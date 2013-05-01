@@ -67,12 +67,12 @@ Erstes Öffentliches Release
 ## In DashUI verwendete Software
 * jQuery http://jquery.com/
 * CanJS http://canjs.com/
+* jqHomematic https://github.com/hobbyquaker/jqHomematic
 * jQuery UI http://jqueryui.com/
 * jqPlot http://www.jqplot.com/
 * lostorage.js https://github.com/js-coder/loStorage.js
 * jQuery UI Multiselect Widget https://github.com/ehynds/jquery-ui-multiselect-widget
 * Icons aus dem KNX-User-Forum http://knx-user-forum.de mfd.gfx@gmail.com User: mfd (CC Lizensiert)
-
 
 ## Copyright, Lizenz, Bedingungen
 
