@@ -33,9 +33,7 @@ Die Parameter ticks, intervals, intervalColors können als ; (Semikolon) getrennt
 
 ### Navigation
 
-* Zur Navigation können einfache Links oder Link-Widgets auf #name-der-view genutzt werden, z.B.:
-
-    <a href="#erdgeschoss">Link auf Erdgeschoss-View</a>
+* Zur Navigation können einfache Links oder Link-Widgets auf #name-der-view genutzt werden.
 
 ### Bedienung
 
@@ -45,7 +43,7 @@ Die Parameter ticks, intervals, intervalColors können als ; (Semikolon) getrennt
 
 Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über http://homematic/addons/dashui/views.html bearbeitet werden.
 
-## Todo / Bekannte Fehler
+## Todo / Bekannte Fehler / Roadmap
 
 * Views duplizieren, umbenennen und löschen implementieren
 * Fehler beheben - manchmal erscheint kein Inspect-Helper (gestrichelte Linie um Widget) wenn neu eingefügtes Widget angeklickt wird
