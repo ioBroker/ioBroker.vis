@@ -70,6 +70,7 @@ Erstes Öffentliches Release
 DashUI
 
 Copyright (c) 2013 hobbyquaker https://github.com/hobbyquaker
+
 MIT Lizenz (MIT)
 
 Hiermit wird unentgeltlich, jeder Person, die eine Kopie der Software und der zugehörigen Dokumentationen (die
