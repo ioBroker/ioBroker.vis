@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>DashUI</title>
+
+
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/loStorage.js"></script>
+    <script type="text/javascript" src="js/jquery.base64.min.js"></script>
+    <script type="text/javascript">
+        $("document").ready(function () {
+            var data = JSON.stringify(storage.get("dashuiViews"), 0, 4);
+            $("#editor").text(data);
+            $("#save").click(function () {
+                data = $.parseJSON($("#editor").val());
+                if (data) {
+                    console.log(data);
+                    storage.set("dashuiViews", data);
+                    alert("saved.");
+                } else {
+                    alert("error.");
+                }
+            });
+        });
+    </script>
+ </head>
+<body>
+    <textarea id="editor" rows="60" cols="120"></textarea><br/>
+    <input type="button" id="save" value="Save changes"/>
+</body>
+</html>
