@@ -5,8 +5,9 @@
 Es wird ein Zugang zur CCU via FTP oder SCP benötigt.
 
 * Addon "WebAPI" installieren (den Ordner webapi auf diesem Zip-File https://github.com/hobbyquaker/WebAPI/archive/master.zip nach /www/addons/ kopieren)
+* https://github.com/hobbyquaker/DashUI/archive/master.zip herunterladen und auspacken
 * Das Verzeichnis dashui auf die CCU nach /www/addons kopieren
-* leeren Ordner /usr/local/addons/dashui erstellen (hier werden Konfigurationen gespeichert)
+* auf der CCU leeren Ordner /usr/local/addons/dashui erstellen (hier werden Konfigurationen gespeichert)
 
 ## Dokumentation
 
