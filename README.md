@@ -5,7 +5,7 @@
 Es wird ein Zugang zur CCU via FTP oder SCP benötigt.
 
 * Addon "WebAPI" installieren: den Ordner "webapi" auf diesem Zip-File https://github.com/hobbyquaker/WebAPI/archive/master.zip nach /www/addons/ kopieren)
-* Den Ordner "dashui" aus diesem Zip-File https://github.com/hobbyquaker/DashUI/archive/master.zip ebenfalls nach /www/addons kopieren
+* Den Ordner "dashui" aus diesem Zip-File https://github.com/hobbyquaker/DashUI/archive/master.zip ebenfalls nach /www/addons/ kopieren
 * auf der CCU leeren Ordner "dashui" in /usr/local/addons/ erstellen (hier werden Konfigurationen gespeichert)
 
 ## Dokumentation
@@ -17,13 +17,15 @@ Es wird ein Zugang zur CCU via FTP oder SCP benötigt.
 * Widgets werden automatisch aktualisiert sobald der Editor geschlossen wird
 * Man muss manuell über die Buttons "auf CCU speichern" und "von CCU laden" im Reiter Homematic die Konfiguration auf der CCU sichern und laden. Automatisch gesichert wird nur im "localstorage" des Browsers.
 * Bestimmte Widget-Attribute erfordern das Neuladen mit dem Browser damit Änderungen sichtbar werden.
-* Bestimmte Views können über http://ccu/addons/dashui/#NameDerView direkt aufgerufen werden
+* Views können über http://ccu/addons/dashui/#NameDerView direkt aufgerufen werden
 
 ### Widgets
 
 #### Homematic-Attribute
 
-* hm_id ist die ID eines Datepunkts (STATE, LEVEL, TEMPERATURE, ...). Zum nachschauen dieser IDs bietet sich das CCU-Addon HQ WebUI an.
+Das Attribut "hm_id" muss bei jedem Widget das Homematic Werte anzeigt oder die Homematic steuert angegeben werden. Zum nachschauen dieser IDs bietet sich das CCU-Addon HQ WebUI an. Vorsicht, falsche IDs können die Stabilität der CCU beeinträchtigen. Hinweis: Die ID 65535 dient als Platzhalter und wird bei der Kommunikation mit der CCU ausgespart.
+
+* hm_id ist die ID eines Datenpunkts (STATE, LEVEL, TEMPERATURE, ...).
 * hm_wid (kann weggelassen werden) ist die ID des zugehörigen WORKING Datenpunkts, sinnvoll bei Dimmern und Rollläden um springende Slider während Aktivität der Aktoren zu verhindern.
 
 #### basic - HTML
