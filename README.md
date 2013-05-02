@@ -4,41 +4,48 @@
 
 Es wird ein Zugang zur CCU via FTP oder SCP benötigt.
 
-* Addon "WebAPI" installieren (den Ordner webapi auf diesem Zip-File https://github.com/hobbyquaker/WebAPI/archive/master.zip nach /www/addons/ kopieren)
-* https://github.com/hobbyquaker/DashUI/archive/master.zip herunterladen und auspacken
-* Das Verzeichnis dashui auf die CCU nach /www/addons kopieren
-* auf der CCU leeren Ordner /usr/local/addons/dashui erstellen (hier werden Konfigurationen gespeichert)
+* Addon "WebAPI" installieren: den Ordner "webapi" auf diesem Zip-File https://github.com/hobbyquaker/WebAPI/archive/master.zip nach /www/addons/ kopieren)
+* Den Ordner "dashui" aus diesem Zip-File https://github.com/hobbyquaker/DashUI/archive/master.zip ebenfalls nach /www/addons kopieren
+* auf der CCU leeren Ordner "dashui" in /usr/local/addons/ erstellen (hier werden Konfigurationen gespeichert)
 
 ## Dokumentation
 
-### Views einrichten
+### Schnellstart
 
 * http://ccu/addons/dashui/?edit aufrufen
-* Während der Editor geöffnet ist finden keine automatischen Refreshs statt.
-* Man muss manuell über die Buttons "auf CCU speichern" und "von CCU laden" Konfigurationen sichern und laden.
+* Nun können Widgets und Views hinzugefügt und konfiguriert werden
+* Widgets werden automatisch aktualisiert sobald der Editor geschlossen wird
+* Man muss manuell über die Buttons "auf CCU speichern" und "von CCU laden" im Reiter Homematic die Konfiguration auf der CCU sichern und laden. Automatisch gesichert wird nur im "localstorage" des Browsers.
+* Bestimmte Widget-Attribute erfordern das Neuladen mit dem Browser damit Änderungen sichtbar werden.
+* Bestimmte Views können über http://ccu/addons/dashui/#NameDerView direkt aufgerufen werden
 
 ### Widgets
 
-* hm_id ist die ID eines Datepunkts (STATE, LEVEL, TEMPERATURE, ...). Zum nachschauen dieser IDs bietet sich das HQ WebUI an.
-* hm_wid ist die ID des WORKING Datenpunkts, sinnvoll bei Dimmern und Rollläden um springende Slider während Aktivität der Aktoren zu verhindern.
+#### Homematic-Attribute
+
+* hm_id ist die ID eines Datepunkts (STATE, LEVEL, TEMPERATURE, ...). Zum nachschauen dieser IDs bietet sich das CCU-Addon HQ WebUI an.
+* hm_wid (kann weggelassen werden) ist die ID des zugehörigen WORKING Datenpunkts, sinnvoll bei Dimmern und Rollläden um springende Slider während Aktivität der Aktoren zu verhindern.
+
+#### basic - HTML
+
+Zeigt beliebigen HTML Code an. Hiermit können z.B. auch Bilder oder Iframes angezeigt eingebunden werden.
 
 #### basic - Value List
 
+Zeigt eine Homematic-Variable vom Typ Werteliste an.
 Der Parameter valuelist muss als ; (Semikolon) getrennte Liste angegeben werden
 
 #### jqplot - MeterGauge Widget
 
+Zeigt Homematic Zahlenwerte (Variablen, Datenpunkte) als Tachometer an.
 Alle weiteren Parameter sind hier dokumentiert: <a href="http://www.jqplot.com/docs/files/plugins/jqplot-meterGaugeRenderer-js.html" target="_blank">jqPlot Docs meterGauge</a></li>
 
 Die Parameter ticks, intervals, intervalColors können als ; (Semikolon) getrennte Liste angegeben werden
 
 ### Navigation
 
-* Zur Navigation können einfache Links oder Link-Widgets auf #name-der-view genutzt werden.
+* Zur Navigation können normale Links oder Link-Widgets mit href="#NameDerView" genutzt werden.
 
-### Bedienung
-
-* Einfach den Editor schließen oder http://ccu/addons/dashui/ aufrufen
 
 ### Rohdaten bearbeiten
 
@@ -50,18 +57,22 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 * Fehler beheben - manchmal erscheint kein Inspect-Helper (gestrichelte Linie um Widget) wenn neu eingefügtes Widget angeklickt wird
 * Fehler beheben bei Widget auf andere View kopieren (wird erst nach Reload sichtbar)
 * Fehler beheben jqPlot Gauge Widget: Wird nur Fehlerfrei auf der sichtbaren View gerendert :(
-* Spezielle Widget-Attribute (Infoschnipsel z.B. für die Dokumentation der Attribute)
 * Config-File
 * Mehr Widgets! ;-)
+* Erweiterte Template-Attribute: Doku, Kompatibilität, ...
 * Erweiterte Widget-Attribute: CSS-Klassen, Kommentar, ...
 * Erweiterte View-Attribute: CSS-Klassen, jqui-Theme?
-* Navigations-Effekte (Beim wechseln der View konfigurierbare Animationen)
+* Navigations-Effekte (Beim Wechseln der View konfigurierbare Animationen)
 
 ## Changelog
 
+### 0.4
+
+* mfd-icon Shutter Widget an Homematic angepasst (umgedreht)
+
 ### 0.3
 
-Erstes Öffentliches Release
+* Erstes Öffentliches Release
 
 
 ## In DashUI verwendete Software
