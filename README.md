@@ -28,6 +28,9 @@ Das Attribut "hm_id" muss bei jedem Widget das Homematic Werte anzeigt oder die 
 * hm_id ist die ID eines Datenpunkts (STATE, LEVEL, TEMPERATURE, ...).
 * hm_wid (kann weggelassen werden) ist die ID des zugehörigen WORKING Datenpunkts, sinnvoll bei Dimmern und Rollläden um springende Slider während Aktivität der Aktoren zu verhindern.
 
+Neben IDs können auch Datenpunkt-Bezeichner wie z.B. "BidCos-RF.EEQ00012345:1.LEVEL" oder bei Programmen und Systemvariablen deren Namen verwendet werden.
+
+
 #### basic - HTML
 
 Zeigt beliebigen HTML Code an. Hiermit können z.B. auch Bilder oder Iframes angezeigt eingebunden werden.
@@ -53,16 +56,14 @@ Die Parameter ticks, intervals, intervalColors können als ; (Semikolon) getrennt
 
 Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über http://homematic/addons/dashui/views.html bearbeitet werden.
 
-## Todo / Bekannte Fehler / Roadmap
+## Todo / Bekannte Fehler
 
 * Views duplizieren Fehler beheben
-* Fehler beheben - manchmal erscheint kein Inspect-Helper (gestrichelte Linie um Widget) wenn neu eingefügtes Widget angeklickt wird
-* Fehler beheben bei Widget auf andere View kopieren (wird erst nach Reload sichtbar) ?
-* Config-File
+* Config-File, Editor und Engine sauber trennen
 * Mehr Widgets! ;-)
 * Erweiterte Template-Attribute: Doku, Kompatibilität, ...
 * Navigations-Effekte (Beim Wechseln der View konfigurierbare Animationen)
-* Externe Steuerung
+
 
 ## Changelog
 
