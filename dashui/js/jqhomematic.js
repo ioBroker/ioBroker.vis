@@ -30,7 +30,7 @@ var homematic = {
 
 (function ($) {
 
-var version =               '0.7',
+var version =               '0.8',
 
     connected =             false,
     ready =                 false,
@@ -100,7 +100,7 @@ var version =               '0.7',
 
                     if (cacheReady) {
                         ccu = $.extend(ccu, cache);
-                        console.log(ccu);
+                        //console.log(ccu);
                         ready = true;
                         settings.ready();
                     }
@@ -136,6 +136,9 @@ var version =               '0.7',
 
         },                     // Homematic Plugin initialisieren
         setState: function (id, val) {
+            //console.log("setState("+id+","+val+")");
+           id = funcs.escape(id);
+
             cancelNextRefresh = true;
             homematic.setState.attr("_"+id, {Value:"\""+val+"\""});
             funcs.uiState(id, val);
@@ -176,7 +179,13 @@ var version =               '0.7',
             });
         },    // Runs a Homematic Script
         state: function(id, value) {
-            if (value) {
+            if (value && id != 65535) {
+                if ((''+id).indexOf("__") !== -1) {
+                    id = id.replace(/__d__/g, ".");
+                    id = id.replace(/__c__/g, ":");
+                    id = "\"" + id + "\"";
+
+                }
                 funcs.script('dom.GetObject('+id+').State('+value+');', function () { cancelNextRefresh = false; });
             }
         },                   // Sets a Homematic Datapoint
@@ -246,6 +255,22 @@ var version =               '0.7',
             });
             return true;
         },             // Run homematic scripts and insert results in Object ccu
+        addStringVariable: function (name, desc) {
+            var script = "object test = dom.GetObject('"+name+"');\n" +
+                "if (test) {\n" +
+                "} else {\n" +
+                "object o = dom.CreateObject(OT_VARDP);\n" +
+                "o.Name('"+name+"');\n" +
+                "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
+                "o.DPInfo('"+desc+"');\n" +
+                "o.DPArchive(false);\n" +
+                "o.ValueUnit('');\n" +
+                "o.ValueType(20);\n" +
+                "o.ValueSubType(11);\n" +
+                "o.State('');\n" +
+                "}";
+            funcs.script(script);
+        },
         refresh: function (DPs) {
             if (cancelNextRefresh) {
                 cancelNextRefresh = false;
@@ -255,6 +280,7 @@ var version =               '0.7',
             }
             var script = funcs.buildRefreshScript(DPs);
             funcs.script(script, function(data) {
+                //console.log(data);
                 data = $.parseJSON(data);
                 if (cancelNextRefresh) {
                     cancelNextRefresh = false;
@@ -265,9 +291,14 @@ var version =               '0.7',
                 for (var dp in data) {
                     //jqhm[dp].attr('Value', data[dp].Value);
                     //jqhm[dp].attr('Timestamp', data[dp].Timestamp);
+                    var xdp = ''+dp;
+                    if (xdp.indexOf(".") !== -1 || xdp.indexOf(":") !== -1) {
+                        xdp = xdp.replace(/\./g, "__d__");
+                        xdp = xdp.replace(/:/g, "__c__");
 
-                    homematic.uiState.attr(dp + ".Value", data[dp].Value);
-                    homematic.uiState.attr(dp + ".Timestamp", data[dp].Timestamp);
+                    }
+                    homematic.uiState.attr(xdp + ".Value", data[dp].Value);
+                    homematic.uiState.attr(xdp + ".Timestamp", data[dp].Timestamp);
                 }
                 $(".jqhmRefresh").hide();
 
@@ -275,6 +306,8 @@ var version =               '0.7',
             });
         },                      // Refresh of all Datapoints in Array DPs
         addUiState: function(id) {
+            //console.log("addUiState("+id+")");
+            id = funcs.escape(id);
             var sid = '_' + id;
             homematic.uiState.attr(sid, {'id':id,'wid':undefined,'Value':0,'Timestamp':''});
         },                     // uiState Objekt initialisieren
@@ -328,14 +361,22 @@ var version =               '0.7',
                     var type; // PROGRAMME ERKENNEN?
 
                     if (homematic.dpWorking["_"+id]) { // WORKING ID
-                        refreshScript += 'w = dom.GetObject(' + homematic.dpWorking["_"+id] + ');\n';
+                        if ((''+homematic.dpWorking["_"+id]).indexOf(":") !== -1) {
+                            refreshScript += 'w = dom.GetObject("' + homematic.dpWorking["_"+id] + '");\n';
+                        } else {
+                            refreshScript += 'w = dom.GetObject(' + homematic.dpWorking["_"+id] + ');\n';
+                        }
                         refreshScript += 'if (w.Value() == false) {\n';
                     }
 
                     refreshScript += 'if (first) {\nfirst = false;\n } else {\n WriteLine(",");\n}\n';
 
 
-                    refreshScript += 'o = dom.GetObject(' + id + ');\n';
+                    if ((''+id).indexOf(":") !== -1) {
+                        refreshScript += 'o = dom.GetObject("' + id + '");\n';
+                    } else {
+                        refreshScript += 'o = dom.GetObject(' + id + ');\n';
+                    }
                     refreshScript += 'Write("\\"_' + id + '\\":{");\n';
                     if (type !== "PROGRAM") {
                         refreshScript += 'Write("\\"Value\\":\\"");\n';
@@ -369,9 +410,24 @@ var version =               '0.7',
         },                   // Warten bis das Plugin initialisiert. Feuert ready Event
         debug: function (txt) {
             if (settings.debug) {
-                console.log(txt);
+                //console.log(txt);
             }
-        }                         // Debugausgabe in die Browserconsole
+        },                         // Debugausgabe in die Browserconsole
+        escape: function (id) {
+            if ((''+id).indexOf(".") !== -1 || (''+id).indexOf(":") !== -1) {
+                id = id.replace(/\./g, "__d__");
+                id = id.replace(/:/g, "__c__");
+            }
+            return id;
+        },
+        unescape: function (id) {
+            if ((''+id).indexOf("__c__") !== -1 || (''+id).indexOf("__d__") !== -1) {
+                id = id.replace(/__c__/g, ":");
+                id = id.replace(/__d__/g, ".");
+            }
+            return id;
+        }
+
     },
     methods = {};
 

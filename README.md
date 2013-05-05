@@ -58,7 +58,7 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 * Views duplizieren, umbenennen und löschen implementieren
 * Fehler beheben - manchmal erscheint kein Inspect-Helper (gestrichelte Linie um Widget) wenn neu eingefügtes Widget angeklickt wird
 * Fehler beheben bei Widget auf andere View kopieren (wird erst nach Reload sichtbar)
-* Fehler beheben jqPlot Gauge Widget: Wird nur Fehlerfrei auf der sichtbaren View gerendert :(
+* -Fehler beheben jqPlot Gauge Widget: Wird nur Fehlerfrei auf der sichtbaren View gerendert :(
 * Config-File
 * Mehr Widgets! ;-)
 * Erweiterte Template-Attribute: Doku, Kompatibilität, ...
@@ -70,7 +70,16 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 
 ### 0.4
 
-* mfd-icon Shutter Widget an Homematic angepasst (umgedreht)
+* Ab sofort kann als Attribut hm_id neben der id auch eine Adresse in der Form BidCos-RF.EEQ0012345:1.LEVEL bzw ein Variablen- oder Programmname angegeben werden
+* Über http://ccu/addons/dashui/reset.html kann der Cache komplett geleert werden
+* diverse Fehler beim Selektieren von Widgets und Wechseln der View behoben
+* Views können nun gelöscht und umbenannt werden
+* Views werden nun erst beim erstmaligen Aufruf gerendert (merzt auch jqPlot Probleme aus)
+* Views und Widget können nun CSS-Klassen zugewiesen werden
+* Widget jqui-input und jqui-input-set-button mit weiteren Attributen ausgestattet
+* Widget mfd-icon Shutter angepasst
+* Widget jqui Input Datetime ausgearbeitet
+* Widget basic - rednumber: Zeigt Ganzzahlwerte an, verschwindet bei Wert 0 (iOS-Like...)
 
 ### 0.3
 
@@ -78,14 +87,19 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 
 
 ## In DashUI verwendete Software
+
+alle verwendeten Softwarekomponenten stehen (unter anderem) unter einer MIT-Lizenz zur Verfügung.
+
 * jQuery http://jquery.com/
 * CanJS http://canjs.com/
+* lostorage.js https://github.com/js-coder/loStorage.js
 * jqHomematic https://github.com/hobbyquaker/jqHomematic
 * jQuery UI http://jqueryui.com/
-* jqPlot http://www.jqplot.com/
-* lostorage.js https://github.com/js-coder/loStorage.js
 * jQuery UI Multiselect Widget https://github.com/ehynds/jquery-ui-multiselect-widget
-* Icons aus dem KNX-User-Forum http://knx-user-forum.de mfd.gfx@gmail.com User: mfd (CC Lizensiert)
+* jQuery UI Timepicker http://trentrichardson.com/examples/timepicker/
+* jqPlot http://www.jqplot.com/
+
+CC-Lizensierte Icons aus dem KNX-User-Forum http://knx-user-forum.de mfd.gfx@gmail.com User: mfd
 
 ## Copyright, Lizenz, Bedingungen
 

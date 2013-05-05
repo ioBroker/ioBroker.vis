@@ -24,10 +24,12 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.3',
+    version:            '0.4',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
+    storageKeyInstance: 'dashuiInstance',
     fileViews:          '/usr/local/addons/dashui/views.dui',
+    instance:           '',
     urlParams:          {},
     settings:           {},
     views:              {},
@@ -35,6 +37,21 @@ var dui = {
     activeView:         "",
     listval:            [],
     binds: {
+        basic: {
+            rednumber: function (el) {
+                var $this = jQuery(el);
+                console.log("rednumber "+$this.attr("id"));
+                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                    if (attr == ("_"+$this.attr("data-hm-id")+".Value")) {
+                        if (parseInt(newVal,10) == 0) {
+                            $this.hide();
+                        } else {
+                            $this.show();
+                        }
+                    }
+                });
+            }
+        },
         jqplot: {
             gauge: function (el, options) {
                 var $this = jQuery(el).find("div[id$='_gauge']");
@@ -52,7 +69,7 @@ var dui = {
                             }
                         }
                     }, options);
-                    console.log(jqplotOptions);
+                    //console.log(jqplotOptions);
                     var series = [[0]];
                     var plot = jQuery.jqplot($this.attr("id"), series, jqplotOptions);
                     homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
@@ -65,9 +82,39 @@ var dui = {
             }
         },
         jqueryui: {
+            classes: function (el) {
+                var $this = jQuery(el);
+                $this.hover(function () {
+                    $this.addClass("ui-state-hover");
+                }, function (){
+                    $this.removeClass("ui-state-hover");
+
+                });
+                var id = $this.attr("data-hm-id");
+                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
+                        var val;
+                        if (newVal === "false") {
+                            val = 0;
+                        } else if (newVal === "true") {
+                            val = 1;
+                        } else {
+                            val = parseFloat(newVal, 10);
+                        }
+                        if (val > 0) {
+                            $this.addClass("ui-state-active");
+                            $this.removeClass("ui-state-default");
+                        } else {
+                            $this.removeClass("ui-state-active");
+                            $this.addClass("ui-state-default");
+
+                        }
+                    }
+                });
+            },
             dialog: function (el, options) {
-                console.log("binds.jqueryui.dialog");
-                console.log(jQuery(el).parent().find("div.dashui-widget-dialog").attr("id"));
+                //console.log("binds.jqueryui.dialog");
+                //console.log(jQuery(el).parent().find("div.dashui-widget-dialog").attr("id"));
                 jQuery(el).parent().find("div.dashui-widget-body").click(function () {
                     if (dui.urlParams["edit"] !== "") {
                         var id = jQuery(this).parent().attr("id") + "_dialog";
@@ -81,6 +128,7 @@ var dui = {
             input: function (el, options) {
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
+                var digits = options;
                 $this.button().addClass("ui-state-default")
                     .css({
                         'font' : 'inherit',
@@ -93,18 +141,64 @@ var dui = {
 
                     });
                 homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+id+".Value")) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
+                        if (digits && digits != "") {
+                            newVal = parseFloat(newVal).toFixed(digits);
+                        }
+                        $this.val(newVal);
+                    }
+                });
+            },
+            inputDatetime: function (el, options) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                var timepickerOptions = jQuery.extend(true, {
+                    dateFormat:'yy-mm-dd',
+                    monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" ],
+                    monthNames: [ "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" ],
+                    dayNamesMin: [ "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" ],
+                    showAnim: "fadeIn",
+                    firstDay: 1,
+                    timeText: "Zeit ",
+                    hourText: "h",
+                    minuteText: "m",
+                    secondText: "s",
+                    currentText: "Jetzt",
+                    closeText: "Schließen",
+                    minuteGrid: undefined,
+                    hourGrid: undefined,
+                    secondGrid: undefined,
+                    timeOnly: false,
+                    showSecond: true,
+                    timeFormat: 'HH:mm:ss',
+                    pickerTimeFormat: 'HH:mm:ss'
+                }, options);
+                    $this.addClass("ui-state-default")
+                    .css({
+                        'font' : 'inherit',
+                        //'color' : 'inherit',
+                        'text-align' : 'left',
+                        'outline' : 'none',
+                        'cursor' : 'text'
+                    }).datetimepicker(timepickerOptions).button();
+                    $this.change(function () {
+                        jQuery.homematic("setState", id, jQuery(this).val());
+
+                    });
+                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
                         $this.val(newVal);
                     }
                 });
             },
             inputset: function (el, options) {
+                var digits = options;
                 var $this = jQuery(el);
                  var input = "#"+$this.attr("id").slice(0,-3) + "input";
 
                 var id = $this.attr("data-hm-id");
                 $this.button().click(function () {
-                    console.log("inputset click " + input)
+                    //console.log("inputset click " + input)
                     jQuery.homematic("setState", id, jQuery(input).val());
 
                     });
@@ -117,7 +211,10 @@ var dui = {
                         'cursor' : 'text'
                     });
                 homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+id+".Value")) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
+                        if (digits && digits != "") {
+                            newVal = parseFloat(newVal).toFixed(digits);
+                        }
                         jQuery(input).val(newVal);
                     }
                 });
@@ -139,7 +236,7 @@ var dui = {
                 $this.slider(settings);
 
                 homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+id+".Value")) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
                         $this.slider("value", newVal);
                     }
                 });
@@ -182,17 +279,22 @@ var dui = {
             },
             radio: function (el, options) {
                 var settings = $.extend({}, options);
+                //console.log("radio "+el);
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
 
                 // Observable -> Buttonset
                 homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+id+".Value")) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
                         $this.find("input").removeAttr("checked");
-                        if (newVal === "true") { newVal = 1; }
-                        if (newVal === "false") { newVal = 0; }
-                        if (newVal === "0.000000") { newVal = 0; }
-                        if (newVal === "1.000000") { newVal = 1; }
+                        if (newVal === "true") {
+                            newVal = 1;
+                        } else if (newVal === "false") {
+                            newVal = 0;
+                        } else {
+                            newVal = parseFloat(newVal,10);
+                        }
+
                         $this.find("input[value='"+newVal+"']").prop("checked", true);
                         $this.find("input").each(function() {
                             jQuery(this).button("refresh");
@@ -203,9 +305,9 @@ var dui = {
 
                 // Buttonset -> Observable
                 $this.find("input").click(function () {
-                        if (dui.urlParams["edit"] !== "") {
-                            $.homematic("setState", id, $(this).val());
-                        }
+                    if (dui.urlParams["edit"] !== "") {
+                        $.homematic("setState", id, $(this).val());
+                    }
                 });
                 $this.find("input").removeAttr("checked");
                 $this.buttonset(settings);
@@ -217,6 +319,11 @@ var dui = {
 
                 jQuery("div#container").find(".ui-button").each(function () {
                     //jQuery(this).button("disable");
+                });
+                jQuery("div#container").find("a[href]").each(function () {
+                    $(this).click(function(e) {
+                        e.preventDefault();
+                    });
                 });
 
             }
@@ -237,6 +344,21 @@ var dui = {
 
     init: function () {
 
+        dui.instance = storage.get(dui.storageKeyInstance);
+        if (!dui.instance) {
+            dui.instance = (Math.random() * 4294967296).toString(16);
+            dui.instance = "0000000" + dui.instance;
+            dui.instance = dui.instance.substr(-8);
+            storage.set(dui.storageKeyInstance, dui.instance);
+
+        }
+
+        var name = "dashui_"+dui.instance;
+        $.homematic("addStringVariable", name+"_view", "automatisch angelegt von DashUI.")
+        $.homematic("addStringVariable", name+"_cmd", "automatisch angelegt von DashUI.")
+        $.homematic("addStringVariable", name+"_data", "automatisch angelegt von DashUI.")
+
+
         var settings = storage.get(dui.storageKeySettings);
         if (settings) {
             dui.settings = $.extend(dui.settings, settings);
@@ -252,14 +374,15 @@ var dui = {
             }
 
             if (dui.activeView == "") {
-                console.log(dui.views);
+                //console.log(dui.views);
                 dui.views['view1'] = {settings:{style:{}},widgets:{}};
                 dui.activeView = "view1";
                 dui.saveLocal();
             }
         } else {
             if (dui.views[hash]) {
-                dui.changeView(hash);
+                dui.activeView = hash;
+                //dui.changeView(hash);
             } else {
                 alert("View doesn't exist :-(");
                 $.error("dui Error can't find view");
@@ -267,12 +390,17 @@ var dui = {
         }
 
         if (dui.views[dui.activeView] && dui.views[dui.activeView].settings != undefined && dui.views[dui.activeView].settings.style != undefined && dui.views[dui.activeView].settings.style['background'] != undefined) {
-            $("#"+view).css("background", dui.views[dui.activeView].settings.style['background']);
+            $("#"+dui.activeView).css("background", dui.views[dui.activeView].settings.style['background']);
         }
 
-        dui.renderViews();
+        $("#active_view").html(dui.activeView);
 
-        $("#inspect_view_background").val(dui.views[dui.activeView].settings.style['background']);
+        dui.changeView(dui.activeView);
+
+        //$("#inspect_view_background").val(dui.views[dui.activeView].settings.style['background']);
+        //$("#select_active_widget").html("<option value='none'>none selected</option>");
+
+        $("#inspect_view").html(dui.activeView);
 
         $(window).bind( 'hashchange', function(e) {
             dui.changeView(window.location.hash.slice(1));
@@ -308,23 +436,29 @@ var dui = {
         }
 
     },
+    renderView: function (view) {
+        //console.log("renderView("+view+")");
+        //console.log(dui.views[view].settings.style);
+        if (!dui.views[view].settings.theme) {
+            dui.views[view].settings.theme = "dark-hive";
+        }
+        $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
+        if ($("#container").find("#"+view).html() == undefined) {
+            $("#container").append("<div id='"+view+"' class='dashui-view'></div>");
+            $("#"+view).css(dui.views[view].settings.style);
 
-    renderViews: function () {
-        var widget = {};
-        for (var view in dui.views) {
-            if ($("#container").find("#"+view).html() == undefined) {
-                $("#container").append("<div id='"+view+"' class='dashui-view'></div>");
-                $("#"+view).css(dui.views[view].settings.style);
 
-                $("#"+view).hide();
-            }
             for (var id in dui.views[view].widgets) {
                 dui.renderWidget(view, id);
             }
-        }
 
-        $("#"+dui.activeView).show();
-        $("#active_view").html(dui.activeView);
+
+            if (dui.activeView != view) {
+                $("#"+view).hide();
+            }
+        } else {
+            //console.log(" - nothing to do");
+        }
 
     },
     preloadImages: function (srcs) {
@@ -340,24 +474,19 @@ var dui = {
     },
     renderWidget: function (view, id) {
         var widget = dui.views[view].widgets[id];
-        console.log(widget);
+        console.log("renderWidget("+view+","+id+")");
         dui.widgets[id] = {
             wid: id,
             data: new can.Observe($.extend({
-                "wid": id,
-                "title": undefined,
-                "subtitle": undefined,
-                "html": undefined,
-                "hm_id": undefined,
-                "hm_wid": undefined,
-                "off_text": undefined,
-                "on_text": undefined,
-                "buttontext": undefined
+                "wid": id
             }, widget.data))
         };
+        //console.log(widget);
 
         $.homematic("addUiState", widget.data.hm_id);
-        $("#"+view).append(can.view(widget.tpl, {hm: homematic.uiState["_"+widget.data.hm_id], data: dui.widgets[id]["data"]}));
+        var widgetData = dui.widgets[id]["data"];
+        widgetData.hm_id = $.homematic("escape", widgetData.hm_id);
+        $("#"+view).append(can.view(widget.tpl, {hm: homematic.uiState["_"+widget.data.hm_id], data: widgetData}));
 
         if (widget.style) {
             $("#"+id).css(widget.style);
@@ -370,6 +499,13 @@ var dui = {
 
     },
     changeView: function (view) {
+
+        dui.inspectWidget("none");
+        dui.clearWidgetHelper();
+        $("#"+dui.activeView).hide();
+        $("#select_active_widget").html("<option value='none'>none selected</option>");
+        //console.log($("#select_active_widget").html());
+
         if (!dui.views[view]) {
             for (var prop in dui.views) {
                 // object[prop]
@@ -377,30 +513,54 @@ var dui = {
             }
             view = prop;
         }
-        dui.inspectWidget("none");
-        dui.clearWidgetHelper();
-        $("#"+dui.activeView).hide();
-        $("#select_active_widget").html("<option value='none'>none selected</option>");
-
+        //console.log("changeView("+view+")");
         dui.activeView = view;
+
         $("#inspect_view").html(view);
+
+
         for (var widget in dui.views[dui.activeView].widgets) {
             $("#select_active_widget").append("<option value='"+widget+"'>"+widget+" ("+$("#"+dui.views[dui.activeView].widgets[widget].tpl).attr("data-dashui-name")+")</option>");
         }
+       //console.log($("#select_active_widget").html());
         $("#select_active_widget").multiselect("refresh");
 
-
+        dui.renderView(dui.activeView);
         $("#"+dui.activeView).show();
+
+        $.homematic("script", "object o = dom.GetObject('dashui_"+dui.instance+"_view');\no.State('"+dui.activeView+"');");
+
         if (window.location.hash.slice(1) != view) {
             history.pushState({}, "", "#" + view);
         }
         if ($("#select_view option:selected").val() != view) {
-            $("#select_view option").each(function() { $(this).removeAttr("selected"); });
+            $("#select_view option").removeAttr("selected");
             $("#select_view option[value='"+view+"']").prop("selected", "selected");
+            $("#select_view").multiselect("refresh");
         }
-        $("#select_view_copy option").each(function() { $(this).removeAttr("selected"); });
+        $("#select_view_copy option").removeAttr("selected");
         $("#select_view_copy option[value='"+view+"']").prop("selected", "selected");
-        $("#inspect_view_background").val(dui.views[dui.activeView].settings.style['background']);
+        $("#select_view_copy").multiselect("refresh");
+        $(".dashui-inspect-view-css").each(function () {
+            var $this = $(this);
+            var attr = $this.attr("id").slice(17);
+            $("#"+$this.attr("id")).val(dui.views[dui.activeView].settings.style[attr]);
+        });
+        $(".dashui-inspect-view").each(function () {
+            var $this = $(this);
+            var attr = $this.attr("id").slice(13);
+            $("#"+$this.attr("id")).val(dui.views[dui.activeView].settings[attr]);
+        });
+        if (!dui.views[dui.activeView].settings["theme"]) {
+            dui.views[dui.activeView].settings["theme"] = "dark-hive";
+        }
+        $("#inspect_view_theme option[value='"+dui.views[dui.activeView].settings.theme+"']").prop("selected", true);
+        $("#inspect_view_theme").multiselect("refresh");
+
+
+
+
+        //console.log("activeView="+dui.activeView);
 
 
 
@@ -412,6 +572,7 @@ var dui = {
         dui.views[view] = {settings:{style:{}},widgets:{}};
         dui.saveLocal();
         dui.changeView(view);
+        window.location.reload();
     },
     loadLocal: function () {
         dui.views = storage.get(dui.storageKeyViews);
@@ -437,8 +598,41 @@ dui = $.extend(true, dui, {
     selectView:         $("#select_view"),
     activeWidget:       "",
 
+    renameView: function () {
+        var val = $("#new_name").val();
+        if (val != "" && dui.views[val] === undefined) {
+            dui.views[val] = $.extend(true, {}, dui.views[dui.activeView]);
+            delete(dui.views[dui.activeView]);
+            storage.set(dui.storageKeyViews, dui.views);
+            dui.renderView(val);
+            dui.changeView(val);
+            window.location.reload();
+        }
+    },
+    delView: function () {
+        if (confirm("Really delete view "+dui.activeView+"?")) {
+                //console.log("delView "+dui.activeView);
+                delete dui.views[dui.activeView];
+                //console.log(dui.views);
+                storage.set(dui.storageKeyViews, dui.views);
+                window.location.href = "?edit";
+           }
+    },
+    copyView: function () {
+        var val = $("#copy_name").val();
+        if (val != "" && dui.views[val] === undefined) {
+            dui.views[val] = $.extend(true, {}, dui.views[dui.activeView]);
+            dui.saveLocal();
+            dui.renderView(val);
+            dui.changeView(val);
+            window.location.reload();
+        }
+    },
     saveLocal: function () {
+        //console.log(dui.views);
+
         storage.extend(dui.storageKeyViews, dui.views);
+
         storage.extend(dui.storageKeySettings, dui.settings);
     },
     saveRemote: function () {
@@ -487,6 +681,8 @@ dui = $.extend(true, dui, {
                 "html": undefined,
                 "hm_id": 65535,
                 "hm_wid": undefined,
+                "factor": 1,
+                "digits": 6,
                 off_text: undefined,
                 on_text: undefined,
                 buttontext: undefined
@@ -496,7 +692,7 @@ dui = $.extend(true, dui, {
         $("#"+dui.activeView).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"]}));
 
         if (!dui.views[dui.activeView]) {
-            console.log("views["+dui.activeView+"]==undefined :-(");
+            //console.log("views["+dui.activeView+"]==undefined :-(");
         }
 
         if (!dui.views[dui.activeView].widgets) {
@@ -519,24 +715,31 @@ dui = $.extend(true, dui, {
 
         dui.binds.jqueryui._disable();
         $("#"+widgetId).click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
             dui.inspectWidget(widgetId);
+            return false;
         });
-        dui.inspectWidget(widgetId);
+        dui.activeWidget = widgetId;
         return widgetId;
 
     },
     dupWidget: function () {
         var activeView = dui.activeView;
         var targetView = $("#select_view_copy option:selected").val();
-        console.log(activeView + "." + dui.activeWidget + " -> " + targetView);
+        //console.log(activeView + "." + dui.activeWidget + " -> " + targetView);
         var tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;
         var data = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].data);
         var style = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].style);
         if (activeView == targetView) {
             style.top += 10;
             style.left += 10;
-            dui.addWidget(tpl, data, style);
+            dui.activeWidget = dui.addWidget(tpl, data, style);
+            setTimeout(function() { dui.inspectWidget(dui.activeWidget); }, 50);
         } else {
+            if ($("#container").find("#"+targetView).html() == undefined) {
+                dui.renderView(targetView);
+            }
             dui.activeView = targetView;
             dui.addWidget(tpl, data, style);
             dui.activeView = activeView;
@@ -544,18 +747,13 @@ dui = $.extend(true, dui, {
         }
     },
     inspectWidget: function (id) {
-
-        console.log($("tabs").tabs('option', 'selected'));
-
-        if (dui.activeWidget === id) {
-            return false;
-        }
+        //console.log("inspectWidget("+id+")");
 
 
-
-        console.log("inspectWidget("+id+")");
+        //console.log($("tabs").tabs('option', 'selected'));
 
         $("#select_active_widget option[value='"+id+"']").prop("selected", true);
+        //console.log($("#select_active_widget").html());
         $("#select_active_widget").multiselect("refresh");
 
         // Alle Widgets de-selektieren und Interaktionen entfernen
@@ -584,23 +782,36 @@ dui = $.extend(true, dui, {
         // Inspector aufbauen
         $(".dashui-widget-tools").show();
 
+        $(".dashui-inspect-widget").each(function () {
+            var $this = $(this);
+            var attr = $this.attr("id").slice(8);
+            $this.val(dui.views[dui.activeView].widgets[dui.activeWidget].data[attr]);
+        });
+
         var widget_attrs = $("#" + widget.tpl).attr("data-dashui-attrs").split(";");
 
         for (var attr in widget_attrs) {
             if (widget_attrs[attr] != "") {
-                $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+widget_attrs[attr]+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'"/></td></tr>');
+                if (widget_attrs[attr].slice(0,4) !== "html") {
+                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+widget_attrs[attr]+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/></td></tr>');
+
+                } else {
+                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+widget_attrs[attr]+'</td><td><textarea id="inspect_'+widget_attrs[attr]+'" rows="2" cols="44"></textarea></td></tr>');
+
+                }
 
                 $("#inspect_"+widget_attrs[attr])
                     .val(widget.data[widget_attrs[attr]])
                     .change(function () {
                         var attribute = $(this).attr("id").slice(8);
-                        console.log("change "+attribute);
+                        //console.log("change "+attribute);
                         dui.widgets[dui.activeWidget].data.attr(attribute, $(this).val());
                         dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = $(this).val();
                         dui.saveLocal();
                     });
             }
         }
+
 
         $(".dashui-inspect-css").each(function () {
             $(this).val($this.css($(this).attr("id").slice(12)));
@@ -610,8 +821,13 @@ dui = $.extend(true, dui, {
         // Widget selektieren
         $("#select_active_widget option").removeAttr("selected");
         $("#select_active_widget option[value='"+id+"']").prop("selected", true);
+        //console.log($("#select_active_widget").html());
         $("#select_active_widget").multiselect("refresh");
 
+        //console.log("left:"+$this.css("left"));
+        //console.log("top:"+$this.css("top"));
+        //console.log("height:"+$this.outerHeight());
+        //console.log("width:"+$this.outerWidth());
 
         $("#widget_helper")
             .css("left", pxAdd($this.css("left"), -2))
@@ -762,7 +978,10 @@ function pxAdd(val, add) {
                 multiple: false,
                 header: false,
                 noneSelectedText: false,
-                selectedList: 1
+                selectedList: 1,
+                minWidth: $(this).attr("data-multiselect-width"),
+                height: $(this).attr("data-multiselect-height")
+
 
             });
         });
@@ -772,7 +991,7 @@ function pxAdd(val, add) {
                 header: false,
                 noneSelectedText: false,
                 selectedList: 1,
-                minWidth: 330,
+                minWidth: 320,
                 height: 410
 
             });
@@ -802,16 +1021,25 @@ function pxAdd(val, add) {
         $("#add_widget").click(function () {
             var tpl = $("#select_tpl option:selected").val();
             var data = {
-                title: undefined,
-                subtitle: undefined,
-                html: undefined,
                 hm_id: 65535,
-                hm_wid: undefined
+                digits: 6,
+                factor: 1
             };
             dui.addWidget(tpl, data);
+            setTimeout(function () { dui.inspectWidget(dui.activeWidget) }, 50);
+
         });
         $("#add_view").click(function () {
             dui.addView($("#new_view").val());
+        });
+        $("#copy_view").click(function () {
+            dui.copyView($("#new_view").val());
+        });
+        $("#del_view").click(function () {
+            dui.delView(dui.activeView);
+        });
+        $("#rename_view").click(function () {
+            dui.renameView(dui.activeView, $("#new_name").val());
         });
         $("#save_ccu").click(dui.saveRemote);
 
@@ -821,6 +1049,13 @@ function pxAdd(val, add) {
         });
 
         // Inspector Change Handler
+        $(".dashui-inspect-widget").change(function () {
+            var $this = $(this);
+            var attr = $this.attr("id").slice(8);
+            //console.log("change "+attr);
+            dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
+            dui.saveLocal();
+        });
         $(".dashui-inspect-css").change(function () {
             var $this = $(this);
             var style = $this.attr("id").substring(12);
@@ -841,14 +1076,35 @@ function pxAdd(val, add) {
 
 
         });
-        $("#inspect_view_background").change(function () {
-            $("#"+dui.activeView).css("background", $(this).val());
-            dui.views[dui.activeView].settings.style = {background:$(this).val()};
+        $(".dashui-inspect-view-css").change(function () {
+            var $this = $(this);
+            var attr = $this.attr("id").slice(17);
+            var val = $this.val();
+            //console.log("change "+attr+" "+val);
+            $("#"+dui.activeView).css(attr, val);
+            dui.views[dui.activeView].settings.style[attr] = val;
+            dui.saveLocal();
+        });
+        $(".dashui-inspect-view").change(function () {
+            var $this = $(this);
+            var attr = $this.attr("id").slice(13);
+            var val = $this.val();
+            //console.log("change "+attr+" "+val);
+            dui.views[dui.activeView].settings[attr] = val;
+            dui.saveLocal();
+        });
+        $("#inspect_view_theme").change(function () {
+            var theme = $("#inspect_view_theme option:selected").val();
+            //console.log("change theme "+theme);
+            dui.views[dui.activeView].settings.theme = theme;
+            $("#jqui_theme").attr("href", "css/"+theme+"/jquery-ui.min.css");
             dui.saveLocal();
         });
         $("#select_active_widget").change(function () {
             dui.inspectWidget($(this).val());
         });
+
+
 
         // Autorefresh nur wenn wir nicht im Edit-Modus sind
         var autoRefresh = dui.urlParams["edit"] !== "";
@@ -865,7 +1121,8 @@ function pxAdd(val, add) {
                 $("#loading").append(txt + "<br/>");
             }
         });
-        console.log("autoRefresh: " + autoRefresh);
+        //console.log("autoRefresh: " + autoRefresh);
     });
+
 
 })(jQuery);
