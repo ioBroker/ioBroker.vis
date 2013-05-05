@@ -297,7 +297,7 @@ var version =               '0.8',
                         xdp = xdp.replace(/:/g, "__c__");
 
                     }
-                    homematic.uiState.attr(xdp + ".Value", data[dp].Value);
+                    homematic.uiState.attr(xdp + ".Value", unescape(data[dp].Value));
                     homematic.uiState.attr(xdp + ".Timestamp", data[dp].Timestamp);
                 }
                 $(".jqhmRefresh").hide();
@@ -325,6 +325,9 @@ var version =               '0.8',
             });
             return views;
         },                    // Returns Array of all visible Datapoints
+        setInterval: function (ms) {
+            settings.refreshInterval = ms;
+        },
         refreshVisible: function () {
             funcs.debug("refreshVisible()");
             $(".jqhmRefresh").show();
@@ -349,6 +352,7 @@ var version =               '0.8',
             });
         },    // Übergibt Commandline an /bin/sh, success(data) beinhaltet stdout
         buildRefreshScript: function (DPs) {
+
             var refreshScript = 'var first = true;\nobject o;\nobject w;\nWrite("{");\n';
 
             var first = true;
@@ -372,7 +376,7 @@ var version =               '0.8',
                     refreshScript += 'if (first) {\nfirst = false;\n } else {\n WriteLine(",");\n}\n';
 
 
-                    if ((''+id).indexOf(":") !== -1) {
+                    if ((''+id).indexOf(":") !== -1 || (''+id).indexOf("_") !== -1) {
                         refreshScript += 'o = dom.GetObject("' + id + '");\n';
                     } else {
                         refreshScript += 'o = dom.GetObject(' + id + ');\n';

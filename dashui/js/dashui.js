@@ -24,7 +24,7 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.4',
+    version:            '0.5',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -35,6 +35,7 @@ var dui = {
     views:              {},
     widgets:            {},
     activeView:         "",
+    defaultHmInterval:  7500,
     listval:            [],
     binds: {
         basic: {
@@ -219,6 +220,27 @@ var dui = {
                     }
                 });
             },
+            multiselect: function (el, options) {
+                console.log("multiselect");
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                $this.multiselect($.extend({
+                    multiple: false,
+                    header: false,
+                    noneSelectedText: false,
+                    selectedList: 1
+                }, options)).change(function () {
+                    jQuery.homematic("setState", id, $this.find("option:selected").val());
+                });
+
+                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
+                        $this.find("option:selected").removeAttr("selected");
+                        $this.find("option[value='"+newVal+"']").attr("selected", true);
+                        $this.multiselect("refresh");
+                    }
+                });
+            },
             slider: function (el, options) {
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
@@ -279,8 +301,9 @@ var dui = {
             },
             radio: function (el, options) {
                 var settings = $.extend({}, options);
-                //console.log("radio "+el);
+                console.log("radio "+el);
                 var $this = jQuery(el);
+                console.log($this);
                 var id = $this.attr("data-hm-id");
 
                 // Observable -> Buttonset
@@ -352,11 +375,62 @@ var dui = {
             storage.set(dui.storageKeyInstance, dui.instance);
 
         }
+        $("#dashui_instance").val(dui.instance);
 
         var name = "dashui_"+dui.instance;
         $.homematic("addStringVariable", name+"_view", "automatisch angelegt von DashUI.")
         $.homematic("addStringVariable", name+"_cmd", "automatisch angelegt von DashUI.")
         $.homematic("addStringVariable", name+"_data", "automatisch angelegt von DashUI.")
+
+        $.homematic("addUiState", name+"_view");
+        $.homematic("addUiState", name+"_cmd");
+        $.homematic("addUiState", name+"_data");
+
+
+        $("body").append('<div class="dashui-dummy" data-hm-id="'+name+'_view"></div>')
+            .append('<div class="dashui-dummy" data-hm-id="'+name+'_cmd"></div>')
+            .append('<div class="dashui-dummy" data-hm-id="'+name+'_data"></div>');
+
+
+        homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+            if (attr == ("_" + name + "_cmd.Value")) {
+                var cmd = newVal;
+                console.log("change " + attr + " " + newVal);
+                if (cmd !== "") {
+                    setTimeout(function () {
+                        var data = homematic.uiState.attr("_"+name+"_data.Value");
+
+                        // external Commands
+                        $.homematic("script",
+                                "object o = dom.GetObject(\""+name+"_data\");\n" +
+                                "o.State(\"\");\n" +
+                                "o = dom.GetObject(\""+name+"_cmd\");\n" +
+                                "o.State(\"\");"
+                        );
+                        switch (cmd) {
+                            case "alert":
+                                alert(data);
+                                break;
+                            case "changeView":
+                                dui.changeView(data);
+                                break;
+                            case "refresh":
+                                break;
+                            case "reload":
+                                setTimeout(function () {window.location.reload();}, 150);
+                            case "dialog":
+                                break;
+                            case "popup":
+                                window.open(data);
+                                break;
+                            default:
+                        }
+
+
+                    }, 50);
+                }
+            }
+        });
 
 
         var settings = storage.get(dui.storageKeySettings);
@@ -442,6 +516,9 @@ var dui = {
         if (!dui.views[view].settings.theme) {
             dui.views[view].settings.theme = "dark-hive";
         }
+        if (!dui.views[view].settings.interval) {
+            dui.views[view].settings.interval = dui.defaultHmInterval;
+        }
         $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
         if ($("#container").find("#"+view).html() == undefined) {
             $("#container").append("<div id='"+view+"' class='dashui-view'></div>");
@@ -513,9 +590,15 @@ var dui = {
             }
             view = prop;
         }
-        //console.log("changeView("+view+")");
+        console.log("changeView("+view+")");
+        if (dui.activeView !== view) {
+            $("#"+dui.activeView).hide();
+        }
         dui.activeView = view;
-
+        if (dui.views[view].settings.interval) {
+            console.log("setInterval "+dui.views[view].settings.interval);
+            $.homematic("setInterval", dui.views[view].settings.interval);
+        }
         $("#inspect_view").html(view);
 
 

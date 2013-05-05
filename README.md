@@ -1,4 +1,4 @@
-# DashUI 0.4
+# DashUI 0.5
 
 ## Installation auf der CCU
 
@@ -55,18 +55,25 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 
 ## Todo / Bekannte Fehler / Roadmap
 
-* Views duplizieren, umbenennen und löschen implementieren
+* Views duplizieren Fehler beheben
 * Fehler beheben - manchmal erscheint kein Inspect-Helper (gestrichelte Linie um Widget) wenn neu eingefügtes Widget angeklickt wird
-* Fehler beheben bei Widget auf andere View kopieren (wird erst nach Reload sichtbar)
-* -Fehler beheben jqPlot Gauge Widget: Wird nur Fehlerfrei auf der sichtbaren View gerendert :(
+* Fehler beheben bei Widget auf andere View kopieren (wird erst nach Reload sichtbar) ?
 * Config-File
 * Mehr Widgets! ;-)
 * Erweiterte Template-Attribute: Doku, Kompatibilität, ...
-* Erweiterte Widget-Attribute: CSS-Klassen, Kommentar, ...
-* Erweiterte View-Attribute: CSS-Klassen, jqui-Theme?
 * Navigations-Effekte (Beim Wechseln der View konfigurierbare Animationen)
+* Externe Steuerung
 
 ## Changelog
+
+### 0.5
+
+* externe Steuerung über automatisch angelegte Systemvariablen, bisherige Befehle: alert, changeView, reload, popup
+* Widget jqui Radio ValueList hinzugefügt
+* Widget jqui Select ValueList hinzugefügt
+* diverse Fehler behoben
+* Widget jqui Input Datetime ausgearbeitet
+
 
 ### 0.4
 
@@ -79,7 +86,6 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 * Views und Widget können nun CSS-Klassen zugewiesen werden
 * Widget jqui-input und jqui-input-set-button mit weiteren Attributen ausgestattet
 * Widget mfd-icon Shutter angepasst
-* Widget jqui Input Datetime ausgearbeitet
 * Widget basic - rednumber: Zeigt Ganzzahlwerte an, verschwindet bei Wert 0 (iOS-Like...)
 * mfd-icons werden nun vollständig mitgeliefert
 

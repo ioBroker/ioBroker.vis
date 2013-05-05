@@ -452,20 +452,40 @@
     <script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-name="jqui - Radiobuttons ValueList" data-dashui-attrs="off_text;on_text;hm_id;values;texts">
         <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
             <div class="dashui-widget-body" >
-                <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>"  >
+                <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.radio(el)},100) %> >
                 <%
-                    var values = (data.attr('values') ? data.attr('values').split(';') : []);
-                    var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
-                    for (var val in values) {
+                var values = (data.attr('values') ? data.attr('values').split(';') : []);
+                var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
+                var wid = data.attr('wid');
+                for (var val in values) {
+
                 %>
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio<%= val %>" name="<%= this.data.attr('wid') %>_radio" value="<%= values[val] %>" /><label for="<%= this.data.attr('wid') %>_radio><%= val %>"><%= texts[val] %></label>
+                <input type="radio" id="<%= wid %>_radio<%= val %>" name="<%= wid %>_radio" value="<%= values[val] %>" /><label for="<%= wid %>_radio<%= val %>"><%= texts[val] %></label>
                 <%
-                    }
-                    //console.log(data.attr('wid') + '_radio');
-                    dui.binds.jqueryui.radio('#'+data.attr('wid') + '_radio');
+                }
                 %>
             </div>
         </div>
+        </div>
+    </script>
+
+    <script type="text/ejs" id="tplJquiSelectList" class="dashui-tpl" data-dashui-name="jqui - Select ValueList" data-dashui-attrs="off_text;on_text;hm_id;values;texts;width;height">
+        <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
+            <div class="dashui-widget-body" >
+                <select id="<%= this.data.attr('wid') %>_select" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300),height: (data.height ? data.height : 220)})},250) %> >
+                <%
+                var values = (data.attr('values') ? data.attr('values').split(';') : []);
+                var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
+                var wid = data.attr('wid');
+                for (var val in values) {
+
+                %>
+                    <option value="<%= values[val] %>"><%= texts[val] %></option>
+                <%
+                }
+                %>
+                </select >
+            </div>
         </div>
     </script>
 
@@ -594,20 +614,16 @@
                         <td>class</td><td><input size="48" type="text" id="inspect_view_class" class="dashui-inspect-view"/></td>
                     </tr>
                     <tr>
-                        <td>interval</td><td><input size="48" type="text" id="inspect_view_interval" class="dashui-inspect-view"/>ms</td>
+                        <td>hm refresh<br>interval</td><td><input size="48" type="text" id="inspect_view_interval" class="dashui-inspect-view"/>ms</td>
                     </tr>
-                    <tr>
-                        <td>hmvar refresh</td><td><input size="48" type="text" id="inspect_view_refresh" class="dashui-inspect-view"/></td>
-                    </tr>
+
                 </table>
             </div>
             <div id="tabs-2">
                 <h4>HomeMatic</h4>
                 <input class="dashui-editor" type="button" id="clear_cache" value="clear cache" />
-                <input class="dashui-editor" type="button" id="refresh" value="refresh" />
-                <br><br>
-
-                Refresh Interval <input type="input" id="refresh_interval" />ms
+                <input class="dashui-editor" type="button" id="refresh" value="refresh" /><br/><br/>
+                Instance ID <input type="input" id="dashui_instance" disabled="disabled"/>
                 <br><br>
                 <input class="dashui-editor" type="button" id="save_ccu" value="save settings on ccu" />
                 <input class="dashui-editor" type="button" id="load_ccu" value="load settings from ccu" />
@@ -696,5 +712,6 @@
 
             </div>
     </div>
+
 </body>
 </html>
