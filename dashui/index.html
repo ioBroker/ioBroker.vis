@@ -133,25 +133,6 @@
         </div>
     </script>
 
-
-
-    <script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-name="jqui - icon link" data-dashui-attrs="src;href;target;alt;text">
-        <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
-        <div class="dashui-widget-body">
-            <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
-        </div>
-        </div>
-    </script>
-
-    <script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-name="jqui - icon .State()" data-dashui-attrs="src;href;target;alt;text">
-        <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
-            <div class="dashui-widget-body">
-                <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
-            </div>
-        </div>
-    </script>
-
-
     <script type="text/ejs" id="tplMfdLight" class="dashui-tpl" data-dashui-name="mfd-icon - Dimmer" data-dashui-attrs="hm_id">
         <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-defaut <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
             <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']);  %>>
@@ -520,6 +501,21 @@
     </script>
 
 
+    <script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-name="jqui - icon link" data-dashui-attrs="src;href;target;alt;text">
+        <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+        <div class="dashui-widget-body">
+            <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+        </div>
+        </div>
+    </script>
+
+    <script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-name="jqui - icon .State()" data-dashui-attrs="src;href;target;alt;text">
+        <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+        <div class="dashui-widget-body">
+            <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+        </div>
+        </div>
+    </script>
 
     <script type="text/ejs" id="tplJquiDialog" class="dashui-tpl" data-dashui-name="jqui - Dialog" data-dashui-attrs="html;html_dialog;modal;">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
