@@ -449,7 +449,7 @@
         </div>
         </div>
     </script>
-    <script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-name="jqui - Radiobuttons ValueList" data-dashui-attrs="off_text;on_text;hm_id;values;texts">
+    <script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-name="jqui - Radiobuttons ValueList" data-dashui-attrs="hm_id;values;texts">
         <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
             <div class="dashui-widget-body" >
                 <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.radio(el)},100) %> >
