@@ -70,6 +70,7 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 
 ### 0.4
 
+* Views können nun unterschiedliche jQuery UI Themes zugewiesen werden, 3 Themes sind bisher mitgeliefert
 * Ab sofort kann als Attribut hm_id neben der id auch eine Adresse in der Form BidCos-RF.EEQ0012345:1.LEVEL bzw ein Variablen- oder Programmname angegeben werden
 * Über http://ccu/addons/dashui/reset.html kann der Cache komplett geleert werden
 * diverse Fehler beim Selektieren von Widgets und Wechseln der View behoben
@@ -80,6 +81,7 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 * Widget mfd-icon Shutter angepasst
 * Widget jqui Input Datetime ausgearbeitet
 * Widget basic - rednumber: Zeigt Ganzzahlwerte an, verschwindet bei Wert 0 (iOS-Like...)
+* mfd-icons werden nun vollständig mitgeliefert
 
 ### 0.3
 
