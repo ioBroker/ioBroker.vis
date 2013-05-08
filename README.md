@@ -1,4 +1,4 @@
-# DashUI 0.5
+# DashUI 0.6
 
 ## Installation auf der CCU
 
@@ -7,16 +7,19 @@ Es wird ein Zugang zur CCU via FTP oder SCP benötigt.
 * Addon "WebAPI" installieren: den Ordner "webapi" auf diesem Zip-File https://github.com/hobbyquaker/WebAPI/archive/master.zip nach /www/addons/ kopieren)
 * Den Ordner "dashui" aus diesem Zip-File https://github.com/hobbyquaker/DashUI/archive/master.zip ebenfalls nach /www/addons/ kopieren
 * auf der CCU leeren Ordner "dashui" in /usr/local/addons/ erstellen (hier werden Konfigurationen gespeichert)
+* http://ccu/addons/dashui/?edit aufrufen
+
+
+Mit einer kleinen Änderung ist es auch möglich DashUI von einem anderen Webserver und nicht von der CCU aufzurufen. Allerdings ist die WebAPI auf der CCU unverzichtbar. Bei Interesse bitte im Forum fragen.
+
 
 ## Dokumentation
 
 ### Schnellstart
 
-* http://ccu/addons/dashui/?edit aufrufen
 * Nun können Widgets und Views hinzugefügt und konfiguriert werden
 * Widgets werden automatisch aktualisiert sobald der Editor geschlossen wird
 * Man muss manuell über die Buttons "auf CCU speichern" und "von CCU laden" im Reiter Homematic die Konfiguration auf der CCU sichern und laden. Automatisch gesichert wird nur im "localstorage" des Browsers.
-* Bestimmte Widget-Attribute erfordern das Neuladen mit dem Browser damit Änderungen sichtbar werden.
 * Views können über http://ccu/addons/dashui/#NameDerView direkt aufgerufen werden
 
 ### Widgets
@@ -28,7 +31,7 @@ Das Attribut "hm_id" muss bei jedem Widget das Homematic Werte anzeigt oder die 
 * hm_id ist die ID eines Datenpunkts (STATE, LEVEL, TEMPERATURE, ...).
 * hm_wid (kann weggelassen werden) ist die ID des zugehörigen WORKING Datenpunkts, sinnvoll bei Dimmern und Rollläden um springende Slider während Aktivität der Aktoren zu verhindern.
 
-Neben IDs können auch Datenpunkt-Bezeichner wie z.B. "BidCos-RF.EEQ00012345:1.LEVEL" oder bei Programmen und Systemvariablen deren Namen verwendet werden.
+Anstelle von IDs können auch Datenpunkt-Bezeichner wie z.B. "BidCos-RF.EEQ00012345:1.LEVEL" oder bei Programmen und Systemvariablen deren Namen verwendet werden.
 
 
 #### basic - HTML
@@ -66,6 +69,19 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 
 
 ## Changelog
+
+### 0.6
+
+* Sind keine lokalen Views vorhanden wird nun automatisch versucht die Views von der CCU zu laden
+* Während des Ladevorgangs wird div#loader eingeblendet
+* Widget-Select wird nun aktualisiert wenn Widgets gelöscht werden
+* Diverse Fehler beim duplizieren von Views behoben
+* Beim Ändern von Widget-Attributen werden Widgets nun neu gerendert, es ist kein Reload mehr notwendig
+* View-Select ist jetzt alphabetisch sortiert
+* Instanzen und Variablen für externe Kommandos werden nicht mehr automatisch angelegt und können entfernt werden
+* Widget "mfd-icon Shutter/Dimmer + jqui Dialog" neue Attribute autoclose und modal
+* Widget "basic - Red Number" Zahl sitzt nun sauber in der Mitte
+
 
 ### 0.5
 

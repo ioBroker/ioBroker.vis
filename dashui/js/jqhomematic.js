@@ -255,7 +255,7 @@ var version =               '0.8',
             });
             return true;
         },             // Run homematic scripts and insert results in Object ccu
-        addStringVariable: function (name, desc) {
+        addStringVariable: function (name, desc, callback) {
             var script = "object test = dom.GetObject('"+name+"');\n" +
                 "if (test) {\n" +
                 "} else {\n" +
@@ -269,7 +269,18 @@ var version =               '0.8',
                 "o.ValueSubType(11);\n" +
                 "o.State('');\n" +
                 "}";
-            funcs.script(script);
+            funcs.script(script, callback);
+        },
+        delVariable: function (name, callback) {
+            var script = "object o = dom.GetObject('"+name+"');\n" +
+                "if (o) {\n" +
+                "  object ch = dom.GetObject(o.Channel());\n" +
+                "  if (ch) {\n" +
+                "    ch.DPs().Remove(o.ID());\n" +
+                "  }\n" +
+                "  dom.DeleteObject(o.ID());\n" +
+                "}";
+            funcs.script(script, callback);
         },
         refresh: function (DPs) {
             if (cancelNextRefresh) {

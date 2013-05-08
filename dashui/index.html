@@ -113,8 +113,8 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-name="basic - Red Numer" data-dashui-attrs="hm_id">
-        <div class="dashui-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.rednumber(el) %>>
+    <script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-name="basic - Red Number" data-dashui-attrs="hm_id">
+        <div class="dashui-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.rednumber(el) %>>
             <div class="dashui-widget-body">
                <%= parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) %>
             </div>
@@ -169,7 +169,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplMfdLightDialog" class="dashui-tpl" data-dashui-name="mfd-icon - Dimmer + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title">
+    <script type="text/ejs" id="tplMfdLightDialog" class="dashui-tpl" data-dashui-name="mfd-icon - Dimmer + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose">
         <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-defaut <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
             <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']); %>>
                 <%
@@ -216,11 +216,12 @@
                 <%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) * 100).toFixed(0) %>%
             </div>
             <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200}) %> />
+            <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") != '') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
         </div>
     </script>
 
     <script type="text/ejs" id="tplMfdShutter" class="dashui-tpl" data-dashui-name="mfd-icon - Shutter" data-dashui-attrs="hm_id">
-        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget dashui-widget ui-widget ui-button ui-corner-all<%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>><div class="dashui-widget-body">
+        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>><div class="dashui-widget-body">
         <% var val = 1 - parseFloat(homematic.uiState.attr('_' + this.data.hm_id + '.Value')); if (val == 1) { %>
         <img width="100%" src="mfd-icons/fts_shutter_100.png"/>
         <% } else if (val >= 0.9) { %>
@@ -245,8 +246,8 @@
     </div></div>
     </script>
 
-    <script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-name="mfd-icon - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title">
-        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-defaut <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+    <script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-name="mfd-icon - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal">
+        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
             <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']); %>>
             <%
                 var val = 1.0 - parseFloat(homematic.uiState.attr('_' + this.data.hm_id + '.Value'));
@@ -287,7 +288,8 @@
         <br/>
         <%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) * 100).toFixed(0) %>%
         </div>
-        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200}) %> />
+        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200,modal:data.attr('modal')}) %> />
+        <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") != '') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
         </div>
     </script>
 
@@ -399,21 +401,21 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiButtonLink" class="dashui-tpl" data-dashui-name="jqui - Button Link" data-dashui-attrs="html_prepend;html_append;buttontext">
+    <script type="text/ejs" id="tplJquiButtonLink" class="dashui-tpl" data-dashui-name="jqui - Button Link" data-dashui-attrs="html_prepend;html_append;buttontext;href">
         <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
             <div class="dashui-widget-body" >
                 <%== this.data.attr("html_prepend") %>
-                <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-dashui-link="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.buttonLink(el); %> />
+                <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-dashui-link="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.buttonLink(el, data.attr('href')); %> />
                 <%== this.data.attr("html_append") %>
             </div>
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiButtonLinkBlank" class="dashui-tpl" data-dashui-name="jqui - Button Link _blank" data-dashui-attrs="html_prepend;html_append;buttontext">
+    <script type="text/ejs" id="tplJquiButtonLinkBlank" class="dashui-tpl" data-dashui-name="jqui - Button Link _blank" data-dashui-attrs="html_prepend;html_append;buttontext;href">
         <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
             <div class="dashui-widget-body" >
                 <%== this.data.attr("html_prepend") %>
-                <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-dashui-link="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.buttonLinkBlank(el); %> />
+                <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-dashui-link="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.buttonLinkBlank(el, data.attr('href')); %> />
                 <%== this.data.attr("html_append") %>
             </div>
         </div>
@@ -530,22 +532,24 @@
     </script>
 
     <script type="text/ejs" id="tplJqhm" class="dashui-tpl" data-dashui-name="jqHomematic - Debug" data-dashui-attrs="">
-        <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr("wid") %>" style="border:2px solid blue">
-        <div class="dashui-widget-body">
-            <div style="height: 20px">
-                <span style="color:#f13; font-weight: bold;" class="jqhmRefresh">Refresh</span>
+        <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr("wid") %>" style="border:1px solid black; background-color:#333; color: #eee; font-family: courier; font-size:11px; padding: 4px; max-height:600px;">
+        <div class="dashui-widget-body" style="overflow-y: scroll; overflow-x: hidden;">
+            <div style="height: 15px">
+                <span style="color:#f13; font-size: 13px; font-weight: bold;" class="jqhmRefresh">$.homematic("refreshVisible")</span>
             </div>
-            <h3>homematic.uiState = {</h3>
-            <table>
+            <h3 style="margin-bottom:0px;">homematic.uiState = {</h3>
+            <table style="white-space: nowrap;">
                 <% homematic.uiState.each(function(i, obj) { %>
                 <tr><td>"<%= jQuery.homematic('unescape', obj) %>":{</td><td>"Value":"<%= homematic.uiState.attr(obj + ".Value") %>",</td><td>"Timestamp":"<%= homematic.uiState.attr(obj + ".Timestamp") %>"}</td></tr>
                 <% }) %>
             </table>
             }
-            <h3>homematic.setState = {</h3>
+            <h3 style="margin-bottom:0px;">homematic.setState = {</h3>
             <table>
                 <% homematic.setState.each(function(i, obj) { %>
+                <% if (jQuery.homematic('unescape', obj) != '_65535') { %>
                 <tr><td>"<%= obj %>":{</td><td>"Value":"<%= homematic.setState.attr(obj + ".Value") %>",</td><td>"Timestamp":"<%= homematic.setState.attr(obj + ".Timestamp") %>"}</td></tr>
+                <% } %>
                 <% }) %>
             </table>
             }
@@ -564,7 +568,7 @@
 
 </head>
 <body>
-    <div id="loading" style="background-color:#999; z-index: 5000; position: absolute; top: 0; left: 0; height:100%; width:100%"></div>
+    <div id="loading" style="background-color:#999; z-index: 5000; padding:20px; position: absolute; top: 0; left: 0; height:100%; width:100%"></div>
 
     <div id="container" style="position: absolute; top: 0; left: 0; height:100%; width:100%">
         <div id="widget_helper">
@@ -584,8 +588,8 @@
             </ul>
             <div id="tabs-1">
                 <h4>New View</h4>
-                <input id="new_view" type="text" /><input class="dashui-editor" id="add_view" type="button" value="Add View"/>
-                <input class="dashui-editor" id="copy_view" type="button" value="Duplicate current view"/>
+                <input id="new_view_name" type="text" /><input class="dashui-editor" id="add_view" type="button" value="Add View"/>
+                <input class="dashui-editor" id="dup_view" type="button" value="Duplicate current view"/>
 
 
                 <h4>Current View</h4><select id="select_view" class="dashui-editor-large"></select><input class="dashui-editor" id="del_view" type="button" value="Delete View"/>
@@ -618,11 +622,16 @@
             <div id="tabs-2">
                 <h4>HomeMatic</h4>
                 <input class="dashui-editor" type="button" id="clear_cache" value="clear cache" />
-                <input class="dashui-editor" type="button" id="refresh" value="refresh" /><br/><br/>
-                Instance ID <input type="input" id="dashui_instance" disabled="disabled"/>
-                <br><br>
-                <input class="dashui-editor" type="button" id="save_ccu" value="save settings on ccu" />
-                <input class="dashui-editor" type="button" id="load_ccu" value="load settings from ccu" />
+                <input class="dashui-editor" type="button" id="refresh" value="refresh" />
+                <h4>External Commands</h4>
+                <input type="button" class="dashui-editor" id="create_instance" value="create instance" />
+                <span id="instance">Instance ID <input type="input" id="dashui_instance" disabled="disabled"/>
+                <input type="button" class="dashui-editor" id="remove_instance" value="remove instance" />
+
+                </span>
+                <h4>Views</h4>
+                <input class="dashui-editor" type="button" id="save_ccu" value="save views on ccu" />
+                <input class="dashui-editor" type="button" id="load_ccu" value="load views from ccu" />
 
             </div>
             <div id="tabs-3">
@@ -708,6 +717,8 @@
 
             </div>
     </div>
+
+
 
 </body>
 </html>
