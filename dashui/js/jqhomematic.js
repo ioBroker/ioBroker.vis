@@ -189,8 +189,8 @@ var version =               '0.8',
                 funcs.script('dom.GetObject('+id+').State('+value+');', function () { cancelNextRefresh = false; });
             }
         },                   // Sets a Homematic Datapoint
-        runProgram: function(id) {
-            funcs.script('dom.GetObject('+id+').RunProgram();');
+        programExecute: function(id) {
+            funcs.script('dom.GetObject("'+id+'").ProgramExecute();');
         },                     // Starts a Homematic Program
         checkRega: function(success, error) {
             funcs.debug("checkRega()");

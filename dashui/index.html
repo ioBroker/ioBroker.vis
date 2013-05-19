@@ -5,7 +5,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>DashUI</title>
 
-    <link rel="stylesheet" href="css/dark-hive/jquery-ui.min.css" id="jqui_theme"/>
+    <link rel="stylesheet" href="css/dhive/jquery-ui.min.css" id="jqui_theme"/>
     <link rel="stylesheet" href="css/jquery.ui.multiselect.css" />
     <link rel="stylesheet" href="css/jquery-ui-timepicker-addon.css" />
     <link rel="stylesheet" href="css/jquery.jqplot.min.css" />
@@ -46,7 +46,7 @@
  *  SOFTWARE.
  */
     -->
-    <script type="text/ejs" id="tplHtml" class="dashui-tpl" data-dashui-name="basic - html" data-dashui-attrs="html">
+    <script type="text/ejs" id="tplHtml" class="dashui-tpl" data-dashui-name="basic - static - html" data-dashui-attrs="html">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr("wid") %>">
             <div class="dashui-widget-body">
                 <%== this.data.attr('html') %>
@@ -54,7 +54,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplLink" class="dashui-tpl" data-dashui-name="basic - link" data-dashui-attrs="html;href;target;alt">
+    <script type="text/ejs" id="tplLink" class="dashui-tpl" data-dashui-name="basic - static - link" data-dashui-attrs="html;href;target;alt">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr("wid") %>">
             <div class="dashui-widget-body">
                 <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr("target") %>" alt="<%== this.data.attr("alt") %>" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%"><%== this.data.attr("html") %></div></a>
@@ -63,7 +63,7 @@
     </script>
 
 
-    <script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-name="basic - Value Number" data-dashui-attrs="html_prepend;html_append;hm_id;digits;factor">
+    <script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-name="basic - hmvalue - Number" data-dashui-attrs="html_prepend;html_append;hm_id;digits;factor">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
             <div class="dashui-widget-body">
                 <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -73,7 +73,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplValueString" class="dashui-tpl" data-dashui-name="basic - Value String" data-dashui-attrs="html_prepend;html_append;hm_id">
+    <script type="text/ejs" id="tplValueString" class="dashui-tpl" data-dashui-name="basic - hmvalue - String" data-dashui-attrs="html_prepend;html_append;hm_id">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
             <div class="dashui-widget-body">
                 <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -83,7 +83,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplValueStringRaw" class="dashui-tpl" data-dashui-name="basic - Value String (unescaped)" data-dashui-attrs="html_prepend;html_append;hm_id">
+    <script type="text/ejs" id="tplValueStringRaw" class="dashui-tpl" data-dashui-name="basic - hmvalue - String (unescaped)" data-dashui-attrs="html_prepend;html_append;hm_id">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
             <div class="dashui-widget-body">
                 <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -93,7 +93,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplValueList" class="dashui-tpl" data-dashui-name="basic - Value List" data-dashui-attrs="html_prepend;html_append;hm_id;valuelist">
+    <script type="text/ejs" id="tplValueList" class="dashui-tpl" data-dashui-name="basic - hmvalue - List" data-dashui-attrs="html_prepend;html_append;hm_id;valuelist">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
             <div class="dashui-widget-body">
                 <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -103,7 +103,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplValueBool" class="dashui-tpl" data-dashui-name="basic - Bool" data-dashui-attrs="html_prepend;html_append;hm_id;html_false;html_true">
+    <script type="text/ejs" id="tplValueBool" class="dashui-tpl" data-dashui-name="basic - hmvalue - Bool" data-dashui-attrs="html_prepend;html_append;hm_id;html_false;html_true">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
             <div class="dashui-widget-body">
                 <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -113,7 +113,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-name="basic - Red Number" data-dashui-attrs="hm_id">
+    <script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-name="basic - hmvalue - Red Number" data-dashui-attrs="hm_id">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.rednumber(el) %>>
             <div class="dashui-widget-body">
                <%= parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) %>
@@ -121,7 +121,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplBulbOnOff" class="dashui-tpl" data-dashui-name="basic - Bulb on/off" data-dashui-attrs="hm_id">
+    <script type="text/ejs" id="tplBulbOnOff" class="dashui-tpl" data-dashui-name="basic - hmvalue - Bulb on/off" data-dashui-attrs="hm_id">
         <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
             <div class="dashui-widget-body">
                 <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": %>
@@ -133,8 +133,8 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplMfdLight" class="dashui-tpl" data-dashui-name="mfd-icon - Dimmer" data-dashui-attrs="hm_id">
-        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-defaut <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+    <script type="text/ejs" id="tplMfdLight" class="dashui-tpl" data-dashui-name="mfd-icon - hmvalue - Dimmer" data-dashui-attrs="hm_id">
+        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
             <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']);  %>>
                 <%
                     var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
@@ -169,8 +169,8 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplMfdLightDialog" class="dashui-tpl" data-dashui-name="mfd-icon - Dimmer + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose">
-        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-defaut <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+    <script type="text/ejs" id="tplMfdLightDialog" class="dashui-tpl" data-dashui-name="mfd-icon - hmcontrol - Dimmer + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose">
+        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
             <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']); %>>
                 <%
                     var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
@@ -220,7 +220,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplMfdShutter" class="dashui-tpl" data-dashui-name="mfd-icon - Shutter" data-dashui-attrs="hm_id">
+    <script type="text/ejs" id="tplMfdShutter" class="dashui-tpl" data-dashui-name="mfd-icon - hmvalue - Shutter" data-dashui-attrs="hm_id">
         <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>><div class="dashui-widget-body">
         <% var val = 1 - parseFloat(homematic.uiState.attr('_' + this.data.hm_id + '.Value')); if (val == 1) { %>
         <img width="100%" src="mfd-icons/fts_shutter_100.png"/>
@@ -246,7 +246,7 @@
     </div></div>
     </script>
 
-    <script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-name="mfd-icon - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal">
+    <script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-name="mfd-icon - hmcontrol - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal">
         <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
             <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']); %>>
             <%
@@ -293,7 +293,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplMfdWindow" class="dashui-tpl"  data-dashui-name="mfd-icon - Drehgriff" data-dashui-attrs="hm_id">
+    <script type="text/ejs" id="tplMfdWindow" class="dashui-tpl"  data-dashui-name="mfd-icon - hmvalue - Drehgriff" data-dashui-attrs="hm_id">
         <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-defaut <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;"  <%= (el) -> dui.binds.jqueryui.classes(el) %>>
             <div class="dashui-widget-body">
                 <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "0": %>
@@ -307,7 +307,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplMfdDoor" class="dashui-tpl" data-dashui-name="mfd-icon - TFK" data-dashui-attrs="hm_id">
+    <script type="text/ejs" id="tplMfdDoor" class="dashui-tpl" data-dashui-name="mfd-icon - hmvalue - TFK" data-dashui-attrs="hm_id">
         <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-defaut <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px;"  <%= (el) -> dui.binds.jqueryui.classes(el) %>>
             <div class="dashui-widget-body">
                 <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "true": %>
@@ -319,7 +319,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplHmWindowRotary" class="dashui-tpl"  data-dashui-name="hm-icon - Drehgriff" data-dataui-attrs="hm_id">
+    <script type="text/ejs" id="tplHmWindowRotary" class="dashui-tpl"  data-dashui-name="hm-icon - hmvalue - Drehgriff" data-dataui-attrs="hm_id">
         <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>">
             <div class="dashui-widget-body">
             <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case 0: %>
@@ -333,7 +333,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplHmWindow" class="dashui-tpl" data-dashui-name="hm-icon - TFK" data-dashui-attrs="hm_id">
+    <script type="text/ejs" id="tplHmWindow" class="dashui-tpl" data-dashui-name="hm-icon - hmvalue - TFK" data-dashui-attrs="hm_id">
         <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:80px">
             <div class="dashui-widget-body">
             <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "true": %>
@@ -345,7 +345,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJqplotGauge" class="dashui-tpl" data-dashui-name="jqplot - MeterGauge" data-dashui-attrs="hm_id;title;min;max;label;ticks;intervals;intervalColors;showTickLabels;intervalInnerRadius;intervalOuterRadius;diameter;padding;shadowOffset;shadowAlpha;shadowDepth;background;ringColor;ringWidth;hubRadius;tickPadding;needleThickness;needlePad">
+    <script type="text/ejs" id="tplJqplotGauge" class="dashui-tpl" data-dashui-name="jqplot - hmvalue - MeterGauge" data-dashui-attrs="hm_id;title;min;max;label;ticks;intervals;intervalColors;showTickLabels;intervalInnerRadius;intervalOuterRadius;diameter;padding;shadowOffset;shadowAlpha;shadowDepth;background;ringColor;ringWidth;hubRadius;tickPadding;needleThickness;needlePad">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="width:460px; height:280px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqplot.gauge(el, { title: data.title, seriesDefaults: {rendererOptions: {min: (data.min ? parseFloat(data.min) : undefined), max: (data.max ? parseFloat(data.max) : undefined), ticks: (data.ticks ? jQuery.map(data.ticks.split(';'), Number ) : undefined), intervals: (data.intervals ? jQuery.map(data.intervals.split(';'), Number ) : undefined), intervalColors: (data.intervalColors ? data.intervalColors.split(';') : undefined), label: data.label, showTickLabels: (data.showTickLabels === "false" ? false : undefined), intervalInnerRadius: (!data.intervalInnerRadius ? undefined : parseInt(data.intervalInnerRadius, 10)),         intervalOuterRadius: (!data.intervalOuterRadius ? undefined : parseInt(data.intervalOuterRadius, 10)),         diameter: (!data.diameter ? undefined : parseInt(data.diameter, 10)),         padding: (!data.padding  ? undefined : parseInt(data.padding, 10)),         shadowOffset: (!data.shadowOffset ? undefined : parseInt(data.shadowOffset, 10)),         shadowAlpha: (!data.shadowAlpha ? undefined : parseInt(data.shadowAlpha, 10)),         shadowDepth: (!data.shadowDepth ? undefined : parseInt(data.shadowDepth, 10)),         background: data.background, ringColor: data.ringColor, tickColor: data.tickColor,         ringWidth: (!data.ringWidth ? undefined : parseInt(data.ringWidth, 10)),        hubRadius: (!data.hubRadius ? undefined : parseInt(data.hubRadius, 10)),       tickPadding: (!data.tickPadding ? undefined : parseInt(data.tickPadding, 10)),        needleThickness: (!data.needleThickness ? undefined : parseInt(data.needleThickness, 10)),        needlePad: (!data.needlePad ? undefined : parseInt(data.needlePad, 10)),        ringWidth: (!data.ringWidth ? undefined : parseInt(data.ringWidth, 10))        }}}) %>>
             <div class="dashui-widget-body" style="width:100%; height:100%">
                 <div id="<%= this.data.attr('wid') %>_gauge" data-hm-id="<%= this.data.attr('hm_id') %>" style="width:100%; height:100%"/>
@@ -353,7 +353,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiInput" class="dashui-tpl" data-dashui-name="jqui - Input" data-dashui-attrs="label;hm_id;digits;size">
+    <script type="text/ejs" id="tplJquiInput" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Input" data-dashui-attrs="label;hm_id;digits;size">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr("wid") %>">
         <div class="dashui-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%= this.data.attr('label') %></label>
@@ -362,7 +362,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-name="jqui - Input Datetime" data-dashui-attrs="hm_id;size">
+    <script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Input Datetime" data-dashui-attrs="hm_id;size">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr("wid") %>">
         <div class="dashui-widget-body">
             <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.inputDatetime(el); %> />
@@ -370,7 +370,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiInputSet" class="dashui-tpl" data-dashui-name="jqui - Input + Set-Button" data-dashui-attrs="title;buttontext;hm_id;unit;digits;size">
+    <script type="text/ejs" id="tplJquiInputSet" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Input + Set-Button" data-dashui-attrs="title;buttontext;hm_id;unit;digits;size">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
             <div class="dashui-widget-body">
                 <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('title') %></label>
@@ -381,7 +381,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiButtonState" class="dashui-tpl" data-dashui-name="jqui - Button .State()" data-dashui-attrs="html_prepend;html_append;buttontext;value;hm_id;">
+    <script type="text/ejs" id="tplJquiButtonState" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Button .State()" data-dashui-attrs="html_prepend;html_append;buttontext;value;hm_id;">
         <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
             <div class="dashui-widget-body" >
                 <%== this.data.attr("html_prepend") %>
@@ -391,7 +391,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiButtonRunProgram" class="dashui-tpl" data-dashui-name="jqui - Button .RunProgram()" data-dashui-attrs="html_prepend;html_append;buttontext;hm_id">
+    <script type="text/ejs" id="tplJquiButtonRunProgram" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Button .ProgramExecute()" data-dashui-attrs="html_prepend;html_append;buttontext;hm_id">
         <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
             <div class="dashui-widget-body" >
                 <%== this.data.attr("html_prepend") %>
@@ -401,7 +401,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiButtonLink" class="dashui-tpl" data-dashui-name="jqui - Button Link" data-dashui-attrs="html_prepend;html_append;buttontext;href">
+    <script type="text/ejs" id="tplJquiButtonLink" class="dashui-tpl" data-dashui-name="jqui - static - Button Link" data-dashui-attrs="html_prepend;html_append;buttontext;href">
         <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
             <div class="dashui-widget-body" >
                 <%== this.data.attr("html_prepend") %>
@@ -411,7 +411,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiButtonLinkBlank" class="dashui-tpl" data-dashui-name="jqui - Button Link _blank" data-dashui-attrs="html_prepend;html_append;buttontext;href">
+    <script type="text/ejs" id="tplJquiButtonLinkBlank" class="dashui-tpl" data-dashui-name="jqui - static - Button Link _blank" data-dashui-attrs="html_prepend;html_append;buttontext;href">
         <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
             <div class="dashui-widget-body" >
                 <%== this.data.attr("html_prepend") %>
@@ -421,7 +421,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiRadio" class="dashui-tpl" data-dashui-name="jqui - Radiobuttons on/off" data-dashui-attrs="off_text;on_text;hm_id">
+    <script type="text/ejs" id="tplJquiRadio" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Radiobuttons on/off" data-dashui-attrs="off_text;on_text;hm_id">
         <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
             <div class="dashui-widget-body" >
                 <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
@@ -432,7 +432,7 @@
         </div>
         </div>
     </script>
-    <script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-name="jqui - Radiobuttons ValueList" data-dashui-attrs="hm_id;values;texts">
+    <script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Radiobuttons ValueList" data-dashui-attrs="hm_id;values;texts">
         <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
             <div class="dashui-widget-body" >
                 <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.radio(el)},100) %> >
@@ -452,7 +452,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiSelectList" class="dashui-tpl" data-dashui-name="jqui - Select ValueList" data-dashui-attrs="off_text;on_text;hm_id;values;texts;width;height">
+    <script type="text/ejs" id="tplJquiSelectList" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Select ValueList" data-dashui-attrs="off_text;on_text;hm_id;values;texts;width;height">
         <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
             <div class="dashui-widget-body" >
                 <select id="<%= this.data.attr('wid') %>_select" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300),height: (data.height ? data.height : 220)})},250) %> >
@@ -472,7 +472,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiRadioSteps" class="dashui-tpl" data-dashui-name="jqui - Radiobuttons 25%" data-dashui-attrs="hm_id">
+    <script type="text/ejs" id="tplJquiRadioSteps" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Radiobuttons 25%" data-dashui-attrs="hm_id">
         <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
             <div class="dashui-widget-body" >
                 <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
@@ -486,24 +486,24 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiSliderVertical" data-dashui-attrs="hm_id;hm_wid" class="dashui-tpl" data-dashui-name="jqui - Slider vertical">
-        <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minWidth":23, "maxWidth":23}' class="dashui-widget" style="width:23px; height:100px;">
-            <div class="dashui-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding-left: 4px; padding-top:13px; height:92%">
+    <script type="text/ejs" id="tplJquiSliderVertical" data-dashui-attrs="hm_id;hm_wid" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Slider vertical">
+        <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minWidth":23, "maxWidth":23}' class="dashui-widget" style="width:23px; height:160px; overflow:visible !important;">
+            <div class="dashui-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
                 <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:1,step:0.01,orientation:"vertical"}) %> /></div>
             </div>
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiSlider" data-dashui-attrs="hm_id;hm_wid" class="dashui-tpl" data-dashui-name="jqui - Slider horizontal">
-        <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minHeight":23, "maxHeight":23}' class="dashui-widget" style="height:23; width:100px;">
-            <div class="dashui-widget-body <%== this.data.attr('class') %>" style="padding-top: 4px; padding-left:13px; padding-right:15px;">
+    <script type="text/ejs" id="tplJquiSlider" data-dashui-attrs="hm_id;hm_wid" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Slider horizontal">
+        <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minHeight":23, "maxHeight":23}' class="dashui-widget" style="height:23; width:160px; overflow:visible !important;">
+            <div class="dashui-widget-body <%== this.data.attr('class') %>" style="padding: 4px;">
                 <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:1,step:0.01}) %> /></div>
             </div>
         </div>
     </script>
 
 
-    <script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-name="jqui - icon link" data-dashui-attrs="src;href;target;alt;text">
+    <script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-name="jqui - static - icon link" data-dashui-attrs="src;href;target;alt;text">
         <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
             <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
@@ -511,7 +511,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-name="jqui - icon .State()" data-dashui-attrs="src;href;target;alt;text">
+    <script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - icon .State()" data-dashui-attrs="src;href;target;alt;text">
         <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
             <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
@@ -519,7 +519,7 @@
         </div>
     </script>
 
-    <script type="text/ejs" id="tplJquiDialog" class="dashui-tpl" data-dashui-name="jqui - Dialog" data-dashui-attrs="html;html_dialog;modal;">
+    <script type="text/ejs" id="tplJquiDialog" class="dashui-tpl" data-dashui-name="jqui - static - Dialog" data-dashui-attrs="html;html_dialog;modal;">
         <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
             <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
                 <%== this.data.attr("html") %>
@@ -558,13 +558,6 @@
     </script>
 
 
-    <script type="text/ejs" id="tplSteffen" class="dashui-tpl" data-dashui-name="example - steffen" data-dashui-attrs="html">
-        <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr("wid") %>" <%= (el) -> dui.binds.examples.steffen(el) %>>
-        <div class="dashui-widget-body">
-            <span id="steffen_result"></span>
-        </div>
-        </div>
-    </script>
 
 </head>
 <body>
@@ -605,8 +598,8 @@
                         <td>theme</td><td>
                             <select id="inspect_view_theme" class="dashui-editor" data-multiselect-width="300" data-multiselect-height="180">
                                 <option value="start">start</option>
-                                <option value="dark-hive">dark-hive</option>
-                                <option value="ui-darkness">ui-darkness</option>
+                                <option value="dhive">dark-hive</option>
+                                <option value="ui-dn">ui-darkness</option>
                             </select>
                         </td>
                     </tr>

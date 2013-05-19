@@ -20,11 +20,11 @@
  *  SOFTWARE.
  */
 ;
-
+console.log("DashUI");
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.6',
+    version:            '0.6.5',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -288,7 +288,7 @@ var dui = {
                 var id = $this.attr("data-hm-id");
                 $this.button().click(function () {
                         if (dui.urlParams["edit"] !== "") {
-                            $.homematic("runProgram", id);
+                            $.homematic("programExecute", id);
                         }
                 });
             },
@@ -355,19 +355,25 @@ var dui = {
                     jQuery(this).slider("disable").removeClass("ui-state-disabled");
                 });
 
-                jQuery("div#container").find(".ui-button").each(function () {
-                    //jQuery(this).button("disable");
+                jQuery("div#container").find(".ui-button:data(uiButton)").each(function () {
+
+                        jQuery(this).button("disable").removeClass("ui-state-disabled");
+
                 });
                 setTimeout(function () {
                     jQuery("div#container").find("select[id$='_select']").each(function () {
                         jQuery(this).multiselect("disable").next().removeClass("ui-state-disabled").unbind("click", false);
                     });
                 }, 200);
-                jQuery("div#container").find("a[href]").each(function () {
-                    $(this).click(function(e) {
-                        e.preventDefault();
+                setTimeout(function () {
+                    jQuery("div#container").find("a[href]").each(function () {
+                        $(this).removeAttr("href"); /*click(function(e) {
+                            e.preventDefault();
+                            return false;
+                        });*/
+
                     });
-                });
+                }, 200);
 
             }
         },
@@ -477,7 +483,7 @@ var dui = {
     },
     init: function () {
 
-
+console.log("INIT");
         dui.initInstance();
 
         var settings = storage.get(dui.storageKeySettings);
@@ -525,9 +531,9 @@ var dui = {
         }
 
         $("#active_view").html(dui.activeView);
-
+        console.log("?");
         dui.changeView(dui.activeView);
-
+console.log("!");
         // Navigation
         $(window).bind( 'hashchange', function(e) {
             dui.changeView(window.location.hash.slice(1));
@@ -567,8 +573,10 @@ var dui = {
         $("#select_tpl").multiselect("refresh");
 
 
+console.log("EDIT??");
 
         if (dui.urlParams["edit"] === "") {
+            console.log("TOOLBOX OPEN");
             $("#dashuiToolbox").dialog("open");
             dui.binds.jqueryui._disable();
         }
@@ -583,7 +591,7 @@ var dui = {
         //console.log("renderView("+view+")");
         //console.log(dui.views[view].settings.style);
         if (!dui.views[view].settings.theme) {
-            dui.views[view].settings.theme = "dark-hive";
+            dui.views[view].settings.theme = "dhive";
         }
         if (!dui.views[view].settings.interval) {
             dui.views[view].settings.interval = dui.defaultHmInterval;
@@ -602,6 +610,11 @@ var dui = {
             if (dui.activeView != view) {
                 $("#"+view).hide();
             }
+
+            if (dui.urlParams["edit"] === "") {
+                dui.binds.jqueryui._disable();
+            }
+
         } else {
             //console.log(" - nothing to do");
         }
@@ -709,7 +722,7 @@ var dui = {
             $("#"+$this.attr("id")).val(dui.views[dui.activeView].settings[attr]);
         });
         if (!dui.views[dui.activeView].settings["theme"]) {
-            dui.views[dui.activeView].settings["theme"] = "dark-hive";
+            dui.views[dui.activeView].settings["theme"] = "dhive";
         }
         $("#inspect_view_theme option[value='"+dui.views[dui.activeView].settings.theme+"']").prop("selected", true);
         $("#inspect_view_theme").multiselect("refresh");
@@ -717,8 +730,8 @@ var dui = {
 
 
 
-        //console.log("activeView="+dui.activeView);
-
+        console.log("activeView="+dui.activeView);
+        return;
 
 
     },

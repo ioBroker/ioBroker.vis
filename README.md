@@ -81,6 +81,7 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 * Instanzen und Variablen für externe Kommandos werden nicht mehr automatisch angelegt und können entfernt werden
 * Widget "mfd-icon Shutter/Dimmer + jqui Dialog" neue Attribute autoclose und modal
 * Widget "basic - Red Number" Zahl sitzt nun sauber in der Mitte
+* Widget "jqui Button Link" und "jqui Button Link _blank" fehlendes Attribut ergänzt
 
 
 ### 0.5
