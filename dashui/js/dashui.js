@@ -24,7 +24,7 @@ console.log("DashUI");
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.6.5',
+    version:            '0.6.6',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -41,16 +41,29 @@ var dui = {
         basic: {
             rednumber: function (el) {
                 var $this = jQuery(el);
-                console.log("rednumber "+$this.attr("id"));
                 homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
                     if (attr == ("_"+$this.attr("data-hm-id")+".Value")) {
                         if (parseInt(newVal,10) == 0) {
-                            $this.hide();
+                            if (dui.urlParams["edit"] !== "") {
+                                $this.hide();
+                            }
                         } else {
                             $this.show();
                         }
                     }
                 });
+            },
+            toggle: function (el) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                $this.click(function () {
+                    var val = homematic.uiState["_"+id].Value;
+                    if (val === "false") { val = 0;}
+                    if (val === "true") { val = 1;}
+                    val = parseFloat(val, 10);
+                    if (val >= 0.5) { val = 1; } else { val = 0; }
+                    jQuery.homematic("setState", id, 1-val);
+                })
             }
         },
         jqplot: {
@@ -522,6 +535,7 @@ console.log("INIT");
                 dui.activeView = hash;
             } else {
                 alert("error - View doesn't exist :-(");
+                window.location.href = "./?edit";
                 $.error("dui Error can't find view");
             }
         }

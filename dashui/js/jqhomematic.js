@@ -376,22 +376,22 @@ var version =               '0.8',
                     var type; // PROGRAMME ERKENNEN?
 
                     if (homematic.dpWorking["_"+id]) { // WORKING ID
-                        if ((''+homematic.dpWorking["_"+id]).indexOf(":") !== -1) {
+                       //) if ((''+homematic.dpWorking["_"+id]).indexOf(":") !== -1) {
                             refreshScript += 'w = dom.GetObject("' + homematic.dpWorking["_"+id] + '");\n';
-                        } else {
-                            refreshScript += 'w = dom.GetObject(' + homematic.dpWorking["_"+id] + ');\n';
-                        }
+                        //} else {
+                        //    refreshScript += 'w = dom.GetObject(' + homematic.dpWorking["_"+id] + ');\n';
+                        //}
                         refreshScript += 'if (w.Value() == false) {\n';
                     }
 
                     refreshScript += 'if (first) {\nfirst = false;\n } else {\n WriteLine(",");\n}\n';
 
 
-                    if ((''+id).indexOf(":") !== -1 || (''+id).indexOf("_") !== -1) {
+                    //if ((''+id).indexOf(":") !== -1 || (''+id).indexOf("_") !== -1) {
                         refreshScript += 'o = dom.GetObject("' + id + '");\n';
-                    } else {
-                        refreshScript += 'o = dom.GetObject(' + id + ');\n';
-                    }
+                    //} else {
+                    //    refreshScript += 'o = dom.GetObject(' + id + ');\n';
+                    //}
                     refreshScript += 'Write("\\"_' + id + '\\":{");\n';
                     if (type !== "PROGRAM") {
                         refreshScript += 'Write("\\"Value\\":\\"");\n';
