@@ -565,15 +565,8 @@
         <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
             <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
             <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0">aus</label>
-            <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="0.25" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
-            <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="0.5" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
-            <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="0.75" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio3">75%</label>
-            <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">100%</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">an</label>
         </div>
-        <br/>
-        <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:1,step:0.01}) %> />
-        <br/>
-        <%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) * 100).toFixed(0) %>%
         </div>
         <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200}) %> />
         <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") != '') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
@@ -631,7 +624,7 @@
     </script>
 
     <script type="text/ejs" id="tplMfdSocket" class="dashui-tpl" data-dashui-name="mfd-icon - hmvalue - Socket" data-dashui-attrs="hm_id">
-        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
+        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px">
             <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['mfd-icons/message_socket_on.png','mfd-icons/message_socket_off.png']);  %>>
             <%
             var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
@@ -646,7 +639,7 @@
         </div>
     </script>
     <script type="text/ejs" id="tplMfdSocketCtrl" class="dashui-tpl" data-dashui-name="mfd-icon - hmcontrol - Socket" data-dashui-attrs="hm_id">
-        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
+        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px"  <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %> >
             <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['mfd-icons/message_socket_on.png','mfd-icons/message_socket_off.png']);  %>>
             <%
             var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
