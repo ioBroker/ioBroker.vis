@@ -1,0 +1,514 @@
+<script type="text/javascript">
+    jQuery.extend(dui.binds, {
+        jqueryui: {
+            classes: function (el) {
+                var $this = jQuery(el);
+                $this.hover(function () {
+                    $this.addClass("ui-state-hover");
+                }, function (){
+                    $this.removeClass("ui-state-hover");
+
+                });
+                var id = $this.attr("data-hm-id");
+                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
+                        var val;
+                        if (newVal === "false") {
+                            val = 0;
+                        } else if (newVal === "true") {
+                            val = 1;
+                        } else {
+                            val = parseFloat(newVal, 10);
+                        }
+                        if (val > 0) {
+                            $this.addClass("ui-state-active");
+                            $this.removeClass("ui-state-default");
+                        } else {
+                            $this.removeClass("ui-state-active");
+                            $this.addClass("ui-state-default");
+
+                        }
+                    }
+                });
+            },
+            dialog: function (el, options) {
+                //console.log("binds.jqueryui.dialog");
+                //console.log(jQuery(el).parent().find("div.dashui-widget-dialog").attr("id"));
+                jQuery(el).parent().find("div.dashui-widget-body").click(function () {
+                    if (dui.urlParams["edit"] !== "") {
+                        var id = jQuery(this).parent().attr("id") + "_dialog";
+                        jQuery("#"+id).dialog("open");
+                    }
+                });
+                jQuery(el).parent().find("div.dashui-widget-dialog").dialog($.extend({
+                    autoOpen: false
+                }, options));
+            },
+            dialogAutoClose: function (el) {
+                var dialog = jQuery("#"+jQuery(el).parent().attr("id")+"_dialog");
+                console.log("autoclose "+dialog.attr("id"));
+                // TODO auf bestimme Elemente einschränken (Button, Radio, ...)
+                dialog.on( "dialogopen", function() {
+                    dialog.one("click", function () {
+                        dialog.dialog("close");
+                    });
+                });
+
+            },
+            input: function (el, options) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                var digits = options;
+                $this.button().addClass("ui-state-default")
+                        .css({
+                            'font' : 'inherit',
+                            //'color' : 'inherit',
+                            'text-align' : 'left',
+                            'outline' : 'none',
+                            'cursor' : 'text'
+                        }).change(function () {
+                            jQuery.homematic("setState", id, jQuery(this).val());
+
+                        });
+                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
+                        if (digits && digits != "") {
+                            newVal = parseFloat(newVal).toFixed(digits);
+                        }
+                        $this.val(newVal);
+                    }
+                });
+            },
+            inputDatetime: function (el, options) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                var timepickerOptions = jQuery.extend(true, {
+                    dateFormat:'yy-mm-dd',
+                    monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" ],
+                    monthNames: [ "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" ],
+                    dayNamesMin: [ "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" ],
+                    showAnim: "fadeIn",
+                    firstDay: 1,
+                    timeText: "Zeit ",
+                    hourText: "h",
+                    minuteText: "m",
+                    secondText: "s",
+                    currentText: "Jetzt",
+                    closeText: "Schließen",
+                    minuteGrid: undefined,
+                    hourGrid: undefined,
+                    secondGrid: undefined,
+                    timeOnly: false,
+                    showSecond: true,
+                    timeFormat: 'HH:mm:ss',
+                    pickerTimeFormat: 'HH:mm:ss'
+                }, options);
+                $this.addClass("ui-state-default")
+                        .css({
+                            'font' : 'inherit',
+                            //'color' : 'inherit',
+                            'text-align' : 'left',
+                            'outline' : 'none',
+                            'cursor' : 'text'
+                        }).datetimepicker(timepickerOptions).button();
+                $this.change(function () {
+                    jQuery.homematic("setState", id, jQuery(this).val());
+
+                });
+                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
+                        $this.val(newVal);
+                    }
+                });
+            },
+            inputset: function (el, options) {
+                var digits = options;
+                var $this = jQuery(el);
+                var input = "#"+$this.attr("id").slice(0,-3) + "input";
+
+                var id = $this.attr("data-hm-id");
+                $this.button().click(function () {
+                    //console.log("inputset click " + input)
+                    jQuery.homematic("setState", id, jQuery(input).val());
+
+                });
+                $this.prev().button().addClass("ui-state-default")
+                        .css({
+                            'font' : 'inherit',
+                            //'color' : 'inherit',
+                            'text-align' : 'left',
+                            'outline' : 'none',
+                            'cursor' : 'text'
+                        });
+                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
+                        if (digits && digits != "") {
+                            newVal = parseFloat(newVal).toFixed(digits);
+                        }
+                        jQuery(input).val(newVal);
+                    }
+                });
+            },
+            multiselect: function (el, options) {
+                console.log("multiselect");
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                $this.multiselect($.extend({
+                    multiple: false,
+                    header: false,
+                    noneSelectedText: false,
+                    selectedList: 1
+                }, options)).change(function () {
+                            jQuery.homematic("setState", id, $this.find("option:selected").val());
+                        });
+
+                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
+                        $this.find("option:selected").removeAttr("selected");
+                        $this.find("option[value='"+newVal+"']").attr("selected", true);
+                        $this.multiselect("refresh");
+                    }
+                });
+            },
+            slider: function (el, options) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+
+                var settings = $.extend({
+                    min: 0,
+                    max: 100,
+                    step: 1,
+                    slide: function (e, ui) {
+                        // Slider -> Observable
+                        jQuery.homematic("setState", id, ui.value.toFixed(6));
+                    }
+                }, options);
+
+                $this.slider(settings);
+
+                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
+                        $this.slider("value", newVal);
+                    }
+                });
+            },
+            button: function (el, value) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                $this.button().click(function () {
+                    if (dui.urlParams["edit"] !== "") {
+                        $.homematic("setState", id, $this.attr("data-hm-value"));
+                    }
+                });
+            },
+            buttonProgram: function (el, value) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                $this.button().click(function () {
+                    if (dui.urlParams["edit"] !== "") {
+                        $.homematic("programExecute", id);
+                    }
+                });
+            },
+            buttonLink: function (el, href) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                $this.button().click(function () {
+                    if (dui.urlParams["edit"] !== "") {
+                        if (href) {
+                            window.location.href = href;
+                        }
+                    }
+                });
+            },
+            buttonLinkBlank: function (el, href) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                $this.button().click(function () {
+                    if (dui.urlParams["edit"] !== "") {
+                        if (href) {
+                            window.open(href);
+                        }
+                    }
+                });
+            },
+            radio: function (el, options) {
+                var settings = $.extend({}, options);
+                console.log("radio "+el);
+                var $this = jQuery(el);
+                console.log($this);
+                var id = $this.attr("data-hm-id");
+
+                // Observable -> Buttonset
+                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
+                        $this.find("input").removeAttr("checked");
+                        if (newVal === "true") {
+                            newVal = 1;
+                        } else if (newVal === "false") {
+                            newVal = 0;
+                        } else {
+                            newVal = parseFloat(newVal,10);
+                        }
+
+                        $this.find("input[value='"+newVal+"']").prop("checked", true);
+                        $this.find("input").each(function() {
+                            jQuery(this).button("refresh");
+                        });
+                    }
+
+                });
+
+                // Buttonset -> Observable
+                $this.find("input").click(function () {
+                    if (dui.urlParams["edit"] !== "") {
+                        $.homematic("setState", id, $(this).val());
+                    }
+                });
+                $this.find("input").removeAttr("checked");
+                $this.buttonset(settings);
+            },
+            _disable: function () {
+                jQuery("div#container").find(".ui-slider").each(function () {
+                    jQuery(this).slider("disable").removeClass("ui-state-disabled");
+                });
+
+                jQuery("div#container").find(".ui-button:data(uiButton)").each(function () {
+
+                    jQuery(this).button("disable").removeClass("ui-state-disabled");
+
+                });
+                setTimeout(function () {
+                    jQuery("div#container").find("select[id$='_select']").each(function () {
+                        jQuery(this).multiselect("disable").next().removeClass("ui-state-disabled").unbind("click", false);
+                    });
+                }, 200);
+                setTimeout(function () {
+                    jQuery("div#container").find("a[href]").each(function () {
+                        $(this).removeAttr("href"); /*click(function(e) {
+                         e.preventDefault();
+                         return false;
+                         });*/
+
+                    });
+                }, 200);
+
+            }
+        }
+    }, true);
+</script>
+
+<script type="text/ejs" id="tplJquiInput" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Input" data-dashui-attrs="label;hm_id;digits;size">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr("wid") %>">
+    <div class="dashui-widget-body">
+        <label for="<%= this.data.attr('wid') %>_input"><%= this.data.attr('label') %></label>
+        <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.input(el, data.digits); %> />
+    </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiBool" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Bool" data-dashui-attrs="label;hm_id;html_true;html_false">
+
+    <div class="ui-widget ui-corner-all ui-state-default dashui-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %>>
+    <div class="dashui-widget-body">
+        <div>
+            <%
+            var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
+            var val = parseFloat(str,10);
+            var state;
+            if (val == 0 || str == "false") {
+            %>
+            <%== this.data.attr("html_false") %>
+            <% } else { %>
+            <%== this.data.attr("html_true") %>
+            <% } %>
+
+        </div>
+    </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Input Datetime" data-dashui-attrs="hm_id;size">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr("wid") %>">
+    <div class="dashui-widget-body">
+        <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.inputDatetime(el); %> />
+    </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiInputSet" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Input + Set-Button" data-dashui-attrs="title;buttontext;hm_id;unit;digits;size">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('title') %></label>
+            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" style="font-size: 1.1em !important; padding-bottom:8px;"/>
+            <%== this.data.attr('unit') %>
+            <input type="button" data-hm-id="<%= this.data.attr('hm_id') %>" name="<%= this.data.attr('wid') %>_set" id="<%= this.data.attr('wid') %>_set" value="<%= this.data.attr('buttontext') %>" <%= (el) -> dui.binds.jqueryui.inputset(el, data.digits); %>/>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiButtonState" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Button .State()" data-dashui-attrs="html_prepend;html_append;buttontext;value;hm_id;">
+    <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+        <div class="dashui-widget-body" >
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-value="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.button(el); %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiButtonRunProgram" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Button .ProgramExecute()" data-dashui-attrs="html_prepend;html_append;buttontext;hm_id">
+    <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+        <div class="dashui-widget-body" >
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.buttonProgram(el); %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiButtonLink" class="dashui-tpl" data-dashui-name="jqui - static - Button Link" data-dashui-attrs="html_prepend;html_append;buttontext;href">
+    <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+        <div class="dashui-widget-body" >
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-dashui-link="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.buttonLink(el, data.attr('href')); %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiButtonLinkBlank" class="dashui-tpl" data-dashui-name="jqui - static - Button Link _blank" data-dashui-attrs="html_prepend;html_append;buttontext;href">
+    <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+        <div class="dashui-widget-body" >
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-dashui-link="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.buttonLinkBlank(el, data.attr('href')); %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiRadio" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Radiobuttons on/off" data-dashui-attrs="off_text;on_text;hm_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
+        <div class="dashui-widget-body" >
+            <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
+
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= this.data.off_text %></label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio1"><%= this.data.on_text %></label>
+        </div>
+    </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Radiobuttons ValueList" data-dashui-attrs="hm_id;values;texts">
+    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
+        <div class="dashui-widget-body" >
+            <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.radio(el)},100) %> >
+            <%
+            var values = (data.attr('values') ? data.attr('values').split(';') : []);
+            var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
+            var wid = data.attr('wid');
+            for (var val in values) {
+
+            %>
+            <input type="radio" id="<%= wid %>_radio<%= val %>" name="<%= wid %>_radio" value="<%= values[val] %>" /><label for="<%= wid %>_radio<%= val %>"><%= texts[val] %></label>
+            <%
+            }
+            %>
+        </div>
+    </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiSelectList" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Select ValueList" data-dashui-attrs="off_text;on_text;hm_id;values;texts;width;height">
+    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
+        <div class="dashui-widget-body" >
+            <select id="<%= this.data.attr('wid') %>_select" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300),height: (data.height ? data.height : 220)})},250) %> >
+            <%
+            var values = (data.attr('values') ? data.attr('values').split(';') : []);
+            var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
+            var wid = data.attr('wid');
+            for (var val in values) {
+
+            %>
+            <option value="<%= values[val] %>"><%= texts[val] %></option>
+            <%
+            }
+            %>
+            </select >
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiRadioSteps" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Radiobuttons 25%" data-dashui-attrs="hm_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+        <div class="dashui-widget-body" >
+            <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0">aus</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="0.25" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="0.5" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="0.75" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio3">75%</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">100%</label>
+        </div>
+    </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiSliderVertical" data-dashui-attrs="hm_id;hm_wid" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Slider vertical">
+    <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minWidth":23, "maxWidth":23}' class="dashui-widget" style="width:23px; height:160px; overflow:visible !important;">
+    <div class="dashui-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
+        <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:1,step:0.01,orientation:"vertical"}) %> /></div>
+    </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiSlider" data-dashui-attrs="hm_id;hm_wid" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Slider horizontal">
+    <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minHeight":23, "maxHeight":23}' class="dashui-widget" style="height:23; width:160px; overflow:visible !important;">
+    <div class="dashui-widget-body <%== this.data.attr('class') %>" style="padding: 4px;">
+        <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:1,step:0.01}) %> /></div>
+    </div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-name="jqui - static - icon link" data-dashui-attrs="src;href;target;alt;text">
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+    <div class="dashui-widget-body">
+        <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+    </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - icon .State()" data-dashui-attrs="src;href;target;alt;text">
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+    <div class="dashui-widget-body">
+        <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+    </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiDialog" class="dashui-tpl" data-dashui-name="jqui - static - Dialog" data-dashui-attrs="html;html_dialog;modal;">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
+        <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
+            <%== this.data.attr("html") %>
+        </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog">
+            <%== this.data.attr("html_dialog") %>
+        </div>
+        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el) %> />
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplContainerDialog" class="dashui-tpl" data-dashui-name="container - view in jqui Dialog" data-dashui-attrs="view">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
+        <div id="<%= this.data.attr('wid') %>_container" class="dashui-widget-body">
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplContainerButtonDialog" class="dashui-tpl" data-dashui-name="container - jqui button - view in Dialog" data-dashui-attrs="view">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
+        <div id="<%= this.data.attr('wid') %>_container" class="dashui-widget-body">
+        </div>
+    </div>
+</script>

@@ -24,7 +24,7 @@ console.log("DashUI");
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.6.6',
+    version:            '0.6.7',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -37,372 +37,8 @@ var dui = {
     activeView:         "",
     defaultHmInterval:  7500,
     listval:            [],
-    binds: {
-        basic: {
-            rednumber: function (el) {
-                var $this = jQuery(el);
-                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+$this.attr("data-hm-id")+".Value")) {
-                        if (parseInt(newVal,10) == 0) {
-                            if (dui.urlParams["edit"] !== "") {
-                                $this.hide();
-                            }
-                        } else {
-                            $this.show();
-                        }
-                    }
-                });
-            },
-            toggle: function (el) {
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                $this.click(function () {
-                    var val = homematic.uiState["_"+id].Value;
-                    if (val === "false") { val = 0;}
-                    if (val === "true") { val = 1;}
-                    val = parseFloat(val, 10);
-                    if (val >= 0.5) { val = 1; } else { val = 0; }
-                    jQuery.homematic("setState", id, 1-val);
-                })
-            }
-        },
-        jqplot: {
-            gauge: function (el, options) {
-                var $this = jQuery(el).find("div[id$='_gauge']");
-                setTimeout(function () {
-                    var jqplotOptions = jQuery.extend(true, {
-                        title: {show: false},
-                        grid: {
-                          background: "transparent"
-                        },
-                        seriesDefaults: {
-                            renderer: $.jqplot.MeterGaugeRenderer,
-                            rendererOptions: {
-                                min: 0,
-                                max: 100
-                            }
-                        }
-                    }, options);
-                    //console.log(jqplotOptions);
-                    var series = [[0]];
-                    var plot = jQuery.jqplot($this.attr("id"), series, jqplotOptions);
-                    homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                        if (attr == ("_"+$this.attr("data-hm-id")+".Value")) {
-                            plot.series[0].data = [[1,parseFloat(newVal)]];
-                            plot.redraw();
-                        }
-                    });
-                }, 20);
-            }
-        },
-        jqueryui: {
-            classes: function (el) {
-                var $this = jQuery(el);
-                $this.hover(function () {
-                    $this.addClass("ui-state-hover");
-                }, function (){
-                    $this.removeClass("ui-state-hover");
-
-                });
-                var id = $this.attr("data-hm-id");
-                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
-                        var val;
-                        if (newVal === "false") {
-                            val = 0;
-                        } else if (newVal === "true") {
-                            val = 1;
-                        } else {
-                            val = parseFloat(newVal, 10);
-                        }
-                        if (val > 0) {
-                            $this.addClass("ui-state-active");
-                            $this.removeClass("ui-state-default");
-                        } else {
-                            $this.removeClass("ui-state-active");
-                            $this.addClass("ui-state-default");
-
-                        }
-                    }
-                });
-            },
-            dialog: function (el, options) {
-                //console.log("binds.jqueryui.dialog");
-                //console.log(jQuery(el).parent().find("div.dashui-widget-dialog").attr("id"));
-                jQuery(el).parent().find("div.dashui-widget-body").click(function () {
-                    if (dui.urlParams["edit"] !== "") {
-                        var id = jQuery(this).parent().attr("id") + "_dialog";
-                        jQuery("#"+id).dialog("open");
-                    }
-                });
-                jQuery(el).parent().find("div.dashui-widget-dialog").dialog($.extend({
-                    autoOpen: false
-                }, options));
-            },
-            dialogAutoClose: function (el) {
-                var dialog = jQuery("#"+jQuery(el).parent().attr("id")+"_dialog");
-                console.log("autoclose "+dialog.attr("id"));
-                // TODO auf bestimme Elemente einschränken (Button, Radio, ...)
-                dialog.on( "dialogopen", function() {
-                    dialog.one("click", function () {
-                        dialog.dialog("close");
-                    });
-                });
-
-            },
-            input: function (el, options) {
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                var digits = options;
-                $this.button().addClass("ui-state-default")
-                    .css({
-                        'font' : 'inherit',
-                        //'color' : 'inherit',
-                        'text-align' : 'left',
-                        'outline' : 'none',
-                        'cursor' : 'text'
-                    }).change(function () {
-                        jQuery.homematic("setState", id, jQuery(this).val());
-
-                    });
-                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
-                        if (digits && digits != "") {
-                            newVal = parseFloat(newVal).toFixed(digits);
-                        }
-                        $this.val(newVal);
-                    }
-                });
-            },
-            inputDatetime: function (el, options) {
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                var timepickerOptions = jQuery.extend(true, {
-                    dateFormat:'yy-mm-dd',
-                    monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" ],
-                    monthNames: [ "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" ],
-                    dayNamesMin: [ "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" ],
-                    showAnim: "fadeIn",
-                    firstDay: 1,
-                    timeText: "Zeit ",
-                    hourText: "h",
-                    minuteText: "m",
-                    secondText: "s",
-                    currentText: "Jetzt",
-                    closeText: "Schließen",
-                    minuteGrid: undefined,
-                    hourGrid: undefined,
-                    secondGrid: undefined,
-                    timeOnly: false,
-                    showSecond: true,
-                    timeFormat: 'HH:mm:ss',
-                    pickerTimeFormat: 'HH:mm:ss'
-                }, options);
-                    $this.addClass("ui-state-default")
-                    .css({
-                        'font' : 'inherit',
-                        //'color' : 'inherit',
-                        'text-align' : 'left',
-                        'outline' : 'none',
-                        'cursor' : 'text'
-                    }).datetimepicker(timepickerOptions).button();
-                    $this.change(function () {
-                        jQuery.homematic("setState", id, jQuery(this).val());
-
-                    });
-                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
-                        $this.val(newVal);
-                    }
-                });
-            },
-            inputset: function (el, options) {
-                var digits = options;
-                var $this = jQuery(el);
-                 var input = "#"+$this.attr("id").slice(0,-3) + "input";
-
-                var id = $this.attr("data-hm-id");
-                $this.button().click(function () {
-                    //console.log("inputset click " + input)
-                    jQuery.homematic("setState", id, jQuery(input).val());
-
-                    });
-                $this.prev().button().addClass("ui-state-default")
-                    .css({
-                        'font' : 'inherit',
-                        //'color' : 'inherit',
-                        'text-align' : 'left',
-                        'outline' : 'none',
-                        'cursor' : 'text'
-                    });
-                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
-                        if (digits && digits != "") {
-                            newVal = parseFloat(newVal).toFixed(digits);
-                        }
-                        jQuery(input).val(newVal);
-                    }
-                });
-            },
-            multiselect: function (el, options) {
-                console.log("multiselect");
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                $this.multiselect($.extend({
-                    multiple: false,
-                    header: false,
-                    noneSelectedText: false,
-                    selectedList: 1
-                }, options)).change(function () {
-                    jQuery.homematic("setState", id, $this.find("option:selected").val());
-                });
-
-                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
-                        $this.find("option:selected").removeAttr("selected");
-                        $this.find("option[value='"+newVal+"']").attr("selected", true);
-                        $this.multiselect("refresh");
-                    }
-                });
-            },
-            slider: function (el, options) {
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-
-                var settings = $.extend({
-                    min: 0,
-                    max: 100,
-                    step: 1,
-                    slide: function (e, ui) {
-                        // Slider -> Observable
-                        jQuery.homematic("setState", id, ui.value.toFixed(6));
-                    }
-                }, options);
-
-                $this.slider(settings);
-
-                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
-                        $this.slider("value", newVal);
-                    }
-                });
-            },
-            button: function (el, value) {
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                $this.button().click(function () {
-                    if (dui.urlParams["edit"] !== "") {
-                         $.homematic("setState", id, $this.attr("data-hm-value"));
-                    }
-                });
-            },
-            buttonProgram: function (el, value) {
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                $this.button().click(function () {
-                        if (dui.urlParams["edit"] !== "") {
-                            $.homematic("programExecute", id);
-                        }
-                });
-            },
-            buttonLink: function (el, href) {
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                $this.button().click(function () {
-                        if (dui.urlParams["edit"] !== "") {
-                            if (href) {
-                                window.location.href = href;
-                            }
-                        }
-                });
-            },
-            buttonLinkBlank: function (el, href) {
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                $this.button().click(function () {
-                        if (dui.urlParams["edit"] !== "") {
-                            if (href) {
-                                window.open(href);
-                            }
-                        }
-                });
-            },
-            radio: function (el, options) {
-                var settings = $.extend({}, options);
-                console.log("radio "+el);
-                var $this = jQuery(el);
-                console.log($this);
-                var id = $this.attr("data-hm-id");
-
-                // Observable -> Buttonset
-                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+ $.homematic("escape",id)+".Value")) {
-                        $this.find("input").removeAttr("checked");
-                        if (newVal === "true") {
-                            newVal = 1;
-                        } else if (newVal === "false") {
-                            newVal = 0;
-                        } else {
-                            newVal = parseFloat(newVal,10);
-                        }
-
-                        $this.find("input[value='"+newVal+"']").prop("checked", true);
-                        $this.find("input").each(function() {
-                            jQuery(this).button("refresh");
-                        });
-                    }
-
-                });
-
-                // Buttonset -> Observable
-                $this.find("input").click(function () {
-                    if (dui.urlParams["edit"] !== "") {
-                        $.homematic("setState", id, $(this).val());
-                    }
-                });
-                $this.find("input").removeAttr("checked");
-                $this.buttonset(settings);
-            },
-            _disable: function () {
-                jQuery("div#container").find(".ui-slider").each(function () {
-                    jQuery(this).slider("disable").removeClass("ui-state-disabled");
-                });
-
-                jQuery("div#container").find(".ui-button:data(uiButton)").each(function () {
-
-                        jQuery(this).button("disable").removeClass("ui-state-disabled");
-
-                });
-                setTimeout(function () {
-                    jQuery("div#container").find("select[id$='_select']").each(function () {
-                        jQuery(this).multiselect("disable").next().removeClass("ui-state-disabled").unbind("click", false);
-                    });
-                }, 200);
-                setTimeout(function () {
-                    jQuery("div#container").find("a[href]").each(function () {
-                        $(this).removeAttr("href"); /*click(function(e) {
-                            e.preventDefault();
-                            return false;
-                        });*/
-
-                    });
-                }, 200);
-
-            }
-        },
-        examples: {
-            steffen: function (el) {
-                $.ajax({
-                    url: "/config/xmlapi/roomlist.cgi",
-                    success: function (data) {
-                        $(data).find("room").each(function () {
-                            $("#steffen_result").append($(this).attr("name") + "<br/>");
-                        });
-                    }
-                });
-            }
-        }
-    },
+    widgetSets:         ["basic","jqplot","jqui","jqui-mfd-icons","special"],
+    binds: {},
     startInstance: function () {
         $("#dashui_instance").val(dui.instance);
         $("#create_instance").hide();
@@ -485,6 +121,25 @@ var dui = {
         storage.set(dui.storageKeyInstance, dui.instance);
         dui.startInstance();
     },
+    loadWidgetSet: function (name) {
+        console.log("loadWidgetSet("+name+")");
+        $.ajax({
+            url: "widgets/"+name+".html",
+            type: "get",
+            async: false,
+            dataType: "text",
+            cache: true,
+            success: function (data) {
+                jQuery("head").append(data);
+            }
+        });
+    },
+    loadWidgetSets: function () {
+        for (var i = 0; i < dui.widgetSets.length; i++) {
+            dui.loadWidgetSet(dui.widgetSets[i]);
+
+        }
+    },
     initInstance: function () {
         dui.instance = storage.get(dui.storageKeyInstance);
         if (!dui.instance) {
@@ -496,7 +151,8 @@ var dui = {
     },
     init: function () {
 
-console.log("INIT");
+        dui.loadWidgetSets();
+
         dui.initInstance();
 
         var settings = storage.get(dui.storageKeySettings);
@@ -545,51 +201,54 @@ console.log("INIT");
         }
 
         $("#active_view").html(dui.activeView);
-        console.log("?");
+
         dui.changeView(dui.activeView);
-console.log("!");
+
         // Navigation
         $(window).bind( 'hashchange', function(e) {
             dui.changeView(window.location.hash.slice(1));
         });
 
 
-        // DashUI Editor Init
-
-        var sel;
-
-        var keys = Object.keys(dui.views),
-            i, k, len = keys.length;
-
-        keys.sort();
-
-        for (i = 0; i < len; i++) {
-            k = keys[i];
-
-            if (k == dui.activeView) {
-                $("#inspect_view").html(dui.activeView);
-                sel = " selected";
-            } else {
-                sel = "";
-            }
-            $("#select_view").append("<option value='"+k+"'"+sel+">"+k+"</option>")
-            $("#select_view_copy").append("<option value='"+k+"'"+sel+">"+k+"</option>")
-        }
-        $("#select_view").multiselect("refresh");
-        $("#select_view_copy").multiselect("refresh");
-        $("#select_view").change(function () {
-            dui.changeView($(this).val());
-        });
-
-        $(".dashui-tpl").each(function () {
-            $("#select_tpl").append("<option value='"+$(this).attr("id")+"'>"+$(this).attr("data-dashui-name")+"</option>")
-        });
-        $("#select_tpl").multiselect("refresh");
 
 
 console.log("EDIT??");
 
         if (dui.urlParams["edit"] === "") {
+            // DashUI Editor Init
+
+            var sel;
+
+            var keys = Object.keys(dui.views),
+                i, k, len = keys.length;
+
+            keys.sort();
+
+            for (i = 0; i < len; i++) {
+                k = keys[i];
+
+                if (k == dui.activeView) {
+                    $("#inspect_view").html(dui.activeView);
+                    sel = " selected";
+                } else {
+                    sel = "";
+                }
+                $("#select_view").append("<option value='"+k+"'"+sel+">"+k+"</option>")
+                $("#select_view_copy").append("<option value='"+k+"'"+sel+">"+k+"</option>")
+            }
+            $("#select_view").multiselect("refresh");
+            $("#select_view_copy").multiselect("refresh");
+            $("#select_view").change(function () {
+                dui.changeView($(this).val());
+            });
+
+            $(".dashui-tpl").each(function () {
+                $("#select_tpl").append("<option value='"+$(this).attr("id")+"'>"+$(this).attr("data-dashui-name")+"</option>")
+            });
+            $("#select_tpl").multiselect("refresh");
+
+
+
             console.log("TOOLBOX OPEN");
             $("#dashuiToolbox").dialog("open");
             dui.binds.jqueryui._disable();
