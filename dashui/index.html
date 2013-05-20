@@ -495,7 +495,7 @@
         </div>
     </script>
     <script type="text/ejs" id="tplMfdLightCtrl" class="dashui-tpl" data-dashui-name="mfd-icon - hmcontrol - Light" data-dashui-attrs="hm_id">
-        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
+        <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-button ui-corner-all ui-state-default  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %>>
             <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']);  %>>
             <%
             var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
