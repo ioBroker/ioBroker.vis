@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    jQuery.extend(dui.binds, {
+    jQuery.extend(true, dui.binds, {
         basic: {
             rednumber: function (el) {
                 var $this = jQuery(el);
@@ -28,7 +28,7 @@
                 })
             }
         }
-    }, true);
+    });
 </script>
 
 <script type="text/ejs" id="tplHtml" class="dashui-tpl" data-dashui-name="basic - static - HTML" data-dashui-attrs="html">

@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    jQuery.extend(dui.binds, {
+    jQuery.extend(true, dui.binds, {
         jqueryui: {
             classes: function (el) {
                 var $this = jQuery(el);
@@ -295,7 +295,7 @@
 
             }
         }
-    }, true);
+    });
 </script>
 
 <script type="text/ejs" id="tplJquiInput" class="dashui-tpl" data-dashui-name="jqui - hmcontrol - Input" data-dashui-attrs="label;hm_id;digits;size">
