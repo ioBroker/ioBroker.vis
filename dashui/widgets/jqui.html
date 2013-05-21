@@ -259,29 +259,35 @@
                 $this.buttonset(settings);
             },
             _disable: function () {
-                jQuery("div#container").find(".ui-slider").each(function () {
+                jQuery("div#dui_container").find(".ui-slider").each(function () {
                     jQuery(this).slider("disable").removeClass("ui-state-disabled");
                 });
 
-                jQuery("div#container").find(".ui-button:data(uiButton)").each(function () {
+                jQuery("div#dui_container").find(".ui-button:data(uiButton)").each(function () {
 
                     jQuery(this).button("disable").removeClass("ui-state-disabled");
 
                 });
                 setTimeout(function () {
-                    jQuery("div#container").find("select[id$='_select']").each(function () {
+                    jQuery("div#dui_container").find("select[id$='_select']").each(function () {
                         jQuery(this).multiselect("disable").next().removeClass("ui-state-disabled").unbind("click", false);
                     });
                 }, 200);
                 setTimeout(function () {
-                    jQuery("div#container").find("a[href]").each(function () {
-                        $(this).removeAttr("href"); /*click(function(e) {
-                         e.preventDefault();
-                         return false;
-                         });*/
+                    jQuery("div#dui_container").find("a[href]").each(function () {
+                        $(this).click(function(e) {
+                         //e.preventDefault();
+
+                           // return false;
+                         });
+                        //jQuery(this).removeAttr("href");
 
                     });
                 }, 200);
+                //jQuery(".widget-link").click(function (e) {
+                    //e.preventDefault();
+                    //return false;
+                //});
 
             }
         }
@@ -311,7 +317,7 @@
 <script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - icon link" data-dashui-attrs="src;href;target;alt;text">
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
     <div class="dashui-widget-body">
-        <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+        <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
     </div>
     </div>
 </script>

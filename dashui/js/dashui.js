@@ -24,7 +24,7 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.6.8',
+    version:            '0.6.9',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -198,7 +198,7 @@ var dui = {
         }
 
         if (dui.views[dui.activeView] && dui.views[dui.activeView].settings != undefined && dui.views[dui.activeView].settings.style != undefined && dui.views[dui.activeView].settings.style['background'] != undefined) {
-            $("#"+dui.activeView).css("background", dui.views[dui.activeView].settings.style['background']);
+            $("#duiview_"+dui.activeView).css("background", dui.views[dui.activeView].settings.style['background']);
         }
 
         $("#active_view").html(dui.activeView);
@@ -255,7 +255,7 @@ var dui = {
 
 
             //console.log("TOOLBOX OPEN");
-            $("#dashuiToolbox").dialog("open");
+            $("#dui_editor").dialog("open");
             dui.binds.jqueryui._disable();
         }
 
@@ -283,9 +283,9 @@ var dui = {
             dui.views[view].settings.interval = dui.defaultHmInterval;
         }
         $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
-        if ($("#container").find("#"+view).html() == undefined) {
-            $("#container").append("<div id='"+view+"' class='dashui-view'></div>");
-            $("#"+view).css(dui.views[view].settings.style);
+        if ($("#dui_container").find("#duiview_"+view).html() == undefined) {
+            $("#dui_container").append("<div id='duiview_"+view+"' class='dashui-view'></div>");
+            $("#duiview_"+view).css(dui.views[view].settings.style);
 
 
             for (var id in dui.views[view].widgets) {
@@ -294,7 +294,7 @@ var dui = {
 
 
             if (dui.activeView != view) {
-                $("#"+view).hide();
+                $("#duiview_"+view).hide();
             }
 
             if (dui.urlParams["edit"] === "") {
@@ -335,14 +335,16 @@ var dui = {
         $.homematic("addUiState", widget.data.hm_id);
         var widgetData = dui.widgets[id]["data"];
         widgetData.hm_id = $.homematic("escape", widgetData.hm_id);
-        $("#"+view).append(can.view(widget.tpl, {hm: homematic.uiState["_"+widget.data.hm_id], data: widgetData}));
+        $("#duiview_"+view).append(can.view(widget.tpl, {hm: homematic.uiState["_"+widget.data.hm_id], data: widgetData}));
 
         if (widget.style) {
             $("#"+id).css(widget.style);
         }
         if (dui.urlParams["edit"] === "") {
-            $("#"+id).click(function () {
+            $("#"+id).click(function (e) {
                 dui.inspectWidget(id);
+                e.preventDefault();
+                return false;
             });
         }
 
@@ -350,7 +352,7 @@ var dui = {
     changeView: function (view) {
         dui.inspectWidget("none");
         dui.clearWidgetHelper();
-        $("#"+dui.activeView).hide();
+        $("#duiview_"+dui.activeView).hide();
         $("#select_active_widget").html("<option value='none'>none selected</option>");
         //console.log($("#select_active_widget").html());
 
@@ -363,7 +365,7 @@ var dui = {
         }
         //console.log("changeView("+view+")");
         if (dui.activeView !== view) {
-            $("#"+dui.activeView).hide();
+            $("#duiview_"+dui.activeView).hide();
         }
         dui.activeView = view;
         if (dui.views[view].settings.interval) {
@@ -381,7 +383,7 @@ var dui = {
         $("#select_active_widget").multiselect("refresh");
 
         dui.renderView(dui.activeView);
-        $("#"+dui.activeView).show();
+        $("#duiview_"+dui.activeView).show();
 
         if (dui.instance) {
             $.homematic("script", "object o = dom.GetObject('dashui_"+dui.instance+"_view');\no.State('"+dui.activeView+"');");
@@ -461,7 +463,7 @@ var dui = {
 
 // duiEdit - the DashUI Editor
 dui = $.extend(true, dui, {
-    toolbox:            $("#dashuiToolbox"),
+    toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
 
@@ -537,8 +539,8 @@ dui = $.extend(true, dui, {
         dui.inspectWidget("none");
     },
     addWidget: function (tpl, data, style) {
-        if (!$("#container").find("#"+dui.activeView)) {
-            $("#container").append("<div id='"+dui.activeView+"'></div>");
+        if (!$("#dui_container").find("#duiview_"+dui.activeView)) {
+            $("#dui_container").append("<div id='"+dui.activeView+"'></div>");
         }
         dui.clearWidgetHelper();
 
@@ -561,7 +563,7 @@ dui = $.extend(true, dui, {
             }, data))
         };
 
-        $("#"+dui.activeView).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"]}));
+        $("#duiview_"+dui.activeView).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"]}));
 
         if (!dui.views[dui.activeView]) {
             //console.log("views["+dui.activeView+"]==undefined :-(");
@@ -615,7 +617,7 @@ dui = $.extend(true, dui, {
                 dui.saveLocal();
             }, 50);
         } else {
-            if ($("#container").find("#"+targetView).html() == undefined) {
+            if ($("#dui_container").find("#duiview_"+targetView).html() == undefined) {
                 dui.renderView(targetView);
             }
             dui.activeView = targetView;
@@ -830,7 +832,7 @@ function pxAdd(val, add) {
 
         $(".dashui-version").html(dui.version);
 
-        $("#dashuiToolbox").dialog({
+        $("#dui_editor").dialog({
             modal: false,
             autoOpen: false,
             width: 480,
@@ -962,7 +964,7 @@ function pxAdd(val, add) {
             var attr = $this.attr("id").slice(17);
             var val = $this.val();
             //console.log("change "+attr+" "+val);
-            $("#"+dui.activeView).css(attr, val);
+            $("#duiview_"+dui.activeView).css(attr, val);
             dui.views[dui.activeView].settings.style[attr] = val;
             dui.saveLocal();
         });
