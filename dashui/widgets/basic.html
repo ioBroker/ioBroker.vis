@@ -3,35 +3,36 @@
         basic: {
             rednumber: function (el) {
                 var $this = jQuery(el);
-                homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-                    if (attr == ("_"+$this.attr("data-hm-id")+".Value")) {
-                        if (parseInt(newVal,10) == 0) {
-                            if (dui.urlParams["edit"] !== "") {
-                                $this.hide();
-                            }
-                        } else {
-                            $this.show();
+                var hm_id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
+                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    if (parseInt(newVal,10) == 0) {
+                        if (dui.urlParams["edit"] !== "") {
+                            $this.hide();
                         }
+                    } else {
+                        $this.show();
                     }
                 });
             },
             toggle: function (el) {
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
-                $this.click(function () {
-                    var val = homematic.uiState["_"+id].Value;
-                    if (val === "false") { val = 0;}
-                    if (val === "true") { val = 1;}
-                    val = parseFloat(val, 10);
-                    if (val >= 0.5) { val = 1; } else { val = 0; }
-                    jQuery.homematic("setState", id, 1-val);
-                })
+                if (dui.urlParams["edit"] !== "") {
+                    $this.click(function () {
+                        var val = homematic.uiState["_"+id].Value;
+                        if (val === "false") { val = 0;}
+                        if (val === "true") { val = 1;}
+                        val = parseFloat(val, 10);
+                        if (val >= 0.5) { val = 1; } else { val = 0; }
+                        jQuery.homematic("setState", id, 1-val);
+                    });
+                }
             }
         }
     });
 </script>
 
-<script type="text/ejs" id="tplHtml" class="dashui-tpl" data-dashui-name="basic - static - HTML" data-dashui-attrs="html">
+<script type="text/ejs" id="tplHtml" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - HTML" data-dashui-attrs="html">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <%== this.data.attr('html') %>
@@ -39,7 +40,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplLink" class="dashui-tpl" data-dashui-name="basic - static - link" data-dashui-attrs="html;href;target;alt">
+<script type="text/ejs" id="tplLink" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - link" data-dashui-attrs="html;href;target;alt">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr("target") %>" alt="<%== this.data.attr("alt") %>" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%"><%== this.data.attr("html") %></div></a>
@@ -47,7 +48,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-name="basic - hmvalue - Number" data-dashui-attrs="html_prepend;html_append;hm_id;digits;factor">
+<script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Number" data-dashui-attrs="html_prepend;html_append;hm_id;digits;factor">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -57,7 +58,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueString" class="dashui-tpl" data-dashui-name="basic - hmvalue - String" data-dashui-attrs="html_prepend;html_append;hm_id">
+<script type="text/ejs" id="tplValueString" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - String" data-dashui-attrs="html_prepend;html_append;hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -67,7 +68,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueStringRaw" class="dashui-tpl" data-dashui-name="basic - hmvalue - String (unescaped)" data-dashui-attrs="html_prepend;html_append;hm_id">
+<script type="text/ejs" id="tplValueStringRaw" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - String (unescaped)" data-dashui-attrs="html_prepend;html_append;hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -77,7 +78,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueList" class="dashui-tpl" data-dashui-name="basic - hmvalue - ValueList Text" data-dashui-attrs="html_prepend;html_append;hm_id;valuelist">
+<script type="text/ejs" id="tplValueList" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - ValueList Text" data-dashui-attrs="html_prepend;html_append;hm_id;valuelist">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -87,7 +88,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueListHtml" class="dashui-tpl" data-dashui-name="basic - hmvalue - ValueList HTML" data-dashui-attrs="html_prepend;html_append;hm_id;valuelist">
+<script type="text/ejs" id="tplValueListHtml" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - ValueList HTML" data-dashui-attrs="html_prepend;html_append;hm_id;valuelist">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -97,8 +98,8 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueBool" class="dashui-tpl" data-dashui-name="basic - hmvalue - Bool HTML" data-dashui-attrs="html_prepend;html_append;hm_id;html_false;html_true">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" >
+<script type="text/ejs" id="tplValueBool" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Bool HTML" data-dashui-attrs="html_prepend;html_append;hm_id;html_false;html_true">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="background-color:#ccc; width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" >
         <div class="dashui-widget-body">
             <div>
                 <%== this.data.attr("html_prepend") %>
@@ -118,8 +119,8 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueBoolCtrl" class="dashui-tpl" data-dashui-name="basic - hmcontrol - Bool HTML" data-dashui-attrs="html_prepend;html_append;hm_id;html_false;html_true">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.toggle(el) %>>
+<script type="text/ejs" id="tplValueBoolCtrl" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - Bool HTML" data-dashui-attrs="html_prepend;html_append;hm_id;html_false;html_true">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="background-color:#ccc; width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.toggle(el) %>>
     <div class="dashui-widget-body">
         <div>
             <%== this.data.attr("html_prepend") %>
@@ -139,7 +140,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplHide" class="dashui-tpl" data-dashui-name="basic - hmvalue - Hide on 0/False" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplHide" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Hide on 0/False" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.rednumber(el) %>>
     <div class="dashui-widget-body">
         <%= parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) %>
@@ -147,7 +148,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-name="basic - hmvalue - Red Number" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Red Number" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.rednumber(el) %>>
     <div class="dashui-widget-body">
         <%= parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) %>
@@ -155,7 +156,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplBulbOnOff" class="dashui-tpl" data-dashui-name="basic - hmvalue - Bulb on/off" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplBulbOnOff" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Bulb on/off" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": %>
@@ -167,7 +168,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplBulbOnOffCtrl" class="dashui-tpl" data-dashui-name="basic - hmcontrol - Bulb on/off" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplBulbOnOffCtrl" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - Bulb on/off" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.toggle(el) %>>
     <div class="dashui-widget-body">
         <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": %>
@@ -180,7 +181,7 @@
 </script>
 
 
-<script type="text/ejs" id="tplHmWindowRotary" class="dashui-tpl"  data-dashui-name="hm-icon - hmvalue - Drehgriff" data-dataui-attrs="hm_id">
+<script type="text/ejs" id="tplHmWindowRotary" class="dashui-tpl"  data-dashui-set="basic" data-dashui-name="hm-icon - hm_val - Drehgriff" data-dataui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>">
         <div class="dashui-widget-body">
             <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case 0: %>
@@ -194,7 +195,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplHmWindow" class="dashui-tpl" data-dashui-name="hm-icon - hmvalue - TFK" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplHmWindow" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm-icon - hm_val - TFK" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:80px">
         <div class="dashui-widget-body">
             <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "true": %>
@@ -207,14 +208,14 @@
 </script>
 
 
-<script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-name="container - view in widget" data-dashui-attrs="view">
+<script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - view in widget" data-dashui-attrs="view">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_container" class="dashui-widget-body">
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplContainerSelectView" class="dashui-tpl" data-dashui-name="container - hmvalue - select view" data-dashui-attrs="view">
+<script type="text/ejs" id="tplContainerSelectView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - hm_val - select view" data-dashui-attrs="view">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_container" class="dashui-widget-body">
         </div>

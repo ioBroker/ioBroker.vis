@@ -429,6 +429,8 @@ var version =               '0.8',
             }
         },                         // Debugausgabe in die Browserconsole
         escape: function (id) {
+            //return id;
+            //return encodeURIComponent(id);
             if ((''+id).indexOf(".") !== -1 || (''+id).indexOf(":") !== -1) {
                 id = id.replace(/\./g, "__d__");
                 id = id.replace(/:/g, "__c__");
@@ -436,6 +438,8 @@ var version =               '0.8',
             return id;
         },
         unescape: function (id) {
+            //return decodeURIComponent(id);
+            //return id;
             if ((''+id).indexOf("__c__") !== -1 || (''+id).indexOf("__d__") !== -1) {
                 id = id.replace(/__c__/g, ":");
                 id = id.replace(/__d__/g, ".");

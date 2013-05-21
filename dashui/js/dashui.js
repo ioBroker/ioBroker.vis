@@ -20,7 +20,7 @@
  *  SOFTWARE.
  */
 ;
-console.log("DashUI");
+//console.log("DashUI");
 // dui - the DashUI Engine
 var dui = {
 
@@ -37,7 +37,8 @@ var dui = {
     activeView:         "",
     defaultHmInterval:  7500,
     listval:            [],
-    widgetSets:         ["basic","jqplot","jqui","jqui-mfd-icons","special"],
+    widgetSets:         ["basic","fancyswitch","jqplot","jqui","jqui-mfd","dev"],
+
     binds: {},
     startInstance: function () {
         $("#dashui_instance").val(dui.instance);
@@ -61,7 +62,7 @@ var dui = {
         homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
             if (attr == ("_" + name + "_cmd.Value")) {
                 var cmd = newVal;
-                console.log("change " + attr + " " + newVal);
+                //console.log("change " + attr + " " + newVal);
                 if (cmd !== "") {
                     setTimeout(function () {
                         var data = homematic.uiState.attr("_"+name+"_data.Value");
@@ -122,7 +123,7 @@ var dui = {
         dui.startInstance();
     },
     loadWidgetSet: function (name) {
-        console.log("loadWidgetSet("+name+")");
+        //console.log("loadWidgetSet("+name+")");
         $.ajax({
             url: "widgets/"+name+".html",
             type: "get",
@@ -212,7 +213,7 @@ var dui = {
 
 
 
-console.log("EDIT??");
+//console.log("EDIT??");
 
         if (dui.urlParams["edit"] === "") {
             // DashUI Editor Init
@@ -223,6 +224,7 @@ console.log("EDIT??");
                 i, k, len = keys.length;
 
             keys.sort();
+
 
             for (i = 0; i < len; i++) {
                 k = keys[i];
@@ -242,18 +244,29 @@ console.log("EDIT??");
                 dui.changeView($(this).val());
             });
 
-            $(".dashui-tpl").each(function () {
-                $("#select_tpl").append("<option value='"+$(this).attr("id")+"'>"+$(this).attr("data-dashui-name")+"</option>")
-            });
-            $("#select_tpl").multiselect("refresh");
+            $("#select_set").change(dui.refreshWidgetSelect);
+
+            for (i = 0; i < dui.widgetSets.length; i++) {
+                $("#select_set").append("<option value='"+dui.widgetSets[i]+"'>"+dui.widgetSets[i]+"</option>")
+
+            }
+            $("#select_set").multiselect("refresh");
+            dui.refreshWidgetSelect();
 
 
-
-            console.log("TOOLBOX OPEN");
+            //console.log("TOOLBOX OPEN");
             $("#dashuiToolbox").dialog("open");
             dui.binds.jqueryui._disable();
         }
 
+    },
+    refreshWidgetSelect: function () {
+        $("#select_tpl").html("");
+        var current_set = $("#select_set option:selected").val();
+        $(".dashui-tpl[data-dashui-set='"+current_set+"']").each(function () {
+            $("#select_tpl").append("<option value='"+$(this).attr("id")+"'>"+$(this).attr("data-dashui-name")+"</option>")
+        });
+        $("#select_tpl").multiselect("refresh");
     },
     initViewObject: function () {
         dui.views = {view1:{settings:{style:{}},widgets:{}}};
@@ -310,7 +323,7 @@ console.log("EDIT??");
     },
     renderWidget: function (view, id) {
         var widget = dui.views[view].widgets[id];
-        console.log("renderWidget("+view+","+id+")");
+        //console.log("renderWidget("+view+","+id+")");
         dui.widgets[id] = {
             wid: id,
             data: new can.Observe($.extend({
@@ -348,20 +361,21 @@ console.log("EDIT??");
             }
             view = prop;
         }
-        console.log("changeView("+view+")");
+        //console.log("changeView("+view+")");
         if (dui.activeView !== view) {
             $("#"+dui.activeView).hide();
         }
         dui.activeView = view;
         if (dui.views[view].settings.interval) {
-            console.log("setInterval "+dui.views[view].settings.interval);
+            //console.log("setInterval "+dui.views[view].settings.interval);
             $.homematic("setInterval", dui.views[view].settings.interval);
         }
         $("#inspect_view").html(view);
 
 
         for (var widget in dui.views[dui.activeView].widgets) {
-            $("#select_active_widget").append("<option value='"+widget+"'>"+widget+" ("+$("#"+dui.views[dui.activeView].widgets[widget].tpl).attr("data-dashui-name")+")</option>");
+            var obj = $("#"+dui.views[dui.activeView].widgets[widget].tpl);
+            $("#select_active_widget").append("<option value='"+widget+"'>"+widget+" ("+obj.attr("data-dashui-set")+ " " +obj.attr("data-dashui-name")+")</option>");
         }
        //console.log($("#select_active_widget").html());
         $("#select_active_widget").multiselect("refresh");
@@ -403,7 +417,7 @@ console.log("EDIT??");
 
 
 
-        console.log("activeView="+dui.activeView);
+        //console.log("activeView="+dui.activeView);
         return;
 
 
