@@ -37,14 +37,15 @@
             $this.css('background', 'url("'+src+'")');
             $this.find('.fancy-on_off').css('display','none');
             $this.find('.fancy-on, .fancy-off').css('text-indent','-10000px');
+            if (dui.urlParams["edit"] !== "") {
+                $this.find("input.fancy-on_off").change(function() {
+                    var val = $(this).val();
 
-            $this.find("input.fancy-on_off").change(function() {
-                var val = $(this).val();
-
-                if (val == '0'){ $this.css('background-position', 'right'); }
-                if (val == '1'){ $this.css('background-position', 'left'); }
-                jQuery.homematic("setState", id, val);
-            });
+                    if (val == '0'){ $this.css('background-position', 'right'); }
+                    if (val == '1'){ $this.css('background-position', 'left'); }
+                    jQuery.homematic("setState", id, val);
+                });
+            }
 
         }
     });
