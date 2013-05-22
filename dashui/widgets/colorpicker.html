@@ -1,0 +1,30 @@
+<link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
+<script type="text/javascript" src="js/colorpicker.js"></script>
+
+<script type="text/javascript">
+    jQuery.extend(true, dui.binds, {
+        colorpicker: function (el, type) {
+            if (dui.urlParams["edit"] !== "") {
+                var $this = jQuery(el);
+                $this.ColorPicker();
+            }
+        }
+    });
+</script>
+
+
+<script type="text/ejs" id="tplHsbColor" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="HSB Colorpicker" data-dashui-attrs="hue_id;sat_id;bri_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <input type="text" <%= (el) -> dui.binds.colorpicker(el, "hsb") %>/>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplRgbColor" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="RGB Colorpicker" data-dashui-attrs="red_id;green_id;blue_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <input type="text" <%= (el) -> dui.binds.colorpicker(el, "rgb") %>/>
+        </div>
+    </div>
+</script>
