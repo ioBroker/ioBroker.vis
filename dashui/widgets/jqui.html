@@ -31,16 +31,28 @@
 
                 });
             },
-            dialog: function (el, options) {
-                jQuery(el).parent().find("div.dashui-widget-body").click(function () {
-                    if (dui.urlParams["edit"] !== "") {
+            dialog: function (el, options, persistent) {
+                var dlg = jQuery(el).parent().find("div.dashui-widget-dialog");
+                if (dui.urlParams["edit"] !== "") {
+                    jQuery(el).parent().find("div.dashui-widget-body").click(function () {
                         var id = jQuery(this).parent().attr("id") + "_dialog";
-                        jQuery("#"+id).dialog("open");
-                    }
-                });
-                jQuery(el).parent().find("div.dashui-widget-dialog").dialog($.extend({
-                    autoOpen: false
-                }, options));
+                        if (persistent) {
+                            jQuery("#"+id).dialog("open");
+                        } else {
+                            dlg.dialog($.extend({
+                                autoOpen: true,
+                                close: function () {
+                                    dlg.dialog("destroy");
+                                }
+                            }, options));
+                        }
+                    });
+                }
+                if (persistent) {
+                    dlg.dialog($.extend({
+                        autoOpen: false
+                    }, options));
+                }
             },
             dialogAutoClose: function (el) {
                 var dialog = jQuery("#"+jQuery(el).parent().attr("id")+"_dialog");
@@ -314,23 +326,35 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - icon link" data-dashui-attrs="src;href;target;alt;text">
+<script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon link" data-dashui-attrs="src;href;target;alt;text">
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
-    <div class="dashui-widget-body">
-        <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
-    </div>
+        <div class="dashui-widget-body">
+            <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+        </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Dialog" data-dashui-attrs="html;html_dialog;modal;">
+<script type="text/ejs" id="tplJquiDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - HTML - Dialog" data-dashui-attrs="html;html_dialog;title;modal;width;height;persistent">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
             <%== this.data.attr("html") %>
         </div>
-        <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog">
+        <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
             <%== this.data.attr("html_dialog") %>
         </div>
-        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el) %> />
+        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent')) %> />
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon - Dialog" data-dashui-attrs="src;alt;text;html_dialog;title;modal;width;height;persistent">
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+        <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
+            <img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+        </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+            <%== this.data.attr("html_dialog") %>
+        </div>
+        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent')) %> />
     </div>
 </script>
 
