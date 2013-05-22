@@ -59,7 +59,7 @@ Die Parameter ticks, intervals, intervalColors können als ; (Semikolon) getrennt
 
 Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über http://homematic/addons/dashui/views.html bearbeitet werden.
 
-## Todo / Bekannte Fehler
+## Todo
 
 * Config-File, Editor und Engine sauber trennen
 * Mehr Widgets! ;-)
