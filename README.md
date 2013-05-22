@@ -1,4 +1,4 @@
-# DashUI 0.6
+# DashUI 0.7
 
 ## Installation auf der CCU
 
@@ -69,6 +69,16 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 
 
 ## Changelog
+
+### 0.7
+* Container implementiert, Views können nun in Widgets und jQuery UI Dialogen dargestellet werden
+* Fehler behoben - Buttons waren nicht mehr editierbar
+* Dialog-Widgets mit zusätzlichen Attributen ausgestattet
+* container und view id präfix, link disable im edit-mode
+* neues Widget-Set: "fancyswitch"
+* Widget-Definitionen und Bindings in eigene Files ausgelagert
+* toggle Binding und neue Widgets
+* diverse Fehler behoben, Pfade gekürzt (100-Zeichen-Limit...)
 
 ### 0.6
 
