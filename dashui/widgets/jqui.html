@@ -207,6 +207,10 @@
                     }
                 });
             },
+            buttonDialog: function (el) {
+                var $this = jQuery(el);
+                $this.button();
+            },
             buttonProgram: function (el, value) {
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
@@ -366,7 +370,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiBool" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Bool" data-dashui-attrs="label;hm_id;html_true;html_false">
+<script type="text/ejs" id="tplJquiBool" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon Bool" data-dashui-attrs="label;hm_id;html_true;html_false">
 
     <div class="ui-widget ui-corner-all ui-state-default dashui-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %>>
     <div class="dashui-widget-body">
@@ -486,56 +490,84 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
         <div class="dashui-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
-            <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0">aus</label>
-            <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="0.25" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
-            <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="0.5" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
-            <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="0.75" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio3">75%</label>
-            <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">100%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0">aus</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="0.25" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="0.5" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="0.75" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio3">75%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">100%</label>
+            </div>
         </div>
-    </div>
     </div>
 </script>
 
 <script type="text/ejs" id="tplJquiSliderVertical" data-dashui-attrs="hm_id;hm_wid" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Slider vertical">
     <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minWidth":23, "maxWidth":23}' class="dashui-widget" style="width:23px; height:160px; overflow:visible !important;">
-    <div class="dashui-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
-        <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:1,step:0.01,orientation:"vertical"}) %> /></div>
-    </div>
+        <div class="dashui-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
+            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:1,step:0.01,orientation:"vertical"}) %> /></div>
+        </div>
     </div>
 </script>
 
 <script type="text/ejs" id="tplJquiSlider" data-dashui-attrs="hm_id;hm_wid" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Slider horizontal">
     <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minHeight":23, "maxHeight":23}' class="dashui-widget" style="height:23; width:160px; overflow:visible !important;">
-    <div class="dashui-widget-body <%== this.data.attr('class') %>" style="padding: 4px;">
-        <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:1,step:0.01}) %> /></div>
-    </div>
+        <div class="dashui-widget-body <%== this.data.attr('class') %>" style="padding: 4px;">
+            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:1,step:0.01}) %> /></div>
+        </div>
     </div>
 </script>
 
 
 
 
-<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - icon .State()" data-dashui-attrs="src;href;target;alt;text">
+<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon .State()" data-dashui-attrs="src;href;target;alt;text">
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
-    <div class="dashui-widget-body">
-        <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
-    </div>
-    </div>
-</script>
-
-
-
-
-<script type="text/ejs" id="tplContainerDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - view in jqui Dialog" data-dashui-attrs="view">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
-        <div id="<%= this.data.attr('wid') %>_container" class="dashui-widget-body">
+        <div class="dashui-widget-body">
+            <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplContainerButtonDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - jqui button - view in Dialog" data-dashui-attrs="view">
+
+
+
+<script type="text/ejs" id="tplContainerDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - HTML - view in jqui Dialog" data-dashui-attrs="html;contains_view;title;modal;width;height;persistent">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
-        <div id="<%= this.data.attr('wid') %>_container" class="dashui-widget-body">
+        <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
+            <%== this.data.attr("html") %>
         </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+            <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+            </div>
+        </div>
+        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent')) %> />
     </div>
 </script>
+
+<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src;alt;text;contains_view;title;modal;width;height;persistent">
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+        <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
+            <img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+        </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+            <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+            </div>
+        </div>
+        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent')) %> />
+    </div>
+</script>
+
+<script type="text/ejs" id="tplContainerButtonDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Button - view in jqui Dialog" data-dashui-attrs="html_prepend;html_append;buttontext;contains_view;title;modal;width;height;persistent">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-value="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.buttonDialog(el); %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+            <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+            </div>
+        </div>
+        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent')) %> />
+    </div>
+</script>
+

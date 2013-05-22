@@ -1,5 +1,15 @@
 <script type="text/javascript">
     jQuery.extend(true, dui.binds, {
+        container: function (el, view) {
+            var $this = jQuery(el);
+            if (dui.views[view]) {
+                console.log("dui.binds.container: "+view+" in "+$this.attr("id"));
+                dui.renderView(view);
+                jQuery("#duiview_"+view).appendTo($this);
+                jQuery("#duiview_"+view).show();
+            }
+
+        },
         basic: {
             rednumber: function (el) {
                 var $this = jQuery(el);
@@ -208,14 +218,14 @@
 </script>
 
 
-<script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - view in widget" data-dashui-attrs="view">
+<script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - view in widget" data-dashui-attrs="contains_view">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
-        <div id="<%= this.data.attr('wid') %>_container" class="dashui-widget-body">
+        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplContainerSelectView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - hm_val - select view" data-dashui-attrs="view">
+<script type="text/ejs" id="tplContainerSelectView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - hm_val - select view" data-dashui-attrs="contains_views,hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_container" class="dashui-widget-body">
         </div>
