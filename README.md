@@ -61,7 +61,6 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 
 ## Todo / Bekannte Fehler
 
-* Views duplizieren Fehler beheben
 * Config-File, Editor und Engine sauber trennen
 * Mehr Widgets! ;-)
 * Erweiterte Template-Attribute: Doku, Kompatibilität, ...
