@@ -11,9 +11,11 @@
     <script type="text/javascript" src="js/jquery.base64.min.js"></script>
     <script type="text/javascript">
         $("document").ready(function () {
-            storage.set("dashuiViews", null);
-            window.location.href="./?edit";
-
+            var x = confirm("wirklich LocalStorage leeren?");
+            if (x) {
+                storage.set("dashuiViews", null);
+                window.location.href="./?edit";
+            }
         });
     </script>
 </head>

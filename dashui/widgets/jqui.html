@@ -218,7 +218,6 @@
             },
             buttonLink: function (el, href) {
                 var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
                 $this.button().click(function () {
                     if (dui.urlParams["edit"] !== "") {
                         if (href) {
@@ -277,7 +276,7 @@
 
                 jQuery("div#dui_container").find(".ui-button:data(uiButton)").each(function () {
 
-                    jQuery(this).button("disable").removeClass("ui-state-disabled");
+                  //  jQuery(this).button("disable").removeClass("ui-state-disabled");
 
                 });
                 setTimeout(function () {
@@ -317,7 +316,7 @@
 </script>
 
 <script type="text/ejs" id="tplJquiButtonLinkBlank" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Button Link _blank" data-dashui-attrs="html_prepend;html_append;buttontext;href">
-    <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+    <div style="top:50px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
         <div class="dashui-widget-body" >
             <%== this.data.attr("html_prepend") %>
             <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-dashui-link="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.buttonLinkBlank(el, data.attr('href')); %> />
