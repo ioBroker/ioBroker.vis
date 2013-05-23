@@ -109,7 +109,7 @@
         <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">an</label>
     </div>
     </div>
-    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200}) %> />
+    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200},true) %> />
     <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") != '') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
@@ -159,7 +159,7 @@
     <br/>
     <%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) * 100).toFixed(0) %>%
     </div>
-    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200}) %> />
+    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200},true) %> />
     <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") != '') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
@@ -263,7 +263,7 @@
     <br/>
     <%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) * 100).toFixed(0) %>%
     </div>
-    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200,modal:data.attr('modal')}) %> />
+    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200,modal:data.attr('modal')},true) %> />
     <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") != '') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>

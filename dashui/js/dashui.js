@@ -24,7 +24,7 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.7.2',
+    version:            '0.7.3',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -37,7 +37,7 @@ var dui = {
     activeView:         "",
     defaultHmInterval:  7500,
     listval:            [],
-    widgetSets:         ["basic","colorpicker","fancyswitch","jqplot","jqui","jqui-mfd","dev"],
+    widgetSets:         ["basic","colorpicker","fancyswitch","knob","jqplot","jqui","jqui-mfd","dev"],
 
     binds: {},
     startInstance: function () {

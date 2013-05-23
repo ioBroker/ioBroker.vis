@@ -1,0 +1,80 @@
+<link rel="stylesheet" type="text/css" href="css/knobKnob.css"/>
+<script src="js/transform.js"></script>
+<script src="js/knobKnob.jquery.js"></script>
+<script src="js/jquery.knob.js"></script>
+
+<script type="text/javascript">
+    jQuery.extend(true, dui.binds, {
+        knob : {
+            knob: function (el) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                $this.knob({
+                    change: function (val) {
+                        if (dui.urlParams["edit"] !== "") {
+                            jQuery.homematic("setState", id, val/100);
+                        }
+                    }
+                });
+                var hm_id = "_" + $.homematic("escape",id);
+                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    $this.val(newVal*100).trigger("change");
+                });
+            },
+            shinyknob: function (el, type) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                    $this.knobKnob({
+                        snap: 5,
+                        turn: function (val) {
+                            if (dui.urlParams["edit"] !== "") {
+                                jQuery.homematic("setState", id, val.toFixed(2));
+                            }
+                        }
+                    });
+
+                var hm_id = "_" + $.homematic("escape",id);
+                /*homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                 $this.knobKnob({
+                 snap: 5,
+                 //value: 0.5,
+                 turn: function (val) {
+                 jQuery.homematic("setState", id, val.toFixed(2));
+
+                 }
+                 });
+                 });*/
+            }
+        }
+
+    });
+</script>
+
+
+<script type="text/ejs" id="tplKnob" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="hm_ctrl - Knob" data-dashui-attrs="html;hm_id;fgColor;bgColor;width;angleOffset;angleArc;linecap;cursor;thickness;displayInput;readOnly">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <input type="text"
+                   data-width="<%= this.data.attr('width') %>"
+                   data-fgColor="<%= this.data.attr('fgColor') %>"
+                   data-bgColor="<%= this.data.attr('bgColor') %>"
+                   data-angleOffset="<%= this.data.attr('angleOffset') %>"
+                   data-angleArc="<%= this.data.attr('angleArc') %>"
+                   data-linecap="<%= this.data.attr('linecap') %>"
+                   data-cursor="<%= this.data.attr('cursor') %>"
+                   data-thickness="<%= this.data.attr('thickness') %>"
+                   data-displayInput="<%= this.data.attr('displayInput') %>"
+                   data-readOnly="<%= this.data.attr('readOnly') %>"
+                   data-hm-id="<%= this.data.attr('hm_id') %>"
+            <%= (el) -> dui.binds.knob.knob(el) %> />
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplShinyknob" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="hm_ctrl - Shinyknob" data-dashui-attrs="html;hm_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <div data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.knob.shinyknob(el) %>></div>
+        </div>
+    </div>
+</script>
