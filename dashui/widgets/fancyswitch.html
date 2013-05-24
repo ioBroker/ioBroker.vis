@@ -17,111 +17,175 @@
 
 
 </style>
+<link rel="stylesheet" type="text/css" href="css/jquery.ibutton.min.css"/>
 
+<script type="text/javascript" src="js/jquery-ui.toggleSwitch.js"></script>
+<script type="text/javascript" src="js/jquery.ibutton.min.js"></script>
 
 <script type="text/javascript">
     jQuery.extend(true, dui.binds, {
-        fancyswitch: function (el, src, reverse) {
-            var $this = jQuery(el).parent().find(".fancy-switch");
-            var id = $this.attr("data-hm-id");
-            var hm_id = "_" + $.homematic("escape",id);
-            homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                var num = parseFloat(newVal, 10);
-                if (num > 0 || newVal == "true" || newVal == true) {
-                    if (reverse) {
-                        $this.css('background-position', 'right');
+        fancyswitch: {
+            fancyswitch: function (el, src, reverse) {
+                var $this = jQuery(el).parent().find(".fancy-switch");
+                var id = $this.attr("data-hm-id");
+                var hm_id = "_" + $.homematic("escape",id);
+                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    var num = parseFloat(newVal, 10);
+                    if (num > 0 || newVal == "true" || newVal == true) {
+                        if (reverse) {
+                            $this.css('background-position', 'right');
+                        } else {
+                            $this.css('background-position', 'left');
+                        }
                     } else {
-                        $this.css('background-position', 'left');
+                        if (reverse) {
+                            $this.css('background-position', 'left');
+                        } else {
+                            $this.css('background-position', 'right');
+                        }
                     }
+                });
 
-                } else {
-                    if (reverse) {
-                        $this.css('background-position', 'left');
-                    } else {
-                        $this.css('background-position', 'right');
-                    }
-
-
+                $this.css('background', 'url("'+src+'")');
+                $this.find('.fancy-on_off').css('display','none');
+                $this.find('.fancy-on, .fancy-off').css('text-indent','-10000px');
+                if (dui.urlParams["edit"] !== "") {
+                    $this.find("input.fancy-on_off").change(function() {
+                        var val = $(this).val();
+                        if (reverse) { val = 1 - val; }
+                        if (val == '0'){ $this.css('background-position', 'right'); }
+                        if (val == '1'){ $this.css('background-position', 'left'); }
+                        jQuery.homematic("setState", id, val);
+                    });
                 }
-            });
 
-            $this.css('background', 'url("'+src+'")');
-            $this.find('.fancy-on_off').css('display','none');
-            $this.find('.fancy-on, .fancy-off').css('text-indent','-10000px');
-            if (dui.urlParams["edit"] !== "") {
-                $this.find("input.fancy-on_off").change(function() {
-                    var val = $(this).val();
-                    if (reverse) { val = 1 - val; }
-                    if (val == '0'){ $this.css('background-position', 'right'); }
-                    if (val == '1'){ $this.css('background-position', 'left'); }
-                    jQuery.homematic("setState", id, val);
+            },
+            toggleswitch: function (el, options) {
+                var $this = jQuery(el).prev();
+                $this.toggleSwitch({
+                    highlight: options.highlight,
+                    width: options.width,
+                    change: function (e) {
+                        //console.log(e);
+                    }
+                });
+            },
+            ibutton: function (el, options) {
+                var $this = jQuery(el);
+                //console.log("ibutton "+$this.attr("id"));
+                //console.log(options);
+
+                setTimeout(function () {
+                    $this.iButton(options);
+                }, 20);
+                var hm_id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
+                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    var num = parseFloat(newVal, 10);
+                    if (num > 0 || newVal == "true" || newVal == true) {
+                        //console.log("iButton true");
+                        $this.prop("checked",true).trigger("change");//.iButton("repaint");
+                    } else {
+                        //console.log("iButton false");
+                        $this.removeAttr("checked").trigger("change");//.iButton("repaint");
+                    }
                 });
             }
-
         }
     });
 </script>
 
 
-<script type="text/ejs" id="tplFancySwitch1" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - fancyswitch-1 bright Off/On Wippe" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplFancySwitch1" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - Wippe hell Off/On" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
             </fieldset>
-            <div <%= (el) -> dui.binds.fancyswitch(el, "img/fancyswitch-1.png") %>></div>
+            <div <%= (el) -> dui.binds.fancyswitch.fancyswitch(el, "img/fancyswitch-1.png") %>></div>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplFancySwitch2" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - fancyswitch-2 dark Off/On" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplFancySwitch2" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - Schieber dunkel Off/On" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
             </fieldset>
-            <div <%= (el) -> dui.binds.fancyswitch(el, "img/fancyswitch-2.png") %>></div>
-        </div>
-    </div>
-</script>
-
-
-<script type="text/ejs" id="tplFancyDarkAnAus" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - fancyswitch dark Ein/Aus" data-dashui-attrs="hm_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
-                <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
-                <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
-            </fieldset>
-            <div <%= (el) -> dui.binds.fancyswitch(el, "img/fancyswitch-3.png") %>></div>
+            <div <%= (el) -> dui.binds.fancyswitch.fancyswitch(el, "img/fancyswitch-2.png") %>></div>
         </div>
     </div>
 </script>
 
 
-<script type="text/ejs" id="tplFancyDarkAnAusRev" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - fancyswitch dark Aus/Ein" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplFancyDarkAnAus" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - Schieber dunkel Ein/Aus" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
             </fieldset>
-            <div <%= (el) -> dui.binds.fancyswitch(el, "img/fancyswitch-4.png") %>></div>
+            <div <%= (el) -> dui.binds.fancyswitch.fancyswitch(el, "img/fancyswitch-3.png") %>></div>
         </div>
     </div>
 </script>
 
 
-<script type="text/ejs" id="tplFancyDarkAnAusWippe" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - fancyswitch dark Aus/Ein Wippe" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplFancyDarkAnAusRev" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - Schieber dunkel Aus/Ein" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
             </fieldset>
-            <div <%= (el) -> dui.binds.fancyswitch(el, "img/fancyswitch-5.png") %>></div>
+            <div <%= (el) -> dui.binds.fancyswitch.fancyswitch(el, "img/fancyswitch-4.png") %>></div>
         </div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplFancyDarkAnAusWippe" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - Wippe dunkel Aus/Ein" data-dashui-attrs="hm_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
+                <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
+                <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
+            </fieldset>
+            <div <%= (el) -> dui.binds.fancyswitch.fancyswitch(el, "img/fancyswitch-5.png") %>></div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplFancyGivaIButton" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - Giva Labs iButton"
+        data-dashui-attrs="hm_id;duration;labelOn;labelOff;resizeHandle;resizeContainer;enableDrag;enableFx">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>" >
+        <div class="dashui-widget-body">
+            <div>
+                <input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox"
+                       id="<%= this.data.attr('wid') %>_checkbox"
+                       data-hm-id="<%= this.data.attr('hm_id') %>"
+                       value="1"
+                        <%= (el) -> dui.binds.basic.checkbox(el); dui.binds.fancyswitch.ibutton(el, {duration: data.attr('duration'), labelOn: data.attr('labelOn'), labelOff: data.attr('labelOff'), resizeHandle: data.attr('resizeHandle'), resizeContainer: data.attr('resizeContainer'), enableDrag: data.attr('enableDrag'), enableFx: data.attr('enableFx')}); %>/>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplFancyToggleswitch" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="hm_ctrl - Bool - Taitem jqui Toggleswitch" data-dashui-attrs="html_prepend;html_append;hm_id;text_true;text_false;highlight;width">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding-left:10px;" id="<%= this.data.attr('wid') %>" >
+        <div class="dashui-widget-body">
+            <div>
+                <%== this.data.attr("html_prepend") %>
+                <select id="<%= this.data.attr('wid') %>_select" data-hm-id="<%= this.data.attr('hm_id') %>">
+                    <option value="0"><%= this.data.attr('text_false') %></option>
+                    <option value="1"><%= this.data.attr('text_true') %></option>
+                </select>
+                <div <%= (el) -> dui.binds.basic.select(el); dui.binds.fancyswitch.toggleswitch(el, {highlight:data.attr('highlight'), width:data.attr('width')}); %>></div>
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
     </div>
 </script>

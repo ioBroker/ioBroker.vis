@@ -3,7 +3,7 @@
         container: function (el, view) {
             var $this = jQuery(el);
             if (dui.views[view]) {
-                console.log("dui.binds.container: "+view+" in "+$this.attr("id"));
+                //console.log("dui.binds.container: "+view+" in "+$this.attr("id"));
                 dui.renderView(view);
                 jQuery("#duiview_"+view).appendTo($this);
                 jQuery("#duiview_"+view).show();
@@ -43,6 +43,32 @@
                         }
                     });
                 }
+            },
+            select: function (el) {
+                var $this = jQuery(el).prev();
+                var id = $this.attr("data-hm-id");
+                $this.change(function () {
+                    jQuery.homematic("setState", $this.attr("data-hm-id"), $this.find("option:selected").val());
+                });
+                var hm_id = "_" + $.homematic("escape",id);
+                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    if (newVal == "false" || parseFloat(newVal) == 0) {
+                        if ($this.find("option[value='1']").prop("selected")) {
+                            //console.log("false");
+                            $this.find("option[value='1']").removeAttr("selected");
+                            $this.find("option[value='0']").prop("selected", true);
+                            $this.trigger("change");
+                        }
+                    } else {
+                        if ($this.find("option[value='0']").prop("selected")) {
+                            //console.log("true");
+                            $this.find("option[value='0']").removeAttr("selected");
+                            $this.find("option[value='1']").prop("selected", true);
+                            $this.trigger("change");
+                        }
+                    }
+                    //
+                });
             },
             toggle: function (el) {
                 var $this = jQuery(el);
@@ -161,6 +187,21 @@
     </div>
 </script>
 
+<script type="text/ejs" id="tplValueBoolSelect" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - Bool Select" data-dashui-attrs="html_prepend;html_append;hm_id;text_true;text_false">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>" >
+        <div class="dashui-widget-body">
+            <div>
+                <%== this.data.attr("html_prepend") %>
+                <select id="<%= this.data.attr('wid') %>_select" data-hm-id="<%= this.data.attr('hm_id') %>">
+                    <option value="0" selected="selected"><%= this.data.attr('text_false') %></option>
+                    <option value="1"><%= this.data.attr('text_true') %></option>
+                </select>
+                <div <%= (el) -> dui.binds.basic.select(el) %>></div>
+                <%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+</script>
 
 
 <script type="text/ejs" id="tplValueBoolCtrl" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - Bool HTML" data-dashui-attrs="html_prepend;html_append;hm_id;html_false;html_true">

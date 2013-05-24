@@ -24,7 +24,7 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.7.4',
+    version:            '0.7.5',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -274,7 +274,7 @@ var dui = {
         window.location.href='./?edit';
     },
     renderView: function (view) {
-        console.log("renderView("+view+")");
+        //console.log("renderView("+view+")");
 
         //console.log(dui.views[view].settings.style);
         if (!dui.views[view].settings.theme) {
@@ -303,12 +303,12 @@ var dui = {
             }
 
         } else {
-            console.log(" - nothing to do");
+            //console.log(" - nothing to do");
         }
 
         // Views in Container verschieben
         $("#duiview_"+view).find("div[id$='container']").each(function () {
-            console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
+            //console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
             var cview = $(this).attr("data-dashui-contains")
             if (!dui.views[cview]) {
                 $(this).append("error: view not found.");
@@ -367,7 +367,7 @@ var dui = {
 
     },
     changeView: function (view) {
-        console.log("changeView("+view+")");
+        //console.log("changeView("+view+")");
         dui.inspectWidget("none");
         dui.clearWidgetHelper();
         $("#duiview_"+dui.activeView).hide();

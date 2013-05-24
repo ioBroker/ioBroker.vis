@@ -284,8 +284,11 @@
 
                 });
                 setTimeout(function () {
-                    jQuery("div#dui_container").find("select[id$='_select']").each(function () {
-                        jQuery(this).multiselect("disable").next().removeClass("ui-state-disabled").unbind("click", false);
+                    jQuery("div#dui_container").find("select[id$='_multiselect']").each(function () {
+                        if (jQuery(this).css("display") == "none") {
+                            console.log("disable multiselect "+jQuery(this).attr("id"));
+                            jQuery(this).multiselect("disable").next().removeClass("ui-state-disabled").unbind("click", false);
+                        }
                     });
                 }, 200);
                 setTimeout(function () {
@@ -469,7 +472,7 @@
 <script type="text/ejs" id="tplJquiSelectList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Select ValueList" data-dashui-attrs="off_text;on_text;hm_id;values;texts;width;height">
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="dashui-widget-body" >
-            <select id="<%= this.data.attr('wid') %>_select" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300),height: (data.height ? data.height : 220)})},250) %> >
+            <select id="<%= this.data.attr('wid') %>_multiselect" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300),height: (data.height ? data.height : 220)})},250) %> >
             <%
             var values = (data.attr('values') ? data.attr('values').split(';') : []);
             var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
