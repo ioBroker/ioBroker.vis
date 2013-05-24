@@ -74,7 +74,7 @@ jQuery.fn.toggleSwitch = function (params) {
         $contain.find("label").eq(selectObj.selectedIndex).click();
 
         // add to DOM
-        $(selectObj).parent().append($contain);
+        $(selectObj).hide().parent().append($contain);
 
     }
 };
