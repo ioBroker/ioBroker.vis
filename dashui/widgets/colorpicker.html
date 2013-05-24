@@ -1,30 +1,92 @@
-<link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
-<script type="text/javascript" src="js/colorpicker.js"></script>
+<!--<script type="text/javascript" src="js/jscolor.js"></script>-->
+
+<script type="text/javascript" src="js/farbtastic.js"></script>
+<link rel="stylesheet" href="css/farbtastic.css" type="text/css" />
+
+<script src='js/spectrum.js'></script>
+<link rel='stylesheet' href='css/spectrum.css' />
 
 <script type="text/javascript">
     jQuery.extend(true, dui.binds, {
-        colorpicker: function (el, type) {
-            if (dui.urlParams["edit"] !== "") {
+        colorpicker: {
+            /*jscolor: function (el) {
+                var myPicker = new jscolor.color(document.getElementById(jQuery(el).parent().attr('id')+"_jscolor"), {})
+
+            }*/
+            spectrum: function (el) {
                 var $this = jQuery(el);
-                $this.ColorPicker();
+                $this.spectrum();
+            },
+            farbtastic: function (el) {
+                var $this = jQuery(el);
+                $this.prev().farbtastic($this);
             }
         }
     });
 </script>
 
-
-<script type="text/ejs" id="tplHsbColor" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="HSB Colorpicker" data-dashui-attrs="hue_id;sat_id;bri_id">
+<!--
+<script type="text/ejs" id="tplJscolor" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="jscolor" data-dashui-attrs="hue_id;sat_id;bri_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <input type="text" <%= (el) -> dui.binds.colorpicker(el, "hsb") %>/>
+            <input id="<%= this.data.attr('wid') %>_jscolor">
+            <div class="popup-helper" <%= (el) -> dui.binds.colorpicker.jscolor(el) %>></div>
+        </div>
+    </div>
+</script>
+-->
+
+<script type="text/ejs" id="tplFarbtastic" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="hue_ctrl - farbtastic (unfertig)" data-dashui-attrs="lamp_id;program_id;hue_id;sat_id;bri_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <div id="<%= this.data.attr('wid') %>_farbtastic"></div>
+            <input id="<%= this.data.attr('wid') %>_farbtastic_input" value="" <%= (el) -> dui.binds.colorpicker.farbtastic(el) %>>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplRgbColor" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="RGB Colorpicker" data-dashui-attrs="red_id;green_id;blue_id">
+
+
+<script type="text/ejs" id="tplDmxFarbtastic" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="dmx_ctrl - farbtastic (unfertig)" data-dashui-attrs="program_id;red_channel;green_channel;blue_channel">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 195px; height: 195px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <div id="<%= this.data.attr('wid') %>_farbtastic"></div>
+            <input id="<%= this.data.attr('wid') %>_farbtastic_input" value=""  <%= (el) -> dui.binds.colorpicker.farbtastic(el) %>>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplFarbtasticDialog" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="hue_ctrl - farbtastic jqui Dialog (unfertig)" data-dashui-attrs="lamp_id;program_id;hue_id;sat_id;bri_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <input type="text" <%= (el) -> dui.binds.colorpicker(el, "rgb") %>/>
+            <div id="<%= this.data.attr('wid') %>_farbtastic"></div>
+            <input id="<%= this.data.attr('wid') %>_farbtastic_input" value="" <%= (el) -> dui.binds.colorpicker.farbtastic(el) %>>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplDmxFarbtasticDialog" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="dmx_ctrl - farbtastic jqui Dialog (unfertig)" data-dashui-attrs="program_id;red_channel;green_channel;blue_channel">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 195px; height: 195px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <div id="<%= this.data.attr('wid') %>_farbtastic"></div>
+            <input id="<%= this.data.attr('wid') %>_farbtastic_input" value=""  <%= (el) -> dui.binds.colorpicker.farbtastic(el) %>>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplSpectrum" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="hue_ctrl - spectrum (unfertig)" data-dashui-attrs="lamp_id;program_id;hue_id;sat_id;bri_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <input id="<%= this.data.attr('wid') %>_spectrum" value="" <%= (el) -> dui.binds.colorpicker.spectrum(el) %>>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplDmxSpectrum" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="dmx_ctrl - spectrum (unfertig)" data-dashui-attrs="program_id;red_channel;green_channel;blue_channel">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <input id="<%= this.data.attr('wid') %>_spectrum" value="" <%= (el) -> dui.binds.colorpicker.spectrum(el) %>>
         </div>
     </div>
 </script>
