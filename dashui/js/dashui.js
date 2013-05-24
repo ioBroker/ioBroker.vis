@@ -24,7 +24,7 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.7.5',
+    version:            '0.7.6',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -366,11 +366,17 @@ var dui = {
         }
 
     },
-    changeView: function (view) {
+    changeView: function (view, hideOptions, showOptions) {
+        console.log("changeView("+view+","+hideOptions+","+showOptions+")");
+        var effect = (hideOptions && hideOptions.effect && hideOptions.effect !== "" ? true : false);
+        hideOptions = $.extend(true, {effect:undefined,options:{},duration:0}, hideOptions);
+        showOptions = $.extend(true, {effect:undefined,options:{},duration:0}, showOptions);
+
+
         //console.log("changeView("+view+")");
         dui.inspectWidget("none");
         dui.clearWidgetHelper();
-        $("#duiview_"+dui.activeView).hide();
+        //$("#duiview_"+dui.activeView).hide();
         $("#select_active_widget").html("<option value='none'>none selected</option>");
         //console.log($("#select_active_widget").html());
 
@@ -381,24 +387,57 @@ var dui = {
             }
             view = prop;
         }
-        //console.log("changeView("+view+")");
+
+        dui.renderView(view);
+
+
+
         if (dui.activeView !== view) {
-            $("#duiview_"+dui.activeView).hide();
+            // View ggf aus Container heraus holen
+            if ($("#duiview_"+dui.activeView).parent().attr("id") !== "dui_container") {
+                $("#duiview_"+dui.activeView).appendTo("#dui_container");
+            }
+            console.log("hide "+dui.activeView);
+
+            if (effect) {
+                console.log("hideoptions..."); console.log(hideOptions);
+                $("#duiview_"+dui.activeView).hide(hideOptions.effect, hideOptions.options, hideOptions.duration, function () {
+                    console.log("show");
+                    $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
+                    $("#duiview_"+view).show(showOptions.effect, showOptions.options, showOptions.duration, function () {
+                        console.log("show done");
+                    });
+                    console.log("hide done");
+                });
+            } else {
+                $("#duiview_"+dui.activeView).hide();
+                console.log("hide "+dui.activeView);
+                $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
+                $("#duiview_"+view).show();
+                console.log("show "+view);
+            }
+
+
+
+
         }
+
+        //console.log("changeView("+view+")");
         dui.activeView = view;
+
+
+
         if (dui.views[view].settings.interval) {
             //console.log("setInterval "+dui.views[view].settings.interval);
             $.homematic("setInterval", dui.views[view].settings.interval);
         }
 
-        dui.renderView(dui.activeView);
 
-        // View ggf aus Container heraus holen
-        if ($("#duiview_"+dui.activeView).parent().attr("id") !== "dui_container") {
-            $("#duiview_"+dui.activeView).appendTo("#dui_container");
-        }
 
-        $("#duiview_"+dui.activeView).show();
+
+
+
+
 
         if (dui.instance) {
             $.homematic("script", "object o = dom.GetObject('dashui_"+dui.instance+"_view');\no.State('"+dui.activeView+"');");

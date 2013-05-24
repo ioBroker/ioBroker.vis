@@ -11,6 +11,19 @@
 
         },
         basic: {
+            navigation: function (el, options) {
+                var $this = jQuery(el);
+                $this.click(function (e) {
+                    if (dui.urlParams["edit"] !== "") {
+                        console.log("--navigation--");
+                        console.log(options);
+                        dui.changeView(options.nav_view, options.hideOptions, options.showOptions);
+                        e.preventDefault();
+                        return false;
+                    }
+
+                });
+            },
             hideOnFalse: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
@@ -96,10 +109,21 @@
     </div>
 </script>
 
+
+
 <script type="text/ejs" id="tplLink" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - link" data-dashui-attrs="html;href;target;alt">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr("target") %>" alt="<%== this.data.attr("alt") %>" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%"><%== this.data.attr("html") %></div></a>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplHtmlNav" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="navigation - HTML" data-dashui-attrs="html;nav_view;hide_effect;hide_duration;show_effect;show_duration">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %>>
+        <div class="dashui-widget-body">
+            <%== this.data.attr('html') %>
         </div>
     </div>
 </script>

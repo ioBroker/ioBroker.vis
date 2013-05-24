@@ -1,13 +1,18 @@
 <script type="text/javascript">
     jQuery.extend(true, dui.binds, {
         jqueryui: {
+            navigationActive: function (el, nav_view) {
+                var $this = jQuery(el);
+                if (window.location.hash.slice(1) == nav_view) {
+                    $this.removeClass("ui-state-default").addClass("ui-state-active");
+                }
+            },
             classes: function (el) {
                 var $this = jQuery(el);
                 $this.hover(function () {
                     $this.addClass("ui-state-hover");
-                }, function (){
+                }, function () {
                     $this.removeClass("ui-state-hover");
-
                 });
                 var id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
 
@@ -361,6 +366,24 @@
             <%== this.data.attr("html_dialog") %>
         </div>
         <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent')) %> />
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiButtonNav" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="navigation - Button" data-dashui-attrs="html_prepend;html_append;buttontext;nav_view;hide_effect;hide_duration;show_effect;show_duration">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" <%= (el) -> jQuery(el).button(); dui.binds.jqueryui.navigationActive(el, data.attr('nav_view')); dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiIconNav" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="navigation - Icon" data-dashui-attrs="src;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el); dui.binds.jqueryui.navigationActive(el, data.attr('nav_view')); dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %>>
+        <div class="dashui-widget-body">
+            <img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+        </div>
     </div>
 </script>
 
