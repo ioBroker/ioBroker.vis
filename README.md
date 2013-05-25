@@ -61,10 +61,9 @@ Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über
 
 ## Todo
 
-* Config-File, Editor und Engine sauber trennen
 * Mehr Widgets! ;-)
+* Config-File, Editor und Engine sauber trennen
 * Erweiterte Template-Attribute: Doku, Kompatibilität, ...
-* Navigations-Effekte (Beim Wechseln der View konfigurierbare Animationen)
 
 
 ## Changelog
