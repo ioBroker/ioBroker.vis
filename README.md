@@ -1,63 +1,9 @@
-# DashUI 0.7
-
-## Installation auf der CCU
-
-Es wird ein Zugang zur CCU via FTP oder SCP benötigt.
-
-* Addon "WebAPI" installieren: den Ordner "webapi" auf diesem Zip-File https://github.com/hobbyquaker/WebAPI/archive/master.zip nach /www/addons/ kopieren)
-* Den Ordner "dashui" aus diesem Zip-File https://github.com/hobbyquaker/DashUI/archive/master.zip ebenfalls nach /www/addons/ kopieren
-* auf der CCU leeren Ordner "dashui" in /usr/local/addons/ erstellen (hier werden Konfigurationen gespeichert)
-* http://ccu/addons/dashui/?edit aufrufen
-
-
-Mit einer kleinen Änderung ist es auch möglich DashUI von einem anderen Webserver und nicht von der CCU aufzurufen. Allerdings ist die WebAPI auf der CCU unverzichtbar. Bei Interesse bitte im Forum fragen.
-
+# DashUI
 
 ## Dokumentation
 
-### Schnellstart
+siehe https://hobbyquaker.github.io/DashUI
 
-* Nun können Widgets und Views hinzugefügt und konfiguriert werden
-* Widgets werden automatisch aktualisiert sobald der Editor geschlossen wird
-* Man muss manuell über die Buttons "auf CCU speichern" und "von CCU laden" im Reiter Homematic die Konfiguration auf der CCU sichern und laden. Automatisch gesichert wird nur im "localstorage" des Browsers.
-* Views können über http://ccu/addons/dashui/#NameDerView direkt aufgerufen werden
-
-### Widgets
-
-#### Homematic-Attribute
-
-Das Attribut "hm_id" muss bei jedem Widget das Homematic Werte anzeigt oder die Homematic steuert angegeben werden. Zum nachschauen dieser IDs bietet sich das CCU-Addon HQ WebUI an. Vorsicht, falsche IDs können die Stabilität der CCU beeinträchtigen. Hinweis: Die ID 65535 dient als Platzhalter und wird bei der Kommunikation mit der CCU ausgespart.
-
-* hm_id ist die ID eines Datenpunkts (STATE, LEVEL, TEMPERATURE, ...).
-* hm_wid (kann weggelassen werden) ist die ID des zugehörigen WORKING Datenpunkts, sinnvoll bei Dimmern und Rollläden um springende Slider während Aktivität der Aktoren zu verhindern.
-
-Anstelle von IDs können auch Datenpunkt-Bezeichner wie z.B. "BidCos-RF.EEQ00012345:1.LEVEL" oder bei Programmen und Systemvariablen deren Namen verwendet werden.
-
-
-#### basic - HTML
-
-Zeigt beliebigen HTML Code an. Hiermit können z.B. auch Bilder oder Iframes angezeigt eingebunden werden.
-
-#### basic - Value List
-
-Zeigt eine Homematic-Variable vom Typ Werteliste an.
-Der Parameter valuelist muss als ; (Semikolon) getrennte Liste angegeben werden
-
-#### jqplot - MeterGauge Widget
-
-Zeigt Homematic Zahlenwerte (Variablen, Datenpunkte) als Tachometer an.
-Alle weiteren Parameter sind hier dokumentiert: <a href="http://www.jqplot.com/docs/files/plugins/jqplot-meterGaugeRenderer-js.html" target="_blank">jqPlot Docs meterGauge</a></li>
-
-Die Parameter ticks, intervals, intervalColors können als ; (Semikolon) getrennte Liste angegeben werden
-
-### Navigation
-
-* Zur Navigation können normale Links oder Link-Widgets mit href="#NameDerView" genutzt werden.
-
-
-### Rohdaten bearbeiten
-
-Das Javascript Object in dem alle Views und Widgets gespeichert werden kann über http://homematic/addons/dashui/views.html bearbeitet werden.
 
 ## Todo
 
