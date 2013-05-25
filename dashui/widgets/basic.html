@@ -157,7 +157,15 @@
         </div>
     </div>
 </script>
-
+<script type="text/ejs" id="tplValueStringImg" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - String img src" data-dashui-attrs="html_prepend;html_append;hm_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <div data-hm-id="<%= this.data.attr('hm_id') %>">
+                <%== this.data.attr("html_prepend") %><img src='<%== homematic.uiState.attr("_" + this.data.hm_id + ".Value") %>' width="100%"/><%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+</script>
 <script type="text/ejs" id="tplValueList" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - ValueList Text" data-dashui-attrs="html_prepend;html_append;hm_id;valuelist">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
