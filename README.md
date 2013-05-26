@@ -1,6 +1,6 @@
 # DashUI
 
-* [DashUI Homepage](https://hobbyquaker.github.io/DashUI) 
+* [DashUI Homepage](http://hobbyquaker.github.io/DashUI) 
 * [DashUI Widget Wiki](https://github.com/hobbyquaker/DashUI/wiki/)
 
 
