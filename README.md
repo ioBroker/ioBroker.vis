@@ -67,8 +67,6 @@
 
 ## In DashUI verwendete Software
 
-alle verwendeten Softwarekomponenten stehen (unter anderem) unter einer MIT-Lizenz zur Verf�gung.
-
 * jQuery http://jquery.com/
 * CanJS http://canjs.com/
 * lostorage.js https://github.com/js-coder/loStorage.js
@@ -77,8 +75,7 @@ alle verwendeten Softwarekomponenten stehen (unter anderem) unter einer MIT-Lize
 * jQuery UI Multiselect Widget https://github.com/ehynds/jquery-ui-multiselect-widget
 * jQuery UI Timepicker http://trentrichardson.com/examples/timepicker/
 * jqPlot http://www.jqplot.com/
-
-CC-Lizensierte Icons aus dem KNX-User-Forum http://knx-user-forum.de mfd.gfx@gmail.com User: mfd
+* CC-Lizensierte Icons aus dem KNX-User-Forum http://knx-user-forum.de mfd.gfx@gmail.com User: mfd
 
 ## Copyright, Lizenz, Bedingungen
 
