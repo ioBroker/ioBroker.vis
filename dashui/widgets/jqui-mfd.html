@@ -295,7 +295,7 @@
 
 
 <script type="text/ejs" id="tplMfdWindow" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Fenster Drehgriff" data-dashui-attrs="hm_id">
-    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-defaut <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;" >
+    <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;" >
         <div class="dashui-widget-body">
             <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "0": %>
             <img height="100%" src="mfd-icons/fts_window_1w.png"/>
@@ -308,7 +308,7 @@
     </div>
 </script>
 <script type="text/ejs" id="tplMfdWindowBool" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Fenster" data-dashui-attrs="hm_id">
-    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-defaut <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;"  >
+    <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;"  >
         <div class="dashui-widget-body">
             <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "false": case "0": case 0: %>
             <img height="100%" src="mfd-icons/fts_window_1w_open.png"/>

@@ -1,8 +1,6 @@
 # DashUI
 
-## Dokumentation
-
-siehe https://hobbyquaker.github.io/DashUI
+[https://hobbyquaker.github.io/DashUI](DashUI Homepage) [https://github.com/hobbyquaker/DashUI/wiki/](DashUI Widget Wiki)
 
 
 ## Todo

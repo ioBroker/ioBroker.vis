@@ -24,7 +24,7 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.7.8',
+    version:            '0.7.9',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -903,7 +903,7 @@ function pxAdd(val, add) {
         $("#dui_editor").dialog({
             modal: false,
             autoOpen: false,
-            width: 480,
+            width: 540,
             height: 610,
             position: { my: "right top", at: "right top", of: window },
             close: function () {
