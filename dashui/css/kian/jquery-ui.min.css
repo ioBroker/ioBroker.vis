@@ -444,7 +444,7 @@ button.ui-button-icons-only { width: 3.7em; }
 .ui-button-text-icon-secondary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: .4em 2.1em .4em 1em; }
 .ui-button-text-icons .ui-button-text { padding-left: 2.1em; padding-right: 2.1em; }
 /* no icon support for input elements, provide padding by default */
-input.ui-button { height: 30px !important; padding: .4em 1em; }
+input.ui-button { /*height: 30px !important;*/ padding: .4em 1em; }
 
 /*button icon element(s) */
 .ui-button-icon-only .ui-icon, .ui-button-text-icon-primary .ui-icon, .ui-button-text-icon-secondary .ui-icon, .ui-button-text-icons .ui-icon, .ui-button-icons-only .ui-icon { position: absolute; top: 50%; margin-top: -8px; }
@@ -527,7 +527,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .ui-tabs { position: relative; zoom: 1; border: none; background: none; } /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
 .ui-tabs .ui-tabs-nav { margin: 0 0 -1px 0; background: none; border: 0;}
 .ui-tabs .ui-tabs-nav li { list-style: none; float: left; position: relative; margin: 0 .2em 1px 0; border-bottom: 0 !important; padding: 0; white-space: nowrap; }
-.ui-tabs .ui-tabs-nav li a { float: left; padding: .5em 1em; text-decoration: none; font-size: 14px; font-weight: bold; }
+.ui-tabs .ui-tabs-nav li a { float: left; padding: .5em .6em; text-decoration: none; font-size: 14px; font-weight: bold; }
 .ui-tabs .ui-tabs-nav li.ui-tabs-selected { margin-bottom: 0; padding-bottom: 1px; }
 .ui-tabs .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs .ui-tabs-nav li.ui-state-disabled a, .ui-tabs .ui-tabs-nav li.ui-state-processing a { cursor: text; }
 .ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a { cursor: pointer; } /* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
@@ -730,8 +730,8 @@ select.ui-toggle-switch { display: none; }
 .ui-button, button.ui-button.ui-state-default, .ui-button.ui-state-default {
 	border: 1px solid #168dd9;
 	color: #FFF;
-	/*padding: 6px 12px;*/
-	font-size: 12px;
+	/*padding: 6px 12px;
+	font-size: 12px;*/
 	box-shadow: 0 1px 0 #53bcff inset, 0 1px 2px rgba(0,0,0,0.2);
 		background: #27abff; /* Old browsers */
 		background: -moz-linear-gradient(top, #27abff 0%, #059eff 100%); /* FF3.6+ */
@@ -784,7 +784,7 @@ button.ui-button.ui-state-focus {
 	background: #1888ce !important;
 }
 .ui-button .ui-button-text {
-	font-size: 12px;
+	/*font-size: 12px;*/
 }
 button.ui-button span {
 	text-shadow: 0 -1px 0 #1584de !important;
@@ -830,5 +830,5 @@ only screen and (     -o-min-device-pixel-ratio: 2/1) {
 
 
 label.ui-button {
-    padding: 6px 12px;
+    padding: 5px 20px;
 }

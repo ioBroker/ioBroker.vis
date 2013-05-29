@@ -24,7 +24,7 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.7.9',
+    version:            '0.8.0',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -775,6 +775,24 @@ dui = $.extend(true, dui, {
         //console.log("height:"+$this.outerHeight());
         //console.log("width:"+$this.outerWidth());
 
+        if ($("#snap_type option:selected").val() == 2) {
+            var gridWidth = parseInt($("#grid_size").val(),10);
+
+            if (gridWidth < 1 || isNaN(gridWidth) ) {
+                gridWidth = 10;
+            }
+
+            var x = parseFloat($this.css("left").slice(0,-2)),
+                y = parseFloat($this.css("top").slice(0,-2));
+
+            x = Math.floor(x / gridWidth) * gridWidth;
+            y = Math.floor(y / gridWidth) * gridWidth;
+
+            $this.css("left",x+"px").css("top",y+"px");
+
+        }
+
+
         $("#widget_helper")
             .css("left", pxAdd($this.css("left"), -2))
             .css("top", pxAdd($this.css("top"), -2))
@@ -798,7 +816,7 @@ dui = $.extend(true, dui, {
         if (!resizableOptions) {
             resizableOptions = {};
         }
-        $this.draggable({
+        var draggableOptions = {
             cancel: false,
             stop: function(event, ui) {
                 var widget = ui.helper.attr("id")
@@ -822,7 +840,14 @@ dui = $.extend(true, dui, {
                     .css("top", (ui.position.top - 1) + "px");
 
             }
-        }).resizable($.extend({
+        };
+        if ($("#snap_type option:selected").val() == 1) {
+            draggableOptions.snap = "#dui_container div.dashui-widget";
+        }
+        if ($("#snap_type option:selected").val() == 2) {
+            draggableOptions.grid = [gridWidth,gridWidth];
+        }
+        $this.draggable(draggableOptions).resizable($.extend({
             stop: function(event, ui) {
                 var widget = ui.helper.attr("id")
                 $("#inspect_css_width").val(ui.size.width + "px");
@@ -899,11 +924,11 @@ function pxAdd(val, add) {
         });
 
         $(".dashui-version").html(dui.version);
-
-        $("#dui_editor").dialog({
+        $("#dui_editor").prop("title", "DashUI " + dui.version)
+           .dialog({
             modal: false,
             autoOpen: false,
-            width: 540,
+            width: 500,
             height: 610,
             position: { my: "right top", at: "right top", of: window },
             close: function () {

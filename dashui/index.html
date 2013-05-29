@@ -36,14 +36,14 @@
         </div>
     </div>
 
-    <div id="dui_editor" title="DashUI">
+    <div id="dui_editor" title="">
         <div id="tabs" style="font-size: 0.7em !important">
             <ul>
                 <li><a href="#tabs-1">Views</a></li>
                 <li><a href="#tabs-4">Widgets</a></li>
                 <li><a href="#tabs-3">CSS Inspector</a></li>
                 <li><a href="#tabs-2">Homematic</a></li>
-                <li><a href="#tabs-5">Editor</a></li>
+                <li><a href="#tabs-6">Editor</a></li>
                 <li><a href="#tabs-5">Info</a></li>
 
             </ul>
@@ -153,9 +153,31 @@
                     <table id="widget_attrs"></table>
                 </div>
             </div>
+
+            <div id="tabs-6" class="ui-widget-content">
+                Snap
+                <select id="snap_type">
+                    <option value="0" selected="selected">disabled</option>
+                    <option value="1">elements</option>
+                    <option value="2">grid</option>
+                </select><br/>
+                grid size <input id="grid_size" type="text" value=""/><br/>
+
+            </div>
+
+
             <div id="tabs-5" class="ui-widget-content">
-                <h3>DashUI Version <span class="dashui-version"></span></h3>
-                <h4>Copyright (c) 2013 <a href="https://github.com/hobbyquaker" target="_blank">hobbyquaker</a></h4>
+
+                    <ul style="font-size: 1.1em; line-height: 2em;">
+                        <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank">Webseite</a></li>
+                        <li><a href="https://github.com/hobbyquaker/DashUI/wiki/" target="_blank">Widget-Wiki</a></li>
+                        <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank">Unterstützung</a></li>
+                        <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank">Änderungs-Historie</a></li>
+                    </ul>
+                <p>Die Nutzung dieser Software erfolgt auf eigenes Risiko. Der Author dieser Software kann für eventuell auftretende Folgeschäden nicht haftbar gemacht werden!</p>
+                </p>
+
+                <h4>Copyright &copy; 2013 <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a></h4>
                 <p>MIT Lizenz (MIT)</p>
                 <p>Hiermit wird unentgeltlich, jeder Person, die eine Kopie der Software und der zugehörigen Dokumentationen (die
                     "Software") erhält, die Erlaubnis erteilt, sie uneingeschränkt zu benutzen, inklusive und ohne Ausnahme, dem Recht,
