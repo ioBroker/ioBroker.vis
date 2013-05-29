@@ -184,8 +184,6 @@ var version =               '0.9',
                 if ((''+id).indexOf("__") !== -1) {
                     id = id.replace(/__d__/g, ".");
                     id = id.replace(/__c__/g, ":");
-
-
                 }
                 if (id != parseInt(id,10)) {
                     id = "\"" + id + "\"";
