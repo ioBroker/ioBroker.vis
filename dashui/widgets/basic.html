@@ -50,9 +50,9 @@
                 if (dui.urlParams["edit"] !== "") {
                     $this.change(function () {
                         if ($this.prop("checked")) {
-                            jQuery.homematic("setState", $this.attr("data-hm-id"), 1);
+                            jQuery.homematic("setState", $this.attr("data-hm-id"), true);
                         } else {
-                            jQuery.homematic("setState", $this.attr("data-hm-id"), 0);
+                            jQuery.homematic("setState", $this.attr("data-hm-id"), false);
                         }
                     });
                 }
@@ -61,10 +61,13 @@
                 var $this = jQuery(el).prev();
                 var id = $this.attr("data-hm-id");
                 $this.change(function () {
+                    console.log("uiState " + homematic.uiState.attr("_"+$this.attr("data-hm-id")));
+                    console.log("setState " + $this.find("option:selected").val());
                     jQuery.homematic("setState", $this.attr("data-hm-id"), $this.find("option:selected").val());
                 });
                 var hm_id = "_" + $.homematic("escape",id);
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    console.log("newVal="+newVal+" oldVal="+oldVal);
                     if (newVal == "false" || parseFloat(newVal) == 0) {
                         if ($this.find("option[value='1']").prop("selected")) {
                             //console.log("false");

@@ -25,12 +25,13 @@ var homematic = {
     uiState: {},                // can Observable für UI
     setState: {},               // can Observable zum setzen von Werten
     ccu: {},                    // Logikschicht-Daten
-    dpWorking: {}
+    dpWorking: {},
+    cancelUpdateList: []            // Datenpunkte die beim nächsten Refresh ausgespart werden sollen
 };
 
 (function ($) {
 
-var version =               '0.8',
+var version =               '0.9',
 
     connected =             false,
     ready =                 false,
@@ -183,8 +184,11 @@ var version =               '0.8',
                 if ((''+id).indexOf("__") !== -1) {
                     id = id.replace(/__d__/g, ".");
                     id = id.replace(/__c__/g, ":");
-                    id = "\"" + id + "\"";
 
+
+                }
+                if (id != parseInt(id,10)) {
+                    id = "\"" + id + "\"";
                 }
                 funcs.script('dom.GetObject('+id+').State('+value+');', function () { cancelNextRefresh = false; });
             }
