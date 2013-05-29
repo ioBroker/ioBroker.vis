@@ -39,7 +39,7 @@
 ### 0.6
 
 * Sind keine lokalen Views vorhanden wird nun automatisch versucht die Views von der CCU zu laden
-* Wï¿½hrend des Ladevorgangs wird div#loader eingeblendet
+* Während des Ladevorgangs wird div#loader eingeblendet
 * Widget-Select wird nun aktualisiert wenn Widgets geläscht werden
 * Diverse Fehler beim duplizieren von Views behoben
 * Beim Ü„ndern von Widget-Attributen werden Widgets nun neu gerendert, es ist kein Reload mehr notwendig
@@ -63,7 +63,7 @@
 
 * Views können nun unterschiedliche jQuery UI Themes zugewiesen werden, 3 Themes sind bisher mitgeliefert
 * Ab sofort kann als Attribut hm_id neben der id auch eine Adresse in der Form BidCos-RF.EEQ0012345:1.LEVEL bzw ein Variablen- oder Programmname angegeben werden
-* Üœber http://ccu/addons/dashui/reset.html kann der Cache komplett geleert werden
+* Über http://ccu/addons/dashui/reset.html kann der Cache komplett geleert werden
 * diverse Fehler beim Selektieren von Widgets und Wechseln der View behoben
 * Views können nun gelöscht und umbenannt werden
 * Views werden nun erst beim erstmaligen Aufruf gerendert (merzt auch jqPlot Probleme aus)
