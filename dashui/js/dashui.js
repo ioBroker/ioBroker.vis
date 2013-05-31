@@ -536,7 +536,7 @@ var dui = {
             this.words = {
                 "hm_id"   : {"en": "Homematic ID", "de": "Homematic ID",   "ru" : "Homematic ID"},
                 "comment" : {"en" : "Comments",    "de": "Kommentare",     "ru" : "Комментарий"},	
-                "Select HM parameter" : {"en" : "Select HM parameter", "de": "HM parameter ausahlen",   "ru" : "Выбрать HM адрес"},	
+                "Select HM parameter" : {"en" : "Select HM parameter", "de": "HM parameter ausw&auml;hlen",   "ru" : "Выбрать HM адрес"},	
                 "Select"  : {"en" : "Select",      "de": "Auswahlen",      "ru" : "Выбрать"},	
                 "Cancel"  : {"en" : "Cancel",      "de": "Abbrechen",      "ru" : "Отмена"},	
                 "Name"    : {"en" : "Name",        "de": "Name",           "ru" : "Имя"},	
@@ -934,16 +934,19 @@ dui = $.extend(true, dui, {
     }
 });
 
-// Device selction dialog
+// Device selection dialog
 var hmSelect = {
-	timeoutHnd:  null, // timeout for search
-	value:       null,
-	_userArg:    null,
-	_onsuccess:  null,
-	images:      null,
-	mydata:      null,
-	_selectText: null,
-	_cancelText: null,
+	timeoutHnd:   null, // timeout for search
+	value:        null,
+	_userArg:     null,
+	_onsuccess:   null,
+	images:       null,
+	mydata:       null,
+	_selectText:  null,
+	_cancelText:  null,
+    _locButtons:  null,
+    _locationFlt: "",   // rooms filter
+    _filter:      null, // current filter
     
 	convertName: function (text)
 	{
@@ -1089,6 +1092,7 @@ var hmSelect = {
 		_onsuccess = onSuccess || null;
 		if (!document.getElementById ("hmSelect")) {
 			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate ("Select HM parameter") + "'><table id='hmSelectContent'></table></div>");
+            $('#hmSelect').prepend ("<div id='hmSelectLocations' class='ui-state-highlight'></div>");
 		}
 		this._selectText = dui.translate ("Select");
 		this._cancelText = dui.translate ("Cancel");
@@ -1113,11 +1117,46 @@ var hmSelect = {
 			width: 870,
 			resize: function(event, ui) { 
 				$("#hmSelectContent").setGridWidth ($('#hmSelect').width()  - 35);
-				$("#hmSelectContent").setGridHeight($('#hmSelect').height() - 50);
+				$("#hmSelectContent").setGridHeight($('#hmSelect').height() - 50 - $('#hmSelectLocations').height ());
+                $('#hmSelectLocations').width ($('#hmSelect').width() - 38);
 			},
 			buttons: dialog_buttons
 		});
 
+        // Fill the locations toolbar
+        if (this._locButtons == null) {
+            this._locButtons = new Array ();
+            var l = 0;
+            for (var room in rooms) {
+                $("#hmSelectLocations").append('<button id="hmSelectLocations' + l + '" />');
+                $('#hmSelectLocations' + l).button ({label: room}).click (function (obj) { 
+                    // toggle state
+                    if (hmSelect._locationFlt == "")
+                    {
+                        
+                        hmSelect._locationFlt = $(this).button('option', 'label');
+                        for (var i =0 ; i < hmSelect._locButtons.length; i++) {
+                            if (hmSelect._locButtons[i].button('option', 'label') == hmSelect._locationFlt)
+                                continue;
+                            hmSelect._locButtons[i].button("disable");
+                        }
+                    }
+                    else
+                    {
+                        hmSelect._locationFlt = "";
+                        for (var i =0 ; i < hmSelect._locButtons.length; i++) {
+                            hmSelect._locButtons[i].button("enable");
+                        }
+                    }
+                    hmSelect.filterLocation (hmSelect._locButtons[i]);
+                });
+                this._locButtons[l] =  $('#hmSelectLocations' + l);
+                l++;
+            }
+        }
+        $('#hmSelectLocations').width ($('#hmSelect').width());
+        
+        // Build the data tree together
 		if (this.mydata == null)
 		{
             this.mydata = new Array ();
@@ -1158,7 +1197,7 @@ var hmSelect = {
 					"Name":      this.convertName(devices[dev].Name),
 					isLeaf:      false,
 					level:       "0",
-					parent:      "",
+					parent:      "null",
 					expanded:   false, 
 					loaded:     true
 				};
@@ -1215,18 +1254,19 @@ var hmSelect = {
 			}
 		}
 
+        // Create the grid
 		$("#hmSelectContent").jqGrid({
 			datatype:    "jsonstring",
 			datastr:     this.mydata,
-			height:      $('#hmSelect').height() - 50,
+			height:      $('#hmSelect').height() - 50 - $('#hmSelectLocations').height (),
 			autowidth:   true,
 			shrinkToFit: false,
 			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Location'), dui.translate ('Interface'), dui.translate ('Type'), dui.translate ('Address')],
 			colModel:[
                 {name:'id',       index:'id',        width:1,   hidden:true, key:true},
-				{name:'Name',     index:'Name',      width:250, sorttype:"text"},
+				{name:'Name',     index:'Name',      width:250, sortable:"text"},
 				{name:'Image',    index:'Image',     width:22,  sortable:false, align:"right", search: false},
-				{name:'Location', index:'Location',  width:110, sorttype:"text"},
+				{name:'Location', index:'Location',  width:110, sorttype:"text", search: false},
 				{name:'Interface',index:'Interface', width:80,  sorttype:"text"},
 				{name:'Type',     index:'Type',      width:120, sorttype:"text"},		
 				{name:'Address',  index:'Address',   width:220, sorttype:"text"}
@@ -1257,41 +1297,51 @@ var hmSelect = {
 				records: function (obj) { return obj.length; }
 			}
 		});
+        // Add the filter column
 		$("#hmSelectContent").jqGrid('filterToolbar',{searchOperators : false,
-			beforeSearch: function ()
-			{
+			beforeSearch: function () {
 				var searchData = jQuery.parseJSON(this.p.postData.filters);
+                hmSelect._filter = searchData;
 				
-				// Custom filter
-				var rows = $("#hmSelectContent").jqGrid('getGridParam', 'data');
-				for (var i = 0; i < rows.length; i++){
-					var isShow = true;
-					if (rows[i].level!="0")
-						continue;
-					for (var j = 0; j < searchData.rules.length; j++)
-					{
-						if (rows[i][searchData.rules[j].field].indexOf (searchData.rules[j].data) == -1)
-						{
-							isShow = false;
-							break;
-						}
-					}
-					$("#"+rows[i].id,"#hmSelectContent").css({display: (isShow) ? "":"none"});
-				}
+                hmSelect.filterLocation ();
 			}
 		});
+        // Select current element
 		if (selectedId != null) {
 			$("#hmSelectContent").setSelection(selectedId, true);
 			$("#"+$("#hmSelectContent").jqGrid('getGridParam','selrow')).focus();
 		}	
-			
+		// Show dialog
 		$('#hmSelect').dialog("open");
+        // Increase dialog because of bug in jqGrid
 		$('#hmSelect').dialog("option", "width", 900);
-		// Disable button if nothing selected
+		// Disable "Select" button if nothing selected
 		if (selectedId == null)	{
 			$(":button:contains('"+this._selectText+"')").prop("disabled", true).addClass("ui-state-disabled");
 		}
 	},
+    filterLocation: function ()
+    {
+        // Custom filter
+        var rows = $("#hmSelectContent").jqGrid('getGridParam', 'data');
+        for (var i = 0; i < rows.length; i++){
+            var isShow = true;
+            if (rows[i].level!="0")
+                continue;
+            if (hmSelect._filter != null) {
+                for (var j = 0; j < hmSelect._filter.rules.length; j++) {
+                    if (rows[i][hmSelect._filter.rules[j].field].indexOf (hmSelect._filter.rules[j].data) == -1) {
+                        isShow = false;
+                        break;
+                    }
+                }
+            }
+            if (isShow && hmSelect._locationFlt != "" && rows[i]['Location'].indexOf (hmSelect._locationFlt) == -1) {
+                isShow = false;
+            }
+            $("#"+rows[i].id,"#hmSelectContent").css({display: (isShow) ? "":"none"});
+        }
+    }
 };
 
 function pxAdd(val, add) {
