@@ -19,7 +19,7 @@
  *  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-;
+
 //console.log("DashUI");
 // dui - the DashUI Engine
 var dui = {
@@ -28,7 +28,7 @@ var dui = {
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
-    fileViews:          '/usr/local/addons/dashui/views.dui',
+    fileViews:          '/usr/local/etc/config/addons/www/dashui/views.dui',
     instance:           null,
     urlParams:          {},
     settings:           {},
@@ -38,6 +38,8 @@ var dui = {
     defaultHmInterval:  7500,
     listval:            [],
     widgetSets:         ["basic","colorpicker","fancyswitch","knob","jqplot","jqui","jqui-mfd","dev"],
+    words:              null,
+    currentLang:        "de",
 
     binds: {},
     startInstance: function () {
@@ -47,7 +49,7 @@ var dui = {
 
         var name = "dashui_"+dui.instance;
         $.homematic("addStringVariable", name+"_view", "automatisch angelegt von DashUI.")
-        $.homematic("addStringVariable", name+"_cmd", "automatisch angelegt von DashUI.")
+        $.homematic("addStringVariable", name+"_cmd",  "automatisch angelegt von DashUI.")
         $.homematic("addStringVariable", name+"_data", "automatisch angelegt von DashUI.")
 
         $.homematic("addUiState", name+"_view");
@@ -224,7 +226,9 @@ var dui = {
                 i, k, len = keys.length;
 
             keys.sort();
-
+            // Load devices from CCU
+            if (!homematic.ccu["devices"])
+                $.homematic ("loadCcuDataAll", true);
 
             for (i = 0; i < len; i++) {
                 k = keys[i];
@@ -526,6 +530,33 @@ var dui = {
             $("#loading").append("CCU Communication Error");
             $.error("CCU Communication Error")
         });
+    },
+    translate: function (text) {
+        if (!this.words) {
+            this.words = {
+                "hm_id"   : {"en": "Homematic ID", "de": "Homematic ID",   "ru" : "Homematic ID"},
+                "comment" : {"en" : "Comments",    "de": "Kommentare",     "ru" : "Комментарий"},	
+                "Select HM parameter" : {"en" : "Select HM parameter", "de": "HM parameter ausahlen",   "ru" : "Выбрать HM адрес"},	
+                "Select"  : {"en" : "Select",      "de": "Auswahlen",      "ru" : "Выбрать"},	
+                "Cancel"  : {"en" : "Cancel",      "de": "Abbrechen",      "ru" : "Отмена"},	
+                "Name"    : {"en" : "Name",        "de": "Name",           "ru" : "Имя"},	
+                "Location": {"en" : "Location",    "de": "Raum",           "ru" : "Положение"},	
+                "Interface"  : {"en" : "Interface","de": "Schnittstelle",  "ru" : "Интерфейс"},	
+                "Type"    : {"en" : "Type",        "de": "Typ",            "ru" : "Тип"},	
+                "Address" : {"en" : "Address",     "de": "Adresse",        "ru" : "Адрес"},	
+            };
+        }
+        // Search the array 
+        /*for (var i = 0; i < this.words.length; i++)
+        {
+            if (this.words[i]["Text"] == text) {
+                return (this.words[i][this.currentLang]) ? this.words[i][this.currentLang] : text;
+            }
+        }*/
+        if (this.words[text] && this.words[text][this.currentLang])
+            return this.words[text][this.currentLang];
+
+        return text;
     }
 };
 
@@ -630,7 +661,6 @@ dui = $.extend(true, dui, {
                 buttontext: undefined
             }, data))
         };
-
         $("#duiview_"+dui.activeView).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"]}));
 
         if (!dui.views[dui.activeView]) {
@@ -654,7 +684,6 @@ dui = $.extend(true, dui, {
             $("#"+widgetId).css(style);
         }
 
-
         dui.binds.jqueryui._disable();
         $("#"+widgetId).click(function (e) {
             e.preventDefault();
@@ -664,7 +693,6 @@ dui = $.extend(true, dui, {
         });
         dui.activeWidget = widgetId;
         return widgetId;
-
     },
     dupWidget: function () {
         var activeView = dui.activeView;
@@ -696,6 +724,7 @@ dui = $.extend(true, dui, {
         }
     },
     inspectWidget: function (id) {
+	
         //console.log("inspectWidget("+id+")");
 
         $("#select_active_widget option[value='"+id+"']").prop("selected", true);
@@ -737,11 +766,22 @@ dui = $.extend(true, dui, {
 
         for (var attr in widget_attrs) {
             if (widget_attrs[attr] != "") {
+                if (widget_attrs[attr] === "hm_id") {
+                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/><input type="button" id="inspect_'+widget_attrs[attr]+'_hmid" value="..."></td></tr>');
+                    document.getElementById ("inspect_"+widget_attrs[attr]+"_hmid").jControl = widget_attrs[attr];
+                    // Select Homematic ID Dialog
+                    $("#inspect_"+widget_attrs[attr]+"_hmid").click ( function () {
+                        hmSelect.value = $("#inspect_"+this.jControl).val();
+                        hmSelect.show (homematic.ccu['devices'], homematic.ccu['rooms'], this.jControl, function (obj, value) {
+                            $("#inspect_"+obj).val(value);
+                        });
+                    });
+                } else
                 if (widget_attrs[attr].slice(0,4) !== "html") {
-                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+widget_attrs[attr]+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/></td></tr>');
+                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/></td></tr>');
 
                 } else {
-                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+widget_attrs[attr]+'</td><td><textarea id="inspect_'+widget_attrs[attr]+'" rows="2" cols="44"></textarea></td></tr>');
+                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><textarea id="inspect_'+widget_attrs[attr]+'" rows="2" cols="44"></textarea></td></tr>');
 
                 }
 
@@ -893,6 +933,366 @@ dui = $.extend(true, dui, {
             .hide();
     }
 });
+
+// Device selction dialog
+var hmSelect = {
+	timeoutHnd:  null, // timeout for search
+	value:       null,
+	_userArg:    null,
+	_onsuccess:  null,
+	images:      null,
+	mydata:      null,
+	_selectText: null,
+	_cancelText: null,
+    
+	convertName: function (text)
+	{
+		var oldText = text;
+		do
+		{
+			oldText = text;
+			text = text.replace ("%C4", "&Auml;");
+			text = text.replace ("%E4", "&auml;");
+			text = text.replace ("%D6", "&Ouml;");
+			text = text.replace ("%F6", "&ouml;");
+			text = text.replace ("%DC", "&Uuml;");
+			text = text.replace ("%FC", "&uuml;");
+			text = text.replace ("%DF", "&szlig;");
+			text = text.replace ("%20", " ");
+			text = text.replace ("%3A", ".");
+		}while (text != oldText);
+		
+		return text;
+	}, // Convert name
+	getImage: function (type)
+	{
+		if (this.images == null) {
+			this.deviceImgPath = '/config/img/devices/50/';
+			// Devices -> Images
+			this.images =  {
+				'HM-LC-Dim1TPBU-FM': 'PushButton-2ch-wm_thumb.png',
+				'HM-LC-Sw1PBU-FM':   'PushButton-2ch-wm_thumb.png',
+				'HM-LC-Bl1PBU-FM':   'PushButton-2ch-wm_thumb.png',
+				'HM-LC-Sw1-PB-FM':   'PushButton-2ch-wm_thumb.png',
+				'HM-PB-2-WM':        'PushButton-2ch-wm_thumb.png',
+				'HM-LC-Sw2-PB-FM':   'PushButton-4ch-wm_thumb.png',
+				'HM-PB-4-WM':        'PushButton-4ch-wm_thumb.png',
+				'HM-LC-Dim1L-Pl':    'OM55_DimmerSwitch_thumb.png',
+				'HM-LC-Dim1T-Pl':    'OM55_DimmerSwitch_thumb.png',
+				'HM-LC-Sw1-Pl':      'OM55_DimmerSwitch_thumb.png',
+				'HM-LC-Dim1L-Pl-2':  'OM55_DimmerSwitch_thumb.png',
+				'HM-LC-Sw1-Pl-OM54': 'OM55_DimmerSwitch_thumb.png',
+				'HM-Sys-sRP-Pl':     'OM55_DimmerSwitch_thumb.png',
+				'HM-LC-Dim1T-Pl-2':  'OM55_DimmerSwitch_thumb.png',
+				'HM-LC-Sw1-Pl-2':    'OM55_DimmerSwitch_thumb.png',
+				'HM-Sen-WA-OD':      '82_hm-sen-wa-od_thumb.png',
+				'HM-Dis-TD-T':       '81_hm-dis-td-t_thumb.png',
+				'HM-Sen-MDIR-O':     '80_hm-sen-mdir-o_thumb.png',
+				'HM-OU-LED16':       '78_hm-ou-led16_thumb.png',
+				'HM-LC-Sw1-Ba-PCB':  '77_hm-lc-sw1-ba-pcb_thumb.png',
+				'HM-LC-Sw4-WM':      '76_hm-lc-sw4-wm_thumb.png',
+				'HM-PB-2-WM55':      '75_hm-pb-2-wm55_thumb.png',
+				'atent':             '73_hm-atent_thumb.png',
+				'HM-RC-BRC-H':       '72_hm-rc-brc-h_thumb.png',
+				'HMW-IO-12-Sw14-DR': '71_hmw-io-12-sw14-dr_thumb.png',
+				'HM-PB-4Dis-WM':     '70_hm-pb-4dis-wm_thumb.png',
+				'HM-LC-Sw2-DR':      '69_hm-lc-sw2-dr_thumb.png',
+				'HM-LC-Sw4-DR':      '68_hm-lc-sw4-dr_thumb.png',
+				'HM-SCI-3-FM':       '67_hm-sci-3-fm_thumb.png',
+				'HM-LC-Dim1T-CV':    '66_hm-lc-dim1t-cv_thumb.png',
+				'HM-LC-Dim1T-FM':    '65_hm-lc-dim1t-fm_thumb.png',
+				'HM-LC-Dim2T-SM':    '64_hm-lc-dim2T-sm_thumb.png',
+				'HM-LC-Bl1-pb-FM':   '61_hm-lc-bl1-pb-fm_thumb.png',
+				'HM-LC-Bi1-pb-FM':   '61_hm-lc-bi1-pb-fm_thumb.png',
+				'HM-OU-CF-Pl':       '60_hm-ou-cf-pl_thumb.png',
+				'HM-OU-CFM-Pl':      '60_hm-ou-cf-pl_thumb.png',
+				'HMW-IO-12-FM':      '59_hmw-io-12-fm_thumb.png',
+				'HMW-Sen-SC-12-FM':  '58_hmw-sen-sc-12-fm_thumb.png',
+				'HM-CC-SCD':         '57_hm-cc-scd_thumb.png',
+				'HMW-Sen-SC-12-DR':  '56_hmw-sen-sc-12-dr_thumb.png',
+				'HM-Sec-SFA-SM':     '55_hm-sec-sfa-sm_thumb.png',
+				'HM-LC-ddc1':        '54a_lc-ddc1_thumb.png',
+				'HM-LC-ddc1-PCB':    '54_hm-lc-ddc1-pcb_thumb.png',
+				'HM-Sen-MDIR-SM':    '53_hm-sen-mdir-sm_thumb.png',
+				'HM-Sec-SD-Team':    '52_hm-sec-sd-team_thumb.png',
+				'HM-Sec-SD':         '51_hm-sec-sd_thumb.png',
+				'HM-Sec-MDIR':       '50_hm-sec-mdir_thumb.png',
+				'HM-Sec-WDS':        '49_hm-sec-wds_thumb.png',
+				'HM-Sen-EP':         '48_hm-sen-ep_thumb.png',
+				'HM-Sec-TiS':        '47_hm-sec-tis_thumb.png',
+				'HM-LC-Sw4-PCB':     '46_hm-lc-sw4-pcb_thumb.png',
+				'HM-LC-Dim2L-SM':    '45_hm-lc-dim2l-sm_thumb.png',
+				'HM-EM-CCM':         '44_hm-em-ccm_thumb.png',
+				'HM-CC-VD':          '43_hm-cc-vd_thumb.png',
+				'HM-CC-TC':          '42_hm-cc-tc_thumb.png',
+				'HM-Swi-3-FM':       '39_hm-swi-3-fm_thumb.png',
+				'HM-PBI-4-FM':       '38_hm-pbi-4-fm_thumb.png',
+				'HMW-Sys-PS7-DR':    '36_hmw-sys-ps7-dr_thumb.png',
+				'HMW-Sys-TM-DR':     '35_hmw-sys-tm-dr_thumb.png',
+				'HMW-Sys-TM':        '34_hmw-sys-tm_thumb.png',
+				'HMW-Sec-TR-FM':     '33_hmw-sec-tr-fm_thumb.png',
+				'HMW-WSTH-SM':       '32_hmw-wsth-sm_thumb.png',
+				'HMW-WSE-SM':        '31_hmw-wse-sm_thumb.png',
+				'HMW-IO-12-Sw7-DR':  '30_hmw-io-12-sw7-dr_thumb.png',
+				'HMW-IO-4-FM':       '29_hmw-io-4-fm_thumb.png',
+				'HMW-LC-Dim1L-DR':   '28_hmw-lc-dim1l-dr_thumb.png',
+				'HMW-LC-Bl1-DR':     '27_hmw-lc-bl1-dr_thumb.png',
+				'HMW-LC-Sw2-DR':     '26_hmw-lc-sw2-dr_thumb.png',
+				'HM-EM-CMM':         '25_hm-em-cmm_thumb.png',
+				'HM-CCU-1':          '24_hm-cen-3-1_thumb.png',
+				'HM-RCV-50':         '24_hm-cen-3-1_thumb.png',
+				'HMW-RCV-50':        '24_hm-cen-3-1_thumb.png',
+				'HM-RC-Key3':        '23_hm-rc-key3-b_thumb.png',
+				'HM-RC-Key3-B':      '23_hm-rc-key3-b_thumb.png',
+				'HM-RC-Sec3':        '22_hm-rc-sec3-b_thumb.png',
+				'HM-RC-Sec3-B':      '22_hm-rc-sec3-b_thumb.png',
+				'HM-RC-P1':          '21_hm-rc-p1_thumb.png',
+				'HM-RC-19':          '20_hm-rc-19_thumb.png',
+				'HM-RC-19-B':        '20_hm-rc-19_thumb.png',
+				'HM-RC-12':          '19_hm-rc-12_thumb.png',
+				'HM-RC-12-B':        '19_hm-rc-12_thumb.png',
+				'HM-RC-4':           '18_hm-rc-4_thumb.png',
+				'HM-RC-4-B':         '18_hm-rc-4_thumb.png',
+				'HM-Sec-RHS':        '17_hm-sec-rhs_thumb.png',
+				'HM-Sec-SC':         '16_hm-sec-sc_thumb.png',
+				'HM-Sec-Win':        '15_hm-sec-win_thumb.png',
+				'HM-Sec-Key':        '14_hm-sec-key_thumb.png',
+				'HM-Sec-Key-S':      '14_hm-sec-key_thumb.png',
+				'HM-WS550STH-I':     '13_hm-ws550sth-i_thumb.png',
+				'HM-WDS40-TH-I':     '13_hm-ws550sth-i_thumb.png',
+				'HM-WS550-US':       '9_hm-ws550-us_thumb.png',
+				'WS550':             '9_hm-ws550-us_thumb.png',
+				'HM-WDC7000':        '9_hm-ws550-us_thumb.png',
+				'HM-LC-Sw1-SM':      '8_hm-lc-sw1-sm_thumb.png',
+				'HM-LC-Bl1-FM':      '7_hm-lc-bl1-fm_thumb.png',
+				'HM-LC-Bl1-SM':      '6_hm-lc-bl1-sm_thumb.png',
+				'HM-LC-Sw2-FM':      '5_hm-lc-sw2-fm_thumb.png',
+				'HM-LC-Sw1-FM':      '4_hm-lc-sw1-fm_thumb.png',
+				'HM-LC-Sw4-SM':      '3_hm-lc-sw4-sm_thumb.png',
+				'HM-LC-Dim1L-CV':    '2_hm-lc-dim1l-cv_thumb.png',
+				'HM-LC-Dim1PWM-CV':  '2_hm-lc-dim1l-cv_thumb.png',
+				'HM-WS550ST-IO':     'IP65_G201_thumb.png',
+				'HM-WDS30-T-O':      'IP65_G201_thumb.png',
+				'HM-WDS100-C6-O':    'WeatherCombiSensor_thumb.png',
+				'HM-WDS10-TH-O':     'TH_CS_thumb.png',
+				'HM-WS550STH-O':     'TH_CS_thumb.png'
+			};	
+		}
+		if (this.images[type])
+			return this.deviceImgPath + this.images[type];
+		else
+			return "";
+	}, // Get image for type
+	show: function (devices, rooms, userArg, onSuccess)
+	{
+		_userArg = userArg || null;
+		_onsuccess = onSuccess || null;
+		if (!document.getElementById ("hmSelect")) {
+			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate ("Select HM parameter") + "'><table id='hmSelectContent'></table></div>");
+		}
+		this._selectText = dui.translate ("Select");
+		this._cancelText = dui.translate ("Cancel");
+		var dialog_buttons = {}; 
+		dialog_buttons[this._selectText] = function() { 
+			$( this ).dialog( "close" ); 
+			if (_onsuccess)
+				_onsuccess (_userArg, value);
+			$('#hmSelectContent').jqGrid('GridUnload');
+		}
+		dialog_buttons[this._cancelText] = function(){ 
+			$( this ).dialog( "close" ); 
+			$('#hmSelectContent').jqGrid('GridUnload'); 
+		}   
+		$('#instanceDialog').dialog({ buttons: dialog_buttons });		
+		
+		$('#hmSelect')
+		.dialog({
+			resizable: true,
+			height: $(window).height(),
+			modal: true,
+			width: 870,
+			resize: function(event, ui) { 
+				$("#hmSelectContent").setGridWidth ($('#hmSelect').width()  - 35);
+				$("#hmSelectContent").setGridHeight($('#hmSelect').height() - 50);
+			},
+			buttons: dialog_buttons
+		});
+
+		if (this.mydata == null)
+		{
+            this.mydata = new Array ();
+		    var i = 0;
+			var selectedId = null;
+			// Add all elements
+			for(var dev in devices){
+			
+				// Try to find room
+				if (devices[dev].room === undefined || devices[dev].room === null){
+					var arr = new Object ();
+					devices[dev].room = "";
+					for (var chn in devices[dev].Channels){
+						devices[dev].Channels[chn].room = "";
+						for (var room in rooms) {
+							for (var k = 0; k < rooms[room].channels.length; k++){
+								if (rooms[room].channels[k] == chn){
+									devices[dev].Channels[chn].room = room;
+									if (!arr[rooms[room]["id"]]) {
+										arr[rooms[room]["id"]] = 1;
+										if (devices[dev].room != "") devices[dev].room += ", ";
+										devices[dev].room += room;
+									}
+									break;
+								}
+							}
+						}
+					}
+				}
+			
+				this.mydata[i] = {
+					id:          ""+(i+1), 
+					"Image":     "<img src='"+this.getImage(devices[dev].HssType)+"' width=25 height=25 />",
+					"Location":  devices[dev].room,
+					"Interface": devices[dev].Interface,
+					"Type":      devices[dev].HssType,
+					"Address":   devices[dev].Address,
+					"Name":      this.convertName(devices[dev].Name),
+					isLeaf:      false,
+					level:       "0",
+					parent:      "",
+					expanded:   false, 
+					loaded:     true
+				};
+				if (hmSelect.value && this.mydata[i]["Address"] == hmSelect.value) {
+					selectedId = this.mydata[i].id;
+				}
+				var _parent = this.mydata[i].id;
+				i++;
+				for (var chn in devices[dev].Channels)
+				{
+					var channel = devices[dev].Channels[chn];
+					this.mydata[i] = {
+						id:          ""+(i+1), 
+						"Image":     "",//"<img src='"+this.getImage(channel.HssType)+"' width=25 height=25 />",
+						"Location":  channel.room,
+						"Interface": devices[dev].Interface,
+						"Type":      channel.HssType,
+						"Address":   channel.Address,
+						"Name":      this.convertName(channel.Name),
+						isLeaf:      false,
+						level:       "1",
+						parent:      _parent,
+						expanded:    false, 
+						loaded:      true
+					};
+					if (hmSelect.value && this.mydata[i]["Address"] == hmSelect.value) {
+						selectedId = this.mydata[i].id;
+					}
+					var parent1 = this.mydata[i].id;
+					i++;
+					for (var dp in channel.DPs)
+					{	
+						var point = channel.DPs[dp];
+						this.mydata[i] = {
+							id:          ""+(i+1), 
+							"Image":     "",
+							"Location":  channel.room,
+							"Interface": devices[dev].Interface,
+							"Type":      point.ValueUnit,
+							"Address":   this.convertName(point.Name),
+							"Name":      point.Type,
+							isLeaf:      true,
+							level:       "2",
+							parent:      parent1,
+							expanded:    false, 
+							loaded:      true
+						};
+						if (hmSelect.value && this.mydata[i]["Address"] == hmSelect.value) {
+							selectedId = this.mydata[i].id;
+						}
+						i++;
+					}
+				}				
+			}
+		}
+
+		$("#hmSelectContent").jqGrid({
+			datatype:    "jsonstring",
+			datastr:     this.mydata,
+			height:      $('#hmSelect').height() - 50,
+			autowidth:   true,
+			shrinkToFit: false,
+			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Location'), dui.translate ('Interface'), dui.translate ('Type'), dui.translate ('Address')],
+			colModel:[
+                {name:'id',       index:'id',        width:1,   hidden:true, key:true},
+				{name:'Name',     index:'Name',      width:250, sorttype:"text"},
+				{name:'Image',    index:'Image',     width:22,  sortable:false, align:"right", search: false},
+				{name:'Location', index:'Location',  width:110, sorttype:"text"},
+				{name:'Interface',index:'Interface', width:80,  sorttype:"text"},
+				{name:'Type',     index:'Type',      width:120, sorttype:"text"},		
+				{name:'Address',  index:'Address',   width:220, sorttype:"text"}
+			],
+			onSelectRow: function(id){ 
+				value = $("#hmSelectContent").jqGrid ('getCell', id, 'Address');
+				if (value != null && value != "") {
+					$(":button:contains('"+hmSelect._selectText+"')").prop("disabled", false).removeClass("ui-state-disabled");
+				}
+			},
+			
+			sortname: 'id',
+			multiselect: false,
+			gridview: true,
+			scrollrows : true,
+            treeGrid: true,
+            treeGridModel: 'adjacency',
+            treedatatype: "local",
+            ExpandColumn: 'Name',
+			ExpandColClick: true, 
+			pgbuttons: true,
+			viewrecords: true,
+			jsonReader: {
+				repeatitems: false,
+				root: function (obj) { return obj; },
+				page: function (obj) { return 1; },
+				total: function (obj) { return 1; },
+				records: function (obj) { return obj.length; }
+			}
+		});
+		$("#hmSelectContent").jqGrid('filterToolbar',{searchOperators : false,
+			beforeSearch: function ()
+			{
+				var searchData = jQuery.parseJSON(this.p.postData.filters);
+				
+				// Custom filter
+				var rows = $("#hmSelectContent").jqGrid('getGridParam', 'data');
+				for (var i = 0; i < rows.length; i++){
+					var isShow = true;
+					if (rows[i].level!="0")
+						continue;
+					for (var j = 0; j < searchData.rules.length; j++)
+					{
+						if (rows[i][searchData.rules[j].field].indexOf (searchData.rules[j].data) == -1)
+						{
+							isShow = false;
+							break;
+						}
+					}
+					$("#"+rows[i].id,"#hmSelectContent").css({display: (isShow) ? "":"none"});
+				}
+			}
+		});
+		if (selectedId != null) {
+			$("#hmSelectContent").setSelection(selectedId, true);
+			$("#"+$("#hmSelectContent").jqGrid('getGridParam','selrow')).focus();
+		}	
+			
+		$('#hmSelect').dialog("open");
+		$('#hmSelect').dialog("option", "width", 900);
+		// Disable button if nothing selected
+		if (selectedId == null)	{
+			$(":button:contains('"+this._selectText+"')").prop("disabled", true).addClass("ui-state-disabled");
+		}
+	},
+};
 
 function pxAdd(val, add) {
     if (!val) { val = "0px"; }

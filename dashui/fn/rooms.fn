@@ -1,0 +1,37 @@
+!# rooms.fn
+!#
+!# Dieses Script gibt eine Liste der Raeume als JSON Objekt aus
+!#
+!# 5'2013 bluefox copied from hobbyquaker
+!#
+
+object oRoom;
+string sRoomId;
+string sRoomName;
+string sChannelId;
+boolean first = true;
+boolean firstsecond = true;
+
+Write("{");
+foreach (sRoomId, dom.GetObject(ID_ROOMS).EnumUsedIDs())
+{
+    if (first == false) {
+      WriteLine(',');
+    } else {
+      first = false;
+    }
+    oRoom = dom.GetObject(sRoomId);
+	Write('"' # oRoom.Name() # '": ');
+    Write('{"id": "_' # sRoomId # '", "channels": [');
+	firstsecond = true;
+    foreach(sChannelId, oRoom.EnumUsedIDs()) {
+		if (firstsecond == false) {
+		  Write(',');
+		} else {
+		  firstsecond = false;
+		}
+		Write('"_' # sChannelId # '"');
+    }
+    Write(']}');
+}
+Write('}');
