@@ -5,30 +5,29 @@
 !# 5'2013 bluefox copied from hobbyquaker
 !#
 
-object oRoom;
-string sRoomId;
-string sRoomName;
-string sChannelId;
-boolean first = true;
-boolean firstsecond = true;
+object  oRoom;
+string  sRoomId;
+string  sChannelId;
+boolean bFirst       = true;
+boolean bFirstSecond = true;
 
 Write("{");
 foreach (sRoomId, dom.GetObject(ID_ROOMS).EnumUsedIDs())
 {
-    if (first == false) {
+    if (bFirst == false) {
       WriteLine(',');
     } else {
-      first = false;
+      bFirst = false;
     }
     oRoom = dom.GetObject(sRoomId);
 	Write('"' # oRoom.Name() # '": ');
     Write('{"id": "_' # sRoomId # '", "channels": [');
-	firstsecond = true;
+	bFirstSecond = true;
     foreach(sChannelId, oRoom.EnumUsedIDs()) {
-		if (firstsecond == false) {
+		if (bFirstSecond == false) {
 		  Write(',');
 		} else {
-		  firstsecond = false;
+		  bFirstSecond = false;
 		}
 		Write('"_' # sChannelId # '"');
     }

@@ -50,6 +50,7 @@ var version =               '0.9',
             "variables",
             "programs",
             "rooms",
+            "functions",
             "devices"
         ],
         'storageKey':       'jqhm',
@@ -248,6 +249,11 @@ var version =               '0.9',
                         type: 'POST',
                         dataType: 'json',
                         data: data,
+                        /*
+                        // Debug answer
+                        complete: function (res, status) {
+                            var i = res;
+                        },*/
                         success: function (res) {
                             settings.loading("loadCcuData("+dataType+") finished");
                             funcs.debug("loadCcuData("+dataType+") finished");

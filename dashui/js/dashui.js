@@ -544,6 +544,7 @@ var dui = {
                 "Interface"  : {"en" : "Interface","de": "Schnittstelle",  "ru" : "Интерфейс"},	
                 "Type"    : {"en" : "Type",        "de": "Typ",            "ru" : "Тип"},	
                 "Address" : {"en" : "Address",     "de": "Adresse",        "ru" : "Адрес"},	
+                "Function": {"en" : "Function",    "de": "Gewerk",         "ru" : "Назначение"},	
             };
         }
         // Search the array 
@@ -772,7 +773,7 @@ dui = $.extend(true, dui, {
                     // Select Homematic ID Dialog
                     $("#inspect_"+widget_attrs[attr]+"_hmid").click ( function () {
                         hmSelect.value = $("#inspect_"+this.jControl).val();
-                        hmSelect.show (homematic.ccu['devices'], homematic.ccu['rooms'], this.jControl, function (obj, value) {
+                        hmSelect.show (homematic.ccu, this.jControl, function (obj, value) {
                             $("#inspect_"+obj).val(value);
                         });
                     });
@@ -944,8 +945,10 @@ var hmSelect = {
 	mydata:       null,
 	_selectText:  null,
 	_cancelText:  null,
-    _locButtons:  null,
-    _locationFlt: "",   // rooms filter
+    _buttonsLoc:  null, // Array with rooms buttons for filter
+    _buttonsFunc: null, // Array with function buttons for filter 
+    _filterLoc:   "",   // rooms filter
+    _filterFunc:  "",   // functions filter
     _filter:      null, // current filter
     
 	convertName: function (text)
@@ -1086,16 +1089,23 @@ var hmSelect = {
 		else
 			return "";
 	}, // Get image for type
-	show: function (devices, rooms, userArg, onSuccess)
+	show: function (ccu, userArg, onSuccess)
 	{
+        var devices   = ccu['devices'];
+        var rooms     = ccu['rooms'];
+        var functions = ccu['functions'];
+        
 		_userArg = userArg || null;
 		_onsuccess = onSuccess || null;
 		if (!document.getElementById ("hmSelect")) {
 			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate ("Select HM parameter") + "'><table id='hmSelectContent'></table></div>");
-            $('#hmSelect').prepend ("<div id='hmSelectLocations' class='ui-state-highlight'></div>");
+            $('#hmSelect').prepend ("<div id='hmSelectFunctions' class='ui-state-highlight'></div>");
+            $('#hmSelect').prepend ("<div id='hmSelectLocations' class='ui-state-error'></div>");
 		}
+        // Define dialog buttons
 		this._selectText = dui.translate ("Select");
 		this._cancelText = dui.translate ("Cancel");
+        
 		var dialog_buttons = {}; 
 		dialog_buttons[this._selectText] = function() { 
 			$( this ).dialog( "close" ); 
@@ -1117,44 +1127,77 @@ var hmSelect = {
 			width: 870,
 			resize: function(event, ui) { 
 				$("#hmSelectContent").setGridWidth ($('#hmSelect').width()  - 35);
-				$("#hmSelectContent").setGridHeight($('#hmSelect').height() - 50 - $('#hmSelectLocations').height ());
+				$("#hmSelectContent").setGridHeight($('#hmSelect').height() - 53 - $('#hmSelectLocations').height () - $('#hmSelectFunctions').height ());
                 $('#hmSelectLocations').width ($('#hmSelect').width() - 38);
+                $('#hmSelectFunctions').width ($('#hmSelect').width() - 38);
 			},
 			buttons: dialog_buttons
 		});
 
         // Fill the locations toolbar
-        if (this._locButtons == null) {
-            this._locButtons = new Array ();
+        if (this._buttonsLoc == null) {
+            this._buttonsLoc = new Array ();
             var l = 0;
             for (var room in rooms) {
                 $("#hmSelectLocations").append('<button id="hmSelectLocations' + l + '" />');
-                $('#hmSelectLocations' + l).button ({label: room}).click (function (obj) { 
+                $('#hmSelectLocations' + l).button ({label: room, height: 20}).click (function (obj) { 
                     // toggle state
-                    if (hmSelect._locationFlt == "")
+                    if (hmSelect._filterLoc == "")
                     {
                         
-                        hmSelect._locationFlt = $(this).button('option', 'label');
-                        for (var i =0 ; i < hmSelect._locButtons.length; i++) {
-                            if (hmSelect._locButtons[i].button('option', 'label') == hmSelect._locationFlt)
+                        hmSelect._filterLoc = $(this).button('option', 'label');
+                        for (var i =0 ; i < hmSelect._buttonsLoc.length; i++) {
+                            if (hmSelect._buttonsLoc[i].button('option', 'label') == hmSelect._filterLoc)
                                 continue;
-                            hmSelect._locButtons[i].button("disable");
+                            hmSelect._buttonsLoc[i].button("disable");
                         }
                     }
                     else
                     {
-                        hmSelect._locationFlt = "";
-                        for (var i =0 ; i < hmSelect._locButtons.length; i++) {
-                            hmSelect._locButtons[i].button("enable");
+                        hmSelect._filterLoc = "";
+                        for (var i =0 ; i < hmSelect._buttonsLoc.length; i++) {
+                            hmSelect._buttonsLoc[i].button("enable");
                         }
                     }
-                    hmSelect.filterLocation (hmSelect._locButtons[i]);
+                    hmSelect.filterApply ();
                 });
-                this._locButtons[l] =  $('#hmSelectLocations' + l);
+                this._buttonsLoc[l] =  $('#hmSelectLocations' + l);
+                this._buttonsLoc[l].css({"font-size": ".8em", 'padding': '.01em'});
                 l++;
             }
         }
         $('#hmSelectLocations').width ($('#hmSelect').width());
+        
+        // Fill the functions toolbar
+        if (this._buttonsFunc == null) {
+            this._buttonsFunc = new Array ();
+            var l = 0;
+            for (var func in functions) {
+                $("#hmSelectFunctions").append('<button id="hmSelectFunctions' + l + '" />');
+                $('#hmSelectFunctions' + l).button ({label: func, height: 20}).click (function (obj) { 
+                    // toggle state
+                    if (hmSelect._filterFunc == "") {
+                        hmSelect._filterFunc = $(this).button('option', 'label');
+                        for (var i =0 ; i < hmSelect._buttonsFunc.length; i++) {
+                            if (hmSelect._buttonsFunc[i].button('option', 'label') == hmSelect._filterFunc)
+                                continue;
+                            hmSelect._buttonsFunc[i].button("disable");
+                        }
+                    }
+                    else {
+                        hmSelect._filterFunc = "";
+                        for (var i =0 ; i < hmSelect._buttonsFunc.length; i++) {
+                            hmSelect._buttonsFunc[i].button("enable");
+                        }
+                    }
+                    hmSelect.filterApply ();
+                });
+                this._buttonsFunc[l] =  $('#hmSelectFunctions' + l);
+                this._buttonsFunc[l].css({"font-size": ".8em", 'padding': '.01em'});
+                l++;
+            }
+        }
+        $('#hmSelectFunctions').width ($('#hmSelect').width());
         
         // Build the data tree together
 		if (this.mydata == null)
@@ -1164,7 +1207,6 @@ var hmSelect = {
 			var selectedId = null;
 			// Add all elements
 			for(var dev in devices){
-			
 				// Try to find room
 				if (devices[dev].room === undefined || devices[dev].room === null){
 					var arr = new Object ();
@@ -1186,6 +1228,28 @@ var hmSelect = {
 						}
 					}
 				}
+                
+                // Try to find function
+				if (devices[dev].func === undefined || devices[dev].func === null){
+					var arr = new Object ();
+					devices[dev].func = "";
+					for (var chn in devices[dev].Channels){
+						devices[dev].Channels[chn].func = "";
+						for (var func in functions) {
+							for (var k = 0; k < functions[func].channels.length; k++){
+								if (functions[func].channels[k] == chn){
+									devices[dev].Channels[chn].func = func;
+									if (!arr[functions[func]["id"]]) {
+										arr[functions[func]["id"]] = 1;
+										if (devices[dev].func != "") devices[dev].func += ", ";
+										devices[dev].func += func;
+									}
+									break;
+								}
+							}
+						}
+					}
+				}
 			
 				this.mydata[i] = {
 					id:          ""+(i+1), 
@@ -1193,6 +1257,7 @@ var hmSelect = {
 					"Location":  devices[dev].room,
 					"Interface": devices[dev].Interface,
 					"Type":      devices[dev].HssType,
+					"Function":  devices[dev].func,
 					"Address":   devices[dev].Address,
 					"Name":      this.convertName(devices[dev].Name),
 					isLeaf:      false,
@@ -1215,6 +1280,7 @@ var hmSelect = {
 						"Location":  channel.room,
 						"Interface": devices[dev].Interface,
 						"Type":      channel.HssType,
+						"Function":  channel.func,
 						"Address":   channel.Address,
 						"Name":      this.convertName(channel.Name),
 						isLeaf:      false,
@@ -1237,6 +1303,7 @@ var hmSelect = {
 							"Location":  channel.room,
 							"Interface": devices[dev].Interface,
 							"Type":      point.ValueUnit,
+							"Function":  channel.func,
 							"Address":   this.convertName(point.Name),
 							"Name":      point.Type,
 							isLeaf:      true,
@@ -1258,10 +1325,10 @@ var hmSelect = {
 		$("#hmSelectContent").jqGrid({
 			datatype:    "jsonstring",
 			datastr:     this.mydata,
-			height:      $('#hmSelect').height() - 50 - $('#hmSelectLocations').height (),
+			height:      $('#hmSelect').height() - 53 - $('#hmSelectLocations').height () - $('#hmSelectFunctions').height (),
 			autowidth:   true,
 			shrinkToFit: false,
-			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Location'), dui.translate ('Interface'), dui.translate ('Type'), dui.translate ('Address')],
+			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Location'), dui.translate ('Interface'), dui.translate ('Type'), dui.translate ('Function'), dui.translate ('Address')],
 			colModel:[
                 {name:'id',       index:'id',        width:1,   hidden:true, key:true},
 				{name:'Name',     index:'Name',      width:250, sortable:"text"},
@@ -1269,6 +1336,7 @@ var hmSelect = {
 				{name:'Location', index:'Location',  width:110, sorttype:"text", search: false},
 				{name:'Interface',index:'Interface', width:80,  sorttype:"text"},
 				{name:'Type',     index:'Type',      width:120, sorttype:"text"},		
+				{name:'Function', index:'Function',  width:120, hidden:true, search: false, sorttype:"text"},		
 				{name:'Address',  index:'Address',   width:220, sorttype:"text"}
 			],
 			onSelectRow: function(id){ 
@@ -1319,8 +1387,10 @@ var hmSelect = {
 		if (selectedId == null)	{
 			$(":button:contains('"+this._selectText+"')").prop("disabled", true).addClass("ui-state-disabled");
 		}
+        // Filter items with last filter
+        this.filterApply ();
 	},
-    filterLocation: function ()
+    filterApply: function ()
     {
         // Custom filter
         var rows = $("#hmSelectContent").jqGrid('getGridParam', 'data');
@@ -1336,9 +1406,12 @@ var hmSelect = {
                     }
                 }
             }
-            if (isShow && hmSelect._locationFlt != "" && rows[i]['Location'].indexOf (hmSelect._locationFlt) == -1) {
+            if (isShow && hmSelect._filterLoc != "" && rows[i]['Location'].indexOf (hmSelect._filterLoc) == -1) {
                 isShow = false;
             }
+            if (isShow && hmSelect._filterFunc != "" && rows[i]['Function'].indexOf (hmSelect._filterFunc) == -1) {
+                isShow = false;
+            }            
             $("#"+rows[i].id,"#hmSelectContent").css({display: (isShow) ? "":"none"});
         }
     }
