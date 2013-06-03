@@ -40,6 +40,7 @@ var dui = {
     widgetSets:         ["basic","colorpicker","fancyswitch","knob","jqplot","jqui","jqui-mfd","dev"],
     words:              null,
     currentLang:        "de",
+    initialized:        false,
 
     binds: {},
     startInstance: function () {
@@ -153,11 +154,14 @@ var dui = {
         }
     },
     init: function () {
-
+        if (this.initialized)
+            return;
+        
         dui.loadWidgetSets();
 
         dui.initInstance();
 
+        var activeBkgClass = "";
         var settings = storage.get(dui.storageKeySettings);
         if (settings) {
             dui.settings = $.extend(dui.settings, settings);
@@ -199,24 +203,28 @@ var dui = {
             }
         }
 
-        if (dui.views[dui.activeView] && dui.views[dui.activeView].settings != undefined && dui.views[dui.activeView].settings.style != undefined && dui.views[dui.activeView].settings.style['background'] != undefined) {
-            $("#duiview_"+dui.activeView).css("background", dui.views[dui.activeView].settings.style['background']);
-        }
-
         $("#active_view").html(dui.activeView);
 
         dui.changeView(dui.activeView);
+        
+        // Set background style
+        if (dui.views[dui.activeView] && dui.views[dui.activeView].settings != undefined && dui.views[dui.activeView].settings.style != undefined) {
+            if (dui.views[dui.activeView].settings.style['background'] != undefined) {
+               $("#duiview_"+dui.activeView).css("background", dui.views[dui.activeView].settings.style['background']);
+            }
+            if (dui.views[dui.activeView].settings.style['background_class'] != undefined) {
+                activeBkgClass = dui.views[dui.activeView].settings.style['background_class'];
+                $("#duiview_"+dui.activeView).addClass(activeBkgClass);
+            }
+        }
 
         // Navigation
         $(window).bind( 'hashchange', function(e) {
             dui.changeView(window.location.hash.slice(1));
         });
-
-
-
-
 //console.log("EDIT??");
 
+        // EDIT mode
         if (dui.urlParams["edit"] === "") {
             // DashUI Editor Init
 
@@ -249,6 +257,7 @@ var dui = {
             });
 
             $("#select_set").change(dui.refreshWidgetSelect);
+            $("#select_set").html ("");
 
             for (i = 0; i < dui.widgetSets.length; i++) {
                 $("#select_set").append("<option value='"+dui.widgetSets[i]+"'>"+dui.widgetSets[i]+"</option>")
@@ -261,8 +270,79 @@ var dui = {
             //console.log("TOOLBOX OPEN");
             $("#dui_editor").dialog("open");
             dui.binds.jqueryui._disable();
+            
+            // Create background_class property if does not exist
+            if (dui.views[dui.activeView] != undefined) {
+                if (dui.views[dui.activeView].settings == undefined) {
+                    dui.views[dui.activeView].settings = new Object ();
+                }
+                if (dui.views[dui.activeView].settings.style == undefined) {
+                    dui.views[dui.activeView].settings.style = new Object ();
+                }
+                if (dui.views[dui.activeView].settings.style['background_class'] == undefined) {
+                    dui.views[dui.activeView].settings.style['background_class'] = "";
+                }
+            }
+           
+            
+            // Init background selector
+            hqStyleSelector.init ({ width: 202,
+                            name: "inspect_view_bkg_def",
+                            style: activeBkgClass,     
+                            styles: {
+							"Blue marine lines": "hq-background-blue-marine-lines",
+							"Blue marine": "hq-background-blue-marine",
+							"Blue flowers": "hq-background-blue-flowers",
+							"Blue radial": "hq-background-radial-blue",
+							"Black hor. gradient 0": "hq-background-h-gradient-black-0",
+							"Black hor. gradient 1": "hq-background-h-gradient-black-1",
+							"Black hor. gradient 2": "hq-background-h-gradient-black-2",
+							"Black hor. gradient 3": "hq-background-h-gradient-black-3",
+							"Black hor. gradient 4": "hq-background-h-gradient-black-4",
+							"Black hor. gradient 5": "hq-background-h-gradient-black-5",
+							"Orange hor. gradient 0": "hq-background-h-gradient-orange-0",
+							"Orange hor. gradient 1": "hq-background-h-gradient-orange-1",
+							"Orange hor. gradient 2": "hq-background-h-gradient-orange-2",
+							"Orange hor. gradient 3": "hq-background-h-gradient-orange-3",
+							"Blue hor. gradient 0": "hq-background-h-gradient-blue-0",
+							"Blue hor. gradient 1": "hq-background-h-gradient-blue-1",
+							"Blue hor. gradient 2": "hq-background-h-gradient-blue-2",
+							"Blue hor. gradient 3": "hq-background-h-gradient-blue-3",
+							"Blue hor. gradient 4": "hq-background-h-gradient-blue-4",
+							"Blue hor. gradient 5": "hq-background-h-gradient-blue-5",
+							"Blue hor. gradient 6": "hq-background-h-gradient-blue-6",
+							"Blue hor. gradient 7": "hq-background-h-gradient-blue-7",
+							"Yellow hor. gradient 0": "hq-background-h-gradient-yellow-0",
+							"Yellow hor. gradient 1": "hq-background-h-gradient-yellow-1",
+							"Yellow hor. gradient 2": "hq-background-h-gradient-yellow-2",
+							"Yellow hor. gradient 3": "hq-background-h-gradient-yellow-3",
+							"Green hor. gradient 0": "hq-background-h-gradient-green-0",
+							"Green hor. gradient 1": "hq-background-h-gradient-green-1",
+							"Green hor. gradient 2": "hq-background-h-gradient-green-2",
+							"Green hor. gradient 3": "hq-background-h-gradient-green-3",
+							"Green hor. gradient 4": "hq-background-h-gradient-green-4",
+							"Gray flat 0": "hq-background-gray-0",
+							"Gray flat 1": "hq-background-gray-1",
+							"Gray hor. gradient 0": "hq-background-h-gradient-gray-0",
+							"Gray hor. gradient 1": "hq-background-h-gradient-gray-1",
+							"Gray hor. gradient 2": "hq-background-h-gradient-gray-2",
+							"Gray hor. gradient 3": "hq-background-h-gradient-gray-3",
+							"Gray hor. gradient 4": "hq-background-h-gradient-gray-4",
+							"Gray hor. gradient 5": "hq-background-h-gradient-gray-5",
+							"Gray hor. gradient 6": "hq-background-h-gradient-gray-6",
+							"Gray graident": "hq-background-gradient-box",
+                            },
+                            parent: $('#inspect_view_bkg_parent'),
+							onchange: function (newStyle, obj) {
+                                if (dui.views[dui.activeView].settings.style['background_class'])
+                                    $("#duiview_"+dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
+								dui.views[dui.activeView].settings.style['background_class'] = newStyle;
+								$("#duiview_"+dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
+							},
+                          });
+            
         }
-
+        this.initialized = true;
     },
     refreshWidgetSelect: function () {
         $("#select_tpl").html("");
@@ -455,7 +535,7 @@ var dui = {
         // Editor
         $("#inspect_view").html(view);
 
-
+        $("#select_active_widget").html("<option value='none'>none selected</option>");
         for (var widget in dui.views[dui.activeView].widgets) {
             var obj = $("#"+dui.views[dui.activeView].widgets[widget].tpl);
             $("#select_active_widget").append("<option value='"+widget+"'>"+widget+" ("+obj.attr("data-dashui-set")+ " " +obj.attr("data-dashui-name")+")</option>");
@@ -1414,6 +1494,182 @@ var hmSelect = {
             }            
             $("#"+rows[i].id,"#hmSelectContent").css({display: (isShow) ? "":"none"});
         }
+    }
+};
+
+// Selector of styles (uses jquery themes)
+var hqStyleSelector = {
+    // local variables
+    _currentElement: 0,
+	_scrollWidth: -1,
+    // Default settings
+    settings: {
+        // List of styles
+        styles:        null,
+        width:         100,
+        style:         "",     // Init style as text
+        onchange:      null,   // onchange fuction: handler (newStyle, onchangeParam);
+        onchangeParam: null,   // user parameter for onchange function
+        parent:        null,
+        height:        30,
+        dropOpened:    false,
+        name:          null,
+        id:            -1,
+    },
+    _findTitle: function (styles, style)
+    {
+        for(var st in styles) {
+            if (styles[st] == style)
+                return ((st == "") ? style : st);
+        }
+        return style;
+    },
+    
+    // Functions
+    init: function (options) {
+		// Detect scrollbar width
+		if (this._scrollWidth == -1)
+		{
+			// Create the measurement node
+			var scrollDiv = document.createElement("div");
+			scrollDiv.style.width = 100;
+			scrollDiv.style.height = 100;
+			scrollDiv.style.overflow = "scroll";
+			scrollDiv.style.position = "absolute";
+			scrollDiv.style.top = "-9999px";
+			document.body.appendChild(scrollDiv);
+
+			// Get the scrollbar width
+			this._scrollWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+			
+			// Delete the DIV 
+			document.body.removeChild(scrollDiv);
+		}
+        if (options.name == undefined || options.name == "") {
+            options.name = ""+ this._currentElement;
+        }
+        
+        var nameImg  = "styleSelectorImg" +options.name;
+        var nameText = "styleSelectorText"+options.name;
+        var nameBtn  = "styleSelectorB"   +options.name;
+        var nameElem = "styleSelector"    +options.name;
+        if (document.getElementById (nameElem) != undefined) {
+            $('#'+nameElem).remove ();
+            $('#styleSelectorBox'+options.name).remove ();
+        }
+        var text = "<table id='"+nameElem+"'><tr><td>";
+            text += "<table><tr><td><div id='"+nameImg+"'></div></td><td width=10></td><td style='text-align: left; vertical-align: middle;'><div  style='text-align: left; vertical-align: middle;' id='"+nameText+"'></div>";
+            text += "</td></tr></table></td><td>";
+            text += "<button id='"+nameBtn+"' />";
+            text += "</td></tr></table>";
+        var parent = (options.parent == null) ? $("body") : options.parent;
+        parent.append (text);
+        var htmlElem = document.getElementById (nameElem);
+        htmlElem.settings = {};
+        htmlElem.settings = $.extend (htmlElem.settings, this.settings);
+        htmlElem.settings = $.extend (htmlElem.settings, options);
+        htmlElem.settings.parent = parent;
+        htmlElem.settings.id = options.name;
+        htmlElem.settings.styles = $.extend ({"None": ""}, options.styles ? options.styles : {});
+        
+        $('#'+nameImg).css  ({width: htmlElem.settings.height*2, height: htmlElem.settings.height - 4}).addClass ('ui-corner-all');
+        $('#'+nameText).css ({width: htmlElem.settings.width});
+        $('#'+nameBtn).button ({icons: {primary: "ui-icon-circle-triangle-s"}, text: false});
+        $('#'+nameBtn).click (htmlElem, function (e){
+            hqStyleSelector._toggleDrop(e.data);
+        });
+        $('#'+nameBtn).height(htmlElem.settings.height).width(htmlElem.settings.height);
+        var elem = $('#styleSelector'+options.name);
+        elem.addClass ('ui-corner-all ui-widget-content');
+        if (htmlElem.settings.style != "") {
+            $('#'+nameImg).addClass (htmlElem.settings.style);
+            $('#'+nameText).html (this._findTitle(htmlElem.settings.styles, htmlElem.settings.style));
+        }
+        else {
+            $('#'+nameText).html ("None");
+        }
+		
+        // Build dropdown box
+        if (document.getElementById ("styleSelectorBox"+options.name) == undefined)
+        {
+            var text = "<form id='styleSelectorBox"+options.name+"'>";
+            var i = 0;
+            for (var st in htmlElem.settings.styles) {
+                text += "<input type='radio' id='styleSelectorBox"+options.name+""+i+"' name='radio' /><label for='styleSelectorBox"+options.name+""+i+"'>";
+                text += "<table><tr><td width='"+(htmlElem.settings.height*2+4)+"px'><div class='ui-corner-all "+htmlElem.settings.styles[st]+"' style='width:"+(htmlElem.settings.height*2)+"px; height:"+(htmlElem.settings.height-4)+"px'></div></td><td width=10></td><td style='text-align: left; vertical-align: middle;'><div style='text-align: left; vertical-align: middle;'>";
+                text += ((st != "")?st:htmlElem.settings.styles[st])+"</div></td></tr></table>";
+                text += "</label><br>";
+                i++;
+            }
+            text += "</form>";            
+            htmlElem.settings.parent.append (text);
+        }
+        
+        var box = $('#styleSelectorBox'+options.name);
+        box.buttonset();
+        $('#styleSelectorBox'+options.name+" :radio").click(htmlElem, function(e) {
+            var rawElement = this;
+            hqStyleSelector._select (e.data, rawElement.iStyle);
+            hqStyleSelector._toggleDrop(e.data);
+        });
+        i = 0;
+        // Set context
+        for (var st in htmlElem.settings.styles) {
+            document.getElementById ("styleSelectorBox"+options.name+""+i).iStyle = htmlElem.settings.styles[st];
+            // Select current button
+            if (htmlElem.settings.style == htmlElem.settings.styles[st]) {
+                $("#styleSelectorBox"+options.name+""+i).attr("checked","checked");
+                box.buttonset('refresh');
+            }
+            i++;
+        }
+		htmlElem.settings.count = i;
+        box.css ({width: $('#styleSelector'+options.name).width(), overflow: "auto"}).addClass('ui-corner-all ui-widget-content');
+        box.css ({position: 'absolute', top: elem.position().top + elem.height(), left: elem.position().left});
+        box.hide ();
+        this._currentElement++;
+		return htmlElem;
+    },
+    _toggleDrop: function (obj)
+    {
+        if (obj.settings.dropOpened) {
+            $("#styleSelectorBox"+obj.settings.id).css ({display: "none"});
+            $("#styleSelectorB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
+            obj.settings.dropOpened = false;
+        }
+        else {
+			var elem = $('#styleSelector'+obj.settings.id);		
+			var elemBox = $("#styleSelectorBox"+obj.settings.id);		
+			//if ($(window).height() < elemBox.height() + elemBox.position().top) {
+			// Get position of last element
+            var iHeight = obj.settings.count * (obj.settings.height + 18);
+			if (iHeight > $(window).height() - elem.position().top - elem.height() - 5)
+				elemBox.height($(window).height() - elem.position().top - elem.height() - 5);
+			else
+				elemBox.height(iHeight + 5);
+				
+			var iWidth = $("#styleSelector"+obj.settings.id).width();
+			elemBox.buttonset().find('table').width(iWidth - 37 - this._scrollWidth);
+            $("#styleSelectorBox"+obj.settings.id).css ({display: "", width: elem.width(), top: elem.position().top + elem.height(), left: elem.position().left});			
+            $("#styleSelectorB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-n" }});
+            obj.settings.dropOpened = true;
+        }
+         
+    },
+    _select: function (obj, iStyle)
+    {
+        var nameImg  = "styleSelectorImg" +obj.settings.id;
+        var nameText = "styleSelectorText"+obj.settings.id;
+        $('#'+nameImg).removeClass (obj.settings.style);
+        obj.settings.style = iStyle;
+        $('#'+nameImg).addClass (obj.settings.style);
+        $('#'+nameText).html (this._findTitle(obj.settings.styles, obj.settings.style));
+		if (obj.settings.onchange)
+			obj.settings.onchange (obj.settings.style, obj.settings.onchangeParam);     
+    },
+    destroy: function (htmlElem) {
+		$("#styleSelectorBox"+htmlElem.settings.id).remove ();			
+		$('#styleSelector'+htmlElem.settings.id).remove ();			
     }
 };
 

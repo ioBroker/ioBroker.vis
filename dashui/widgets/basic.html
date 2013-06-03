@@ -112,7 +112,13 @@
     </div>
 </script>
 
-
+<script type="text/ejs" id="tplImage" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Image" data-dashui-attrs="src">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <img src="<%== this.data.attr('src') %>" />
+        </div>
+    </div>
+</script>
 
 <script type="text/ejs" id="tplLink" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - link" data-dashui-attrs="html;href;target;alt">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
