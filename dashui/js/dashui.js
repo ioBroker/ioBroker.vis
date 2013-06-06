@@ -858,6 +858,22 @@ dui = $.extend(true, dui, {
                         });
                     });
                 } else
+                if (widget_attrs[attr] === "src") {
+                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/><input type="button" id="inspect_'+widget_attrs[attr]+'_btn" value="..."></td></tr>');
+                    document.getElementById ("inspect_"+widget_attrs[attr]+"_btn").jControl = widget_attrs[attr];
+                    // Select image Dialog
+                    $("#inspect_"+widget_attrs[attr]+"_btn").click ( function () {
+                        var settings = {
+                            current: $("#inspect_"+this.jControl).val(),
+                            onselectArg: this.jControl,
+                            onselect:    function (img, obj)
+                            {
+                                $("#inspect_"+obj).val(img);
+                                $("#inspect_"+obj).trigger("change");
+                            }};
+                        imageSelect.Show (settings);
+                    });
+                } else
                 if (widget_attrs[attr].slice(0,4) !== "html") {
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/></td></tr>');
 
@@ -879,11 +895,9 @@ dui = $.extend(true, dui, {
             }
         }
 
-
         $(".dashui-inspect-css").each(function () {
             $(this).val($this.css($(this).attr("id").slice(12)));
         });
-
 
         // Widget selektieren
         $("#select_active_widget option").removeAttr("selected");
@@ -1014,6 +1028,197 @@ dui = $.extend(true, dui, {
             .hide();
     }
 });
+
+// Image selection Dialog
+var imageSelect = {
+    // possible settings
+    settings: {
+                iwidth:      32,
+                iheight:     32,
+                withName:    false,
+                onselect:    null,
+                onselectArg: null,
+                result:      "",
+                current:     null,   // current image
+                parent:      $('body'), 
+                elemName:    "idialog_",
+           },
+    _pictDir: "./img/",
+    _selectText: "",
+    _cancelText: "",    
+    _titleText:  "",    
+    Show:  function (options){
+        var i = 0;
+        
+        if (this._selectText == "") {
+            this._selectText = dui.translate ("Select");
+            this._cancelText = dui.translate ("Cancel");
+            this._titleText  = dui.translate ("Selected image: ");
+        }
+           
+        if (!options.elemName || options.elemName == "") {
+            options.elemName = "idialog_";
+        }
+        if (!options.parent) {
+            options.parent = $('body');
+        }
+        
+        if (document.getElementById (options.elemName) != undefined) {
+            $('#'+options.elemName).remove ();
+        }
+        options.parent.append("<div class='dialog' id='imageSelect' title='" + this._titleText + "'></div>");
+        var htmlElem = document.getElementById ("imageSelect");
+        htmlElem.settings = {};
+        htmlElem.settings = $.extend (htmlElem.settings, this.settings);
+        htmlElem.settings = $.extend (htmlElem.settings, options);
+        
+         // Define dialog buttons
+        
+        var dialog_buttons = {}; 
+        dialog_buttons[this._selectText] = function() { 
+            $( this ).dialog( "close" ); 
+            if (this.settings.onselect)
+                this.settings.onselect (imageSelect._pictDir+this.settings.result, this.settings.onselectArg);
+            $( this ).remove ();
+        }
+        dialog_buttons[this._cancelText] = function(){ 
+            $( this ).dialog( "close" ); 
+            $( this ).remove ();
+        }   
+        $('#imageSelect')
+        .dialog({
+            resizable: true,
+            height: $(window).height(),
+            modal: true,
+            width: 600,
+            /*resize: function(event, ui) { 
+                $("#hmSelectContent").setGridWidth ($('#hmSelect').width()  - 35);
+                $("#hmSelectContent").setGridHeight($('#hmSelect').height() - 53 - $('#hmSelectLocations').height () - $('#hmSelectFunctions').height ());
+                $('#hmSelectLocations').width ($('#hmSelect').width() - 38);
+                $('#hmSelectFunctions').width ($('#hmSelect').width() - 38);
+            },*/
+            buttons: dialog_buttons
+        });     
+        this.getImageList (htmlElem);
+    },
+    getImageList: function (htmlElem)
+    {
+        $.homematic("getImageList", "/www/addons/dashui/img", this.showImages, htmlElem)
+    },
+    showImages: function (aImages, obj)
+    {	
+        obj.settings.columns = Math.floor (($(obj).width() -20) / (obj.settings.iwidth + 5));
+        obj.settings.rows    = Math.floor (aImages.length / obj.settings.columns) + 1;
+        
+        var sText = "<table id='"+obj.settings.elemName+"_tbl'>";
+        var row = 0;
+        var col;
+        for (row = 0; row < obj.settings.rows; row++)
+        {
+            sText += "<tr>";
+            for (col = 0; col < obj.settings.columns; col++)
+            {
+                var i=row*obj.settings.columns +col;
+                sText += "<td id='"+obj.settings.elemName+"_"+i+"' style='text-align: center; width:"+obj.settings.iwidth+";height:"+obj.settings.iheight+"'>";
+                if (aImages.length > row * obj.settings.columns + col) {
+                    sText += "<img id='"+obj.settings.elemName+"_img"+i+"' title='"+aImages[row*obj.settings.columns +col]+"'/>";
+                }
+                sText += "</td>";	
+            }
+            sText += "</tr>";
+        }
+        
+        sText += "</table>";//</div>";
+        
+        $(obj).append (sText);
+        $(obj).css ({overflow: 'auto'});
+        obj.settings.table = $('#'+obj.settings.elemName+'_tbl').addClass("h-no-select");
+        obj.settings.table.css({padding: 0, 'mapping': 0});
+        
+        obj.curElement = null;
+        
+        for (i = 0; i < aImages.length; i++)
+        {
+            var img   = $('#'+obj.settings.elemName+"_"+i);
+            var image = $('#'+obj.settings.elemName+'_img'+i);
+            img.addClass ("ui-state-default ui-widget-content").css({width: obj.settings.iwidth+4, height: obj.settings.iheight+4});           
+            img.parent = obj;
+            img.result = aImages[i];
+            image.parent = img;
+            image.iwidth = obj.settings.iwidth;
+            image.iheight = obj.settings.iheight;
+            image.i = i;
+            image.isLast = (i == aImages.length-1);
+            img.image = image;
+            if (obj.settings.current && (imageSelect._pictDir + aImages[i]) == obj.settings.current) {	
+                obj.settings.curElement = img;
+                img.removeClass ("ui-state-default").addClass ("ui-state-active");
+            }
+            
+            if (image.isLast && obj.settings.curElement) image.current = obj.settings.curElement; 
+            
+            image.bind ("load", {msg: image}, function (event){
+                var obj_ = event.data.msg;
+                if (obj_.width() > obj_.iwidth || obj_.height() > obj_.iheight)
+                {
+                    if (obj_.width() > obj_.height())
+                        obj_.css ({height: (obj_.height() / obj_.width())  *obj._iwidth,  width:  obj_.iwidth});
+                    else
+                        obj_.css ({width:  (obj_.width()  / obj_.height()) *obj_.iheight, height: obj_.iheight});
+                } 
+                if (obj_.isLast && obj_.current)
+                    $(obj_.parent.parent).animate ({scrollTop: obj_.current.image.position().top + obj_.current.image.height()}, 'fast');			
+            });
+            image.error (function (){
+                $(this).hide();
+            });
+            img.bind ("mouseenter", {msg: img}, function (event)
+            {
+                var obj = event.data.msg;
+                obj.removeClass("ui-state-default").removeClass("ui-state-active").addClass("ui-state-hover");
+            });
+            img.bind ("mouseleave", {msg: img}, function (event)
+            {			
+                var obj = event.data.msg;
+                obj.removeClass("ui-state-hover");
+                if (obj == obj.parent.settings.curElement)
+                    obj.addClass  ("ui-state-active");
+                else
+                    obj.addClass  ("ui-state-default");
+            });				
+            img.bind ("click", {msg: img}, function (event)
+            {			
+                var obj_ = event.data.msg;
+                obj.settings.result = obj_.result;
+                if (obj.settings.curElement) {
+                    obj.settings.curElement.removeClass("ui-state-active").addClass("ui-state-default");
+                }
+                obj.settings.curElement = obj_;
+                obj_.removeClass("ui-state-hover").addClass ("ui-state-active");
+                $(obj).dialog('option', 'title', imageSelect._titleText + obj.settings.result);
+            });				
+            img.bind ("dblclick", {msg: img}, function (event)
+            {			
+                var obj_ = event.data.msg;
+                obj.settings.result = imageSelect._pictDir + obj_.result;
+                if (obj.settings.onselect)
+                    obj.settings.onselect (obj.settings.result, obj.settings.onselectArg);
+                $( obj ).dialog( "close" );
+                $( obj ).remove ();
+            });				
+            //if (img.complete) img.iload();
+            image.attr('src', imageSelect._pictDir+aImages[i]);
+        }
+        // Show active image
+        if (obj.settings.current) { 
+            var str = obj.settings.current;
+            if (str.substring (0, imageSelect._pictDir.length) == imageSelect._pictDir) {
+                str = str.substring (imageSelect._pictDir.length);
+            }
+            $(obj).dialog('option', 'title', imageSelect._titleText + str);
+        }
+    }
+};
 
 // Device selection dialog
 var hmSelect = {
@@ -1197,7 +1402,7 @@ var hmSelect = {
 			$( this ).dialog( "close" ); 
 			$('#hmSelectContent').jqGrid('GridUnload'); 
 		}   
-		$('#instanceDialog').dialog({ buttons: dialog_buttons });		
+		//$('#instanceDialog').dialog({ buttons: dialog_buttons });		
 		
 		$('#hmSelect')
 		.dialog({

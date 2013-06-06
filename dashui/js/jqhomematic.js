@@ -270,6 +270,57 @@ var version =               '0.9',
             });
             return true;
         },             // Run homematic scripts and insert results in Object ccu
+        getImageList: function (dirName, ready, readyPrm) {
+            var cache = storage.get(settings.storageKey);
+            if (cache && cache !== null && cache["images"] && cache["images"][dirName]) {
+                if (ready) {
+                    ready (cache["images"][dirName], readyPrm);
+                }
+                return;
+            }       
+
+            if ($.active > 0) {
+                setTimeout(function() {
+                    funcs.getImageList(dirName, ready, readyPrm);
+                }, 100);
+                return false;
+            }
+
+            if (dirName == undefined)
+                dirName = "/www/addons/dashui/img";
+                
+            var url = settings.url + 'tclscript.cgi?content=html';
+            if (settings.session) {
+                url += '&session=' + settings.session;
+            }
+            $.ajax({
+                url: url,
+                type: 'POST',
+                dataType: 'html',
+                data: "glob *",
+                
+                // Debug answer
+                /*complete: function (res, status) {
+                    var i = res;
+                },*/
+                success: function (res) {
+                    // dummy names for test
+                    res = "eg_trans.png lol.png knob.png hexabump.png fancyswitch-5.png fancyswitch-4.png fancyswitch-3.png fancyswitch-2.png fancyswitch-1.png eg.png bulb_on.png bulb_off.png blank.gif";
+                    settings.loading("getImageList("+dirName+") finished");
+                    funcs.debug("getImageList("+dirName+") finished");
+                    
+                    homematic.ccu["images"][dirName] = res.split(' ');
+                    if (settings.cache) {
+                        settings.loading("caching images " + dirName);
+                        funcs.debug("caching images" + dirName);
+                        storage.extend(settings.storageKey, homematic.ccu);
+                    }
+                    if (ready) {
+                        ready (homematic.ccu["images"][dirName], readyPrm);
+                    }
+                }
+            });                   
+        },        // Get list of images in the directory
         addStringVariable: function (name, desc, callback) {
             var script = "object test = dom.GetObject('"+name+"');\n" +
                 "if (test) {\n" +
