@@ -234,9 +234,6 @@ var dui = {
                 i, k, len = keys.length;
 
             keys.sort();
-            // Load devices from CCU
-            if (!homematic.ccu["devices"])
-                $.homematic ("loadCcuDataAll", true);
 
             for (i = 0; i < len; i++) {
                 k = keys[i];
@@ -848,7 +845,7 @@ dui = $.extend(true, dui, {
         for (var attr in widget_attrs) {
             if (widget_attrs[attr] != "") {
                 if (widget_attrs[attr] === "hm_id") {
-                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/><input type="button" id="inspect_'+widget_attrs[attr]+'_hmid" value="..."></td></tr>');
+                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44" style="width:90%"/><input type="button" id="inspect_'+widget_attrs[attr]+'_hmid" value="..."  style="width:8%"></td></tr>');
                     document.getElementById ("inspect_"+widget_attrs[attr]+"_hmid").jControl = widget_attrs[attr];
                     // Select Homematic ID Dialog
                     $("#inspect_"+widget_attrs[attr]+"_hmid").click ( function () {
@@ -1073,7 +1070,6 @@ var imageSelect = {
         htmlElem.settings = $.extend (htmlElem.settings, options);
         
          // Define dialog buttons
-        
         var dialog_buttons = {}; 
         dialog_buttons[this._selectText] = function() { 
             $( this ).dialog( "close" ); 
@@ -1099,6 +1095,10 @@ var imageSelect = {
             },*/
             buttons: dialog_buttons
         });     
+        // Show wait icon
+        if (!document.getElementById ('waitico'))
+            $('#imageSelect').append("<p id='waitico'>Please wait...</p>");
+        $('#waitico').show();
         this.getImageList (htmlElem);
     },
     getImageList: function (htmlElem)
@@ -1107,8 +1107,13 @@ var imageSelect = {
     },
     showImages: function (aImages, obj)
     {	
+        // Remove wait icon
+        $('#waitico').hide ();
         obj.settings.columns = Math.floor (($(obj).width() -20) / (obj.settings.iwidth + 5));
         obj.settings.rows    = Math.floor (aImages.length / obj.settings.columns) + 1;
+        
+        if (document.getElementById (obj.settings.elemName+"_tbl"))
+            $('#'+obj.settings.elemName+"_tbl").remove ();
         
         var sText = "<table id='"+obj.settings.elemName+"_tbl'>";
         var row = 0;
@@ -1374,19 +1379,36 @@ var hmSelect = {
 		else
 			return "";
 	}, // Get image for type
-	show: function (ccu, userArg, onSuccess)
+    show: function (ccu, userArg, onSuccess)
 	{
+        this._onsuccess = onSuccess;
+        this._userArg   = userArg;
         var devices   = ccu['devices'];
         var rooms     = ccu['rooms'];
         var functions = ccu['functions'];
+        var veriables = ccu['veriables'];
         
 		_userArg = userArg || null;
 		_onsuccess = onSuccess || null;
 		if (!document.getElementById ("hmSelect")) {
-			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate ("Select HM parameter") + "'><table id='hmSelectContent'></table></div>");
-            $('#hmSelect').prepend ("<div id='hmSelectFunctions' class='ui-state-highlight'></div>");
-            $('#hmSelect').prepend ("<div id='hmSelectLocations' class='ui-state-error'></div>");
+			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate ("Select HM parameter") + "'></div>");
+            var text = "<div id='hmSelect_tabs'>";
+            text += "  <ul>";
+            text += "    <li><a href='#tabs-devs'>Devices</a></li>";
+            text += "    <li><a href='#tabs-vars'>Variables</a></li>";
+            text += "    <li><a href='#tabs-progs'>Functions</a></li>";
+            text += "  </ul>";
+            text += "  <div id='tabs-devs' style='padding: 3px'></div><div id='tabs-vars' style='padding: 3px'></div><div id='tabs-progs' style='padding: 3px'></div>";
+            text += "</div>";
+            $("#hmSelect").append(text);
+            $("#tabs-devs").append("<table id='hmSelectContent'></table>");
+        
+            $('#tabs-devs').prepend ("<div id='hmSelectFunctions' class='ui-state-highlight'></div>");
+            $('#tabs-devs').prepend ("<div id='hmSelectLocations' class='ui-state-error'></div>");
+            $('#tabs-devs').prepend ("<p id='waitico'>Please wait...</p>");
 		}
+        $("#hmSelect_tabs").tabs();
+        
         // Define dialog buttons
 		this._selectText = dui.translate ("Select");
 		this._cancelText = dui.translate ("Cancel");
@@ -1411,14 +1433,30 @@ var hmSelect = {
 			modal: true,
 			width: 870,
 			resize: function(event, ui) { 
-				$("#hmSelectContent").setGridWidth ($('#hmSelect').width()  - 35);
-				$("#hmSelectContent").setGridHeight($('#hmSelect').height() - 53 - $('#hmSelectLocations').height () - $('#hmSelectFunctions').height ());
-                $('#hmSelectLocations').width ($('#hmSelect').width() - 38);
-                $('#hmSelectFunctions').width ($('#hmSelect').width() - 38);
+                $('#hmSelect_tabs').width ($('#hmSelect').width() - 30);
+                $('#hmSelect_tabs').height ($('#hmSelect').height() - 12);
+                $('#hmSelectLocations').width ($('#tabs-devs').width()-6);
+                $('#hmSelectFunctions').width ($('#tabs-devs').width()-6);
+                $('#tabs-devs').width ($('#hmSelect_tabs').width() - 6);
+                $('#tabs-devs').height ($('#hmSelect_tabs').height() - 60);
+				$("#hmSelectContent").setGridWidth ($('#tabs-devs').width()  - 6);
+				$("#hmSelectContent").setGridHeight($('#tabs-devs').height() - 35 - $('#hmSelectLocations').height () - $('#hmSelectFunctions').height ());
 			},
 			buttons: dialog_buttons
 		});
-
+        $('#waitico').show();
+        if (devices == undefined || devices == null)
+        {
+            // request list of devices anew
+            $.homematic ("loadCcuDataAll", function () {hmSelect.show (homematic.ccu, hmSelect._userArg, hmSelect._onsuccess)});
+            return;
+        }
+        $('#waitico').hide();
+        $('#hmSelect_tabs').width ($('#hmSelect').width());
+        $('#hmSelect_tabs').height ($('#hmSelect').height() - 12);
+        $('#tabs-devs').width ($('#hmSelect_tabs').width() - 6);
+        $('#tabs-devs').height ($('#hmSelect_tabs').height() - 60);
+        
         // Fill the locations toolbar
         if (this._buttonsLoc == null) {
             this._buttonsLoc = new Array ();
@@ -1451,7 +1489,7 @@ var hmSelect = {
                 l++;
             }
         }
-        $('#hmSelectLocations').width ($('#hmSelect').width());
+        $('#hmSelectLocations').width ($('#tabs-devs').width()-6);
         
         // Fill the functions toolbar
         if (this._buttonsFunc == null) {
@@ -1482,7 +1520,7 @@ var hmSelect = {
                 l++;
             }
         }
-        $('#hmSelectFunctions').width ($('#hmSelect').width());
+        $('#hmSelectFunctions').width ($('#tabs-devs').width()-6);
         
         // Build the data tree together
 		if (this.mydata == null)
@@ -1610,7 +1648,7 @@ var hmSelect = {
 		$("#hmSelectContent").jqGrid({
 			datatype:    "jsonstring",
 			datastr:     this.mydata,
-			height:      $('#hmSelect').height() - 53 - $('#hmSelectLocations').height () - $('#hmSelectFunctions').height (),
+			height:      $('#tabs-devs').height() - 35 - $('#hmSelectLocations').height () - $('#hmSelectFunctions').height (),
 			autowidth:   true,
 			shrinkToFit: false,
 			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Location'), dui.translate ('Interface'), dui.translate ('Type'), dui.translate ('Function'), dui.translate ('Address')],

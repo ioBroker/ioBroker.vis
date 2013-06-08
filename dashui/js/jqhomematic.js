@@ -82,7 +82,7 @@ var version =               '0.9',
             homematic.uiState = new can.Observe({"_65535":{"Value":0}});
             homematic.setState = new can.Observe({"_65535":{"Value":0}});
 
-            funcs.loadCcuDataAll (false);
+            funcs.loadCcuDataAll ();
         },                 // Homematic Plugin initialisieren
         setState: function (id, val) {
             //console.log("setState("+id+","+val+")");
@@ -165,10 +165,11 @@ var version =               '0.9',
                 }
             });
         },          // ReGaHss running? (= Port 8181 reachable)
-        loadCcuDataAll: function (isForceLoad) {
-            if (isForceLoad && !settings.loadCcuData){
+        loadCcuDataAll: function (callback) {
+            if (callback != null && callback != undefined && !settings.loadCcuData){
                 settings.loadCcuData = true;
                 ready = false;
+                settings.ready = callback;
             }
             
             funcs.checkRega(function() {
