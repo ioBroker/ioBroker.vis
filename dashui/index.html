@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="css/dhive/jquery-ui.min.css" id="jqui_theme"/>
     <link rel="stylesheet" href="css/jquery.ui.multiselect.css" />
     <link rel="stylesheet" href="css/jquery-ui-timepicker-addon.css" />
+    <link rel="stylesheet" href="css/backgrounds.css" />
     <link rel="stylesheet" href="css/dashui.css" />
+    <link rel="stylesheet" href="css/ui.jqgrid.css" type="text/css" media="screen" />
 
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/can.jquery.min.js"></script>
@@ -24,6 +26,8 @@
     <script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
 
     <script type="text/javascript" src="js/jqhomematic.js"></script>
+    <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="js/grid.locale-en.js" ></script>
     <script type="text/javascript" src="js/dashui.js"></script>
 
 </head>
@@ -99,6 +103,7 @@
             <div id="tabs-3">
                 <h4>View: <span id="inspect_view"></span></h4>
                 <table>
+                    <tr><td>Background class</td><td id="inspect_view_bkg_parent"></td></tr>
                     <tr><td>background</td><td><input size="48" type="text" id="inspect_view_css_background" class="dashui-inspect-view-css"/></td></tr>
                     <tr><td>background-size</td><td><input size="48" type="text" id="inspect_view_css_background-size" class="dashui-inspect-view-css"/></td></tr>
                     <tr><td>font</td><td><input size="48" type="text" id="inspect_view_css_font" class="dashui-inspect-view-css"/></td></tr>

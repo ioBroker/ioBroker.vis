@@ -51,4 +51,30 @@
     width: 100%;
     height: 100%;
 }
-
+@-webkit-keyframes waiticoRotate {
+	from {
+		-webkit-transform:rotate(0deg);
+	}
+	to {
+		-webkit-transform:rotate(360deg);
+	}
+}
+#waitico {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: -24px 0 0 -24px;
+	height: 48px;
+	width: 48px;
+	text-indent: 250px;
+	white-space: nowrap;
+	overflow: hidden;
+    background: url(../img/Bubbles_Wait.png);
+	-webkit-animation-duration: 2s;
+	-webkit-animation-name: waiticoRotate;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
+}
+/*	-webkit-mask-image: url(../img/ico_Wait.png);
+	background-color: #000;
+*/

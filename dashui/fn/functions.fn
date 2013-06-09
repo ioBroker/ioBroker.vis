@@ -1,0 +1,36 @@
+!# funktions.fn
+!#
+!# Dieses Script gibt eine Liste der Gewerken als JSON Objekt aus
+!#
+!# 6'2013 bluefox copied from hobbyquaker
+!#
+
+object  oFunction;
+string  sFunctionId;
+string  sChannelId;
+boolean bFirst       = true;
+boolean bFirstSecond = true;
+
+Write("{");
+foreach (sFunctionId, dom.GetObject(ID_FUNCTIONS).EnumUsedIDs())
+{
+    if (bFirst == false) {
+      WriteLine(',');
+    } else {
+      bFirst = false;
+    }
+    oFunction = dom.GetObject(sFunctionId);
+	Write('"' # oFunction.Name() # '": ');
+    Write('{"id": "_' # sFunctionId # '", "desc": "' # oFunction.EnumInfo() # '", "channels": [');
+	bFirstSecond = true;
+    foreach(sChannelId, oFunction.EnumUsedIDs()) {
+		if (bFirstSecond == false) {
+		  Write(',');
+		} else {
+		  bFirstSecond = false;
+		}
+		Write('"_' # sChannelId # '"');
+    }
+    Write(']}');
+}
+Write('}');
