@@ -8,17 +8,21 @@
 
 * Mehr Widgets! ;-)
 * Config-File, Editor und Engine sauber trennen
-* Erweiterte Template-Attribute: Doku, Kompatibilität, ...
+* Erweiterte Template-Attribute: Doku, Kompatibilitï¿½t, ...
 
 
 ## Changelog
 
+### 0.8.1
+* Neuer Contributor: Bluefox - Herzlich Willkommen! :-)
+* (Bluefox) Neuer Dialog zur GerÃ¤teauswahl
+
 ### 0.8
 * Fehler im Theme "Kiandra" behoben
-* Snapping hinzugefügt: einfacheres Positionieren von Widgets wahlweise an einem Gitter oder an anderen Widgets
+* Snapping hinzugefï¿½gt: einfacheres Positionieren von Widgets wahlweise an einem Gitter oder an anderen Widgets
 * Neuer Reiter "Editor" um das Snapping zu konfigurieren
-* Fehler behoben der dazu führte dass Variablen nicht richtig gesetzt wurden
-* Widget "basic hm_val - String img src" hinzugefügt
+* Fehler behoben der dazu fï¿½hrte dass Variablen nicht richtig gesetzt wurden
+* Widget "basic hm_val - String img src" hinzugefï¿½gt
 * Neues Widget-Set "Knobs"
 * 3 Neue Widgets zur animierten Navigation zwischen Views
 * Neue Widgets im Widget-Set "fancyswitch"
@@ -27,55 +31,55 @@
 
 
 ### 0.7
-* Container implementiert, Views können nun in Widgets und jQuery UI Dialogen dargestellet werden
+* Container implementiert, Views kï¿½nnen nun in Widgets und jQuery UI Dialogen dargestellet werden
 * Fehler behoben - Buttons waren nicht mehr editierbar
-* Dialog-Widgets mit zusätzlichen Attributen ausgestattet
-* container und view id präfix, link disable im edit-mode
+* Dialog-Widgets mit zusï¿½tzlichen Attributen ausgestattet
+* container und view id prï¿½fix, link disable im edit-mode
 * neues Widget-Set: "fancyswitch"
 * Widget-Definitionen und Bindings in eigene Files ausgelagert
 * toggle Binding und neue Widgets
-* diverse Fehler behoben, Pfade gekürzt (100-Zeichen-Limit...)
+* diverse Fehler behoben, Pfade gekï¿½rzt (100-Zeichen-Limit...)
 
 ### 0.6
 
 * Sind keine lokalen Views vorhanden wird nun automatisch versucht die Views von der CCU zu laden
-* Während des Ladevorgangs wird div#loader eingeblendet
-* Widget-Select wird nun aktualisiert wenn Widgets geläscht werden
+* Wï¿½hrend des Ladevorgangs wird div#loader eingeblendet
+* Widget-Select wird nun aktualisiert wenn Widgets gelï¿½scht werden
 * Diverse Fehler beim duplizieren von Views behoben
 * Beim Ü„ndern von Widget-Attributen werden Widgets nun neu gerendert, es ist kein Reload mehr notwendig
 * View-Select ist jetzt alphabetisch sortiert
-* Instanzen und Variablen für externe Kommandos werden nicht mehr automatisch angelegt und können entfernt werden
+* Instanzen und Variablen fï¿½r externe Kommandos werden nicht mehr automatisch angelegt und kï¿½nnen entfernt werden
 * Widget "mfd-icon Shutter/Dimmer + jqui Dialog" neue Attribute autoclose und modal
 * Widget "basic - Red Number" Zahl sitzt nun sauber in der Mitte
-* Widget "jqui Button Link" und "jqui Button Link _blank" fehlendes Attribut ergänzt
+* Widget "jqui Button Link" und "jqui Button Link _blank" fehlendes Attribut ergï¿½nzt
 
 
 ### 0.5
 
-* externe Steuerung über automatisch angelegte Systemvariablen, bisherige Befehle: alert, changeView, reload, popup
-* Widget jqui Radio ValueList hinzugefügt
-* Widget jqui Select ValueList hinzugefügt
+* externe Steuerung ï¿½ber automatisch angelegte Systemvariablen, bisherige Befehle: alert, changeView, reload, popup
+* Widget jqui Radio ValueList hinzugefï¿½gt
+* Widget jqui Select ValueList hinzugefï¿½gt
 * diverse Fehler behoben
 * Widget jqui Input Datetime ausgearbeitet
 
 
 ### 0.4
 
-* Views können nun unterschiedliche jQuery UI Themes zugewiesen werden, 3 Themes sind bisher mitgeliefert
+* Views kï¿½nnen nun unterschiedliche jQuery UI Themes zugewiesen werden, 3 Themes sind bisher mitgeliefert
 * Ab sofort kann als Attribut hm_id neben der id auch eine Adresse in der Form BidCos-RF.EEQ0012345:1.LEVEL bzw ein Variablen- oder Programmname angegeben werden
-* Über http://ccu/addons/dashui/reset.html kann der Cache komplett geleert werden
+* ï¿½ber http://ccu/addons/dashui/reset.html kann der Cache komplett geleert werden
 * diverse Fehler beim Selektieren von Widgets und Wechseln der View behoben
-* Views können nun gelöscht und umbenannt werden
+* Views kï¿½nnen nun gelï¿½scht und umbenannt werden
 * Views werden nun erst beim erstmaligen Aufruf gerendert (merzt auch jqPlot Probleme aus)
-* Views und Widget können nun CSS-Klassen zugewiesen werden
+* Views und Widget kï¿½nnen nun CSS-Klassen zugewiesen werden
 * Widget jqui-input und jqui-input-set-button mit weiteren Attributen ausgestattet
 * Widget mfd-icon Shutter angepasst
 * Widget basic - rednumber: Zeigt Ganzzahlwerte an, verschwindet bei Wert 0 (iOS-Like...)
-* mfd-icons werden nun vollständig mitgeliefert
+* mfd-icons werden nun vollstï¿½ndig mitgeliefert
 
 ### 0.3
 
-* Erstes öffentliches Release
+* Erstes ï¿½ffentliches Release
 
 
 ## In DashUI verwendete Software
@@ -98,9 +102,9 @@ Copyright (c) 2013 hobbyquaker https://github.com/hobbyquaker
 
 MIT Lizenz (MIT)
 
-Hiermit wird unentgeltlich, jeder Person, die eine Kopie der Software und der zugehörigen Dokumentationen (die
-"Software") erhält, die Erlaubnis erteilt, sie uneingeschränkt zu benutzen, inklusive und ohne Ausnahme, dem Recht,
-sie zu verwenden, kopieren, ändern, fusionieren, verlegen, verbreiten, unterlizenzieren und/oder zu verkaufen, und
+Hiermit wird unentgeltlich, jeder Person, die eine Kopie der Software und der zugehï¿½rigen Dokumentationen (die
+"Software") erhï¿½lt, die Erlaubnis erteilt, sie uneingeschrï¿½nkt zu benutzen, inklusive und ohne Ausnahme, dem Recht,
+sie zu verwenden, kopieren, ï¿½ndern, fusionieren, verlegen, verbreiten, unterlizenzieren und/oder zu verkaufen, und
 Personen, die diese Software erhalten, diese Rechte zu geben, unter den folgenden Bedingungen:
 
 Der obige Urheberrechtsvermerk und dieser Erlaubnisvermerk sind in allen Kopien oder Teilkopien der Software beizulegen.
