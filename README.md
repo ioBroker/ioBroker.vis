@@ -16,6 +16,8 @@
 ### 0.8.1
 * Neuer Contributor: Bluefox - Herzlich Willkommen! :-)
 * (Bluefox) Neuer Dialog zur Geräteauswahl
+* (Bluefox) Neuer Dialog zur Bilderauswahl
+* (Bluefox) Neuer Selector für vodefinierte View-Hintergründe 
 
 ### 0.8
 * Fehler im Theme "Kiandra" behoben
