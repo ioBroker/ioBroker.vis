@@ -1041,9 +1041,13 @@ var imageSelect = {
                 elemName:    "idialog_",
            },
     _pictDir: "./img/",
+    _rootDir: null,
+    _curDir: null,
     _selectText: "",
     _cancelText: "",    
-    _titleText:  "",    
+    _titleText:  "",
+    _dirImage: "kde_folder.png",
+    _curImage: "",
     Show:  function (options){
         var i = 0;
         
@@ -1087,33 +1091,75 @@ var imageSelect = {
             height: $(window).height(),
             modal: true,
             width: 600,
-            /*resize: function(event, ui) { 
-                $("#hmSelectContent").setGridWidth ($('#hmSelect').width()  - 35);
-                $("#hmSelectContent").setGridHeight($('#hmSelect').height() - 53 - $('#hmSelectLocations').height () - $('#hmSelectFunctions').height ());
-                $('#hmSelectLocations').width ($('#hmSelect').width() - 38);
-                $('#hmSelectFunctions').width ($('#hmSelect').width() - 38);
-            },*/
             buttons: dialog_buttons
         });     
         // Show wait icon
         if (!document.getElementById ('waitico'))
             $('#imageSelect').append("<p id='waitico'>Please wait...</p>");
         $('#waitico').show();
+        this._rootDir = "/www/addons/dashui/img/";
+        this._curDir = "";
+        htmlElem.settings.result = htmlElem.settings.current;
+        // Find current directory
+        if (htmlElem.settings.result && htmlElem.settings.result != "") { 
+            var str = htmlElem.settings.result;
+            if (str.substring (0, this._pictDir.length) == this._pictDir) {
+                str = str.substring (this._pictDir.length);
+            }
+            if (str.indexOf ('/') != -1) {
+                var disr = str.split ("/");
+                for (var z=0; z < disr.length -1; z++)
+                    this._curDir += disr[z]+"/";
+            }
+        }
+        
         this.getImageList (htmlElem);
     },
     getImageList: function (htmlElem)
     {
-        $.homematic("getImageList", "/www/addons/dashui/img", this.showImages, htmlElem)
+        // find selected image
+        imageSelect._curImage = "";
+        
+        if (htmlElem.settings.result && htmlElem.settings.result != "") { 
+            var str = htmlElem.settings.result;
+            if (str.substring (0, imageSelect._pictDir.length) == imageSelect._pictDir) {
+                str = str.substring (imageSelect._pictDir.length);
+            }
+            if  (str.substring (0, imageSelect._curDir.length) == imageSelect._curDir) {
+                str = str.substring (imageSelect._curDir.length);
+                if (str.indexOf ('/') == -1) {
+                    imageSelect._curImage = str;
+                }
+            }
+        }
+        
+        // Load directory
+        $.homematic("getImageList", this._rootDir + this._curDir, this.showImages, htmlElem)
     },
     showImages: function (aImages, obj)
     {	
         // Remove wait icon
         $('#waitico').hide ();
-        obj.settings.columns = Math.floor (($(obj).width() -20) / (obj.settings.iwidth + 5));
-        obj.settings.rows    = Math.floor (aImages.length / obj.settings.columns) + 1;
+        obj.settings.columns = Math.floor (($(obj).width()-40) / (obj.settings.iwidth+5));
+        obj.settings.rows    = Math.floor (aImages.length / obj.settings.columns)+1;
         
         if (document.getElementById (obj.settings.elemName+"_tbl"))
             $('#'+obj.settings.elemName+"_tbl").remove ();
+        
+        // Remove directory image and place directories first
+        var bImages = new Array ();
+        var j = 0;
+        if (imageSelect._curDir != null && imageSelect._curDir != "")
+            bImages[j++] = "..";
+        for (var i = 0; i < aImages.length; i++)
+            if (aImages[i].indexOf ('.') == -1)
+                bImages[j++] = aImages[i];
+                
+        for (var i = 0; i < aImages.length; i++)
+            if (aImages[i].indexOf ('.') != -1 && aImages[i] != imageSelect._dirImage)
+                bImages[j++] = aImages[i];
+            
+        aImages = bImages;
         
         var sText = "<table id='"+obj.settings.elemName+"_tbl'>";
         var row = 0;
@@ -1123,10 +1169,37 @@ var imageSelect = {
             sText += "<tr>";
             for (col = 0; col < obj.settings.columns; col++)
             {
-                var i=row*obj.settings.columns +col;
-                sText += "<td id='"+obj.settings.elemName+"_"+i+"' style='text-align: center; width:"+obj.settings.iwidth+";height:"+obj.settings.iheight+"'>";
-                if (aImages.length > row * obj.settings.columns + col) {
-                    sText += "<img id='"+obj.settings.elemName+"_img"+i+"' title='"+aImages[row*obj.settings.columns +col]+"'/>";
+                var k=row*obj.settings.columns+col;
+                sText += "<td id='"+obj.settings.elemName+"_"+k+"' style='text-align: center; width:"+obj.settings.iwidth+";height:"+obj.settings.iheight+"'>";
+                if (aImages.length > k) {
+                    var isDir = (aImages[k].indexOf ('.') == -1) || (aImages[k] == "..");
+                    if (obj.settings.withName || isDir) {
+                        sText += "<table><tr><td>";
+                    }
+                
+                    sText += "<img id='"+obj.settings.elemName+"_img"+k+"'";
+                    // File or directory
+                    if (aImages[k] == "..") {
+                        sText += " src=\""+imageSelect._pictDir+imageSelect._dirImage+"\" title='"+dui.translate ("Back")+"'";
+                    }
+                    else if (isDir) {
+                        sText += " src=\""+imageSelect._pictDir+imageSelect._dirImage+"\" title='"+aImages[k]+"' ";
+                    }
+                    else {
+                        sText += "title='"+aImages[k]+"' ";
+                    }
+                    sText += " />";
+                    
+                    if (obj.settings.withName || isDir) {
+                        sText += "</td></tr><tr><td style='font-size:0.6em;font-weight:normal'>";
+                        if (aImages[k] == "..") {
+                            sText += "<span class='ui-icon ui-icon-arrowreturnthick-1-w' style='top:50%; left:50%; margin: -10 0 0 -10'></span>";
+                        }
+                        else {
+                            sText += aImages[k];
+                        }
+                        sText += "</td></tr></table>";
+                    }
                 }
                 sText += "</td>";	
             }
@@ -1155,7 +1228,7 @@ var imageSelect = {
             image.i = i;
             image.isLast = (i == aImages.length-1);
             img.image = image;
-            if (obj.settings.current && (imageSelect._pictDir + aImages[i]) == obj.settings.current) {	
+            if (imageSelect._curImage == aImages[i]) {	
                 obj.settings.curElement = img;
                 img.removeClass ("ui-state-default").addClass ("ui-state-active");
             }
@@ -1194,33 +1267,49 @@ var imageSelect = {
             img.bind ("click", {msg: img}, function (event)
             {			
                 var obj_ = event.data.msg;
-                obj.settings.result = obj_.result;
-                if (obj.settings.curElement) {
-                    obj.settings.curElement.removeClass("ui-state-active").addClass("ui-state-default");
+                // back directory
+                if (obj_.result == "..") {
+                    var dirs = imageSelect._curDir.split ('/');
+                    imageSelect._curDir = "";
+                    for (var t = 0; t < dirs.length - 2; t++)
+                        imageSelect._curDir += dirs[t]+"/";
+                    imageSelect.getImageList (obj);
                 }
-                obj.settings.curElement = obj_;
-                obj_.removeClass("ui-state-hover").addClass ("ui-state-active");
-                $(obj).dialog('option', 'title', imageSelect._titleText + obj.settings.result);
+                else
+                if (obj_.result.indexOf ('.') == -1) {
+                    imageSelect._curDir += obj_.result+"/";
+                    imageSelect.getImageList (obj);
+                }
+                else {
+                    obj.settings.result = imageSelect._curDir+obj_.result;
+                    if (obj.settings.curElement) {
+                        obj.settings.curElement.removeClass("ui-state-active").addClass("ui-state-default");
+                    }
+                    obj.settings.curElement = obj_;
+                    obj_.removeClass("ui-state-hover").addClass ("ui-state-active");
+                    $(obj).dialog('option', 'title', imageSelect._titleText + obj.settings.result);
+                }
             });				
             img.bind ("dblclick", {msg: img}, function (event)
             {			
                 var obj_ = event.data.msg;
-                obj.settings.result = imageSelect._pictDir + obj_.result;
+                obj.settings.result = imageSelect._pictDir + imageSelect._curDir + obj_.result;
                 if (obj.settings.onselect)
                     obj.settings.onselect (obj.settings.result, obj.settings.onselectArg);
                 $( obj ).dialog( "close" );
                 $( obj ).remove ();
             });				
-            //if (img.complete) img.iload();
-            image.attr('src', imageSelect._pictDir+aImages[i]);
+            // If File
+            if (aImages[i] != ".." && aImages[i].indexOf ('.') != -1) {
+                image.attr('src', imageSelect._pictDir+imageSelect._curDir+aImages[i]);
+            }
         }
         // Show active image
-        if (obj.settings.current) { 
-            var str = obj.settings.current;
-            if (str.substring (0, imageSelect._pictDir.length) == imageSelect._pictDir) {
-                str = str.substring (imageSelect._pictDir.length);
-            }
-            $(obj).dialog('option', 'title', imageSelect._titleText + str);
+        if (imageSelect._curImage != null && imageSelect._curImage != "") { 
+            $(obj).dialog('option', 'title', imageSelect._titleText + imageSelect._curDir + imageSelect._curImage);
+        }
+        else {
+            $(obj).dialog('option', 'title', imageSelect._titleText + imageSelect._curDir);
         }
     }
 };

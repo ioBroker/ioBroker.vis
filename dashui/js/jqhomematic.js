@@ -272,6 +272,8 @@ var version =               '0.9',
             return true;
         },             // Run homematic scripts and insert results in Object ccu
         getImageList: function (dirName, ready, readyPrm) {
+            // dirName = "/www/addons/dashui/img";
+            
             var cache = storage.get(settings.storageKey);
             if (cache && cache !== null && cache["DIR_"+dirName]) {
                 if (ready) {
@@ -286,9 +288,6 @@ var version =               '0.9',
                 }, 100);
                 return false;
             }
-
-            if (dirName == undefined)
-                dirName = "/www/addons/dashui/img";
                 
             var url = settings.url + 'tclscript.cgi?content=html';
             if (settings.session) {
@@ -298,7 +297,7 @@ var version =               '0.9',
                 url: url,
                 type: 'POST',
                 dataType: 'html',
-                data: "puts [glob "+dirName+"/*.*]",
+                data: "puts [glob "+dirName+"*]",
                 
                 // Debug answer
                 complete: function (res, status) {
@@ -311,7 +310,7 @@ var version =               '0.9',
                     
                     homematic.ccu["DIR_"+dirName] = res.split(' ');
                     for (var i=0; i<homematic.ccu["DIR_"+dirName].length; i++)
-                        homematic.ccu["DIR_"+dirName][i] = homematic.ccu["DIR_"+dirName][i].replace (dirName+"/", "");
+                        homematic.ccu["DIR_"+dirName][i] = homematic.ccu["DIR_"+dirName][i].replace (dirName, "");
                     if (settings.cache) {
                         settings.loading("caching images " + dirName);
                         funcs.debug("caching images" + dirName);
