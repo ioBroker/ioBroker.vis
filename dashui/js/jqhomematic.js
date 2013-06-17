@@ -379,20 +379,18 @@ var version =               '0.9',
                     homematic.uiState.attr(xdp + ".Timestamp", data[dp].Timestamp);
                 }
                 $(".jqhmRefresh").hide();
-
-
             });
         },                      // Refresh of all Datapoints in Array DPs
-        addUiState: function(id) {
+        addUiState: function(id, wid) {
             //console.log("addUiState("+id+")");
             id = funcs.escape(id);
             var sid = '_' + id;
-            homematic.uiState.attr(sid, {'id':id,'wid':undefined,'Value':0,'Timestamp':''});
+            homematic.uiState.attr(sid, {'id':id,'wid':wid,'Value':0,'Timestamp':''});
         },                     // uiState Objekt initialisieren
         viewsVisible: function () {
             var views = [];
             $("*[data-hm-id]").each(function () {
-                var id = $(this).attr("data-hm-id");
+                var id  = $(this).attr("data-hm-id");
                 var wid = $(this).attr("data-hm-wid");
                 if (wid) {
                     homematic.dpWorking["_"+id] = wid;
