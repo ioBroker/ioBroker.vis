@@ -879,7 +879,7 @@ dui = $.extend(true, dui, {
                         hmSelect.show (homematic.ccu, this.jControl, function (obj, value) {
                             $("#inspect_"+obj).val(value);
                             if (document.getElementById ('inspect_hm_wid')) {
-                                if (value.indexOf ("[") == -1) {
+                                if (value.indexOf (".LEVEL") != -1) {
                                     // Fill automatically working attribute
                                     var s = value.split('.');
                                     value = "";
@@ -1563,7 +1563,7 @@ var hmSelect = {
 					"Description":this._convertName(variables[vari].DPInfo),
 					"Unit":       this._convertName(variables[vari].ValueUnit),
 					"Name":       this._convertName(variables[vari].Name),
-					"data":       vari.substring(1) + "[" + this._convertName(variables[vari].Name) + "]",
+					"data":       /*vari.substring(1) + "[" + */this._convertName(variables[vari].Name)/* + "]"*/,
 					isLeaf:       true,
 					level:        "0",
 					parent:       "null",
@@ -1660,7 +1660,7 @@ var hmSelect = {
 					id:           ""+(i+1), 
 					"Description":this._convertName(programs[prog].PrgInfo),
 					"Name":       this._convertName(programs[prog].Name),
-					"data":       prog.substring(1) + "[" + this._convertName(programs[prog].Name) + "]",
+					"data":       /*prog.substring(1) + "[" + */this._convertName(programs[prog].Name)/* + "]"*/,
 					isLeaf:       true,
 					level:        "0",
 					parent:       "null",
