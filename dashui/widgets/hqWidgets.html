@@ -1,0 +1,215 @@
+<script type="text/javascript">
+    /*jQuery.extend(true, dui.binds, {
+        hqWidgetsExt: {
+            hqMapping: {},
+            hqSaveTimer : null,
+            hqSave: function () {
+                if (hqSaveTimer != null) 
+                    clearTimer(hqSaveTimer);
+                    
+                hqSaveTimer = setTimeout (function () { 
+                    dui.saveLocal (); 
+                    console.log ("Saved!"); 
+                    dui.binds.hqWidgetsExt.hqSaveTimer = null;
+                }, 2000);
+            },
+            hqButtonExt: function (el, options, wtype) {
+                var opt = (options != undefined && options != null) ? $.parseJSON(options) : {x:50, y: 50};
+                var hm_ids = new Array ();
+                // Define store settings function
+                var adv = {store: function (obj, opt) {
+                    var newOpt = JSON.stringify (opt);
+                    dui.views[dui.activeView].widgets[obj.advSettings.elemName].data.hqoptions = newOpt;
+                    //$('#inspect_hqoptions').val(newOpt);
+                    obj.settings._jelement.attr ('hqoptions', newOpt);
+                    console.log ("Stored: " + newOpt);
+                    hqSave ();
+                }};
+                
+                // If first creation
+                if (wtype != undefined) {
+                    // Set default settings
+                    if (wtype == 'tplHqButton') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeButton, 
+                                              iconName: 'Lamp.png', 
+                                              zindex: 2, 
+                                              hm_id: '',
+                                              hm_filter: 'STATE',
+                                              });
+                    }
+                    else
+                    if (wtype == 'tplHqInfo') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeInfo, zindex: 2});
+                    }
+                    else
+                    if (wtype == 'tplHqDimmer') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeDimmer, iconName: 'Lamp.png', zindex: 3});
+                    }
+                    else
+                    if (wtype == 'tplHqShutter') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeBlind, windowConfig: hqWidgets.gSwingType.gSwingLeft, zindex: 2});
+                    }
+                    else
+                    if (wtype == 'tplHqInTemp') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeInTemp, iconName: 'Temperature.png', zindex: 2});
+                    }
+                    else
+                    if (wtype == 'tplHqOutTemp') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeOutTemp, iconName: 'Temperature.png', zindex: 2});
+                    }
+                    else
+                    if (wtype == 'tplHqDoor') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeDoor, zindex: 2});
+                    }
+                    else
+                    if (wtype == 'tplHqLock') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeLock, iconName: 'unlocked.png', iconOn: 'locked.png', zindex: 3});
+                    }
+                    else
+                    if (wtype == 'tplHqText') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeText, radius: 0, zindex: 2});
+                    }
+                    else
+                    if (wtype == 'tplHqImage') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeImage, iconName:'flat.jpg', radius: 0});
+                    }
+                }
+                else {
+                    // non-edit mode => define event handlers
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
+                        adv = $.extend (adv, {action: function (obj, what, state) {
+                            if (what == 'state') {
+                                if (state != hqWidgets.gState.gStateOn) {
+                                    obj.SetStates ({percentState: 100, state: hqWidgets.gState.gStateOn});
+                                }
+                                else {
+                                    obj.SetStates ({percentState: 0, state: hqWidgets.gState.gStateOff});
+                                }
+                            }
+                            else {
+                                if (state != 0) {
+                                    obj.SetStates ({state: hqWidgets.gState.gStateOn});
+                                }
+                                else {
+                                    obj.SetStates ({state: hqWidgets.gState.gStateOff});
+                                }
+                            }
+                            
+                        }});
+                    }
+                    else
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeButton) {
+                        adv = $.extend (adv, {action: function (obj, what, state) {
+                            if (state != hqWidgets.gState.gStateOn) {
+                                state = hqWidgets.gState.gStateOn;
+                            }
+                            else {
+                                state = hqWidgets.gState.gStateOff;
+                            }
+                            obj.SetStates ({state: state});
+                            // Send command to HM
+                            $.homematic("setState", opt.hm_id, (state == hqWidgets.gState.gStateOn));                        
+                        }});
+                        var t = 0;
+                        if (opt.hm_id != null && opt.hm_id != "") {
+                            hm_ids[t++] = {hm_id: opt.hm_id, option: 'state'};
+                        }
+                    }
+                }
+                
+                
+                var btn = hqWidgets.Create (opt, {elemName: el, parent: $("#duiview_"+dui.activeView)});
+                
+                // Enable edit mode
+                if (dui.urlParams["edit"] === "") {
+                    btn.SetEditMode (true);
+                } 
+                else
+                {
+                    for (var i = 0; i < hm_ids.length; i++) {
+                         // Register hm_id to detect changes
+                        $.homematic("addUiState", hm_ids[i].hm_id);
+                        // Store mapping
+                        hqMapping[hm_ids[i].hm_id] = {button: btn, option: hm_ids[i].option};
+                    }
+                }
+                 
+                btn.SetStates (adv);
+                
+                // Store options
+                var newOpt = JSON.stringify (btn.GetSettings ());
+                $('#'+el).attr ('hqoptions', newOpt);
+                
+                // Create signal translators
+                if (wtype !== undefined) {
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeButton) {
+                        btn = $.extend (btn, {translateSignal: function (options, value) {
+                            return value ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
+                        }});
+                    }
+                }
+            },
+            hqButtonEdit: function (obj, parent) {
+                var opt = obj.GetSettings ();
+                if (opt.hm_id != undefined) {
+                    var attr = 'hm_id';
+                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="44" style="width:90%"/><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:8%"></td></tr>');
+                    document.getElementById ("inspect_"+attr+"_btn").jControl = attr;
+                    // Select Homematic ID Dialog
+                    $("#inspect_"+attr+"_btn").click ( function () {
+                        hmSelect.value = $("#inspect_"+this.jControl).val();
+                        hmSelect.show (homematic.ccu, this.jControl, function (obj, value) {
+                            $("#inspect_"+obj).val(value).trigger("change");
+                        }, opt.hm_filter);
+                    });
+                    $("#inspect_"+attr).change(function (el) {
+                        hqWidgets.Get (dui.activeWidget).SetSettings ({hm_id: $(this).val()});
+                    };
+                }
+            },
+            hqMonitor: function (wid, newState){
+                console.log(wid+"="+newState);
+                if (hqMapping[wid]) {
+                    var change = {};
+                    change[hqMapping[wid].option] = hqMapping[wid].button.translateSignal (hqMapping[wid].option, newState);
+                    hqMapping[wid].button.SetStates (change);
+                }
+            },          
+        }
+    });*/
+</script>
+<!--
+    <%= (el) -> console.log ("A");dui.binds.hqWidgetsExt.hqButtonExt (data.attr('wid'), data.attr('hqoptions')) %>
+    <script type="text/javascript">console.log ("B");</script>
+-->
+
+<script type="text/ejs" id="tplHqButton" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="On/Off" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM">
+    <div id="<%= this.data.attr('wid') %>" />
+</script>
+<script type="text/ejs" id="tplHqDimmer" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Dimmer" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Dim1TPBU-FM,HM-LC-Dim1PWM-CV,HM-LC-Dim1T-FM,HM-LC-Dim1T-CV,HM-LC-Dim1T-PI,HM-LC-Dim1L-CV,HM-LC-Dim1L-Pl,HM-LC-Dim2L-SM,HMW-LC-Dim1L-DR">
+    <div id="<%= this.data.attr('wid') %>" />
+</script>
+<script type="text/ejs" id="tplHqShutter" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Window and Shutter" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Bl1-SM,HMW-LC-Bl1-DR,HM-LC-Bl1-FM;HM-Sec-SC,HM-Sec-RHS,CC-SC-Rd-WM-W-R5,FHT80TF-2">
+    <div id="<%= this.data.attr('wid') %>" />
+</script>
+<script type="text/ejs" id="tplHqInTemp" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Inside temperature" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-CC-TC;HM-CC-VD">
+    <div id="<%= this.data.attr('wid') %>" />
+</script>
+<script type="text/ejs" id="tplHqOutTemp" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Outside temperature" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-WDC7000,HM-WDS10-TH-O,HM-WDS40-TH-I,HM-WDS100-C6-O,HM-WDS30-T-O">
+    <div id="<%= this.data.attr('wid') %>" />
+</script>
+<script type="text/ejs" id="tplHqDoor" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Door" data-dashui-attrs="hm_id;hqoptions" data-hqwidgets-filter="HM-Sec-SC,HM-SCI-3-FM,HMW-Sen-SC-12-DR,HMW-IO-12-Sw14-DR">
+    <div id="<%= this.data.attr('wid') %>" />
+</script>
+<script type="text/ejs" id="tplHqLock" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Lock" data-dashui-attrs="hm_id;hqoptions" data-hqwidgets-filter="HM-Sec-Key-S">
+    <div id="<%= this.data.attr('wid') %>" />
+</script>
+<script type="text/ejs" id="tplHqText" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Text" data-dashui-attrs="hqoptions">
+    <div id="<%= this.data.attr('wid') %>" />
+</script>
+<script type="text/ejs" id="tplHqInfo" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Info" data-dashui-attrs="hm_id;hqoptions">
+    <div id="<%= this.data.attr('wid') %>" />
+</script>
+<script type="text/ejs" id="tplHqImage" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Image" data-dashui-attrs="hqoptions">
+    <div id="<%= this.data.attr('wid') %>" style="z-index: -2"/>
+</script>

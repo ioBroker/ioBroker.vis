@@ -28,7 +28,7 @@
                 var $this = jQuery(el);
                 var hm_id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                    if (newVal == "false" || parseInt(newVal,10) == 0) {
+                    if (newVal == "false" || parseInt(newVal,10) == 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
                         }
@@ -68,7 +68,7 @@
                 var hm_id = "_" + $.homematic("escape",id);
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     console.log("newVal="+newVal+" oldVal="+oldVal);
-                    if (newVal == "false" || parseFloat(newVal) == 0) {
+                    if (newVal == "false" || parseFloat(newVal) == 0) {
                         if ($this.find("option[value='1']").prop("selected")) {
                             //console.log("false");
                             $this.find("option[value='1']").removeAttr("selected");
@@ -92,7 +92,7 @@
                 if (dui.urlParams["edit"] !== "") {
                     $this.click(function () {
                         var val = homematic.uiState["_"+id].Value;
-                        if (val === "false") { val = 0;}
+                        if (val === "false") { val = 0;}
                         if (val === "true") { val = 1;}
                         val = parseFloat(val, 10);
                         if (val >= 0.5) { val = 1; } else { val = 0; }
@@ -204,7 +204,7 @@
                 var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
                 var val = parseFloat(str,10);
                 var state;
-                if (val == 0 || str == "false") {
+                if (val == 0 || str == "false") {
                 %>
                 <%== this.data.attr("html_false") %>
                 <% } else { %>
@@ -254,7 +254,7 @@
             var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
             var val = parseFloat(str,10);
             var state;
-            if (val == 0 || str == "false") {
+            if (val == 0 || str == "false") {
             %>
             <%== this.data.attr("html_false") %>
             <% } else { %>

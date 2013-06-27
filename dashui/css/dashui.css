@@ -69,12 +69,10 @@
 	text-indent: 250px;
 	white-space: nowrap;
 	overflow: hidden;
-    background: url(../img/Bubbles_Wait.png);
+    background: url(../img/gear-icon-md.png);
+    background-size: 100% auto;
 	-webkit-animation-duration: 2s;
 	-webkit-animation-name: dashui-waitico-rotate;
 	-webkit-animation-iteration-count: infinite;
 	-webkit-animation-timing-function: linear;
 }
-/*	-webkit-mask-image: url(../img/ico_Wait.png);
-	background-color: #000;
-*/
