@@ -42,6 +42,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
+    version: "0.1.1",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -400,9 +401,10 @@ var hqWidgets = {
             staticTextFont:   null,  // Font for static text
             staticTextColor:  null,  // Color for static text
             isContextMenu:    false, // If install edit context menu
+            noBackground:     false, // If show background or just text or image
+            usejQueryStyle:   false, // Use jQuery style for active/passive background
             
             // Local variables (Will not be stored)
-            _noBackground:false,        // If show background or just text or image
             _contextMenu: null,         // Context menu
             _element:     null,         // HTML container as object
             _isEditMode:  false,        // Is Edit mode
@@ -472,7 +474,7 @@ var hqWidgets = {
         
         var intern = {
             // Local variables (Will not be stored)
-            _noBackground:false,        // If show background or just text or image
+            noBackground:false,        // If show background or just text or image
             _contextMenu: null,         // Context menu
             _element:     null,         // HTML container as object
             _isEditMode:  false,        // Is Edit mode
@@ -541,6 +543,93 @@ var hqWidgets = {
         
         this.settings._jelement = $('#'+this.advSettings.elemName);
         
+        // Define background style
+        this._setUsejQueryStyle = function (isUse, isUpdate) {
+            this.settings.usejQueryStyle = isUse;
+            
+            this.settings._jelement.removeClass ("ui-state-default ui-state-hover ui-state-active");
+            if (isUse) {
+                // Colors of the states
+                if (!this.settings.noBackground) {
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
+                    {
+                        this.settings._backOff        = "ui-state-default hq-button-base-intemp";
+                        this.settings._backOffHover   = "ui-state-hover hq-button-base-intemp-hover";
+                        this.settings._backMoving     = "hq-button-base-moving";
+                    }
+                    else
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp)
+                    {
+                        this.settings._backOff        = "hq-button-base-outtemp ui-state-default";
+                        this.settings._backOffHover   = "hq-button-base-outtemp-hover ui-state-hover";
+                        this.settings._backMoving     = "hq-button-base-moving";
+                    }
+                    else
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {	
+                        this.settings._backOff        = "hq-blind-base";
+                        this.settings._backOffHover   = "hq-blind-base";
+                        this.settings._backMoving     = "hq-blind-blind3-moving";
+                    }
+                    else
+                    {
+                        this.settings._backOff        = "ui-state-default hq-button-base-normal";
+                        this.settings._backOffHover   = "ui-state-hover hq-button-base-normal-hover";
+                        this.settings._backMoving     = "hq-button-base-moving";
+                    }                
+                    this.settings._backOn         = "ui-state-active hq-button-base-on";
+                    this.settings._backOnHover    = "ui-state-active hq-button-base-on-hover";
+                }
+                else {
+                    this.settings._backOff        = "";
+                    this.settings._backOffHover   = "";
+                    this.settings._backOn         = "";
+                    this.settings._backOnHover    = "";
+                    this.settings._backMoving     = "hq-button-base-moving";
+                }
+            }
+            else {
+                // Colors of the hqWidgets states
+                if (!this.settings.noBackground) {
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
+                    {
+                        this.settings._backOff        = "hq-button-base-intemp";
+                        this.settings._backOffHover   = "hq-button-base-intemp-hover";
+                        this.settings._backMoving     = "hq-button-base-moving";
+                    }
+                    else
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp)
+                    {
+                        this.settings._backOff        = "hq-button-base-outtemp";
+                        this.settings._backOffHover   = "hq-button-base-outtemp-hover";
+                        this.settings._backMoving     = "hq-button-base-moving";
+                    }
+                    else
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {	
+                        this.settings._backOff        = "hq-blind-base";
+                        this.settings._backOffHover   = "hq-blind-base";
+                        this.settings._backMoving     = "hq-blind-blind3-moving";
+                    }
+                    else
+                    {
+                        this.settings._backOff        = "hq-button-base-normal";
+                        this.settings._backOffHover   = "hq-button-base-normal-hover";
+                        this.settings._backMoving     = "hq-button-base-moving";
+                    }                
+                    this.settings._backOn         = "hq-button-base-on";
+                    this.settings._backOnHover    = "hq-button-base-on-hover";
+                }
+                else {
+                    this.settings._backOff        = "";
+                    this.settings._backOffHover   = "";
+                    this.settings._backOn         = "";
+                    this.settings._backOnHover    = "";
+                    this.settings._backMoving     = "hq-button-base-moving";
+                }
+
+            }
+            if (isUpdate)
+                this.ShowState ();
+        };
         // Draw window content
         this.DrawOneWindow = function (index, type, xoffset, width_, height_) {
             var name = this.settings._jelement.attr("id")+"_"+index;
@@ -844,6 +933,8 @@ var hqWidgets = {
                         var t = text;
                         while (t.length > 0 && t[t.length-1] == 0)
                             t = t.substring (0, t.length -1);
+                        if (t[t.length-1] == '.')
+                            t = t.substring (0, t.length -1);
                         
                         if (f+"" == t) {// it is float 
                             // leave only one digit after point
@@ -930,7 +1021,7 @@ var hqWidgets = {
                     else
                     {
                         if (this.settings.isContextMenu) {
-                            if (!this.settings._noBackground) {
+                            if (!this.settings.noBackground) {
                                 if (this.settings.isIgnoreEditMode)
                                     this.SetClass (this.settings._backOn);
                                 else
@@ -1659,7 +1750,7 @@ var hqWidgets = {
                 if (hqWidgets.gDynamics.gActiveElement)
                 {
                     hqWidgets.gDynamics.gActiveElement.settings._isPressed = false;
-                    if (hqWidgets.gDynamics.gActiveElement.settings._noBackground) 
+                    if (hqWidgets.gDynamics.gActiveElement.settings.noBackground) 
                         hqWidgets.gDynamics.gActiveElement.SetClass ("hq-no-background-edit", 100);
                     else 
                         hqWidgets.gDynamics.gActiveElement.SetClass (hqWidgets.gDynamics.gActiveElement.settings._backOffHover, 100);
@@ -1833,7 +1924,7 @@ var hqWidgets = {
                     
                 this.Generate    
                     
-                if (this.settings._noBackground)
+                if (this.settings.noBackground)
                     this.SetClass ("hq-no-background-edit", 100);
                 else 
                 if (!isTouch)
@@ -2136,34 +2227,7 @@ var hqWidgets = {
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer  ||
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeButton) {
                 // Colors of the states
-                if (!this.settings._noBackground) {
-                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
-                    {
-                        this.settings._backOff        = "hq-button-base-intemp";
-                        this.settings._backOffHover   = "hq-button-base-intemp-hover";
-                    }
-                    else
-                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp)
-                    {
-                        this.settings._backOff        = "hq-button-base-outtemp";
-                        this.settings._backOffHover   = "hq-button-base-outtemp-hover";
-                    }
-                    else
-                    {
-                        this.settings._backOff        = "hq-button-base-normal";
-                        this.settings._backOffHover   = "hq-button-base-normal-hover";
-                    }
-                    this.settings._backOn         = "hq-button-base-on";
-                    this.settings._backOnHover    = "hq-button-base-on-hover";
-                }
-                else {
-                    this.settings._backOff        = "";
-                    this.settings._backOffHover   = "";
-                    this.settings._backOn         = "";
-                    this.settings._backOnHover    = "";
-                }
-        
-                this.settings._backMoving     = "hq-button-base-moving";
+                this._setUsejQueryStyle (this.settings.usejQueryStyle);
                 this.settings._jelement.addClass ("hq-button-base");
                 this.settings._jelement.addClass ("hq-no-select");
                 this.settings._jelement.css ({width:        this.settings.width, 
@@ -2304,7 +2368,7 @@ var hqWidgets = {
                     this.settings._backOffHover   = "";
                     this.settings._backOn         = "";
                     this.settings._backOnHover    = "";
-                    this.settings._noBackground   = true;
+                    this.settings.noBackground   = true;
                     
                     if (!document.getElementById(this.advSettings.elemName+'_lock')) {
                         var $newdiv1 = $('<div id="'+this.advSettings.elemName+'_lock"></div>');
@@ -2362,11 +2426,11 @@ var hqWidgets = {
             }
             else
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {	
-                this.settings._backMoving  = "hq-blind-blind3-moving";
+                // Colors of the states
+                this._setUsejQueryStyle (this.settings.usejQueryStyle);
+
                 this.settings._jelement.addClass ('hq-blind-base');
                 this.settings._jelement.css ({borderRadius: 0});
-                this.settings._backOff        = "hq-blind-base";
-                this.settings._backOffHover   = "hq-blind-base";
                 this.SetWindowType (this.settings.windowConfig);
                 this.SetSize (this.settings.width, this.settings.height, true);
                 
@@ -2483,7 +2547,7 @@ var hqWidgets = {
                     this.settings._jelement.append("<div id='"+this.advSettings.elemName+"_stext' ></div>");
                 this.settings._jstaticText = $('#'+this.advSettings.elemName+"_stext").show();
                 this.settings._jstaticText.addClass("hq-no-select");
-                this.settings._noBackground = true;
+                this.settings.noBackground = true;
                 this.SetStaticText (this.staticText, this.staticTextFont, this.staticTextColor);
                 document.getElementById(this.advSettings.elemName+'_stext').parentQuery = this;
                 this.settings._jstaticText.bind ("mousedown", {msg: this}, function (e)
@@ -2631,53 +2695,27 @@ var hqWidgets = {
             if (options.room != undefined)
                 this.SetTitle (options.room, this.title);
 
+            // jQuery style
+            if (options.usejQueryStyle != undefined)
+                this._setUsejQueryStyle (options.usejQueryStyle, true);
 
             // noBackground
-            if (options._noBackground != undefined) {
-                if (this.settings._noBackground != options._noBackground) 
-                {
-                    this.settings._noBackground = options._noBackground;
-
-                    // Colors of the states
-                    if (!options._noBackground)
-                    {
-                        if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
-                        {
-                            this.settings._backOff        = "hq-button-base-intemp";
-                            this.settings._backOffHover   = "hq-button-base-intemp-hover";
-                        }
-                        else
-                        if (this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp)
-                        {
-                            this.settings._backOff        = "hq-button-base-outtemp";
-                            this.settings._backOffHover   = "hq-button-base-outtemp-hover";
-                        }
-                        else
-                        {
-                            this.settings._backOff        = "hq-button-base-normal";
-                            this.settings._backOffHover   = "hq-button-base-normal-hover";
-                        }
-                        this.settings._backOn         = "hq-button-base-on";
-                        this.settings._backOnHover    = "hq-button-base-on-hover";
-                    }
-                    else
-                    {
-                        this.settings._backOff        = "";
-                        this.settings._backOffHover   = "";
-                        this.settings._backOn         = "";
-                        this.settings._backOnHover    = "";
-                    }
-                    this.ShowState ();
-                }
+            if (options.noBackground != undefined) {
+                this.settings.noBackground = options.noBackground;
+                this._setUsejQueryStyle (this.settings.usejQueryStyle, true);
             }
             
             //  iconName
-            if (options.iconName !== undefined) 
+            if (options.iconName !== undefined) {
                 this.SetIcon (options.iconName);
+                options.iconName = this.settings.iconName;
+            }
 
             //  iconOn
-            if (options.iconOn !== undefined) 
+            if (options.iconOn !== undefined) {
                 this.SetIconOn (options.iconOn);
+                options.iconOn = this.settings.iconOn;
+            }
 
             // doorType
             if (options.doorType!=undefined) 
@@ -2941,8 +2979,10 @@ var hqWidgets = {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeText  && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDoor  && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeImage && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeBlind)
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeBlind) {
             sText += "<tr><td>"+ hqWidgets.Translate("Radius:")+"</td><td id='"+this.e_settings.elemName+"_radius'></td></tr>";
+            //sText += "<tr><td>"+ hqWidgets.Translate("jQuery Styles:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_jstyle' "+((this.e_internal.attr.usejQueryStyle) ? "checked" : "")+">";
+        }
 
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeDoor) {
             sText += "<tr><td>"+ hqWidgets.Translate("Slide:")+"</td><td><select style='width: "+this.e_settings.width+"px'  id='"+this.e_settings.elemName+"_door'>";
@@ -3016,6 +3056,10 @@ var hqWidgets = {
             sText += "<tr><td>"+ hqWidgets.Translate("Active condition:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_condition'  type='text' value='"+this.e_internal.attr.infoCondition+"'></td></tr>";
             sText += "<tr><td>"+ hqWidgets.Translate("Hide inactive:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_hideInactive' "+((this.e_internal.attr.infoIsHideInactive) ? "checked" : "")+">";
         }  
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeButton) {
+            sText += "<tr><td>"+ hqWidgets.Translate("No background:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_back' "+((this.e_internal.attr.noBackground) ? "checked" : "")+">";
+        }
         sText += "<tr><td>"+ hqWidgets.Translate("Description:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_title' type='text' value='"+((this.e_internal.attr.title) || "")+"'></td></tr>";
 
         this.e_settings.parent.append (sText);
@@ -3307,6 +3351,28 @@ var hqWidgets = {
             
             _jcheckbox.change (function () { this.parent.e_internal.inactiveChanged ();});
         }	
+        if ((elem = document.getElementById (this.e_settings.elemName+'_back')) != null) {
+            var _jcheckbox = $('#'+this.e_settings.elemName+'_back');
+            elem.parent = this;
+            this.e_internal.noBackChanged = function ()
+            {
+                this.attr.noBackground = $('#'+this.parent.e_settings.elemName+'_back').prop('checked');
+                this.obj.SetSettings ({noBackground: this.attr.noBackground}, true);
+            };
+            
+            _jcheckbox.change (function () { this.parent.e_internal.noBackChanged ();});
+        }
+        if ((elem = document.getElementById (this.e_settings.elemName+'_jstyle')) != null) {
+            var _jcheckbox = $('#'+this.e_settings.elemName+'_jstyle');
+            elem.parent = this;
+            this.e_internal.jQueryStyleChanged = function ()
+            {
+                this.attr.usejQueryStyle = $('#'+this.parent.e_settings.elemName+'_jstyle').prop('checked');
+                this.obj.SetSettings ({usejQueryStyle: this.attr.usejQueryStyle}, true);
+            };
+            
+            _jcheckbox.change (function () { this.parent.e_internal.jQueryStyleChanged ();});
+        }
         if (this.e_internal.extra)
             this.e_internal.extra ();
     },
