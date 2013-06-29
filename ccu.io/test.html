@@ -1,0 +1,15 @@
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://172.16.23.33:2100/socket.io/socket.io.js"></script>
+<script>
+    function msgReceived(msg){
+        $clientCounter.html(msg.clients);
+    }
+
+    $(document).ready(function () {
+
+        var socket = io.connect('http://localhost:2100');
+        socket.on('event', function(obj) {
+            console.log(obj)
+        });
+    });
+</script>
