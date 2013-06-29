@@ -1,5 +1,5 @@
 /**
- *      CCU.IO
+ *      CCU.IO version 0.1
  *
  *      Socket.IO based HomeMatic Interface
  *

@@ -1,6 +1,8 @@
 /**
  *      HomeMatic BIN-RPC Schnittstelle für Node.js
  *
+ *      Version 0.1
+ *
  *      Copyright (c) 2013 http://hobbyquaker.github.io
  *
  *      CC BY-NC 3.0
