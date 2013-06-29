@@ -14,10 +14,10 @@ zur CCU eingesetzt werden.
 
 ## Vorraussetzungen
 
-CCU.IO benötigt Node.js:
+CCU.IO benötigt Node.js das für viele Plattformen inklusive der CCU2 zur Verfügung steht:
 * Binärfile für die CCU2 hab ich gebaut und hier veröffentlicht: https://github.com/hobbyquaker/node-ccu2
-* Binärpakete für Raspbian gibt es hier: https://gist.github.com/adammw/3245130
-* Installer für Linux, OSX, Sun, Windows sowie die Sourcen gibt es hier: http://nodejs.org/download/
+* Binärpakete für den Raspberry Pi gibt es hier: https://gist.github.com/adammw/3245130
+* Installer für Linux, OSX, Sun und Windows sowie die Sourcen gibt es hier: http://nodejs.org/download/
 
 
 ## Ausprobieren!
