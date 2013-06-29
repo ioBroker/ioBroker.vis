@@ -1,7 +1,7 @@
 CCU.IO
 ======
 
-Socket.IO basierte Schnittstelle für die HomeMatic CCU2
+Socket.IO basierte Schnittstelle für die HomeMatic CCU (Funk, Wired und CUxD)
 
 CCU.IO ist eine Node.js Applikation die via BIN-RPC mit rfd, hs485d und cuxd kommuniziert. CCU.IO kann - aber muss nicht -
 auf der CCU2 installiert werden. Ein integrierter Websocket Server dient dazu Webbrowsern oder anderen Servern die von
@@ -15,9 +15,10 @@ zur CCU eingesetzt werden.
 ## Vorraussetzungen
 
 CCU.IO benötigt Node.js:
-* Binärfile für die CCU2: https://github.com/hobbyquaker/node-ccu2
+* Binärfile für die CCU2 hab ich gebaut und hier veröffentlicht: https://github.com/hobbyquaker/node-ccu2
 * Binärpakete für Raspbian gibt es hier: https://gist.github.com/adammw/3245130
 * Installer für Linux, OSX, Sun, Windows sowie die Sourcen gibt es hier: http://nodejs.org/download/
+
 
 ## Ausprobieren!
 
