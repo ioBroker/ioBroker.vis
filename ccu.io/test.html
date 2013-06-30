@@ -6,7 +6,7 @@
         var output = $("#output");
         var socket = io.connect('http://172.16.23.153:2100');
         socket.on('event', function(obj) {
-            output.prepend(JSON.stringify(obj) + "\n");
+            output.prepend((new Date().toLocaleString()) + " event " + JSON.stringify(obj) + "\n");
         });
     });
 </script>
