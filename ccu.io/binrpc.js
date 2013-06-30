@@ -1,7 +1,7 @@
 /**
  *      HomeMatic BIN-RPC Schnittstelle für Node.js
  *
- *      Version 0.1
+ *      Version 0.2
  *
  *      Copyright (c) 2013 http://hobbyquaker.github.io
  *
@@ -23,11 +23,12 @@ var binrpc = function(options) {
     logger.verbose("Copyright (c) 2013 hobbyquaker");
     logger.verbose("Licensed under CC BY-NC 3.0");
 
-    var that = this;
     this.options = options;
+    this.inits = options.inits;
     this.prefix = options.prefix;
     this.methods = options.methods;
 
+    this.init();
 };
 
 binrpc.prototype = {
@@ -454,15 +455,9 @@ binrpc.prototype = {
     init: function (options) {
         var that = this;
 
-        if (options.cuxd) {
-            this.inits.push({id: "CUxD", port: options.cuxdPort || 8701});
-        }
-        if (options.rf) {
-            this.inits.push({id: "BidCos-RF", port: options.rfPort || 2001});
-        }
-        if (options.wired) {
-            this.inits.push({id: "BidCos-Wired", port: options.wiredPort || 2000});
-        }
+
+
+
 
         if (this.inits.length < 1) {
             return false;

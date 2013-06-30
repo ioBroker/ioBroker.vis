@@ -24,8 +24,11 @@ CCU.IO benötigt Node.js das für viele Plattformen inklusive der CCU2 zur Verf�
 
 * in der Datei ccu.io.js müssen die IP des Hosts auf dem Node.js läuft sowie die IP der CCU angepasst werden. (Läuft CCU.IO auf
 der CCU2 selbst kann hier an beiden stellen 127.0.0.1 eingetragen werden.)
-* In test.html die IP des Node-Servers anpassen
-* Den Server starten: node ccu.io.js
+* In test.html die IP des Node-Servers anpassen (an zwei Stellen!)
+* Den Server starten:
+
+     node ccu.io.js
+
 * die Datei test.html im Browser aufrufen. -> Events sollten nun in der Browser-Konsole erscheinen
 
 ## Todo/Roadmap
