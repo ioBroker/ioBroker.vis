@@ -12,6 +12,8 @@
 
 
 ## Changelog
+### 0.8.2
+* hqWidgets: Button, Shutter, Lock, Door, Text, Image, Info, InTemp, OutTemp
 
 ### 0.8
 * Fehler im Theme "Kiandra" behoben

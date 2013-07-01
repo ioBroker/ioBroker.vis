@@ -124,12 +124,7 @@ var dui = {
         dui.startInstance();
     },
     loadWidgetSet: function (name) {
-        //console.log("loadWidgetSet("+name+")");
-        // Skip hqWidgets if not installed
-        if (name == "hqWidgets" && (typeof hqWidgets == 'undefined')) {
-            return;
-        }
-        
+        //console.log("loadWidgetSet("+name+")");        
         $.ajax({
             url: "widgets/"+name+".html",
             type: "get",
@@ -164,12 +159,6 @@ var dui = {
 
         dui.initInstance();
         
-        // Init hqWidgets engine
-        if (typeof hqWidgets != 'undefined') {
-            hqWidgets.Init ({gPictDir: "img/"});
-            $.homematic ("registerUpdate", dui.binds.hqWidgetsExt.hqMonitor);
-        }
-
         var activeBkgClass = "";
         var settings = storage.get(dui.storageKeySettings);
         if (settings) {
@@ -440,17 +429,16 @@ var dui = {
             }, widget.data))
         };
         //console.log(widget);
-
         // Register hm_id to detect changes
-        $.homematic("addUiState", widget.data.hm_id, widget.data.hm_wid);
+        if (widget.data.hm_id != 65535)
+            $.homematic("addUiState", widget.data.hm_id, widget.data.hm_wid);
+        
         var widgetData = dui.widgets[id]["data"];
         widgetData.hm_id = $.homematic("escape", widgetData.hm_id);
+        
         // Append html element to view
         $("#duiview_"+view).append(can.view(widget.tpl, {hm: homematic.uiState["_"+widget.data.hm_id], data: widgetData}));
-        
-        if ((typeof hqWidgets != 'undefined') && hqWidgets != null && widget.tpl != "" && widget.tpl.length > 5 && widget.tpl.substring(0,5) == "tplHq") {
-            dui.binds.hqWidgetsExt.hqButtonExt (id, widgetData.hqoptions);
-        }
+       
 
         if (widget.style) {
             $("#"+id).css(widget.style);
@@ -739,9 +727,6 @@ dui = $.extend(true, dui, {
         dui.clearWidgetHelper();
         $("#select_active_widget option[value='"+dui.activeWidget+"']").remove();
         $("#select_active_widget").multiselect("refresh");
-        if ((typeof hqWidgets != 'undefined') && hqWidgets != null) {
-            hqWidgets.Delete (dui.activeWidget);
-        }
         $("#"+dui.activeWidget).remove();
         delete(dui.views[dui.activeView].widgets[dui.activeWidget]);
         dui.saveLocal();
@@ -772,11 +757,6 @@ dui = $.extend(true, dui, {
             }, data))
         };
         $("#duiview_"+dui.activeView).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"]}));
-        
-        if ((typeof hqWidgets != 'undefined') && hqWidgets != null && tpl != "" && tpl.length > 5 && tpl.substring(0,5) == "tplHq") {
-            dui.binds.hqWidgetsExt.hqButtonExt (widgetId, dui.widgets[widgetId]["data"].attr('hqoptions'), tpl);
-        }
-        
         if (!dui.views[dui.activeView]) {
             //console.log("views["+dui.activeView+"]==undefined :-(");
         }
@@ -938,10 +918,12 @@ dui = $.extend(true, dui, {
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><textarea id="inspect_'+widget_attrs[attr]+'" rows="2" cols="44"></textarea></td></tr>');
                     $('#widget_attrs_fix').hide ();
                     // Common settings
-                    hqWidgets.hqButtonEdit ({parent: $("#widget_attrs"), imgSelect: imageSelect}, hqWidgets.Get (dui.activeWidget), function () {
-                        // Special HM settings
-                        dui.binds.hqWidgetsExt.hqButtonEdit (hqWidgets.Get (dui.activeWidget), $("#widget_attrs"), $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"));                    
-                    });
+                    if (dui.binds.hqWidgetsExt) {
+                        hqWidgets.hqButtonEdit ({parent: $("#widget_attrs"), imgSelect: imageSelect}, hqWidgets.Get (dui.activeWidget), function () {
+                            // Special HM settings
+                            dui.binds.hqWidgetsExt.hqButtonEdit (hqWidgets.Get (dui.activeWidget), $("#widget_attrs"), $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"));                    
+                        });
+                    }
                 }else
                 if (widget_attrs[attr].slice(0,4) !== "html" && widget_attrs[attr] != 'hqoptions') {
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/></td></tr>');
@@ -1025,8 +1007,7 @@ dui = $.extend(true, dui, {
             stop: function(event, ui) {
                 var widget = ui.helper.attr("id")
                 $("#inspect_css_top").val(ui.position.top + "px");
-                $("#inspect_css_left").val(ui.position.left + "px");
-
+                $("#inspect_css_left").val(ui.position.left + "px");              
                 if (!dui.views[dui.activeView].widgets[widget].style) {
                     dui.views[dui.activeView].widgets[widget].style = {};
                 }
@@ -1042,7 +1023,7 @@ dui = $.extend(true, dui, {
                 $("#widget_inner_helper")
                     .css("left", (ui.position.left - 1) + "px")
                     .css("top", (ui.position.top - 1) + "px");
-
+                
             }
         };
         if ($("#snap_type option:selected").val() == 1) {
@@ -1050,7 +1031,7 @@ dui = $.extend(true, dui, {
         }
         if ($("#snap_type option:selected").val() == 2) {
             draggableOptions.grid = [gridWidth,gridWidth];
-        }
+        }        
         $this.draggable(draggableOptions).resizable($.extend({
             stop: function(event, ui) {
                 var widget = ui.helper.attr("id")

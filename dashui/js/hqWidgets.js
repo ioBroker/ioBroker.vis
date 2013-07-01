@@ -282,6 +282,24 @@ var hqWidgets = {
             }
         }			
     },
+    // Delete button from the list
+    GarbageCollector: function () {
+        var isDeleted;
+        do {
+            var i = 0;
+            isDeleted = false;
+            // Check all buttons
+            while (this.gDynamics.gElements[i]) {
+                // If button exists but container not => delete button
+                if (!document.getElementById (this.gDynamics.gElements[i].advSettings.elemName)) {
+                    isDeleted = true;
+                    this.Delete (this.gDynamics.gElements[i]);
+                    break;
+                }
+                i++;
+            }
+        }while (isDeleted);
+    },
     // Create and add button to the list
     Create: function (options, advOptions) {
         var btnObj = new this.hqButton (options, advOptions);
@@ -582,6 +600,10 @@ var hqWidgets = {
                         this.settings._backMoving     = "hq-blind-blind3-moving";
                     }
                     else
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage) {
+                        this.settings._backOff="";  
+                    }                        
+                    else
                     {
                         this.settings._backOff        = "ui-state-default";
                         this.settings._backOffHover   = "ui-state-hover";
@@ -621,6 +643,10 @@ var hqWidgets = {
                         this.settings._backMoving     = "hq-blind-blind3-moving";
                     }
                     else
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage) {
+                        this.settings._backOff="";  
+                    } 
+                    else
                     {
                         this.settings._backOff        = "hq-button-base-normal";
                         this.settings._backOffHover   = "hq-button-base-normal-hover";
@@ -647,7 +673,7 @@ var hqWidgets = {
             if (!this.settings._jelement.leaf) this.settings._jelement.leaf = new Array ();
             this.settings._jelement.prepend("<div id='"+name+"_0' class='hq-blind-blind1'></div>");
             var wnd = new Object ();
-            wnd.ooffset = (Math.tan(15 * Math.PI/180) * width_)/2 + 2;
+            wnd.ooffset = (Math.tan(10 * Math.PI/180) * width_)/2 + 2;
             wnd.width   = width_  - 9;
             wnd.height  = height_ - 9;
             wnd.owidth  = (wnd.width * Math.cos(15 * Math.PI/180)) * 0.9;
@@ -760,7 +786,7 @@ var hqWidgets = {
                 }
                 
                 if (this.settings._jdoor)
-                    this.settings._jdoor.css ({width: this.settings.width, height: this.settings.height});	
+                    this.settings._jdoor.css ({width: '100%'/*this.settings.width*/, height: '100%'/*this.settings.height*/});	
                     
                 if (this.settings._jdoorHandle)
                 {
@@ -1005,7 +1031,7 @@ var hqWidgets = {
                         this.settings._jdoor.stop().animate ({width: this.settings._jelement.width() * 0.8, 
                                                               left: (this.settings.doorType!=hqWidgets.gSwingType.gSwingLeft) ? 0: this.settings._jelement.width() * 0.2}, (noDelay) ? 0 : 200);
                     else
-                        this.settings._jdoor.stop().animate ({left:0, width: this.settings._jelement.width()}, (noDelay) ? 0 : 200);
+                        this.settings._jdoor.stop().animate ({left:0, width: '100%'/*this.settings._jelement.width()*/}, (noDelay) ? 0 : 200);
                 }
             }
         }
@@ -1164,6 +1190,10 @@ var hqWidgets = {
             if (this.settings._isEditMode != isEditMode)
             {
                 this.settings._isEditMode = isEditMode;			
+                if (this.settings._isEditMode)
+                    this.settings._jeventhnd.hide ();
+                else
+                    this.settings._jeventhnd.show ();
                 this.ShowState ();
             }		
         }	
@@ -2063,7 +2093,7 @@ var hqWidgets = {
                 this.settings._jelement.removeClass ("hq-button-base");
                 this.settings._jelement.removeClass ('hq-blind-base');
                 this.settings._jelement.removeClass ('hq-door-black');
-                this.settings._jelement.removeClass ("hq-backround");
+                this.settings._jelement.removeClass ("hq-background");
                 
                 //this.settings._jelement.removeAttr("style")
                 if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp  ||
@@ -2436,7 +2466,7 @@ var hqWidgets = {
                 this.settings._jdoor=$('#'+this.advSettings.elemName+"_door");
                 this.settings._jdoor.addClass ('hq-door');
                 this.settings._jdoor.addClass ('hq-no-select').show();
-                this.settings._jdoor.css ({width: this.settings.width, height: this.settings.height});
+                this.settings._jdoor.css ({width: '100%'/*this.settings.width*/, height: '100%'/*this.settings.height*/});
                 this.SetDoorType (this.settings.doorType);
                 if (!document.getElementById(this.advSettings.elemName+'_handle'))
                     this.settings._jelement.prepend('<div id="'+this.advSettings.elemName+'_handle"></div>');
@@ -2449,7 +2479,7 @@ var hqWidgets = {
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage)
             {
                 this.settings._backMoving     = "hq-button-base-moving";
-                this.settings._jelement.addClass ("hq-backround");
+                this.settings._jelement.addClass ("hq-background");
                 this.settings._jelement.addClass ("hq-no-select").css ({'z-index': this.settings.zindex});
                 this.settings._backOff="";
                 if (this.settings._contextMenu) {
@@ -2475,7 +2505,7 @@ var hqWidgets = {
                 this.settings._jstaticText = $('#'+this.advSettings.elemName+"_stext").show();
                 this.settings._jstaticText.addClass("hq-no-select");
                 this.settings.noBackground = true;
-                this.SetStaticText (this.staticText, this.staticTextFont, this.staticTextColor);
+                this.SetStaticText (this.settings.staticText, this.settings.staticTextFont, this.settings.staticTextColor);
                 document.getElementById(this.advSettings.elemName+'_stext').parentQuery = this;
                 this.settings._jstaticText.bind ("mousedown", {msg: this}, function (e)
                 {
@@ -2709,6 +2739,9 @@ var hqWidgets = {
                
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage && options.zindex != undefined){
                 //this.settings.zindex = (options.zindex < 998) ? options.zindex: 997; 
+                this.settings._jelement.css({'z-index':this.settings.zindex});
+            }
+            if (options.zindex != undefined){
                 this.settings._jelement.css({'z-index':this.settings.zindex});
             }
             if (isSave) {
@@ -2961,7 +2994,8 @@ var hqWidgets = {
         this.settings._jeventhnd.bind ("mousedown", {msg: this}, function (e)	{
             if (e.button == 0) // right
             {
-                if (e.data.msg.OnMouseDown(e.pageX, e.pageY, false)) {
+                
+                if (!e.data.msg.settings._isEditMode && e.data.msg.OnMouseDown(e.pageX, e.pageY, false)) {
                     e.preventDefault();
                 }
                 // Hide active menu
@@ -2989,12 +3023,6 @@ var hqWidgets = {
         this.settings._eventhnd.addEventListener('touchend', function(e) {
             e.target.parentQuery.OnMouseUp (true);
         }, false);	
-        this.settings._jeventhnd.bind ("resize", {msg: this}, function (e)	{
-            if (e.data.msg.settings.isContextMenu)
-                return;
-                    
-            e.data.msg.SetSize (e.data.msg.settings._jelement.width(), e.data.msg.settings._jelement.height());
-        });
         this.settings._jeventhnd.bind ("change", {msg: this}, function (e)	{
             if (e.data.msg.settings.isContextMenu)
                 return;
@@ -3008,7 +3036,12 @@ var hqWidgets = {
         this.settings._jeventhnd.bind ("mouseup", {msg: this}, function (e)	{
             e.data.msg.OnMouseUp (false);
         });	
-
+        this.settings._jelement.bind ("resize", {msg: this}, function (e)	{
+            if (e.data.msg.settings.isContextMenu)
+                return;
+                    
+            e.data.msg.SetSize (e.data.msg.settings._jelement.width(), e.data.msg.settings._jelement.height());
+        });
     },
     // Creates in the parent table lines with settings
     hqButtonEdit: function (options, obj, additionalSettingsFunction)
@@ -3137,7 +3170,7 @@ var hqWidgets = {
         
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo) {
             sText += "<tr><td>"+ hqWidgets.Translate("Format string:")    +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_format'     type='text' value='"+this.e_internal.attr.infoFormat+"'></td></tr>";
-            sText += "<tr><td>"+ hqWidgets.Translate("Active condition:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_condition'  type='text' value='"+this.e_internal.attr.infoCondition+"'></td></tr>";
+            sText += "<tr><td>"+ hqWidgets.Translate("Active condition:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_condition'  type='text' value='"+((this.e_internal.attr.infoCondition != undefined) ? this.e_internal.attr.infoCondition : "")+"'></td></tr>";
             sText += "<tr><td>"+ hqWidgets.Translate("Hide inactive:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_hideInactive' "+((this.e_internal.attr.infoIsHideInactive) ? "checked" : "")+">";
         }  
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo ||

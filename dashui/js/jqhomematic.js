@@ -22,11 +22,11 @@
 ;
 
 var homematic = {
-    uiState: {},                // can Observable für UI
+    uiState: {},                // can Observable fur UI
     setState: {},               // can Observable zum setzen von Werten
     ccu: {},                    // Logikschicht-Daten
     dpWorking: {},
-    cancelUpdateList: []            // Datenpunkte die beim nächsten Refresh ausgespart werden sollen
+    cancelUpdateList: []            // Datenpunkte die beim nachsten Refresh ausgespart werden sollen
 };
 
 (function ($) {
@@ -38,7 +38,6 @@ var version =               '0.9',
     setStateTimers =        {},
     refreshTimer,
     cancelNextRefresh =     false,
-    isdebug =               false,
 
     settings =      {
         'ccu':              undefined,
@@ -62,8 +61,7 @@ var version =               '0.9',
         'regaUp':           function() {},
         'connected':        function() {},
         'ready':            function() { funcs.debug("ready"); },
-        'loading':          function(txt) {},
-        'update':           function(el, newState) {},
+        'loading':          function(txt) {}
     },
 
     funcs = {
@@ -88,15 +86,18 @@ var version =               '0.9',
         },                 // Homematic Plugin initialisieren
         setState: function (id, val) {
             //console.log("setState("+id+","+val+")");
-            id = funcs.escape(id);
+           id = funcs.escape(id);
 
             cancelNextRefresh = true;
             homematic.setState.attr("_"+id, {Value:"\""+val+"\""});
+            // ??? @hobbyquaker: Eigentlich, state muss wieder vom CCU 
+            // gelesen werden um den richtigen status zu bekommen (vielleciht wurde die lampe gar nicht eingeshaltet
+            // oder man kann quality von dem signal einfugen
             funcs.uiState(id, val);
-        },                 // Wert-Änderung in homematic.setState schreiben
+        },                 // Wert-Anderung in homematic.setState schreiben
         uiState: function (id, val) {
             homematic.uiState.attr("_"+id+".Value", val);
-        },                 // Wert-Änderung in homematic.uiState schreiben
+        },                 // Wert-Anderung in homematic.uiState schreiben
         stateDelayed: function (attr, val) {
             if (!setStateTimers[attr]) {
                 funcs.state(attr.slice(1), val);
@@ -109,7 +110,7 @@ var version =               '0.9',
                     setStateTimers[attr] = undefined;
                 }, settings.setStateDelay);
             }
-        },                // Wert-Änderungs-Frequenz begrenzen
+        },                // Wert-Anderungs-Frequenz begrenzen
         clearCache: function () {
             storage.set(settings.storageKey, null);
             window.location.reload();
@@ -150,27 +151,22 @@ var version =               '0.9',
             if (settings.ccu) {
                 url = settings.protocol + '://' + settings.ccu + url;
             }
-            if (isdebug) {
-                settings.regaUp();
-                if (success) { success(); }            
-            }
-            else
-                $.ajax({
-                    url: url,
-                    success: function(data) {
-                        if (data == 'OK') {
-                            settings.regaUp();
-                            if (success) { success(); }
-                        } else {
-                            settings.regaDown();
-                            if (error) { error(data); }
-                        }
-                    },
-                    error: function(a, b, c) {
+            $.ajax({
+                url: url,
+                success: function(data) {
+                    if (data == 'OK') {
+                        settings.regaUp();
+                        if (success) { success(); }
+                    } else {
                         settings.regaDown();
-                        error(a,b,c);
+                        if (error) { error(data); }
                     }
-                });
+                },
+                error: function(a, b, c) {
+                    settings.regaDown();
+                    error(a,b,c);
+                }
+            });
         },          // ReGaHss running? (= Port 8181 reachable)
         loadCcuDataAll: function (callback) {
             if (callback != null && callback != undefined && !settings.loadCcuData){
@@ -243,85 +239,42 @@ var version =               '0.9',
             }
             settings.loading("loadCcuData("+dataType+")")
             funcs.debug("loadCcuData("+dataType+")");
-            if (isdebug) {
-                var url = settings.url;
-                if (dataType == 'variables') {
-                    url += 'hmvars.dat';
-                }
-                else
-                if (dataType == 'programs') {
-                    url += 'hmprogs.dat';
-                }
-                else
-                if (dataType == 'rooms') {
-                    url += 'hmrooms.dat';
-                }
-                else
-                if (dataType == 'functions') {
-                    url += 'hmfuncs.dat';
-                }
-                else
-                if (dataType == 'devices') {
-                    url += 'hmdevs.dat';
-                }                   
-                
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function (res) {
-                        settings.loading("loadCcuData("+dataType+") finished");
-                        funcs.debug("loadCcuData("+dataType+") finished");
-                        
-                        homematic.ccu[dataType] = res;
-                        if (settings.cache) {
-                            settings.loading("caching " + dataType);
-                            funcs.debug("caching " + dataType);
-                            storage.extend(settings.storageKey, homematic.ccu);
-                        }
+            $.ajax({
+                url: 'fn/' + dataType + '.fn',
+                type: 'GET',
+                dataType: 'text',
+                success: function (data) {
+                    var url = settings.url + 'hmscript.cgi?content=json';
+                    if (settings.session) {
+                        url += '&session=' + settings.session;
                     }
-                });
-            }
-            else {
-                $.ajax({
-                    url: 'fn/' + dataType + '.fn',
-                    type: 'GET',
-                    dataType: 'text',
-                    success: function (data) {
-                        var url = settings.url + 'hmscript.cgi?content=json';
-                        if (settings.session) {
-                            url += '&session=' + settings.session;
-                        }
-                        $.ajax({
-                            url: url,
-                            type: 'POST',
-                            dataType: 'json',
-                            data: data,
-                            /*
-                            // Debug answer
-                            complete: function (res, status) {
-                                var i = res;
-                            },*/
-                            success: function (res) {
-                                settings.loading("loadCcuData("+dataType+") finished");
-                                funcs.debug("loadCcuData("+dataType+") finished");
-                                
-                                homematic.ccu[dataType] = res;
-                                if (settings.cache) {
-                                    settings.loading("caching " + dataType);
-                                    funcs.debug("caching " + dataType);
-                                    storage.extend(settings.storageKey, homematic.ccu);
-                                }
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: data,
+                        /*
+                        // Debug answer
+                        complete: function (res, status) {
+                            var i = res;
+                        },*/
+                        success: function (res) {
+                            settings.loading("loadCcuData("+dataType+") finished");
+                            funcs.debug("loadCcuData("+dataType+") finished");
+							
+                            homematic.ccu[dataType] = res;
+                            if (settings.cache) {
+                                settings.loading("caching " + dataType);
+                                funcs.debug("caching " + dataType);
+                                storage.extend(settings.storageKey, homematic.ccu);
                             }
-                        });
-                    }
-                });
-            }
+                        }
+                    });
+                }
+            });
             return true;
         },             // Run homematic scripts and insert results in Object ccu
         getImageList: function (dirName, ready, readyPrm) {
-            // dirName = "/www/addons/dashui/img";
-            
             var cache = storage.get(settings.storageKey);
             if (cache && cache !== null && cache["DIR_"+dirName]) {
                 if (ready) {
@@ -336,66 +289,39 @@ var version =               '0.9',
                 }, 100);
                 return false;
             }
-            
-            if (isdebug) {
-                $.ajax({
-                    url: settings.url + 'imglist.dat',
-                    type: 'POST',
-                    dataType: 'html',
-                    success: function (res) {
-                        // dummy names for test
-                        settings.loading("getImageList("+dirName+") finished");
-                        funcs.debug("getImageList("+dirName+") finished");
-                        
-                        homematic.ccu["DIR_"+dirName] = res.split(' ');
-                        for (var i=0; i<homematic.ccu["DIR_"+dirName].length; i++)
-                            homematic.ccu["DIR_"+dirName][i] = homematic.ccu["DIR_"+dirName][i].replace (dirName, "");
-                        if (settings.cache) {
-                            settings.loading("caching images " + dirName);
-                            funcs.debug("caching images" + dirName);
-                            storage.extend(settings.storageKey, homematic.ccu);
-                        }
-                        if (ready) {
-                            ready (homematic.ccu["DIR_"+dirName], readyPrm);
-                        }
-                    }
-                });  
+                
+            var url = settings.url + 'tclscript.cgi?content=html';
+            if (settings.session) {
+                url += '&session=' + settings.session;
             }
-            else
-            {            
-                var url = settings.url + 'tclscript.cgi?content=html';
-                if (settings.session) {
-                    url += '&session=' + settings.session;
-                }
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    dataType: 'html',
-                    data: "puts [glob "+dirName+"*]",
+            $.ajax({
+                url: url,
+                type: 'POST',
+                dataType: 'html',
+                data: "puts [glob "+dirName+"*]",
+                
+                // Debug answer
+                complete: function (res, status) {
+                    var i = res;
+                },
+                success: function (res) {
+                    // dummy names for test
+                    settings.loading("getImageList("+dirName+") finished");
+                    funcs.debug("getImageList("+dirName+") finished");
                     
-                    // Debug answer
-                    complete: function (res, status) {
-                        var i = res;
-                    },
-                    success: function (res) {
-                        // dummy names for test
-                        settings.loading("getImageList("+dirName+") finished");
-                        funcs.debug("getImageList("+dirName+") finished");
-                        
-                        homematic.ccu["DIR_"+dirName] = res.split(' ');
-                        for (var i=0; i<homematic.ccu["DIR_"+dirName].length; i++)
-                            homematic.ccu["DIR_"+dirName][i] = homematic.ccu["DIR_"+dirName][i].replace (dirName, "");
-                        if (settings.cache) {
-                            settings.loading("caching images " + dirName);
-                            funcs.debug("caching images" + dirName);
-                            storage.extend(settings.storageKey, homematic.ccu);
-                        }
-                        if (ready) {
-                            ready (homematic.ccu["DIR_"+dirName], readyPrm);
-                        }
+                    homematic.ccu["DIR_"+dirName] = res.split(' ');
+                    for (var i=0; i<homematic.ccu["DIR_"+dirName].length; i++)
+                        homematic.ccu["DIR_"+dirName][i] = homematic.ccu["DIR_"+dirName][i].replace (dirName, "");
+                    if (settings.cache) {
+                        settings.loading("caching images " + dirName);
+                        funcs.debug("caching images" + dirName);
+                        storage.extend(settings.storageKey, homematic.ccu);
                     }
-                });  
-            }                
+                    if (ready) {
+                        ready (homematic.ccu["DIR_"+dirName], readyPrm);
+                    }
+                }
+            });                   
         },        // Get list of images in the directory
         addStringVariable: function (name, desc, callback) {
             var script = "object test = dom.GetObject('"+name+"');\n" +
@@ -431,7 +357,8 @@ var version =               '0.9',
 
                 return false;
             }
-            var processFunc = function(data) {
+            var script = funcs.buildRefreshScript(DPs);
+            funcs.script(script, function(data) {
                 //console.log(data);
                 data = $.parseJSON(data);
                 if (cancelNextRefresh) {
@@ -440,58 +367,33 @@ var version =               '0.9',
 
                     return false;
                 }
-                var isChanged;
                 for (var dp in data) {
                     //jqhm[dp].attr('Value', data[dp].Value);
                     //jqhm[dp].attr('Timestamp', data[dp].Timestamp);
                     var xdp = ''+dp;
-                    var value;
                     if (xdp.indexOf(".") !== -1 || xdp.indexOf(":") !== -1) {
                         xdp = xdp.replace(/\./g, "__d__");
                         xdp = xdp.replace(/:/g, "__c__");
 
                     }
-                    // Bluefox: How to bind on change ???
-                    isChanged = false;
-                    value     = unescape(data[dp].Value);
-                    if (homematic.uiState.attr(xdp + ".Value") != value) {
-                        homematic.uiState.attr(xdp + ".Value", value);
-                        isChanged = true;
-                    }
-
+                    homematic.uiState.attr(xdp + ".Value", unescape(data[dp].Value));
                     homematic.uiState.attr(xdp + ".Timestamp", data[dp].Timestamp);
-
-                    // Do not forget to remove it after the "canjs" will function
-                    if (isChanged && settings.update && dp != "") {
-                        settings.update (dp.substring(1), value);
-                    }
                 }
                 $(".jqhmRefresh").hide();
-            };
-            if (isdebug) {
-                $.ajax({
-                    url: settings.url + 'update.dat',
-                    type: 'POST',
-                    dataType: 'text',
-                    data: script,
-                    success: processFunc,
-                });
-            }
-            else {
-                var script = funcs.buildRefreshScript(DPs);
-                funcs.script(script, processFunc);
-            }
+
+
+            });
         },                      // Refresh of all Datapoints in Array DPs
-        addUiState: function(id, wid) {
+        addUiState: function(id) {
             //console.log("addUiState("+id+")");
             id = funcs.escape(id);
             var sid = '_' + id;
-            homematic.uiState.attr(sid, {'id':id,'wid':wid,'Value':0,'Timestamp':''});
+            homematic.uiState.attr(sid, {'id':id,'wid':undefined,'Value':0,'Timestamp':''});
         },                     // uiState Objekt initialisieren
         viewsVisible: function () {
             var views = [];
             $("*[data-hm-id]").each(function () {
-                var id  = $(this).attr("data-hm-id");
+                var id = $(this).attr("data-hm-id");
                 var wid = $(this).attr("data-hm-wid");
                 if (wid) {
                     homematic.dpWorking["_"+id] = wid;
@@ -527,7 +429,7 @@ var version =               '0.9',
                 success: success,
                 error: error
             });
-        },    // Übergibt Commandline an /bin/sh, success(data) beinhaltet stdout
+        },    // Ubergibt Commandline an /bin/sh, success(data) beinhaltet stdout
         buildRefreshScript: function (DPs) {
 
             var refreshScript = 'var first = true;\nobject o;\nobject w;\nWrite("{");\n';
@@ -558,7 +460,7 @@ var version =               '0.9',
                     //    refreshScript += 'o = dom.GetObject(' + id + ');\n';
 
                     refreshScript += 'Write("\\"_' + id + '\\":{");\n';
-                    if (type !== "PROGRAM") {
+                    if (type !== "PROGRAM") {
                         refreshScript += 'Write("\\"Value\\":\\"");\n';
                         refreshScript += 'WriteURL(o.Value());\nWrite("\\",");\n';
                     }
@@ -611,10 +513,8 @@ var version =               '0.9',
                 id = id.replace(/__d__/g, ".");
             }
             return id;
-        },
-        registerUpdate: function (func) {
-            settings.update = func;
-        } // install on update event
+        }
+
     },
     methods = {};
 
