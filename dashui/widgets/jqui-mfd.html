@@ -221,7 +221,7 @@
     <% } %>
 </div></div>
 </script>
-<script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal">
+<script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal" data-dashui-filter="LEVEL" >
     <div data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']); %>>
     <%

@@ -22,11 +22,11 @@
 ;
 
 var homematic = {
-    uiState: {},                // can Observable für UI
+    uiState: {},                // can Observable fur UI
     setState: {},               // can Observable zum setzen von Werten
     ccu: {},                    // Logikschicht-Daten
     dpWorking: {},
-    cancelUpdateList: []            // Datenpunkte die beim nächsten Refresh ausgespart werden sollen
+    cancelUpdateList: []            // Datenpunkte die beim nachsten Refresh ausgespart werden sollen
 };
 
 (function ($) {
@@ -90,11 +90,14 @@ var version =               '0.9',
 
             cancelNextRefresh = true;
             homematic.setState.attr("_"+id, {Value:"\""+val+"\""});
+            // ??? @hobbyquaker: Eigentlich, state muss wieder vom CCU 
+            // gelesen werden um den richtigen status zu bekommen (vielleciht wurde die lampe gar nicht eingeshaltet
+            // oder man kann quality von dem signal einfugen
             funcs.uiState(id, val);
-        },                 // Wert-Änderung in homematic.setState schreiben
+        },                 // Wert-Anderung in homematic.setState schreiben
         uiState: function (id, val) {
             homematic.uiState.attr("_"+id+".Value", val);
-        },                 // Wert-Änderung in homematic.uiState schreiben
+        },                 // Wert-Anderung in homematic.uiState schreiben
         stateDelayed: function (attr, val) {
             if (!setStateTimers[attr]) {
                 funcs.state(attr.slice(1), val);
@@ -107,7 +110,7 @@ var version =               '0.9',
                     setStateTimers[attr] = undefined;
                 }, settings.setStateDelay);
             }
-        },                // Wert-Änderungs-Frequenz begrenzen
+        },                // Wert-Anderungs-Frequenz begrenzen
         clearCache: function () {
             storage.set(settings.storageKey, null);
             window.location.reload();
@@ -286,9 +289,6 @@ var version =               '0.9',
                 }, 100);
                 return false;
             }
-
-            if (dirName == undefined)
-                dirName = "/www/addons/dashui/img";
                 
             var url = settings.url + 'tclscript.cgi?content=html';
             if (settings.session) {
@@ -298,7 +298,7 @@ var version =               '0.9',
                 url: url,
                 type: 'POST',
                 dataType: 'html',
-                data: "puts [glob "+dirName+"/*.*]",
+                data: "puts [glob "+dirName+"*]",
                 
                 // Debug answer
                 complete: function (res, status) {
@@ -311,7 +311,7 @@ var version =               '0.9',
                     
                     homematic.ccu["DIR_"+dirName] = res.split(' ');
                     for (var i=0; i<homematic.ccu["DIR_"+dirName].length; i++)
-                        homematic.ccu["DIR_"+dirName][i] = homematic.ccu["DIR_"+dirName][i].replace (dirName+"/", "");
+                        homematic.ccu["DIR_"+dirName][i] = homematic.ccu["DIR_"+dirName][i].replace (dirName, "");
                     if (settings.cache) {
                         settings.loading("caching images " + dirName);
                         funcs.debug("caching images" + dirName);
@@ -429,7 +429,7 @@ var version =               '0.9',
                 success: success,
                 error: error
             });
-        },    // Übergibt Commandline an /bin/sh, success(data) beinhaltet stdout
+        },    // Ubergibt Commandline an /bin/sh, success(data) beinhaltet stdout
         buildRefreshScript: function (DPs) {
 
             var refreshScript = 'var first = true;\nobject o;\nobject w;\nWrite("{");\n';
@@ -460,7 +460,7 @@ var version =               '0.9',
                     //    refreshScript += 'o = dom.GetObject(' + id + ');\n';
 
                     refreshScript += 'Write("\\"_' + id + '\\":{");\n';
-                    if (type !== "PROGRAM") {
+                    if (type !== "PROGRAM") {
                         refreshScript += 'Write("\\"Value\\":\\"");\n';
                         refreshScript += 'WriteURL(o.Value());\nWrite("\\",");\n';
                     }
