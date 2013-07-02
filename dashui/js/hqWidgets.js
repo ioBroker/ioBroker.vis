@@ -1190,7 +1190,7 @@ var hqWidgets = {
             if (this.settings._isEditMode != isEditMode)
             {
                 this.settings._isEditMode = isEditMode;			
-                if (this.settings._isEditMode)
+                if (this.settings._isEditMode && !this.settings.isContextMenu)
                     this.settings._jeventhnd.hide ();
                 else
                     this.settings._jeventhnd.show ();
@@ -2994,8 +2994,7 @@ var hqWidgets = {
         this.settings._jeventhnd.bind ("mousedown", {msg: this}, function (e)	{
             if (e.button == 0) // right
             {
-                
-                if (!e.data.msg.settings._isEditMode && e.data.msg.OnMouseDown(e.pageX, e.pageY, false)) {
+                if ((!e.data.msg.settings._isEditMode || e.data.msg.settings.isContextMenu) && e.data.msg.OnMouseDown(e.pageX, e.pageY, false)) {
                     e.preventDefault();
                 }
                 // Hide active menu

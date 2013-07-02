@@ -406,7 +406,11 @@ if ((typeof hqWidgets !== 'undefined')) {
                          // Register hm_id to detect changes
                         $.homematic("addUiState", hm_ids[i].hm_id);
                         // Store mapping
-                        dui.binds.hqWidgetsExt.hqMapping[hm_ids[i].hm_id] = {button: btn, option: hm_ids[i].option, index: hm_ids[i].index};
+                        var j = 0;
+                        while (dui.binds.hqWidgetsExt.hqMapping[hm_ids[i].hm_id+'_'+j])
+                            j++;
+                            
+                        dui.binds.hqWidgetsExt.hqMapping[hm_ids[i].hm_id+'_'+j] = {button: btn, option: hm_ids[i].option, index: hm_ids[i].index};
                         if (i > 0) {
                             btn.settings._jelement.append ("<div id='"+el+"helper_"+i+"' data-hm-id='"+hm_ids[i].hm_id +"' style='display: none' />");
                         } 
@@ -489,16 +493,16 @@ if ((typeof hqWidgets !== 'undefined')) {
                 }
                 
                 console.log(wid+"="+newState);
-                
-                if (dui.binds.hqWidgetsExt.hqMapping[wid]) {
+                var i = 0;
+                while (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i]) {
                 
                     var change = {};
-                    change[dui.binds.hqWidgetsExt.hqMapping[wid].option] = dui.binds.hqWidgetsExt.hqMapping[wid].button.translateSignal (dui.binds.hqWidgetsExt.hqMapping[wid].option, newState);
+                    change[dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option] = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.translateSignal (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option, newState);
                     change['isRefresh'] = false;
                     
                     // If new percent state
-                    if (dui.binds.hqWidgetsExt.hqMapping[wid].option == 'percentState') {
-                        var type = dui.binds.hqWidgetsExt.hqMapping[wid].button.GetSettings('buttonType');
+                    if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'percentState') {
+                        var type = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.GetSettings('buttonType');
                         // Remove unknown state of the button and if dimmer select valid state
                         if (type == hqWidgets.gButtonType.gTypeDimmer)
                             change['state'] = (newState > 0) ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
@@ -506,13 +510,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                             change['state'] = hqWidgets.gState.gStateOff; // Remove unknown state
                     }
                     else
-                    if (dui.binds.hqWidgetsExt.hqMapping[wid].option == 'windowState') {
+                    if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'windowState') {
                         change['state'] = hqWidgets.gState.gStateOff; // Remove unknown state
-                        dui.binds.hqWidgetsExt.hqMapping[wid].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid].index, (newState == "true") ? hqWidgets.gWindowState.gWindowOpened : hqWidgets.gWindowState.gWindowClosed);
+                        dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, (newState == "true") ? hqWidgets.gWindowState.gWindowOpened : hqWidgets.gWindowState.gWindowClosed);
                         return;
                     }
                         
-                    dui.binds.hqWidgetsExt.hqMapping[wid].button.SetStates (change);
+                    dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetStates (change);
+                    i++;
                 }
             },    
             hqButtonEdit: function (obj, parent, devFilter) {
