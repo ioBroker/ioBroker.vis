@@ -213,7 +213,6 @@ html,body {
 /* ------------------------ Blind styles ---------------------------*/
 .hq-blind-base { /* Basis */
 	position: absolute; 
-    overflow-y: visible;
 	/*z-index:1000;*/
 	background: #fffeff; /* Old browsers */
 	background: -moz-linear-gradient(top,  #fffeff 0%, #8e8e90 100%); /* FF3.6+ */
@@ -242,7 +241,6 @@ html,body {
 	border-width: 3px 1px 1px 2px;
 	border-color: #a9a7a8;
 	border-style: solid;
-    overflow-y: visible;
 	background: rgb(173,174,178); /* Old browsers */
 	background: -moz-linear-gradient(45deg,  rgba(173,174,178,1) 0%, rgba(251,251,251,1) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,rgba(173,174,178,1)), color-stop(100%,rgba(251,251,251,1))); /* Chrome,Safari4+ */
@@ -256,7 +254,6 @@ html,body {
 /*	z-index:13; */
 	margin-top: 3px;
 	margin-left: 3px;
-    overflow-y: visible;
 	background: -moz-linear-gradient(top,  rgba(0,0,0,0.8) 0%, rgba(0,51,135,0.83) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.8)), color-stop(100%,rgba(0,51,135,0.83))); /* Chrome,Safari4+ */
 	background: -webkit-linear-gradient(top,  rgba(0,0,0,0.8) 0%,rgba(0,51,135,0.83) 100%); /* Chrome10+,Safari5.1+ */
@@ -271,7 +268,6 @@ html,body {
 	border-width: 2px 1px 1px 1px;
 	border-color: #a5aaad;
 	border-style: solid;	
-    overflow-y: visible;
 	background: rgb(221,231,243); /* Old browsers */
 	background: -moz-linear-gradient(45deg,  rgba(221,231,243,0.7) 0%, rgba(120,132,146,0.7) 52%, rgba(166,178,190,0.7) 68%, rgba(201,206,210,0.7) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,rgba(221,231,243,0.7)), color-stop(52%,rgba(120,132,146,0.7)), color-stop(68%,rgba(166,178,190,0.7)), color-stop(100%,rgba(201,206,210,0.7))); /* Chrome,Safari4+ */
@@ -292,7 +288,6 @@ html,body {
 	-o-transform: skew(0deg,10deg);
 	-ms-transform: skew(0deg,10deg);
 	transform: skew(0deg,10deg);
-    overflow-y: visible;
 	background: rgb(221,231,243); /* Old browsers */
 	background: -moz-linear-gradient(45deg,  rgba(221,231,243,0.7) 0%, rgba(120,132,146,0.7) 52%, rgba(166,178,190,0.7) 68%, rgba(201,206,210,0.7) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,rgba(221,231,243,0.7)), color-stop(52%,rgba(120,132,146,0.7)), color-stop(68%,rgba(166,178,190,0.7)), color-stop(100%,rgba(201,206,210,0.7))); /* Chrome,Safari4+ */
@@ -313,7 +308,6 @@ html,body {
 	-o-transform: skew(0deg,-10deg);
 	-ms-transform: skew(0deg,-10deg);
 	transform: skew(0deg,-10deg);
-    overflow-y: visible;
 	background: rgb(221,231,243); /* Old browsers */
 	background: -moz-linear-gradient(45deg,  rgba(221,231,243,0.7) 0%, rgba(120,132,146,0.7) 52%, rgba(166,178,190,0.7) 68%, rgba(201,206,210,0.7) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,rgba(221,231,243,0.7)), color-stop(52%,rgba(120,132,146,0.7)), color-stop(68%,rgba(166,178,190,0.7)), color-stop(100%,rgba(201,206,210,0.7))); /* Chrome,Safari4+ */
