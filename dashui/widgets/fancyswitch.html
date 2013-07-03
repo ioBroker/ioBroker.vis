@@ -31,7 +31,7 @@
                 var hm_id = "_" + $.homematic("escape",id);
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     var num = parseFloat(newVal, 10);
-                    if (num > 0 || newVal == "true" ||newVal == true) {
+                    if (num > 0 || newVal == "true" || newVal == true) {
                         if (reverse) {
                             $this.css('background-position', 'right');
                         } else {
@@ -81,7 +81,7 @@
                 var hm_id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     var num = parseFloat(newVal, 10);
-                    if (num > 0 || newVal == "true" ||newVal == true) {
+                    if (num > 0 || newVal == "true" || newVal == true) {
                         //console.log("iButton true");
                         $this.prop("checked",true).trigger("change");//.iButton("repaint");
                     } else {
