@@ -1,3 +1,7 @@
+<link rel="stylesheet" href="css/hqWidgets.css" type="text/css"/>
+<script type="text/javascript" src="js/hqWidgets.js"></script>
+
+
 <script type="text/javascript">
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
@@ -197,6 +201,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     else {
                                         obj.SetStates ({state: hqWidgets.gState.gStateOff});
                                     }
+                                    console.log ("SetState: "+ hm_id + " = " + (state / 100));
                                     // Send command to HM
                                     $.homematic("setState", hm_id, state / 100);                                  
                                 }  
@@ -492,7 +497,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                     return;
                 }
                 
-                console.log(wid+"="+newState);
+                //console.log(wid+"="+newState);
                 var i = 0;
                 while (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i]) {
                 
