@@ -2854,7 +2854,7 @@ function pxAdd(val, add) {
 
         // jqHomematic Plugin Init
         $.homematic({
-            ccu: "172.16.23.3",
+            //ccu: "172.16.23.3",
             loadCcuData: false,
             autoRefresh: autoRefresh,
             ready: function () {
