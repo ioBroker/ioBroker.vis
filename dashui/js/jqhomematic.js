@@ -31,7 +31,7 @@ var homematic = {
 
 (function ($) {
 
-var version =               '0.9',
+var version =               '0.10',
 
     connected =             false,
     ready =                 false,
@@ -42,6 +42,7 @@ var version =               '0.9',
     settings =      {
         'ccu':              undefined,
         'api':              '/addons/webapi/',
+        'socket':           undefined,
         'protocol':         'http',
         'debug':            true,
         'loadCcuData':      true,
@@ -371,13 +372,20 @@ var version =               '0.9',
                     //jqhm[dp].attr('Value', data[dp].Value);
                     //jqhm[dp].attr('Timestamp', data[dp].Timestamp);
                     var xdp = ''+dp;
+                    /*
                     if (xdp.indexOf(".") !== -1 || xdp.indexOf(":") !== -1) {
+
                         xdp = xdp.replace(/\./g, "__d__");
                         xdp = xdp.replace(/:/g, "__c__");
 
-                    }
-                    homematic.uiState.attr(xdp + ".Value", unescape(data[dp].Value));
+                    }*/
+
+                    xdp = funcs.escape(xdp);
+                    homematic.uiState.attr(xdp, {Value: unescape(data[dp].Value), Timestamp: data[dp].Timestamp, certain: true});
+
+               /*     homematic.uiState.attr(xdp + ".Value", unescape(data[dp].Value));
                     homematic.uiState.attr(xdp + ".Timestamp", data[dp].Timestamp);
+                    homematic.uiState.attr(xdp + ".Certain", true);*/
                 }
                 $(".jqhmRefresh").hide();
 
@@ -388,7 +396,7 @@ var version =               '0.9',
             //console.log("addUiState("+id+")");
             id = funcs.escape(id);
             var sid = '_' + id;
-            homematic.uiState.attr(sid, {'id':id,'wid':undefined,'Value':0,'Timestamp':''});
+            homematic.uiState.attr(sid, {'id':id,'wid':undefined,'Value':0,'Timestamp':'','certain':false});
         },                     // uiState Objekt initialisieren
         viewsVisible: function () {
             var views = [];

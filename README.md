@@ -12,6 +12,9 @@
 
 
 ## Changelog
+### 0.8.3
+
+
 ### 0.8.2
 * hqWidgets: Button, Shutter, Lock, Door, Text, Image, Info, InTemp, OutTemp
 

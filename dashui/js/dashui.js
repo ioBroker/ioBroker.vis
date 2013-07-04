@@ -24,7 +24,7 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.8.2',
+    version:            '0.8.3',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -2854,6 +2854,7 @@ function pxAdd(val, add) {
 
         // jqHomematic Plugin Init
         $.homematic({
+            ccu: "172.16.23.3",
             loadCcuData: false,
             autoRefresh: autoRefresh,
             ready: function () {
