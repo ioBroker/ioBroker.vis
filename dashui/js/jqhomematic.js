@@ -41,11 +41,13 @@ var version =               '0.10',
 
     settings =      {
         'ccu':              undefined,
+        'ccuIoUrl':         undefined,
         'api':              '/addons/webapi/',
         'socket':           undefined,
         'protocol':         'http',
         'debug':            true,
         'loadCcuData':      true,
+        "ccuSocket":       true,
         'cache':            true,
         'dataTypes': [
             "variables",
@@ -72,6 +74,8 @@ var version =               '0.10',
                 return false;
             }
 
+
+
             settings = $.extend(settings, options);
 
             if (settings.ccu) {
@@ -80,8 +84,21 @@ var version =               '0.10',
                 settings.url = settings.api;
             }
 
+
             homematic.uiState = new can.Observe({"_65535":{"Value":0}});
             homematic.setState = new can.Observe({"_65535":{"Value":0}});
+
+            if (typeof io !== "undefined" && settings.ccuIoUrl) {
+                funcs.debug("jqHomematic socket found");
+                var socket = io.connect(settings.ccuIoUrl);
+                socket.on('event', function(obj) {
+                    var id = funcs.escape(obj[0]);
+                    if (homematic.uiState["_"+id]) {
+                        funcs.uiState(id, obj[1]);
+                    }
+                });
+            }
+
 
             funcs.loadCcuDataAll ();
         },                 // Homematic Plugin initialisieren
@@ -358,6 +375,10 @@ var version =               '0.10',
 
                 return false;
             }
+            if (DPs.length == 0) {
+                $(".jqhmRefresh").hide();
+                return false;
+            }
             var script = funcs.buildRefreshScript(DPs);
             funcs.script(script, function(data) {
                 //console.log(data);
@@ -407,7 +428,14 @@ var version =               '0.10',
                     homematic.dpWorking["_"+id] = wid;
                 }
                 if (views.indexOf(id) === -1) {
-                    views.push(id);
+                    // Don't Poll BidCos-Adresses if ccu.io is available
+                    if (typeof io === "undefined") {
+                        views.push(id);
+                    } else {
+                        if (!id.match(/BidCos/) && !id.match(/CUxD/)) {
+                            views.push(id);
+                        }
+                    }
                 }
             });
             return views;

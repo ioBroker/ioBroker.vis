@@ -124,7 +124,7 @@ var dui = {
         dui.startInstance();
     },
     loadWidgetSet: function (name) {
-        //console.log("loadWidgetSet("+name+")");        
+        console.log("loadWidgetSet("+name+")");
         $.ajax({
             url: "widgets/"+name+".html",
             type: "get",
@@ -2855,6 +2855,7 @@ function pxAdd(val, add) {
         // jqHomematic Plugin Init
         $.homematic({
             //ccu: "172.16.23.3",
+            //ccuIoUrl: "http://pi-blue:2100",
             loadCcuData: false,
             autoRefresh: autoRefresh,
             ready: function () {
