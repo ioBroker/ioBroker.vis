@@ -15,35 +15,7 @@ var logger = require('./logger.js');
 var binrpc = require("./binrpc.js");
 
 var io = require('socket.io').listen(2100);
-var socketlist = [];
-
-process.on('SIGINT', function () {
-    /*socketlist.forEach(function(socket) {
-        logger.info("socket.io --> "  + " destroying socket");
-
-        socket.destroy();
-    });
-
-    */
-    logger.info("socket.io closing server");
-    io.server.close();
-
-});
-
-io.sockets.on('connection', function (socket) {
-    socketlist.push(socket);
-
-    logger.info("socket.io <-- "  + " connected");
-    socket.on('disconnect', function () {
-        logger.info("socket.io <-- "  + " disconnected");
-        socketlist.splice(socketlist.indexOf(socket), 1);
-    });
-    socket.on('close', function () {
-        logger.info("socket.io <-- "  + " socket closed");
-        socketlist.splice(socketlist.indexOf(socket), 1);
-    });
-
-});
+//var socketlist = [];
 
 var homematic = new binrpc({
     ccuIp: "172.16.23.3",
@@ -55,8 +27,6 @@ var homematic = new binrpc({
         { id: "io_wired", port: 2000 }
     ],
     methods: {
-        // system.multicall und system.listMethods sind bereits in binrpc.js implementiert
-        // Nicht-implementierte Methoden werden mit einem leeren String beantwortet und als Error auf der Konsole ausgegeben
         event: function (obj) {
             var res = [];
             switch (obj[0]) {
@@ -77,4 +47,34 @@ var homematic = new binrpc({
             return "";
         }
     }
+});
+
+
+io.sockets.on('connection', function (socket) {
+    //socketlist.push(socket);
+
+    logger.info("socket.io <-- "  + " connected");
+    socket.on('disconnect', function () {
+        logger.info("socket.io <-- "  + " disconnected");
+        //socketlist.splice(socketlist.indexOf(socket), 1);
+    });
+    socket.on('close', function () {
+        logger.info("socket.io <-- "  + " socket closed");
+        //socketlist.splice(socketlist.indexOf(socket), 1);
+    });
+
+});
+
+
+process.on('SIGINT', function () {
+    /*socketlist.forEach(function(socket) {
+     logger.info("socket.io --> "  + " destroying socket");
+
+     socket.destroy();
+     });
+
+     */
+    logger.info("socket.io closing server");
+    io.server.close();
+
 });

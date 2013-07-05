@@ -1,7 +1,7 @@
 var binrpc = require("./binrpc.js");
 
 var homematic = new binrpc({
-    ccuIp: "172.16.23.33",
+    ccuAddress: "172.16.23.33",
     listenIp: "172.16.23.153",
     listenPort: 2013,
     methods: {
@@ -19,7 +19,14 @@ homematic.init({
     cuxd: true
 });
 
-/* homematic.request(2001, "listDevices", [], function (data) {
-    console.log(data);
-}); */
+/*
 
+homematic.request(2001, "listDevices", [], function (data) {
+    console.log(data);
+});
+
+homematic.request(8701, "getValue", ["CUX0100001:1", "TEMPERATURE"], function (data) {
+    console.log(data);
+});
+
+ */
