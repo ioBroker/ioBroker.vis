@@ -12,11 +12,15 @@
 
 
 ## Changelog
-### 0.8.3
+### 0.8.4
+* (hobbyquaker) CCU.IO integriert
 
+### 0.8.3
+* (Bluefox) diverse Fehler behoben
+* (Eisbaer) diverse Fehler behoben
 
 ### 0.8.2
-* hqWidgets: Button, Shutter, Lock, Door, Text, Image, Info, InTemp, OutTemp
+* (Bluefox) hqWidgets: Button, Shutter, Lock, Door, Text, Image, Info, InTemp, OutTemp
 
 ### 0.8.1
 * Neuer Contributor: Bluefox - Herzlich Willkommen! :-)
