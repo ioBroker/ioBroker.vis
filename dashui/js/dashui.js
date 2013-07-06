@@ -28,7 +28,7 @@ var dui = {
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
-    fileViews:          '/usr/local/addons/dashui.views',
+    fileViews:          '/usr/local/addons/dashui.views' ,
     instance:           null,
     urlParams:          {},
     settings:           {},
