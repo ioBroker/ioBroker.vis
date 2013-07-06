@@ -94,7 +94,7 @@ var version =               '0.10',
                 socket.on('event', function(obj) {
                     var id = funcs.escape(obj[0]);
                     if (homematic.uiState["_"+id]) {
-                        funcs.uiState(id, obj[1]);
+                        funcs.uiState(id, {Value:obj[1], Timestamp:'', certain:true});
                     }
                 });
             }
@@ -381,7 +381,6 @@ var version =               '0.10',
             }
             var script = funcs.buildRefreshScript(DPs);
             funcs.script(script, function(data) {
-                //console.log(data);
                 data = $.parseJSON(data);
                 if (cancelNextRefresh) {
                     cancelNextRefresh = false;
@@ -400,6 +399,7 @@ var version =               '0.10',
                         xdp = xdp.replace(/:/g, "__c__");
 
                     }*/
+
 
                     xdp = funcs.escape(xdp);
                     homematic.uiState.attr(xdp, {Value: unescape(data[dp].Value), Timestamp: data[dp].Timestamp, certain: true});
