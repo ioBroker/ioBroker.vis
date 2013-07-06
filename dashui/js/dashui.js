@@ -24,11 +24,11 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.8.4',
+    version:            '0.8.5',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
-    fileViews:          '/usr/local/etc/config/addons/www/dashui/views.dui',
+    fileViews:          '/usr/local/addons/dashui.views',
     instance:           null,
     urlParams:          {},
     settings:           {},
@@ -37,7 +37,7 @@ var dui = {
     activeView:         "",
     defaultHmInterval:  7500,
     listval:            [],
-    widgetSets:         ["basic","colorpicker","fancyswitch","knob","jqplot","jqui","jqui-mfd","dev","hqWidgets"],
+    widgetSets:         ["basic","colorpicker","fancyswitch","hqWidgets","knob","jqplot","jqui","jqui-mfd","dev"],
     words:              null,
     currentLang:        "de",
     initialized:        false,

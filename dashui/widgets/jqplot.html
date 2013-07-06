@@ -26,8 +26,8 @@
                     var id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
                     homematic.uiState.bind(id+".Value", function( e, newVal, oldVal ) {
                         //if (attr == ("_"+ $.homematic("escape",$this.attr("data-hm-id"))+".Value")) {
-                            newVal.Value = ''+newVal.Value;
-                            plot.series[0].data = [[1,parseFloat(newVal.Value)]];
+                            newVal = ''+newVal;
+                            plot.series[0].data = [[1,parseFloat(newVal)]];
                             plot.redraw();
                         //}
                     });

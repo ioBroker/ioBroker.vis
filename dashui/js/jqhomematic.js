@@ -94,7 +94,8 @@ var version =               '0.10',
                 socket.on('event', function(obj) {
                     var id = funcs.escape(obj[0]);
                     if (homematic.uiState["_"+id]) {
-                        funcs.uiState(id, {Value:obj[1], Timestamp:'', certain:true});
+                        homematic.uiState.attr("_"+id+".Value", ''+obj[1]);
+                        homematic.uiState.attr("_"+id+".Timestamp", (new Date()).getTime());
                     }
                 });
             }
@@ -392,21 +393,13 @@ var version =               '0.10',
                     //jqhm[dp].attr('Value', data[dp].Value);
                     //jqhm[dp].attr('Timestamp', data[dp].Timestamp);
                     var xdp = ''+dp;
-                    /*
-                    if (xdp.indexOf(".") !== -1 || xdp.indexOf(":") !== -1) {
-
-                        xdp = xdp.replace(/\./g, "__d__");
-                        xdp = xdp.replace(/:/g, "__c__");
-
-                    }*/
-
 
                     xdp = funcs.escape(xdp);
-                    homematic.uiState.attr(xdp, {Value: unescape(data[dp].Value), Timestamp: data[dp].Timestamp, certain: true});
+                  //  homematic.uiState.attr(xdp, {Value: unescape(data[dp].Value), Timestamp: data[dp].Timestamp, certain: true});
 
-               /*     homematic.uiState.attr(xdp + ".Value", unescape(data[dp].Value));
+                    homematic.uiState.attr(xdp + ".Value", unescape(data[dp].Value));
                     homematic.uiState.attr(xdp + ".Timestamp", data[dp].Timestamp);
-                    homematic.uiState.attr(xdp + ".Certain", true);*/
+                    homematic.uiState.attr(xdp + ".certain", true);
                 }
                 $(".jqhmRefresh").hide();
 
@@ -429,7 +422,7 @@ var version =               '0.10',
                 }
                 if (views.indexOf(id) === -1) {
                     // Don't Poll BidCos-Adresses if ccu.io is available
-                    if (typeof io === "undefined") {
+                    if (typeof io === "undefined" || homematic.uiState["_"+funcs.escape(id)].Timestamp == "") {
                         views.push(id);
                     } else {
                         if (!id.match(/BidCos/) && !id.match(/CUxD/)) {
