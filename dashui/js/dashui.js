@@ -24,11 +24,11 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.8.1',
+    version:            '0.8.5',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
-    fileViews:          '/usr/local/etc/config/addons/www/dashui/views.dui',
+    fileViews:          '/usr/local/addons/dashui.views',
     instance:           null,
     urlParams:          {},
     settings:           {},
@@ -37,10 +37,11 @@ var dui = {
     activeView:         "",
     defaultHmInterval:  7500,
     listval:            [],
-    widgetSets:         ["basic","colorpicker","fancyswitch","knob","jqplot","jqui","jqui-mfd","dev","hqWidgets"],
+    widgetSets:         ["basic","colorpicker","fancyswitch","hqWidgets","knob","jqplot","jqui","jqui-mfd","dev"],
     words:              null,
     currentLang:        "de",
     initialized:        false,
+    useCache:           true,
 
     binds: {},
     startInstance: function () {
@@ -124,13 +125,13 @@ var dui = {
         dui.startInstance();
     },
     loadWidgetSet: function (name) {
-        //console.log("loadWidgetSet("+name+")");        
+        console.log("loadWidgetSet("+name+")");        
         $.ajax({
             url: "widgets/"+name+".html",
             type: "get",
             async: false,
             dataType: "text",
-            cache: true,
+            cache: dui.useCache,
             success: function (data) {
                 jQuery("head").append(data);
             }
@@ -623,6 +624,7 @@ var dui = {
                 "hm_id2"  : {"en": "Swing ID 3",    "de": "Fensterblatt 3",     "ru" : "Створка 3"},
                 "hm_id3"  : {"en": "Swing ID 4",    "de": "Fensterblatt 4",     "ru" : "Створка 4"},
                 "hm_idV"  : {"en": "Valve",         "de": "Ventilsteuerung",    "ru" : "Батарея"},
+                "hm_idL"  : {"en": "Lock ID",       "de": "Schloss ID",         "ru" : "KeyMatic"},
                 "hm_wid"  : {"en": "Working ID"},
                 "comment" : {"en" : "Comments",    "de": "Kommentare",     "ru" : "Комментарий"},	
                 "Select HM parameter" : {"en" : "Select HM parameter", "de": "HM parameter ausw&auml;hlen",   "ru" : "Выбрать HM адрес"},	
@@ -702,6 +704,16 @@ dui = $.extend(true, dui, {
         storage.extend(dui.storageKeySettings, dui.settings);
     },
     saveRemote: function () {
+        //Get directory
+        var parts = dui.fileViews.split("/");
+        var dir = parts[0];
+        for (var t = 1; t < parts.length -1; t++)
+            dir += "/" + parts[t];
+            
+        // Create directory 
+        $.homematic("shell", "mkdir " + dir + "\nexit 0\n", function () {
+            
+        });
         var content = $.base64.encode(JSON.stringify(dui.views));
         var cmd = "echo \"" + content + "\" | gzip > " + dui.fileViews + "\nexit 0\n";
         $.homematic("shell", cmd, function () {
@@ -1093,6 +1105,7 @@ var imageSelect = {
         parent:      $('body'), 
         elemName:    "idialog_",
         zindex:      5050,
+        filter:      null,   // filter
     },
     _pictDir:    "img/",
     _rootDir:    null,
@@ -1101,6 +1114,7 @@ var imageSelect = {
     _cancelText: "",    
     _titleText:  "",
     _dirImage:   "kde_folder.png",
+    _soundImage: "sound.png",
     _curImage:   "",
     
     Show:  function (options){
@@ -1169,9 +1183,9 @@ var imageSelect = {
             }
         }
         
-        this.getImageList (htmlElem);
+        this.getFileList (htmlElem);
     },
-    getImageList: function (htmlElem) {
+    getFileList: function (htmlElem) {
         // find selected image
         imageSelect._curImage = "";
         
@@ -1189,7 +1203,7 @@ var imageSelect = {
         }
         
         // Load directory
-        $.homematic("getImageList", this._rootDir + this._curDir, this.showImages, htmlElem)
+        $.homematic("getFileList", this._rootDir + this._curDir, this.showImages, htmlElem)
     },
     showImages: function (aImages, obj) {	
         // Remove wait icon
@@ -1222,6 +1236,11 @@ var imageSelect = {
         var row;
         var col;
         var id = 0;
+        var filters = null;
+        if (obj.settings.filter != null && obj.settings.filter != ''){
+            filters = obj.settings.filter.split(';');
+        } 
+        
         for (row = 0; row < obj.settings.rows; row++) {
             sText += "<tr>";
             var isDirs = (aImages[id].indexOf ('.') == -1);
@@ -1236,7 +1255,20 @@ var imageSelect = {
                         }
                         sText += "</tr></table><table id='"+obj.settings.elemName+"_tbl1'>";
                         break;      
-                    }                        
+                    } 
+                    if (!isDir && filters){
+                        var isFound = false;
+                        for(var i = 0; i < filters.length; i++) {
+                            if (aImages[id].indexOf(filters[i]) != -1) {
+                                isFound = true;
+                                break;
+                            }
+                        }
+                        if (!isFound) {
+                            id++;
+                            continue;
+                        }
+                    }                 
 
                     sText += "<td id='"+obj.settings.elemName+"_"+id+"' style='text-align: center; width:"+obj.settings.iwidth+";height:"+obj.settings.iheight+"'>";
                     
@@ -1249,8 +1281,13 @@ var imageSelect = {
                     if (aImages[id] == "..") {
                         sText += " src=\""+imageSelect._pictDir+imageSelect._dirImage+"\" title='"+dui.translate ("Back")+"'";
                     }
-                    else if (isDir) {
+                    else 
+                    if (isDir) {
                         sText += " src=\""+imageSelect._pictDir+imageSelect._dirImage+"\" title='"+aImages[id]+"' ";
+                    }
+                    else 
+                    if (aImages[id].indexOf(".wav") != -1 || aImages[id].indexOf(".mp3") != -1) {
+                        sText += " src=\""+imageSelect._pictDir+imageSelect._soundImage+"\" title='"+aImages[id]+"' ";                    
                     }
                     else {
                         sText += "title='"+aImages[id]+"' ";
@@ -1328,13 +1365,11 @@ var imageSelect = {
             image.error (function (){
                 $(this).hide();
             });
-            img.bind ("mouseenter", {msg: img}, function (event)
-            {
+            img.bind ("mouseenter", {msg: img}, function (event) {
                 var obj = event.data.msg;
                 obj.removeClass("ui-state-default").removeClass("ui-state-active").addClass("ui-state-hover");
             });
-            img.bind ("mouseleave", {msg: img}, function (event)
-            {			
+            img.bind ("mouseleave", {msg: img}, function (event) {			
                 var obj = event.data.msg;
                 obj.removeClass("ui-state-hover");
                 if (obj == obj.parent.settings.curElement)
@@ -1342,8 +1377,7 @@ var imageSelect = {
                 else
                     obj.addClass  ("ui-state-default");
             });				
-            img.bind ("click", {msg: img}, function (event)
-            {			
+            img.bind ("click", {msg: img}, function (event) {			
                 var obj_ = event.data.msg;
                 // back directory
                 if (obj_.result == "..") {
@@ -1351,12 +1385,12 @@ var imageSelect = {
                     imageSelect._curDir = "";
                     for (var t = 0; t < dirs.length - 2; t++)
                         imageSelect._curDir += dirs[t]+"/";
-                    imageSelect.getImageList (obj);
+                    imageSelect.getFileList (obj);
                 }
                 else
                 if (obj_.result.indexOf ('.') == -1) {
                     imageSelect._curDir += obj_.result+"/";
-                    imageSelect.getImageList (obj);
+                    imageSelect.getFileList (obj);
                 }
                 else {
                     obj.settings.result = imageSelect._curDir+obj_.result;
@@ -1378,7 +1412,7 @@ var imageSelect = {
                 $( obj ).remove ();
             });				
             // If File
-            if (aImages[i] != ".." && aImages[i].indexOf ('.') != -1) {
+            if (aImages[i] != ".." && aImages[i].indexOf ('.') != -1 && aImages[i].indexOf(".wav") == -1 && aImages[i].indexOf(".mp3") == -1) {
                 image.attr('src', imageSelect._pictDir+imageSelect._curDir+aImages[i]);
             }
         }
@@ -1899,6 +1933,7 @@ var hmSelect = {
             if (this.myDevFilter != '' && this.myDevFilter != null && this.myDevFilter != undefined) {
                 //leave only desired elements
                 var f = devFilter.split(',');
+                var isWithDPs  = (f.length > 0 && f[0].length > 0 && f[0][0] == '.');
                 var newDevices = new Object ();
                 var iChns = 0;
                 for(var dev in this._devices){
@@ -1930,13 +1965,54 @@ var hmSelect = {
                     }
                     else {
                         for (var chn in device.Channels){
-                            var channel   = device.Channels[chn];
-                            newDevices[chn] = {
-                                    "Interface": device.Interface,
-                                    "HssType":   device.HssType,
-                                    "Address":   device.Interface+"."+channel.Address,
-                                    "Name":      channel.Name,
-                            };
+                            var channel   = device.Channels[chn];                            
+                            if (isWithDPs) {
+                                var iPnts = 0;
+                                var newPoints = new Object ();
+                            
+                                for (var dp in channel.DPs) {
+                                    var point = channel.DPs[dp];                        
+                                    var name = this._convertName(point.Name);
+                                    for (var t = 0; t < f.length; t++) {
+                                        if (name.indexOf (f[t]) != -1) {
+                                            newPoints [dp] = point;
+                                            iPnts++;
+                                        }
+                                    }
+                                }
+                                if (iPnts > 0) {
+                                    newDevices[chn] = {
+                                            "Interface": device.Interface,
+                                            "HssType":   device.HssType,
+                                            "Address":   device.Interface+"."+channel.Address,
+                                            "Name":      channel.Name,
+                                    };
+                                    newDevices[chn].cnt = iPnts;
+                                    if (iPnts == 1) {
+                                        for (var dp in newPoints) {
+                                            newDevices[chn]["Address"] = newPoints[dp]["Name"];
+                                            newDevices[chn].Channels = null;
+                                            newDevices[chn].cnt = 0;
+                                            break;
+                                        }
+                                        iPnts = 0;
+                                    }  
+                                    else {
+                                        newDevices[chn].Channels = [];
+                                        for (var dp in newPoints) {
+                                            newDevices[chn].Channels[dp] = {'Name': newPoints[dp].Type, 'Address': newPoints[dp].Name};
+                                        }                                      
+                                    }                                    
+                                }
+                            }
+                            else {
+                                newDevices[chn] = {
+                                        "Interface": device.Interface,
+                                        "HssType":   device.HssType,
+                                        "Address":   device.Interface+"."+channel.Address,
+                                        "Name":      channel.Name,
+                                };
+                            }
                         }
                     }
                 }
@@ -2154,7 +2230,7 @@ var hmSelect = {
 						"Function":  channel.func,
 						"Address":   channel.Address,
 						"Name":      this._convertName(channel.Name),
-					    "obj":       channel,
+					    "obj":       chn,
 						isLeaf:      (channel.cnt == undefined || channel.cnt > 0) ? false : true,
 						level:       "1",
 						parent:      _parent,
@@ -2220,12 +2296,12 @@ var hmSelect = {
 				{name:'Type',     index:'Type',      width:120, sorttype:"text"},		
 				{name:'Function', index:'Function',  width:120, hidden:true, search: false, sorttype:"text"},		
 				{name:'Address',  index:'Address',   width:220, sorttype:"text"},
-				{name:'obj',      index:'obj',      width:0,   hidden:true}
+				{name:'obj',      index:'obj',       width:0,   hidden:true}
 			],
 			onSelectRow: function(id){ 
 				value    = $("#hmDevsContent").jqGrid ('getCell', id, 'Address');
                 var d = $("#hmDevsContent").jqGrid ('getCell', id, 'obj');
-                valueObj = (d != "" && d != null) ? hmSelect._devices[d] :null
+                valueObj = (d != "" && d != null) ? hmSelect._devices[d] :null;
 
 				if (value != null && value != "") {
 					$(":button:contains('"+hmSelect._selectText+"')").prop("disabled", false).removeClass("ui-state-disabled");
@@ -2854,8 +2930,16 @@ function pxAdd(val, add) {
 
         // jqHomematic Plugin Init
         $.homematic({
+            ccu: "192.168.1.5",
+            //ccuIoUrl: "http://raspberrypi:2100",
             loadCcuData: false,
             autoRefresh: autoRefresh,
+            regaDown: function (error) {
+                if (error !== undefined) {
+                    $("#loading").append(error);
+                    $.error(error);
+                }
+            },
             ready: function () {
                 dui.init();
             },
