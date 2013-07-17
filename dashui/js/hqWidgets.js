@@ -57,6 +57,7 @@ var hqWidgets = {
                                     // like callback (imageList, userParam);
                                     // e.g. "function GetFiles (callback, param) { if (callback) callback (aImages, param); }"
         gTempSymbol:   '&#176;C',   // Farenheit or celcius
+        gIsTouchDevice: false,      // if desctop or touch device
     },
     // Button states
     gState: {
@@ -450,6 +451,7 @@ var hqWidgets = {
     Init: function (options) {
         // Set breakpoint here if you want to debug hqWidgets.html
         this.gOptions = $.extend (this.gOptions, options);
+        this.gOptions.gIsTouchDevice = 'ontouchstart' in document.documentElement;
     
         // ======== Mouse events bind ============
         $(document).mouseup(function(){
@@ -1230,6 +1232,12 @@ var hqWidgets = {
                     // Setup pin button
                     document.getElementById(this.advSettings.elemName+"_pin").parentQuery = this;
                     $("#"+this.advSettings.elemName+"_pin").addClass('hq-ipcam-pin-btn').button({icons: {primary: (this.dynStates.bigPinned ? "ui-icon-pin-s" : "ui-icon-pin-w")}, text: false}).click(function( event ) {
+                            if (this.parentQuery.intern._clickTimer) return;
+                            this.parentQuery.intern._clickTimer = setTimeout (function (elem) { 
+                                clearTimeout (elem.intern._clickTimer);
+                                elem.intern._clickTimer = null;
+                            }, 500, this.parentQuery);
+                            
                             event.preventDefault();
                             this.parentQuery.dynStates.bigPinned = !this.parentQuery.dynStates.bigPinned;
                             $(this).button({icons: {primary: (this.parentQuery.dynStates.bigPinned ? "ui-icon-pin-s" : "ui-icon-pin-w")}});
@@ -2612,8 +2620,10 @@ var hqWidgets = {
                 // remember position if it was moved
                 if (this.settings.buttonType == hqWidgets.gButtonType.gTypeCam ||
                     this.settings.buttonType == hqWidgets.gButtonType.gTypeGong) {
-                    this.intern._jbigWindow.bheight = this.intern._jbigWindow.height();
-                    this.intern._jbigWindow.bwidth  = this.intern._jbigWindow.width();
+                    if (!hqWidgets.gOptions.gIsTouchDevice) {
+                        this.intern._jbigWindow.bheight = this.intern._jbigWindow.height();
+                        this.intern._jbigWindow.bwidth  = this.intern._jbigWindow.width();
+                    }
                     this.intern._jbigWindow.x       = this.intern._jbigWindow.position().left;
                     this.intern._jbigWindow.y       = this.intern._jbigWindow.position().top;
                 }
