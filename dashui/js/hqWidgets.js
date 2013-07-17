@@ -131,6 +131,30 @@ var hqWidgets = {
         gClickTimer          : null,    // Timer to filer out the double clicks
     },
     Translate: function (text) {
+            if (!this.words) {
+            this.words = {
+                "IP Camera"                 : {"en": "IP Camera",       "de": "IP Kamera",              "ru" : "Камера"},
+                "Description:"              : {"en": "Description:",    "de": "Beschreibung:",          "ru" : "Описание:"},
+                "Close"                     : {"en": "Hide",            "de": "Ignore",                 "ru" : "Спрятать"},
+                "Advanced..."               : {"en": "Advanced...",     "de": "Erweitert...",           "ru" : "Ещё"},
+                "Pop up delay (ms):"        : {"en": "Pop up delay (ms):", "de": "Verzogerung (ms)",    "ru" : "Задержка закрытия (мс):"},
+                "Open door button:"         : {"en": "Open door button:",  "de": "'Tur aufmachen' Knopf:","ru" : "Кнопка 'Открыть дверь'"},
+                "Small image update(sec):"  : {"en": "Small image update(sec):",    "de": "Kleines Bild erneuern(Sek):",    "ru" : "Обновление мал. картинки:"},
+                "Open door text:"           : {"en": "Open door text:", "de": "Knopfbeschrieftung:",    "ru" : "Текст на кнопке:"},
+                "Open&nbsp;lock"            : {"en": "Open&nbsp;lock",  "de": "Aufmachen",              "ru" : "Открыть"},
+                "Open the door?"            : {"en": "Open the door?",  "de": "Tur aufmachen?",         "ru" : "Открыть дверь?"},
+                "Simulate click"            : {"en": "Simulate click",  "de": "Simuliere Click",        "ru" : "Щелчок мышью"},
+                "Test state"                : {"en": "Test state",      "de": "Zustand testen",         "ru" : "Проверить состояние"},
+           };
+        }
+        if (this.words[text]) {
+            if (this.words[text][this.gOptions.gLocale])
+                return this.words[text][this.gOptions.gLocale];
+            else 
+            if (this.words[text]["en"])
+                return this.words[text]["en"];
+        }
+
         return text;
     },
     TempFormat: function (t){
@@ -509,11 +533,11 @@ var hqWidgets = {
             ipCamUpdateSec:   30,    // Update interval in seconds
             popUpDelay:       5000,  // Dela for popup window, like camera, blinds
             openDoorBttn:    false, // Show action button on ip camera big window
-            openDoorBttnText:"Open&nbsp;lock", // Action button text for camera popup
+            openDoorBttnText:hqWidgets.Translate("Open&nbsp;lock"), // Action button text for camera popup
             ipCamVideoDelay:  1000,  // Video delay
             gongMelody:       null,  // Play melody if gong goes from Off to On
             gongActionBtn:    false, // Show on the gong dialog Bell button
-            gongQuestion:     "Open the door?", // Text for the door bell question
+            gongQuestion:     hqWidgets.Translate("Open the door?"), // Text for the door bell question
             gongQuestionImg:  "DoorOpen.png", // Icon by question
             gongBtnText:      "Gong",// Text for button play gong
             hoursLastAction:  3,     // If the last action time must be shown (-1 - do not show, 0 -always show, x - not older as x hours, -2 show absolute time always, "-x" - show absolute time x hours
@@ -1167,20 +1191,20 @@ var hqWidgets = {
                     this.intern._jbigWindow.css ({top: yy, left:xx});
                     this.intern._jbigWindow.parent = this;
                     this.intern._jbigWindow.OnClick = function () {
+                        if (this.parent.intern._clickTimer) return;
                         this.parent.ShowBigWindow (false);
                     }
                     
                     
                     // Create inner image and buttons (Very dirty)
-                    var imageheight = (this.intern._jbigWindow.height() - 42) - ((isShowButtons) ? 46 : 0);
-                    var text = "<table style='width: 100%, height: 100%'><tr style='height: 33px'><td><div width='100%' id='"+this.advSettings.elemName+"_title' class='ui-widget ui-widget-header ui-corner-all ui-dialog-titlebar'>";
+                    var text = "<table style='width: 100%; height: 100%'><tr style='height: 33px'><td><div width='100%' id='"+this.advSettings.elemName+"_title' class='ui-widget ui-widget-header ui-corner-all ui-dialog-titlebar'>";
                     // Add description
-                    text += "<table width='100%' class='ui-widget-header'><tr><td width='93%'><span class='ui-dialog-title' style='padding: 1px 1px 1px 10px'>"+((this.settings.buttonType == hqWidgets.gButtonType.gTypeCam) ? this.settings.title : this.settings.gongQuestion)+"</span></td>";
+                    text += "<table  id='"+this.advSettings.elemName+"_hdr' width='100%' class='ui-widget-header'><tr><td width='93%'><span class='ui-dialog-title' style='padding: 1px 1px 1px 10px'>"+((this.settings.buttonType == hqWidgets.gButtonType.gTypeCam) ? (this.settings.title || hqWidgets.Translate ("IP Camera")) : this.settings.gongQuestion)+"</span></td>";
                         
                     text += "<td><button id='"+this.advSettings.elemName+"_pin'></button></div></td></tr></table></td></tr>";
-                    text += "<tr><td><div style='height: "+imageheight+"px; width:100%'><img style='height: 100%; width:100%' id='"+this.advSettings.elemName+"_bigImage' /></div></td></tr>";
+                    text += "<tr><td><div style='height: 100%; width:100%'><img style='height: 100%; width:100%' id='"+this.advSettings.elemName+"_bigImage' /></div></td></tr>";
                     if (isShowButtons) {
-                        text += "<tr><td style='height:auto'><table style='width:100%'><tr><td style='width: 93%'></td>";
+                        text += "<tr id='"+this.advSettings.elemName+"_btns' style='height:40px'><td><table style='width:100%'><tr><td style='width: 93%'></td>";
                         if (this.settings.gongActionBtn)
                             text += "<td><button style='height:40px' id='"+this.advSettings.elemName+"_bigGong' style='width:8em'>"+this.settings.gongBtnText+"</button></td>";
                         if (this.settings.openDoorBttn)
@@ -1192,14 +1216,16 @@ var hqWidgets = {
                     
                     this.intern._jbigWindow.append (text);
                     this.intern._jbigWindow.jbigImage = $('#'+this.advSettings.elemName+"_bigImage");
+                    this.intern._jbigWindow.jbigImageHdr  = $('#'+this.advSettings.elemName+"_hdr");
+                    this.intern._jbigWindow.jbigImageBtns = $('#'+this.advSettings.elemName+"_btns");
                     this.intern._jbigWindow.jbigImage.parent = this;
                     document.getElementById(this.advSettings.elemName+'_bigImage').parentQuery = this;
                     this.intern._jbigWindow.jbigImage.bind("click", {msg: this.intern._jbigWindow}, function (e)	{
                         e.data.msg.OnClick ();
                     });                    
-                    
                     // Make header draggable
                     this.intern._jbigWindow.draggable ({handle: "div"});
+                    this.intern._jbigWindow.resizable ();
                     
                     // Setup pin button
                     document.getElementById(this.advSettings.elemName+"_pin").parentQuery = this;
@@ -1226,8 +1252,7 @@ var hqWidgets = {
                         });
 
                     // Setup action button
-                    if (this.settings.openDoorBttn && isShowButtons)
-                    {
+                    if (this.settings.openDoorBttn && isShowButtons) {
                         document.getElementById(this.advSettings.elemName+"_bigButton").parentQuery = this;
                         $("#"+this.advSettings.elemName+"_bigButton").button({icons: {primary: "ui-icon-unlocked"}, text: true}).click(function( event ) {
                             //event.preventDefault();
@@ -1238,8 +1263,7 @@ var hqWidgets = {
                     }
 
                     // Setup action button
-                    if (this.settings.gongActionBtn && isShowButtons)
-                    {
+                    if (this.settings.gongActionBtn && isShowButtons) {
                         document.getElementById(this.advSettings.elemName+"_bigGong").parentQuery = this;
                         $("#"+this.advSettings.elemName+"_bigGong").button({icons: {primary: "ui-icon-volume-on"}, text: true}).click(function( event ) {
                             //event.preventDefault();
@@ -1250,6 +1274,7 @@ var hqWidgets = {
                     }
                     
                     this.intern._jbigWindow.OnShow = function () {
+                        this.parent.intern._jbigWindow.trigger("resize");
                         if (this.parent.settings["ipCamVideoURL"] != null && this.parent.settings["ipCamVideoURL"] != "") {
                             // activate video
                             //http://192.168.1.8/videostream.cgi?user=xxx&pwd=xxx
@@ -1270,14 +1295,20 @@ var hqWidgets = {
                                 }                                        
                             });
                             this.parent._UpdateBigCam ();
+                            this.parent.intern._jbigWindow.bind("resize", {msg: this.parent}, function (e)	{
+                                var big = e.data.msg.intern._jbigWindow;
+                                big.jbigImage.height(big.height() - big.jbigImageHdr.height() - 15 - ((big.jbigImageBtns) ? big.jbigImageBtns.height(): 0) );
+                            });
+                            this.parent.intern._jbigWindow.trigger("resize");
                         }
                     }
                     this.intern._jbigWindow.OnHide = function () {
+                        this.parent.intern._jbigWindow.bind("resize", null, null);
                         // Stop update of the images
                         clearTimeout(this.parent.intern._ipCamBigTimer);
                         this.parent.intern._ipCamBigTimer = null;
                         this.parent.intern._jbigWindow.jbigImage.load(null);
-                    }                    
+                    }
                 } // end of Create bigger image
                     
                 // if url exists
@@ -1673,6 +1704,7 @@ var hqWidgets = {
                 // Set unknown state
                 this.SetStates ({'isWorking': true});
                 this.intern._ipCamLastImage = this.intern._ipCamImageURL + d.getTime();
+                //$('#status').append("update" + this.intern._ipCamLastImage + "<br>");
                 this.intern._jcenter.attr('src', this.intern._ipCamLastImage);
                 // Update big image too
                 if (this.intern._jbigWindow && this.intern._isBigVisible)
@@ -2264,7 +2296,7 @@ var hqWidgets = {
                                                   dlg.parentQuery.intern.timerID = null;
                                                 }
                                             };
-                                btns[hqWidgets.gOptions.gCancelText] = function() {
+                                btns[hqWidgets.Translate(hqWidgets.gOptions.gCancelText)] = function() {
                                             var dlg = document.getElementById ('gongDialog');
                                             dlg.parentQuery.intern._isBigVisible = false;
                                             $( this ).dialog( "close" );
@@ -2550,16 +2582,16 @@ var hqWidgets = {
                     this.intern._jbigWindow.y       = this.intern._jbigWindow.position().top;
                 }
                 this.intern._jbigWindow.css ({top:    this.settings.y, 
-                                                left:   this.settings.x, 
-                                                width:  this.intern._jelement.width(), 
-                                                height: this.intern._jelement.height(),
-                                                'z-index': 22, 
-                                                });
+                                              left:   this.settings.x, 
+                                              width:  this.intern._jelement.width(), 
+                                              height: this.intern._jelement.height(),
+                                              'z-index': 22, 
+                                              });
                                                 
                 this.intern._jbigWindow.animate ({top:    this.intern._jbigWindow.y, 
-                                                    left:   this.intern._jbigWindow.x, 
-                                                    width:  this.intern._jbigWindow.bwidth, 
-                                                    height: this.intern._jbigWindow.bheight}, 500);
+                                                  left:   this.intern._jbigWindow.x, 
+                                                  width:  this.intern._jbigWindow.bwidth, 
+                                                  height: this.intern._jbigWindow.bheight}, 500);
                 if (this.intern._jbigWindow.buttons) {
                     setTimeout (function () {
                         var i;
@@ -2569,9 +2601,9 @@ var hqWidgets = {
                 else
                 if (this.intern._jbigBlind1 != null)
                     this.intern._jbigBlind1.css({height:this.intern._jbigWindow.bheight * this.dynStates.percentState / 100});
-                else 
+                else
                 if (this.intern._jbigWindow.jbigImage) {
-                    this.intern._jbigWindow.OnShow ();
+                    setTimeout (function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
                 }
             }
             else {
@@ -3279,9 +3311,12 @@ var hqWidgets = {
                 if ((settings.ipCamImageURL == null || settings.ipCamImageURL == "") && options.ipCamImageURL != null && options.ipCamImageURL != "") {
                     this._CreateBigCam ();
                 }
+                var upd = ((this.settings.ipCamImageURL != null && this.settings.ipCamImageURL != "") ||
+                          (options.ipCamImageURL != null && options.ipCamImageURL != ""));
                 this.intern._ipCamImageURL = null;
                 this.settings.ipCamImageURL = options.ipCamImageURL;
-                this._UpdateSmallCam ();
+                if (upd)
+                    this._UpdateSmallCam ();
             }
                 
 
