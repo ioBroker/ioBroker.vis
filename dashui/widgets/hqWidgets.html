@@ -7,6 +7,7 @@
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
         hqWidgetsExt: {
+            version: "0.1.2",
             hqIgnoreNextUpdate: null, // id of controlled element
             hqTimerDetectDelete: null,
             hqTimerDetectMoving: null,
@@ -29,6 +30,8 @@ if ((typeof hqWidgets !== 'undefined')) {
             hqInit: function () {
                 // Init hqWidgets engine
                 hqWidgets.Init ({gPictDir: "img/"});
+                if (hqWidgets.version != dui.binds.hqWidgetsExt.version)
+                    window.alert ("The versions of hqWidgets.js and hqWidgets.html are different. Expected version of hqWidgets.js is " +dui.binds.hqWidgetsExt.version);
                 homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
                     if (how != "set") 
                         return;
