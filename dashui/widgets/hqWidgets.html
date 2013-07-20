@@ -3,11 +3,11 @@
 
 
 <script type="text/javascript">
-
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
         hqWidgetsExt: {
             version: "0.1.2",
+            inited:  false,
             hqIgnoreNextUpdate: null, // id of controlled element
             hqTimerDetectDelete: null,
             hqTimerDetectMoving: null,
@@ -28,6 +28,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                 }
             },
             hqInit: function () {
+                if (homematic === undefined || homematic.uiState === undefined || homematic.uiState.bind === undefined )
+                    return;
+                    
+                if (dui.binds.hqWidgetsExt.inited)
+                    return;
+                
+                dui.binds.hqWidgetsExt.inited = true;
+                
                 // Init hqWidgets engine
                 hqWidgets.Init ({gPictDir: "img/"});
                 if (hqWidgets.version != dui.binds.hqWidgetsExt.version)
@@ -310,6 +318,10 @@ if ((typeof hqWidgets !== 'undefined')) {
                                         if (opt['hm_id'+i] != null && opt['hm_id'+i] != "")
                                             hm_ids[t++] = {hm_id: opt['hm_id'+i] + ".STATE", option: 'windowState', index:i};   
                                     }
+                                    if (opt['hm_id_hnd'+i] != undefined) {
+                                        if (opt['hm_id_hnd'+i] != null && opt['hm_id_hnd'+i] != "")
+                                            hm_ids[t++] = {hm_id: opt['hm_id_hnd'+i] + ".STATE", option: 'handleState', index:i};   
+                                    }
                                 }
                             }
                             else {
@@ -516,8 +528,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                 if (dui.urlParams["edit"] === "") {
                     btn.SetEditMode (true);
                 } 
-                else
-                {
+                else {
                     for (var i = 0; i < hm_ids.length; i++) {
                          // Register hm_id to detect changes
                         $.homematic("addUiState", hm_ids[i].hm_id);
@@ -633,6 +644,11 @@ if ((typeof hqWidgets !== 'undefined')) {
                             dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, (newState == "true") ? hqWidgets.gWindowState.gWindowOpened : hqWidgets.gWindowState.gWindowClosed);
                             return;
                         }
+                        else
+                        if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'handleState') {
+                            dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, undefined, (newState == "OPEN") ? hqWidgets.gHandlePos.gPosOpened : ((newState == "TILTED") ? hqWidgets.gHandlePos.gPosTilted : hqWidgets.gHandlePos.gPosClosed));
+                            return;
+                        }
                     }
                     else {
                         // Just update state
@@ -699,7 +715,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                         parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="44" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'" style="width:90%"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:8%"></td></tr>');
                         document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
                         document.getElementById ("inspect_"+attr).jControl = attr;
-                        document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > i + 1) ? devFilters[i+1] : devFilters[devFilters.length -1];
+                        document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > 1) ? devFilters[1] : devFilters[0];
                         // Select Homematic ID Dialog
                         $("#inspect_"+attr+"_btn").click ( function () {
                             hmSelect.value = $("#inspect_"+this.jControl).val();
@@ -728,7 +744,43 @@ if ((typeof hqWidgets !== 'undefined')) {
                             hqWidgets.e_internal.timer = setTimeout (function(elem) {
                                 elem.trigger("change");
                             }, hqWidgets.e_settings.timeout, $(this));
-                        });                        
+                        });      
+
+                        //--------------- handler ------------------------
+                        attr = 'hm_id_hnd'+i;
+                        parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="44" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'" style="width:90%"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:8%"></td></tr>');
+                        document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
+                        document.getElementById ("inspect_"+attr).jControl = attr;
+                        document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > 2) ? devFilters[2] : devFilters[0];
+                        // Select Homematic ID Dialog
+                        $("#inspect_"+attr+"_btn").click ( function () {
+                            hmSelect.value = $("#inspect_"+this.jControl).val();
+                            hmSelect.show (homematic.ccu, this.jControl, function (obj, value, valueObj) {
+                                $("#inspect_"+obj).val(value).trigger("change");
+                            }, null, this.devFilter);
+                        });
+                        $("#inspect_"+attr).change(function (el) {
+                            var btn = hqWidgets.Get (dui.activeWidget);
+                            
+                            var wnd = btn.GetSettings ('windowConfig');
+                            var a = wnd.split(',');
+                            
+                            if (btn) {
+                                var option = {};
+                                option[this.jControl] = $(this).val();
+                                for (var j = a.length; j < 4; j++)
+                                    option['hm_id_hnd'+j] = null;
+                                btn.SetSettings (option, true);
+                            }
+                        });
+                        $("#inspect_"+attr).keyup (function () {
+                            if (hqWidgets.e_internal.timer) 
+                                clearTimeout (hqWidgets.e_internal.timer);
+                                    
+                            hqWidgets.e_internal.timer = setTimeout (function(elem) {
+                                elem.trigger("change");
+                            }, hqWidgets.e_settings.timeout, $(this));
+                        });                                  
                     }
                 }
                 if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp || opt.buttonType == hqWidgets.gButtonType.gTypeGong) {
@@ -801,7 +853,7 @@ if ((typeof hqWidgets !== 'undefined')) {
             }
         }
     %></script>
-<script type="text/ejs" id="tplHqShutter" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Window and Shutter" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Bl1-SM,HMW-LC-Bl1-DR,HM-LC-Bl1-FM;HM-Sec-SC,HM-Sec-RHS,CC-SC-Rd-WM-W-R5,FHT80TF-2">
+<script type="text/ejs" id="tplHqShutter" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Window and Shutter" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Bl1-SM,HMW-LC-Bl1-DR,HM-LC-Bl1-FM;HM-Sec-SC,HM-Sec-RHS,CC-SC-Rd-WM-W-R5,FHT80TF-2;HM-Sec-RHS">
     <% 
         if (this && this.data && this.data.attr) {
             if (this.data.attr('hqoptions')){

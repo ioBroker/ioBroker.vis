@@ -696,11 +696,12 @@ var hqWidgets = {
             if (type != hqWidgets.gSwingType.gSwingDeaf) {
                 wnd.divs[3].append("<div id='"+name+"_4'></div>");
                 wnd.divs[4] = $("#"+name+"_4");
-                wnd.divs[4].addClass('hq-no-select hq-blind-handle-closed');
+                wnd.divs[4].addClass('hq-no-select hq-blind-handle-closed hq-blind-handle-bg');
+                wnd.divs[4].css({top: wnd.divs[3].height() / 2, height: wnd.divs[3].height() * 0.15});
                 if (type == hqWidgets.gSwingType.gSwingLeft)
-                    wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 2});
+                    wnd.divs[4].css({left: wnd.divs[2].width() - wnd.divs[4].width()});
                 else
-                    wnd.divs[4].css({left: 2});
+                    wnd.divs[4].css({left: 0});
             }
             
             this.intern._jelement.leaf[index] = wnd;
@@ -2531,8 +2532,7 @@ var hqWidgets = {
         }
         // Set title (Tooltip)
         this.SetTitle = function (room, title)	{
-            if (!this.intern._jleft) 
-            {
+            if (!this.intern._jleft) {
                 if (!document.getElementById(this.advSettings.elemName+'_left')) 
                 {
                     var $newdiv2 = $('<div id="'+this.advSettings.elemName+'_left"></div>');
@@ -2775,6 +2775,14 @@ var hqWidgets = {
                 
                 if (this.intern._isEditMode && !this.settings.isContextMenu)
                     state = hqWidgets.gOptions.gWindowOpened;
+                    
+                if (wnd.divs[4])
+                    wnd.divs[4].removeClass('hq-blind-handle-closed').
+                                removeClass('hq-blind-handle-bg').
+                                removeClass('hq-blind-handle-opened-bg').
+                                removeClass('hq-blind-handle-opened').
+                                removeClass('hq-blind-handle-tilted').
+                                removeClass('hq-blind-handle-tilted-bg');
 
                 if (state == hqWidgets.gWindowState.gWindowClosed || (this.intern._isEditMode && this.settings.isContextMenu)) {
                     if (!this.intern._isEditMode) wnd.state = hqWidgets.gWindowState.gWindowClosed;
@@ -2784,18 +2792,27 @@ var hqWidgets = {
                     wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3').css ({top: 0, left: 0, width: wnd.width});
                     // Set the handle state
                     if (wnd.style && wnd.style != hqWidgets.gSwingType.gSwingDeaf) { 
-                        if (this.intern._jelement.leaf[index].handleState == hqWidgets.gHandlePos.gPosTilted)
-                            wnd.divs[4].removeClass ('hq-blind-handle-closed').removeClass('hq-blind-handle-opened').addClass('hq-blind-handle-tilted');
+                        if (this.intern._jelement.leaf[index].handleState == hqWidgets.gHandlePos.gPosTilted) {
+                            wnd.divs[4].addClass('hq-blind-handle-tilted hq-blind-handle-tilted-bg');
+                            wnd.divs[4].css({height: wnd.divs[3].height() * 0.15, width: 2});
+                            wnd.divs[4].css({top: wnd.divs[3].height() / 2});
+                        }
                         else
-                        if (this.intern._jelement.leaf[index].handleState == hqWidgets.gHandlePos.gPosOpened)
-                            wnd.divs[4].removeClass ('hq-blind-handle-closed').removeClass('hq-blind-handle-tilted').addClass('hq-blind-handle-opened');
-                        else
-                            wnd.divs[4].removeClass ('hq-blind-handle-tilted').removeClass('hq-blind-handle-opened').addClass('hq-blind-handle-closed');
+                        if (this.intern._jelement.leaf[index].handleState == hqWidgets.gHandlePos.gPosOpened) {
+                            wnd.divs[4].addClass('hq-blind-handle-opened hq-blind-handle-opened-bg');
+                            wnd.divs[4].css({width: wnd.divs[3].height() * 0.15, height: 2});
+                            wnd.divs[4].css({top: (wnd.divs[3].height() - wnd.divs[4].height()) / 2});
+                        }
+                        else {
+                            wnd.divs[4].css({height: wnd.divs[3].height() * 0.15, width: 2});
+                            wnd.divs[4].css({top: wnd.divs[3].height() / 2});
+                            wnd.divs[4].addClass('hq-blind-handle-closed hq-blind-handle-bg');
+                        }
                     
                         if (wnd.style == hqWidgets.gSwingType.gSwingLeft)
-                            wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 2});
+                            wnd.divs[4].css({left: wnd.divs[2].width() - wnd.divs[4].width()});
                         else
-                            wnd.divs[4].css({left: 2});
+                            wnd.divs[4].css({left: 0});
                     }
                 }
                 else { // Opened or tilted
@@ -2810,11 +2827,13 @@ var hqWidgets = {
                         wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3-tilted');
                         wnd.divs[wnd.leafIndex].css ({top: wnd.ooffset-2, left: +4, height: wnd.oheight});
                         // Set handle state
-                        wnd.divs[4].removeClass ('hq-blind-handle-closed').removeClass('hq-blind-handle-opened').addClass('hq-blind-handle-tilted');
+                        wnd.divs[4].addClass('hq-blind-handle-tilted hq-blind-handle-bg');
+                        wnd.divs[4].css({height: wnd.divs[3].height() * 0.15, width: 2});
+                        wnd.divs[4].css({top: wnd.divs[3].height() / 2});
                         if (wnd.style == hqWidgets.gSwingType.gSwingLeft)
-                            wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 2});
+                            wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 1});
                         else
-                            wnd.divs[4].css({left: 2});
+                            wnd.divs[4].css({left: 0});
                     }
                     else
                     if (wnd.style && wnd.style == hqWidgets.gSwingType.gSwingLeft) {
@@ -2824,8 +2843,10 @@ var hqWidgets = {
                         wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3-opened-left');
                         wnd.divs[wnd.leafIndex].css ({top: wnd.ooffset-3, left: 0, width: wnd.owidth});
                         // Set handle state
-                        wnd.divs[4].removeClass ('hq-blind-handle-closed').removeClass('hq-blind-handle-tilted').addClass('hq-blind-handle-opened');
-                        wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 2});
+                        wnd.divs[4].css({width: wnd.divs[3].height() * 0.15, height: 2});
+                        wnd.divs[4].css({top: (wnd.divs[3].height() - wnd.divs[4].height()) / 2, });
+                        wnd.divs[4].addClass('hq-blind-handle-opened hq-blind-handle-bg');
+                        wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 1});
                     }
                     else
                     if (wnd.style && wnd.style == hqWidgets.gSwingType.gSwingRight)
@@ -2835,8 +2856,10 @@ var hqWidgets = {
                         wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3-opened-right');
                         wnd.divs[wnd.leafIndex].css ({top:  wnd.ooffset-3, left: wnd.width-wnd.owidth-1	, width: wnd.owidth});
                         // Set handle state
-                        wnd.divs[4].removeClass ('hq-blind-handle-closed').removeClass('hq-blind-handle-tilted').addClass('hq-blind-handle-opened');
-                        wnd.divs[4].css({left: 2});
+                        wnd.divs[4].css({width: wnd.divs[3].height() * 0.15, height: 2});
+                        wnd.divs[4].css({top: (wnd.divs[3].height() - wnd.divs[4].height()) / 2, });
+                        wnd.divs[4].addClass('hq-blind-handle-opened hq-blind-handle-bg');
+                        wnd.divs[4].css({left: 0});
                     }
                 }			
             }
@@ -3298,7 +3321,7 @@ var hqWidgets = {
             if (dynOptions.handleState !== undefined && 
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {
                 // trim
-                if (dynOptions.handleState != null && dynOptions.windowState.replace(/^\s+|\s+$/g, '') != "") 
+                if (dynOptions.handleState != null && dynOptions.handleState.replace(/^\s+|\s+$/g, '') != "") 
                 {
                     var a=dynOptions.handleState.split(',');
                     var i;
