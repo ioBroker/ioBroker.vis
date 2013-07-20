@@ -87,8 +87,9 @@ var hqWidgets = {
         // State of the leaf
         gWindowClosed: 0,
         gWindowOpened: 1,
-        gWindowToggle: 2,
-        gWindowUpdate: 3,
+        gWindowTilted: 2,
+        gWindowToggle: 3,
+        gWindowUpdate: 4,
     },
     gSwingType: {
         // Type of the leaf
@@ -128,24 +129,24 @@ var hqWidgets = {
         gIsEditMode          : false,   // Move the buttons
         gDivID               : 0,       // Used for div name generation
         gBodyStyle           : "",      // Body class
-        gElements            : new Array(),
+        gElements            : [],
         gClickTimer          : null,    // Timer to filer out the double clicks
     },
     Translate: function (text) {
             if (!this.words) {
             this.words = {
-                "IP Camera"                 : {"en": "IP Camera",       "de": "IP Kamera",              "ru" : "Камера"},
-                "Description:"              : {"en": "Description:",    "de": "Beschreibung:",          "ru" : "Описание:"},
-                "Close"                     : {"en": "Hide",            "de": "Ignore",                 "ru" : "Спрятать"},
-                "Advanced..."               : {"en": "Advanced...",     "de": "Erweitert...",           "ru" : "Ещё"},
-                "Pop up delay (ms):"        : {"en": "Pop up delay (ms):", "de": "Verzogerung (ms)",    "ru" : "Задержка закрытия (мс):"},
-                "Open door button:"         : {"en": "Open door button:",  "de": "'Tur aufmachen' Knopf:","ru" : "Кнопка 'Открыть дверь'"},
-                "Small image update(sec):"  : {"en": "Small image update(sec):",    "de": "Kleines Bild erneuern(Sek):",    "ru" : "Обновление мал. картинки:"},
-                "Open door text:"           : {"en": "Open door text:", "de": "Knopfbeschrieftung:",    "ru" : "Текст на кнопке:"},
-                "Open&nbsp;lock"            : {"en": "Open&nbsp;lock",  "de": "Aufmachen",              "ru" : "Открыть"},
-                "Open the door?"            : {"en": "Open the door?",  "de": "Tur aufmachen?",         "ru" : "Открыть дверь?"},
-                "Simulate click"            : {"en": "Simulate click",  "de": "Simuliere Click",        "ru" : "Щелчок мышью"},
-                "Test state"                : {"en": "Test state",      "de": "Zustand testen",         "ru" : "Проверить состояние"},
+                "IP Camera"                 : {"en": "IP Camera",       "de": "IP Kamera",              "ru" : "::::::"},
+                "Description:"              : {"en": "Description:",    "de": "Beschreibung:",          "ru" : ":::::::::"},
+                "Close"                     : {"en": "Hide",            "de": "Ignore",                 "ru" : "::::::::"},
+                "Advanced..."               : {"en": "Advanced...",     "de": "Erweitert...",           "ru" : "::"},
+                "Pop up delay (ms):"        : {"en": "Pop up delay (ms):", "de": "Verzogerung (ms)",    "ru" : ":::::::: :::::::: (::):"},
+                "Open door button:"         : {"en": "Open door button:",  "de": "'Tur aufmachen' Knopf:","ru" : ":::::: '::::::: :::::'"},
+                "Small image update(sec):"  : {"en": "Small image update(sec):",    "de": "Kleines Bild erneuern(Sek):",    "ru" : ":::::::::: :::. :::::::::"},
+                "Open door text:"           : {"en": "Open door text:", "de": "Knopfbeschrieftung:",    "ru" : "::::: :: :::::::"},
+                "Open&nbsp;lock"            : {"en": "Open&nbsp;lock",  "de": "Aufmachen",              "ru" : ":::::::"},
+                "Open the door?"            : {"en": "Open the door?",  "de": "Tur aufmachen?",         "ru" : "::::::: :::::?"},
+                "Simulate click"            : {"en": "Simulate click",  "de": "Simuliere Click",        "ru" : ":::::: :::::"},
+                "Test state"                : {"en": "Test state",      "de": "Zustand testen",         "ru" : "::::::::: :::::::::"},
            };
         }
         if (this.words[text]) {
@@ -407,17 +408,23 @@ var hqWidgets = {
         }
     },
     GetTimeInterval: function (oldTime, newTime) {
+        var result = "";
         if (newTime === undefined)
             newTime = new Date ();
         var seconds = (newTime.getTime() - oldTime.getTime ()) / 1000;
         if (seconds <= 3600)
-            return "vor "+ Math.floor (seconds / 60)+" Min.";
+            result = "vor "+ Math.floor (seconds / 60)+" Min.";
+        else
         if (seconds <= 3600*24)
-            return "vor "+ Math.floor (seconds / 3600)+" St. und "+Math.floor (seconds / 60)+" Min.";
+            result = "vor "+ Math.floor (seconds / 3600)+" St. und "+Math.floor (seconds / 60)+" Min.";
+        else
         if (seconds > 3600*24 && seconds <= 3600*48)
-            return "gestern";
+            result = "gestern";
+        else
         if (seconds > 3600*48)
-            return "vor "+ Math.floor (seconds / 3600)+" Stunden";
+            result = "vor "+ Math.floor (seconds / 3600)+" Stunden";
+
+        return result;
     },
     // Format timr
     TimeToString: function (time) {
@@ -486,7 +493,7 @@ var hqWidgets = {
             o.remove();
 
             return w;
-        }
+        };
         this.CyclicService ();
     },
     // HButton
@@ -552,23 +559,23 @@ var hqWidgets = {
         // Dynamical states (will not be stored)
         var dynStates = {
             // Dynamic variables (Will not be stored)
-            infoText:    null,          // Dynamic text in the middle of the button
-            state:       hqWidgets.gState.gStateUnknown, // Unknown, active, inactive
-            hndState:    hqWidgets.gHandlePos.gPosClosed, // Set default position to closed
-            lowBattery:  false,         // If show low battery icon or not
-            strength:    null,          // If set, so the signal strength will be shown
-            isStrengthShow: false,      // If show strength
-            isRefresh:   false,         // Is refresh state
-            isWorking:   false,         // Is working state
-            percentState:0,             // State of blind or dimmer in percent
-            action:      null,          // On click action in form handler (object, ["state" | "pos"], state or position)
-            store:       null,          // function on store settings handler (object, settings)
-            valve:       null,
-            setTemp:     null,
-            temperature: null,
-            humidity:    null,
-            hideValve:   false,
-            bigPinned:   false,         // If big window pinned or not
+            infoText:      null,          // Dynamic text in the middle of the button
+            state:         hqWidgets.gState.gStateUnknown, // Unknown, active, inactive
+            handleState:   hqWidgets.gHandlePos.gPosClosed, // Set default position to closed
+            lowBattery:    false,         // If show low battery icon or not
+            strength:      null,          // If set, so the signal strength will be shown
+            isStrengthShow:false,         // If show strength
+            isRefresh:     false,         // Is refresh state
+            isWorking:     false,         // Is working state
+            percentState:  0,             // State of blind or dimmer in percent
+            action:        null,          // On click action in form handler (object, ["state" | "pos"], state or position)
+            store:         null,          // function on store settings handler (object, settings)
+            valve:         null,
+            setTemp:       null,
+            temperature:   null,
+            humidity:      null,
+            hideValve:     false,
+            bigPinned:     false,         // If big window pinned or not
             };
         
         // Local variables (Will not be stored)
@@ -656,18 +663,20 @@ var hqWidgets = {
         // ------- Functions ----------	
         this._DrawOneWindow = function (index, type, xoffset, width_, height_) {
             var name = this.intern._jelement.attr("id")+"_"+index;
-            if (!this.intern._jelement.leaf) this.intern._jelement.leaf = new Array ();
+            if (!this.intern._jelement.leaf) this.intern._jelement.leaf = [];
             this.intern._jelement.prepend("<div id='"+name+"_0' class='hq-blind-blind1'></div>");
-            var wnd = new Object ();
+            var wnd = {};
             wnd.ooffset = (Math.tan(10 * Math.PI/180) * width_)/2 + 2;
             wnd.width   = width_  - 9;
             wnd.height  = height_ - 9;
-            wnd.owidth  = (wnd.width * Math.cos(15 * Math.PI/180)) * 0.9;
-            wnd.divs = new Array ();
+            wnd.owidth  = (wnd.width  * Math.cos(15 * Math.PI/180)) * 0.9;
+            wnd.oheight = (wnd.height * Math.cos(15 * Math.PI/180)) * 0.9;
+            wnd.divs = [];
             wnd.style = type;
             wnd.state = hqWidgets.gWindowState.gWindowClosed;
-            wnd.leafIndex=3;
-            wnd.blindIndex=2;
+            wnd.handleState = hqWidgets.gHandlePos.gPosClosed;
+            wnd.leafIndex  = 3;
+            wnd.blindIndex = 2;
             wnd.divs[0] = $("#"+name+"_0");
             wnd.divs[0].css({height: height_-2, width: width_-2, top: 3, position: 'absolute', left: xoffset+4}); // Set size
             wnd.divs[0].append("<div id='"+name+"_1'  class='hq-blind-blind2'></div>");
@@ -684,16 +693,22 @@ var hqWidgets = {
             wnd.divs[3].css({height: height_-9, width: width_-9}); // Set size
             wnd.divs[3].addClass('hq-no-select');
             // handle
-            /*wnd.divs[4] = $("#"+name+"_4");
-            wnd.divs[4].css({height: 9, width: 2, top: '50%', left: 0}); // Set size
-            wnd.divs[4].addClass('hq-no-select');*/
+            if (type != hqWidgets.gSwingType.gSwingDeaf) {
+                wnd.divs[3].append("<div id='"+name+"_4'></div>");
+                wnd.divs[4] = $("#"+name+"_4");
+                wnd.divs[4].addClass('hq-no-select hq-blind-handle-closed');
+                if (type == hqWidgets.gSwingType.gSwingLeft)
+                    wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 2});
+                else
+                    wnd.divs[4].css({left: 2});
+            }
             
             this.intern._jelement.leaf[index] = wnd;
             
             wnd.divs[3].parentQuery=this;
-            if (!this.intern._blinds) this.intern._blinds = new Array ();
+            if (!this.intern._blinds) this.intern._blinds = [];
             this.intern._blinds[index] = wnd;
-        }
+        };
         this._GetWindowType = function () {
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind)
             {
@@ -705,7 +720,7 @@ var hqWidgets = {
             }
             else
                 return "";
-        }
+        };
         this._PlayMelody = function () {
             if (this.settings.gongMelody) {
                 $("#sound_").remove()
@@ -981,7 +996,7 @@ var hqWidgets = {
                     if (xx < 0) xx = 0;
                     if (yy < 0) yy = 0;
                     this.intern._jbigWindow.css ({top: yy, left:xx});
-                    this.intern._jbigWindow.buttons = new Array ();
+                    this.intern._jbigWindow.buttons = [];
                     this.intern._jbigWindow.prepend('<div id="'+this.advSettings.elemName+'_lock1"></div><div id="'+this.advSettings.elemName+'_lock2"></div><div id="'+this.advSettings.elemName+'_lock3"></div>');
                     this.intern._jbigWindow.buttons[0] = new hqWidgets.hqButton ({radius: 5, iconName: 'LockOrange.png', hoursLastAction:-1}, {elemName: this.advSettings.elemName+'_lock1', parent: this.advSettings.parent});
                     this.intern._jbigWindow.buttons[0].parentLock = this;
@@ -1123,12 +1138,12 @@ var hqWidgets = {
                 this.intern._backOff="";
                 if (this.intern._contextMenu) {
                     this.intern._contextMenu.Add({text:"Bring to back", action:function(elem) {
-                            var options = new Object ();
+                            var options = {};
                             options.zindex = 0;
                             elem.SetSettings (options);
                         }});
                     this.intern._contextMenu.Add({text:"Bring to front", action:function(elem) {
-                            var options = new Object ();
+                            var options = {};
                             options.zindex = GetMaxZindex () + 1;
                             elem.SetSettings (options);
                         }});
@@ -1508,8 +1523,8 @@ var hqWidgets = {
             }
             this.intern._blinds = null;
 
-            if (iCount >= 1) this._DrawOneWindow (0, type1, 0,                                  this.intern._jelement.width() / iCount, this.intern._jelement.height());
-            if (iCount >= 2) this._DrawOneWindow (1, type2, this.intern._jelement.width() / iCount * 1, this.intern._jelement.width() / iCount, this.intern._jelement.height());
+            if (iCount >= 1) this._DrawOneWindow (0, type1, 0,                                          this.intern._jelement.width() / iCount, this.intern._jelement.height());
+            if (iCount >= 2) this._DrawOneWindow (1, type2, this.intern._jelement.width() / iCount,     this.intern._jelement.width() / iCount, this.intern._jelement.height());
             if (iCount >= 3) this._DrawOneWindow (2, type3, this.intern._jelement.width() / iCount * 2, this.intern._jelement.width() / iCount, this.intern._jelement.height());
             if (iCount >= 4) this._DrawOneWindow (3, type4, this.intern._jelement.width() / iCount * 3, this.intern._jelement.width() / iCount, this.intern._jelement.height());		
             
@@ -1539,7 +1554,7 @@ var hqWidgets = {
                     opacity:     0,
                     //borderWidth: 1,
                     borderRadius: 10+(this.settings.height > this.settings.width) ? this.settings.width : this.settings.height};
-                    
+
                 $('#'+this.advSettings.elemName+'_action1').addClass('hq-changing-normal').css({borderRadius: this.settings.radius+10}).animate(_css,
                 1000, 'swing', function (){$(this).remove();});  
 
@@ -1720,7 +1735,7 @@ var hqWidgets = {
                     
                 this.intern._iuCamUpdateTimer = setTimeout (function (obj) { obj._UpdateSmallCam() }, this.settings.ipCamUpdateSec * 1000, this);
             }
-        },
+        }
         this._UpdateBigCam = function () {
             if (this.settings.ipCamImageURL != null && this.settings.ipCamImageURL != "") {
                 if (this.intern._ipCamImageURL == null) {
@@ -1749,7 +1764,7 @@ var hqWidgets = {
             }
         }
         this.GetAdvSettings = function () {
-            var advOptions = new Object ();
+            var advOptions = {};
             advOptions.parent   = this.advSettings.parent;
             advOptions.elemName = this.advSettings.elemName;
             return advOptions;
@@ -1757,17 +1772,19 @@ var hqWidgets = {
         this.GetStates = function () {
             var dynOptions = hqWidgets.Clone (this.dynStates);
             
-            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) 
-            {
+            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {
                 dynOptions.windowState = "";
+                dynOptions.handleState = "";
                 var index = 0;
-                while (this.intern._blinds[index])
+                while (this.intern._blinds[index]) {
                     dynOptions.windowState = ((options.windowState == "") ? "" : ",") + this.intern._blinds[index].state;
+                    dynOptions.handleState = ((options.handleState == "") ? "" : ",") + this.intern._blinds[index].handleState;
+                }
             }
         }
         // Get all options as one parameter
         this.GetSettings = function (isAllOrOneName) {
-            var options = new Object ();
+            var options = {};
 
             if (isAllOrOneName !== undefined && isAllOrOneName !== true && isAllOrOneName !== false)
                 return this.settings[isAllOrOneName];
@@ -2141,7 +2158,7 @@ var hqWidgets = {
                 }
                 else
                 {
-                    this.SetWindowState(-1, hqWidgets.gWindowState.gWindowClosed);
+                    this.SetWindowState(-1, hqWidgets.gWindowState.gWindowClosed, hqWidgets.gHandlePos.gPosClosed);
                     this.ShowBlindState();
                 }
             }
@@ -2329,8 +2346,7 @@ var hqWidgets = {
                                 
                                 this.intern.timerID = setTimeout (function (elem) {
                                     elem.intern._isBigVisible = false;
-                                    $('#gongDialog').dialog('close');
-                                    $('#gongDialog').remove ();
+                                    $('#gongDialog').dialog('close').remove ();
                                     elem.intern.timerID = null;
                                 }, this.settings.popUpDelay, this);
                                 //dlg.dialog('open');
@@ -2438,7 +2454,7 @@ var hqWidgets = {
                         this.intern._jelement.prepend("<div id='"+this.advSettings.elemName+"_signal'></div>");
                     this.intern._jsignal=$('#'+this.advSettings.elemName+"_signal").show();
                     this.intern._jsignal.addClass("hq-signal");
-                    this.intern._jsignal.bar = new Array ();
+                    this.intern._jsignal.bar = [];
                     var h=this.intern._jsignal.height ();
                     var w=this.intern._jsignal.width ();
                     var ws=0;
@@ -2727,49 +2743,89 @@ var hqWidgets = {
                 }
             }
         }
-        this.SetWindowState = function (index, state)	{
-            if (index==-1 && this.intern._jelement.leaf)
-            {
+        this.SetWindowState = function (index, state, handleState)	{            
+            // If set all leafs to this state
+            if (index==-1 && this.intern._jelement.leaf) {
                 var i=0;
                 while (this.intern._jelement.leaf[i])
                 {
-                    this.SetWindowState(i, state);
+                    this.SetWindowState(i, state, handleState);
                     i++;
                 }
                 return;
             }
-        
-            if (this.intern._jelement.leaf && this.intern._jelement.leaf[index])
-            {
-                var wnd = this.intern._jelement.leaf[index]; 
                 
+            if (this.intern._jelement.leaf && this.intern._jelement.leaf[index]) {
+                var wnd = this.intern._jelement.leaf[index]; 
+        
+                if (handleState === undefined)
+                    handleState = wnd.handleState;
+
+                if (state === undefined)
+                    state = wnd.state;
+        
                 if (state == hqWidgets.gWindowState.gWindowToggle)
                     state = (wnd.state == hqWidgets.gWindowState.gWindowClosed) ? hqWidgets.gWindowState.gWindowOpened: hqWidgets.gWindowState.gWindowClosed;
                 else
                 if (state == hqWidgets.gWindowState.gWindowUpdate)
-                    state  = wnd.state;
+                    state = wnd.state;
                     
-                this.intern._jelement.leaf[index].state = state;
+                this.intern._jelement.leaf[index].state       = state;
+                this.intern._jelement.leaf[index].handleState = handleState;
                 
                 if (this.intern._isEditMode && !this.settings.isContextMenu)
-                    state=hqWidgets.gOptions.gWindowOpened;
+                    state = hqWidgets.gOptions.gWindowOpened;
 
-                if (state == hqWidgets.gWindowState.gWindowClosed || (this.intern._isEditMode && this.settings.isContextMenu))
-                {
+                if (state == hqWidgets.gWindowState.gWindowClosed || (this.intern._isEditMode && this.settings.isContextMenu)) {
                     if (!this.intern._isEditMode) wnd.state = hqWidgets.gWindowState.gWindowClosed;
-                    wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-opened-left');
-                    wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-opened-right');
-                    wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3');
-                    wnd.divs[wnd.leafIndex].css ({top: 0, left: 0, width: wnd.width});
+                    wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-opened-left')
+                                           .removeClass ('hq-blind-blind3-opened-right')
+                                           .removeClass ('hq-blind-blind3-tilted');
+                    wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3').css ({top: 0, left: 0, width: wnd.width});
+                    // Set the handle state
+                    if (wnd.style && wnd.style != hqWidgets.gSwingType.gSwingDeaf) { 
+                        if (this.intern._jelement.leaf[index].handleState == hqWidgets.gHandlePos.gPosTilted)
+                            wnd.divs[4].removeClass ('hq-blind-handle-closed').removeClass('hq-blind-handle-opened').addClass('hq-blind-handle-tilted');
+                        else
+                        if (this.intern._jelement.leaf[index].handleState == hqWidgets.gHandlePos.gPosOpened)
+                            wnd.divs[4].removeClass ('hq-blind-handle-closed').removeClass('hq-blind-handle-tilted').addClass('hq-blind-handle-opened');
+                        else
+                            wnd.divs[4].removeClass ('hq-blind-handle-tilted').removeClass('hq-blind-handle-opened').addClass('hq-blind-handle-closed');
+                    
+                        if (wnd.style == hqWidgets.gSwingType.gSwingLeft)
+                            wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 2});
+                        else
+                            wnd.divs[4].css({left: 2});
+                    }
                 }
-                else
-                {
-                    if (wnd.style && wnd.style == hqWidgets.gSwingType.gSwingLeft)
-                    {
+                else { // Opened or tilted
+                    // If handle says tilted => window is tilted
+                    if (this.intern._jelement.leaf[index].handleState == hqWidgets.gHandlePos.gPosTilted)
+                        state = hqWidgets.gWindowState.gWindowTilted;
+                
+                    if (wnd.style && wnd.style != hqWidgets.gSwingType.gSwingDeaf && 
+                        state == hqWidgets.gWindowState.gWindowTilted) {
+                        if (!this.intern._isEditMode) wnd.state = hqWidgets.gOptions.gWindowTilted;
+                        wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3');
+                        wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3-tilted');
+                        wnd.divs[wnd.leafIndex].css ({top: wnd.ooffset-2, left: +4, height: wnd.oheight});
+                        // Set handle state
+                        wnd.divs[4].removeClass ('hq-blind-handle-closed').removeClass('hq-blind-handle-opened').addClass('hq-blind-handle-tilted');
+                        if (wnd.style == hqWidgets.gSwingType.gSwingLeft)
+                            wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 2});
+                        else
+                            wnd.divs[4].css({left: 2});
+                    }
+                    else
+                    if (wnd.style && wnd.style == hqWidgets.gSwingType.gSwingLeft) {
                         if (!this.intern._isEditMode) wnd.state = hqWidgets.gOptions.gWindowOpened;
+                        wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3');
                         wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3');
                         wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3-opened-left');
                         wnd.divs[wnd.leafIndex].css ({top: wnd.ooffset-3, left: 0, width: wnd.owidth});
+                        // Set handle state
+                        wnd.divs[4].removeClass ('hq-blind-handle-closed').removeClass('hq-blind-handle-tilted').addClass('hq-blind-handle-opened');
+                        wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 2});
                     }
                     else
                     if (wnd.style && wnd.style == hqWidgets.gSwingType.gSwingRight)
@@ -2778,6 +2834,9 @@ var hqWidgets = {
                         wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3');
                         wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3-opened-right');
                         wnd.divs[wnd.leafIndex].css ({top:  wnd.ooffset-3, left: wnd.width-wnd.owidth-1	, width: wnd.owidth});
+                        // Set handle state
+                        wnd.divs[4].removeClass ('hq-blind-handle-closed').removeClass('hq-blind-handle-tilted').addClass('hq-blind-handle-opened');
+                        wnd.divs[4].css({left: 2});
                     }
                 }			
             }
@@ -2891,7 +2950,7 @@ var hqWidgets = {
             }
             else {
                 if (!this.settings.isContextMenu)
-                    return;
+                    return false;
                     
                 //$('#status').append('down ' + x_+" "+y_+'<br>');
                 hqWidgets.gDynamics.gActiveElement = this;
@@ -3156,8 +3215,7 @@ var hqWidgets = {
                         this.intern._angle = newang;
 
                     this.intern._isMoved = true;
-                    percent = Math.floor (ang / 360 * 100);
-                    this.SetPercent (percent, true);
+                    this.SetPercent (Math.floor (ang / 360 * 100), true);
                 }	            
             }
         }
@@ -3234,6 +3292,17 @@ var hqWidgets = {
                     var a=dynOptions.windowState.split(',');
                     var i;
                     for (i=0; i < a.length; i++) this.SetWindowState (i, a[i]);
+                }
+            }
+            //  handleState  - like "0,2,1" means first handle is unknown state, middle is closed and the third is opened
+            if (dynOptions.handleState !== undefined && 
+                this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {
+                // trim
+                if (dynOptions.handleState != null && dynOptions.windowState.replace(/^\s+|\s+$/g, '') != "") 
+                {
+                    var a=dynOptions.handleState.split(',');
+                    var i;
+                    for (i=0; i < a.length; i++) this.SetWindowState (i, undefined, a[i]);
                 }
             }
 
@@ -3695,7 +3764,7 @@ var hqWidgets = {
                 elem.ctrlAttr = eee;
                 elem.filter   = (filter === undefined) ? null : filter;
                 elem.isStates = isStates;
-                $('#'+this.e_settings.elemName+'_'+eee).change (function () {
+                var jeee = $('#'+this.e_settings.elemName+'_'+eee).change (function () {
                     // If really changed
                     if (!elem.isStates) {
                         if (this.parent.e_internal.attr[this.ctrlAttr] != $(this).val()) {
@@ -3727,8 +3796,8 @@ var hqWidgets = {
                         }
                     }
                 });
-                
-                $('#'+this.e_settings.elemName+'_'+eee).keyup (function () {
+
+                jeee.keyup (function () {
                     if (this.parent.e_internal.timer) 
                         clearTimeout (this.parent.e_internal.timer);
                         
@@ -3959,7 +4028,7 @@ var hqWidgets = {
             advBtn.state = false;
             
             $('#idShowAdv').button({icons: {primary: "ui-icon-carat-1-s"}}).click(function( event ) {
-                                        this.state = !this.state;
+                                        this.state = !(this.state);
                                         if (this.state) {
                                             $('#idShowAdv').button("option", {icons: { primary: "ui-icon-carat-1-n" }});
                                             var i = 0;
@@ -3997,7 +4066,7 @@ var hqWidgets = {
             });
         }        
 
-        if ((elem = document.getElementById (this.e_settings.elemName+'_radius')) != null) {
+        if (document.getElementById (this.e_settings.elemName+'_radius') != null) {
             this.e_internal.controlRadius = new this.hqSlider ({parent: $('#'+this.e_settings.elemName+'_radius'), 
                                                      withText: true, 
                                                      position: this.e_internal.attr.radius, 
@@ -4480,9 +4549,9 @@ var hqWidgets = {
                         this.parent.SetPosition (iPos);
                     }						
                 };
-                
-                $('#'+this.internal.elemName+'_text').change (function () {this.parent.internal.changed ();});
-                $('#'+this.internal.elemName+'_text').keyup (function () {
+
+                this.internal.text.change (function () {this.parent.internal.changed ();});
+                this.internal.text.keyup (function () {
                     if (this.parent.internal.timer) clearTimeout (this.parent.internal.timer);
                     this.parent.internal.timer = setTimeout (function(elem) { elem.changed (); }, 500, this.parent);
                 });
