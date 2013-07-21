@@ -95,7 +95,15 @@ var version =               '0.10',
                     var id = funcs.escape(obj[0]);
                     if (homematic.uiState["_"+id]) {
                         homematic.uiState.attr("_"+id+".Value", ''+obj[1]);
-                        homematic.uiState.attr("_"+id+".Timestamp", (new Date()).getTime());
+                        var ts = new Date();
+                        var tsstr =   ts.getFullYear() + '-' +
+                            ("0" + (ts.getMonth() + 1).toString(10)).slice(-2) + '-' +
+                            ("0" + (ts.getDate() + 1).toString(10)).slice(-2) + ' ' +
+                            ("0" + (ts.getHours()).toString(10)).slice(-2) + ':' +
+                            ("0" + (ts.getMinutes()).toString(10)).slice(-2) + ':' +
+                            ("0" + (ts.getSeconds()).toString(10)).slice(-2)
+                        homematic.uiState.attr("_"+id+".Timestamp", tsstr);
+                        homematic.uiState.attr("_"+id+".certain", true);
                     }
                 });
             }
@@ -112,7 +120,8 @@ var version =               '0.10',
             // ??? @hobbyquaker: Eigentlich, state muss wieder vom CCU 
             // gelesen werden um den richtigen status zu bekommen (vielleciht wurde die lampe gar nicht eingeshaltet
             // oder man kann quality von dem signal einfugen
-            funcs.uiState(id, val);
+            homematic.uiState.attr("_"+id+".Value", val);
+            homematic.uiState.attr("_"+id+".certain", false);
         },                 // Wert-Anderung in homematic.setState schreiben
         uiState: function (id, val) {
             homematic.uiState.attr("_"+id+".Value", val);

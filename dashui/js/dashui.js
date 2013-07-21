@@ -28,7 +28,7 @@ var dui = {
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
-    fileViews:          '/usr/local/addons/dashui.views' ,
+    fileViews:          '/usr/local/addons/dashui.views',
     instance:           null,
     urlParams:          {},
     settings:           {},
@@ -512,6 +512,7 @@ var dui = {
         //console.log("changeView("+view+")");
         dui.activeView = view;
 
+        $.homematic("refreshVisible");
 
 
         if (dui.views[view].settings.interval) {
@@ -533,6 +534,21 @@ var dui = {
         if (window.location.hash.slice(1) != view) {
             history.pushState({}, "", "#" + view);
         }
+
+        // Navigation-Widgets
+
+        $(".jqui-nav-state").each(function () {
+            var $this = $(this);
+            if ($this.attr("data-dashui-nav") == view) {
+                $this.removeClass("ui-state-default")
+                $this.addClass("ui-state-active");
+            } else {
+                $this.addClass("ui-state-default")
+                $this.removeClass("ui-state-active");
+            }
+        });
+
+
 
 
         // Editor
@@ -2854,8 +2870,8 @@ function pxAdd(val, add) {
 
         // jqHomematic Plugin Init
         $.homematic({
-            //ccu: "172.16.23.3",
-            //ccuIoUrl: "http://pi-blue:2100",
+            ccu: "172.16.23.3",
+            ccuIoUrl: "http://pi-blue:2100",
             loadCcuData: false,
             autoRefresh: autoRefresh,
             ready: function () {

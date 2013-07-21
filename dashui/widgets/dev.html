@@ -7,7 +7,7 @@
         <h3 style="margin-bottom:0px;">homematic.uiState = {</h3>
         <table style="white-space: nowrap;">
             <% homematic.uiState.each(function(i, obj) { %>
-            <tr><td>"<%= jQuery.homematic('unescape', obj) %>":{</td><td>"Value":"<%= homematic.uiState.attr(obj + ".Value") %>",</td><td>"Timestamp":"<%= homematic.uiState.attr(obj + ".Timestamp") %>"}</td></tr>
+            <tr><td>"<%= jQuery.homematic('unescape', obj) %>":</td><td colspan="2"><%= JSON.stringify({Value:homematic.uiState.attr(obj+".Value"),Timestamp:homematic.uiState.attr(obj+".Timestamp"),certain:homematic.uiState.attr(obj+".certain")}) %>,</td></tr>
             <% }) %>
         </table>
         }
