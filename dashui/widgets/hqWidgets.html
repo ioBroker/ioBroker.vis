@@ -521,7 +521,6 @@ if ((typeof hqWidgets !== 'undefined')) {
                     }   
                 }
                 
-                
                 var btn = hqWidgets.Create (opt, {elemName: el, parent: $("#duiview_"+dui.activeView)});
                 
                 // Enable edit mode
@@ -646,7 +645,21 @@ if ((typeof hqWidgets !== 'undefined')) {
                         }
                         else
                         if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'handleState') {
-                            dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, undefined, (newState == "OPEN") ? hqWidgets.gHandlePos.gPosOpened : ((newState == "TILTED") ? hqWidgets.gHandlePos.gPosTilted : hqWidgets.gHandlePos.gPosClosed));
+                            // 1. CLOSED, 2. TILTED, 3.OPEN
+                            // If no contact sensor => set the valid position
+                            var wndState = undefined;
+                            var opt =  dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.GetSettings('hm_id'+dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index);
+                            if (opt === undefined || opt == null || opt == "") {
+                                if (newState == "OPEN") 
+                                    wndState = hqWidgets.gWindowState.gWindowOpened;
+                                else
+                                if (newState == "TILTED") 
+                                    wndState = hqWidgets.gWindowState.gWindowTilted;
+                                else
+                                    wndState = hqWidgets.gWindowState.gWindowClosed;
+                                
+                            }
+                            dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, wndState, (newState == "OPEN") ? hqWidgets.gHandlePos.gPosOpened : ((newState == "TILTED") ? hqWidgets.gHandlePos.gPosTilted : hqWidgets.gHandlePos.gPosClosed));
                             return;
                         }
                     }

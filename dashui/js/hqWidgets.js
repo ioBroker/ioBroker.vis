@@ -1810,8 +1810,11 @@ var hqWidgets = {
                     
                 options[propertyName] = this.settings[propertyName];
             }
-            if (options.iconName) options.iconName = (options.iconName.substring(0, hqWidgets.gOptions.gPictDir.length) == hqWidgets.gOptions.gPictDir) ? options.iconName.substring(hqWidgets.gOptions.gPictDir.length) : options.iconName;
-            if (options.iconOn)   options.iconOn   = (options.iconOn.substring  (0, hqWidgets.gOptions.gPictDir.length) == hqWidgets.gOptions.gPictDir) ? options.iconOn.substring  (hqWidgets.gOptions.gPictDir.length) : options.iconOn;
+            if (options.iconName) 
+                options.iconName = (options.iconName.substring(0, hqWidgets.gOptions.gPictDir.length) == hqWidgets.gOptions.gPictDir) ? options.iconName.substring(hqWidgets.gOptions.gPictDir.length) : options.iconName;
+            
+            if (options.iconOn)   
+                options.iconOn   = (options.iconOn.substring  (0, hqWidgets.gOptions.gPictDir.length) == hqWidgets.gOptions.gPictDir) ? options.iconOn.substring  (hqWidgets.gOptions.gPictDir.length) : options.iconOn;
             return options;
              /*
             options.buttonType = this.settings.buttonType;

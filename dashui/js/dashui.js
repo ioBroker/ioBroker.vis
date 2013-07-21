@@ -28,18 +28,18 @@ var dui = {
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
-    fileViews:          '/usr/local/addons/dashui.views',
+    fileViews:          duiConfig.fileViews,
     instance:           null,
     urlParams:          {},
     settings:           {},
     views:              {},
     widgets:            {},
     activeView:         "",
-    defaultHmInterval:  7500,
+    defaultHmInterval:  duiConfig.defaultHmInterval,
     listval:            [],
-    widgetSets:         ["basic","colorpicker","fancyswitch","hqWidgets","knob","jqplot","jqui","jqui-mfd","dev"],
+    widgetSets:         duiConfig.widgetSets,
     words:              null,
-    currentLang:        "de",
+    currentLang:        duiConfig.currentLang,
     initialized:        false,
     useCache:           true,
 
@@ -2780,7 +2780,7 @@ function pxAdd(val, add) {
            .dialog({
             modal: false,
             autoOpen: false,
-            width: 500,
+            width:  500,
             height: 610,
             position: { my: "right top", at: "right top", of: window },
             close: function () {
@@ -2939,8 +2939,8 @@ function pxAdd(val, add) {
 
         // jqHomematic Plugin Init
         $.homematic({
-            ccu: "192.168.1.5",
-            //ccuIoUrl: "http://raspberrypi:2100",
+            ccu: duiConfig.ccu,
+            ccuIoUrl: duiConfig.ccuIoUrl,
             loadCcuData: false,
             autoRefresh: autoRefresh,
             regaDown: function (error) {
