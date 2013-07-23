@@ -10,6 +10,23 @@
 * Config-File, Editor und Engine sauber trennen
 * Erweiterte Template-Attribute: Doku, Kompatibilität, ...
 
+## Roadmap
+
+### 0.9
+
+* jqHomematic/WebAPI fliegt raus, komplette CCU-Kommunikation via CCU.IO
+* hm-ctrl valuelist view container widget (bestimmte view in abhängigkeit von Variable anzeigen)
+* instanz-steuerung via eigenes (cuxd)gerät?
+* Alle vorhandenen Widgets fixen
+* Wunderground/yr.no Widgets via CCU.IO
+* Hue Widgets via CCU.IO
+* diverse Todos CCU.IO
+
+### 1.0
+
+* Doku
+* Einfache Installation gemeinsam mit CCU.IO, Pakete für Raspbian und CCU2
+
 
 ## Changelog
 ### 0.8.4
