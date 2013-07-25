@@ -78,6 +78,16 @@ if ((typeof hqWidgets !== 'undefined')) {
                             }
                             else {
                                 hqWidgets.Delete (btn);
+                                dui.activeWidget = null;
+                            }
+                        }
+                    }
+                    else {
+                        var btn = hqWidgets.Get (dui.activeWidget);
+                        if (btn) {
+                            if (!document.getElementById (btn.advSettings.elemName)) {
+                                hqWidgets.Delete (btn);
+                                dui.activeWidget = null;
                             }
                         }
                     }
@@ -913,7 +923,6 @@ if ((typeof hqWidgets !== 'undefined')) {
 
     dui.binds.hqWidgetsExt.hqInit ();
 }
-
 </script>
 <!--
     <%= (el) -> console.log ("A");dui.binds.hqWidgetsExt.hqButtonExt (data.attr('wid'), data.attr('hqoptions')) %>

@@ -665,7 +665,7 @@ var hqWidgets = {
         
         if (advSettings != undefined)
             this.advSettings = $.extend (advSettings, advOptions);
-        this.settings = $.extend (this.settings, options);
+        this.settings = $.extend (settings, options);
             
         if (this.advSettings.elemName == null) {
             this.advSettings.elemName = ("elem" + (hqWidgets.gDynamics.gDivID++));
