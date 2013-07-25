@@ -159,8 +159,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                                               zindex: 3,
                                               hm_id: '',
                                               hoursLastAction:-1,
-                                              ramp_time: 0.5,
-                                              on_time: 0,
+                                              dimmerRampTime: 0.5,
+                                              dimmerOnTime: 0,
                                               });
                     }
                     else
@@ -259,7 +259,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                         if (time_id != null) {
                                             if (time_id.indexOf(".LEVEL") == -1) {
                                                 time_id += ".ON_TIME";
-                                                var on_time = obj.GetSettings ('on_time');
+                                                var on_time = obj.GetSettings ('dimmerOnTime');
                                                 if (on_time !== undefined && on_time != null && on_time != "")
                                                     $.homematic("setState", time_id, on_time);
                                             }
@@ -275,7 +275,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                         if (time_id != null) {
                                             if (time_id.indexOf(".LEVEL") == -1) {
                                                 time_id += ".RAMP_TIME";
-                                                var on_time = obj.GetSettings ('ramp_time');
+                                                var on_time = obj.GetSettings ('dimmerRampTime');
                                                 if (on_time !== undefined && on_time != null && on_time != "")
                                                     $.homematic("setState", time_id, on_time);
                                             }
@@ -305,8 +305,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                             if (opt.hm_id.indexOf(".LEVEL") == -1) {
                                 hm_ids[t++] = {hm_id: opt.hm_id + ".LEVEL",    option: 'percentState'}; // First is always main element
                                 hm_ids[t++] = {hm_id: opt.hm_id + ".WORKING",  option: 'isWorking'};
-                                hm_ids[t++] = {hm_id: opt.hm_id + ".RAMP_TIME",option: 'ramp_time'}; 
-                                hm_ids[t++] = {hm_id: opt.hm_id + ".ON_TIME",  option: 'on_time'}; 
+                                hm_ids[t++] = {hm_id: opt.hm_id + ".RAMP_TIME",option: 'dimmerRampTime'}; 
+                                hm_ids[t++] = {hm_id: opt.hm_id + ".ON_TIME",  option: 'dimmerOnTime'}; 
                             }
                             else {
                                 hm_ids[t++] = {hm_id: opt.hm_id, option: 'percentState'};
@@ -753,11 +753,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                 var devFilters = (devFilter) ? devFilter.split (';') : [null, null];
                 if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
                     // Add ramp_time and on_time
-                    var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"' style='display:none'><td>"+ dui.translate("ramp_time:") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_ramp_time'  type='text' value='"+hqEditElem.e_internal.attr.ramp_time+"'></td></tr>";
-                        sTextAdv += "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"' style='display:none'><td>"+ dui.translate("on_time:")   +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_on_time'    type='text' value='"+hqEditElem.e_internal.attr.on_time  +"'></td></tr>";
+                    var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"' style='display:none'><td>"+ dui.translate("ramp_time:") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_dimmerRampTime'  type='text' value='"+hqEditElem.e_internal.attr.dimmerRampTime+"'></td></tr>";
+                        sTextAdv += "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"' style='display:none'><td>"+ dui.translate("on_time:")   +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_dimmerOnTime'    type='text' value='"+hqEditElem.e_internal.attr.dimmerOnTime
+                        +"'></td></tr>";
                     parent.append (sTextAdv);
-                    hqEditElem._EditTextHandler ('ramp_time');
-                    hqEditElem._EditTextHandler ('on_time');
+                    hqEditElem._EditTextHandler ('dimmerRampTime');
+                    hqEditElem._EditTextHandler ('dimmerOnTime');
                 }
                 
                 if (opt.hm_id != undefined) {
