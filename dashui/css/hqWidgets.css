@@ -414,6 +414,14 @@ html,body {
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
+.hq-blind-big-text {
+    position: absolute;
+    top: 45%;
+    left: 37%;
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+}
 
 /* ------------------------ Door styles ---------------------------*/
 .hq-door-black {

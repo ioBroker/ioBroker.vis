@@ -290,49 +290,6 @@ var dui = {
             hqStyleSelector.init ({ width: 202,
                             name: "inspect_view_bkg_def",
                             style: activeBkgClass,     
-                            styles: {
-							"Blue marine lines": "hq-background-blue-marine-lines",
-							"Blue marine": "hq-background-blue-marine",
-							"Blue flowers": "hq-background-blue-flowers",
-							"Blue radial": "hq-background-radial-blue",
-							"Black hor. gradient 0": "hq-background-h-gradient-black-0",
-							"Black hor. gradient 1": "hq-background-h-gradient-black-1",
-							"Black hor. gradient 2": "hq-background-h-gradient-black-2",
-							"Black hor. gradient 3": "hq-background-h-gradient-black-3",
-							"Black hor. gradient 4": "hq-background-h-gradient-black-4",
-							"Black hor. gradient 5": "hq-background-h-gradient-black-5",
-							"Orange hor. gradient 0": "hq-background-h-gradient-orange-0",
-							"Orange hor. gradient 1": "hq-background-h-gradient-orange-1",
-							"Orange hor. gradient 2": "hq-background-h-gradient-orange-2",
-							"Orange hor. gradient 3": "hq-background-h-gradient-orange-3",
-							"Blue hor. gradient 0": "hq-background-h-gradient-blue-0",
-							"Blue hor. gradient 1": "hq-background-h-gradient-blue-1",
-							"Blue hor. gradient 2": "hq-background-h-gradient-blue-2",
-							"Blue hor. gradient 3": "hq-background-h-gradient-blue-3",
-							"Blue hor. gradient 4": "hq-background-h-gradient-blue-4",
-							"Blue hor. gradient 5": "hq-background-h-gradient-blue-5",
-							"Blue hor. gradient 6": "hq-background-h-gradient-blue-6",
-							"Blue hor. gradient 7": "hq-background-h-gradient-blue-7",
-							"Yellow hor. gradient 0": "hq-background-h-gradient-yellow-0",
-							"Yellow hor. gradient 1": "hq-background-h-gradient-yellow-1",
-							"Yellow hor. gradient 2": "hq-background-h-gradient-yellow-2",
-							"Yellow hor. gradient 3": "hq-background-h-gradient-yellow-3",
-							"Green hor. gradient 0": "hq-background-h-gradient-green-0",
-							"Green hor. gradient 1": "hq-background-h-gradient-green-1",
-							"Green hor. gradient 2": "hq-background-h-gradient-green-2",
-							"Green hor. gradient 3": "hq-background-h-gradient-green-3",
-							"Green hor. gradient 4": "hq-background-h-gradient-green-4",
-							"Gray flat 0": "hq-background-gray-0",
-							"Gray flat 1": "hq-background-gray-1",
-							"Gray hor. gradient 0": "hq-background-h-gradient-gray-0",
-							"Gray hor. gradient 1": "hq-background-h-gradient-gray-1",
-							"Gray hor. gradient 2": "hq-background-h-gradient-gray-2",
-							"Gray hor. gradient 3": "hq-background-h-gradient-gray-3",
-							"Gray hor. gradient 4": "hq-background-h-gradient-gray-4",
-							"Gray hor. gradient 5": "hq-background-h-gradient-gray-5",
-							"Gray hor. gradient 6": "hq-background-h-gradient-gray-6",
-							"Gray graident": "hq-background-gradient-box",
-                            },
                             parent: $('#inspect_view_bkg_parent'),
 							onchange: function (newStyle, obj) {
                                 if (dui.views[dui.activeView].settings.style['background_class'])
@@ -443,7 +400,7 @@ var dui = {
         widgetData.hm_id = $.homematic("escape", widgetData.hm_id);
         
         // Append html element to view
-        $("#duiview_"+view).append(can.view(widget.tpl, {hm: homematic.uiState["_"+widget.data.hm_id], data: widgetData}));
+        $("#duiview_"+view).append(can.view(widget.tpl, {hm: homematic.uiState["_"+widget.data.hm_id], data: widgetData, view: view}));
        
 
         if (widget.style) {
@@ -641,19 +598,14 @@ var dui = {
                 "Cancel"    : {"en" : "Cancel",      "de": "Abbrechen",      "ru" : "Отмена"},	
                 "Name"      : {"en" : "Name",        "de": "Name",           "ru" : "Имя"},	
                 "Location"  : {"en" : "Location",    "de": "Raum",           "ru" : "Положение"},	
-                "Interface" :{"en" : "Interface",   "de": "Schnittstelle",  "ru" : "Интерфейс"},	
+                "Interface" : {"en" : "Interface",   "de": "Schnittstelle",  "ru" : "Интерфейс"},	
                 "Type"      : {"en" : "Type",        "de": "Typ",            "ru" : "Тип"},	
                 "Address"   : {"en" : "Address",     "de": "Adresse",        "ru" : "Адрес"},	
                 "Function"  : {"en" : "Function",    "de": "Gewerk",         "ru" : "Назначение"},	
+                "ramp_time:": {"en" : "Ramp time(s)","de": "Dauer - Aus (sek)","ru" : "Выключение (сек)"},
+                "on_time:"  : {"en" : "On time(s)",  "de": "Dauer - An (sek)","ru" : "Включение (сек)"},
             };
         }
-        // Search the array 
-        /*for (var i = 0; i < this.words.length; i++)
-        {
-            if (this.words[i]["Text"] == text) {
-                return (this.words[i][this.currentLang]) ? this.words[i][this.currentLang] : text;
-            }
-        }*/
         if (this.words[text]) {
             if (this.words[text][this.currentLang])
                 return this.words[text][this.currentLang];
@@ -777,7 +729,7 @@ dui = $.extend(true, dui, {
                 buttontext: undefined
             }, data))
         };
-        $("#duiview_"+dui.activeView).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"]}));
+        $("#duiview_"+dui.activeView).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"], "view": dui.activeView}));
         if (!dui.views[dui.activeView]) {
             //console.log("views["+dui.activeView+"]==undefined :-(");
         }
@@ -817,7 +769,7 @@ dui = $.extend(true, dui, {
         var data = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].data);
         var style = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].style);
         if (activeView == targetView) {
-            style.top += 10;
+            style.top  += 10;
             style.left += 10;
             dui.activeWidget = dui.addWidget(tpl, data, style);
 
@@ -940,9 +892,9 @@ dui = $.extend(true, dui, {
                     $('#widget_attrs_fix').hide ();
                     // Common settings
                     if (dui.binds.hqWidgetsExt) {
-                        hqWidgets.hqButtonEdit ({parent: $("#widget_attrs"), imgSelect: imageSelect}, hqWidgets.Get (dui.activeWidget), function () {
+                        hqWidgets.hqButtonEdit ({parent: $("#widget_attrs"), imgSelect: imageSelect}, hqWidgets.Get (dui.activeWidget), function (editEl) {
                             // Special HM settings
-                            dui.binds.hqWidgetsExt.hqButtonEdit (hqWidgets.Get (dui.activeWidget), $("#widget_attrs"), $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"));                    
+                            dui.binds.hqWidgetsExt.hqButtonEdit (hqWidgets.Get (dui.activeWidget), $("#widget_attrs"), $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);                    
                         });
                     }
                 }else
@@ -2574,7 +2526,8 @@ var hmSelect = {
 var hqStyleSelector = {
     // local variables
     _currentElement: 0,
-	_scrollWidth: -1,
+	_scrollWidth:    -1,
+    _internalList:   null,
     // Default settings
     settings: {
         // List of styles
@@ -2589,8 +2542,7 @@ var hqStyleSelector = {
         name:          null,
         id:            -1,
     },
-    _findTitle: function (styles, style)
-    {
+    _findTitle: function (styles, style) {
         for(var st in styles) {
             if (styles[st] == style)
                 return ((st == "") ? style : st);
@@ -2600,9 +2552,24 @@ var hqStyleSelector = {
     
     // Functions
     init: function (options) {
+        if (this._internalList == null) {
+            this._internalList = {};
+            var sSheetList = document.styleSheets;
+            for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
+                if (document.styleSheets[sSheet].href && document.styleSheets[sSheet].href.indexOf("backgrounds.css") != -1) {
+                    var ruleList = document.styleSheets[sSheet].cssRules;
+                    for (var rule = 0; rule < ruleList.length; rule ++) {
+                        var name = ruleList[rule].selectorText.substring(".hq-background-".length);
+                        name = name.replace (/-/g, " ");
+                        name = name[0].toUpperCase() + name.substring(1);
+                        this._internalList[name] = ruleList[rule].selectorText.substring(1);
+                    }
+                }
+            }        
+        }
+
 		// Detect scrollbar width
-		if (this._scrollWidth == -1)
-		{
+		if (this._scrollWidth == -1) {
 			// Create the measurement node
 			var scrollDiv = document.createElement("div");
 			scrollDiv.style.width = 100;
@@ -2635,6 +2602,7 @@ var hqStyleSelector = {
             text += "</td></tr></table></td><td>";
             text += "<button id='"+nameBtn+"' />";
             text += "</td></tr></table>";
+            
         var parent = (options.parent == null) ? $("body") : options.parent;
         parent.append (text);
         var htmlElem = document.getElementById (nameElem);
@@ -2643,7 +2611,7 @@ var hqStyleSelector = {
         htmlElem.settings = $.extend (htmlElem.settings, options);
         htmlElem.settings.parent = parent;
         htmlElem.settings.id = options.name;
-        htmlElem.settings.styles = $.extend ({"None": ""}, options.styles ? options.styles : {});
+        htmlElem.settings.styles = $.extend ({"None": ""}, options.styles ? options.styles : this._internalList);
         
         $('#'+nameImg).css  ({width: htmlElem.settings.height*2, height: htmlElem.settings.height - 4}).addClass ('ui-corner-all');
         $('#'+nameText).css ({width: htmlElem.settings.width});
@@ -2703,8 +2671,7 @@ var hqStyleSelector = {
         this._currentElement++;
 		return htmlElem;
     },
-    _toggleDrop: function (obj)
-    {
+    _toggleDrop: function (obj) {
         if (obj.settings.dropOpened) {
             $("#styleSelectorBox"+obj.settings.id).css ({display: "none"});
             $("#styleSelectorB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
@@ -2729,8 +2696,7 @@ var hqStyleSelector = {
         }
          
     },
-    _select: function (obj, iStyle)
-    {
+    _select: function (obj, iStyle) {
         var nameImg  = "styleSelectorImg" +obj.settings.id;
         var nameText = "styleSelectorText"+obj.settings.id;
         $('#'+nameImg).removeClass (obj.settings.style);
