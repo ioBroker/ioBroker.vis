@@ -3623,13 +3623,16 @@ var hqWidgets = {
 
                 }
                 else {
-                    if (this.intern._jright)
-                        this.intern._jright.remove ();
-                    this.intern._jright     = null;
-                    this.intern._jrightText = null;
-                    if (this.intern._jbigWindow && this.intern._jbigWindow.jtext) {
-                        this.intern._jbigWindow.jtext.remove ();
-                        this.intern._jbigWindow.jtext = undefined;
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer ||
+                        this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {
+                        if (this.intern._jright)
+                            this.intern._jright.remove ();
+                        this.intern._jright     = null;
+                        this.intern._jrightText = null;
+                        if (this.intern._jbigWindow && this.intern._jbigWindow.jtext) {
+                            this.intern._jbigWindow.jtext.remove ();
+                            this.intern._jbigWindow.jtext = undefined;
+                        }
                     }
                 }
             }
