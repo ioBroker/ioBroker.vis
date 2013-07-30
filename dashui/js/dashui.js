@@ -892,7 +892,7 @@ dui = $.extend(true, dui, {
                     $('#widget_attrs_fix').hide ();
                     // Common settings
                     if (dui.binds.hqWidgetsExt) {
-                        hqWidgets.hqButtonEdit ({parent: $("#widget_attrs"), imgSelect: imageSelect}, hqWidgets.Get (dui.activeWidget), function (editEl) {
+                        hqWidgets.hqButtonEdit ({parent: $("#widget_attrs"), imgSelect: imageSelect, clrSelect: colorSelect}, hqWidgets.Get (dui.activeWidget), function (editEl) {
                             // Special HM settings
                             dui.binds.hqWidgetsExt.hqButtonEdit (hqWidgets.Get (dui.activeWidget), $("#widget_attrs"), $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);                    
                         });
@@ -1401,6 +1401,77 @@ var imageSelect = {
         return path;
     },
 
+};
+
+// Color selection Dialog
+var colorSelect = {
+    // possible settings
+    settings: {
+        onselect:    null,
+        onselectArg: null,
+        result:      "",
+        current:     null,   // current value
+        parent:      $('body'), 
+        elemName:    "idialog_",
+        zindex:      5050,
+    },
+    _selectText: "",
+    _cancelText: "",    
+    _titleText:  "",
+    
+    Show:  function (options){
+        var i = 0;
+        
+        if (this._selectText == "") {
+            this._selectText = dui.translate ("Select");
+            this._cancelText = dui.translate ("Cancel");
+            this._titleText  = dui.translate ("Select color");
+        }
+           
+        if (!options.elemName || options.elemName == "") {
+            options.elemName = "idialog_";
+        }
+        if (!options.parent) {
+            options.parent = $('body');
+        }
+        
+        if (document.getElementById (options.elemName) != undefined) {
+            $('#'+options.elemName).remove ();
+        }
+        options.parent.append("<div class='dialog' id='colorSelect' title='" + this._titleText + "' style='text-align: center;' ><div style='display: inline-block;' id='colorpicker'></div><input type='text' id='colortext'/></div>");
+        var htmlElem = document.getElementById ("colorSelect");
+        htmlElem.settings = {};
+        htmlElem.settings = $.extend (htmlElem.settings, this.settings);
+        htmlElem.settings = $.extend (htmlElem.settings, options);
+        $(htmlElem).css({'z-index': htmlElem.settings.zindex});
+        
+         // Define dialog buttons
+        var dialog_buttons = {}; 
+        dialog_buttons[this._selectText] = function() { 
+            $( this ).dialog( "close" ); 
+            if (this.settings.onselect)
+                this.settings.onselect ($('#colortext').val(), this.settings.onselectArg);
+            $( this ).remove ();
+        }
+        dialog_buttons[this._cancelText] = function(){ 
+            $( this ).dialog( "close" ); 
+            $( this ).remove ();
+        }   
+        $('#colorSelect')
+        .dialog({
+            resizable: false,
+            height:    380,
+            width:     320,
+            modal:     true,
+            buttons:   dialog_buttons
+        });     
+        if (htmlElem.settings.current != null && htmlElem.settings.current != "")
+            $('#colortext').val (htmlElem.settings.current);
+        $('#colorpicker').farbtastic('#colortext');
+    },
+    GetColor: function () {
+        return $('#colortext').val();
+    }
 };
 
 // Device selection dialog

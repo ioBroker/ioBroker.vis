@@ -340,6 +340,22 @@
         </div>
     </div>
 </script>
+<script type="text/ejs" id="tplValueFloatBar" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Bar Horizontal" data-dashui-attrs="hm_id;factor;color;border;shadow">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:240px;height:20px;border:1px solid #888" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="background-color:<%= this.data.color %>;border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;width:<%= homematic.uiState.attr('_' + this.data.hm_id + '.Value') * this.data.factor %>%;">
+            <div data-hm-id="<%= this.data.attr('hm_id') %>">
+            </div>
+        </div>
+    </div>
+</script>
 
+<script type="text/ejs" id="tplValueFloatBarVertical" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Bar Vertical" data-dashui-attrs="hm_id;factor;color;border;shadow">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:20px;height:240px;border:1px solid #888" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="background-color:<%= this.data.color %>;border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;height:<%=  homematic.uiState.attr('_' + this.data.hm_id + '.Value') * this.data.factor %>%;">
+            <div data-hm-id="<%= this.data.attr('hm_id') %>">
+            </div>
+        </div>
+    </div>
+</script>
 
 

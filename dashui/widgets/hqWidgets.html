@@ -1,5 +1,7 @@
-<link rel="stylesheet" href="css/hqWidgets.css" type="text/css"/>
-<script type="text/javascript" src="js/hqWidgets.js"></script>
+<link rel="stylesheet" href="css/hqWidgets.css" type="text/css" />
+    <link rel="stylesheet" href="css/farbtastic.css" type="text/css" />
+    <script type="text/javascript" src="js/farbtastic.js"></script>
+    <script type="text/javascript" src="js/hqWidgets.js"></script>
 
 
 <script type="text/javascript">
@@ -239,7 +241,17 @@ if ((typeof hqWidgets !== 'undefined')) {
                                               iconName: 'ringing-bell.png', 
                                               popUpDelay: 10000});
                     }                
-                }
+                    else
+                    if (wtype == 'tplHqGauge') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeGauge,  
+                                              hm_id: '', 
+                                              zindex: 2, 
+                                              radius: 2,
+                                              valueMin: 0,
+                                              valueMax: 100,
+                                              });
+                    }                
+                 }
                 else {
                     // non-edit mode => define event handlers
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
@@ -396,7 +408,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                         var t = 0;
                         if (opt.hm_id != null && opt.hm_id != "") {
                             if (opt.hm_id.indexOf(":1.TEMPERATURE") == -1) {
-                                hm_ids[t++] = {hm_id: opt.hm_id + ":2.SETPOINT",    option: 'setTemp'}; // First is always control element
+                                hm_ids[t++] = {hm_id: opt.hm_id + ":2.SETPOINT",    option: 'valueSet'}; // First is always control element
                                 hm_ids[t++] = {hm_id: opt.hm_id + ":1.TEMPERATURE", option: 'temperature'}; 
                                 hm_ids[t++] = {hm_id: opt.hm_id + ":1.HUMIDITY",    option: 'humidity'};
                             }
@@ -575,6 +587,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                         if (opt.height === 0 || opt.height === "0")
                             opt.height = undefined;
                     }
+                    else
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeGauge) {
+                        // Fill up the required IDs
+                        var t = 0;
+                        if (opt['hm_id'] != null && opt['hm_id'] != "") {
+                            hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'valueSet'}; 
+                        }  
+                    }
                 }
                 
                 var btn = hqWidgets.Create (opt, {elemName: el, parent: $("#duiview_"+view)});//dui.activeView)});
@@ -641,9 +661,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp ||
                         opt.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
                         // remove "--"
-                        btn.SetStates ({temperature: 0, valve: 0, humidity: 0, setTemp: 0});
+                        btn.SetStates ({temperature: 0, valve: 0, humidity: 0, valueSet: 0});
                         btn = $.extend (btn, {translateSignal: function (options, value) {
-                            if (options == "setTemp")
+                            if (options == "valueSet")
                                 return (value == 0) ? dui.translate ("Off") : ((value == 100) ? dui.Tramslate ("On") : value);
                             else // temperature, humidity, valve
                                 return value;
@@ -656,7 +676,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                         }});
                     }
                     else
-                    if (opt.buttonType == hqWidgets.gButtonType.gTypeInfo) {
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeInfo ||
+                        opt.buttonType == hqWidgets.gButtonType.gTypeGauge) {
                         btn = $.extend (btn, {translateSignal: function (options, value) {
                             return value;
                         }});
@@ -924,6 +945,7 @@ if ((typeof hqWidgets !== 'undefined')) {
 
     dui.binds.hqWidgetsExt.hqInit ();
 }
+
 </script>
 <!--
     <%= (el) -> console.log ("A");dui.binds.hqWidgetsExt.hqButtonExt (data.attr('wid'), data.attr('hqoptions')) %>
@@ -1069,6 +1091,18 @@ if ((typeof hqWidgets !== 'undefined')) {
             }
             else {
                 dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGong", this.view); 
+            }
+        }
+    %>
+</script>
+<script type="text/ejs" id="tplHqGauge" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Gauge" data-dashui-attrs="hm_id;hqoptions">
+    <% 
+        if (this && this.data && this.data.attr) {
+            if (this.data.attr('hqoptions')){
+                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
+            }
+            else {
+                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGauge", this.view); 
             }
         }
     %>

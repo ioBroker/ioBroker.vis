@@ -82,6 +82,7 @@ var hqWidgets = {
         gTypeDimmer : 12,  // Dimmer
         gTypeCam    : 13,  // Ip Camera
         gTypeGong   : 14,  // Gong indicator with camera view on knock
+        gTypeGauge  : 15,
     },
     gWindowState: {
         // State of the leaf
@@ -562,8 +563,12 @@ var hqWidgets = {
             stateTimeout:     600,   // 5 min state timeout
             showChanging:     true,  // Show changes as animation
 
-            heatCtrlMin:      6,     // Min for inner temperature control
-            heatCtrlMax:      30,    // Max for inner temperature control
+            valueMin:         6,     // Min for inner temperature control
+            valueMax:         30,    // Max for inner temperature control
+            
+            gaugeStart:       true,
+            gaugeHorz:        false,
+            gaugeColor:       'blue',
 
             hideValve:        false, // if the valve status must be shown
         };
@@ -583,7 +588,7 @@ var hqWidgets = {
             action:        null,          // On click action in form handler (object, ["state" | "pos"], state or position)
             store:         null,          // function on store settings handler (object, settings)
             valve:         null,          // valve status
-            setTemp:       null,          // actual "must" temperature
+            valueSet:      null,          // actual "must" temperature
             temperature:   null,          // actual "is" temperature
             humidity:      null,          // humidity in %
             bigPinned:     false,         // If big window pinned or not
@@ -646,7 +651,7 @@ var hqWidgets = {
             _jsignal:     null,         // jQuery signal strength container
             _jdoor:       null,         // jQuery door container
             _jinfoText:   null,         // jQuery dynamic text in the middle container
-            _jright:      null,         // jQuery right panel for setTemp, valve or dimmer percent
+            _jright:      null,         // jQuery right panel for valueSet, valve or dimmer percent
             _jtemp:       null,         // jQuery temperature in the middle
             _jhumid:      null,         // jQuery humidity in the middle
             _jsetTemp:    null,         // jQuery set temperature in the middle, when control
@@ -963,8 +968,7 @@ var hqWidgets = {
                     this.intern._jbigWindow.remove ();
                     this.intern._jbigWindow = null;                
                 }
-                if (this.intern._jright)
-                {
+                if (this.intern._jright) {
                     this.intern._jright.html("").hide();
                     this.intern._jright.remove();
                     this.intern._jright = null;
@@ -978,6 +982,7 @@ var hqWidgets = {
                 this.intern._jdoor       = null;
                 this.intern._jdoorHandle = null;
                 this.intern._jstaticText = null;
+                this.intern._jgauge      = null;
                 
                 if ( this.intern._jcenter) {
                     this.intern._jcenter.html("");
@@ -990,8 +995,7 @@ var hqWidgets = {
                 }
         
                 //this.intern._jelement.removeAttr("style")
-                if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage)
-                {
+                if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage) {
                     if (this.intern._contextMenu)
                     {
                         this.intern._contextMenu.Remove("Bring to back");
@@ -1265,7 +1269,7 @@ var hqWidgets = {
                     if (!document.getElementById(this.advSettings.elemName+'_bigBlindText'))
                         this.intern._jbigWindow.append('<div id="'+this.advSettings.elemName+'_bigBlindText"></div>');
                     this.intern._jbigWindow.jtext = $('#'+this.advSettings.elemName+'_bigBlindText');
-                    this.intern._jbigWindow.jtext.addClass('ui-widget hq-blind-big-text');
+                    this.intern._jbigWindow.jtext.addClass('ui-widget hq-blind-big-text').css({position: 'absolute'});
                     this.intern._jbigWindow.jtext.parentQuery = this;
                 }            
             }
@@ -1330,7 +1334,7 @@ var hqWidgets = {
                     e.target.parentQuery.OnMouseDown(e.pageX, e.pageY, false);
                 });		
             }
-            
+            else
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeCam ||
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeGong) {
 
@@ -1543,6 +1547,14 @@ var hqWidgets = {
                     this._CreateBigCam ();
                 }
             }
+            else
+            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
+                this.intern._jelement.append ("<div id='"+this.advSettings.elemName+"_gauge'></div>");
+                this.intern._jgauge       = $('#'+this.advSettings.elemName+"_gauge");
+                this.intern._jgauge.css ({borderRadius: (this.settings.radius > 4) ? 4: this.settings.radius, position: 'absolute', 'border': '1px solid black'});
+                this.SetInfoText (this.dynStates.valueSet, this.settings.infoTextFont, this.settings.infoTextColor); 
+            }
+            
             if ((this.settings.buttonType != hqWidgets.gButtonType.gTypeImage ||
                 this.settings.buttonType  != hqWidgets.gButtonType.gTypeBlind ||
                 this.settings.buttonType  != hqWidgets.gButtonType.gTypeText ||
@@ -1753,7 +1765,7 @@ var hqWidgets = {
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer)
                 pState = (isForSet) ? this.intern._percentStateSet : this.dynStates.percentState;
             else
-                pState = (isForSet) ? this.intern._percentStateSet : Math.round ((this.dynStates.setTemp - this.settings.heatCtrlMin) / (this.settings.heatCtrlMax - this.settings.heatCtrlMin) * 100, 1);
+                pState = (isForSet) ? this.intern._percentStateSet : Math.round ((this.dynStates.valueSet - this.settings.valueMin) / (this.settings.valueMax - this.settings.valueMin) * 100, 1);
         
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer)
                 this._ShowRightInfo (pState + "%");
@@ -1762,7 +1774,7 @@ var hqWidgets = {
                     this.intern._jtemp.hide ();
                     this.intern._jhumid.hide ();
                     this.intern._jsetTemp.show ();
-                    var temp = Math.round (((this.settings.heatCtrlMax - this.settings.heatCtrlMin) * pState / 100 + this.settings.heatCtrlMin) * 2) / 2;
+                    var temp = Math.round (((this.settings.valueMax - this.settings.valueMin) * pState / 100 + this.settings.valueMin) * 2) / 2;
                     this.intern._jsetTemp.html (hqWidgets.TempFormat (temp) + '&deg;');
                 }
                 else {
@@ -1828,6 +1840,30 @@ var hqWidgets = {
                     this.intern._jcircle.hide ();
             }
         }	
+        this._ShowGauge = function () {
+            var pState = Math.round ((this.dynStates.valueSet - this.settings.valueMin) / (this.settings.valueMax - this.settings.valueMin) * 100, 1);
+            if (pState < 0)   pState = 0;
+            if (pState > 100) pState = 100;
+            this.intern._jgauge.css({background: this.settings.gaugeColor});
+            if (this.settings.gaugeHorz) {
+                this.intern._jgauge.css ({height: this.settings.height-2, width: this.settings.width * pState / 100});
+                if (this.settings.gaugeStart)
+                    this.intern._jgauge.css ({left: 0});
+                else
+                    this.intern._jgauge.css ({left: this.settings.width - this.settings.width * pState / 100});
+                    
+            }
+            else {
+                this.intern._jgauge.css ({width: this.settings.width - 2, height: this.settings.height * pState / 100});
+                if (this.settings.gaugeStart)
+                    this.intern._jgauge.css ({top: 0});
+                else
+                    this.intern._jgauge.css ({top: this.settings.height - this.settings.height * pState / 100});
+            }
+            
+            this.SetInfoText (this.dynStates.valueSet, this.settings.infoTextFont, this.settings.infoTextColor); 
+            this.SetPercent (pState);
+       }
         this._ShowLastActionTime = function () {
             if (this.intern._jrightText && (this.settings.hoursLastAction != -1)) {
                 if (this.intern._lastAction != null) {
@@ -1864,7 +1900,8 @@ var hqWidgets = {
             else 
             if (this.intern._jrightText && 
                 this.settings.buttonType != hqWidgets.gButtonType.gTypeDimmer &&
-                this.settings.buttonType != hqWidgets.gButtonType.gTypeInTemp)
+                this.settings.buttonType != hqWidgets.gButtonType.gTypeInTemp &&
+                this.settings.buttonType != hqWidgets.gButtonType.gTypeGauge)
                 this.intern._jright.hide ();            
         }
         this._ShowRightInfo = function (newText) {
@@ -2032,8 +2069,7 @@ var hqWidgets = {
                 if (this.intern._jdoor)
                     this.intern._jdoor.css ({width: '100%'/*this.settings.width*/, height: '100%'/*this.settings.height*/});	
                     
-                if (this.intern._jdoorHandle)
-                {
+                if (this.intern._jdoorHandle) {
                     this.intern._jdoorHandle.css ({top: (this.settings.height - this.intern._jdoorHandle.height()) / 2});
                     this.ShowDoorState (true);
                     /*
@@ -2044,11 +2080,14 @@ var hqWidgets = {
                         */
                 }
                 
-                if (this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind)
-                {
+                if (this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {
                     this._SetWindowType (this._GetWindowType ());
                     this.SetWindowState(-1, hqWidgets.gWindowState.gWindowUpdate);
                     this.ShowBlindState();
+                }
+                else
+                if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
+                    this._ShowGauge ();
                 }
                     
                 if (this.intern._jinfoText)
@@ -2153,7 +2192,9 @@ var hqWidgets = {
             }
         }	
         this.SetInfoText = function (text, textFont, textColor) {
-            if (this.settings.buttonType != hqWidgets.gButtonType.gTypeInfo) return;
+            if (this.settings.buttonType != hqWidgets.gButtonType.gTypeInfo &&
+                this.settings.buttonType != hqWidgets.gButtonType.gTypeGauge) 
+                return;
             if (text      == undefined || text      == null || text     == "") text      = null;
             if (textFont  == undefined || textFont  == null || textFont == "") textFont  = '20px "Tahoma", sans-serif';
             if (textColor == undefined || textColor == null || textColor== "") textColor = "white"; 
@@ -2168,8 +2209,7 @@ var hqWidgets = {
                 this.intern._jinfoText.addClass('hq-no-select');
                 this.intern._jinfoText.addClass('hq-info-text');
             }
-            if (this.intern._jinfoText)
-            {
+            if (this.intern._jinfoText){
                 // state condition
                 if (this.settings.infoCondition != null && this.settings.infoCondition != "") {
                     // create condition
@@ -2195,6 +2235,8 @@ var hqWidgets = {
             
                 // format string
                 if (this.settings.infoFormat != null && this.settings.infoFormat != "") {
+                    text += "";
+
                     // try to cut the float value
                     if (text.indexOf ('.') != -1) {
                         var f = parseFloat(text);
@@ -2263,8 +2305,7 @@ var hqWidgets = {
             }
         }
         this.ShowState = function () {
-            if (this.intern._isEditMode)
-            {
+            if (this.intern._isEditMode){
                 if (this.settings.isContextMenu) {
                     if (this.intern._jcenter && this.settings.buttonType != hqWidgets.gButtonType.gTypeImage)  
                         this.intern._jcenter.stop().hide();		
@@ -2278,11 +2319,14 @@ var hqWidgets = {
                 if (this.intern._jsignal)  this.intern._jsignal.stop().hide();
                 if (this.intern._jicon)	 this.intern._jicon.removeClass("ui-icon-cancel").hide();
                 
+                if (this.intern._jgauge){
+                    this._ShowGauge ();
+                }
+                else
                 if (this.intern._jdoor)	
                     this.ShowDoorState ();
                 else
-                if (this.settings.buttonType != hqWidgets.gButtonType.gTypeBlind)
-                {
+                if (this.settings.buttonType != hqWidgets.gButtonType.gTypeBlind) {
                     if (this.intern._isPressed)	
                         this._SetClass (this.intern._backMoving);
                     else
@@ -2315,8 +2359,7 @@ var hqWidgets = {
                         }
                     }
                 }
-                else
-                {
+                else {
                     this.SetWindowState(-1, hqWidgets.gWindowState.gWindowClosed, hqWidgets.gHandlePos.gPosClosed);
                     this.ShowBlindState();
                 }
@@ -2341,6 +2384,10 @@ var hqWidgets = {
                     if (this.intern._jicon)
                         this.intern._jicon.removeClass("ui-icon-cancel");
                         
+                    if (this.intern._jgauge){
+                        this._ShowGauge ();
+                    }
+                    else
                     if (this.intern._jdoor)
                         this.ShowDoorState ();
                     else
@@ -2399,6 +2446,10 @@ var hqWidgets = {
                         this.intern._jicon.removeClass("ui-icon-refresh");
                         this.intern._jicon.removeClass("ui-icon-gear");
                         this.intern._jicon.addClass("ui-icon-cancel");
+                    }
+                    
+                    if (this.intern._jgauge){
+                        this._ShowGauge ();
                     }
                     if (this.intern._jdoor)
                         this.ShowDoorState ();
@@ -2848,11 +2899,12 @@ var hqWidgets = {
                 }	
             }
         }
-        this.SetPercent = function (percent, isForSet)	{
+        this.SetPercent = function (percent, isForSet, isForce)	{
             if (percent < 0)   percent = 0;
             if (percent > 100) percent =100;
             
-            if ((!isForSet && percent != this.dynStates.percentState) ||
+            if (isForce ||
+                (!isForSet && percent != this.dynStates.percentState) ||
                 (isForSet  && percent != this.intern._percentStateSet)) {
                 if (isForSet)
                     this.intern._percentStateSet=percent;
@@ -2884,7 +2936,7 @@ var hqWidgets = {
         
             if (!this.intern._isEditMode && this.dynStates.action) {
                 if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
-                    this.dynStates.action (this, "pos", Math.round (((this.settings.heatCtrlMax - this.settings.heatCtrlMin) * this.intern._percentStateSet / 100 + this.settings.heatCtrlMin) * 2) / 2);
+                    this.dynStates.action (this, "pos", Math.round (((this.settings.valueMax - this.settings.valueMin) * this.intern._percentStateSet / 100 + this.settings.valueMin) * 2) / 2);
                 else
                     this.dynStates.action (this, "pos", this.intern._percentStateSet);
             }
@@ -3043,12 +3095,12 @@ var hqWidgets = {
                     this.SetState (hqWidgets.gState.gStateOff);
                 
                 if (temp.valve      !=undefined && this.intern._jvalve)  this.intern._jvalve.html(Math.round(temp.valve) + '%');
-                if (temp.setTemp    !=undefined && this.intern._jsettemp){
+                if (temp.valueSet    !=undefined && this.intern._jsettemp){
                     // If state word
-                    if (typeof temp.setTemp === "string" && (temp.setTemp[0] < '0' || temp.setTemp[0] > '9'))
-                        this.intern._jsettemp.html(temp.setTemp);
+                    if (typeof temp.valueSet === "string" && (temp.valueSet[0] < '0' || temp.valueSet[0] > '9'))
+                        this.intern._jsettemp.html(temp.valueSet);
                     else
-                        this.intern._jsettemp.html(hqWidgets.TempFormat(temp.setTemp) + hqWidgets.gOptions.gTempSymbol);
+                        this.intern._jsettemp.html(hqWidgets.TempFormat(temp.valueSet) + hqWidgets.gOptions.gTempSymbol);
                 }
                 if (temp.temperature!=undefined && this.intern._jtemp)   this.intern._jtemp.html(hqWidgets.TempFormat(temp.temperature) + hqWidgets.gOptions.gTempSymbol);
                 if (temp.humidity   !=undefined && this.intern._jhumid)  this.intern._jhumid.html(Math.round(temp.humidity)+'%');
@@ -3450,6 +3502,7 @@ var hqWidgets = {
                 if (this.intern._jsignal)
                     this.ShowSignal (true, this.dynStates.strength);
             }
+            
             // Show signal
             if (dynOptions.isStrengthShow !== undefined && this.dynStates.strength != null) 
                 this.ShowSignal (dynOptions.isStrengthShow, this.dynStates.strength);
@@ -3503,6 +3556,12 @@ var hqWidgets = {
             //  percentState - blinds position from 0 to 100 or dimmer state from 0 to 100
             if (dynOptions.percentState !== undefined) 
                 this.SetPercent (dynOptions.percentState);
+
+            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge && dynOptions.valueSet !== undefined) {
+                this.dynStates.valueSet = parseInt(dynOptions.valueSet);
+                dynOptions.state = hqWidgets.gState.gStateOff;
+                this._ShowGauge ();
+            }
                 
             //  state
             if (dynOptions.state !== undefined) { 
@@ -3620,11 +3679,15 @@ var hqWidgets = {
                         this.intern._jbigWindow.jtext = $('#'+this.advSettings.elemName+'_bigBlindText');
                         this.intern._jbigWindow.jtext.addClass('ui-widget hq-blind-big-text');
                     }
-
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
+                        this.settings.isShowPercent = true;
+                        this._ShowGauge ();
+                    }
                 }
                 else {
                     if (this.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer ||
-                        this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {
+                        this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind ||
+                        this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
                         if (this.intern._jright)
                             this.intern._jright.remove ();
                         this.intern._jright     = null;
@@ -3632,6 +3695,10 @@ var hqWidgets = {
                         if (this.intern._jbigWindow && this.intern._jbigWindow.jtext) {
                             this.intern._jbigWindow.jtext.remove ();
                             this.intern._jbigWindow.jtext = undefined;
+                        }
+                        if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
+                            this.settings.isShowPercent = false;
+                            this._ShowGauge ();
                         }
                     }
                 }
@@ -3672,7 +3739,8 @@ var hqWidgets = {
                     this.SetStaticText (this.settings.staticText, this.settings.staticTextFont, options.staticTextColor);
             }
             
-            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInfo) {
+            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInfo ||
+                this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
                 if (options.infoTextFont != undefined && options.infoTextColor != undefined) 
                     this.SetInfoText (this.dynStates.infoText, options.infoTextFont, options.infoTextColor);
                 else
@@ -3695,7 +3763,34 @@ var hqWidgets = {
                     this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor);
                 }
             }
-               
+
+            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
+                var isSet = false;
+                 if (options.valueMin !== undefined) {
+                    this.settings.valueMin = parseInt(options.valueMin);
+                    isSet = true;
+                }
+                if (options.gaugeColor !== undefined) {
+                    this.settings.gaugeColor = options.gaugeColor;
+                    isSet = true;
+                }
+                if (options.valueMax !== undefined) {
+                    this.settings.valueMax = parseInt(options.valueMax);
+                    isSet = true;
+                }
+                if (options.gaugeHorz !== undefined) {
+                    this.settings.gaugeHorz = options.gaugeHorz;
+                    isSet = true;
+                }
+                if (options.gaugeStart !== undefined) {
+                    this.settings.gaugeStart = options.gaugeStart;
+                    isSet = true;
+                }
+                
+                if (isSet)
+                    this._ShowGauge ();
+            }
+            
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage && options.zindex != undefined){
                 //this.settings.zindex = (options.zindex < 998) ? options.zindex: 997; 
                 this.intern._jelement.css({'z-index':this.settings.zindex});
@@ -3937,6 +4032,7 @@ var hqWidgets = {
             width:     200,
             imgSelect: null, // image selection dialog
             timeout:   500,  // object update timeout
+            clrSelect: null, // color selection dialog
         };
         var e_internal = {
             attr:            null,
@@ -4085,6 +4181,53 @@ var hqWidgets = {
                 });
             }        
         }
+        this._EditColorHandler = function (eee) {
+            var elem;
+            if ((elem = document.getElementById (this.e_settings.elemName+'_'+eee)) != null) {
+                elem.parent   = this;
+                elem.ctrlAttr = eee;
+                var jeee = $('#'+this.e_settings.elemName+'_'+eee).change (function () {
+                    // If really changed                  
+                    if (this.parent.e_internal.attr[this.ctrlAttr] != $(this).val()) {
+                        this.parent.e_internal.attr[this.ctrlAttr] = $(this).val();
+                        
+                        if (this.parent.e_internal.attr[this.ctrlAttr] == "")
+                            this.parent.e_internal.attr[this.ctrlAttr] = null;
+                        
+                        var newSettings = {};
+                        newSettings[this.ctrlAttr] = this.parent.e_internal.attr[this.ctrlAttr];
+                        this.parent.e_internal.obj.SetSettings (newSettings, true);
+                    }
+                });
+
+                jeee.keyup (function () {
+                    if (this.parent.e_internal.timer) 
+                        clearTimeout (this.parent.e_internal.timer);
+                        
+                    this.parent.e_internal.timer = setTimeout (function(elem_) {
+                        $(elem_).trigger('change');
+                        elem_.parent.e_internal.timer=null;
+                    }, this.parent.e_settings.timeout, this);
+                });            
+                if (this.e_settings.clrSelect) {
+                    var btn = document.getElementById (this.e_settings.elemName+'_'+eee+'Btn');
+                    if (btn) {
+                        btn.ctrlAttr = eee;
+                        btn.elemName = this.e_settings.elemName;
+                        $(btn).bind("click", {msg: this}, function (event) {
+                            var _obj = event.data.msg;
+                            var _settings = {
+                                current:     _obj.e_internal.attr[this.ctrlAttr],
+                                onselectArg: this.ctrlAttr,
+                                onselect:    function (img, ctrlAttr) {
+                                    $('#'+_obj.e_settings.elemName+'_'+ctrlAttr).val(_obj.e_settings.clrSelect.GetColor()).trigger("change");
+                                }};
+                            _obj.e_settings.clrSelect.Show (_settings);                    
+                        });
+                    }
+                }
+            }	
+        }
         
         // Active/Inactive state
         if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeBlind  &&
@@ -4092,7 +4235,8 @@ var hqWidgets = {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeText   &&
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam) {
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {
             sText += "<tr><td>"+ hqWidgets.Translate("Test state:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_state'>";
         }
         
@@ -4110,7 +4254,8 @@ var hqWidgets = {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeBlind && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Radius:")+"</td><td id='"+this.e_settings.elemName+"_radius'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("jQuery Styles:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_usejQueryStyle' "+((this.e_internal.attr.usejQueryStyle) ? "checked" : "")+">";
+            if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge)
+                sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("jQuery Styles:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_usejQueryStyle' "+((this.e_internal.attr.usejQueryStyle) ? "checked" : "")+">";
         }
 
         // Door swing type
@@ -4147,8 +4292,9 @@ var hqWidgets = {
         // Normal icon image
         if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDoor  && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeBlind && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeText&& 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam) {
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeText  && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam   && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {
             sText += "<tr><td>"+ hqWidgets.Translate("Icon:")+"</td><td>";
             sText += "<input id='"+this.e_settings.elemName+"_iconName' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.iconName==undefined) ? "" : this.e_internal.attr.iconName)+"'>";
             sText += "<input id='"+this.e_settings.elemName+"_iconNameBtn' style='width: 30px' type='button' value='...'>";
@@ -4156,28 +4302,43 @@ var hqWidgets = {
         }
         
         // Info Text color, font, type
-        if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDoor  && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeText  && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeBlind && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeImage && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLock  && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDimmer&& 
+        if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDoor   && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeText   && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeBlind  && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeImage  && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLock   && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDimmer && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeButton &&
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGong) {
-            sText    += "<tr><td>"+ hqWidgets.Translate("Test text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoText'  type='text' value='"+(this.e_internal.obj.dynStates.infoText || "")+"'></td></tr>";
+            if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge)
+                sText    += "<tr><td>"+ hqWidgets.Translate("Test text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoText'  type='text' value='"+(this.e_internal.obj.dynStates.infoText || "")+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Font:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextFont'  type='text' value='"+this.e_internal.attr.infoTextFont+"'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColor' type='text' value='"+this.e_internal.attr.infoTextColor+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColor' type='text' value='"+this.e_internal.attr.infoTextColor+"'>";
+            sTextAdv += "<input id='"+this.e_settings.elemName+"_infoTextColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
         }
+        
+        // Gauge min value, max value, test value, gague color
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge) {
+            sText    += "<tr><td>"+ hqWidgets.Translate("Test value:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueSet'  type='text' value='"+((this.e_internal.obj.settings.valueMax - this.e_internal.obj.settings.valueMin) / 2)+"'></td></tr>";
+            sText    += "<tr><td>"+ hqWidgets.Translate("Min value:")  +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueMin'  type='text' value='"+this.e_internal.obj.settings.valueMin+"'></td></tr>";
+            sText    += "<tr><td>"+ hqWidgets.Translate("Max value:")  +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueMax'  type='text' value='"+this.e_internal.obj.settings.valueMax+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_gaugeColor' type='text' value='"+this.e_internal.attr.gaugeColor+"'>";
+            sTextAdv += "<input id='"+this.e_settings.elemName+"_gaugeColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Horizontal:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_gaugeHorz' "+((this.e_internal.attr.gaugeHorz) ? "checked" : "")+">";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("From top/left:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_gaugeStart' "+((this.e_internal.attr.gaugeStart) ? "checked" : "")+">";
+        }        
         
         // Static Text color, font, type
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeText) {
             sText    += "<tr><td>"+ hqWidgets.Translate("Text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_staticText'  type='text' value='"+this.e_internal.attr.staticText+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Font:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_staticTextFont'  type='text' value='"+this.e_internal.attr.staticTextFont+"'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_staticTextColor' type='text' value='"+this.e_internal.attr.staticTextColor+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_staticTextColor' type='text' value='"+this.e_internal.attr.staticTextColor+"'>";
+            sTextAdv += "<input id='"+this.e_settings.elemName+"_staticTextColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
         }  
+
         
         // Active state icon
         if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDoor   && 
@@ -4186,7 +4347,8 @@ var hqWidgets = {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeText   &&
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam) {
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Icon&nbsp;active:")+"</td><td>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_iconOn' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.iconOn == undefined) ? "":this.e_internal.attr.iconOn)+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_iconOnBtn' style='width: 30px' type='button' value='...'>";
@@ -4210,8 +4372,10 @@ var hqWidgets = {
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Small image update(sec):") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ipCamUpdateSec'  type='text' value='"+this.e_internal.attr.ipCamUpdateSec+"'></td></tr>";
         }
-        // Camera update interval for small image
-        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeBlind) {
+        
+        // Show percent
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeBlind || 
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Show percent:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_isShowPercent' "+((this.e_internal.attr.isShowPercent) ? "checked" : "")+"></td></tr>";
         }
         
@@ -4229,25 +4393,29 @@ var hqWidgets = {
         }
             
         // if hide last action info after x hours
-        if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeText  && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeImage && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam && 
+        if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeText   && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeImage  && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDimmer) {            
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDimmer && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {            
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Hide last action after (hrs):") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_hoursLastAction'  type='text' value='"+this.e_internal.attr.hoursLastAction+"'></td></tr>";
         }
         
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo  ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge) {
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Format string:")    +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoFormat'     type='text' value='"+this.e_internal.attr.infoFormat+"'></td></tr>";        
+        }
         
         // Format string, active condition, If hide when incative state
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Format string:")    +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoFormat'     type='text' value='"+this.e_internal.attr.infoFormat+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Active condition:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoCondition'  type='text' value='"+((this.e_internal.attr.infoCondition != undefined) ? this.e_internal.attr.infoCondition : "")+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Hide inactive:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_infoIsHideInactive' "+((this.e_internal.attr.infoIsHideInactive) ? "checked" : "")+">";
         }  
         
         // No background
-        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo ||
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo   ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeButton ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("No background:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_back' "+((this.e_internal.attr.noBackground) ? "checked" : "")+">";
@@ -4372,18 +4540,23 @@ var hqWidgets = {
         
         this._EditTextHandler('infoText', '', true);   
         this._EditTextHandler('infoTextFont');   
-        this._EditTextHandler('infoTextColor');   
+        this._EditColorHandler('infoTextColor');   
         this._EditTextHandler('infoFormat');   
         this._EditTextHandler('infoCondition');  
         
         this._EditTextHandler('staticText');   
         this._EditTextHandler('staticTextFont');   
-        this._EditTextHandler('staticTextColor');   
+        this._EditColorHandler('staticTextColor'); 
+        
+        this._EditTextHandler('valueSet', null, true);   
+        this._EditColorHandler('gaugeColor');   
+        this._EditTextHandler('valueMin');   
+        this._EditTextHandler('valueMax');   
+        this._EditCheckboxHandler ('gaugeHorz', false, false, true);
+        this._EditCheckboxHandler ('gaugeStart', false, false, true);
         
         this._EditTextHandler('title');   
-       
-        this._EditTextHandler('infoTextColor');   
-        
+               
         this._EditCheckboxHandler ('infoIsHideInactive', false, false, true);
         this._EditCheckboxHandler ('noBackChanged', false, false, true);
 
@@ -4419,6 +4592,10 @@ var hqWidgets = {
         this._EditTextHandler ('gongQuestionImg');
         
         this.e_internal.iAdvCount = iAdvCount;
+        
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge) {
+            $('#'+this.e_settings.elemName+'_valueSet').trigger('change');
+        }
         
         if (this.e_internal.extra)
             this.e_internal.extra (this);
