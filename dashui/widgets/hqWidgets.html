@@ -1,7 +1,8 @@
 <link rel="stylesheet" href="css/hqWidgets.css" type="text/css" />
-    <link rel="stylesheet" href="css/farbtastic.css" type="text/css" />
-    <script type="text/javascript" src="js/farbtastic.js"></script>
-    <script type="text/javascript" src="js/hqWidgets.js"></script>
+<link rel="stylesheet" href="css/hqWidgetsButtons.css" type="text/css"/>
+<link rel="stylesheet" href="css/farbtastic.css" type="text/css" />
+<script type="text/javascript" src="js/farbtastic.js"></script>
+<script type="text/javascript" src="js/hqWidgets.js"></script>
 
 
 <script type="text/javascript">
@@ -171,6 +172,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                               windowConfig: hqWidgets.gSwingType.gSwingLeft, 
                                               zindex: 3,
                                               hm_id: '',
+                                              newVersion: true,
                                               });
                     }
                     else
@@ -653,6 +655,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                         btn = $.extend (btn, {translateSignal: function (options, value) {
                             if (options == "percentState")
                                 return Math.floor (100 - (value * 100));
+							else
+							if (options == "handleState")
+								return value;
                             else // working
                                 return (value == "true") ? true : false;
                         }});
@@ -721,11 +726,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                         if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'windowState') {
                             change['state'] = hqWidgets.gState.gStateOff; // Remove unknown state
                             dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, (newState == "true") ? hqWidgets.gWindowState.gWindowOpened : hqWidgets.gWindowState.gWindowClosed);
-                            return;
+                            i++;
+                            continue;
                         }
                         else
                         if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'handleState') {
-                            // 1. CLOSED, 2. TILTED, 3.OPEN ab  V1.6 ???
+                            // 0. TILTED, 1. CLOSED, 2.OPEN ab  V1.6 ???
                             // 0. Closed, 1. tilted, 2.open bis V1.6
                             var wndState = undefined;
                             var opt    = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.GetSettings('hm_id'+dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index);
@@ -733,27 +739,29 @@ if ((typeof hqWidgets !== 'undefined')) {
                             var newVer = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.GetSettings('newVersion');
                             if (newVer === undefined || newVer === null)
                                 newVer = false;
+                            var nState = newState;
                                 
-                            if ((!newVer && newState == "2") || (newVer && newState == "3")) {
+                            if ((!newVer && newState == "2") || (newVer && newState == "2")) {
                                 wndState = hqWidgets.gWindowState.gWindowOpened;
-                                newState = hqWidgets.gHandlePos.gPosOpened;
+                                nState = hqWidgets.gHandlePos.gPosOpened;
                             }
                             else
-                            if ((!newVer && newState == "1") || (newVer && newState == "2")) {
+                            if ((!newVer && newState == "1") || (newVer && newState == "0")) {
                                 wndState = hqWidgets.gWindowState.gWindowTilted;
-                                newState = hqWidgets.gHandlePos.gPosTilted;
+                                nState = hqWidgets.gHandlePos.gPosTilted;
                             }
                             else {
                                 wndState = hqWidgets.gWindowState.gWindowClosed;
-                                newState = hqWidgets.gHandlePos.gPosClosed;
+                                nState = hqWidgets.gHandlePos.gPosClosed;
                             }
                             
                             // If contact sensor => set the valid position from sensor
                             if (opt !== undefined && opt != null && opt != "") 
                                 wndState = undefined;
                                 
-                            dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, wndState, newState);
-                            return;
+                            dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, wndState, nState);
+                            i++;
+                            continue;
                         }
                     }
                     else {
@@ -900,8 +908,20 @@ if ((typeof hqWidgets !== 'undefined')) {
                             hqWidgets.e_internal.timer = setTimeout (function(elem) {
                                 elem.trigger("change");
                             }, hqWidgets.e_settings.timeout, $(this));
-                        });                                  
+                        }); 
                     }
+					//--------------- handler version ------------------------
+					var attr = 'newVersion';
+					parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="checkbox" id="inspect_'+attr+'" '+((opt[attr] != undefined && opt[attr]) ? "checked" : "")+' ></td></tr>');
+					document.getElementById ("inspect_"+attr).jControl = attr;
+					$("#inspect_"+attr).change(function (el) {
+						var btn = hqWidgets.Get (dui.activeWidget);
+						if (btn) {
+							var option = {};
+							option[this.jControl] = $(this).prop('checked');
+							btn.SetSettings (option, true);
+						}
+					});
                 }
                 else
                 if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp || opt.buttonType == hqWidgets.gButtonType.gTypeGong) {
@@ -945,7 +965,6 @@ if ((typeof hqWidgets !== 'undefined')) {
 
     dui.binds.hqWidgetsExt.hqInit ();
 }
-
 </script>
 <!--
     <%= (el) -> console.log ("A");dui.binds.hqWidgetsExt.hqButtonExt (data.attr('wid'), data.attr('hqoptions')) %>

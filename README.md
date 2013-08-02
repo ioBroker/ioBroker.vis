@@ -11,6 +11,11 @@
 * Erweiterte Template-Attribute: Doku, Kompatibilitat, ...
 
 ## Changelog
+### 0.8.x
+* (Bluefox) Gauge widget 
+            config.js - Bitte eigene IP Adresse einstellen
+
+
 ### 0.8.6
 * (Bluefox) Neue hqWidgets Komponente: Gong, IP Camera. 
             Soll Wert fuer Thermostat

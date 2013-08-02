@@ -287,11 +287,12 @@ var dui = {
            
             
             // Init background selector
-            hqStyleSelector.init ({ width: 202,
-                            name: "inspect_view_bkg_def",
-                            style: activeBkgClass,     
-                            parent: $('#inspect_view_bkg_parent'),
-							onchange: function (newStyle, obj) {
+            hqStyleSelector.Show ({ width: 202,
+                            name:       "inspect_view_bkg_def",
+                            filterFile: "backgrounds.css",
+                            style:      activeBkgClass,     
+                            parent:     $('#inspect_view_bkg_parent'),
+							onchange:   function (newStyle, obj) {
                                 if (dui.views[dui.activeView].settings.style['background_class'])
                                     $("#duiview_"+dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
 								dui.views[dui.activeView].settings.style['background_class'] = newStyle;
@@ -604,6 +605,7 @@ var dui = {
                 "Function"  : {"en" : "Function",    "de": "Gewerk",         "ru" : "Назначение"},	
                 "ramp_time:": {"en" : "Ramp time(s)","de": "Dauer - Aus (sek)","ru" : "Выключение (сек)"},
                 "on_time:"  : {"en" : "On time(s)",  "de": "Dauer - An (sek)","ru" : "Включение (сек)"},
+                "newVersion": {"en" : "Handler ab V1.6",  "de": "Griff ab V1.6","ru" : "Ручка версии от V1.6"},
             };
         }
         if (this.words[text]) {
@@ -887,23 +889,39 @@ dui = $.extend(true, dui, {
                         imageSelect.Show (settings);
                     });
                 } else
-                if (widget_attrs[attr] == "hqoptions") {
+                if (widget_attrs[attr] === "hqoptions") {
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><textarea id="inspect_'+widget_attrs[attr]+'" rows="2" cols="44"></textarea></td></tr>');
                     $('#widget_attrs_fix').hide ();
                     // Common settings
                     if (dui.binds.hqWidgetsExt) {
-                        hqWidgets.hqButtonEdit ({parent: $("#widget_attrs"), imgSelect: imageSelect, clrSelect: colorSelect}, hqWidgets.Get (dui.activeWidget), function (editEl) {
+                        hqWidgets.hqButtonEdit ({parent: $("#widget_attrs"), imgSelect: imageSelect, clrSelect: colorSelect, styleSelect: hqStyleSelector}, hqWidgets.Get (dui.activeWidget), function (editEl) {
                             // Special HM settings
                             dui.binds.hqWidgetsExt.hqButtonEdit (hqWidgets.Get (dui.activeWidget), $("#widget_attrs"), $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);                    
                         });
                     }
                 }else
+                if (widget_attrs[attr] === "color") {
+                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44" style="width:90%" /><input id="inspect_'+widget_attrs[attr]+'Btn"  style="width:8%" type="button" value="..."></td></tr>');
+                    if (colorSelect) {
+                        var btn = document.getElementById ("inspect_"+widget_attrs[attr]+"Btn");
+                        if (btn) {
+                            btn.ctrlAttr = widget_attrs[attr];
+                            $(btn).bind("click", {msg: this}, function (event) {
+                                var _settings = {
+                                    current:     $('#inspect_'+this.ctrlAttr).val(),
+                                    onselectArg: this.ctrlAttr,
+                                    onselect:    function (img, ctrlAttr) {
+                                        $('#inspect_'+ctrlAttr).val(colorSelect.GetColor()).trigger("change");
+                                    }};
+                                colorSelect.Show (_settings);                    
+                            });
+                        }
+                    }
+                }else
                 if (widget_attrs[attr].slice(0,4) !== "html" && widget_attrs[attr] != 'hqoptions') {
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/></td></tr>');
-
                 } else {
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><textarea id="inspect_'+widget_attrs[attr]+'" rows="2" cols="44"></textarea></td></tr>');
-
                 }
 
                 $("#inspect_"+widget_attrs[attr])
@@ -1467,6 +1485,8 @@ var colorSelect = {
         });     
         if (htmlElem.settings.current != null && htmlElem.settings.current != "")
             $('#colortext').val (htmlElem.settings.current);
+        else
+            $('#colortext').val ('#FFFFFF');
         $('#colorpicker').farbtastic('#colortext');
     },
     GetColor: function () {
@@ -2612,6 +2632,9 @@ var hqStyleSelector = {
         dropOpened:    false,
         name:          null,
         id:            -1,
+        filterFile:    null,
+        filterName:    null,
+        filterAttrs:   null,
     },
     _findTitle: function (styles, style) {
         for(var st in styles) {
@@ -2622,18 +2645,43 @@ var hqStyleSelector = {
     },
     
     // Functions
-    init: function (options) {
+    Show: function (options) {
+        // Fill the list of styles
         if (this._internalList == null) {
             this._internalList = {};
             var sSheetList = document.styleSheets;
             for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
-                if (document.styleSheets[sSheet].href && document.styleSheets[sSheet].href.indexOf("backgrounds.css") != -1) {
-                    var ruleList = document.styleSheets[sSheet].cssRules;
-                    for (var rule = 0; rule < ruleList.length; rule ++) {
-                        var name = ruleList[rule].selectorText.substring(".hq-background-".length);
+                var ruleList = document.styleSheets[sSheet].cssRules;
+                var bglen = ".hq-background-".length;
+                for (var rule = 0; rule < ruleList.length; rule ++) {
+                    if (ruleList[rule].selectorText === undefined || ruleList[rule].selectorText == null || ruleList[rule].selectorText == "")
+                        continue;
+                        
+                    var styles = ruleList[rule].selectorText.split(' ');
+                    for (var i = 0; i < styles.length; i++) {
+                        if (styles[i] == "" || styles[i][0] != '.' || styles[i].indexOf(':') != -1)
+                            break;
+                            
+                        var name = styles[i];
+                        name = name.replace (",", "");
+                        if (name.length > 0 && (name[0] == '.' || name[0] == '#'))
+                            name = name.substring(1);                       
+                        var val  = name;
+                        if (name.length >= bglen && name.substring(0, bglen) == ".hq-background-")
+                            name = name.substring(bglen);
+                            
+                        if (name.substring(0, "hq-".length) == "hq-")
+                            name = name.substring(3);
+                            
+                        if (name.substring(0, "ui-".length) == "ui-")
+                            name = name.substring(3);
+                            
                         name = name.replace (/-/g, " ");
-                        name = name[0].toUpperCase() + name.substring(1);
-                        this._internalList[name] = ruleList[rule].selectorText.substring(1);
+                        if (name.length > 0) {
+                            name = name[0].toUpperCase() + name.substring(1);
+                            this._internalList[name] = {style: val, file: document.styleSheets[sSheet].href, attrs: ruleList[rule].style};
+                        }
+                        break;
                     }
                 }
             }        
@@ -2656,7 +2704,7 @@ var hqStyleSelector = {
 			// Delete the DIV 
 			document.body.removeChild(scrollDiv);
 		}
-        if (options.name == undefined || options.name == "") {
+        if (options.name === undefined || options.name == "") {
             options.name = ""+ this._currentElement;
         }
         
@@ -2682,7 +2730,56 @@ var hqStyleSelector = {
         htmlElem.settings = $.extend (htmlElem.settings, options);
         htmlElem.settings.parent = parent;
         htmlElem.settings.id = options.name;
-        htmlElem.settings.styles = $.extend ({"None": ""}, options.styles ? options.styles : this._internalList);
+        htmlElem.settings.styles = {};
+        htmlElem.settings.styles[dui.translate("Default")] = {style: null, file: null};
+        
+        if (options.styles) {
+            htmlElem.settings.styles = $.extend (htmlElem.settings.styles, options.styles);
+        }
+        else {
+            // IF filter defined
+            if (htmlElem.settings.filterFile != null || htmlElem.settings.filterName != null) {
+                var filters = null;
+                if (htmlElem.settings.filterName != null && htmlElem.settings.filterName != "")
+                    filters = htmlElem.settings.filterName.split(' ');
+                    
+                var attrs = null;
+                if (htmlElem.settings.filterAttrs != null && htmlElem.settings.filterAttrs != "")
+                    attrs = htmlElem.settings.filterAttrs.split(' ');
+            
+                for(var name in this._internalList) {
+                    if (htmlElem.settings.filterFile == null || 
+                       (this._internalList[name].file != null && this._internalList[name].file.indexOf (htmlElem.settings.filterFile) != -1)) {
+                        var isFound = (filters == null);
+                        if (!isFound) {
+                            for (var k = 0; k < filters.length; k++) {
+                                if (this._internalList[name].style.indexOf (filters[k]) != -1) {
+                                    isFound = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (isFound) {
+                            isFound = (attrs == null);
+                            if (!isFound) {
+                                for (var k = 0; k < attrs.length; k++) {
+                                    var t = this._internalList[name].attrs[attrs[k]];
+                                    if (t !== undefined && t != null && t != "") {
+                                        isFound = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }                            
+                        if (isFound) {
+                            htmlElem.settings.styles[name] = {style: this._internalList[name].style, file: this._internalList[name].file};
+                        }
+                    }
+                }
+            }
+            else
+                htmlElem.settings.styles = $.extend (htmlElem.settings.styles, this._internalList);
+        }
         
         $('#'+nameImg).css  ({width: htmlElem.settings.height*2, height: htmlElem.settings.height - 4}).addClass ('ui-corner-all');
         $('#'+nameText).css ({width: htmlElem.settings.width});
@@ -2702,14 +2799,13 @@ var hqStyleSelector = {
         }
 		
         // Build dropdown box
-        if (document.getElementById ("styleSelectorBox"+options.name) == undefined)
-        {
-            var text = "<form id='styleSelectorBox"+options.name+"'>";
+        if (document.getElementById ("styleSelectorBox"+options.name) == undefined) {
+            var text = "<form id='styleSelectorBox"+options.name+"' style='z-index:1'>";
             var i = 0;
             for (var st in htmlElem.settings.styles) {
                 text += "<input type='radio' id='styleSelectorBox"+options.name+""+i+"' name='radio' /><label for='styleSelectorBox"+options.name+""+i+"'>";
-                text += "<table><tr><td width='"+(htmlElem.settings.height*2+4)+"px'><div class='ui-corner-all "+htmlElem.settings.styles[st]+"' style='width:"+(htmlElem.settings.height*2)+"px; height:"+(htmlElem.settings.height-4)+"px'></div></td><td width=10></td><td style='text-align: left; vertical-align: middle;'><div style='text-align: left; vertical-align: middle;'>";
-                text += ((st != "")?st:htmlElem.settings.styles[st])+"</div></td></tr></table>";
+                text += "<table><tr><td width='"+(htmlElem.settings.height*2+4)+"px'><div class='ui-corner-all "+htmlElem.settings.styles[st].style+"' style='width:"+(htmlElem.settings.height*2)+"px; height:"+(htmlElem.settings.height-4)+"px'></div></td><td width=10></td><td style='text-align: left; vertical-align: middle;'><div style='text-align: left; vertical-align: middle;'>";
+                text += ((st != "")?st:htmlElem.settings.styles[st].style)+"</div></td></tr></table>";
                 text += "</label><br>";
                 i++;
             }
@@ -2727,9 +2823,9 @@ var hqStyleSelector = {
         i = 0;
         // Set context
         for (var st in htmlElem.settings.styles) {
-            document.getElementById ("styleSelectorBox"+options.name+""+i).iStyle = htmlElem.settings.styles[st];
+            document.getElementById ("styleSelectorBox"+options.name+""+i).iStyle = htmlElem.settings.styles[st].style;
             // Select current button
-            if (htmlElem.settings.style == htmlElem.settings.styles[st]) {
+            if (htmlElem.settings.style == htmlElem.settings.styles[st].style) {
                 $("#styleSelectorBox"+options.name+""+i).attr("checked","checked");
                 box.buttonset('refresh');
             }
@@ -2755,9 +2851,13 @@ var hqStyleSelector = {
 			// Get position of last element
             var iHeight = obj.settings.count * (obj.settings.height + 18);
 			if (iHeight > $(window).height() - elem.position().top - elem.height() - 5)
-				elemBox.height($(window).height() - elem.position().top - elem.height() - 5);
+				iHeight = $(window).height() - elem.position().top - elem.height() - 5;
 			else
-				elemBox.height(iHeight + 5);
+				iHeight += 5;
+                
+            if (iHeight < 150)
+                iHeight = 150;
+            elemBox.height(iHeight + 5);
 				
 			var iWidth = $("#styleSelector"+obj.settings.id).width();
 			elemBox.buttonset().find('table').width(iWidth - 37 - this._scrollWidth);
@@ -2975,24 +3075,30 @@ function pxAdd(val, add) {
         var autoRefresh = dui.urlParams["edit"] !== "";
 
         // jqHomematic Plugin Init
-        $.homematic({
-            ccu: duiConfig.ccu,
-            ccuIoUrl: duiConfig.ccuIoUrl,
-            loadCcuData: false,
-            autoRefresh: autoRefresh,
-            regaDown: function (error) {
-                if (error !== undefined) {
-                    $("#loading").append(error);
-                    $.error(error);
+        if (duiConfig.ccu == null && duiConfig.ccuIoUrl == undefined) {
+            window.alert("Setup the ip addresses in config.js");
+        }
+        else
+        {
+            $.homematic({
+                ccu: duiConfig.ccu,
+                ccuIoUrl: duiConfig.ccuIoUrl,
+                loadCcuData: false,
+                autoRefresh: autoRefresh,
+                regaDown: function (error) {
+                    if (error !== undefined) {
+                        $("#loading").append(error);
+                        $.error(error);
+                    }
+                },
+                ready: function () {
+                    dui.init();
+                },
+                loading: function (txt) {
+                    $("#loading").append(txt + "<br/>");
                 }
-            },
-            ready: function () {
-                dui.init();
-            },
-            loading: function (txt) {
-                $("#loading").append(txt + "<br/>");
-            }
-        });
+            });
+        }
         //console.log("autoRefresh: " + autoRefresh);
     });
 

@@ -38,6 +38,12 @@ html,body {
 	margin: 0px;
 }
 /* ------------------------ Button styles ---------------------------*/
+/* Basis */
+.hq-button-base {
+	font-family: 'Tahoma', sans-serif;
+	cursor: pointer;
+	z-index:2;
+}
 .hq-button-base-normal {
 	background-image: -ms-linear-gradient(top, #ADADAD 0%, #333333 100%);
 	background-image: -moz-linear-gradient(top, #ADADAD 0%, #333333 100%);
@@ -45,13 +51,11 @@ html,body {
 	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ADADAD), color-stop(1, #333333));
 	background-image: -webkit-linear-gradient(top, #ADADAD 0%, #333333 100%);
 	background-image: linear-gradient(to bottom, #ADADAD 0%, #333333 100%);
-	cursor: pointer;
 	border: 1px solid rgba(0,0,0,0.9) ;
 	box-shadow: inset 0 1px 0 0 rgba(128,128,128,0.5),
 				0 0 1px 1px rgba(128,128,128,0.8),
 				0 0 0 6px rgba(0,0,0,0.06),
 				0 0 0 3px rgba(0,0,0,0.1);
-	z-index:2;
 }
 .hq-button-base-normal-hover {
 	background-image: -ms-linear-gradient(top, #E0E0E0 0%, #8F8F8F 100%);
@@ -60,13 +64,11 @@ html,body {
 	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #E0E0E0), color-stop(1, #8F8F8F));
 	background-image: -webkit-linear-gradient(top, #E0E0E0 0%, #8F8F8F 100%);
 	background-image: linear-gradient(to bottom, #E0E0E0 0%, #8F8F8F 100%);
-	cursor: pointer;
 	border: 1px solid rgba(0,0,0,0.4) ;
 	box-shadow: inset 0 1px 0 0 rgba(128,128,128,0.5),
 				0 0 1px 1px rgba(128,128,128,0.8),
 				0 0 0 6px rgba(0,0,0,0.06),
 				0 0 0 3px rgba(0,0,0,0.1);
-	z-index:2;
 }
 .hq-button-base-on {
 	background: rgb(255,214,94);
@@ -78,13 +80,11 @@ html,body {
 	background: -ms-linear-gradient(top,  rgba(255,214,94,1) 0%,rgba(254,191,4,1) 100%);
 	background: linear-gradient(top,  rgba(255,214,94,1) 0%,rgba(254,191,4,1) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffd65e', endColorstr='#febf04',GradientType=0 );
-	cursor: pointer;
 	border: 1px solid rgba(0,0,0,0.4) ;
 	box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.5),
 				0 0 1px 1px rgba(255,255,255,0.8),
 				0 0 0 6px rgba(0,0,0,0.06),
 				0 0 0 3px rgba(0,0,0,0.1);
-	z-index:2;
 }
 .hq-button-base-on-hover {
 	background-image: -ms-linear-gradient(top, #FDCB28 0%, #E08600 100%);
@@ -93,13 +93,11 @@ html,body {
 	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FDCB28), color-stop(1, #E08600));
 	background-image: -webkit-linear-gradient(top, #FDCB28 0%, #E08600 100%);
 	background-image: linear-gradient(to bottom, #FDCB28 0%, #E08600 100%);
-	cursor: pointer;
 	border: 1px solid rgba(0,0,0,0.4) ;
 	box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.5),
 				0 0 1px 1px rgba(255,255,255,0.8),
 				0 0 0 6px rgba(0,0,0,0.06),
 				0 0 0 3px rgba(0,0,0,0.1);
-	z-index:2;
 }
 .hq-button-base-moving {
 	background-image: -ms-linear-gradient(top, #00ACFC 0%, #006899 100%);
@@ -109,13 +107,11 @@ html,body {
 	background-image: -webkit-linear-gradient(top, #00ACFC 0%, #006899 100%);
 	background-image: linear-gradient(to bottom, #00ACFC 0%, #006899 100%);
 	cursor:move
-	z-index:2;
 	border: 1px solid rgba(0,0,0,0.9) ;
 	box-shadow: inset 0 1px 0 0 rgba(128,128,128,0.5),
 				0 0 1px 1px rgba(128,128,128,0.8),
 				0 0 0 6px rgba(0,0,0,0.06),
 				0 0 0 3px rgba(0,0,0,0.1);
-	z-index:2;
 }
 .hq-button-base-outtemp {
 	background: #e0f3fa; /* Old browsers */
@@ -126,13 +122,11 @@ html,body {
 	background: -ms-linear-gradient(top,  #e0f3fa 0%,#b6dffd 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #e0f3fa 0%,#b6dffd 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0f3fa', endColorstr='#b6dffd',GradientType=0 ); /* IE6-9 */
-	cursor: pointer;
 	border: 1px solid rgba(182,223,253,0.9) ;
 	box-shadow: inset 0 1px 0 0 rgba(182,223,253,0.5),
 				0 0 1px 1px rgba(182,223,253,0.8),
 				0 0 0 6px rgba(182,223,253,0.06),
 				0 0 0 3px rgba(182,223,253,0.1);
-	z-index:2;
 }
 .hq-button-base-outtemp-hover {
 	background: #bbe9f9; /* Old browsers */
@@ -143,13 +137,11 @@ html,body {
 	background: -ms-linear-gradient(top,  #bbe9f9 0%,#94d1fc 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #bbe9f9 0%,#94d1fc 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bbe9f9', endColorstr='#94d1fc',GradientType=0 ); /* IE6-9 */
-	cursor: pointer;
 	border: 1px solid rgba(182,223,253,0.9) ;
 	box-shadow: inset 0 1px 0 0 rgba(182,223,253,0.5),
 				0 0 1px 1px rgba(182,223,253,0.8),
 				0 0 0 6px rgba(182,223,253,0.06),
 				0 0 0 3px rgba(182,223,253,0.1);
-	z-index:2;
 }
 .hq-button-base-intemp {
 	background: #f6e6b4; /* Old browsers */
@@ -160,13 +152,11 @@ html,body {
 	background: -ms-linear-gradient(top,  #f6e6b4 0%,#eaac60 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #f6e6b4 0%,#eaac60 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6e6b4', endColorstr='#eaac60',GradientType=0 ); /* IE6-9 */
-	cursor: pointer;
 	border: 1px solid rgba(232,158,69,0.9) ;
 	box-shadow: inset 0 1px 0 0 rgba(232,158,69,0.5),
 				0 0 1px 1px rgba(232,158,69,0.8),
 				0 0 0 6px rgba(232,158,69,0.06),
 				0 0 0 3px rgba(232,158,69,0.1);
-	z-index:2;
 }
 .hq-button-base-intemp-hover {
 	background: #f4d169; /* Old browsers */
@@ -177,13 +167,11 @@ html,body {
 	background: -ms-linear-gradient(top,  #f4d169 0%,#e89e45 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #f4d169 0%,#e89e45 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4d169', endColorstr='#e89e45',GradientType=0 ); /* IE6-9 */
-	cursor: pointer;
 	border: 1px solid rgba(232,158,69,0.9) ;
 	box-shadow: inset 0 1px 0 0 rgba(232,158,69,0.5),
 				0 0 1px 1px rgba(232,158,69,0.8),
 				0 0 0 6px rgba(232,158,69,0.06),
 				0 0 0 3px rgba(232,158,69,0.1);
-	z-index:2;
 }
 .hq-button-base-info {
  	z-index:999;
@@ -210,11 +198,6 @@ html,body {
 }
 
 
-/* Basis */
-.hq-button-base {
-	font-family: 'Tahoma', sans-serif;
-	/*z-index:1000;*/
-}
 
 /* ------------------------ Blind styles ---------------------------*/
 .hq-blind-base { /* Basis */
@@ -346,7 +329,7 @@ html,body {
 }
 .hq-blind-handle-tilted {
     width: 2px;
-    margin-top: -15%;    
+    margin-top: -5px;    
 }
 .hq-blind-handle-opened-bg {
     background: rgb(243,197,189); /* Old browsers */

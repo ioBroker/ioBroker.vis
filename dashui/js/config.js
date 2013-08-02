@@ -3,7 +3,7 @@ var duiConfig = {
     currentLang:        "de",
     useCache:           true,
     fileViews:          '/usr/local/addons/dashui.views',
-    ccu:                "192.168.1.5",
+    ccu:                null,
     ccuIoUrl:           undefined, //"http://raspberrypi:2100",
     defaultHmInterval:  7500,
 };

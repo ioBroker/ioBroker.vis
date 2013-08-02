@@ -518,6 +518,12 @@ var hqWidgets = {
             dimmerColorInact: 'grey',   // Colors for dimmer 
             noBackground:     false,    // If show background or just text or image
             
+            //styles
+            styleNormal:      null,
+            styleNormalHover: null,
+            styleActive:      null,
+            styleActiveHover: null,
+            
             // Static state properties
             buttonType:       hqWidgets.gButtonType.gTypeButton,// button type
             doorType:         hqWidgets.gSwingType.gSwingLeft,  // Swing direction for door
@@ -1269,7 +1275,7 @@ var hqWidgets = {
                     if (!document.getElementById(this.advSettings.elemName+'_bigBlindText'))
                         this.intern._jbigWindow.append('<div id="'+this.advSettings.elemName+'_bigBlindText"></div>');
                     this.intern._jbigWindow.jtext = $('#'+this.advSettings.elemName+'_bigBlindText');
-                    this.intern._jbigWindow.jtext.addClass('ui-widget hq-blind-big-text').css({position: 'absolute'});
+                    this.intern._jbigWindow.jtext.addClass('ui-widget').css({position: 'absolute'});
                     this.intern._jbigWindow.jtext.parentQuery = this;
                 }            
             }
@@ -1602,6 +1608,16 @@ var hqWidgets = {
             removeClass("hq-button-base-intemp").removeClass("hq-button-base-intemp-hover").
             removeClass("hq-button-base-intemp").removeClass("hq-button-base-intemp-hover").
             removeClass("hq-button-base-on").removeClass("hq-button-base-on-hover");
+            
+            if (this.settings.styleNormal != null)
+                this.intern._jelement.removeClass (this.settings.styleNormal);
+            if (this.settings.styleNormalHover != null)
+                this.intern._jelement.removeClass (this.settings.styleNormalHover);
+            if (this.settings.styleActive != null)
+                this.intern._jelement.removeClass (this.settings.styleActive);
+            if (this.settings.styleActiveHover != null)
+                this.intern._jelement.removeClass (this.settings.styleActiveHover);
+                
             this.intern._currentClass = ""; // force update
             if (isUse) {
                 // Colors of the states
@@ -1651,21 +1667,21 @@ var hqWidgets = {
                 if (!this.settings.noBackground) {
                     if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
                     {
-                        this.intern._backOff        = "hq-button-base-intemp";
-                        this.intern._backOffHover   = "hq-button-base-intemp-hover";
+                        this.intern._backOff        = (this.settings.styleNormal) ? this.settings.styleNormal : "hq-button-base-intemp";
+                        this.intern._backOffHover   = (this.settings.styleNormalHover) ? this.settings.styleNormalHover : "hq-button-base-intemp-hover";
                         this.intern._backMoving     = "hq-button-base-moving";
                     }
                     else
                     if (this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp)
                     {
-                        this.intern._backOff        = "hq-button-base-outtemp";
-                        this.intern._backOffHover   = "hq-button-base-outtemp-hover";
+                        this.intern._backOff        = (this.settings.styleNormal) ? this.settings.styleNormal : "hq-button-base-outtemp";
+                        this.intern._backOffHover   = (this.settings.styleNormalHover) ? this.settings.styleNormalHover : "hq-button-base-outtemp-hover";
                         this.intern._backMoving     = "hq-button-base-moving";
                     }
                     else
                     if (this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {	
-                        this.intern._backOff        = "hq-blind-base";
-                        this.intern._backOffHover   = "hq-blind-base";
+                        this.intern._backOff        = (this.settings.styleNormal) ? this.settings.styleNormal : "hq-blind-base";
+                        this.intern._backOffHover   = (this.settings.styleNormalHover) ? this.settings.styleNormalHover : "hq-blind-base";
                         this.intern._backMoving     = "hq-blind-blind3-moving";
                     }
                     else
@@ -1674,12 +1690,12 @@ var hqWidgets = {
                     } 
                     else
                     {
-                        this.intern._backOff        = "hq-button-base-normal";
-                        this.intern._backOffHover   = "hq-button-base-normal-hover";
+                        this.intern._backOff        = (this.settings.styleNormal) ? this.settings.styleNormal : "hq-button-base-normal";
+                        this.intern._backOffHover   = (this.settings.styleNormalHover) ? this.settings.styleNormalHover : "hq-button-base-normal-hover";
                         this.intern._backMoving     = "hq-button-base-moving";
                     }                
-                    this.intern._backOn         = "hq-button-base-on";
-                    this.intern._backOnHover    = "hq-button-base-on-hover";
+                    this.intern._backOn         = (this.settings.styleActive) ? this.settings.styleActive : "hq-button-base-on";
+                    this.intern._backOnHover    = (this.settings.styleActiveHover) ? this.settings.styleActiveHover : "hq-button-base-on-hover";
                 }
                 else {
                     this.intern._backOff        = "";
@@ -1688,7 +1704,6 @@ var hqWidgets = {
                     this.intern._backOnHover    = "";
                     this.intern._backMoving     = "hq-button-base-moving";
                 }
-
             }
             //if (isUpdate)
                 this.ShowState ();
@@ -1848,17 +1863,17 @@ var hqWidgets = {
             if (this.settings.gaugeHorz) {
                 this.intern._jgauge.css ({height: this.settings.height-2, width: this.settings.width * pState / 100});
                 if (this.settings.gaugeStart)
-                    this.intern._jgauge.css ({left: 0});
+                    this.intern._jgauge.css ({left: 0, top: 0});
                 else
-                    this.intern._jgauge.css ({left: this.settings.width - this.settings.width * pState / 100});
+                    this.intern._jgauge.css ({top:0, left: this.settings.width - this.settings.width * pState / 100});
                     
             }
             else {
                 this.intern._jgauge.css ({width: this.settings.width - 2, height: this.settings.height * pState / 100});
                 if (this.settings.gaugeStart)
-                    this.intern._jgauge.css ({top: 0});
+                    this.intern._jgauge.css ({top: 0, left: 0});
                 else
-                    this.intern._jgauge.css ({top: this.settings.height - this.settings.height * pState / 100});
+                    this.intern._jgauge.css ({left:0, top: this.settings.height - this.settings.height * pState / 100});
             }
             
             this.SetInfoText (this.dynStates.valueSet, this.settings.infoTextFont, this.settings.infoTextColor); 
@@ -2942,11 +2957,9 @@ var hqWidgets = {
             }
         }
         this.ShowBlindState = function ()	{
-            if (this.intern._jelement.leaf)
-            {
+            if (this.intern._jelement.leaf) {
                 var i=0;
-                while (this.intern._jelement.leaf[i])
-                {
+                while (this.intern._jelement.leaf[i]) {
                     if (this.intern._isEditMode && this.settings.iContextMenu)
                         this.intern._jelement.leaf[i].divs[0].hide();
                     else
@@ -3004,7 +3017,7 @@ var hqWidgets = {
                     wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-opened-left')
                                            .removeClass ('hq-blind-blind3-opened-right')
                                            .removeClass ('hq-blind-blind3-tilted');
-                    wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3').css ({top: 0, left: 0, width: wnd.width});
+                    wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3').css ({top: 0, left: 0, width: wnd.width, height: wnd.height});
                     // Set the handle state
                     if (wnd.style && wnd.style != hqWidgets.gSwingType.gSwingDeaf) { 
                         var h = wnd.divs[3].height();
@@ -3043,12 +3056,15 @@ var hqWidgets = {
                     var w = wnd.divs[3].width();
                     var size = (h > w) ? w : h;
                
+                    // Show tilted state
                     if (wnd.style && wnd.style != hqWidgets.gSwingType.gSwingDeaf && 
                         state == hqWidgets.gWindowState.gWindowTilted) {
                         if (!this.intern._isEditMode) wnd.state = hqWidgets.gOptions.gWindowTilted;
                         wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3');
-                        wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3-tilted');
-                        wnd.divs[wnd.leafIndex].css ({top: wnd.ooffset-2, left: +4, height: wnd.oheight});
+                        wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-opened-left');
+                        wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-opened-right');
+                        wnd.divs[wnd.leafIndex].addClass    ('hq-blind-blind3-tilted');
+                        wnd.divs[wnd.leafIndex].css ({top: wnd.height - wnd.oheight - 2, left: 5, height: wnd.oheight, width: wnd.width});
                         // Set handle state
                         wnd.divs[4].addClass('hq-blind-handle-tilted hq-blind-handle-bg');
                         wnd.divs[4].css({height: size * 0.15, width: 2});
@@ -3058,26 +3074,29 @@ var hqWidgets = {
                         else
                             wnd.divs[4].css({left: 0});
                     }
-                    else
+                    else // Show opened state
                     if (wnd.style && wnd.style == hqWidgets.gSwingType.gSwingLeft) {
                         if (!this.intern._isEditMode) wnd.state = hqWidgets.gOptions.gWindowOpened;
                         wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3');
-                        wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3');
-                        wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3-opened-left');
-                        wnd.divs[wnd.leafIndex].css ({top: wnd.ooffset-3, left: 0, width: wnd.owidth});
+                        wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-tilted');
+                        wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-opened-right');
+                        wnd.divs[wnd.leafIndex].addClass    ('hq-blind-blind3-opened-left');
+                        wnd.divs[wnd.leafIndex].css ({top: wnd.ooffset-3, left: 0, width: wnd.owidth, height: wnd.height});
                         // Set handle state
                         wnd.divs[4].css({width: size * 0.15, height: 2});
                         wnd.divs[4].css({top: (wnd.divs[3].height() - wnd.divs[4].height()) / 2, });
                         wnd.divs[4].addClass('hq-blind-handle-opened hq-blind-handle-bg');
                         wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 1});
                     }
-                    else
+                    else // Show opened state
                     if (wnd.style && wnd.style == hqWidgets.gSwingType.gSwingRight)
                     {
                         if (!this.intern._isEditMode)wnd.state = hqWidgets.gOptions.gWindowOpened;
                         wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3');
-                        wnd.divs[wnd.leafIndex].addClass ('hq-blind-blind3-opened-right');
-                        wnd.divs[wnd.leafIndex].css ({top:  wnd.ooffset-3, left: wnd.width-wnd.owidth-1	, width: wnd.owidth});
+                        wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-tilted');
+                        wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-opened-left');
+                        wnd.divs[wnd.leafIndex].addClass    ('hq-blind-blind3-opened-right');
+                        wnd.divs[wnd.leafIndex].css ({top:  wnd.ooffset-3, left: wnd.width-wnd.owidth-1, width: wnd.owidth, height: wnd.height});
                         // Set handle state
                         wnd.divs[4].css({width: size * 0.15, height: 2});
                         wnd.divs[4].css({top: (wnd.divs[3].height() - wnd.divs[4].height()) / 2, });
@@ -3573,8 +3592,36 @@ var hqWidgets = {
             this.dynStates = $.extend (this.dynStates, dynOptions);
         }
         this.SetSettings = function (options, isSave) {
+            
+            // Styles
+            {
+                var isSet = false;
+                if (options.styleNormal !== undefined) {
+                    this.intern._jelement.removeClass (this.settings.styleNormal);
+                    this.settings.styleNormal = options.styleNormal;
+                    isSet = true;
+                }
+                if (options.styleNormalHover !== undefined) {
+                    this.intern._jelement.removeClass (this.settings.styleNormalHover);
+                    this.settings.styleNormalHover = options.styleNormalHover;
+                    isSet = true;
+                }
+                if (options.styleActive !== undefined) {
+                    this.intern._jelement.removeClass (this.settings.styleActive);
+                    this.settings.styleActive = options.styleActive;
+                    isSet = true;
+                }
+                if (options.styleActiveHover !== undefined) {
+                    this.intern._jelement.removeClass (this.settings.styleActiveHover);
+                    this.settings.styleActiveHover = options.styleActiveHover;
+                    isSet = true;
+                }
+                if (isSet)
+                    this._SetUsejQueryStyle (this.settings.usejQueryStyle, true);
+            }
+            
             //  Type
-            if (options.buttonType!=undefined) 
+            if (options.buttonType !== undefined) 
                 this._SetType (options.buttonType);
 
             // Position
@@ -4027,12 +4074,13 @@ var hqWidgets = {
     // Creates in the parent table lines with settings
     hqButtonEdit: function (options, obj, additionalSettingsFunction) {
         var e_settings = {
-            parent:    null,
-            elemName:  'inspect',
-            width:     200,
-            imgSelect: null, // image selection dialog
-            timeout:   500,  // object update timeout
-            clrSelect: null, // color selection dialog
+            parent:      null,
+            elemName:    'inspect',
+            width:       200,
+            imgSelect:   null,   // image selection dialog
+            timeout:     500,    // object update timeout
+            clrSelect:   null,   // color selection dialog
+            styleSelect: null,   // style selection dialog
         };
         var e_internal = {
             attr:            null,
@@ -4065,9 +4113,11 @@ var hqWidgets = {
         // clear all
         this.e_settings.parent.html("");
         
-        var sText     = "";
-        var sTextAdv  = "";
-        var iAdvCount = 0;
+        var sText       = "";
+        var sTextAdv    = "";
+        var sTextStyle  = "";
+        var iAdvCount   = 0;
+        var iStyleCount = 0;
         
         this._EditTextHandler = function (eee, filter, isStates) {
             var elem;
@@ -4228,6 +4278,35 @@ var hqWidgets = {
                 }
             }	
         }
+        this._EditStyleHandler = function (eee, filterFile, filterName, filterAttrs) {
+            var elem;
+            if ((elem = document.getElementById (this.e_settings.elemName+'_'+eee+'Parent')) != null) {
+                elem.parent   = this;
+                elem.ctrlAttr = eee;
+                hqStyleSelector.Show ({ width: 202,
+                    name:          this.e_settings.elemName+'_'+eee,
+                    style:         this.e_internal.attr[elem.ctrlAttr],     
+                    parent:        $('#'+this.e_settings.elemName+'_'+eee+'Parent'),
+                    filterFile:    filterFile,
+                    filterName:    filterName,
+                    filterAttrs:   filterAttrs,
+                    onchangeParam: elem,
+                    onchange: function (newStyle, obj) {
+                        // If really changed                  
+                        if (obj.parent.e_internal.attr[obj.ctrlAttr] != newStyle) {
+                            obj.parent.e_internal.attr[obj.ctrlAttr] = newStyle;
+                            
+                            if (obj.parent.e_internal.attr[obj.ctrlAttr] == "")
+                                obj.parent.e_internal.attr[obj.ctrlAttr] = null;
+                            
+                            var newSettings = {};
+                            newSettings[obj.ctrlAttr] = obj.parent.e_internal.attr[obj.ctrlAttr];
+                            obj.parent.e_internal.obj.SetSettings (newSettings, true);
+                        }
+                    },
+                });      
+            }	
+        }
         
         // Active/Inactive state
         if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeBlind  &&
@@ -4339,7 +4418,6 @@ var hqWidgets = {
             sTextAdv += "<input id='"+this.e_settings.elemName+"_staticTextColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
         }  
 
-        
         // Active state icon
         if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDoor   && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeBlind  && 
@@ -4403,12 +4481,13 @@ var hqWidgets = {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Hide last action after (hrs):") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_hoursLastAction'  type='text' value='"+this.e_internal.attr.hoursLastAction+"'></td></tr>";
         }
         
+        // Format string
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo  ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Format string:")    +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoFormat'     type='text' value='"+this.e_internal.attr.infoFormat+"'></td></tr>";        
         }
         
-        // Format string, active condition, If hide when incative state
+        // Active condition, If hide when incative state
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Active condition:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoCondition'  type='text' value='"+((this.e_internal.attr.infoCondition != undefined) ? this.e_internal.attr.infoCondition : "")+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Hide inactive:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_infoIsHideInactive' "+((this.e_internal.attr.infoIsHideInactive) ? "checked" : "")+">";
@@ -4421,11 +4500,72 @@ var hqWidgets = {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("No background:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_back' "+((this.e_internal.attr.noBackground) ? "checked" : "")+">";
         }
         
+        // Styles
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo   ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeButton ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong   ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeOutTemp|| 
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInTemp ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
+            sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Normal:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalParent' ></td></tr>";
+            sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Normal hover:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalHoverParent' ></td></tr>";
+            
+            if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
+                this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp) {
+                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Active:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveParent' ></td></tr>";
+                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Active hover:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveHoverParent' ></td></tr>";
+            }
+        }
+        
+        
         // Description
         sText += "<tr><td>"+ hqWidgets.Translate("Description:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_title' type='text' value='"+((this.e_internal.attr.title) || "")+"'></td></tr>";
 
+        // Show all styles
         this.e_settings.parent.append (sText);
-        if (sTextAdv != "") {
+        if (iStyleCount == 1)
+            this.e_settings.parent.append (sTextStyle);
+        else 
+        if (iStyleCount > 1) {
+            sTextStyle = "<tr><td colspan=2><button id='idShowStyle'>"+hqWidgets.Translate("Styles...")+"</td></tr>" + sTextStyle;
+            this.e_settings.parent.append (sTextStyle);
+            var advBtn = document.getElementById ('idShowStyle');
+            advBtn.obj   = this;
+            advBtn.state = false;
+            
+            $('#idShowStyle').button({icons: {primary: "ui-icon-carat-1-s"}}).click(function( event ) {
+                                        this.state = !(this.state);
+                                        if (this.state) {
+                                            $('#idShowStyle').button("option", {icons: { primary: "ui-icon-carat-1-n" }});
+                                            var i = 0;
+                                            while (document.getElementById ('idStyle'+i)) {
+                                                $('#idStyle'+i).show();
+                                                i++;
+                                            }
+                                        }
+                                        else {
+                                            $('#idShowStyle').button("option", {icons: { primary: "ui-icon-carat-1-s" }});
+                                            var i = 0;
+                                            while (document.getElementById ('idStyle'+i)) {
+                                                $('#idStyle'+i).hide();
+                                                i++;
+                                            }                                        
+                                        }
+                                  });
+            // Hide all                      
+            var i = 0;
+            while (document.getElementById ('idStyle'+i)) {
+                $('#idStyle'+i).hide();
+                i++;
+            }
+        }
+        
+        // Show all advacned settigs
+        if (iAdvCount == 1) {
+            this.e_settings.parent.append (sTextAdv);
+        }
+        else
+        if (iAdvCount > 0) {
             sTextAdv = "<tr><td colspan=2><button id='idShowAdv'>"+hqWidgets.Translate("Advanced...")+"</td></tr>" + sTextAdv;
             this.e_settings.parent.append (sTextAdv);
             var advBtn = document.getElementById ('idShowAdv');
@@ -4590,8 +4730,15 @@ var hqWidgets = {
         this._EditTextHandler ('gongMelody', ".mp3;.wav");
         
         this._EditTextHandler ('gongQuestionImg');
+
+        this._EditStyleHandler ('styleNormal',      null, '-button', 'background');
+        this._EditStyleHandler ('styleNormalHover', null, '-button', 'background');
+        this._EditStyleHandler ('styleActive',      null, '-button', 'background');
+        this._EditStyleHandler ('styleActiveHover', null, '-button', 'background');
+
         
-        this.e_internal.iAdvCount = iAdvCount;
+        this.e_internal.iAdvCount   = iAdvCount;
+        this.e_internal.iStyleCount = iStyleCount;
         
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge) {
             $('#'+this.e_settings.elemName+'_valueSet').trigger('change');
