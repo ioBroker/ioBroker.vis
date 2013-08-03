@@ -731,7 +731,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                         }
                         else
                         if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'handleState') {
-                            // 0. TILTED, 1. CLOSED, 2.OPEN ab  V1.6 ???
+                            // 0. CLOSED, 1. TILTED, 2.OPEN ab  V1.6 ???
                             // 0. Closed, 1. tilted, 2.open bis V1.6
                             var wndState = undefined;
                             var opt    = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.GetSettings('hm_id'+dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index);
@@ -746,7 +746,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 nState = hqWidgets.gHandlePos.gPosOpened;
                             }
                             else
-                            if ((!newVer && newState == "1") || (newVer && newState == "0")) {
+                            if ((!newVer && newState == "1") || (newVer && newState == "1")) {
                                 wndState = hqWidgets.gWindowState.gWindowTilted;
                                 nState = hqWidgets.gHandlePos.gPosTilted;
                             }
@@ -911,7 +911,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                         }); 
                     }
 					//--------------- handler version ------------------------
-					var attr = 'newVersion';
+					/*var attr = 'newVersion';
 					parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="checkbox" id="inspect_'+attr+'" '+((opt[attr] != undefined && opt[attr]) ? "checked" : "")+' ></td></tr>');
 					document.getElementById ("inspect_"+attr).jControl = attr;
 					$("#inspect_"+attr).change(function (el) {
@@ -921,7 +921,7 @@ if ((typeof hqWidgets !== 'undefined')) {
 							option[this.jControl] = $(this).prop('checked');
 							btn.SetSettings (option, true);
 						}
-					});
+					});*/
                 }
                 else
                 if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp || opt.buttonType == hqWidgets.gButtonType.gTypeGong) {

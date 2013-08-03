@@ -14,6 +14,8 @@
 ### 0.8.x
 * (Bluefox) Gauge widget 
             config.js - Bitte eigene IP Adresse einstellen
+            Styles fur Button
+            Fixed Fenster und Rolladen
 
 
 ### 0.8.6
