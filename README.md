@@ -3,6 +3,10 @@
 * [DashUI Homepage](http://hobbyquaker.github.io/DashUI) 
 * [DashUI Widget Wiki](https://github.com/hobbyquaker/DashUI/wiki/)
 
+# Unbedingt IP Adressen einstellen!
+  js/config.js Datei hat zwei wichtige Parameter, die fuer jeden Anwender unterschiedlich sind:
+  ccu      - Ip Adresse von CCU
+  ccuIoUrl - URL von CCU.IO, nur falls vorhanden, sonst auf "undefined" lassen.
 
 ## Todo
 
