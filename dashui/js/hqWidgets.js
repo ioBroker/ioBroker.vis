@@ -1341,6 +1341,13 @@ var hqWidgets = {
                 });		
             }
             else
+            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
+                this.intern._jelement.append ("<div id='"+this.advSettings.elemName+"_gauge'></div>");
+                this.intern._jgauge       = $('#'+this.advSettings.elemName+"_gauge");
+                this.intern._jgauge.css ({borderRadius: (this.settings.radius > 4) ? 4: this.settings.radius, position: 'absolute', 'border': '1px solid black'});
+                this.SetInfoText (this.dynStates.valueSet, this.settings.infoTextFont, this.settings.infoTextColor); 
+            }      
+            // no else here !!!
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeCam ||
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeGong) {
 
@@ -1553,13 +1560,7 @@ var hqWidgets = {
                     this._CreateBigCam ();
                 }
             }
-            else
-            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
-                this.intern._jelement.append ("<div id='"+this.advSettings.elemName+"_gauge'></div>");
-                this.intern._jgauge       = $('#'+this.advSettings.elemName+"_gauge");
-                this.intern._jgauge.css ({borderRadius: (this.settings.radius > 4) ? 4: this.settings.radius, position: 'absolute', 'border': '1px solid black'});
-                this.SetInfoText (this.dynStates.valueSet, this.settings.infoTextFont, this.settings.infoTextColor); 
-            }
+
             
             if ((this.settings.buttonType != hqWidgets.gButtonType.gTypeImage ||
                 this.settings.buttonType  != hqWidgets.gButtonType.gTypeBlind ||
@@ -1990,6 +1991,8 @@ var hqWidgets = {
                 this._ShowLastActionTime ();
                 
                 // Check last update of the element state
+                // Deactivate this code, while only temperature sensors send theirs information continuantly
+                /*
                 if (this.dynStates.state != hqWidgets.gState.gStateUnknown && 
                     this.intern._lastUpdate != null && 
                     this.settings.stateTimeout > 0) {
@@ -1998,7 +2001,7 @@ var hqWidgets = {
                     var seconds = (dt.getTime() - this.intern._lastUpdate.getTime()) / 1000;
                     if (seconds > this.settings.stateTimeout)
                         this.SetState (hqWidgets.gState.gStateUnknown);
-                }
+                }*/
             }
         }
         this.GetAdvSettings = function () {
@@ -3686,7 +3689,7 @@ var hqWidgets = {
             }
             
             // ipCamImageURL => reset internal URl link
-            if (options.ipCam !== undefined && options.ipCamImageURL !== undefined) {
+            if (options.ipCamImageURL !== undefined) {
                 if ((settings.ipCamImageURL == null || settings.ipCamImageURL == "") && options.ipCamImageURL != null && options.ipCamImageURL != "") {
                     this._CreateBigCam ();
                 }
