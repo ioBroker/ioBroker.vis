@@ -1,18 +1,26 @@
-<link rel="stylesheet" href="widgets/hqWidgets/css/hqWidgets.css" type="text/css" />
-<link rel="stylesheet" href="widgets/hqWidgets/css/hqWidgetsButtons.css" type="text/css" />
-<link rel="stylesheet" href="widgets/colorpicker/css/farbtastic.css" type="text/css" />
-<script type="text/javascript" src="widgets/colorpicker/js/farbtastic.js"></script>
-<script type="text/javascript" src="widgets/hqWidgets/js/hqWidgets.js"></script>
-
-
-<script type="text/javascript">
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
         hqWidgetsExt: {
             version: "0.1.2",
             inited:  false,
             hqIgnoreNextUpdate: null, // id of controlled element
+            hqTimerDetectMoving: null,
             hqMapping: {},
+            hqSaveTimer : null,
+            hqDelete: function (id) {
+                hqWidgets.Delete (id);
+            },
+            // Check if template belongs to hqWidgets
+            hqCheck: function (tpl) {
+                return (tpl != null && tpl != "" && tpl.length > 5 && tpl.substring(0,5) == "tplHq");
+            },
+            hqStopDrag: function () {
+                var btn = hqWidgets.Get (dui.activeWidget);
+                if (btn) {
+                    var pos = btn.intern._jelement.position();
+                    btn.SetPosition (pos.left, pos.top);
+                }
+            },
             hqInit: function () {
                 if (homematic === undefined || homematic.uiState === undefined || homematic.uiState.bind === undefined )
                     return;
@@ -24,10 +32,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                 
                 // Init hqWidgets engine
                 hqWidgets.Init ({gPictDir: "widgets/hqWidgets/img/"});
-                if (hqWidgets.version != dui.binds.hqWidgetsExt.version) {
+                if (hqWidgets.version != dui.binds.hqWidgetsExt.version)
                     window.alert ("The versions of hqWidgets.js and hqWidgets.html are different. Expected version of hqWidgets.js is " +dui.binds.hqWidgetsExt.version);
-                }
-                
                 homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
                     if (how != "set") 
                         return;
@@ -50,20 +56,197 @@ if ((typeof hqWidgets !== 'undefined')) {
                         
                     dui.binds.hqWidgetsExt.hqMonitor (attr, newVal, isTimestamp);
                 });
-                
-                if (dui.binds.hqWidgetsExt.hqEditInit) {
-                    dui.binds.hqWidgetsExt.hqEditInit ();
-                }
             },
-            hqEditStore: null, // overload this function by edit
+            hqDetectMoving: function () {
+                if (dui.activeWidget != "" && dui.activeWidget != null) {
+                    if (dui.views[dui.activeView].widgets[dui.activeWidget] !== undefined) {     
+                        var btn = hqWidgets.Get (dui.activeWidget);
+                        if (btn) {
+                            if (document.getElementById (btn.advSettings.elemName)) {
+                                var pos = btn.intern._jelement.position();
+                                pos.top  = Math.round (pos.top);
+                                pos.left = Math.round (pos.left);
+                                // If position changed
+                                if (pos.top != btn.settings.y || pos.left != btn.settings.x) {
+                                    btn.SetPosition (pos.left, pos.top);
+                                }
+                            }
+                            else {
+                                hqWidgets.Delete (btn);
+                                dui.activeWidget = null;
+                            }
+                        }
+                    }
+                    else {
+                        var btn = hqWidgets.Get (dui.activeWidget);
+                        if (btn) {
+                            if (!document.getElementById (btn.advSettings.elemName)) {
+                                hqWidgets.Delete (btn);
+                                dui.activeWidget = null;
+                            }
+                        }
+                    }
+                }
+            
+                dui.binds.hqWidgetsExt.hqTimerDetectMoving = setTimeout (function () { 
+                    dui.binds.hqWidgetsExt.hqDetectMoving (); 
+                 }, 1000);
+            },            
+            hqSave: function () {
+                if (dui.binds.hqWidgetsExt.hqSaveTimer != null) {
+                    clearTimeout(dui.binds.hqWidgetsExt.hqSaveTimer);
+                }
+                    
+                dui.binds.hqWidgetsExt.hqSaveTimer = setTimeout (function () { 
+                    dui.saveLocal (); 
+                    console.log ("Saved!"); 
+                    dui.binds.hqWidgetsExt.hqSaveTimer = null;
+                }, 2000);
+            },
             hqButtonExt: function (el, options, wtype, view) {
-                var opt = (options != undefined && options != null) ? $.parseJSON(options) : hqEditDefault (wtype);
+                var opt = (options != undefined && options != null) ? $.parseJSON(options) : {x:50, y: 50};
                 var hm_ids = new Array ();
                 // Define store settings function
-                var adv = {store: dui.binds.hqWidgetsExt.hqEditStore};
+                var adv = {store: function (obj, opt) {
+                    var newOpt = JSON.stringify (opt);
+                    var duiWidget = dui.views[dui.activeView].widgets[obj.advSettings.elemName];
+                    if (duiWidget === undefined) {
+                        for (var view in dui.views) {
+                            if (dui.views[view].widgets[obj.advSettings.elemName]) {
+                                duiWidget = dui.views[view].widgets[obj.advSettings.elemName];
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (duiWidget) {
+                        duiWidget.data.hqoptions = newOpt;
+                        //$('#inspect_hqoptions').val(newOpt);
+                        obj.intern._jelement.attr ('hqoptions', newOpt);
+                        console.log ("Stored: " + newOpt);
+                        dui.binds.hqWidgetsExt.hqSave ();
+                    }
+                    else
+                        console.log ("Cannot find " + duiWidget.advSettings.elemName + " in any view");
+                }};
                 
                 // If first creation
-                if (wtype === undefined) {
+                if (wtype !== undefined) {
+                    // Set default settings
+                    if (wtype == 'tplHqButton') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeButton, 
+                                              iconName: 'Lamp.png', 
+                                              zindex: 2, 
+                                              hm_id: '',
+                                              });
+                    }
+                    else
+                    if (wtype == 'tplHqInfo') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeInfo, 
+                                              zindex: 2,
+                                              hm_id: '',
+                                              });
+                    }
+                    else
+                    if (wtype == 'tplHqDimmer') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeDimmer, 
+                                              iconName: 'Lamp.png', 
+                                              zindex: 3,
+                                              hm_id: '',
+                                              hoursLastAction:-1,
+                                              dimmerRampTime: 0.5,
+                                              dimmerOnTime: 0,
+                                              });
+                    }
+                    else
+                    if (wtype == 'tplHqShutter') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeBlind, 
+                                              windowConfig: hqWidgets.gSwingType.gSwingLeft, 
+                                              zindex: 3,
+                                              hm_id: '',
+                                              newVersion: true,
+                                              });
+                    }
+                    else
+                    if (wtype == 'tplHqInTemp') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeInTemp, 
+                                              iconName: 'Temperature.png', 
+                                              zindex: 2,
+                                              hm_id: '',
+                                              hm_idV:'',
+                                              hoursLastAction:-1,
+                                              });
+                    }
+                    else
+                    if (wtype == 'tplHqOutTemp') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeOutTemp, 
+                                              iconName: 'Temperature.png', 
+                                              zindex: 2,
+                                              hm_id: '',
+                                              hoursLastAction:-1,
+                                              });
+                    }
+                    else
+                    if (wtype == 'tplHqDoor') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeDoor, 
+                                              zindex: 3,
+                                              hm_id: '',
+                                              });
+                    }
+                    else
+                    if (wtype == 'tplHqLock') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeLock, 
+                                              iconName: 'unlocked.png', 
+                                              iconOn: 'locked.png', 
+                                              zindex: 21,
+                                              hm_id: '',
+                                              });
+                    }
+                    else
+                    if (wtype == 'tplHqText') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeText, 
+                                              radius: 0, 
+                                              zindex: 2, 
+                                              hoursLastAction:-1});
+                    }
+                    else
+                    if (wtype == 'tplHqImage') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeImage, 
+                                              iconName:'eg_trans.png', 
+                                              radius: 0});
+                    }
+                    else
+                    if (wtype == 'tplHqCam') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeCam,  
+                                              hm_id: '', 
+                                              radius: 2, 
+                                              width:100, 
+                                              height:60, 
+                                              zindex: 2, 
+                                              popUpDelay: 10000, 
+                                              openDoorBttn: false});
+                    }
+                    else
+                    if (wtype == 'tplHqGong') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeGong,  
+                                              hm_id: '', 
+                                              hm_idL:'',
+                                              zindex: 2, 
+                                              iconName: 'ringing-bell.png', 
+                                              popUpDelay: 10000});
+                    }                
+                    else
+                    if (wtype == 'tplHqGauge') {
+                        opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeGauge,  
+                                              hm_id: '', 
+                                              zindex: 2, 
+                                              radius: 2,
+                                              valueMin: 0,
+                                              valueMax: 100,
+                                              });
+                    }                
+                 }
+                else {
                     // non-edit mode => define event handlers
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
                         adv = $.extend (adv, {action: function (obj, what, state) {
@@ -413,11 +596,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                 // Enable edit mode
                 if (dui.urlParams["edit"] === "") {
                     btn.SetEditMode (true);
-                    if (dui.binds.hqWidgetsExt.hqEditDetectMoving) {
-                        // install timer to detect moving
-                        clearTimeout (dui.binds.hqWidgetsExt.hqEditTimerDetectMoving);
-                        dui.binds.hqWidgetsExt.hqEditDetectMoving ();
-                    }
+                    // install timer to detect moving
+                    clearTimeout (dui.binds.hqWidgetsExt.hqTimerDetectMoving);
+                    dui.binds.hqWidgetsExt.hqDetectMoving ();
                 } 
                 else {
                     for (var i = 0; i < hm_ids.length; i++) {
@@ -446,7 +627,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                 $('#'+el).attr ('hqoptions', newOpt);
                 
                 // Create signal translators
-                if (wtype === undefined) {
+                if (wtype == undefined) {
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeButton) {
                         btn = $.extend (btn, {translateSignal: function (options, value) {
                             return (value == "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
@@ -584,165 +765,195 @@ if ((typeof hqWidgets !== 'undefined')) {
                     i++;
                 }
             },    
+            hqEditButton: function (obj, parent, devFilter, hqEditElem) {
+                // install timer to detect moving
+                clearTimeout (dui.binds.hqWidgetsExt.hqTimerDetectMoving);
+                dui.binds.hqWidgetsExt.hqDetectMoving ();
+
+                var opt = obj.GetSettings ();
+                var devFilters = (devFilter) ? devFilter.split (';') : [null, null];
+                if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
+                    // Add ramp_time and on_time
+                    var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"' style='display:none'><td>"+ dui.translate("ramp_time:") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_dimmerRampTime'  type='text' value='"+hqEditElem.e_internal.attr.dimmerRampTime+"'></td></tr>";
+                        sTextAdv += "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"' style='display:none'><td>"+ dui.translate("on_time:")   +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_dimmerOnTime'    type='text' value='"+hqEditElem.e_internal.attr.dimmerOnTime
+                        +"'></td></tr>";
+                    parent.append (sTextAdv);
+                    hqEditElem._EditTextHandler ('dimmerRampTime');
+                    hqEditElem._EditTextHandler ('dimmerOnTime');
+                }
+                
+                if (opt.hm_id != undefined) {
+                    var attr = 'hm_id';
+                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="44" value="'+opt.hm_id+'" style="width:90%"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:8%"></td></tr>');
+                    document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
+                    document.getElementById ("inspect_"+attr+"_btn").devFilter = devFilters[0];
+                    // Select Homematic ID Dialog
+                    $("#inspect_"+attr+"_btn").click ( function () {
+                        hmSelect.value = $("#inspect_"+this.jControl).val();
+                        hmSelect.show (homematic.ccu, this.jControl, function (obj, value, valueObj) {
+                            $("#inspect_"+obj).val(value).trigger("change");
+                            if (valueObj) {
+                                var btn = hqWidgets.Get (dui.activeWidget);
+                                if (btn) {
+                                    var settings = btn.GetSettings ();
+                                    btn.SetSettings ({room: valueObj.room});
+                                    if (settings.title == undefined || settings.title == null || settings.title == "") {
+                                        var title = hmSelect._convertName(valueObj.Name);                                        
+                                        // Remove ROOM from device name
+                                        if (title.length > valueObj.room.length && title.substring(0, valueObj.room.length) == valueObj.room)
+                                            title = title.substring(valueObj.room.length);
+                                        // Remove the leading dot
+                                        if (title.length > 0 && title[0] == '.')
+                                            title = title.substring(1);
+                                        $('#inspect_title').val (title);
+                                        $('#inspect_title').trigger ('change');
+                                    }
+                                }
+                            }
+                        }, null, this.devFilter);
+                    });
+                    $("#inspect_"+attr).change(function (el) {
+                        var btn = hqWidgets.Get (dui.activeWidget);
+                        if (btn) {
+                            btn.SetSettings ({hm_id: $(this).val()}, true);
+                        }
+                    });
+                    $("#inspect_"+attr).keyup (function () {
+                        if (hqWidgets.e_internal.timer) 
+                            clearTimeout (hqWidgets.e_internal.timer);
+                                
+                        hqWidgets.e_internal.timer = setTimeout (function(elem) {
+                            elem.trigger("change");
+                        }, hqWidgets.e_settings.timeout, $(this));
+                    });
+                }
+                if (opt.buttonType == hqWidgets.gButtonType.gTypeBlind) {
+                    var wnd = opt.windowConfig;
+                    var a = wnd.split(',');
+                    for (var i = 0; i < a.length; i++) {
+                        var attr = 'hm_id'+i;
+                        parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="44" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'" style="width:90%"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:8%"></td></tr>');
+                        document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
+                        document.getElementById ("inspect_"+attr).jControl = attr;
+                        document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > 1) ? devFilters[1] : devFilters[0];
+                        // Select Homematic ID Dialog
+                        $("#inspect_"+attr+"_btn").click ( function () {
+                            hmSelect.value = $("#inspect_"+this.jControl).val();
+                            hmSelect.show (homematic.ccu, this.jControl, function (obj, value, valueObj) {
+                                $("#inspect_"+obj).val(value).trigger("change");
+                            }, null, this.devFilter);
+                        });
+                        $("#inspect_"+attr).change(function (el) {
+                            var btn = hqWidgets.Get (dui.activeWidget);
+                            
+                            var wnd = btn.GetSettings ('windowConfig');
+                            var a = wnd.split(',');
+                            
+                            if (btn) {
+                                var option = {};
+                                option[this.jControl] = $(this).val();
+                                for (var j = a.length; j < 4; j++)
+                                    option['hm_id'+j] = null;
+                                btn.SetSettings (option, true);
+                            }
+                        });
+                        $("#inspect_"+attr).keyup (function () {
+                            if (hqWidgets.e_internal.timer) 
+                                clearTimeout (hqWidgets.e_internal.timer);
+                                    
+                            hqWidgets.e_internal.timer = setTimeout (function(elem) {
+                                elem.trigger("change");
+                            }, hqWidgets.e_settings.timeout, $(this));
+                        });      
+
+                        //--------------- handler ------------------------
+                        attr = 'hm_id_hnd'+i;
+                        parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="44" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'" style="width:90%"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:8%"></td></tr>');
+                        document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
+                        document.getElementById ("inspect_"+attr).jControl = attr;
+                        document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > 2) ? devFilters[2] : devFilters[0];
+                        // Select Homematic ID Dialog
+                        $("#inspect_"+attr+"_btn").click ( function () {
+                            hmSelect.value = $("#inspect_"+this.jControl).val();
+                            hmSelect.show (homematic.ccu, this.jControl, function (obj, value, valueObj) {
+                                $("#inspect_"+obj).val(value).trigger("change");
+                            }, null, this.devFilter);
+                        });
+                        $("#inspect_"+attr).change(function (el) {
+                            var btn = hqWidgets.Get (dui.activeWidget);
+                            
+                            var wnd = btn.GetSettings ('windowConfig');
+                            var a = wnd.split(',');
+                            
+                            if (btn) {
+                                var option = {};
+                                option[this.jControl] = $(this).val();
+                                for (var j = a.length; j < 4; j++)
+                                    option['hm_id_hnd'+j] = null;
+                                btn.SetSettings (option, true);
+                            }
+                        });
+                        $("#inspect_"+attr).keyup (function () {
+                            if (hqWidgets.e_internal.timer) 
+                                clearTimeout (hqWidgets.e_internal.timer);
+                                    
+                            hqWidgets.e_internal.timer = setTimeout (function(elem) {
+                                elem.trigger("change");
+                            }, hqWidgets.e_settings.timeout, $(this));
+                        }); 
+                    }
+					//--------------- handler version ------------------------
+					/*var attr = 'newVersion';
+					parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="checkbox" id="inspect_'+attr+'" '+((opt[attr] != undefined && opt[attr]) ? "checked" : "")+' ></td></tr>');
+					document.getElementById ("inspect_"+attr).jControl = attr;
+					$("#inspect_"+attr).change(function (el) {
+						var btn = hqWidgets.Get (dui.activeWidget);
+						if (btn) {
+							var option = {};
+							option[this.jControl] = $(this).prop('checked');
+							btn.SetSettings (option, true);
+						}
+					});*/
+                }
+                else
+                if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp || opt.buttonType == hqWidgets.gButtonType.gTypeGong) {
+                    var attr = 'hm_idV';
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeGong)
+                        attr = 'hm_idL';
+                    var text = '<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td>';
+                    text += '<td><input type="text" id="inspect_'+attr+'" size="44" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'" style="width:90%">';
+                    text += '<input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:8%"></td></tr>';
+                    parent.append(text);
+                    document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
+                    document.getElementById ("inspect_"+attr).jControl = attr;
+                    document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > i + 1) ? devFilters[i+1] : devFilters[devFilters.length -1];
+                    // Select Homematic ID Dialog
+                    $("#inspect_"+attr+"_btn").click ( function () {
+                        hmSelect.value = $("#inspect_"+this.jControl).val();
+                        hmSelect.show (homematic.ccu, this.jControl, function (obj, value, valueObj) {
+                            $("#inspect_"+obj).val(value).trigger("change");
+                        }, null, this.devFilter);
+                    });
+                    $("#inspect_"+attr).change(function (el) {
+                        var btn = hqWidgets.Get (dui.activeWidget);
+                        if (btn) {
+                            var option = {};
+                            option[this.jControl] = $(this).val();
+                            btn.SetSettings (option, true);
+                        }
+                    });
+                    $("#inspect_"+attr).keyup (function () {
+                        if (hqWidgets.e_internal.timer) 
+                            clearTimeout (hqWidgets.e_internal.timer);
+                                
+                        hqWidgets.e_internal.timer = setTimeout (function(elem) {
+                            elem.trigger("change");
+                        }, hqWidgets.e_settings.timeout, $(this));
+                    });                        
+                }
+            },      
         }
     });
 
     dui.binds.hqWidgetsExt.hqInit ();
 }
-</script>
-
-<script type="text/ejs" id="tplHqButton" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="On/Off" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqButton", this.view); 
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplHqDimmer" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Dimmer" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Dim1TPBU-FM,HM-LC-Dim1PWM-CV,HM-LC-Dim1T-FM,HM-LC-Dim1T-CV,HM-LC-Dim1T-PI,HM-LC-Dim1L-CV,HM-LC-Dim1L-Pl,HM-LC-Dim2L-SM,HMW-LC-Dim1L-DR">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqDimmer", this.view); 
-            }
-        }
-    %></script>
-<script type="text/ejs" id="tplHqShutter" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Window and Shutter" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Bl1-SM,HMW-LC-Bl1-DR,HM-LC-Bl1-FM;HM-Sec-SC,CC-SC-Rd-WM-W-R5,FHT80TF-2;HM-Sec-RHS">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqShutter", this.view); 
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplHqInTemp" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Inside temperature" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-CC-TC;HM-CC-VD">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqInTemp", this.view); 
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplHqOutTemp" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Outside temperature" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-WDC7000,HM-WDS10-TH-O,HM-WDS40-TH-I,HM-WDS100-C6-O,HM-WDS30-T-O">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqOutTemp", this.view); 
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplHqDoor" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Door" data-dashui-attrs="hm_id;hqoptions" data-hqwidgets-filter="HM-Sec-SC,HM-SCI-3-FM,HMW-Sen-SC-12-DR,HMW-IO-12-Sw14-DR">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqDoor", this.view); 
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplHqLock" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Lock" data-dashui-attrs="hm_id;hqoptions" data-hqwidgets-filter="HM-Sec-Key-S">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqLock", this.view); 
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplHqText" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Text" data-dashui-attrs="hqoptions">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqText", this.view); 
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplHqInfo" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Info" data-dashui-attrs="hm_id;hqoptions">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqInfo", this.view); 
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplHqImage" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Image" data-dashui-attrs="hqoptions">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqImage", this.view); 
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplHqCam" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="IpCamera" data-dashui-attrs="hm_id;hqoptions" data-hqwidgets-filter=".STATE,.OPEN,HM-Sec-Key-S,HM-LC-Sw4-WM,HM-LC-Sw1-Pl,HM-LC-SW1-FM,HM-LC-Sw2-FM,HM-LC-Sw1-SM,HM-LC-Sw4-SM,HM-LC-Sw1-BA-PCB">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqCam", this.view); 
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplHqGong" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Gong" data-dashui-attrs="hm_id;hqoptions" data-hqwidgets-filter="HM-OU-CFM-Pl,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-Sec-SC,HM-SCI-3-FM,HMW-Sen-SC-12-DR,HMW-IO-12-Sw14-DR;.STATE,.OPEN,HM-Sec-Key-S,HM-LC-Sw4-WM,HM-LC-Sw1-Pl,HM-LC-SW1-FM,HM-LC-Sw2-FM,HM-LC-Sw1-SM,HM-LC-Sw4-SM,HM-LC-Sw1-BA-PCB">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGong", this.view); 
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplHqGauge" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Gauge" data-dashui-attrs="hm_id;hqoptions">
-    <% 
-        if (this && this.data && this.data.attr) {
-            if (this.data.attr('hqoptions')){
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
-            }
-            else {
-                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGauge", this.view); 
-            }
-        }
-    %>
-</script>

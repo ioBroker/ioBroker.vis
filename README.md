@@ -16,6 +16,12 @@
 
 ## Changelog
 ### 0.8.x
+* (Bluefox) Kein neue Funktionalitaet, nur Umstrukturierung.
+            config.js unbedingt updaten!
+            Jedes Widget hat eigenes "js", "css" und "img" Verzeichnis 
+            Edit und Engine geteilt.
+            Um zu editieren, muss man edit.html (und nicht ?edit) aufrufen. Obwohl "?edit" wird umgeleitet.
+
 * (Bluefox) Gauge widget 
             config.js - Bitte eigene IP Adresse einstellen
             Styles fur Button
