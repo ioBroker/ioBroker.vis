@@ -1,0 +1,99 @@
+<link rel="stylesheet" href="widgets/timeAndWeather/css/flipclock.css">
+<link rel="stylesheet" href="widgets/timeAndWeather/css/jquery.jdigiclock.css">
+<link rel="stylesheet" href="widgets/timeAndWeather/css/yahoo.css">
+<link rel="stylesheet" href="widgets/timeAndWeather/css/simpleclock.css">
+<script src="widgets/timeAndWeather/js/flipclock/libs/prefixfree.min.js"></script>
+<script src="widgets/timeAndWeather/js/flipclock/flipclock.min.js"></script>
+<script src="widgets/timeAndWeather/js/jquery.jdigiclock.js"></script>
+<script src="widgets/timeAndWeather/js/jquery.zweatherfeed.js"></script>
+<!--script src="widgets/timeAndWeather/js/coolclock.js"></script>
+<script src="widgets/timeAndWeather/js/moreskins.js"></script-->
+
+<script language="javascript">
+    function startTime(elem)
+    {
+        var today=new Date();
+        var h=today.getHours();
+        var m=today.getMinutes();
+        var s=today.getSeconds();
+        // add a zero in front of numbers<10
+        m=(m<10) ? ("0"+m): m;
+        s=(s<10) ? ("0"+s): s;
+        var hl = document.getElementById(elem);
+        if (hl) {
+            hl.innerHTML=h+":"+m+":"+s;
+            setTimeout(function(hl_){startTime(hl_)}, 1000, elem);
+        }
+    }
+</script>
+
+<script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="">
+    <%
+        var text = '<div class="dashui-widget clock" id="'+this.data.attr('wid')+'" ></div>';
+        jQuery('#duiview_'+dui.activeView).append(text);
+        startTime (this.data.attr('wid'));
+    %>
+</script>
+<!--script type="text/ejs" id="tplTwCoolClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="CoolClock" data-dashui-attrs="" >
+    <%
+    var text = '<canvas style="position: absolute; width:85px; height: 85px" id="'+this.data.attr('wid')+'" class="CoolClock:Skin:Radius:noSeconds:GMTOffset" data-dashui-resizable=';
+        text += "'" + '{"disabled":true}' + "'></canvas>";
+    jQuery('#duiview_'+dui.activeView).append(text);
+    CoolClock.findAndCreateClocks();
+    %>
+</script-->
+
+<script type="text/ejs" id="tplTwFlipClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="FlipClock" data-dashui-attrs="">
+    
+    <% 
+        var text = '<div class="dashui-widget" style="width:500px; height: 110px" id="'+this.data.attr('wid')+'" data-dashui-resizable=';
+        text += "'" + '{"disabled":true}' + "'></div>";
+        jQuery('#duiview_'+dui.activeView).append(text);
+        var clock = jQuery('#'+this.data.attr('wid')).FlipClock({clockFace: 'TwentyFourHourClock'});
+    %>
+</script>
+
+<script type="text/ejs" id="tplTwHtcWeather" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="HtcWeather" data-dashui-attrs="weoid">
+    <% 
+        var text = '<div class="dashui-widget" style="width:500px; height: 420px" id="'+this.data.attr('wid')+'" data-dashui-resizable=';
+        text += "'" + '{"disabled":true}' + "'></div>";
+        jQuery('#duiview_'+dui.activeView).append(text);
+        var weoid = this.data.attr('weoid');
+        if (weoid !== undefined && weoid !== null) {
+            var i = weoid.indexOf('[');
+            if (i != -1) {
+                weoid = weoid.substring(i+1);
+                i = weoid.indexOf(']');
+                weoid = weoid.substring(0, i);
+            }
+        }
+        else
+            weoid = '664942';
+
+        var clock = jQuery('#'+this.data.attr('wid')).jdigiclock({
+            weatherLocationCode: weoid, 
+            weatherUpdate: 5, 
+            lang: 'de', 
+            clockImagesPath: 'widgets/timeAndWeather/img/clock/',
+            });
+    %>
+</script>
+<script type="text/ejs" id="tplTwYahooWeather" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="YahooWeather" data-dashui-attrs="weoid">
+    <% 
+        var text = '<div class="dashui-widget ui-widget-content" id="'+this.data.attr('wid')+'"></div>';
+        jQuery('#duiview_'+dui.activeView).append(text);
+        var weoid = this.data.attr('weoid');
+        if (weoid !== undefined && weoid !== null) {
+            var i = weoid.indexOf('[');
+            if (i != -1) {
+                weoid = weoid.substring(i+1);
+                i = weoid.indexOf(']');
+                weoid = weoid.substring(0, i);
+            }
+        }
+        else
+            weoid = '664942';
+        jQuery('#'+this.data.attr('wid')).weatherfeed([weoid], {lang:'de', woeid: true, humidity: true, forecast: true, link: false, resizable: (dui.urlParams['edit'] === "")});
+%>
+</script>
+

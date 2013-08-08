@@ -392,7 +392,7 @@ html,body {
 }
 .hq-blind-big-blind {
 /*	z-index:26; */
-	background-image:url('../img/blind.png');
+	background-image:url(../img/blind.png);
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;

@@ -584,46 +584,6 @@ var dui = {
         storage.extend(dui.storageKeyViews, dui.views);
         storage.extend(dui.storageKeySettings, dui.settings);
     },
-    translate: function (text) {
-        if (!this.words) {
-            this.words = {
-                "hm_id"     : {"en": "Homematic ID"},
-                "hm_id0"    : {"en": "Swing ID 1",    "de": "Fensterblatt 1",     "ru" : "Створка 1"},
-                "hm_id1"    : {"en": "Swing ID 2",    "de": "Fensterblatt 2",     "ru" : "Створка 2"},
-                "hm_id2"    : {"en": "Swing ID 3",    "de": "Fensterblatt 3",     "ru" : "Створка 3"},
-                "hm_id3"    : {"en": "Swing ID 4",    "de": "Fensterblatt 4",     "ru" : "Створка 4"},
-                "hm_id_hnd0": {"en": "Handle ID 1",   "de": "Griffkontakt 1",     "ru" : "Ручка 1"},
-                "hm_id_hnd1": {"en": "Handle ID 2",   "de": "Griffkontakt 2",     "ru" : "Ручка 2"},
-                "hm_id_hnd2": {"en": "Handle ID 3",   "de": "Griffkontakt 3",     "ru" : "Ручка 3"},
-                "hm_id_hnd3": {"en": "Handle ID 4",   "de": "Griffkontakt 4",     "ru" : "Ручка 4"},
-                "hm_idV"    : {"en": "Valve",         "de": "Ventilsteuerung",    "ru" : "Батарея"},
-                "hm_idL"    : {"en": "Lock ID",       "de": "Schloss ID",         "ru" : "KeyMatic"},
-                "hm_wid"    : {"en": "Working ID"},
-                "comment"   : {"en" : "Comments",    "de": "Kommentare",     "ru" : "Комментарий"},	
-                "Select HM parameter" : {"en" : "Select HM parameter", "de": "HM parameter ausw&auml;hlen",   "ru" : "Выбрать HM адрес"},	
-                "Select"    : {"en" : "Select",      "de": "Auswahlen",      "ru" : "Выбрать"},	
-                "Cancel"    : {"en" : "Cancel",      "de": "Abbrechen",      "ru" : "Отмена"},	
-                "Name"      : {"en" : "Name",        "de": "Name",           "ru" : "Имя"},	
-                "Location"  : {"en" : "Location",    "de": "Raum",           "ru" : "Положение"},	
-                "Interface" : {"en" : "Interface",   "de": "Schnittstelle",  "ru" : "Интерфейс"},	
-                "Type"      : {"en" : "Type",        "de": "Typ",            "ru" : "Тип"},	
-                "Address"   : {"en" : "Address",     "de": "Adresse",        "ru" : "Адрес"},	
-                "Function"  : {"en" : "Function",    "de": "Gewerk",         "ru" : "Назначение"},	
-                "ramp_time:": {"en" : "Ramp time(s)","de": "Dauer - Aus (sek)","ru" : "Выключение (сек)"},
-                "on_time:"  : {"en" : "On time(s)",  "de": "Dauer - An (sek)","ru" : "Включение (сек)"},
-                "newVersion": {"en" : "Handler ab V1.6",  "de": "Griff ab V1.6","ru" : "Ручка версии от V1.6"},
-            };
-        }
-        if (this.words[text]) {
-            if (this.words[text][this.currentLang])
-                return this.words[text][this.currentLang];
-            else 
-            if (this.words[text]["en"])
-                return this.words[text]["en"];
-        }
-
-        return text;
-    }
 };
 
 // Parse Querystring

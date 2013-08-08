@@ -15,7 +15,7 @@
 	left:0;
 	width:83px;
 	height:83px;
-	background:url('../img/knob.png') no-repeat;
+	background:url(../img/knob.png) no-repeat;
 	z-index:10;
 	cursor:default !important;
 }

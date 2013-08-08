@@ -16,6 +16,12 @@
 
 ## Changelog
 ### 0.8.x
+* (Bluefox) Yahoo Weather widget.
+            Htc Weather widget.
+            Simple Clock
+            Flip Clock
+
+
 * (Bluefox) Kein neue Funktionalitaet, nur Umstrukturierung.
             config.js unbedingt updaten!
             Jedes Widget hat eigenes "js", "css" und "img" Verzeichnis 
