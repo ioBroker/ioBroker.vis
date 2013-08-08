@@ -43,8 +43,6 @@
 			linktarget: '_blank',
 			woeid:      false,
 			lang:       'en',
-			width:      280,
-			height:     0,
 			update:     60 // minutes
 		};  		
 		var options = $.extend(defaults, options); 
@@ -244,8 +242,9 @@
 			var _process = function(e, options) {
 				var $e = $(e);
 
-				$e.empty();	
-				$e.css ({width: options.width});
+				$e.empty();
+                if (options.width)
+				    $e.css ({width: options.width});
 				if (options.height)
 					$e.css ({height: options.height});
 				var feed = $e[0].feed;
