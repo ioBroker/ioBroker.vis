@@ -1,5 +1,5 @@
 var duiConfig = {
-    widgetSets:         ["basic","colorpicker","fancyswitch", {name: "hqWidgets", edit: "hqWidgetsEdit"},"timeAndWeather",knob","jqplot","jqui","jqui-mfd","dev"],
+    widgetSets:         ["basic","colorpicker","fancyswitch", {name: "hqWidgets", edit: "hqWidgetsEdit"},"timeAndWeather","knob","jqplot","jqui","jqui-mfd","dev"],
     currentLang:        "de",
     useCache:           true,
     fileViews:          /usr/local/addons/dashui.views,
