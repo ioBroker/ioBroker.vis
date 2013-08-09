@@ -57,7 +57,7 @@ if ((typeof hqWidgets !== 'undefined')) {
             },
             hqEditStore: null, // overload this function by edit
             hqButtonExt: function (el, options, wtype, view) {
-                var opt = (options != undefined && options != null) ? $.parseJSON(options) : hqEditDefault (wtype);
+                var opt = (options != undefined && options != null) ? $.parseJSON(options) : dui.binds.hqWidgetsExt.hqEditDefault (wtype);
                 var hm_ids = new Array ();
                 // Define store settings function
                 var adv = {store: dui.binds.hqWidgetsExt.hqEditStore};
