@@ -10,7 +10,8 @@
  * http://www.gnu.org/licenses/gpl.html
  *
  */
-
+/* Changes for DahsUI *_container => *_cAntainer, because container is occuped */
+var jdigiclockCounter = 0;
 
 (function($) {
     $.fn.extend({
@@ -24,8 +25,8 @@
                 weatherLocationCode: 'EUR|BG|BU002|BOURGAS',
                 weatherMetric: 'C',
                 weatherUpdate: 0,
-                proxyType: 'yahoo'
-                
+                proxyType: 'yahoo',
+                curID: 0
             };
 
             var regional = [];
@@ -40,6 +41,7 @@
 
 
             var options = $.extend(defaults, options);
+            options.curID = jdigiclockCounter++;
             var i = options.weatherLocationCode.indexOf('[');
             if (i != -1) {
                 options.weatherLocationCode = options.weatherLocationCode.substring(i+1);
@@ -51,6 +53,7 @@
                 
                 var $this = $(this);
                 var o = options;
+                $this.o = o;
                 $this.clockImagesPath = o.clockImagesPath;
                 $this.weatherImagesPath = o.weatherImagesPath;
                 $this.lang = regional[o.lang] == undefined ? regional['en'] : regional[o.lang];
@@ -64,14 +67,14 @@
                 $this.timeUpdate = '';
 
 
-                var html = '<div id="plugin_container">';
-                html    += '<p id="left_arrow"><img src="'+o.clockImagesPath+'../icon_left.png" /></p>';
-                html    += '<p id="right_arrow"><img src="'+o.clockImagesPath+'../icon_right.png" /></p>';
-                html    += '<div id="digital_container">';
-                html    += '<div id="clock"></div>';
-                html    += '<div id="weather"></div>';
+                var html = '<div id="plugin_cAntainer'+o.curID+'" class="plugin_container">';
+                html    += '<p id="left_arrow'+o.curID+'" class="left_arrow"><img src="'+o.clockImagesPath+'../icon_left.png" /></p>';
+                html    += '<p id="right_arrow'+o.curID+'" class="right_arrow"><img src="'+o.clockImagesPath+'../icon_right.png" /></p>';
+                html    += '<div id="digital_cAntainer'+o.curID+'" class="digital_container">';
+                html    += '<div id="clock'+o.curID+'" class="clock"></div>';
+                html    += '<div id="weather'+o.curID+'" class="weather"></div>';
                 html    += '</div>';
-                html    += '<div id="forecast_container"></div>';
+                html    += '<div id="forecast_cAntainer'+o.curID+'" class="forecast_container"></div>';
                 html    += '</div>';
 
                 $this.html(html);
@@ -80,31 +83,34 @@
 
                 $this.displayWeather($this);               
 
-                var panel_pos = ($('#plugin_container > div').length - 1) * 500;
+                var panel_pos = ($('#plugin_cAntainer'+o.curID+' > div').length - 1) * 500;
                 var next = function() {
                     //$('#right_arrow').unbind('click', next);
-                    $('#plugin_container > div').filter(function(i) {
+                    $('#plugin_cAntainer'+this.o.curID+' > div').filter(function(i) {
                         $(this).animate({'left': (i * 500) - 500 + 'px'}, 400, function() {
                             if (i == 0) {
-                                $(this).appendTo('#plugin_container').css({'left':panel_pos + 'px'});
+                                $(this).appendTo('#plugin_cAntainer'+this.o.curID).css({'left':panel_pos + 'px'});
                             }
                             //$('#right_arrow').bind('click', next);
                         });                        
                     });
                 };
-                $('#right_arrow').bind('click', next);
+                $('#right_arrow'+o.curID).bind('click', next);
 
                 var prev = function() {
                     //$('#left_arrow').unbind('click', prev);
-                    $('#plugin_container > div:last').prependTo('#plugin_container').css({'left':'-500px'});
-                    $('#plugin_container > div').filter(function(i) {
+                    $('#plugin_cAntainer'+this.o.curID+' > div:last').prependTo('#plugin_cAntainer'+this.o.curID).css({'left':'-500px'});
+                    $('#plugin_cAntainer'+this.o.curID+' > div').filter(function(i) {
                         $(this).animate({'left': i * 500 + 'px'}, 400, function() {
                             //$('#left_arrow').bind('click', prev);
                         });
                     });
                 };
-                $('#left_arrow').bind('click', prev);
-
+                document.getElementById ('left_arrow'+o.curID).o = o;
+                document.getElementById ('right_arrow'+o.curID).o = o;
+                document.getElementById ('digital_cAntainer'+o.curID).o = o;
+                document.getElementById ('forecast_cAntainer'+o.curID).o = o;
+                $('#left_arrow'+o.curID).bind('click', prev);
             });
         }
     });  
@@ -159,21 +165,21 @@
         var firstMinuteDigit = old_minutes.substr(0,1);
         var secondMinuteDigit = old_minutes.substr(1,1);
         
-        timeOld += '<div id="hours"><div class="line"></div>';
-        timeOld += '<div id="hours_bg"><img src="' + el.clockImagesPath + 'clockbg1.png" /></div>';
-        timeOld += '<img src="' + el.clockImagesPath + firstHourDigit + '.png" id="fhd" class="first_digit" />';
-        timeOld += '<img src="' + el.clockImagesPath + secondHourDigit + '.png" id="shd" class="second_digit" />';
+        timeOld += '<div id="hours'+el.o.curID+'" class="hours"><div class="line"></div>';
+        timeOld += '<div id="hours_bg'+el.o.curID+'" class="hours_bg"><img src="' + el.clockImagesPath + 'clockbg1.png" /></div>';
+        timeOld += '<img src="' + el.clockImagesPath + firstHourDigit + '.png" id="fhd'+el.o.curID+'" class="first_digit" />';
+        timeOld += '<img src="' + el.clockImagesPath + secondHourDigit + '.png" id="shd'+el.o.curID+'" class="second_digit" />';
         timeOld += '</div>';
-        timeOld += '<div id="minutes"><div class="line"></div>';
+        timeOld += '<div id="minutes'+el.o.curID+'" class="minutes"><div class="line"></div>';
         if (el.am_pm) {
-            timeOld += '<div id="am_pm"><img src="' + el.clockImagesPath + am_pm + '.png" /></div>';
+            timeOld += '<div id="am_pm'+el.o.curID+'" class="am_pm"><img src="' + el.clockImagesPath + am_pm + '.png" /></div>';
         }
-        timeOld += '<div id="minutes_bg"><img src="' + el.clockImagesPath + 'clockbg1.png" /></div>';
-        timeOld += '<img src="' + el.clockImagesPath + firstMinuteDigit + '.png" id="fmd" class="first_digit" />';
-        timeOld += '<img src="' + el.clockImagesPath + secondMinuteDigit + '.png" id="smd" class="second_digit" />';
+        timeOld += '<div id="minutes_bg'+el.o.curID+'" class="minutes_bg"><img src="' + el.clockImagesPath + 'clockbg1.png" /></div>';
+        timeOld += '<img src="' + el.clockImagesPath + firstMinuteDigit + '.png" id="fmd'+el.o.curID+'" class="first_digit" />';
+        timeOld += '<img src="' + el.clockImagesPath + secondMinuteDigit + '.png" id="smd'+el.o.curID+'" class="second_digit" />';
         timeOld += '</div>';
 
-        el.find('#clock').html(timeOld);
+        el.find('#clock'+el.o.curID).html(timeOld);
 
         // set minutes
         if (secondMinuteDigit != '9') {
@@ -184,39 +190,39 @@
             firstMinuteDigit = '511';
         }
 
-        setTimeout(function() {
-            $('#fmd').attr('src', el.clockImagesPath + firstMinuteDigit + '-1.png');
-            $('#minutes_bg img').attr('src', el.clockImagesPath + 'clockbg2.png');
-        },200);
-        setTimeout(function() { $('#minutes_bg img').attr('src', el.clockImagesPath + 'clockbg3.png')},250);
-        setTimeout(function() {
-            $('#fmd').attr('src', el.clockImagesPath + firstMinuteDigit + '-2.png');
-            $('#minutes_bg img').attr('src', el.clockImagesPath + 'clockbg4.png');
-        },400);
-        setTimeout(function() { $('#minutes_bg img').attr('src', el.clockImagesPath + 'clockbg5.png')},450);
-        setTimeout(function() {
-            $('#fmd').attr('src', el.clockImagesPath + firstMinuteDigit + '-3.png');
-            $('#minutes_bg img').attr('src', el.clockImagesPath + 'clockbg6.png');
-        },600);
+        setTimeout(function(el) {
+            $('#fmd'+el.o.curID).attr('src', el.clockImagesPath + firstMinuteDigit + '-1.png');
+            $('#minutes_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg2.png');
+        },200, el);
+        setTimeout(function(el) { $('#minutes_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg3.png')},250,el);
+        setTimeout(function(el) {
+            $('#fmd'+el.o.curID).attr('src', el.clockImagesPath + firstMinuteDigit + '-2.png');
+            $('#minutes_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg4.png');
+        },400, el);
+        setTimeout(function(el) { $('#minutes_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg5.png')},450, el);
+        setTimeout(function(el) {
+            $('#fmd'+el.o.curID).attr('src', el.clockImagesPath + firstMinuteDigit + '-3.png');
+            $('#minutes_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg6.png');
+        },600, el);
 
-        setTimeout(function() {
-            $('#smd').attr('src', el.clockImagesPath + secondMinuteDigit + '-1.png');
-            $('#minutes_bg img').attr('src', el.clockImagesPath + 'clockbg2.png');
-        },200);
-        setTimeout(function() { $('#minutes_bg img').attr('src', el.clockImagesPath + 'clockbg3.png')},250);
-        setTimeout(function() {
-            $('#smd').attr('src', el.clockImagesPath + secondMinuteDigit + '-2.png');
-            $('#minutes_bg img').attr('src', el.clockImagesPath + 'clockbg4.png');
-        },400);
-        setTimeout(function() { $('#minutes_bg img').attr('src', el.clockImagesPath + 'clockbg5.png')},450);
-        setTimeout(function() {
-            $('#smd').attr('src', el.clockImagesPath + secondMinuteDigit + '-3.png');
-            $('#minutes_bg img').attr('src', el.clockImagesPath + 'clockbg6.png');
-        },600);
+        setTimeout(function(el) {
+            $('#smd'+el.o.curID).attr('src', el.clockImagesPath + secondMinuteDigit + '-1.png');
+            $('#minutes_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg2.png');
+        },200, el);
+        setTimeout(function(el) { $('#minutes_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg3.png')},250, el);
+        setTimeout(function(el) {
+            $('#smd'+el.o.curID).attr('src', el.clockImagesPath + secondMinuteDigit + '-2.png');
+            $('#minutes_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg4.png');
+        },400, el);
+        setTimeout(function(el) { $('#minutes_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg5.png')},450, el);
+        setTimeout(function(el) {
+            $('#smd'+el.o.curID).attr('src', el.clockImagesPath + secondMinuteDigit + '-3.png');
+            $('#minutes_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg6.png');
+        },600, el);
 
-        setTimeout(function() {$('#fmd').attr('src', el.clockImagesPath + now_minutes.substr(0,1) + '.png')},800);
-        setTimeout(function() {$('#smd').attr('src', el.clockImagesPath + now_minutes.substr(1,1) + '.png')},800);
-        setTimeout(function() { $('#minutes_bg img').attr('src', el.clockImagesPath + 'clockbg1.png')},850);
+        setTimeout(function(el) {$('#fmd'+el.o.curID).attr('src', el.clockImagesPath + now_minutes.substr(0,1) + '.png')},800, el);
+        setTimeout(function(el) {$('#smd'+el.o.curID).attr('src', el.clockImagesPath + now_minutes.substr(1,1) + '.png')},800, el);
+        setTimeout(function(el) { $('#minutes_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg1.png')},850, el);
 
         // set hours
         if (now_minutes == '00') {
@@ -246,69 +252,69 @@
                 }
             }
 
-            setTimeout(function() {
-                $('#fhd').attr('src', el.clockImagesPath + firstHourDigit + '-1.png');
-                $('#hours_bg img').attr('src', el.clockImagesPath + 'clockbg2.png');
-            },200);
-            setTimeout(function() { $('#hours_bg img').attr('src', el.clockImagesPath + 'clockbg3.png')},250);
-            setTimeout(function() {
-                $('#fhd').attr('src', el.clockImagesPath + firstHourDigit + '-2.png');
-                $('#hours_bg img').attr('src', el.clockImagesPath + 'clockbg4.png');
-            },400);
-            setTimeout(function() { $('#hours_bg img').attr('src', el.clockImagesPath + 'clockbg5.png')},450);
-            setTimeout(function() {
-                $('#fhd').attr('src', el.clockImagesPath + firstHourDigit + '-3.png');
-                $('#hours_bg img').attr('src', el.clockImagesPath + 'clockbg6.png');
-            },600);
+            setTimeout(function(el) {
+                $('#fhd'+el.o.curID).attr('src', el.clockImagesPath + firstHourDigit + '-1.png');
+                $('#hours_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg2.png');
+            },200, el);
+            setTimeout(function(el) { $('#hours_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg3.png')},250, el);
+            setTimeout(function(el) {
+                $('#fhd'+el.o.curID).attr('src', el.clockImagesPath + firstHourDigit + '-2.png');
+                $('#hours_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg4.png');
+            },400, el);
+            setTimeout(function(el) { $('#hours_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg5.png')},450, el);
+            setTimeout(function(el) {
+                $('#fhd'+el.o.curID).attr('src', el.clockImagesPath + firstHourDigit + '-3.png');
+                $('#hours_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg6.png');
+            },600, el);
 
             setTimeout(function() {
-            $('#shd').attr('src', el.clockImagesPath + secondHourDigit + '-1.png');
-            $('#hours_bg img').attr('src', el.clockImagesPath + 'clockbg2.png');
-            },200);
-            setTimeout(function() { $('#hours_bg img').attr('src', el.clockImagesPath + 'clockbg3.png')},250);
-            setTimeout(function() {
-                $('#shd').attr('src', el.clockImagesPath + secondHourDigit + '-2.png');
-                $('#hours_bg img').attr('src', el.clockImagesPath + 'clockbg4.png');
-            },400);
-            setTimeout(function() { $('#hours_bg img').attr('src', el.clockImagesPath + 'clockbg5.png')},450);
-            setTimeout(function() {
-                $('#shd').attr('src', el.clockImagesPath + secondHourDigit + '-3.png');
-                $('#hours_bg img').attr('src', el.clockImagesPath + 'clockbg6.png');
-            },600);
+            $('#shd'+el.o.curID).attr('src', el.clockImagesPath + secondHourDigit + '-1.png');
+            $('#hours_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg2.png');
+            },200, el);
+            setTimeout(function(el) { $('#hours_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg3.png')},250);
+            setTimeout(function(el) {
+                $('#shd'+el.o.curID).attr('src', el.clockImagesPath + secondHourDigit + '-2.png');
+                $('#hours_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg4.png');
+            },400, el);
+            setTimeout(function(el) { $('#hours_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg5.png')},450);
+            setTimeout(function(el) {
+                $('#shd'+el.o.curID).attr('src', el.clockImagesPath + secondHourDigit + '-3.png');
+                $('#hours_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg6.png');
+            },600, el);
 
-            setTimeout(function() {$('#fhd').attr('src', el.clockImagesPath + now_hours.substr(0,1) + '.png')},800);
-            setTimeout(function() {$('#shd').attr('src', el.clockImagesPath + now_hours.substr(1,1) + '.png')},800);
-            setTimeout(function() { $('#hours_bg img').attr('src', el.clockImagesPath + 'clockbg1.png')},850);
+            setTimeout(function(el) {$('#fhd'+el.o.curID).attr('src', el.clockImagesPath + now_hours.substr(0,1) + '.png')},800, el);
+            setTimeout(function(el) {$('#shd'+el.o.curID).attr('src', el.clockImagesPath + now_hours.substr(1,1) + '.png')},800, el);
+            setTimeout(function(el) { $('#hours_bg'+el.o.curID+' img').attr('src', el.clockImagesPath + 'clockbg1.png')},850, el);
         }
     }
 
 	$.fn.processAnswer = function(el, data) {
         var metric = el.weatherMetric == 1 ? 'C' : 'F';
 		
-		el.find('#weather .loading, #forecast_container .loading').hide();
+		el.find('#weather'+el.o.curID+' .loading, #forecast_cAntainer'+el.o.curID+' .loading').hide();
 
 		var curr_temp = '<p class="temp">' + data.curr_temp + '&deg;<span class="metric">' + metric + '</span></p>';
 
 		if (data.curr_icon.indexOf("http://") == -1)
-			el.find('#weather').css('background','url(' + el.weatherImagesPath + data.curr_icon + '.png) 50% 100% no-repeat');
+			el.find('#weather'+el.o.curID).css('background','url(' + el.weatherImagesPath + data.curr_icon + '.png) 50% 100% no-repeat');
 		else
-			el.find('#weather').css('background','url('+ data.curr_icon + ') 50% 100% no-repeat');
-		var weather = '<div id="local"><p class="city">' + data.city + '</p><p>' + data.curr_text + '</p></div>';
-		weather += '<div id="temp"><p id="date">' + el.currDate + '</p>' + curr_temp + '</div>';
-		el.find('#weather').html(weather);
+			el.find('#weather'+el.o.curID).css('background','url('+ data.curr_icon + ') 50% 100% no-repeat');
+		var weather = '<div id="local'+el.o.curID+'" class="local"><p class="city">' + data.city + '</p><p>' + data.curr_text + '</p></div>';
+		weather += '<div id="temp'+el.o.curID+'" class="temp"><p id="date'+el.o.curID+'" class="date">' + el.currDate + '</p>' + curr_temp + '</div>';
+		el.find('#weather'+el.o.curID+'').html(weather);
 
 		// forecast
-		el.find('#forecast_container').append('<div id="current"></div>');
+		el.find('#forecast_cAntainer'+el.o.curID+'').append('<div id="current'+el.o.curID+'" class="current"></div>');
 		var curr_for = curr_temp + '<p class="high_low">' + data.forecast[0].day_htemp + '&deg;&nbsp;/&nbsp;' + data.forecast[0].day_ltemp + '&deg;</p>';
 		curr_for    += '<p class="city">' + data.city + '</p>';
 		curr_for    += '<p class="text">' + data.forecast[0].day_text + '</p>';
 		
 		if (data.forecast[0].day_icon.indexOf("http://") == -1)
-			el.find('#current').css('background','url(' + el.weatherImagesPath + data.forecast[0].day_icon + '.png) 50% 0 no-repeat').append(curr_for);
+			el.find('#current'+el.o.curID).css('background','url(' + el.weatherImagesPath + data.forecast[0].day_icon + '.png) 50% 0 no-repeat').append(curr_for);
 		else
-			el.find('#current').css('background','url('+data.forecast[0].day_icon + ') 100% 0 no-repeat').css('background-size', '100% auto').append(curr_for);
+			el.find('#current'+el.o.curID).css('background','url('+data.forecast[0].day_icon + ') 100% 0 no-repeat').css('background-size', '100% auto').append(curr_for);
 
-		el.find('#forecast_container').append('<ul id="forecast"></ul>');
+		el.find('#forecast_cAntainer'+el.o.curID).append('<ul id="forecast'+el.o.curID+'" class="forecast"></ul>');
 		data.forecast.shift();
 		for (var i in data.forecast) {
 			var d_date = new Date(data.forecast[i].day_date);
@@ -325,14 +331,14 @@
 			forecast    += '" alt="' + data.forecast[i].day_text + '" title="' + data.forecast[i].day_text + '" />';
 			forecast    += '<p>' + data.forecast[i].day_htemp + '&deg;&nbsp;/&nbsp;' + data.forecast[i].day_ltemp + '&deg;</p>';
 			forecast    += '</li>';
-			el.find('#forecast').append(forecast);
+			el.find('#forecast'+el.o.curID).append(forecast);
 		}
 
-		el.find('#forecast_container').append('<div id="update"><img src="'+el.clockImagesPath+'../refresh_01.png" alt="reload" title="reload" id="reload" />' + el.timeUpdate + '</div>');
+		el.find('#forecast_cAntainer'+el.o.curID).append('<div id="update'+el.o.curID+'" class="update"><img src="'+el.clockImagesPath+'../refresh_01.png" alt="reload" title="reload" id="reload'+el.o.curID+'" />' + el.timeUpdate + '</div>');
 
-		$('#reload').click(function() {
-			el.find('#weather').html('');
-			el.find('#forecast_container').html('');
+		$('#reload'+el.o.curID+'').click(function() {
+			el.find('#weather'+el.o.curID).html('');
+			el.find('#forecast_cAntainer'+el.o.curID).html('');
 			$.fn.getWeather(el);
 		});
 	}
@@ -347,8 +353,8 @@
 	};	
     $.fn.getWeather = function(el) {
 
-        el.find('#weather').html('<p class="loading">Update Weather ...</p>');
-        el.find('#forecast_container').html('<p class="loading">Update Weather ...</p>');
+        el.find('#weather'+el.o.curID).html('<p class="loading">Update Weather ...</p>');
+        el.find('#forecast_cAntainer'+el.o.curID).html('<p class="loading">Update Weather ...</p>');
         var proxy = '';
 
 			
