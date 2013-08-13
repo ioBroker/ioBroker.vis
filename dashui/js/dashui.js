@@ -37,7 +37,7 @@ var dui = {
     activeView:         "",
     defaultHmInterval:  7500,
     listval:            [],
-    widgetSets:         ["basic","colorpicker","fancyswitch","hqWidgets","knob","jqplot","jqui","jqui-mfd","dev"],
+    widgetSets:         ["basic","colorpicker","fancyswitch","hqWidgets","knob","jqplot","jqui","jqui-mfd","weather","dev"],
     words:              null,
     currentLang:        "de",
     initialized:        false,

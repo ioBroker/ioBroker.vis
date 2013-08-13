@@ -128,6 +128,13 @@
     </div>
 </script>
 
+<script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - view in widget" data-dashui-attrs="contains_view">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
+        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+        </div>
+    </div>
+</script>
+
 
 <script type="text/ejs" id="tplHtmlNav" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="navigation - HTML" data-dashui-attrs="html;nav_view;hide_effect;hide_duration;show_effect;show_duration">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %>>
@@ -152,6 +159,24 @@
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
                 <%== this.data.attr("html_prepend") %><%= homematic.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplValueFloatBar" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Bar Horizontal" data-dashui-attrs="hm_id;factor;color;border;shadow">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:240px;height:20px;border:1px solid #888" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="background-color:<%= this.data.color %>;border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;width:<%= homematic.uiState.attr('_' + this.data.hm_id + '.Value') * this.data.factor %>%;">
+            <div data-hm-id="<%= this.data.attr('hm_id') %>">
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplValueFloatBarVertical" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Bar Vertical" data-dashui-attrs="hm_id;factor;color;border;shadow">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:20px;height:240px;border:1px solid #888;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="background-color:<%= this.data.color %>;border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;height:<%=  homematic.uiState.attr('_' + this.data.hm_id + '.Value') * this.data.factor %>%;">
+            <div data-hm-id="<%= this.data.attr('hm_id') %>">
             </div>
         </div>
     </div>
@@ -343,9 +368,4 @@
 </script>
 
 
-<script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - view in widget" data-dashui-attrs="contains_view">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
-        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
-        </div>
-    </div>
-</script>
+
