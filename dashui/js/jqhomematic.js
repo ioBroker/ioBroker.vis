@@ -21,13 +21,6 @@
  */
 ;
 
-var homematic = {
-    uiState: {},                // can Observable fur UI
-    setState: {},               // can Observable zum setzen von Werten
-    ccu: {},                    // Logikschicht-Daten
-    dpWorking: {},
-    cancelUpdateList: []            // Datenpunkte die beim nachsten Refresh ausgespart werden sollen
-};
 
 (function ($) {
 

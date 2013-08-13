@@ -22,9 +22,19 @@
 
 //console.log("DashUI");
 // dui - the DashUI Engine
+
+
+var homematic = {
+    uiState: {},                // can Observable fur UI
+    setState: {},            // can Observable zum setzen von Werten
+    regaIndex: {},
+    regaObjects: {}
+
+}
+
 var dui = {
 
-    version:            '0.9dev1',
+    version:            '0.9dev2',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -42,7 +52,6 @@ var dui = {
     currentLang:        duiConfig.currentLang,
     initialized:        false,
     useCache:           true,
-
     binds: {},
     startInstance: function () {
         $("#dashui_instance").val(dui.instance);
@@ -645,6 +654,38 @@ var dui = {
         }
         else
         {
+            homematic.uiState = new can.Observe({"_65535":{"Value":0}});
+            homematic.setState = new can.Observe({"_65535":{"Value":0}});
+
+            console.log("socket.io")
+            var socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
+            socket.on('event', function(obj) {
+                console.log("event! "+JSON.stringify(obj))
+                homematic.uiState.attr("_"+obj[0]+".Value", ''+obj[1]);
+                homematic.uiState.attr("_"+obj[0]+".Timestamp", ''+obj[2]);
+                homematic.uiState.attr("_"+obj[0]+".Certain", ''+obj[3]);
+
+            });
+
+            socket.emit("getIndex", function (index) {
+                console.log("index loaded");
+                homematic.regaIndex = index;
+                socket.emit("getObjects", function (obj) {
+                    console.log("objects loaded")
+                    homematic.regaObjects = obj;
+                    socket.emit("getDatapoints", function (data) {
+                        console.log("datapoints loaded");
+                        for (var dp in data) {
+                            homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1]});
+
+
+                        }
+                        dui.init();
+                    });
+                });
+            });
+
+            /*
             $.homematic({
                 ccu:         duiConfig.ccu,
                 ccuIoUrl:    duiConfig.ccuIoUrl,
@@ -662,7 +703,7 @@ var dui = {
                 loading: function (txt) {
                     $("#loading").append(txt + "<br/>");
                 }
-            });
+            });*/
         }
         //console.log("autoRefresh: " + autoRefresh);
     });
