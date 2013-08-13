@@ -47,11 +47,7 @@ var version =               '0.10',
         'protocol':         'http',
         'debug':            true,
         'loadCcuData':      true,
-<<<<<<< HEAD
-        "ccuSocket":       true,
-=======
         "ccuSocket":        true,
->>>>>>> bluefox/master
         'cache':            true,
         'dataTypes': [
             "variables",
@@ -99,19 +95,7 @@ var version =               '0.10',
                     var id = funcs.escape(obj[0]);
                     if (homematic.uiState["_"+id]) {
                         homematic.uiState.attr("_"+id+".Value", ''+obj[1]);
-<<<<<<< HEAD
-                        var ts = new Date();
-                        var tsstr =   ts.getFullYear() + '-' +
-                            ("0" + (ts.getMonth() + 1).toString(10)).slice(-2) + '-' +
-                            ("0" + (ts.getDate() + 1).toString(10)).slice(-2) + ' ' +
-                            ("0" + (ts.getHours()).toString(10)).slice(-2) + ':' +
-                            ("0" + (ts.getMinutes()).toString(10)).slice(-2) + ':' +
-                            ("0" + (ts.getSeconds()).toString(10)).slice(-2)
-                        homematic.uiState.attr("_"+id+".Timestamp", tsstr);
-                        homematic.uiState.attr("_"+id+".certain", true);
-=======
                         homematic.uiState.attr("_"+id+".Timestamp", (new Date()).getTime());
->>>>>>> bluefox/master
                     }
                 });
             }
@@ -417,26 +401,6 @@ var version =               '0.10',
             }
             var script = funcs.buildRefreshScript(DPs);
             funcs.script(script, function(data) {
-<<<<<<< HEAD
-                data = $.parseJSON(data);
-                if (cancelNextRefresh) {
-                    cancelNextRefresh = false;
-                    $(".jqhmRefresh").hide();
-
-                    return false;
-                }
-                for (var dp in data) {
-                    //jqhm[dp].attr('Value', data[dp].Value);
-                    //jqhm[dp].attr('Timestamp', data[dp].Timestamp);
-                    var xdp = ''+dp;
-
-                    xdp = funcs.escape(xdp);
-                  //  homematic.uiState.attr(xdp, {Value: unescape(data[dp].Value), Timestamp: data[dp].Timestamp, certain: true});
-
-                    homematic.uiState.attr(xdp + ".Value", unescape(data[dp].Value));
-                    homematic.uiState.attr(xdp + ".Timestamp", data[dp].Timestamp);
-                    homematic.uiState.attr(xdp + ".certain", true);
-=======
                 try {
                     data = $.parseJSON(data);
                     if (cancelNextRefresh) {
@@ -461,7 +425,6 @@ var version =               '0.10',
                 }
                 catch (e) {
                     console.log (e.name + ". May be invalid Homematic ID??"+ data);
->>>>>>> bluefox/master
                 }
 
 
@@ -486,7 +449,7 @@ var version =               '0.10',
                     if (typeof io === "undefined" || homematic.uiState["_"+funcs.escape(id)].Timestamp == "") {
                         views.push(id);
                     } else {
-                        if (!id.match(/BidCos/) && !id.match(/CUxD/)) {
+                        if (!id.match(/BidCos/) && !id.match(/CUxD/)) {
                             views.push(id);
                         }
                     }

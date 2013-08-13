@@ -24,15 +24,11 @@
 // dui - the DashUI Engine
 var dui = {
 
-    version:            '0.8.5',
+    version:            '0.9dev1',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
-<<<<<<< HEAD
-    fileViews:          '/usr/local/addons/dashui.views',
-=======
     fileViews:          duiConfig.fileViews,
->>>>>>> bluefox/master
     instance:           null,
     urlParams:          {},
     settings:           {},
@@ -41,11 +37,7 @@ var dui = {
     activeView:         "",
     defaultHmInterval:  duiConfig.defaultHmInterval,
     listval:            [],
-<<<<<<< HEAD
-    widgetSets:         ["basic","colorpicker","fancyswitch","hqWidgets","knob","jqplot","jqui","jqui-mfd","weather","dev"],
-=======
     widgetSets:         duiConfig.widgetSets,
->>>>>>> bluefox/master
     words:              null,
     currentLang:        duiConfig.currentLang,
     initialized:        false,
@@ -133,11 +125,7 @@ var dui = {
         dui.startInstance();
     },
     loadWidgetSet: function (name) {
-<<<<<<< HEAD
         console.log("loadWidgetSet("+name+")");
-=======
-        console.log("loadWidgetSet("+name+")");        
->>>>>>> bluefox/master
         $.ajax({
             url: "widgets/"+name+".html",
             type: "get",
@@ -205,7 +193,7 @@ var dui = {
 
         var hash = window.location.hash.substring(1);
 
-        // View ausgewählt?
+        // View ausgewï¿½hlt?
         if (hash == "") {
             for (var view in dui.views) {
                 dui.activeView = view;
@@ -261,7 +249,7 @@ var dui = {
             for (i = 0; i < len; i++) {
                 k = keys[i];
 
-                if (k == dui.activeView) {
+                if (k == dui.activeView) {
                     $("#inspect_view").html(dui.activeView);
                     sel = " selected";
                 } else {
@@ -497,12 +485,6 @@ var dui = {
         //console.log("changeView("+view+")");
         dui.activeView = view;
 
-<<<<<<< HEAD
-        $.homematic("refreshVisible");
-
-
-=======
->>>>>>> bluefox/master
         if (dui.views[view].settings.interval) {
             //console.log("setInterval "+dui.views[view].settings.interval);
             $.homematic("setInterval", dui.views[view].settings.interval);
@@ -516,7 +498,6 @@ var dui = {
             history.pushState({}, "", "#" + view);
         }
 
-<<<<<<< HEAD
         // Navigation-Widgets
 
         $(".jqui-nav-state").each(function () {
@@ -533,8 +514,6 @@ var dui = {
 
 
 
-=======
->>>>>>> bluefox/master
         // Editor
         $("#inspect_view").html(view);
 
@@ -645,7 +624,7 @@ var dui = {
 
 (function($) {
     $(document).ready(function() {
-        // für iOS Safari - wirklich notwendig?
+        // fï¿½r iOS Safari - wirklich notwendig?
         $('body').on('touchmove', function (e) {
             if ($(e.target).closest("body").length == 0) {
                 e.preventDefault();
@@ -661,20 +640,6 @@ var dui = {
         }
         
         // jqHomematic Plugin Init
-<<<<<<< HEAD
-        $.homematic({
-            ccu: "172.16.23.3",
-            ccuIoUrl: "http://pi-blue:2100",
-            loadCcuData: false,
-            autoRefresh: autoRefresh,
-            ready: function () {
-                dui.init();
-            },
-            loading: function (txt) {
-                $("#loading").append(txt + "<br/>");
-            }
-        });
-=======
         if (duiConfig.ccu == null && duiConfig.ccuIoUrl == undefined) {
             window.alert("Setup the ip addresses in config.js");
         }
@@ -699,7 +664,6 @@ var dui = {
                 }
             });
         }
->>>>>>> bluefox/master
         //console.log("autoRefresh: " + autoRefresh);
     });
 
