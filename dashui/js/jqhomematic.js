@@ -47,7 +47,11 @@ var version =               '0.10',
         'protocol':         'http',
         'debug':            true,
         'loadCcuData':      true,
+<<<<<<< HEAD
         "ccuSocket":       true,
+=======
+        "ccuSocket":        true,
+>>>>>>> bluefox/master
         'cache':            true,
         'dataTypes': [
             "variables",
@@ -95,6 +99,7 @@ var version =               '0.10',
                     var id = funcs.escape(obj[0]);
                     if (homematic.uiState["_"+id]) {
                         homematic.uiState.attr("_"+id+".Value", ''+obj[1]);
+<<<<<<< HEAD
                         var ts = new Date();
                         var tsstr =   ts.getFullYear() + '-' +
                             ("0" + (ts.getMonth() + 1).toString(10)).slice(-2) + '-' +
@@ -104,6 +109,9 @@ var version =               '0.10',
                             ("0" + (ts.getSeconds()).toString(10)).slice(-2)
                         homematic.uiState.attr("_"+id+".Timestamp", tsstr);
                         homematic.uiState.attr("_"+id+".certain", true);
+=======
+                        homematic.uiState.attr("_"+id+".Timestamp", (new Date()).getTime());
+>>>>>>> bluefox/master
                     }
                 });
             }
@@ -186,13 +194,13 @@ var version =               '0.10',
                         settings.regaUp();
                         if (success) { success(); }
                     } else {
-                        settings.regaDown();
+                        settings.regaDown(data);
                         if (error) { error(data); }
                     }
                 },
                 error: function(a, b, c) {
-                    settings.regaDown();
-                    error(a,b,c);
+                    settings.regaDown("Cannot get checkrega.cgi");
+                    if (error) {error(a,b,c);}
                 }
             });
         },          // ReGaHss running? (= Port 8181 reachable)
@@ -248,8 +256,8 @@ var version =               '0.10',
                 homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                 if (how == "set" || how == "add") {
                     funcs.stateDelayed(attr, newVal.Value);
-                }
-            });
+                    }
+                });
 
             }, function () {
                 connected = false;
@@ -302,7 +310,10 @@ var version =               '0.10',
             });
             return true;
         },             // Run homematic scripts and insert results in Object ccu
-        getImageList: function (dirName, ready, readyPrm) {
+        getFileList: function (dirName, ready, readyPrm, filter) {
+            if (filter === undefined || filter == null || filter == "")
+                filter = "*";
+        
             var cache = storage.get(settings.storageKey);
             if (cache && cache !== null && cache["DIR_"+dirName]) {
                 if (ready) {
@@ -313,12 +324,22 @@ var version =               '0.10',
 
             if ($.active > 0) {
                 setTimeout(function() {
-                    funcs.getImageList(dirName, ready, readyPrm);
+                    funcs.getFileList(dirName, ready, readyPrm);
                 }, 100);
                 return false;
             }
                 
-            var url = settings.url + 'tclscript.cgi?content=html';
+            var url   = settings.url + 'tclscript.cgi?content=html';
+            var surl  = document.URL;
+            var _url  = url.split('/');
+            var _urls = surl.split('/');
+            if (_url[2] != _urls[2]) {
+                url = url.replace (_url[2], _urls[2]);
+                dirName = "/var/" + dirName;
+            }
+            
+            // If the http server is not on the CCU, so get the images from the server
+            
             if (settings.session) {
                 url += '&session=' + settings.session;
             }
@@ -326,7 +347,7 @@ var version =               '0.10',
                 url: url,
                 type: 'POST',
                 dataType: 'html',
-                data: "puts [glob "+dirName+"*]",
+                data: "puts [glob "+dirName+filter+"]",
                 
                 // Debug answer
                 complete: function (res, status) {
@@ -334,9 +355,14 @@ var version =               '0.10',
                 },
                 success: function (res) {
                     // dummy names for test
-                    settings.loading("getImageList("+dirName+") finished");
-                    funcs.debug("getImageList("+dirName+") finished");
-                    
+                    settings.loading("getFileList("+dirName+") finished");
+                    funcs.debug("getFileList("+dirName+") finished");
+                    res = res.replace(/^\s+|\s+$/g, '');
+                    var i = res.indexOf (String.fromCharCode(10));
+                    while (i != -1) {
+                        res = res.replace(String.fromCharCode(10), " ");
+                        i = res.indexOf (String.fromCharCode(10));
+                    }
                     homematic.ccu["DIR_"+dirName] = res.split(' ');
                     for (var i=0; i<homematic.ccu["DIR_"+dirName].length; i++)
                         homematic.ccu["DIR_"+dirName][i] = homematic.ccu["DIR_"+dirName][i].replace (dirName, "");
@@ -391,6 +417,7 @@ var version =               '0.10',
             }
             var script = funcs.buildRefreshScript(DPs);
             funcs.script(script, function(data) {
+<<<<<<< HEAD
                 data = $.parseJSON(data);
                 if (cancelNextRefresh) {
                     cancelNextRefresh = false;
@@ -409,8 +436,33 @@ var version =               '0.10',
                     homematic.uiState.attr(xdp + ".Value", unescape(data[dp].Value));
                     homematic.uiState.attr(xdp + ".Timestamp", data[dp].Timestamp);
                     homematic.uiState.attr(xdp + ".certain", true);
+=======
+                try {
+                    data = $.parseJSON(data);
+                    if (cancelNextRefresh) {
+                        cancelNextRefresh = false;
+                        $(".jqhmRefresh").hide();
+
+                        return false;
+                    }
+                    for (var dp in data) {
+                        //jqhm[dp].attr('Value', data[dp].Value);
+                        //jqhm[dp].attr('Timestamp', data[dp].Timestamp);
+                        var xdp = ''+dp;
+
+                        xdp = funcs.escape(xdp);
+                      //  homematic.uiState.attr(xdp, {Value: unescape(data[dp].Value), Timestamp: data[dp].Timestamp, certain: true});
+
+                        homematic.uiState.attr(xdp + ".Value", unescape(data[dp].Value));
+                        homematic.uiState.attr(xdp + ".Timestamp", data[dp].Timestamp);
+                        homematic.uiState.attr(xdp + ".certain", true);
+                    }
+                    $(".jqhmRefresh").hide();
                 }
-                $(".jqhmRefresh").hide();
+                catch (e) {
+                    console.log (e.name + ". May be invalid Homematic ID??"+ data);
+>>>>>>> bluefox/master
+                }
 
 
             });

@@ -1,40 +1,44 @@
-<link rel="stylesheet" type="text/css" href="css/knobKnob.css"/>
+<link rel="stylesheet" type="text/css" href="widgets/knob/css/knobKnob.css"/>
 <style type="text/css">
     .rot-knob{
-        background-image: url(img/knobs/blueplastic.png);
+        background-image: url(widgets/knob/img/blueplastic.png);
     }
     .black{
-        background-image: url(img/knobs/blackgear.png);
+        background-image: url(widgets/knob/img/blackgear.png);
     }
     .circle{
-        background-image: url(img/knobs/circle.png);
+        background-image: url(widgets/knob/img/circle.png);
     }
     .lumen{
-        background-image: url(img/knobs/lumen.png);
+        background-image: url(widgets/knob/img/lumen.png);
     }
     .silver {
-        background-image: url(img/knobs/silver.png);
+        background-image: url(widgets/knob/img/silver.png);
     }
-    .grey128 { background-image: url(img/knobs/grey-128px.png); }
-    .grey100 { background-image: url(img/knobs/grey-100px.png); }
-    .grey128l { background-image: url(img/knobs/grey-line-128px.png); }
-    .grey100l { background-image: url(img/knobs/grey-line-100px.png); }
-    .grey128m { background-image: url(img/knobs/grey-minmax-128px.png); }
-    .grey100m { background-image: url(img/knobs/grey-minmax-100px.png); }
-    .grey64 { background-image: url(img/knobs/grey-64px.png); }
-    .black48 { background-image: url(img/knobs/blackplastic-circle-48px.png); }
-    .black80 { background-image: url(img/knobs/blackplastic-circle-80px.png); }
-    .white { background-image: url(img/knobs/whiteknob.png); }
+    .grey128 { background-image: url(widgets/knob/img/grey-128px.png); }
+    .grey100 { background-image: url(widgets/knob/img/grey-100px.png); }
+    .grey128l { background-image: url(widgets/knob/img/grey-line-128px.png); }
+    .grey100l { background-image: url(widgets/knob/img/grey-line-100px.png); }
+    .grey128m { background-image: url(widgets/knob/img/grey-minmax-128px.png); }
+    .grey100m { background-image: url(widgets/knob/img/grey-minmax-100px.png); }
+    .grey64 { background-image: url(widgets/knob/img/grey-64px.png); }
+    .black48 { background-image: url(widgets/knob/img/blackplastic-circle-48px.png); }
+    .black80 { background-image: url(widgets/knob/img/blackplastic-circle-80px.png); }
+    .white { background-image: url(widgets/knob/img/whiteknob.png); }
 </style>
-<script src="js/transform.js"></script>
-<script src="js/knobKnob.jquery.js"></script>
-<script src="js/jquery.knob.js"></script>
-<script src="js/knobRot-0.2.2.js"></script>
+<script src="widgets/knob/js/transform.js"></script>
+<script src="widgets/knob/js/knobKnob.jquery.js"></script>
+<script src="widgets/knob/js/jquery.knob.js"></script>
+<script src="widgets/knob/js/knobRot-0.2.2.js"></script>
 
 <script type="text/javascript">
     jQuery.extend(true, dui.binds, {
         knob : {
+<<<<<<< HEAD
             knobrot: function (el, options, factor) {
+=======
+            knobrot: function (el, options, factor){
+>>>>>>> bluefox/master
                 factor = parseInt(factor, 10);
                 if (factor == 0) { factor = 1; }
                 var $this = jQuery(el);
