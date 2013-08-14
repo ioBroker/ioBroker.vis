@@ -34,7 +34,7 @@ var homematic = {
 
 var dui = {
 
-    version:            '0.9dev3',
+    version:            '0.9dev4',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
