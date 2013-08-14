@@ -27,6 +27,24 @@ dui = $.extend(true, dui, {
     selectView:         $("#select_view"),
     activeWidget:       "",
 
+    convertIds: function () {
+    // FOR 0.8.x -> 0.9.x Upgrade
+    // Replace all BidCos Addresses by their Regadom ID
+
+        for (var view in dui.views) {
+            for (var widgetId in dui.views[view].widgets) {
+                var widget = dui.views[view].widgets[widgetId];
+                if (widget.data.hm_id != parseInt(widget.data.hm_id, 10)) {
+                    if (homematic.regaIndex.Name[widget.data.hm_id]) {
+                        console.log(widget.data.hm_id+" -> "+homematic.regaIndex.Name[widget.data.hm_id][0]);
+                        dui.views[view].widgets[widgetId].data.hm_id = homematic.regaIndex.Name[widget.data.hm_id][0];
+                    }
+                }
+            }
+        }
+
+
+    },
     renameView: function () {
         var val = $("#new_name").val();
         if (val != "" && dui.views[val] === undefined) {
@@ -543,6 +561,8 @@ dui = $.extend(true, dui, {
 
 
         // Button Click Handler
+
+        $("#convert_ids").click(dui.convertIds);
         $("#clear_cache").click(function() {
             // TODO - Entfällt $.homematic("clearCache");
         });

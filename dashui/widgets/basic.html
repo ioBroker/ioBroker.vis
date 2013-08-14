@@ -200,9 +200,9 @@
 </script>
 <script type="text/ejs" id="tplValueListHtml8" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - ValueList HTML 8" data-dashui-attrs="html_prepend;html_append;hm_id;value0;value1;value2;value3;value4;value5;value6;value7;style0;style1;style2;style3;style4;style5;style6;style7">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="border-color:lightgray;" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body" style="padding: 3px 0px 3px 0px; <% var slist = [data.style0,data.style1,data.style2,data.style3,data.style4,data.style5,data.style6,data.style7]; %><%== slist[parseInt((homematic.uiState.attr("_" + this.data.hm_id + ".Value") == "true" ? 1 : (homematic.uiState.attr("_" + this.data.hm_id + ".Value") == "false" ? 0 : homematic.uiState.attr("_" + this.data.hm_id + ".Value"))),10)] %>">
+        <div class="dashui-widget-body" style="padding: 3px 0px 3px 0px; <% var slist = [data.style0,data.style1,data.style2,data.style3,data.style4,data.style5,data.style6,data.style7]; %><%== slist[parseInt((homematic.uiState.attr("_" + this.data.hm_id + ".Value") == true ? 1 : (homematic.uiState.attr("_" + this.data.hm_id + ".Value") == false ? 0 : homematic.uiState.attr("_" + this.data.hm_id + ".Value"))),10)] %>">
         <div data-hm-id="<%= this.data.attr('hm_id') %>">
-            <%== this.data.attr("html_prepend") %><% var list = [data.value0,data.value1,data.value2,data.value3,data.value4,data.value5,data.value6,data.value7]; %><%== list[parseInt((homematic.uiState.attr("_" + this.data.hm_id + ".Value") == "true" ? 1 : (homematic.uiState.attr("_" + this.data.hm_id + ".Value") == "false" ? 0 : homematic.uiState.attr("_" + this.data.hm_id + ".Value"))),10)] %><%== this.data.attr("html_append") %>
+            <%== this.data.attr("html_prepend") %><% var list = [data.value0,data.value1,data.value2,data.value3,data.value4,data.value5,data.value6,data.value7]; %><%== list[parseInt((homematic.uiState.attr("_" + this.data.hm_id + ".Value") == true ? 1 : (homematic.uiState.attr("_" + this.data.hm_id + ".Value") == false ? 0 : homematic.uiState.attr("_" + this.data.hm_id + ".Value"))),10)] %><%== this.data.attr("html_append") %>
         </div>
     </div>
     </div>
