@@ -62,6 +62,14 @@ dui = $.extend(true, dui, {
         }
     },
     saveRemote: function () {
+        dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
+            alert("Successfully saved views on CCU.IO");
+        });
+
+        /*
+
+
+
         //Get directory
         var parts = dui.fileViews.split("/");
         var dir = parts[0];
@@ -73,10 +81,12 @@ dui = $.extend(true, dui, {
             
         });
         var content = $.base64.encode(JSON.stringify(dui.views));
+
+
         var cmd = "echo \"" + content + "\" | gzip > " + dui.fileViews + "\nexit 0\n";
         $.homematic("shell", cmd, function () {
             alert("Successfully saved views on Homematic CCU.");
-        });
+        }); */
     },
     nextWidget: function () {
         var next = 1;
@@ -534,10 +544,10 @@ dui = $.extend(true, dui, {
 
         // Button Click Handler
         $("#clear_cache").click(function() {
-            $.homematic("clearCache");
+            // TODO - Entfällt $.homematic("clearCache");
         });
         $("#refresh").click(function() {
-            $.homematic("refreshVisible");
+            // TODO Entfällt $.homematic("refreshVisible");
         });
         $("#del_widget").click(dui.delWidget);
         $("#dup_widget").click(dui.dupWidget);
@@ -787,7 +797,9 @@ var imageSelect = {
         }
         
         // Load directory
-        $.homematic("getFileList", this._rootDir + this._curDir, this.showImages, htmlElem)
+        //$.homematic("getFileList", this._rootDir + this._curDir, this.showImages, htmlElem)
+        console.log("load directory "+ this._rootDir + this._curDir);
+        // TODO socket.emit("readdir" ...
     },
     showImages: function (aImages, obj) {	
         // Remove wait icon
@@ -2136,7 +2148,8 @@ var hmSelect = {
         if (ccu['devices'] == undefined || ccu['devices'] == null)
         {
             // request list of devices anew
-            $.homematic ("loadCcuDataAll", function () {hmSelect.show (homematic.ccu, hmSelect._userArg, hmSelect._onsuccess, filter, devFilter)});
+            //$.homematic ("loadCcuDataAll", function () {hmSelect.show (homematic.ccu, hmSelect._userArg, hmSelect._onsuccess, filter, devFilter)});
+            // Todo -> CCU-Data already in homematic.regaObjects and homematic.regaIndex
             return;
         }
         $('#dashui-waitico').hide();

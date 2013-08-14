@@ -14,7 +14,7 @@
                 }, function () {
                     $this.removeClass("ui-state-hover");
                 });
-                var id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
+                var id = "_" + $this.attr("data-hm-id");
 
                 homematic.uiState.bind(id+".Value", function( e, newVal, oldVal ) {
                     var val;
@@ -61,7 +61,7 @@
             },
             dialogAutoClose: function (el) {
                 var dialog = jQuery("#"+jQuery(el).parent().attr("id")+"_dialog");
-                // TODO auf bestimme Elemente einschränken (Button, Radio, ...)
+                // TODO auf bestimme Elemente einschrï¿½nken (Button, Radio, ...)
                 dialog.on( "dialogopen", function() {
                     dialog.one("click", function () {
                         dialog.dialog("close");
@@ -85,7 +85,7 @@
 
                         });
 
-                var hm_id = "_" + $.homematic("escape",id);
+                var hm_id = "_" + id;
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (digits && digits != "") {
                         newVal = parseFloat(newVal).toFixed(digits);
@@ -99,7 +99,7 @@
                 var timepickerOptions = jQuery.extend(true, {
                     dateFormat:'yy-mm-dd',
                     monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" ],
-                    monthNames: [ "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" ],
+                    monthNames: [ "Januar", "Februar", "Mï¿½rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" ],
                     dayNamesMin: [ "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" ],
                     showAnim: "fadeIn",
                     firstDay: 1,
@@ -108,7 +108,7 @@
                     minuteText: "m",
                     secondText: "s",
                     currentText: "Jetzt",
-                    closeText: "Schließen",
+                    closeText: "Schlieï¿½en",
                     minuteGrid: undefined,
                     hourGrid: undefined,
                     secondGrid: undefined,
@@ -129,7 +129,7 @@
                     jQuery.homematic("setState", id, jQuery(this).val());
 
                 });
-                var hm_id = "_" + $.homematic("escape",id);
+                var hm_id = "_" + id;
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.val(newVal);
 
@@ -154,7 +154,7 @@
                             'outline' : 'none',
                             'cursor' : 'text'
                         });
-                var hm_id = "_" + $.homematic("escape",id);
+                var hm_id = "_" + id;
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (digits && digits != "") {
                         newVal = parseFloat(newVal).toFixed(digits);
@@ -175,7 +175,7 @@
                             jQuery.homematic("setState", id, $this.find("option:selected").val());
                         });
 
-                var hm_id = "_" + $.homematic("escape",id);
+                var hm_id = "_" + id;
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.find("option:selected").removeAttr("selected");
                     $this.find("option[value='"+newVal+"']").attr("selected", true);
@@ -198,7 +198,7 @@
 
                 $this.slider(settings);
 
-                var hm_id = "_" + $.homematic("escape",id);
+                var hm_id = "_" + id
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.slider("value", newVal);
                 });
@@ -208,7 +208,7 @@
                 var id = $this.attr("data-hm-id");
                 $this.button().click(function () {
                     if (dui.urlParams["edit"] !== "") {
-                        $.homematic("setState", id, $this.attr("data-hm-value"));
+                        // TODO $.homematic("setState", id, $this.attr("data-hm-value"));
                     }
                 });
             },
@@ -221,7 +221,7 @@
                 var id = $this.attr("data-hm-id");
                 $this.button().click(function () {
                     if (dui.urlParams["edit"] !== "") {
-                        $.homematic("programExecute", id);
+                        // TODO $.homematic("programExecute", id);
                     }
                 });
             },
@@ -252,7 +252,7 @@
                 var id = $this.attr("data-hm-id");
 
                 // Observable -> Buttonset
-                var hm_id = "_" + $.homematic("escape",id);
+                var hm_id = "_" + id
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.find("input").removeAttr("checked");
                     if (newVal === "true") {
@@ -272,7 +272,8 @@
                 // Buttonset -> Observable
                 $this.find("input").click(function () {
                     if (dui.urlParams["edit"] !== "") {
-                        $.homematic("setState", id, $(this).val());
+                        //$.homematic("setState", id, $(this).val());
+                        // TODO Direct: homematic.setState.attr ...
                     }
                 });
                 $this.find("input").removeAttr("checked");
@@ -307,7 +308,7 @@
 
                     });
                 }, 200);
-                //jQuery(".widget-link").click(function (e) {
+                //jQuery(".widget-link").click(function (e)ï¿½{
                     //e.preventDefault();
                     //return false;
                 //});
@@ -451,7 +452,7 @@
             var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
             var val = parseFloat(str,10);
             var state;
-            if (val == 0 || str == "false") {
+            if (val == 0 ||ï¿½str == "false") {
             %>
             <%== this.data.attr("html_false") %>
             <% } else { %>

@@ -34,7 +34,7 @@ var homematic = {
 
 var dui = {
 
-    version:            '0.9dev2',
+    version:            '0.9dev3',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -52,6 +52,7 @@ var dui = {
     currentLang:        duiConfig.currentLang,
     initialized:        false,
     useCache:           true,
+    socket: {},
     binds: {},
     startInstance: function () {
         $("#dashui_instance").val(dui.instance);
@@ -59,6 +60,7 @@ var dui = {
         $("#instance").show();
 
         var name = "dashui_"+dui.instance;
+        /* TODO Instanzen
         $.homematic("addStringVariable", name+"_view", "automatisch angelegt von DashUI.")
         $.homematic("addStringVariable", name+"_cmd",  "automatisch angelegt von DashUI.")
         $.homematic("addStringVariable", name+"_data", "automatisch angelegt von DashUI.")
@@ -66,6 +68,7 @@ var dui = {
         $.homematic("addUiState", name+"_view");
         $.homematic("addUiState", name+"_cmd");
         $.homematic("addUiState", name+"_data");
+         */
 
 
         $("body").append('<div class="dashui-dummy" data-hm-id="'+name+'_view"></div>')
@@ -81,7 +84,7 @@ var dui = {
                         var data = homematic.uiState.attr("_"+name+"_data.Value");
 
                         // external Commands
-                        $.homematic("script",
+                       /* $.homematic("script",
                             "object o = dom.GetObject(\""+name+"_data\");\n" +
                                 "o.State(\"\");\n" +
                                 "o = dom.GetObject(\""+name+"_cmd\");\n" +
@@ -104,7 +107,7 @@ var dui = {
                                 window.open(data);
                                 break;
                             default:
-                        }
+                        }*/
                     }, 50);
                 }
             }
@@ -114,7 +117,7 @@ var dui = {
     removeInstance: function () {
         storage.set(dui.storageKeyInstance, null);
         var name = "dashui_"+dui.instance;
-        $.homematic("delVariable", name + "_cmd",
+       /* $.homematic("delVariable", name + "_cmd",
             function () {
                 $.homematic("delVariable", name + "_data",
                     function () {
@@ -122,7 +125,7 @@ var dui = {
                     }
                 );
             }
-        );
+        );*/
 
 
     },
@@ -412,11 +415,11 @@ var dui = {
         };
         //console.log(widget);
         // Register hm_id to detect changes
-        if (widget.data.hm_id != 65535)
-            $.homematic("addUiState", widget.data.hm_id, widget.data.hm_wid);
+       // if (widget.data.hm_id != 65535)
+         //   $.homematic("addUiState", widget.data.hm_id, widget.data.hm_wid);
         
         var widgetData = dui.widgets[id]["data"];
-        widgetData.hm_id = $.homematic("escape", widgetData.hm_id);
+        widgetData.hm_id = widgetData.hm_id; //$.homematic("escape", widgetData.hm_id);
         
         // Append html element to view
         $("#duiview_"+view).append(can.view(widget.tpl, {hm: homematic.uiState["_"+widget.data.hm_id], data: widgetData, view: view}));
@@ -493,14 +496,14 @@ var dui = {
 
         //console.log("changeView("+view+")");
         dui.activeView = view;
-
+/*
         if (dui.views[view].settings.interval) {
             //console.log("setInterval "+dui.views[view].settings.interval);
-            $.homematic("setInterval", dui.views[view].settings.interval);
+           $.homematic("setInterval", dui.views[view].settings.interval);
         }
-
+*/
         if (dui.instance) {
-            $.homematic("script", "object o = dom.GetObject('dashui_"+dui.instance+"_view');\no.State('"+dui.activeView+"');");
+          // Todo  $.homematic("script", "object o = dom.GetObject('dashui_"+dui.instance+"_view');\no.State('"+dui.activeView+"');");
         }
 
         if (window.location.hash.slice(1) != view) {
@@ -587,7 +590,9 @@ var dui = {
     loadRemote: function (err) {
         var cmd = "cat " + dui.fileViews + " | gzip -d\nexit 0\n";
         $("#loading").append("Please wait! Trying to load views from CCU.");
+        /* TODO load from CCU.IO
         $.homematic("shell", cmd, function (data) {
+
             if ($.trim(data) == "") {
                 if (err) { err(); }
             } else {
@@ -602,6 +607,7 @@ var dui = {
             //$.error("CCU Communication Error");
             if (err) { err(); }
         });
+        */
     },
     saveLocal: function () {
         //console.log(dui.views);
@@ -658,8 +664,8 @@ var dui = {
             homematic.setState = new can.Observe({"_65535":{"Value":0}});
 
             console.log("socket.io")
-            var socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
-            socket.on('event', function(obj) {
+            dui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
+            dui.socket.on('event', function(obj) {
                 console.log("event! "+JSON.stringify(obj))
                 homematic.uiState.attr("_"+obj[0]+".Value", ''+obj[1]);
                 homematic.uiState.attr("_"+obj[0]+".Timestamp", ''+obj[2]);
@@ -667,13 +673,13 @@ var dui = {
 
             });
 
-            socket.emit("getIndex", function (index) {
+            dui.socket.emit("getIndex", function (index) {
                 console.log("index loaded");
                 homematic.regaIndex = index;
-                socket.emit("getObjects", function (obj) {
+                dui.socket.emit("getObjects", function (obj) {
                     console.log("objects loaded")
                     homematic.regaObjects = obj;
-                    socket.emit("getDatapoints", function (data) {
+                    dui.socket.emit("getDatapoints", function (data) {
                         console.log("datapoints loaded");
                         for (var dp in data) {
                             homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1]});
