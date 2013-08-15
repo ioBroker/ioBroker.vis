@@ -26,7 +26,7 @@
             },
             hideOnFalse: function (el) {
                 var $this = jQuery(el);
-                var hm_id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
+                var hm_id = "_" + $this.attr("data-hm-id");
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (newVal == "false" || parseInt(newVal,10) == 0) {
                         if (dui.urlParams["edit"] !== "") {
@@ -39,7 +39,7 @@
             },
             checkbox: function (el) {
                 var $this = jQuery(el);
-                var hm_id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
+                var hm_id = "_" + $this.attr("data-hm-id");
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (newVal == "false" || parseFloat(newVal,10) < 0.5) {
                         $this.removeAttr("checked");
@@ -50,9 +50,9 @@
                 if (dui.urlParams["edit"] !== "") {
                     $this.change(function () {
                         if ($this.prop("checked")) {
-                            jQuery.homematic("setState", $this.attr("data-hm-id"), true);
+                            homematic.setValue( $this.attr("data-hm-id"),  true);
                         } else {
-                            jQuery.homematic("setState", $this.attr("data-hm-id"), false);
+                            homematic.setValue( $this.attr("data-hm-id"),  false);
                         }
                     });
                 }
@@ -63,9 +63,9 @@
                 $this.change(function () {
                     console.log("uiState " + homematic.uiState.attr("_"+$this.attr("data-hm-id")));
                     console.log("setState " + $this.find("option:selected").val());
-                    jQuery.homematic("setState", $this.attr("data-hm-id"), $this.find("option:selected").val());
+                    homematic.setValue( $this.attr("data-hm-id"),  $this.find("option:selected").val());
                 });
-                var hm_id = "_" + $.homematic("escape",id);
+                var hm_id = "_" + id;
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     console.log("newVal="+newVal+" oldVal="+oldVal);
                     if (newVal == "false" || parseFloat(newVal) == 0) {
@@ -96,7 +96,7 @@
                         if (val === "true") { val = 1;}
                         val = parseFloat(val, 10);
                         if (val >= 0.5) { val = 1; } else { val = 0; }
-                        jQuery.homematic("setState", id, 1-val);
+                        homematic.setValue( id,  1-val);
                     });
                 }
             }

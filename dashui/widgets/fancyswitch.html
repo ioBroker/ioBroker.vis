@@ -55,7 +55,7 @@
                         if (reverse) { val = 1 - val; }
                         if (val == '0'){ $this.css('background-position', 'right'); }
                         if (val == '1'){ $this.css('background-position', 'left'); }
-                        jQuery.homematic("setState", id, val);
+                        homematic.setValue( id, val);
                     });
                 }
 

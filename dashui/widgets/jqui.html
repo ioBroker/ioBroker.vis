@@ -81,7 +81,7 @@
                             'outline' : 'none',
                             'cursor' : 'text'
                         }).change(function () {
-                            jQuery.homematic("setState", id, jQuery(this).val());
+                            homematic.setValue(id,  jQuery(this).val());
 
                         });
 
@@ -126,7 +126,7 @@
                             'cursor' : 'text'
                         }).datetimepicker(timepickerOptions).button();
                 $this.change(function () {
-                    jQuery.homematic("setState", id, jQuery(this).val());
+                   homematic.setValue(id,  jQuery(this).val());
 
                 });
                 var hm_id = "_" + id;
@@ -143,7 +143,7 @@
                 var id = $this.attr("data-hm-id");
                 $this.button().click(function () {
                     //console.log("inputset click " + input)
-                    jQuery.homematic("setState", id, jQuery(input).val());
+                    homematic.setValue(id,  jQuery(input).val());
 
                 });
                 $this.prev().button().addClass("ui-state-default")
@@ -172,7 +172,10 @@
                     noneSelectedText: false,
                     selectedList: 1
                 }, options)).change(function () {
-                            jQuery.homematic("setState", id, $this.find("option:selected").val());
+                           homematic.setValue(id,  $this.find("option:selected").val());
+
+                            homematic.setValue(id, parseInt($this.find("option:selected").val(), 10));
+
                         });
 
                 var hm_id = "_" + id;
@@ -192,7 +195,7 @@
                     step: 1,
                     slide: function (e, ui) {
                         // Slider -> Observable
-                        jQuery.homematic("setState", id, ui.value.toFixed(6));
+                        homematic.setValue(id,  ui.value.toFixed(6));
                     }
                 }, options);
 
@@ -208,7 +211,7 @@
                 var id = $this.attr("data-hm-id");
                 $this.button().click(function () {
                     if (dui.urlParams["edit"] !== "") {
-                        // TODO $.homematic("setState", id, $this.attr("data-hm-value"));
+                        homematic.setValue(id,  $this.attr("data-hm-value"));
                     }
                 });
             },
@@ -221,7 +224,7 @@
                 var id = $this.attr("data-hm-id");
                 $this.button().click(function () {
                     if (dui.urlParams["edit"] !== "") {
-                        // TODO $.homematic("programExecute", id);
+                        $.homematic("programExecute", id);
                     }
                 });
             },
@@ -272,8 +275,7 @@
                 // Buttonset -> Observable
                 $this.find("input").click(function () {
                     if (dui.urlParams["edit"] !== "") {
-                        //$.homematic("setState", id, $(this).val());
-                        // TODO Direct: homematic.setState.attr ...
+                        homematic.setValue(id,  $(this).val());
                     }
                 });
                 $this.find("input").removeAttr("checked");

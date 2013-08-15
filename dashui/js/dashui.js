@@ -24,17 +24,10 @@
 // dui - the DashUI Engine
 
 
-var homematic = {
-    uiState: {},                // can Observable fur UI
-    setState: {},            // can Observable zum setzen von Werten
-    regaIndex: {},
-    regaObjects: {}
-
-}
 
 var dui = {
 
-    version:            '0.9dev4',
+    version:            '0.9dev5',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -617,6 +610,47 @@ var dui = {
     },
 };
 
+
+var homematic = {
+    uiState: new can.Observe({"_65535":{"Value":null}}),
+    setState: new can.Observe({"_65535":{"Value":null}}),
+    regaIndex: {},
+    regaObjects: {},
+    setStateTimers: {},
+    setValue: function (id, val) {
+        console.log("setValue("+id+","+val+")");
+
+        this.setState.attr("_"+id, {Value:val});
+        this.uiState.attr("_"+id+".Value", val);
+        this.uiState.attr("_"+id+".certain", false);
+        // Todo Timestamp
+    },
+    stateDelayed: function (attr, val) {
+        var id = parseInt(attr.slice(1), 10);
+        if (!this.setStateTimers[id]) {
+
+            dui.socket.emit("setState", [id, val]);
+
+            this.setState.removeAttr(attr);
+            this.setStateTimers[id] = setTimeout(function () {
+                if (homematic.setState[attr]) {
+                    homematic.setStateTimers[id] = undefined;
+                    homematic.stateDelayed(id, homematic.setState.attr(attr + ".Value"));
+                }
+                homematic.setStateTimers[id] = undefined;
+            }, 1000);
+        }
+    }
+}
+
+homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
+    console.log("homematic setState change "+how+" "+attr+" "+newVal);
+    if (how == "set" || how == "add") {
+        homematic.stateDelayed(attr, newVal.Value);
+    }
+});
+
+
 // Parse Querystring
 (window.onpopstate = function () {
     var match,
@@ -660,8 +694,6 @@ var dui = {
         }
         else
         {
-            homematic.uiState = new can.Observe({"_65535":{"Value":0}});
-            homematic.setState = new can.Observe({"_65535":{"Value":0}});
 
             console.log("socket.io")
             dui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));

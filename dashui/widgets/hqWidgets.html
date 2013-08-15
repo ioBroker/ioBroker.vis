@@ -32,10 +32,11 @@ if ((typeof hqWidgets !== 'undefined')) {
                     if (how != "set") 
                         return;
                     
-                    if (newVal.certain !== undefined && newVal.certain === false)
+                    if (newVal.Certain !== undefined && newVal.Certain === false)
                         return;
                         
                     // extract name
+                    // Todo entfällt
                     if ((''+attr).indexOf("__") !== -1) {
                         attr = attr.replace(/__d__/g, ".");
                         attr = attr.replace(/__c__/g, ":");
@@ -84,14 +85,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                                                 time_id += ".ON_TIME";
                                                 var on_time = obj.GetSettings ('dimmerOnTime');
                                                 if (on_time !== undefined && on_time != null && on_time != "")
-                                                    $.homematic("setState", time_id, on_time);
+                                                    homematic.setState( time_id, on_time);
                                             }
                                         }
                                             
                                         obj.SetStates ({percentState: 100, state: hqWidgets.gState.gStateOn, isRefresh: true});
                                         // Send command to HM
                                                                 
-                                        $.homematic("setState", hm_id, 1);                        
+                                        homematic.setState( hm_id, 1);                        
                                     }
                                     else {
                                         // Send ramp time settings to dimmer
@@ -100,13 +101,13 @@ if ((typeof hqWidgets !== 'undefined')) {
                                                 time_id += ".RAMP_TIME";
                                                 var on_time = obj.GetSettings ('dimmerRampTime');
                                                 if (on_time !== undefined && on_time != null && on_time != "")
-                                                    $.homematic("setState", time_id, on_time);
+                                                    homematic.setState( time_id, on_time);
                                             }
                                         }
 
                                         obj.SetStates ({percentState: 0, state: hqWidgets.gState.gStateOff, isRefresh: true});
                                         // Send command to HM
-                                        $.homematic("setState", hm_id, 0);                        
+                                        homematic.setState( hm_id, 0);                        
                                     }
                                 }
                                 else {
@@ -118,7 +119,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     }
                                     console.log ("SetState: "+ hm_id + " = " + (state / 100));
                                     // Send command to HM
-                                    $.homematic("setState", hm_id, state / 100);                                  
+                                    homematic.setState( hm_id, state / 100);                                  
                                 }  
                             }                                
                         }});
@@ -152,7 +153,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 dui.binds.hqWidgetsExt.hqIgnoreNextUpdate = hm_id;
                                 obj.SetStates ({state: state, isRefresh: true, isRefresh: true});
                                 // Send command to HM
-                                $.homematic("setState", hm_id, (state == hqWidgets.gState.gStateOn)); 
+                                homematic.setState( hm_id, (state == hqWidgets.gState.gStateOn)); 
                             }                                
                         }});
                         // Fill up the required IDs
@@ -176,7 +177,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 obj.SetStates ({isRefresh: true});
                                 dui.binds.hqWidgetsExt.hqIgnoreNextUpdate = hm_id;
                                 // Send command to HM
-                                $.homematic("setState", hm_id, (100 - state) / 100);  
+                                homematic.setState( hm_id, (100 - state) / 100);  
                             }                                
                         }});
                         // Fill up the required IDs
@@ -212,7 +213,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 dui.binds.hqWidgetsExt.hqIgnoreNextUpdate = hm_id;
                                 console.log ("SetTemp: "+ hm_id + " = " + state);
                                 // Send command to HM
-                                $.homematic("setState", hm_id, state);                                  
+                                homematic.setState( hm_id, state);                                  
                             }                                
                         }});
                         // Fill up the required IDs
@@ -247,7 +248,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     hm_id += ".LEVEL";
                                 obj.SetStates ({isRefresh: true});
                                 // Send command to HM
-                                $.homematic("setState", hm_id, (100 - state) / 100);  
+                                homematic.setState( hm_id, (100 - state) / 100);  
                             }                                
                         }});*/
                         // Fill up the required IDs
@@ -288,13 +289,13 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     if (hm_id.indexOf(".STATE") == -1)
                                         hm_id += ".STATE";
                                     // Send command to HM
-                                    $.homematic("setState", hm_id, (state == hqWidgets.gLockType.gLockClose) ? "false" : "true");
+                                    homematic.setState( hm_id, (state == hqWidgets.gLockType.gLockClose) ? "false" : "true");
                                 }
                                 else { // Open door
                                     if (hm_id.indexOf(".OPEN") == -1)
                                         hm_id += ".OPEN";
                                     // Send command to HM
-                                    $.homematic("setState", hm_id, "true");
+                                    homematic.setState( hm_id, "true");
                                 }
                             }                            
                         }});
@@ -330,7 +331,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                         if (hm_id.indexOf(".OPEN") == -1 && hm_id.indexOf(".STATE") == -1)
                                             hm_id += ".STATE";
                                         // Send command to HM
-                                        $.homematic("setState", hm_id, "true");
+                                        homematic.setState( hm_id, "true");
                                     }                            
                                 }});
                         }                    
@@ -357,7 +358,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                         if (hm_id.indexOf(".OPEN") == -1 && hm_id.indexOf(".STATE") == -1)
                                             hm_id += ".OPEN";
                                         // Send command to HM
-                                        $.homematic("setState", hm_id, "true");
+                                        homematic.setState( hm_id, "true");
                                     }   
                                 }
                                 else { // Play melody or blink with LED
@@ -367,9 +368,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                                         if (hm_id.indexOf(".STATE") == -1)
                                             hm_id += ".STATE";
                                         // Send command to HM
-                                        $.homematic("setState", hm_id, "true");
+                                        homematic.setState( hm_id, "true");
                                         // Switch of in 2 seconds
-                                        setTimeout (function (id) { $.homematic("setState", id, "false");}, 2000, hm_id);
+                                        setTimeout (function (id) { homematic.setState( id, "false");}, 2000, hm_id);
                                     }                            
                                 }  
                             }                                
