@@ -361,7 +361,7 @@ dui = $.extend(true, dui, {
         if ($("#snap_type option:selected").val() == 2) {
             var gridWidth = parseInt($("#grid_size").val(),10);
 
-            if (gridWidth < 1 || isNaN(gridWidth) ) {
+            if (gridWidth < 1 || isNaN(gridWidth) ) {
                 gridWidth = 10;
             }
 
@@ -456,7 +456,7 @@ dui = $.extend(true, dui, {
         $("#inspect_wid").html(id);
         $("#inspect_wid2").html(id);
         var tabActive = $("#tabs").tabs("option", "active");
-        if (tabActive !== 1 && tabActive !== 2) {
+        if (tabActive !== 1 && tabActive !== 2) {
             $("#tabs").tabs("option", "active", 1);
         }
     },
