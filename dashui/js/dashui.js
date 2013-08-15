@@ -249,7 +249,7 @@ var dui = {
             for (i = 0; i < len; i++) {
                 k = keys[i];
 
-                if (k == dui.activeView) {
+                if (k == dui.activeView) {
                     $("#inspect_view").html(dui.activeView);
                     sel = " selected";
                 } else {

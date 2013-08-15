@@ -448,7 +448,7 @@ var version =               '0.10',
                     if (typeof io === "undefined" || homematic.uiState["_"+funcs.escape(id)].Timestamp == "") {
                         views.push(id);
                     } else {
-                        if (!id.match(/BidCos/) && !id.match(/CUxD/)) {
+                        if (!id.match(/BidCos/) && !id.match(/CUxD/)) {
                             views.push(id);
                         }
                     }
