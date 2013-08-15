@@ -1,9 +1,7 @@
-<script type="text/javascript" src="js/jquery.touchSwipe.min.js">
-</script>
+<script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>
 <script type="text/javascript">
     jQuery.extend(true, dui.binds, {
       swipe: {
-
 
         swipe_nav: function(el) {
           if (dui.urlParams["edit"] !== "") {
@@ -12,19 +10,14 @@
               swipeLeft: function() {
                
               var $this = $("#duiview_"+dui.activeView).find("[id$=swipe]")
-                //console.log($this);
-
-             // var options= {nav_view:$this.attr('Left-nav_view'),hideOptions:{effect:"slide",options:{direction: "left"},duration:$this.attr('duration')},showOptions:{effect:"slide",options:{direction: "right"},duration:$this.attr('duration')}};
-             //   console.log(options);
-
+                
               if ($this.attr('Left-nav_view') != undefined && $this.attr('Left-nav_view')!= null){
                 dui.changeView($this.attr('Left-nav_view'), {effect:"slide",options:{direction: "left"},duration:$this.attr('duration')},{effect:"slide",options:{direction: "right"},duration:$this.attr('duration')})
               }
             },
               swipeRight: function() {
                 var $this = $("#duiview_"+dui.activeView).find("[id$=swipe]")
-                  //console.log($this);
-
+                 
               if ($this.attr('Right-nav_view')!= undefined && $this.attr('Right-nav_view') != null){
                 dui.changeView($this.attr('Right-nav_view'), {effect:"slide",options:{direction: "right"},duration:$this.attr('duration')},{effect:"slide",options:{direction: "left"},duration:$this.attr('duration')})
               }
@@ -35,6 +28,7 @@
       }
     });
 </script>
+
 <script type="text/ejs" id="tplswipe" class="dashui-tpl" data-dashui-set="swipe" data-dashui-name="swipe Navigation" data-dashui-attrs="Left-nav_view;Right-nav_view;duration">
 
   <div class = "dashui-widget <%== this.data.attr('class') %>" style="width: 90px; height: 60px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.swipe.swipe_nav(el) %>>
