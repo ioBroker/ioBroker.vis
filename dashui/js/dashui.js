@@ -183,8 +183,13 @@ var dui = {
             dui.binds.hqWidgetsExt.hqInit ();
         }
             
-        dui.loadLocal();
+        //dui.loadLocal();
+        dui.loadRemote(dui.initNext);
 
+
+
+    },
+    initNext: function () {
         if (!dui.views) {
             dui.loadRemote(function() {
                 $("#loading").html("").hide();
@@ -222,11 +227,11 @@ var dui = {
         $("#active_view").html(dui.activeView);
 
         dui.changeView(dui.activeView);
-        
+
         // Set background style
         if (dui.views[dui.activeView] && dui.views[dui.activeView].settings != undefined && dui.views[dui.activeView].settings.style != undefined) {
             if (dui.views[dui.activeView].settings.style['background'] != undefined) {
-               $("#duiview_"+dui.activeView).css("background", dui.views[dui.activeView].settings.style['background']);
+                $("#duiview_"+dui.activeView).css("background", dui.views[dui.activeView].settings.style['background']);
             }
             if (dui.views[dui.activeView].settings.style['background_class'] != undefined) {
                 activeBkgClass = dui.views[dui.activeView].settings.style['background_class'];
@@ -273,7 +278,7 @@ var dui = {
             $("#select_set").html ("");
 
             for (i = 0; i < dui.widgetSets.length; i++) {
-                if (dui.widgetSets[i].name !== undefined) 
+                if (dui.widgetSets[i].name !== undefined)
                     $("#select_set").append("<option value='"+dui.widgetSets[i].name+"'>"+dui.widgetSets[i].name+"</option>");
                 else
                     $("#select_set").append("<option value='"+dui.widgetSets[i]+"'>"+dui.widgetSets[i]+"</option>");
@@ -285,7 +290,7 @@ var dui = {
             //console.log("TOOLBOX OPEN");
             $("#dui_editor").dialog("open");
             dui.binds.jqueryui._disable();
-            
+
             // Create background_class property if does not exist
             if (dui.views[dui.activeView] != undefined) {
                 if (dui.views[dui.activeView].settings == undefined) {
@@ -298,22 +303,22 @@ var dui = {
                     dui.views[dui.activeView].settings.style['background_class'] = "";
                 }
             }
-           
-            
+
+
             // Init background selector
             hqStyleSelector.Show ({ width: 202,
-                            name:       "inspect_view_bkg_def",
-                            filterFile: "backgrounds.css",
-                            style:      activeBkgClass,     
-                            parent:     $('#inspect_view_bkg_parent'),
-							onchange:   function (newStyle, obj) {
-                                if (dui.views[dui.activeView].settings.style['background_class'])
-                                    $("#duiview_"+dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
-								dui.views[dui.activeView].settings.style['background_class'] = newStyle;
-								$("#duiview_"+dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
-							},
-                          });
-            
+                name:       "inspect_view_bkg_def",
+                filterFile: "backgrounds.css",
+                style:      activeBkgClass,
+                parent:     $('#inspect_view_bkg_parent'),
+                onchange:   function (newStyle, obj) {
+                    if (dui.views[dui.activeView].settings.style['background_class'])
+                        $("#duiview_"+dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
+                    dui.views[dui.activeView].settings.style['background_class'] = newStyle;
+                    $("#duiview_"+dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
+                },
+            });
+
         }
         this.initialized = true;
     },
@@ -573,17 +578,30 @@ var dui = {
         window.location.reload();
     },
     loadLocal: function () {
+
+        /* Todo remove!
+
         dui.views = storage.get(dui.storageKeyViews);
 
         if (!dui.views) {
             //dui.views = {};
             //dui.loadRemote();
-        }
+        } */
     },
-    loadRemote: function (err) {
-        var cmd = "cat " + dui.fileViews + " | gzip -d\nexit 0\n";
-        $("#loading").append("Please wait! Trying to load views from CCU.");
+    loadRemote: function (callback) {
+        //var cmd = "cat " + dui.fileViews + " | gzip -d\nexit 0\n";
+        $("#loading").append("Please wait! Trying to load views from CCU.IO");
+        dui.socket.emit("readFile", "dashui-views.json", function (data) {
+            dui.views = data;
+            if (!dui.views) {
+                alert("No Views found on CCU.IO");
+            }
+            callback();
+        });
+
         /* TODO load from CCU.IO
+
+
         $.homematic("shell", cmd, function (data) {
 
             if ($.trim(data) == "") {
@@ -603,6 +621,9 @@ var dui = {
         */
     },
     saveLocal: function () {
+
+        // TODO REMOVE!
+
         //console.log(dui.views);
 
         storage.extend(dui.storageKeyViews, dui.views);
@@ -620,22 +641,22 @@ var homematic = {
     setValue: function (id, val) {
         console.log("setValue("+id+","+val+")");
 
-        this.setState.attr("_"+id, {Value:val});
+        this.setState.attr("_"+id, {Value: val});
         this.uiState.attr("_"+id+".Value", val);
-        this.uiState.attr("_"+id+".certain", false);
+        this.uiState.attr("_"+id+".Certain", false);
         // Todo Timestamp
     },
     stateDelayed: function (attr, val) {
         var id = parseInt(attr.slice(1), 10);
         if (!this.setStateTimers[id]) {
-
+            console.log("setState "+id+" "+val);
             dui.socket.emit("setState", [id, val]);
 
             this.setState.removeAttr(attr);
             this.setStateTimers[id] = setTimeout(function () {
                 if (homematic.setState[attr]) {
                     homematic.setStateTimers[id] = undefined;
-                    homematic.stateDelayed(id, homematic.setState.attr(attr + ".Value"));
+                    homematic.stateDelayed(attr, homematic.setState.attr(attr + ".Value"));
                 }
                 homematic.setStateTimers[id] = undefined;
             }, 1000);

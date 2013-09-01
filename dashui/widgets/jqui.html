@@ -174,7 +174,7 @@
                 }, options)).change(function () {
                            homematic.setValue(id,  $this.find("option:selected").val());
 
-                            homematic.setValue(id, parseInt($this.find("option:selected").val(), 10));
+                            homematic.setValue(id, $this.find("option:selected").val());
 
                         });
 
