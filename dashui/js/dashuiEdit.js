@@ -79,33 +79,6 @@ dui = $.extend(true, dui, {
             window.location.reload();
         }
     },
-    saveRemote: function () {
-        dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
-            alert("Successfully saved views on CCU.IO");
-        });
-
-        /*
-
-
-
-        //Get directory
-        var parts = dui.fileViews.split("/");
-        var dir = parts[0];
-        for (var t = 1; t < parts.length -1; t++)
-            dir += "/" + parts[t];
-            
-        // Create directory 
-        $.homematic("shell", "mkdir " + dir + "\nexit 0\n", function () {
-            
-        });
-        var content = $.base64.encode(JSON.stringify(dui.views));
-
-
-        var cmd = "echo \"" + content + "\" | gzip > " + dui.fileViews + "\nexit 0\n";
-        $.homematic("shell", cmd, function () {
-            alert("Successfully saved views on Homematic CCU.");
-        }); */
-    },
     nextWidget: function () {
         var next = 1;
         var used = [];

@@ -27,7 +27,7 @@
 
 var dui = {
 
-    version:            '0.9dev6',
+    version:            '0.9dev7',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -577,19 +577,7 @@ var dui = {
         dui.changeView(view);
         window.location.reload();
     },
-    loadLocal: function () {
-
-        /* Todo remove!
-
-        dui.views = storage.get(dui.storageKeyViews);
-
-        if (!dui.views) {
-            //dui.views = {};
-            //dui.loadRemote();
-        } */
-    },
     loadRemote: function (callback) {
-        //var cmd = "cat " + dui.fileViews + " | gzip -d\nexit 0\n";
         $("#loading").append("Please wait! Trying to load views from CCU.IO");
         dui.socket.emit("readFile", "dashui-views.json", function (data) {
             dui.views = data;
@@ -599,36 +587,23 @@ var dui = {
             callback();
         });
 
-        /* TODO load from CCU.IO
-
-
-        $.homematic("shell", cmd, function (data) {
-
-            if ($.trim(data) == "") {
-                if (err) { err(); }
-            } else {
-                dui.views = $.parseJSON($.base64.decode($.trim(data)))
-                storage.set(dui.storageKeyViews, null);
-                dui.saveLocal();
-                window.location.reload();
-            }
-        },
-        function () {
-            $("#loading").append("CCU Communication Error");
-            //$.error("CCU Communication Error");
-            if (err) { err(); }
-        });
-        */
     },
     saveLocal: function () {
 
         // TODO REMOVE!
 
-        //console.log(dui.views);
+        dui.saveRemote();
 
-        storage.extend(dui.storageKeyViews, dui.views);
-        storage.extend(dui.storageKeySettings, dui.settings);
+
+        //storage.extend(dui.storageKeyViews, dui.views);
+        //storage.extend(dui.storageKeySettings, dui.settings);
     },
+    saveRemote: function () {
+        dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
+            alert("Successfully saved views on CCU.IO");
+        });
+
+    }
 };
 
 
