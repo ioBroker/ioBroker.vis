@@ -31,7 +31,6 @@
 * Noch mehr Widgets! :)
 * Doku
 * Einfache Installation gemeinsam mit CCU.IO, Pakete für Raspbian und CCU2
-
 * Mehr Widgets! ;-)
 * Config-File, Editor und Engine sauber trennen
 * Erweiterte Template-Attribute: Doku, Kompatibilitat, ...
