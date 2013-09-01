@@ -120,7 +120,6 @@
 ### 0.6
 
 * Sind keine lokalen Views vorhanden wird nun automatisch versucht die Views von der CCU zu laden
-
 * Wahrend des Ladevorgangs wird div#loader eingeblendet
 * Widget-Select wird nun aktualisiert wenn Widgets gelascht werden
 * Diverse Fehler beim duplizieren von Views behoben
@@ -135,17 +134,14 @@
 
 ### 0.5
 
-
 * externe Steuerung über automatisch angelegte Systemvariablen, bisherige Befehle: alert, changeView, reload, popup
 * Widget jqui Radio ValueList hinzugefügt
 * Widget jqui Select ValueList hinzugefügt
-
 * diverse Fehler behoben
 * Widget jqui Input Datetime ausgearbeitet
 
 
 ### 0.4
-
 
 * Views können nun unterschiedliche jQuery UI Themes zugewiesen werden, 3 Themes sind bisher mitgeliefert
 * Ab sofort kann als Attribut hm_id neben der id auch eine Adresse in der Form BidCos-RF.EEQ0012345:1.LEVEL bzw ein Variablen- oder Programmname angegeben werden
