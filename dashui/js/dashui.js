@@ -730,8 +730,6 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                         console.log("datapoints loaded");
                         for (var dp in data) {
                             homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1]});
-
-
                         }
                         dui.init();
                     });
