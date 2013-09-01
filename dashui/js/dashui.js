@@ -709,12 +709,6 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             dui.editInit ();
         }
         
-        // jqHomematic Plugin Init
-        if (duiConfig.ccu == null && duiConfig.ccuIoUrl == undefined) {
-            window.alert("Setup the ip addresses in config.js");
-        }
-        else
-        {
 
             console.log("socket.io")
             dui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
@@ -744,27 +738,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                 });
             });
 
-            /*
-            $.homematic({
-                ccu:         duiConfig.ccu,
-                ccuIoUrl:    duiConfig.ccuIoUrl,
-                loadCcuData: false,
-                autoRefresh: autoRefresh,
-                regaDown:    function (error) {
-                    if (error !== undefined) {
-                        $("#loading").append(error);
-                        $.error(error);
-                    }
-                },
-                ready: function () {
-                    dui.init();
-                },
-                loading: function (txt) {
-                    $("#loading").append(txt + "<br/>");
-                }
-            });*/
-        }
-        //console.log("autoRefresh: " + autoRefresh);
+
     });
 
 
