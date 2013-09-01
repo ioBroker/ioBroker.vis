@@ -1,0 +1,17 @@
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://172.16.23.153:2100/socket.io/socket.io.js"></script>
+<script>
+
+    $(document).ready(function () {
+        var output = $("#output");
+        var socket = io.connect('http://172.16.23.153:2100');
+        socket.on('event', function(obj) {
+            output.prepend((new Date().toLocaleString()) + " event " + JSON.stringify(obj) + "\n");
+        });
+    });
+</script>
+<body>
+<pre id="output">
+
+</pre>
+</body>
