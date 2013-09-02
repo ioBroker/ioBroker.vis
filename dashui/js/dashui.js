@@ -27,7 +27,7 @@
 
 var dui = {
 
-    version:            '0.9dev8',
+    version:            '0.9dev9',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -376,7 +376,7 @@ var dui = {
         window.location.href='./?edit';
     },
     renderView: function (view) {
-        //console.log("renderView("+view+")");
+        console.log("renderView("+view+")");
 
         //console.log(dui.views[view].settings.style);
         if (!dui.views[view].settings.theme) {
@@ -405,17 +405,17 @@ var dui = {
             }
 
         } else {
-            //console.log(" - nothing to do");
+            console.log("View already rendered - nothing to do");
         }
 
         // Views in Container verschieben
         $("#duiview_"+view).find("div[id$='container']").each(function () {
-            //console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
+            console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
             var cview = $(this).attr("data-dashui-contains")
             if (!dui.views[cview]) {
                 $(this).append("error: view not found.");
                 return false;
-            } else if (cview == dui.activeView) {
+            } else if (cview == view) {
                 $(this).append("error: view container recursion.");
                 return false;
             }
@@ -502,12 +502,13 @@ var dui = {
 
         dui.renderView(view);
 
+        // View ggf aus Container heraus holen
+        if ($("#duiview_"+view).parent().attr("id") !== "dui_container") {
+            $("#duiview_"+view).appendTo("#dui_container");
+        }
+
+
         if (dui.activeView !== view) {
-            // View ggf aus Container heraus holen
-            if ($("#duiview_"+dui.activeView).parent().attr("id") !== "dui_container") {
-                $("#duiview_"+dui.activeView).appendTo("#dui_container");
-            }
-            console.log("hide "+dui.activeView);
 
             if (effect) {
                 console.log("hideoptions..."); console.log(hideOptions);
@@ -534,12 +535,19 @@ var dui = {
 
         //console.log("changeView("+view+")");
         dui.activeView = view;
-/*
-        if (dui.views[view].settings.interval) {
-            //console.log("setInterval "+dui.views[view].settings.interval);
-           $.homematic("setInterval", dui.views[view].settings.interval);
-        }
-*/
+
+        $("#duiview_"+view).find("div[id$='container']").each(function () {
+            console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
+            var cview = $(this).attr("data-dashui-contains");
+            jQuery("duiview_"+cview).show();
+        });
+
+                /*
+                        if (dui.views[view].settings.interval) {
+                            //console.log("setInterval "+dui.views[view].settings.interval);
+                           $.homematic("setInterval", dui.views[view].settings.interval);
+                        }
+                */
         if (dui.instance) {
             // TODO aktuelle View in Instanz-Variable schreiben
           //   $.homematic("script", "object o = dom.GetObject('dashui_"+dui.instance+"_view');\no.State('"+dui.activeView+"');");
