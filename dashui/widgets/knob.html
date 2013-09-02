@@ -34,6 +34,7 @@
 <script type="text/javascript">
     jQuery.extend(true, dui.binds, {
         knob : {
+            knobrot: function (el, options, factor) {
             knobrot: function (el, options, factor){
                 factor = parseInt(factor, 10);
                 if (factor == 0) { factor = 1; }
@@ -46,7 +47,7 @@
                 $this.knobRot(options);
                 $this.bind("knobrefresh", function (a) {
                     var val = (a.target.value / factor);
-                    jQuery.homematic("setState", id, val);
+                    homematic.setState( id, val);
                 });
                 var hm_id = "_" + $.homematic("escape",id);
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
@@ -65,7 +66,7 @@
                 $this.knob({
                     change: function (val) {
                         if (dui.urlParams["edit"] !== "") {
-                            jQuery.homematic("setState", id, val/100);
+                            homematic.setState( id, val/100);
                         }
                     }
                 });
@@ -81,7 +82,7 @@
                         snap: 5,
                         turn: function (val) {
                             if (dui.urlParams["edit"] !== "") {
-                                jQuery.homematic("setState", id, val.toFixed(2));
+                                homematic.setState( id, val.toFixed(2));
                             }
                         }
                     });
@@ -92,7 +93,7 @@
                  snap: 5,
                  //value: 0.5,
                  turn: function (val) {
-                 jQuery.homematic("setState", id, val.toFixed(2));
+                 homematic.setState( id, val.toFixed(2));
 
                  }
                  });
@@ -228,4 +229,3 @@
         </div>
     </div>
 </script>
-

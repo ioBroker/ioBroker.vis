@@ -1,0 +1,21 @@
+<script type="text/javascript">
+    jQuery.extend(true, dui.binds, {
+        weather: {
+            yr: function (el, url) {
+
+            },
+            wunderground: function (el) {
+
+            }
+        }
+    });
+</script>
+
+<script type="text/ejs" id="tplYrBasic" class="dashui-tpl"
+        data-dashui-set="weather"
+        data-dashui-name="yr.no basic forecast"
+        data-dashui-attrs="url">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" <%= (el) -> dui.binds.weather.yr(el, data.attr('url')) %> />
+    </div>
+</script>

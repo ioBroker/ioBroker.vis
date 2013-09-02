@@ -1,20 +1,17 @@
-<script type="text/ejs" id="tplJqhm" class="dashui-tpl" data-dashui-set="dev" data-dashui-name="jqHomematic - Debug" data-dashui-attrs="">
+<script type="text/ejs" id="tplJqhm" class="dashui-tpl" data-dashui-set="dev" data-dashui-name="Debug" data-dashui-attrs="">
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr("wid") %>" style="border:1px solid black; background-color:#333; color: #eee; font-family: courier; font-size:11px; padding: 4px; max-height:600px;">
     <div class="dashui-widget-body" style="overflow-y: scroll; overflow-x: hidden;">
-        <div style="height: 15px">
-            <span style="color:#f13; font-size: 13px; font-weight: bold;" class="jqhmRefresh">$.homematic("refreshVisible")</span>
-        </div>
         <h3 style="margin-bottom:0px;">homematic.uiState = {</h3>
         <table style="white-space: nowrap;">
             <% homematic.uiState.each(function(i, obj) { %>
-            <tr><td>"<%= jQuery.homematic('unescape', obj) %>":{</td><td>"Value":"<%= homematic.uiState.attr(obj + ".Value") %>",</td><td>"Timestamp":"<%= homematic.uiState.attr(obj + ".Timestamp") %>"}</td></tr>
+            <tr><td>"<%= obj %>":</td><td colspan="2"><%= JSON.stringify({Value:homematic.uiState.attr(obj+".Value"),Timestamp:homematic.uiState.attr(obj+".Timestamp"),Certain:homematic.uiState.attr(obj+".Certain")}) %>,</td></tr>
             <% }) %>
         </table>
         }
         <h3 style="margin-bottom:0px;">homematic.setState = {</h3>
         <table>
             <% homematic.setState.each(function(i, obj) { %>
-            <% if (jQuery.homematic('unescape', obj) != '_65535') { %>
+            <% if (obj != '_65535') { %>
             <tr><td>"<%= obj %>":{</td><td>"Value":"<%= homematic.setState.attr(obj + ".Value") %>",</td><td>"Timestamp":"<%= homematic.setState.attr(obj + ".Timestamp") %>"}</td></tr>
             <% } %>
             <% }) %>

@@ -27,6 +27,24 @@ dui = $.extend(true, dui, {
     selectView:         $("#select_view"),
     activeWidget:       "",
 
+    convertIds: function () {
+    // FOR 0.8.x -> 0.9.x Upgrade
+    // Replace all BidCos Addresses by their Regadom ID
+
+        for (var view in dui.views) {
+            for (var widgetId in dui.views[view].widgets) {
+                var widget = dui.views[view].widgets[widgetId];
+                if (widget.data.hm_id != parseInt(widget.data.hm_id, 10)) {
+                    if (homematic.regaIndex.Name[widget.data.hm_id]) {
+                        console.log(widget.data.hm_id+" -> "+homematic.regaIndex.Name[widget.data.hm_id][0]);
+                        dui.views[view].widgets[widgetId].data.hm_id = homematic.regaIndex.Name[widget.data.hm_id][0];
+                    }
+                }
+            }
+        }
+
+
+    },
     renameView: function () {
         var val = $("#new_name").val();
         if (val != "" && dui.views[val] === undefined) {
@@ -55,28 +73,11 @@ dui = $.extend(true, dui, {
                 dui.views[val].widgets[dui.nextWidget()] = dui.views[val].widgets[widget];
                 delete dui.views[val].widgets[widget];
             }
-            dui.saveLocal();
+            dui.saveRemote();
             dui.renderView(val);
             dui.changeView(val);
             window.location.reload();
         }
-    },
-    saveRemote: function () {
-        //Get directory
-        var parts = dui.fileViews.split("/");
-        var dir = parts[0];
-        for (var t = 1; t < parts.length -1; t++)
-            dir += "/" + parts[t];
-            
-        // Create directory 
-        $.homematic("shell", "mkdir " + dir + "\nexit 0\n", function () {
-            
-        });
-        var content = $.base64.encode(JSON.stringify(dui.views));
-        var cmd = "echo \"" + content + "\" | gzip > " + dui.fileViews + "\nexit 0\n";
-        $.homematic("shell", cmd, function () {
-            alert("Successfully saved views on Homematic CCU.");
-        });
     },
     nextWidget: function () {
         var next = 1;
@@ -99,7 +100,7 @@ dui = $.extend(true, dui, {
         $("#select_active_widget").multiselect("refresh");
         $("#"+dui.activeWidget).remove();
         delete(dui.views[dui.activeView].widgets[dui.activeWidget]);
-        dui.saveLocal();
+        dui.saveRemote();
         dui.inspectWidget("none");
     },
     addWidget: function (tpl, data, style) {
@@ -174,7 +175,7 @@ dui = $.extend(true, dui, {
 
             setTimeout(function() {
                 dui.inspectWidget(dui.activeWidget);
-                dui.saveLocal();
+                dui.saveRemote();
             }, 50);
         } else {
             if ($("#dui_container").find("#duiview_"+targetView).html() == undefined) {
@@ -182,7 +183,7 @@ dui = $.extend(true, dui, {
             }
             dui.activeView = targetView;
             dui.addWidget(tpl, data, style);
-            dui.saveLocal();
+            dui.saveRemote();
             dui.activeView = activeView;
             alert("Widget copied to view " + targetView + ".");
         }
@@ -301,7 +302,7 @@ dui = $.extend(true, dui, {
                     $('#option_'+widget_attrs[attr]).jweatherCity ({lang:'de', currentValue: widget.data[widget_attrs[attr]], onselect: function (wid, text, obj) {
                             dui.widgets[dui.activeWidget].data.attr('weoid', text);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
-                            dui.saveLocal();
+                            dui.saveRemote();
                             dui.reRenderWidget(dui.activeWidget);					
                         }
                     });
@@ -337,7 +338,7 @@ dui = $.extend(true, dui, {
                         //console.log("change "+attribute);
                         dui.widgets[dui.activeWidget].data.attr(attribute, $(this).val());
                         dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = $(this).val();
-                        dui.saveLocal();
+                        dui.saveRemote();
                         dui.reRenderWidget(dui.activeWidget);
                     });
             }
@@ -410,7 +411,7 @@ dui = $.extend(true, dui, {
                 }
                 dui.views[dui.activeView].widgets[widget].style.left = ui.position.left;
                 dui.views[dui.activeView].widgets[widget].style.top = ui.position.top;
-                dui.saveLocal();
+                dui.saveRemote();
 
             },
             drag: function(event, ui) {
@@ -439,7 +440,7 @@ dui = $.extend(true, dui, {
                 }
                 dui.views[dui.activeView].widgets[widget].style.width = ui.size.width;
                 dui.views[dui.activeView].widgets[widget].style.height = ui.size.height;
-                dui.saveLocal();
+                dui.saveRemote();
 
             },
             resize: function (event,ui) {
@@ -484,7 +485,7 @@ dui = $.extend(true, dui, {
             height: 610,
             position: { my: "right top", at: "right top", of: window },
             close: function () {
-                dui.saveLocal();
+                dui.saveRemote();
                 location.href = "./#"+dui.activeView;
             }
         });
@@ -533,11 +534,13 @@ dui = $.extend(true, dui, {
 
 
         // Button Click Handler
+
+        $("#convert_ids").click(dui.convertIds);
         $("#clear_cache").click(function() {
-            $.homematic("clearCache");
+            // TODO - EntfГ¤llt $.homematic("clearCache");
         });
         $("#refresh").click(function() {
-            $.homematic("refreshVisible");
+            // TODO EntfГ¤llt $.homematic("refreshVisible");
         });
         $("#del_widget").click(dui.delWidget);
         $("#dup_widget").click(dui.dupWidget);
@@ -581,14 +584,14 @@ dui = $.extend(true, dui, {
             var $this = $(this);
             var attr = $this.attr("id").slice(8);
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
-            dui.saveLocal();
+            dui.saveRemote();
             dui.reRenderWidget(dui.activeWidget);
         });
         $(".dashui-inspect-css").change(function () {
             var $this = $(this);
             var style = $this.attr("id").substring(12);
             dui.views[dui.activeView].widgets[dui.activeWidget].style[style] = $this.val();
-            dui.saveLocal();
+            dui.saveRemote();
             $("#"+dui.activeWidget).css(style, $this.val());
             $("#widget_helper")
                 .css("left", pxAdd($("#"+dui.activeWidget).css("left"), -2))
@@ -611,7 +614,7 @@ dui = $.extend(true, dui, {
             //console.log("change "+attr+" "+val);
             $("#duiview_"+dui.activeView).css(attr, val);
             dui.views[dui.activeView].settings.style[attr] = val;
-            dui.saveLocal();
+            dui.saveRemote();
         });
         $(".dashui-inspect-view").change(function () {
             var $this = $(this);
@@ -619,14 +622,14 @@ dui = $.extend(true, dui, {
             var val = $this.val();
             //console.log("change "+attr+" "+val);
             dui.views[dui.activeView].settings[attr] = val;
-            dui.saveLocal();
+            dui.saveRemote();
         });
         $("#inspect_view_theme").change(function () {
             var theme = $("#inspect_view_theme option:selected").val();
             //console.log("change theme "+theme);
             dui.views[dui.activeView].settings.theme = theme;
             $("#jqui_theme").attr("href", "css/"+theme+"/jquery-ui.min.css");
-            dui.saveLocal();
+            dui.saveRemote();
         });
         $("#select_active_widget").change(function () {
             dui.inspectWidget($(this).val());
@@ -636,31 +639,31 @@ dui = $.extend(true, dui, {
         if (!this.words) {
             this.words = {
                 "hm_id"     : {"en": "Homematic ID"},
-                "hm_id0"    : {"en": "Swing ID 1",    "de": "Fensterblatt 1",     "ru" : "Створка 1"},
-                "hm_id1"    : {"en": "Swing ID 2",    "de": "Fensterblatt 2",     "ru" : "Створка 2"},
-                "hm_id2"    : {"en": "Swing ID 3",    "de": "Fensterblatt 3",     "ru" : "Створка 3"},
-                "hm_id3"    : {"en": "Swing ID 4",    "de": "Fensterblatt 4",     "ru" : "Створка 4"},
-                "hm_id_hnd0": {"en": "Handle ID 1",   "de": "Griffkontakt 1",     "ru" : "Ручка 1"},
-                "hm_id_hnd1": {"en": "Handle ID 2",   "de": "Griffkontakt 2",     "ru" : "Ручка 2"},
-                "hm_id_hnd2": {"en": "Handle ID 3",   "de": "Griffkontakt 3",     "ru" : "Ручка 3"},
-                "hm_id_hnd3": {"en": "Handle ID 4",   "de": "Griffkontakt 4",     "ru" : "Ручка 4"},
-                "hm_idV"    : {"en": "Valve",         "de": "Ventilsteuerung",    "ru" : "Батарея"},
+                "hm_id0"    : {"en": "Swing ID 1",    "de": "Fensterblatt 1",     "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 1"},
+                "hm_id1"    : {"en": "Swing ID 2",    "de": "Fensterblatt 2",     "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 2"},
+                "hm_id2"    : {"en": "Swing ID 3",    "de": "Fensterblatt 3",     "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 3"},
+                "hm_id3"    : {"en": "Swing ID 4",    "de": "Fensterblatt 4",     "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 4"},
+                "hm_id_hnd0": {"en": "Handle ID 1",   "de": "Griffkontakt 1",     "ru" : "пїЅпїЅпїЅпїЅпїЅ 1"},
+                "hm_id_hnd1": {"en": "Handle ID 2",   "de": "Griffkontakt 2",     "ru" : "пїЅпїЅпїЅпїЅпїЅ 2"},
+                "hm_id_hnd2": {"en": "Handle ID 3",   "de": "Griffkontakt 3",     "ru" : "пїЅпїЅпїЅпїЅпїЅ 3"},
+                "hm_id_hnd3": {"en": "Handle ID 4",   "de": "Griffkontakt 4",     "ru" : "пїЅпїЅпїЅпїЅпїЅ 4"},
+                "hm_idV"    : {"en": "Valve",         "de": "Ventilsteuerung",    "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ"},
                 "hm_idL"    : {"en": "Lock ID",       "de": "Schloss ID",         "ru" : "KeyMatic"},
                 "hm_wid"    : {"en": "Working ID"},
-                "comment"   : {"en" : "Comments",    "de": "Kommentare",     "ru" : "Комментарий"},	
-                "Select HM parameter" : {"en" : "Select HM parameter", "de": "HM parameter ausw&auml;hlen",   "ru" : "Выбрать HM адрес"},	
-                "Select"    : {"en" : "Select",      "de": "Auswahlen",      "ru" : "Выбрать"},	
-                "Cancel"    : {"en" : "Cancel",      "de": "Abbrechen",      "ru" : "Отмена"},	
-                "Name"      : {"en" : "Name",        "de": "Name",           "ru" : "Имя"},	
-                "Location"  : {"en" : "Location",    "de": "Raum",           "ru" : "Положение"},	
-                "Interface" : {"en" : "Interface",   "de": "Schnittstelle",  "ru" : "Интерфейс"},	
-                "Type"      : {"en" : "Type",        "de": "Typ",            "ru" : "Тип"},	
-                "Address"   : {"en" : "Address",     "de": "Adresse",        "ru" : "Адрес"},	
-                "Function"  : {"en" : "Function",    "de": "Gewerk",         "ru" : "Назначение"},	
-                "ramp_time:": {"en" : "Ramp time(s)","de": "Dauer - Aus (sek)","ru" : "Выключение (сек)"},
-                "on_time:"  : {"en" : "On time(s)",  "de": "Dauer - An (sek)","ru" : "Включение (сек)"},
-                "newVersion": {"en" : "Handler ab V1.6",  "de": "Griff ab V1.6","ru" : "Ручка версии от V1.6"},
-                "weoid"     : {"en" : "City",        "de": "Stadt",          "ru" : "Город"},
+                "comment"   : {"en" : "Comments",    "de": "Kommentare",     "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"},	
+                "Select HM parameter" : {"en" : "Select HM parameter", "de": "HM parameter ausw&auml;hlen",   "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ HM пїЅпїЅпїЅпїЅпїЅ"},	
+                "Select"    : {"en" : "Select",      "de": "Auswahlen",      "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ"},	
+                "Cancel"    : {"en" : "Cancel",      "de": "Abbrechen",      "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅ"},	
+                "Name"      : {"en" : "Name",        "de": "Name",           "ru" : "пїЅпїЅпїЅ"},	
+                "Location"  : {"en" : "Location",    "de": "Raum",           "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"},	
+                "Interface" : {"en" : "Interface",   "de": "Schnittstelle",  "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"},	
+                "Type"      : {"en" : "Type",        "de": "Typ",            "ru" : "пїЅпїЅпїЅ"},	
+                "Address"   : {"en" : "Address",     "de": "Adresse",        "ru" : "пїЅпїЅпїЅпїЅпїЅ"},	
+                "Function"  : {"en" : "Function",    "de": "Gewerk",         "ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"},	
+                "ramp_time:": {"en" : "Ramp time(s)","de": "Dauer - Aus (sek)","ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ)"},
+                "on_time:"  : {"en" : "On time(s)",  "de": "Dauer - An (sek)","ru" : "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ)"},
+                "newVersion": {"en" : "Handler ab V1.6",  "de": "Griff ab V1.6","ru" : "пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ V1.6"},
+                "weoid"     : {"en" : "City",        "de": "Stadt",          "ru" : "пїЅпїЅпїЅпїЅпїЅ"},
             };
         }
         if (this.words[text]) {
@@ -787,7 +790,9 @@ var imageSelect = {
         }
         
         // Load directory
-        $.homematic("getFileList", this._rootDir + this._curDir, this.showImages, htmlElem)
+        //$.homematic("getFileList", this._rootDir + this._curDir, this.showImages, htmlElem)
+        console.log("load directory "+ this._rootDir + this._curDir);
+        // TODO socket.emit("readdir" ...
     },
     showImages: function (aImages, obj) {	
         // Remove wait icon
@@ -2136,7 +2141,8 @@ var hmSelect = {
         if (ccu['devices'] == undefined || ccu['devices'] == null)
         {
             // request list of devices anew
-            $.homematic ("loadCcuDataAll", function () {hmSelect.show (homematic.ccu, hmSelect._userArg, hmSelect._onsuccess, filter, devFilter)});
+            //$.homematic ("loadCcuDataAll", function () {hmSelect.show (homematic.ccu, hmSelect._userArg, hmSelect._onsuccess, filter, devFilter)});
+            // Todo -> CCU-Data already in homematic.regaObjects and homematic.regaIndex
             return;
         }
         $('#dashui-waitico').hide();

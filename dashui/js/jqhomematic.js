@@ -21,13 +21,6 @@
  */
 ;
 
-var homematic = {
-    uiState: {},                // can Observable fur UI
-    setState: {},               // can Observable zum setzen von Werten
-    ccu: {},                    // Logikschicht-Daten
-    dpWorking: {},
-    cancelUpdateList: []            // Datenpunkte die beim nachsten Refresh ausgespart werden sollen
-};
 
 (function ($) {
 
@@ -112,7 +105,8 @@ var version =               '0.10',
             // ??? @hobbyquaker: Eigentlich, state muss wieder vom CCU 
             // gelesen werden um den richtigen status zu bekommen (vielleciht wurde die lampe gar nicht eingeshaltet
             // oder man kann quality von dem signal einfugen
-            funcs.uiState(id, val);
+            homematic.uiState.attr("_"+id+".Value", val);
+            homematic.uiState.attr("_"+id+".certain", false);
         },                 // Wert-Anderung in homematic.setState schreiben
         uiState: function (id, val) {
             homematic.uiState.attr("_"+id+".Value", val);

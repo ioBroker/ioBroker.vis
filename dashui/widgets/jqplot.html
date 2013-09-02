@@ -25,9 +25,8 @@
                     var plot = jQuery.jqplot($this.attr("id"), series, jqplotOptions);
                     var id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
                     homematic.uiState.bind(id+".Value", function( e, newVal, oldVal ) {
-                        //console.log("*** jqplot change " + attr);
-                        //console.log(attr == id+".Value");
                         //if (attr == ("_"+ $.homematic("escape",$this.attr("data-hm-id"))+".Value")) {
+                            newVal = ''+newVal;
                             plot.series[0].data = [[1,parseFloat(newVal)]];
                             plot.redraw();
                         //}

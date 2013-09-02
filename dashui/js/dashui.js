@@ -22,9 +22,12 @@
 
 //console.log("DashUI");
 // dui - the DashUI Engine
+
+
+
 var dui = {
 
-    version:            '0.8.5',
+    version:            '0.9dev10',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -42,14 +45,47 @@ var dui = {
     currentLang:        duiConfig.currentLang,
     initialized:        false,
     useCache:           true,
-
+    socket: {},
     binds: {},
+    addStringVariable: function(name, desc, callback) {
+        var script = "object test = dom.GetObject('"+name+"');\n" +
+            "if (test) {\n" +
+            "} else {\n" +
+            "object o = dom.CreateObject(OT_VARDP);\n" +
+            "o.Name('"+name+"');\n" +
+            "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
+            "o.DPInfo('"+desc+"');\n" +
+            "o.DPArchive(false);\n" +
+            "o.ValueUnit('');\n" +
+            "o.ValueType(20);\n" +
+            "o.ValueSubType(11);\n" +
+            "o.State('');\n" +
+            "}";
+
+        dui.socket.emit("runScript", script, function () {
+            if (callback) {
+                callback();
+            }
+        });
+
+
+    },
     startInstance: function () {
         $("#dashui_instance").val(dui.instance);
         $("#create_instance").hide();
         $("#instance").show();
 
         var name = "dashui_"+dui.instance;
+
+        dui.addStringVariable(name+"_view", "automatisch angelegt von DashUI.", function () {
+            dui.addStringVariable(name+"_cmd", "automatisch angelegt von DashUI.", function () {
+                dui.addStringVariable(name+"_data", "automatisch angelegt von DashUI.", function () {
+
+                });
+            });
+        });
+
+        /* TODO Instanzen - Problem - neu angelegte Variablen sind CCU.IO nicht bekannt. Einfach in regaObject/Index einf√ºgen?
         $.homematic("addStringVariable", name+"_view", "automatisch angelegt von DashUI.")
         $.homematic("addStringVariable", name+"_cmd",  "automatisch angelegt von DashUI.")
         $.homematic("addStringVariable", name+"_data", "automatisch angelegt von DashUI.")
@@ -57,6 +93,7 @@ var dui = {
         $.homematic("addUiState", name+"_view");
         $.homematic("addUiState", name+"_cmd");
         $.homematic("addUiState", name+"_data");
+         */
 
 
         $("body").append('<div class="dashui-dummy" data-hm-id="'+name+'_view"></div>')
@@ -64,6 +101,9 @@ var dui = {
             .append('<div class="dashui-dummy" data-hm-id="'+name+'_data"></div>');
 
         homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+
+            // TODO auf IDs umbauen
+
             if (attr == ("_" + name + "_cmd.Value")) {
                 var cmd = newVal;
                 //console.log("change " + attr + " " + newVal);
@@ -72,7 +112,7 @@ var dui = {
                         var data = homematic.uiState.attr("_"+name+"_data.Value");
 
                         // external Commands
-                        $.homematic("script",
+                       /* $.homematic("script",
                             "object o = dom.GetObject(\""+name+"_data\");\n" +
                                 "o.State(\"\");\n" +
                                 "o = dom.GetObject(\""+name+"_cmd\");\n" +
@@ -95,7 +135,7 @@ var dui = {
                                 window.open(data);
                                 break;
                             default:
-                        }
+                        }*/
                     }, 50);
                 }
             }
@@ -105,7 +145,8 @@ var dui = {
     removeInstance: function () {
         storage.set(dui.storageKeyInstance, null);
         var name = "dashui_"+dui.instance;
-        $.homematic("delVariable", name + "_cmd",
+        // TODO
+       /* $.homematic("delVariable", name + "_cmd",
             function () {
                 $.homematic("delVariable", name + "_data",
                     function () {
@@ -113,7 +154,7 @@ var dui = {
                     }
                 );
             }
-        );
+        );*/
 
 
     },
@@ -125,7 +166,7 @@ var dui = {
         dui.startInstance();
     },
     loadWidgetSet: function (name) {
-        console.log("loadWidgetSet("+name+")");        
+        console.log("loadWidgetSet("+name+")");
         $.ajax({
             url: "widgets/"+name+".html",
             type: "get",
@@ -139,15 +180,16 @@ var dui = {
     },
     loadWidgetSets: function () {
         for (var i = 0; i < dui.widgetSets.length; i++) {
+
             if (dui.widgetSets[i].name !== undefined) {
                 dui.loadWidgetSet(dui.widgetSets[i].name);
                 
                 if (dui.urlParams['edit'] === "" && dui.widgetSets[i].edit) {
                     dui.loadWidgetSet(dui.widgetSets[i].edit);
                 }
-            }
-            else
+            } else {
                 dui.loadWidgetSet(dui.widgetSets[i]);
+            }
         }
     },
     initInstance: function () {
@@ -160,11 +202,14 @@ var dui = {
         }
     },
     init: function () {
-        if (this.initialized)
+        if (this.initialized) {
             return;
-        
+        }
+
+
         dui.loadWidgetSets();
 
+        $("#loading").append(" done.<br/>");
         dui.initInstance();
         
         var activeBkgClass = "";
@@ -178,8 +223,13 @@ var dui = {
             dui.binds.hqWidgetsExt.hqInit ();
         }
             
-        dui.loadLocal();
+        //dui.loadLocal();
+        dui.loadRemote(dui.initNext);
 
+
+
+    },
+    initNext: function () {
         if (!dui.views) {
             dui.loadRemote(function() {
                 $("#loading").html("").hide();
@@ -193,7 +243,7 @@ var dui = {
 
         var hash = window.location.hash.substring(1);
 
-        // View ausgew‰hlt?
+        // View ausgew√§fhlt?
         if (hash == "") {
             for (var view in dui.views) {
                 dui.activeView = view;
@@ -217,11 +267,11 @@ var dui = {
         $("#active_view").html(dui.activeView);
 
         dui.changeView(dui.activeView);
-        
+
         // Set background style
         if (dui.views[dui.activeView] && dui.views[dui.activeView].settings != undefined && dui.views[dui.activeView].settings.style != undefined) {
             if (dui.views[dui.activeView].settings.style['background'] != undefined) {
-               $("#duiview_"+dui.activeView).css("background", dui.views[dui.activeView].settings.style['background']);
+                $("#duiview_"+dui.activeView).css("background", dui.views[dui.activeView].settings.style['background']);
             }
             if (dui.views[dui.activeView].settings.style['background_class'] != undefined) {
                 activeBkgClass = dui.views[dui.activeView].settings.style['background_class'];
@@ -268,7 +318,7 @@ var dui = {
             $("#select_set").html ("");
 
             for (i = 0; i < dui.widgetSets.length; i++) {
-                if (dui.widgetSets[i].name !== undefined) 
+                if (dui.widgetSets[i].name !== undefined)
                     $("#select_set").append("<option value='"+dui.widgetSets[i].name+"'>"+dui.widgetSets[i].name+"</option>");
                 else
                     $("#select_set").append("<option value='"+dui.widgetSets[i]+"'>"+dui.widgetSets[i]+"</option>");
@@ -280,7 +330,7 @@ var dui = {
             //console.log("TOOLBOX OPEN");
             $("#dui_editor").dialog("open");
             dui.binds.jqueryui._disable();
-            
+
             // Create background_class property if does not exist
             if (dui.views[dui.activeView] != undefined) {
                 if (dui.views[dui.activeView].settings == undefined) {
@@ -293,22 +343,22 @@ var dui = {
                     dui.views[dui.activeView].settings.style['background_class'] = "";
                 }
             }
-           
-            
+
+
             // Init background selector
             hqStyleSelector.Show ({ width: 202,
-                            name:       "inspect_view_bkg_def",
-                            filterFile: "backgrounds.css",
-                            style:      activeBkgClass,     
-                            parent:     $('#inspect_view_bkg_parent'),
-							onchange:   function (newStyle, obj) {
-                                if (dui.views[dui.activeView].settings.style['background_class'])
-                                    $("#duiview_"+dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
-								dui.views[dui.activeView].settings.style['background_class'] = newStyle;
-								$("#duiview_"+dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
-							},
-                          });
-            
+                name:       "inspect_view_bkg_def",
+                filterFile: "backgrounds.css",
+                style:      activeBkgClass,
+                parent:     $('#inspect_view_bkg_parent'),
+                onchange:   function (newStyle, obj) {
+                    if (dui.views[dui.activeView].settings.style['background_class'])
+                        $("#duiview_"+dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
+                    dui.views[dui.activeView].settings.style['background_class'] = newStyle;
+                    $("#duiview_"+dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
+                },
+            });
+
         }
         this.initialized = true;
     },
@@ -322,11 +372,11 @@ var dui = {
     },
     initViewObject: function () {
         dui.views = {view1:{settings:{style:{}},widgets:{}}};
-        dui.saveLocal();
+        dui.saveRemote();
         window.location.href='./?edit';
     },
     renderView: function (view) {
-        //console.log("renderView("+view+")");
+        console.log("renderView("+view+")");
 
         //console.log(dui.views[view].settings.style);
         if (!dui.views[view].settings.theme) {
@@ -355,17 +405,17 @@ var dui = {
             }
 
         } else {
-            //console.log(" - nothing to do");
+            console.log("View already rendered - nothing to do");
         }
 
         // Views in Container verschieben
         $("#duiview_"+view).find("div[id$='container']").each(function () {
-            //console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
+            console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
             var cview = $(this).attr("data-dashui-contains")
             if (!dui.views[cview]) {
                 $(this).append("error: view not found.");
                 return false;
-            } else if (cview == dui.activeView) {
+            } else if (cview == view) {
                 $(this).append("error: view container recursion.");
                 return false;
             }
@@ -403,11 +453,11 @@ var dui = {
         };
         //console.log(widget);
         // Register hm_id to detect changes
-        if (widget.data.hm_id != 65535)
-            $.homematic("addUiState", widget.data.hm_id, widget.data.hm_wid);
+       // if (widget.data.hm_id != 65535)
+         //   $.homematic("addUiState", widget.data.hm_id, widget.data.hm_wid);
         
         var widgetData = dui.widgets[id]["data"];
-        widgetData.hm_id = $.homematic("escape", widgetData.hm_id);
+        widgetData.hm_id = widgetData.hm_id; //$.homematic("escape", widgetData.hm_id);
         
         // Append html element to view
         $("#duiview_"+view).append(can.view(widget.tpl, {hm: homematic.uiState["_"+widget.data.hm_id], data: widgetData, view: view}));
@@ -452,12 +502,13 @@ var dui = {
 
         dui.renderView(view);
 
+        // View ggf aus Container heraus holen
+        if ($("#duiview_"+view).parent().attr("id") !== "dui_container") {
+            $("#duiview_"+view).appendTo("#dui_container");
+        }
+
+
         if (dui.activeView !== view) {
-            // View ggf aus Container heraus holen
-            if ($("#duiview_"+dui.activeView).parent().attr("id") !== "dui_container") {
-                $("#duiview_"+dui.activeView).appendTo("#dui_container");
-            }
-            console.log("hide "+dui.activeView);
 
             if (effect) {
                 console.log("hideoptions..."); console.log(hideOptions);
@@ -485,18 +536,42 @@ var dui = {
         //console.log("changeView("+view+")");
         dui.activeView = view;
 
-        if (dui.views[view].settings.interval) {
-            //console.log("setInterval "+dui.views[view].settings.interval);
-            $.homematic("setInterval", dui.views[view].settings.interval);
-        }
+        $("#duiview_"+view).find("div[id$='container']").each(function () {
+            console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
+            var cview = $(this).attr("data-dashui-contains");
+            jQuery("duiview_"+cview).show();
+        });
 
+                /*
+                        if (dui.views[view].settings.interval) {
+                            //console.log("setInterval "+dui.views[view].settings.interval);
+                           $.homematic("setInterval", dui.views[view].settings.interval);
+                        }
+                */
         if (dui.instance) {
-            $.homematic("script", "object o = dom.GetObject('dashui_"+dui.instance+"_view');\no.State('"+dui.activeView+"');");
+            // TODO aktuelle View in Instanz-Variable schreiben
+          //   $.homematic("script", "object o = dom.GetObject('dashui_"+dui.instance+"_view');\no.State('"+dui.activeView+"');");
         }
 
         if (window.location.hash.slice(1) != view) {
             history.pushState({}, "", "#" + view);
         }
+
+        // Navigation-Widgets
+
+        $(".jqui-nav-state").each(function () {
+            var $this = $(this);
+            if ($this.attr("data-dashui-nav") == view) {
+                $this.removeClass("ui-state-default")
+                $this.addClass("ui-state-active");
+            } else {
+                $this.addClass("ui-state-default")
+                $this.removeClass("ui-state-active");
+            }
+        });
+
+
+
 
         // Editor
         $("#inspect_view").html(view);
@@ -547,44 +622,68 @@ var dui = {
             return false;
         }
         dui.views[view] = {settings:{style:{}},widgets:{}};
-        dui.saveLocal();
+        dui.saveRemote();
         dui.changeView(view);
         window.location.reload();
     },
-    loadLocal: function () {
-        dui.views = storage.get(dui.storageKeyViews);
-
-        if (!dui.views) {
-            //dui.views = {};
-            //dui.loadRemote();
-        }
-    },
-    loadRemote: function (err) {
-        var cmd = "cat " + dui.fileViews + " | gzip -d\nexit 0\n";
-        $("#loading").append("Please wait! Trying to load views from CCU.");
-        $.homematic("shell", cmd, function (data) {
-            if ($.trim(data) == "") {
-                if (err) { err(); }
-            } else {
-                dui.views = $.parseJSON($.base64.decode($.trim(data)))
-                storage.set(dui.storageKeyViews, null);
-                dui.saveLocal();
-                window.location.reload();
+    loadRemote: function (callback) {
+        $("#loading").append("Please wait! Trying to load views from CCU.IO");
+        dui.socket.emit("readFile", "dashui-views.json", function (data) {
+            dui.views = data;
+            if (!dui.views) {
+                alert("No Views found on CCU.IO");
             }
-        },
-        function () {
-            $("#loading").append("CCU Communication Error");
-            //$.error("CCU Communication Error");
-            if (err) { err(); }
+            callback();
         });
-    },
-    saveLocal: function () {
-        //console.log(dui.views);
 
-        storage.extend(dui.storageKeyViews, dui.views);
-        storage.extend(dui.storageKeySettings, dui.settings);
     },
+    saveRemote: function () {
+        dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
+            console.log("Saved views on CCU.IO");
+        });
+    }
 };
+
+
+var homematic = {
+    uiState: new can.Observe({"_65535":{"Value":null}}),
+    setState: new can.Observe({"_65535":{"Value":null}}),
+    regaIndex: {},
+    regaObjects: {},
+    setStateTimers: {},
+    setValue: function (id, val) {
+        console.log("setValue("+id+","+val+")");
+
+        this.setState.attr("_"+id, {Value: val});
+        this.uiState.attr("_"+id+".Value", val);
+        this.uiState.attr("_"+id+".Certain", false);
+        // Todo Timestamp
+    },
+    stateDelayed: function (attr, val) {
+        var id = parseInt(attr.slice(1), 10);
+        if (!this.setStateTimers[id]) {
+            console.log("setState "+id+" "+val);
+            dui.socket.emit("setState", [id, val]);
+
+            this.setState.removeAttr(attr);
+            this.setStateTimers[id] = setTimeout(function () {
+                if (homematic.setState[attr]) {
+                    homematic.setStateTimers[id] = undefined;
+                    homematic.stateDelayed(attr, homematic.setState.attr(attr + ".Value"));
+                }
+                homematic.setStateTimers[id] = undefined;
+            }, 1000);
+        }
+    }
+}
+
+homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
+    console.log("homematic setState change "+how+" "+attr+" "+newVal);
+    if (how == "set" || how == "add") {
+        homematic.stateDelayed(attr, newVal.Value);
+    }
+});
+
 
 // Parse Querystring
 (window.onpopstate = function () {
@@ -608,7 +707,7 @@ var dui = {
 
 (function($) {
     $(document).ready(function() {
-        // f¸r iOS Safari - wirklich notwendig?
+        // f√ºr iOS Safari - wirklich notwendig?
         $('body').on('touchmove', function (e) {
             if ($(e.target).closest("body").length == 0) {
                 e.preventDefault();
@@ -623,32 +722,43 @@ var dui = {
             dui.editInit ();
         }
         
-        // jqHomematic Plugin Init
-        if (duiConfig.ccu == null && duiConfig.ccuIoUrl == undefined) {
-            window.alert("Setup the ip addresses in config.js");
-        }
-        else
-        {
-            $.homematic({
-                ccu:         duiConfig.ccu,
-                ccuIoUrl:    duiConfig.ccuIoUrl,
-                loadCcuData: false,
-                autoRefresh: autoRefresh,
-                regaDown:    function (error) {
-                    if (error !== undefined) {
-                        $("#loading").append(error);
-                        $.error(error);
-                    }
-                },
-                ready: function () {
-                    dui.init();
-                },
-                loading: function (txt) {
-                    $("#loading").append(txt + "<br/>");
-                }
+
+            console.log("socket.io");
+        $("#loading").append("Connecting Socket.IO ...<br/>");
+
+        dui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
+            dui.socket.on('event', function(obj) {
+                console.log("event! "+JSON.stringify(obj))
+                homematic.uiState.attr("_"+obj[0]+".Value", ''+obj[1]);
+                homematic.uiState.attr("_"+obj[0]+".Timestamp", ''+obj[2]);
+                homematic.uiState.attr("_"+obj[0]+".Certain", ''+obj[3]);
+
             });
-        }
-        //console.log("autoRefresh: " + autoRefresh);
+
+        $("#loading").append("Loading ReGa Data");
+
+        dui.socket.emit("getIndex", function (index) {
+            $("#loading").append(".");
+            console.log("index loaded");
+                homematic.regaIndex = index;
+                dui.socket.emit("getObjects", function (obj) {
+                    $("#loading").append(".");
+                    console.log("objects loaded")
+                    homematic.regaObjects = obj;
+                    dui.socket.emit("getDatapoints", function (data) {
+                        $("#loading").append(".<br/>");
+                        console.log("datapoints loaded");
+                        for (var dp in data) {
+                            homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1]});
+                        }
+                        $("#loading").append("Loading Widget-Sets...");
+                        setTimeout(dui.init, 10);
+
+                    });
+                });
+            });
+
+
     });
 
 
