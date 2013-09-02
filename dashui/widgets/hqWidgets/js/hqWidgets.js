@@ -676,6 +676,7 @@ var hqWidgets = {
         
         if (advSettings != undefined)
             this.advSettings = $.extend (advSettings, advOptions);
+        this.settingsDefault = $.extend ({}, settings);
         this.settings = $.extend (settings, options);
             
         if (this.advSettings.elemName == null) {
@@ -2024,19 +2025,22 @@ var hqWidgets = {
             }
         }
         // Get all options as one parameter
-        this.GetSettings = function (isAllOrOneName) {
+        this.GetSettings = function (isAllOrOneName, ignoreDefault) {
             var options = {};
 
             if (isAllOrOneName !== undefined && isAllOrOneName !== true && isAllOrOneName !== false)
                 return this.settings[isAllOrOneName];
-            
             
             for(var propertyName in this.settings) {
                 if (propertyName[0] == '_')
                     continue;
                 if ((isAllOrOneName === undefined || isAllOrOneName === false) && this.settings[propertyName] === null)
                     continue;
-                    
+                
+                if (ignoreDefault !== undefined && ignoreDefault == true && this.settings[propertyName] == this.settingsDefault[propertyName])
+                    continue;
+                
+                
                 // ignore some settings
                 if (this.settings.buttonType != hqWidgets.gButtonType.gTypeDimmer && 
                     (propertyName == "dimmerColorAct" || propertyName == "dimmerThick"  || propertyName == "dimmerColorInact"))
@@ -2945,7 +2949,7 @@ var hqWidgets = {
         this.StoreSettings = function()	{
             // Store settings in DB
             if (this.dynStates.store != null)
-                this.dynStates.store (this, this.GetSettings());
+                this.dynStates.store (this, this.GetSettings(false, true));
         }
         // Send command with new position to real device
         this.SendPercent = function()	{
@@ -3872,7 +3876,7 @@ var hqWidgets = {
             this.intern._contextMenu    = new hqUtils.ContextMenu ({parent: this});
             this.intern._contextMenu.Add ({text:hqWidgets.Type2Name(this.settings.buttonType)});
             this.intern._contextMenu.Add ({text:"Settings", action:function(elem){
-                    var m   = new hqUtils.SettingsDialogContent({options: elem.GetSettings (), getImages: hqWidgets.gOptions.getImages}); 
+                    var m   = new hqUtils.SettingsDialogContent({options: elem.GetSettings (false, false), getImages: hqWidgets.gOptions.getImages}); 
                     var dlg = new hqUtils.Dialog ({
                         title:        hqWidgets.Translate("Settings"), 
                         contentClass: m, 
