@@ -604,10 +604,15 @@ var dui = {
     },
     getObjDesc: function (id) {
         if (homematic.regaObjects[id] !== undefined) {
+            var parent = "";
+            var p = homematic.regaObjects[id]["Parent"];
+            if (p !== undefined && homematic.regaObjects[p]["DPs"] !== undefined)
+                parent = homematic.regaObjects[p]["Name"] + "/";       
+        
             if (homematic.regaObjects[id]["Address"] !== undefined)
-                return homematic.regaObjects[id]["Name"] + "/" + homematic.regaObjects[id]["Address"];
+                return parent + homematic.regaObjects[id]["Name"] + "/" + homematic.regaObjects[id]["Address"];
             else
-                return homematic.regaObjects[id]["Name"];
+                return parent + homematic.regaObjects[id]["Name"];
         }
         else
             return "";
@@ -628,9 +633,13 @@ var homematic = {
         console.log("setValue("+id+","+val+")");
 
         this.setState.attr("_"+id, {Value:val});
-        this.uiState.attr("_"+id+".Value", val);
-        this.uiState.attr("_"+id+".certain", false);
-        // Todo Timestamp
+        var d = new Date();
+        var t = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+        var o = {};
+        o["_"+id+".Value"]     = val;
+        o["_"+id+".Timestamp"] = t;
+        o["_"+id+".Certain"]   = false;
+        this.uiState.attr(o);
     },
     stateDelayed: function (attr, val) {
         var id = parseInt(attr.slice(1), 10);
@@ -701,13 +710,19 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         dui.socket.on('event', function(obj) {
             console.log("event! "+JSON.stringify(obj));
             if (homematic.uiState["_"+obj[0]] !== undefined) {
-                homematic.uiState.attr("_"+obj[0]+".Value", ''+obj[1]);
-                homematic.uiState.attr("_"+obj[0]+".Timestamp", ''+obj[2]);
-                homematic.uiState.attr("_"+obj[0]+".Certain", ''+obj[3]);
+                var o = {};
+                o["_"+obj[0]+".Value"]     = obj[1];
+                o["_"+obj[0]+".Timestamp"] = obj[2];
+                o["_"+obj[0]+".Certain"]   = obj[3];            
+                homematic.uiState.attr(o);
+                
+                // Ich habe keine Ahnung, aber bind("change") funktioniert einfach nicht 
+                if (dui.binds.hqWidgetsExt && dui.binds.hqWidgetsExt.hqMonitor && obj[3])
+                    dui.binds.hqWidgetsExt.hqMonitor (obj[0], obj[1], obj[2]);
             }
-            else
+            else {
                 console.log("Datenpunkte sind noch nicht geladen!");
-
+            }
         });
 
         dui.socket.emit("getIndex", function (index) {
