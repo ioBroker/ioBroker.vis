@@ -1549,6 +1549,9 @@ var hmSelect = {
                     iPnts = 0;
                     iChns = 0;
                     
+                    if (device["HssType"] !== undefined && device["HssType"] == "MAINTENANCE")
+                        continue;
+                    
                     for (var chn in device.Channels){
                         var idChn     = device["Channels"][chn];
                         var channel   = homematic.regaObjects[idChn];
@@ -1562,16 +1565,22 @@ var hmSelect = {
                             for (var t = 0; t < f.length; t++) {
                                 if (name.indexOf (f[t]) != -1) {
                                     newPoints [idPnt] = point;
+                                    newPoints [idPnt]["Type"] = dp;
                                     iPnts++;
+                                    break;
                                 }
                             }
                         }
                         if (iPnts > 0) {
                             if (iPnts == 1) {
                                 for (var idPnt in newPoints) {
-                                    newChannels[idPnt]["Address"] = newPoints[idPnt]["Name"];
-                                    newChannels[idPnt].DPs = null;
-                                    newChannels[idPnt].cnt = 0;
+                                    newChannels[idPnt] = {
+                                        "HssType":   channel.HssType,
+                                        "Address":   newPoints[idPnt]["Name"],
+                                        "Name":      channel.Name,
+                                        DPs:         null,
+                                        cnt:         0
+                                    }
                                     break;
                                 }
                                 iPnts = 0;
@@ -1618,7 +1627,7 @@ var hmSelect = {
         }
         
         // Filter by hssType of device
-        if (this.myDevFilter != devFilter) {
+        if (this.myDevFilter != devFilter || this._devices == null) {
             this.myDevFilter = devFilter;
             // Clear prepared data
             this._buttonsLoc  = null;
@@ -1640,8 +1649,8 @@ var hmSelect = {
                 var idDev  = devicesCCU[dev];
                 var device = homematic.regaObjects[idDev];
                 var isFound = false;
-                iChns = 0;
-
+                iChns = 0;                    
+                
                 if (f === null || device.Interface == "CUxD")
                     isFound = true;
                 else {
@@ -1667,7 +1676,11 @@ var hmSelect = {
                 else {
                     for (var chn in device.Channels){
                         var idChn   = device["Channels"][chn];
-                        var channel = homematic.regaObjects[idChn];                            
+                        var channel = homematic.regaObjects[idChn];       
+                        
+                        if (channel["HssType"] !== undefined && channel["HssType"] == "MAINTENANCE")
+                            continue;
+                            
                         if (isWithDPs) {
                             var iPnts = 0;
                             var newPoints = new Object ();
@@ -1678,13 +1691,16 @@ var hmSelect = {
                                 var name = this._convertName(point.Name);
                                 if (f == null) {
                                     newPoints [idPnt] = point;
+                                    newPoints [idPnt]["Type"] = dp;
                                     iPnts++;
                                 }
                                 else {
                                     for (var t = 0; t < f.length; t++) {
                                         if (name.indexOf (f[t]) != -1) {
                                             newPoints [idPnt] = point;
+                                            newPoints [idPnt]["Type"] = dp;
                                             iPnts++;
+                                            break;
                                         }
                                     }
                                 }
@@ -1692,9 +1708,14 @@ var hmSelect = {
                             if (iPnts > 0) {
                                 if (iPnts == 1) {
                                     for (var idPnt in newPoints) {
-                                        newDevices[idPnt]["Address"] = newPoints[idPnt]["Name"];
-                                        newDevices[idPnt].Channels = null;
-                                        newDevices[idPnt].cnt = 0;
+                                        newDevices[idPnt] = {
+                                            "Interface": device.Interface,
+                                            "HssType":   device.HssType,
+                                            "Address":   newPoints[idPnt]["Name"],
+                                            "Name":      channel["Name"],
+                                            cnt:         0,
+                                            Channels:    null
+                                        };
                                         break;
                                     }
                                     iPnts = 0;
@@ -1880,7 +1901,7 @@ var hmSelect = {
                             this._devices[dev].Channels[chn].func = "";
                             for (var func in functions) {
                                 for (var k = 0; k < homematic.regaObjects[functions[func]]["Channels"].length; k++){
-                                    if (homematic.regaObjects[func]["Channels"][k] == chn){
+                                    if (homematic.regaObjects[functions[func]]["Channels"][k] == chn){
                                         this._devices[dev].Channels[chn].func = homematic.regaObjects[functions[func]]["Name"];
                                         if (!arr[homematic.regaObjects[functions[func]]["id"]]) {
                                             arr[homematic.regaObjects[functions[func]]["id"]] = 1;
@@ -1915,7 +1936,7 @@ var hmSelect = {
 					"Address":   this._devices[dev].Address,
 					"Name":      this._convertName(this._devices[dev].Name),
                     "_ID":       dev,
-					isLeaf:      (this._devices[dev].cnt == undefined || this._devices[dev].cnt > 0) ? false : true,
+					isLeaf:      (this._devices[dev].cnt !== undefined && this._devices[dev].cnt > 0) ? false : true,
 					level:       "0",
 					parent:      "null",
 					expanded:   false, 
@@ -1926,8 +1947,7 @@ var hmSelect = {
 				}
 				var _parent = this.mydata[i].id;
 				i++;
-				for (var chn in this._devices[dev].Channels)
-				{
+				for (var chn in this._devices[dev].Channels) {
 					var channel = this._devices[dev].Channels[chn];
 					this.mydata[i] = {
 						id:          ""+(i+1), 
@@ -1939,7 +1959,7 @@ var hmSelect = {
 						"Address":   channel.Address,
 						"Name":      this._convertName(channel.Name),
 					    "_ID":       chn,
-						isLeaf:      (channel.cnt == undefined || channel.cnt > 0) ? false : true,
+						isLeaf:      (channel.cnt !== undefined && channel.cnt > 0) ? false : true,
 						level:       "1",
 						parent:      _parent,
 						expanded:    false, 
@@ -1950,8 +1970,7 @@ var hmSelect = {
 					}
 					var parent1 = this.mydata[i].id;
 					i++;
-					for (var dp in channel.DPs)
-					{	
+					for (var dp in channel.DPs)	{	
 						var point = channel.DPs[dp];
 						this.mydata[i] = {
 							id:          ""+(i+1), 
