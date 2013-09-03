@@ -267,7 +267,7 @@ dui = $.extend(true, dui, {
                     // Select Homematic ID Dialog
                     $("#inspect_"+widget_attrs[attr]+"_btn").click ( function () {
                         hmSelect.value = $("#inspect_"+this.jControl).val();
-                        hmSelect.show (homematic.ccu, this.jControl, function (obj, value) {
+                        hmSelect.show (homematic, this.jControl, function (obj, value) {
                             $("#inspect_"+obj).val(value);
                             $("#inspect_"+obj).trigger('change');
                             if (document.getElementById ('inspect_hm_wid')) {
@@ -292,7 +292,7 @@ dui = $.extend(true, dui, {
                     // Select Homematic ID Dialog
                     $("#inspect_"+widget_attrs[attr]+"_btn").click ( function () {
                         hmSelect.value = $("#inspect_"+this.jControl).val();
-                        hmSelect.show (homematic.ccu, this.jControl, function (obj, value) {
+                        hmSelect.show (homematic, this.jControl, function (obj, value) {
                             $("#inspect_"+obj).val(value);
                             $("#inspect_"+obj).trigger('change');
                         }, 'WORKING');
@@ -364,6 +364,10 @@ dui = $.extend(true, dui, {
                     .val(widget.data[widget_attrs[attr]])
                     .change(function () {
                         var attribute = $(this).attr("id").slice(8);
+                        if (attribute == "hm_id" || attribute == "hm_wid") {
+                            $("#inspect_"+attribute+"_desc").html(dui.getObjDesc ($(this).val()));
+                        }
+                        
                         //console.log("change "+attribute);
                         dui.widgets[dui.activeWidget].data.attr(attribute, $(this).val());
                         dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = $(this).val();
@@ -1288,28 +1292,31 @@ var hmSelect = {
 			return "";
 	}, // Get image for type
     _type2Str: function (type, subtype) {
+        type    = parseInt (type);
+        subtype = parseInt (subtype);
         switch (type) {
-            case '2':
-                if (subtype == '6')
+            case 2:
+                if (subtype == 6)
                     return dui.translate('Alarm');
                 else
-                if (subtype == '2')
-                    return dui.translate('Logocal');
+                if (subtype == 2)
+                    return dui.translate('Logical');
                 else
                 return dui.translate('Boolean')+","+subtype;
                 
-            case '20':
-                if (subtype == '11')
+            case 20:
+                if (subtype == 11)
                     return dui.translate('String');
                 else
                     return dui.translate('String')+","+subtype;
-            case '4':
-                if (subtype == '0')
+            case 4:
+                if (subtype == 0)
                     return dui.translate('Number');
                 else
                     return dui.translate('Number')+","+subtype;
-            case '16':
-                if (subtype == '29')
+                    
+            case 16:
+                if (subtype == 29)
                     return dui.translate('Enum');
                 else
                     return dui.translate('Enum')+","+subtype;
@@ -1317,39 +1324,46 @@ var hmSelect = {
                 return ''+type+","+subtype;
         }
     },
-    _buildVarsGrid: function () {
-        return;
-        var variables  = this._ccu['variables'];
+    _buildVarsGrid: function (homematic) {
+        var variables  = homematic.regaIndex["VARDP"]; // IDs of all devices
 		var selectedId = null;
                 
         var w = $('#hmSelect').dialog ("option", "width");
 		$('#hmSelect').dialog("option", "width", w-50);
          // Build the data tree together
-		if (this.myVarsData == null)
-		{
+		if (this.myVarsData == null) {
             this.myVarsData = new Array ();
 		    var i = 0;
 			// Add all elements
-			for(var vari in variables){
+			for(var vari in variables) {
+                var variObj = homematic.regaObjects[variables[vari]];
 				this.myVarsData[i] = {
 					id:           ""+(i+1), 
-					"Type":       this._type2Str(variables[vari].ValueType, variables[vari].ValueSubType),
-					"Description":this._convertName(variables[vari].DPInfo),
-					"Unit":       this._convertName(variables[vari].ValueUnit),
-					"Name":       this._convertName(variables[vari].Name),
-					"data":       /*vari.substring(1) + "[" + */this._convertName(variables[vari].Name)/* + "]"*/,
+					"Type":       this._type2Str(variObj["ValueType"], variObj["ValueSubType"]),
+					"Description":this._convertName(variObj["DPInfo"]),
+					"Unit":       this._convertName(variObj["ValueUnit"]),
+					"Name":       this._convertName(variObj["Name"]),
+					"data":       /*vari.substring(1) + "[" + */this._convertName(variObj["Name"])/* + "]"*/,
+                    "_ID":        variables[vari],
 					isLeaf:       true,
 					level:        "0",
 					parent:       "null",
 					expanded:     false, 
 					loaded:       true
 				};
-				if (hmSelect.value && this.myVarsData[i]["Name"] == hmSelect.value) {
+				if (hmSelect.value && this.myVarsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myVarsData[i].id;
 				}
                 i++;
 			}
 		}
+        else if (hmSelect.value != null && hmSelect.value != "") {
+			for(var i = 0; i < this.myVarsData.length; i++){
+				if (hmSelect.value && this.myVarsData[i]["_ID"] == hmSelect.value) {
+					selectedId = this.myVarsData[i].id;
+				}
+			}
+        }
 
         // Create the grid
 		$("#hmVarsContent").jqGrid({
@@ -1358,7 +1372,7 @@ var hmSelect = {
 			height:      $('#tabs-vars').height() - 35,
 			autowidth:   true,
 			shrinkToFit: false,
-			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Type'), dui.translate ('Unit'), dui.translate ('Description')],
+			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Type'), dui.translate ('Unit'), dui.translate ('Description'), ''],
 			colModel:[
                 {name:'id',         index:'id',          width:1,   hidden:true, key:true},
 				{name:'Name',       index:'Name',        width:250, sortable:"text"},
@@ -1366,9 +1380,10 @@ var hmSelect = {
 				{name:'Type',       index:'Type',        width:80,  sortable:false, align:"right", search: false},
 				{name:'Units',      index:'Unit',        width:80,  sorttype:"text", search: false},
 				{name:'Description',index:'Description', width:400, sorttype:"text"},
+				{name:'_ID',        index:'_ID',         width:0,   hidden:true},
 			],
 			onSelectRow: function(id){ 
-				value    = $("#hmVarsContent").jqGrid ('getCell', id, 'data');
+				value    = $("#hmVarsContent").jqGrid ('getCell', id, '_ID');
                 valueObj = null;
 				if (value != null && value != "") {
 					$(":button:contains('"+hmSelect._selectText+"')").prop("disabled", false).removeClass("ui-state-disabled");
@@ -1418,37 +1433,44 @@ var hmSelect = {
         // Filter items with last filter
         this._filterVarsApply ();
     },
-    _buildProgsGrid: function () {
-        return ;
-        var programs  = this._ccu['programs'];
+    _buildProgsGrid: function (homematic) {
+        var programs   = homematic.regaIndex["PROGRAM"]; // IDs of all devices
 		var selectedId = null;
                 
         var w = $('#hmSelect').dialog ("option", "width");
 		$('#hmSelect').dialog("option", "width", w-50);
         // Build the data tree together
-		if (this.myProgsData == null)
-		{
+		if (this.myProgsData == null) {
             this.myProgsData = new Array ();
 		    var i = 0;
 			// Add all elements
 			for(var prog in programs){
 				this.myProgsData[i] = {
 					id:           ""+(i+1), 
-					"Description":this._convertName(programs[prog].PrgInfo),
-					"Name":       this._convertName(programs[prog].Name),
-					"data":       /*prog.substring(1) + "[" + */this._convertName(programs[prog].Name)/* + "]"*/,
+					"Description":this._convertName(homematic.regaObjects[programs[prog]]["PrgInfo"]),
+					"Name":       this._convertName(homematic.regaObjects[programs[prog]]["Name"]),
+					"data":       /*prog.substring(1) + "[" + */this._convertName(homematic.regaObjects[programs[prog]]["Name"])/* + "]"*/,
+                    "_ID":        programs[prog],
 					isLeaf:       true,
 					level:        "0",
 					parent:       "null",
 					expanded:     false, 
 					loaded:       true
+                    
 				};
-				if (hmSelect.value && this.myProgsData[i]["Name"] == hmSelect.value) {
+				if (hmSelect.value && this.myProgsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myProgsData[i].id;
 				}
                 i++;
 			}
 		}
+        else if (hmSelect.value != null && hmSelect.value != "") {
+			for(var i = 0; i < this.myProgsData.length; i++){
+				if (hmSelect.value && this.myProgsData[i]["_ID"] == hmSelect.value) {
+					selectedId = this.myProgsData[i].id;
+				}
+			}
+        }
 
         // Create the grid
 		$("#hmProgsContent").jqGrid({
@@ -1457,15 +1479,16 @@ var hmSelect = {
 			height:      $('#tabs-progs').height() - 35,
 			autowidth:   true,
 			shrinkToFit: false,
-			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Description')],
+			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Description'), ''],
 			colModel:[
                 {name:'id',          index:'id',          width:1,   hidden:true, key:true},
 				{name:'Name',        index:'Name',        width:250, sortable:"text"},
                 {name:'data',        index:'data',        width:1,   hidden:true},
-				{name:'Description', index:'Description', width:570, sorttype:"text"}
+				{name:'Description', index:'Description', width:570, sorttype:"text"},
+				{name:'_ID',         index:'_ID',         width:0,   hidden:true},
 			],
 			onSelectRow: function(id){ 
-				value    = $("#hmProgsContent").jqGrid ('getCell', id, 'data');
+				value    = $("#hmProgsContent").jqGrid ('getCell', id, "_ID");
                 valueObj = null;
 				if (value != null && value != "") {
 					$(":button:contains('"+hmSelect._selectText+"')").prop("disabled", false).removeClass("ui-state-disabled");
@@ -1665,7 +1688,7 @@ var hmSelect = {
                 if (!isFound)
                     continue;
                 // Special process temperature inside
-                if (device.HssType == "HM-CC-TC") {
+                if (f !== null && device.HssType == "HM-CC-TC") {
                     newDevices[idDev] = {
                                 "Interface": device.Interface,
                                 "HssType":   device.HssType,
@@ -2097,10 +2120,10 @@ var hmSelect = {
         $("#hmProgsContent").setGridWidth ($('#tabs-progs').width()  - 6);
         $("#hmProgsContent").setGridHeight($('#tabs-progs').height() - 35);
     },
-    show: function (ccu, userArg, onSuccess, filter, devFilter) { // onsuccess (userArg, value, valueObj)  
+    show: function (homematic, userArg, onSuccess, filter, devFilter) { // onsuccess (userArg, value, valueObj)  
         this._onsuccess = onSuccess;
         this._userArg   = userArg;
-        this._ccu       = ccu;
+        this._homematic = homematic;
         // points filter, e.g. 'WORKING' or 'STATE,TEMPERATURE,HUMIDITY'
         if (filter == undefined || filter == null || filter == "") {           
             filter = 'all';
@@ -2164,12 +2187,12 @@ var hmSelect = {
             }
             if (devFilter == undefined && (filter == 'all' || filter == 'variables')) {           
                 $('#var_select').click (function (e) {
-                    hmSelect._buildVarsGrid ();
+                    hmSelect._buildVarsGrid (homematic);
                 });
             }
             if (devFilter == undefined && (filter == 'all' || filter == 'programs')) {       
                 $('#prog_select').click (function (e) {
-                    hmSelect._buildProgsGrid ();
+                    hmSelect._buildProgsGrid (homematic);
                 });
             }
 		}
@@ -2213,7 +2236,16 @@ var hmSelect = {
         $('#tabs-progs').width ($('#hmSelect_tabs').width()  - 6);
         $('#tabs-progs').height($('#hmSelect_tabs').height() - 60);
         
-        this._buildDevicesGrid(homematic, filter, devFilter);
+        this._buildDevicesGrid (homematic, filter, devFilter);
+        if (this.value != null && homematic.regaObjects[this.value] != null){
+            if (homematic.regaObjects[this.value]["TypeName"] != undefined && homematic.regaObjects[this.value]["TypeName"] == "VARDP") {
+                $('#var_select').trigger("click");
+            }
+            else
+            if (homematic.regaObjects[this.value]["TypeName"] != undefined && homematic.regaObjects[this.value]["TypeName"] == "PROGRAM") {
+                $('#prog_select').trigger("click");
+            }
+        }
 	},
     _filterDevsApply: function () {
         // Custom filter

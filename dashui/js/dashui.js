@@ -607,7 +607,16 @@ var dui = {
             var parent = "";
             var p = homematic.regaObjects[id]["Parent"];
             if (p !== undefined && homematic.regaObjects[p]["DPs"] !== undefined)
-                parent = homematic.regaObjects[p]["Name"] + "/";       
+                parent = homematic.regaObjects[p]["Name"] + "/";
+            else if (homematic.regaObjects[id]["TypeName"] !== undefined) {
+                if (homematic.regaObjects[id]["TypeName"] == "VARDP") {  
+                    parent = dui.translate ("Variable") + " / ";
+                }
+                else
+                if (homematic.regaObjects[id]["TypeName"] == "PROGRAM") {  
+                    parent = dui.translate ("Program") + " / ";
+                }
+            }
         
             if (homematic.regaObjects[id]["Address"] !== undefined)
                 return parent + homematic.regaObjects[id]["Name"] + "/" + homematic.regaObjects[id]["Address"];
@@ -711,6 +720,14 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             console.log("event! "+JSON.stringify(obj));
             if (homematic.uiState["_"+obj[0]] !== undefined) {
                 var o = {};
+                // Check if value changed
+                if (obj[3]) {
+                    if (o["_"+obj[0]+".Value"] != obj[1]) {
+                        var d = new Date();
+                        var t = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+                        o["_"+obj[0]+".LastChange"] = t;
+                    }
+                }
                 o["_"+obj[0]+".Value"]     = obj[1];
                 o["_"+obj[0]+".Timestamp"] = obj[2];
                 o["_"+obj[0]+".Certain"]   = obj[3];            
@@ -718,7 +735,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                 
                 // Ich habe keine Ahnung, aber bind("change") funktioniert einfach nicht 
                 if (dui.binds.hqWidgetsExt && dui.binds.hqWidgetsExt.hqMonitor && obj[3])
-                    dui.binds.hqWidgetsExt.hqMonitor (obj[0], obj[1], obj[2]);
+                    dui.binds.hqWidgetsExt.hqMonitor (obj[0], obj[1], homematic.uiState["_"+obj[0]]["LastChange"]);
             }
             else {
                 console.log("Datenpunkte sind noch nicht geladen!");
