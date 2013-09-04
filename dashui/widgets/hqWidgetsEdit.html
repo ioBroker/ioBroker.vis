@@ -204,7 +204,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             clearTimeout (dui.binds.hqWidgetsExt.hqEditTimerDetectMoving);
             dui.binds.hqWidgetsExt.hqEditDetectMoving ();
 
-            var opt = obj.GetSettings ();
+            var opt = obj.GetSettings (false, false);
             var devFilters = (devFilter) ? devFilter.split (';') : [null, null];
             if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
                 // Add ramp_time and on_time
@@ -218,20 +218,21 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             
             if (opt.hm_id != undefined) {
                 var attr = 'hm_id';
-                parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="44" value="'+opt.hm_id+'" style="width:90%"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:8%"></td></tr>');
+                parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+opt.hm_id+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
                 document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
                 document.getElementById ("inspect_"+attr+"_btn").devFilter = devFilters[0];
+                $("#inspect_"+attr+"_desc").html(dui.getObjDesc (opt.hm_id));
                 // Select Homematic ID Dialog
                 $("#inspect_"+attr+"_btn").click ( function () {
                     hmSelect.value = $("#inspect_"+this.jControl).val();
-                    hmSelect.show (homematic.ccu, this.jControl, function (obj, value, valueObj) {
+                    hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
                         $("#inspect_"+obj).val(value).trigger("change");
                         if (valueObj) {
                             var btn = hqWidgets.Get (dui.activeWidget);
                             if (btn) {
-                                var settings = btn.GetSettings ();
+                                var stitle = btn.GetSettings ("title");
                                 btn.SetSettings ({room: valueObj.room});
-                                if (settings.title == undefined || settings.title == null || settings.title == "") {
+                                if (stitle == undefined || stitle == null || stitle == "") {
                                     var title = hmSelect._convertName(valueObj.Name);                                        
                                     // Remove ROOM from device name
                                     if (title.length > valueObj.room.length && title.substring(0, valueObj.room.length) == valueObj.room)
@@ -247,6 +248,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     }, null, this.devFilter);
                 });
                 $("#inspect_"+attr).change(function (el) {
+                    $("#inspect_hm_id_desc").html(dui.getObjDesc ($(this).val()));
                     var btn = hqWidgets.Get (dui.activeWidget);
                     if (btn) {
                         btn.SetSettings ({hm_id: $(this).val()}, true);
@@ -266,14 +268,15 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 var a = wnd.split(',');
                 for (var i = 0; i < a.length; i++) {
                     var attr = 'hm_id'+i;
-                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="44" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'" style="width:90%"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:8%"></td></tr>');
-                    document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
-                    document.getElementById ("inspect_"+attr).jControl = attr;
+                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
+                    document.getElementById ("inspect_"+attr+"_btn").jControl = attr;
+                    document.getElementById ("inspect_"+attr).jControl        = attr;
                     document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > 1) ? devFilters[1] : devFilters[0];
+                    $("#inspect_"+attr+"_desc").html(dui.getObjDesc (opt[attr]));
                     // Select Homematic ID Dialog
                     $("#inspect_"+attr+"_btn").click ( function () {
                         hmSelect.value = $("#inspect_"+this.jControl).val();
-                        hmSelect.show (homematic.ccu, this.jControl, function (obj, value, valueObj) {
+                        hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
                             $("#inspect_"+obj).val(value).trigger("change");
                         }, null, this.devFilter);
                     });
@@ -282,12 +285,15 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                         
                         var wnd = btn.GetSettings ('windowConfig');
                         var a = wnd.split(',');
+
+                        $("#inspect_"+this.jControl+"_desc").html(dui.getObjDesc ($(this).val()));
                         
                         if (btn) {
                             var option = {};
                             option[this.jControl] = $(this).val();
-                            for (var j = a.length; j < 4; j++)
+                            for (var j = a.length; j < 4; j++) {
                                 option['hm_id'+j] = null;
+                            }
                             btn.SetSettings (option, true);
                         }
                     });
@@ -302,14 +308,15 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 
                     //--------------- handler ------------------------
                     attr = 'hm_id_hnd'+i;
-                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="44" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'" style="width:90%"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:8%"></td></tr>');
+                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
                     document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
                     document.getElementById ("inspect_"+attr).jControl = attr;
                     document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > 2) ? devFilters[2] : devFilters[0];
+                    $("#inspect_"+attr+"_desc").html(dui.getObjDesc (opt[attr]));
                     // Select Homematic ID Dialog
                     $("#inspect_"+attr+"_btn").click ( function () {
                         hmSelect.value = $("#inspect_"+this.jControl).val();
-                        hmSelect.show (homematic.ccu, this.jControl, function (obj, value, valueObj) {
+                        hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
                             $("#inspect_"+obj).val(value).trigger("change");
                         }, null, this.devFilter);
                     });
@@ -318,6 +325,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                         
                         var wnd = btn.GetSettings ('windowConfig');
                         var a = wnd.split(',');
+                        
+                        $("#inspect_"+this.jControl+"_desc").html(dui.getObjDesc ($(this).val()));
                         
                         if (btn) {
                             var option = {};
@@ -355,21 +364,23 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 if (opt.buttonType == hqWidgets.gButtonType.gTypeGong)
                     attr = 'hm_idL';
                 var text = '<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td>';
-                text += '<td><input type="text" id="inspect_'+attr+'" size="44" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'" style="width:90%">';
-                text += '<input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:8%"></td></tr>';
+                text += '<td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'">';
+                text += '<input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>';
                 parent.append(text);
                 document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
                 document.getElementById ("inspect_"+attr).jControl = attr;
                 document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > i + 1) ? devFilters[i+1] : devFilters[devFilters.length -1];
+                $("#inspect_"+attr+"_desc").html(dui.getObjDesc (opt[attr]));
                 // Select Homematic ID Dialog
                 $("#inspect_"+attr+"_btn").click ( function () {
                     hmSelect.value = $("#inspect_"+this.jControl).val();
-                    hmSelect.show (homematic.ccu, this.jControl, function (obj, value, valueObj) {
+                    hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
                         $("#inspect_"+obj).val(value).trigger("change");
                     }, null, this.devFilter);
                 });
                 $("#inspect_"+attr).change(function (el) {
                     var btn = hqWidgets.Get (dui.activeWidget);
+                    $("#inspect_"+this.jControl+"_desc").html(dui.getObjDesc ($(this).val()));
                     if (btn) {
                         var option = {};
                         option[this.jControl] = $(this).val();
