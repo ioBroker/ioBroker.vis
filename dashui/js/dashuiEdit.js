@@ -73,38 +73,11 @@ dui = $.extend(true, dui, {
                 dui.views[val].widgets[dui.nextWidget()] = dui.views[val].widgets[widget];
                 delete dui.views[val].widgets[widget];
             }
-            dui.saveLocal();
+            dui.saveRemote();
             dui.renderView(val);
             dui.changeView(val);
             window.location.reload();
         }
-    },
-    saveRemote: function () {
-        dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
-            alert("Successfully saved views on CCU.IO");
-        });
-
-        /*
-
-
-
-        //Get directory
-        var parts = dui.fileViews.split("/");
-        var dir = parts[0];
-        for (var t = 1; t < parts.length -1; t++)
-            dir += "/" + parts[t];
-            
-        // Create directory 
-        $.homematic("shell", "mkdir " + dir + "\nexit 0\n", function () {
-            
-        });
-        var content = $.base64.encode(JSON.stringify(dui.views));
-
-
-        var cmd = "echo \"" + content + "\" | gzip > " + dui.fileViews + "\nexit 0\n";
-        $.homematic("shell", cmd, function () {
-            alert("Successfully saved views on Homematic CCU.");
-        }); */
     },
     nextWidget: function () {
         var next = 1;
@@ -127,7 +100,7 @@ dui = $.extend(true, dui, {
         $("#select_active_widget").multiselect("refresh");
         $("#"+dui.activeWidget).remove();
         delete(dui.views[dui.activeView].widgets[dui.activeWidget]);
-        dui.saveLocal();
+        dui.saveRemote();
         dui.inspectWidget("none");
     },
     addWidget: function (tpl, data, style) {
@@ -210,7 +183,7 @@ dui = $.extend(true, dui, {
             }
             dui.activeView = targetView;
             dui.addWidget(tpl, data, style);
-            dui.saveLocal();
+            dui.saveRemote();
             dui.activeView = activeView;
             alert("Widget copied to view " + targetView + ".");
         }
@@ -332,7 +305,7 @@ dui = $.extend(true, dui, {
                     $('#option_'+widget_attrs[attr]).jweatherCity ({lang:'de', currentValue: widget.data[widget_attrs[attr]], onselect: function (wid, text, obj) {
                             dui.widgets[dui.activeWidget].data.attr('weoid', text);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
-                            dui.saveLocal();
+                            dui.saveRemote();
                             dui.reRenderWidget(dui.activeWidget);					
                         }
                     });
@@ -372,7 +345,7 @@ dui = $.extend(true, dui, {
                         //console.log("change "+attribute);
                         dui.widgets[dui.activeWidget].data.attr(attribute, $(this).val());
                         dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = $(this).val();
-                        dui.saveLocal();
+                        dui.saveRemote();
                         dui.reRenderWidget(dui.activeWidget);
                     });
             }
@@ -445,7 +418,7 @@ dui = $.extend(true, dui, {
                 }
                 dui.views[dui.activeView].widgets[widget].style.left = ui.position.left;
                 dui.views[dui.activeView].widgets[widget].style.top = ui.position.top;
-                dui.saveLocal();
+                dui.saveRemote();
 
             },
             drag: function(event, ui) {
@@ -474,7 +447,7 @@ dui = $.extend(true, dui, {
                 }
                 dui.views[dui.activeView].widgets[widget].style.width = ui.size.width;
                 dui.views[dui.activeView].widgets[widget].style.height = ui.size.height;
-                dui.saveLocal();
+                dui.saveRemote();
 
             },
             resize: function (event,ui) {
@@ -519,7 +492,7 @@ dui = $.extend(true, dui, {
             height: 610,
             position: { my: "right top", at: "right top", of: window },
             close: function () {
-                dui.saveLocal();
+                dui.saveRemote();
                 location.href = "./#"+dui.activeView;
             }
         });
@@ -618,14 +591,14 @@ dui = $.extend(true, dui, {
             var $this = $(this);
             var attr = $this.attr("id").slice(8);
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
-            dui.saveLocal();
+            dui.saveRemote();
             dui.reRenderWidget(dui.activeWidget);
         });
         $(".dashui-inspect-css").change(function () {
             var $this = $(this);
             var style = $this.attr("id").substring(12);
             dui.views[dui.activeView].widgets[dui.activeWidget].style[style] = $this.val();
-            dui.saveLocal();
+            dui.saveRemote();
             $("#"+dui.activeWidget).css(style, $this.val());
             $("#widget_helper")
                 .css("left", pxAdd($("#"+dui.activeWidget).css("left"), -2))
@@ -648,7 +621,7 @@ dui = $.extend(true, dui, {
             //console.log("change "+attr+" "+val);
             $("#duiview_"+dui.activeView).css(attr, val);
             dui.views[dui.activeView].settings.style[attr] = val;
-            dui.saveLocal();
+            dui.saveRemote();
         });
         $(".dashui-inspect-view").change(function () {
             var $this = $(this);
@@ -656,14 +629,14 @@ dui = $.extend(true, dui, {
             var val = $this.val();
             //console.log("change "+attr+" "+val);
             dui.views[dui.activeView].settings[attr] = val;
-            dui.saveLocal();
+            dui.saveRemote();
         });
         $("#inspect_view_theme").change(function () {
             var theme = $("#inspect_view_theme option:selected").val();
             //console.log("change theme "+theme);
             dui.views[dui.activeView].settings.theme = theme;
             $("#jqui_theme").attr("href", "css/"+theme+"/jquery-ui.min.css");
-            dui.saveLocal();
+            dui.saveRemote();
         });
         $("#select_active_widget").change(function () {
             dui.inspectWidget($(this).val());
