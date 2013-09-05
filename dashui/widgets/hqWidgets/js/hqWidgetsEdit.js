@@ -346,6 +346,8 @@ hqWidgets = $.extend (true, hqWidgets, {
             sText += "<input id='"+this.e_settings.elemName+"_iconName' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.iconName==undefined) ? "" : this.e_internal.attr.iconName)+"'>";
             sText += "<input id='"+this.e_settings.elemName+"_iconNameBtn' style='width: 30px' type='button' value='...'>";
             sText += "</td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Icon width:")+"</td><td id='"+this.e_settings.elemName+"_btIconWidth'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Icon height:")+"</td><td id='"+this.e_settings.elemName+"_btIconHeight'></td></tr>";
         }
         
         // Info Text color, font, type
@@ -593,6 +595,44 @@ hqWidgets = $.extend (true, hqWidgets, {
                                                             
                                                             if (!isNaN(obj_.e_internal.attr.radius))
                                                                 obj_.e_internal.obj.SetSettings ({radius: obj_.e_internal.attr.radius}, true);
+                                                        }
+                                                     }
+            });
+        }	
+        // Icon width
+        if (document.getElementById (this.e_settings.elemName+'_btIconWidth') != null) {
+            this.e_internal.controlRadius = new this.hqSlider ({parent: $('#'+this.e_settings.elemName+'_btIconWidth'), 
+                                                     withText: true, 
+                                                     position: this.e_internal.attr.btIconWidth, 
+                                                     max:      this.e_internal.attr.width, 
+                                                     min:      0, 
+                                                     width:    this.e_settings.width, 
+                                                     onchangePrm: this, 
+                                                     onchange: function (pos, obj_){
+                                                        if (obj_.e_internal.attr.btIconWidth != pos) {
+                                                            obj_.e_internal.attr.btIconWidth = pos;
+                                                            
+                                                            if (!isNaN(obj_.e_internal.attr.btIconWidth))
+                                                                obj_.e_internal.obj.SetSettings ({btIconWidth: obj_.e_internal.attr.btIconWidth}, true);
+                                                        }
+                                                     }
+            });
+        }	
+        // Icon height
+        if (document.getElementById (this.e_settings.elemName+'_btIconHeight') != null) {
+            this.e_internal.controlRadius = new this.hqSlider ({parent: $('#'+this.e_settings.elemName+'_btIconHeight'), 
+                                                     withText: true, 
+                                                     position: this.e_internal.attr.btIconHeight, 
+                                                     max:      this.e_internal.attr.height, 
+                                                     min:      0, 
+                                                     width:    this.e_settings.width, 
+                                                     onchangePrm: this, 
+                                                     onchange: function (pos, obj_){
+                                                        if (obj_.e_internal.attr.btIconHeight != pos) {
+                                                            obj_.e_internal.attr.btIconHeight = pos;
+                                                            
+                                                            if (!isNaN(obj_.e_internal.attr.btIconHeight))
+                                                                obj_.e_internal.obj.SetSettings ({btIconHeight: obj_.e_internal.attr.btIconHeight}, true);
                                                         }
                                                      }
             });

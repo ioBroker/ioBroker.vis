@@ -175,7 +175,7 @@ dui = $.extend(true, dui, {
 
             setTimeout(function() {
                 dui.inspectWidget(dui.activeWidget);
-                dui.saveLocal();
+                dui.saveRemote();
             }, 50);
         } else {
             if ($("#dui_container").find("#duiview_"+targetView).html() == undefined) {
@@ -761,7 +761,7 @@ var imageSelect = {
         if (!document.getElementById ('dashui-waitico'))
             $('#imageSelect').append("<p id='dashui-waitico'>Please wait...</p>");
         $('#dashui-waitico').show();
-        this._rootDir = "/www/addons/dashui/img/";
+        this._rootDir = "www/dashui/img/";
         this._curDir = "";
         htmlElem.settings.result = htmlElem.settings.current;
         // Find current directory
@@ -797,9 +797,15 @@ var imageSelect = {
         }
         
         // Load directory
-        //$.homematic("getFileList", this._rootDir + this._curDir, this.showImages, htmlElem)
         console.log("load directory "+ this._rootDir + this._curDir);
-        // TODO socket.emit("readdir" ...
+        // Abfragen welche Bild-Dateien im Ordner "www/dashui/img/" vorhanden sind
+        dui.socket.emit('readdir', this._rootDir + this._curDir, function(dirArr) {
+            /*for (var i = 0; i < dirArr.length; i++) {
+                //var id = parseInt(dirArr[i].replace(/\..*$/, ""), 10);
+                var id = dirArr[i].replace(/\..*$/, "");
+            }*/
+            imageSelect.showImages (dirArr, htmlElem);
+        });
     },
     showImages: function (aImages, obj) {	
         // Remove wait icon

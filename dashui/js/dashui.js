@@ -183,13 +183,11 @@ var dui = {
             return;
         }
 
-
         dui.loadWidgetSets();
 
         $("#loading").append(" done.<br/>");
         dui.initInstance();
         
-        var activeBkgClass = "";
         var settings = storage.get(dui.storageKeySettings);
         if (settings) {
             dui.settings = $.extend(dui.settings, settings);
@@ -219,6 +217,7 @@ var dui = {
         }
 
         var hash = window.location.hash.substring(1);
+        var activeBkgClass = "";
 
         // View ausgewäfhlt?
         if (hash == "") {
@@ -618,6 +617,33 @@ var dui = {
         dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
             console.log("Saved views on CCU.IO");
         });
+    },
+    getObjDesc: function (id) {
+        if (homematic.regaObjects[id] !== undefined) {
+            var parent = "";
+            var p = homematic.regaObjects[id]["Parent"];
+            if (p !== undefined && homematic.regaObjects[p]["DPs"] !== undefined)
+                parent = homematic.regaObjects[p]["Name"] + "/";
+            else if (homematic.regaObjects[id]["TypeName"] !== undefined) {
+                if (homematic.regaObjects[id]["TypeName"] == "VARDP") {  
+                    parent = dui.translate ("Variable") + " / ";
+                }
+                else
+                if (homematic.regaObjects[id]["TypeName"] == "PROGRAM") {  
+                    parent = dui.translate ("Program") + " / ";
+                }
+            }
+        
+            if (homematic.regaObjects[id]["Address"] !== undefined)
+                return parent + homematic.regaObjects[id]["Name"] + "/" + homematic.regaObjects[id]["Address"];
+            else
+                return parent + homematic.regaObjects[id]["Name"];
+        }
+        else
+            return "";
+    },
+    translate: function (text) {
+        return text;
     }
 };
 
