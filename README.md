@@ -1,17 +1,16 @@
 
 # DashUI
 
-* [DashUI Homepage](http://hobbyquaker.github.io/DashUI) 
-* [DashUI Widget Wiki](https://github.com/hobbyquaker/DashUI/wiki/)
+## Installation & Dokumentation
+
+siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 
-## Todo
-..
-
-## Roadmap
+## Todo/Roadmap
 
 ### 0.9
 
+* Bild-Upload (im Reiter Editor unterbringen?)
 * jqHomematic/WebAPI fliegt raus, komplette CCU-Kommunikation via CCU.IO
 * diverse Todos CCU.IO
 * Anpassung Kanalauswahl / Bildauswahl an CCU.IO
@@ -36,6 +35,9 @@
 * Erweiterte Template-Attribute: Doku, Kompatibilitat, ...
 
 ## Changelog
+
+
+
 ### 0.8.x
 * (Bluefox) Yahoo Weather widget.
             Htc Weather widget.
