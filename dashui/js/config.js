@@ -1,7 +1,6 @@
 var duiConfig = {
-    // {name: "hqWidgets", edit: "hqWidgetsEdit"}
-    widgetSets:         ["basic",{name: "hqWidgets", edit: "hqWidgetsEdit"},"colorpicker","fancyswitch","timeAndWeather","jqplot","jqui","jqui-mfd","dev"],
-    currentLang:        "de",
-    useCache:           true,
-    defaultHmInterval:  7500,      // Update interval in ms
+
+    widgetSets:         ["basic","colorpicker","fancyswitch",{name: "hqWidgets", edit: "hqWidgetsEdit"},"timeAndWeather","jqplot","jqui","jqui-mfd","swipe","dev"],
+    currentLang:        "de"
+
 };
