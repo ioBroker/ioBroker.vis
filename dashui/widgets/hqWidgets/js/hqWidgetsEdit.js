@@ -348,6 +348,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             sText += "</td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Icon width:")+"</td><td id='"+this.e_settings.elemName+"_btIconWidth'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Icon height:")+"</td><td id='"+this.e_settings.elemName+"_btIconHeight'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Icon size:")+"</td><td><input id='"+this.e_settings.elemName+"_iconAutoBtn' type='button' value='Auto'></td></tr>";
         }
         
         // Info Text color, font, type
@@ -530,7 +531,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             }
         }
         
-        // Show all advacned settigs
+        // Show all advanced settigs
         if (iAdvCount == 1) {
             this.e_settings.parent.append (sTextAdv);
         }
@@ -637,6 +638,26 @@ hqWidgets = $.extend (true, hqWidgets, {
                                                      }
             });
         }	
+        
+        // Auto height and width
+        if (document.getElementById (this.e_settings.elemName+'_iconAutoBtn') != null) {
+            document.getElementById (this.e_settings.elemName+'_iconAutoBtn').jControl = this;
+            $('#'+this.e_settings.elemName+'_iconAutoBtn').click (function () {
+                var obj = this.jControl;
+                var newSettings = {};
+                newSettings["btIconHeight"] = obj.e_internal.attr["height"] - 10;
+                if (newSettings["btIconHeight"] < 0)
+                    newSettings["btIconHeight"] = obj.e_internal.attr["height"];
+                newSettings["btIconWidth"] = obj.e_internal.attr["width"] - 10;
+                if (newSettings["btIconWidth"] < 0)
+                    newSettings["btIconWidth"] = obj.e_internal.attr["width"];
+                    
+                obj.e_internal.obj.SetSettings (newSettings, true);
+            });
+        }
+     
+        
+        
         // Process doorType changes
         if ((elem = document.getElementById (this.e_settings.elemName+'_door')) != null) {
             elem.parent = this;

@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.2",
+    version: "0.1.3",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -3661,7 +3661,7 @@ var hqWidgets = {
                 if (options.btIconHeight !== undefined)
                     this.settings.btIconHeight = options.btIconHeight;
                     
-                this.SetSize(this.settings.width, this.settings.height, true);
+                this.SetIcon(this.settings.iconName);
             }
                 
             // Radius
