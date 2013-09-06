@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.2",
+    version: "0.1.3",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -517,6 +517,8 @@ var hqWidgets = {
             dimmerColorAct:   'yellow', // Colors for dimmer
             dimmerColorInact: 'grey',   // Colors for dimmer 
             noBackground:     false,    // If show background or just text or image
+            btIconWidth:      hqWidgets.gOptions.gBtIconWidth,  // Width of the icon
+            btIconHeight:     hqWidgets.gOptions.gBtIconHeight, // Height of the icon
             
             //styles
             styleNormal:      null,
@@ -2139,9 +2141,9 @@ var hqWidgets = {
                 }
                 
                 if (this.intern._jcenter && this.settings.buttonType != hqWidgets.gButtonType.gTypeCam) {
-                    this.intern._jcenter.css({left:   (this.settings.width  - hqWidgets.gOptions.gBtIconWidth) / 2, 
-                                                top:    (this.settings.height - hqWidgets.gOptions.gBtIconHeight) / 2,
-                                                }); // Set position                 
+                    this.intern._jcenter.css({left:   (this.settings.width  - this.settings.btIconWidth) / 2, 
+                                              top:    (this.settings.height - this.settings.btIconHeight) / 2,
+                                             }); // Set position                 
                 }
                 if (this.intern._jleft) {
                     this.intern._jleft.css({left:  this.settings.x - this.intern._jleft.offset, 
@@ -2178,11 +2180,11 @@ var hqWidgets = {
 
                 if (this.settings.buttonType != hqWidgets.gButtonType.gTypeImage) {
                     this.intern._jcenter.css({position: 'absolute', 
-                                                top:      ((this.intern._jelement.height()-hqWidgets.gOptions.gBtIconHeight)/2), 
-                                                left:     ((this.intern._jelement.width() -hqWidgets.gOptions.gBtIconWidth) /2), 
+                                                top:      ((this.intern._jelement.height()- this.settings.btIconHeight)/2), 
+                                                left:     ((this.intern._jelement.width() - this.settings.btIconWidth) /2), 
                                                 'z-index':'10', 
-                                                width:     hqWidgets.gOptions.gBtIconWidth, 
-                                                height:    hqWidgets.gOptions.gBtIconHeight});
+                                                width:     this.settings.btIconWidth, 
+                                                height:    this.settings.btIconHeight});
                 }
                 else {
                 
@@ -3209,10 +3211,10 @@ var hqWidgets = {
                             50);
                             
                         if (this.intern._jcenter)
-                            this.intern._jcenter.stop().animate({width:  hqWidgets.gOptions.gBtIconWidth -iShrinkCtr, 
-                                                                   height: hqWidgets.gOptions.gBtIconHeight-iShrinkCtr, 
-                                                                   left:  (_width - iShrink - hqWidgets.gOptions.gBtIconWidth  + iShrinkCtr)/2, 
-                                                                   top:   (_height- iShrink - hqWidgets.gOptions.gBtIconHeight + iShrinkCtr)/2}, 50);
+                            this.intern._jcenter.stop().animate({width:  this.settings.btIconWidth - iShrinkCtr, 
+                                                                 height: this.settings.btIconHeight- iShrinkCtr, 
+                                                                 left:  (_width - iShrink - this.settings.btIconWidth  + iShrinkCtr)/2, 
+                                                                 top:   (_height- iShrink - this.settings.btIconHeight + iShrinkCtr)/2}, 50);
                        
                         this.intern._jicon.stop().animate({top:  (_height / 15 + iShrink / 2), 
                                                              left: (_width  / 15 + iShrink / 2)}, 50);
@@ -3287,21 +3289,21 @@ var hqWidgets = {
                         }
                         
                         this.intern._jelement.stop().animate({width:        this.settings.width, 
-                                                                height:       this.settings.height, 
-                                                                borderRadius: this.settings.radius, 
-                                                                left:         this.settings.x, 
-                                                                top:          this.settings.y}, 50);
+                                                              height:       this.settings.height, 
+                                                              borderRadius: this.settings.radius, 
+                                                              left:         this.settings.x, 
+                                                              top:          this.settings.y}, 50);
                         if (this.intern._jcenter) {
-                            this.intern._jcenter.stop().animate({width:  hqWidgets.gOptions.gBtIconWidth,
-                                                                   height: hqWidgets.gOptions.gBtIconHeight, 
-                                                                   left:   (this.settings.width - hqWidgets.gOptions.gBtIconWidth )/2, 
-                                                                   top:    (this.settings.height- hqWidgets.gOptions.gBtIconHeight)/2}, 50);
+                            this.intern._jcenter.stop().animate({width:  this.settings.btIconWidth,
+                                                                 height: this.settings.btIconHeight, 
+                                                                 left:   (this.settings.width - this.settings.btIconWidth )/2, 
+                                                                 top:    (this.settings.height- this.settings.btIconHeight)/2}, 50);
                             // Bugfix: somethimes it is in the wrong position
                             setTimeout (function (elem){
-                                elem.intern._jcenter.stop().css({width:  hqWidgets.gOptions.gBtIconWidth,
-                                                                   height: hqWidgets.gOptions.gBtIconHeight, 
-                                                                   left:   (elem.settings.width - hqWidgets.gOptions.gBtIconWidth )/2, 
-                                                                   top:    (elem.settings.height- hqWidgets.gOptions.gBtIconHeight)/2}, 50);
+                                elem.intern._jcenter.stop().css({width:  this.settings.btIconWidth,
+                                                                 height: this.settings.btIconHeight, 
+                                                                 left:   (elem.settings.width - this.settings.btIconWidth )/2, 
+                                                                 top:    (elem.settings.height- this.settings.btIconHeight)/2}, 50);
                                                        }, 50, this);
                         }
                                                                    
@@ -3650,7 +3652,18 @@ var hqWidgets = {
             else
             if (options.height!=undefined)
                 this.SetSize(this.intern._jelement.width(), options.y);
-
+            
+            // Icon size
+            if (options.btIconWidth !== undefined || options.btIconHeight !== undefined) {
+                if (options.btIconWidth !== undefined)
+                    this.settings.btIconWidth = options.btIconWidth;
+                    
+                if (options.btIconHeight !== undefined)
+                    this.settings.btIconHeight = options.btIconHeight;
+                    
+                this.SetIcon(this.settings.iconName);
+            }
+                
             // Radius
             if (options.radius!= undefined && 
                 this.settings.buttonType != hqWidgets.gButtonType.gTypeBlind && 
@@ -4001,15 +4014,15 @@ var hqWidgets = {
                     if (obj.settings.buttonType != hqWidgets.gButtonType.gTypeBlind)
                     {
                         obj.intern._jelement.stop().animate({width:        _width, 
-                                                               height:       _height, 
-                                                               borderRadius: obj.settings.radius, 
-                                                               left:         obj.settings.x, 
-                                                               top:          obj.settings.y}, 50);
+                                                             height:       _height, 
+                                                             borderRadius: obj.settings.radius, 
+                                                             left:         obj.settings.x, 
+                                                             top:          obj.settings.y}, 50);
                         if (obj.intern._jcenter)
-                            obj.intern._jcenter.stop().animate({width:  hqWidgets.gOptions.gBtIconWidth, 
-                                                                  height: hqWidgets.gOptions.gBtIconHeight, 
-                                                                  left:  (_width  - hqWidgets.gOptions.gBtIconWidth)/2, 
-                                                                  top:   (_height - hqWidgets.gOptions.gBtIconHeight)/2}, 50);
+                            obj.intern._jcenter.stop().animate({width:  this.settings.btIconWidth, 
+                                                                height: this.settings.btIconHeight, 
+                                                                left:  (_width  - this.settings.btIconWidth)/2, 
+                                                                top:   (_height - this.settings.btIconHeight)/2}, 50);
                         obj.intern._jicon.stop().animate({top:  (_height / 15), 
                                                             left: (_width  / 15)}, 50);
                     }

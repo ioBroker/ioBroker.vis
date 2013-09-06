@@ -52,7 +52,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             }
                 
             dui.binds.hqWidgetsExt.hqEditSaveTimer = setTimeout (function () { 
-                dui.saveLocal (); 
+                dui.saveRemote (); 
                 console.log ("Saved!"); 
                 dui.binds.hqWidgetsExt.hqEditSaveTimer = null;
             }, 2000);
