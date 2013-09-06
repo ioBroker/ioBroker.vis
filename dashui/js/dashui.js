@@ -735,7 +735,6 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
 
         dui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
         dui.socket.on('event', function(obj) {
-            console.log("event! "+JSON.stringify(obj));
             if (homematic.uiState["_"+obj[0]] !== undefined) {
                 var o = {};
                 // Check if value changed
