@@ -27,7 +27,7 @@
 
 var dui = {
 
-    version:            '0.9dev11',
+    version:            '0.9dev12',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -47,82 +47,82 @@ var dui = {
     useCache:           true,
     socket: {},
     binds: {},
+    instanceView: undefined,
+    instanceData: undefined,
+    instanceCmd: undefined,
     startInstance: function () {
-        $("#dashui_instance").val(dui.instance);
-        $("#create_instance").hide();
-        $("#instance").show();
 
-        var name = "dashui_"+dui.instance;
+        if (dui.instance) {
+            $("#dashui_instance").val(dui.instance);
+            $("#create_instance").hide();
+            $("#instance").show();
 
-        dui.addStringVariable(name+"_view", "automatisch angelegt von DashUI.", function () {
-            dui.addStringVariable(name+"_cmd", "automatisch angelegt von DashUI.", function () {
-                dui.addStringVariable(name+"_data", "automatisch angelegt von DashUI.", function () {
+            var name = "dashui_"+dui.instance;
 
+            dui.addStringVariable(name+"_cmd", "automatisch angelegt von DashUI.", function (res) {
+                dui.instanceCmd = res;
+                dui.addStringVariable(name+"_view", "automatisch angelegt von DashUI.", function (res) {
+                    dui.instanceView = res;
+                    dui.addStringVariable(name+"_data", "automatisch angelegt von DashUI.", function (res) {
+                        dui.instanceData = res;
+
+                        storage.set(dui.storageKeyInstance, dui.instance);
+
+                    });
                 });
             });
-        });
 
-        /* TODO Instanzen
-        $.homematic("addStringVariable", name+"_view", "automatisch angelegt von DashUI.")
-        $.homematic("addStringVariable", name+"_cmd",  "automatisch angelegt von DashUI.")
-        $.homematic("addStringVariable", name+"_data", "automatisch angelegt von DashUI.")
+            $("body").append('<div class="dashui-dummy" data-hm-id="'+dui.instanceView+'"></div>')
+                .append('<div class="dashui-dummy" data-hm-id="'+dui.instanceCmd+'"></div>')
+                .append('<div class="dashui-dummy" data-hm-id="'+dui.instanceData+'"></div>');
 
-        $.homematic("addUiState", name+"_view");
-        $.homematic("addUiState", name+"_cmd");
-        $.homematic("addUiState", name+"_data");
-         */
+            homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
 
+                if (attr == ("_" + dui.instanceCmd + ".Value")) {
+                    var cmd = newVal;
+                    //console.log("change " + attr + " " + newVal);
+                    if (cmd !== "") {
+                        setTimeout(function () {
+                            var data = homematic.uiState.attr("_"+dui.instanceData+".Value");
 
-        $("body").append('<div class="dashui-dummy" data-hm-id="'+name+'_view"></div>')
-            .append('<div class="dashui-dummy" data-hm-id="'+name+'_cmd"></div>')
-            .append('<div class="dashui-dummy" data-hm-id="'+name+'_data"></div>');
-
-        homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-
-            // TODO auf IDs umbauen
-
-            if (attr == ("_" + name + "_cmd.Value")) {
-                var cmd = newVal;
-                //console.log("change " + attr + " " + newVal);
-                if (cmd !== "") {
-                    setTimeout(function () {
-                        var data = homematic.uiState.attr("_"+name+"_data.Value");
-
-                        // external Commands
-                       /* $.homematic("script",
-                            "object o = dom.GetObject(\""+name+"_data\");\n" +
-                                "o.State(\"\");\n" +
-                                "o = dom.GetObject(\""+name+"_cmd\");\n" +
-                                "o.State(\"\");"
-                        );
-                        switch (cmd) {
-                            case "alert":
-                                alert(data);
-                                break;
-                            case "changeView":
-                                dui.changeView(data);
-                                break;
-                            case "refresh":
-                                break;
-                            case "reload":
-                                setTimeout(function () {window.location.reload();}, 150);
-                            case "dialog":
-                                break;
-                            case "popup":
-                                window.open(data);
-                                break;
-                            default:
-                        }*/
-                    }, 50);
+                            // external Commands
+                            /* $.homematic("script",
+                             "object o = dom.GetObject(\""+name+"_data\");\n" +
+                             "o.State(\"\");\n" +
+                             "o = dom.GetObject(\""+name+"_cmd\");\n" +
+                             "o.State(\"\");"
+                             );
+                             switch (cmd) {
+                             case "alert":
+                             alert(data);
+                             break;
+                             case "changeView":
+                             dui.changeView(data);
+                             break;
+                             case "refresh":
+                             break;
+                             case "reload":
+                             setTimeout(function () {window.location.reload();}, 150);
+                             case "dialog":
+                             break;
+                             case "popup":
+                             window.open(data);
+                             break;
+                             default:
+                             }*/
+                        }, 50);
+                    }
                 }
-            }
-        });
+            });
+        }
+
+
 
     },
     removeInstance: function () {
-        storage.set(dui.storageKeyInstance, null);
-        var name = "dashui_"+dui.instance;
-        // TODO
+        //storage.set(dui.storageKeyInstance, null);
+        //var name = "dashui_"+dui.instance;
+        // TODO REMOVE INSTANCE
        /* $.homematic("delVariable", name + "_cmd",
             function () {
                 $.homematic("delVariable", name + "_data",
@@ -139,7 +139,6 @@ var dui = {
         dui.instance = (Math.random() * 4294967296).toString(16);
         dui.instance = "0000000" + dui.instance;
         dui.instance = dui.instance.substr(-8);
-        storage.set(dui.storageKeyInstance, dui.instance);
         dui.startInstance();
     },
     loadWidgetSet: function (name) {
