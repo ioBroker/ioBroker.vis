@@ -28,7 +28,7 @@
             fancyswitch: function (el, src, reverse) {
                 var $this = jQuery(el).parent().find(".fancy-switch");
                 var id = $this.attr("data-hm-id");
-                var hm_id = "_" + $.homematic("escape",id);
+                var hm_id = "_" + id;
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     var num = parseFloat(newVal, 10);
                     if (num > 0 || newVal == "true" || newVal == true) {
@@ -78,7 +78,7 @@
                 setTimeout(function () {
                     $this.iButton(options);
                 }, 20);
-                var hm_id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
+                var hm_id = "_" + $this.attr("data-hm-id");
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     var num = parseFloat(newVal, 10);
                     if (num > 0 || newVal == "true" || newVal == true) {
