@@ -27,7 +27,7 @@
 
 var dui = {
 
-    version:            '0.9dev12',
+    version:            '0.9dev13',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -665,8 +665,8 @@ var homematic = {
         o["_"+id+".Certain"]   = false;
         this.uiState.attr(o);
     },
-    stateDelayed: function (attr, val) {
-        var id = parseInt(attr.slice(1), 10);
+    stateDelayed: function (id, val) {
+        var attr = "_"+id;
         if (!this.setStateTimers[id]) {
 
             dui.socket.emit("setState", [id, val]);
@@ -686,7 +686,8 @@ var homematic = {
 homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
     console.log("homematic setState change "+how+" "+attr+" "+newVal);
     if (how == "set" || how == "add") {
-        homematic.stateDelayed(attr, newVal.Value);
+        var id = parseInt(attr.slice(1), 10);
+        homematic.stateDelayed(id, newVal.Value);
     }
 });
 
