@@ -27,7 +27,7 @@
 
 var dui = {
 
-    version:            '0.9dev13',
+    version:            '0.9dev14',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -50,74 +50,47 @@ var dui = {
     instanceView: undefined,
     instanceData: undefined,
     instanceCmd: undefined,
-    startInstance: function () {
-
-        if (dui.instance) {
-            $("#dashui_instance").val(dui.instance);
-            $("#create_instance").hide();
-            $("#instance").show();
-
-            var name = "dashui_"+dui.instance;
-
-            dui.addStringVariable(name+"_cmd", "automatisch angelegt von DashUI.", function (res) {
-                dui.instanceCmd = res;
-                dui.addStringVariable(name+"_view", "automatisch angelegt von DashUI.", function (res) {
-                    dui.instanceView = res;
-                    dui.addStringVariable(name+"_data", "automatisch angelegt von DashUI.", function (res) {
-                        dui.instanceData = res;
-
-                        storage.set(dui.storageKeyInstance, dui.instance);
-
-                    });
-                });
-            });
-
-            $("body").append('<div class="dashui-dummy" data-hm-id="'+dui.instanceView+'"></div>')
-                .append('<div class="dashui-dummy" data-hm-id="'+dui.instanceCmd+'"></div>')
-                .append('<div class="dashui-dummy" data-hm-id="'+dui.instanceData+'"></div>');
-
-            homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
-
-                if (attr == ("_" + dui.instanceCmd + ".Value")) {
-                    var cmd = newVal;
-                    //console.log("change " + attr + " " + newVal);
-                    if (cmd !== "") {
-                        setTimeout(function () {
-                            var data = homematic.uiState.attr("_"+dui.instanceData+".Value");
-
-                            // external Commands
-                            /* $.homematic("script",
-                             "object o = dom.GetObject(\""+name+"_data\");\n" +
-                             "o.State(\"\");\n" +
-                             "o = dom.GetObject(\""+name+"_cmd\");\n" +
-                             "o.State(\"\");"
-                             );
-                             switch (cmd) {
-                             case "alert":
-                             alert(data);
-                             break;
-                             case "changeView":
-                             dui.changeView(data);
-                             break;
-                             case "refresh":
-                             break;
-                             case "reload":
-                             setTimeout(function () {window.location.reload();}, 150);
-                             case "dialog":
-                             break;
-                             case "popup":
-                             window.open(data);
-                             break;
-                             default:
-                             }*/
-                        }, 50);
-                    }
-                }
-            });
+    bindInstance: function () {
+        if (!dui.instanceCmd) {
+            console.log("can't bind instance :-(");
+            return false;
         }
+        console.log("bind instance id="+dui.instanceCmd);
 
+        homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function( e, how, newVal, oldVal ) {
 
+            var cmd = newVal;
+            if (cmd !== "") {
+                setTimeout(function () {
+                    var data = homematic.uiState.attr("_"+dui.instanceData+".Value");
+                    console.log("external command cmd=" + cmd + " data=" + data);
 
+                    // external Commands
+                    switch (cmd) {
+                        case "alert":
+                            alert(data);
+                            break;
+                        case "changeView":
+                            dui.changeView(data);
+                            break;
+                        case "refresh":
+                        case "reload":
+                            setTimeout(function () {window.location.reload();}, 1);
+                        case "dialog":
+                            break;
+                        case "popup":
+                            window.open(data);
+                            break;
+                        default:
+                    }
+
+                    // remove command
+                    homematic.setValue(dui.instanceCmd, "");
+
+                }, 50);
+            }
+
+        });
     },
     removeInstance: function () {
         //storage.set(dui.storageKeyInstance, null);
@@ -134,12 +107,6 @@ var dui = {
         );*/
 
 
-    },
-    createInstance: function () {
-        dui.instance = (Math.random() * 4294967296).toString(16);
-        dui.instance = "0000000" + dui.instance;
-        dui.instance = dui.instance.substr(-8);
-        dui.startInstance();
     },
     loadWidgetSet: function (name) {
         console.log("loadWidgetSet("+name+")");
@@ -170,11 +137,34 @@ var dui = {
     },
     initInstance: function () {
         dui.instance = storage.get(dui.storageKeyInstance);
-        if (!dui.instance) {
-            $("#instance").hide();
-            return;
-        } else {
-            dui.startInstance();
+        if (dui.instance) {
+
+
+
+            $("#dashui_instance").val(dui.instance);
+            $("#create_instance").hide();
+            $("#instance").show();
+
+            var cmdVarName = "dashui_"+dui.instance+"_cmd";
+            var viewVarName = "dashui_"+dui.instance+"_view";
+            var dataVarName = "dashui_"+dui.instance+"_data";
+
+            var cmdId = homematic.regaIndex.Name[cmdVarName];
+            if (cmdId) {
+
+                $("body").append('<div class="dashui-dummy" data-hm-id="'+dui.instanceView+'"></div>')
+                    .append('<div class="dashui-dummy" data-hm-id="'+dui.instanceCmd+'"></div>')
+                    .append('<div class="dashui-dummy" data-hm-id="'+dui.instanceData+'"></div>');
+
+                dui.instanceCmd = cmdId[0];
+                dui.instanceView = homematic.regaIndex.Name[viewVarName][0];
+                dui.instanceData = homematic.regaIndex.Name[dataVarName][0];
+
+                dui.bindInstance();
+
+            } else {
+                console.log("init instance failed - variables "+cmdVarName+" missing?");
+            }
         }
     },
     init: function () {
@@ -436,7 +426,6 @@ var dui = {
         
         // Append html element to view
         $("#duiview_"+view).append(can.view(widget.tpl, {hm: homematic.uiState["_"+widget.data.hm_id], data: widgetData, view: view}));
-       
 
         if (widget.style) {
             $("#"+id).css(widget.style);
@@ -456,7 +445,6 @@ var dui = {
         var effect = (hideOptions && hideOptions.effect && hideOptions.effect !== "" ? true : false);
         hideOptions = $.extend(true, {effect:undefined,options:{},duration:0}, hideOptions);
         showOptions = $.extend(true, {effect:undefined,options:{},duration:0}, showOptions);
-
 
         //console.log("changeView("+view+")");
         if (dui.inspectWidget) {
@@ -502,9 +490,6 @@ var dui = {
                 $("#duiview_"+view).show();
                 console.log("show "+view);
             }
-
-
-
 
         }
 
