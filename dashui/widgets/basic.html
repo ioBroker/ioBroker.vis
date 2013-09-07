@@ -41,7 +41,7 @@
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                    if (newVal == "false" || parseFloat(newVal,10) < 0.5) {
+                    if (newVal === false || parseFloat(newVal,10) === 0.0) {
                         $this.removeAttr("checked");
                     } else {
                         $this.prop("checked", true);
