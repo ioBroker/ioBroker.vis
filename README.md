@@ -10,33 +10,29 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.9
 
-* Bild-Upload (im Reiter Editor unterbringen?)
-* jqHomematic/WebAPI fliegt raus, komplette CCU-Kommunikation via CCU.IO
-* diverse Todos CCU.IO
-* Anpassung Kanalauswahl / Bildauswahl an CCU.IO
-* mehr Widgets :)
-* Editor: mehrere Widgets auf einmal Bewegen
-* Editor/CSS-Inspector: Zauberstab-tool um Style-Eigenschaften von anderen Widgets zu übernehmen
-* hm-ctrl valuelist view container widget (bestimmte view in abhängigkeit von Variable anzeigen)
-* instanz-steuerung via eigenes (cuxd)gerät?
 * Alle vorhandenen Widgets fixen
-* Wunderground/yr.no Widgets via CCU.IO
-* Hue Widgets via CCU.IO
-
 
 ### 1.0
 
-* vollständige Trennung Engine/Editor, Performanceoptimierung
+* Doku!
+* Bild-Upload (im Reiter Editor unterbringen?)
+* Editor: mehrere Widgets auf einmal Bewegen
+* Editor/CSS-Inspector: Zauberstab-tool um Style-Eigenschaften von anderen Widgets zu übernehmen
+* Wunderground/yr.no Widgets via CCU.IO
+* Hue Widgets via CCU.IO
+* "basic - hm_val valuelist-view-container" widget (bestimmte View in Containerwidget in abhängigkeit von Variable anzeigen)
 * Noch mehr Widgets! :)
-* Doku
-* Einfache Installation gemeinsam mit CCU.IO, Pakete für Raspbian und CCU2
-* Mehr Widgets! ;-)
+* Einfache Installation gemeinsam mit CCU.IO, Pakete für Raspbian und CCU2,
+* RaspberryPi Speicherkartenimage mit Web-based Setup
+* Mehr Widgets! Doku! ;-)
 * Config-File, Editor und Engine sauber trennen
-* Erweiterte Template-Attribute: Doku, Kompatibilitat, ...
+* Erweiterte Template-Attribute: Integrierte Doku, Kompatibilitat, ...
 
 ## Changelog
 
+### 0.9dev
 
+* (Hobbyquaker, Bluefox) Anpassung an CCU.IO, Bugfixes
 
 ### 0.8.x
 * (Bluefox) Yahoo Weather widget.
