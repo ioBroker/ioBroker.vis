@@ -47,6 +47,9 @@
                         $this.prop("checked", true);
                     }
                 });
+                if (homematic.uiState.attr(hm_id+".Value")) {
+                    $this.prop("checked", true);
+                }
                 if (dui.urlParams["edit"] !== "") {
                     $this.change(function () {
                         if ($this.prop("checked")) {
