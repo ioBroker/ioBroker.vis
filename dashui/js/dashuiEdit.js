@@ -22,7 +22,7 @@
 
 // duiEdit - the DashUI Editor
 dui = $.extend(true, dui, {
-    editVersion:        '0.9dev14',
+    editVersion:        '0.9dev15',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -91,11 +91,12 @@ dui = $.extend(true, dui, {
                 //console.log("delView "+dui.activeView);
                 delete dui.views[dui.activeView];
                 //console.log(dui.views);
-                storage.set(dui.storageKeyViews, dui.views);
-                window.location.href = "?edit";
+                dui.saveRemote();
+                window.location.href = "edit.html";
            }
     },
     dupView: function (val) {
+        console.log("dupView("+val+")");
         if (val != "" && dui.views[val] === undefined) {
             dui.views[val] = $.extend(true, {}, dui.views[dui.activeView]);
             // Allen Widgets eine neue ID verpassen...
@@ -107,6 +108,14 @@ dui = $.extend(true, dui, {
             dui.renderView(val);
             dui.changeView(val);
             window.location.reload();
+        }
+    },
+    checkNewView: function() {
+        if ($("#new_view_name").val() == "") {
+            alert("Bitte einen Namen für die neue View eingeben!");
+            return false;
+        } else {
+            return $("#new_view_name").val();
         }
     },
     nextWidget: function () {
@@ -595,10 +604,10 @@ dui = $.extend(true, dui, {
 
         });
         $("#add_view").click(function () {
-            dui.addView($("#new_view_name").val());
+            dui.addView(dui.checkNewView());
         });
         $("#dup_view").click(function () {
-            dui.dupView($("#new_view_name").val());
+            dui.dupView(dui.checkNewView());
         });
         $("#del_view").click(function () {
             dui.delView(dui.activeView);
