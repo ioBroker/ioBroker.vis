@@ -30,6 +30,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * Noch mehr Widgets! :)
 * Einfache Installation gemeinsam mit CCU.IO
 * Web-based Setup
+* Javascript-Files minifiziert und teilweise gemerged ausliefern
 * Paket für Raspbian
 * RaspberryPi Speicherkartenimage
 * Mehr Widgets! Doku! ;-)
