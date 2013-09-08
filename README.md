@@ -41,7 +41,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Hobbyquaker, Bluefox)    Anpassung an CCU.IO, Bugfixes
 * (Smiling-Jack)            Swipe-Widget (Navigation via Touch-Gesten)
 
-### 0.8.5-0.8.6
+### 0.8.4-0.8.6
 * (Bluefox) Yahoo Weather widget.
 * (Bluefox) Htc Weather widget.
 * (Bluefox) Simple Clock
