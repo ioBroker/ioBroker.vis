@@ -10,59 +10,59 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.9
 
-* Alle vorhandenen Widgets fixen
+* Alle vorhandenen Widgets testen & Bugs fixen
+* "basic - hm_val valuelist-view-container" widget (bestimmte View in Container-Widget in abhängigkeit von Variable anzeigen)
+* "basic - static iframe" widget mit attribut refresh-interval
+* neues Widget-Attribut: Integrierte Doku -> im Editor anzeigbar
+* neues Widget-Attribut: Kompatibilitat um ID-Auswahl vorab einzugrenzen
+* neues Widget-Attribut: Widgetset - um vorab zu prüfen welche Widget-Sets geladen werden müssen (im Editmodus immer alle laden)
+
+
 
 ### 1.0
 
 * Doku!
+* Alle vorhandenen Widgets testen & Bugs fixen
 * Bild-Upload (im Reiter Editor unterbringen?)
 * Editor: mehrere Widgets auf einmal Bewegen
 * Editor/CSS-Inspector: Zauberstab-tool um Style-Eigenschaften von anderen Widgets zu übernehmen
 * Wunderground/yr.no Widgets via CCU.IO
 * Hue Widgets via CCU.IO
-* "basic - hm_val valuelist-view-container" widget (bestimmte View in Containerwidget in abhängigkeit von Variable anzeigen)
 * Noch mehr Widgets! :)
-* Einfache Installation gemeinsam mit CCU.IO, Pakete für Raspbian und CCU2,
-* RaspberryPi Speicherkartenimage mit Web-based Setup
+* Einfache Installation gemeinsam mit CCU.IO
+* Web-based Setup
+* Paket für Raspbian
+* RaspberryPi Speicherkartenimage
 * Mehr Widgets! Doku! ;-)
-* Config-File, Editor und Engine sauber trennen
-* Erweiterte Template-Attribute: Integrierte Doku, Kompatibilitat, ...
 
 ## Changelog
 
 ### 0.9dev
 
-* (Hobbyquaker, Bluefox) Anpassung an CCU.IO, Bugfixes
+* (Hobbyquaker, Bluefox)    Anpassung an CCU.IO, Bugfixes
+* (Smiling-Jack)            Swipe-Widget (Navigation via Touch-Gesten)
 
-### 0.8.x
+### 0.8.5-0.8.6
 * (Bluefox) Yahoo Weather widget.
-            Htc Weather widget.
-            Simple Clock
-            Flip Clock
-
+* (Bluefox) Htc Weather widget.
+* (Bluefox) Simple Clock
+* (Bluefox) Flip Clock
 
 * (Bluefox) Kein neue Funktionalitaet, nur Umstrukturierung.
-            config.js unbedingt updaten!
-            Jedes Widget hat eigenes "js", "css" und "img" Verzeichnis 
-            Edit und Engine geteilt.
-            Um zu editieren, muss man edit.html (und nicht ?edit) aufrufen. Obwohl "?edit" wird umgeleitet.
+* (Bluefox) Jedes Widget-Set hat eigenes "js", "css" und "img" Verzeichnis
+* (Bluefox) Edit und Engine geteilt.
 
 * (Bluefox) Gauge widget 
-            config.js - Bitte eigene IP Adresse einstellen
-            Styles fur Button
-            Fixed Fenster und Rolladen
+* (Bluefox) Styles fur Button
+* (Bluefox) Fixed Fenster und Rolladen
 
-
-
-### 0.8.6
 * (Bluefox) Neue hqWidgets Komponente: Gong, IP Camera. 
-            Soll Wert fuer Thermostat
-            Fixed Problem mit Positionierung
-            Letzte Statusanderung-Anzeige
-            Status Changed- Animation
-            Advanced Settings
+* (Bluefox) Soll Wert fuer Thermostat
+* (Bluefox) Fixed Problem mit Positionierung
+* (Bluefox) Letzte Statusanderung-Anzeige
+* (Bluefox) Status Changed- Animation
+* (Bluefox) Advanced Settings
 
-### 0.8.4
 * (hobbyquaker) CCU.IO integriert
 
 ### 0.8.3
