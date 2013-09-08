@@ -12,11 +12,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 * Alle vorhandenen Widgets testen & Bugs fixen
 * "basic - hm_val valuelist-view-container" widget (bestimmte View in Container-Widget in abhängigkeit von Variable anzeigen)
-* "basic - static iframe" widget mit attribut refresh-interval
+* "basic - static iframe" widget mit attribut refresh-interval, persistent
 * neues Widget-Attribut: Integrierte Doku -> im Editor anzeigbar
 * neues Widget-Attribut: Kompatibilitat um ID-Auswahl vorab einzugrenzen
 * neues Widget-Attribut: Widgetset - um vorab zu prüfen welche Widget-Sets geladen werden müssen (im Editmodus immer alle laden)
-
 
 
 ### 1.0

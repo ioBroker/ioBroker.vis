@@ -27,7 +27,7 @@
 
 var dui = {
 
-    version:            '0.9dev15',
+    version:            '0.9beta1',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
