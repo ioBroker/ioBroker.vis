@@ -28,6 +28,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * Wunderground/yr.no Widgets via CCU.IO
 * Hue Widgets via CCU.IO
 * Noch mehr Widgets! :)
+* Editor "aufhübschen"
 * Einfache Installation gemeinsam mit CCU.IO
 * Web-based Setup
 * Javascript-Files minifiziert und teilweise gemerged ausliefern
