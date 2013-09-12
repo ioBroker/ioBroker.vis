@@ -27,7 +27,7 @@
 
 var dui = {
 
-    version:            '0.9beta1',
+    version:            '0.9beta2',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -175,6 +175,9 @@ var dui = {
         dui.loadWidgetSets();
 
         $("#loading").append(" done.<br/>");
+
+
+
         dui.initInstance();
         
         var settings = storage.get(dui.storageKeySettings);
@@ -706,6 +709,17 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             }
         });
 
+        dui.preloadImages(["img/disconnect.png"]);
+
+        $("#ccu-io-disconnect").dialog({
+            modal: true,
+            closeOnEscape: false,
+            autoOpen: false,
+            dialogClass: "noTitle",
+            width: 400,
+            height: 90
+        });
+
         $(".dashui-version").html(dui.version);
 
         // Autorefresh nur wenn wir nicht im Edit-Modus sind
@@ -716,7 +730,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         
 
         console.log("socket.io")
-        $("#loading").append("Connecting Socket.IO ...<br/>");
+        $("#loading").append("Connecting to CCU.IO ...<br/>");
 
         dui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
         dui.socket.on('event', function(obj) {
@@ -743,6 +757,42 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                 console.log("Datenpunkte sind noch nicht geladen!");
             }
         });
+
+        dui.socket.on('connect', function () {
+            $("#ccu-io-disconnect").dialog("close");
+            console.log((new Date()) + " socket.io connect");
+        });
+
+        dui.socket.on('connecting', function () {
+            console.log((new Date()) + " socket.io connecting");
+        });
+
+        dui.socket.on('disconnect', function () {
+            console.log((new Date()) + " socket.io disconnect");
+            $("#ccu-io-disconnect").dialog("open");
+        });
+
+        dui.socket.on('disconnecting', function () {
+            console.log((new Date()) + " socket.io disconnecting");
+        });
+
+        dui.socket.on('reconnect', function () {
+            $("#ccu-io-disconnect").dialog("close");
+            console.log((new Date()) + " socket.io reconnect");
+        });
+
+        dui.socket.on('reconnecting', function () {
+            console.log((new Date()) + " socket.io reconnecting");
+        });
+
+        dui.socket.on('reconnect_failed', function () {
+            console.log((new Date()) + " socket.io reconnect failed");
+        });
+
+        dui.socket.on('error', function () {
+            console.log((new Date()) + " socket.io error");
+        });
+
 
         $("#loading").append("Loading ReGa Data");
 
