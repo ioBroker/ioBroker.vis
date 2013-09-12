@@ -38,6 +38,14 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta2
+
+* (Hobbyquaker) Popup wenn Verbindung zu CCU.IO unterbrochen ist
+
+### 0.9beta1
+
+* (Hobbyquaker) Aufgeräumt
+
 ### 0.9dev
 
 * (Hobbyquaker, Bluefox)    Anpassung an CCU.IO, Bugfixes
