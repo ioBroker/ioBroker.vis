@@ -21,15 +21,16 @@
                             }
                         }
                     }, options);
-                    var series = [[0]];
+                    var id = "_"+$this.attr("data-hm-id");
+                    var series = [[homematic.uiState[id].Value]];
+                    console.log("jqplot");
+                    console.log(series);
                     var plot = jQuery.jqplot($this.attr("id"), series, jqplotOptions);
-                    var id = "_" + $.homematic("escape",$this.attr("data-hm-id"));
-                    homematic.uiState.bind(id+".Value", function( e, newVal, oldVal ) {
-                        //if (attr == ("_"+ $.homematic("escape",$this.attr("data-hm-id"))+".Value")) {
-                            newVal = ''+newVal;
-                            plot.series[0].data = [[1,parseFloat(newVal)]];
-                            plot.redraw();
-                        //}
+                    homematic.uiState.bind(id+".Value", function(e, newVal, oldVal ) {
+                        plot.series[0].data = [[1,newVal]];
+                        console.log("jqplot");
+                        console.log(series);
+                        plot.redraw();
                     });
                 }, 20);
             }

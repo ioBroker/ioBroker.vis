@@ -346,6 +346,9 @@ hqWidgets = $.extend (true, hqWidgets, {
             sText += "<input id='"+this.e_settings.elemName+"_iconName' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.iconName==undefined) ? "" : this.e_internal.attr.iconName)+"'>";
             sText += "<input id='"+this.e_settings.elemName+"_iconNameBtn' style='width: 30px' type='button' value='...'>";
             sText += "</td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Icon width:")+"</td><td id='"+this.e_settings.elemName+"_btIconWidth'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Icon height:")+"</td><td id='"+this.e_settings.elemName+"_btIconHeight'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Icon size:")+"</td><td><input id='"+this.e_settings.elemName+"_iconAutoBtn' type='button' value='Auto'></td></tr>";
         }
         
         // Info Text color, font, type
@@ -528,7 +531,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             }
         }
         
-        // Show all advacned settigs
+        // Show all advanced settigs
         if (iAdvCount == 1) {
             this.e_settings.parent.append (sTextAdv);
         }
@@ -597,6 +600,64 @@ hqWidgets = $.extend (true, hqWidgets, {
                                                      }
             });
         }	
+        // Icon width
+        if (document.getElementById (this.e_settings.elemName+'_btIconWidth') != null) {
+            this.e_internal.controlRadius = new this.hqSlider ({parent: $('#'+this.e_settings.elemName+'_btIconWidth'), 
+                                                     withText: true, 
+                                                     position: this.e_internal.attr.btIconWidth, 
+                                                     max:      this.e_internal.attr.width, 
+                                                     min:      0, 
+                                                     width:    this.e_settings.width, 
+                                                     onchangePrm: this, 
+                                                     onchange: function (pos, obj_){
+                                                        if (obj_.e_internal.attr.btIconWidth != pos) {
+                                                            obj_.e_internal.attr.btIconWidth = pos;
+                                                            
+                                                            if (!isNaN(obj_.e_internal.attr.btIconWidth))
+                                                                obj_.e_internal.obj.SetSettings ({btIconWidth: obj_.e_internal.attr.btIconWidth}, true);
+                                                        }
+                                                     }
+            });
+        }	
+        // Icon height
+        if (document.getElementById (this.e_settings.elemName+'_btIconHeight') != null) {
+            this.e_internal.controlRadius = new this.hqSlider ({parent: $('#'+this.e_settings.elemName+'_btIconHeight'), 
+                                                     withText: true, 
+                                                     position: this.e_internal.attr.btIconHeight, 
+                                                     max:      this.e_internal.attr.height, 
+                                                     min:      0, 
+                                                     width:    this.e_settings.width, 
+                                                     onchangePrm: this, 
+                                                     onchange: function (pos, obj_){
+                                                        if (obj_.e_internal.attr.btIconHeight != pos) {
+                                                            obj_.e_internal.attr.btIconHeight = pos;
+                                                            
+                                                            if (!isNaN(obj_.e_internal.attr.btIconHeight))
+                                                                obj_.e_internal.obj.SetSettings ({btIconHeight: obj_.e_internal.attr.btIconHeight}, true);
+                                                        }
+                                                     }
+            });
+        }	
+        
+        // Auto height and width
+        if (document.getElementById (this.e_settings.elemName+'_iconAutoBtn') != null) {
+            document.getElementById (this.e_settings.elemName+'_iconAutoBtn').jControl = this;
+            $('#'+this.e_settings.elemName+'_iconAutoBtn').click (function () {
+                var obj = this.jControl;
+                var newSettings = {};
+                newSettings["btIconHeight"] = obj.e_internal.attr["height"] - 10;
+                if (newSettings["btIconHeight"] < 0)
+                    newSettings["btIconHeight"] = obj.e_internal.attr["height"];
+                newSettings["btIconWidth"] = obj.e_internal.attr["width"] - 10;
+                if (newSettings["btIconWidth"] < 0)
+                    newSettings["btIconWidth"] = obj.e_internal.attr["width"];
+                    
+                obj.e_internal.obj.SetSettings (newSettings, true);
+            });
+        }
+     
+        
+        
         // Process doorType changes
         if ((elem = document.getElementById (this.e_settings.elemName+'_door')) != null) {
             elem.parent = this;
