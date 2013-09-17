@@ -38,6 +38,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta3
+
+* (Bluefox) HqWidgets Update Geräte
+
 ### 0.9beta2
 
 * (Hobbyquaker) Popup wenn Verbindung zu CCU.IO unterbrochen ist
