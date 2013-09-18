@@ -28,7 +28,7 @@
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                    if (newVal == "false" || parseInt(newVal,10) == 0) {
+                    if (newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
                         }
@@ -36,6 +36,9 @@
                         $this.show();
                     }
                 });
+                if (homematic.uiState.attr(hm_id+".Value") == 0) {
+                    $this.hide();
+                }
             },
             checkbox: function (el) {
                 var $this = jQuery(el);
@@ -299,7 +302,7 @@
 
 <script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Red Number" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.hideOnFalse(el) %>>
-        <div class="dashui-widget-body">
+        <div class="dashui-widget-body" >
             <%= parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) %>
         </div>
     </div>
