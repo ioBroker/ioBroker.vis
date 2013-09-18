@@ -311,7 +311,7 @@
 <script type="text/ejs" id="tplBulbOnOff" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Bulb on/off" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": %>
+            <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case false: case "false": %>
             <img src="img/bulb_off.png" width="100%"/>
             <% break; default: %>
             <img src="img/bulb_on.png" width="100%"/>
@@ -323,7 +323,7 @@
 <script type="text/ejs" id="tplBulbOnOffCtrl" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - Bulb on/off" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.toggle(el) %>>
     <div class="dashui-widget-body">
-        <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": %>
+        <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": case false: %>
         <img src="img/bulb_off.png" width="100%"/>
         <% break; default: %>
         <img src="img/bulb_on.png" width="100%"/>
