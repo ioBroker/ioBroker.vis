@@ -1,35 +1,37 @@
 
 <script type="text/ejs" id="tplMfdLight" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Light/Dimmer" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
-        <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']);  %>>
+        <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']);  %>>
         <%
         var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
         var val = parseFloat(str,10);
-        if (val == 1 || str == "true") {
+        if (str === true) { val = 1; }
+        if (str === false) { val = 0; }
+        if (val !== 0) {
         %>
-        <img width="100%" src="mfd-icons/light_light_dim_100.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
         <% } else if (val >= 0.9) { %>
-        <img width="100%" src="mfd-icons/light_light_dim_90.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
         <% } else if (val >= 0.8) { %>
-        <img width="100%" src="mfd-icons/light_light_dim_80.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
         <% } else if (val >= 0.7) { %>
-        <img width="100%" src="mfd-icons/light_light_dim_70.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
         <% } else if (val >= 0.6) { %>
-        <img width="100%" src="mfd-icons/light_light_dim_60.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
         <% } else if (val >= 0.5) { %>
-        <img width="100%" src="mfd-icons/light_light_dim_50.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
         <% } else if (val >= 0.4) { %>
-        <img width="100%" src="mfd-icons/light_light_dim_40.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
         <% } else if (val >= 0.3) { %>
-        <img width="100%" src="mfd-icons/light_light_dim_30.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
         <% } else if (val >= 0.2) { %>
-        <img width="100%" src="mfd-icons/light_light_dim_20.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
         <% } else if (val >= 0.1) { %>
-        <img width="100%" src="mfd-icons/light_light_dim_10.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
         <% } else if (val >= 0.01) { %>
-        <img width="100%" src="mfd-icons/light_light_dim_00.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
         <% } else { %>
-        <img width="100%" src="mfd-icons/light_light_dim.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
         <% } %>
     </div>
     </div>
@@ -37,70 +39,74 @@
 
 <script type="text/ejs" id="tplMfdLightCtrl" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Light" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-button ui-corner-all ui-state-default  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %>>
-    <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']);  %>>
+    <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']);  %>>
     <%
     var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
     var val = parseFloat(str,10);
-    if (val == 1 || str == "true") {
+    if (str === true) { val = 1; }
+    if (str === false) { val = 0; }
+    if (val !== 0) {
     %>
-    <img width="100%" src="mfd-icons/light_light_dim_100.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
     <% } else if (val >= 0.9) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_90.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
     <% } else if (val >= 0.8) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_80.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
     <% } else if (val >= 0.7) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_70.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
     <% } else if (val >= 0.6) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_60.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
     <% } else if (val >= 0.5) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_50.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
     <% } else if (val >= 0.4) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_40.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
     <% } else if (val >= 0.3) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_30.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
     <% } else if (val >= 0.2) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_20.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
     <% } else if (val >= 0.1) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_10.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
     <% } else if (val >= 0.01) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_00.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
     <% } else { %>
-    <img width="100%" src="mfd-icons/light_light_dim.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
     <% } %>
     </div>
     </div>
 </script>
 <script type="text/ejs" id="tplMfdLightOnOffDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Light + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
-    <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
     <%
     var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
     var val = parseFloat(str, 10);
-    if (val == 1 || str == "true") {
+    if (str === true) { val = 1; }
+    if (str === false) { val = 0; }
+    if (val !== 0) {
     %>
-    <img width="100%" src="mfd-icons/light_light_dim_100.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
     <% } else if (val >= 0.9) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_90.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
     <% } else if (val >= 0.8) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_80.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
     <% } else if (val >= 0.7) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_70.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
     <% } else if (val >= 0.6) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_60.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
     <% } else if (val >= 0.5) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_50.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
     <% } else if (val >= 0.4) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_40.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
     <% } else if (val >= 0.3) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_30.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
     <% } else if (val >= 0.2) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_20.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
     <% } else if (val >= 0.1) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_10.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
     <% } else if (val >= 0.01) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_00.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
     <% } else { %>
-    <img width="100%" src="mfd-icons/light_light_dim.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
     <% } %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
@@ -115,35 +121,37 @@
 </script>
 <script type="text/ejs" id="tplMfdLightDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Dimmer + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
-    <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
     <%
     var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
     var val = parseFloat(str, 10);
-    if (val == 1 || str == "true") {
+    if (str === true) { val = 1; }
+    if (str === false) { val = 0; }
+    if (val !== 0) {
     %>
-    <img width="100%" src="mfd-icons/light_light_dim_100.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
     <% } else if (val >= 0.9) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_90.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
     <% } else if (val >= 0.8) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_80.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
     <% } else if (val >= 0.7) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_70.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
     <% } else if (val >= 0.6) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_60.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
     <% } else if (val >= 0.5) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_50.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
     <% } else if (val >= 0.4) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_40.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
     <% } else if (val >= 0.3) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_30.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
     <% } else if (val >= 0.2) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_20.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
     <% } else if (val >= 0.1) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_10.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
     <% } else if (val >= 0.01) { %>
-    <img width="100%" src="mfd-icons/light_light_dim_00.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
     <% } else { %>
-    <img width="100%" src="mfd-icons/light_light_dim.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
     <% } %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
@@ -166,30 +174,34 @@
 
 <script type="text/ejs" id="tplMfdSocket" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Socket" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px">
-        <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['mfd-icons/message_socket_on.png','mfd-icons/message_socket_off.png']);  %>>
+        <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['widgets/jqui-mfd/img/message_socket_on.png','widgets/jqui-mfd/img/message_socket_off.png']);  %>>
         <%
         var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
         var val = parseFloat(str,10);
-        if (val == 1 || str == "true") {
+        if (str === true) { val = 1; }
+        if (str === false) { val = 0; }
+        if (val !== 0) {
         %>
-        <img width="100%" src="mfd-icons/message_socket_on.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/message_socket_on.png"/>
         <% } else { %>
-        <img width="100%" src="mfd-icons/message_socket_off.png"/>
+        <img width="100%" src="widgets/jqui-mfd/img/message_socket_off.png"/>
         <% } %>
     </div>
     </div>
 </script>
 <script type="text/ejs" id="tplMfdSocketCtrl" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Socket" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px"  <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %> >
-    <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['mfd-icons/message_socket_on.png','mfd-icons/message_socket_off.png']);  %>>
+    <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['widgets/jqui-mfd/img/message_socket_on.png','widgets/jqui-mfd/img/message_socket_off.png']);  %>>
     <%
     var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
     var val = parseFloat(str,10);
-    if (val == 1 || str == "true") {
+    if (str === true) { val = 1; }
+    if (str === false) { val = 0; }
+    if (val !== 0) {
     %>
-    <img width="100%" src="mfd-icons/message_socket_on.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/message_socket_on.png"/>
     <% } else { %>
-    <img width="100%" src="mfd-icons/message_socket_off.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/message_socket_off.png"/>
     <% } %>
     </div>
     </div>
@@ -199,55 +211,55 @@
 <script type="text/ejs" id="tplMfdShutter" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Shutter" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>><div class="dashui-widget-body">
     <% var val = 1 - parseFloat(homematic.uiState.attr('_' + this.data.hm_id + '.Value')); if (val == 1) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_100.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_100.png"/>
     <% } else if (val >= 0.9) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_90.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_90.png"/>
     <% } else if (val >= 0.8) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_80.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_80.png"/>
     <% } else if (val >= 0.7) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_70.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_70.png"/>
     <% } else if (val >= 0.6) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_60.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_60.png"/>
     <% } else if (val >= 0.5) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_50.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_50.png"/>
     <% } else if (val >= 0.4) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_40.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_40.png"/>
     <% } else if (val >= 0.3) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_30.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_30.png"/>
     <% } else if (val >= 0.2) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_20.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_20.png"/>
     <% } else { %>
-    <img width="100%" src="mfd-icons/fts_shutter_10.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_10.png"/>
     <% } %>
 </div></div>
 </script>
 <script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal" data-dashui-filter="LEVEL" >
     <div data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
-    <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['mfd-icons/light_light_dim_100.png','mfd-icons/light_light_dim_90.png','mfd-icons/light_light_dim_80.png','mfd-icons/light_light_dim_70.png','mfd-icons/light_light_dim_60.png','mfd-icons/light_light_dim_50.png','mfd-icons/light_light_dim_40.png','mfd-icons/light_light_dim_30.png','mfd-icons/light_light_dim_20.png','mfd-icons/light_light_dim_10.png','mfd-icons/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
     <%
     var val = 1.0 - parseFloat(homematic.uiState.attr('_' + this.data.hm_id + '.Value'));
     if (val == 1) {
     %>
 
-    <img width="100%" src="mfd-icons/fts_shutter_100.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_100.png"/>
     <% } else if (val >= 0.9) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_90.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_90.png"/>
     <% } else if (val >= 0.8) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_80.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_80.png"/>
     <% } else if (val >= 0.7) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_70.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_70.png"/>
     <% } else if (val >= 0.6) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_60.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_60.png"/>
     <% } else if (val >= 0.5) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_50.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_50.png"/>
     <% } else if (val >= 0.4) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_40.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_40.png"/>
     <% } else if (val >= 0.3) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_30.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_30.png"/>
     <% } else if (val >= 0.2) { %>
-    <img width="100%" src="mfd-icons/fts_shutter_20.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_20.png"/>
     <% } else { %>
-    <img width="100%" src="mfd-icons/fts_shutter_10.png"/>
+    <img width="100%" src="widgets/jqui-mfd/img/fts_shutter_10.png"/>
     <% } %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
@@ -271,7 +283,7 @@
 <script type="text/ejs" id="tplMfdHeating" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Heizung + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%">
-        <img src="mfd-icons/sani_heating_temp.png" width="100%"/>
+        <img src="widgets/jqui-mfd/img/sani_heating_temp.png" width="100%"/>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
         <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
@@ -297,12 +309,12 @@
 <script type="text/ejs" id="tplMfdWindow" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Fenster Drehgriff" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;" >
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "0": %>
-            <img height="100%" src="mfd-icons/fts_window_1w.png"/>
-            <% break; case "1": %>
-            <img height="100%" src="mfd-icons/fts_window_1w_tilt.png"/>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case 0: %>
+            <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w.png"/>
+            <% break; case 1: %>
+            <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w_tilt.png"/>
             <% break; default: %>
-            <img height="100%" src="mfd-icons/fts_window_1w_open.png"/>
+            <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.png"/>
             <% } %>
         </div>
     </div>
@@ -310,10 +322,10 @@
 <script type="text/ejs" id="tplMfdWindowBool" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Fenster" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;"  >
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "false": case "0": case 0: %>
-            <img height="100%" src="mfd-icons/fts_window_1w_open.png"/>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case false: case "false": case "0": case 0: %>
+            <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.png"/>
             <% break; default: %>
-            <img height="100%" src="mfd-icons/fts_window_1w.png"/>
+            <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w.png"/>
             <% } %>
         </div>
     </div>
@@ -321,10 +333,10 @@
 <script type="text/ejs" id="tplMfdRoofWindowBool" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Dachfenster" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "false": case "0": case 0:  %>
-            <img height="100%" src="mfd-icons/fts_window_roof.png"/>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case false: case "false": case "0": case 0:  %>
+            <img height="100%" src="widgets/jqui-mfd/img/fts_window_roof.png"/>
             <% break; default: %>
-            <img height="100%" src="mfd-icons/fts_window_roof_open_2.png"/>
+            <img height="100%" src="widgets/jqui-mfd/img/fts_window_roof_open_2.png"/>
             <% } %>
         </div>
     </div>
@@ -333,10 +345,10 @@
 <script type="text/ejs" id="tplMfdDoor" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - T�re" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px;">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "false": case "0": case 0: %>
-            <img height="100%" src="mfd-icons/fts_door.png"/>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case false: case "false": case "0": case 0: %>
+            <img height="100%" src="widgets/jqui-mfd/img/fts_door.png"/>
             <% break; default: %>
-            <img height="100%" src="mfd-icons/fts_door_open.png"/>
+            <img height="100%" src="widgets/jqui-mfd/img/fts_door_open.png"/>
             <% } %>
         </div>
     </div>
@@ -344,10 +356,10 @@
 <script type="text/ejs" id="tplMfdGarage" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Garage" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px;">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "false": case "0": case 0: %>
-            <img height="100%" src="mfd-icons/fts_garage_door_100.png"/>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case false: case "false": case "0": case 0: %>
+            <img height="100%" src="widgets/jqui-mfd/img/fts_garage_door_100.png"/>
             <% break; default: %>
-            <img height="100%" src="mfd-icons/fts_garage_door_10.png"/>
+            <img height="100%" src="widgets/jqui-mfd/img/fts_garage_door_10.png"/>
             <% } %>
         </div>
     </div>

@@ -22,7 +22,7 @@
 
 // duiEdit - the DashUI Editor
 dui = $.extend(true, dui, {
-    editVersion:        '0.9dev11',
+    editVersion:        '0.9beta4',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -45,6 +45,36 @@ dui = $.extend(true, dui, {
 
 
     },
+    startInstance: function () {
+        if (dui.instance) {
+            $("#dashui_instance").val(dui.instance);
+            $("#create_instance").hide();
+            $("#instance").show();
+
+            console.log("adding Instance Variables");
+            var name = "dashui_"+dui.instance;
+            dui.socket.emit("addStringVariable", name+"_cmd", "automatisch angelegt von DashUI.", "", function (cmd) {
+                dui.instanceCmd = cmd;
+                console.log("id "+name+"_cmd="+cmd);
+                dui.socket.emit("addStringVariable", name+"_view", "automatisch angelegt von DashUI.", "", function (view) {
+                    dui.instanceView = view;
+                    console.log("id "+name+"_view="+view);
+                    dui.socket.emit("addStringVariable", name+"_data", "automatisch angelegt von DashUI.", "", function (data) {
+                        dui.instanceData = data;
+                        console.log("id "+name+"_data="+data);
+                        storage.set(dui.storageKeyInstance, dui.instance);
+                        dui.bindInstance();
+                    });
+                });
+            });
+        }
+    },
+    createInstance: function () {
+        dui.instance = (Math.random() * 4294967296).toString(16);
+        dui.instance = "0000000" + dui.instance;
+        dui.instance = dui.instance.substr(-8);
+        dui.startInstance();
+    },
     renameView: function () {
         var val = $("#new_name").val();
         if (val != "" && dui.views[val] === undefined) {
@@ -61,11 +91,12 @@ dui = $.extend(true, dui, {
                 //console.log("delView "+dui.activeView);
                 delete dui.views[dui.activeView];
                 //console.log(dui.views);
-                storage.set(dui.storageKeyViews, dui.views);
-                window.location.href = "?edit";
+                dui.saveRemote();
+                window.location.href = "edit.html";
            }
     },
     dupView: function (val) {
+        console.log("dupView("+val+")");
         if (val != "" && dui.views[val] === undefined) {
             dui.views[val] = $.extend(true, {}, dui.views[dui.activeView]);
             // Allen Widgets eine neue ID verpassen...
@@ -77,6 +108,14 @@ dui = $.extend(true, dui, {
             dui.renderView(val);
             dui.changeView(val);
             window.location.reload();
+        }
+    },
+    checkNewView: function() {
+        if ($("#new_view_name").val() == "") {
+            alert("Bitte einen Namen für die neue View eingeben!");
+            return false;
+        } else {
+            return $("#new_view_name").val();
         }
     },
     nextWidget: function () {
@@ -565,10 +604,10 @@ dui = $.extend(true, dui, {
 
         });
         $("#add_view").click(function () {
-            dui.addView($("#new_view_name").val());
+            dui.addView(dui.checkNewView());
         });
         $("#dup_view").click(function () {
-            dui.dupView($("#new_view_name").val());
+            dui.dupView(dui.checkNewView());
         });
         $("#del_view").click(function () {
             dui.delView(dui.activeView);
@@ -641,6 +680,16 @@ dui = $.extend(true, dui, {
         $("#select_active_widget").change(function () {
             dui.inspectWidget($(this).val());
         });
+
+        // Instances
+        dui.instance = storage.get(dui.storageKeyInstance);
+        if (!dui.instance) {
+            $("#instance").hide();
+            return;
+        } else {
+
+        }
+
     },
     translate: function (text) {
         if (!this.words) {

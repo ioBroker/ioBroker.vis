@@ -76,3 +76,8 @@
 	-webkit-animation-iteration-count: infinite;
 	-webkit-animation-timing-function: linear;
 }
+
+.noTitle .ui-dialog-titlebar {
+    display:none;
+    margin-top: 30px;
+}
