@@ -192,7 +192,7 @@ html,body {
 	cursor: default;
 }
 .hq-changing-normal {
-	cursor: none;
+/*	cursor: none;*/
 	border: 5px solid rgba(255,255,255,0.9) ;
 	z-index: 25;
 }

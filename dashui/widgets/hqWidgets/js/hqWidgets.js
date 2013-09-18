@@ -3300,10 +3300,10 @@ var hqWidgets = {
                                                                  top:    (this.settings.height- this.settings.btIconHeight)/2}, 50);
                             // Bugfix: somethimes it is in the wrong position
                             setTimeout (function (elem){
-                                elem.intern._jcenter.stop().css({width:  this.settings.btIconWidth,
-                                                                 height: this.settings.btIconHeight, 
-                                                                 left:   (elem.settings.width - this.settings.btIconWidth )/2, 
-                                                                 top:    (elem.settings.height- this.settings.btIconHeight)/2}, 50);
+                                elem.intern._jcenter.stop().css({width:  elem.settings.btIconWidth,
+                                                                 height: elem.settings.btIconHeight, 
+                                                                 left:   (elem.settings.width - elem.settings.btIconWidth )/2, 
+                                                                 top:    (elem.settings.height- elem.settings.btIconHeight)/2}, 50);
                                                        }, 50, this);
                         }
                                                                    

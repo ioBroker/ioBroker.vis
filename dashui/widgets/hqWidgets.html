@@ -174,25 +174,25 @@ if ((typeof hqWidgets !== 'undefined')) {
                         }});
                         // Fill up the required IDs
                         var t = 0;
-                        if (opt.hm_id != null && opt.hm_id != "") {
+                        if (opt['hm_id'] != null && opt['hm_id'] != "") {
                             if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"]) {
                                 hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"],   option: 'percentState'}; // First is always main element
                                 hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"], option: 'isWorking'};
-                                for (var i = 0; i < 4; i++) {
-                                    if (opt['hm_id'+i] != undefined) {
-                                        if (opt['hm_id'+i] != null && opt['hm_id'+i] != "")
-                                            hm_ids[t++] = {hm_id: homematic.regaObjects[opt['hm_id'+i]]["DPs"]["STATE"], option: 'windowState', index:i};   
-                                    }
-                                    if (opt['hm_id_hnd'+i] != undefined) {
-                                        if (opt['hm_id_hnd'+i] != null && opt['hm_id_hnd'+i] != "")
-                                            hm_ids[t++] = {hm_id: homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["STATE"], option: 'handleState', index:i};   
-                                    }
-                                }
                             }
                             else {
-                                hm_ids[t++] = {hm_id: opt.hm_id, option: 'percentState'};
+                                hm_ids[t++] = {hm_id: opt['hm_id'], option: 'percentState'};
                             }
-                        }                        
+                        }
+                        for (var i = 0; i < 4; i++) {
+                            if (opt['hm_id'+i] != undefined) {
+                                if (opt['hm_id'+i] != null && opt['hm_id'+i] != "")
+                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt['hm_id'+i]]["DPs"]["STATE"], option: 'windowState', index:i};   
+                            }
+                            if (opt['hm_id_hnd'+i] != undefined) {
+                                if (opt['hm_id_hnd'+i] != null && opt['hm_id_hnd'+i] != "")
+                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["STATE"], option: 'handleState', index:i};   
+                            }
+                        }                   
                     }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp) {
@@ -271,13 +271,13 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["STATE"])
                                         hm_id = homematic.regaObjects[hm_id]["DPs"]["STATE"];
                                      // Send command to HM
-                                    homematic.setValue( hm_id, (state == hqWidgets.gLockType.gLockClose) ? "false" : "true");
+                                    homematic.setValue( hm_id, (state == hqWidgets.gLockType.gLockClose) ? false : true);
                                 }
                                 else { // Open door
                                     if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["OPEN"])
                                         hm_id = homematic.regaObjects[hm_id]["DPs"]["OPEN"];
                                     // Send command to HM
-                                    homematic.setValue( hm_id, "true");
+                                    homematic.setValue( hm_id, true);
                                 }
                             }                            
                         }});
@@ -313,7 +313,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                             hm_id = homematic.regaObjects[hm_id]["DPs"]["STATE"];
                                         }
                                         // Send command to HM
-                                        homematic.setValue( hm_id, "true");
+                                        homematic.setValue( hm_id, true);
                                     }                            
                                 }});
                         }                    
@@ -340,7 +340,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                             hm_id = homematic.regaObjects[hm_id]["DPs"]["OPEN"];
                                         }
                                         // Send command to HM
-                                        homematic.setValue( hm_id, "true");
+                                        homematic.setValue( hm_id, true);
                                     }   
                                 }
                                 else { // Play melody or blink with LED
@@ -350,9 +350,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                                             hm_id = homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"];
                                         }
                                         // Send command to HM
-                                        homematic.setValue( hm_id, "true");
+                                        homematic.setValue( hm_id, true);
                                         // Switch of in 2 seconds
-                                        setTimeout (function (id) { homematic.setState( id, "false");}, 2000, hm_id);
+                                        setTimeout (function (id) { homematic.setState( id, false);}, 2000, hm_id);
                                     }                            
                                 }  
                             }                                
@@ -514,7 +514,10 @@ if ((typeof hqWidgets !== 'undefined')) {
                     else
                     if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'windowState') {
                         change['state'] = hqWidgets.gState.gStateOff; // Remove unknown state
-                        dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, (newState == "true") ? hqWidgets.gWindowState.gWindowOpened : hqWidgets.gWindowState.gWindowClosed);
+                        dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, (newState == true) ? hqWidgets.gWindowState.gWindowOpened : hqWidgets.gWindowState.gWindowClosed);
+                        var hm_id = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.GetSettings("hm_id");
+                        if (hm_id == null || hm_id == "")
+                            dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetStates ({'state': hqWidgets.gState.gStateOff}); // Remove unknown state                       
                         i++;
                         continue;
                     }
@@ -549,6 +552,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             wndState = undefined;
                             
                         dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, wndState, nState);
+                        var hm_id = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.GetSettings("hm_id");
+                        if (hm_id == null || hm_id == "")
+                            dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetStates ({'state': hqWidgets.gState.gStateOff}); // Remove unknown state                       
                         i++;
                         continue;
                     }
