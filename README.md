@@ -38,6 +38,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta4
+
+* (Hobbyquaker) Bugfixes: diverse Widgets aus den Widget-Sets Basic, jqui und jqui-mfd
+
 ### 0.9beta3
 
 * (Bluefox) HqWidgets Update Geräte

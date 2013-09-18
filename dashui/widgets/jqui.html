@@ -18,9 +18,9 @@
 
                 homematic.uiState.bind(id+".Value", function( e, newVal, oldVal ) {
                     var val;
-                    if (newVal === "false") {
+                    if (newVal === false) {
                         val = 0;
-                    } else if (newVal === "true") {
+                    } else if (newVal === true) {
                         val = 1;
                     } else {
                         val = parseFloat(newVal, 10);
@@ -35,6 +35,17 @@
                     }
 
                 });
+                var val = homematic.uiState.attr(id+".Value");
+                if (val === true) { val = 1; }
+                if (val === false) { val = 0; }
+                if (val === 0) {
+                    $this.removeClass("ui-state-active");
+                    $this.addClass("ui-state-default");
+                } else {
+                    $this.addClass("ui-state-active");
+                    $this.removeClass("ui-state-default");
+                }
+
             },
             dialog: function (el, options, persistent) {
                 var dlg = jQuery(el).parent().find("div.dashui-widget-dialog");
@@ -258,9 +269,9 @@
                 var hm_id = "_" + id
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.find("input").removeAttr("checked");
-                    if (newVal === "true") {
+                    if (newVal === true) {
                         newVal = 1;
-                    } else if (newVal === "false") {
+                    } else if (newVal === false) {
                         newVal = 0;
                     } else {
                         newVal = parseFloat(newVal,10);
@@ -272,6 +283,16 @@
                     });
                 });
 
+                var val = homematic.uiState.attr(hm_id+".Value");
+
+                if (val === true) { val = 1; }
+                if (val === false) { val = 0; }
+                $this.find("input[value='"+val+"']").prop("checked", true);
+                /*
+                $this.find("input").each(function() {
+                    jQuery(this).button("refresh");
+                });
+                */
                 // Buttonset -> Observable
                 $this.find("input").click(function () {
                     if (dui.urlParams["edit"] !== "") {

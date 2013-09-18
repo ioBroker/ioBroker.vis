@@ -5,7 +5,9 @@
         <%
         var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
         var val = parseFloat(str,10);
-        if (val == 1 || str == "true") {
+        if (str === true) { val = 1; }
+        if (str === false) { val = 0; }
+        if (val !== 0) {
         %>
         <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
         <% } else if (val >= 0.9) { %>
@@ -41,7 +43,9 @@
     <%
     var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
     var val = parseFloat(str,10);
-    if (val == 1 || str == "true") {
+    if (str === true) { val = 1; }
+    if (str === false) { val = 0; }
+    if (val !== 0) {
     %>
     <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
     <% } else if (val >= 0.9) { %>
@@ -76,7 +80,9 @@
     <%
     var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
     var val = parseFloat(str, 10);
-    if (val == 1 || str == "true") {
+    if (str === true) { val = 1; }
+    if (str === false) { val = 0; }
+    if (val !== 0) {
     %>
     <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
     <% } else if (val >= 0.9) { %>
@@ -119,7 +125,9 @@
     <%
     var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
     var val = parseFloat(str, 10);
-    if (val == 1 || str == "true") {
+    if (str === true) { val = 1; }
+    if (str === false) { val = 0; }
+    if (val !== 0) {
     %>
     <img width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
     <% } else if (val >= 0.9) { %>
@@ -170,7 +178,9 @@
         <%
         var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
         var val = parseFloat(str,10);
-        if (val == 1 || str == "true") {
+        if (str === true) { val = 1; }
+        if (str === false) { val = 0; }
+        if (val !== 0) {
         %>
         <img width="100%" src="widgets/jqui-mfd/img/message_socket_on.png"/>
         <% } else { %>
@@ -185,7 +195,9 @@
     <%
     var str = homematic.uiState.attr('_' + this.data.hm_id + '.Value');
     var val = parseFloat(str,10);
-    if (val == 1 || str == "true") {
+    if (str === true) { val = 1; }
+    if (str === false) { val = 0; }
+    if (val !== 0) {
     %>
     <img width="100%" src="widgets/jqui-mfd/img/message_socket_on.png"/>
     <% } else { %>
@@ -297,9 +309,9 @@
 <script type="text/ejs" id="tplMfdWindow" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Fenster Drehgriff" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;" >
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "0": %>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case 0: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w.png"/>
-            <% break; case "1": %>
+            <% break; case 1: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w_tilt.png"/>
             <% break; default: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.png"/>
@@ -310,7 +322,7 @@
 <script type="text/ejs" id="tplMfdWindowBool" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Fenster" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;"  >
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "false": case "0": case 0: %>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case false: case "false": case "0": case 0: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.png"/>
             <% break; default: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w.png"/>
@@ -321,7 +333,7 @@
 <script type="text/ejs" id="tplMfdRoofWindowBool" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Dachfenster" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "false": case "0": case 0:  %>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case false: case "false": case "0": case 0:  %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_window_roof.png"/>
             <% break; default: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_window_roof_open_2.png"/>
@@ -333,7 +345,7 @@
 <script type="text/ejs" id="tplMfdDoor" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - T�re" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px;">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "false": case "0": case 0: %>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case false: case "false": case "0": case 0: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_door.png"/>
             <% break; default: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_door_open.png"/>
@@ -344,7 +356,7 @@
 <script type="text/ejs" id="tplMfdGarage" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Garage" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px;">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "false": case "0": case 0: %>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case false: case "false": case "0": case 0: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_garage_door_100.png"/>
             <% break; default: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_garage_door_10.png"/>

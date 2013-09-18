@@ -98,8 +98,8 @@
                 if (dui.urlParams["edit"] !== "") {
                     $this.click(function () {
                         var val = homematic.uiState["_"+id].Value;
-                        if (val === "false") { val = 0;}
-                        if (val === "true") { val = 1;}
+                        if (val === false || val === "false") { val = 0;}
+                        if (val === true || val === "true") { val = 1;}
                         val = parseFloat(val, 10);
                         if (val >= 0.5) { val = 1; } else { val = 0; }
                         homematic.setValue( id,  1-val);
