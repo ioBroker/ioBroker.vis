@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.3",
+    version: "0.1.4",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -588,6 +588,7 @@ var hqWidgets = {
             state:         hqWidgets.gState.gStateUnknown, // Unknown, active, inactive
             handleState:   hqWidgets.gHandlePos.gPosClosed, // Set default position to closed
             lowBattery:    false,         // If show low battery icon or not
+			lowBatteryDesc:null,          // ToolTip for battery icon
             strength:      null,          // If set, so the signal strength will be shown
             isStrengthShow:false,         // If show strength
             isRefresh:     false,         // Is refresh state
@@ -2663,6 +2664,10 @@ var hqWidgets = {
                     $('#'+this.advSettings.elemName+"_battery1").addClass("hq-battery1"); 
                     this.intern._jbattery.prepend("<div id='"+this.advSettings.elemName+"_batteryTop'></div>");
                     $('#'+this.advSettings.elemName+"_batteryTop").addClass("hq-battery-top"); 
+					if (this.dynStates.lowBatteryDesc != null)
+						this.intern._jbattery.prop('title', this.dynStates.lowBatteryDesc);
+					else
+						this.intern._jbattery.prop('title', '');
                 }
                 else
                     this.intern._jbattery.show();
@@ -3561,7 +3566,13 @@ var hqWidgets = {
             
             //  lowBattery
             if (dynOptions.lowBattery !== undefined) 
+			{
+				if (dynOptions.lowBatteryDesc != undefined)
+					this.dynStates.lowBatteryDesc = dynOptions.lowBatteryDesc;
+				else
+					this.dynStates.lowBatteryDesc = null;
                 this.ShowBattery (dynOptions.lowBattery); 
+			}
 
             //  windowState  - like "0,2,1" means first leaf is unknown state, middle is closed and the third is opened
             if (dynOptions.windowState !== undefined && 
