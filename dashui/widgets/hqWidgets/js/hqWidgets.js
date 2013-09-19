@@ -600,7 +600,7 @@ var hqWidgets = {
             temperature:   null,          // actual "is" temperature
             humidity:      null,          // humidity in %
             bigPinned:     false,         // If big window pinned or not
-            infoWindow : {
+            infoWindow:  {
                 isEnabled: false,
                 width:     100,
                 height:    200,
@@ -1152,6 +1152,7 @@ var hqWidgets = {
                         this.advSettings.parent.append ($newdiv1);
                     }
                     this.intern._jbigWindow=$('#'+this.advSettings.elemName+"_lock");
+                    this.dynStates.infoWindow.isEnabled = true;
                     this.intern._jbigWindow.hide();
                     this.intern._jbigWindow.addClass('hq-lock-big');
                     this.intern._jbigWindow.addClass('hq-no-select');		
@@ -1216,6 +1217,7 @@ var hqWidgets = {
                     this.advSettings.parent.append ($newdiv1);
                 }
                 this.intern._jbigWindow=$('#'+this.advSettings.elemName+"_big");
+                this.dynStates.infoWindow.isEnabled = true;
                 this.intern._jbigWindow.addClass('hq-blind-big');
                 this.intern._jbigWindow.addClass('hq-no-select');
                 this.intern._jbigWindow.bheight   = this.intern._jbigWindow.height();  // Size of the big window
@@ -2023,8 +2025,11 @@ var hqWidgets = {
                 while (this.intern._blinds[index]) {
                     dynOptions.windowState = ((options.windowState == "") ? "" : ",") + this.intern._blinds[index].state;
                     dynOptions.handleState = ((options.handleState == "") ? "" : ",") + this.intern._blinds[index].handleState;
+                    index++;
                 }
             }
+            
+            return dynOptions;
         }
         // Get all options as one parameter
         this.GetSettings = function (isAllOrOneName, ignoreDefault) {
@@ -2219,15 +2224,15 @@ var hqWidgets = {
             if (this.settings.buttonType != hqWidgets.gButtonType.gTypeInfo &&
                 this.settings.buttonType != hqWidgets.gButtonType.gTypeGauge) 
                 return;
-            if (text      == undefined || text      == null || text     == "") text      = null;
-            if (textFont  == undefined || textFont  == null || textFont == "") textFont  = '20px "Tahoma", sans-serif';
-            if (textColor == undefined || textColor == null || textColor== "") textColor = "white"; 
+            if (text      === undefined || text      === null || text     === "") text      = null;
+            if (textFont  ==  undefined || textFont  ==  null || textFont ==  "") textFont  = '20px "Tahoma", sans-serif';
+            if (textColor ==  undefined || textColor ==  null || textColor==  "") textColor = "white"; 
  
             this.dynStates.infoText     = text;
             this.settings.infoTextFont  = textFont;
             this.settings.infoTextColor = textColor;
               
-            if (text != null && this.intern._jinfoText == null) {
+            if (text !== null && this.intern._jinfoText == null) {
                 this.intern._jelement.prepend("<div id='"+this.advSettings.elemName+"_infoText'></div>");
                 this.intern._jinfoText = jQuery('#'+this.advSettings.elemName + '_infoText');
                 this.intern._jinfoText.addClass('hq-no-select');
@@ -3414,7 +3419,7 @@ var hqWidgets = {
                     this._PlayMelody ();
                 }
                 else   
-                if (this.intern._jbigWindow)
+                if (this.intern._jbigWindow && this.dynStates.infoWindow.isEnabled)
                     this.ShowBigWindow(true);
             }
                 

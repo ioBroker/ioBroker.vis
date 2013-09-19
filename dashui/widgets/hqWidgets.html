@@ -9,7 +9,7 @@
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
         hqWidgetsExt: {
-            version: "0.1.3",
+            version: "0.1.4",
             inited:  false,
             hqIgnoreNextUpdate: null, // id of controlled element
             hqMapping: {},
@@ -420,6 +420,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                             else // working
                                 return (value === true || value === "true") ? true : false;
                         }});
+                        var hm_id = btn.GetSettings("hm_id");
+                        if (hm_id == null || hm_id == "") {
+                            var dynStates = btn.GetStates();
+                            dynStates.infoWindow.isEnabled = false;
+                            btn.SetStates(dynStates);
+                        }
                     }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp ||
