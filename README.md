@@ -38,6 +38,14 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta6
+
+* (Bluefox)	Fix problem with Info and logical value Do not show control for window if no actor projected
+* (Bluefox) Show battery problems by door and window widgets.
+* (Bluefox) Description for battery problem if window widget.
+* (Bluefox) Fix hwWidget/Window in Firefox
+* (Bluefox) Fix error if HM_ID not exist
+
 ### 0.9beta5
 
 * (Bluefox) Fix image of button if pressed
@@ -101,27 +109,22 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Bluefox) Neuer Selector für vodefinierte View-Hintergründe 
 
 ### 0.8
-* Fehler im Theme "Kiandra" behoben
-* Snapping hinzugefügt: einfacheres Positionieren von Widgets wahlweise an einem Gitter oder an anderen Widgets
-* Neuer Reiter "Editor" um das Snapping zu konfigurieren
-* Fehler behoben der dazu führte dass Variablen nicht richtig gesetzt wurden
-* Widget "basic hm_val - String img src" hinzugefügt
-
+* (Hobbyquaker) Fehler im Theme "Kiandra" behoben
+* (Hobbyquaker) Snapping hinzugefügt: einfacheres Positionieren von Widgets wahlweise an einem Gitter oder an anderen Widgets
+* (Hobbyquaker) Neuer Reiter "Editor" um das Snapping zu konfigurieren
+* (Hobbyquaker) Fehler behoben der dazu führte dass Variablen nicht richtig gesetzt wurden
+* (Hobbyquaker) Widget "basic hm_val - String img src" hinzugefügt
 * (Bluefox) Neuer Dialog zur Gerateauswahl
 * (Bluefox) Neuer Dialog zur Bilderauswahl
 * (Bluefox) Neuer Selector fur vodefinierte View-Hintergrunde 
 
 ### 0.8
-* Fehler im Theme "Kiandra" behoben
-* Snapping hinzugefugt: einfacheres Positionieren von Widgets wahlweise an einem Gitter oder an anderen Widgets
-* Neuer Reiter "Editor" um das Snapping zu konfigurieren
-* Fehler behoben der dazu fuhrte dass Variablen nicht richtig gesetzt wurden
-* Widget "basic hm_val - String img src" hinzugefugt
-* Neues Widget-Set "Knobs"
-* 3 Neue Widgets zur animierten Navigation zwischen Views
-* Neue Widgets im Widget-Set "fancyswitch"
-* Neue Colorpicker-Widgets
-* diverse neue Widgets im Widget-Set "basic"
+
+* (Hobbyquaker) Neues Widget-Set "Knobs"
+* (Hobbyquaker) 3 Neue Widgets zur animierten Navigation zwischen Views
+* (Hobbyquaker) Neue Widgets im Widget-Set "fancyswitch"
+* (Hobbyquaker) Neue Colorpicker-Widgets
+* (Hobbyquaker) diverse neue Widgets im Widget-Set "basic"
 
 
 ### 0.7
