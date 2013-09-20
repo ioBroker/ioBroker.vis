@@ -1247,7 +1247,7 @@ var hqWidgets = {
                 }
                 
                 this.intern._jbigWindow.mouseDown = function (element, y_) {
-                    var y_ = event.pageY;
+                    //var y_ = event.pageY;
                     hqWidgets.gDynamics.gActiveBig = element;
                     hqWidgets.gDynamics.gActiveBig.intern._cursorY = y_;
                     var yOffset = y_ - hqWidgets.gDynamics.gActiveBig.intern._jbigWindow.position().top;
