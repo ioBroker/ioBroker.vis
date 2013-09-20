@@ -626,8 +626,13 @@ var dui = {
             else
                 return parent + homematic.regaObjects[id]["Name"];
         }
+        else 
+        if (id == 41) 
+            return dui.translate ("Service messages");
         else
-            return "";
+        if (id == 49)
+            return dui.translate ("Alarms");
+        return "";
     },
     translate: function (text) {
         return text;

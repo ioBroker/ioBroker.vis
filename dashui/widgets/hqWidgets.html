@@ -446,9 +446,9 @@ if ((typeof hqWidgets !== 'undefined')) {
 												
                         var hm_id = btn.GetSettings("hm_id");
                         if (hm_id == null || hm_id == "") {
-                            var dynStates = btn.GetStates();
-                            dynStates.infoWindow.isEnabled = false;
-                            btn.SetStates(dynStates);
+                            var infoWindow = btn.GetInfoWindowSettings ();
+                            infoWindow.isEnabled = false;
+                            btn.SetInfoWindowSettings(infoWindow);
                         }
                     }
                     else
@@ -461,7 +461,50 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 return (value == 0) ? dui.translate ("Off") : ((value == 100) ? dui.Tramslate ("On") : value);
                             else // temperature, humidity, valve
                                 return value;
-                        }});                        
+                        }});  
+                        var infoWindow = btn.GetInfoWindowSettings ();
+                        infoWindow.isEnabled     = true;
+                        infoWindow.content       = "";
+                        infoWindow.isShowButtons = true;
+                        infoWindow.pinShow       = true;
+                        infoWindow.showPinned    = true;
+                        infoWindow.width         = 800;
+                        infoWindow.height        = 400;
+                        infoWindow.title         = ((opt.room != "" && opt.room != null) ? ("[" + opt.room + "] ") : "") + opt.title;
+                        infoWindow.onShow        = function (obj, jContent) {
+                            // update information if older than 5 minutes
+                            if (obj.lastBigShow === undefined || Date.now() - obj.lastBigShow > 60000) {
+                                jContent.html ("");
+                                var infoWnd = {'content': obj.graficIframe};
+                                obj.SetInfoWindowSettings (infoWnd);
+                                obj.lastBigShow = Date.now();
+                            }
+                        };
+                        // Show grafik
+                        var hm_id = opt['hm_id'];
+                        if (hm_id != null && hm_id != "") {
+                            var points = [];
+                            var cnt = 0;
+                            if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["TEMPERATURE"]) {
+                                points[cnt++] = homematic.regaObjects[hm_id]["DPs"]["TEMPERATURE"];
+                                points[cnt++] = homematic.regaObjects[hm_id]["DPs"]["HUMIDITY"];
+                            }
+                        }
+                        if (points[0]) {
+                            var src = document.location.href;
+                            var i = src.indexOf("dashui");
+                            if (i > 0) {
+                                src = src.substring (0, i) + "charts/";
+                                btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no"'+
+                                                     'src="'+src+'?dp=';
+                                for (var t = 0; t < points.length; t++) {
+                                    btn.graficIframe += ((t > 0) ? ',' : '') + points[t];
+                                }
+                                btn.graficIframe += '&navserie='+points[0];
+                                btn.graficIframe += '&theme=&percentaxis=true&loader=false&legend=inline&period=72&range=24"></iframe>';//gray
+                                btn.SetInfoWindowSettings (infoWindow);
+                            }
+                        }
                     }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeLock) {

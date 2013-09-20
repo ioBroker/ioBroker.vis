@@ -720,6 +720,8 @@ dui = $.extend(true, dui, {
                 "on_time:"  : {"en" : "On time(s)",  "de": "Dauer - An (sek)","ru" : "��������� (���)"},
                 "newVersion": {"en" : "Handler ab V1.6",  "de": "Griff ab V1.6","ru" : "����� ������ �� V1.6"},
                 "weoid"     : {"en" : "City",        "de": "Stadt",          "ru" : "�����"},
+                "Service messages" : {"en" : "Service messages", "de": "Servicemeldungen ", "ru" : "Service messages"},
+                "Alarms"    : {"en" : "Alarms ",     "de": "Alarmmeldungen ","ru" : "Alarms"},
             };
         }
         if (this.words[text]) {
