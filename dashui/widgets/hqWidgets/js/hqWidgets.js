@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.3",
+    version: "0.1.4",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -588,6 +588,7 @@ var hqWidgets = {
             state:         hqWidgets.gState.gStateUnknown, // Unknown, active, inactive
             handleState:   hqWidgets.gHandlePos.gPosClosed, // Set default position to closed
             lowBattery:    false,         // If show low battery icon or not
+			lowBatteryDesc:null,          // ToolTip for battery icon
             strength:      null,          // If set, so the signal strength will be shown
             isStrengthShow:false,         // If show strength
             isRefresh:     false,         // Is refresh state
@@ -600,7 +601,7 @@ var hqWidgets = {
             temperature:   null,          // actual "is" temperature
             humidity:      null,          // humidity in %
             bigPinned:     false,         // If big window pinned or not
-            infoWindow : {
+            infoWindow:  {
                 isEnabled: false,
                 width:     100,
                 height:    200,
@@ -1152,6 +1153,7 @@ var hqWidgets = {
                         this.advSettings.parent.append ($newdiv1);
                     }
                     this.intern._jbigWindow=$('#'+this.advSettings.elemName+"_lock");
+                    this.dynStates.infoWindow.isEnabled = true;
                     this.intern._jbigWindow.hide();
                     this.intern._jbigWindow.addClass('hq-lock-big');
                     this.intern._jbigWindow.addClass('hq-no-select');		
@@ -1216,6 +1218,7 @@ var hqWidgets = {
                     this.advSettings.parent.append ($newdiv1);
                 }
                 this.intern._jbigWindow=$('#'+this.advSettings.elemName+"_big");
+                this.dynStates.infoWindow.isEnabled = true;
                 this.intern._jbigWindow.addClass('hq-blind-big');
                 this.intern._jbigWindow.addClass('hq-no-select');
                 this.intern._jbigWindow.bheight   = this.intern._jbigWindow.height();  // Size of the big window
@@ -1244,7 +1247,7 @@ var hqWidgets = {
                 }
                 
                 this.intern._jbigWindow.mouseDown = function (element, y_) {
-                    var y_ = event.pageY;
+                    //var y_ = event.pageY;
                     hqWidgets.gDynamics.gActiveBig = element;
                     hqWidgets.gDynamics.gActiveBig.intern._cursorY = y_;
                     var yOffset = y_ - hqWidgets.gDynamics.gActiveBig.intern._jbigWindow.position().top;
@@ -2023,8 +2026,11 @@ var hqWidgets = {
                 while (this.intern._blinds[index]) {
                     dynOptions.windowState = ((options.windowState == "") ? "" : ",") + this.intern._blinds[index].state;
                     dynOptions.handleState = ((options.handleState == "") ? "" : ",") + this.intern._blinds[index].handleState;
+                    index++;
                 }
             }
+            
+            return dynOptions;
         }
         // Get all options as one parameter
         this.GetSettings = function (isAllOrOneName, ignoreDefault) {
@@ -2219,15 +2225,15 @@ var hqWidgets = {
             if (this.settings.buttonType != hqWidgets.gButtonType.gTypeInfo &&
                 this.settings.buttonType != hqWidgets.gButtonType.gTypeGauge) 
                 return;
-            if (text      == undefined || text      == null || text     == "") text      = null;
-            if (textFont  == undefined || textFont  == null || textFont == "") textFont  = '20px "Tahoma", sans-serif';
-            if (textColor == undefined || textColor == null || textColor== "") textColor = "white"; 
+            if (text      === undefined || text      === null || text     === "") text      = null;
+            if (textFont  ==  undefined || textFont  ==  null || textFont ==  "") textFont  = '20px "Tahoma", sans-serif';
+            if (textColor ==  undefined || textColor ==  null || textColor==  "") textColor = "white"; 
  
             this.dynStates.infoText     = text;
             this.settings.infoTextFont  = textFont;
             this.settings.infoTextColor = textColor;
               
-            if (text != null && this.intern._jinfoText == null) {
+            if (text !== null && this.intern._jinfoText == null) {
                 this.intern._jelement.prepend("<div id='"+this.advSettings.elemName+"_infoText'></div>");
                 this.intern._jinfoText = jQuery('#'+this.advSettings.elemName + '_infoText');
                 this.intern._jinfoText.addClass('hq-no-select');
@@ -2658,6 +2664,10 @@ var hqWidgets = {
                     $('#'+this.advSettings.elemName+"_battery1").addClass("hq-battery1"); 
                     this.intern._jbattery.prepend("<div id='"+this.advSettings.elemName+"_batteryTop'></div>");
                     $('#'+this.advSettings.elemName+"_batteryTop").addClass("hq-battery-top"); 
+					if (this.dynStates.lowBatteryDesc != null)
+						this.intern._jbattery.prop('title', this.dynStates.lowBatteryDesc);
+					else
+						this.intern._jbattery.prop('title', '');
                 }
                 else
                     this.intern._jbattery.show();
@@ -3414,7 +3424,7 @@ var hqWidgets = {
                     this._PlayMelody ();
                 }
                 else   
-                if (this.intern._jbigWindow)
+                if (this.intern._jbigWindow && this.dynStates.infoWindow.isEnabled)
                     this.ShowBigWindow(true);
             }
                 
@@ -3556,7 +3566,13 @@ var hqWidgets = {
             
             //  lowBattery
             if (dynOptions.lowBattery !== undefined) 
+			{
+				if (dynOptions.lowBatteryDesc != undefined)
+					this.dynStates.lowBatteryDesc = dynOptions.lowBatteryDesc;
+				else
+					this.dynStates.lowBatteryDesc = null;
                 this.ShowBattery (dynOptions.lowBattery); 
+			}
 
             //  windowState  - like "0,2,1" means first leaf is unknown state, middle is closed and the third is opened
             if (dynOptions.windowState !== undefined && 
