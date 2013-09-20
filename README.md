@@ -72,26 +72,23 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Smiling-Jack)            Swipe-Widget (Navigation via Touch-Gesten)
 
 ### 0.8.4-0.8.6
+
 * (Bluefox) Yahoo Weather widget.
 * (Bluefox) Htc Weather widget.
 * (Bluefox) Simple Clock
 * (Bluefox) Flip Clock
-
 * (Bluefox) Kein neue Funktionalitaet, nur Umstrukturierung.
 * (Bluefox) Jedes Widget-Set hat eigenes "js", "css" und "img" Verzeichnis
 * (Bluefox) Edit und Engine geteilt.
-
 * (Bluefox) Gauge widget 
 * (Bluefox) Styles fur Button
 * (Bluefox) Fixed Fenster und Rolladen
-
 * (Bluefox) Neue hqWidgets Komponente: Gong, IP Camera. 
 * (Bluefox) Soll Wert fuer Thermostat
 * (Bluefox) Fixed Problem mit Positionierung
 * (Bluefox) Letzte Statusanderung-Anzeige
 * (Bluefox) Status Changed- Animation
 * (Bluefox) Advanced Settings
-
 * (hobbyquaker) CCU.IO integriert
 
 ### 0.8.3
