@@ -375,7 +375,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 
                 if (hqEditElem.e_internal.attr.charts === undefined) {
                     hqEditElem.e_internal.attr.charts = {
-                        "navigator":   "true",
+                        "navigator":   "",
                         "percentaxis": "true",
                         "period":      "72",
                         "theme":       "",
@@ -389,7 +389,11 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 }
                 
                 // Is Show Navigator
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Navigator:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_navigator' "+((hqEditElem.e_internal.attr.charts.navigator) ? "checked" : "")+">";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Navigator:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_navigator'>";
+                sTextChart += "<option value='' "     + ((hqEditElem.e_internal.attr.charts.navigator=="")     ? "selected" : "") + ">Show top and bottom</option>";
+                sTextChart += "<option value='true' " + ((hqEditElem.e_internal.attr.charts.navigator=="true") ? "selected" : "") + ">Show bottom</option>";
+                sTextChart += "<option value='false' "+ ((hqEditElem.e_internal.attr.charts.navigator=="false")? "selected" : "") + ">Do not show</option>";
+                sTextChart += "</select>";                
                 // Load from CCU: 1h, 2h, 6h, 12h, 1d, 3d, 5d, 1w, 2w, 1m, 3m, 6m, 1y, All
                 sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Load period:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_period'>";
                 sTextChart += "<option value='1' "    + ((hqEditElem.e_internal.attr.charts.period==1)    ? "selected" : "") + ">"+dui.translate("1 Hour")+"</option>";
@@ -507,7 +511,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                         });
                     }        
                 }                    
-                hqEditElem._EditCheckboxHandlerEx ('navigator');
+                hqEditElem._EditSelectHandler ('navigator');
                 hqEditElem._EditSelectHandler ('period');
                 hqEditElem._EditSelectHandler ('theme');
                 hqEditElem._EditCheckboxHandlerEx ('percentaxis');
