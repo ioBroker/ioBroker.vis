@@ -2401,7 +2401,7 @@ var hqStyleSelector = {
             var sSheetList = document.styleSheets;
             for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
                 var ruleList = document.styleSheets[sSheet].cssRules;
-                var bglen = ".hq-background-".length;
+                var bglen = "hq-background-".length;
                 for (var rule = 0; rule < ruleList.length; rule ++) {
                     if (ruleList[rule].selectorText === undefined || ruleList[rule].selectorText == null || ruleList[rule].selectorText == "")
                         continue;
@@ -2416,7 +2416,7 @@ var hqStyleSelector = {
                         if (name.length > 0 && (name[0] == '.' || name[0] == '#'))
                             name = name.substring(1);                       
                         var val  = name;
-                        if (name.length >= bglen && name.substring(0, bglen) == ".hq-background-")
+                        if (name.length >= bglen && name.substring(0, bglen) == "hq-background-")
                             name = name.substring(bglen);
                             
                         if (name.substring(0, "hq-".length) == "hq-")
@@ -2428,7 +2428,10 @@ var hqStyleSelector = {
                         name = name.replace (/-/g, " ");
                         if (name.length > 0) {
                             name = name[0].toUpperCase() + name.substring(1);
-                            this._internalList[name] = {style: val, file: document.styleSheets[sSheet].href, attrs: ruleList[rule].style};
+                            var fff = document.styleSheets[sSheet].href;
+                            if (fff != null && fff != "" && fff.indexOf('/') != -1)
+                                fff = fff.substring(fff.lastIndexOf('/')+1);
+                            this._internalList[name] = {style: val, file: fff, attrs: ruleList[rule].style};
                         }
                         break;
                     }
