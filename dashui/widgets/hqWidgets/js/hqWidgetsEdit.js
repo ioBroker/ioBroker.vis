@@ -492,6 +492,12 @@ hqWidgets = $.extend (true, hqWidgets, {
         // Description
         sText += "<tr><td>"+ hqWidgets.Translate("Description:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_title' type='text' value='"+((this.e_internal.attr.title) || "")+"'></td></tr>";
 
+        if (this.e_internal.obj.stylesVisible === undefined)
+            this.e_internal.obj.stylesVisible = false;
+            
+        if (this.e_internal.obj.advancedVisible === undefined)
+            this.e_internal.obj.advancedVisible = false;
+        
         // Show all styles
         this.e_settings.parent.append (sText);
         if (iStyleCount == 1)
@@ -502,32 +508,36 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_settings.parent.append (sTextStyle);
             var advBtn = document.getElementById ('idShowStyle');
             advBtn.obj   = this;
-            advBtn.state = false;
+            advBtn.state = this.e_internal.obj.stylesVisible;
             
-            $('#idShowStyle').button({icons: {primary: "ui-icon-carat-1-s"}}).click(function( event ) {
-                                        this.state = !(this.state);
-                                        if (this.state) {
-                                            $('#idShowStyle').button("option", {icons: { primary: "ui-icon-carat-1-n" }});
-                                            var i = 0;
-                                            while (document.getElementById ('idStyle'+i)) {
-                                                $('#idStyle'+i).show();
-                                                i++;
-                                            }
-                                        }
-                                        else {
-                                            $('#idShowStyle').button("option", {icons: { primary: "ui-icon-carat-1-s" }});
-                                            var i = 0;
-                                            while (document.getElementById ('idStyle'+i)) {
-                                                $('#idStyle'+i).hide();
-                                                i++;
-                                            }                                        
-                                        }
-                                  });
-            // Hide all                      
-            var i = 0;
-            while (document.getElementById ('idStyle'+i)) {
-                $('#idStyle'+i).hide();
-                i++;
+            $('#idShowStyle').button({icons: {primary: (!this.e_internal.obj.stylesVisible) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
+                this.state = !(this.state);
+                this.obj.e_internal.obj.stylesVisible = this.state;
+                if (this.state) {
+                    $('#idShowStyle').button("option", {icons: { primary: "ui-icon-carat-1-n" }});
+                    var i = 0;
+                    while (document.getElementById ('idStyle'+i)) {
+                        $('#idStyle'+i).show();
+                        i++;
+                    }
+                }
+                else {
+                    $('#idShowStyle').button("option", {icons: { primary: "ui-icon-carat-1-s" }});
+                    var i = 0;
+                    while (document.getElementById ('idStyle'+i)) {
+                        $('#idStyle'+i).hide();
+                        i++;
+                    }                                        
+                }
+            });
+            if (!this.e_internal.obj.stylesVisible)
+            {
+                // Hide all                      
+                var i = 0;
+                while (document.getElementById ('idStyle'+i)) {
+                    $('#idStyle'+i).hide();
+                    i++;
+                }
             }
         }
         
@@ -541,32 +551,36 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_settings.parent.append (sTextAdv);
             var advBtn = document.getElementById ('idShowAdv');
             advBtn.obj   = this;
-            advBtn.state = false;
+            advBtn.state = this.e_internal.obj.advancedVisible;
             
-            $('#idShowAdv').button({icons: {primary: "ui-icon-carat-1-s"}}).click(function( event ) {
-                                        this.state = !(this.state);
-                                        if (this.state) {
-                                            $('#idShowAdv').button("option", {icons: { primary: "ui-icon-carat-1-n" }});
-                                            var i = 0;
-                                            while (document.getElementById ('idAdv'+i)) {
-                                                $('#idAdv'+i).show();
-                                                i++;
-                                            }
-                                        }
-                                        else {
-                                            $('#idShowAdv').button("option", {icons: { primary: "ui-icon-carat-1-s" }});
-                                            var i = 0;
-                                            while (document.getElementById ('idAdv'+i)) {
-                                                $('#idAdv'+i).hide();
-                                                i++;
-                                            }                                        
-                                        }
-                                  });
-            // Hide all                      
-            var i = 0;
-            while (document.getElementById ('idAdv'+i)) {
-                $('#idAdv'+i).hide();
-                i++;
+            $('#idShowAdv').button({icons: {primary: (!this.e_internal.obj.advancedVisible) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
+                this.state = !(this.state);
+                this.obj.e_internal.obj.advancedVisible = this.state;
+                if (this.state) {
+                    $('#idShowAdv').button("option", {icons: { primary: "ui-icon-carat-1-n" }});
+                    var i = 0;
+                    while (document.getElementById ('idAdv'+i)) {
+                        $('#idAdv'+i).show();
+                        i++;
+                    }
+                }
+                else {
+                    $('#idShowAdv').button("option", {icons: { primary: "ui-icon-carat-1-s" }});
+                    var i = 0;
+                    while (document.getElementById ('idAdv'+i)) {
+                        $('#idAdv'+i).hide();
+                        i++;
+                    }                                        
+                }
+            });
+            if (!this.e_internal.obj.advancedVisible)
+            {
+                // Hide all                      
+                var i = 0;
+                while (document.getElementById ('idAdv'+i)) {
+                    $('#idAdv'+i).hide();
+                    i++;
+                }
             }
         }
         // Apply functionality

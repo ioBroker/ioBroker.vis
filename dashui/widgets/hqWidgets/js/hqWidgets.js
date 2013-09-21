@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.4",
+    version: "0.1.5",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -604,7 +604,7 @@ var hqWidgets = {
             infoWindow:  {
                 isEnabled: false,
                 width:     400,
-                height:    200,
+                height:    300,
                 x:         null,
                 y:         null,
                 onShow:    null,          // function (obj, jContent)
@@ -821,6 +821,8 @@ var hqWidgets = {
                     this.parent.intern._jbigWindow.bind("resize", null, null);
                     if (this.parent.dynStates.infoWindow.onHide)
                         this.parent.dynStates.infoWindow.onHide (this.parent, this.parent.intern._jbigWindow.jbigWindowContent);
+                    if (this.parent.dynStates.infoWindow._onHide)
+                        this.parent.dynStates.infoWindow._onHide (this.parent, this.parent.intern._jbigWindow.jbigWindowContent);
                 }                    
             }   
         };
@@ -1154,6 +1156,16 @@ var hqWidgets = {
                         this.intern._jvalve.addClass('hq-no-select').show();
                         this.intern._jsettemp.addClass('hq-no-select');
                         this.intern._jright.addClass('hq-no-select');
+                        // Generate action event, because the normal button is overloaded by temperature control
+                        /*if (!this.intern._isEditMode) {
+                            this.intern._jright.bind("click", {msg: this}, function (e) {
+                                var obj = e.data.msg;
+                                if (obj.intern._jbigWindow && obj.dynStates.infoWindow.isEnabled)
+                                    obj.ShowBigWindow(true);
+                            });
+                        }       */             
+                        
+                        
                     }
                     this.SetTemperature ();
                 }
@@ -1411,7 +1423,7 @@ var hqWidgets = {
                             elem.intern._jbigWindow.trigger("resize");
                         }
                     }
-                    this.dynStates.infoWindow.onHide = function (elem) {
+                    this.dynStates.infoWindow._onHide = function (elem) {
                         elem.intern._jbigWindow.bind("resize", null, null);
                         // Stop update of the images
                         clearTimeout(elem.intern._ipCamBigTimer);
@@ -3206,8 +3218,7 @@ var hqWidgets = {
             if (!this.intern._isEditMode) {
                 if (this.settings.buttonType != hqWidgets.gButtonType.gTypeBlind && 
                     this.settings.buttonType != hqWidgets.gButtonType.gTypeImage && 
-                    this.settings.buttonType != hqWidgets.gButtonType.gTypeCam)
-                {
+                    this.settings.buttonType != hqWidgets.gButtonType.gTypeCam) {
                     if (this.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer ||
                         this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
                     {
@@ -3229,8 +3240,7 @@ var hqWidgets = {
                         //$('#status').html(x_+"down<br>")
                     }
                 
-                    if (this.dynStates.action)
-                    {
+                    if (this.dynStates.action){
                         var _width  = this.intern._jelement.width();
                         var _height = this.intern._jelement.height();
                         if (!this.settings.x) this.settings.x = this.intern._jelement.position().left;
@@ -3269,8 +3279,7 @@ var hqWidgets = {
                 if (this.intern._jstaticText)	
                     hqWidgets.gDynamics.gActiveElement.intern._jstaticText.hide ();
                     
-                if (isTouch)
-                {
+                if (isTouch){
                     this.intern._isNonClick = false; // on tablet if I click the button in edit mode, it is moved immediately
                                                        // to detect the click, if mouse Up faster than 500 ms => click
                     hqWidgets.gDynamics.gRightClickDetection = setTimeout (function () {
@@ -3284,8 +3293,7 @@ var hqWidgets = {
                     
                     return true;
                 }
-                else
-                {
+                else {
                     this.intern._isNonClick = true;
                     if (hqWidgets.gDynamics.gRightClickDetection) clearTimeout (hqWidgets.gDynamics.gRightClickDetection);
                     hqWidgets.gDynamics.gRightClickDetection = setTimeout (function () {
@@ -3303,7 +3311,7 @@ var hqWidgets = {
                 hqWidgets.gDynamics.gRightClickDetection = null;
             }
             
-            this.intern._isHoover  = false;
+            this.intern._isHoover = false;
             
             if (!this.intern._isEditMode) {
                 if (this.settings.buttonType != hqWidgets.gButtonType.gTypeBlind && 
@@ -3344,11 +3352,6 @@ var hqWidgets = {
                                                                    
                         this.intern._jicon.stop().animate({top:  '' + this.settings.height / 15, 
                                                              left: '' + this.settings.width  / 15}, 50);
-                        /*if (this.intern._jtemp)     this.intern._jtemp.stop().show(50);
-                        if (this.intern._jhumid)    this.intern._jhumid.stop().show(50);
-                        if (this.intern._jright)    this.intern._jright.stop().show(50);
-                        if (this.intern._jinfoText && (this.settings.buttonType != hqWidgets.gButtonType.gTypeDimmer)) 
-                            this.intern._jinfoText.stop().show(50);*/
                     }
                 }
                 this.intern._isPressed = false;
@@ -3360,8 +3363,7 @@ var hqWidgets = {
                     }, 50, this);
                 }
             }
-            else
-            {
+            else {
                 this.intern._isPressed = false;
                 
                 clearTimeout (this.intern._clickDetection);
@@ -3449,7 +3451,7 @@ var hqWidgets = {
                     this._PlayMelody ();
                 }
                 else   
-                if (this.intern._jbigWindow && this.dynStates.infoWindow.isEnabled)
+                if (this.intern._jbigWindow && this.dynStates.infoWindow.isEnabled && !this.intern._isMoved)
                     this.ShowBigWindow(true);
             }
                 
@@ -3470,8 +3472,7 @@ var hqWidgets = {
                 var delta = Math.abs(this.intern._cursorX - x_);
                 if (delta <= mustBe) delta = Math.abs(this.intern._cursorY - y_);
                         
-                if (delta > mustBe)
-                {
+                if (delta > mustBe) {
                     if (hqWidgets.gDynamics.gRightClickDetection) { 
                         //$('#status').append('cleard ' + hqWidgets.gDynamics.gRightClickDetection + "<br>");
                         clearTimeout (hqWidgets.gDynamics.gRightClickDetection); 
@@ -3494,8 +3495,7 @@ var hqWidgets = {
                 var delta = Math.abs(this.intern._cursorX - x_);
                 if (delta <= mustBe) delta = Math.abs(this.intern._cursorY - y_);
                         
-                if (delta > mustBe)
-                {
+                if (delta > mustBe) {
                     // Y/X = tg (A)
                     var center_x = (this.settings.x + this.settings.width  / 2);
                     var center_y = (this.settings.y + this.settings.height / 2);
@@ -3596,10 +3596,10 @@ var hqWidgets = {
                         this.parent.intern._jbigWindow.bind("resize", null, null);
                         var obj = this.parent;
                         var pos = obj.intern._jbigWindow.position ();
-                        obj.dynStates.infoWindow.x      = pos.left;
-                        obj.dynStates.infoWindow.y      = pos.top;
-                        obj.dynStates.infoWindow.height = obj.intern._jbigWindow.height();
-                        obj.dynStates.infoWindow.width  = obj.intern._jbigWindow.width();
+                        obj.dynStates.infoWindow.x      = Math.round(pos.left);
+                        obj.dynStates.infoWindow.y      = Math.round(pos.top);
+                        obj.dynStates.infoWindow.height = Math.round(obj.intern._jbigWindow.height());
+                        obj.dynStates.infoWindow.width  = Math.round(obj.intern._jbigWindow.width());
                         obj.intern._jbigWindow.bheight  = obj.dynStates.infoWindow.height;
                         obj.intern._jbigWindow.bwidth   = obj.dynStates.infoWindow.width;
                         obj.intern._jbigWindow.x        = obj.dynStates.infoWindow.x;
@@ -4203,14 +4203,12 @@ var hqWidgets = {
             }
         });	
         this.intern._jeventhnd.bind ("mousedown",  {msg: this}, function (e)	{
-            if (e.button == 0) // right
-            {
+            if (e.button == 0) { // right
                 if ((!e.data.msg.intern._isEditMode || e.data.msg.settings.isContextMenu) && e.data.msg.OnMouseDown(e.pageX, e.pageY, false)) {
                     e.preventDefault();
                 }
                 // Hide active menu
-                if (hqWidgets.gDynamics.gActiveMenu)
-                {
+                if (hqWidgets.gDynamics.gActiveMenu) {
                     hqWidgets.gDynamics.gActiveMenu.Show(false);
                     hqWidgets.gDynamics.gActiveMenu = null;
                 }
