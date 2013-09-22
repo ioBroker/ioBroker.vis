@@ -275,7 +275,26 @@ hqWidgets = $.extend (true, hqWidgets, {
                 });      
             }	
         }
-        
+        this._EditSelectHandler = function (eee) {
+            var elem;
+            if ((elem = document.getElementById (this.e_settings.elemName+'_'+eee)) != null) {
+                // Set actual value
+                for (var i = 0; i < elem.options.length; i++)
+                    if (elem.options[i].value == this.e_internal.attr[eee]) {
+                        elem.options[i].selected = true;
+                        break;
+                    }
+                
+                elem.parent   = this;
+                elem.ctrlAttr = eee;
+                $('#'+this.e_settings.elemName+'_'+eee).change (function () { 
+                    this.parent.e_internal.attr[this.ctrlAttr] = $(this).prop('value');
+                    var newSettings = {};
+                    newSettings[this.ctrlAttr] = this.parent.e_internal.attr[this.ctrlAttr];
+                    this.parent.e_internal.obj.SetSettings (newSettings, true);                            
+                });
+            }        
+        }          
         // Active/Inactive state
         if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeBlind  &&
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeImage  &&
@@ -449,7 +468,16 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDimmer && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {            
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Hide last action after (hrs):") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_hoursLastAction'  type='text' value='"+this.e_internal.attr.hoursLastAction+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Last action:")+"</td><td><select id='"+this.e_settings.elemName+"_hoursLastAction' style='width: "+this.e_settings.width+"px'>";
+            sTextAdv += "<option value='-1' >"+hqWidgets.Translate("Do not show")+"</option>";
+            sTextAdv += "<option value='-2'>" +hqWidgets.Translate("Show always")+"</option>";
+            sTextAdv += "<option value='1' >" +hqWidgets.Translate("Hide after 1 hour")+"</option>";
+            sTextAdv += "<option value='2' >" +hqWidgets.Translate("Hide after 2 hours")+"</option>";
+            sTextAdv += "<option value='6' >" +hqWidgets.Translate("Hide after 6 hours")+"</option>";
+            sTextAdv += "<option value='12' >"+hqWidgets.Translate("Hide after 12 hours")+"</option>";
+            sTextAdv += "<option value='24' >"+hqWidgets.Translate("Hide after 1 day")+"</option>";
+            sTextAdv += "<option value='24' >"+hqWidgets.Translate("Hide after 2 days")+"</option>";
+            sTextAdv += "</select>";                
         }
         
         // Format string
@@ -739,6 +767,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         this._EditCheckboxHandler ('gaugeStart', false, false, true);
         
         this._EditTextHandler('title');   
+        this._EditSelectHandler('hoursLastAction');   
                
         this._EditCheckboxHandler ('infoIsHideInactive', false, false, true);
         this._EditCheckboxHandler ('noBackChanged', false, false, true);

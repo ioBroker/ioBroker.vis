@@ -137,6 +137,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 if (wtype == 'tplHqCam') {
                     opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeCam,  
                                           hm_id: '', 
+                                          hm_idL:'',
                                           radius: 2, 
                                           width:100, 
                                           height:60, 
@@ -326,9 +327,12 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 });*/
             }
             else
-            if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp || opt.buttonType == hqWidgets.gButtonType.gTypeGong) {
+            if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp || 
+                opt.buttonType == hqWidgets.gButtonType.gTypeGong   || 
+                opt.buttonType == hqWidgets.gButtonType.gTypeCam) {
                 var attr = 'hm_idV';
-                if (opt.buttonType == hqWidgets.gButtonType.gTypeGong)
+                if (opt.buttonType == hqWidgets.gButtonType.gTypeGong|| 
+                    opt.buttonType == hqWidgets.gButtonType.gTypeCam)
                     attr = 'hm_idL';
                 var text = '<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td>';
                 text += '<td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'">';
@@ -389,73 +393,73 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 }
                 
                 // Is Show Navigator
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Navigator:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_navigator'>";
-                sTextChart += "<option value='' "     + ((hqEditElem.e_internal.attr.charts.navigator=="")     ? "selected" : "") + ">Show top and bottom</option>";
-                sTextChart += "<option value='true' " + ((hqEditElem.e_internal.attr.charts.navigator=="true") ? "selected" : "") + ">Show bottom</option>";
-                sTextChart += "<option value='false' "+ ((hqEditElem.e_internal.attr.charts.navigator=="false")? "selected" : "") + ">Do not show</option>";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Navigator:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_navigator' class='selectEditWidth'>";
+                sTextChart += "<option value=''     >"+dui.translate("Show top and bottom")+"</option>";
+                sTextChart += "<option value='true' >"+dui.translate("Show bottom")+"</option>";
+                sTextChart += "<option value='false'>"+dui.translate("Do not show")+"</option>";
                 sTextChart += "</select>";                
                 // Load from CCU: 1h, 2h, 6h, 12h, 1d, 3d, 5d, 1w, 2w, 1m, 3m, 6m, 1y, All
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Load period:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_period'>";
-                sTextChart += "<option value='1' "    + ((hqEditElem.e_internal.attr.charts.period==1)    ? "selected" : "") + ">"+dui.translate("1 Hour")+"</option>";
-                sTextChart += "<option value='2' "    + ((hqEditElem.e_internal.attr.charts.period==2)    ? "selected" : "") + ">"+dui.translate("2 Hours")+"</option>";
-                sTextChart += "<option value='6' "    + ((hqEditElem.e_internal.attr.charts.period==6)    ? "selected" : "") + ">"+dui.translate("6 Hours")+"</option>";
-                sTextChart += "<option value='12' "   + ((hqEditElem.e_internal.attr.charts.period==12)   ? "selected" : "") + ">"+dui.translate("12 Hours")+"</option>";
-                sTextChart += "<option value='24' "   + ((hqEditElem.e_internal.attr.charts.period==24)   ? "selected" : "") + ">"+dui.translate("1 Day")+"</option>";
-                sTextChart += "<option value='72' "   + ((hqEditElem.e_internal.attr.charts.period==72)   ? "selected" : "") + ">"+dui.translate("3 Days")+"</option>";
-                sTextChart += "<option value='120' "  + ((hqEditElem.e_internal.attr.charts.period==120)  ? "selected" : "") + ">"+dui.translate("5 Days")+"</option>";
-                sTextChart += "<option value='168' "  + ((hqEditElem.e_internal.attr.charts.period==168)  ? "selected" : "") + ">"+dui.translate("1 Week")+"</option>";
-                sTextChart += "<option value='336' "  + ((hqEditElem.e_internal.attr.charts.period==336)  ? "selected" : "") + ">"+dui.translate("2 Weeks")+"</option>";
-                sTextChart += "<option value='720' "  + ((hqEditElem.e_internal.attr.charts.period==720)  ? "selected" : "") + ">"+dui.translate("1 Month")+"</option>";
-                sTextChart += "<option value='2160' " + ((hqEditElem.e_internal.attr.charts.period==2160) ? "selected" : "") + ">"+dui.translate("3 Months")+"</option>";
-                sTextChart += "<option value='4320' " + ((hqEditElem.e_internal.attr.charts.period==4320) ? "selected" : "") + ">"+dui.translate("6 Months")+"</option>";
-                sTextChart += "<option value='8760' " + ((hqEditElem.e_internal.attr.charts.period==8760) ? "selected" : "") + ">"+dui.translate("1 Year")+"</option>";
-                sTextChart += "<option value='' "     + ((hqEditElem.e_internal.attr.charts.period=="")   ? "selected" : "") + ">"+dui.translate("All")+"</option>";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Load period:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_period' class='selectEditWidth'>";
+                sTextChart += "<option value='1'    >"+dui.translate("1 Hour")+"</option>";
+                sTextChart += "<option value='2'    >"+dui.translate("2 Hours")+"</option>";
+                sTextChart += "<option value='6'    >"+dui.translate("6 Hours")+"</option>";
+                sTextChart += "<option value='12'   >"+dui.translate("12 Hours")+"</option>";
+                sTextChart += "<option value='24'   >"+dui.translate("1 Day")+"</option>";
+                sTextChart += "<option value='72'   >"+dui.translate("3 Days")+"</option>";
+                sTextChart += "<option value='120'  >"+dui.translate("5 Days")+"</option>";
+                sTextChart += "<option value='168'  >"+dui.translate("1 Week")+"</option>";
+                sTextChart += "<option value='336'  >"+dui.translate("2 Weeks")+"</option>";
+                sTextChart += "<option value='720'  >"+dui.translate("1 Month")+"</option>";
+                sTextChart += "<option value='2160' >"+dui.translate("3 Months")+"</option>";
+                sTextChart += "<option value='4320' >"+dui.translate("6 Months")+"</option>";
+                sTextChart += "<option value='8760' >"+dui.translate("1 Year")+"</option>";
+                sTextChart += "<option value=''     >"+dui.translate("All")+"</option>";
                 sTextChart += "</select>";
 
                 // Theme: none, grid, dark-green, skies, dark-blue, gray 
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Theme:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_theme'>";
-                sTextChart += "<option value='' "          + ((hqEditElem.e_internal.attr.charts.theme=="")          ? "selected" : "") + ">-</option>";
-                sTextChart += "<option value='grid' "      + ((hqEditElem.e_internal.attr.charts.theme=="grid")      ? "selected" : "") + ">Grid</option>";
-                sTextChart += "<option value='dark-green' "+ ((hqEditElem.e_internal.attr.charts.theme=="dark-green")? "selected" : "") + ">Dark green</option>";
-                sTextChart += "<option value='skies' "     + ((hqEditElem.e_internal.attr.charts.theme=="skies")     ? "selected" : "") + ">Skies</option>";
-                sTextChart += "<option value='dark-blue' " + ((hqEditElem.e_internal.attr.charts.theme=="dark-blue") ? "selected" : "") + ">Dark blue</option>";
-                sTextChart += "<option value='gray' "      + ((hqEditElem.e_internal.attr.charts.theme=="gray")      ? "selected" : "") + ">Gray</option>";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Theme:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_theme' class='selectEditWidth'>";
+                sTextChart += "<option value=''          >-</option>";
+                sTextChart += "<option value='grid'      >Grid</option>";
+                sTextChart += "<option value='dark-green'>Dark green</option>";
+                sTextChart += "<option value='skies'     >Skies</option>";
+                sTextChart += "<option value='dark-blue' >Dark blue</option>";
+                sTextChart += "<option value='gray'      >Gray</option>";
                 sTextChart += "</select>";                
                 // Description left and right
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Description with percent:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_percentaxis' "+((hqEditElem.e_internal.attr.charts.percentaxis) ? "checked" : "")+">";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Description with percent:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_percentaxis'>";
                 // Zoom: 1h, 2h, 6h, 12h, 1d, 3d, 5d, 1w, 2w, 1m, 3m, 6m, 1y, Auto
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Zoom level:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_range'>";
-                sTextChart += "<option value='1' "    + ((hqEditElem.e_internal.attr.charts.range==1)    ? "selected" : "") + ">"+dui.translate("1 Hour")+"</option>";
-                sTextChart += "<option value='2' "    + ((hqEditElem.e_internal.attr.charts.range==2)    ? "selected" : "") + ">"+dui.translate("2 Hours")+"</option>";
-                sTextChart += "<option value='6' "    + ((hqEditElem.e_internal.attr.charts.range==6)    ? "selected" : "") + ">"+dui.translate("6 Hours")+"</option>";
-                sTextChart += "<option value='12' "   + ((hqEditElem.e_internal.attr.charts.range==12)   ? "selected" : "") + ">"+dui.translate("12 Hours")+"</option>";
-                sTextChart += "<option value='24' "   + ((hqEditElem.e_internal.attr.charts.range==24)   ? "selected" : "") + ">"+dui.translate("1 Day")+"</option>";
-                sTextChart += "<option value='72' "   + ((hqEditElem.e_internal.attr.charts.range==72)   ? "selected" : "") + ">"+dui.translate("3 Days")+"</option>";
-                sTextChart += "<option value='120' "  + ((hqEditElem.e_internal.attr.charts.range==120)  ? "selected" : "") + ">"+dui.translate("5 Days")+"</option>";
-                sTextChart += "<option value='168' "  + ((hqEditElem.e_internal.attr.charts.range==168)  ? "selected" : "") + ">"+dui.translate("1 Week")+"</option>";
-                sTextChart += "<option value='336' "  + ((hqEditElem.e_internal.attr.charts.range==336)  ? "selected" : "") + ">"+dui.translate("2 Weeks")+"</option>";
-                sTextChart += "<option value='720' "  + ((hqEditElem.e_internal.attr.charts.range==720)  ? "selected" : "") + ">"+dui.translate("1 Month")+"</option>";
-                sTextChart += "<option value='2160' " + ((hqEditElem.e_internal.attr.charts.range==2160) ? "selected" : "") + ">"+dui.translate("3 Months")+"</option>";
-                sTextChart += "<option value='4320' " + ((hqEditElem.e_internal.attr.charts.range==4320) ? "selected" : "") + ">"+dui.translate("6 Months")+"</option>";
-                sTextChart += "<option value='8760' " + ((hqEditElem.e_internal.attr.charts.range==8760) ? "selected" : "") + ">"+dui.translate("1 Year")+"</option>";
-                sTextChart += "<option value='' "     + ((hqEditElem.e_internal.attr.charts.range=="")   ? "selected" : "") + ">"+dui.translate("All")+"</option>";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Zoom level:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_range' class='selectEditWidth'>";
+                sTextChart += "<option value='1'   >"+dui.translate("1 Hour")+"</option>";
+                sTextChart += "<option value='2'   >"+dui.translate("2 Hours")+"</option>";
+                sTextChart += "<option value='6'   >"+dui.translate("6 Hours")+"</option>";
+                sTextChart += "<option value='12'  >"+dui.translate("12 Hours")+"</option>";
+                sTextChart += "<option value='24'  >"+dui.translate("1 Day")+"</option>";
+                sTextChart += "<option value='72'  >"+dui.translate("3 Days")+"</option>";
+                sTextChart += "<option value='120' >"+dui.translate("5 Days")+"</option>";
+                sTextChart += "<option value='168' >"+dui.translate("1 Week")+"</option>";
+                sTextChart += "<option value='336' >"+dui.translate("2 Weeks")+"</option>";
+                sTextChart += "<option value='720' >"+dui.translate("1 Month")+"</option>";
+                sTextChart += "<option value='2160'>"+dui.translate("3 Months")+"</option>";
+                sTextChart += "<option value='4320'>"+dui.translate("6 Months")+"</option>";
+                sTextChart += "<option value='8760'>"+dui.translate("1 Year")+"</option>";
+                sTextChart += "<option value=''    >"+dui.translate("All")+"</option>";
                 sTextChart += "</select>";
                 // Scrollbar
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Scrollbar:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_scrollbar' "+((hqEditElem.e_internal.attr.charts.scrollbar) ? "checked" : "")+">";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Scrollbar:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_scrollbar'>";
                 // Dynamic aggregation
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Dynamic aggregation:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_grouping' "+((hqEditElem.e_internal.attr.charts.grouping) ? "checked" : "")+">";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Dynamic aggregation:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_grouping'>";
                 // Legend: Left, In chart, hide
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Legend:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_legend'>";
-                sTextChart += "<option value='' "       + ((hqEditElem.e_internal.attr.charts.legend=="  ")     ? "selected" : "") + ">"+dui.translate("Left")+"</option>";
-                sTextChart += "<option value='inline' " + ((hqEditElem.e_internal.attr.charts.legend=="inline") ? "selected" : "") + ">"+dui.translate("Inside")+"</option>";
-                sTextChart += "<option value='false' "  + ((hqEditElem.e_internal.attr.charts.legend=="false")  ? "selected" : "") + ">"+dui.translate("Hide")+"</option>";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Legend:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_legend' class='selectEditWidth'>";
+                sTextChart += "<option value=''      >"+dui.translate("Left")+"</option>";
+                sTextChart += "<option value='inline'>"+dui.translate("Inside")+"</option>";
+                sTextChart += "<option value='false' >"+dui.translate("Hide")+"</option>";
                 sTextChart += "</select>";                
                 // Zoom active
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ hqWidgets.Translate("Zoom active:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_zoom' "+((hqEditElem.e_internal.attr.charts.zoom) ? "checked" : "")+">";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Zoom active:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_zoom'>";
                 
             
                 // Show button
-                sTextChart = "<tr><td colspan=2><button id='idShowChart'>"+hqWidgets.Translate("Charts...")+"</td></tr>" + sTextChart;
+                sTextChart = "<tr><td colspan=2><button id='idShowChart'>"+dui.translate("Charts...")+"</td></tr>" + sTextChart;
                 hqEditElem.e_settings.parent.append (sTextChart);
                 var advBtn = document.getElementById ('idShowChart');
                 advBtn.obj   = hqEditElem;
@@ -492,6 +496,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 hqEditElem._EditCheckboxHandlerEx = function (eee) {
                     var elem;
                     if ((elem = document.getElementById (this.e_settings.elemName+'_'+eee)) != null) {
+                        if (this.e_internal.attr.charts[eee] == "true" || this.e_internal.attr.charts[eee] === true)
+                            elem.checked = true;
                         elem.parent   = this;
                         elem.ctrlAttr = eee;
                         $('#'+this.e_settings.elemName+'_'+eee).change (function () { 
@@ -500,9 +506,16 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                         });
                     }        
                 }                
-                hqEditElem._EditSelectHandler = function (eee) {
+                hqEditElem._EditSelectHandlerEx = function (eee) {
                     var elem;
                     if ((elem = document.getElementById (this.e_settings.elemName+'_'+eee)) != null) {
+                        // Set actual value
+                        for (var i = 0; i < elem.options.length; i++)
+                            if (elem.options[i].value == this.e_internal.attr.charts[eee]) {
+                                elem.options[i].selected = true;
+                                break;
+                            }
+                        
                         elem.parent   = this;
                         elem.ctrlAttr = eee;
                         $('#'+this.e_settings.elemName+'_'+eee).change (function () { 
@@ -511,14 +524,14 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                         });
                     }        
                 }                    
-                hqEditElem._EditSelectHandler ('navigator');
-                hqEditElem._EditSelectHandler ('period');
-                hqEditElem._EditSelectHandler ('theme');
+                hqEditElem._EditSelectHandlerEx ('navigator');
+                hqEditElem._EditSelectHandlerEx ('period');
+                hqEditElem._EditSelectHandlerEx ('theme');
                 hqEditElem._EditCheckboxHandlerEx ('percentaxis');
-                hqEditElem._EditSelectHandler ('range');
+                hqEditElem._EditSelectHandlerEx ('range');
                 hqEditElem._EditCheckboxHandlerEx ('scrollbar');
                 hqEditElem._EditCheckboxHandlerEx ('grouping');
-                hqEditElem._EditSelectHandler ('legend');
+                hqEditElem._EditSelectHandlerEx ('legend');
                 hqEditElem._EditCheckboxHandlerEx ('zoom');
             }
         },      
