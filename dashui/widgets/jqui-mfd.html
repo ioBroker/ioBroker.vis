@@ -322,7 +322,7 @@
 <script type="text/ejs" id="tplMfdWindowBool" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Fenster" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;"  >
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case false: case "false": case "0": case 0: %>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case true: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.png"/>
             <% break; default: %>
             <img height="100%" src="widgets/jqui-mfd/img/fts_window_1w.png"/>
