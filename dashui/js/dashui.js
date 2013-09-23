@@ -534,9 +534,7 @@ var dui = {
         });
 
 
-
-
-        // Editor
+        // --------- Editor -----------------
         $("#inspect_view").html(view);
 
         $("#select_active_widget").html("<option value='none'>none selected</option>");
@@ -546,7 +544,6 @@ var dui = {
         }
         //console.log($("#select_active_widget").html());
         $("#select_active_widget").multiselect("refresh");
-
 
         if ($("#select_view option:selected").val() != view) {
             $("#select_view option").removeAttr("selected");
@@ -572,13 +569,8 @@ var dui = {
         $("#inspect_view_theme option[value='"+dui.views[dui.activeView].settings.theme+"']").prop("selected", true);
         $("#inspect_view_theme").multiselect("refresh");
 
-
-
-
         //console.log("activeView="+dui.activeView);
         return;
-
-
     },
     addView: function (view) {
         if (dui[view]) {
@@ -626,8 +618,13 @@ var dui = {
             else
                 return parent + homematic.regaObjects[id]["Name"];
         }
+        else 
+        if (id == 41) 
+            return dui.translate ("Service messages");
         else
-            return "";
+        if (id == 49)
+            return dui.translate ("Alarms");
+        return "";
     },
     translate: function (text) {
         return text;
@@ -728,7 +725,6 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             dui.editInit ();
         }
         
-
         console.log("socket.io")
         $("#loading").append("Connecting to CCU.IO ...<br/>");
 
@@ -736,14 +732,6 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         dui.socket.on('event', function(obj) {
             if (homematic.uiState["_"+obj[0]] !== undefined) {
                 var o = {};
-                // Check if value changed
-                if (obj[3]) {
-                    if (o["_"+obj[0]+".Value"] != obj[1]) {
-                        var d = new Date();
-                        var t = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-                        o["_"+obj[0]+".LastChange"] = t;
-                    }
-                }
                 o["_"+obj[0]+".Value"]     = obj[1];
                 o["_"+obj[0]+".Timestamp"] = obj[2];
                 o["_"+obj[0]+".Certain"]   = obj[3];            
@@ -751,7 +739,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                 
                 // Ich habe keine Ahnung, aber bind("change") funktioniert einfach nicht 
                 if (dui.binds.hqWidgetsExt && dui.binds.hqWidgetsExt.hqMonitor && obj[3])
-                    dui.binds.hqWidgetsExt.hqMonitor (obj[0], obj[1], homematic.uiState["_"+obj[0]]["LastChange"]);
+                    dui.binds.hqWidgetsExt.hqMonitor (obj[0], obj[1]);
             }
             else {
                 console.log("Datenpunkte sind noch nicht geladen!");
@@ -793,7 +781,6 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             console.log((new Date()) + " socket.io error");
         });
 
-
         $("#loading").append("Loading ReGa Data");
 
         dui.socket.emit("getIndex", function (index) {
@@ -808,7 +795,14 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                         $("#loading").append(".<br/>");
                         console.log("datapoints loaded");
                         for (var dp in data) {
-                            homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1]});
+                            if (data[dp][3]) {
+                                var lc = new Date ();
+                                lc.setTime (data[dp][3] * 1000);
+                                homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: lc});
+                            }
+                            else {
+                                homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1]});
+                            }
                         }
                         $("#loading").append("Loading Widget-Sets...");
                         setTimeout(dui.init, 10);
@@ -816,7 +810,6 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                     });
                 });
             });
-
 
     });
 
