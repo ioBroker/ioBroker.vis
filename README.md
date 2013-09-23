@@ -38,6 +38,21 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta7
+
+* (Hobbyquaker) Fixed various Bugs in jqui and jqui-mfd Widget-Sets
+* (Bluefox) Description for ID 40 and 41 …
+* (Bluefox) Preparation for Temperature Graphics
+* (Bluefox) Delete jqhomematic.js
+* (Bluefox) Fix problem with select background in edit mode.
+* (Bluefox) Add kde-folder.png again.
+* (Bluefox) hqWidgest: Show charts for In/Out temperature widget …
+* (Bluefox) hqWidgets: Save position of information window, e.g. Camera
+* (Bluefox) Extend settings for charts
+* (Bluefox) Support of lastStateChanged timestamp
+* (Bluefox) Translate Charts settings
+* (Bluefox) Fix error with ipCam and auto open info window
+
 ### 0.9beta6
 
 * (Bluefox)	Fix problem with Info and logical value Do not show control for window if no actor projected
@@ -99,13 +114,14 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Bluefox) hqWidgets: Button, Shutter, Lock, Door, Text, Image, Info, InTemp, OutTemp
 
 ### 0.8.1
-* Neuer Contributor: Bluefox - Herzlich Willkommen! :-)
 
 * (Bluefox) Neuer Dialog zur Geräteauswahl
 * (Bluefox) Neuer Dialog zur Bilderauswahl
-* (Bluefox) Neuer Selector für vodefinierte View-Hintergründe 
+* (Bluefox) Neuer Selector für vodefinierte View-Hintergründe
+* Neuer Contributor: Bluefox - Herzlich Willkommen! :-)
 
 ### 0.8
+
 * (Hobbyquaker) Fehler im Theme "Kiandra" behoben
 * (Hobbyquaker) Snapping hinzugefügt: einfacheres Positionieren von Widgets wahlweise an einem Gitter oder an anderen Widgets
 * (Hobbyquaker) Neuer Reiter "Editor" um das Snapping zu konfigurieren
