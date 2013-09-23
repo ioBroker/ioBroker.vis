@@ -23,7 +23,7 @@
                     } else if (newVal === true) {
                         val = 1;
                     } else {
-                        val = parseFloat(newVal, 10);
+                        val = newVal;
                     }
                     if (val > 0) {
                         $this.addClass("ui-state-active");
@@ -31,7 +31,6 @@
                     } else {
                         $this.removeClass("ui-state-active");
                         $this.addClass("ui-state-default");
-
                     }
 
                 });
@@ -206,13 +205,15 @@
                     step: 1,
                     slide: function (e, ui) {
                         // Slider -> Observable
-                        homematic.setValue(id,  ui.value.toFixed(6));
+                        homematic.setValue(id, ui.value.toFixed(6));
                     }
                 }, options);
 
-                $this.slider(settings);
+                var hm_id = "_" + id;
 
-                var hm_id = "_" + id
+                $this.slider(settings);
+                $this.slider("value", homematic.uiState.attr(hm_id+".Value"));
+
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.slider("value", newVal);
                 });
@@ -275,7 +276,7 @@
                     } else if (newVal === false) {
                         newVal = 0;
                     } else {
-                        newVal = parseFloat(newVal,10);
+                        newVal = newVal;
                     }
 
                     $this.find("input[value='"+newVal+"']").prop("checked", true);
@@ -288,20 +289,21 @@
 
                 if (val === true) { val = 1; }
                 if (val === false) { val = 0; }
+                $this.find("input").removeAttr("checked");
                 $this.find("input[value='"+val+"']").prop("checked", true);
-                /*
+                $this.buttonset(settings);
+
                 $this.find("input").each(function() {
                     jQuery(this).button("refresh");
                 });
-                */
+
                 // Buttonset -> Observable
                 $this.find("input").click(function () {
                     if (dui.urlParams["edit"] !== "") {
                         homematic.setValue(id,  $(this).val());
                     }
                 });
-                $this.find("input").removeAttr("checked");
-                $this.buttonset(settings);
+
             },
             _disable: function () {
                 jQuery("div#dui_container").find(".ui-slider").each(function () {
