@@ -27,7 +27,7 @@
 
 var dui = {
 
-    version:            '0.9beta7',
+    version:            '0.9beta8',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -57,37 +57,36 @@ var dui = {
         }
         console.log("bind instance id="+dui.instanceCmd);
 
-        homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function( e, how, newVal, oldVal ) {
-
+        homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function(e, newVal) {
             var cmd = newVal;
+            console.log("external command cmd=" + cmd);
+
             if (cmd !== "") {
-                setTimeout(function () {
-                    var data = homematic.uiState.attr("_"+dui.instanceData+".Value");
-                    console.log("external command cmd=" + cmd + " data=" + data);
+                var data = homematic.uiState.attr("_"+dui.instanceData+".Value");
+                console.log("external command cmd=" + cmd + " data=" + data);
 
-                    // external Commands
-                    switch (cmd) {
-                        case "alert":
-                            alert(data);
-                            break;
-                        case "changeView":
-                            dui.changeView(data);
-                            break;
-                        case "refresh":
-                        case "reload":
-                            setTimeout(function () {window.location.reload();}, 1);
-                        case "dialog":
-                            break;
-                        case "popup":
-                            window.open(data);
-                            break;
-                        default:
-                    }
+                // external Commands
+                switch (cmd) {
+                    case "alert":
+                        alert(data);
+                        break;
+                    case "changeView":
+                        dui.changeView(data);
+                        break;
+                    case "refresh":
+                    case "reload":
+                        setTimeout(function () {window.location.reload();}, 1);
+                    case "dialog":
+                        break;
+                    case "popup":
+                        window.open(data);
+                        break;
+                    default:
+                }
 
-                    // remove command
-                    homematic.setValue(dui.instanceCmd, "");
+                // remove command
+                homematic.setValue(dui.instanceCmd, "");
 
-                }, 50);
             }
 
         });
@@ -473,7 +472,6 @@ var dui = {
             $("#duiview_"+view).appendTo("#dui_container");
         }
 
-
         if (dui.activeView !== view) {
 
             if (effect) {
@@ -505,15 +503,8 @@ var dui = {
             jQuery("duiview_"+cview).show();
         });
 
-                /*
-                        if (dui.views[view].settings.interval) {
-                            //console.log("setInterval "+dui.views[view].settings.interval);
-                           $.homematic("setInterval", dui.views[view].settings.interval);
-                        }
-                */
         if (dui.instance) {
-            // TODO aktuelle View in Instanz-Variable schreiben
-          //   $.homematic("script", "object o = dom.GetObject('dashui_"+dui.instance+"_view');\no.State('"+dui.activeView+"');");
+            homematic.setValue(dui.instanceView, dui.activeView);
         }
 
         if (window.location.hash.slice(1) != view) {
@@ -601,29 +592,27 @@ var dui = {
         if (homematic.regaObjects[id] !== undefined) {
             var parent = "";
             var p = homematic.regaObjects[id]["Parent"];
-            if (p !== undefined && homematic.regaObjects[p]["DPs"] !== undefined)
+            if (p !== undefined && homematic.regaObjects[p]["DPs"] !== undefined) {
                 parent = homematic.regaObjects[p]["Name"] + "/";
-            else if (homematic.regaObjects[id]["TypeName"] !== undefined) {
+            } else if (homematic.regaObjects[id]["TypeName"] !== undefined) {
                 if (homematic.regaObjects[id]["TypeName"] == "VARDP") {  
-                    parent = dui.translate ("Variable") + " / ";
-                }
-                else
-                if (homematic.regaObjects[id]["TypeName"] == "PROGRAM") {  
-                    parent = dui.translate ("Program") + " / ";
+                    parent = dui.translate("Variable") + " / ";
+                } else if (homematic.regaObjects[id]["TypeName"] == "PROGRAM") {
+                    parent = dui.translate("Program") + " / ";
                 }
             }
         
-            if (homematic.regaObjects[id]["Address"] !== undefined)
+            if (homematic.regaObjects[id]["Address"] !== undefined) {
                 return parent + homematic.regaObjects[id]["Name"] + "/" + homematic.regaObjects[id]["Address"];
-            else
+            } else {
                 return parent + homematic.regaObjects[id]["Name"];
+            }
+
+        } else if (id == 41) {
+            return dui.translate("Service messages");
+        } else if (id == 40) {
+            return dui.translate("Alarms");
         }
-        else 
-        if (id == 41) 
-            return dui.translate ("Service messages");
-        else
-        if (id == 40)
-            return dui.translate ("Alarms");
         return "";
     },
     translate: function (text) {
