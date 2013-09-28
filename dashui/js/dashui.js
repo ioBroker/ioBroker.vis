@@ -20,14 +20,9 @@
  *  SOFTWARE.
  */
 
-//console.log("DashUI");
-// dui - the DashUI Engine
-
-
-
 var dui = {
 
-    version:            '0.9beta8',
+    version:            '0.9beta9',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',

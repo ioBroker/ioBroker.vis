@@ -22,7 +22,7 @@
 
 // duiEdit - the DashUI Editor
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta8',
+    editVersion:        '0.9beta9',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -588,6 +588,13 @@ dui = $.extend(true, dui, {
 
 
         // Button Click Handler
+
+        $("#widget_doc").click(function () {
+            var tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;
+            var widgetSet = $("#"+tpl).attr("data-dashui-set");
+            var docUrl = "widgets/"+widgetSet+"/doc.html#"+tpl;
+            window.open(docUrl,"WidgetDoc", "height=640,width=500,status=yes,toolbar=no,menubar=no,location=no");
+        });
 
         $("#convert_ids").click(dui.convertIds);
         $("#clear_cache").click(function() {
