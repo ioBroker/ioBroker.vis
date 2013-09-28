@@ -1,10 +1,106 @@
 <html>
 <head>
     <link rel="stylesheet" href="/dashui/css/doc.css" />
+    <title>Dokumentation Widget-Set basic</title>
 </head>
 <body>
 
+<h3><a name="tplContainerView">container - view in widget</a></h3>
 
+Dieses Widget kann Views innerhalb von Views darstellen. Sinnvoll z.B. für eine Navigation: Man baut eine View navigation
+und bindet diese dann in beliebig vielen anderen Views ein.
+
+<h4>Attribute</h4>
+<dl>
+    <dt>contains_view</dt>
+    <dd>Name der View die im Container angezeigt werden soll.</dd>
+</dl>
+
+<hr/>
+
+<h3><a name="tplHtml">static - HTML</a></h3>
+
+<hr/>
+
+<h3><a name="tplImage">static - Image</a></h3>
+
+<hr/>
+
+<h3><a name="tplLink">static - link</a></h3>
+
+<hr/>
+
+<h3><a name="tplHtmlNav">navigation - HTML</a></h3>
+Dieses Widget dient dazu eine Navigation zwischen den Views aufzubauen.
+
+<h4>Attribute</h4>
+<dl>
+    <dt>nav_view</dt>
+    <dd>Hier muss der Name der View zu der navigiert werden soll eingetragen werden</dd>
+    
+    <dt>hide_effect</dt>
+    <dd>Hier kann der Name eines jQueryUI Effektes eingetragen werden der beim verlassen der View genutzt wird.
+        Verfügbare Effekte sind: Blind, Bounce, Clip, Drop, Explode, Fade, Fold, Highlight, Puff, Pulsate, Scale, Shake, Size,
+        Slide und Transfer.
+        <a href="http://jqueryui.com/effect/" target="_blank">Hier gibt es Demos der Effekte</a>.
+    </dd>
+    
+    <dt>hide_duration</dt>
+    <dd>Dauer des Effekts in ms</dd>
+    
+    <dt>show_effect</dt>
+    <dd>siehe oben, das gleiche aber dieses mal für das einblenden der neuen View</dd>
+    
+    <dt>show_duration</dt>
+    <dd>Siehe oben, Zeit in ms für das einblenden der neuen View</dd>
+</dl>
+<hr/>
+
+<h3><a name="">hm_val - Number</a></h3>
+
+<hr/>
+
+<h3><a name="">hm_val - String</a></h3>
+
+<hr/>
+
+<h3><a name="">hm_val - String (unescaped)</a></h3>
+
+<hr/>
+
+<h3><a name="">hm_val - String img src</a></h3>
+
+<hr/>
+
+<h3><a name="">hm_val - String</a></h3>
+
+<hr/>
+
+<h3><a name="">hm_val - ValueList Text</a></h3>
+
+<hr/>
+
+<h3><a name="">hm_val - ValueList HTML</a></h3>
+
+<hr/>
+
+<h3><a name="">hm_val - ValueList HTML 8</a></h3>
+
+<hr/>
+
+<h3><a name="">hm_val - Bool HTML</a></h3>
+
+<hr/>
+
+<h3><a name="">hm_ctrl - Bool Checkbox</a></h3>
+
+<hr/>
+
+<h3><a name="">hm_ctrl - Bool Select</a></h3>
+
+<hr/>
+
+<h3><a name="">hm_ctrl - Bool HTML</a></h3>
 
 </body>
 </html>
