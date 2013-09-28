@@ -20,14 +20,9 @@
  *  SOFTWARE.
  */
 
-//console.log("DashUI");
-// dui - the DashUI Engine
-
-
-
 var dui = {
 
-    version:            '0.9beta2',
+    version:            '0.9beta9',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -57,37 +52,36 @@ var dui = {
         }
         console.log("bind instance id="+dui.instanceCmd);
 
-        homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function( e, how, newVal, oldVal ) {
-
+        homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function(e, newVal) {
             var cmd = newVal;
+            console.log("external command cmd=" + cmd);
+
             if (cmd !== "") {
-                setTimeout(function () {
-                    var data = homematic.uiState.attr("_"+dui.instanceData+".Value");
-                    console.log("external command cmd=" + cmd + " data=" + data);
+                var data = homematic.uiState.attr("_"+dui.instanceData+".Value");
+                console.log("external command cmd=" + cmd + " data=" + data);
 
-                    // external Commands
-                    switch (cmd) {
-                        case "alert":
-                            alert(data);
-                            break;
-                        case "changeView":
-                            dui.changeView(data);
-                            break;
-                        case "refresh":
-                        case "reload":
-                            setTimeout(function () {window.location.reload();}, 1);
-                        case "dialog":
-                            break;
-                        case "popup":
-                            window.open(data);
-                            break;
-                        default:
-                    }
+                // external Commands
+                switch (cmd) {
+                    case "alert":
+                        alert(data);
+                        break;
+                    case "changeView":
+                        dui.changeView(data);
+                        break;
+                    case "refresh":
+                    case "reload":
+                        setTimeout(function () {window.location.reload();}, 1);
+                    case "dialog":
+                        break;
+                    case "popup":
+                        window.open(data);
+                        break;
+                    default:
+                }
 
-                    // remove command
-                    homematic.setValue(dui.instanceCmd, "");
+                // remove command
+                homematic.setValue(dui.instanceCmd, "");
 
-                }, 50);
             }
 
         });
@@ -379,7 +373,7 @@ var dui = {
         // Views in Container verschieben
         $("#duiview_"+view).find("div[id$='container']").each(function () {
             console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
-            var cview = $(this).attr("data-dashui-contains")
+            var cview = $(this).attr("data-dashui-contains");
             if (!dui.views[cview]) {
                 $(this).append("error: view not found.");
                 return false;
@@ -388,7 +382,8 @@ var dui = {
                 return false;
             }
             dui.renderView(cview);
-            $("#duiview_"+cview).appendTo(this).show();
+            $("#duiview_"+cview).appendTo(this);
+            $("#duiview_"+cview).show();
 
         });
 
@@ -473,7 +468,6 @@ var dui = {
             $("#duiview_"+view).appendTo("#dui_container");
         }
 
-
         if (dui.activeView !== view) {
 
             if (effect) {
@@ -488,10 +482,8 @@ var dui = {
                 });
             } else {
                 $("#duiview_"+dui.activeView).hide();
-                console.log("hide "+dui.activeView);
                 $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
                 $("#duiview_"+view).show();
-                console.log("show "+view);
             }
 
         }
@@ -502,18 +494,11 @@ var dui = {
         $("#duiview_"+view).find("div[id$='container']").each(function () {
             console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
             var cview = $(this).attr("data-dashui-contains");
-            jQuery("duiview_"+cview).show();
+            $("#duiview_"+cview).show();
         });
 
-                /*
-                        if (dui.views[view].settings.interval) {
-                            //console.log("setInterval "+dui.views[view].settings.interval);
-                           $.homematic("setInterval", dui.views[view].settings.interval);
-                        }
-                */
         if (dui.instance) {
-            // TODO aktuelle View in Instanz-Variable schreiben
-          //   $.homematic("script", "object o = dom.GetObject('dashui_"+dui.instance+"_view');\no.State('"+dui.activeView+"');");
+            homematic.setValue(dui.instanceView, dui.activeView);
         }
 
         if (window.location.hash.slice(1) != view) {
@@ -534,9 +519,7 @@ var dui = {
         });
 
 
-
-
-        // Editor
+        // --------- Editor -----------------
         $("#inspect_view").html(view);
 
         $("#select_active_widget").html("<option value='none'>none selected</option>");
@@ -546,7 +529,6 @@ var dui = {
         }
         //console.log($("#select_active_widget").html());
         $("#select_active_widget").multiselect("refresh");
-
 
         if ($("#select_view option:selected").val() != view) {
             $("#select_view option").removeAttr("selected");
@@ -572,13 +554,8 @@ var dui = {
         $("#inspect_view_theme option[value='"+dui.views[dui.activeView].settings.theme+"']").prop("selected", true);
         $("#inspect_view_theme").multiselect("refresh");
 
-
-
-
         //console.log("activeView="+dui.activeView);
         return;
-
-
     },
     addView: function (view) {
         if (dui[view]) {
@@ -609,25 +586,28 @@ var dui = {
         if (homematic.regaObjects[id] !== undefined) {
             var parent = "";
             var p = homematic.regaObjects[id]["Parent"];
-            if (p !== undefined && homematic.regaObjects[p]["DPs"] !== undefined)
+            if (p !== undefined && homematic.regaObjects[p]["DPs"] !== undefined) {
                 parent = homematic.regaObjects[p]["Name"] + "/";
-            else if (homematic.regaObjects[id]["TypeName"] !== undefined) {
+            } else if (homematic.regaObjects[id]["TypeName"] !== undefined) {
                 if (homematic.regaObjects[id]["TypeName"] == "VARDP") {  
-                    parent = dui.translate ("Variable") + " / ";
-                }
-                else
-                if (homematic.regaObjects[id]["TypeName"] == "PROGRAM") {  
-                    parent = dui.translate ("Program") + " / ";
+                    parent = dui.translate("Variable") + " / ";
+                } else if (homematic.regaObjects[id]["TypeName"] == "PROGRAM") {
+                    parent = dui.translate("Program") + " / ";
                 }
             }
         
-            if (homematic.regaObjects[id]["Address"] !== undefined)
+            if (homematic.regaObjects[id]["Address"] !== undefined) {
                 return parent + homematic.regaObjects[id]["Name"] + "/" + homematic.regaObjects[id]["Address"];
-            else
+            } else {
                 return parent + homematic.regaObjects[id]["Name"];
+            }
+
+        } else if (id == 41) {
+            return dui.translate("Service messages");
+        } else if (id == 40) {
+            return dui.translate("Alarms");
         }
-        else
-            return "";
+        return "";
     },
     translate: function (text) {
         return text;
@@ -728,7 +708,6 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             dui.editInit ();
         }
         
-
         console.log("socket.io")
         $("#loading").append("Connecting to CCU.IO ...<br/>");
 
@@ -736,14 +715,6 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         dui.socket.on('event', function(obj) {
             if (homematic.uiState["_"+obj[0]] !== undefined) {
                 var o = {};
-                // Check if value changed
-                if (obj[3]) {
-                    if (o["_"+obj[0]+".Value"] != obj[1]) {
-                        var d = new Date();
-                        var t = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-                        o["_"+obj[0]+".LastChange"] = t;
-                    }
-                }
                 o["_"+obj[0]+".Value"]     = obj[1];
                 o["_"+obj[0]+".Timestamp"] = obj[2];
                 o["_"+obj[0]+".Certain"]   = obj[3];            
@@ -751,7 +722,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                 
                 // Ich habe keine Ahnung, aber bind("change") funktioniert einfach nicht 
                 if (dui.binds.hqWidgetsExt && dui.binds.hqWidgetsExt.hqMonitor && obj[3])
-                    dui.binds.hqWidgetsExt.hqMonitor (obj[0], obj[1], homematic.uiState["_"+obj[0]]["LastChange"]);
+                    dui.binds.hqWidgetsExt.hqMonitor (obj[0], obj[1]);
             }
             else {
                 console.log("Datenpunkte sind noch nicht geladen!");
@@ -793,30 +764,34 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             console.log((new Date()) + " socket.io error");
         });
 
-
         $("#loading").append("Loading ReGa Data");
 
         dui.socket.emit("getIndex", function (index) {
             $("#loading").append(".");
             console.log("index loaded");
-                homematic.regaIndex = index;
-                dui.socket.emit("getObjects", function (obj) {
-                    $("#loading").append(".");
-                    console.log("objects loaded")
-                    homematic.regaObjects = obj;
-                    dui.socket.emit("getDatapoints", function (data) {
-                        $("#loading").append(".<br/>");
-                        console.log("datapoints loaded");
-                        for (var dp in data) {
+            homematic.regaIndex = index;
+            dui.socket.emit("getObjects", function (obj) {
+                $("#loading").append(".");
+                console.log("objects loaded")
+                homematic.regaObjects = obj;
+                dui.socket.emit("getDatapoints", function (data) {
+                    $("#loading").append(".<br/>");
+                    console.log("datapoints loaded");
+                    for (var dp in data) {
+                        if (data[dp][3]) {
+                            var lc = new Date ();
+                            lc.setTime (data[dp][3] * 1000);
+                            homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: lc});
+                        } else {
                             homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1]});
                         }
-                        $("#loading").append("Loading Widget-Sets...");
-                        setTimeout(dui.init, 10);
+                    }
+                    $("#loading").append("Loading Widget-Sets...");
+                    setTimeout(dui.init, 10);
 
-                    });
                 });
             });
-
+        });
 
     });
 

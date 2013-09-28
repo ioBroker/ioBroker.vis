@@ -38,6 +38,49 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta9
+* (Hobbyquaker) Widget-Dokumentation direkt aus Editor öffnen
+
+### 0.9beta8
+* (Hobbyquaker) Fehler behoben beim ausführen von externen Kommandos (Instanzen)
+* (Hobbyquaker) Fehler behoben beim Wechsel zwischen Views (Container-Views wurden u.U. nicht angezeigt)
+* (Bluefox) Fehler behoben Wetter-Widgets
+
+### 0.9beta7
+
+* (Hobbyquaker) Fixed various Bugs in jqui and jqui-mfd Widget-Sets
+* (Bluefox) Description for ID 40 and 41 …
+* (Bluefox) Preparation for Temperature Graphics
+* (Bluefox) Delete jqhomematic.js
+* (Bluefox) Fix problem with select background in edit mode.
+* (Bluefox) Add kde-folder.png again.
+* (Bluefox) hqWidgest: Show charts for In/Out temperature widget …
+* (Bluefox) hqWidgets: Save position of information window, e.g. Camera
+* (Bluefox) Extend settings for charts
+* (Bluefox) Support of lastStateChanged timestamp
+* (Bluefox) Translate Charts settings
+* (Bluefox) Fix error with ipCam and auto open info window
+
+### 0.9beta6
+
+* (Bluefox)	Fix problem with Info and logical value Do not show control for window if no actor projected
+* (Bluefox) Show battery problems by door and window widgets.
+* (Bluefox) Description for battery problem if window widget.
+* (Bluefox) Fix hwWidget/Window in Firefox
+* (Bluefox) Fix error if HM_ID not exist
+
+### 0.9beta5
+
+* (Bluefox) Fix image of button if pressed
+
+### 0.9beta4
+
+* (Hobbyquaker) Bugfixes: diverse Widgets aus den Widget-Sets Basic, jqui und jqui-mfd
+
+### 0.9beta3
+
+* (Bluefox) HqWidgets Update Geräte
+
 ### 0.9beta2
 
 * (Hobbyquaker) Popup wenn Verbindung zu CCU.IO unterbrochen ist
@@ -52,26 +95,23 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Smiling-Jack)            Swipe-Widget (Navigation via Touch-Gesten)
 
 ### 0.8.4-0.8.6
+
 * (Bluefox) Yahoo Weather widget.
 * (Bluefox) Htc Weather widget.
 * (Bluefox) Simple Clock
 * (Bluefox) Flip Clock
-
 * (Bluefox) Kein neue Funktionalitaet, nur Umstrukturierung.
 * (Bluefox) Jedes Widget-Set hat eigenes "js", "css" und "img" Verzeichnis
 * (Bluefox) Edit und Engine geteilt.
-
 * (Bluefox) Gauge widget 
 * (Bluefox) Styles fur Button
 * (Bluefox) Fixed Fenster und Rolladen
-
 * (Bluefox) Neue hqWidgets Komponente: Gong, IP Camera. 
 * (Bluefox) Soll Wert fuer Thermostat
 * (Bluefox) Fixed Problem mit Positionierung
 * (Bluefox) Letzte Statusanderung-Anzeige
 * (Bluefox) Status Changed- Animation
 * (Bluefox) Advanced Settings
-
 * (hobbyquaker) CCU.IO integriert
 
 ### 0.8.3
@@ -82,34 +122,30 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Bluefox) hqWidgets: Button, Shutter, Lock, Door, Text, Image, Info, InTemp, OutTemp
 
 ### 0.8.1
-* Neuer Contributor: Bluefox - Herzlich Willkommen! :-)
 
 * (Bluefox) Neuer Dialog zur Geräteauswahl
 * (Bluefox) Neuer Dialog zur Bilderauswahl
-* (Bluefox) Neuer Selector für vodefinierte View-Hintergründe 
+* (Bluefox) Neuer Selector für vodefinierte View-Hintergründe
+* Neuer Contributor: Bluefox - Herzlich Willkommen! :-)
 
 ### 0.8
-* Fehler im Theme "Kiandra" behoben
-* Snapping hinzugefügt: einfacheres Positionieren von Widgets wahlweise an einem Gitter oder an anderen Widgets
-* Neuer Reiter "Editor" um das Snapping zu konfigurieren
-* Fehler behoben der dazu führte dass Variablen nicht richtig gesetzt wurden
-* Widget "basic hm_val - String img src" hinzugefügt
 
+* (Hobbyquaker) Fehler im Theme "Kiandra" behoben
+* (Hobbyquaker) Snapping hinzugefügt: einfacheres Positionieren von Widgets wahlweise an einem Gitter oder an anderen Widgets
+* (Hobbyquaker) Neuer Reiter "Editor" um das Snapping zu konfigurieren
+* (Hobbyquaker) Fehler behoben der dazu führte dass Variablen nicht richtig gesetzt wurden
+* (Hobbyquaker) Widget "basic hm_val - String img src" hinzugefügt
 * (Bluefox) Neuer Dialog zur Gerateauswahl
 * (Bluefox) Neuer Dialog zur Bilderauswahl
 * (Bluefox) Neuer Selector fur vodefinierte View-Hintergrunde 
 
 ### 0.8
-* Fehler im Theme "Kiandra" behoben
-* Snapping hinzugefugt: einfacheres Positionieren von Widgets wahlweise an einem Gitter oder an anderen Widgets
-* Neuer Reiter "Editor" um das Snapping zu konfigurieren
-* Fehler behoben der dazu fuhrte dass Variablen nicht richtig gesetzt wurden
-* Widget "basic hm_val - String img src" hinzugefugt
-* Neues Widget-Set "Knobs"
-* 3 Neue Widgets zur animierten Navigation zwischen Views
-* Neue Widgets im Widget-Set "fancyswitch"
-* Neue Colorpicker-Widgets
-* diverse neue Widgets im Widget-Set "basic"
+
+* (Hobbyquaker) Neues Widget-Set "Knobs"
+* (Hobbyquaker) 3 Neue Widgets zur animierten Navigation zwischen Views
+* (Hobbyquaker) Neue Widgets im Widget-Set "fancyswitch"
+* (Hobbyquaker) Neue Colorpicker-Widgets
+* (Hobbyquaker) diverse neue Widgets im Widget-Set "basic"
 
 
 ### 0.7

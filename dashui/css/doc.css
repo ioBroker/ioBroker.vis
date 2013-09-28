@@ -1,0 +1,14 @@
+body {
+    font-family: sans-serif;
+    padding-bottom: 600px;
+    background-color: #ddd;
+}
+
+h4 {
+    margin-bottom: 4px;
+}
+
+dt {
+    font-style: italic;
+}
+

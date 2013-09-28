@@ -28,7 +28,7 @@
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                    if (newVal == "false" || parseInt(newVal,10) == 0) {
+                    if (newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
                         }
@@ -36,6 +36,9 @@
                         $this.show();
                     }
                 });
+                if (homematic.uiState.attr(hm_id+".Value") == 0) {
+                    $this.hide();
+                }
             },
             checkbox: function (el) {
                 var $this = jQuery(el);
@@ -95,8 +98,8 @@
                 if (dui.urlParams["edit"] !== "") {
                     $this.click(function () {
                         var val = homematic.uiState["_"+id].Value;
-                        if (val === "false") { val = 0;}
-                        if (val === "true") { val = 1;}
+                        if (val === false || val === "false") { val = 0;}
+                        if (val === true || val === "true") { val = 1;}
                         val = parseFloat(val, 10);
                         if (val >= 0.5) { val = 1; } else { val = 0; }
                         homematic.setValue( id,  1-val);
@@ -299,7 +302,7 @@
 
 <script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Red Number" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.hideOnFalse(el) %>>
-        <div class="dashui-widget-body">
+        <div class="dashui-widget-body" >
             <%= parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) %>
         </div>
     </div>
@@ -308,7 +311,7 @@
 <script type="text/ejs" id="tplBulbOnOff" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Bulb on/off" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": %>
+            <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case false: case "false": %>
             <img src="img/bulb_off.png" width="100%"/>
             <% break; default: %>
             <img src="img/bulb_on.png" width="100%"/>
@@ -320,7 +323,7 @@
 <script type="text/ejs" id="tplBulbOnOffCtrl" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - Bulb on/off" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.toggle(el) %>>
     <div class="dashui-widget-body">
-        <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": %>
+        <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": case false: %>
         <img src="img/bulb_off.png" width="100%"/>
         <% break; default: %>
         <img src="img/bulb_on.png" width="100%"/>
@@ -330,7 +333,7 @@
 </script>
 
 
-<script type="text/ejs" id="tplHmWindowRotary" class="dashui-tpl"  data-dashui-set="basic" data-dashui-name="hm-icon - hm_val - Drehgriff" data-dataui-attrs="hm_id">
+<script type="text/ejs" id="tplHmWindowRotary" class="dashui-tpl"  data-dashui-set="basic" data-dashui-name="hm_val - Drehgriff" data-dataui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>">
         <div class="dashui-widget-body">
             <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case 0: %>
@@ -344,7 +347,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplHmWindow" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm-icon - hm_val - TFK" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplHmWindow" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - TFK" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:80px">
         <div class="dashui-widget-body">
             <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "true": %>
