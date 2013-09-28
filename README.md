@@ -38,6 +38,11 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta8
+* (Hobbyquaker) Fehler behoben beim ausführen von externen Kommandos (Instanzen)
+* (Hobbyquaker) Fehler behoben beim Wechsel zwischen Views (Container-Views wurden u.U. nicht angezeigt)
+* (Bluefox) Fehler behoben Wetter-Widgets
+
 ### 0.9beta7
 
 * (Hobbyquaker) Fixed various Bugs in jqui and jqui-mfd Widget-Sets
