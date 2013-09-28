@@ -22,7 +22,7 @@
 
 // duiEdit - the DashUI Editor
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta7',
+    editVersion:        '0.9beta8',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -63,7 +63,15 @@ dui = $.extend(true, dui, {
                         dui.instanceData = data;
                         console.log("id "+name+"_data="+data);
                         storage.set(dui.storageKeyInstance, dui.instance);
-                        dui.bindInstance();
+
+                        dui.socket.emit("getIndex", function (index) {
+                            homematic.regaIndex = index;
+                            dui.socket.emit("getObjects", function (obj) {
+                                homematic.regaObjects = obj;
+                                dui.bindInstance();
+                            });
+                        });
+
                     });
                 });
             });

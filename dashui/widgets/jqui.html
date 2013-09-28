@@ -182,11 +182,8 @@
                     noneSelectedText: false,
                     selectedList: 1
                 }, options)).change(function () {
-                           homematic.setValue(id,  $this.find("option:selected").val());
-
-                            homematic.setValue(id, $this.find("option:selected").val());
-
-                        });
+                    homematic.setValue(id,  $this.find("option:selected").val());
+                });
 
                 var hm_id = "_" + id;
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
