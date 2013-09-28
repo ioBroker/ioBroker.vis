@@ -723,7 +723,7 @@ dui = $.extend(true, dui, {
                 "hm_wid"           : {"en": "Working ID"},
                 "comment"          : {"en" : "Comments",     "de": "Kommentare"},	
                 "Select HM parameter" : {"en" : "Select HM parameter", "de": "HM parameter ausw&auml;hlen"},	
-                "Select"           : {"en" : "Select",       "de": "Auswahlen"},	
+                "Select"           : {"en" : "Select",       "de": "Auswählen"},
                 "Cancel"           : {"en" : "Cancel",       "de": "Abbrechen"},	
                 "Name"             : {"en" : "Name",         "de": "Name"},	
                 "Location"         : {"en" : "Location",     "de": "Raum"},	
