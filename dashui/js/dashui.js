@@ -378,7 +378,7 @@ var dui = {
         // Views in Container verschieben
         $("#duiview_"+view).find("div[id$='container']").each(function () {
             console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
-            var cview = $(this).attr("data-dashui-contains")
+            var cview = $(this).attr("data-dashui-contains");
             if (!dui.views[cview]) {
                 $(this).append("error: view not found.");
                 return false;
@@ -387,7 +387,8 @@ var dui = {
                 return false;
             }
             dui.renderView(cview);
-            $("#duiview_"+cview).appendTo(this).show();
+            $("#duiview_"+cview).appendTo(this);
+            $("#duiview_"+cview).show();
 
         });
 
@@ -486,10 +487,8 @@ var dui = {
                 });
             } else {
                 $("#duiview_"+dui.activeView).hide();
-                console.log("hide "+dui.activeView);
                 $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
                 $("#duiview_"+view).show();
-                console.log("show "+view);
             }
 
         }
@@ -500,7 +499,7 @@ var dui = {
         $("#duiview_"+view).find("div[id$='container']").each(function () {
             console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
             var cview = $(this).attr("data-dashui-contains");
-            jQuery("duiview_"+cview).show();
+            $("#duiview_"+cview).show();
         });
 
         if (dui.instance) {
