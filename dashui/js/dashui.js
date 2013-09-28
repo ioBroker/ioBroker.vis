@@ -786,30 +786,29 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         dui.socket.emit("getIndex", function (index) {
             $("#loading").append(".");
             console.log("index loaded");
-                homematic.regaIndex = index;
-                dui.socket.emit("getObjects", function (obj) {
-                    $("#loading").append(".");
-                    console.log("objects loaded")
-                    homematic.regaObjects = obj;
-                    dui.socket.emit("getDatapoints", function (data) {
-                        $("#loading").append(".<br/>");
-                        console.log("datapoints loaded");
-                        for (var dp in data) {
-                            if (data[dp][3]) {
-                                var lc = new Date ();
-                                lc.setTime (data[dp][3] * 1000);
-                                homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: lc});
-                            }
-                            else {
-                                homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1]});
-                            }
+            homematic.regaIndex = index;
+            dui.socket.emit("getObjects", function (obj) {
+                $("#loading").append(".");
+                console.log("objects loaded")
+                homematic.regaObjects = obj;
+                dui.socket.emit("getDatapoints", function (data) {
+                    $("#loading").append(".<br/>");
+                    console.log("datapoints loaded");
+                    for (var dp in data) {
+                        if (data[dp][3]) {
+                            var lc = new Date ();
+                            lc.setTime (data[dp][3] * 1000);
+                            homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: lc});
+                        } else {
+                            homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1]});
                         }
-                        $("#loading").append("Loading Widget-Sets...");
-                        setTimeout(dui.init, 10);
+                    }
+                    $("#loading").append("Loading Widget-Sets...");
+                    setTimeout(dui.init, 10);
 
-                    });
                 });
             });
+        });
 
     });
 
