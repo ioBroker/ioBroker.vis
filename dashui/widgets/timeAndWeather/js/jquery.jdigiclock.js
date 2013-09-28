@@ -67,14 +67,14 @@ var jdigiclockCounter = 0;
                 $this.timeUpdate = '';
 
 
-                var html = '<div id="plugin_cAntainer'+o.curID+'" class="plugin_container">';
-                html    += '<p id="left_arrow'+o.curID+'" class="left_arrow"><img src="'+o.clockImagesPath+'../icon_left.png" /></p>';
-                html    += '<p id="right_arrow'+o.curID+'" class="right_arrow"><img src="'+o.clockImagesPath+'../icon_right.png" /></p>';
-                html    += '<div id="digital_cAntainer'+o.curID+'" class="digital_container">';
-                html    += '<div id="clock'+o.curID+'" class="clock"></div>';
-                html    += '<div id="weather'+o.curID+'" class="weather"></div>';
+                var html = '<div id="plugin_cAntainer'+o.curID+'" class="dc_plugin_container">';
+                html    += '<p id="left_arrow'+o.curID+'" class="dc_left_arrow"><img src="'+o.clockImagesPath+'../icon_left.png" /></p>';
+                html    += '<p id="right_arrow'+o.curID+'" class="dc_right_arrow"><img src="'+o.clockImagesPath+'../icon_right.png" /></p>';
+                html    += '<div id="digital_cAntainer'+o.curID+'" class="dc_digital_container">';
+                html    += '<div id="clock'+o.curID+'" class="dc_clock"></div>';
+                html    += '<div id="weather'+o.curID+'" class="dc_weather"></div>';
                 html    += '</div>';
-                html    += '<div id="forecast_cAntainer'+o.curID+'" class="forecast_container"></div>';
+                html    += '<div id="forecast_cAntainer'+o.curID+'" class="dc_forecast_container"></div>';
                 html    += '</div>';
 
                 $this.html(html);
@@ -165,18 +165,18 @@ var jdigiclockCounter = 0;
         var firstMinuteDigit = old_minutes.substr(0,1);
         var secondMinuteDigit = old_minutes.substr(1,1);
         
-        timeOld += '<div id="hours'+el.o.curID+'" class="hours"><div class="line"></div>';
-        timeOld += '<div id="hours_bg'+el.o.curID+'" class="hours_bg"><img src="' + el.clockImagesPath + 'clockbg1.png" /></div>';
-        timeOld += '<img src="' + el.clockImagesPath + firstHourDigit + '.png" id="fhd'+el.o.curID+'" class="first_digit" />';
-        timeOld += '<img src="' + el.clockImagesPath + secondHourDigit + '.png" id="shd'+el.o.curID+'" class="second_digit" />';
+        timeOld += '<div id="hours'+el.o.curID+'" class="dc_hours"><div class="dc_line"></div>';
+        timeOld += '<div id="hours_bg'+el.o.curID+'" class="dc_hours_bg"><img src="' + el.clockImagesPath + 'clockbg1.png" /></div>';
+        timeOld += '<img src="' + el.clockImagesPath + firstHourDigit + '.png" id="fhd'+el.o.curID+'" class="dc_first_digit" />';
+        timeOld += '<img src="' + el.clockImagesPath + secondHourDigit + '.png" id="shd'+el.o.curID+'" class="dc_second_digit" />';
         timeOld += '</div>';
-        timeOld += '<div id="minutes'+el.o.curID+'" class="minutes"><div class="line"></div>';
+        timeOld += '<div id="minutes'+el.o.curID+'" class="dc_minutes"><div class="dc_line"></div>';
         if (el.am_pm) {
-            timeOld += '<div id="am_pm'+el.o.curID+'" class="am_pm"><img src="' + el.clockImagesPath + am_pm + '.png" /></div>';
+            timeOld += '<div id="am_pm'+el.o.curID+'" class="dc_am_pm"><img src="' + el.clockImagesPath + am_pm + '.png" /></div>';
         }
-        timeOld += '<div id="minutes_bg'+el.o.curID+'" class="minutes_bg"><img src="' + el.clockImagesPath + 'clockbg1.png" /></div>';
-        timeOld += '<img src="' + el.clockImagesPath + firstMinuteDigit + '.png" id="fmd'+el.o.curID+'" class="first_digit" />';
-        timeOld += '<img src="' + el.clockImagesPath + secondMinuteDigit + '.png" id="smd'+el.o.curID+'" class="second_digit" />';
+        timeOld += '<div id="minutes_bg'+el.o.curID+'" class="dc_minutes_bg"><img src="' + el.clockImagesPath + 'clockbg1.png" /></div>';
+        timeOld += '<img src="' + el.clockImagesPath + firstMinuteDigit + '.png" id="fmd'+el.o.curID+'" class="dc_first_digit" />';
+        timeOld += '<img src="' + el.clockImagesPath + secondMinuteDigit + '.png" id="smd'+el.o.curID+'" class="dc_second_digit" />';
         timeOld += '</div>';
 
         el.find('#clock'+el.o.curID).html(timeOld);
@@ -291,30 +291,30 @@ var jdigiclockCounter = 0;
 	$.fn.processAnswer = function(el, data) {
         var metric = el.weatherMetric == 1 ? 'C' : 'F';
 		
-		el.find('#weather'+el.o.curID+' .loading, #forecast_cAntainer'+el.o.curID+' .loading').hide();
+		el.find('#weather'+el.o.curID+' .dc_loading, #forecast_cAntainer'+el.o.curID+' .dc_loading').hide();
 
-		var curr_temp = '<p class="temp">' + data.curr_temp + '&deg;<span class="metric">' + metric + '</span></p>';
+		var curr_temp = '<p class="">' + data.curr_temp + '&deg;<span class="dc_metric">' + metric + '</span></p>';
 
 		if (data.curr_icon.indexOf("http://") == -1)
 			el.find('#weather'+el.o.curID).css('background','url(' + el.weatherImagesPath + data.curr_icon + '.png) 50% 100% no-repeat');
 		else
 			el.find('#weather'+el.o.curID).css('background','url('+ data.curr_icon + ') 50% 100% no-repeat');
-		var weather = '<div id="local'+el.o.curID+'" class="local"><p class="city">' + data.city + '</p><p>' + data.curr_text + '</p></div>';
-		weather += '<div id="temp'+el.o.curID+'" class="temp"><p id="date'+el.o.curID+'" class="date">' + el.currDate + '</p>' + curr_temp + '</div>';
+		var weather = '<div id="local'+el.o.curID+'" class="dc_local"><p class="dc_city">' + data.city + '</p><p>' + data.curr_text + '</p></div>';
+		weather += '<div id="temp'+el.o.curID+'" class="dc_temp"><p id="date'+el.o.curID+'" class="dc_date">' + el.currDate + '</p>' + curr_temp + '</div>';
 		el.find('#weather'+el.o.curID+'').html(weather);
 
 		// forecast
-		el.find('#forecast_cAntainer'+el.o.curID+'').append('<div id="current'+el.o.curID+'" class="current"></div>');
-		var curr_for = curr_temp + '<p class="high_low">' + data.forecast[0].day_htemp + '&deg;&nbsp;/&nbsp;' + data.forecast[0].day_ltemp + '&deg;</p>';
-		curr_for    += '<p class="city">' + data.city + '</p>';
-		curr_for    += '<p class="text">' + data.forecast[0].day_text + '</p>';
+		el.find('#forecast_cAntainer'+el.o.curID+'').append('<div id="current'+el.o.curID+'" class="dc_current"></div>');
+		var curr_for = curr_temp + '<p class="dc_high_low">' + data.forecast[0].day_htemp + '&deg;&nbsp;/&nbsp;' + data.forecast[0].day_ltemp + '&deg;</p>';
+		curr_for    += '<p class="dc_city">' + data.city + '</p>';
+		curr_for    += '<p class="dc_text">' + data.forecast[0].day_text + '</p>';
 		
 		if (data.forecast[0].day_icon.indexOf("http://") == -1)
 			el.find('#current'+el.o.curID).css('background','url(' + el.weatherImagesPath + data.forecast[0].day_icon + '.png) 50% 0 no-repeat').append(curr_for);
 		else
 			el.find('#current'+el.o.curID).css('background','url('+data.forecast[0].day_icon + ') 100% 0 no-repeat').css('background-size', '100% auto').append(curr_for);
 
-		el.find('#forecast_cAntainer'+el.o.curID).append('<ul id="forecast'+el.o.curID+'" class="forecast"></ul>');
+		el.find('#forecast_cAntainer'+el.o.curID).append('<ul id="forecast'+el.o.curID+'" class="dc_forecast"></ul>');
 		data.forecast.shift();
 		for (var i in data.forecast) {
 			var d_date = new Date(data.forecast[i].day_date);
@@ -334,7 +334,7 @@ var jdigiclockCounter = 0;
 			el.find('#forecast'+el.o.curID).append(forecast);
 		}
 
-		el.find('#forecast_cAntainer'+el.o.curID).append('<div id="update'+el.o.curID+'" class="update"><img src="'+el.clockImagesPath+'../refresh_01.png" alt="reload" title="reload" id="reload'+el.o.curID+'" />' + el.timeUpdate + '</div>');
+		el.find('#forecast_cAntainer'+el.o.curID).append('<div id="update'+el.o.curID+'" class="dc_update"><img src="'+el.clockImagesPath+'../refresh_01.png" alt="reload" title="reload" id="reload'+el.o.curID+'" />' + el.timeUpdate + '</div>');
 
 		$('#reload'+el.o.curID+'').click(function() {
 			el.find('#weather'+el.o.curID).html('');
@@ -353,8 +353,8 @@ var jdigiclockCounter = 0;
 	};	
     $.fn.getWeather = function(el) {
 
-        el.find('#weather'+el.o.curID).html('<p class="loading">Update Weather ...</p>');
-        el.find('#forecast_cAntainer'+el.o.curID).html('<p class="loading">Update Weather ...</p>');
+        el.find('#weather'+el.o.curID).html('<p class="dc_loading">Update Weather ...</p>');
+        el.find('#forecast_cAntainer'+el.o.curID).html('<p class="dc_loading">Update Weather ...</p>');
         var proxy = '';
 
 			

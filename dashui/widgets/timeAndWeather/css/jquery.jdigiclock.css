@@ -1,4 +1,4 @@
-.plugin_container {
+.dc_plugin_container {
     width:500px;
     height:420px;
     position:relative;
@@ -7,27 +7,27 @@
     color:#fff;
 }
 
-.plugin_container p {
+.dc_plugin_container p {
     margin:0;
     padding:0;
 }
 
-.left_arrow, .right_arrow {
+.dc_left_arrow, .dc_right_arrow {
     position:absolute;
     top:200px;
     z-index:200;
     cursor:pointer;
 }
 
-.left_arrow {
+.dc_left_arrow {
     left:5px;
 }
 
-.right_arrow {
+.dc_right_arrow {
     right:5px;
 }
 
-.digital_container {
+.dc_digital_container {
     width:500px;
     height:360px;
     background:url(../img/background.png) 50% 40px no-repeat;
@@ -38,23 +38,23 @@
 }
 
 
-.clock {
+.dc_clock {
     float:left;
     margin-left:48px;
 }
 
-.hours, .minutes {
+.dc_hours, .dc_minutes {
     width:200px;
     height:200px;
     float:left;
     position:relative;
 }
 
-.minutes {
+.dc_minutes {
     margin-left:4px;
 }
 
-.hours_bg, .minutes_bg {
+.dc_hours_bg, .dc_minutes_bg {
     width:100%;
     height:100%;
     position:absolute;
@@ -63,7 +63,7 @@
     z-index:99;
 }
 
-.first_digit {
+.dc_first_digit {
     width:80px;
     height:100%;
     position:absolute;
@@ -72,7 +72,7 @@
     z-index:100;
 }
 
-.second_digit {
+.dc_second_digit {
     width:80px;
     height:100%;
     position:absolute;
@@ -81,7 +81,7 @@
     z-index:100;
 }
 
-.line {
+.dc_line {
     width:175px;
     height:2px;
     background:#efefef;
@@ -92,14 +92,14 @@
     font-size:1px;
 }
 
-.am_pm {
+.dc_am_pm {
     position:absolute;
     top:156px;
     left:130px;
     z-index:110;
 }
 
-.weather {
+.dc_weather {
     width:100%;
     height:206px;
     position:absolute;
@@ -109,37 +109,37 @@
     color:#fff;
 }
 
-.weather .local, .weather .loading {
+.dc_weather .dc_local, .dc_weather .dc_loading {
     float:left;
     margin:65px 0 0 45px;
 }
 
-.city {
+.dc_city {
     font-weight:bold;
     font-size:12pt;
 }
 
-.temp {
+.dc_temp {
     font-size:30pt;
     padding:0;
 }
 
-.temp .metric {
+.dc_temp .dc_metric {
     margin-left:-3px;
 }
 
-.weather .temp {
+.dc_weather .dc_temp {
     float:right;
     margin:65px 45px 0 0;
     text-align:right;
 }
 
-.weather .date {
+.dc_weather .dc_date {
     font-size:11pt;
     padding-right:2px;
 }
 
-.forecast_container {
+.dc_forecast_container {
     width:500px;
     height:400px;
     background:url(../img/background_forecast.png) 50% 100% no-repeat;
@@ -149,43 +149,43 @@
     z-index:98;
 }
 
-.forecast_container #current {
+.dc_forecast_container #current {
     width:400px;
     height:240px;
     margin-left:50px;
     position:relative;
 }
 
-.forecast_container .loading {
+.dc_forecast_container .dc_loading {
     margin:130px 0 0 70px;
 }
 
-.forecast_container .current .temp, .forecast_container .current .high_low {
+.dc_forecast_container .dc_current .dc_temp, .dc_forecast_container .dc_current .dc_high_low {
     width:116px;
     text-align:center;
 }
 
-.forecast_container .current .temp {
+.dc_forecast_container .dc_current .dc_temp {
     font-size:32pt;
     margin-top:110px;
     float:left
 }
 
-.forecast_container .current .high_low {
+.dc_forecast_container .dc_current .dc_high_low {
     font-size:12pt;
     clear:both;
 }
 
-.forecast_container .current .city, .forecast_container .current .text {
+.dc_forecast_container .dc_current .dc_city, .dc_forecast_container .dc_current .dc_text {
     width:100%;
     text-align:center;
 }
 
-.forecast_container .current .text {
+.dc_forecast_container .dc_current .dc_text {
     margin-top:6px;
 }
 
-.forecast_container .forecast {
+.dc_forecast_container .dc_forecast {
     width:400px;
     height:122px;
     list-style:none;
@@ -193,14 +193,14 @@
     padding:0;
 }
 
-.forecast_container .forecast li {
+.dc_forecast_container .dc_forecast li {
     width:25%;
     height:100%;
     float:left;
     text-align:center;
 }
 
-.forecast_container .forecast li p {
+.dc_forecast_container .dc_forecast li p {
     width:100%;
     height:30px;
     margin:0;
@@ -209,17 +209,17 @@
     line-height:30px;
 }
 
-.forecast_container .forecast li img {
+.dc_forecast_container .dc_forecast li img {
     width:96px;
 }
 
-.forecast_container .update {
+.dc_forecast_container .dc_update {
     text-align:center;
     margin-top:10px;
     font-size:11px;
 }
 
-.forecast_container .update img {
+.dc_forecast_container .dc_update img {
     margin:-2px 4px 0 0;
     vertical-align:middle;
     cursor:pointer;

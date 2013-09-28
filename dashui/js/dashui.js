@@ -622,7 +622,7 @@ var dui = {
         if (id == 41) 
             return dui.translate ("Service messages");
         else
-        if (id == 49)
+        if (id == 40)
             return dui.translate ("Alarms");
         return "";
     },

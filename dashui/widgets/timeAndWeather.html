@@ -6,6 +6,7 @@
 <script src="widgets/timeAndWeather/js/flipclock/flipclock.min.js"></script>
 <script src="widgets/timeAndWeather/js/jquery.jdigiclock.js"></script>
 <script src="widgets/timeAndWeather/js/jquery.zweatherfeed.js"></script>
+
 <!--script src="widgets/timeAndWeather/js/coolclock.js"></script>
 <script src="widgets/timeAndWeather/js/moreskins.js"></script-->
 
@@ -30,7 +31,7 @@
 <script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="">
     <%
         var text = '<div class="dashui-widget clock" id="'+this.data.attr('wid')+'" ></div>';
-        jQuery('#duiview_'+dui.activeView).append(text);
+        jQuery('#duiview_'+this.view).append(text);
         startTime (this.data.attr('wid'));
     %>
 </script>
@@ -38,7 +39,7 @@
     <%
     var text = '<canvas style="position: absolute; width:85px; height: 85px" id="'+this.data.attr('wid')+'" class="CoolClock:Skin:Radius:noSeconds:GMTOffset" data-dashui-resizable=';
         text += "'" + '{"disabled":true}' + "'></canvas>";
-    jQuery('#duiview_'+dui.activeView).append(text);
+    jQuery('#duiview_'+this.view).append(text);
     CoolClock.findAndCreateClocks();
     %>
 </script-->
@@ -48,7 +49,7 @@
     <% 
         var text = '<div class="dashui-widget" style="width:500px; height: 110px" id="'+this.data.attr('wid')+'" data-dashui-resizable=';
         text += "'" + '{"disabled":true}' + "'></div>";
-        jQuery('#duiview_'+dui.activeView).append(text);
+        jQuery('#duiview_'+this.view).append(text);
         var clock = jQuery('#'+this.data.attr('wid')).FlipClock({clockFace: 'TwentyFourHourClock'});
     %>
 </script>
@@ -57,7 +58,7 @@
     <% 
         var text = '<div class="dashui-widget" style="width:500px; height: 420px" id="'+this.data.attr('wid')+'" data-dashui-resizable=';
         text += "'" + '{"disabled":true}' + "'></div>";
-        jQuery('#duiview_'+dui.activeView).append(text);
+        jQuery('#duiview_'+this.view).append(text);
         var weoid = this.data.attr('weoid');
         if (weoid !== undefined && weoid !== null) {
             var i = weoid.indexOf('[');
@@ -81,7 +82,7 @@
 <script type="text/ejs" id="tplTwYahooWeather" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="YahooWeather" data-dashui-attrs="weoid">
     <% 
         var text = '<div class="dashui-widget ui-widget-content" id="'+this.data.attr('wid')+'"></div>';
-        jQuery('#duiview_'+dui.activeView).append(text);
+        jQuery('#duiview_'+this.view).append(text);
         var weoid = this.data.attr('weoid');
         if (weoid !== undefined && weoid !== null) {
             var i = weoid.indexOf('[');
