@@ -38,6 +38,11 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta10
+* (Hobbyquaker) Doku für das Widget-Set "basic" ausgearbeitet
+* (Hobbyquaker) Widgets "basic hm_val Bar horizontal/vertical" mit zusätzlichem Attribut "reverse" ausgestattet
+* (Hobbyquaker) Bugfixes diverse Widgets aus dem Widget-Set "basic"
+
 ### 0.9beta9
 * (Hobbyquaker) Widget-Dokumentation direkt aus Editor öffnen
 
