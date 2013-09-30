@@ -347,7 +347,11 @@ var dui = {
         if (!dui.views[view].settings.interval) {
             dui.views[view].settings.interval = dui.defaultHmInterval;
         }
-        $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
+
+        $("#jqui_theme").remove();
+        $("style[data-href$='jquery-ui.min.css']").remove();
+        $("head").append('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme"/>');
+
         if ($("#dui_container").find("#duiview_"+view).html() == undefined) {
             $("#dui_container").append("<div id='duiview_"+view+"' class='dashui-view'></div>");
             $("#duiview_"+view).css(dui.views[view].settings.style);

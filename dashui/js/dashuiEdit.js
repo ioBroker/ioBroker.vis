@@ -687,9 +687,12 @@ dui = $.extend(true, dui, {
         });
         $("#inspect_view_theme").change(function () {
             var theme = $("#inspect_view_theme option:selected").val();
-            //console.log("change theme "+theme);
+            console.log("change theme "+"css/"+theme+"/jquery-ui.min.css");
             dui.views[dui.activeView].settings.theme = theme;
-            $("#jqui_theme").attr("href", "css/"+theme+"/jquery-ui.min.css");
+            $("#jqui_theme").remove();
+            $("style[data-href$='jquery-ui.min.css']").remove();
+            $("head").append('<link rel="stylesheet" type="text/css" href="css/'+theme+'/jquery-ui.min.css" id="jqui_theme"/>');
+            //attr("data-href", "css/"+theme+"/jquery-ui.min.css");
             dui.saveRemote();
         });
         $("#select_active_widget").change(function () {
