@@ -348,9 +348,10 @@ var dui = {
             dui.views[view].settings.interval = dui.defaultHmInterval;
         }
 
+        console.log("renderView() change Theme "+dui.views[view].settings.theme);
         $("#jqui_theme").remove();
         $("style[data-href$='jquery-ui.min.css']").remove();
-        $("head").append('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme"/>');
+        $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme"/>');
 
         if ($("#dui_container").find("#duiview_"+view).html() == undefined) {
             $("#dui_container").append("<div id='duiview_"+view+"' class='dashui-view'></div>");
@@ -486,6 +487,7 @@ var dui = {
                 });
             } else {
                 $("#duiview_"+dui.activeView).hide();
+                console.log("changeView() change Theme "+dui.views[view].settings.theme);
                 $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
                 $("#duiview_"+view).show();
             }

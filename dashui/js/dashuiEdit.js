@@ -691,7 +691,7 @@ dui = $.extend(true, dui, {
             dui.views[dui.activeView].settings.theme = theme;
             $("#jqui_theme").remove();
             $("style[data-href$='jquery-ui.min.css']").remove();
-            $("head").append('<link rel="stylesheet" type="text/css" href="css/'+theme+'/jquery-ui.min.css" id="jqui_theme"/>');
+            $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+theme+'/jquery-ui.min.css" id="jqui_theme"/>');
             //attr("data-href", "css/"+theme+"/jquery-ui.min.css");
             dui.saveRemote();
         });
