@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:            '0.9beta10',
+    version:            '0.9beta11',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -784,13 +784,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                     $("#loading").append(".<br/>");
                     console.log("datapoints loaded");
                     for (var dp in data) {
-                        if (data[dp][3]) {
-                            var lc = new Date ();
-                            lc.setTime (data[dp][3] * 1000);
-                            homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: lc});
-                        } else {
-                            homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1]});
-                        }
+                        homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
                     }
                     $("#loading").append("Loading Widget-Sets...");
                     setTimeout(dui.init, 10);
