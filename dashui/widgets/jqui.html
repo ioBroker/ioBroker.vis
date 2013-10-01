@@ -109,7 +109,7 @@
                 var timepickerOptions = jQuery.extend(true, {
                     dateFormat:'yy-mm-dd',
                     monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" ],
-                    monthNames: [ "Januar", "Februar", "M�rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" ],
+                    monthNames: [ "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" ],
                     dayNamesMin: [ "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" ],
                     showAnim: "fadeIn",
                     firstDay: 1,
@@ -118,7 +118,7 @@
                     minuteText: "m",
                     secondText: "s",
                     currentText: "Jetzt",
-                    closeText: "Schlie�en",
+                    closeText: "Schließen",
                     minuteGrid: undefined,
                     hourGrid: undefined,
                     secondGrid: undefined,
@@ -342,7 +342,7 @@
 </script>
 
 <script type="text/ejs" id="tplJquiButtonLink" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Button Link" data-dashui-attrs="html_prepend;html_append;buttontext;href">
-    <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+    <div style="top:0px; left:0px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
         <div class="dashui-widget-body" >
             <%== this.data.attr("html_prepend") %>
             <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-dashui-link="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.buttonLink(el, data.attr('href')); %> />
@@ -475,7 +475,7 @@
             var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
             var val = parseFloat(str,10);
             var state;
-            if (val == 0 ||�str == "false") {
+            if (val == 0 || str == "false") {
             %>
             <%== this.data.attr("html_false") %>
             <% } else { %>
@@ -531,7 +531,7 @@
 
 
 <script type="text/ejs" id="tplJquiRadio" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Radiobuttons on/off" data-dashui-attrs="off_text;on_text;hm_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
+    <div style="top:0px; left:0px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="dashui-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
 
@@ -543,7 +543,7 @@
 </script>
 
 <script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Radiobuttons ValueList" data-dashui-attrs="hm_id;values;texts">
-    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
+    <div style="top:0px; left:0px; width:250px; height:38px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="dashui-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.radio(el)},100) %> >
             <%
@@ -615,7 +615,7 @@
 
 
 
-<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon .State()" data-dashui-attrs="src;href;target;alt;text">
+<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon .State()" data-dashui-attrs="hm_id;src;href;target;alt;text">
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
             <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
