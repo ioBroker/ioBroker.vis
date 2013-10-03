@@ -38,6 +38,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta12
+* (Hobbyquaker) Neues Widget "basic - hm_ctrl - HTML State" - setzt bei Klick einen Wert
+
 ### 0.9beta11
 * (Hobbyquaker) Bugfixes in diversen Widget-Sets
 * (Hobbyquaker) Widget-Dokumentation
