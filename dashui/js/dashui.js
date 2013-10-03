@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:            '0.9beta9',
+    version:            '0.9beta13',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -347,7 +347,12 @@ var dui = {
         if (!dui.views[view].settings.interval) {
             dui.views[view].settings.interval = dui.defaultHmInterval;
         }
-        $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
+
+        console.log("renderView() change Theme "+dui.views[view].settings.theme);
+        $("#jqui_theme").remove();
+        $("style[data-href$='jquery-ui.min.css']").remove();
+        $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme"/>');
+
         if ($("#dui_container").find("#duiview_"+view).html() == undefined) {
             $("#dui_container").append("<div id='duiview_"+view+"' class='dashui-view'></div>");
             $("#duiview_"+view).css(dui.views[view].settings.style);
@@ -482,6 +487,7 @@ var dui = {
                 });
             } else {
                 $("#duiview_"+dui.activeView).hide();
+                console.log("changeView() change Theme "+dui.views[view].settings.theme);
                 $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
                 $("#duiview_"+view).show();
             }
@@ -778,13 +784,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                     $("#loading").append(".<br/>");
                     console.log("datapoints loaded");
                     for (var dp in data) {
-                        if (data[dp][3]) {
-                            var lc = new Date ();
-                            lc.setTime (data[dp][3] * 1000);
-                            homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: lc});
-                        } else {
-                            homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1]});
-                        }
+                        homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
                     }
                     $("#loading").append("Loading Widget-Sets...");
                     setTimeout(dui.init, 10);

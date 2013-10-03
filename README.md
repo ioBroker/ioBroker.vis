@@ -38,6 +38,22 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta13
+* (Bluefox) Neue hqWidgets: Eventlist und Chart
+
+### 0.9beta12
+* (Hobbyquaker) Neues Widget "basic - hm_ctrl - HTML State" - setzt bei Klick einen Wert
+
+### 0.9beta11
+* (Hobbyquaker) Bugfixes in diversen Widget-Sets
+* (Hobbyquaker) Widget-Dokumentation
+* (Bluefox) Fix für LastChange Timestamp
+
+### 0.9beta10
+* (Hobbyquaker) Doku für das Widget-Set "basic" ausgearbeitet
+* (Hobbyquaker) Widgets "basic hm_val Bar horizontal/vertical" mit zusätzlichem Attribut "reverse" ausgestattet
+* (Hobbyquaker) Bugfixes diverse Widgets aus dem Widget-Set "basic"
+
 ### 0.9beta9
 * (Hobbyquaker) Widget-Dokumentation direkt aus Editor öffnen
 

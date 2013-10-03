@@ -164,6 +164,32 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           valueMax: 100,
                                           });
                 }                
+                else
+                if (wtype == 'tplHqCharts') {
+                    opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeButton,
+                                          buttonTypeEx: hqWidgets.gButtonType.gTypeCharts,                 
+                                          iconName: 'chart.png', 
+                                          zindex: 2, 
+                                          hm_ids: '',
+                                          title: dui.translate("Chart"),
+                                          exPopup: true,
+                                          });
+                }
+                else
+                if (wtype == 'tplHqEventlist') {
+                    opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeButton, 
+                                          buttonTypeEx: hqWidgets.gButtonType.gTypeEventlist,                 
+                                          iconName: 'history.png', 
+                                          zindex: 2, 
+                                          hm_ids: '',
+                                          exLoading: false,
+                                          exStatesOnly: true,
+                                          exTypes: 0,
+                                          exWidth: 0,
+                                          exPopup: true,
+                                          title: dui.translate("History"),
+                                          });
+                }
              }
             return opt;
         },
@@ -184,7 +210,10 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 hqEditElem._EditTextHandler ('dimmerOnTime');
             }
             
-            if (opt.hm_id != undefined) {
+            // Edit hm_id with help of dialog
+            if (opt["hm_id"] != undefined && 
+                opt.buttonTypeEx != hqWidgets.gButtonType.gTypeCharts &&
+                opt.buttonTypeEx != hqWidgets.gButtonType.gTypeEventlist) {
                 var attr = 'hm_id';
                 parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+opt.hm_id+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
                 document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
@@ -219,7 +248,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     $("#inspect_hm_id_desc").html(dui.getObjDesc ($(this).val()));
                     var btn = hqWidgets.Get (dui.activeWidget);
                     if (btn) {
-                        btn.SetSettings ({hm_id: $(this).val()}, true);
+                        btn.SetSettings ({"hm_id": $(this).val()}, true);
                     }
                 });
                 $("#inspect_"+attr).keyup (function () {
@@ -231,6 +260,114 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     }, hqWidgets.e_settings.timeout, $(this));
                 });
             }
+            if (opt["hm_ids"] != undefined) {
+                // This is multiselect
+                /*
+                var attr = 'hm_id';
+                var sText = '<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><select id="inspect_'+attr+'" multiple="multiple"  value="'+opt[attr]+'" "inspect_'+attr+'">\n';
+                for (var i = 0; i < homematic.regaIndex.HSSDP.length; i++) {
+                    var id = homematic.regaIndex.HSSDP[i];
+                    var chId = homematic.regaObjects[id].Parent;
+
+                    var unit = "";
+                    if (homematic.regaObjects[id].ValueUnit) {
+                        unit = " ["+homematic.regaObjects[id].ValueUnit+"]";
+                    }
+                    var tmp = homematic.regaObjects[id].Name.split(".");
+                    var dpName = tmp[2];
+
+                    sText +="<option value='"+id+"'>HSSDP "+homematic.regaObjects[chId].Name+" "+dpName+unit+"</option>\n";
+                }                
+                sText += '</select></td></tr>\n';
+                parent.append(sText);
+
+                // Select Homematic ID Dialog
+                $("#inspect_"+attr).multiselect({
+                    minWidth: 300,
+                    height: 260,
+                    noneSelectedText: "Datenreihen: keine ausgewahlt",
+                    selectedText: "Datenreihen: # ausgewahlt",
+
+                    checkAllText: "alle auswahlen",
+                    uncheckAllText: "Auswahl aufheben"
+                }).multiselectfilter({
+                    placeholder: ""
+                });
+                
+                $("#inspect_"+attr).change(function () {
+                    var btn = hqWidgets.Get (dui.activeWidget);
+                    if (btn) {
+                        btn.SetSettings ({"hm_ids": $(this).val()}, true);
+                    }
+                });*/
+                var attr = 'hm_ids';
+                var points = opt["hm_ids"];
+                if (points.constructor != Array) {
+                    points = points.split(',');
+                }
+                var cnt = 2;
+                for (var i = 0; i < cnt; i++) {
+                    if (points[i] === undefined) points[i] = "";
+                    
+                    parent.append('<tr class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'_'+i+'" size="5" value="'+points[i]+'"><input type="button" id="inspect_'+attr+'_'+i+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_'+i+'_desc"></div></td></tr>');
+                    document.getElementById ("inspect_"+attr+"_"+i+"_btn").jControl  = attr+"_"+i;
+                    document.getElementById ("inspect_"+attr+"_"+i+"_btn").devFilter = devFilters[0];
+                    $("#inspect_"+attr+"_"+i+"_desc").html(dui.getObjDesc (points[i]));
+                    // Select Homematic ID Dialog
+                    $("#inspect_"+attr+"_"+i+"_btn").click ( function () {
+                        hmSelect.value = $("#inspect_"+this.jControl).val();
+                        hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
+                            $("#inspect_"+obj).val(value).trigger("change");
+                            if (valueObj) {
+                                var btn = hqWidgets.Get (dui.activeWidget);
+                                if (btn) {
+                                    var stitle = btn.GetSettings ("title");
+                                    btn.SetSettings ({room: valueObj.room});
+                                    if (stitle == undefined || stitle == null || stitle == "") {
+                                        var title = hmSelect._convertName(valueObj.Name);                                        
+                                        // Remove ROOM from device name
+                                        if (title.length > valueObj.room.length && title.substring(0, valueObj.room.length) == valueObj.room)
+                                            title = title.substring(valueObj.room.length);
+                                        // Remove the leading dot
+                                        if (title.length > 0 && title[0] == '.')
+                                            title = title.substring(1);
+                                        $('#inspect_title').val (title);
+                                        $('#inspect_title').trigger ('change');
+                                    }
+                                }
+                            }
+                        }, null, this.devFilter);
+                    });
+                    $("#inspect_"+attr+"_"+i).change(function (el) {
+                        var i = this.id.substring(this.id.length-2);
+                        i = i.replace('_','');
+                        $("#inspect_hm_ids_"+i+"_desc").html(dui.getObjDesc ($(this).val()));
+                        var btn = hqWidgets.Get (dui.activeWidget);
+                        if (btn) {
+                            var j = 0;
+                            var val = "";
+                            var obj = null;
+                            while (document.getElementById('inspect_hm_ids_'+j) != null) {
+                                var v = $('#inspect_hm_ids_'+j).val();
+                                if (v != "")
+                                    val += ((val == "") ? "" : ",") + v;
+                                j++;
+                            }
+                        
+                            btn.SetSettings ({"hm_ids": val}, true);
+                        }
+                    });
+                    $("#inspect_"+attr+"_"+i).keyup (function () {
+                        if (hqWidgets.e_internal.timer) 
+                            clearTimeout (hqWidgets.e_internal.timer);
+                                
+                        hqWidgets.e_internal.timer = setTimeout (function(elem) {
+                            elem.trigger("change");
+                        }, hqWidgets.e_settings.timeout, $(this));
+                    });
+                }
+            }
+            // no else hier
             if (opt.buttonType == hqWidgets.gButtonType.gTypeBlind) {
                 var wnd = opt.windowConfig;
                 var a = wnd.split(',');
@@ -369,8 +506,12 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             }
             
             // Hichcharts settings
-            if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp || 
-                opt.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
+            if (opt.buttonType  == hqWidgets.gButtonType.gTypeInTemp  || 
+                opt.buttonType  == hqWidgets.gButtonType.gTypeOutTemp ||
+                (opt.buttonTypeEx !== undefined &&
+                 opt.buttonTypeEx == hqWidgets.gButtonType.gTypeCharts)
+               )
+                 {
                 if (hqEditElem.e_internal.obj.advancedVisible === undefined)
                     hqEditElem.e_internal.obj.advancedVisible = false;
                     
@@ -456,6 +597,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 sTextChart += "</select>";                
                 // Zoom active
                 sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Zoom active:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_zoom'>";
+                // Show loading process
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Show loading:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_loader'>";
                 
             
                 // Show button
@@ -533,7 +676,49 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 hqEditElem._EditCheckboxHandlerEx ('grouping');
                 hqEditElem._EditSelectHandlerEx ('legend');
                 hqEditElem._EditCheckboxHandlerEx ('zoom');
+                hqEditElem._EditCheckboxHandlerEx ('loader');
             }
+            
+            // Popup
+            if (opt.buttonTypeEx !== undefined &&
+                (opt.buttonTypeEx == hqWidgets.gButtonType.gTypeCharts ||
+                 opt.buttonTypeEx == hqWidgets.gButtonType.gTypeEventlist)){
+                var sText = "<tr><td>"+ dui.translate("As popup:") +"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_exPopup' "+(hqEditElem.e_internal.attr.exPopup ? "checked" : "")+" ></td></tr>";
+                parent.append(sText);
+                hqEditElem._EditCheckboxHandler ('exPopup', false, false, true);
+                
+                // Hide all unused fields
+                $("#tr"+hqEditElem.e_settings.elemName+"_state").hide();
+                $("#td1_"+hqEditElem.e_settings.elemName+"_iconOn").hide();
+                $("#td2_"+hqEditElem.e_settings.elemName+"_iconOn").hide();
+                $("#td1_"+hqEditElem.e_settings.elemName+"_hoursLastAction").hide();
+                $("#td2_"+hqEditElem.e_settings.elemName+"_hoursLastAction").hide();
+                $("#td1_"+hqEditElem.e_settings.elemName+"_styleActiveParent").hide();
+                $("#"+hqEditElem.e_settings.elemName+"_styleActiveParent").hide();
+                $("#td1_"+hqEditElem.e_settings.elemName+"_styleActiveHoverParent").hide();
+                $("#"+hqEditElem.e_settings.elemName+"_styleActiveHoverParent").hide();
+                
+                
+            }
+            // Eventlist settings
+            if (opt.buttonTypeEx !== undefined &&
+                opt.buttonTypeEx == hqWidgets.gButtonType.gTypeEventlist) {
+                var sText = "";
+                sText += "<tr><td>"+ dui.translate("Show loading:") +"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_exLoading' "+(hqEditElem.e_internal.attr.exLoading ? "checked" : "")+" ></td></tr>";
+                sText += "<tr><td>"+ dui.translate("Only states:") +"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_exStatesOnly' "+(hqEditElem.e_internal.attr.exStatesOnly ? "checked" : "")+" ></td></tr>";
+                sText += "<tr><td>"+ dui.translate("Width:") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_exWidth'  type='text' value='"+hqEditElem.e_internal.attr.exWidth+"'></td></tr>";
+                sText += "<tr><td>"+ dui.translate("Show types:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_exTypes' class='selectEditWidth'>";
+                sText += "<option value='0'>"+dui.translate("All")+"</option>";
+                sText += "<option value='1'>"+dui.translate("Only devices")+"</option>";
+                sText += "<option value='2'>"+dui.translate("Only variables")+"</option>";
+                sText += "</select>";                
+                parent.append(sText);
+                
+                hqEditElem._EditCheckboxHandler ('exLoading', false, false, true);
+                hqEditElem._EditCheckboxHandler ('exStatesOnly', false, false, true);
+                hqEditElem._EditTextHandler('staticText');   
+                hqEditElem._EditSelectHandler('exTypes');   
+            }        
         },      
     });
 }

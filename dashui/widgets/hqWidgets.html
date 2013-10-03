@@ -22,6 +22,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                 
                 dui.binds.hqWidgetsExt.inited = true;
                 
+                // Extend types with specific types
+                hqWidgets.gButtonType = $.extend (hqWidgets.gButtonType, 
+                    {gTypeCharts:     100,
+                     gTypeEventlist:  101,
+                    });
+                
                 // Init hqWidgets engine
                 hqWidgets.Init ({gPictDir: "widgets/hqWidgets/img/"});
                 if (hqWidgets.version != dui.binds.hqWidgetsExt.version) {
@@ -110,9 +116,74 @@ if ((typeof hqWidgets !== 'undefined')) {
                     opt.buttonType = hqWidgets.gButtonType.gTypeButton;
                 }
                 
-                // If first creation
+                // If first creation in non-edit mode
                 if (wtype === undefined) {
                     // non-edit mode => define event handlers
+                    if (opt.buttonTypeEx !== undefined && opt.buttonTypeEx == hqWidgets.gButtonType.gTypeCharts) {
+                        adv = $.extend (adv, {action: function (obj, what, state) {
+                            // Show grafik in a new window
+                            var hm_id = opt['hm_ids'];
+                            var points = [];
+                            if (hm_id != null && hm_id != "") {
+                                points = hm_id.split(',');
+                            }
+                            if (points[0]) {
+                                var src = document.location.href;
+                                var i = src.indexOf("dashui");
+                                if (i > 0) {
+                                    src = src.substring (0, i) + "charts/";
+                                    var url = src+'?dp=';
+                                    for (var t = 0; t < points.length; t++) {
+                                        url += ((t > 0) ? ',' : '') + points[t];
+                                    }
+                                    url += '&navserie='+points[0];
+                                    if (opt["charts"] !== undefined) {
+                                        for(var property in opt["charts"]) {
+                                           // you can get the value like this: myObject[propertyName]
+                                           url += '&'+property+'='+opt["charts"][property];
+                                        }
+                                    }
+                                    else
+                                        url += '&theme=&percentaxis=true&loader=false&legend=inline&period=72&range=24';
+                                    var win=window.open(url, 'myCharts');
+                                    win.focus();                            
+                                }
+                            }
+                        }});
+                    }
+                    else
+                    if (opt.buttonTypeEx !== undefined && opt.buttonTypeEx == hqWidgets.gButtonType.gTypeEventlist) {
+                        adv = $.extend (adv, {action: function (obj, what, state) {
+                            // Show grafik in a new window
+                            var src = document.location.href;
+                            var i = src.indexOf("dashui");
+                            if (i > 0) {
+                                src = src.substring (0, i) + "eventlist/";
+                                 var url = "";
+                                if (opt['hm_ids'] !== undefined && opt['hm_ids'] != "") {
+                                    url += ((url !="") ? "&" : "?") + "hmID=" + opt['hm_ids'];
+                                }
+                                if (opt['exLoading'] !== undefined && opt['exLoading'] != "") {
+                                    url += ((url !="") ? "&" : "?") + "loading=" + opt['exLoading'];
+                                }
+                                if (opt['exAdvanced'] !== undefined && opt['exAdvanced'] != "") {
+                                    url += ((url !="") ? "&" : "?") + "advanced=" + opt['exAdvanced'];
+                                }
+                                if (opt['exStatesOnly'] !== undefined && opt['exStatesOnly'] != "") {
+                                    url += ((url !="") ? "&" : "?") + "states=" + opt['exStatesOnly'];
+                                }
+                                if (opt['exWidth'] !== undefined && opt['exWidth'] != "" && opt['exWidth'] != "0" && opt['exWidth'] != 0) {
+                                    url += ((url !="") ? "&" : "?") + "width=" + opt['exWidth'];
+                                }
+                                if (opt['exTypes'] !== undefined && opt['exTypes'] != "") {
+                                    url += ((url !="") ? "&" : "?") + "types=" + opt['exTypes'];
+                                }
+                                var win=window.open(src+url, 'myCharts');
+                                win.focus();                            
+                            }
+                        }});
+                    }
+                    else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
                         adv = $.extend (adv, {action: function (obj, what, state) {
                             var hm_id   = obj.GetSettings ('hm_id');
@@ -471,8 +542,140 @@ if ((typeof hqWidgets !== 'undefined')) {
                 
                 var btn = hqWidgets.Create (opt, {elemName: el, parent: $("#duiview_"+view)});//dui.activeView)});
  
-                if (wtype === undefined) {
-                    // Create signal translators
+                // Create signal translators
+                if (wtype === undefined) {                  
+                    if (opt.buttonTypeEx !== undefined && opt.buttonTypeEx == hqWidgets.gButtonType.gTypeCharts) {
+                        // Get stored settings for info window
+                        var wObj = dui.binds.hqWidgetsExt.hqGetWidgetByObj (btn);
+                        btn.SetStates({state: hqWidgets.gState.gStateOff});
+                        if (opt.exPopup == true) {
+                            var storedInfo = null;
+                            if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+                            var infoWindow = btn.GetInfoWindowSettings ();
+                            infoWindow.isEnabled     = true;
+                            infoWindow.content       = "";
+                            infoWindow.isShowButtons = true;
+                            infoWindow.pinShow       = true;
+                            infoWindow.showPinned    = true;
+                            infoWindow.width         = (storedInfo == null) ? 800:  storedInfo.width;
+                            infoWindow.height        = (storedInfo == null) ? 400:  storedInfo.height;
+                            infoWindow.x             = (storedInfo == null) ? null: storedInfo.x;
+                            infoWindow.y             = (storedInfo == null) ? null: storedInfo.y;
+                            infoWindow.title         = ((opt.room != "" && opt.room != null) ? ("[" + opt.room + "] ") : "") + (opt.title || dui.translate("Chart"));
+                            infoWindow.onShow        = function (obj, jContent) {
+                                // update information if older than 5 minutes
+                                if (obj.lastBigShow === undefined || Date.now() - obj.lastBigShow > 60000) {
+                                    jContent.html ("");
+                                    var infoWnd = {'content': obj.graficIframe};
+                                    obj.SetInfoWindowSettings (infoWnd);
+                                    obj.lastBigShow = Date.now();
+                                }
+                            };
+                            infoWindow.onHide         = function (obj, jContent) {
+                                // Store position and size of this big window
+                                var iWnd = obj.GetInfoWindowSettings ();
+                                var infoWindow = {'x': Math.round(iWnd.x), 'y': Math.round(iWnd.y), 'width': Math.round(iWnd.width), 'height': Math.round(iWnd.height)};
+                                dui.binds.hqWidgetsExt.hqEditStoreInfoWindow (obj, infoWindow);
+                            };
+                            // Show grafik
+                            var hm_id = opt['hm_ids'];
+                            var points = [];
+                            if (hm_id != null && hm_id != "") {
+                                points = hm_id.split(',');
+                            }
+                            if (points[0]) {
+                                var src = document.location.href;
+                                var i = src.indexOf("dashui");
+                                if (i > 0) {
+                                    src = src.substring (0, i) + "charts/";
+                                    btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
+                                                         'src="'+src+'?dp=';
+                                    for (var t = 0; t < points.length; t++) {
+                                        btn.graficIframe += ((t > 0) ? ',' : '') + points[t];
+                                    }
+                                    btn.graficIframe += '&navserie='+points[0];
+                                    if (opt["charts"] !== undefined) {
+                                        for(var property in opt["charts"]) {
+                                           // you can get the value like this: myObject[propertyName]
+                                           btn.graficIframe += '&'+property+'='+opt["charts"][property];
+                                        }
+                                    }
+                                    else
+                                        btn.graficIframe += '&theme=&percentaxis=true&loader=false&legend=inline&period=72&range=24';
+                                    btn.graficIframe += '"></iframe>';
+                                    console.log("Highchart: " + btn.graficIframe);
+                                    btn.SetInfoWindowSettings (infoWindow);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    if (opt.buttonTypeEx !== undefined && opt.buttonTypeEx == hqWidgets.gButtonType.gTypeEventlist) {
+                         // Get stored settings for info window
+                        var wObj = dui.binds.hqWidgetsExt.hqGetWidgetByObj (btn);
+                        btn.SetStates({state: hqWidgets.gState.gStateOff});
+                        if (opt.exPopup == true) {
+                            var storedInfo = null;
+                            if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+                            var infoWindow = btn.GetInfoWindowSettings ();
+                            infoWindow.isEnabled     = true;
+                            infoWindow.content       = "";
+                            infoWindow.isShowButtons = true;
+                            infoWindow.pinShow       = true;
+                            infoWindow.showPinned    = true;
+                            infoWindow.width         = (storedInfo == null) ? 800:  storedInfo.width;
+                            infoWindow.height        = (storedInfo == null) ? 400:  storedInfo.height;
+                            infoWindow.x             = (storedInfo == null) ? null: storedInfo.x;
+                            infoWindow.y             = (storedInfo == null) ? null: storedInfo.y;
+                            infoWindow.title         = ((opt.room != "" && opt.room != null) ? ("[" + opt.room + "] ") : "") + (opt.title || dui.translate("History"));
+                            infoWindow.onShow        = function (obj, jContent) {
+                                // update information if older than 5 minutes
+                                if (obj.lastBigShow === undefined || Date.now() - obj.lastBigShow > 60000) {
+                                    jContent.html ("");
+                                    var infoWnd = {'content': obj.graficIframe};
+                                    obj.SetInfoWindowSettings (infoWnd);
+                                    obj.lastBigShow = Date.now();
+                                }
+                            };
+                            infoWindow.onHide         = function (obj, jContent) {
+                                // Store position and size of this big window
+                                var iWnd = obj.GetInfoWindowSettings ();
+                                var infoWindow = {'x': Math.round(iWnd.x), 'y': Math.round(iWnd.y), 'width': Math.round(iWnd.width), 'height': Math.round(iWnd.height)};
+                                dui.binds.hqWidgetsExt.hqEditStoreInfoWindow (obj, infoWindow);
+                            };
+                            // Show grafik
+                            // Show grafik in a new window
+                            var src = document.location.href;
+                            var i = src.indexOf("dashui");
+                            if (i > 0) {
+                                src = src.substring (0, i) + "eventlist/";
+                                btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
+                                                         'src="'+src;
+                                var url = "";
+                                if (opt['hm_ids'] !== undefined && opt['hm_ids'] != "") {
+                                    url += ((url !="") ? "&" : "?") + "hmID=" + opt['hm_ids'];
+                                }
+                                if (opt['exLoading'] !== undefined && opt['exLoading'] != "") {
+                                    url += ((url !="") ? "&" : "?") + "loading=" + opt['exLoading'];
+                                }
+                                if (opt['exAdvanced'] !== undefined && opt['exAdvanced'] != "") {
+                                    url += ((url !="") ? "&" : "?") + "advanced=" + opt['exAdvanced'];
+                                }
+                                if (opt['exStatesOnly'] !== undefined && opt['exStatesOnly'] != "") {
+                                    url += ((url !="") ? "&" : "?") + "states=" + opt['exStatesOnly'];
+                                }
+                                if (opt['exWidth'] !== undefined && opt['exWidth'] != "" && opt['exWidth'] != "0" && opt['exWidth'] != 0) {
+                                    url += ((url !="") ? "&" : "?") + "width=" + opt['exWidth'];
+                                }
+                                if (opt['exTypes'] !== undefined && opt['exTypes'] != "") {
+                                    url += ((url !="") ? "&" : "?") + "types=" + opt['exTypes'];
+                                }
+                                btn.graficIframe += url +'"></iframe>';
+                                btn.SetInfoWindowSettings (infoWindow);
+                            }
+                        }
+                    }
+                    else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeButton) {
                         btn = $.extend (btn, {translateSignal: function (options, value) {
                             return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
@@ -557,8 +760,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                         };
                         // Show grafik
                         var hm_id = opt['hm_id'];
+                        var points = [];
                         if (hm_id != null && hm_id != "") {
-                            var points = [];
                             var cnt = 0;
                             if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["TEMPERATURE"]) {
                                 points[cnt++] = homematic.regaObjects[hm_id]["DPs"]["TEMPERATURE"];
@@ -613,11 +816,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                         btn = $.extend (btn, {translateSignal: function (options, value) {
                             return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
                         }});
-                     }
+                    }
                 
                     // Restore size of information window
-                    if (opt.buttonType == hqWidgets.gButtonType.gTypeCam ||
-                        opt.buttonType == hqWidgets.gButtonType.gTypeGong) {
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeCam  ||
+                        opt.buttonType == hqWidgets.gButtonType.gTypeGong) 
+                    {
                         // Get stored settings for info window
                         var wObj = dui.binds.hqWidgetsExt.hqGetWidgetByObj (btn);
                         var storedInfo = null;
@@ -628,6 +832,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                         infoWindow.height        = (storedInfo == null) ? infoWindow.height: storedInfo.height;
                         infoWindow.x             = (storedInfo == null) ? infoWindow.x:      storedInfo.x;
                         infoWindow.y             = (storedInfo == null) ? infoWindow.y:      storedInfo.y;
+                        infoWindow.isEnabled     = true;
                         
                         infoWindow.onHide         = function (obj, jContent) {
                             // Store position and size of this big window
@@ -638,7 +843,6 @@ if ((typeof hqWidgets !== 'undefined')) {
                         btn.SetInfoWindowSettings (infoWindow);
                     }
                 }
-
  
                 // Enable edit mode
                 if (dui.urlParams["edit"] === "") {
@@ -920,6 +1124,42 @@ if ((typeof hqWidgets !== 'undefined')) {
             }
             else {
                 dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGauge", this.view); 
+            }
+        }
+    %>
+</script>
+<script type="text/ejs" id="tplHqGauge" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Gauge" data-dashui-attrs="hm_id;hqoptions">
+    <% 
+        if (this && this.data && this.data.attr) {
+            if (this.data.attr('hqoptions')){
+                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
+            }
+            else {
+                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGauge", this.view); 
+            }
+        }
+    %>
+</script>
+<script type="text/ejs" id="tplHqCharts" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Charts" data-dashui-attrs="hqoptions">
+    <% 
+        if (this && this.data && this.data.attr) {
+            if (this.data.attr('hqoptions')){
+                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
+            }
+            else {
+                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqCharts", this.view); 
+            }
+        }
+    %>
+</script>
+<script type="text/ejs" id="tplHqEventlist" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Eventlist" data-dashui-attrs="hqoptions">
+    <% 
+        if (this && this.data && this.data.attr) {
+            if (this.data.attr('hqoptions')){
+                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view); 
+            }
+            else {
+                dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqEventlist", this.view); 
             }
         }
     %>

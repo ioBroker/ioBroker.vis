@@ -109,81 +109,248 @@ Dieses Widget stellt einen Zahlenwert dar (sowohl für Integer als auch Float ve
 
 <hr/>
 
-<h3><a name="">hm_val - String</a></h3>
+<h3><a name="tplValueString">hm_val - String</a></h3>
+Dieses Widget stellt einen Datenpunkt vom Typ Zeichenkette dar.
+<dl>
+    <dt>html_prepend</dt>
+    <dd>Text oder HTML-Code der vor dem String angezeigt wird</dd>
+
+    <dt>html_append</dt>
+    <dd>Text oder HTML-Code der hinter dem String angezeigt wird</dd>
+</dl>
+<hr/>
+
+<h3><a name="tplValueStringRaw">hm_val - String (unescaped)</a></h3>
+Dieses Widget stellt einen Datenpunkt vom Typ Zeichenkette dar. Im Unterschied zum <a href="#tplValueString">Widget "hm_val - String"</a>
+werden dabei keine Sonderzeichen "escaped" - d.h. die Variable kann auch HTML-Code enthalten und dieser wird dann dargestellt.
+<dl>
+    <dt>html_prepend</dt>
+    <dd>Text oder HTML-Code der vor dem String angezeigt wird</dd>
+
+    <dt>html_append</dt>
+    <dd>Text oder HTML-Code der hinter dem String angezeigt wird</dd>
+</dl>
 
 <hr/>
 
-<h3><a name="">hm_val - String (unescaped)</a></h3>
+<h3><a name="tplValueStringImg">hm_val - String img src</a></h3>
+Diesem Widget kann ein Variable vom Typ Zeichenkette zugeordnet werden, eine dort enthaltene URL wird dann als Bild dargestellt
+<dl>
+    <dt>html_prepend</dt>
+    <dd>Text oder HTML-Code der vor dem Bild angezeigt wird</dd>
 
-<hr/>
-
-<h3><a name="">hm_val - String img src</a></h3>
-
-<hr/>
-
-
-<h3><a name="">hm_val - ValueList Text</a></h3>
-
-<hr/>
-
-<h3><a name="">hm_val - ValueList HTML</a></h3>
-
-<hr/>
-
-<h3><a name="">hm_val - ValueList HTML 8</a></h3>
-
-<hr/>
-
-<h3><a name="">hm_val - Bool HTML</a></h3>
-
-<hr/>
-
-<h3><a name="">hm_ctrl - Bool Checkbox</a></h3>
-
-<hr/>
-
-<h3><a name="">hm_ctrl - Bool Select</a></h3>
-
+    <dt>html_append</dt>
+    <dd>Text oder HTML-Code der hinter dem Bild angezeigt wird</dd>
+</dl>
 <hr/>
 
 
-<h3><a name="">hm_val - Hide on 0/false</a></h3>
+<h3><a name="tplValueList">hm_val - ValueList Text</a></h3>
+Dieses Widget stellt eine Variable vom Typ Werteliste dar.
+<dl>
+    <dt>valuelist</dt>
+    <dd>Eine Semikolon-getrennte Liste von Texten für die jeweiligen Werte.</dd>
+
+    <dt>html_prepend</dt>
+    <dd>Text oder HTML-Code der vor dem Bild angezeigt wird</dd>
+
+    <dt>html_append</dt>
+    <dd>Text oder HTML-Code der hinter dem Bild angezeigt wird</dd>
+</dl>
+<hr/>
+
+<h3><a name="tplValueListHtml">hm_val - ValueList HTML</a></h3>
+Dieses Widget stellt eine Variable vom Typ Werteliste dar. Entspricht dem <a href="#tplValueList">Widget "hm_val - ValueList Text</a>,
+allerdings wird nicht "escaped", d.h. in valuelist kann HTML-Code eingetragen werden.
+<dl>
+    <dt>valuelist</dt>
+    <dd>Eine Semikolon-getrennte Liste von HTML-Code für die jeweiligen Werte.</dd>
+
+    <dt>html_prepend</dt>
+    <dd>Text oder HTML-Code der vor dem Bild angezeigt wird</dd>
+
+    <dt>html_append</dt>
+    <dd>Text oder HTML-Code der hinter dem Bild angezeigt wird</dd>
+</dl>
+<hr/>
+
+<h3><a name="tplValueListHtml8">hm_val - ValueList HTML 8</a></h3>
+Dieses Widget stellt eine Variable vom Typ Werteliste dar. Entspricht dem <a href="#tplValueListHTML">Widget "hm_val - ValueList HTML</a>,
+bietet aber die Möglichkeit für 8 verschiedene Werte (0-7) auch 8 verschiedene CSS-Angaben zu verwenden.
+<dl>
+    <dt>html_prepend</dt>
+    <dd>Text oder HTML-Code der vor dem Bild angezeigt wird</dd>
+
+    <dt>html_append</dt>
+    <dd>Text oder HTML-Code der hinter dem Bild angezeigt wird</dd>
+
+    <dt>value0 bis value7</dt>
+    <dd>Text oder HTML-Code für die Werte 0 bis 7</dd>
+
+    <dt>style0 bis style7</dt>
+    <dd>CSS-Angaben für die Werte 0 bis 7</dd>
+
+
+</dl>
+<hr/>
+
+<h3><a name="tplValueBool">hm_val - Bool HTML</a></h3>
+Dieses Widget stellt Bool-Werte dar.
+<dl>
+    <dt>html_prepend</dt>
+    <dd>Text oder HTML-Code der vor dem Bild angezeigt wird</dd>
+
+    <dt>html_append</dt>
+    <dd>Text oder HTML-Code der hinter dem Bild angezeigt wird</dd>
+
+    <dt>html_true</dt>
+    <dd>Text oder HTML-Code der im True-Fall angezeigt wird</dd>
+
+    <dt>html_false</dt>
+    <dd>Text oder HTML-Code der im False-Fall angezeigt wird</dd>
+
+
+</dl>
+
+
+<hr/>
+
+<h3><a name="tplValueBoolCheckbox">hm_ctrl - Bool Checkbox</a></h3>
+Dieses Widget zeigt Bool-Werte als einfache Checkbox an und erlaubt außerdem den Wert zu umzuschalten.
+<dl>
+    <dt>html_prepend</dt>
+    <dd>Text oder HTML-Code der vor der Checkbox angezeigt wird</dd>
+
+    <dt>html_append</dt>
+    <dd>Text oder HTML-Code der hinter der Checkbox angezeigt wird</dd>
+</dl>
+<hr/>
+
+<h3><a name="tplValueBoolSelect">hm_ctrl - Bool Select</a></h3>
+Dieses Widget stellt Bool-Werte als Dropdown dar und erlaubt außerdem den Wert umzuschalten.
+<dl>
+    <dt>html_prepend</dt>
+    <dd>Text oder HTML-Code der vor dem Bild angezeigt wird</dd>
+
+    <dt>html_append</dt>
+    <dd>Text oder HTML-Code der hinter dem Bild angezeigt wird</dd>
+
+    <dt>text_true</dt>
+    <dd>Text für den True-Fall</dd>
+
+    <dt>text_false</dt>
+    <dd>Text für den False-Fall</dd>
+
+
+</dl>
+
+<hr/>
+<h3><a name="tplValueBoolCtrl">hm_ctrl - Bool HTML</a></h3>
+Dieses Widget stellt Bool-Werte dar und erlaubt außerdem den Wert auf Klick innerhalb der Widget-Fläche umzuschalten.
+<dl>
+    <dt>html_prepend</dt>
+    <dd>Text oder HTML-Code der vor dem Bild angezeigt wird</dd>
+
+    <dt>html_append</dt>
+    <dd>Text oder HTML-Code der hinter dem Bild angezeigt wird</dd>
+
+    <dt>html_true</dt>
+    <dd>Text oder HTML-Code der im True-Fall angezeigt wird</dd>
+
+    <dt>html_false</dt>
+    <dd>Text oder HTML-Code der im False-Fall angezeigt wird</dd>
+
+</dl>
+
+<hr/>
+
+
+<h3><a name="tplBasicState">hm_ctrl - HTML State</a></h3>
+Dieses Widget setzt bei Klick innerhalb der Widget-Fläche einen Wert.
+<dl>
+    <dt>html</dt>
+    <dd>Text oder HTML-Code der angezeigt wird</dd>
+
+    <dt>value</dt>
+    <dd>Wert der gesetzt werden soll</dd>
+
+</dl>
+
+<hr/>
+
+<h3><a name="tplHide">hm_val - Hide on 0/false</a></h3>
 Dieses Widget verschwindet wenn der Wert des zugeordneten Datenpunkts 0 bzw false ist. Geschickt z.B. für die Anzeige von Servicemeldungen
 
 <hr/>
 
-<h3><a name="">hm_val - Red Number</a></h3>
+<h3><a name="tplRedNumber">hm_val - Red Number</a></h3>
 Anzeige eines numerischen Werts im Stil der iOS Benachrichtigungs-Symbole. Verschwindet beim Wert 0.
 
 
 <hr/>
 
-<h3><a name="">hm_val - Bulb on/off</a></h3>
+<h3><a name="tplBulbOnOff">hm_val - Bulb on/off</a></h3>
+Dieses Widget stellt einen Wert als ausgeschaltete oder leuchtende Glühbirne auf schwarzem Hintergrund dar. Ist für Bool und Float-Werte (Dimmer) einsetzbar.
 
 <hr/>
 
-<h3><a name="">hm_ctrl - Bulb on/off</a></h3>
+<h3><a name="tplBulbOnOffCtrl">hm_ctrl - Bulb on/off</a></h3>
+Dieses Widget stellt einen Wert als ausgeschaltete oder leuchtende Glühbirne auf schwarzem Hintergrund dar. Bei Klick auf das Widget
+wird der Wert umgeschaltet.
 
 <hr/>
 
-<h3><a name="">hm_val - Bulb on/off</a></h3>
+<h3><a name="tplHmWindowRotary">hm_val - Drehgriff</a></h3>
+Dieses Widget stellt eine Drehgriff-Sensor mit den originalen Homematic-Icons dar.
+<hr/>
+
+<h3><a name="tplHmWindow">hm_val - TFK</a></h3>
+Dieses Widget stellt einen Tür-/Fenster-Kontakt mit den originalen Homematic-Icons dar.
+<hr/>
+
+<h3><a name="tplValueFloatBar">hm_val - Bar Horizontal</a></h3>
+Dieses Widget stellt einen Wert von 0-100 als horizontalen Balken dar.
+<dl>
+    <dt>factor</dt>
+    <dd>Faktor mit dem der Wert multipliziert wird. Beispiel: für einen Dimmer (der von 0.00 bis 1.00 geht) muss 100 eingetragen werden.</dd>
+
+    <dt>color</dt>
+    <dd>CSS-Eigenschaft background-color des Balkens</dd>
+
+    <dt>border</dt>
+    <dd>CSS-Eigenschaft border des Balkens</dd>
+
+    <dt>shadow</dt>
+    <dd>CSS-Eigenschaft box-shadow des Balkens</dd>
+
+    <dt>reverse</dt>
+    <dd>Wenn hier true eingetragen wird wird der Balken von rechts nach links statt von links nach rechts angezeigt</dd>
+
+
+</dl>
 
 <hr/>
 
-<h3><a name="">hm_val - Drehgriff</a></h3>
+<h3><a name="tplValueFloatBarVertical">hm_val - Bar Vertical</a></h3>
+Entspricht dem <a href="#tplValueFloatBar">Widget "hm_val - Bar Horizontal</a>, allerdings vertikal statt horiziontal.
+<dl>
+    <dt>factor</dt>
+    <dd>Faktor mit dem der Wert multipliziert wird. Beispiel: für einen Dimmer (der von 0.00 bis 1.00 geht) muss 100 eingetragen werden.</dd>
 
-<hr/>
+    <dt>color</dt>
+    <dd>CSS-Eigenschaft background-color des Balkens</dd>
 
-<h3><a name="">hm_val - TFK</a></h3>
+    <dt>border</dt>
+    <dd>CSS-Eigenschaft border des Balkens</dd>
 
-<hr/>
+    <dt>shadow</dt>
+    <dd>CSS-Eigenschaft box-shadow des Balkens</dd>
 
-<h3><a name="">hm_val - Bar Horizontal</a></h3>
+    <dt>reverse</dt>
+    <dd>Wenn hier true eingetragen wird wird der Balken von unten nach oben statt von oben nach unten angezeigt</dd>
 
-<hr/>
 
-<h3><a name="">hm_val - Bar Vertical</a></h3>
-
+</dl>
 <hr/>
 
 </body>
