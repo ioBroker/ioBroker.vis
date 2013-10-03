@@ -217,12 +217,7 @@
             },
             button: function (el, value) {
                 var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                $this.button().click(function () {
-                    if (dui.urlParams["edit"] !== "") {
-                        homematic.setValue(id,  $this.attr("data-hm-value"));
-                    }
-                });
+                $this.button();
             },
             buttonDialog: function (el) {
                 var $this = jQuery(el);
@@ -425,7 +420,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
             <%== this.data.attr("html_prepend") %>
-            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-value="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.buttonDialog(el); %> />
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.buttonDialog(el); %> />
             <%== this.data.attr("html_append") %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
@@ -506,17 +501,17 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiButtonState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Button .State()" data-dashui-attrs="html_prepend;html_append;buttontext;value;hm_id;">
+<script type="text/ejs" id="tplJquiButtonState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Button State" data-dashui-attrs="html_prepend;html_append;buttontext;value;hm_id;">
     <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
         <div class="dashui-widget-body" >
             <%== this.data.attr("html_prepend") %>
-            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-value="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.button(el); %> />
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.button(el); dui.binds.basic.state(el); %> />
             <%== this.data.attr("html_append") %>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiButtonRunProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Button .ProgramExecute()" data-dashui-attrs="html_prepend;html_append;buttontext;hm_id">
+<script type="text/ejs" id="tplJquiButtonRunProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Button ProgramExecute" data-dashui-attrs="html_prepend;html_append;buttontext;hm_id">
     <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
         <div class="dashui-widget-body" >
             <%== this.data.attr("html_prepend") %>
@@ -615,11 +610,22 @@
 
 
 
-<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon .State()" data-dashui-attrs="hm_id;src;href;target;alt;text">
-    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
-        <div class="dashui-widget-body">
-            <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
-        </div>
+<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon State" data-dashui-attrs="hm_id;value;text;src;alt">
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.state(el); dui.binds.jqueryui.classes(el) %>>
+    <div class="dashui-widget-body">
+        <img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+    </div>
+    </div>
+</script>
+
+
+
+
+<script type="text/ejs" id="tplIconProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon ProgramExecute" data-dashui-attrs="hm_id;text;src;alt">
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.program(el); dui.binds.jqueryui.classes(el) %>>
+    <div class="dashui-widget-body">
+        <img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+    </div>
     </div>
 </script>
 

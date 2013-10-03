@@ -303,7 +303,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {
-            sText += "<tr><td>"+ hqWidgets.Translate("Test state:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_state'>";
+            sText += "<tr id='tr"+this.e_settings.elemName+"_state'><td>"+ hqWidgets.Translate("Test state:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_state'>";
         }
         
         // Simulate click
@@ -417,7 +417,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Icon&nbsp;active:")+"</td><td>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td id='td1_"+this.e_settings.elemName+"_iconOn'>"+ hqWidgets.Translate("Icon&nbsp;active:")+"</td><td id='td2_"+this.e_settings.elemName+"_iconOn'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_iconOn' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.iconOn == undefined) ? "":this.e_internal.attr.iconOn)+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_iconOnBtn' style='width: 30px' type='button' value='...'>";
             sTextAdv += "</td></tr>";
@@ -468,7 +468,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDimmer && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {            
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Last action:")+"</td><td><select id='"+this.e_settings.elemName+"_hoursLastAction' style='width: "+this.e_settings.width+"px'>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td id='td1_"+this.e_settings.elemName+"_hoursLastAction'>"+ hqWidgets.Translate("Last action:")+"</td><td id='td2_"+this.e_settings.elemName+"_hoursLastAction'><select id='"+this.e_settings.elemName+"_hoursLastAction' style='width: "+this.e_settings.width+"px'>";
             sTextAdv += "<option value='-1' >"+hqWidgets.Translate("Do not show")+"</option>";
             sTextAdv += "<option value='-2'>" +hqWidgets.Translate("Show always")+"</option>";
             sTextAdv += "<option value='1' >" +hqWidgets.Translate("Hide after 1 hour")+"</option>";
@@ -511,8 +511,8 @@ hqWidgets = $.extend (true, hqWidgets, {
             
             if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
                 this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp) {
-                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Active:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveParent' ></td></tr>";
-                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Active hover:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveHoverParent' ></td></tr>";
+                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td id='td1_"+this.e_settings.elemName+"_styleActiveParent'>"+ hqWidgets.Translate("Active:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveParent'></td></tr>";
+                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td id='td1_"+this.e_settings.elemName+"_styleActiveHoverParent'>"+ hqWidgets.Translate("Active hover:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveHoverParent' ></td></tr>";
             }
         }
         

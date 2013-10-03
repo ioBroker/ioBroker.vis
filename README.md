@@ -38,6 +38,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta13
+* (Bluefox) Neue hqWidgets: Eventlist und Chart
+
 ### 0.9beta12
 * (Hobbyquaker) Neues Widget "basic - hm_ctrl - HTML State" - setzt bei Klick einen Wert
 

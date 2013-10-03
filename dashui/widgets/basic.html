@@ -11,7 +11,7 @@
 
         },
         basic: {
-            state: function (el, val) {
+            state: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
                 var val = $this.attr("data-hm-val");
@@ -20,6 +20,15 @@
                 $this.click(function (e) {
                     if (dui.urlParams["edit"] !== "") {
                         homematic.setValue( $this.attr("data-hm-id"), val);
+                    }
+                });
+            },
+            program: function (el) {
+                var $this = jQuery(el);
+                var hm_id = "_" + $this.attr("data-hm-id");
+                $this.click(function (e) {
+                    if (dui.urlParams["edit"] !== "") {
+                        dui.socket.emit("programExecute", [hm_id]);
                     }
                 });
             },
