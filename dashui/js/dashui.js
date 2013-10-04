@@ -437,7 +437,9 @@ var dui = {
         // If edit mode, bind on click event to open this widget in edit dialog
         if (dui.urlParams["edit"] === "") {
             $("#"+id).click(function (e) {
-                dui.inspectWidget(id);
+                if (dui.activeWidget != id) {
+                    dui.inspectWidget(id);
+                };
                 e.preventDefault();
                 return false;
             });
