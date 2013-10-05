@@ -1,19 +1,19 @@
 /*
-hqWidgets is a “high quality” home automation widgets library.
+hqWidgets is a ï¿½high qualityï¿½ home automation widgets library.
 You can easy create the user interface for home automation with the help of this library using HTML, javascript and CSS.
  
 The library supports desktop and mobile browsers versions.
 Actually library has following widgets:
-- On/Off Button – To present and/or control some switch (e.g. Lamp)
-- Dimmer – To present and control dimmer
-- Window blind – to present and control one blind and display up to 4 window leafs
-- Indoor temperature – to display indoor temperature and humidity with desired temperature and valve state
-- Outdoor temperature – to display outdoor temperature and humidity
-- Door   – to present a door
-- Lock   – to present and control lock
-- Image  – to show a static image
-- Text   – to show a static text with different colors and font styles
-- Info   – To display some information. Supports format string, condition for active state and different icons for active and static state.
+- On/Off Button ï¿½ To present and/or control some switch (e.g. Lamp)
+- Dimmer ï¿½ To present and control dimmer
+- Window blind ï¿½ to present and control one blind and display up to 4 window leafs
+- Indoor temperature ï¿½ to display indoor temperature and humidity with desired temperature and valve state
+- Outdoor temperature ï¿½ to display outdoor temperature and humidity
+- Door   ï¿½ to present a door
+- Lock   ï¿½ to present and control lock
+- Image  ï¿½ to show a static image
+- Text   ï¿½ to show a static text with different colors and font styles
+- Info   ï¿½ To display some information. Supports format string, condition for active state and different icons for active and static state.
  
 ------ Version V0.1 ------
  
@@ -442,15 +442,15 @@ var hqWidgets = {
         var t = time.getFullYear();
         t = (t < 10) ? "0" + t : "" + t;
         dateStr += t + ".";
-        
+
         t = time.getMonth() + 1;
         t = (t < 10) ? "0" + t : "" + t;
         dateStr += t + ".";
-        
+
         t = time.getDate();
         t = (t < 10) ? "0" + t : "" + t;
         dateStr += t + " ";
-        
+
         t = time.getHours();
         t = (t < 10) ? "0" + t : "" + t;
         dateStr += t + ":";

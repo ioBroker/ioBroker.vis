@@ -1138,7 +1138,7 @@ var imageSelect = {
             }
         }
         return path;
-    },
+    }
 
 };
 
@@ -2408,6 +2408,7 @@ var hmSelect = {
         }
     }
 };
+
 
 // Selector of styles (uses jquery themes)
 var hqStyleSelector = {

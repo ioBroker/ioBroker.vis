@@ -337,8 +337,8 @@ var dui = {
         dui.saveRemote();
         window.location.href='./?edit';
     },
-    renderView: function (view) {
-        console.log("renderView("+view+")");
+    renderView: function (view, noThemeChange) {
+        console.log("renderView("+view+","+noThemeChange+")");
 
         //console.log(dui.views[view].settings.style);
         if (!dui.views[view].settings.theme) {
@@ -348,10 +348,12 @@ var dui = {
             dui.views[view].settings.interval = dui.defaultHmInterval;
         }
 
-        console.log("renderView() change Theme "+dui.views[view].settings.theme);
-        $("#jqui_theme").remove();
-        $("style[data-href$='jquery-ui.min.css']").remove();
-        $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme"/>');
+        if (!noThemeChange) {
+            console.log("theme "+dui.views[view].settings.theme);
+            $("#jqui_theme").remove();
+            $("style[data-href$='jquery-ui.min.css']").remove();
+            $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme"/>');
+        }
 
         if ($("#dui_container").find("#duiview_"+view).html() == undefined) {
             $("#dui_container").append("<div id='duiview_"+view+"' class='dashui-view'></div>");
@@ -386,7 +388,7 @@ var dui = {
                 $(this).append("error: view container recursion.");
                 return false;
             }
-            dui.renderView(cview);
+            dui.renderView(cview, true);
             $("#duiview_"+cview).appendTo(this);
             $("#duiview_"+cview).show();
 
@@ -447,6 +449,7 @@ var dui = {
     },
     changeView: function (view, hideOptions, showOptions) {
         console.log("changeView("+view+","+hideOptions+","+showOptions+")");
+        console.log("dui.activeView="+dui.activeView);
         var effect = (hideOptions && hideOptions.effect && hideOptions.effect !== "" ? true : false);
         hideOptions = $.extend(true, {effect:undefined,options:{},duration:0}, hideOptions);
         showOptions = $.extend(true, {effect:undefined,options:{},duration:0}, showOptions);
@@ -468,7 +471,7 @@ var dui = {
             view = prop;
         }
 
-        dui.renderView(view);
+        dui.renderView(view, !(dui.activeView == view));
 
         // View ggf aus Container heraus holen
         if ($("#duiview_"+view).parent().attr("id") !== "dui_container") {
@@ -481,6 +484,7 @@ var dui = {
                 console.log("hideoptions..."); console.log(hideOptions);
                 $("#duiview_"+dui.activeView).hide(hideOptions.effect, hideOptions.options, hideOptions.duration, function () {
                     console.log("show");
+                    console.log("changeView() change Theme "+dui.views[view].settings.theme);
                     $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
                     $("#duiview_"+view).show(showOptions.effect, showOptions.options, showOptions.duration, function () {
                         console.log("show done");
