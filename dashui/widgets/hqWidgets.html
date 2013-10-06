@@ -196,6 +196,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     time_id = null;
 
                                 if (what == 'state') {
+                                    // Send on time to dimmer
                                     if (time_id != null) {
                                         if (homematic.regaObjects[time_id] && homematic.regaObjects[time_id]["DPs"] && homematic.regaObjects[time_id]["DPs"]["RAMP_TIME"]) {
                                             time_id = homematic.regaObjects[time_id]["DPs"]["RAMP_TIME"];
@@ -204,7 +205,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                                 homematic.setValue( time_id, on_time);
                                         }
                                     }
-                                    // Send on time to dimmer
+                                    
                                     if (state != hqWidgets.gState.gStateOn) {
 
                                         obj.SetStates ({percentState: 100, state: hqWidgets.gState.gStateOn, isRefresh: true});
@@ -213,7 +214,6 @@ if ((typeof hqWidgets !== 'undefined')) {
                                         homematic.setValue( hm_id, 1);
                                     }
                                     else {
-                                        // Send ramp time settings to dimmer
 
                                         obj.SetStates ({percentState: 0, state: hqWidgets.gState.gStateOff, isRefresh: true});
                                         // Send command to HM
@@ -239,8 +239,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"]) {
                                 hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"],    option: 'percentState'}; // First is always main element
                                 hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"],  option: 'isWorking'};
-                                if (homematic.regaObjects[opt["hm_id"]]["DPs"]["RAMP_TIME"]) { hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["RAMP_TIME"],option: 'dimmerRampTime'}; }
-                                if (homematic.regaObjects[opt["hm_id"]]["DPs"]["ON_TIME"]) { hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["ON_TIME"],  option: 'dimmerOnTime'}; }
+                                if (homematic.regaObjects[opt["hm_id"]]["DPs"]["RAMP_TIME"]) {
+                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["RAMP_TIME"],option: 'dimmerRampTime'}; 
+                                }
                             }
                             else if (homematic.regaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {hm_id: opt.hm_id, option: 'percentState'};
@@ -252,18 +253,28 @@ if ((typeof hqWidgets !== 'undefined')) {
                         adv = $.extend (adv, {action: function (obj, what, state) {
                             var hm_id = obj.GetSettings ('hm_id');
                             if (hm_id != null && hm_id != "") {
-                                if (homematic.regaObjects[opt.hm_id] && homematic.regaObjects[opt.hm_id]["DPs"] && homematic.regaObjects[opt.hm_id]["DPs"]["STATE"])
-                                    hm_id = homematic.regaObjects[opt.hm_id]["DPs"]["STATE"];
-                                if (state != hqWidgets.gState.gStateOn) {
-                                    state = hqWidgets.gState.gStateOn;
+                                
+                                if (homematic.regaObjects [opt.hm_id] && 
+                                    homematic.regaObjects [opt.hm_id]["TypeName"] !== undefined && 
+                                    homematic.regaObjects [opt.hm_id]["TypeName"] == "PROGRAM") {
+                                    console.log ("Activate programm " + homematic.regaObjects [opt.hm_id]["Name"]);
+                                    dui.socket.emit("programExecute", [opt.hm_id]);
                                 }
-                                else {
-                                    state = hqWidgets.gState.gStateOff;
+                                else {    
+                                    if (homematic.regaObjects[opt.hm_id] && homematic.regaObjects[opt.hm_id]["DPs"] && homematic.regaObjects[opt.hm_id]["DPs"]["STATE"])
+                                        hm_id = homematic.regaObjects[opt.hm_id]["DPs"]["STATE"];
+                                    if (state != hqWidgets.gState.gStateOn) {
+                                        state = hqWidgets.gState.gStateOn;
+                                    }
+                                    else {
+                                        state = hqWidgets.gState.gStateOff;
+                                    }
+                                    
+                                    obj.SetStates ({state: state, isRefresh: true, isRefresh: true});
+                                    // Send command to HM
+                                    homematic.setValue(hm_id, (state == hqWidgets.gState.gStateOn)); 
                                 }
-                                obj.SetStates ({state: state, isRefresh: true, isRefresh: true});
-                                // Send command to HM
-                                homematic.setValue(hm_id, (state == hqWidgets.gState.gStateOn));
-                            }
+                            }                                
                         }});
                         // Fill up the required IDs
                         var t = 0;
@@ -421,6 +432,32 @@ if ((typeof hqWidgets !== 'undefined')) {
                     }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeInfo) {
+                       adv = $.extend (adv, {action: function (obj, what, state) {
+                            var hm_idOn   = obj.GetSettings ('hm_idC_On');
+                            var hm_idOff  = obj.GetSettings ('hm_idC_Off');
+                            var hm_valOn  = obj.GetSettings ('ctrlValueOn');
+                            var hm_valOff = obj.GetSettings ('ctrlValueOff');
+                            
+                            if (hm_idOn !== undefined && hm_idOn != null && hm_idOn != "") {
+                                // obj.SetStates ({isRefresh: true});
+                                if (hm_valOn === undefined || hm_valOn == null || hm_valOn == "")
+                                    hm_valOn = true;
+                                    
+                                if (hm_valOff === undefined || hm_valOff == null || hm_valOff == "")
+                                    hm_valOff = hm_valOn;
+                                    
+                                //If control depends of state
+                                if (hm_idOff === undefined || hm_idOff == null || hm_idOff == "")
+                                    hm_idOff = hm_idOn;
+                                    
+                                var states = obj.GetStates ();
+                                // Get actual state
+                                if (states.state == hqWidgets.gState.gStateOn)
+                                    homematic.setValue(hm_idOff, hm_valOff);                                
+                                else
+                                    homematic.setValue(hm_idOn, hm_valOn);                                
+                            }                            
+                        }});
                         // Fill up the required IDs
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "" && homematic.regaObjects[opt["hm_id"]]) {
@@ -862,7 +899,20 @@ if ((typeof hqWidgets !== 'undefined')) {
                          btn.intern._jelement.attr('data-hm-id', hm_ids[0].hm_id);
                          } */
                         // Set actual state
-                        this.hqMonitor (hm_ids[i].hm_id, homematic.uiState["_"+hm_ids[i].hm_id].Value, homematic.uiState["_"+hm_ids[i].hm_id].LastChange);
+                        // Convert string to time
+                        if (homematic.uiState["_"+hm_ids[i].hm_id] && homematic.uiState["_"+hm_ids[i].hm_id].Value !== undefined) {
+                            var dt = undefined;
+                            if (homematic.uiState["_"+hm_ids[i].hm_id].LastChange !== undefined) {
+                                dt = new Date(homematic.uiState["_"+hm_ids[i].hm_id].LastChange);//.replace(' ', 'T'));//('2011-04-11T11:51:00') "T" Means GMT (We do not have GMT)
+                            }
+                            this.hqMonitor (hm_ids[i].hm_id, homematic.uiState["_"+hm_ids[i].hm_id].Value, dt);
+                        }
+                        else {
+                            if (homematic.uiState["_"+hm_ids[i].hm_id]) 
+                                console.log("DATAPOINT " + hm_ids[i].hm_id + " does not exist in homematic.uiState !!!!!!!!!!!!!!");
+                            else
+                                console.log("DATAPOINT " + hm_ids[i].hm_id + " does not have Value!!!!!!!!!!!!!!");
+                        }
                     }
                 }
 

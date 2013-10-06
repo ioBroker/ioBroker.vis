@@ -636,14 +636,22 @@ var homematic = {
     setValue: function (id, val) {
         console.log("setValue("+id+","+val+")");
 
-        this.setState.attr("_"+id, {Value:val});
-        var d = new Date();
-        var t = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-        var o = {};
-        o["_"+id+".Value"]     = val;
-        o["_"+id+".Timestamp"] = t;
-        o["_"+id+".Certain"]   = false;
-        this.uiState.attr(o);
+        // Check if this ID is a programm
+        if (homematic.regaObjects [id] && 
+            homematic.regaObjects [id]["TypeName"] !== undefined && 
+            homematic.regaObjects [id]["TypeName"] == "PROGRAM") {
+            dui.socket.emit("programExecute", [id]);
+        }
+        else {
+            this.setState.attr("_"+id, {Value:val});
+            var d = new Date();
+            var t = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+            var o = {};
+            o["_"+id+".Value"]     = val;
+            o["_"+id+".Timestamp"] = t;
+            o["_"+id+".Certain"]   = false;
+            this.uiState.attr(o);
+        }
     },
     stateDelayed: function (id, val) {
         var attr = "_"+id;
