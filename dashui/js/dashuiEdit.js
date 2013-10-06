@@ -22,7 +22,7 @@
 
 // duiEdit - the DashUI Editor
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta13',
+    editVersion:        '0.9beta14',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -713,6 +713,7 @@ dui = $.extend(true, dui, {
         if (!this.words) {
             this.words = {
                 "hm_id"            : {"en": "Homematic ID"},
+                "hm_ids"           : {"en": "Homematic IDs"},
                 "hm_id0"           : {"en": "Swing ID 1",    "de": "Fensterblatt 1"},
                 "hm_id1"           : {"en": "Swing ID 2",    "de": "Fensterblatt 2"},
                 "hm_id2"           : {"en": "Swing ID 3",    "de": "Fensterblatt 3"},
@@ -724,6 +725,8 @@ dui = $.extend(true, dui, {
                 "hm_idV"           : {"en": "Valve",         "de": "Ventilsteuerung"},
                 "hm_idL"           : {"en": "Lock ID",       "de": "Schloss ID"},
                 "hm_wid"           : {"en": "Working ID"},
+                "hm_idC_On"        : {"en": "HM ID for ON",  "de": "HM ID für ON"},
+                "hm_idC_Off"       : {"en": "HM ID for OFF", "de": "HM ID für OFF"},
                 "comment"          : {"en" : "Comments",     "de": "Kommentare"},	
                 "Select HM parameter" : {"en" : "Select HM parameter", "de": "HM parameter ausw&auml;hlen"},	
                 "Select"           : {"en" : "Select",       "de": "Auswählen"},
@@ -1138,7 +1141,7 @@ var imageSelect = {
             }
         }
         return path;
-    },
+    }
 
 };
 
@@ -2408,6 +2411,7 @@ var hmSelect = {
         }
     }
 };
+
 
 // Selector of styles (uses jquery themes)
 var hqStyleSelector = {

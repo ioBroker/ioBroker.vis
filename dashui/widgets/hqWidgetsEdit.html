@@ -63,6 +63,12 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeInfo, 
                                           zindex: 2,
                                           hm_id: '',
+                                          hm_idC_On:'', // On control (will be used for off if no hm_idC_Off projected                                          
+                                          hm_idC_Off:'',
+                                          ctrlActionBtn: false,
+                                          ctrlQuestion: "",
+                                          ctrlValueOn:  true,
+                                          ctrlValueOff: false,
                                           });
                 }
                 else
@@ -73,7 +79,6 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           hm_id: '',
                                           hoursLastAction:-1,
                                           dimmerRampTime: 0.5,
-                                          dimmerOnTime: 0,
                                           });
                 }
                 else
@@ -143,7 +148,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           height:60, 
                                           zindex: 2, 
                                           popUpDelay: 10000, 
-                                          openDoorBttn: false});
+                                          ctrlActionBtn: false});
                 }
                 else
                 if (wtype == 'tplHqGong') {
@@ -193,6 +198,59 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
              }
             return opt;
         },
+        hqEditHmID: function (obj, parent, devFilter, hqEditElem, attr, groupID) {
+            var opt = obj.GetSettings (false, false);
+            var devFilters = (devFilter) ? devFilter.split (';') : [null, null];
+            
+            parent.append('<tr '+((groupID === undefined) ? '': 'id="'+groupID+'"') + ' class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+opt.hm_id+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
+            document.getElementById ("inspect_"+attr).jControl         = attr;
+            document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
+            document.getElementById ("inspect_"+attr+"_btn").devFilter = devFilters[0];
+            $("#inspect_"+attr+"_desc").html(dui.getObjDesc (opt.hm_id));
+            
+            // Select Homematic ID Dialog
+            $("#inspect_"+attr+"_btn").click ( function () {
+                hmSelect.value = $("#inspect_"+this.jControl).val();
+                hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
+                    $("#inspect_"+obj).val(value).trigger("change");
+                    if (valueObj) {
+                        var btn = hqWidgets.Get (dui.activeWidget);
+                        if (btn) {
+                            var stitle = btn.GetSettings ("title");
+                            btn.SetSettings ({room: valueObj.room});
+                            if (stitle == undefined || stitle == null || stitle == "") {
+                                var title = hmSelect._convertName(valueObj.Name);                                        
+                                // Remove ROOM from device name
+                                if (title.length > valueObj.room.length && title.substring(0, valueObj.room.length) == valueObj.room)
+                                    title = title.substring(valueObj.room.length);
+                                // Remove the leading dot
+                                if (title.length > 0 && title[0] == '.')
+                                    title = title.substring(1);
+                                $('#inspect_title').val (title);
+                                $('#inspect_title').trigger ('change');
+                            }
+                        }
+                    }
+                }, null, this.devFilter);
+            });
+            $("#inspect_"+attr).change(function (el) {
+                $("#inspect_"+this.jControl+"_desc").html(dui.getObjDesc ($(this).val()));
+                var btn = hqWidgets.Get (dui.activeWidget);
+                if (btn) {
+                    var settings = {};
+                    settings[this.jControl] = $(this).val();
+                    btn.SetSettings (settings, true);
+                }
+            });
+            $("#inspect_"+attr).keyup (function () {
+                if (hqWidgets.e_internal.timer) 
+                    clearTimeout (hqWidgets.e_internal.timer);
+                        
+                hqWidgets.e_internal.timer = setTimeout (function(elem) {
+                    elem.trigger("change");
+                }, hqWidgets.e_settings.timeout, $(this));
+            });
+        },
         hqEditButton: function (obj, parent, devFilter, hqEditElem) {
             // install timer to detect moving
             clearTimeout (dui.binds.hqWidgetsExt.hqEditTimerDetectMoving);
@@ -202,19 +260,43 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             var devFilters = (devFilter) ? devFilter.split (';') : [null, null];
             if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
                 // Add ramp_time and on_time
-                var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"' style='display:none'><td>"+ dui.translate("ramp_time:") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_dimmerRampTime'  type='text' value='"+hqEditElem.e_internal.attr.dimmerRampTime+"'></td></tr>";
-                    sTextAdv += "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"' style='display:none'><td>"+ dui.translate("on_time:")   +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_dimmerOnTime'    type='text' value='"+hqEditElem.e_internal.attr.dimmerOnTime
-                    +"'></td></tr>";
+                var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"' style='display:none'>\n";
+                    sTextAdv += "<td>"+ dui.translate("ramp_time:") +"</td>\n";
+                    sTextAdv += "<td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_dimmerRampTime' type='text' value='"+hqEditElem.e_internal.attr.dimmerRampTime+"'></td></tr>";
                 parent.append (sTextAdv);
                 hqEditElem._EditTextHandler ('dimmerRampTime');
-                hqEditElem._EditTextHandler ('dimmerOnTime');
+            }
+
+            if (opt.buttonType == hqWidgets.gButtonType.gTypeInfo) {
+                // find next free index
+                var j = 0;
+                while (document.getElementById ('idCtrl'+j)) {
+                    $('#idCtrl'+j).hide();
+                    j++;
+                }            
+                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, "hm_idC_On", 'idCtrl'+j);j++;
+                parent.append("<tr id='idCtrl"+j+"'><td>"+ dui.translate("Control value (ON):")  +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_ctrlValueOn'  type='text' value='"+hqEditElem.e_internal.attr.ctrlValueOn +"'></td></tr>");j++;
+                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, "hm_idC_Off", 'idCtrl'+j);j++;
+                parent.append("<tr id='idCtrl"+j+"'><td>"+ dui.translate("Control value (OFF):") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_ctrlValueOff' type='text' value='"+hqEditElem.e_internal.attr.ctrlValueOff+"'></td></tr>");j++;
+                hqEditElem._EditTextHandler('ctrlValueOn');   
+                hqEditElem._EditTextHandler('ctrlValueOff');   
+
+                if (!hqEditElem.e_internal.obj.controlsVisible){
+                    // Hide all                      
+                    var i = 0;
+                    while (document.getElementById ('idCtrl'+i)) {
+                        $('#idCtrl'+i).hide();
+                        i++;
+                    }
+                }
             }
             
             // Edit hm_id with help of dialog
             if (opt["hm_id"] != undefined && 
                 opt.buttonTypeEx != hqWidgets.gButtonType.gTypeCharts &&
-                opt.buttonTypeEx != hqWidgets.gButtonType.gTypeEventlist) {
-                var attr = 'hm_id';
+                opt.buttonTypeEx != hqWidgets.gButtonType.gTypeEventlist) {              
+                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, 'hm_id');
+                /*var attr = 'hm_id';
                 parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+opt.hm_id+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
                 document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
                 document.getElementById ("inspect_"+attr+"_btn").devFilter = devFilters[0];
@@ -258,7 +340,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     hqWidgets.e_internal.timer = setTimeout (function(elem) {
                         elem.trigger("change");
                     }, hqWidgets.e_settings.timeout, $(this));
-                });
+                });*/
             }
             if (opt["hm_ids"] != undefined) {
                 // This is multiselect
@@ -471,6 +553,10 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 if (opt.buttonType == hqWidgets.gButtonType.gTypeGong|| 
                     opt.buttonType == hqWidgets.gButtonType.gTypeCam)
                     attr = 'hm_idL';
+                
+                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, attr);
+                /*
+                    
                 var text = '<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td>';
                 text += '<td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'">';
                 text += '<input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>';
@@ -502,16 +588,14 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     hqWidgets.e_internal.timer = setTimeout (function(elem) {
                         elem.trigger("change");
                     }, hqWidgets.e_settings.timeout, $(this));
-                });                        
+                }); */                       
             }
             
             // Hichcharts settings
             if (opt.buttonType  == hqWidgets.gButtonType.gTypeInTemp  || 
                 opt.buttonType  == hqWidgets.gButtonType.gTypeOutTemp ||
                 (opt.buttonTypeEx !== undefined &&
-                 opt.buttonTypeEx == hqWidgets.gButtonType.gTypeCharts)
-               )
-                 {
+                 opt.buttonTypeEx == hqWidgets.gButtonType.gTypeCharts)){
                 if (hqEditElem.e_internal.obj.advancedVisible === undefined)
                     hqEditElem.e_internal.obj.advancedVisible = false;
                     
