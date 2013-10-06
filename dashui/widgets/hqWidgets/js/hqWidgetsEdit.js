@@ -83,7 +83,9 @@ hqWidgets = $.extend (true, hqWidgets, {
         
         var sText       = "";
         var sTextAdv    = "";
+        var sTextCtrl   = "";
         var sTextStyle  = "";
+        var iCtrlCount  = 0;
         var iAdvCount   = 0;
         var iStyleCount = 0;
         
@@ -121,9 +123,9 @@ hqWidgets = $.extend (true, hqWidgets, {
                             if (settings[name] == "")
                                 settings[name] = null;
                             
-                            if (name == 'openDoorBttnText') {            
-                                settings['openDoorBttn'] = (settings[name] != null);
-                                newSettings['openDoorBttn'] = settings['openDoorBttn'];
+                            if (name == 'ctrlBtnText') {            
+                                settings['ctrlActionBtn'] = (settings[name] != null);
+                                newSettings['ctrlActionBtn'] = settings['ctrlActionBtn'];
                             }
                             
                             nSettings[name] = settings[name];
@@ -432,8 +434,8 @@ hqWidgets = $.extend (true, hqWidgets, {
             else
                 sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'>"+s;
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Pop up delay (ms):") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_popUpDelay'  type='text' value='"+this.e_internal.attr.popUpDelay+"'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Open door button:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_openDoorBttn' "+(this.e_internal.attr.openDoorBttn ? "checked" : "")+" ></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Open door text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_openDoorBttnText'  type='text' value='"+this.e_internal.attr.openDoorBttnText+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Open door button:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_ctrlActionBtn' "+(this.e_internal.attr.ctrlActionBtn ? "checked" : "")+" ></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Open door text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlBtnText'  type='text' value='"+this.e_internal.attr.ctrlBtnText+"'></td></tr>";
         }
 
         // Camera update interval for small image
@@ -453,11 +455,22 @@ hqWidgets = $.extend (true, hqWidgets, {
             sText    += "<input id='"+this.e_settings.elemName+"_gongMelody' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.gongMelody == undefined) ? "":this.e_internal.attr.gongMelody)+"'>";
             sText    += "<input id='"+this.e_settings.elemName+"_gongMelodyBtn' style='width: 30px' type='button' value='...'>";
             sText    += "</td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Gong question:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_gongQuestion'  type='text' value='"+this.e_internal.attr.gongQuestion+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Gong question:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlQuestion'  type='text' value='"+this.e_internal.attr.ctrlQuestion+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Gong question image:")+"</td><td>";
-            sTextAdv += "<input id='"+this.e_settings.elemName+"_gongQuestionImg' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.gongQuestionImg == undefined) ? "":this.e_internal.attr.gongQuestionImg)+"'>";
-            sTextAdv += "<input id='"+this.e_settings.elemName+"_gongQuestionImgBtn' style='width: 30px' type='button' value='...'>";
+            sTextAdv += "<input id='"+this.e_settings.elemName+"_ctrlQuestionImg' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.ctrlQuestionImg == undefined) ? "":this.e_internal.attr.ctrlQuestionImg)+"'>";
+            sTextAdv += "<input id='"+this.e_settings.elemName+"_ctrlQuestionImgBtn' style='width: 30px' type='button' value='...'>";
             sTextAdv += "</td></tr>";
+        }
+        
+        // Control question, Control question image
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo) {
+            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.Translate("Show control popup:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_ctrlActionBtn' "+(this.e_internal.attr.ctrlActionBtn ? "checked" : "")+" ></td></tr>";
+            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.Translate("Control question:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlQuestion'  type='text' value='"+this.e_internal.attr.ctrlQuestion+"'></td></tr>";
+            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.Translate("Control question image:")+"</td><td>";
+            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.Translate("Button text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlBtnText'  type='text' value='"+this.e_internal.attr.ctrlBtnText+"'></td></tr>";
+            sTextCtrl += "<input id='"+this.e_settings.elemName+"_ctrlQuestionImg' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.ctrlQuestionImg == undefined) ? "":this.e_internal.attr.ctrlQuestionImg)+"'>";
+            sTextCtrl += "<input id='"+this.e_settings.elemName+"_ctrlQuestionImgBtn' style='width: 30px' type='button' value='...'>";
+            sTextCtrl += "</td></tr>";
         }
             
         // if hide last action info after x hours
@@ -496,7 +509,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo   ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeButton ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("No background:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_back' "+((this.e_internal.attr.noBackground) ? "checked" : "")+">";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("No background:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_noBackground' "+((this.e_internal.attr.noBackground) ? "checked" : "")+">";
         }
         
         // Styles
@@ -520,13 +533,10 @@ hqWidgets = $.extend (true, hqWidgets, {
         // Description
         sText += "<tr><td>"+ hqWidgets.Translate("Description:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_title' type='text' value='"+((this.e_internal.attr.title) || "")+"'></td></tr>";
 
+        // Show all styles
         if (this.e_internal.obj.stylesVisible === undefined)
             this.e_internal.obj.stylesVisible = false;
-            
-        if (this.e_internal.obj.advancedVisible === undefined)
-            this.e_internal.obj.advancedVisible = false;
-        
-        // Show all styles
+                    
         this.e_settings.parent.append (sText);
         if (iStyleCount == 1)
             this.e_settings.parent.append (sTextStyle);
@@ -558,8 +568,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                     }                                        
                 }
             });
-            if (!this.e_internal.obj.stylesVisible)
-            {
+            if (!this.e_internal.obj.stylesVisible) {
                 // Hide all                      
                 var i = 0;
                 while (document.getElementById ('idStyle'+i)) {
@@ -570,6 +579,9 @@ hqWidgets = $.extend (true, hqWidgets, {
         }
         
         // Show all advanced settigs
+        if (this.e_internal.obj.advancedVisible === undefined)
+            this.e_internal.obj.advancedVisible = false;
+        
         if (iAdvCount == 1) {
             this.e_settings.parent.append (sTextAdv);
         }
@@ -601,8 +613,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                     }                                        
                 }
             });
-            if (!this.e_internal.obj.advancedVisible)
-            {
+            if (!this.e_internal.obj.advancedVisible){
                 // Hide all                      
                 var i = 0;
                 while (document.getElementById ('idAdv'+i)) {
@@ -611,8 +622,49 @@ hqWidgets = $.extend (true, hqWidgets, {
                 }
             }
         }
-        // Apply functionality
         
+        // Show controls
+        if (this.e_internal.obj.controlsVisible === undefined)
+            this.e_internal.obj.controlsVisible = false;
+
+        if (iCtrlCount > 0) {
+            sTextCtrl = "<tr><td colspan=2><button id='idShowCtrl'>"+hqWidgets.Translate("Control...")+"</td></tr>" + sTextCtrl;
+            this.e_settings.parent.append (sTextCtrl);
+            var ctrlBtn = document.getElementById ('idShowCtrl');
+            ctrlBtn.obj   = this;
+            ctrlBtn.state = this.e_internal.obj.controlsVisible;
+            
+            $('#idShowCtrl').button({icons: {primary: (!this.e_internal.obj.controlsVisible) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
+                this.state = !(this.state);
+                this.obj.e_internal.obj.controlsVisible = this.state;
+                if (this.state) {
+                    $('#idShowCtrl').button("option", {icons: { primary: "ui-icon-carat-1-n" }});
+                    var i = 0;
+                    while (document.getElementById ('idCtrl'+i)) {
+                        $('#idCtrl'+i).show();
+                        i++;
+                    }
+                }
+                else {
+                    $('#idShowCtrl').button("option", {icons: { primary: "ui-icon-carat-1-s" }});
+                    var i = 0;
+                    while (document.getElementById ('idCtrl'+i)) {
+                        $('#idCtrl'+i).hide();
+                        i++;
+                    }                                        
+                }
+            });
+            if (!this.e_internal.obj.controlsVisible){
+                // Hide all                      
+                var i = 0;
+                while (document.getElementById ('idCtrl'+i)) {
+                    $('#idCtrl'+i).hide();
+                    i++;
+                }
+            }
+        }
+          
+        // Apply functionality
         this._EditCheckboxHandler ('state');
     
         var elem;
@@ -770,7 +822,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         this._EditSelectHandler('hoursLastAction');   
                
         this._EditCheckboxHandler ('infoIsHideInactive', false, false, true);
-        this._EditCheckboxHandler ('noBackChanged', false, false, true);
+        this._EditCheckboxHandler ('noBackground', false, false, true);
 
         this._EditCheckboxHandler ('usejQueryStyle', false, false, true);
         this._EditCheckboxHandler ('isShowPercent', false, false, true, function (isChecked, obj) {
@@ -782,26 +834,39 @@ hqWidgets = $.extend (true, hqWidgets, {
         });
         this._EditTextHandler('ipCamImageURL');   
         this._EditTextHandler('popUpDelay');   
-        this._EditCheckboxHandler ('openDoorBttn', false, false, true, function (isChecked, obj) {
+        this._EditCheckboxHandler ('ctrlActionBtn', false, false, true, function (isChecked, obj) {
             document.getElementById(obj.e_settings.elemName+'_openDoorBttnText').disabled = !isChecked;
         });
         if (document.getElementById(this.e_settings.elemName+'_openDoorBttnText')) {
-            document.getElementById(this.e_settings.elemName+'_openDoorBttnText').disabled = !this.e_internal.attr.openDoorBttn;
+            document.getElementById(this.e_settings.elemName+'_openDoorBttnText').disabled = !this.e_internal.attr.ctrlActionBtn;
         }
-        this._EditTextHandler ('openDoorBttnText');
+        this._EditTextHandler ('ctrlBtnText');
         this._EditTextHandler ('hoursLastAction');
         if (document.getElementById(this.e_settings.elemName+'_hoursLastAction') && this.e_internal.attr.isShowPercent) {
             document.getElementById(this.e_settings.elemName+'_hoursLastAction').value = "-1";
             document.getElementById(this.e_settings.elemName+'_hoursLastAction').disabled = this.e_internal.attr.isShowPercent;
         }
-        this._EditTextHandler ('gongQuestion');
-        this._EditTextHandler ('gongQuestionImg');
+        this._EditCheckboxHandler ('ctrlActionBtn', false, false, true, function (isChecked, obj) {
+            $('#'+obj.e_settings.elemName+'_ctrlQuestion').prop('disabled', !isChecked);
+            $('#'+obj.e_settings.elemName+'_ctrlQuestionImg').prop('disabled', !isChecked);
+            $('#'+obj.e_settings.elemName+'_ctrlQuestionImgBtn').prop('disabled', !isChecked);
+            $('#'+obj.e_settings.elemName+'_ctrlBtnText').prop('disabled', !isChecked);
+        });
+        if (document.getElementById(this.e_settings.elemName+"_ctrlActionBtn") != null) {
+            $('#'+this.e_settings.elemName+'_ctrlQuestion').prop('disabled', !this.e_internal.attr.ctrlActionBtn);
+            $('#'+this.e_settings.elemName+'_ctrlQuestionImg').prop('disabled', !this.e_internal.attr.ctrlActionBtn);
+            $('#'+this.e_settings.elemName+'_ctrlQuestionImgBtn').prop('disabled', !this.e_internal.attr.ctrlActionBtn);
+            $('#'+this.e_settings.elemName+'_ctrlBtnText').prop('disabled', !this.e_internal.attr.ctrlActionBtn);
+        }
+        
+        this._EditTextHandler ('ctrlQuestion');
+        this._EditTextHandler ('ctrlQuestionImg');
         
         this._EditTextHandler ('ipCamUpdateSec');
        
         this._EditTextHandler ('gongMelody', ".mp3;.wav");
         
-        this._EditTextHandler ('gongQuestionImg');
+        this._EditTextHandler ('ctrlQuestionImg');
 
         this._EditStyleHandler ('styleNormal',      null, '-button', 'background');
         this._EditStyleHandler ('styleNormalHover', null, '-button', 'background');

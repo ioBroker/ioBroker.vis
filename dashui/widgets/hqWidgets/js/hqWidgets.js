@@ -1,19 +1,19 @@
 /*
-hqWidgets is a �high quality� home automation widgets library.
+hqWidgets is a "high quality" home automation widgets library.
 You can easy create the user interface for home automation with the help of this library using HTML, javascript and CSS.
  
 The library supports desktop and mobile browsers versions.
 Actually library has following widgets:
-- On/Off Button � To present and/or control some switch (e.g. Lamp)
-- Dimmer � To present and control dimmer
-- Window blind � to present and control one blind and display up to 4 window leafs
-- Indoor temperature � to display indoor temperature and humidity with desired temperature and valve state
-- Outdoor temperature � to display outdoor temperature and humidity
-- Door   � to present a door
-- Lock   � to present and control lock
-- Image  � to show a static image
-- Text   � to show a static text with different colors and font styles
-- Info   � To display some information. Supports format string, condition for active state and different icons for active and static state.
+- On/Off Button - To present and/or control some switch (e.g. Lamp)
+- Dimmer - To present and control dimmer
+- Window blind - to present and control one blind and display up to 4 window leafs
+- Indoor temperature - to display indoor temperature and humidity with desired temperature and valve state
+- Outdoor temperature - to display outdoor temperature and humidity
+- Door   - to present a door
+- Lock   - to present and control lock
+- Image  - to show a static image
+- Text   - to show a static text with different colors and font styles
+- Info   - To display some information. Supports format string, condition for active state and different icons for active and static state.
  
 ------ Version V0.1 ------
  
@@ -138,7 +138,7 @@ var hqWidgets = {
             this.words = {
                 "IP Camera"                 : {"en": "IP Camera",       "de": "IP Kamera"},
                 "Description:"              : {"en": "Description:",    "de": "Beschreibung:"},
-                "Close"                     : {"en": "Hide",            "de": "Ignore"},
+                "Close"                     : {"en": "Hide",            "de": "Abbrechen"},
                 "Advanced..."               : {"en": "Advanced...",     "de": "Erweitert..."},
                 "Pop up delay (ms):"        : {"en": "Pop up delay (ms):", "de": "Verzogerung (ms)"},
                 "Open door button:"         : {"en": "Open door button:",  "de": "'Tur aufmachen' Knopf:"},
@@ -442,15 +442,15 @@ var hqWidgets = {
         var t = time.getFullYear();
         t = (t < 10) ? "0" + t : "" + t;
         dateStr += t + ".";
-
+        
         t = time.getMonth() + 1;
         t = (t < 10) ? "0" + t : "" + t;
         dateStr += t + ".";
-
+        
         t = time.getDate();
         t = (t < 10) ? "0" + t : "" + t;
         dateStr += t + " ";
-
+        
         t = time.getHours();
         t = (t < 10) ? "0" + t : "" + t;
         dateStr += t + ":";
@@ -566,15 +566,16 @@ var hqWidgets = {
             ipCamUpdateSec:   30,    // Update interval in seconds
             
             popUpDelay:       5000,  // Dela for popup window, like camera, blinds
-            openDoorBttn:     false, // Show action button on ip camera big window
-            openDoorBttnText:hqWidgets.Translate("Open&nbsp;lock"), // Action button text for camera popup
             ipCamVideoDelay:  1000,  // Video delay
 
             gongMelody:       null,  // Play melody if gong goes from Off to On
             gongActionBtn:    false, // Show on the gong dialog Bell button
-            gongQuestion:     hqWidgets.Translate("Open the door?"), // Text for the door bell question
-            gongQuestionImg:  "DoorOpen.png", // Icon by question
             gongBtnText:      "Gong",// Text for button play gong
+
+            ctrlActionBtn:    false, // Show action button on ip camera big window
+            ctrlQuestion:     hqWidgets.Translate("Open the door?"), // Text for the door bell question
+            ctrlQuestionImg:  "DoorOpen.png", // Icon by question
+            ctrlBtnText:      hqWidgets.Translate("Open&nbsp;lock"), // Action button text for camera popup
 
             hoursLastAction:  -1,    // If the last action time must be shown (-1 - do not show, 0 -always show, x - not older as x hours, -2 show absolute time always, "-x" - show absolute time x hours
             stateTimeout:     600,   // 5 min state timeout
@@ -834,25 +835,7 @@ var hqWidgets = {
                         this.parent.dynStates.infoWindow._onHide (this.parent, this.parent.intern._jbigWindow.jbigWindowContent);
                 }                    
             }   
-        };
-        this._SetInfoPopupTitle = function (newTitle) {
-            if (newTitle === undefined) {
-                newTitle = this.dynStates.infoWindow.title;
-            }
-            else {
-                this.dynStates.infoWindow.title = newTitle;
-            }
-            this.intern._jbigWindow.jbigWindowTitle.html (newTitle);
-        };
-        this._SetInfoPopupContent = function (newContent) {
-            if (newContent === undefined) {
-                newContent = this.dynStates.infoWindow.content;
-            }
-            else {
-                this.dynStates.infoWindow.content = newContent;
-            }
-            this.intern._jbigWindow.jbigWindowContent.html (newContent);
-        };        
+        };    
         this._CreateRightInfo = function () {
             if (!document.getElementById(this.advSettings.elemName+'_right')) {
                 var $newdiv1 = $('<div id="'+this.advSettings.elemName+'_right"></div>');
@@ -970,7 +953,24 @@ var hqWidgets = {
                 this.intern._currentClass = newClass;
             }
         }		
-        this._SetType = function (buttonType) {
+        this._SetInfoPopupTitle = function (newTitle) {
+            if (newTitle === undefined) {
+                newTitle = this.dynStates.infoWindow.title;
+            }
+            else {
+                this.dynStates.infoWindow.title = newTitle;
+            }
+            this.intern._jbigWindow.jbigWindowTitle.html (newTitle);
+        };
+        this._SetInfoPopupContent = function (newContent) {
+            if (newContent === undefined) {
+                newContent = this.dynStates.infoWindow.content;
+            }
+            else {
+                this.dynStates.infoWindow.content = newContent;
+            }
+            this.intern._jbigWindow.jbigWindowContent.html (newContent);
+        };            this._SetType = function (buttonType) {
             if (this.settings.buttonType == buttonType && this.intern._inited)
                 return;
 
@@ -1402,7 +1402,7 @@ var hqWidgets = {
                     this.dynStates.infoWindow.isEnabled     = true;
                     this.dynStates.infoWindow.isMovable     = true;
                     this.dynStates.infoWindow.isResizable   = true;
-                    this.dynStates.infoWindow.pinShow       = true;
+                    this.dynStates.infoWindow.pinShow       = true;                    
                     this.dynStates.infoWindow.onShow        = function (elem, jBigWindow) {
                         elem.intern._jbigWindow.trigger("resize");
                         if (elem.settings["ipCamVideoURL"] != null && elem.settings["ipCamVideoURL"] != "") {
@@ -1411,36 +1411,40 @@ var hqWidgets = {
                         }
                         else {
                             // Show last loaded image
-                            elem.intern._jbigWindow.jbigImage.load(function () {
-                                if (this.parentQuery.intern._isBigVisible) {
-                                    var d = new Date();
-                                    // update images as fast as possible
-                                    if (this.parentQuery.settings.ipCamVideoDelay) {
-                                        this.parentQuery.intern._ipCamBigTimer = setTimeout (function (elem) {
-                                            elem._UpdateBigCam ();                                    
-                                        }, this.parentQuery.settings.ipCamVideoDelay, this.parentQuery);
-                                    }
-                                    else 
-                                        this.parentQuery._UpdateBigCam (); 
-                                }                                        
-                            });
-                            elem._UpdateBigCam ();
-                            elem.intern._jbigWindow.bind("resize", {msg: elem}, function (e)	{
-                                var big = e.data.msg.intern._jbigWindow;
-                                big.jbigImage.height(big.height() - big.jbigWindowHdr.height() - 15 - ((big.jbigWindowBtns) ? big.jbigWindowBtns.height(): 0) );
-                            });
-                            elem.intern._jbigWindow.trigger("resize");
+                            if (elem.intern._jbigWindow.jbigImage) {
+                                elem.intern._jbigWindow.jbigImage.load(function () {
+                                    if (this.parentQuery.intern._isBigVisible) {
+                                        var d = new Date();
+                                        // update images as fast as possible
+                                        if (this.parentQuery.settings.ipCamVideoDelay) {
+                                            this.parentQuery.intern._ipCamBigTimer = setTimeout (function (elem) {
+                                                elem._UpdateBigCam ();                                    
+                                            }, this.parentQuery.settings.ipCamVideoDelay, this.parentQuery);
+                                        }
+                                        else 
+                                            this.parentQuery._UpdateBigCam (); 
+                                    }                                        
+                                });
+                                elem._UpdateBigCam ();
+                                elem.intern._jbigWindow.bind("resize", {msg: elem}, function (e)	{
+                                    var big = e.data.msg.intern._jbigWindow;
+                                    big.jbigImage.height(big.height() - big.jbigWindowHdr.height() - 15 - ((big.jbigWindowBtns) ? big.jbigWindowBtns.height(): 0) );
+                                });
+                                elem.intern._jbigWindow.trigger("resize");
+                            }
                         }
                     }
                     this.dynStates.infoWindow._onHide = function (elem) {
-                        elem.intern._jbigWindow.bind("resize", null, null);
-                        // Stop update of the images
-                        clearTimeout(elem.intern._ipCamBigTimer);
-                        elem.intern._ipCamBigTimer = null;
-                        elem.intern._jbigWindow.jbigImage.load(null);
+                        if (elem.intern._jbigWindow.jbigImage) {
+                            elem.intern._jbigWindow.bind("resize", null, null);
+                            // Stop update of the images
+                            clearTimeout(elem.intern._ipCamBigTimer);
+                            elem.intern._ipCamBigTimer = null;
+                            elem.intern._jbigWindow.jbigImage.load(null);
+                        }
                     }
                     
-                    var isShowButtons = (this.settings.openDoorBttn || this.settings.gongActionBtn); // && (this.dynStates.action != null)
+                    var isShowButtons = (this.settings.ctrlActionBtn || this.settings.gongActionBtn); // && (this.dynStates.action != null)
                     this.dynStates.infoWindow.isShowButtons = isShowButtons;
                     
                     if (!isShowButtons)
@@ -1449,16 +1453,18 @@ var hqWidgets = {
                         this._CreateInfoPopup ('hq-ipcam-big-with-action');
                         
                     // Create inner image and buttons (Very dirty)
-                    this._SetInfoPopupTitle (((this.settings.buttonType == hqWidgets.gButtonType.gTypeCam) ? (this.settings.title || hqWidgets.Translate ("IP Camera")) : this.settings.gongQuestion));
-                    this._SetInfoPopupContent ("<img style='height: 100%; width:100%' id='"+this.advSettings.elemName+"_bigImage' />");
+                    this._SetInfoPopupTitle (((this.settings.buttonType == hqWidgets.gButtonType.gTypeCam) ? (this.settings.title || hqWidgets.Translate ("IP Camera")) : this.settings.ctrlQuestion));
+                    if (this.settings.buttonType != hqWidgets.gButtonType.gTypeInfo) {
+                        this._SetInfoPopupContent ("<img style='height: 100%; width:100%' id='"+this.advSettings.elemName+"_bigImage' />");
+                    }
 
                     if (isShowButtons) {
                         //text += "<tr id='"+this.advSettings.elemName+"_btns' style='height:40px'>"
                         var text = "<table style='width:100%'><tr><td style='width: 93%'></td>";
                         if (this.settings.gongActionBtn)
                             text += "<td><button style='height:40px' id='"+this.advSettings.elemName+"_bigGong' style='width:8em'>"+this.settings.gongBtnText+"</button></td>";
-                        if (this.settings.openDoorBttn)
-                            text += "<td><button style='height:40px' id='"+this.advSettings.elemName+"_bigButton' style='width:8em'>"+this.settings.openDoorBttnText+"</button></td>";
+                        if (this.settings.ctrlActionBtn)
+                            text += "<td><button style='height:40px' id='"+this.advSettings.elemName+"_bigButton' style='width:8em'>"+this.settings.ctrlBtnText+"</button></td>";
                         
                         text += "</tr></table>";
                         this.intern._jbigWindow.jbigWindowBtns.append (text);
@@ -1472,10 +1478,10 @@ var hqWidgets = {
                     document.getElementById(this.advSettings.elemName+'_bigImage').parentQuery = this;
                     this.intern._jbigWindow.jbigImage.bind("click", {msg: this.intern._jbigWindow}, function (e)	{
                         e.data.msg.OnClick ();
-                    });                    
+                    });  
 
                     // Setup action button
-                    if (this.settings.openDoorBttn && isShowButtons) {
+                    if (this.settings.ctrlActionBtn && isShowButtons) {
                         document.getElementById(this.advSettings.elemName+"_bigButton").parentQuery = this;
                         $("#"+this.advSettings.elemName+"_bigButton").button({icons: {primary: "ui-icon-unlocked"}, text: true}).click(function( event ) {
                             //event.preventDefault();
@@ -1521,7 +1527,7 @@ var hqWidgets = {
                     }
                     
                     this._CreateBigCam ();
-                }
+                }              
             }
 
             if ((this.settings.buttonType != hqWidgets.gButtonType.gTypeImage ||
@@ -2471,8 +2477,7 @@ var hqWidgets = {
             // If state changed
             if (newState != null && this.dynStates.state != newState) {
                 this.dynStates.state = newState;
-                
-                    
+                                    
                 if (this.settings.iconOn) {
                     if (this.dynStates.state == hqWidgets.gState.gStateOn) {
                         this.intern._jcenter.attr('src', this.settings.iconOn);
@@ -2499,18 +2504,18 @@ var hqWidgets = {
                         }
                         // Show dialog
                         else 
-                        if (this.dynStates.action && !this.intern._isBigVisible && this.settings.openDoorBttn) {
+                        if (this.dynStates.action && !this.intern._isBigVisible && this.settings.ctrlActionBtn) {
                             if (!document.getElementById('gongDialog')) {
                                 this.intern._isBigVisible = true;
-                                var text = "<div id='gongDialog' style='width:"+(200 + this.settings.gongQuestion.width('18px "Arial", sans-serif')) + "px'><table style='width: 100%; height: 100%' class='ui-widget-content'><tr><td>";
-                                var iconName = this.settings.gongQuestionImg;
+                                var text = "<div id='gongDialog' style='width:"+(200 + this.settings.ctrlQuestion.width('18px "Arial", sans-serif')) + "px'><table style='width: 100%; height: 100%' class='ui-widget-content'><tr><td>";
+                                var iconName = this.settings.ctrlQuestionImg;
                                 iconName = (iconName != null && iconName != "") ? (((iconName.indexOf ("/") != -1) ? "" : hqWidgets.gOptions.gPictDir) + iconName) : null;
 
                                 text += "<img src='"+iconName+"' /></td>";
-                                text += "<td><p>"+this.settings.gongQuestion+"</p></td></tr></table></div>"
+                                text += "<td><p>"+this.settings.ctrlQuestion+"</p></td></tr></table></div>"
                                 // Show dialog, that will hide automatically after 10 seconds
                                 var btns = {};
-                                btns[this.settings.openDoorBttnText] = function() {
+                                btns[this.settings.ctrlBtnText] = function() {
                                                 var dlg = document.getElementById ('gongDialog');
                                                 dlg.parentQuery.intern._isBigVisible = false;
                                                 $( this ).dialog( "close" );
@@ -3369,23 +3374,79 @@ var hqWidgets = {
             if (hqWidgets.gDynamics.gShownBig != null && hqWidgets.gDynamics.gShownBig != this)
                 hqWidgets.gDynamics.gShownBig.ShowBigWindow(false);
 
-            if ((!this.intern._isEditMode || (this.settings.isIgnoreEditMode && !this.intern._isMoved)) && 
-                this.dynStates.action && !this.intern._jbigWindow)
-                this.dynStates.action (this, "state", this.dynStates.state);
-             
-            if (!this.intern._isEditMode || isForce) {
-                // Send gong signal if gong pressed. Do not show camera dialog
-                if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGong) {
-                    if (this.dynStates.action)
-                        this.dynStates.action (this, "state", this.dynStates.state);
-                   // Play melody
-                    this._PlayMelody ();
-                }
-                else   
-                if (this.intern._jbigWindow && this.dynStates.infoWindow.isEnabled && !this.intern._isMoved)
-                    this.ShowBigWindow(true);
+            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInfo && this.settings.ctrlActionBtn){
+                if ((!this.intern._isEditMode || isForce) && this.dynStates.action && !this.intern._isBigVisible) {
+                    if (!document.getElementById('infoDialog')) {
+                        this.intern._isBigVisible = true;
+                        var text = "<div id='infoDialog' style='width:"+(200 + this.settings.ctrlQuestion.width('18px "Arial", sans-serif')) + "px'><table style='width: 100%; height: 100%' class='ui-widget-content'><tr><td>";
+                        var iconName = this.settings.ctrlQuestionImg;
+                        iconName = (iconName != null && iconName != "") ? (((iconName.indexOf ("/") != -1) ? "" : hqWidgets.gOptions.gPictDir) + iconName) : null;
+
+                        text += "<img src='"+iconName+"' /></td>";
+                        text += "<td><p>"+this.settings.ctrlQuestion+"</p></td></tr></table></div>"
+                        // Show dialog, that will hide automatically after 10 seconds
+                        var btns = {};
+                        btns[this.settings.ctrlBtnText] = function() {
+                                        var dlg = document.getElementById ('infoDialog');
+                                        dlg.parentQuery.intern._isBigVisible = false;
+                                        $( this ).dialog( "close" );
+                                        $( this ).remove();
+                                        dlg.parentQuery.dynStates.action (dlg.parentQuery, "open", hqWidgets.gState.gStateOn);
+                                        if (dlg.parentQuery.intern.timerID) {
+                                          clearTimeout (dlg.parentQuery.intern.timerID);
+                                          dlg.parentQuery.intern.timerID = null;
+                                        }
+                                    };
+                        btns[hqWidgets.Translate(hqWidgets.gOptions.gCancelText)] = function() {
+                                    var dlg = document.getElementById ('infoDialog');
+                                    dlg.parentQuery.intern._isBigVisible = false;
+                                    $( this ).dialog( "close" );
+                                    $( this ).remove();
+                                    if (dlg.parentQuery.intern.timerID) {
+                                        clearTimeout (dlg.parentQuery.intern.timerID);
+                                        dlg.parentQuery.intern.timerID = null;
+                                    }
+                                };
+                        $('body').append(text);
+                        var dlg = document.getElementById ('infoDialog');
+                        dlg.parentQuery = this;
+                        
+                        var jdlg = $('#infoDialog').dialog ({title: this.settings.title, 
+                                         resizable: false,
+                                         modal: true,
+                                         autoOpen:true,
+                                         width: 'auto',
+                                         buttons: btns});
+                        
+                        jdlg.parentQuery = this;
+                        
+                        this.intern.timerID = setTimeout (function (elem) {
+                            elem.intern._isBigVisible = false;
+                            $('#infoDialog').dialog('close').remove ();
+                            elem.intern.timerID = null;
+                        }, this.settings.popUpDelay, this);
+                        //dlg.dialog('open');
+                    }
+                }    
             }
-                
+            else {       
+                if ((!this.intern._isEditMode || (this.settings.isIgnoreEditMode && !this.intern._isMoved)) && 
+                    this.dynStates.action && !this.intern._jbigWindow)
+                    this.dynStates.action (this, "state", this.dynStates.state);
+                 
+                if (!this.intern._isEditMode || isForce) {
+                    // Send gong signal if gong pressed. Do not show camera dialog
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGong) {
+                        if (this.dynStates.action)
+                            this.dynStates.action (this, "state", this.dynStates.state);
+                       // Play melody
+                        this._PlayMelody ();
+                    }
+                    else   
+                    if (this.intern._jbigWindow && this.dynStates.infoWindow.isEnabled && !this.intern._isMoved)
+                        this.ShowBigWindow(true);
+                }
+            } 
             //hqWidgets.gDynamics.gActiveElement = null;
             //$('#status').append('click end ' + this.intern._isEditMode+" " + this.clickTimer +" "+ this.dynStates.state+'<br>');
         }
@@ -3990,9 +4051,9 @@ var hqWidgets = {
                 this.StoreSettings ();
             }
             if (this._CreateBigCam &&
-                (options.title            != undefined || options.openDoorBttn  != undefined ||
-                 options.openDoorBttnText != undefined || options.gongActionBtn != undefined ||
-                 options.gongQuestion     != undefined || options.gongBtnText   != undefined)) {
+                (options.title        != undefined || options.ctrlActionBtn != undefined ||
+                 options.ctrlBtnText  != undefined || options.gongActionBtn != undefined ||
+                 options.ctrlQuestion != undefined || options.gongBtnText   != undefined)) {
                 this._CreateBigCam ();
             }
         }
