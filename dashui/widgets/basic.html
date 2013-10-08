@@ -61,6 +61,22 @@
                     $this.hide();
                 }
             },
+            hideOnTrue: function (el) {
+                var $this = jQuery(el);
+                var hm_id = "_" + $this.attr("data-hm-id");
+                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    if (newVal === true || parseFloat(newVal) > 0) {
+                        if (dui.urlParams["edit"] !== "") {
+                            $this.hide();
+                        }
+                    } else {
+                        $this.show();
+                    }
+                });
+                if (parseFloat(homematic.uiState.attr(hm_id+".Value")) > 0 && homematic.uiState.attr(hm_id+".Value") !== false) {
+                    $this.hide();
+                }
+            },
             checkbox: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
@@ -196,7 +212,7 @@
 
 
 <script type="text/ejs" id="tplValueStringRaw" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - String (unescaped)" data-dashui-attrs="html_prepend;html_append;hm_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
                 <%== this.data.attr("html_prepend") %><%== homematic.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
@@ -323,18 +339,26 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplHide" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Hide on 0/False" data-dashui-attrs="hm_id,html">
+<script type="text/ejs" id="tplHide" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Hide on 0/False" data-dashui-attrs="hm_id;html;html_prepend;html_append">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="background-color:#ccc; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.hideOnFalse(el) %>>
         <div class="dashui-widget-body">
-            <%== this.data.attr('html') %>
+            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Red Number" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplHideTrue" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Hide on >0/True" data-dashui-attrs="hm_id;html;html_prepend;html_append">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="background-color:#ccc; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.hideOnTrue(el) %>>
+        <div class="dashui-widget-body">
+            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Red Number" data-dashui-attrs="hm_id;html_prepend;html_append">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.hideOnFalse(el) %>>
         <div class="dashui-widget-body" >
-            <%= parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) %>
+            <%== this.data.attr("html_prepend") %><%= parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) %><%== this.data.attr("html_append") %>
         </div>
     </div>
 </script>
