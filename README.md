@@ -10,13 +10,8 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.9
 
-* Alle vorhandenen Widgets testen & Bugs fixen
 * "basic - hm_val valuelist-view-container" widget (bestimmte View in Container-Widget in abhängigkeit von Variable anzeigen)
 * "basic - static iframe" widget mit attribut refresh-interval, persistent
-* neues Widget-Attribut: Integrierte Doku -> im Editor anzeigbar
-* neues Widget-Attribut: Kompatibilitat um ID-Auswahl vorab einzugrenzen
-* neues Widget-Attribut: Widgetset - um vorab zu prüfen welche Widget-Sets geladen werden müssen (im Editmodus immer alle laden)
-
 
 ### 1.0
 
@@ -25,8 +20,6 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * Bild-Upload (im Reiter Editor unterbringen?)
 * Editor: mehrere Widgets auf einmal Bewegen
 * Editor/CSS-Inspector: Zauberstab-tool um Style-Eigenschaften von anderen Widgets zu übernehmen
-* Wunderground/yr.no Widgets via CCU.IO
-* Hue Widgets via CCU.IO
 * Noch mehr Widgets! :)
 * Editor "aufhübschen"
 * Einfache Installation gemeinsam mit CCU.IO
@@ -37,6 +30,20 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * Mehr Widgets! Doku! ;-)
 
 ## Changelog
+
+### 0.9beta15
+
+* (Hobbyquaker) Bugfix basic widgets, added yr-adapter
+* (Bluefox) Add images for chart and eventlist buttons
+* (Bluefox) Add HM-LC-Bl1PBU-FM
+
+### 0.9beta14
+* (Bluefox) Enable activation of programs with hqWidget Button
+* (Bluefox) New feature: Control by hqWidget/Info (e.g. to control the garage door)
+* (Bluefox) Remove Time_ON property for Dimmer.
+* (Bluefox) Fixed: Error if wired dimmer used
+* (Bluefox) Alert window if incompatible data point used for hqWidget
+* (Bluefox) Bugfixes hqDimmer
 
 ### 0.9beta13
 * (Bluefox) Neue hqWidgets: Eventlist und Chart
