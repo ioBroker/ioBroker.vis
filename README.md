@@ -116,6 +116,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 * (Hobbyquaker, Bluefox)    Anpassung an CCU.IO, Bugfixes
 * (Smiling-Jack)            Swipe-Widget (Navigation via Touch-Gesten)
+* Neuer Contributor: Smiling-Jack - Herzlich Willkommen! :-)
 
 ### 0.8.4-0.8.6
 
@@ -140,6 +141,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ### 0.8.3
 * (Bluefox) diverse Fehler behoben
 * (Eisbaer) diverse Fehler behoben
+* Neuer Contributor: Eisbaer - Herzlich Willkommen! :-)
 
 ### 0.8.2
 * (Bluefox) hqWidgets: Button, Shutter, Lock, Door, Text, Image, Info, InTemp, OutTemp
