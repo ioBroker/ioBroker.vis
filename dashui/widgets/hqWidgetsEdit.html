@@ -192,6 +192,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           exTypes: 0,
                                           exWidth: 0,
                                           exPopup: true,
+                                          exPcount: 250,
                                           title: dui.translate("History"),
                                           });
                 }
@@ -796,12 +797,22 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 sText += "<option value='1'>"+dui.translate("Only devices")+"</option>";
                 sText += "<option value='2'>"+dui.translate("Only variables")+"</option>";
                 sText += "</select>";                
+                sText += "<tr><td>"+ dui.translate("On one page:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_exPcount' class='selectEditWidth'>";
+                sText += "<option value='25'>25</option>";
+                sText += "<option value='50'>50</option>";
+                sText += "<option value='100'>100</option>";
+                sText += "<option value='250'>250</option>";
+                sText += "<option value='500'>500</option>";
+                sText += "<option value='750'>750</option>";
+                sText += "<option value='1000'>1000</option>";
+                sText += "</select>";                
                 parent.append(sText);
                 
                 hqEditElem._EditCheckboxHandler ('exLoading', false, false, true);
                 hqEditElem._EditCheckboxHandler ('exStatesOnly', false, false, true);
                 hqEditElem._EditTextHandler('staticText');   
                 hqEditElem._EditSelectHandler('exTypes');   
+                hqEditElem._EditSelectHandler('exPcount');   
             }        
         },      
     });
