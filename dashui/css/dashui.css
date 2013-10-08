@@ -85,3 +85,28 @@
     width:180px;
 }
 
+button.ui-dialog-titlebar-close {
+    width: 30px !important;
+    height: 30px !important;
+    margin-top: -4px !important;
+    }
+a.ui-dialog-titlebar-minimize {
+    width: 26px !important;
+    height: 26px !important;
+    padding: 1px !important;
+    margin-top: -4px !important;
+}
+a.ui-dialog-titlebar-restore {
+    width: 26px !important;
+    height: 26px !important;
+    padding: 1px !important;
+    margin-top: -4px !important;
+}
+.ui-dialog-titlebar-restore span{
+    margin-top: 5px !important;
+    margin-left:5px !important;
+}
+.ui-dialog-titlebar-minimize span{
+    margin-top: 5px !important;
+    margin-left:5px !important;
+}
