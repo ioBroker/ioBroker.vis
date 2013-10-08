@@ -543,6 +543,13 @@ dui = $.extend(true, dui, {
                 location.href = "./#"+dui.activeView;
             }
         });
+         $("#dui_editor").dialogExtend({
+            "minimizable" : true,
+            "icons" : { "maximize" : "ui-icon-arrow-4-diag" },
+            "minimize" : function(evt) {
+               $("#dui_editor").dialog( "option", "position", { my: "right top", at: "right top", of: window });
+            }
+        });
 
         $("#tabs").tabs();
         $("#widget_helper").hide();
