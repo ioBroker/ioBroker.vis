@@ -173,57 +173,57 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.7
 
-* Container implementiert, Views können nun in Widgets und jQuery UI Dialogen dargestellet werden
-* Fehler behoben - Buttons waren nicht mehr editierbar
-* Dialog-Widgets mit zusätzlichen Attributen ausgestattet
-* container und view id präfix, link disable im edit-mode
-* neues Widget-Set: "fancyswitch"
-* Widget-Definitionen und Bindings in eigene Files ausgelagert
-* toggle Binding und neue Widgets
-* diverse Fehler behoben, Pfade gekürzt (100-Zeichen-Limit...)
+* (Hobbyquaker) Container implementiert, Views können nun in Widgets und jQuery UI Dialogen dargestellet werden
+* (Hobbyquaker) Fehler behoben - Buttons waren nicht mehr editierbar
+* (Hobbyquaker) Dialog-Widgets mit zusätzlichen Attributen ausgestattet
+* (Hobbyquaker) container und view id präfix, link disable im edit-mode
+* (Hobbyquaker) neues Widget-Set: "fancyswitch"
+* (Hobbyquaker) Widget-Definitionen und Bindings in eigene Files ausgelagert
+* (Hobbyquaker) toggle Binding und neue Widgets
+* (Hobbyquaker) diverse Fehler behoben, Pfade gekürzt (100-Zeichen-Limit...)
 
 
 ### 0.6
 
-* Sind keine lokalen Views vorhanden wird nun automatisch versucht die Views von der CCU zu laden
-* Wahrend des Ladevorgangs wird div#loader eingeblendet
-* Widget-Select wird nun aktualisiert wenn Widgets gelascht werden
-* Diverse Fehler beim duplizieren von Views behoben
-* Beim U?ndern von Widget-Attributen werden Widgets nun neu gerendert, es ist kein Reload mehr notwendig
-* View-Select ist jetzt alphabetisch sortiert
-* Instanzen und Variablen fur externe Kommandos werden nicht mehr automatisch angelegt und konnen entfernt werden
-* Widget "mfd-icon Shutter/Dimmer + jqui Dialog" neue Attribute autoclose und modal
-* Widget "basic - Red Number" Zahl sitzt nun sauber in der Mitte
-* Widget "jqui Button Link" und "jqui Button Link _blank" fehlendes Attribut erganzt
+* (Hobbyquaker) Sind keine lokalen Views vorhanden wird nun automatisch versucht die Views von der CCU zu laden
+* (Hobbyquaker) Wahrend des Ladevorgangs wird div#loader eingeblendet
+* (Hobbyquaker) Widget-Select wird nun aktualisiert wenn Widgets gelascht werden
+* (Hobbyquaker) Diverse Fehler beim duplizieren von Views behoben
+* (Hobbyquaker) Beim U?ndern von Widget-Attributen werden Widgets nun neu gerendert, es ist kein Reload mehr notwendig
+* (Hobbyquaker) View-Select ist jetzt alphabetisch sortiert
+* (Hobbyquaker) Instanzen und Variablen fur externe Kommandos werden nicht mehr automatisch angelegt und konnen entfernt werden
+* (Hobbyquaker) Widget "mfd-icon Shutter/Dimmer + jqui Dialog" neue Attribute autoclose und modal
+* (Hobbyquaker) Widget "basic - Red Number" Zahl sitzt nun sauber in der Mitte
+* (Hobbyquaker) Widget "jqui Button Link" und "jqui Button Link _blank" fehlendes Attribut erganzt
 
 
 
 ### 0.5
 
-* externe Steuerung über automatisch angelegte Systemvariablen, bisherige Befehle: alert, changeView, reload, popup
-* Widget jqui Radio ValueList hinzugefügt
-* Widget jqui Select ValueList hinzugefügt
-* diverse Fehler behoben
-* Widget jqui Input Datetime ausgearbeitet
+* (Hobbyquaker) externe Steuerung über automatisch angelegte Systemvariablen, bisherige Befehle: alert, changeView, reload, popup
+* (Hobbyquaker) Widget jqui Radio ValueList hinzugefügt
+* (Hobbyquaker) Widget jqui Select ValueList hinzugefügt
+* (Hobbyquaker) diverse Fehler behoben
+* (Hobbyquaker) Widget jqui Input Datetime ausgearbeitet
 
 
 ### 0.4
 
-* Views können nun unterschiedliche jQuery UI Themes zugewiesen werden, 3 Themes sind bisher mitgeliefert
-* Ab sofort kann als Attribut hm_id neben der id auch eine Adresse in der Form BidCos-RF.EEQ0012345:1.LEVEL bzw ein Variablen- oder Programmname angegeben werden
-* Über http://ccu/addons/dashui/reset.html kann der Cache komplett geleert werden
-* diverse Fehler beim Selektieren von Widgets und Wechseln der View behoben
-* Views können nun gelöscht und umbenannt werden
-* Views werden nun erst beim erstmaligen Aufruf gerendert (merzt auch jqPlot Probleme aus)
-* Views und Widget können nun CSS-Klassen zugewiesen werden
-* Widget jqui-input und jqui-input-set-button mit weiteren Attributen ausgestattet
-* Widget mfd-icon Shutter angepasst
-* Widget basic - rednumber: Zeigt Ganzzahlwerte an, verschwindet bei Wert 0 (iOS-Like...)
-* mfd-icons werden nun vollständig mitgeliefert
+* (Hobbyquaker) Views können nun unterschiedliche jQuery UI Themes zugewiesen werden, 3 Themes sind bisher mitgeliefert
+* (Hobbyquaker) Ab sofort kann als Attribut hm_id neben der id auch eine Adresse in der Form BidCos-RF.EEQ0012345:1.LEVEL bzw ein Variablen- oder Programmname angegeben werden
+* (Hobbyquaker) Über http://ccu/addons/dashui/reset.html kann der Cache komplett geleert werden
+* (Hobbyquaker) diverse Fehler beim Selektieren von Widgets und Wechseln der View behoben
+* (Hobbyquaker) Views können nun gelöscht und umbenannt werden
+* (Hobbyquaker) Views werden nun erst beim erstmaligen Aufruf gerendert (merzt auch jqPlot Probleme aus)
+* (Hobbyquaker) Views und Widget können nun CSS-Klassen zugewiesen werden
+* (Hobbyquaker) Widget jqui-input und jqui-input-set-button mit weiteren Attributen ausgestattet
+* (Hobbyquaker) Widget mfd-icon Shutter angepasst
+* (Hobbyquaker) Widget basic - rednumber: Zeigt Ganzzahlwerte an, verschwindet bei Wert 0 (iOS-Like...)
+* (Hobbyquaker) mfd-icons werden nun vollständig mitgeliefert
 
 ### 0.3
 
-* Erstes öffentliches Release
+* (Hobbyquaker) Erstes öffentliches Release
 
 
 
