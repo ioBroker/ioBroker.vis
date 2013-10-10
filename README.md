@@ -31,6 +31,13 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta16
+
+* (smiling-Jack) Add minimize Button to Editor
+* (smiling-Jack) CSS anpassung für Editor minimize
+* (smiling-Jack) Add Glow effekt
+* (Bluefox) Einstellbare Anzahl von Ereignissen auf der Seite
+
 ### 0.9beta15
 
 * (Hobbyquaker) Bugfix basic widgets, added yr-adapter
