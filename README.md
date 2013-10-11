@@ -31,6 +31,12 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta17
+
+* (hobbyquaker) Style-Anpassung für Schließen-Button im Editor-Dialog und anderen jQueryUI Dialogen
+* (hobbyquaker) erzwungener Reload falls automatischer Reconnect bei verlorener CCU.IO-Verbindung nicht funktioniert
+* (hobbyquaker) Widgets "basic red Number" und "basic hm_val number" mit getrennten html_append Eigenschaften für Singular und Plural ausgetattet
+
 ### 0.9beta16
 
 * (smiling-Jack) Add minimize Button to Editor

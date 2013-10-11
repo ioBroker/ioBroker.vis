@@ -22,7 +22,7 @@
 
 // duiEdit - the DashUI Editor
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta16',
+    editVersion:        '0.9beta17',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -538,6 +538,7 @@ dui = $.extend(true, dui, {
             width:  500,
             height: 610,
             position: { my: "right top", at: "right top", of: window },
+            dialogClass: "dui-editor-dialog",
             close: function () {
                 dui.saveRemote();
                 location.href = "./#"+dui.activeView;

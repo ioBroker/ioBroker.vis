@@ -189,11 +189,11 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Number" data-dashui-attrs="html_prepend;html_append;hm_id;digits;factor">
+<script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Number" data-dashui-attrs="html_prepend;html_append_singular;html_append_plural;hm_id;digits;factor">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) * this.data.factor).toFixed(this.data.digits) %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) * this.data.factor).toFixed(this.data.digits) %><%== (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
             </div>
         </div>
     </div>
@@ -355,10 +355,10 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Red Number" data-dashui-attrs="hm_id;html_prepend;html_append">
+<script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Red Number" data-dashui-attrs="hm_id;html_prepend;html_append_singular;html_append_plural">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.hideOnFalse(el) %>>
         <div class="dashui-widget-body" >
-            <%== this.data.attr("html_prepend") %><%= parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) %><%== this.data.attr("html_append") %>
+            <%== this.data.attr("html_prepend") %><%= parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) %><%== (parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
         </div>
     </div>
 </script>

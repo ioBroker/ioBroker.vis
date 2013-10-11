@@ -85,11 +85,19 @@
     width:180px;
 }
 
+
 button.ui-dialog-titlebar-close {
     width: 30px !important;
     height: 30px !important;
+    margin-top: -14px !important;
+}
+
+div.dui-editor-dialog div div button.ui-dialog-titlebar-close {
+    margin-left: 1px !important;
     margin-top: -4px !important;
-    }
+}
+
+
 a.ui-dialog-titlebar-minimize {
     width: 26px !important;
     height: 26px !important;
