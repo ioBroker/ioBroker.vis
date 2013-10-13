@@ -29,9 +29,9 @@
 
     <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
     <script type="text/javascript" src="js/grid.locale-en.js" ></script>
-    <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before dashui.js tttttttt -->
+    <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before dashui.js -->
     <script type="text/javascript" src="js/dashui.js"></script>
-    <script type="text/javascript" src="js/dashuiEdit.js"></script>
+    <script type="text/javascript" src="js/dashuiEdit.js"></script>    
 </head>
 <body>
     <div id="loading" style="background-color:#999; z-index: 5000; padding:20px; position: absolute; top: 0; left: 0; height:100%; width:100%"></div>
@@ -130,7 +130,7 @@
                 </div>
             </div>
             <div id="tabs-4" class="ui-widget-content">
-                <h4>Add Widget</h4>
+                <h4>Add Widget:</h4>
                 <select id="select_set" class="dashui-editor" data-multiselect-width="425" data-multiselect-height="400"></select></br>
                 <select id="select_tpl" class="dashui-editor" data-multiselect-width="425" data-multiselect-height="360"></select><input class="dashui-editor" type="button" id="add_widget" value="add widget" />
                 <h4>Inspecting Widget:</h4> <select id="select_active_widget" class="dashui-editor" data-multiselect-width="425" data-multiselect-height="265"></select><br/><br/>
@@ -145,7 +145,7 @@
                         </td>
                     </tr></table>
                     <input type="button" class="dashui-editor" id="widget_doc" value="Widget-Documentation" />
-                    <h4>Widget Attributes</h4>
+                    <h4>Widget Attributes:</h4>
                     <table id="widget_attrs_fix">
                         <tr>
                             <td>comment</td><td><input size="48" type="text" id="inspect_comment" class="dashui-inspect-widget"/></td>
@@ -202,5 +202,8 @@
                 </p>
             </div>
     </div>
+    <script type="text/javascript">
+        dui.translateAll ();
+    </script>
 </body>
 </html>

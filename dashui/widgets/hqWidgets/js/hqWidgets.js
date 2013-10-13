@@ -83,6 +83,7 @@ var hqWidgets = {
         gTypeCam    : 13,  // Ip Camera
         gTypeGong   : 14,  // Gong indicator with camera view on knock
         gTypeGauge  : 15,
+        gTypeLowbat : 16,  // Show widget only if low battery problem
     },
     gWindowState: {
         // State of the leaf
@@ -157,6 +158,21 @@ var hqWidgets = {
                 "Hide after 12 hours"       : {"en": "Hide after 12 hours","de": "Ausblenden nach 12 Stunden"},
                 "Hide after 1 day"          : {"en": "Hide after 1 day",   "de": "Ausblenden nach 1 Tag"},
                 "Hide after 2 days"         : {"en": "Hide after 2 days",  "de": "Ausblenden nach 2 Tagen"},
+                "Battery problem"           : {"en": "Battery problem", "de": "Akku-Problem"},
+                "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
+                "Icon:"                     : {"en": "Icon:",           "de": "Kleinbild:"},
+                "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
+                "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
+                "Styles..."                 : {"en": "Styles...",       "de": "Stile..."},
+                "jQuery Styles:"            : {"en": "Use&nbsp;jQuery&nbsp;Styles:", "de": "jQuery&nbsp;Stil&nbsp;anwenden:"},
+                "Radius:"                   : {"en": "Border&nbsp;Radius:", "de": "Eckenradius:"},
+                "Icon width:"               : {"en": "Icon width:",     "de": "Bildbreite:"},
+                "Icon height:"              : {"en": "Icon height:",    "de": "Bildh&ouml;he:"},
+                "Icon size:"                : {"en": "Icon size:",      "de": "Bildgr&ouml;&szlig;e:"},
+                "Icon active:"              : {"en": "Active&nbsp;icon:","de": "Aktivbild:"},
+                "Hide inactive:"            : {"en": "Hide&nbsp;if&nbsp;incative:", "de": "Verstecken&nbsp;falls&nbsp;inaktiv:"},
+                "No background:"            : {"en": "No&nbsp;background:",         "de": "Kein&nbsp;Hintergrund:"},
+                "Show description:"         : {"en": "Show&nbsp;description:",      "de": "Zeige&nbspBeschreibung:"},
            };
         }
         if (this.words[text]) {
@@ -226,8 +242,7 @@ var hqWidgets = {
     },
     // Convert button type to string
     Type2Name: function  (t) {
-        switch (t)
-        {
+        switch (t){
         case this.gButtonType.gTypeButton: return this.Translate("Button");
         case this.gButtonType.gTypeInTemp: return this.Translate("In. Temp.");
         case this.gButtonType.gTypeOutTemp:return this.Translate("Out. Temp.");
@@ -241,6 +256,11 @@ var hqWidgets = {
         case this.gButtonType.gTypeDimmer: return this.Translate("Dimmer");
         case this.gButtonType.gTypeImage:  return this.Translate("Image");
         case this.gButtonType.gTypeText:   return this.Translate("Text");
+        case this.gButtonType.gTypeDimmer: return this.Translate("Dimmer");
+        case this.gButtonType.gTypeCam:    return this.Translate("Camera");
+        case this.gButtonType.gTypeGong:   return this.Translate("Gong");
+        case this.gButtonType.gTypeGauge:  return this.Translate("Gauge");
+        case this.gButtonType.gTypeLowbat: return this.Translate("Low battery");
         default: return "";
         }
     },
@@ -560,6 +580,7 @@ var hqWidgets = {
             isContextMenu:    false, // If install edit context menu
             noBackground:     false, // If show background or just text or image
             usejQueryStyle:   false, // Use jQuery style for active/passive background
+            showDescription:  false, // If show description of widget in normal (not edit) mode
 
             ipCamImageURL:    null,  // Url of image
             ipCamVideoURL:    null,  // Video Url
@@ -2368,7 +2389,7 @@ var hqWidgets = {
                 if (this.intern._jtemp)        this.intern._jtemp.stop().show();
                 if (this.intern._jhumid)       this.intern._jhumid.stop().show();
                 if (this.intern._jinfoText)    this.intern._jinfoText.stop().show();
-                if (this.intern._jleft)        this.intern._jleft.stop().hide();
+                if (this.intern._jleft && !this.settings.showDescription) this.intern._jleft.stop().hide();
                 if (this.intern._jbattery)     this.intern._jbattery.stop().show();
                 if (this.intern._jsignal)      this.intern._jsignal.stop().show();
                 if (this.intern._jstaticText)  this.intern._jstaticText.stop().show();
@@ -2387,6 +2408,10 @@ var hqWidgets = {
                     {
                         if (this.dynStates.state == hqWidgets.gState.gStateOn)
                         {
+                            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
+                                this.show();
+                            }
+                            
                             if (this.intern._isPressed)
                                 this._SetClass (this.intern._backOnHover);
                             else
@@ -2394,6 +2419,13 @@ var hqWidgets = {
                         }
                         else
                         {
+                            // Hide element if lowbat is false
+                            if (this.dynStates.state == hqWidgets.gState.gStateOff && 
+                                this.settings.buttonType == hqWidgets.gButtonType.gTypeLowbat &&
+                                this.settings.infoIsHideInactive == true) {
+                                this.hide();
+                            }
+
                             if (this.intern._isPressed)
                                 this._SetClass (this.intern._backOffHover);
                             else
@@ -2739,8 +2771,7 @@ var hqWidgets = {
         // Set title (Tooltip)
         this.SetTitle = function (room, title)	{
             if (!this.intern._jleft) {
-                if (!document.getElementById(this.advSettings.elemName+'_left')) 
-                {
+                if (!document.getElementById(this.advSettings.elemName+'_left')) {
                     var $newdiv2 = $('<div id="'+this.advSettings.elemName+'_left"></div>');
                     this.advSettings.parent.append ($newdiv2);
                 }
@@ -2771,8 +2802,9 @@ var hqWidgets = {
                 this.intern._description = hqWidgets.Type2Name (this.settings.buttonType);
                 this.intern._jelement.attr ('title', "");
             }
-            else
-                this.intern._jelement.attr ('title', this.settings.title);
+            else {
+                this.intern._jelement.attr ('title', this.settings.title.replace("<br>", " / "));
+            }
 
             this.intern._jleft.offset = this.intern._description.width();
             var w = this.settings.room.width();

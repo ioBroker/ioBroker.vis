@@ -1,19 +1,19 @@
 /*
-hqWidgets is a ìhigh qualityî home automation widgets library.
+hqWidgets is a ‚Äúhigh quality‚Äù home automation widgets library.
 You can easy create the user interface for home automation with the help of this library using HTML, javascript and CSS.
  
 The library supports desktop and mobile browsers versions.
 Actually library has following widgets:
-- On/Off Button ñ To present and/or control some switch (e.g. Lamp)
-- Dimmer ñ To present and control dimmer
-- Window blind ñ to present and control one blind and display up to 4 window leafs
-- Indoor temperature ñ to display indoor temperature and humidity with desired temperature and valve state
-- Outdoor temperature ñ to display outdoor temperature and humidity
-- Door   ñ to present a door
-- Lock   ñ to present and control lock
-- Image  ñ to show a static image
-- Text   ñ to show a static text with different colors and font styles
-- Info   ñ To display some information. Supports format string, condition for active state and different icons for active and static state.
+- On/Off Button ‚Äì To present and/or control some switch (e.g. Lamp)
+- Dimmer ‚Äì To present and control dimmer
+- Window blind ‚Äì to present and control one blind and display up to 4 window leafs
+- Indoor temperature ‚Äì to display indoor temperature and humidity with desired temperature and valve state
+- Outdoor temperature ‚Äì to display outdoor temperature and humidity
+- Door   ‚Äì to present a door
+- Lock   ‚Äì to present and control lock
+- Image  ‚Äì to show a static image
+- Text   ‚Äì to show a static text with different colors and font styles
+- Info   ‚Äì To display some information. Supports format string, condition for active state and different icons for active and static state.
  
 ------ Version V0.1 ------
  
@@ -383,7 +383,8 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGong) {
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGong && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLowbat) {
             if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge)
                 sText    += "<tr><td>"+ hqWidgets.Translate("Test text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoText'  type='text' value='"+(this.e_internal.obj.dynStates.infoText || "")+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Font:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextFont'  type='text' value='"+this.e_internal.attr.infoTextFont+"'></td></tr>";
@@ -419,7 +420,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td id='td1_"+this.e_settings.elemName+"_iconOn'>"+ hqWidgets.Translate("Icon&nbsp;active:")+"</td><td id='td2_"+this.e_settings.elemName+"_iconOn'>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td id='td1_"+this.e_settings.elemName+"_iconOn'>"+ hqWidgets.Translate("Icon active:")+"</td><td id='td2_"+this.e_settings.elemName+"_iconOn'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_iconOn' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.iconOn == undefined) ? "":this.e_internal.attr.iconOn)+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_iconOnBtn' style='width: 30px' type='button' value='...'>";
             sTextAdv += "</td></tr>";
@@ -480,7 +481,8 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDimmer && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {            
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge  && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLowbat) {            
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td id='td1_"+this.e_settings.elemName+"_hoursLastAction'>"+ hqWidgets.Translate("Last action:")+"</td><td id='td2_"+this.e_settings.elemName+"_hoursLastAction'><select id='"+this.e_settings.elemName+"_hoursLastAction' style='width: "+this.e_settings.width+"px'>";
             sTextAdv += "<option value='-1' >"+hqWidgets.Translate("Do not show")+"</option>";
             sTextAdv += "<option value='-2'>" +hqWidgets.Translate("Show always")+"</option>";
@@ -505,10 +507,16 @@ hqWidgets = $.extend (true, hqWidgets, {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Hide inactive:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_infoIsHideInactive' "+((this.e_internal.attr.infoIsHideInactive) ? "checked" : "")+">";
         }  
         
+        // Lowbat, If hide when incative state
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Hide inactive:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_infoIsHideInactive' "+((this.e_internal.attr.infoIsHideInactive) ? "checked" : "")+">";
+        }  
+        
         // No background
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo   ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeButton ||
-            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong) {
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong   ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("No background:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_noBackground' "+((this.e_internal.attr.noBackground) ? "checked" : "")+">";
         }
         
@@ -518,7 +526,8 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong   ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeOutTemp|| 
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInTemp ||
-            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeDimmer || 
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
             sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Normal:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalParent' ></td></tr>";
             sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Normal hover:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalHoverParent' ></td></tr>";
             
@@ -528,6 +537,9 @@ hqWidgets = $.extend (true, hqWidgets, {
                 sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td id='td1_"+this.e_settings.elemName+"_styleActiveHoverParent'>"+ hqWidgets.Translate("Active hover:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveHoverParent' ></td></tr>";
             }
         }
+        
+        // If show description
+        sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Show description:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_showDescription' "+(this.e_internal.attr.showDescription ? "checked" : "")+" ></td></tr>";
         
         
         // Description
@@ -542,7 +554,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_settings.parent.append (sTextStyle);
         else 
         if (iStyleCount > 1) {
-            sTextStyle = "<tr><td colspan=2><button id='idShowStyle'>"+hqWidgets.Translate("Styles...")+"</td></tr>" + sTextStyle;
+            sTextStyle = "<tr><td colspan=2><button id='idShowStyle' class='groupButtonWidth'>"+hqWidgets.Translate("Styles...")+"</td></tr>" + sTextStyle;
             this.e_settings.parent.append (sTextStyle);
             var advBtn = document.getElementById ('idShowStyle');
             advBtn.obj   = this;
@@ -587,7 +599,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         }
         else
         if (iAdvCount > 0) {
-            sTextAdv = "<tr><td colspan=2><button id='idShowAdv'>"+hqWidgets.Translate("Advanced...")+"</td></tr>" + sTextAdv;
+            sTextAdv = "<tr><td colspan=2><button id='idShowAdv' class='groupButtonWidth'>"+hqWidgets.Translate("Advanced...")+"</td></tr>" + sTextAdv;
             this.e_settings.parent.append (sTextAdv);
             var advBtn = document.getElementById ('idShowAdv');
             advBtn.obj   = this;
@@ -628,7 +640,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.obj.controlsVisible = false;
 
         if (iCtrlCount > 0) {
-            sTextCtrl = "<tr><td colspan=2><button id='idShowCtrl'>"+hqWidgets.Translate("Control...")+"</td></tr>" + sTextCtrl;
+            sTextCtrl = "<tr><td colspan=2><button id='idShowCtrl' class='groupButtonWidth'>"+hqWidgets.Translate("Control...")+"</td></tr>" + sTextCtrl;
             this.e_settings.parent.append (sTextCtrl);
             var ctrlBtn = document.getElementById ('idShowCtrl');
             ctrlBtn.obj   = this;
@@ -774,7 +786,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                     
                     this.parent.e_internal.attr.windowConfig = newS;
                     this.parent.e_internal.obj.SetSettings ({windowConfig: this.parent.e_internal.attr.windowConfig}, true);
-                    hqWidgets.hqButtonEdit (this.parent.e_settings, this.parent.e_internal.obj, this.parent.e_internal.extra);
+                    hqWidgets.hqEditButton (this.parent.e_settings, this.parent.e_internal.obj, this.parent.e_internal.extra);
                 });
         }	
         // Process window types changes
@@ -817,6 +829,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         this._EditTextHandler('valueMax');   
         this._EditCheckboxHandler ('gaugeHorz', false, false, true);
         this._EditCheckboxHandler ('gaugeStart', false, false, true);
+        this._EditCheckboxHandler ('showDescription', false, false, true);
         
         this._EditTextHandler('title');   
         this._EditSelectHandler('hoursLastAction');   
@@ -834,9 +847,20 @@ hqWidgets = $.extend (true, hqWidgets, {
         });
         this._EditTextHandler('ipCamImageURL');   
         this._EditTextHandler('popUpDelay');   
-        this._EditCheckboxHandler ('ctrlActionBtn', false, false, true, function (isChecked, obj) {
-            document.getElementById(obj.e_settings.elemName+'_openDoorBttnText').disabled = !isChecked;
-        });
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong) {
+            this._EditCheckboxHandler ('ctrlActionBtn', false, false, true, function (isChecked, obj) {
+                document.getElementById(obj.e_settings.elemName+'_openDoorBttnText').disabled = !isChecked;
+            });
+        }
+        else {
+            this._EditCheckboxHandler ('ctrlActionBtn', false, false, true, function (isChecked, obj) {
+                $('#'+obj.e_settings.elemName+'_ctrlQuestion').prop('disabled', !isChecked);
+                $('#'+obj.e_settings.elemName+'_ctrlQuestionImg').prop('disabled', !isChecked);
+                $('#'+obj.e_settings.elemName+'_ctrlQuestionImgBtn').prop('disabled', !isChecked);
+                $('#'+obj.e_settings.elemName+'_ctrlBtnText').prop('disabled', !isChecked);
+            });
+        }
         if (document.getElementById(this.e_settings.elemName+'_openDoorBttnText')) {
             document.getElementById(this.e_settings.elemName+'_openDoorBttnText').disabled = !this.e_internal.attr.ctrlActionBtn;
         }
@@ -846,12 +870,6 @@ hqWidgets = $.extend (true, hqWidgets, {
             document.getElementById(this.e_settings.elemName+'_hoursLastAction').value = "-1";
             document.getElementById(this.e_settings.elemName+'_hoursLastAction').disabled = this.e_internal.attr.isShowPercent;
         }
-        this._EditCheckboxHandler ('ctrlActionBtn', false, false, true, function (isChecked, obj) {
-            $('#'+obj.e_settings.elemName+'_ctrlQuestion').prop('disabled', !isChecked);
-            $('#'+obj.e_settings.elemName+'_ctrlQuestionImg').prop('disabled', !isChecked);
-            $('#'+obj.e_settings.elemName+'_ctrlQuestionImgBtn').prop('disabled', !isChecked);
-            $('#'+obj.e_settings.elemName+'_ctrlBtnText').prop('disabled', !isChecked);
-        });
         if (document.getElementById(this.e_settings.elemName+"_ctrlActionBtn") != null) {
             $('#'+this.e_settings.elemName+'_ctrlQuestion').prop('disabled', !this.e_internal.attr.ctrlActionBtn);
             $('#'+this.e_settings.elemName+'_ctrlQuestionImg').prop('disabled', !this.e_internal.attr.ctrlActionBtn);
