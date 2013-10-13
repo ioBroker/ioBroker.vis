@@ -529,12 +529,15 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeDimmer || 
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
             sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Normal:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalParent' ></td></tr>";
-            sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Normal hover:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalHoverParent' ></td></tr>";
-            
+            if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLowbat) {
+                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Normal hover:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalHoverParent' ></td></tr>";
+            }
             if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
                 this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp) {
                 sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td id='td1_"+this.e_settings.elemName+"_styleActiveParent'>"+ hqWidgets.Translate("Active:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveParent'></td></tr>";
-                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td id='td1_"+this.e_settings.elemName+"_styleActiveHoverParent'>"+ hqWidgets.Translate("Active hover:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveHoverParent' ></td></tr>";
+                if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLowbat) {
+                    sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td id='td1_"+this.e_settings.elemName+"_styleActiveHoverParent'>"+ hqWidgets.Translate("Active hover:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveHoverParent' ></td></tr>";
+                }
             }
         }
         

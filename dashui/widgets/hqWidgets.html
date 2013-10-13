@@ -575,11 +575,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
                             if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["LOWBAT"]) {
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};   
                                 hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'state'};   
                             }
                             else if (homematic.regaObjects[opt["hm_id"]]){
-                                hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'lowBattery'};
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'state'};
                             }
                         }  
@@ -953,7 +951,7 @@ if ((typeof hqWidgets !== 'undefined')) {
             },
             hqMonitor: function (wid, newState, lastchange) {
                 
-                //console.log(wid+"["+dui.getObjDesc (wid)+"] = "+newState);
+                console.log(wid+"["+dui.getObjDesc (wid)+"] = "+newState);
                 var i = 0;
                 while (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i]) {
                 
