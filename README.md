@@ -31,6 +31,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta18
+
+* (Bluefox) Neues Widget hqWidgets Battery indicator
+
 ### 0.9beta17
 
 * (hobbyquaker) Style-Anpassung für Schließen-Button im Editor-Dialog und anderen jQueryUI Dialogen
