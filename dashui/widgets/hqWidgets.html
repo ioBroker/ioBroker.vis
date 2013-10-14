@@ -112,6 +112,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                 // Define store settings function
                 var adv = {store: dui.binds.hqWidgetsExt.hqEditStore};
                 
+                // Set default type to button
                 if (opt.buttonType === undefined) {
                     opt.buttonType = hqWidgets.gButtonType.gTypeButton;
                 }
@@ -494,14 +495,16 @@ if ((typeof hqWidgets !== 'undefined')) {
                             else if (homematic.regaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'state'};
                             }
-                        }  
+                        }
+                         
                         if (opt['hm_idL'] != null && opt['hm_idL'] != "") {
                             if (homematic.regaObjects[opt["hm_idL"]] && homematic.regaObjects[opt["hm_idL"]]["DPs"] && homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"]) {
                                 hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"], option: 'open'};
 							}
                             else if (homematic.regaObjects[opt["hm_idL"]])
                                 hm_ids[t++] = {hm_id: opt['hm_idL'], option: 'open'};
-                        }                    
+                        }     
+                          
                     }   
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeGong) {
@@ -918,12 +921,6 @@ if ((typeof hqWidgets !== 'undefined')) {
                             j++;
                             
                         dui.binds.hqWidgetsExt.hqMapping[hm_ids[i].hm_id+'_'+j] = {button: btn, option: hm_ids[i].option, index: hm_ids[i].index};
-                        /*if (i > 0) {
-                            btn.intern._jelement.append ("<div id='"+el+"helper_"+i+"' data-hm-id='"+hm_ids[i].hm_id +"' style='display: none' />");
-                        } 
-                        else {
-                            btn.intern._jelement.attr('data-hm-id', hm_ids[0].hm_id);
-                        } */      
                         // Set actual state
                         // Convert string to time
                         if (homematic.uiState["_"+hm_ids[i].hm_id] && homematic.uiState["_"+hm_ids[i].hm_id].Value !== undefined) {
@@ -1207,7 +1204,7 @@ if ((typeof hqWidgets !== 'undefined')) {
     }
     %>
 </script>
-<script type="text/ejs" id="tplHqLowbat" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Battery Indicator" data-dashui-attrs="hqoptions" data-hqwidgets-filter=".LOWBAT"><!--"HM-RC-4-2,HM-RC-Key4-2,HM-RC-Sec4-2,HM-RC-4,HM-RC-4-B,HM-RC-Sec3,HM-RC-Sec3-B,HM-RC-P1,HM-RC-Key3,HM-RC-Key3-B,HM-RC-12,HM-RC-12-B,HM-RC-P1,HM-RC-19,HM-RC-19-B,HM-PB-4Dis-WM,HM-PB-2-WM55,HM-PB-6-WM55,HM-Sec-RHS,HM-Sec-SC,HM-Sen-MDIR-O,HM-Sec-WDS,HM-Sec-MDIR,HM-Sec-SD,HM-Sec-TiS,HM-Sen-RD-O,HM-WDS30-T-O,HM-WDS10-TH-O,HM-WDS40-TH-I,HM-WDS100-C6-O,HM-WDC7000,HM-SCI-3-FM,HM-SwI-3-FM,HM-PBI-4-FM,HM-Sen-EP,HM-CC-RT-DN,HM-LC-Sw4-Ba-PCB"-->
+<script type="text/ejs" id="tplHqLowbat" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Battery Indicator" data-dashui-attrs="hqoptions" data-hqwidgets-filter=".LOWBAT">
     <%
     if (this && this.data && this.data.attr) {
         if (this.data.attr('hqoptions')){
