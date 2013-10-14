@@ -118,3 +118,17 @@ a.ui-dialog-titlebar-restore {
     margin-top: 5px !important;
     margin-left:5px !important;
 }
+.groupButtonWidth {
+    width:350px;
+}
+h4 {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12pt;
+	font-weight: bold;
+	padding-top: 4px;
+	padding-bottom: 0px;
+	padding-left: 6px;
+    width: 100%;
+    border-top: 1px dotted white;  
+    border-left: 1px dotted white;
+}

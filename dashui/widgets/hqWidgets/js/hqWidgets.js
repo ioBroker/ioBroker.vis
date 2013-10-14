@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.5",
+    version: "0.1.6",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -83,6 +83,7 @@ var hqWidgets = {
         gTypeCam    : 13,  // Ip Camera
         gTypeGong   : 14,  // Gong indicator with camera view on knock
         gTypeGauge  : 15,
+        gTypeLowbat : 16,  // Show widget only if low battery problem
     },
     gWindowState: {
         // State of the leaf
@@ -157,6 +158,21 @@ var hqWidgets = {
                 "Hide after 12 hours"       : {"en": "Hide after 12 hours","de": "Ausblenden nach 12 Stunden"},
                 "Hide after 1 day"          : {"en": "Hide after 1 day",   "de": "Ausblenden nach 1 Tag"},
                 "Hide after 2 days"         : {"en": "Hide after 2 days",  "de": "Ausblenden nach 2 Tagen"},
+                "Battery problem"           : {"en": "Battery problem", "de": "Akku-Problem"},
+                "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
+                "Icon:"                     : {"en": "Icon:",           "de": "Kleinbild:"},
+                "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
+                "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
+                "Styles..."                 : {"en": "Styles...",       "de": "Stile..."},
+                "jQuery Styles:"            : {"en": "Use&nbsp;jQuery&nbsp;Styles:", "de": "jQuery&nbsp;Stil&nbsp;anwenden:"},
+                "Radius:"                   : {"en": "Border&nbsp;Radius:", "de": "Eckenradius:"},
+                "Icon width:"               : {"en": "Icon width:",     "de": "Bildbreite:"},
+                "Icon height:"              : {"en": "Icon height:",    "de": "Bildh&ouml;he:"},
+                "Icon size:"                : {"en": "Icon size:",      "de": "Bildgr&ouml;&szlig;e:"},
+                "Icon active:"              : {"en": "Active&nbsp;icon:","de": "Aktivbild:"},
+                "Hide inactive:"            : {"en": "Hide&nbsp;if&nbsp;incative:", "de": "Verstecken&nbsp;falls&nbsp;inaktiv:"},
+                "No background:"            : {"en": "No&nbsp;background:",         "de": "Kein&nbsp;Hintergrund:"},
+                "Show description:"         : {"en": "Show&nbsp;description:",      "de": "Zeige&nbspBeschreibung:"},
            };
         }
         if (this.words[text]) {
@@ -226,8 +242,7 @@ var hqWidgets = {
     },
     // Convert button type to string
     Type2Name: function  (t) {
-        switch (t)
-        {
+        switch (t){
         case this.gButtonType.gTypeButton: return this.Translate("Button");
         case this.gButtonType.gTypeInTemp: return this.Translate("In. Temp.");
         case this.gButtonType.gTypeOutTemp:return this.Translate("Out. Temp.");
@@ -241,6 +256,11 @@ var hqWidgets = {
         case this.gButtonType.gTypeDimmer: return this.Translate("Dimmer");
         case this.gButtonType.gTypeImage:  return this.Translate("Image");
         case this.gButtonType.gTypeText:   return this.Translate("Text");
+        case this.gButtonType.gTypeDimmer: return this.Translate("Dimmer");
+        case this.gButtonType.gTypeCam:    return this.Translate("Camera");
+        case this.gButtonType.gTypeGong:   return this.Translate("Gong");
+        case this.gButtonType.gTypeGauge:  return this.Translate("Gauge");
+        case this.gButtonType.gTypeLowbat: return this.Translate("Low battery");
         default: return "";
         }
     },
@@ -281,7 +301,7 @@ var hqWidgets = {
         }
        
         
-        if (buttonToDelete.settings.isContextMenu && hqUtils != undefined && hqUtils != null) {
+        if (buttonToDelete.settings.isContextMenu && hqUtils !== undefined && hqUtils != null) {
             var dlg = new hqUtils.Dialog ({
                 title:     hqWidgets.Translate("Delete"), 
                 content:   hqWidgets.Translate("Are you sure?"), 
@@ -560,6 +580,7 @@ var hqWidgets = {
             isContextMenu:    false, // If install edit context menu
             noBackground:     false, // If show background or just text or image
             usejQueryStyle:   false, // Use jQuery style for active/passive background
+            showDescription:  false, // If show description of widget in normal (not edit) mode
 
             ipCamImageURL:    null,  // Url of image
             ipCamVideoURL:    null,  // Video Url
@@ -689,7 +710,7 @@ var hqWidgets = {
             _jstaticText: null,         // jQuery static text container (Only if gTypeText)
         };
         
-        if (advSettings != undefined)
+        if (advSettings !== undefined)
             this.advSettings = $.extend (advSettings, advOptions);
         this.settingsDefault = $.extend ({}, settings);
         this.settings = $.extend (settings, options);
@@ -970,7 +991,8 @@ var hqWidgets = {
                 this.dynStates.infoWindow.content = newContent;
             }
             this.intern._jbigWindow.jbigWindowContent.html (newContent);
-        };            this._SetType = function (buttonType) {
+        };            
+        this._SetType = function (buttonType) {
             if (this.settings.buttonType == buttonType && this.intern._inited)
                 return;
 
@@ -978,10 +1000,10 @@ var hqWidgets = {
             var height = this.intern._jelement.height();
 
             // Delete old structures
-            if (this.intern._currentClass != undefined && this.intern._currentClass != "") 
+            if (this.intern._currentClass !== undefined && this.intern._currentClass != "") 
                 this.intern._jelement.removeClass (this.intern._currentClass);
                 
-            if (this.settings.buttonType != undefined && this.intern._inited) {
+            if (this.settings.buttonType !== undefined && this.intern._inited) {
                 this.intern._backOff        = "";
                 this.intern._backOffHover   = "";
                 this.intern._backOn         = "";
@@ -1692,10 +1714,10 @@ var hqWidgets = {
                 {type1=a[0]; type2=a[1]; type3=a[2]; type4=a[3];}			
             }
             
-            var iCount = (type4 != undefined && type4 != null) ? 4 : ((type3 != undefined && type3 != null) ? 3 : ((type2 != undefined && type2 != null) ? 2 : 1));
+            var iCount = (type4 !== undefined && type4 != null) ? 4 : ((type3 !== undefined && type3 != null) ? 3 : ((type2 !== undefined && type2 != null) ? 2 : 1));
                 
             // Clear all 
-            if (this.intern._blinds != undefined && this.intern._blinds != null)
+            if (this.intern._blinds !== undefined && this.intern._blinds != null)
             {
                 for (var i = 0; i < this.intern._blinds.length; i++)
                     this.intern._blinds[i].divs[0].remove ();
@@ -2123,7 +2145,7 @@ var hqWidgets = {
         }	
         // Set icon in ON state
         this.SetIconOn = function (iconName_) {
-            if (iconName_!= undefined && iconName_ != null && iconName_ != "" && this.intern._jcenter)
+            if (iconName_!== undefined && iconName_ != null && iconName_ != "" && this.intern._jcenter)
             {
                 this.settings.iconOn = ((iconName_.indexOf ("/") != -1) ? "" : hqWidgets.gOptions.gPictDir) + iconName_;
                 if (this.dynStates.state == hqWidgets.gState.gStateOn) {
@@ -2309,7 +2331,7 @@ var hqWidgets = {
                 if (this.intern._jleft)    this.intern._jleft.stop().show();
                 if (this.intern._jbattery) this.intern._jbattery.stop().hide();
                 if (this.intern._jsignal)  this.intern._jsignal.stop().hide();
-                if (this.intern._jicon)	 this.intern._jicon.removeClass("ui-icon-cancel").hide();
+                if (this.intern._jicon)	   this.intern._jicon.removeClass("ui-icon-cancel").hide();
                 
                 if (this.intern._jgauge){
                     this._ShowGauge ();
@@ -2368,7 +2390,7 @@ var hqWidgets = {
                 if (this.intern._jtemp)        this.intern._jtemp.stop().show();
                 if (this.intern._jhumid)       this.intern._jhumid.stop().show();
                 if (this.intern._jinfoText)    this.intern._jinfoText.stop().show();
-                if (this.intern._jleft)        this.intern._jleft.stop().hide();
+                if (this.intern._jleft && !this.settings.showDescription) this.intern._jleft.stop().hide();
                 if (this.intern._jbattery)     this.intern._jbattery.stop().show();
                 if (this.intern._jsignal)      this.intern._jsignal.stop().show();
                 if (this.intern._jstaticText)  this.intern._jstaticText.stop().show();
@@ -2387,6 +2409,10 @@ var hqWidgets = {
                     {
                         if (this.dynStates.state == hqWidgets.gState.gStateOn)
                         {
+                            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
+                                this.show();
+                            }
+                            
                             if (this.intern._isPressed)
                                 this._SetClass (this.intern._backOnHover);
                             else
@@ -2394,6 +2420,13 @@ var hqWidgets = {
                         }
                         else
                         {
+                            // Hide element if lowbat is false
+                            if (this.dynStates.state == hqWidgets.gState.gStateOff && 
+                                this.settings.buttonType == hqWidgets.gButtonType.gTypeLowbat &&
+                                this.settings.infoIsHideInactive == true) {
+                                this.hide();
+                            }
+
                             if (this.intern._isPressed)
                                 this._SetClass (this.intern._backOffHover);
                             else
@@ -2739,8 +2772,7 @@ var hqWidgets = {
         // Set title (Tooltip)
         this.SetTitle = function (room, title)	{
             if (!this.intern._jleft) {
-                if (!document.getElementById(this.advSettings.elemName+'_left')) 
-                {
+                if (!document.getElementById(this.advSettings.elemName+'_left')) {
                     var $newdiv2 = $('<div id="'+this.advSettings.elemName+'_left"></div>');
                     this.advSettings.parent.append ($newdiv2);
                 }
@@ -2760,8 +2792,8 @@ var hqWidgets = {
                 this.intern._jroom = $('#'+this.advSettings.elemName+"_room");
                 this.intern._jroom.css ({position:'absolute', top:15, left:5});
             }
-            if (title != undefined) this.settings.title = title;
-            if (room  != undefined) this.settings.room  = room;
+            if (title !== undefined) this.settings.title = title;
+            if (room  !== undefined) this.settings.room  = room;
             if (this.settings.room == null)
                 this.settings.room = "";
             
@@ -2771,8 +2803,9 @@ var hqWidgets = {
                 this.intern._description = hqWidgets.Type2Name (this.settings.buttonType);
                 this.intern._jelement.attr ('title', "");
             }
-            else
-                this.intern._jelement.attr ('title', this.settings.title);
+            else {
+                this.intern._jelement.attr ('title', this.settings.title.replace("<br>", " / "));
+            }
 
             this.intern._jleft.offset = this.intern._description.width();
             var w = this.settings.room.width();
@@ -3102,7 +3135,7 @@ var hqWidgets = {
             if (temp)
             {
                 // State is no more unknown 
-                if (temp.temperature != undefined && temp.temperature != null && this.dynStates.state == hqWidgets.gState.gStateUnknown)
+                if (temp.temperature !== undefined && temp.temperature != null && this.dynStates.state == hqWidgets.gState.gStateUnknown)
                     this.SetState (hqWidgets.gState.gStateOff);
                 
                 if (temp.valve      !=undefined && this.intern._jvalve)  this.intern._jvalve.html(Math.round(temp.valve) + '%');
@@ -3704,7 +3737,7 @@ var hqWidgets = {
                 this.ShowSignal (dynOptions.isStrengthShow, this.dynStates.strength);
 
             // Action function
-            if (dynOptions.action != undefined)
+            if (dynOptions.action !== undefined)
                 this.dynStates.action = dynOptions.action;
 
             // Context menu
@@ -3734,7 +3767,7 @@ var hqWidgets = {
             
             //  lowBattery
             if (dynOptions.lowBattery !== undefined) {
-				if (dynOptions.lowBatteryDesc != undefined)
+				if (dynOptions.lowBatteryDesc !== undefined)
 					this.dynStates.lowBatteryDesc = dynOptions.lowBatteryDesc;
 				else
 					this.dynStates.lowBatteryDesc = null;
@@ -3775,6 +3808,10 @@ var hqWidgets = {
             //  state
             if (dynOptions.state !== undefined) { 
                 this.SetState (dynOptions.state);
+                if (this.settings.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
+                    dynOptions.lowBattery = (dynOptions.state == hqWidgets.gState.gStateOn);
+                    this.ShowBattery (dynOptions.lowBattery); 
+                }            
                 if (dynOptions.state == null)
                     dynOptions.state = undefined;
             }                
@@ -3815,20 +3852,20 @@ var hqWidgets = {
                 this._SetType (options.buttonType);
 
             // Position
-            if (options.x!= undefined && options.y!=undefined)
+            if (options.x!== undefined && options.y!=undefined)
                 this.SetPosition(options.x, options.y);
             else 
-            if (options.x!= undefined)
+            if (options.x!== undefined)
                 this.SetPosition(options.x, this.settings.y);
             else
             if (options.y!=undefined)
                 this.SetPosition(this.settings.x, options.y);
 
             // Width and height
-            if (options.width!= undefined && options.height!=undefined)
+            if (options.width!== undefined && options.height!=undefined)
                 this.SetSize(options.width, options.height);
             else 
-            if (options.width!= undefined)
+            if (options.width!== undefined)
                 this.SetSize(options.width, this.intern._jelement.height());
             else
             if (options.height!=undefined)
@@ -3846,7 +3883,7 @@ var hqWidgets = {
             }
                 
             // Radius
-            if (options.radius!= undefined && 
+            if (options.radius!== undefined && 
                 this.settings.buttonType != hqWidgets.gButtonType.gTypeBlind && 
                 this.settings.buttonType != hqWidgets.gButtonType.gTypeDoor  && 
                 this.settings.buttonType != hqWidgets.gButtonType.gTypeText) {
@@ -3857,25 +3894,26 @@ var hqWidgets = {
             }
 
             // State
-            if (options.state!= undefined) 
-                this.SetState (options.state);                
+            if (options.state !== undefined) {
+                this.SetState (options.state);
+            }                
             
             // Room and description
-            if (options.title != undefined && options.room != undefined)
+            if (options.title !== undefined && options.room !== undefined)
                 this.SetTitle (options.room, options.title);
             else
-            if (options.title != undefined)
+            if (options.title !== undefined)
                 this.SetTitle (this.room, options.title);
             else
-            if (options.room != undefined)
+            if (options.room !== undefined)
                 this.SetTitle (options.room, this.title);
 
             // jQuery style
-            if (options.usejQueryStyle != undefined)
+            if (options.usejQueryStyle !== undefined)
                 this._SetUsejQueryStyle (options.usejQueryStyle, true);
 
             // noBackground
-            if (options.noBackground != undefined) {
+            if (options.noBackground !== undefined) {
                 this.settings.noBackground = options.noBackground;
                 this._SetUsejQueryStyle (this.settings.usejQueryStyle, true);
             }
@@ -3953,7 +3991,7 @@ var hqWidgets = {
             }
                 
             //  windowConfig - like "1,0,2" means 3 leafs, first is gSwingLeft, middle is deaf and the third is gSwingRight
-            if (options.windowConfig != undefined && 
+            if (options.windowConfig !== undefined && 
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {
                 // trim
                 if (options.windowConfig != null && options.windowConfig.replace(/^\s+|\s+$/g, '') != "")
@@ -3965,48 +4003,48 @@ var hqWidgets = {
             }
                 
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeText) {
-                if (options.staticText != undefined && options.staticTextFont != undefined && options.staticTextColor != undefined) 
+                if (options.staticText !== undefined && options.staticTextFont !== undefined && options.staticTextColor !== undefined) 
                     this.SetStaticText (options.staticText, options.staticTextFont, options.staticTextColor);
                 else
-                if (options.staticText != undefined && options.staticTextFont != undefined) 
+                if (options.staticText !== undefined && options.staticTextFont !== undefined) 
                     this.SetStaticText (options.staticText, options.staticTextFont, this.settings.staticTextColor);
                 else
-                if (options.staticText != undefined && options.staticTextColor != undefined) 
+                if (options.staticText !== undefined && options.staticTextColor !== undefined) 
                     this.SetStaticText (options.staticText, this.settings.staticTextFont, options.staticTextColor);
                 else
-                if (options.staticTextFont != undefined && options.staticTextColor != undefined) 
+                if (options.staticTextFont !== undefined && options.staticTextColor !== undefined) 
                     this.SetStaticText (this.settings.staticText, options.staticTextFont, options.staticTextColor);
                 else
-                if (options.staticText != undefined) 
+                if (options.staticText !== undefined) 
                     this.SetStaticText (options.staticText, this.settings.staticTextFont, this.settings.staticTextColor);
                 else
-                if (options.staticTextFont != undefined) 
+                if (options.staticTextFont !== undefined) 
                     this.SetStaticText (this.settings.staticText, options.staticTextFont, this.settings.staticTextColor);
                 else
-                if (options.staticTextColor != undefined) 
+                if (options.staticTextColor !== undefined) 
                     this.SetStaticText (this.settings.staticText, this.settings.staticTextFont, options.staticTextColor);
             }
             
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInfo ||
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
-                if (options.infoTextFont != undefined && options.infoTextColor != undefined) 
+                if (options.infoTextFont !== undefined && options.infoTextColor !== undefined) 
                     this.SetInfoText (this.dynStates.infoText, options.infoTextFont, options.infoTextColor);
                 else
-                if (options.infoTextColor != undefined) 
+                if (options.infoTextColor !== undefined) 
                     this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, options.infoTextColor);
                 else
-                if (options.infoTextFont != undefined) 
+                if (options.infoTextFont !== undefined) 
                     this.SetInfoText (this.dynStates.infoText, options.infoTextFont, this.settings.infoTextColor);
                     
-                if (options.infoFormat != undefined) {
+                if (options.infoFormat !== undefined) {
                     this.settings.infoFormat = options.infoFormat;
                     this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor);
                 }
-                if (options.infoCondition != undefined) {
+                if (options.infoCondition !== undefined) {
                     this.settings.infoCondition = options.infoCondition;
                     this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor);
                 }
-                if (options.infoIsHideInactive != undefined) {
+                if (options.infoIsHideInactive !== undefined) {
                     this.settings.infoIsHideInactive = options.infoIsHideInactive;
                     this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor);
                 }
@@ -4039,11 +4077,11 @@ var hqWidgets = {
                     this._ShowGauge ();
             }
             
-            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage && options.zindex != undefined){
+            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage && options.zindex !== undefined){
                 //this.settings.zindex = (options.zindex < 998) ? options.zindex: 997; 
                 this.intern._jelement.css({'z-index':this.settings.zindex});
             }
-            if (options.zindex != undefined){
+            if (options.zindex !== undefined){
                 this.intern._jelement.css({'z-index':this.settings.zindex});
             }
             if (isSave) {
@@ -4051,9 +4089,9 @@ var hqWidgets = {
                 this.StoreSettings ();
             }
             if (this._CreateBigCam &&
-                (options.title        != undefined || options.ctrlActionBtn != undefined ||
-                 options.ctrlBtnText  != undefined || options.gongActionBtn != undefined ||
-                 options.ctrlQuestion != undefined || options.gongBtnText   != undefined)) {
+                (options.title        !== undefined || options.ctrlActionBtn !== undefined ||
+                 options.ctrlBtnText  !== undefined || options.gongActionBtn !== undefined ||
+                 options.ctrlQuestion !== undefined || options.gongBtnText   !== undefined)) {
                 this._CreateBigCam ();
             }
         }
@@ -4064,7 +4102,7 @@ var hqWidgets = {
             this.intern._jelement.css ({top: options.y, left: options.x, position: 'absolute'}); // Set position
         
         // States and local variables
-        //this.settings.zindex = (options.zindex != undefined) ? ((options.zindex < 998) ? options.zindex : 997) : ((options.buttonType == hqWidgets.gButtonType.gTypeImage) ? 0 : 1000);
+        //this.settings.zindex = (options.zindex !== undefined) ? ((options.zindex < 998) ? options.zindex : 997) : ((options.buttonType == hqWidgets.gButtonType.gTypeImage) ? 0 : 1000);
 
         if (this.settings.isContextMenu && (typeof hqUtils != 'undefined') && hqUtils != null) {
             this.intern._contextMenu    = new hqUtils.ContextMenu ({parent: this});

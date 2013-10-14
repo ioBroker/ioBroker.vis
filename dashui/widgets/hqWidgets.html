@@ -9,7 +9,7 @@
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
         hqWidgetsExt: {
-            version: "0.1.5",
+            version: "0.1.6",
             inited:  false,
             hqIgnoreNextUpdate: null, // id of controlled element
             hqMapping: {},
@@ -385,7 +385,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
                             if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
                                 hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"],  option: 'state'}; 
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};   
+                                if (homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"] !== undefined) {
+                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};
+                                }                                
                             }
                             else if (homematic.regaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'state'};
@@ -565,6 +567,19 @@ if ((typeof hqWidgets !== 'undefined')) {
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "" && homematic.regaObjects[opt["hm_id"]]) {
                             hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'valueSet'}; 
+                        }  
+                    }
+                    else
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
+                        // Fill up the required IDs
+                        var t = 0;
+                        if (opt['hm_id'] != null && opt['hm_id'] != "") {
+                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["LOWBAT"]) {
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'state'};   
+                            }
+                            else if (homematic.regaObjects[opt["hm_id"]]){
+                                hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'state'};
+                            }
                         }  
                     }
                 }
@@ -844,6 +859,15 @@ if ((typeof hqWidgets !== 'undefined')) {
                             return value;
                         }});
                     }
+                    else
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
+                        btn = $.extend (btn, {translateSignal: function (options, value) {
+                            if (options == 'state')
+                                return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
+                            else
+                                return value;
+                        }});
+                    }
                     else {
                         btn = $.extend (btn, {translateSignal: function (options, value) {
                             return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
@@ -852,8 +876,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                 
                     // Restore size of information window
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeCam  ||
-                        opt.buttonType == hqWidgets.gButtonType.gTypeGong) 
-                    {
+                        opt.buttonType == hqWidgets.gButtonType.gTypeGong) {
                         // Get stored settings for info window
                         var wObj = dui.binds.hqWidgetsExt.hqGetWidgetByObj (btn);
                         var storedInfo = null;
@@ -928,7 +951,7 @@ if ((typeof hqWidgets !== 'undefined')) {
             },
             hqMonitor: function (wid, newState, lastchange) {
                 
-                //console.log(wid+"["+dui.getObjDesc (wid)+"] = "+newState);
+                console.log(wid+"["+dui.getObjDesc (wid)+"] = "+newState);
                 var i = 0;
                 while (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i]) {
                 
@@ -1181,6 +1204,18 @@ if ((typeof hqWidgets !== 'undefined')) {
     else {
     dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGauge", this.view);
     }
+    }
+    %>
+</script>
+<script type="text/ejs" id="tplHqLowbat" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Battery Indicator" data-dashui-attrs="hqoptions" data-hqwidgets-filter=".LOWBAT"><!--"HM-RC-4-2,HM-RC-Key4-2,HM-RC-Sec4-2,HM-RC-4,HM-RC-4-B,HM-RC-Sec3,HM-RC-Sec3-B,HM-RC-P1,HM-RC-Key3,HM-RC-Key3-B,HM-RC-12,HM-RC-12-B,HM-RC-P1,HM-RC-19,HM-RC-19-B,HM-PB-4Dis-WM,HM-PB-2-WM55,HM-PB-6-WM55,HM-Sec-RHS,HM-Sec-SC,HM-Sen-MDIR-O,HM-Sec-WDS,HM-Sec-MDIR,HM-Sec-SD,HM-Sec-TiS,HM-Sen-RD-O,HM-WDS30-T-O,HM-WDS10-TH-O,HM-WDS40-TH-I,HM-WDS100-C6-O,HM-WDC7000,HM-SCI-3-FM,HM-SwI-3-FM,HM-PBI-4-FM,HM-Sen-EP,HM-CC-RT-DN,HM-LC-Sw4-Ba-PCB"-->
+    <%
+    if (this && this.data && this.data.attr) {
+        if (this.data.attr('hqoptions')){
+            dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+        }
+        else {
+            dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqLowbat", this.view);
+        }
     }
     %>
 </script>
