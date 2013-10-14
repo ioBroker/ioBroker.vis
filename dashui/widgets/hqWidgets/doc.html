@@ -39,7 +39,81 @@
 </dd>
 <hr/>
 
+<h3><a name="tplHqLowbat">Battery Indicator</a></h3>
+<img src="img/help/helpLowbat.png"/><br>
+Dieses Widget stellt einfach und schnell einen Battery-Alarm bei einem Ger&auml;t dar.<br>
+Normalerweise wird dieses Widget nur dann angezeigt, falls ein Batterie-Problem da ist. Sonst ist das unsichtbar.
+Es wird z.B. f&uuml;r den Taster verwendet, weil sonst diese Ger&auml;te nirgendwo auf der grafische Oberfl&auml;che verwendet werden.
+Mit diesem Widget kann man signalisieren, dass einen Taster eine Batterie fast leer hat oder gar nicht von CCU erreicht wird.<br>
+Es muss darauf geachtet werden, dass falls es zwei LOWBAT Datenpunkten fur das Ger&auml;t gibt, dass es immer der letzter Datenpunkt verwendet sein sollte.<br>
+<i>Z.B. es gibt HEQ1234567:0.LOWBAT und HEQ1234567:1.LOWBAT, dann sollte HEQ1234567:1.LOWBAT ausgew&auml;hlt werden.</i>
+<h4>Attribute</h4>
+<dd>
 
+<dt>Zustand antesten:</dt>
+<dd>Schaltet Widget in Aktivzustand und zur&uuml;ck, um im Edit-Modus den Aktivzustand zu testen. Zustand wird nicht gespeichert.</dd>
+
+<dt>Kleinbild:</dt>
+<dd>Pfad zum Klenbild in der Mitte von dem Widget. Falls kein Aktivbild gesetzt ist, dann wird das Bild auch im Aktivzustand verwendet.
+Man kann die Bildgr&ouml;&szlig;e in der <b>"Erweitert..."</b>- Lasche einstellen.</dd>
+
+<dt>Beschreibung:</dt>
+<dd>Beschreibung von dem Widget. Das Feld wird mit dem Ger&auml;tenamen vorbelegt. Das konnte aber frei ge&auml;ndert werden.<br>
+Falls <b>"Zeige Beschreibung"</b>-Checkbox gesetzt ist, dann wird diese Beschreibung oben links auch im nicht Editmodus angezeigt.</dd>
+
+<dt>Stile...</dt>
+<dd>Hier kann man die Stile f&uuml;r zwei Zust&auml;nde einstellen.</dd>
+
+<dt>Normal:</dt>
+<dd>Damit uberschreibt man vorgegebenen Stil f&uuml;r den Normalzustand.<br>
+Falls die <b>"jQuery Stil anwenden:"</b>- Option gesetzt ist, dann wird diese Einstellung ignoriert.<br>
+Falls die <b>"Verstecken falls inaktiv:"</b> - Option gesetzt ist, dann wird Widget im Normalzustand gar nicht angezeigt und diese Einstellung ist dann auch wirkungslos.
+</dd>
+
+<dt>Aktive:</dt>
+<dd>Damit uberschreibt man vorgegebenen Stil f&uuml;r den Aktivezustand.<br>
+Falls die <b>"jQuery Stil anwenden:"</b>- Option gesetzt ist, dann wird diese Einstellung ignoriert.
+</dd>
+
+<dt>Erweitert...</dt>
+<dd>Hier kann man die erweiterte Einstellungen vorzunehmen.</dd>
+
+<dt>Eckenradius:</dt>
+<dd>Stellt den Radius von den Widgetecken ein.
+<table><tr><td><img src="img/help/helpRadius0.png" /></td><td><img src="img/help/helpRadius50.png" /></td><td><img src="img/help/helpRadius50.png" /></td></tr>
+<tr><td style="width:120px;">Radius 0</td><td style="width:120px;">Radius 25%<br>von der Breite</td><td style="width:120px;">Radius 50%<br>von der Breite</td></tr></table>
+</dd>
+
+<dt>jQuery Stil anwenden:</dt>
+<dd>Stellt ein, ob die Klassen von aktueller jQuery-Theme f&uuml;r die Darstellung verwendet sein sollten.
+Falls die Option gew&auml;hlt ist, dann werden folgende CSS-Klassen verwendet:<br>
+- Normalzustand: "ui-state-default",<br>
+- Aktivezustand: "ui-state-active"<br>
+Die Stil-Einstell&uuml;ngen werden  mit dieser Option ignoriert.
+</dd>
+
+<dt>Bildbreite:</dt>
+<dd>Stellt die Kelinbildbreite ein. Die Bildbreite darf nicht gr&ouml;sse als die Widgetbreite sein.
+</dd>
+
+<dt>Bildh&ouml;he:</dt>
+<dd>Stellt die Kelinbildh&ouml;he ein. Die Bildh&ouml;he darf nicht gr&ouml;sse als die Widgeth&ouml;he sein.
+</dd>
+
+<dt>Bildgr&ouml;sse:</dt>
+<dd>Beim bet&auml;tigen von "Auto"-Knopf wird einmalig die passende Bildbreite und Gr&ouml;sse ausge&auml;hlt. Im Normalmodus hat den Knopf keine Auswirkung.
+</dd>
+
+<dt>Aktivbild:</dt>
+<dd>Pfad zum Klenbild in der Mitte von dem Widget in Aktivezustand. Falls kein Aktivbild gesetzt ist, dann wird das <b>"Kleinbild"</b> verwendet.
+Es ist empfohlen, dass das Normalbild und Aktivebild die gleiche Gr&ouml;sse haben, damit bei der Zustands&auml;ndrung keine Spr&uuml;nge von dem Bild passieren.</dd>
+
+<dt></dt>
+<dd></dd>
+
+
+</dd>
+<hr/>
 
 </body>
 </html>

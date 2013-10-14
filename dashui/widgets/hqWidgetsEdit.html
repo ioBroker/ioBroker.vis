@@ -4,7 +4,7 @@
 <script type="text/javascript">
 if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) {
     $.extend(true, dui.binds.hqWidgetsExt, {
-        hqEditVersion: "0.1.5",
+        hqEditVersion: "0.1.6",
         hqEditTimerDetectMoving: null,
         hqEditSaveTimer : null,
         hqEditInit: function () {
@@ -170,6 +170,18 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           });
                 }                
                 else
+                if (wtype == 'tplHqLowbat') {
+                    opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeLowbat, 
+                                          iconName: '', 
+                                          zindex: 2, 
+                                          hm_id: '',
+                                          radius: 3,
+                                          showDescription: true,
+                                          noBackground: false,
+                                          infoIsHideInactive: true,
+                                          });
+                }
+                else
                 if (wtype == 'tplHqCharts') {
                     opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeButton,
                                           buttonTypeEx: hqWidgets.gButtonType.gTypeCharts,                 
@@ -192,18 +204,20 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           exTypes: 0,
                                           exWidth: 0,
                                           exPopup: true,
+                                          exPcount: 250,
                                           title: dui.translate("History"),
                                           });
                 }
              }
             return opt;
         },
-        hqEditHmID: function (obj, parent, devFilter, hqEditElem, attr, groupID) {
+        hqEditHmID: function (obj, parent, devFilter, hqEditElem, attr, groupID, onChange) {
             var opt = obj.GetSettings (false, false);
             var devFilters = (devFilter) ? devFilter.split (';') : [null, null];
             
-            parent.append('<tr '+((groupID === undefined) ? '': 'id="'+groupID+'"') + ' class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+opt.hm_id+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
+            parent.append('<tr '+((groupID === undefined) ? '': 'id="'+groupID+'"') + ' class="dashui-add-option"><td>'+dui.translate(attr)+':</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+opt.hm_id+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
             document.getElementById ("inspect_"+attr).jControl         = attr;
+            document.getElementById ("inspect_"+attr)._onChange        = onChange;
             document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
             document.getElementById ("inspect_"+attr+"_btn").devFilter = devFilters[0];
             $("#inspect_"+attr+"_desc").html(dui.getObjDesc (opt.hm_id));
@@ -211,8 +225,23 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             // Select Homematic ID Dialog
             $("#inspect_"+attr+"_btn").click ( function () {
                 hmSelect.value = $("#inspect_"+this.jControl).val();
+                var pointFilter = "";
+                var devFilter   = "";
+                
+                // Extract data points filter
+                if (this.devFilter != null && this.devFilter != "") {
+                    var f = this.devFilter.split(',');
+                    for (var i = 0; i < f.length; i++) {
+                        if (f[i].length > 0 && f[i][0] == '.') {
+                            pointFilter += ((pointFilter == "") ? "" : ",") + f[i];
+                        }
+                        else {
+                            devFilter += ((devFilter == "") ? "" : ",") + f[i];
+                        }
+                    }
+                }
+                
                 hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
-                    $("#inspect_"+obj).val(value).trigger("change");
                     if (valueObj) {
                         var btn = hqWidgets.Get (dui.activeWidget);
                         if (btn) {
@@ -226,16 +255,19 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                 // Remove the leading dot
                                 if (title.length > 0 && title[0] == '.')
                                     title = title.substring(1);
-                                $('#inspect_title').val (title);
-                                $('#inspect_title').trigger ('change');
+                                $('#inspect_title').val (title).trigger ('change');
                             }
                         }
                     }
-                }, null, this.devFilter);
+                    $("#inspect_"+obj).val(value).trigger("change");
+                }, pointFilter, devFilter);
             });
             $("#inspect_"+attr).change(function (el) {
                 $("#inspect_"+this.jControl+"_desc").html(dui.getObjDesc ($(this).val()));
                 var btn = hqWidgets.Get (dui.activeWidget);
+                if (this._onChange) {
+                    this._onChange ($(this).val(), btn);
+                }
                 if (btn) {
                     var settings = {};
                     settings[this.jControl] = $(this).val();
@@ -295,52 +327,30 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             if (opt["hm_id"] != undefined && 
                 opt.buttonTypeEx != hqWidgets.gButtonType.gTypeCharts &&
                 opt.buttonTypeEx != hqWidgets.gButtonType.gTypeEventlist) {              
-                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, 'hm_id');
-                /*var attr = 'hm_id';
-                parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+opt.hm_id+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
-                document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
-                document.getElementById ("inspect_"+attr+"_btn").devFilter = devFilters[0];
-                $("#inspect_"+attr+"_desc").html(dui.getObjDesc (opt.hm_id));
-                // Select Homematic ID Dialog
-                $("#inspect_"+attr+"_btn").click ( function () {
-                    hmSelect.value = $("#inspect_"+this.jControl).val();
-                    hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
-                        $("#inspect_"+obj).val(value).trigger("change");
-                        if (valueObj) {
-                            var btn = hqWidgets.Get (dui.activeWidget);
-                            if (btn) {
-                                var stitle = btn.GetSettings ("title");
-                                btn.SetSettings ({room: valueObj.room});
-                                if (stitle == undefined || stitle == null || stitle == "") {
-                                    var title = hmSelect._convertName(valueObj.Name);                                        
-                                    // Remove ROOM from device name
-                                    if (title.length > valueObj.room.length && title.substring(0, valueObj.room.length) == valueObj.room)
-                                        title = title.substring(valueObj.room.length);
-                                    // Remove the leading dot
-                                    if (title.length > 0 && title[0] == '.')
-                                        title = title.substring(1);
-                                    $('#inspect_title').val (title);
-                                    $('#inspect_title').trigger ('change');
-                                }
+                if (opt.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
+                    dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, 'hm_id', null, function (val, btn) {
+                        // Select automatically image for this element
+                        var e = $('#inspect_iconName');
+                        if (1 || e.val() == "") {
+                            var p = val;
+                            while (homematic.regaObjects[p]["Parent"] !== undefined) {
+                                p = homematic.regaObjects[p]["Parent"];
+                            }
+                            p = hmSelect._getImage(homematic.regaObjects[p]["HssType"]);
+                            if (p !== null && p != "") {
+                                e.val (p).trigger("change");
                             }
                         }
-                    }, null, this.devFilter);
-                });
-                $("#inspect_"+attr).change(function (el) {
-                    $("#inspect_hm_id_desc").html(dui.getObjDesc ($(this).val()));
-                    var btn = hqWidgets.Get (dui.activeWidget);
-                    if (btn) {
-                        btn.SetSettings ({"hm_id": $(this).val()}, true);
-                    }
-                });
-                $("#inspect_"+attr).keyup (function () {
-                    if (hqWidgets.e_internal.timer) 
-                        clearTimeout (hqWidgets.e_internal.timer);
-                            
-                    hqWidgets.e_internal.timer = setTimeout (function(elem) {
-                        elem.trigger("change");
-                    }, hqWidgets.e_settings.timeout, $(this));
-                });*/
+                        // Add battery probelm text
+                        /*e = $('#inspect_title');
+                        if (e.val().indexOf('<br>') == -1) {
+                            e.val(e.val()+"<br>"+hqWidgets.Translate("Battery problem")).trigger("change");
+                        }*/
+                    });
+                }
+                else {
+                    dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, 'hm_id');
+                }
             }
             if (opt["hm_ids"] != undefined) {
                 // This is multiselect
@@ -391,7 +401,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 for (var i = 0; i < cnt; i++) {
                     if (points[i] === undefined) points[i] = "";
                     
-                    parent.append('<tr class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'_'+i+'" size="5" value="'+points[i]+'"><input type="button" id="inspect_'+attr+'_'+i+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_'+i+'_desc"></div></td></tr>');
+                    parent.append('<tr class="dashui-add-option"><td>'+dui.translate(attr)+':</td><td><input type="text" id="inspect_'+attr+'_'+i+'" size="5" value="'+points[i]+'"><input type="button" id="inspect_'+attr+'_'+i+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_'+i+'_desc"></div></td></tr>');
                     document.getElementById ("inspect_"+attr+"_"+i+"_btn").jControl  = attr+"_"+i;
                     document.getElementById ("inspect_"+attr+"_"+i+"_btn").devFilter = devFilters[0];
                     $("#inspect_"+attr+"_"+i+"_desc").html(dui.getObjDesc (points[i]));
@@ -455,7 +465,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 var a = wnd.split(',');
                 for (var i = 0; i < a.length; i++) {
                     var attr = 'hm_id'+i;
-                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
+                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+':</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
                     document.getElementById ("inspect_"+attr+"_btn").jControl = attr;
                     document.getElementById ("inspect_"+attr).jControl        = attr;
                     document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > 1) ? devFilters[1] : devFilters[0];
@@ -495,7 +505,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 
                     //--------------- handler ------------------------
                     attr = 'hm_id_hnd'+i;
-                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
+                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+':</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
                     document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
                     document.getElementById ("inspect_"+attr).jControl = attr;
                     document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > 2) ? devFilters[2] : devFilters[0];
@@ -555,40 +565,6 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     attr = 'hm_idL';
                 
                 dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, attr);
-                /*
-                    
-                var text = '<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td>';
-                text += '<td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'">';
-                text += '<input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>';
-                parent.append(text);
-                document.getElementById ("inspect_"+attr+"_btn").jControl  = attr;
-                document.getElementById ("inspect_"+attr).jControl = attr;
-                document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > i + 1) ? devFilters[i+1] : devFilters[devFilters.length -1];
-                $("#inspect_"+attr+"_desc").html(dui.getObjDesc (opt[attr]));
-                // Select Homematic ID Dialog
-                $("#inspect_"+attr+"_btn").click ( function () {
-                    hmSelect.value = $("#inspect_"+this.jControl).val();
-                    hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
-                        $("#inspect_"+obj).val(value).trigger("change");
-                    }, null, this.devFilter);
-                });
-                $("#inspect_"+attr).change(function (el) {
-                    var btn = hqWidgets.Get (dui.activeWidget);
-                    $("#inspect_"+this.jControl+"_desc").html(dui.getObjDesc ($(this).val()));
-                    if (btn) {
-                        var option = {};
-                        option[this.jControl] = $(this).val();
-                        btn.SetSettings (option, true);
-                    }
-                });
-                $("#inspect_"+attr).keyup (function () {
-                    if (hqWidgets.e_internal.timer) 
-                        clearTimeout (hqWidgets.e_internal.timer);
-                            
-                    hqWidgets.e_internal.timer = setTimeout (function(elem) {
-                        elem.trigger("change");
-                    }, hqWidgets.e_settings.timeout, $(this));
-                }); */                       
             }
             
             // Hichcharts settings
@@ -684,9 +660,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 // Show loading process
                 sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Show loading:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_loader'>";
                 
-            
                 // Show button
-                sTextChart = "<tr><td colspan=2><button id='idShowChart'>"+dui.translate("Charts...")+"</td></tr>" + sTextChart;
+                sTextChart = "<tr><td colspan=2><button id='idShowChart' class='groupButtonWidth'>"+dui.translate("Charts...")+"</td></tr>" + sTextChart;
                 hqEditElem.e_settings.parent.append (sTextChart);
                 var advBtn = document.getElementById ('idShowChart');
                 advBtn.obj   = hqEditElem;
@@ -796,12 +771,22 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 sText += "<option value='1'>"+dui.translate("Only devices")+"</option>";
                 sText += "<option value='2'>"+dui.translate("Only variables")+"</option>";
                 sText += "</select>";                
+                sText += "<tr><td>"+ dui.translate("On one page:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_exPcount' class='selectEditWidth'>";
+                sText += "<option value='25'>25</option>";
+                sText += "<option value='50'>50</option>";
+                sText += "<option value='100'>100</option>";
+                sText += "<option value='250'>250</option>";
+                sText += "<option value='500'>500</option>";
+                sText += "<option value='750'>750</option>";
+                sText += "<option value='1000'>1000</option>";
+                sText += "</select>";                
                 parent.append(sText);
                 
                 hqEditElem._EditCheckboxHandler ('exLoading', false, false, true);
                 hqEditElem._EditCheckboxHandler ('exStatesOnly', false, false, true);
                 hqEditElem._EditTextHandler('staticText');   
                 hqEditElem._EditSelectHandler('exTypes');   
+                hqEditElem._EditSelectHandler('exPcount');   
             }        
         },      
     });

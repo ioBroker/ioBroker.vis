@@ -31,6 +31,29 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta18
+
+* (Bluefox) Change a bit the style of edit dialog
+* (Bluefox) Prepare translate of edit dialog
+* (Bluefox) Change Homematic ID selection dialog
+* (Bluefox) Fix small error in Eventlist and Chart widgets
+* (Bluefox) New widget Battery indicator
+* (Bluefox) New setting for Widget: Show description. To show description of the widget on the left.
+* (Bluefox) hqWidgets Documentation
+
+### 0.9beta17
+
+* (hobbyquaker) Style-Anpassung für Schließen-Button im Editor-Dialog und anderen jQueryUI Dialogen
+* (hobbyquaker) erzwungener Reload falls automatischer Reconnect bei verlorener CCU.IO-Verbindung nicht funktioniert
+* (hobbyquaker) Widgets "basic red Number" und "basic hm_val number" mit getrennten html_append Eigenschaften für Singular und Plural ausgetattet
+
+### 0.9beta16
+
+* (smiling-Jack) Add minimize Button to Editor
+* (smiling-Jack) CSS anpassung für Editor minimize
+* (smiling-Jack) Add Glow effekt
+* (Bluefox) Einstellbare Anzahl von Ereignissen auf der Seite
+
 ### 0.9beta15
 
 * (Hobbyquaker) Bugfix basic widgets, added yr-adapter
