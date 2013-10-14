@@ -33,7 +33,13 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.9beta18
 
-* (Bluefox) Neues Widget hqWidgets Battery indicator
+* (Bluefox) Change a bit the style of edit dialog
+* (Bluefox) Prepare translate of edit dialog
+* (Bluefox) Change Homematic ID selection dialog
+* (Bluefox) Fix small error in Eventlist and Chart widgets
+* (Bluefox) New widget Battery indicator
+* (Bluefox) New setting for Widget: Show description. To show description of the widget on the left.
+* (Bluefox) hqWidgets Documentation
 
 ### 0.9beta17
 
