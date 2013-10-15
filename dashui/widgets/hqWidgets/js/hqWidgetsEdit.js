@@ -434,6 +434,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                 sText += "<tr>"+s;
             else
                 sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'>"+s;
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Show Pop up:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_isPopupEnabled' "+((this.e_internal.attr.isPopupEnabled) ? "checked" : "")+">";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Pop up delay (ms):") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_popUpDelay'  type='text' value='"+this.e_internal.attr.popUpDelay+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Open door button:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_ctrlActionBtn' "+(this.e_internal.attr.ctrlActionBtn ? "checked" : "")+" ></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Open door text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlBtnText'  type='text' value='"+this.e_internal.attr.ctrlBtnText+"'></td></tr>";
@@ -833,6 +834,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         this._EditCheckboxHandler ('gaugeHorz', false, false, true);
         this._EditCheckboxHandler ('gaugeStart', false, false, true);
         this._EditCheckboxHandler ('showDescription', false, false, true);
+        this._EditCheckboxHandler ('isPopupEnabled', false, false, true);
         
         this._EditTextHandler('title');   
         this._EditSelectHandler('hoursLastAction');   

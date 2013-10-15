@@ -585,6 +585,7 @@ var hqWidgets = {
             ipCamImageURL:    null,  // Url of image
             ipCamVideoURL:    null,  // Video Url
             ipCamUpdateSec:   30,    // Update interval in seconds
+            isPopupEnabled:   true,  // Is popup enabled (e.g. by ipcam)
             
             popUpDelay:       5000,  // Dela for popup window, like camera, blinds
             ipCamVideoDelay:  1000,  // Video delay
@@ -1952,7 +1953,7 @@ var hqWidgets = {
                 this.intern._jcenter.jparent = this;
                 // remove unknown state
                 // Set unknown state
-                this.SetStates ({'isWorking': true});
+                this.SetStates ({'isWorking': true, "state": hqWidgets.gState.gStateOff});
                 this.intern._ipCamLastImage = this.intern._ipCamImageURL + d.getTime();
                 //$('#status').append("update" + this.intern._ipCamLastImage + "<br>");
                 this.intern._jcenter.attr('src', this.intern._ipCamLastImage);
@@ -2155,7 +2156,9 @@ var hqWidgets = {
             else
             {
                 this.settings.iconOn = null;
-                if (this.intern._jcenter) this.intern._jcenter.attr('src', this.settings.iconName);
+                if (this.settings.iconName != null && this.intern._jcenter) {
+                    this.intern._jcenter.attr('src', this.settings.iconName);
+                }
             }
         }	
         // Set icon in Off state
@@ -2192,8 +2195,11 @@ var hqWidgets = {
                 if (this.dynStates.state == hqWidgets.gState.gStateOff || 
                     this.settings.iconOn == undefined || 
                     this.settings.iconOn == null || 
-                    this.settings.iconOn == "")
-                    this.intern._jcenter.attr('src', this.settings.iconName);
+                    this.settings.iconOn == "") {
+                    if (this.settings.iconName != null) {
+                        this.intern._jcenter.attr('src', this.settings.iconName);
+                    }
+                }
                     
                 this.intern._jcenter.addClass('hq-no-select');
                 this.intern._jcenter.show();
@@ -2515,8 +2521,10 @@ var hqWidgets = {
                     if (this.dynStates.state == hqWidgets.gState.gStateOn) {
                         this.intern._jcenter.attr('src', this.settings.iconOn);
                     }
-                    else
+                    else 
+                    if (this.settings.iconName != null) {
                         this.intern._jcenter.attr('src', this.settings.iconName);
+                    }
                 }
                                 
                 // Show information window if state chaged to true
@@ -3475,8 +3483,8 @@ var hqWidgets = {
                        // Play melody
                         this._PlayMelody ();
                     }
-                    else   
-                    if (this.intern._jbigWindow && this.dynStates.infoWindow.isEnabled && !this.intern._isMoved)
+                    else
+                    if (this.intern._jbigWindow && this.dynStates.infoWindow.isEnabled && !this.intern._isMoved && this.settings.isPopupEnabled)
                         this.ShowBigWindow(true);
                 }
             } 
@@ -3894,9 +3902,9 @@ var hqWidgets = {
             }
 
             // State
-            if (options.state !== undefined) {
+            /*if (options.state !== undefined) {
                 this.SetState (options.state);
-            }                
+            }  */              
             
             // Room and description
             if (options.title !== undefined && options.room !== undefined)
@@ -3927,8 +3935,8 @@ var hqWidgets = {
             // ipCamImageURL => reset internal URl link
             if (options.ipCamImageURL !== undefined) {
                 if ((settings.ipCamImageURL == null || settings.ipCamImageURL == "") && options.ipCamImageURL != null && options.ipCamImageURL != "") {
-                    this._CreateBigCam ();
-                }
+                     this._CreateBigCam ();
+               }
                 var upd = ((this.settings.ipCamImageURL != null && this.settings.ipCamImageURL != "") ||
                           (options.ipCamImageURL != null && options.ipCamImageURL != ""));
                 this.intern._ipCamImageURL = null;
