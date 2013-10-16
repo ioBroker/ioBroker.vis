@@ -31,6 +31,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta20
+* (Bluefox) Fixed problem with background in different views
+* (smiling-Jack) Knob Widgets: Dezimal stellen
+
 ### 0.9beta19
 * (Bluefox) New option by IpCam Widget: Show Pop up (Enable/Disable the show of the PopUp Window
 * (Bluefox) Fix error by ipCam Widget. (Load immediately the picture, Remove cancel icon in the corner of the IpCam)
