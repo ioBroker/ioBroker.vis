@@ -231,17 +231,6 @@ var dui = {
 
         dui.changeView(dui.activeView);
 
-        // Set background style
-        if (dui.views[dui.activeView] && dui.views[dui.activeView].settings != undefined && dui.views[dui.activeView].settings.style != undefined) {
-            if (dui.views[dui.activeView].settings.style['background'] != undefined) {
-                $("#duiview_"+dui.activeView).css("background", dui.views[dui.activeView].settings.style['background']);
-            }
-            if (dui.views[dui.activeView].settings.style['background_class'] != undefined) {
-                activeBkgClass = dui.views[dui.activeView].settings.style['background_class'];
-                $("#duiview_"+dui.activeView).addClass(activeBkgClass);
-            }
-        }
-
         // Navigation
         $(window).bind( 'hashchange', function(e) {
             dui.changeView(window.location.hash.slice(1));
@@ -348,7 +337,7 @@ var dui = {
         if (!dui.views[view].settings.interval) {
             dui.views[view].settings.interval = dui.defaultHmInterval;
         }
-
+        
         if (!noThemeChange) {
             console.log("theme "+dui.views[view].settings.theme);
             $("#jqui_theme").remove();
@@ -376,6 +365,17 @@ var dui = {
 
         } else {
             console.log("View already rendered - nothing to do");
+        }
+        
+        // Set background style
+        if (dui.views[view] && dui.views[view].settings != undefined && dui.views[view].settings.style != undefined) {
+            if (dui.views[view].settings.style['background'] != undefined) {
+                $("#duiview_"+view).css("background", dui.views[view].settings.style['background']);
+            }
+            if (dui.views[view].settings.style['background_class'] != undefined) {
+                activeBkgClass = dui.views[view].settings.style['background_class'];
+                $("#duiview_"+view).addClass(activeBkgClass);
+            }
         }
 
         // Views in Container verschieben
