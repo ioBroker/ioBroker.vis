@@ -783,7 +783,7 @@ dui = $.extend(true, dui, {
                 "Zoom active:"     : {"en" : "Zoom active:", "de": "Zoomen aktiviert:"},
                 "Charts..."        : {"en" : "Charts...",    "de": "Charts..."},
                 "Rooms"            : {"en" : "Rooms",        "de": "R&auml;ume"},
-                "Functions"        : {"en" : "Functions",    "de": "Gew&auml;rke"},
+                "Functions"        : {"en" : "Functions",    "de": "Gewerke"},
                 "Add Widget:"      : {"en" : "Add Widget:",   "de": "Widget einf&uuml;gen:"},
                 "Inspecting Widget:":{"en" : "Inspecting Widget:", "de": "Widget inspektieren:"},
                 "Widget Attributes:":{"en" : "Widget Attributes:", "de": "Widget-Eigenschaften:"},
@@ -1716,16 +1716,23 @@ var hmSelect = {
         var devicesCCU  = homematic.regaIndex["DEVICE"]; // IDs of all devices
         var rooms       = homematic.regaIndex["ENUM_ROOMS"]; // IDs of all ROOMS
         var functions   = homematic.regaIndex["ENUM_FUNCTIONS"]; // IDS of all functions
+
+        if (this.myFilter != filter || this.myDevFilter != devFilter) {
+            this._devices    = null;
+            this.myFilter    = filter;
+            this.myDevFilter = devFilter;
+        }
         
         // If filter changed
-        if (this.myFilter != filter) {
-            this.myFilter     = filter;
-            this.myDevFilter  = null;
+        if (this._devices == null && filter != "all") {            
             // Clear prepared data
-            $("#hmSelectFilter").empty ();
-            this.mydata       = null;
+            this.mydata = null;
             
             if (this.myFilter != 'variables' && this.myFilter != 'programs') {
+            
+                if (this.myFilter == "all") {
+                    this._devices = null;
+                }
                 //leave only desired elements
                 var f = filter.split(',');
                 for (var t = 0; t < f.length; t++) {
@@ -1828,11 +1835,8 @@ var hmSelect = {
         }
         
         // Filter by hssType of device
-        if (this.myDevFilter != devFilter || this._devices == null) {
-            this.myDevFilter = devFilter;
-            // Clear prepared data
-            $("#hmSelectFilter").empty ();
-            this.mydata       = null;
+        if (this._devices == null) {
+            this.mydata = null;
             
             if (filter == "all" || this._devices == null) {
                 var f = null;
@@ -1950,8 +1954,9 @@ var hmSelect = {
             }
         }
         
-        // Fill the locations toolbar
-        if (true /*this._buttonsLoc == null*/) {
+        // Fill the locations and functions toolbar
+        if ($("#hmSelectFilter").html () == "") {
+            // Fill the locations toolbar
             var text = dui.translate('Rooms')+":&nbsp;<select id='hmSelectLocations'>";
                 text += "<option value=''>"+dui.translate('All')+"</option>";
             for (var room in rooms) {
@@ -1962,7 +1967,21 @@ var hmSelect = {
                 text += "<option value='"+homematic.regaObjects[rooms[room]]["Name"]+"' "+selected+">"+homematic.regaObjects[rooms[room]]["Name"]+"</option>";
             }
             text += "</select>&nbsp;&nbsp;";
+            
+            // Fill the functions toolbar
+            text += dui.translate('Functions')+":&nbsp;<select id='hmSelectFunctions'>";
+            text += "<option value=''>"+dui.translate('All')+"</option>";
+            for (var func in functions) {
+                var selected = "";
+                if (hmSelect._filterFunc == homematic.regaObjects[functions[func]]["Name"]) {
+                    selected = " selected ";
+                }                
+                text += "<option value='"+homematic.regaObjects[functions[func]]["Name"]+"' "+selected+">"+homematic.regaObjects[functions[func]]["Name"]+"</option>";
+            }
+            text += "</select>";
             $("#hmSelectFilter").append (text);
+            
+            
             $("#hmSelectLocations").change (function () {
                 // toggle state
                 if (hmSelect._filterLoc != $(this).val()) {                       
@@ -1973,21 +1992,6 @@ var hmSelect = {
             if (hmSelect._filterLoc != "") {
                 hmSelect._filterDevsApply ();
             }
-        }
-
-        // Fill the functions toolbar
-        if (true /*this._buttonsLoc == null*/) {
-            var text = dui.translate('Functions')+":&nbsp;<select id='hmSelectFunctions'>";
-                text += "<option value=''>"+dui.translate('All')+"</option>";
-            for (var func in functions) {
-                var selected = "";
-                if (hmSelect._filterFunc == homematic.regaObjects[functions[func]]["Name"]) {
-                    selected = " selected ";
-                }                
-                text += "<option value='"+homematic.regaObjects[functions[func]]["Name"]+"' "+selected+">"+homematic.regaObjects[functions[func]]["Name"]+"</option>";
-            }
-            text += "</select>";
-            $("#hmSelectFilter").append (text);
             $("#hmSelectFunctions").change (function () {
                 // toggle state
                 if (hmSelect._filterFunc != $(this).val()) {                       
@@ -1997,9 +2001,9 @@ var hmSelect = {
             });
             if (hmSelect._filterFunc != "") {
                 hmSelect._filterDevsApply ();
-            }
-        }        
-         
+            }    
+        }
+    
         var selectedId = null;
                 
         // Build the data tree together
