@@ -33,6 +33,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.9beta20
 * (Bluefox) Fixed problem with background in different views
+* (Bluefox) Fixed hmSelect Dialog
 * (smiling-Jack) Knob Widgets: Dezimal stellen
 
 ### 0.9beta19
