@@ -1955,7 +1955,9 @@ var hmSelect = {
         }
         
         // Fill the locations and functions toolbar
-        if ($("#hmSelectFilter").html () == "") {
+        if (1) {
+            $("#hmSelectFilter").html ("");
+            
             // Fill the locations toolbar
             var text = dui.translate('Rooms')+":&nbsp;<select id='hmSelectLocations'>";
                 text += "<option value=''>"+dui.translate('All')+"</option>";
@@ -1989,9 +1991,6 @@ var hmSelect = {
                     hmSelect._filterDevsApply ();
                 }
             });
-            if (hmSelect._filterLoc != "") {
-                hmSelect._filterDevsApply ();
-            }
             $("#hmSelectFunctions").change (function () {
                 // toggle state
                 if (hmSelect._filterFunc != $(this).val()) {                       
@@ -1999,6 +1998,9 @@ var hmSelect = {
                     hmSelect._filterDevsApply ();
                 }
             });
+            if (hmSelect._filterLoc != "") {
+                hmSelect._filterDevsApply ();
+            }
             if (hmSelect._filterFunc != "") {
                 hmSelect._filterDevsApply ();
             }    
