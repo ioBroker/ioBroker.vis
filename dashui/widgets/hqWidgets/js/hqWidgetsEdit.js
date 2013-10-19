@@ -546,8 +546,9 @@ hqWidgets = $.extend (true, hqWidgets, {
         sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Show description:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_showDescription' "+(this.e_internal.attr.showDescription ? "checked" : "")+" ></td></tr>";
         
         
-        // Description
+        // Description and Room
         sText += "<tr><td>"+ hqWidgets.Translate("Description:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_title' type='text' value='"+((this.e_internal.attr.title) || "")+"'></td></tr>";
+        sText += "<tr><td>"+ hqWidgets.Translate("Room:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_room' type='text' value='"+((this.e_internal.attr.room) || "")+"'></td></tr>";
 
         // Show all styles
         if (this.e_internal.obj.stylesVisible === undefined)
@@ -837,6 +838,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         this._EditCheckboxHandler ('isPopupEnabled', false, false, true);
         
         this._EditTextHandler('title');   
+        this._EditTextHandler('room');   
         this._EditSelectHandler('hoursLastAction');   
                
         this._EditCheckboxHandler ('infoIsHideInactive', false, false, true);

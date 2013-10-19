@@ -1527,7 +1527,7 @@ var hqWidgets = {
                 } // end of Create bigger image
                     
                 // if url exists
-                if (this.settings.ipCamImageURL != null && this.settings.ipCamImageURL != "") {
+                if (this.settings.ipCamImageURL != null && this.settings.ipCamImageURL != "" && this.settings.isPopupEnabled) {
                     // create base image
                     if (this.settings.buttonType == hqWidgets.gButtonType.gTypeCam) {
                         this.intern._jelement.addClass('hq-ipcam-base').addClass('hq-no-select').css({width: this.settings.width, height: this.settings.height});
@@ -3933,10 +3933,23 @@ var hqWidgets = {
             }
             
             // ipCamImageURL => reset internal URl link
-            if (options.ipCamImageURL !== undefined) {
+            if (options.ipCamImageURL !== undefined || options.isPopupEnabled !== undefined) {
                 if ((settings.ipCamImageURL == null || settings.ipCamImageURL == "") && options.ipCamImageURL != null && options.ipCamImageURL != "") {
-                     this._CreateBigCam ();
-               }
+                    if (options.ipCamVideoDelay !== undefined) {
+                        this.settings.ipCamVideoDelay = options.ipCamVideoDelay;
+                    }
+                    if (options.isPopupEnabled !== undefined) {
+                        this.settings.isPopupEnabled = options.isPopupEnabled;
+                    }                    
+                    if (this.settings.isPopupEnabled && this._CreateBigCam) {
+                        this._CreateBigCam ();
+                    }
+                }
+                else 
+                if (!this.settings.isPopupEnabled && options.isPopupEnabled) {
+                    this.settings.isPopupEnabled = true;
+                    this._CreateBigCam ();
+                }
                 var upd = ((this.settings.ipCamImageURL != null && this.settings.ipCamImageURL != "") ||
                           (options.ipCamImageURL != null && options.ipCamImageURL != ""));
                 this.intern._ipCamImageURL = null;
@@ -4096,7 +4109,7 @@ var hqWidgets = {
                 this.settings = $.extend (this.settings, options);
                 this.StoreSettings ();
             }
-            if (this._CreateBigCam &&
+            if (this._CreateBigCam && this.settings.isPopupEnabled &&
                 (options.title        !== undefined || options.ctrlActionBtn !== undefined ||
                  options.ctrlBtnText  !== undefined || options.gongActionBtn !== undefined ||
                  options.ctrlQuestion !== undefined || options.gongBtnText   !== undefined)) {

@@ -290,6 +290,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 
             var opt = obj.GetSettings (false, false);
             var devFilters = (devFilter) ? devFilter.split (';') : [null, null];
+            var devFiltersNum = 0;
             if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
                 // Add ramp_time and on_time
                 var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"' style='display:none'>\n";
@@ -306,9 +307,11 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     $('#idCtrl'+j).hide();
                     j++;
                 }            
-                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, "hm_idC_On", 'idCtrl'+j);j++;
+                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilters[devFiltersNum], hqEditElem, "hm_idC_On", 'idCtrl'+j);j++;
+                if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
                 parent.append("<tr id='idCtrl"+j+"'><td>"+ dui.translate("Control value (ON):")  +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_ctrlValueOn'  type='text' value='"+hqEditElem.e_internal.attr.ctrlValueOn +"'></td></tr>");j++;
-                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, "hm_idC_Off", 'idCtrl'+j);j++;
+                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilters[devFiltersNum], hqEditElem, "hm_idC_Off", 'idCtrl'+j);j++;
+                if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
                 parent.append("<tr id='idCtrl"+j+"'><td>"+ dui.translate("Control value (OFF):") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_ctrlValueOff' type='text' value='"+hqEditElem.e_internal.attr.ctrlValueOff+"'></td></tr>");j++;
                 hqEditElem._EditTextHandler('ctrlValueOn');   
                 hqEditElem._EditTextHandler('ctrlValueOff');   
@@ -328,7 +331,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 opt.buttonTypeEx != hqWidgets.gButtonType.gTypeCharts &&
                 opt.buttonTypeEx != hqWidgets.gButtonType.gTypeEventlist) {              
                 if (opt.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
-                    dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, 'hm_id', null, function (val, btn) {
+                    dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilters[devFiltersNum], hqEditElem, 'hm_id', null, function (val, btn) {
                         // Select automatically image for this element
                         var e = $('#inspect_iconName');
                         if (1 || e.val() == "") {
@@ -349,8 +352,9 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     });
                 }
                 else {
-                    dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, 'hm_id');
+                    dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilters[devFiltersNum], hqEditElem, 'hm_id');
                 }
+                if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
             }
             if (opt["hm_ids"] != undefined) {
                 // This is multiselect
@@ -563,8 +567,10 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 if (opt.buttonType == hqWidgets.gButtonType.gTypeGong|| 
                     opt.buttonType == hqWidgets.gButtonType.gTypeCam)
                     attr = 'hm_idL';
+                    
                 
-                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilter, hqEditElem, attr);
+                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilters[devFiltersNum], hqEditElem, attr);
+                if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
             }
             
             // Hichcharts settings
