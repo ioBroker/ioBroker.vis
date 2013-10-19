@@ -782,6 +782,8 @@ dui = $.extend(true, dui, {
                 "Hide"             : {"en" : "Hide",         "de": "nicht anzeigen"},
                 "Zoom active:"     : {"en" : "Zoom active:", "de": "Zoomen aktiviert:"},
                 "Charts..."        : {"en" : "Charts...",    "de": "Charts..."},
+                "Chart"            : {"en" : "Chart",        "de": "Chart"},
+                "History"          : {"en" : "History",      "de": "Verlauf"},
                 "Rooms"            : {"en" : "Rooms",        "de": "R&auml;ume"},
                 "Functions"        : {"en" : "Functions",    "de": "Gewerke"},
                 "Add Widget:"      : {"en" : "Add Widget:",   "de": "Widget einf&uuml;gen:"},
