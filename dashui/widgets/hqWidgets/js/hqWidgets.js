@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.6",
+    version: "0.1.7",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -173,6 +173,7 @@ var hqWidgets = {
                 "Hide inactive:"            : {"en": "Hide&nbsp;if&nbsp;incative:", "de": "Verstecken&nbsp;falls&nbsp;inaktiv:"},
                 "No background:"            : {"en": "No&nbsp;background:",         "de": "Kein&nbsp;Hintergrund:"},
                 "Show description:"         : {"en": "Show&nbsp;description:",      "de": "Zeige&nbspBeschreibung:"},
+                "Room:"                     : {"en": "Room:",           "de": "Raum:"},
            };
         }
         if (this.words[text]) {
@@ -611,6 +612,7 @@ var hqWidgets = {
             gaugeColor:       'blue',
 
             hideValve:        false, // if the valve status must be shown
+			hideHumidity:     false  // if hide humidity by temperature
         };
         
         // Dynamical states (will not be stored)
@@ -709,6 +711,8 @@ var hqWidgets = {
             _jbigBlind1:  null,         // jQuery (rolladen) movable part on the _jbigWindow
             _jicon:       null,         // jQuery working, unknown state or refreshing icon state
             _jstaticText: null,         // jQuery static text container (Only if gTypeText)
+			_jPercent:    null,         // jQuery container for _jPercentValue and small image
+			_jPercentValue: null        // jQuery container for percent value (brightness fo motion)
         };
         
         if (advSettings !== undefined)
@@ -788,9 +792,9 @@ var hqWidgets = {
                 // Add description
                 text += "<table id='"+this.advSettings.elemName+"_hdr' width='100%' class='ui-widget-header'><tr><td width='93%'><span class='ui-dialog-title' style='padding: 1px 1px 1px 10px'  id='"+this.advSettings.elemName+"_bigTitle' ></span></td>";
                 if (this.dynStates.infoWindow.pinShow)    
-                    text += "<td><button id='"+this.advSettings.elemName+"_pin'></button></td>";
+                    text += "<td style='text-align:right'><button id='"+this.advSettings.elemName+"_pin'></button></td>";
                 text += "</tr></table></div></td></tr>";
-                text += "<tr><td><div style='height: 100%; width:100%' id='"+this.advSettings.elemName+"_bigContent'></div></td></tr>";
+                text += "<tr><td style='height: 100%; width:100%'><div style='height: 100%; width:100%' id='"+this.advSettings.elemName+"_bigContent'></div></td></tr>";
                 if (this.dynStates.infoWindow.isShowButtons) {
                     text += "<tr style='height:40px'><td id='"+this.advSettings.elemName+"_btns' ></td></tr>";                    
                 }
@@ -891,6 +895,120 @@ var hqWidgets = {
             this.intern._jrightText.addClass('hq-no-select').show();
             this.intern._jright.addClass('hq-no-select');
         };
+        this._CreateRightMotionInfo = function () {
+			if ((this.settings.hoursLastAction == -1) && !this.settings.isShowPercent) {
+				if (this.intern._jright) {
+					this.intern._jright.remove ();
+					this.intern._jright.hide();
+					this.intern._jright = undefined;
+				}
+				return;
+			}
+		
+			if (!document.getElementById(this.advSettings.elemName+'_right')) {
+				var $newdiv1 = $('<div id="'+this.advSettings.elemName+'_right"></div>');
+				this.advSettings.parent.append ($newdiv1);
+			}
+			this.intern._jright=$('#'+this.advSettings.elemName+"_right");
+			this.intern._jright.html("");
+			this.intern._jright.css({position:  'absolute', 
+									   top:       this.settings.y, 
+									   left:      this.settings.x+this.settings.width/2,
+									   borderRadius: 10, 
+									   height:    30, 
+									   width:     hqWidgets.gOptions.gBtWidth*0.8 + this.settings.width/2, 
+									   'z-index': (this.settings.zindex == 'auto') ? -1 : this.settings.zindex-1,  
+									   fontSize:  10, 
+									   color:     'black'}); // Set size 
+			this.intern._jright.addClass ("hq-button-base-info").show();
+			
+			// Create last action 
+            if (this.settings.hoursLastAction != -1) {
+				if (!document.getElementById(this.advSettings.elemName+"_rightText"))
+					this.intern._jright.prepend("<div id='"+this.advSettings.elemName+"_rightText'></div>");
+					
+				this.intern._jrightText=$('#'+this.advSettings.elemName+"_rightText");
+				this.intern._jrightText.html("");
+				this.intern._jrightText.css({position: 'absolute', 
+											 left:     (this.intern._jelement.width()/2 + 8 + ((this.settings.redius < 3) ? 5 : 0)), 
+											 height:   15, 
+											 'z-index':'2', 
+											 fontSize: 9, 
+											 color:    'black'}); // Set size
+				this.intern._jrightText.addClass('hq-no-select').show();
+				this.intern._jright.addClass('hq-no-select');         
+            }
+			// Create last percent
+			if (this.settings.isShowPercent) {
+				if (!document.getElementById(this.advSettings.elemName+"_percent"))
+					this.intern._jright.prepend("<div id='"+this.advSettings.elemName+"_percent'></div>");
+					
+				this.intern._jPercent     =$('#'+this.advSettings.elemName+"_percent");
+				this.intern._jPercent.html("<table style='border:0px;margin:0px;padding:0px;border-spacing:0px;'><tr style='border:0px;margin:0px;padding:0px;border-spacing:0px;'><td style='border:0px;margin:0px;padding:0px;border-spacing:0px;'><img style='border-image-width:0px' src='" + hqWidgets.gOptions.gPictDir + "sun.png' /></td><td style='border:0px;margin:0px;padding:0px;border-spacing:0px;vertical-align:top' id='"+this.advSettings.elemName+"_percentValue'></td></tr></table>");
+				this.intern._jPercentValue=$('#'+this.advSettings.elemName+"_percentValue");
+				this.intern._jPercent.css({position: 'absolute', 
+										   top:(this.settings.hoursLastAction != -1) ? this.settings.width/2 -11: (this.settings.width - 9) / 2,
+										   left:this.settings.width/2+5,
+										   height: 15, // Height of the image
+										   'z-index':'2' 
+										   }); // Set size
+				this.intern._jPercentValue.css ( {fontSize:12, color:'black'});
+				this.intern._jPercentValue.css("text-align", "left");
+				this.intern._jPercent.css("text-align", "left");
+			}
+		},
+        this._CreateRightTemp = function () {
+			if (!document.getElementById(this.advSettings.elemName+'_right')) {
+				var $newdiv1 = $('<div id="'+this.advSettings.elemName+'_right"></div>');
+				this.advSettings.parent.append ($newdiv1);
+			}
+			this.intern._jright=$('#'+this.advSettings.elemName+"_right");
+			this.intern._jright.css({position:  'absolute', 
+									   top:       this.settings.y, 
+									   left:      this.settings.x+this.settings.width/2,
+									   borderRadius: 10, 
+									   height:    30, 
+									   width:     hqWidgets.gOptions.gBtWidth*0.8 + this.settings.width/2, 
+									   'z-index': (this.settings.zindex == 'auto') ? -1 : this.settings.zindex-1,  
+									   fontSize:  10, 
+									   color:     'black'}); // Set size 
+			this.intern._jright.addClass ("hq-button-base-info").show();
+			if (!document.getElementById(this.advSettings.elemName+"_valve"))
+				this.intern._jright.prepend("<div id='"+this.advSettings.elemName+"_valve'></div>");
+				
+			if (!document.getElementById(this.advSettings.elemName+"_settemp"))
+				this.intern._jright.prepend("<div id='"+this.advSettings.elemName+"_settemp'></div>");
+				
+			this.intern._jvalve  =$('#'+this.advSettings.elemName+"_valve");
+			this.intern._jsettemp=$('#'+this.advSettings.elemName+"_settemp");
+			this.intern._jvalve.css({position: 'absolute', 
+									   top:15, 
+									   left:this.settings.width/2 + 5, 
+									   height: 15, 
+									   'z-index':'2', 
+									   fontSize:9, 
+									   color:'black'}); // Set size
+			this.intern._jvalve.css("text-align", "left");
+			this.intern._jsettemp.css({position: 'absolute', 
+										 top: 3, 
+										 left:this.settings.width/2 + 1, 
+										 height: 15, 
+										 'z-index':'2', 
+										 fontSize:9, 
+										 color:'black'}); // Set size
+			this.intern._jsettemp.css("text-align", "left").show();
+			this.intern._jvalve.addClass('hq-no-select').show();
+			this.intern._jsettemp.addClass('hq-no-select');
+			this.intern._jright.addClass('hq-no-select');
+			// Generate action event, because the normal button is overloaded by temperature control
+			/*if (!this.intern._isEditMode) {
+				this.intern._jright.bind("click", {msg: this}, function (e) {
+					var obj = e.data.msg;
+					if (obj.intern._jbigWindow && obj.dynStates.infoWindow.isEnabled)
+						obj.ShowBigWindow(true);
+				});
+			}       */             
+		},
         this._DrawOneWindow = function (index, type, xoffset, width_, height_) {
             var name = this.intern._jelement.attr("id")+"_"+index;
             if (!this.intern._jelement.leaf) this.intern._jelement.leaf = [];
@@ -993,7 +1111,7 @@ var hqWidgets = {
             }
             this.intern._jbigWindow.jbigWindowContent.html (newContent);
         };            
-        this._SetType = function (buttonType) {
+		this._SetType = function (buttonType) {
             if (this.settings.buttonType == buttonType && this.intern._inited)
                 return;
 
@@ -1081,7 +1199,8 @@ var hqWidgets = {
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeInfo    ||
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer  ||
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeButton  ||
-                this.settings.buttonType == hqWidgets.gButtonType.gTypeGong) {
+                this.settings.buttonType == hqWidgets.gButtonType.gTypeGong    ||
+                this.settings.buttonType == hqWidgets.gButtonType.gTypeMotion) {
                 // Colors of the states
                 this._SetUsejQueryStyle (this.settings.usejQueryStyle);
                 this.intern._jelement.addClass ("hq-button-base");
@@ -1142,62 +1261,9 @@ var hqWidgets = {
                         this.intern._jsetTemp.css("text-align", "center").hide();
                         this.intern._jsetTemp.addClass('hq-no-select');
                         this.intern._jsetTemp.parentQuery=this;
-                    }
-                    // create info on the right side
-                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
-                    {
-                        if (!document.getElementById(this.advSettings.elemName+'_right')) {
-                            var $newdiv1 = $('<div id="'+this.advSettings.elemName+'_right"></div>');
-                            this.advSettings.parent.append ($newdiv1);
-                        }
-                        this.intern._jright=$('#'+this.advSettings.elemName+"_right");
-                        this.intern._jright.css({position:  'absolute', 
-                                                   top:       this.settings.y, 
-                                                   left:      this.settings.x+this.settings.width/2,
-                                                   borderRadius: 10, 
-                                                   height:    30, 
-                                                   width:     hqWidgets.gOptions.gBtWidth*0.8 + this.settings.width/2, 
-                                                   'z-index': (this.settings.zindex == 'auto') ? -1 : this.settings.zindex-1,  
-                                                   fontSize:  10, 
-                                                   color:     'black'}); // Set size 
-                        this.intern._jright.addClass ("hq-button-base-info").show();
-                        if (!document.getElementById(this.advSettings.elemName+"_valve"))
-                            this.intern._jright.prepend("<div id='"+this.advSettings.elemName+"_valve'></div>");
-                            
-                        if (!document.getElementById(this.advSettings.elemName+"_settemp"))
-                            this.intern._jright.prepend("<div id='"+this.advSettings.elemName+"_settemp'></div>");
-                            
-                        this.intern._jvalve  =$('#'+this.advSettings.elemName+"_valve");
-                        this.intern._jsettemp=$('#'+this.advSettings.elemName+"_settemp");
-                        this.intern._jvalve.css({position: 'absolute', 
-                                                   top:15, 
-                                                   left:this.settings.width/2+5, 
-                                                   height: 15, 
-                                                   'z-index':'2', 
-                                                   fontSize:9, 
-                                                   color:'black'}); // Set size
-                        this.intern._jvalve.css("text-align", "left");
-                        this.intern._jsettemp.css({position: 'absolute', 
-                                                     top: 3, 
-                                                     left:this.settings.width/2 + 1, 
-                                                     height: 15, 
-                                                     'z-index':'2', 
-                                                     fontSize:9, 
-                                                     color:'black'}); // Set size
-                        this.intern._jsettemp.css("text-align", "left").show();
-                        this.intern._jvalve.addClass('hq-no-select').show();
-                        this.intern._jsettemp.addClass('hq-no-select');
-                        this.intern._jright.addClass('hq-no-select');
-                        // Generate action event, because the normal button is overloaded by temperature control
-                        /*if (!this.intern._isEditMode) {
-                            this.intern._jright.bind("click", {msg: this}, function (e) {
-                                var obj = e.data.msg;
-                                if (obj.intern._jbigWindow && obj.dynStates.infoWindow.isEnabled)
-                                    obj.ShowBigWindow(true);
-                            });
-                        }       */             
-                        
-                        
+						
+						// create info on the right side
+						this._CreateRightTemp ();
                     }
                     this.SetTemperature ();
                 }
@@ -1265,6 +1331,10 @@ var hqWidgets = {
                 if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInfo) {
                     this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, this.settings.infoTextColor); 
                 }
+				else
+				if (this.settings.buttonType == hqWidgets.gButtonType.gTypeMotion) {
+					this._CreateRightMotionInfo ();
+				}
             }
             else
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeBlind) {	
@@ -1614,15 +1684,13 @@ var hqWidgets = {
             if (isUse) {
                 // Colors of the states
                 if (!this.settings.noBackground) {
-                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
-                    {
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp) {
                         this.intern._backOff        = "ui-state-default";
                         this.intern._backOffHover   = "ui-state-hover";
                         this.intern._backMoving     = "hq-button-base-moving";
                     }
                     else
-                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp)
-                    {
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
                         this.intern._backOff        = "ui-state-default";
                         this.intern._backOffHover   = "ui-state-hover";
                         this.intern._backMoving     = "hq-button-base-moving";
@@ -1637,8 +1705,7 @@ var hqWidgets = {
                     if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage) {
                         this.intern._backOff="";  
                     }                        
-                    else
-                    {
+                    else {
                         this.intern._backOff        = "ui-state-default";
                         this.intern._backOffHover   = "ui-state-hover";
                         this.intern._backMoving     = "hq-button-base-moving";
@@ -1870,11 +1937,11 @@ var hqWidgets = {
             
             this.SetInfoText (this.dynStates.valueSet, this.settings.infoTextFont, this.settings.infoTextColor); 
             this.SetPercent (pState);
-       }
+        }
         this._ShowLastActionTime = function () {
             if (this.intern._jrightText && (this.settings.hoursLastAction != -1)) {
                 if (this.dynStates.lastAction != null) {
-                    // Show absolut time
+                    // Show absolute time
                     if (this.settings.hoursLastAction < 0) {
                         if (this.settings.hoursLastAction == -2) {
                             this.intern._jright.show ();
@@ -1887,7 +1954,7 @@ var hqWidgets = {
                                 this._ShowRightInfo (hqWidgets.TimeToString(this.dynStates.lastAction));
                             }
                             else
-                                this._jright.hide ();
+                                this._ShowRightInfo (null);
                         }
                     }
                     else {
@@ -1897,35 +1964,85 @@ var hqWidgets = {
                             this._ShowRightInfo (hqWidgets.GetTimeInterval(this.dynStates.lastAction));
                         }
                         else 
-                            this.intern._jright.hide ();
+                            this._ShowRightInfo (null);
                     }
                 
                 }
                 else
-                    this.intern._jright.hide ();            
+                    this._ShowRightInfo (null);            
             }
             else 
             if (this.intern._jrightText && 
                 this.settings.buttonType != hqWidgets.gButtonType.gTypeDimmer &&
                 this.settings.buttonType != hqWidgets.gButtonType.gTypeInTemp &&
-                this.settings.buttonType != hqWidgets.gButtonType.gTypeGauge)
+                this.settings.buttonType != hqWidgets.gButtonType.gTypeGauge &&
+                this.settings.buttonType != hqWidgets.gButtonType.gTypeMotion)
                 this.intern._jright.hide ();            
         }
-        this._ShowRightInfo = function (newText) {
-            if (this.intern._jright && this.intern._jrightText) {
-                if (newText == undefined) 
+        this._ShowRightInfo = function (newText, newPercent) {
+            if (this.intern._jright && (this.intern._jrightText || this.intern._jPercentValue)) {
+			
+                if (newText == undefined && this.intern._jrightText) 
                     newText = this.intern._jrightText.html();
+					
+                if (newPercent == undefined && this.intern._jPercent) 
+                    newPercent = this.intern._jPercentValue.html();
+					
                 // Calculate new width
-                if (newText == "" || newText == null)
+                if ((newText == "" || newText == null) && (newPercent == "" || newPercent == null))
                     this.intern._jright.hide ();
                 else {
-                    var w = newText.width('9px "Tahoma", sans-serif');
-                        
-                    this.intern._jright.stop().show ();
-                    this.intern._jrightText.css({left: (this.intern._jelement.width()/2 + 6 + ((this.settings.radius < 3) ? 8 : 0))});
-                    this.intern._jright.css({left:this.settings.x+this.settings.width/2, height: 30, width: this.settings.width / 2 + 7 + ((this.settings.radius < 3) ? 8 : 0) + w*1.2}); // Set size
-                    this.intern._jrightText.html(newText);
+                    var w1 = (newText)    ? newText.width('9px "Tahoma", sans-serif') : 0;
+                    var w2 = (newPercent) ? newPercent.width('12px "Tahoma", sans-serif') + 16: 0;
+					var w  = (w1 > w2) ? w1 : w2;
+					if (this.intern._jPercent) {
+						if (newPercent == "" || newPercent == null)
+							this.intern._jPercent.hide ();
+						else
+							this.intern._jPercent.show ();
+					}
+					
+                    if (w) {
+						this.intern._jright.stop().show ();
+						if (this.intern._jrightText) {
+							this.intern._jrightText.css({left: (this.intern._jelement.width()/2 + 8 + ((this.settings.radius < 3) ? 8 : 0))});
+							this.intern._jrightText.html(newText);
+						}
+						if (this.intern._jPercent) {
+							this.intern._jPercent.css({left: (this.intern._jelement.width()/2 + 6 + ((this.settings.radius < 3) ? 8 : 0))});
+							this.intern._jPercentValue.html(newPercent);
+						}
+						this.intern._jright.css({left:this.settings.x+this.settings.width/2, height: 30, width: this.settings.width / 2 + 7 + ((this.settings.radius < 3) ? 8 : 0) + w*1.2}); // Set size
+					}
                 }
+				
+				// Set the height
+				var isTextVisible = false;
+				var isPercentVisible = false;
+				
+                if (this.intern._jrightText && this.intern._jrightText.html() != "") {
+					if (this.intern._jPercent && this.intern._jPercentValue.html() != "") {
+						isTextVisible = true;
+						isPercentVisible = true;
+						this.intern._jrightText.css({top: 15});
+						this.intern._jPercent.css({top: 3});
+					}
+					else {
+						isTextVisible = true;
+						this.intern._jrightText.css({top: (this.intern._jright.height() - this.intern._jrightText.height()) / 2 +3});
+					}
+                }
+				else 
+				if (this.intern._jPercent && this.intern._jPercentValue.html() != "") {
+					isPercentVisible = true;
+					// Workaround because the image loaded later and change the height of the _jPercent
+					//this.intern._jPercent.css({top: (this.intern._jright.height() - this.intern._jPercent.height()) / 2});
+					this.intern._jPercent.css({top: (this.intern._jright.height() - 15) / 2});
+				}
+				if (!isPercentVisible && !isTextVisible) 
+					this.intern._jright.hide();
+				else
+					this.intern._jright.show();
             }
         }
         this._UpdateSmallCam = function () {
@@ -2105,9 +2222,10 @@ var hqWidgets = {
                     this._ShowGauge ();
                 }
                     
-                if (this.intern._jinfoText)
-                    this.intern._jinfoText.css({top: (this.settings.height - this.intern._jinfoText.height()) / 2, left: (this.settings.width - this.intern._jinfoText.width()) / 2 });
-                
+                if (this.intern._jinfoText) {
+					this.intern._jinfoText.css({top: (this.settings.height - this.intern._jinfoText.height()) / 2, left: (this.settings.width - this.intern._jinfoText.width()) / 2 });
+                }
+				
                 if (this.intern._jtemp)
                     this.intern._jtemp.css({top:this.settings.height/2-11, width: this.settings.width}); // Set size
                 
@@ -2119,7 +2237,8 @@ var hqWidgets = {
                         this._ShowRightInfo ();
                     else
                         this.intern._jright.css({left:this.settings.x+this.settings.width/2, width: hqWidgets.gOptions.gBtWidth*0.8 + this.settings.width/2}); // Set size
-                    if (this.intern._jvalve)   this.intern._jvalve.css  ({left:this.settings.width/2+5}); // Set size
+
+					if (this.intern._jvalve)   this.intern._jvalve.css  ({left:this.settings.width/2+5}); // Set size
                     if (this.intern._jsettemp) this.intern._jsettemp.css({left:this.settings.width/2+1}); // Set size
                 }
                                 
@@ -2279,12 +2398,11 @@ var hqWidgets = {
                 this.intern._jinfoText.css({font: textFont, color: textColor});
                 this.intern._jinfoText.html ((text) || "");
                 if (text != null) {
-                
                     var w = text.width(textFont);
                     // Place it in the middle
                     this.intern._jinfoText.css({top:  (this.settings.height - this.intern._jinfoText.height()) / 2, 
-                                                  left: (this.settings.width  - w) / 2,
-                                                  width: w});
+                                                left: (this.settings.width  - w) / 2,
+                                                width: w});
                 }                                                  
             }
         }
@@ -2965,8 +3083,13 @@ var hqWidgets = {
                 if (this.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer ||
                     this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
                    this._ShowCircleState (isForSet);
+				   
                 if (this.settings.isShowPercent) {
-                    this._ShowRightInfo ("  "+percent+"%");
+					if (this.intern._jPercent)
+						this._ShowRightInfo (undefined, percent+"%");
+					else
+						this._ShowRightInfo ("  "+percent+"%");
+					
                     if (this.intern._jbigWindow && this.intern._jbigWindow.jtext)
                         this.intern._jbigWindow.jtext.html(percent+"%");
                 }
@@ -3140,14 +3263,13 @@ var hqWidgets = {
             }
         }
         this.SetTemperature = function (temp)	{
-            if (temp)
-            {
+            if (temp) {
                 // State is no more unknown 
                 if (temp.temperature !== undefined && temp.temperature != null && this.dynStates.state == hqWidgets.gState.gStateUnknown)
                     this.SetState (hqWidgets.gState.gStateOff);
                 
                 if (temp.valve      !=undefined && this.intern._jvalve)  this.intern._jvalve.html(Math.round(temp.valve) + '%');
-                if (temp.valueSet    !=undefined && this.intern._jsettemp){
+                if (temp.valueSet   !=undefined && this.intern._jsettemp){
                     // If state word
                     if (typeof temp.valueSet === "string" && (temp.valueSet[0] < '0' || temp.valueSet[0] > '9'))
                         this.intern._jsettemp.html(temp.valueSet);
@@ -3155,7 +3277,12 @@ var hqWidgets = {
                         this.intern._jsettemp.html(hqWidgets.TempFormat(temp.valueSet) + hqWidgets.gOptions.gTempSymbol);
                 }
                 if (temp.temperature!=undefined && this.intern._jtemp)   this.intern._jtemp.html(hqWidgets.TempFormat(temp.temperature) + hqWidgets.gOptions.gTempSymbol);
-                if (temp.humidity   !=undefined && this.intern._jhumid)  this.intern._jhumid.html(Math.round(temp.humidity)+'%');
+				if (this.settings.hideHumidity === false) {
+					if (temp.humidity   !=undefined && this.intern._jhumid)  this.intern._jhumid.html(Math.round(temp.humidity)+'%');
+				}
+				else if (this.intern._jhumid){
+					this.intern._jhumid.hide();
+				}
                 if (this.settings.hideValve  !=undefined && this.intern._jvalve)  {
                     if (!this.settings.hideValve)
                         this.intern._jvalve.show();
@@ -3163,8 +3290,7 @@ var hqWidgets = {
                         this.intern._jvalve.hide();
                 }
             }
-            else
-            {	
+            else {	
                 if (this.intern._jvalve)   this.intern._jvalve.html('--%');
                 if (this.intern._jsettemp) this.intern._jsettemp.html('--,-&#176;C');
                 if (this.intern._jtemp)    this.intern._jtemp.html('--,-&#176;C');
@@ -3978,7 +4104,10 @@ var hqWidgets = {
             if (options.isShowPercent !== undefined) {
                 if (options.isShowPercent) {
                     this._CreateRightInfo ();
-                    this._ShowRightInfo (this.dynStates.percentState+"%");
+					if (this.intern._jPercent)
+						this._ShowRightInfo (undefined, this.dynStates.percentState+"%");
+					else
+						this._ShowRightInfo ("  "+this.dynStates.percentState+"%");
 
                     if (this.intern._jbigWindow && this.intern._jbigWindow.jtext == undefined) {
                         if (!document.getElementById(this.advSettings.elemName+'_bigBlindText'))
@@ -4073,7 +4202,7 @@ var hqWidgets = {
 
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
                 var isSet = false;
-                 if (options.valueMin !== undefined) {
+                if (options.valueMin !== undefined) {
                     this.settings.valueMin = parseInt(options.valueMin);
                     isSet = true;
                 }

@@ -9,7 +9,7 @@
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
         hqWidgetsExt: {
-            version: "0.1.6",
+            version: "0.1.7",
             inited:  false,
             hqIgnoreNextUpdate: null, // id of controlled element
             hqMapping: {},
@@ -162,7 +162,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 src = src.substring (0, i) + "eventlist/";
                                  var url = "";
                                 if (opt['hm_ids'] !== undefined && opt['hm_ids'] != "") {
-                                    url += ((url !="") ? "&" : "?") + "hmID=" + opt['hm_ids'];
+                                    url += ((url !="") ? "&" : "?") + "hmid=" + opt['hm_ids'];
                                 }
                                 if (opt['exLoading'] !== undefined && opt['exLoading'] !== "") {
                                     url += ((url !="") ? "&" : "?") + "loading=" + opt['exLoading'];
@@ -332,9 +332,16 @@ if ((typeof hqWidgets !== 'undefined')) {
                         adv = $.extend (adv, {action: function (obj, what, state) {
                             var hm_id = obj.GetSettings ('hm_id');
                             if (hm_id != null && hm_id != "") {
-                                if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["Channels"] && homematic.regaObjects[opt['hm_id']]["Channels"][2]) {
-                                    hm_id = homematic.regaObjects[homematic.regaObjects[opt['hm_id']]["Channels"][2]]["DPs"]["SETPOINT"];
+                                if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["Channels"]) {
+									if (homematic.regaObjects[opt['hm_id']]["HssType"] == "HM-CC-TC") {
+										hm_id = homematic.regaObjects[homematic.regaObjects[opt['hm_id']]["Channels"][2]]["DPs"]["SETPOINT"];
+									}
+									else // HM-CC-RT-DN
+									if (homematic.regaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
+										hm_id = homematic.regaObjects[homematic.regaObjects[opt['hm_id']]["Channels"][4]]["DPs"]["SET_TEMPERATURE"];
+									}
                                 }
+
                                 console.log ("SetTemp: "+ hm_id + " = " + state);
                                 // Send command to HM
                                 homematic.setValue (hm_id, state);                                  
@@ -343,26 +350,38 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Fill up the required IDs
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
-                            if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["Channels"] && homematic.regaObjects[opt['hm_id']]["Channels"][1]) {
+							var isHM_CC_RT_DN = false;
+                            if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["HssType"] == "HM-CC-TC") {
                                 var weatherId = homematic.regaObjects[opt['hm_id']]["Channels"][1];
                                 var controlId = homematic.regaObjects[opt['hm_id']]["Channels"][2];
                                 hm_ids[t++] = {hm_id: homematic.regaObjects[controlId]["DPs"]["SETPOINT"],    option: 'valueSet'}; // First is always control element
                                 hm_ids[t++] = {hm_id: homematic.regaObjects[weatherId]["DPs"]["TEMPERATURE"], option: 'temperature'}; 
                                 hm_ids[t++] = {hm_id: homematic.regaObjects[weatherId]["DPs"]["HUMIDITY"],    option: 'humidity'};
                             }
+                            else 
+							if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
+                                isHM_CC_RT_DN = true;
+								var controlId = homematic.regaObjects[opt['hm_id']]["Channels"][4];
+                                hm_ids[t++] = {hm_id: homematic.regaObjects[controlId]["DPs"]["SET_TEMPERATURE"],     option: 'valueSet'}; // First is always control element
+                                hm_ids[t++] = {hm_id: homematic.regaObjects[controlId]["DPs"]["ACTUAL_TEMPERATURE "], option: 'temperature'}; 
+                                hm_ids[t++] = {hm_id: homematic.regaObjects[controlId]["DPs"]["VALVE_STATE"],         option: 'valve'};	
+								adv = $.extend (adv, {'hideHumidity': true});
+							}
                             else if (homematic.regaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {hm_id: opt['hm_id'], option: 'temperature'};
                             }
-                            if (opt["hm_idV"]) {
-                                if (homematic.regaObjects[opt["hm_idV"]] && homematic.regaObjects[opt["hm_idV"]]["DPs"])
-                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_idV"]]["DPs"]["VALVE_STATE"], option: 'valve'};
-                                else if (homematic.regaObjects[opt["hm_idV"]])
-                                    hm_ids[t++] = {hm_id: opt["hm_idV"], option: 'valve'};
-                                adv = $.extend (adv, {'hideValve': false});
-                            }
-                            else {
-                                adv = $.extend (adv, {'hideValve': true});
-                            }
+							if (!isHM_CC_RT_DN) {
+								if (opt["hm_idV"]) {
+									if (homematic.regaObjects[opt["hm_idV"]] && homematic.regaObjects[opt["hm_idV"]]["DPs"])
+										hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_idV"]]["DPs"]["VALVE_STATE"], option: 'valve'};
+									else if (homematic.regaObjects[opt["hm_idV"]])
+										hm_ids[t++] = {hm_id: opt["hm_idV"], option: 'valve'};
+									adv = $.extend (adv, {'hideValve': false});
+								}
+								else {
+									adv = $.extend (adv, {'hideValve': true});
+								}
+							}
                         }  
                     }
                     else
@@ -467,6 +486,45 @@ if ((typeof hqWidgets !== 'undefined')) {
                             hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'infoText'};
                         }  
                     }                
+                    else
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeMotion) {
+                        adv = $.extend (adv, {action: function (obj, what, state) {
+                            if (obj.GetSettings ('isPopupEnabled')) {
+                                var isValueChart = obj.GetSettings ('exIsChart');
+                                if (isValueChart) {
+                                    // Show chart of value
+                                }
+                                else {
+                                    // Show history of state
+                                }
+                            }
+                                                
+                        }});
+                        // Fill up the required IDs
+                        var t = 0;
+                        if (opt["hm_id"] != null && opt["hm_id"] != "") {
+                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"]) {
+                                if (homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"]) {
+                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"],      option: 'state'}; // First is always main element
+                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["BRIGHTNESS"],  option: 'percentState'};                         
+									opt = $.extend (opt, {'isShowPercent': true});
+                                }
+                                else 
+                                if (homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"]){
+                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"], option: 'state'};  
+									opt = $.extend (opt, {'isShowPercent': false});
+                                }
+								// no else here
+                                if (homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"] !== undefined) {
+                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};
+									opt = $.extend (opt, {'isShowPercent': false});
+                                }                                
+                            }
+                            else if (homematic.regaObjects[opt["hm_id"]]){
+                                hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"], option: 'state'};                                    
+                            }
+                        }                        
+                    }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeCam) {
                         if (dui.urlParams["edit"] === undefined) {
@@ -690,8 +748,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 var infoWindow = {'x': Math.round(iWnd.x), 'y': Math.round(iWnd.y), 'width': Math.round(iWnd.width), 'height': Math.round(iWnd.height)};
                                 dui.binds.hqWidgetsExt.hqEditStoreInfoWindow (obj, infoWindow);
                             };
-                            // Show grafik
-                            // Show grafik in a new window
+                            // Show history in popup window
                             var src = document.location.href;
                             var i = src.indexOf("dashui");
                             if (i > 0) {
@@ -700,7 +757,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                                          'src="'+src;
                                 var url = "";
                                 if (opt['hm_ids'] !== undefined && opt['hm_ids'] != "") {
-                                    url += ((url !="") ? "&" : "?") + "hmID=" + opt['hm_ids'];
+                                    url += ((url !="") ? "&" : "?") + "hmid=" + opt['hm_ids'];
                                 }
                                 if (opt['exLoading'] !== undefined && opt['exLoading'] !== "") {
                                     url += ((url !="") ? "&" : "?") + "loading=" + opt['exLoading'];
@@ -781,7 +838,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Get stored settings for info window
                         var wObj = dui.binds.hqWidgetsExt.hqGetWidgetByObj (btn);
                         var storedInfo = null;
-                        if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+                        if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) {
+							storedInfo = $.parseJSON(wObj.data.informWindow);
+						}
                         var infoWindow = btn.GetInfoWindowSettings ();
                         infoWindow.isEnabled     = true;
                         infoWindow.content       = "";
@@ -794,8 +853,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                         infoWindow.y             = (storedInfo == null) ? null: storedInfo.y;
                         infoWindow.title         = ((opt.room != "" && opt.room != null) ? ("[" + opt.room + "] ") : "") + opt.title;
                         infoWindow.onShow        = function (obj, jContent) {
-                            // update information if older than 5 minutes
-                            if (obj.lastBigShow === undefined || Date.now() - obj.lastBigShow > 60000) {
+                            // update information if older than 5 minute
+                            if (obj.lastBigShow === undefined || Date.now() - obj.lastBigShow > 5*60000) {
                                 jContent.html ("");
                                 var infoWnd = {'content': obj.graficIframe};
                                 obj.SetInfoWindowSettings (infoWnd);
@@ -863,6 +922,111 @@ if ((typeof hqWidgets !== 'undefined')) {
                         }});
                     }
                     else
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeMotion) {
+                        btn = $.extend (btn, {translateSignal: function (options, value) {
+                            if (options == "percentState") {
+								if (value < 33) value = 33;
+                                var p = Math.round ((value - 33) / (256 - 33) * 100);
+								return p;
+							}
+                            else // state
+                                return (value === false || value === "false") ? hqWidgets.gState.gStateOff : hqWidgets.gState.gStateOn;
+                        }});
+						if (opt["exShowGrafik"] === 'history' || opt["exShowGrafik"] === 'grafic') {
+							var storedInfo = null;
+							if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+							var infoWindow = btn.GetInfoWindowSettings ();
+							infoWindow.isEnabled     = true;
+							infoWindow.content       = "";
+							infoWindow.isShowButtons = true;
+							infoWindow.pinShow       = true;
+							infoWindow.showPinned    = true;
+							infoWindow.x             = (storedInfo == null) ? null: storedInfo.x;
+							infoWindow.y             = (storedInfo == null) ? null: storedInfo.y;
+							if (opt["exShowGrafik"] === 'grafic') {
+								infoWindow.width         = (storedInfo == null) ? 800:  storedInfo.width;
+								infoWindow.height        = (storedInfo == null) ? 400:  storedInfo.height;
+								infoWindow.title         = ((opt.room != "" && opt.room != null) ? ("[" + opt.room + "] ") : "") + (opt.title || dui.translate("Chart"));
+							}
+							else if (opt["exShowGrafik"] === 'history'){
+								infoWindow.width         = (storedInfo == null) ? 350:  storedInfo.width;
+								infoWindow.height        = (storedInfo == null) ? 300:  storedInfo.height;
+								infoWindow.title         = (opt.title || dui.translate("History"));
+							}
+							infoWindow.onShow        = function (obj, jContent) {
+								// update information if older than 5 minutes
+								if (obj.lastBigShow === undefined || Date.now() - obj.lastBigShow > 60000) {
+									jContent.html ("");
+									var infoWnd = {'content': obj.graficIframe};
+									obj.SetInfoWindowSettings (infoWnd);
+									obj.lastBigShow = Date.now();
+								}
+							};
+							infoWindow.onHide         = function (obj, jContent) {
+								// Store position and size of this big window
+								var iWnd = obj.GetInfoWindowSettings ();
+								var infoWindow = {'x': Math.round(iWnd.x), 'y': Math.round(iWnd.y), 'width': Math.round(iWnd.width), 'height': Math.round(iWnd.height)};
+								dui.binds.hqWidgetsExt.hqEditStoreInfoWindow (obj, infoWindow);
+							};
+							
+							if (opt["exShowGrafik"] === 'grafic') {
+								// Show grafik
+								var hm_id = opt['hm_id'];
+								if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"]) {
+									hm_id = homematic.regaObjects[opt["hm_id"]]["DPs"]["BRIGHTNESS"];
+								}
+								var points = [hm_id];
+								if (points[0]) {
+									var src = document.location.href;
+									var i = src.indexOf("dashui");
+									if (i > 0) {
+										src = src.substring (0, i) + "charts/";
+										btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
+															 'src="'+src+'?dp=';
+										for (var t = 0; t < points.length; t++) {
+											btn.graficIframe += ((t > 0) ? ',' : '') + points[t];
+										}
+										btn.graficIframe += '&loader=false&navserie='+points[0];
+										if (opt["charts"] !== undefined) {
+											for(var property in opt["charts"]) {
+											   // you can get the value like this: myObject[propertyName]
+											   btn.graficIframe += '&'+property+'='+opt["charts"][property];
+											}
+										}
+										else
+											btn.graficIframe += '&theme=&percentaxis=true&loader=false&legend=inline&period=72&range=24';
+										btn.graficIframe += '"></iframe>';
+										console.log("Highchart: " + btn.graficIframe);
+										btn.SetInfoWindowSettings (infoWindow);
+									}
+								}
+							}
+							else 
+							if (opt["exShowGrafik"] === 'history') {
+                            // Show history in popup window
+                            var src = document.location.href;
+                            var i = src.indexOf("dashui");
+                            if (i > 0) {
+                                src = src.substring (0, i) + "eventlist/";
+                                btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
+                                                         'src="'+src;
+                                var url = "";
+								var hm_id = opt['hm_id'];
+								if (homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"]) {
+									hm_id = homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"];
+									url += ((url !="") ? "&" : "?") + "value=true&compact=true";
+								}
+								url += ((url !="") ? "&" : "?") + "hmid=" + hm_id;
+
+								url += ((url !="") ? "&" : "?") + "pcount=25";
+								url += "&loading=false";
+                                btn.graficIframe += url +'"></iframe>';
+                                btn.SetInfoWindowSettings (infoWindow);
+                            }						
+						}
+						}
+					}
+                    else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
                         btn = $.extend (btn, {translateSignal: function (options, value) {
                             if (options == 'state')
@@ -926,8 +1090,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                         if (homematic.uiState["_"+hm_ids[i].hm_id] && homematic.uiState["_"+hm_ids[i].hm_id].Value !== undefined) {
                             var dt = undefined;
                             if (homematic.uiState["_"+hm_ids[i].hm_id].LastChange !== undefined) {
-                                dt = new Date(homematic.uiState["_"+hm_ids[i].hm_id].LastChange);//.replace(' ', 'T'));//('2011-04-11T11:51:00') "T" Means GMT (We do not have GMT)
-                            }
+                                dt = new Date(homematic.uiState["_"+hm_ids[i].hm_id].LastChange.replace(' ', 'T') + "Z");//('2011-04-11T11:51:00') "T" Means GMT (We do not have GMT)
+								dt.setMinutes(dt.getMinutes() + new Date().getTimezoneOffset());
+							}
                             this.hqMonitor (hm_ids[i].hm_id, homematic.uiState["_"+hm_ids[i].hm_id].Value, dt);
                         }
                         else {
@@ -975,7 +1140,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Remove unknown state of the button and if dimmer select valid state
                         if (type == hqWidgets.gButtonType.gTypeDimmer)
                             change['state'] = (newState > 0) ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
-                        else
+                        else 
+						if (type != hqWidgets.gButtonType.gTypeMotion)
                             change['state'] = hqWidgets.gState.gStateOff; // Remove unknown state
                     }
                     else
@@ -1072,7 +1238,7 @@ if ((typeof hqWidgets !== 'undefined')) {
     }
     %>
 </script>
-<script type="text/ejs" id="tplHqInTemp" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Inside temperature" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-CC-TC;HM-CC-VD">
+<script type="text/ejs" id="tplHqInTemp" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Inside temperature" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-CC-TC,HM-CC-RT-DN;HM-CC-VD">
     <%
     if (this && this.data && this.data.attr) {
     if (this.data.attr('hqoptions')){
@@ -1099,12 +1265,12 @@ if ((typeof hqWidgets !== 'undefined')) {
 <script type="text/ejs" id="tplHqDoor" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Door" data-dashui-attrs="hm_id;hqoptions" data-hqwidgets-filter="HM-Sec-SC,HM-SCI-3-FM,HMW-Sen-SC-12-DR,HMW-IO-12-Sw14-DR">
     <%
     if (this && this.data && this.data.attr) {
-    if (this.data.attr('hqoptions')){
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
-    }
-    else {
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqDoor", this.view);
-    }
+		if (this.data.attr('hqoptions')){
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		}
+		else {
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqDoor", this.view);
+		}
     }
     %>
 </script>
@@ -1183,24 +1349,24 @@ if ((typeof hqWidgets !== 'undefined')) {
 <script type="text/ejs" id="tplHqGauge" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Gauge" data-dashui-attrs="hm_id;hqoptions">
     <%
     if (this && this.data && this.data.attr) {
-    if (this.data.attr('hqoptions')){
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
-    }
-    else {
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGauge", this.view);
-    }
+		if (this.data.attr('hqoptions')){
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		}
+		else {
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGauge", this.view);
+		}
     }
     %>
 </script>
-<script type="text/ejs" id="tplHqGauge" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Gauge" data-dashui-attrs="hm_id;hqoptions">
+<script type="text/ejs" id="tplHqMotion" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Motion Detector" data-dashui-attrs="hm_id;hqoptions" data-hqwidgets-filter="HM-Sen-MDIR-O,HM-Sec-WDS,HM-Sec-MDIR,HM-Sec-SD,HM-CC-SCD,HM-Sec-TiS">
     <%
     if (this && this.data && this.data.attr) {
-    if (this.data.attr('hqoptions')){
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
-    }
-    else {
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGauge", this.view);
-    }
+		if (this.data.attr('hqoptions')){
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		}
+		else {
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqMotion", this.view);
+		}
     }
     %>
 </script>
