@@ -5,7 +5,123 @@
 </head>
 <body>
 
+<h2><a name="Attribute">Beschreibung von Attributen</a></h2>
+<h3><a name="Common">Haupteinstell&uuml;ngen</a></h3>
 
+<h4><a name="TestStatus">Zustand antesten:</a></h4>
+<p>Schaltet Widget in Aktivzustand und zur&uuml;ck, um im Edit-Modus den Aktivzustand zu testen. Zustand wird nicht gespeichert.</p>
+
+<h4><a name="normalIcon">Kleinbild</a></h4>
+<p>Pfad zum Klenbild in der Mitte von dem Widget. Falls kein Aktivbild gesetzt ist, dann wird das Bild auch im Aktivzustand verwendet.
+Man kann die Bildgr&ouml;&szlig;e in der <b>"Erweitert..."</b>- Lasche einstellen.</p>
+
+<h4><a name="description">Beschreibung</a></h4>
+<p>Beschreibung von dem Widget. Das Feld wird mit dem Ger&auml;tenamen vorbelegt. Das konnte aber frei ge&auml;ndert werden.<br>
+Falls <b>"Zeige Beschreibung"</b>-Checkbox gesetzt ist, dann wird diese Beschreibung oben links auch im nicht Editmodus angezeigt.</p>
+
+<h4><a name="room">Raum</a></h4>
+<p>Beschreibung dem Raum wo das Widget sich befindet. Wird automatisch beim ausw&auml;len von <a href='#hmID'>Homematic ID</a> ausgef&uuml;llt. 
+Danach kann man auf beliebiegen Wert die Raumbeshreibung &auml;ndern.</p>
+
+<h4><a name="hmID">Homematic ID</a></h4>
+<p>Homematic ID f&uuml;r Hauptzustand</p>
+
+<hr/>
+<h3><a name="Styles">Stile</a></h3>
+<p>Hier kann man die Stile f&uuml;r zwei Zust&auml;nde einstellen.</p>
+
+<h4><a name="normalStyle">Normal</a></h4>
+<p>Damit uberschreibt man vorgegebenen Stil f&uuml;r den Normalzustand.<br>
+Falls die <b>"jQuery Stil anwenden:"</b>- Option gesetzt ist, dann wird diese Einstellung ignoriert.<br>
+Falls die <b>"Verstecken falls inaktiv:"</b> - Option gesetzt ist, dann wird Widget im Normalzustand gar nicht angezeigt und diese Einstellung ist dann auch wirkungslos.
+</p>
+
+<h4><a name="normalHoverStyle">Normal hover</a></h4>
+<p>Damit uberschreibt man vorgegebenen Stil f&uuml;r den Normalzustand unter dem Mauskursor.<br>
+Falls die <b>"jQuery Stil anwenden:"</b>- Option gesetzt ist, dann wird diese Einstellung ignoriert.<br>
+Falls die <b>"Verstecken falls inaktiv:"</b> - Option gesetzt ist, dann wird Widget im Normalzustand gar nicht angezeigt und diese Einstellung ist dann auch wirkungslos.
+</p>
+
+<h4><a name="activeStyle">Aktive</a></h4>
+<p>Damit uberschreibt man vorgegebenen Stil f&uuml;r den Aktivezustand.<br>
+Falls die <b>"jQuery Stil anwenden:"</b>- Option gesetzt ist, dann wird diese Einstellung ignoriert.
+</p>
+
+<h4><a name="activeHoverStyle">Aktive hover</a></h4>
+<p>Damit uberschreibt man vorgegebenen Stil f&uuml;r den Aktivezustand unter dem Mauskursor.<br>
+Falls die <b>"jQuery Stil anwenden:"</b>- Option gesetzt ist, dann wird diese Einstellung ignoriert.
+</p>
+
+<hr/>
+
+<h3><a name="advancedSettings">Erweitert</a></h3>
+<p>Hier kann man die erweiterte Einstellungen vorzunehmen.</p>
+
+<h4><a name="borderRadius">Eckenradius</a></h4>
+<p>Stellt den Radius von den Widgetecken ein.
+<table><tr><td><img src="img/help/helpRadius0.png" /></td><td><img src="img/help/helpRadius50.png" /></td><td><img src="img/help/helpRadius50.png" /></td></tr>
+<tr><td style="width:120px;">Radius 0</td><td style="width:120px;">Radius 25%<br>von der Breite</td><td style="width:120px;">Radius 50%<br>von der Breite</td></tr></table>
+</p>
+
+<h4><a name="jQueryStyles">jQuery Stil anwenden</a></h4>
+<p>Stellt ein, ob die Klassen von aktueller jQuery-Theme f&uuml;r die Darstellung verwendet sein sollten.
+Falls die Option gew&auml;hlt ist, dann werden folgende CSS-Klassen verwendet:<br>
+- Normalzustand: "ui-state-default",<br>
+- Normalzustand unter dem Mauskursor: "ui-state-default",<br>
+- Aktivezustand: "ui-state-active"<br>
+- Aktivezustand unter dem Mauskursor: "ui-state-active"<br>
+Die Stil-Einstell&uuml;ngen werden mit dieser Option ignoriert.
+</p>
+
+<h4><a name="imageWidth">Bildbreite</a></h4>
+<p>Stellt die Kelinbildbreite ein. Die Bildbreite darf nicht gr&ouml;sse als die Widgetbreite sein.
+</p>
+
+<h4><a name="imageHeight">Bildh&ouml;he</a></h4>
+<p>Stellt die Kelinbildh&ouml;he ein. Die Bildh&ouml;he darf nicht gr&ouml;sse als die Widgeth&ouml;he sein.
+</p>
+
+<h4><a name="imageSize">Bildgr&ouml;sse</a></h4>
+<p>Beim bet&auml;tigen von "Auto"-Knopf wird einmalig die passende Bildbreite und Gr&ouml;sse ausge&auml;hlt. Im Normalmodus hat den Knopf keine Auswirkung.
+</p>
+
+<h4><a name="iconOn">Aktivbild</a></h4>
+<p>Pfad zum Klenbild in der Mitte von dem Widget in Aktivezustand. Falls kein Aktivbild gesetzt ist, dann wird das <b>"Kleinbild"</b> verwendet.
+Es ist empfohlen, dass das Normalbild und Aktivebild die gleiche Gr&ouml;sse haben, damit bei der Zustands&auml;ndrung keine Spr&uuml;nge von dem Bild passieren.</p>
+
+<h4><a name="hideIfInactive">Verstecken falls inaktiv</a></h4>
+<p>Falls diese Checkbox gesetzt ist, dann wird das Widget nur im Aktivmodus sichtbar. Normalleweise wenn Zustand "true" ist. 
+Z.B. wenn Batterie fast leer ist, oder falls Aktivebedienung zugeschlagen hat.</p>
+
+<h4><a name="lastChangeAction">Lezte Status&auml;nderung</a></h4>
+<p>
+Ob die Zeit von der letzten &Auml;nderung angezeiugt werden soll. 
+<table><tr><td><img src='img/help/helpLastActionTime.png' /></td><td><img src='img/help/helpLastActionInterval.png' /></td></tr>
+<tr><td>Immer zeigen</td><td>Ausblenden nach X Stunden</td></tr></table>
+Falls "Ausblenden nach X Stunden" ausgew&auml;hlt ist, dan verschindet diese Anzeige (nicht das Widget) nach Ablauf von X Stunden.
+</p>
+
+<h4><a name="onClickAction">Aktion beim Anklicken</a></h4>
+<p>
+<ul>
+	<li>Keine Aktion</li>
+	<li>Grafik - Es wird Grafik von Lichth&auml;lligkeit angezeigt</li>
+	<li>Verlauf - Es wird die Verlauftabelle mit Ereignissen angezeigt</li>
+</ul>
+</p>
+
+<h4><a name="noBackground">Kein Hintergrund</a></h4>
+<p>Zeige kein Hintergrund beim Widget
+<table><tr><td style="width:150px;"><img src='img/help/withBackground.png' /></td><td style="width:120px;"><img src='img/help/noBackground.png' /></td></tr>
+<tr><td>Mit&nbsp;dem Hintergrund</td><td>Ohne Hintergrund</td></tr></table></p>
+
+<h4><a name="showDescription">Zeige Beschreibung</a></h4>
+<p>Zeige Name und Raum vom Widget.<br>
+<img src='img/help/showDescription.png' /></p>
+
+<hr/>
+
+<h2><a name="Widgets">Widgets</a></h2>
 <h3><a name="tplHqButton">On/Off</a></h3>
 
 <h4>Attribute</h4>
@@ -37,6 +153,48 @@
 <dd></dd>
 
 </dd>
+
+<hr/>
+
+<h3><a name="tplHqMotion">Motion Detector</a></h3>
+<table><tr><td><img src="img/help/helpMotion.png"/></td><td><img src="img/help/helpMotionOn.png"/></td></table><br>
+Dieses Widget stellt Bewegungsmelder dar. Widget kann Lichthelligkeit und die Zeit von der letzten Bewegung zeigen.
+Beim klicken auf dem Widget wird entweder die Grafik mit der Lichthelligkeit oder mit den Bewegungsereignissen angezeigt.<br>
+<b>Verlauf</b><br>
+<img src="img/help/helpMotionEvents.png"/><br>
+<b>Grafik<b><br>
+<img src="img/help/helpMotionGrafik.png"/><br>
+
+<h4>Unterst&uuml;tzte Homematic Ger&auml;te</h4>
+<ul>
+	<li>HM-Sen-MDIR-O</li>
+	<li>HM-Sec-WDS</li>
+	<li>HM-Sec-MDIR</li>
+	<li>HM-Sec-SD</li>
+	<li>HM-CC-SCD</li>
+	<li>HM-Sec-TiS</li>
+</ul>
+
+<h4><a name="Styles">Stile</a></h4>
+<ul>
+	<li><a href="#normalStyle">Normal</a></li>
+	<li><a href="#normalHoverStyle">Normal hover</a></li>
+	<li><a href="#activeStyle">Aktive</a></li>
+	<li><a href="#activeHoverStyle">Aktive hover</a></li>
+</ul>
+<h4><a href="#advancedSettings">Erweitert</a></h4>
+<ul>
+	<li><a href="#borderRadius">Eckenradius</a></li>
+	<li><a href="#jQueryStyles">jQuery Stil anwenden</a></li>
+	<li><a href="#imageWidth">Bildbreite</a></li>
+	<li><a href="#imageHeight">Bildh&ouml;he</a></li>
+	<li><a href="#imageSize">Bildgr&ouml;sse</a></li>
+	<li><a href="#iconOn">Aktivbild</a></li>
+	<li><a href="#lastChangeAction">Lezte Status&auml;nderung</a></li>
+	<li><a href="#showDescription">Zeige Beschreibung</a></li>
+	<li><a href="#onClickAction">Aktion beim Klicken</a></li>
+</ul>
+
 <hr/>
 
 <h3><a name="tplHqLowbat">Battery Indicator</a></h3>
@@ -47,73 +205,39 @@ Es wird z.B. f&uuml;r den Taster verwendet, weil sonst diese Ger&auml;te nirgend
 Mit diesem Widget kann man signalisieren, dass einen Taster eine Batterie fast leer hat oder gar nicht von CCU erreicht wird.<br>
 Es muss darauf geachtet werden, dass falls es zwei LOWBAT Datenpunkten fur das Ger&auml;t gibt, dass es immer der letzter Datenpunkt verwendet sein sollte.<br>
 <i>Z.B. es gibt HEQ1234567:0.LOWBAT und HEQ1234567:1.LOWBAT, dann sollte HEQ1234567:1.LOWBAT ausgew&auml;hlt werden.</i>
-<h4>Attribute</h4>
-<dd>
 
-<dt>Zustand antesten:</dt>
-<dd>Schaltet Widget in Aktivzustand und zur&uuml;ck, um im Edit-Modus den Aktivzustand zu testen. Zustand wird nicht gespeichert.</dd>
+<h4>Unterst&uuml;tzte Homematic Ger&auml;te</h4>
+Alle Ger&auml;te, die LOWBAT Eigenschaft haben.
 
-<dt>Kleinbild:</dt>
-<dd>Pfad zum Klenbild in der Mitte von dem Widget. Falls kein Aktivbild gesetzt ist, dann wird das Bild auch im Aktivzustand verwendet.
-Man kann die Bildgr&ouml;&szlig;e in der <b>"Erweitert..."</b>- Lasche einstellen.</dd>
+<h4>Haupteinstell&uuml;ngen</h4>
+<ul>
+	<li><a href="#TestStatus">Zustand antesten</a></li>
+	<li><a href="#normalIcon">Kleinbild</a></li>
+	<li><a href="#description">Beschreibung</a></li>
+	<li><a href="#room">Raum</a></li>
+	<li><a href="#hmID">Homematic ID</a><br>
+Ger&auml;t ID von welchem Batteriezustand angezeigt werden soll.</li>
+</ul>
 
-<dt>Beschreibung:</dt>
-<dd>Beschreibung von dem Widget. Das Feld wird mit dem Ger&auml;tenamen vorbelegt. Das konnte aber frei ge&auml;ndert werden.<br>
-Falls <b>"Zeige Beschreibung"</b>-Checkbox gesetzt ist, dann wird diese Beschreibung oben links auch im nicht Editmodus angezeigt.</dd>
-
-<dt>Stile...</dt>
-<dd>Hier kann man die Stile f&uuml;r zwei Zust&auml;nde einstellen.</dd>
-
-<dt>Normal:</dt>
-<dd>Damit uberschreibt man vorgegebenen Stil f&uuml;r den Normalzustand.<br>
-Falls die <b>"jQuery Stil anwenden:"</b>- Option gesetzt ist, dann wird diese Einstellung ignoriert.<br>
-Falls die <b>"Verstecken falls inaktiv:"</b> - Option gesetzt ist, dann wird Widget im Normalzustand gar nicht angezeigt und diese Einstellung ist dann auch wirkungslos.
-</dd>
-
-<dt>Aktive:</dt>
-<dd>Damit uberschreibt man vorgegebenen Stil f&uuml;r den Aktivezustand.<br>
-Falls die <b>"jQuery Stil anwenden:"</b>- Option gesetzt ist, dann wird diese Einstellung ignoriert.
-</dd>
-
-<dt>Erweitert...</dt>
-<dd>Hier kann man die erweiterte Einstellungen vorzunehmen.</dd>
-
-<dt>Eckenradius:</dt>
-<dd>Stellt den Radius von den Widgetecken ein.
-<table><tr><td><img src="img/help/helpRadius0.png" /></td><td><img src="img/help/helpRadius50.png" /></td><td><img src="img/help/helpRadius50.png" /></td></tr>
-<tr><td style="width:120px;">Radius 0</td><td style="width:120px;">Radius 25%<br>von der Breite</td><td style="width:120px;">Radius 50%<br>von der Breite</td></tr></table>
-</dd>
-
-<dt>jQuery Stil anwenden:</dt>
-<dd>Stellt ein, ob die Klassen von aktueller jQuery-Theme f&uuml;r die Darstellung verwendet sein sollten.
-Falls die Option gew&auml;hlt ist, dann werden folgende CSS-Klassen verwendet:<br>
-- Normalzustand: "ui-state-default",<br>
-- Aktivezustand: "ui-state-active"<br>
-Die Stil-Einstell&uuml;ngen werden  mit dieser Option ignoriert.
-</dd>
-
-<dt>Bildbreite:</dt>
-<dd>Stellt die Kelinbildbreite ein. Die Bildbreite darf nicht gr&ouml;sse als die Widgetbreite sein.
-</dd>
-
-<dt>Bildh&ouml;he:</dt>
-<dd>Stellt die Kelinbildh&ouml;he ein. Die Bildh&ouml;he darf nicht gr&ouml;sse als die Widgeth&ouml;he sein.
-</dd>
-
-<dt>Bildgr&ouml;sse:</dt>
-<dd>Beim bet&auml;tigen von "Auto"-Knopf wird einmalig die passende Bildbreite und Gr&ouml;sse ausge&auml;hlt. Im Normalmodus hat den Knopf keine Auswirkung.
-</dd>
-
-<dt>Aktivbild:</dt>
-<dd>Pfad zum Klenbild in der Mitte von dem Widget in Aktivezustand. Falls kein Aktivbild gesetzt ist, dann wird das <b>"Kleinbild"</b> verwendet.
-Es ist empfohlen, dass das Normalbild und Aktivebild die gleiche Gr&ouml;sse haben, damit bei der Zustands&auml;ndrung keine Spr&uuml;nge von dem Bild passieren.</dd>
-
-<dt></dt>
-<dd></dd>
+<h4><a name="Styles">Stile</a></h4>
+<ul>
+	<li><a href="#normalStyle">Normal</a></li>
+	<li><a href="#activeStyle">Aktive</a></li>
+</ul>
 
 
-</dd>
+<h4><a href="#advancedSettings">Erweitert</a></h4>
+<ul>
+	<li><a href="#borderRadius">Eckenradius</a></li>
+	<li><a href="#jQueryStyles">jQuery Stil anwenden</a></li>
+	<li><a href="#imageWidth">Bildbreite</a></li>
+	<li><a href="#imageHeight">Bildh&ouml;he</a></li>
+	<li><a href="#imageSize">Bildgr&ouml;sse</a></li>
+	<li><a href="#iconOn">Aktivbild</a></li>
+	<li><a href="#hideIfInactive">Verstecken falls inaktiv</a></li>
+	<li><a href="#noBackground">Kein Hintergrund</a></li>
+	<li><a href="#showDescription">Zeige Beschreibung</a></li>
+</ul>
 <hr/>
-
 </body>
 </html>

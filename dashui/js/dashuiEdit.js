@@ -789,6 +789,7 @@ dui = $.extend(true, dui, {
                 "Add Widget:"      : {"en" : "Add Widget:",   "de": "Widget einf&uuml;gen:"},
                 "Inspecting Widget:":{"en" : "Inspecting Widget:", "de": "Widget inspektieren:"},
                 "Widget Attributes:":{"en" : "Widget Attributes:", "de": "Widget-Eigenschaften:"},
+                "Action on click:" : {"en" : "Action on click:", "de": "Aktion beim Anklicken:"},
             };
         }
         if (this.words[text]) {

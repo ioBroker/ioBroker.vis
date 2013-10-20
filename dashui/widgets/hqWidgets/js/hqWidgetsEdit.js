@@ -529,7 +529,8 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeOutTemp|| 
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInTemp ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeDimmer || 
-            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLowbat || 
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeMotion) {
             sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Normal:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalParent' ></td></tr>";
             if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLowbat) {
                 sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.Translate("Normal hover:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalHoverParent' ></td></tr>";
@@ -767,9 +768,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                 obj.e_internal.obj.SetSettings (newSettings, true);
             });
         }
-     
-        
-        
+         
         // Process doorType changes
         if ((elem = document.getElementById (this.e_settings.elemName+'_door')) != null) {
             elem.parent = this;

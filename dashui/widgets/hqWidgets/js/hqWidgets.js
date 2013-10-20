@@ -173,6 +173,7 @@ var hqWidgets = {
                 "Hide inactive:"            : {"en": "Hide&nbsp;if&nbsp;incative:", "de": "Verstecken&nbsp;falls&nbsp;inaktiv:"},
                 "No background:"            : {"en": "No&nbsp;background:",         "de": "Kein&nbsp;Hintergrund:"},
                 "Show description:"         : {"en": "Show&nbsp;description:",      "de": "Zeige&nbspBeschreibung:"},
+                "Room:"                     : {"en": "Room:",           "de": "Raum:"},
            };
         }
         if (this.words[text]) {
@@ -1683,15 +1684,13 @@ var hqWidgets = {
             if (isUse) {
                 // Colors of the states
                 if (!this.settings.noBackground) {
-                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
-                    {
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp) {
                         this.intern._backOff        = "ui-state-default";
                         this.intern._backOffHover   = "ui-state-hover";
                         this.intern._backMoving     = "hq-button-base-moving";
                     }
                     else
-                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp)
-                    {
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
                         this.intern._backOff        = "ui-state-default";
                         this.intern._backOffHover   = "ui-state-hover";
                         this.intern._backMoving     = "hq-button-base-moving";
@@ -1706,8 +1705,7 @@ var hqWidgets = {
                     if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage) {
                         this.intern._backOff="";  
                     }                        
-                    else
-                    {
+                    else {
                         this.intern._backOff        = "ui-state-default";
                         this.intern._backOffHover   = "ui-state-hover";
                         this.intern._backMoving     = "hq-button-base-moving";
