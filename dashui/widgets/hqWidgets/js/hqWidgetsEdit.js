@@ -384,7 +384,8 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGong && 
-            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLowbat) {
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLowbat && 
+            this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeMotion) {
             if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge)
                 sText    += "<tr><td>"+ hqWidgets.Translate("Test text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoText'  type='text' value='"+(this.e_internal.obj.dynStates.infoText || "")+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Font:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextFont'  type='text' value='"+this.e_internal.attr.infoTextFont+"'></td></tr>";
@@ -873,7 +874,9 @@ hqWidgets = $.extend (true, hqWidgets, {
         }
         this._EditTextHandler ('ctrlBtnText');
         this._EditTextHandler ('hoursLastAction');
-        if (document.getElementById(this.e_settings.elemName+'_hoursLastAction') && this.e_internal.attr.isShowPercent) {
+        if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeMotion &&
+     		document.getElementById(this.e_settings.elemName+'_hoursLastAction') && 
+			this.e_internal.attr.isShowPercent) {
             document.getElementById(this.e_settings.elemName+'_hoursLastAction').value = "-1";
             document.getElementById(this.e_settings.elemName+'_hoursLastAction').disabled = this.e_internal.attr.isShowPercent;
         }

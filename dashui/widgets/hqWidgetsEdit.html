@@ -1,10 +1,14 @@
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgetsEdit.js"></script>
+<!--link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/jquery.multiselect.css"/>
+<link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/jquery.multiselect.filter.css"/>
+<script src="widgets/hqWidgets/js/jquery.multiselect.min.js"></script>
+<script src="widgets/hqWidgets/js/jquery.multiselect.filter.js"></script-->
 
 
 <script type="text/javascript">
 if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) {
     $.extend(true, dui.binds.hqWidgetsExt, {
-        hqEditVersion: "0.1.6",
+        hqEditVersion: "0.1.7",
         hqEditTimerDetectMoving: null,
         hqEditSaveTimer : null,
         hqEditInit: function () {
@@ -170,6 +174,17 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           });
                 }                
                 else
+				if (wtype == 'tplHqMotion') {
+                    opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeMotion, 
+                                          iconName: 'motionOff.png', 
+                                          iconOn: 'motionOn.png', 
+                                          zindex: 3,
+                                          hm_id: '',
+										  exShowGrafik: true,
+                                          hoursLastAction:-1,
+                                          });
+                }
+                else
                 if (wtype == 'tplHqLowbat') {
                     opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeLowbat, 
                                           iconName: '', 
@@ -247,6 +262,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                         if (btn) {
                             var stitle = btn.GetSettings ("title");
                             btn.SetSettings ({room: valueObj.room});
+							// Update room text box
+							$('#inspect_room').val (valueObj.room);
                             if (stitle == undefined || stitle == null || stitle == "") {
                                 var title = hmSelect._convertName(valueObj.Name);                                        
                                 // Remove ROOM from device name
@@ -293,13 +310,28 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             var devFiltersNum = 0;
             if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
                 // Add ramp_time and on_time
-                var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"' style='display:none'>\n";
+                var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"'>\n";
                     sTextAdv += "<td>"+ dui.translate("ramp_time:") +"</td>\n";
                     sTextAdv += "<td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_dimmerRampTime' type='text' value='"+hqEditElem.e_internal.attr.dimmerRampTime+"'></td></tr>";
                 parent.append (sTextAdv);
                 hqEditElem._EditTextHandler ('dimmerRampTime');
+				if (!hqEditElem.e_internal.obj.advancedVisible) {
+					$('#idAdv'+(hqEditElem.e_internal.iAdvCount -1)).hide();
+				}
             }
-
+			else
+            if (opt.buttonType == hqWidgets.gButtonType.gTypeMotion) {
+                // Add ramp_time and on_time
+                var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"'>\n";
+                    sTextAdv += "<td>"+ dui.translate("On click - brightness:") +"</td>\n";
+                    sTextAdv += "<td><input id='"+hqEditElem.e_settings.elemName+"_exShowGrafik' type='checkbox' "+((hqEditElem.e_internal.attr.exShowGrafik == true) ? 'checked': "")+"></td></tr>";
+                parent.append (sTextAdv);
+                hqEditElem._EditCheckboxHandler  ('exShowGrafik', false, false, true, null);
+				if (!hqEditElem.e_internal.obj.advancedVisible) {
+					$('#idAdv'+(hqEditElem.e_internal.iAdvCount -1)).hide();
+				}            
+			}
+			else
             if (opt.buttonType == hqWidgets.gButtonType.gTypeInfo) {
                 // find next free index
                 var j = 0;
@@ -761,9 +793,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 $("#td1_"+hqEditElem.e_settings.elemName+"_styleActiveParent").hide();
                 $("#"+hqEditElem.e_settings.elemName+"_styleActiveParent").hide();
                 $("#td1_"+hqEditElem.e_settings.elemName+"_styleActiveHoverParent").hide();
-                $("#"+hqEditElem.e_settings.elemName+"_styleActiveHoverParent").hide();
-                
-                
+                $("#"+hqEditElem.e_settings.elemName+"_styleActiveHoverParent").hide();           
             }
             // Eventlist settings
             if (opt.buttonTypeEx !== undefined &&
