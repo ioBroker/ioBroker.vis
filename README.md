@@ -31,6 +31,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta22
+
+* (Hobbyquaker) Fixed RAMP_TIME hqWidget Dimmer (benötigt CCU.IO >= 0.9.53)
+
 ### 0.9beta21
 
 * (Hobbyquaker) Fixed Theme Change, Background Change and Effects - Immer noch ein Flickern beim Change auf noch nicht gerenderte View und beim Theme Change da das da früher nicht war - suche noch die Ursache

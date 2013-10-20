@@ -195,40 +195,40 @@ if ((typeof hqWidgets !== 'undefined')) {
                             if (hm_id != null && hm_id != "") {
                                 if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["LEVEL"]) {
                                     hm_id = homematic.regaObjects[hm_id]["DPs"]["LEVEL"];
-                                }
-                                else 
+                                } else {
                                     time_id = null;
-                                
+                                }
                                 if (what == 'state') {
                                     // Send on time to dimmer
                                     if (time_id != null) {
                                         if (homematic.regaObjects[time_id] && homematic.regaObjects[time_id]["DPs"] && homematic.regaObjects[time_id]["DPs"]["RAMP_TIME"]) {
                                             time_id = homematic.regaObjects[time_id]["DPs"]["RAMP_TIME"];
                                             var on_time = obj.GetSettings ('dimmerRampTime');
-                                            if (on_time !== undefined && on_time != null && on_time != "")
-                                                homematic.setValue( time_id, on_time);
                                         }
                                     }
-                                    
-                                    if (state != hqWidgets.gState.gStateOn) {                                                                                        
+                                    if (state != hqWidgets.gState.gStateOn) {
                                         obj.SetStates ({percentState: 100, state: hqWidgets.gState.gStateOn, isRefresh: true});
-                                        // Send command to HM                                                                
-                                        homematic.setValue( hm_id, 1);                        
-                                    }
-                                    else {
+                                        // Send command to HM
+                                        if (on_time !== undefined && on_time != null && on_time != "") {
+                                            homematic.setValue( time_id, parseFloat(on_time));
+                                        }
+                                        homematic.setValue( hm_id, 1);
+                                    } else {
                                         obj.SetStates ({percentState: 0, state: hqWidgets.gState.gStateOff, isRefresh: true});
                                         // Send command to HM
-                                        homematic.setValue( hm_id, 0);                        
+                                        if (on_time !== undefined && on_time != null && on_time != "") {
+                                            homematic.setValue( time_id, parseFloat(on_time));
+                                        }
+                                        homematic.setValue( hm_id, 0);
                                     }
-                                }
-                                else {
+                                } else {
                                     if (state != 0) {
                                         obj.SetStates ({state: hqWidgets.gState.gStateOn});
                                     }
                                     else {
                                         obj.SetStates ({state: hqWidgets.gState.gStateOff});
                                     }
-                                    console.log ("SetState: "+ hm_id + " = " + (state / 100));
+                                    //console.log ("SetState: "+ hm_id + " = " + (state / 100));
                                     // Send command to HM
                                     homematic.setValue( hm_id, state / 100);                                  
                                 }  
@@ -948,7 +948,7 @@ if ((typeof hqWidgets !== 'undefined')) {
             },
             hqMonitor: function (wid, newState, lastchange) {
                 
-                console.log(wid+"["+dui.getObjDesc (wid)+"] = "+newState);
+                //console.log(wid+"["+dui.getObjDesc (wid)+"] = "+newState);
                 var i = 0;
                 while (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i]) {
                 

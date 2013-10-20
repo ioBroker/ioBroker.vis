@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:            '0.9beta21',
+    version:            '0.9beta22',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -345,9 +345,8 @@ if (hqStyleSelector) {
         }
 
         if ($("#dui_container").find("#duiview_"+view).html() == undefined) {
-            $("#dui_container").append("<div style='display:none' id='duiview_"+view+"' class='dashui-view'></div>");
+            $("#dui_container").append("<div style='display:none;' id='duiview_"+view+"' class='dashui-view'></div>");
             $("#duiview_"+view).css(dui.views[view].settings.style);
-            if (!showEffectComing) { $("#duiview_"+view).show(); }
             if (dui.views[view].settings.style.background_class) {
                 $("#duiview_"+view).addClass(dui.views[view].settings.style.background_class);
                 if (!noThemeChange) {
@@ -359,9 +358,10 @@ if (hqStyleSelector) {
                 dui.renderWidget(view, id);
             }
 
-            if (dui.activeView != view) {
-                $("#duiview_"+view).hide();
-            }
+
+            //if (dui.activeView != view) {
+            //    $("#duiview_"+view).hide();
+            //}
 
             if (dui.urlParams["edit"] === "") {
                 dui.binds.jqueryui._disable();
@@ -399,6 +399,9 @@ if (hqStyleSelector) {
             $("#duiview_"+cview).show();
 
         });
+
+        if (!showEffectComing) { $("#duiview_"+view).show(); }
+
 
     },
     preloadImages: function (srcs) {
@@ -454,7 +457,7 @@ if (hqStyleSelector) {
         }
     },
     changeView: function (view, hideOptions, showOptions) {
-        var effect = (hideOptions && hideOptions.effect && hideOptions.effect !== "" ? true : false);
+        var effect = hideOptions && hideOptions.effect && hideOptions.effect !== "";
         hideOptions = $.extend(true, {effect:undefined,options:{},duration:0}, hideOptions);
         showOptions = $.extend(true, {effect:undefined,options:{},duration:0}, showOptions);
 
@@ -477,6 +480,7 @@ if (hqStyleSelector) {
         if (dui.activeView !== view) {
 
             if (effect) {
+                console.log("effect");
                 $("#duiview_"+dui.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration,10), function () {
 
 
@@ -498,6 +502,7 @@ if (hqStyleSelector) {
                     });
                 });
             } else {
+                console.log("no effect");
                 dui.renderView(view, true);
 
                 // View ggf aus Container heraus holen
@@ -711,7 +716,7 @@ var homematic = {
     stateDelayed: function (id, val) {
         var attr = "_"+id;
         if (!this.setStateTimers[id]) {
-
+            //console.log("setState id="+id+" val="+val);
             dui.socket.emit("setState", [id, val]);
 
             this.setState.removeAttr(attr);
