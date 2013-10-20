@@ -31,6 +31,13 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta21
+
+* (Hobbyquaker) Fixed Theme Change, Background Change and Effects - Immer noch ein Flickern beim Change auf noch nicht gerenderte View und beim Theme Change da das da früher nicht war - suche noch die Ursache
+* (Hobbyquaker) diverse console.log entfernt
+* (Hobbyquaker) Bugfix Widgets "basic - hm_val - Hide on 0/false" und "basic - hm_val - Hide on >0/true"
+* (Bluefox, smiling-Jack) Transparente Geräte Icons für hqWidgets
+
 ### 0.9beta20
 * (Bluefox) Fixed problem with background in different views
 * (Bluefox) Fixed hmSelect Dialog
