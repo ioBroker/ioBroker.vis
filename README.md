@@ -31,6 +31,17 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta23
+
+* (Bluefox) Fix hqWidget/Eventlist. Filter by ID
+* (Bluefox) hqWidgets Try to support HM-CC-RT-DN
+* (Bluefox) New widget hqWidgets/Motion Detector
+* (Bluefox) Fix last activated time in Firefox
+* (Bluefox) Fix Charts/History in Firefox in PopUp
+* (Bluefox) Fixed Position of the Pin Button in PopUp Window
+* (Bluefox) Documentation for Motion Detector
+* (Bluefox) Neuer Style für Dokumentation
+
 ### 0.9beta22
 
 * (Hobbyquaker) Fixed RAMP_TIME hqWidget Dimmer (benötigt CCU.IO >= 0.9.53)

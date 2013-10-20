@@ -36,6 +36,10 @@ body {
   background: #f7f7fa;
   text-shadow: 0 1px 0 rgba(255,255,255,1.0);
   border-top: 4px solid #556270;
+  padding-bottom: 400px;
+  margin-left: 8px;
+  margin-top: -6px;
+
 }
 
 a {
@@ -47,12 +51,7 @@ a:hover {
 }
 
 hr {
-  margin: 20px 0 25px 0;
-  text-align: center;
-  letter-spacing: 3px;
-  font-size: 20px;
-  color: #ddd;
-  border: none;
+  display: none;
 }
 hr:before {
   content: '\2022 \2022 \2022 \2022 \2022';
@@ -103,6 +102,11 @@ h3 {
 	font-family: 'lucida sans unicode', 'lucida grande', sans-serif;
 	width: 100%;
 	background: blanchedalmond;
+    margin-left: -8px;
+}
+
+h3 a:hover {
+    text-decoration: none;
 }
 
 h4 {
@@ -112,6 +116,7 @@ h4 {
 	color: #000;
 	font-weight: bold;
 	-webkit-margin-after: 0.1em;
+    margin-left: -8px;
 }
 
 blockquote {
