@@ -1007,12 +1007,10 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.internal.text = $('#'+this.internal.elemName+'_text').addClass('hq-slider-info');
             var elem = document.getElementById (this.internal.elemName+'_text');
             var timeout = 500;
-            if (elem)
-            {
+            if (elem) {
                 elem.parent = this;
                 this.internal.parent = this;
-                this.internal.changed = function ()
-                {
+                this.internal.changed = function (){
                     var iPos = parseInt($('#'+this.elemName+'_text').val());
                     if (!isNaN(iPos))
                     {
@@ -1020,10 +1018,16 @@ hqWidgets = $.extend (true, hqWidgets, {
                     }						
                 };
 
-                this.internal.text.change (function () {this.parent.internal.changed ();});
+                this.internal.text.change (function () {
+					this.parent.internal.changed ();
+				});
                 this.internal.text.keyup (function () {
-                    if (this.parent.internal.timer) clearTimeout (this.parent.internal.timer);
-                    this.parent.internal.timer = setTimeout (function(elem) { elem.changed (); }, 500, this.parent);
+                    if (this.parent.internal.timer) {
+						clearTimeout (this.parent.internal.timer);
+					}
+                    this.parent.internal.timer = setTimeout (function(elem) { 
+						elem.internal.changed (); 
+					}, 500, this.parent);
                 });
             }		
             

@@ -4296,9 +4296,14 @@ var hqWidgets = {
         // Apply all settings
         this.SetSettings (this.settings);
         
-        // Remember actual position for calculations 
-        this.settings.x = this.intern._jelement.position().left;
-        this.settings.y = this.intern._jelement.position().top;
+        // Remember actual position for calculations
+        if (this.intern._jelement.css('display') != "none") {
+            var pos = this.intern._jelement.position();
+            if (pos.top != 0 || pos.left != 0) {
+                this.settings.x = this.intern._jelement.position().left;
+                this.settings.y = this.intern._jelement.position().top;
+            }
+        }
         
         // Show button
         this.ShowState ();
