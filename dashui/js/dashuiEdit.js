@@ -22,7 +22,7 @@
 
 // duiEdit - the DashUI Editor
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta18',
+    editVersion:        '0.9beta22',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -731,6 +731,7 @@ dui = $.extend(true, dui, {
                 "hm_id_hnd2"       : {"en": "Handle ID 3",   "de": "Griffkontakt 3"},
                 "hm_id_hnd3"       : {"en": "Handle ID 4",   "de": "Griffkontakt 4"},
                 "hm_idV"           : {"en": "Valve",         "de": "Ventilsteuerung"},
+                "hm_idB"           : {"en": "Brightness",    "de": "Lichthelligkeit"},
                 "hm_idL"           : {"en": "Lock ID",       "de": "Schloss ID"},
                 "hm_wid"           : {"en": "Working ID"},
                 "hm_idC_On"        : {"en": "HM ID for ON",  "de": "HM ID für ON"},

@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.7",
+    version: "0.1.8",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -3930,8 +3930,15 @@ var hqWidgets = {
             }
 
             //  percentState - blinds position from 0 to 100 or dimmer state from 0 to 100
-            if (dynOptions.percentState !== undefined) 
+            if (dynOptions.percentState !== undefined) {
+                if (this.settings.buttonType == hqWidgets.gButtonType.gTypeMotion) {
+                    //Calculate percent
+                    if (dynOptions.percentState < this.settings.valueMin) dynOptions.percentState = this.settings.valueMin;
+                    if (dynOptions.percentState > this.settings.valueMax) dynOptions.percentState = this.settings.valueMax;
+                    dynOptions.percentState = Math.round ((dynOptions.percentState - this.settings.valueMin) / (this.settings.valueMax - this.settings.valueMin) * 100);
+                }
                 this.SetPercent (dynOptions.percentState);
+            }
 
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge && dynOptions.valueSet !== undefined) {
                 this.dynStates.valueSet = parseInt(dynOptions.valueSet);
@@ -4296,9 +4303,14 @@ var hqWidgets = {
         // Apply all settings
         this.SetSettings (this.settings);
         
-        // Remember actual position for calculations 
-        this.settings.x = this.intern._jelement.position().left;
-        this.settings.y = this.intern._jelement.position().top;
+        // Remember actual position for calculations
+        if (this.intern._jelement.css('display') != "none") {
+            var pos = this.intern._jelement.position();
+            if (pos.top != 0 || pos.left != 0) {
+                this.settings.x = this.intern._jelement.position().left;
+                this.settings.y = this.intern._jelement.position().top;
+            }
+        }
         
         // Show button
         this.ShowState ();

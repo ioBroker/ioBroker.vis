@@ -9,7 +9,7 @@
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
         hqWidgetsExt: {
-            version: "0.1.7",
+            version: "0.1.8",
             inited:  false,
             hqIgnoreNextUpdate: null, // id of controlled element
             hqMapping: {},
@@ -238,14 +238,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                         var t = 0;
                         if (opt["hm_id"] != null && opt["hm_id"] != "") {
                             if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"]) {
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"],    option: 'percentState'}; // First is always main element
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"],  option: 'isWorking'};
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"],    option: 'percentState'}; // First is always main element
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"],  option: 'isWorking'};
                                 if (homematic.regaObjects[opt["hm_id"]]["DPs"]["RAMP_TIME"]) {
-                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["RAMP_TIME"],option: 'dimmerRampTime'}; 
+                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["RAMP_TIME"],option: 'dimmerRampTime'}; 
                                 }
                             }
                             else if (homematic.regaObjects[opt["hm_id"]]){
-                                hm_ids[t++] = {hm_id: opt.hm_id, option: 'percentState'};
+                                hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'percentState'};
                             }
                         }                        
                     }
@@ -255,15 +255,15 @@ if ((typeof hqWidgets !== 'undefined')) {
                             var hm_id = obj.GetSettings ('hm_id');
                             if (hm_id != null && hm_id != "") {
                                 
-                                if (homematic.regaObjects [opt.hm_id] && 
-                                    homematic.regaObjects [opt.hm_id]["TypeName"] !== undefined && 
-                                    homematic.regaObjects [opt.hm_id]["TypeName"] == "PROGRAM") {
-                                    console.log ("Activate programm " + homematic.regaObjects [opt.hm_id]["Name"]);
-                                    dui.socket.emit("programExecute", [opt.hm_id]);
+                                if (homematic.regaObjects [opt['hm_id']] && 
+                                    homematic.regaObjects [opt['hm_id']]["TypeName"] !== undefined && 
+                                    homematic.regaObjects [opt['hm_id']]["TypeName"] == "PROGRAM") {
+                                    console.log ("Activate programm " + homematic.regaObjects [opt['hm_id']]["Name"]);
+                                    dui.socket.emit("programExecute", [opt['hm_id']]);
                                 }
                                 else {    
-                                    if (homematic.regaObjects[opt.hm_id] && homematic.regaObjects[opt.hm_id]["DPs"] && homematic.regaObjects[opt.hm_id]["DPs"]["STATE"])
-                                        hm_id = homematic.regaObjects[opt.hm_id]["DPs"]["STATE"];
+                                    if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["DPs"] && homematic.regaObjects[opt['hm_id']]["DPs"]["STATE"])
+                                        hm_id = homematic.regaObjects[opt['hm_id']]["DPs"]["STATE"];
                                     if (state != hqWidgets.gState.gStateOn) {
                                         state = hqWidgets.gState.gStateOn;
                                     }
@@ -279,12 +279,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                         }});
                         // Fill up the required IDs
                         var t = 0;
-                        if (opt.hm_id != null && opt.hm_id != "") {
-                            if (homematic.regaObjects[opt.hm_id] && homematic.regaObjects[opt.hm_id]["DPs"] && homematic.regaObjects[opt.hm_id]["DPs"]["STATE"]) {
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[opt.hm_id]["DPs"]["STATE"], option: 'state'};
+                        if (opt['hm_id'] != null && opt['hm_id'] != "") {
+                            if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["DPs"] && homematic.regaObjects[opt['hm_id']]["DPs"]["STATE"]) {
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["STATE"], option: 'state'};
                             }
                             else if (homematic.regaObjects[opt["hm_id"]]){
-                                hm_ids[t++] = {hm_id: opt["hm_id"], option: 'state'};
+                                hm_ids[t++] = {'hm_id': opt["hm_id"], option: 'state'};
                             }
                         }
                     }
@@ -305,24 +305,24 @@ if ((typeof hqWidgets !== 'undefined')) {
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
                             if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"]) {
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"],   option: 'percentState'}; // First is always main element
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"], option: 'isWorking'};
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"],   option: 'percentState'}; // First is always main element
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"], option: 'isWorking'};
                             }
                             else if (homematic.regaObjects[opt["hm_id"]]){
-                                hm_ids[t++] = {hm_id: opt['hm_id'], option: 'percentState'};
+                                hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'percentState'};
                             }
                         }
                         for (var i = 0; i < 4; i++) {
                             if (opt['hm_id'+i] != undefined) {
                                 if (opt['hm_id'+i] != null && opt['hm_id'+i] != "") {
-                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt['hm_id'+i]]["DPs"]["STATE"],  option: 'windowState',  index:i}; 
-                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt['hm_id'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryS',  index:i};   
+                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id'+i]]["DPs"]["STATE"],  option: 'windowState',  index:i}; 
+                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryS',  index:i};   
                                 }                                    
                             }
                             if (opt['hm_id_hnd'+i] != undefined) {
                                 if (opt['hm_id_hnd'+i] != null && opt['hm_id_hnd'+i] != "") {
-                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["STATE"],  option: 'handleState',  index:i};   
-                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryH',  index:i};   
+                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["STATE"],  option: 'handleState',  index:i};   
+                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryH',  index:i};   
                                 }
                             }
                         }                   
@@ -354,28 +354,28 @@ if ((typeof hqWidgets !== 'undefined')) {
                             if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["HssType"] == "HM-CC-TC") {
                                 var weatherId = homematic.regaObjects[opt['hm_id']]["Channels"][1];
                                 var controlId = homematic.regaObjects[opt['hm_id']]["Channels"][2];
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[controlId]["DPs"]["SETPOINT"],    option: 'valueSet'}; // First is always control element
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[weatherId]["DPs"]["TEMPERATURE"], option: 'temperature'}; 
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[weatherId]["DPs"]["HUMIDITY"],    option: 'humidity'};
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["SETPOINT"],    option: 'valueSet'}; // First is always control element
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[weatherId]["DPs"]["TEMPERATURE"], option: 'temperature'}; 
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[weatherId]["DPs"]["HUMIDITY"],    option: 'humidity'};
                             }
                             else 
 							if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
                                 isHM_CC_RT_DN = true;
 								var controlId = homematic.regaObjects[opt['hm_id']]["Channels"][4];
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[controlId]["DPs"]["SET_TEMPERATURE"],     option: 'valueSet'}; // First is always control element
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[controlId]["DPs"]["ACTUAL_TEMPERATURE "], option: 'temperature'}; 
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[controlId]["DPs"]["VALVE_STATE"],         option: 'valve'};	
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["SET_TEMPERATURE"],     option: 'valueSet'}; // First is always control element
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["ACTUAL_TEMPERATURE "], option: 'temperature'}; 
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["VALVE_STATE"],         option: 'valve'};	
 								adv = $.extend (adv, {'hideHumidity': true});
 							}
                             else if (homematic.regaObjects[opt["hm_id"]]){
-                                hm_ids[t++] = {hm_id: opt['hm_id'], option: 'temperature'};
+                                hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'temperature'};
                             }
 							if (!isHM_CC_RT_DN) {
 								if (opt["hm_idV"]) {
 									if (homematic.regaObjects[opt["hm_idV"]] && homematic.regaObjects[opt["hm_idV"]]["DPs"])
-										hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_idV"]]["DPs"]["VALVE_STATE"], option: 'valve'};
+										hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_idV"]]["DPs"]["VALVE_STATE"], option: 'valve'};
 									else if (homematic.regaObjects[opt["hm_idV"]])
-										hm_ids[t++] = {hm_id: opt["hm_idV"], option: 'valve'};
+										hm_ids[t++] = {'hm_id': opt["hm_idV"], option: 'valve'};
 									adv = $.extend (adv, {'hideValve': false});
 								}
 								else {
@@ -442,6 +442,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
                             if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
                                 hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"],   option: 'state'}; 
+                                if (homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"]) {
+                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"], option: 'isWorking'};
+                                }
                                 hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["OPEN"],    option: 'open'}; 
 								if (homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"] !== undefined)
 									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};   
@@ -503,15 +506,18 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Fill up the required IDs
                         var t = 0;
                         if (opt["hm_id"] != null && opt["hm_id"] != "") {
+                            var isBright = false;
                             if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"]) {
                                 if (homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"]) {
-                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"],      option: 'state'}; // First is always main element
-                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["BRIGHTNESS"],  option: 'percentState'};                         
+                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"],      option: 'state'}; // First is always main element
+                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["BRIGHTNESS"],  option: 'percentState'};                         
 									opt = $.extend (opt, {'isShowPercent': true});
+                                    isBright = true;
                                 }
+                                                      
                                 else 
                                 if (homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"]){
-                                    hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"], option: 'state'};  
+                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"], option: 'state'};  
 									opt = $.extend (opt, {'isShowPercent': false});
                                 }
 								// no else here
@@ -520,8 +526,35 @@ if ((typeof hqWidgets !== 'undefined')) {
 									opt = $.extend (opt, {'isShowPercent': false});
                                 }                                
                             }
+                            else
+                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["Name"] && homematic.regaObjects[opt["hm_id"]]["Name"].indexOf(".MOTION") != -1) {
+                                hm_ids[t++] = {'hm_id': opt["hm_id"],      option: 'state'}; // First is always main element
+                                
+                                if (homematic.regaObjects[opt["hm_id"]]["Parent"]) {
+                                    var parent = homematic.regaObjects[opt["hm_id"]]["Parent"];
+                                    if (homematic.regaObjects[parent] && homematic.regaObjects[parent]["DPs"] && homematic.regaObjects[parent]["DPs"]["BRIGHTNESS"]) {
+                                        hm_ids[t++] = {'hm_id': homematic.regaObjects[parent]["DPs"]["BRIGHTNESS"],  option: 'percentState'};                         
+                                        opt = $.extend (opt, {'isShowPercent': true});
+                                        isBright = true;
+                                        parent = homematic.regaObjects[parent]["Parent"];
+                                        if (parent != null && homematic.regaObjects[parent] && 
+                                            homematic.regaObjects[parent]["Channels"] && homematic.regaObjects[parent]["Channels"][0]) {
+                                            parent = homematic.regaObjects[parent]["Channels"][0];
+                                            if (homematic.regaObjects[parent]["DPs"] && homematic.regaObjects[parent]["DPs"]["LOWBAT"]) {
+                                                hm_ids[t++] = {'hm_id': homematic.regaObjects[parent]["DPs"]["LOWBAT"], option: 'lowBattery'};
+                                            
+                                            }
+                                        }
+                                    }
+                                }
+                            }          
                             else if (homematic.regaObjects[opt["hm_id"]]){
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"], option: 'state'};                                    
+                                hm_ids[t++] = {'hm_id': opt["hm_id"], option: 'state'};                                    
+                            }
+                            
+                            if (!isBright && opt['hm_idB'] !== undefined && opt['hm_idB'] != null && opt['hm_idB'] != "") {
+                                hm_ids[t++] = {'hm_id': opt['hm_idB'],  option: 'percentState'};                         
+								opt = $.extend (opt, {'isShowPercent': true});
                             }
                         }                        
                     }
@@ -557,10 +590,10 @@ if ((typeof hqWidgets !== 'undefined')) {
                          
                         if (opt['hm_idL'] != null && opt['hm_idL'] != "") {
                             if (homematic.regaObjects[opt["hm_idL"]] && homematic.regaObjects[opt["hm_idL"]]["DPs"] && homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"]) {
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"], option: 'open'};
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"], option: 'open'};
 							}
                             else if (homematic.regaObjects[opt["hm_idL"]])
-                                hm_ids[t++] = {hm_id: opt['hm_idL'], option: 'open'};
+                                hm_ids[t++] = {'hm_id': opt['hm_idL'], option: 'open'};
                         }     
                           
                     }   
@@ -607,12 +640,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                         }  
                         if (opt['hm_idL'] != null && opt['hm_idL'] != "") {
                             if (homematic.regaObjects[opt["hm_idL"]] && homematic.regaObjects[opt["hm_idL"]]["DPs"] && homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"]) {
-                                hm_ids[t++] = {hm_id: homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"], option: 'open'};
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"], option: 'open'};
 								if (homematic.regaObjects[opt['hm_idL']]["DPs"]["LOWBAT"] !== undefined)
 									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_idL']]["DPs"]["LOWBAT"], option: 'lowBattery'};   
 							}
                             else if (homematic.regaObjects[opt["hm_idL"]])
-                                hm_ids[t++] = {hm_id: opt['hm_idL'], option: 'open'};
+                                hm_ids[t++] = {'hm_id': opt['hm_idL'], option: 'open'};
                         }
                     }   
                     else
@@ -784,16 +817,24 @@ if ((typeof hqWidgets !== 'undefined')) {
                     }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeButton) {
-                        btn = $.extend (btn, {translateSignal: function (options, value) {
-                            return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
+                        btn = $.extend (btn, {translateSignal: function (option, value) {
+                            if (option == 'lowBattery' || option == 'isWorking') {
+                                return (value === true || value === "true") ? true : false;
+                            }
+                            else
+                                return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
                         }});
                     }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
-                        btn = $.extend (btn, {translateSignal: function (options, value) {
-                            if (options == "percentState")
+                        btn = $.extend (btn, {translateSignal: function (option, value) {
+                            if (option == 'lowBattery' || option == 'isWorking') {
+                                return (value === true || value === "true") ? true : false;
+                            }
+                            else
+                            if (option == "percentState")
                                 return Math.floor (value * 100);
-                            else // working
+                            else // state
                                 return (value === true || value === "true") ? true : false;
                         }});
                     }
@@ -806,11 +847,11 @@ if ((typeof hqWidgets !== 'undefined')) {
 															   return true;
 														    return false;
 														},
-							translateSignal: function (options, value) {
-								if (options == "percentState")
+							translateSignal: function (option, value) {
+								if (option == "percentState")
 									return Math.floor (100 - (value * 100));
 								else
-								if (options == "handleState")
+								if (option == "handleState")
 									return value;
 								else // working
 									return (value === true || value === "true") ? true : false;
@@ -829,8 +870,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                         opt.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
                         // remove "--"
                         btn.SetStates ({temperature: 0, valve: 0, humidity: 0, valueSet: 0});
-                        btn = $.extend (btn, {translateSignal: function (options, value) {
-                            if (options == "valueSet")
+                        btn = $.extend (btn, {translateSignal: function (option, value) {
+                            if (option == "valueSet")
                                 return (value == 0) ? dui.translate ("Off") : ((value == 100) ? dui.Tramslate ("On") : value);
                             else // temperature, humidity, valve
                                 return value;
@@ -910,24 +951,30 @@ if ((typeof hqWidgets !== 'undefined')) {
                     }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeLock) {
-                        btn = $.extend (btn, {translateSignal: function (options, value) {
-                            return (value === false || value === "false") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
+                        btn = $.extend (btn, {translateSignal: function (option, value) {
+                            if (option == 'lowBattery' || option == 'isWorking') {
+                                return (value === true || value === "true") ? true : false;
+                            }
+                            else
+                                return (value === false || value === "false") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
                         }});
                     }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeInfo ||
                         opt.buttonType == hqWidgets.gButtonType.gTypeGauge) {
-                        btn = $.extend (btn, {translateSignal: function (options, value) {
+                        btn = $.extend (btn, {translateSignal: function (option, value) {
                             return value;
                         }});
                     }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeMotion) {
-                        btn = $.extend (btn, {translateSignal: function (options, value) {
-                            if (options == "percentState") {
-								if (value < 33) value = 33;
-                                var p = Math.round ((value - 33) / (256 - 33) * 100);
-								return p;
+                        btn = $.extend (btn, {translateSignal: function (option, value) {
+                            if (option == 'lowBattery' || option == 'isWorking') {
+                                return (value === true || value === "true") ? true : false;
+                            }
+                            else
+                            if (option == "percentState") {
+								return parseInt(value);
 							}
                             else // state
                                 return (value === false || value === "false") ? hqWidgets.gState.gStateOff : hqWidgets.gState.gStateOn;
@@ -1003,40 +1050,49 @@ if ((typeof hqWidgets !== 'undefined')) {
 							}
 							else 
 							if (opt["exShowGrafik"] === 'history') {
-                            // Show history in popup window
-                            var src = document.location.href;
-                            var i = src.indexOf("dashui");
-                            if (i > 0) {
-                                src = src.substring (0, i) + "eventlist/";
-                                btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
-                                                         'src="'+src;
-                                var url = "";
-								var hm_id = opt['hm_id'];
-								if (homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"]) {
-									hm_id = homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"];
-									url += ((url !="") ? "&" : "?") + "value=true&compact=true";
-								}
-								url += ((url !="") ? "&" : "?") + "hmid=" + hm_id;
+                                // Show history in popup window
+                                var src = document.location.href;
+                                var i = src.indexOf("dashui");
+                                if (i > 0) {
+                                    src = src.substring (0, i) + "eventlist/";
+                                    btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
+                                                             'src="'+src;
+                                    var url = "";
+                                    var hm_id = opt['hm_id'];
+                                    if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"]) {
+                                        hm_id = homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"];
+                                        url += ((url !="") ? "&" : "?") + "value=true&compact=true";
+                                    }
+                                    else
+                                    if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["Name"] && homematic.regaObjects[opt["hm_id"]]["Name"].indexOf(".MOTION") != -1) {
+                                        hm_id = opt["hm_id"];
+                                        url += ((url !="") ? "&" : "?") + "value=true&compact=true";                                    
+                                    }
+                                    url += ((url !="") ? "&" : "?") + "hmid=" + hm_id;
 
-								url += ((url !="") ? "&" : "?") + "pcount=25";
-								url += "&loading=false";
-                                btn.graficIframe += url +'"></iframe>';
-                                btn.SetInfoWindowSettings (infoWindow);
-                            }						
-						}
+                                    url += ((url !="") ? "&" : "?") + "pcount=25";
+                                    url += "&loading=false";
+                                    btn.graficIframe += url +'"></iframe>';
+                                    btn.SetInfoWindowSettings (infoWindow);
+                                }						
+                            }
 						}
 					}
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
-                        btn = $.extend (btn, {translateSignal: function (options, value) {
-                            if (options == 'state')
+                        btn = $.extend (btn, {translateSignal: function (option, value) {
+                            if (option == 'state')
                                 return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
                             else
                                 return value;
                         }});
                     }
                     else {
-                        btn = $.extend (btn, {translateSignal: function (options, value) {
+                        btn = $.extend (btn, {translateSignal: function (option, value) {
+                            if (option == 'lowBattery' || option == 'isWorking') {
+                                return (value === true || value === "true") ? true : false;
+                            }
+                            else
                             return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
                         }});
                     }
@@ -1120,6 +1176,11 @@ if ((typeof hqWidgets !== 'undefined')) {
                     var change = {};
                     change[dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option] = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.translateSignal (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option, newState);
                     change['isRefresh'] = false;
+                    
+                    if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'isWorking') {
+                        var t = 0;
+                    }
+                    
                     if (lastchange != undefined) {
                         change['lastAction'] = lastchange;
                     }
@@ -1358,7 +1419,7 @@ if ((typeof hqWidgets !== 'undefined')) {
     }
     %>
 </script>
-<script type="text/ejs" id="tplHqMotion" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Motion Detector" data-dashui-attrs="hm_id;hqoptions" data-hqwidgets-filter="HM-Sen-MDIR-O,HM-Sec-WDS,HM-Sec-MDIR,HM-Sec-SD,HM-CC-SCD,HM-Sec-TiS">
+<script type="text/ejs" id="tplHqMotion" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Motion Detector" data-dashui-attrs="hm_id;hqoptions" data-hqwidgets-filter=".STATE,.MOTION;">
     <%
     if (this && this.data && this.data.attr) {
 		if (this.data.attr('hqoptions')){

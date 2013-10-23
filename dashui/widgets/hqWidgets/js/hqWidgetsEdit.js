@@ -392,12 +392,17 @@ hqWidgets = $.extend (true, hqWidgets, {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColor' type='text' value='"+this.e_internal.attr.infoTextColor+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_infoTextColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
         }
-        
-        // Gauge min value, max value, test value, gague color
-        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge) {
-            sText    += "<tr><td>"+ hqWidgets.Translate("Test value:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueSet'  type='text' value='"+((this.e_internal.obj.settings.valueMax - this.e_internal.obj.settings.valueMin) / 2)+"'></td></tr>";
+
+        // Percent min value, max value
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeMotion) {
             sText    += "<tr><td>"+ hqWidgets.Translate("Min value:")  +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueMin'  type='text' value='"+this.e_internal.obj.settings.valueMin+"'></td></tr>";
             sText    += "<tr><td>"+ hqWidgets.Translate("Max value:")  +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueMax'  type='text' value='"+this.e_internal.obj.settings.valueMax+"'></td></tr>";
+        }
+        
+        // Gauge test value, gauge color
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge) {
+            sText    += "<tr><td>"+ hqWidgets.Translate("Test value:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueSet'  type='text' value='"+((this.e_internal.obj.settings.valueMax - this.e_internal.obj.settings.valueMin) / 2)+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_gaugeColor' type='text' value='"+this.e_internal.attr.gaugeColor+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_gaugeColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.Translate("Horizontal:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_gaugeHorz' "+((this.e_internal.attr.gaugeHorz) ? "checked" : "")+">";
@@ -1007,12 +1012,10 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.internal.text = $('#'+this.internal.elemName+'_text').addClass('hq-slider-info');
             var elem = document.getElementById (this.internal.elemName+'_text');
             var timeout = 500;
-            if (elem)
-            {
+            if (elem) {
                 elem.parent = this;
                 this.internal.parent = this;
-                this.internal.changed = function ()
-                {
+                this.internal.changed = function (){
                     var iPos = parseInt($('#'+this.elemName+'_text').val());
                     if (!isNaN(iPos))
                     {
@@ -1020,10 +1023,16 @@ hqWidgets = $.extend (true, hqWidgets, {
                     }						
                 };
 
-                this.internal.text.change (function () {this.parent.internal.changed ();});
+                this.internal.text.change (function () {
+					this.parent.internal.changed ();
+				});
                 this.internal.text.keyup (function () {
-                    if (this.parent.internal.timer) clearTimeout (this.parent.internal.timer);
-                    this.parent.internal.timer = setTimeout (function(elem) { elem.changed (); }, 500, this.parent);
+                    if (this.parent.internal.timer) {
+						clearTimeout (this.parent.internal.timer);
+					}
+                    this.parent.internal.timer = setTimeout (function(elem) { 
+						elem.internal.changed (); 
+					}, 500, this.parent);
                 });
             }		
             
