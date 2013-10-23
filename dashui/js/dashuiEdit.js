@@ -340,7 +340,7 @@ dui = $.extend(true, dui, {
                     $('#widget_attrs_fix').hide ();
                     // Common settings
                     if (dui.binds.hqWidgetsExt) {
-                        hqWidgets.hqEditButton ({parent: $("#widget_attrs"), imgSelect: imageSelect, clrSelect: colorSelect, styleSelect: hqStyleSelector}, hqWidgets.Get (dui.activeWidget), function (editEl) {
+                        hqWidgets.hqEditButton ({parent: $("#widget_attrs"), imgSelect: imageSelect, clrSelect: colorSelect, styleSelect: dui.styleSelector}, hqWidgets.Get (dui.activeWidget), function (editEl) {
                             // Special HM settings
                             dui.binds.hqWidgetsExt.hqEditButton (hqWidgets.Get (dui.activeWidget), $("#widget_attrs"), $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);                    
                         });
@@ -718,89 +718,6 @@ dui = $.extend(true, dui, {
 
     },
     translate: function (text) {
-        if (!this.words) {
-            this.words = {
-                "hm_id"            : {"en": "Homematic ID"},
-                "hm_ids"           : {"en": "Homematic IDs"},
-                "hm_id0"           : {"en": "Swing ID 1",    "de": "Fensterblatt 1"},
-                "hm_id1"           : {"en": "Swing ID 2",    "de": "Fensterblatt 2"},
-                "hm_id2"           : {"en": "Swing ID 3",    "de": "Fensterblatt 3"},
-                "hm_id3"           : {"en": "Swing ID 4",    "de": "Fensterblatt 4"},
-                "hm_id_hnd0"       : {"en": "Handle ID 1",   "de": "Griffkontakt 1"},
-                "hm_id_hnd1"       : {"en": "Handle ID 2",   "de": "Griffkontakt 2"},
-                "hm_id_hnd2"       : {"en": "Handle ID 3",   "de": "Griffkontakt 3"},
-                "hm_id_hnd3"       : {"en": "Handle ID 4",   "de": "Griffkontakt 4"},
-                "hm_idV"           : {"en": "Valve",         "de": "Ventilsteuerung"},
-                "hm_idB"           : {"en": "Brightness",    "de": "Lichthelligkeit"},
-                "hm_idL"           : {"en": "Lock ID",       "de": "Schloss ID"},
-                "hm_wid"           : {"en": "Working ID"},
-                "hm_idC_On"        : {"en": "HM ID for ON",  "de": "HM ID für ON"},
-                "hm_idC_Off"       : {"en": "HM ID for OFF", "de": "HM ID für OFF"},
-                "comment"          : {"en" : "Comments",     "de": "Kommentare"},	
-                "Select HM parameter" : {"en" : "Select HM parameter", "de": "HM parameter ausw&auml;hlen"},	
-                "Select"           : {"en" : "Select",       "de": "Auswählen"},
-                "Cancel"           : {"en" : "Cancel",       "de": "Abbrechen"},	
-                "None"             : {"en": "None",          "de": "Vorgegeben"},
-                "Default"          : {"en": "Default",       "de": "Vorgegeben"},
-                "Name"             : {"en" : "Name",         "de": "Name"},	
-                "Location"         : {"en" : "Location",     "de": "Raum"},	
-                "Interface"        : {"en" : "Interface",    "de": "Schnittstelle"},	
-                "Type"             : {"en" : "Type",         "de": "Typ"},	
-                "Address"          : {"en" : "Address",      "de": "Adresse"},	
-                "Function"         : {"en" : "Function",     "de": "Gewerk"},	
-                "ramp_time:"       : {"en" : "Ramp time(s)", "de": "Dauer - Aus (sek)"},
-                "on_time:"         : {"en" : "On time(s)",   "de": "Dauer - An (sek)"},
-                "newVersion"       : {"en" : "Handler ab V1.6",  "de": "Griff ab V1.6"},
-                "weoid"            : {"en" : "City",         "de": "Stadt"},
-                "Service messages" : {"en" : "Service messages", "de": "Servicemeldungen "},
-                "Navigator:"       : {"en" : "Navigator:",   "de": "Navigator:"},
-                "Show top and bottom": {"en" : "Show top and bottom", "de": "Anzeigen oben und unten"},
-                "Show bottom"      : {"en" : "Show bottom",  "de": "Anzeigen unten"},
-                "Do not show"      : {"en" : "Do not show",  "de": "Nicht anzeigen"},
-                "Load period:"     : {"en" : "Load period:", "de": "Von CCU laden:"},
-                "1 Hour"           : {"en" : "1 Hour",       "de": "1 Stunde"},
-                "2 Hours"          : {"en" : "2 Hours",      "de": "2 Stunden"},
-                "6 Hours"          : {"en" : "6 Hours",      "de": "6 Stunden"},
-                "12 Hours"         : {"en" : "12 Hours",     "de": "12 Stunden"},
-                "1 Day"            : {"en" : "1 Day",        "de": "1 Tag"},
-                "3 Days"           : {"en" : "3 Days",       "de": "3 Tage"},
-                "5 Days"           : {"en" : "5 Days",       "de": "5 Tage"},
-                "1 Week"           : {"en" : "1 Week",       "de": "1 Woche"},
-                "2 Weeks"          : {"en" : "2 Weeks",      "de": "2 Wochen"},
-                "1 Month"          : {"en" : "1 Month",      "de": "1 Monat"},
-                "3 Months"         : {"en" : "3 Months",     "de": "3 Monaten"},
-                "6 Months"         : {"en" : "6 Months",     "de": "6 Monaten"},
-                "1 Year"           : {"en" : "1 Year",       "de": "1 Jahn"},
-                "All"              : {"en" : "All",          "de": "Alle"},
-                "Theme:"           : {"en" : "Theme:",       "de": "Theme:"},
-                "Description with percent:": {"en" : "Description with percent:", "de": "Beschriftung y-Achse mit %"},
-                "Zoom level:"      : {"en" : "Zoom level:",  "de": "Zoom-Stufe:"},
-                "Scrollbar:"       : {"en" : "Scrollbar:",   "de": "Scrollbar:"},
-                "Dynamic aggregation:": {"en" : "Dynamic aggregation:", "de": "Dynamische Aggregation:"},
-                "Legend:"          : {"en" : "Legend:",      "de": "Legende:"},
-                "Left"             : {"en" : "Left",         "de": "Links"},
-                "Inside"           : {"en" : "Inside",       "de": "im Chart"},
-                "Hide"             : {"en" : "Hide",         "de": "nicht anzeigen"},
-                "Zoom active:"     : {"en" : "Zoom active:", "de": "Zoomen aktiviert:"},
-                "Charts..."        : {"en" : "Charts...",    "de": "Charts..."},
-                "Chart"            : {"en" : "Chart",        "de": "Chart"},
-                "History"          : {"en" : "History",      "de": "Verlauf"},
-                "Rooms"            : {"en" : "Rooms",        "de": "R&auml;ume"},
-                "Functions"        : {"en" : "Functions",    "de": "Gewerke"},
-                "Add Widget:"      : {"en" : "Add Widget:",   "de": "Widget einf&uuml;gen:"},
-                "Inspecting Widget:":{"en" : "Inspecting Widget:", "de": "Widget inspektieren:"},
-                "Widget Attributes:":{"en" : "Widget Attributes:", "de": "Widget-Eigenschaften:"},
-                "Action on click:" : {"en" : "Action on click:", "de": "Aktion beim Anklicken:"},
-            };
-        }
-        if (this.words[text]) {
-            if (this.words[text][this.currentLang])
-                return this.words[text][this.currentLang];
-            else 
-            if (this.words[text]["en"])
-                return this.words[text]["en"];
-        }
-
         return text;
     },
     translateAll: function () {
@@ -810,7 +727,279 @@ dui = $.extend(true, dui, {
         $("button").each (function (index) {
             $(this).html(dui.translate($( this ).text()));
         });
-    }
+    },
+    // Selector of styles (uses jquery themes)
+    styleSelector: {
+        // local variables
+        _currentElement: 0,
+        _scrollWidth:    -1,
+        _internalList:   null,
+        // Default settings
+        settings: {
+            // List of styles
+            styles:        null,
+            width:         100,
+            style:         "",     // Init style as text
+            onchange:      null,   // onchange fuction: handler (newStyle, onchangeParam);
+            onchangeParam: null,   // user parameter for onchange function
+            parent:        null,
+            height:        30,
+            dropOpened:    false,
+            name:          null,
+            id:            -1,
+            filterFile:    null,
+            filterName:    null,
+            filterAttrs:   null,
+        },
+        _findTitle: function (styles, style) {
+            for(var st in styles) {
+                if (styles[st] == style)
+                    return ((st == "") ? style : st);
+            }
+            return style;
+        },
+        
+        // Functions
+        Show: function (options) {
+            // Fill the list of styles
+            if (this._internalList == null) {
+                this._internalList = {};
+                var sSheetList = document.styleSheets;
+                for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
+                    var ruleList = document.styleSheets[sSheet].cssRules;
+                    var bglen = "hq-background-".length;
+                    for (var rule = 0; rule < ruleList.length; rule ++) {
+                        if (ruleList[rule].selectorText === undefined || ruleList[rule].selectorText == null || ruleList[rule].selectorText == "")
+                            continue;
+                            
+                        var styles = ruleList[rule].selectorText.split(' ');
+                        for (var i = 0; i < styles.length; i++) {
+                            if (styles[i] == "" || styles[i][0] != '.' || styles[i].indexOf(':') != -1)
+                                break;
+                                
+                            var name = styles[i];
+                            name = name.replace (",", "");
+                            if (name.length > 0 && (name[0] == '.' || name[0] == '#'))
+                                name = name.substring(1);                       
+                            var val  = name;
+                            if (name.length >= bglen && name.substring(0, bglen) == "hq-background-")
+                                name = name.substring(bglen);
+                                
+                            if (name.substring(0, "hq-".length) == "hq-")
+                                name = name.substring(3);
+                                
+                            if (name.substring(0, "ui-".length) == "ui-")
+                                name = name.substring(3);
+                                
+                            name = name.replace (/-/g, " ");
+                            if (name.length > 0) {
+                                name = name[0].toUpperCase() + name.substring(1);
+                                var fff = document.styleSheets[sSheet].href;
+                                if (fff != null && fff != "" && fff.indexOf('/') != -1)
+                                    fff = fff.substring(fff.lastIndexOf('/')+1);
+                                this._internalList[name] = {style: val, file: fff, attrs: ruleList[rule].style};
+                            }
+                            break;
+                        }
+                    }
+                }        
+            }
+
+            // Detect scrollbar width
+            if (this._scrollWidth == -1) {
+                // Create the measurement node
+                var scrollDiv = document.createElement("div");
+                scrollDiv.style.width = 100;
+                scrollDiv.style.height = 100;
+                scrollDiv.style.overflow = "scroll";
+                scrollDiv.style.position = "absolute";
+                scrollDiv.style.top = "-9999px";
+                document.body.appendChild(scrollDiv);
+
+                // Get the scrollbar width
+                this._scrollWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+                
+                // Delete the DIV 
+                document.body.removeChild(scrollDiv);
+            }
+            if (options.name === undefined || options.name == "") {
+                options.name = ""+ this._currentElement;
+            }
+            
+            var nameImg  = "styleSelectorImg" +options.name;
+            var nameText = "styleSelectorText"+options.name;
+            var nameBtn  = "styleSelectorB"   +options.name;
+            var nameElem = "styleSelector"    +options.name;
+            if (document.getElementById (nameElem) != undefined) {
+                $('#'+nameElem).remove ();
+                $('#styleSelectorBox'+options.name).remove ();
+            }
+            var text = "<table id='"+nameElem+"'><tr><td>";
+                text += "<table><tr><td><div id='"+nameImg+"'></div></td><td width=10></td><td style='text-align: left; vertical-align: middle;'><div  style='text-align: left; vertical-align: middle;' id='"+nameText+"'></div>";
+                text += "</td></tr></table></td><td>";
+                text += "<button id='"+nameBtn+"' />";
+                text += "</td></tr></table>";
+                
+            var parent = (options.parent == null) ? $("body") : options.parent;
+            parent.append (text);
+            var htmlElem = document.getElementById (nameElem);
+            htmlElem.settings = {};
+            htmlElem.settings = $.extend (htmlElem.settings, this.settings);
+            htmlElem.settings = $.extend (htmlElem.settings, options);
+            htmlElem.settings.parent = parent;
+            htmlElem.settings.id = options.name;
+            htmlElem.settings.styles = {};
+            htmlElem.settings.styles[dui.translate("Default")] = {style: null, file: null};
+            
+            if (options.styles) {
+                htmlElem.settings.styles = $.extend (htmlElem.settings.styles, options.styles);
+            }
+            else {
+                // IF filter defined
+                if (htmlElem.settings.filterFile != null || htmlElem.settings.filterName != null) {
+                    var filters = null;
+                    if (htmlElem.settings.filterName != null && htmlElem.settings.filterName != "")
+                        filters = htmlElem.settings.filterName.split(' ');
+                        
+                    var attrs = null;
+                    if (htmlElem.settings.filterAttrs != null && htmlElem.settings.filterAttrs != "")
+                        attrs = htmlElem.settings.filterAttrs.split(' ');
+                
+                    for(var name in this._internalList) {
+                        if (htmlElem.settings.filterFile == null || 
+                           (this._internalList[name].file != null && this._internalList[name].file.indexOf (htmlElem.settings.filterFile) != -1)) {
+                            var isFound = (filters == null);
+                            if (!isFound) {
+                                for (var k = 0; k < filters.length; k++) {
+                                    if (this._internalList[name].style.indexOf (filters[k]) != -1) {
+                                        isFound = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (isFound) {
+                                isFound = (attrs == null);
+                                if (!isFound) {
+                                    for (var k = 0; k < attrs.length; k++) {
+                                        var t = this._internalList[name].attrs[attrs[k]];
+                                        if (t !== undefined && t != null && t != "") {
+                                            isFound = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }                            
+                            if (isFound) {
+                                htmlElem.settings.styles[name] = {style: this._internalList[name].style, file: this._internalList[name].file};
+                            }
+                        }
+                    }
+                }
+                else
+                    htmlElem.settings.styles = $.extend (htmlElem.settings.styles, this._internalList);
+            }
+            
+            $('#'+nameImg).css  ({width: htmlElem.settings.height*2, height: htmlElem.settings.height - 4}).addClass ('ui-corner-all');
+            $('#'+nameText).css ({width: htmlElem.settings.width});
+            $('#'+nameBtn).button ({icons: {primary: "ui-icon-circle-triangle-s"}, text: false});
+            $('#'+nameBtn).click (htmlElem, function (e){
+                dui.styleSelector._toggleDrop(e.data);
+            });
+            $('#'+nameBtn).height(htmlElem.settings.height).width(htmlElem.settings.height);
+            var elem = $('#styleSelector'+options.name);
+            elem.addClass ('ui-corner-all ui-widget-content');
+            if (htmlElem.settings.style != "") {
+                $('#'+nameImg).addClass (htmlElem.settings.style);
+                $('#'+nameText).html (this._findTitle(htmlElem.settings.styles, htmlElem.settings.style));
+            }
+            else {
+                $('#'+nameText).html ("None");
+            }
+            
+            // Build dropdown box
+            if (document.getElementById ("styleSelectorBox"+options.name) == undefined) {
+                var text = "<form id='styleSelectorBox"+options.name+"' style='z-index:1'>";
+                var i = 0;
+                for (var st in htmlElem.settings.styles) {
+                    text += "<input type='radio' id='styleSelectorBox"+options.name+""+i+"' name='radio' /><label for='styleSelectorBox"+options.name+""+i+"'>";
+                    text += "<table><tr><td width='"+(htmlElem.settings.height*2+4)+"px'><div class='ui-corner-all "+htmlElem.settings.styles[st].style+"' style='width:"+(htmlElem.settings.height*2)+"px; height:"+(htmlElem.settings.height-4)+"px'></div></td><td width=10></td><td style='text-align: left; vertical-align: middle;'><div style='text-align: left; vertical-align: middle;'>";
+                    text += ((st != "")?st:htmlElem.settings.styles[st].style)+"</div></td></tr></table>";
+                    text += "</label><br>";
+                    i++;
+                }
+                text += "</form>";            
+                htmlElem.settings.parent.append (text);
+            }
+            
+            var box = $('#styleSelectorBox'+options.name);
+            box.buttonset();
+            $('#styleSelectorBox'+options.name+" :radio").click(htmlElem, function(e) {
+                var rawElement = this;
+                dui.styleSelector._select (e.data, rawElement.iStyle);
+                dui.styleSelector._toggleDrop(e.data);
+            });
+            i = 0;
+            // Set context
+            for (var st in htmlElem.settings.styles) {
+                document.getElementById ("styleSelectorBox"+options.name+""+i).iStyle = htmlElem.settings.styles[st].style;
+                // Select current button
+                if (htmlElem.settings.style == htmlElem.settings.styles[st].style) {
+                    $("#styleSelectorBox"+options.name+""+i).attr("checked","checked");
+                    box.buttonset('refresh');
+                }
+                i++;
+            }
+            htmlElem.settings.count = i;
+            box.css ({width: $('#styleSelector'+options.name).width(), overflow: "auto"}).addClass('ui-corner-all ui-widget-content');
+            box.css ({position: 'absolute', top: elem.position().top + elem.height(), left: elem.position().left});
+            box.hide ();
+            this._currentElement++;
+            return htmlElem;
+        },
+        _toggleDrop: function (obj) {
+            if (obj.settings.dropOpened) {
+                $("#styleSelectorBox"+obj.settings.id).css ({display: "none"});
+                $("#styleSelectorB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
+                obj.settings.dropOpened = false;
+            }
+            else {
+                var elem = $('#styleSelector'+obj.settings.id);		
+                var elemBox = $("#styleSelectorBox"+obj.settings.id);		
+                //if ($(window).height() < elemBox.height() + elemBox.position().top) {
+                // Get position of last element
+                var iHeight = obj.settings.count * (obj.settings.height + 18);
+                if (iHeight > $(window).height() - elem.position().top - elem.height() - 5)
+                    iHeight = $(window).height() - elem.position().top - elem.height() - 5;
+                else
+                    iHeight += 5;
+                    
+                if (iHeight < 150)
+                    iHeight = 150;
+                elemBox.height(iHeight + 5);
+                    
+                var iWidth = $("#styleSelector"+obj.settings.id).width();
+                elemBox.buttonset().find('table').width(iWidth - 37 - this._scrollWidth);
+                $("#styleSelectorBox"+obj.settings.id).css ({display: "", width: elem.width(), top: elem.position().top + elem.height(), left: elem.position().left});			
+                $("#styleSelectorB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-n" }});
+                obj.settings.dropOpened = true;
+            }
+             
+        },
+        _select: function (obj, iStyle) {
+            var nameImg  = "styleSelectorImg" +obj.settings.id;
+            var nameText = "styleSelectorText"+obj.settings.id;
+            $('#'+nameImg).removeClass (obj.settings.style);
+            obj.settings.style = iStyle;
+            $('#'+nameImg).addClass (obj.settings.style);
+            $('#'+nameText).html (this._findTitle(obj.settings.styles, obj.settings.style));
+            if (obj.settings.onchange)
+                obj.settings.onchange (obj.settings.style, obj.settings.onchangeParam);     
+        },
+        destroy: function (htmlElem) {
+            $("#styleSelectorBox"+htmlElem.settings.id).remove ();			
+            $('#styleSelector'+htmlElem.settings.id).remove ();			
+        }
+    }    
 });
 
 // Image selection Dialog
@@ -2412,279 +2601,9 @@ var hmSelect = {
 };
 
 
-// Selector of styles (uses jquery themes)
-var hqStyleSelector = {
-    // local variables
-    _currentElement: 0,
-	_scrollWidth:    -1,
-    _internalList:   null,
-    // Default settings
-    settings: {
-        // List of styles
-        styles:        null,
-        width:         100,
-        style:         "",     // Init style as text
-        onchange:      null,   // onchange fuction: handler (newStyle, onchangeParam);
-        onchangeParam: null,   // user parameter for onchange function
-        parent:        null,
-        height:        30,
-        dropOpened:    false,
-        name:          null,
-        id:            -1,
-        filterFile:    null,
-        filterName:    null,
-        filterAttrs:   null,
-    },
-    _findTitle: function (styles, style) {
-        for(var st in styles) {
-            if (styles[st] == style)
-                return ((st == "") ? style : st);
-        }
-        return style;
-    },
-    
-    // Functions
-    Show: function (options) {
-        // Fill the list of styles
-        if (this._internalList == null) {
-            this._internalList = {};
-            var sSheetList = document.styleSheets;
-            for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
-                var ruleList = document.styleSheets[sSheet].cssRules;
-                var bglen = "hq-background-".length;
-                for (var rule = 0; rule < ruleList.length; rule ++) {
-                    if (ruleList[rule].selectorText === undefined || ruleList[rule].selectorText == null || ruleList[rule].selectorText == "")
-                        continue;
-                        
-                    var styles = ruleList[rule].selectorText.split(' ');
-                    for (var i = 0; i < styles.length; i++) {
-                        if (styles[i] == "" || styles[i][0] != '.' || styles[i].indexOf(':') != -1)
-                            break;
-                            
-                        var name = styles[i];
-                        name = name.replace (",", "");
-                        if (name.length > 0 && (name[0] == '.' || name[0] == '#'))
-                            name = name.substring(1);                       
-                        var val  = name;
-                        if (name.length >= bglen && name.substring(0, bglen) == "hq-background-")
-                            name = name.substring(bglen);
-                            
-                        if (name.substring(0, "hq-".length) == "hq-")
-                            name = name.substring(3);
-                            
-                        if (name.substring(0, "ui-".length) == "ui-")
-                            name = name.substring(3);
-                            
-                        name = name.replace (/-/g, " ");
-                        if (name.length > 0) {
-                            name = name[0].toUpperCase() + name.substring(1);
-                            var fff = document.styleSheets[sSheet].href;
-                            if (fff != null && fff != "" && fff.indexOf('/') != -1)
-                                fff = fff.substring(fff.lastIndexOf('/')+1);
-                            this._internalList[name] = {style: val, file: fff, attrs: ruleList[rule].style};
-                        }
-                        break;
-                    }
-                }
-            }        
-        }
 
-		// Detect scrollbar width
-		if (this._scrollWidth == -1) {
-			// Create the measurement node
-			var scrollDiv = document.createElement("div");
-			scrollDiv.style.width = 100;
-			scrollDiv.style.height = 100;
-			scrollDiv.style.overflow = "scroll";
-			scrollDiv.style.position = "absolute";
-			scrollDiv.style.top = "-9999px";
-			document.body.appendChild(scrollDiv);
 
-			// Get the scrollbar width
-			this._scrollWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-			
-			// Delete the DIV 
-			document.body.removeChild(scrollDiv);
-		}
-        if (options.name === undefined || options.name == "") {
-            options.name = ""+ this._currentElement;
-        }
-        
-        var nameImg  = "styleSelectorImg" +options.name;
-        var nameText = "styleSelectorText"+options.name;
-        var nameBtn  = "styleSelectorB"   +options.name;
-        var nameElem = "styleSelector"    +options.name;
-        if (document.getElementById (nameElem) != undefined) {
-            $('#'+nameElem).remove ();
-            $('#styleSelectorBox'+options.name).remove ();
-        }
-        var text = "<table id='"+nameElem+"'><tr><td>";
-            text += "<table><tr><td><div id='"+nameImg+"'></div></td><td width=10></td><td style='text-align: left; vertical-align: middle;'><div  style='text-align: left; vertical-align: middle;' id='"+nameText+"'></div>";
-            text += "</td></tr></table></td><td>";
-            text += "<button id='"+nameBtn+"' />";
-            text += "</td></tr></table>";
-            
-        var parent = (options.parent == null) ? $("body") : options.parent;
-        parent.append (text);
-        var htmlElem = document.getElementById (nameElem);
-        htmlElem.settings = {};
-        htmlElem.settings = $.extend (htmlElem.settings, this.settings);
-        htmlElem.settings = $.extend (htmlElem.settings, options);
-        htmlElem.settings.parent = parent;
-        htmlElem.settings.id = options.name;
-        htmlElem.settings.styles = {};
-        htmlElem.settings.styles[dui.translate("Default")] = {style: null, file: null};
-        
-        if (options.styles) {
-            htmlElem.settings.styles = $.extend (htmlElem.settings.styles, options.styles);
-        }
-        else {
-            // IF filter defined
-            if (htmlElem.settings.filterFile != null || htmlElem.settings.filterName != null) {
-                var filters = null;
-                if (htmlElem.settings.filterName != null && htmlElem.settings.filterName != "")
-                    filters = htmlElem.settings.filterName.split(' ');
-                    
-                var attrs = null;
-                if (htmlElem.settings.filterAttrs != null && htmlElem.settings.filterAttrs != "")
-                    attrs = htmlElem.settings.filterAttrs.split(' ');
-            
-                for(var name in this._internalList) {
-                    if (htmlElem.settings.filterFile == null || 
-                       (this._internalList[name].file != null && this._internalList[name].file.indexOf (htmlElem.settings.filterFile) != -1)) {
-                        var isFound = (filters == null);
-                        if (!isFound) {
-                            for (var k = 0; k < filters.length; k++) {
-                                if (this._internalList[name].style.indexOf (filters[k]) != -1) {
-                                    isFound = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (isFound) {
-                            isFound = (attrs == null);
-                            if (!isFound) {
-                                for (var k = 0; k < attrs.length; k++) {
-                                    var t = this._internalList[name].attrs[attrs[k]];
-                                    if (t !== undefined && t != null && t != "") {
-                                        isFound = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }                            
-                        if (isFound) {
-                            htmlElem.settings.styles[name] = {style: this._internalList[name].style, file: this._internalList[name].file};
-                        }
-                    }
-                }
-            }
-            else
-                htmlElem.settings.styles = $.extend (htmlElem.settings.styles, this._internalList);
-        }
-        
-        $('#'+nameImg).css  ({width: htmlElem.settings.height*2, height: htmlElem.settings.height - 4}).addClass ('ui-corner-all');
-        $('#'+nameText).css ({width: htmlElem.settings.width});
-        $('#'+nameBtn).button ({icons: {primary: "ui-icon-circle-triangle-s"}, text: false});
-        $('#'+nameBtn).click (htmlElem, function (e){
-            hqStyleSelector._toggleDrop(e.data);
-        });
-        $('#'+nameBtn).height(htmlElem.settings.height).width(htmlElem.settings.height);
-        var elem = $('#styleSelector'+options.name);
-        elem.addClass ('ui-corner-all ui-widget-content');
-        if (htmlElem.settings.style != "") {
-            $('#'+nameImg).addClass (htmlElem.settings.style);
-            $('#'+nameText).html (this._findTitle(htmlElem.settings.styles, htmlElem.settings.style));
-        }
-        else {
-            $('#'+nameText).html ("None");
-        }
-		
-        // Build dropdown box
-        if (document.getElementById ("styleSelectorBox"+options.name) == undefined) {
-            var text = "<form id='styleSelectorBox"+options.name+"' style='z-index:1'>";
-            var i = 0;
-            for (var st in htmlElem.settings.styles) {
-                text += "<input type='radio' id='styleSelectorBox"+options.name+""+i+"' name='radio' /><label for='styleSelectorBox"+options.name+""+i+"'>";
-                text += "<table><tr><td width='"+(htmlElem.settings.height*2+4)+"px'><div class='ui-corner-all "+htmlElem.settings.styles[st].style+"' style='width:"+(htmlElem.settings.height*2)+"px; height:"+(htmlElem.settings.height-4)+"px'></div></td><td width=10></td><td style='text-align: left; vertical-align: middle;'><div style='text-align: left; vertical-align: middle;'>";
-                text += ((st != "")?st:htmlElem.settings.styles[st].style)+"</div></td></tr></table>";
-                text += "</label><br>";
-                i++;
-            }
-            text += "</form>";            
-            htmlElem.settings.parent.append (text);
-        }
-        
-        var box = $('#styleSelectorBox'+options.name);
-        box.buttonset();
-        $('#styleSelectorBox'+options.name+" :radio").click(htmlElem, function(e) {
-            var rawElement = this;
-            hqStyleSelector._select (e.data, rawElement.iStyle);
-            hqStyleSelector._toggleDrop(e.data);
-        });
-        i = 0;
-        // Set context
-        for (var st in htmlElem.settings.styles) {
-            document.getElementById ("styleSelectorBox"+options.name+""+i).iStyle = htmlElem.settings.styles[st].style;
-            // Select current button
-            if (htmlElem.settings.style == htmlElem.settings.styles[st].style) {
-                $("#styleSelectorBox"+options.name+""+i).attr("checked","checked");
-                box.buttonset('refresh');
-            }
-            i++;
-        }
-		htmlElem.settings.count = i;
-        box.css ({width: $('#styleSelector'+options.name).width(), overflow: "auto"}).addClass('ui-corner-all ui-widget-content');
-        box.css ({position: 'absolute', top: elem.position().top + elem.height(), left: elem.position().left});
-        box.hide ();
-        this._currentElement++;
-		return htmlElem;
-    },
-    _toggleDrop: function (obj) {
-        if (obj.settings.dropOpened) {
-            $("#styleSelectorBox"+obj.settings.id).css ({display: "none"});
-            $("#styleSelectorB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
-            obj.settings.dropOpened = false;
-        }
-        else {
-			var elem = $('#styleSelector'+obj.settings.id);		
-			var elemBox = $("#styleSelectorBox"+obj.settings.id);		
-			//if ($(window).height() < elemBox.height() + elemBox.position().top) {
-			// Get position of last element
-            var iHeight = obj.settings.count * (obj.settings.height + 18);
-			if (iHeight > $(window).height() - elem.position().top - elem.height() - 5)
-				iHeight = $(window).height() - elem.position().top - elem.height() - 5;
-			else
-				iHeight += 5;
-                
-            if (iHeight < 150)
-                iHeight = 150;
-            elemBox.height(iHeight + 5);
-				
-			var iWidth = $("#styleSelector"+obj.settings.id).width();
-			elemBox.buttonset().find('table').width(iWidth - 37 - this._scrollWidth);
-            $("#styleSelectorBox"+obj.settings.id).css ({display: "", width: elem.width(), top: elem.position().top + elem.height(), left: elem.position().left});			
-            $("#styleSelectorB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-n" }});
-            obj.settings.dropOpened = true;
-        }
-         
-    },
-    _select: function (obj, iStyle) {
-        var nameImg  = "styleSelectorImg" +obj.settings.id;
-        var nameText = "styleSelectorText"+obj.settings.id;
-        $('#'+nameImg).removeClass (obj.settings.style);
-        obj.settings.style = iStyle;
-        $('#'+nameImg).addClass (obj.settings.style);
-        $('#'+nameText).html (this._findTitle(obj.settings.styles, obj.settings.style));
-		if (obj.settings.onchange)
-			obj.settings.onchange (obj.settings.style, obj.settings.onchangeParam);     
-    },
-    destroy: function (htmlElem) {
-		$("#styleSelectorBox"+htmlElem.settings.id).remove ();			
-		$('#styleSelector'+htmlElem.settings.id).remove ();			
-    }
-};
-
+// Val: "10px", Add: "20px", Result: "30px"
 function pxAdd(val, add) {
     if (!val) { val = "0px"; }
     var ret = parseInt(val.slice(0, -2), 10) + add;

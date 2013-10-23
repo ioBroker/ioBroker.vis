@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:            '0.9beta18',
+    version:            '0.9beta22',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -48,18 +48,18 @@ var dui = {
     instanceCmd: undefined,
     bindInstance: function () {
         if (!dui.instanceCmd) {
-            console.log("can't bind instance :-(");
+            //console.log("can't bind instance :-(");
             return false;
         }
-        console.log("bind instance id="+dui.instanceCmd);
+        //console.log("bind instance id="+dui.instanceCmd);
 
         homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function(e, newVal) {
             var cmd = newVal;
-            console.log("external command cmd=" + cmd);
+            //console.log("external command cmd=" + cmd);
 
             if (cmd !== "") {
                 var data = homematic.uiState.attr("_"+dui.instanceData+".Value");
-                console.log("external command cmd=" + cmd + " data=" + data);
+                //console.log("external command cmd=" + cmd + " data=" + data);
 
                 // external Commands
                 switch (cmd) {
@@ -104,7 +104,7 @@ var dui = {
 
     },
     loadWidgetSet: function (name) {
-        console.log("loadWidgetSet("+name+")");
+        //console.log("loadWidgetSet("+name+")");
         $.ajax({
             url: "widgets/"+name+".html",
             type: "get",
@@ -158,7 +158,7 @@ var dui = {
                 dui.bindInstance();
 
             } else {
-                console.log("init instance failed - variables "+cmdVarName+" missing?");
+                //console.log("init instance failed - variables "+cmdVarName+" missing?");
             }
         }
     },
@@ -204,7 +204,6 @@ var dui = {
         }
 
         var hash = window.location.hash.substring(1);
-        var activeBkgClass = "";
 
         // View ausgewäfhlt?
         if (hash == "") {
@@ -235,7 +234,7 @@ var dui = {
         $(window).bind( 'hashchange', function(e) {
             dui.changeView(window.location.hash.slice(1));
         });
-//console.log("EDIT??");
+
 
         // EDIT mode
         if (dui.urlParams["edit"] === "") {
@@ -298,18 +297,23 @@ var dui = {
 
 
             // Init background selector
-            hqStyleSelector.Show ({ width: 202,
-                            name:       "inspect_view_bkg_def",
-                            filterFile: "backgrounds.css",
-                            style:      activeBkgClass,     
-                            parent:     $('#inspect_view_bkg_parent'),
-							onchange:   function (newStyle, obj) {
-                                if (dui.views[dui.activeView].settings.style['background_class'])
-                                    $("#duiview_"+dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
-								dui.views[dui.activeView].settings.style['background_class'] = newStyle;
-								$("#duiview_"+dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
-							},
-                          });
+            if (dui.styleSelector) {
+                dui.styleSelector.Show ({ width: 202,
+                    name:       "inspect_view_bkg_def",
+                    filterFile: "backgrounds.css",
+                    style:      dui.views[dui.activeView].settings.style['background_class'],
+                    parent:     $('#inspect_view_bkg_parent'),
+                    onchange:   function (newStyle, obj) {
+                        if (dui.views[dui.activeView].settings.style['background_class']) {
+                            $("#duiview_"+dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
+                        }
+                        dui.views[dui.activeView].settings.style['background_class'] = newStyle;
+                        $("#duiview_"+dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
+                    }
+                });
+            }
+
+
             
         }
         this.initialized = true;
@@ -327,60 +331,47 @@ var dui = {
         dui.saveRemote();
         window.location.href='./?edit';
     },
-    renderView: function (view, noThemeChange) {
-        console.log("renderView("+view+","+noThemeChange+")");
+    renderView: function (view, noThemeChange, showEffectComing) {
 
-        //console.log(dui.views[view].settings.style);
         if (!dui.views[view].settings.theme) {
             dui.views[view].settings.theme = "dhive";
         }
-        if (!dui.views[view].settings.interval) {
-            dui.views[view].settings.interval = dui.defaultHmInterval;
-        }
-        
+
         if (!noThemeChange) {
-            console.log("theme "+dui.views[view].settings.theme);
-            $("#jqui_theme").remove();
             $("style[data-href$='jquery-ui.min.css']").remove();
-            $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme"/>');
+            $("link[href$='jquery-ui.min.css']").remove();
+            $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme" />');
         }
 
-        if ($("#dui_container").find("#duiview_"+view).html() == undefined) {
-            $("#dui_container").append("<div id='duiview_"+view+"' class='dashui-view'></div>");
+        if ($("#dui_container").find("#duiview_"+view).html() === undefined) {
+            $("#dui_container").append("<div style='display:none;' id='duiview_"+view+"' class='dashui-view'></div>");
             $("#duiview_"+view).css(dui.views[view].settings.style);
-
+            if (dui.views[view].settings.style.background_class) {
+                $("#duiview_"+view).addClass(dui.views[view].settings.style.background_class);
+            }
 
             for (var id in dui.views[view].widgets) {
                 dui.renderWidget(view, id);
             }
 
-
-            if (dui.activeView != view) {
-                $("#duiview_"+view).hide();
-            }
+            //if (dui.activeView != view) {
+            //    $("#duiview_"+view).hide();
+            //}
 
             if (dui.urlParams["edit"] === "") {
                 dui.binds.jqueryui._disable();
             }
 
-        } else {
-            console.log("View already rendered - nothing to do");
         }
-        
+        else
         // Set background style
-        if (dui.views[view] && dui.views[view].settings != undefined && dui.views[view].settings.style != undefined) {
-            if (dui.views[view].settings.style['background'] != undefined) {
-                $("#duiview_"+view).css("background", dui.views[view].settings.style['background']);
-            }
-            if (dui.views[view].settings.style['background_class'] != undefined) {
-                activeBkgClass = dui.views[view].settings.style['background_class'];
-                $("#duiview_"+view).addClass(activeBkgClass);
-            }
+        if (dui.views[view].settings.style.background_class !== undefined) {
+            $("#duiview_"+view).addClass(dui.views[view].settings.style.background_class); 
         }
 
         // Views in Container verschieben
         $("#duiview_"+view).find("div[id$='container']").each(function () {
-            console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
+            //console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
             var cview = $(this).attr("data-dashui-contains");
             if (!dui.views[cview]) {
                 $(this).append("error: view not found.");
@@ -395,6 +386,7 @@ var dui = {
 
         });
 
+        if (!showEffectComing) { $("#duiview_"+view).show(); }
     },
     preloadImages: function (srcs) {
         if (!dui.preloadImages.cache) {
@@ -449,19 +441,14 @@ var dui = {
         }
     },
     changeView: function (view, hideOptions, showOptions) {
-        console.log("changeView("+view+","+hideOptions+","+showOptions+")");
-        console.log("dui.activeView="+dui.activeView);
-        var effect = (hideOptions && hideOptions.effect && hideOptions.effect !== "" ? true : false);
+        var effect = hideOptions && hideOptions.effect && hideOptions.effect !== "";
         hideOptions = $.extend(true, {effect:undefined,options:{},duration:0}, hideOptions);
         showOptions = $.extend(true, {effect:undefined,options:{},duration:0}, showOptions);
 
-        //console.log("changeView("+view+")");
         if (dui.inspectWidget) {
             dui.inspectWidget("none");
             dui.clearWidgetHelper();
-            //$("#duiview_"+dui.activeView).hide();
             $("#select_active_widget").html("<option value='none'>none selected</option>");
-            //console.log($("#select_active_widget").html());
         }
 
         if (!dui.views[view]) {
@@ -472,40 +459,67 @@ var dui = {
             view = prop;
         }
 
-        dui.renderView(view, !(dui.activeView == view));
 
-        // View ggf aus Container heraus holen
-        if ($("#duiview_"+view).parent().attr("id") !== "dui_container") {
-            $("#duiview_"+view).appendTo("#dui_container");
-        }
 
         if (dui.activeView !== view) {
 
             if (effect) {
-                console.log("hideoptions..."); console.log(hideOptions);
-                $("#duiview_"+dui.activeView).hide(hideOptions.effect, hideOptions.options, hideOptions.duration, function () {
-                    console.log("show");
-                    console.log("changeView() change Theme "+dui.views[view].settings.theme);
-                    $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
-                    $("#duiview_"+view).show(showOptions.effect, showOptions.options, showOptions.duration, function () {
-                        console.log("show done");
+                console.log("effect");
+                $("#duiview_"+dui.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration,10), function () {
+
+
+                    dui.renderView(view, true, true);
+
+                    // View ggf aus Container heraus holen
+                    if ($("#duiview_"+view).parent().attr("id") !== "dui_container") {
+                        $("#duiview_"+view).appendTo("#dui_container");
+                    }
+
+                    if ($("link[href$='jquery-ui.min.css']").length ==  0) {
+                        $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme" />');
+                    } else {
+                        $("link[href$='jquery-ui.min.css']").attr("href", 'css/'+dui.views[view].settings.theme+'/jquery-ui.min.css');
+                    }
+                    $("style[data-href$='jquery-ui.min.css']").remove();
+
+                    $("#duiview_"+view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration,10), function () {
                     });
-                    console.log("hide done");
                 });
             } else {
-                $("#duiview_"+dui.activeView).hide();
-                console.log("changeView() change Theme "+dui.views[view].settings.theme);
-                $("#jqui_theme").attr("href", "css/"+dui.views[view].settings.theme+"/jquery-ui.min.css");
+                console.log("no effect");
+                dui.renderView(view, true);
+
+                // View ggf aus Container heraus holen
+                if ($("#duiview_"+view).parent().attr("id") !== "dui_container") {
+                    $("#duiview_"+view).appendTo("#dui_container");
+                }
+
+                if (dui.views[dui.activeView].settings.theme != dui.views[view].settings.theme) {
+                    if ($("link[href$='jquery-ui.min.css']").length ==  0) {
+                        $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme" />');
+                    } else {
+                        $("link[href$='jquery-ui.min.css']").attr("href", 'css/'+dui.views[view].settings.theme+'/jquery-ui.min.css');
+                    }
+                    $("style[data-href$='jquery-ui.min.css']").remove();
+                }
                 $("#duiview_"+view).show();
+                $("#duiview_"+dui.activeView).hide();
+
             }
 
+        } else {
+            dui.renderView(view);
+
+            // View ggf aus Container heraus holen
+            if ($("#duiview_"+view).parent().attr("id") !== "dui_container") {
+                $("#duiview_"+view).appendTo("#dui_container");
+            }
         }
 
         //console.log("changeView("+view+")");
         dui.activeView = view;
 
         $("#duiview_"+view).find("div[id$='container']").each(function () {
-            console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
             var cview = $(this).attr("data-dashui-contains");
             $("#duiview_"+cview).show();
         });
@@ -533,39 +547,63 @@ var dui = {
 
 
         // --------- Editor -----------------
-        $("#inspect_view").html(view);
 
-        $("#select_active_widget").html("<option value='none'>none selected</option>");
-        for (var widget in dui.views[dui.activeView].widgets) {
-            var obj = $("#"+dui.views[dui.activeView].widgets[widget].tpl);
-            $("#select_active_widget").append("<option value='"+widget+"'>"+widget+" ("+obj.attr("data-dashui-set")+ " " +obj.attr("data-dashui-name")+")</option>");
-        }
-        //console.log($("#select_active_widget").html());
-        $("#select_active_widget").multiselect("refresh");
+        if (dui.urlParams['edit'] === "") {
+            // Init background selector
+            if (dui.styleSelector) {
+                dui.styleSelector.Show ({ width: 202,
+                    name:       "inspect_view_bkg_def",
+                    filterFile: "backgrounds.css",
+                    style:      dui.views[view].settings.style.background_class,
+                    parent:     $('#inspect_view_bkg_parent'),
+                    onchange:   function (newStyle, obj) {
+                        if (dui.views[dui.activeView].settings.style['background_class']) {
+                            $("#duiview_"+dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
+                        }
+                        dui.views[dui.activeView].settings.style['background_class'] = newStyle;
+                        $("#duiview_"+dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
+                    }
+                });
+            }
 
-        if ($("#select_view option:selected").val() != view) {
-            $("#select_view option").removeAttr("selected");
-            $("#select_view option[value='"+view+"']").prop("selected", "selected");
-            $("#select_view").multiselect("refresh");
+
+            $("#inspect_view").html(view);
+
+            $("#select_active_widget").html("<option value='none'>none selected</option>");
+            for (var widget in dui.views[dui.activeView].widgets) {
+                var obj = $("#"+dui.views[dui.activeView].widgets[widget].tpl);
+                $("#select_active_widget").append("<option value='"+widget+"'>"+widget+" ("+obj.attr("data-dashui-set")+ " " +obj.attr("data-dashui-name")+")</option>");
+            }
+            //console.log($("#select_active_widget").html());
+            $("#select_active_widget").multiselect("refresh");
+
+            if ($("#select_view option:selected").val() != view) {
+                $("#select_view option").removeAttr("selected");
+                $("#select_view option[value='"+view+"']").prop("selected", "selected");
+                $("#select_view").multiselect("refresh");
+            }
+            $("#select_view_copy option").removeAttr("selected");
+            $("#select_view_copy option[value='"+view+"']").prop("selected", "selected");
+            $("#select_view_copy").multiselect("refresh");
+            $(".dashui-inspect-view-css").each(function () {
+                var $this = $(this);
+                var attr = $this.attr("id").slice(17);
+                $("#"+$this.attr("id")).val(dui.views[dui.activeView].settings.style[attr]);
+            });
+            $(".dashui-inspect-view").each(function () {
+                var $this = $(this);
+                var attr = $this.attr("id").slice(13);
+                $("#"+$this.attr("id")).val(dui.views[dui.activeView].settings[attr]);
+            });
+            if (!dui.views[dui.activeView].settings["theme"]) {
+                dui.views[dui.activeView].settings["theme"] = "dhive";
+            }
+            $("#inspect_view_theme option[value='"+dui.views[dui.activeView].settings.theme+"']").prop("selected", true);
+            $("#inspect_view_theme").multiselect("refresh");
+
+
         }
-        $("#select_view_copy option").removeAttr("selected");
-        $("#select_view_copy option[value='"+view+"']").prop("selected", "selected");
-        $("#select_view_copy").multiselect("refresh");
-        $(".dashui-inspect-view-css").each(function () {
-            var $this = $(this);
-            var attr = $this.attr("id").slice(17);
-            $("#"+$this.attr("id")).val(dui.views[dui.activeView].settings.style[attr]);
-        });
-        $(".dashui-inspect-view").each(function () {
-            var $this = $(this);
-            var attr = $this.attr("id").slice(13);
-            $("#"+$this.attr("id")).val(dui.views[dui.activeView].settings[attr]);
-        });
-        if (!dui.views[dui.activeView].settings["theme"]) {
-            dui.views[dui.activeView].settings["theme"] = "dhive";
-        }
-        $("#inspect_view_theme option[value='"+dui.views[dui.activeView].settings.theme+"']").prop("selected", true);
-        $("#inspect_view_theme").multiselect("refresh");
+
 
         //console.log("activeView="+dui.activeView);
         return;
@@ -592,7 +630,7 @@ var dui = {
     },
     saveRemote: function () {
         dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
-            console.log("Saved views on CCU.IO");
+            //console.log("Saved views on CCU.IO");
         });
     },
     getObjDesc: function (id) {
@@ -627,7 +665,6 @@ var dui = {
     }
 };
 
-
 var homematic = {
     uiState: new can.Observe({"_65535":{"Value":null}}),
     setState: new can.Observe({"_65535":{"Value":null}}),
@@ -635,7 +672,7 @@ var homematic = {
     regaObjects: {},
     setStateTimers: {},
     setValue: function (id, val) {
-        console.log("setValue("+id+","+val+")");
+        //console.log("setValue("+id+","+val+")");
 
         // Check if this ID is a programm
         if (homematic.regaObjects [id] &&
@@ -656,7 +693,7 @@ var homematic = {
     stateDelayed: function (id, val) {
         var attr = "_"+id;
         if (!this.setStateTimers[id]) {
-
+            //console.log("setState id="+id+" val="+val);
             dui.socket.emit("setState", [id, val]);
 
             this.setState.removeAttr(attr);
@@ -672,7 +709,7 @@ var homematic = {
 }
 
 homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
-    console.log("homematic setState change "+how+" "+attr+" "+newVal);
+    //console.log("homematic setState change "+how+" "+attr+" "+newVal);
     if (how == "set" || how == "add") {
         var id = parseInt(attr.slice(1), 10);
         homematic.stateDelayed(id, newVal.Value);
@@ -728,7 +765,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             dui.editInit ();
         }
         
-        console.log("socket.io")
+        //console.log("socket.io")
         $("#loading").append("Connecting to CCU.IO ...<br/>");
 
         dui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
@@ -745,60 +782,60 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                     dui.binds.hqWidgetsExt.hqMonitor (obj[0], obj[1]);
             }
             else {
-                console.log("Datenpunkte sind noch nicht geladen!");
+                //console.log("Datenpunkte sind noch nicht geladen!");
             }
         });
 
         dui.socket.on('connect', function () {
             $("#ccu-io-disconnect").dialog("close");
-            console.log((new Date()) + " socket.io connect");
+            //console.log((new Date()) + " socket.io connect");
         });
 
         dui.socket.on('connecting', function () {
-            console.log((new Date()) + " socket.io connecting");
+            //console.log((new Date()) + " socket.io connecting");
         });
 
         dui.socket.on('disconnect', function () {
-            console.log((new Date()) + " socket.io disconnect");
+            //console.log((new Date()) + " socket.io disconnect");
             $("#ccu-io-disconnect").dialog("open");
             dui.ccuIoDisconnected = true;
         });
 
         dui.socket.on('disconnecting', function () {
-            console.log((new Date()) + " socket.io disconnecting");
+            //console.log((new Date()) + " socket.io disconnecting");
         });
 
         dui.socket.on('reconnect', function () {
             $("#ccu-io-disconnect").dialog("close");
             dui.ccuIoDisconnected = false;
-            console.log((new Date()) + " socket.io reconnect");
+            //console.log((new Date()) + " socket.io reconnect");
         });
 
         dui.socket.on('reconnecting', function () {
-            console.log((new Date()) + " socket.io reconnecting");
+            //console.log((new Date()) + " socket.io reconnecting");
         });
 
         dui.socket.on('reconnect_failed', function () {
-            console.log((new Date()) + " socket.io reconnect failed");
+            //console.log((new Date()) + " socket.io reconnect failed");
         });
 
         dui.socket.on('error', function () {
-            console.log((new Date()) + " socket.io error");
+            //console.log((new Date()) + " socket.io error");
         });
 
         $("#loading").append("Loading ReGa Data");
 
         dui.socket.emit("getIndex", function (index) {
             $("#loading").append(".");
-            console.log("index loaded");
+            //console.log("index loaded");
             homematic.regaIndex = index;
             dui.socket.emit("getObjects", function (obj) {
                 $("#loading").append(".");
-                console.log("objects loaded")
+                //console.log("objects loaded")
                 homematic.regaObjects = obj;
                 dui.socket.emit("getDatapoints", function (data) {
                     $("#loading").append(".<br/>");
-                    console.log("datapoints loaded");
+                    //console.log("datapoints loaded");
                     for (var dp in data) {
                         homematic.uiState.attr("_"+dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
                     }
@@ -814,7 +851,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
     // Auto-Reconnect
     setInterval(function () {
         if (dui.ccuIoDisconnected) {
-            console.log("trying to force reconnect...");
+            //console.log("trying to force reconnect...");
             $.ajax({
                 url: "/dashui/index.html",
                 success: function () {

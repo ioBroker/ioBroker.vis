@@ -158,23 +158,33 @@ Falls "Ausblenden nach X Stunden" ausgew&auml;hlt ist, dan verschindet diese Anz
 
 <h3><a name="tplHqMotion" ></a>Motion Detector</h3>
 <table><tr><td><img src="img/help/helpMotion.png"/></td><td><img src="img/help/helpMotionOn.png"/></td></table><br>
-Dieses Widget stellt Bewegungsmelder dar. Widget kann Lichthelligkeit und die Zeit von der letzten Bewegung zeigen.
-Beim klicken auf dem Widget wird entweder die Grafik mit der Lichthelligkeit oder mit den Bewegungsereignissen angezeigt.<br>
+Dieses Widget stellt einen Bewegungsmelder dar. Widget kann die Lichthelligkeit und die Zeit von der letzten Bewegung zeigen.
+Beim klicken auf dem Widget wird entweder die Grafik mit der Lichthelligkeit oder mit den Bewegungsereignissen angezeigt.<br><br>
+
 <b>Verlauf</b><br>
 <img src="img/help/helpMotionEvents.png"/><br>
 <b>Grafik</b><br>
 <img src="img/help/helpMotionGrafik.png"/><br>
 
 <h4>Unterst&uuml;tzte Homematic Ger&auml;te</h4>
-<ul>
-	<li>HM-Sen-MDIR-O</li>
-	<li>HM-Sec-WDS</li>
-	<li>HM-Sec-MDIR</li>
-	<li>HM-Sec-SD</li>
-	<li>HM-CC-SCD</li>
-	<li>HM-Sec-TiS</li>
-</ul>
+Alle Ger&auml;te, die MOTION oder STATE Eigenschaft haben.<br>
+Falls der Datenpunkt Homemetic ID *.MOTION ist, dann wird Lichthelligkeit automatisch belegt. Auch LOWBAT (Low battery) Datenpunkt wird benutzt.
+Falls Homematic ID STATE ist. Dann kann man (muss aber nicht) noch Helligkeit-Datenpunkt aussuchen. Der wird dann fur Prozentanzeige verwendet.
 
+
+<h4>Haupteinstell&uuml;ngen</h4>
+<ul>
+	<li><a href="#TestStatus">Zustand antesten</a></li>
+	<li><a href="#normalIcon">Kleinbild</a></li>
+ 	<li><a href="#minmaxValue">Min Wert</a></li>
+	<li><a href="#minmaxValue">Max Wert</a></li>   
+	<li><a href="#description">Beschreibung</a></li>
+	<li><a href="#room">Raum</a></li>
+	<li><a href="#hmID">Homematic ID</a><br>
+Datenpunkt ID (MOTION oder STATE) von welchem Bewegungszustand abgelesen werden soll.</li>
+	<li><a href="#hmID">Lichthelligkeit ID</a><br>
+Datenpunkt ID von welchem Lichthelligkeit abgelesen werden konnte.</li>
+</ul>
 <h4>Stile</h4>
 <ul>
 	<li><a href="#normalStyle">Normal</a></li>
