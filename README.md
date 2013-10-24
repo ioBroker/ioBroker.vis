@@ -31,6 +31,16 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta24
+* (Bluefox) Fix error in hqSlider
+* (Bluefox) Fix error if hqWidgets is invisible. e.g. Wrong position of all pop up windows (including Shutter)
+* (Bluefox) Place hqStyleSelector to dui.styleSelector
+* (Bluefox) Move translate to extra file dashuiLang.js and hqWidgetsLang.js
+* (Bluefox) Fix documentation for Motion Detection
+* (Bluefox) Fix selection of BackgroundStyle at first load
+* (Bluefox) Add dashuiLang.js to edit.html
+
+
 ### 0.9beta23
 
 * (Bluefox) Fix hqWidget/Eventlist. Filter by ID
