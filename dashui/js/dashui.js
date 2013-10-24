@@ -204,7 +204,6 @@ var dui = {
         }
 
         var hash = window.location.hash.substring(1);
-        activeBkgClass = "";
 
         // View ausgewäfhlt?
         if (hash == "") {
@@ -364,19 +363,10 @@ var dui = {
             }
 
         }
-        
+        else
         // Set background style
-
-        if (!noThemeChange && dui.views[view] && dui.views[view].settings && dui.views[view].settings.style) {
-            /* Verursacht "Flicker" beim Wechsel der View!
-               Sollte auch an dieser Stelle überflüssig sein - wird doch in Zeile 344 bereits gemacht.
-            if (dui.views[view].settings.style['background'] != undefined) {
-                $("#duiview_"+view).css("background", dui.views[view].settings.style['background']);
-            } */
-            if (dui.views[view].settings.style.background_class != undefined) {
-                activeBkgClass = dui.views[view].settings.style['background_class'];
-                //$("#duiview_"+view).addClass(activeBkgClass);  Muss in renderView bereits gesetzt werden!
-            }
+        if (dui.views[view].settings.style.background_class !== undefined) {
+            $("#duiview_"+view).addClass(dui.views[view].settings.style.background_class); 
         }
 
         // Views in Container verschieben
@@ -674,8 +664,6 @@ var dui = {
         return text;
     }
 };
-
-var activeBkgClass, hqStyleSelector; // Hab sie mal hier deklariert, aber das gefällt mir nicht. Warum ist das kein Attribut von dui?
 
 var homematic = {
     uiState: new can.Observe({"_65535":{"Value":null}}),
