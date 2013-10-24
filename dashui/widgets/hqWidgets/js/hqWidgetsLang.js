@@ -37,7 +37,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 (Free for non-commercial use).
 */
 
-hqWidgets = $.exted (hqWidgets, 
+hqWidgets = $.extend (hqWidgets, {
     translate: function (text) {
         if (!this.words) {
             this.words = {
@@ -79,7 +79,7 @@ hqWidgets = $.exted (hqWidgets,
                 "Show description:"         : {"en": "Show&nbsp;description:",      "de": "Zeige&nbspBeschreibung:"},
                 "Room:"                     : {"en": "Room:",           "de": "Raum:"},
                 "Min value:"                : {"en": "Min value:",      "de": "Min Wert:"},
-                "Max value:"                : {"en": "Max value:",      "de": "Max Wert:"},
+                "Max value:"                : {"en": "Max value:",      "de": "Max Wert:"}
            };
         }
         if (this.words[text]) {
@@ -92,4 +92,4 @@ hqWidgets = $.exted (hqWidgets,
 
         return text;
     }
-);
+});
