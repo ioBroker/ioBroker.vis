@@ -1460,6 +1460,7 @@ var hmSelect = {
 	_onsuccess:   null,
 	images:       null,
 	mydata:       null,
+    _homematic:   null,
 	_selectText:  null,
 	_cancelText:  null,
     _buttonsLoc:  null, // Array with rooms buttons for filter
@@ -1468,6 +1469,7 @@ var hmSelect = {
     _filterFunc:  "",   // functions filter
     _filter:      null, // current filter
     _devices:     null, // devices instance
+    _ignoreFilter:false,// If ignore device or point filter
     
 	_convertName: function (text) {
 		var oldText = text;
@@ -1934,7 +1936,7 @@ var hmSelect = {
         }
         
         // If filter changed
-        if (this._devices == null && filter != "all") {            
+        if (this._devices == null && filter != "all" && !this._ignoreFilter) {            
             // Clear prepared data
             this.mydata = null;
             
@@ -2048,10 +2050,10 @@ var hmSelect = {
         if (this._devices == null) {
             this.mydata = null;
             
-            if (filter == "all" || this._devices == null) {
+            if (filter == "all" || this._devices == null || this._ignoreFilter) {
                 var f = null;
                 var isWithDPs = true;
-                if (this.myDevFilter != '' && this.myDevFilter != null && this.myDevFilter != undefined) {
+                if (!this._ignoreFilter && this.myDevFilter != '' && this.myDevFilter != null && this.myDevFilter != undefined) {
                     //leave only desired elements
                     f = devFilter.split(',');
                     isWithDPs  = (f.length > 0 && f[0].length > 0 && f[0][0] == '.');
@@ -2190,8 +2192,19 @@ var hmSelect = {
                 }                
                 text += "<option value='"+homematic.regaObjects[functions[func]]["Name"]+"' "+selected+">"+homematic.regaObjects[functions[func]]["Name"]+"</option>";
             }
-            text += "</select>";
+            text += "</select>\n";
+            if (filter != "all" || devFilter != null || devFilter != "") {
+                text += dui.translate ("Disable device filter:") + "<input type='checkbox' id='hmSelectIgnoreFilter' "+ (this._ignoreFilter ? "checked" : "") +">";
+            }
             $("#hmSelectFilter").append (text);
+            
+            // Ignore filter switch
+            $("#hmSelectIgnoreFilter").change (function () {
+                hmSelect._ignoreFilter = !hmSelect._ignoreFilter;
+                hmSelect._devices    = null;
+                $('#hmSelect').remove();
+                hmSelect.show (hmSelect._homematic,  hmSelect._userArg, hmSelect._onsuccess, hmSelect.myFilter, hmSelect.myDevFilter);
+            });
             
             
             $("#hmSelectLocations").change (function () {
@@ -2440,38 +2453,41 @@ var hmSelect = {
 			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate ("Select HM parameter") + "'></div>");
             var text = "<div id='hmSelect_tabs'>";
             text += "  <ul>";
-            if (filter == 'all' || (filter != 'variables' && filter != 'programs')) {           
-                text += "    <li><a href='#tabs-devs'  id='dev_select'>Devices</a></li>";
+            var i = 0;
+            if (devFilter == undefined || this._ignoreFilter) {
+                if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
+                    text += "    <li><a href='#tabs-devs'  id='dev_select'>Devices</a></li>";
+                }
+                if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'variables'))) {           
+                    text += "    <li><a href='#tabs-vars'  id='var_select'>Variables</a></li>";
+                }
+                if (this._ignoreFilter || (devFilter == undefined && ( filter == 'all' || filter == 'programs'))) {           
+                    text += "    <li><a href='#tabs-progs' id='prog_select'>Functions</a></li>";
+                }
+                text += "  </ul>";
             }
-            if (devFilter == undefined && (filter == 'all' || filter == 'variables')) {           
-                text += "    <li><a href='#tabs-vars'  id='var_select'>Variables</a></li>";
-            }
-            if (devFilter == undefined && (filter == 'all' || filter == 'programs')) {           
-                text += "    <li><a href='#tabs-progs' id='prog_select'>Functions</a></li>";
-            }
-            text += "  </ul>";
-            if (filter == 'all' || (filter != 'variables' && filter != 'programs')) {           
+            if (this._ignoreFilter || filter == 'all' || (filter != 'variables' && filter != 'programs')) {           
                 text += "  <div id='tabs-devs' style='padding: 3px'></div>";
             }
-            if (devFilter == undefined && (filter == 'all' || filter == 'variables')) {           
+            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'variables'))) {           
                 text += "  <div id='tabs-vars' style='padding: 3px'></div>";
             }
-            if (devFilter == undefined && (filter == 'all' || filter == 'programs')) {       
+            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'programs'))) {       
                 text += "  <div id='tabs-progs' style='padding: 3px'></div>";
             }            
             text += "</div>";
             $("#hmSelect").append(text);
-            if (filter == 'all' || (filter != 'variables' && filter != 'programs')) {           
+            if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
                 $("#tabs-devs").append  ("<table id='hmDevsContent'></table>");     
             }                
-            if (devFilter == undefined && (filter == 'all' || filter == 'variables')) {           
+            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'variables'))) {           
                 $("#tabs-vars").append  ("<table id='hmVarsContent'></table>");        
             }
-            if (devFilter == undefined && (filter == 'all' || filter == 'programs')) {       
+            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'programs'))) {       
                  $("#tabs-progs").append ("<table id='hmProgsContent'></table>");      
             }            
             
-            if (filter == 'all' || (filter != 'variables' && filter != 'programs')) {           
+            if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
                 $('#tabs-devs').prepend ("<div id='hmSelectFilter' class='ui-state-highlight'></div>");
                 $('#tabs-devs').prepend ("<p id='dashui-waitico'>Please wait...</p>");
             }
@@ -2481,7 +2497,7 @@ var hmSelect = {
             else
                 $('#tabs-progs').prepend ("<p id='dashui-waitico'>Please wait...</p>");
                 
-            if (filter == 'all' || (filter != 'variables' && filter != 'programs')) {           
+            if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
                 $('#dev_select').click (function (e) {
                     var w = $('#hmSelect').dialog ("option", "width");
                     $('#hmSelect').dialog("option", "width", w-50);
@@ -2489,12 +2505,12 @@ var hmSelect = {
                     //hmSelect._onResize ();
                 });
             }
-            if (devFilter == undefined && (filter == 'all' || filter == 'variables')) {           
+            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'variables'))) {           
                 $('#var_select').click (function (e) {
                     hmSelect._buildVarsGrid (homematic);
                 });
             }
-            if (devFilter == undefined && (filter == 'all' || filter == 'programs')) {       
+            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'programs'))) {       
                 $('#prog_select').click (function (e) {
                     hmSelect._buildProgsGrid (homematic);
                 });

@@ -233,7 +233,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     // Send command to HM
                                     homematic.setValue( hm_id, state / 100);                                  
                                 }  
-                            }                                
+                            }                                                
                         }});
                         // Fill up the required IDs
                         var t = 0;
@@ -1020,9 +1020,21 @@ if ((typeof hqWidgets !== 'undefined')) {
 							if (opt["exShowGrafik"] === 'grafic') {
 								// Show grafik
 								var hm_id = opt['hm_id'];
-								if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"]) {
-									hm_id = homematic.regaObjects[opt["hm_id"]]["DPs"]["BRIGHTNESS"];
-								}
+                                if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"]) {
+                                    if (homematic.regaObjects[hm_id]["DPs"]["MOTION"]) {
+                                        hm_id = homematic.regaObjects[opt["hm_id"]]["DPs"]["BRIGHTNESS"];
+                                    }                                                          
+                                }
+                                else
+                                if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["Name"] && homematic.regaObjects[hm_id]["Name"].indexOf(".MOTION") != -1) {
+                                    if (homematic.regaObjects[hm_id]["Parent"]) {
+                                        var parent = homematic.regaObjects[hm_id]["Parent"];
+                                        if (homematic.regaObjects[parent] && homematic.regaObjects[parent]["DPs"] && homematic.regaObjects[parent]["DPs"]["BRIGHTNESS"]) {
+                                            hm_id = homematic.regaObjects[parent]["DPs"]["BRIGHTNESS"];
+                                        }
+                                    }
+                                }          
+
 								var points = [hm_id];
 								if (points[0]) {
 									var src = document.location.href;
