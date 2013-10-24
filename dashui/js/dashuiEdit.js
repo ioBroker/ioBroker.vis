@@ -394,6 +394,8 @@ dui = $.extend(true, dui, {
                         dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = $(this).val();
                         dui.saveRemote();
                         dui.reRenderWidget(dui.activeWidget);
+                    }).keyup(function () { 
+                        $(this).trigger('change');
                     });
             }
         }
@@ -661,20 +663,35 @@ dui = $.extend(true, dui, {
             var style = $this.attr("id").substring(12);
             dui.views[dui.activeView].widgets[dui.activeWidget].style[style] = $this.val();
             dui.saveRemote();
+            var activeWidget = $("#"+dui.activeWidget);
             $("#"+dui.activeWidget).css(style, $this.val());
             $("#widget_helper")
-                .css("left", pxAdd($("#"+dui.activeWidget).css("left"), -2))
-                .css("top", pxAdd($("#"+dui.activeWidget).css("top"), -2))
-                .css("height", $("#"+dui.activeWidget).outerHeight()+2)
-                .css("width", $("#"+dui.activeWidget).outerWidth()+2);
+                .css("left", pxAdd(activeWidget.css("left"), -2))
+                .css("top", pxAdd(activeWidget.css("top"), -2))
+                .css("height", activeWidget.outerHeight()+2)
+                .css("width", activeWidget.outerWidth()+2);
 
             $("#widget_inner_helper")
-                .css("left", pxAdd($("#"+dui.activeWidget).css("left"), -1))
-                .css("top", pxAdd($("#"+dui.activeWidget).css("top"), -1))
-                .css("height", $("#"+dui.activeWidget).outerHeight())
-                .css("width", $("#"+dui.activeWidget).outerWidth());
+                .css("left", pxAdd(activeWidget.css("left"), -1))
+                .css("top", pxAdd(activeWidget.css("top"), -1))
+                .css("height", activeWidget.outerHeight())
+                .css("width", activeWidget.outerWidth());
 
+            // Update hqWidgets if width or height changed
+            if (dui.views[dui.activeView].widgets[dui.activeWidget] && hqWidgets) {
+                var hq = hqWidgets.Get (dui.activeWidget);
+                if (hq != null) {
+                    hq.SetSettings ({width:  activeWidget.width(), 
+                                     height: activeWidget.height(),
+                                     top:    activeWidget.position().top,
+                                     left:   activeWidget.position().left,
+                                     zindex: activeWidget.zIndex()});
+                                     
+                }
+            }
 
+        }).keyup (function () {
+            $(this).trigger("change");
         });
         $(".dashui-inspect-view-css").change(function () {
             var $this = $(this);
