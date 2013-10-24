@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.7",
+    version: "0.1.8",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -134,56 +134,7 @@ var hqWidgets = {
         gElements            : [],
         gClickTimer          : null,    // Timer to filer out the double clicks
     },
-    Translate: function (text) {
-        if (!this.words) {
-            this.words = {
-                "IP Camera"                 : {"en": "IP Camera",       "de": "IP Kamera"},
-                "Description:"              : {"en": "Description:",    "de": "Beschreibung:"},
-                "Close"                     : {"en": "Hide",            "de": "Abbrechen"},
-                "Advanced..."               : {"en": "Advanced...",     "de": "Erweitert..."},
-                "Pop up delay (ms):"        : {"en": "Pop up delay (ms):", "de": "Verzogerung (ms)"},
-                "Open door button:"         : {"en": "Open door button:",  "de": "'Tur aufmachen' Knopf:"},
-                "Small image update(sec):"  : {"en": "Small image update(sec):",    "de": "Kleines Bild erneuern(Sek):"},
-                "Open door text:"           : {"en": "Open door text:", "de": "Knopfbeschrieftung:"},
-                "Open&nbsp;lock"            : {"en": "Open&nbsp;lock",  "de": "Aufmachen"},
-                "Open the door?"            : {"en": "Open the door?",  "de": "Tur aufmachen?"},
-                "Simulate click"            : {"en": "Simulate click",  "de": "Simuliere Click"},
-                "Test state"                : {"en": "Test state",      "de": "Zustand testen"},
-                "Last action:"              : {"en": "Last action:",    "de": "Lezte Status&auml;nderung:"},
-                "Do not show"               : {"en": "Do not show",     "de": "Nicht zeigen"},
-                "Show always"               : {"en": "Show always",     "de": "Immer zeigen"},
-                "Hide after 1 hour"         : {"en": "Hide after 1 hour",  "de": "Ausblenden nach 1 Stunde"},
-                "Hide after 2 hours"        : {"en": "Hide after 2 hours", "de": "Ausblenden nach 2 Stunden"},
-                "Hide after 6 hours"        : {"en": "Hide after 6 hours", "de": "Ausblenden nach 6 Stunden"},
-                "Hide after 12 hours"       : {"en": "Hide after 12 hours","de": "Ausblenden nach 12 Stunden"},
-                "Hide after 1 day"          : {"en": "Hide after 1 day",   "de": "Ausblenden nach 1 Tag"},
-                "Hide after 2 days"         : {"en": "Hide after 2 days",  "de": "Ausblenden nach 2 Tagen"},
-                "Battery problem"           : {"en": "Battery problem", "de": "Akku-Problem"},
-                "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
-                "Icon:"                     : {"en": "Icon:",           "de": "Kleinbild:"},
-                "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
-                "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
-                "Styles..."                 : {"en": "Styles...",       "de": "Stile..."},
-                "jQuery Styles:"            : {"en": "Use&nbsp;jQuery&nbsp;Styles:", "de": "jQuery&nbsp;Stil&nbsp;anwenden:"},
-                "Radius:"                   : {"en": "Border&nbsp;Radius:", "de": "Eckenradius:"},
-                "Icon width:"               : {"en": "Icon width:",     "de": "Bildbreite:"},
-                "Icon height:"              : {"en": "Icon height:",    "de": "Bildh&ouml;he:"},
-                "Icon size:"                : {"en": "Icon size:",      "de": "Bildgr&ouml;&szlig;e:"},
-                "Icon active:"              : {"en": "Active&nbsp;icon:","de": "Aktivbild:"},
-                "Hide inactive:"            : {"en": "Hide&nbsp;if&nbsp;incative:", "de": "Verstecken&nbsp;falls&nbsp;inaktiv:"},
-                "No background:"            : {"en": "No&nbsp;background:",         "de": "Kein&nbsp;Hintergrund:"},
-                "Show description:"         : {"en": "Show&nbsp;description:",      "de": "Zeige&nbspBeschreibung:"},
-                "Room:"                     : {"en": "Room:",           "de": "Raum:"},
-           };
-        }
-        if (this.words[text]) {
-            if (this.words[text][this.gOptions.gLocale])
-                return this.words[text][this.gOptions.gLocale];
-            else 
-            if (this.words[text]["en"])
-                return this.words[text]["en"];
-        }
-
+    translate: function (text) {
         return text;
     },
     TempFormat: function (t){
@@ -244,24 +195,24 @@ var hqWidgets = {
     // Convert button type to string
     Type2Name: function  (t) {
         switch (t){
-        case this.gButtonType.gTypeButton: return this.Translate("Button");
-        case this.gButtonType.gTypeInTemp: return this.Translate("In. Temp.");
-        case this.gButtonType.gTypeOutTemp:return this.Translate("Out. Temp.");
-        case this.gButtonType.gTypeBlind:  return this.Translate("Blind");
-        case this.gButtonType.gTypeLock:   return this.Translate("Lock");
-        case this.gButtonType.gTypeDoor:   return this.Translate("Door");
-        case this.gButtonType.gTypeInfo:   return this.Translate("Info");
-        case this.gButtonType.gTypeHeat:   return this.Translate("Heater");
-        case this.gButtonType.gTypeMotion: return this.Translate("Motion");
-        case this.gButtonType.gTypePhone:  return this.Translate("Phone");
-        case this.gButtonType.gTypeDimmer: return this.Translate("Dimmer");
-        case this.gButtonType.gTypeImage:  return this.Translate("Image");
-        case this.gButtonType.gTypeText:   return this.Translate("Text");
-        case this.gButtonType.gTypeDimmer: return this.Translate("Dimmer");
-        case this.gButtonType.gTypeCam:    return this.Translate("Camera");
-        case this.gButtonType.gTypeGong:   return this.Translate("Gong");
-        case this.gButtonType.gTypeGauge:  return this.Translate("Gauge");
-        case this.gButtonType.gTypeLowbat: return this.Translate("Low battery");
+        case this.gButtonType.gTypeButton: return this.translate("Button");
+        case this.gButtonType.gTypeInTemp: return this.translate("In. Temp.");
+        case this.gButtonType.gTypeOutTemp:return this.translate("Out. Temp.");
+        case this.gButtonType.gTypeBlind:  return this.translate("Blind");
+        case this.gButtonType.gTypeLock:   return this.translate("Lock");
+        case this.gButtonType.gTypeDoor:   return this.translate("Door");
+        case this.gButtonType.gTypeInfo:   return this.translate("Info");
+        case this.gButtonType.gTypeHeat:   return this.translate("Heater");
+        case this.gButtonType.gTypeMotion: return this.translate("Motion");
+        case this.gButtonType.gTypePhone:  return this.translate("Phone");
+        case this.gButtonType.gTypeDimmer: return this.translate("Dimmer");
+        case this.gButtonType.gTypeImage:  return this.translate("Image");
+        case this.gButtonType.gTypeText:   return this.translate("Text");
+        case this.gButtonType.gTypeDimmer: return this.translate("Dimmer");
+        case this.gButtonType.gTypeCam:    return this.translate("Camera");
+        case this.gButtonType.gTypeGong:   return this.translate("Gong");
+        case this.gButtonType.gTypeGauge:  return this.translate("Gauge");
+        case this.gButtonType.gTypeLowbat: return this.translate("Low battery");
         default: return "";
         }
     },
@@ -304,8 +255,8 @@ var hqWidgets = {
         
         if (buttonToDelete.settings.isContextMenu && hqUtils !== undefined && hqUtils != null) {
             var dlg = new hqUtils.Dialog ({
-                title:     hqWidgets.Translate("Delete"), 
-                content:   hqWidgets.Translate("Are you sure?"), 
+                title:     hqWidgets.translate("Delete"), 
+                content:   hqWidgets.translate("Are you sure?"), 
                 positionX: 'center', 
                 positionY: 'middle', 
                 isYes:     true, 
@@ -596,9 +547,9 @@ var hqWidgets = {
             gongBtnText:      "Gong",// Text for button play gong
 
             ctrlActionBtn:    false, // Show action button on ip camera big window
-            ctrlQuestion:     hqWidgets.Translate("Open the door?"), // Text for the door bell question
+            ctrlQuestion:     hqWidgets.translate("Open the door?"), // Text for the door bell question
             ctrlQuestionImg:  "DoorOpen.png", // Icon by question
-            ctrlBtnText:      hqWidgets.Translate("Open&nbsp;lock"), // Action button text for camera popup
+            ctrlBtnText:      hqWidgets.translate("Open&nbsp;lock"), // Action button text for camera popup
 
             hoursLastAction:  -1,    // If the last action time must be shown (-1 - do not show, 0 -always show, x - not older as x hours, -2 show absolute time always, "-x" - show absolute time x hours
             stateTimeout:     600,   // 5 min state timeout
@@ -1546,7 +1497,7 @@ var hqWidgets = {
                         this._CreateInfoPopup ('hq-ipcam-big-with-action');
                         
                     // Create inner image and buttons (Very dirty)
-                    this._SetInfoPopupTitle (((this.settings.buttonType == hqWidgets.gButtonType.gTypeCam) ? (this.settings.title || hqWidgets.Translate ("IP Camera")) : this.settings.ctrlQuestion));
+                    this._SetInfoPopupTitle (((this.settings.buttonType == hqWidgets.gButtonType.gTypeCam) ? (this.settings.title || hqWidgets.translate ("IP Camera")) : this.settings.ctrlQuestion));
                     if (this.settings.buttonType != hqWidgets.gButtonType.gTypeInfo) {
                         this._SetInfoPopupContent ("<img style='height: 100%; width:100%' id='"+this.advSettings.elemName+"_bigImage' />");
                     }
@@ -2685,7 +2636,7 @@ var hqWidgets = {
                                                   dlg.parentQuery.intern.timerID = null;
                                                 }
                                             };
-                                btns[hqWidgets.Translate(hqWidgets.gOptions.gCancelText)] = function() {
+                                btns[hqWidgets.translate(hqWidgets.gOptions.gCancelText)] = function() {
                                             var dlg = document.getElementById ('gongDialog');
                                             dlg.parentQuery.intern._isBigVisible = false;
                                             $( this ).dialog( "close" );
@@ -2886,7 +2837,7 @@ var hqWidgets = {
         }
         this.SetStaticText = function (text, textFont, textColor) {
             if (this.settings.buttonType != hqWidgets.gButtonType.gTypeText) return;
-            if (text      == undefined || text      == null || text     == "") text      = hqWidgets.Translate ("Text");
+            if (text      == undefined || text      == null || text     == "") text      = hqWidgets.translate ("Text");
             if (textFont  == undefined || textFont  == null || textFont == "") textFont  = '20px "Tahoma", sans-serif';
             if (textColor == undefined || textColor == null || textColor== "") textColor = "white"; 
             this.intern._jstaticText.html(text).css({font: textFont, color: textColor});
@@ -3564,7 +3515,7 @@ var hqWidgets = {
                                           dlg.parentQuery.intern.timerID = null;
                                         }
                                     };
-                        btns[hqWidgets.Translate(hqWidgets.gOptions.gCancelText)] = function() {
+                        btns[hqWidgets.translate(hqWidgets.gOptions.gCancelText)] = function() {
                                     var dlg = document.getElementById ('infoDialog');
                                     dlg.parentQuery.intern._isBigVisible = false;
                                     $( this ).dialog( "close" );
@@ -3930,8 +3881,15 @@ var hqWidgets = {
             }
 
             //  percentState - blinds position from 0 to 100 or dimmer state from 0 to 100
-            if (dynOptions.percentState !== undefined) 
+            if (dynOptions.percentState !== undefined) {
+                if (this.settings.buttonType == hqWidgets.gButtonType.gTypeMotion) {
+                    //Calculate percent
+                    if (dynOptions.percentState < this.settings.valueMin) dynOptions.percentState = this.settings.valueMin;
+                    if (dynOptions.percentState > this.settings.valueMax) dynOptions.percentState = this.settings.valueMax;
+                    dynOptions.percentState = Math.round ((dynOptions.percentState - this.settings.valueMin) / (this.settings.valueMax - this.settings.valueMin) * 100);
+                }
                 this.SetPercent (dynOptions.percentState);
+            }
 
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge && dynOptions.valueSet !== undefined) {
                 this.dynStates.valueSet = parseInt(dynOptions.valueSet);
@@ -4260,7 +4218,7 @@ var hqWidgets = {
             this.intern._contextMenu.Add ({text:"Settings", action:function(elem){
                     var m   = new hqUtils.SettingsDialogContent({options: elem.GetSettings (false, false), getImages: hqWidgets.gOptions.getImages}); 
                     var dlg = new hqUtils.Dialog ({
-                        title:        hqWidgets.Translate("Settings"), 
+                        title:        hqWidgets.translate("Settings"), 
                         contentClass: m, 
                         isOk:         true, 
                         isCancel:     true, 
@@ -4296,9 +4254,14 @@ var hqWidgets = {
         // Apply all settings
         this.SetSettings (this.settings);
         
-        // Remember actual position for calculations 
-        this.settings.x = this.intern._jelement.position().left;
-        this.settings.y = this.intern._jelement.position().top;
+        // Remember actual position for calculations
+        if (this.intern._jelement.css('display') != "none") {
+            var pos = this.intern._jelement.position();
+            if (pos.top != 0 || pos.left != 0) {
+                this.settings.x = this.intern._jelement.position().left;
+                this.settings.y = this.intern._jelement.position().top;
+            }
+        }
         
         // Show button
         this.ShowState ();

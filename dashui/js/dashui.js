@@ -298,21 +298,21 @@ var dui = {
 
 
             // Init background selector
-if (hqStyleSelector) {
-    hqStyleSelector.Show ({ width: 202,
-        name:       "inspect_view_bkg_def",
-        filterFile: "backgrounds.css",
-        style:      activeBkgClass,
-        parent:     $('#inspect_view_bkg_parent'),
-        onchange:   function (newStyle, obj) {
-            if (dui.views[dui.activeView].settings.style['background_class']) {
-                $("#duiview_"+dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
+            if (dui.styleSelector) {
+                dui.styleSelector.Show ({ width: 202,
+                    name:       "inspect_view_bkg_def",
+                    filterFile: "backgrounds.css",
+                    style:      dui.views[dui.activeView].settings.style['background_class'],
+                    parent:     $('#inspect_view_bkg_parent'),
+                    onchange:   function (newStyle, obj) {
+                        if (dui.views[dui.activeView].settings.style['background_class']) {
+                            $("#duiview_"+dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
+                        }
+                        dui.views[dui.activeView].settings.style['background_class'] = newStyle;
+                        $("#duiview_"+dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
+                    }
+                });
             }
-            dui.views[dui.activeView].settings.style['background_class'] = newStyle;
-            $("#duiview_"+dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
-        }
-    });
-}
 
 
             
@@ -344,20 +344,16 @@ if (hqStyleSelector) {
             $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme" />');
         }
 
-        if ($("#dui_container").find("#duiview_"+view).html() == undefined) {
+        if ($("#dui_container").find("#duiview_"+view).html() === undefined) {
             $("#dui_container").append("<div style='display:none;' id='duiview_"+view+"' class='dashui-view'></div>");
             $("#duiview_"+view).css(dui.views[view].settings.style);
             if (dui.views[view].settings.style.background_class) {
                 $("#duiview_"+view).addClass(dui.views[view].settings.style.background_class);
-                if (!noThemeChange) {
-                    activeBkgClass = dui.views[view].settings.style.background_class
-                }
             }
 
             for (var id in dui.views[view].widgets) {
                 dui.renderWidget(view, id);
             }
-
 
             //if (dui.activeView != view) {
             //    $("#duiview_"+view).hide();
@@ -401,8 +397,6 @@ if (hqStyleSelector) {
         });
 
         if (!showEffectComing) { $("#duiview_"+view).show(); }
-
-
     },
     preloadImages: function (srcs) {
         if (!dui.preloadImages.cache) {
@@ -565,17 +559,12 @@ if (hqStyleSelector) {
         // --------- Editor -----------------
 
         if (dui.urlParams['edit'] === "") {
-            activeBkgClass = dui.views[view].settings.style.background_class;
-
-
-
             // Init background selector
-            if (hqStyleSelector) {
-
-                hqStyleSelector.Show ({ width: 202,
+            if (dui.styleSelector) {
+                dui.styleSelector.Show ({ width: 202,
                     name:       "inspect_view_bkg_def",
                     filterFile: "backgrounds.css",
-                    style:      activeBkgClass,
+                    style:      dui.views[view].settings.style.background_class,
                     parent:     $('#inspect_view_bkg_parent'),
                     onchange:   function (newStyle, obj) {
                         if (dui.views[dui.activeView].settings.style['background_class']) {
