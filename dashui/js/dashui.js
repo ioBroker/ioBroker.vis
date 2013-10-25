@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:            '0.9beta25',
+    version:            '0.9beta26',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -46,6 +46,7 @@ var dui = {
     instanceView: undefined,
     instanceData: undefined,
     instanceCmd: undefined,
+    viewsActiveFilter: {},
     bindInstance: function () {
         if (!dui.instanceCmd) {
             //console.log("can't bind instance :-(");
@@ -337,6 +338,12 @@ var dui = {
             dui.views[view].settings.theme = "dhive";
         }
 
+        if (dui.views[view].settings.filterkey) {
+            dui.viewsActiveFilter[view] = dui.views[view].settings.filterkey.split(",");
+        } else {
+            dui.viewsActiveFilter[view] = [];
+        }
+
         if (!noThemeChange) {
             $("style[data-href$='jquery-ui.min.css']").remove();
             $("link[href$='jquery-ui.min.css']").remove();
@@ -408,6 +415,27 @@ var dui = {
         $("#"+widget).remove();
         dui.renderWidget(dui.activeView, widget);
     },
+    changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
+
+        var widgets = dui.views[dui.activeView].widgets;
+        if (filter == "") {
+            // show all
+            for (var widget in widgets) {
+                $("#"+widget).show(showEffect, null, showDuration);
+            }
+        } else {
+            dui.viewsActiveFilter[dui.activeView] = filter.split(",");
+            for (var widget in widgets) {
+                console.log(widgets[widget]);
+                if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "" && dui.viewsActiveFilter[dui.activeView].length > 0 &&  dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
+                    $("#"+widget).hide(hideEffect, null, hideDuration);
+                } else {
+                    $("#"+widget).show(showEffect, null, showDuration);
+                }
+            }
+        }
+
+    },
     renderWidget: function (view, id) {
         var widget = dui.views[view].widgets[id];
         
@@ -429,6 +457,14 @@ var dui = {
         
         // Append html element to view
         $("#duiview_"+view).append(can.view(widget.tpl, {hm: homematic.uiState["_"+widget.data.hm_id], data: widgetData, view: view}));
+
+        if (dui.urlParams["edit"] !== "") {
+            console.log("widget id="+id+" filterkey="+widget.data.filterkey+" viewsActiveFilter["+view+"]="+JSON.stringify(dui.viewsActiveFilter[view]));
+            if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
+                console.log("hide #"+id);
+                $("#"+id).hide();
+            }
+        }
 
         if (widget.style) {
             $("#"+id).css(widget.style);

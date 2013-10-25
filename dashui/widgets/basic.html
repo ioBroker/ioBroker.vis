@@ -11,6 +11,19 @@
 
         },
         basic: {
+            filterDropdown: function (el, filters, hideEffect, hideDuration, showEffect, showDuration) {
+                var $this = jQuery(el);
+                if (filters) {
+                    filters = filters.split(";");
+                    for (var i = 0; i < filters.length; i++) {
+                        $this.find("select").append("<option value='"+filters[i]+"'>"+filters[i]+"</option>");
+                    }
+                }
+                $this.find("select").change(function () {
+                    dui.changeFilter($this.find("select option:selected").val(), hideEffect, hideDuration, showEffect, showDuration);
+                });
+
+            },
             state: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
@@ -157,7 +170,7 @@
 </script>
 
 <script type="text/ejs" id="tplHtml" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - HTML" data-dashui-attrs="html">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 200px; height: 130px; border: 1px solid #000;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <%== this.data.attr('html') %>
         </div>
@@ -187,6 +200,16 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %>>
         <div class="dashui-widget-body">
             <%== this.data.attr('html') %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplFilterDropdown" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="filter - dropdown" data-dashui-attrs="filters;hide_effect;hide_duration;show_effect;show_duration">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 200px; height: 40px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.filterDropdown(el, data.attr('filters'), data.attr('hide_effect'), data.attr('hide_duration'), data.attr('show_effect'),data.attr('show_duration')) %>>
+        <div class="dashui-widget-body">
+            <select id="" name="">
+                <option value="">all</option>
+            </select>
         </div>
     </div>
 </script>

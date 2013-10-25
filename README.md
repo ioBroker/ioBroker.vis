@@ -31,6 +31,12 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta26
+* (Hobbyquaker) Filter implementiert
+
+### 0.9beta25
+* (Bluefox) Fixed bugs
+
 ### 0.9beta24
 * (Bluefox) Fix error in hqSlider
 * (Bluefox) Fix error if hqWidgets is invisible. e.g. Wrong position of all pop up windows (including Shutter)
