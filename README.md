@@ -31,6 +31,12 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta27
+
+* (Hobbyquaker) Bugfix filter
+* (Hobbyquaker) Widget "jqui-mfd - hm_ctrl - heating"
+* (Bluefox) dashuiEdit.js Fix error if no CSS loaded
+
 ### 0.9beta26
 * (Hobbyquaker) Filter implementiert
 

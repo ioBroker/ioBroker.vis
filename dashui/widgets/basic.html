@@ -19,6 +19,12 @@
                         $this.find("select").append("<option value='"+filters[i]+"'>"+filters[i]+"</option>");
                     }
                 }
+
+                if (dui.viewsActiveFilter[dui.activeView]) {
+
+                    $this.find("select option[value='"+dui.viewsActiveFilter[dui.activeView]+"']").attr("selected", true);
+                }
+
                 $this.find("select").change(function () {
                     dui.changeFilter($this.find("select option:selected").val(), hideEffect, hideDuration, showEffect, showDuration);
                 });

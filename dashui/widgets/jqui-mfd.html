@@ -284,26 +284,27 @@
 </script>
 
 <script type="text/ejs" id="tplMfdHeating" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Heizung + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose">
-    <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+    <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%">
         <img src="img/mfd/sani_heating_temp.png" width="100%"/>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
         <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0">aus</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="6" /><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="12" /><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="16" /><label for="<%= this.data.attr('wid') %>_radio3">75%</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="17"/><label for="<%= this.data.attr('wid') %>_radio4">100%</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio5" name="<%= this.data.attr('wid') %>_radio" value="18"/><label for="<%= this.data.attr('wid') %>_radio5">100%</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio6" name="<%= this.data.attr('wid') %>_radio" value="19"/><label for="<%= this.data.attr('wid') %>_radio6">100%</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="6" /><label for="<%= this.data.attr('wid') %>_radio1">6°</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="12" /><label for="<%= this.data.attr('wid') %>_radio2">12°</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="16" /><label for="<%= this.data.attr('wid') %>_radio3">16°</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio5" name="<%= this.data.attr('wid') %>_radio" value="18"/><label for="<%= this.data.attr('wid') %>_radio5">18°</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio6" name="<%= this.data.attr('wid') %>_radio" value="19"/><label for="<%= this.data.attr('wid') %>_radio6">19°</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio7" name="<%= this.data.attr('wid') %>_radio" value="20"/><label for="<%= this.data.attr('wid') %>_radio7">20°</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio8" name="<%= this.data.attr('wid') %>_radio" value="21"/><label for="<%= this.data.attr('wid') %>_radio8">21°</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio9" name="<%= this.data.attr('wid') %>_radio" value="22"/><label for="<%= this.data.attr('wid') %>_radio9">22°</label>
     </div>
     <br/>
-    <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:1,step:0.01}) %> />
+    <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:6,max:30,step:0.1}) %> />
     <br/>
-    <%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) * 100).toFixed(0) %>%
+    <%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value"))).toFixed(1) %>°C
     </div>
-    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200},true) %> />
+    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:600,height:200},true) %> />
     <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") != '') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
