@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:            '0.9beta24',
+    version:            '0.9beta25',
     storageKeyViews:    'dashuiViews',
     storageKeySettings: 'dashuiSettings',
     storageKeyInstance: 'dashuiInstance',
@@ -363,11 +363,16 @@ var dui = {
             }
 
         }
+
+        /* Das versursacht "Flicker" beim Wechsel der VIew und sollte an dieser Stelle
+            nicht notwendig sein (background_class wird bereits in Zeile 350 beim
+            Rendern der View gesetzt)
+
         else
         // Set background style
         if (dui.views[view].settings.style.background_class !== undefined) {
-            $("#duiview_"+view).addClass(dui.views[view].settings.style.background_class); 
-        }
+            $("#duiview_"+view).addClass(dui.views[view].settings.style.background_class);
+        } */
 
         // Views in Container verschieben
         $("#duiview_"+view).find("div[id$='container']").each(function () {
