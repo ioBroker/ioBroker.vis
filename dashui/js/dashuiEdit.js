@@ -784,40 +784,42 @@ dui = $.extend(true, dui, {
                 var sSheetList = document.styleSheets;
                 for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
                     var ruleList = document.styleSheets[sSheet].cssRules;
-                    var bglen = "hq-background-".length;
-                    for (var rule = 0; rule < ruleList.length; rule ++) {
-                        if (ruleList[rule].selectorText === undefined || ruleList[rule].selectorText == null || ruleList[rule].selectorText == "")
-                            continue;
-                            
-                        var styles = ruleList[rule].selectorText.split(' ');
-                        for (var i = 0; i < styles.length; i++) {
-                            if (styles[i] == "" || styles[i][0] != '.' || styles[i].indexOf(':') != -1)
+                    if (ruleList !== undefined && ruleList != null) {
+                        var bglen = "hq-background-".length;
+                        for (var rule = 0; rule < ruleList.length; rule ++) {
+                            if (ruleList[rule].selectorText === undefined || ruleList[rule].selectorText == null || ruleList[rule].selectorText == "")
+                                continue;
+                                
+                            var styles = ruleList[rule].selectorText.split(' ');
+                            for (var i = 0; i < styles.length; i++) {
+                                if (styles[i] == "" || styles[i][0] != '.' || styles[i].indexOf(':') != -1)
+                                    break;
+                                    
+                                var name = styles[i];
+                                name = name.replace (",", "");
+                                if (name.length > 0 && (name[0] == '.' || name[0] == '#'))
+                                    name = name.substring(1);                       
+                                var val  = name;
+                                if (name.length >= bglen && name.substring(0, bglen) == "hq-background-")
+                                    name = name.substring(bglen);
+                                    
+                                if (name.substring(0, "hq-".length) == "hq-")
+                                    name = name.substring(3);
+                                    
+                                if (name.substring(0, "ui-".length) == "ui-")
+                                    name = name.substring(3);
+                                    
+                                name = name.replace (/-/g, " ");
+                                if (name.length > 0) {
+                                    name = name[0].toUpperCase() + name.substring(1);
+                                    var fff = document.styleSheets[sSheet].href;
+                                    if (fff != null && fff != "" && fff.indexOf('/') != -1)
+                                        fff = fff.substring(fff.lastIndexOf('/')+1);
+                                    this._internalList[name] = {style: val, file: fff, attrs: ruleList[rule].style};
+                                }
                                 break;
-                                
-                            var name = styles[i];
-                            name = name.replace (",", "");
-                            if (name.length > 0 && (name[0] == '.' || name[0] == '#'))
-                                name = name.substring(1);                       
-                            var val  = name;
-                            if (name.length >= bglen && name.substring(0, bglen) == "hq-background-")
-                                name = name.substring(bglen);
-                                
-                            if (name.substring(0, "hq-".length) == "hq-")
-                                name = name.substring(3);
-                                
-                            if (name.substring(0, "ui-".length) == "ui-")
-                                name = name.substring(3);
-                                
-                            name = name.replace (/-/g, " ");
-                            if (name.length > 0) {
-                                name = name[0].toUpperCase() + name.substring(1);
-                                var fff = document.styleSheets[sSheet].href;
-                                if (fff != null && fff != "" && fff.indexOf('/') != -1)
-                                    fff = fff.substring(fff.lastIndexOf('/')+1);
-                                this._internalList[name] = {style: val, file: fff, attrs: ruleList[rule].style};
                             }
-                            break;
-                        }
+	                    }
                     }
                 }        
             }
