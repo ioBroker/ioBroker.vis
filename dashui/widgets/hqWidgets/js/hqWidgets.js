@@ -4377,10 +4377,10 @@ var hqWidgets = {
                                                              left:         obj.settings.x, 
                                                              top:          obj.settings.y}, 50);
                         if (obj.intern._jcenter)
-                            obj.intern._jcenter.stop().animate({width:  this.settings.btIconWidth, 
-                                                                height: this.settings.btIconHeight, 
-                                                                left:  (_width  - this.settings.btIconWidth)/2, 
-                                                                top:   (_height - this.settings.btIconHeight)/2}, 50);
+                            obj.intern._jcenter.stop().animate({width:  obj.settings.btIconWidth, 
+                                                                height: obj.settings.btIconHeight, 
+                                                                left:  (_width  - obj.settings.btIconWidth)/2, 
+                                                                top:   (_height - obj.settings.btIconHeight)/2}, 50);
                         obj.intern._jicon.stop().animate({top:  (_height / 15), 
                                                             left: (_width  / 15)}, 50);
                     }

@@ -24,6 +24,11 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                             var pos = btn.intern._jelement.position();
                             pos.top  = Math.round (pos.top);
                             pos.left = Math.round (pos.left);
+							if (pos.left == 0 && pos.top == 0) {
+								// suspicious
+								btn.intern._jelement = ('#' + btn.advSettings.elemName);
+							}
+							
                             // If position changed
                             if (pos.top != btn.settings.y || pos.left != btn.settings.x) {
                                 btn.SetPosition (pos.left, pos.top);
