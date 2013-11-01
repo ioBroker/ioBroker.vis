@@ -35,7 +35,8 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 * (Bluefox) New widgets Filter Bar and Navigation Bar
 * (Bluefox) Support of Active color for INFO hqWidget
-* (Bluefox) Add effect selector* (Hobbyquaker) Bugfixes Widget-Set jqui
+* (Bluefox) Add effect selector
+* (Hobbyquaker) Bugfixes Widget-Set jqui
 * (Hobbyquaker) neuer Parameter sync in Methode changeView
 * (Hobbyquaker) neue Attribute min,max,step für Widgets "jqui - hm_ctrl - Slider"
 * (Hobbyquaker) relative statt absolute Pfade für /lib und /socket.io
