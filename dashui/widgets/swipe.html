@@ -12,19 +12,19 @@
               var $this = $("#duiview_"+dui.activeView).find("[id$=swipe]")
                 
               if ($this.attr('Left-nav_view') != undefined && $this.attr('Left-nav_view')!= null){
-                dui.changeView($this.attr('Left-nav_view'), {effect:"slide",options:{direction: "left"},duration:$this.attr('duration')},{effect:"slide",options:{direction: "right"},duration:$this.attr('duration')})
+                dui.changeView($this.attr('Left-nav_view'), {effect:"slide",options:{direction: "left"},duration:$this.attr('duration')},{effect:"slide",options:{direction: "right"},duration:$this.attr('duration')},true)
               }
             },
               swipeRight: function() {
                 var $this = $("#duiview_"+dui.activeView).find("[id$=swipe]")
                  
               if ($this.attr('Right-nav_view')!= undefined && $this.attr('Right-nav_view') != null){
-                dui.changeView($this.attr('Right-nav_view'), {effect:"slide",options:{direction: "right"},duration:$this.attr('duration')},{effect:"slide",options:{direction: "left"},duration:$this.attr('duration')})
+                dui.changeView($this.attr('Right-nav_view'), {effect:"slide",options:{direction: "right"},duration:$this.attr('duration')},{effect:"slide",options:{direction: "left"},duration:$this.attr('duration')},true)
               }
             }
             });
           }
-        },
+        }
       }
     });
 </script>
