@@ -1000,7 +1000,6 @@ dui = $.extend(true, dui, {
         } else {
             return [];
         }
-
     },
     // Selector of styles (uses jquery themes)
     styleSelector: {
@@ -1861,9 +1860,9 @@ var hmSelect = {
 			};	
 		}
 		if (this.images[type]) {
-            return this.deviceImgPath + this.images[type];
+			return this.deviceImgPath + this.images[type];
         } else {
-            return "";
+			return "";
         }
 	}, // Get image for type
     _type2Str: function (type, subtype) {

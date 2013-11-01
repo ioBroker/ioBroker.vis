@@ -868,12 +868,17 @@ jQuery.extend(true, dui.binds, {
 						}
 						else
 						{
+							// Save actual state
+							var actState = (htmlBtn._state === 1) ? 1 : 0;
+							
 							if (div.barsOptions.bOnlyOneSelected){
 								for (var i = 0; i < div.barsOptions.buttons.length; i++) {
 									var btn = document.getElementById (div.barsIntern.wid+"_btn"+i);
 									btn._state = 0;
 									$(btn).removeClass ('ui-state-active');
 								}
+								// Restore state
+								htmlBtn._state = actState;
 							}						
 						
 							if (htmlBtn._state === 1) {

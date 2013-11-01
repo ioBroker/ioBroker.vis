@@ -422,14 +422,16 @@ var dui = {
         if (filter == "") {
             // show all
             for (var widget in widgets) {
-                $("#"+widget).show(showEffect, null, parseInt (showDuration));
+				if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
+					$("#"+widget).show(showEffect, null, parseInt (showDuration));
+				}
             }
 			// Show hqWidgets
 			if (hqWidgets) {
 				setTimeout (function () {
 					var btn;
 					for (var widget in widgets) {
-						if (btn = hqWidgets.Get (widget)) {
+						if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "" && (btn = hqWidgets.Get (widget))) {
 							btn.show ();
 						}
 					}
@@ -448,16 +450,17 @@ var dui = {
             dui.viewsActiveFilter[dui.activeView] = filter.split(",");
             for (var widget in widgets) {
                 //console.log(widgets[widget]);
-                if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "" && dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
-					var btn;
-					if (hqWidgets && (btn = hqWidgets.Get (widget))) {
-						btn.hide (true);
+                if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
+					if (dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
+						var btn;
+						if (hqWidgets && (btn = hqWidgets.Get (widget))) {
+							btn.hide (true);
+						}
+						$("#"+widget).hide(hideEffect, null, parseInt (hideDuration));
+					} else {
+						$("#"+widget).show(showEffect, null, parseInt(showDuration));
 					}
-                    $("#"+widget).hide(hideEffect, null, parseInt (hideDuration));
-                } 
-				else {
-                    $("#"+widget).show(showEffect, null, parseInt(showDuration));
-                }
+				}
             }
 			if (hqWidgets) {
 				setTimeout (function () {
@@ -465,8 +468,10 @@ var dui = {
 					// Show hqWidgets
 					for (var widget in widgets) {
 						if (btn = hqWidgets.Get (widget)) {
-							if (!(widgets[widget].data.filterkey && widgets[widget].data.filterkey != "" && dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
-								btn.show ();
+							if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
+								if (!(dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
+									btn.show ();
+								}
 							}
 						}
 					}						
@@ -482,7 +487,7 @@ var dui = {
     renderWidget: function (view, id) {
         var widget = dui.views[view].widgets[id];
         
-        ////console.log("renderWidget("+view+","+id+")");
+        //console.log("renderWidget("+view+","+id+")");
         // Add to the global array of widgets
         dui.widgets[id] = {
             wid: id,
