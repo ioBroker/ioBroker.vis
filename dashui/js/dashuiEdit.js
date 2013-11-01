@@ -96,9 +96,9 @@ dui = $.extend(true, dui, {
     },
     delView: function () {
         if (confirm("Really delete view "+dui.activeView+"?")) {
-                ////console.log("delView "+dui.activeView);
+                //console.log("delView "+dui.activeView);
                 delete dui.views[dui.activeView];
-                ////console.log(dui.views);
+                //console.log(dui.views);
                 dui.saveRemote();
                 window.location.href = "edit.html";
            }
@@ -187,7 +187,7 @@ dui = $.extend(true, dui, {
         //console.log(dui.widgets[widgetId].data);
         $("#duiview_"+dui.activeView).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"], "view": dui.activeView}));
         if (!dui.views[dui.activeView]) {
-            ////console.log("views["+dui.activeView+"]==undefined :-(");
+            //console.log("views["+dui.activeView+"]==undefined :-(");
         }
 
         if (!dui.views[dui.activeView].widgets) {
@@ -220,7 +220,7 @@ dui = $.extend(true, dui, {
     dupWidget: function () {
         var activeView = dui.activeView;
         var targetView = $("#select_view_copy option:selected").val();
-        ////console.log(activeView + "." + dui.activeWidget + " -> " + targetView);
+        //console.log(activeView + "." + dui.activeWidget + " -> " + targetView);
         var tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;
         var data = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].data);
         var style = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].style);
@@ -606,13 +606,13 @@ dui = $.extend(true, dui, {
         // Widget selektieren
         $("#select_active_widget option").removeAttr("selected");
         $("#select_active_widget option[value='"+id+"']").prop("selected", true);
-        ////console.log($("#select_active_widget").html());
+        //console.log($("#select_active_widget").html());
         $("#select_active_widget").multiselect("refresh");
 
-        ////console.log("left:"+$this.css("left"));
-        ////console.log("top:"+$this.css("top"));
-        ////console.log("height:"+$this.outerHeight());
-        ////console.log("width:"+$this.outerWidth());
+        //console.log("left:"+$this.css("left"));
+        //console.log("top:"+$this.css("top"));
+        //console.log("height:"+$this.outerHeight());
+        //console.log("width:"+$this.outerWidth());
 
         if ($("#snap_type option:selected").val() == 2) {
             var gridWidth = parseInt($("#grid_size").val(),10);
@@ -919,7 +919,7 @@ dui = $.extend(true, dui, {
             var $this = $(this);
             var attr = $this.attr("id").slice(17);
             var val = $this.val();
-            ////console.log("change "+attr+" "+val);
+            //console.log("change "+attr+" "+val);
             $("#duiview_"+dui.activeView).css(attr, val);
 			if (!dui.views[dui.activeView].settings.style) {
 				dui.views[dui.activeView].settings.style = {};
@@ -933,7 +933,7 @@ dui = $.extend(true, dui, {
             var $this = $(this);
             var attr = $this.attr("id").slice(13);
             var val = $this.val();
-            ////console.log("change "+attr+" "+val);
+            //console.log("change "+attr+" "+val);
             dui.views[dui.activeView].settings[attr] = val;
             dui.saveRemote();
         }).keyup(function () { 
@@ -959,7 +959,6 @@ dui = $.extend(true, dui, {
         dui.instance = storage.get(dui.storageKeyInstance);
         if (!dui.instance) {
             $("#instance").hide();
-            return;
         } else {
 
         }
@@ -983,7 +982,7 @@ dui = $.extend(true, dui, {
             dui.views[dui.activeView].filterList = [];
             
             for (var widget in widgets) {
-                if (widgets[widget].data.filterkey != "" && widgets[widget].data.filterkey !== undefined) {
+                if (widgets[widget] && widgets[widget].data.filterkey != "" && widgets[widget].data.filterkey !== undefined) {
 					var isFound = false;
 					for (var z = 0; z < dui.views[dui.activeView].filterList.length; z++) {
 						if (dui.views[dui.activeView].filterList[z] == widgets[widget].data.filterkey) {
@@ -1022,12 +1021,13 @@ dui = $.extend(true, dui, {
             id:            -1,
             filterFile:    null,
             filterName:    null,
-            filterAttrs:   null,
+            filterAttrs:   null
         },
         _findTitle: function (styles, style) {
             for(var st in styles) {
-                if (styles[st] == style)
+                if (styles[st] == style) {
                     return ((st == "") ? style : st);
+                }
             }
             return style;
         },
@@ -1292,7 +1292,7 @@ var imageSelect = {
         parent:      $('body'), 
         elemName:    "idialog_",
         zindex:      5050,
-        filter:      null,   // filter
+        filter:      null    // filter
     },
     _pictDir:    "img/",
     _rootDir:    null,
@@ -1644,7 +1644,7 @@ var colorSelect = {
         current:     null,   // current value
         parent:      $('body'), 
         elemName:    "idialog_",
-        zindex:      5050,
+        zindex:      5050
     },
     _selectText: "",
     _cancelText: "",    
@@ -1957,7 +1957,7 @@ var hmSelect = {
 				{name:'Type',       index:'Type',        width:80,  sortable:false, align:"right", search: false},
 				{name:'Units',      index:'Unit',        width:80,  sorttype:"text", search: false},
 				{name:'Description',index:'Description', width:400, sorttype:"text"},
-				{name:'_ID',        index:'_ID',         width:0,   hidden:true},
+				{name:'_ID',        index:'_ID',         width:0,   hidden:true}
 			],
 			onSelectRow: function(id) {
 				value    = $("#hmVarsContent").jqGrid ('getCell', id, '_ID');
@@ -2062,10 +2062,10 @@ var hmSelect = {
 				{name:'Name',        index:'Name',        width:250, sortable:"text"},
                 {name:'data',        index:'data',        width:1,   hidden:true},
 				{name:'Description', index:'Description', width:570, sorttype:"text"},
-				{name:'_ID',         index:'_ID',         width:0,   hidden:true},
+				{name:'_ID',         index:'_ID',         width:0,   hidden:true}
 			],
 			onSelectRow: function(id) {
-				value    = $("#hmProgsContent").jqGrid ('getCell', id, "_ID");
+				var value    = $("#hmProgsContent").jqGrid ('getCell', id, "_ID");
                 valueObj = null;
 				if (value != null && value != "") {
 					$(":button:contains('"+hmSelect._selectText+"')").prop("disabled", false).removeClass("ui-state-disabled");
@@ -2346,7 +2346,7 @@ var hmSelect = {
                                     "Interface": device.Interface,
                                     "HssType":   device.HssType,
                                     "Address":   device.Interface + "." + device.Address,
-                                    "Name":      device.Name,
+                                    "Name":      device.Name
                             };
                     }
                     else {
@@ -2401,7 +2401,7 @@ var hmSelect = {
                                                 "Interface": device.Interface,
                                                 "HssType":   device.HssType,
                                                 "Address":   device.Interface+"."+channel.Address,
-                                                "Name":      channel["Name"],
+                                                "Name":      channel["Name"]
                                         };
                                         newDevices[idChn].cnt = iPnts;                                        
                                         newDevices[idChn].Channels = [];
@@ -2416,7 +2416,7 @@ var hmSelect = {
                                         "Interface": device["Interface"],
                                         "HssType":   device["HssType"],
                                         "Address":   device["Interface"]+"."+channel["Address"],
-                                        "Name":      channel["Name"],
+                                        "Name":      channel["Name"]
                                 };
                             }
                         }
@@ -2626,7 +2626,7 @@ var hmSelect = {
 				{name:'Type',     index:'Type',      width:120, sorttype:"text"},		
 				{name:'Function', index:'Function',  width:120, hidden:true, search: false, sorttype:"text"},		
 				{name:'Address',  index:'Address',   width:220, sorttype:"text"},
-				{name:'_ID',      index:'_ID',       width:0,   hidden:true},
+				{name:'_ID',      index:'_ID',       width:0,   hidden:true}
 			],
 			onSelectRow: function(id) {
 				value    = $("#hmDevsContent").jqGrid ('getCell', id, '_ID');

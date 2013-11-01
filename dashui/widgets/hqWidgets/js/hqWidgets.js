@@ -91,13 +91,13 @@ var hqWidgets = {
         gWindowOpened: 1,
         gWindowTilted: 2,
         gWindowToggle: 3,
-        gWindowUpdate: 4,
+        gWindowUpdate: 4
     },
     gSwingType: {
         // Type of the leaf
         gSwingDeaf:  0, // Window or door cannot be opened
         gSwingLeft:  1, // Window or door opened on the right side
-        gSwingRight: 2, // Window or door opened on the left side
+        gSwingRight: 2  // Window or door opened on the left side
     },
     // Window handle position
     gHandlePos: {
@@ -109,7 +109,7 @@ var hqWidgets = {
     gLockType: {
         gLockClose:    0, // Command to close lock
         gLockOpen:     1, // Command to open lock
-        gLockOpenDoor: 2, // Command to open door
+        gLockOpenDoor: 2  // Command to open door
     },
     gDlgResult: {
         // Dialog result
@@ -118,7 +118,7 @@ var hqWidgets = {
         gDlgCancel:   2,
         gDlgYes:      3,
         gDlgNo:       4,
-        gDlgInvalid: -1,
+        gDlgInvalid: -1
     },
     gDynamics: {
         gRightClickDetection : null,    // Timer to detect the right click
@@ -132,7 +132,7 @@ var hqWidgets = {
         gDivID               : 0,       // Used for div name generation
         gBodyStyle           : "",      // Body class
         gElements            : [],
-        gClickTimer          : null,    // Timer to filer out the double clicks
+        gClickTimer          : null     // Timer to filer out the double clicks
     },
     translate: function (text) {
         return text;
@@ -140,10 +140,11 @@ var hqWidgets = {
     TempFormat: function (t){
         var tStr = parseFloat(Math.round(t * 10) / 10).toFixed(1) + "";
         if (this.gOptions.gLocale != 'de' && 
-            this.gOptions.gLocale != 'ru')
+            this.gOptions.gLocale != 'ru') {
             return tStr;
-        else
+        }else{
             return tStr.replace (".", ",");
+        }
     },
     Clone: function (obj) {
         if (null == obj || "object" != typeof obj) return obj;
@@ -493,7 +494,7 @@ var hqWidgets = {
         var advSettings = {
             // Parent and container (Will not be stored)
             elemName:     null,         // name of the container HTML element (div)
-            parent:      $('body'),     // jQuery parent class
+            parent:       $('body')     // jQuery parent class
         };
         
         var settings = {       
@@ -613,8 +614,8 @@ var hqWidgets = {
                 showPinned: false,        // If show window pinned
                 isMovable: true,
                 isResizable: true ,               
-                content:   "",            // Dynamic content of the window as html                
-            },
+                content:   ""             // Dynamic content of the window as html
+            }
         };
         
         // Local variables (Will not be stored)
@@ -691,8 +692,8 @@ var hqWidgets = {
         this.intern._element = document.getElementById (this.advSettings.elemName);
         // Create HTML container if not exists
         if (!this.intern._element) {
-            var $newdiv1 = $('<div id="'+this.advSettings.elemName+'"></div>');
-            this.advSettings.parent.append ($newdiv1); 
+            var newdiv1 = $('<div id="'+this.advSettings.elemName+'"></div>');
+            this.advSettings.parent.append (newdiv1);
             this.intern._element = document.getElementById (this.advSettings.elemName);
         }
         else {
@@ -2206,15 +2207,15 @@ var hqWidgets = {
                                 
                 if (this.intern._jcircle) {
                     this.intern._jcircle.css({left:   this.settings.x - this.settings.dimmerThick, 
-                                                top:    this.settings.y - this.settings.dimmerThick,
-                                                /*width:  this.settings.width  + this.settings.dimmerThick*2,
+                                                top:    this.settings.y - this.settings.dimmerThick/*,
+                                                width:  this.settings.width  + this.settings.dimmerThick*2,
                                                 height: this.settings.height + this.settings.dimmerThick*2*/
                                                 }); // Set size
                 }
                 
                 if (this.intern._jcenter && this.settings.buttonType != hqWidgets.gButtonType.gTypeCam) {
                     this.intern._jcenter.css({left:   (this.settings.width  - this.settings.btIconWidth) / 2, 
-                                              top:    (this.settings.height - this.settings.btIconHeight) / 2,
+                                              top:    (this.settings.height - this.settings.btIconHeight) / 2
                                              }); // Set position                 
                 }
                 if (this.intern._jleft) {
@@ -2946,7 +2947,7 @@ var hqWidgets = {
                                               left:   this.settings.x, 
                                               width:  this.intern._jelement.width(), 
                                               height: this.intern._jelement.height(),
-                                              'z-index': 22, 
+                                              'z-index': 22
                                               });
                                                 
                 this.intern._jbigWindow.animate ({top:    this.intern._jbigWindow.y, 
@@ -3181,9 +3182,9 @@ var hqWidgets = {
                     if (this.intern._jelement.leaf[index].handleState == hqWidgets.gHandlePos.gPosTilted)
                         state = hqWidgets.gWindowState.gWindowTilted;
                         
-                    var h = wnd.divs[3].height();
+                    var hh = wnd.divs[3].height();
                     var w = wnd.divs[3].width();
-                    var size = (h > w) ? w : h;
+                    var size = (hh > w) ? w : hh;
                
                     // Show tilted state
                     if (wnd.style && wnd.style != hqWidgets.gSwingType.gSwingDeaf && 
@@ -3213,7 +3214,7 @@ var hqWidgets = {
                         wnd.divs[wnd.leafIndex].css ({top: wnd.ooffset-3, left: 0, width: wnd.owidth, height: wnd.height});
                         // Set handle state
                         wnd.divs[4].css({width: size * 0.15, height: 2});
-                        wnd.divs[4].css({top: (wnd.divs[3].height() - wnd.divs[4].height()) / 2, });
+                        wnd.divs[4].css({top: (wnd.divs[3].height() - wnd.divs[4].height()) / 2});
                         wnd.divs[4].addClass('hq-blind-handle-opened hq-blind-handle-bg');
                         wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 1});
                     }
@@ -3228,13 +3229,13 @@ var hqWidgets = {
                         wnd.divs[wnd.leafIndex].css ({top:  wnd.ooffset-3, left: wnd.width-wnd.owidth-1, width: wnd.owidth, height: wnd.height});
                         // Set handle state
                         wnd.divs[4].css({width: size * 0.15, height: 2});
-                        wnd.divs[4].css({top: (wnd.divs[3].height() - wnd.divs[4].height()) / 2, });
+                        wnd.divs[4].css({top: (wnd.divs[3].height() - wnd.divs[4].height()) / 2});
                         wnd.divs[4].addClass('hq-blind-handle-opened hq-blind-handle-bg');
                         wnd.divs[4].css({left: 0});
                     }
                 }			
             }
-        }
+        };
         this.SetTemperature = function (temp)	{
             if (temp) {
                 // State is no more unknown 
@@ -3269,7 +3270,7 @@ var hqWidgets = {
                 if (this.intern._jtemp)    this.intern._jtemp.html('--,-&#176;C');
                 if (this.intern._jhumid)   this.intern._jhumid.html('--,-%');
             }
-        }
+        };
         this.OnContextMenu = function (x_, y_, isTouch)	{
             if (this.intern._isEditMode && this.intern._contextMenu && !this.intern._contextMenu.IsEmpty ())
             {
@@ -3932,7 +3933,7 @@ var hqWidgets = {
             }                
                 
             this.dynStates = $.extend (this.dynStates, dynOptions);
-        }
+        };
         this.SetSettings = function (options, isSave) {
             
             // Styles
@@ -4312,7 +4313,7 @@ var hqWidgets = {
                                       left:   0,//this.settings.x,
                                       'z-index': 21,
                                       position: 'absolute',
-                                      "background-color": "transparent",
+                                      "background-color": "transparent"
                                       });
         this.intern._eventhnd.parentQuery = this;
         // ------------ Install all handlers on invisible handling div -----------------------------

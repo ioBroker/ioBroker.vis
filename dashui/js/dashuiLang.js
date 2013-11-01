@@ -97,7 +97,7 @@ dui = $.extend(true, dui, {
                 "Widget Attributes:":{"en" : "Widget Attributes:", "de": "Widget-Eigenschaften:"},
                 "Action on click:" : {"en" : "Action on click:", "de": "Aktion beim Anklicken:"},
                 "Disable device filter:" : {"en" : "Disable device filter:", "de": "Schalte Ger&auml;tefilter aus:"},
-                "filter_key"       : {"en" : "Filter key:",  "de": "Filterwort:"},
+                "filter_key"       : {"en" : "Filter key:",  "de": "Filterwort:"}
             };
         }
         if (this.words[text]) {

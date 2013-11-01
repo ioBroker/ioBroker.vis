@@ -60,11 +60,12 @@ jQuery.extend(true, dui.binds, {
         },
         _editSliderHandler: function (attr_name, div, min, max) {
             var elem = document.getElementById ('inspect_' + attr_name);
-            if (elem != null) {
+            if (elem == null) {
+            } else {
                 elem.ctrlAttr = attr_name;
                 elem.parent   = div;
                 var parent = $('#inspect_' + attr_name);
-                parent.html ("<table style='no-spaces'><tr style='no-spaces'><td style='no-spaces'><input type='text' size='3' value='"+div.barsOptions[attr_name]+"' id='inspect_" + attr_name+ "_text'></td><td style='no-spaces'><div style='width: "+(dui.binds.bars.width - 40)+"px' id='inspect_" + attr_name+ "_slider'></div></td></tr></table>");
+                parent.html("<table style='no-spaces'><tr style='no-spaces'><td style='no-spaces'><input type='text' size='3' value='" + div.barsOptions[attr_name] + "' id='inspect_" + attr_name + "_text'></td><td style='no-spaces'><div style='width: " + (dui.binds.bars.width - 40) + "px' id='inspect_" + attr_name + "_slider'></div></td></tr></table>");
 
                 var slider = document.getElementById ("inspect_" + attr_name+ "_slider");
                 var text   = document.getElementById ("inspect_" + attr_name+ "_text");
@@ -75,26 +76,26 @@ jQuery.extend(true, dui.binds, {
                 text.ctrl        = div;
                 text.attr_name   = attr_name;
                 
-                var slider = $("#inspect_" + attr_name+ "_slider").slider({
+                $("#inspect_" + attr_name + "_slider").slider({
                     min: min,
                     max: max,
                     range: "min",
                     value: div.barsOptions[attr_name],
-                    slide: function( event, ui ) {
+                    slide: function (event, ui) {
                         var div = this.ctrl;
                         var attr_name = this.attr_name;
                         $(this.jText).val(ui.value);
                         if (div.barsOptions[attr_name] != ui.value) {
                             div.barsOptions[attr_name] = ui.value;
                             if (!isNaN(div.barsOptions[attr_name])) {
-                                dui.binds.bars.init (div.barsIntern.wid);
+                                dui.binds.bars.init(div.barsIntern.wid);
                                 dui.binds.bars.editSave(div);
                             }
                         }
                     }
                 });
-                $( "#inspect_" + attr_name+ "_text" ).change(function() {
-                  this.slider.slider( "value", $(this).val() );
+                $("#inspect_" + attr_name + "_text").change(function () {
+                    this.slider.slider("value", $(this).val());
                 });                
             }	        
         },
@@ -266,10 +267,10 @@ jQuery.extend(true, dui.binds, {
 			text += "<table style='width:"+w+"px; height:"+h+"px' class='no-spaces'>";
 			if (isHorizontal) {
 				text += "<tr class='no-spaces' style='height:"+div.barsOptions.bHeight+"px'>";
-				for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-					text += "<td class='no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, i, div.barsOptions) + "</td>";
-                    if (i != div.barsOptions.buttons.length - 1)
-                        text += "<td class='no-spaces' style='width:"+div.barsOptions.bSpace+"px'></td>";
+				for (var d = 0; d < div.barsOptions.buttons.length; d++) {
+					text += "<td class='no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, d, div.barsOptions) + "</td>";
+                                       if (d != div.barsOptions.buttons.length - 1)
+                                           text += "<td class='no-spaces' style='width:"+div.barsOptions.bSpace+"px'></td>";
 				}
 				text += "</tr>";
 			}
@@ -296,32 +297,36 @@ jQuery.extend(true, dui.binds, {
 					var j = $("#"+this.ctrlId+"_content");
 					if (j.css ('display') == 'none') {
 						$('#'+this.ctrlId+"_button").button ('option', {icons: {primary: "ui-icon-carat-1-s"}});
-					}
-					else
+					} else {
 						$('#'+this.ctrlId+"_button").button ('option', {icons: {primary: "ui-icon-carat-1-n"}});
-					$("#"+this.ctrlId+"_content").slideToggle("slow");
+                    }
+                    j.slideToggle("slow");
 				});
 			}
 		
             var hMax = 0;
             var wMax = 0;
-			for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-                var btn = $('#'+div.barsIntern.wid+"_btn"+i);
+			for (var b = 0; b < div.barsOptions.buttons.length; b++) {
+                var btn = $('#'+div.barsIntern.wid+"_btn"+b);
 				//btn.button();
-                if (hMax < btn.height()) hMax = btn.height ();
-                if (wMax < btn.width())  wMax = btn.width ();
+                if (hMax < btn.height()) {
+                    hMax = btn.height();
+                }
+                if (wMax < btn.width()) {
+                    wMax = btn.width();
+                }
 			}
             if (wMax != 0 && hMax != 0) {
-                for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-                    var html_btn = document.getElementById (div.barsIntern.wid+"_btn"+i);
+                for (var u = 0; u < div.barsOptions.buttons.length; u++) {
+                    var html_btn = document.getElementById (div.barsIntern.wid+"_btn"+u);
                     html_btn.ctrl = div;
-                    html_btn.ctrlId = i;
-                    var btn = $(html_btn);
-                    btn.width(wMax);
-                    btn.height(hMax);
-                    btn.css ({'border-radius': div.barsOptions.bRadius});
-                    btn.hover (function () { $(this).addClass ('ui-state-hover');},function () { $(this).removeClass ('ui-state-hover');});
-                    btn.click (function () { if (this.ctrl._onClick) this.ctrl._onClick (this, this.ctrl, this.ctrlId) });
+                    html_btn.ctrlId = u;
+                    var btn_ = $(html_btn);
+                    btn_.width(wMax);
+                    btn_.height(hMax);
+                    btn_.css ({'border-radius': div.barsOptions.bRadius});
+                    btn_.hover (function () { $(this).addClass ('ui-state-hover');},function () { $(this).removeClass ('ui-state-hover');});
+                    btn_.click (function () { if (this.ctrl._onClick) this.ctrl._onClick (this, this.ctrl, this.ctrlId) });
                 }
             }
 			
@@ -335,8 +340,8 @@ jQuery.extend(true, dui.binds, {
 			    div.barsOptions.position == dui.binds.bars.position.floatVertical) {
 				jDiv.css ({'position':'absolute'});
 
-				for (var i = 0; i < dui.binds.bars.themes.length; i++) {
-					jDiv.removeClass(dui.binds.bars.themes[i].css_class);
+				for (var q = 0; q < dui.binds.bars.themes.length; q++) {
+					jDiv.removeClass(dui.binds.bars.themes[q].css_class);
 				}
 				if (div.barsOptions.bTheme != "") {
 					jDiv.addClass(div.barsOptions.bTheme);
@@ -451,10 +456,10 @@ jQuery.extend(true, dui.binds, {
                 var btn = $('#barsDel'+i);
                 if (btn) {
                     btn.button();
-                    var htmlbtn = document.getElementById ('barsDel'+i);
-                    if (htmlbtn) {
-                        htmlbtn.parent = div;
-                        htmlbtn.ctrlId = i;
+                    var htmlbtn4 = document.getElementById ('barsDel'+i);
+                    if (htmlbtn4) {
+                        htmlbtn4.parent = div;
+                        htmlbtn4.ctrlId = i;
                     }
                     btn.click (function () {
                         var div = this.parent;
@@ -471,10 +476,10 @@ jQuery.extend(true, dui.binds, {
                 btn = $('#barsUp'+i);
                 if (btn) {
                     btn.button( {icons: {primary: "ui-icon-carat-1-s"}});
-                    var htmlbtn = document.getElementById ('barsUp'+i);
-                    if (htmlbtn) {
-                        htmlbtn.parent = div;
-                        htmlbtn.ctrlId = i;
+                    var htmlbtn_ = document.getElementById ('barsUp'+i);
+                    if (htmlbtn_) {
+                        htmlbtn_.parent = div;
+                        htmlbtn_.ctrlId = i;
                     }
                     btn.click (function () {
                         var div = this.parent;
@@ -578,15 +583,15 @@ jQuery.extend(true, dui.binds, {
 					}
                 }
                 
-                for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-                    sText += dui.binds.bars.editButton (div, i);
+                for (var m = 0; m < div.barsOptions.buttons.length; m++) {
+                    sText += dui.binds.bars.editButton (div, m);
                 }   
                 sText += "<tr><td><input type='button' id='barsAdd' value='"+dui.translate("Add")+"'></td></tr></table>";
                 $('#barsEditElements').remove ();
                 jParent.append (sText);
                 			
-                for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-                    sText += dui.binds.bars.editButton (div, i, true);
+                for (var n = 0; n < div.barsOptions.buttons.length; n++) {
+                    sText += dui.binds.bars.editButton (div, n, true);
                 }                   
                 dui.binds.bars._editSelectHandler ('position', div, function (div, ctrlAttr, val) {
 					if (val > 1) {
@@ -626,13 +631,13 @@ jQuery.extend(true, dui.binds, {
                 dui.binds.bars._editSliderHandler ("bSpace",  div, 0,  50);
                 dui.binds.bars._editSliderHandler ("bRadius", div, 0,  150);
                 dui.binds.bars._editSliderHandler ("bOffset", div, 0,  100);
-                dui.binds.bars._editSelectHandler ("bTextAlign",  div);
-                dui.binds.bars._editSelectHandler ("bImageAlign", div);
+                dui.binds.bars._editSelectHandler ("bTextAlign",  div, null, null);
+                dui.binds.bars._editSelectHandler ("bImageAlign", div, null, null);
                 dui.binds.bars._editCheckboxHandler ("bOnlyOneSelected", div);
                 if (div.barsIntern.wType == 'tplBarFilter' ||
 				    div.barsIntern.wType == 'tplBarNavigator') {
-                    dui.binds.bars._editSelectHandler ("bShowEffect",  div);
-                    dui.binds.bars._editSelectHandler ("bHideEffect",  div);
+                    dui.binds.bars._editSelectHandler ("bShowEffect", div, null, null);
+                    dui.binds.bars._editSelectHandler ("bHideEffect", div, null, null);
                     dui.binds.bars._editTextHandler ("bShowEffectMs", div, -1);
                     dui.binds.bars._editTextHandler ("bHideEffectMs", div, -1);
 					$('#inspect_test').button().click (function () {
@@ -722,7 +727,7 @@ jQuery.extend(true, dui.binds, {
 				}
 			}
 		},
-		init: function(wid, options, view, wType, style) {
+		init: function(wid, options, view, wType) {
 			var settings = {
 				position: 0,
                 bWidth:   100,  // Width of the button. 0 - every button has own width
@@ -747,6 +752,7 @@ jQuery.extend(true, dui.binds, {
 			}
 			var div = document.getElementById (wid);
 			var barsIntern = null;
+            var barsOptions = null;
 			
 			if (div.barsIntern) {
 				barsIntern = div.barsIntern;
@@ -756,8 +762,9 @@ jQuery.extend(true, dui.binds, {
 			if (document.getElementById ('jquerySideBar_'+wid)) {
 				$('#jquerySideBar_'+div.barsIntern.wid).remove ();
 				
-				if (document.getElementById (wid) == null) {
-					$('#duiview_' + barsIntern.view).append ("<div id='"+wid+"'></div>");
+                if (document.getElementById(wid) != null) {
+                } else {
+                    $('#duiview_' + barsIntern.view).append("<div id='" + wid + "'></div>");
 				}
 				div = document.getElementById (wid);
 				div.barsOptions = barsOptions;
@@ -770,8 +777,8 @@ jQuery.extend(true, dui.binds, {
                 div.barsOptions = {};
                 
 			var isFound = false;
-			for (var i = 0; i < dui.binds.bars.created.length; i++) {
-				if (dui.binds.bars.created[i] == wid) {
+			for (var g = 0; g < dui.binds.bars.created.length; g++) {
+				if (dui.binds.bars.created[g] == wid) {
 					isFound = true;
 					break;
 				}
@@ -798,8 +805,8 @@ jQuery.extend(true, dui.binds, {
 							var filter = dui.updateFilter();
 							if (filter.length > 0) {
 								div.barsOptions.buttons[0] = {'image': "", "text" : dui.translate("All"), "option": ""};
-								for (var i = 0; i < filter.length; i++) {	
-									div.barsOptions.buttons[i + 1] = {'image': "", "text" : filter[i].charAt(0).toUpperCase() + filter[i].slice(1).toLowerCase(), "option": filter[i]};
+								for (var x = 0; x < filter.length; x++) {
+									div.barsOptions.buttons[x + 1] = {'image': "", "text" : filter[x].charAt(0).toUpperCase() + filter[x].slice(1).toLowerCase(), "option": filter[x]};
 								}
 							}
 							else
@@ -807,14 +814,13 @@ jQuery.extend(true, dui.binds, {
 						}
 						else
 						if (div.barsIntern.wType == 'tplBarNavigator') {
-							for (var v in dui.views) {
-								div.barsOptions.buttons[div.barsOptions.buttons.length] = {'image': "", "text" : v.charAt(0).toUpperCase() + v.slice(1).toLowerCase(), "option": v};
+							for (var s in dui.views) {
+								div.barsOptions.buttons[div.barsOptions.buttons.length] = {'image': "", "text" : s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(), "option": s};
 							}
 						}
 					}
 				}
             }
-            var obj = dui.binds.bars.getWidgetByObj (div);
 			
 			this.draw(div, jDiv);
 		
@@ -824,19 +830,19 @@ jQuery.extend(true, dui.binds, {
                 if (div.barsIntern.wType == 'tplBarFilter') {
                     if (div.barsOptions.bValue != "") {
                         var values = div.barsOptions.bValue.split(",");
-                        for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-                            var isFound = false;
-                            for(var j = 0; j < values.length; i++) {
-                                if(values[i] === div.barsOptions.buttons[i].option) {
-                                    isFound = true;
+                        for (var p = 0; p < div.barsOptions.buttons.length; p++) {
+                            var isFound2 = false;
+                            for(var j = 0; j < values.length; j++) {
+                                if(values[j] === div.barsOptions.buttons[p].option) {
+                                    isFound2 = true;
                                     break;
                                 }
                             }
-                            if (isFound) {
-								var htmlBtn = document.getElementById (div.barsIntern.wid+"_btn"+i);
-								if (htmlBtn) {
-									htmlBtn.state = 1;
-									$(htmlBtn).addClass ('ui-state-active');
+                            if (isFound2) {
+								var htmlBtn2 = document.getElementById (div.barsIntern.wid+"_btn"+p);
+								if (htmlBtn2) {
+                                    htmlBtn2.state = 1;
+									$(htmlBtn2).addClass ('ui-state-active');
 								}
                             }
                         }
@@ -846,13 +852,13 @@ jQuery.extend(true, dui.binds, {
 				if (div.barsIntern.wType == 'tplBarNavigator') {
 					var v = dui.activeView;
 					if (!v) v =  div.barsIntern.view;
-				    for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-						if(v === div.barsOptions.buttons[i].option) {
-							var htmlBtn = document.getElementById (div.barsIntern.wid+"_btn"+i);
-							if (htmlBtn) {
-								htmlBtn.state = 1;
-								$(htmlBtn).addClass ('ui-state-active');
-							}
+				    for (var u = 0; u < div.barsOptions.buttons.length; u++) {
+						if(v === div.barsOptions.buttons[u].option) {
+							var htmlBtn = document.getElementById (div.barsIntern.wid+"_btn"+u);
+								if (htmlBtn) {
+									htmlBtn.state = 1;
+									$(htmlBtn).addClass ('ui-state-active');
+								}
 							break;
 						}
 					}
@@ -860,9 +866,9 @@ jQuery.extend(true, dui.binds, {
             
                 // Install on click function 
                 if (div._onClick === undefined) {
-                    div._onClick = function (htmlBtn, div, i) {
+                    div._onClick = function (htmlBtn, div, r) {
 						if (div.barsIntern.wType == 'tplBarNavigator') {
-							dui.changeView (div.barsOptions.buttons[i].option, 
+							dui.changeView (div.barsOptions.buttons[r].option,
 								{effect:div.barsOptions.bHideEffect, duration:div.barsOptions.bHideEffectMs}, 
 								{effect:div.barsOptions.bShowEffect, duration:div.barsOptions.bShowEffectMs});
 						}
@@ -871,11 +877,12 @@ jQuery.extend(true, dui.binds, {
 							// Save actual state
 							var actState = (htmlBtn._state === 1) ? 1 : 0;
 							
-							if (div.barsOptions.bOnlyOneSelected){
-								for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-									var btn = document.getElementById (div.barsIntern.wid+"_btn"+i);
-									btn._state = 0;
-									$(btn).removeClass ('ui-state-active');
+                            if (!div.barsOptions.bOnlyOneSelected) {
+                            } else {
+                                for (var f = 0; f < div.barsOptions.buttons.length; f++) {
+                                    var btn3 = document.getElementById(div.barsIntern.wid + "_btn" + f);
+                                    btn3._state = 0;
+                                    $(btn3).removeClass('ui-state-active');
 								}
 								// Restore state
 								htmlBtn._state = actState;
@@ -892,16 +899,16 @@ jQuery.extend(true, dui.binds, {
 							// install filters handler
 							if (div.barsIntern.wType == 'tplBarFilter') {
 								var filter = "";
-								for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-									if (document.getElementById (div.barsIntern.wid+"_btn"+i)._state === 1) {
-										if (div.barsOptions.buttons[i].option != "") {
-											filter += (filter == "" ? "" : ",") + div.barsOptions.buttons[i].option;
+								for (var w = 0; w < div.barsOptions.buttons.length; w++) {
+									if (document.getElementById (div.barsIntern.wid+"_btn"+w)._state === 1) {
+										if (div.barsOptions.buttons[w].option != "") {
+											filter += (filter == "" ? "" : ",") + div.barsOptions.buttons[w].option;
 										}
 										// If disable all filters
 										else {
 											filter = "";
-											for (var j = 0; j < div.barsOptions.buttons.length; j++) {
-												var btn = document.getElementById (div.barsIntern.wid+"_btn"+j);
+											for (var q = 0; q < div.barsOptions.buttons.length; q++) {
+												var btn = document.getElementById (div.barsIntern.wid+"_btn"+q);
 												btn._state = 0;
 												$(btn).removeClass ('ui-state-active');
 											}
