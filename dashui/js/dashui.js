@@ -478,7 +478,7 @@ var dui = {
             });
         }
     },
-    changeView: function (view, hideOptions, showOptions) {
+    changeView: function (view, hideOptions, showOptions, sync) {
         var effect = hideOptions && hideOptions.effect && hideOptions.effect !== "";
         hideOptions = $.extend(true, {effect:undefined,options:{},duration:0}, hideOptions);
         showOptions = $.extend(true, {effect:undefined,options:{},duration:0}, showOptions);
@@ -503,15 +503,19 @@ var dui = {
 
             if (effect) {
                 console.log("effect");
+                dui.renderView(view, true, true);
+
+                // View ggf aus Container heraus holen
+                if ($("#duiview_"+view).parent().attr("id") !== "dui_container") {
+                    $("#duiview_"+view).appendTo("#dui_container");
+                }
+
+                if (sync) {
+                    $("#duiview_"+view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration,10), function () { });
+                }
                 $("#duiview_"+dui.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration,10), function () {
 
 
-                    dui.renderView(view, true, true);
-
-                    // View ggf aus Container heraus holen
-                    if ($("#duiview_"+view).parent().attr("id") !== "dui_container") {
-                        $("#duiview_"+view).appendTo("#dui_container");
-                    }
 
                     if ($("link[href$='jquery-ui.min.css']").length ==  0) {
                         $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+dui.views[view].settings.theme+'/jquery-ui.min.css" id="jqui_theme" />');
@@ -520,11 +524,12 @@ var dui = {
                     }
                     $("style[data-href$='jquery-ui.min.css']").remove();
 
-                    $("#duiview_"+view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration,10), function () {
-                    });
+                    if (!sync) {
+                        $("#duiview_"+view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration,10), function () { });
+                    }
                 });
             } else {
-                console.log("no effect");
+
                 dui.renderView(view, true);
 
                 // View ggf aus Container heraus holen
