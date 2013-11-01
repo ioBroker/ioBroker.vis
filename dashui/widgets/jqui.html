@@ -176,6 +176,10 @@
             multiselect: function (el, options) {
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
+
+                $this.find("option:selected").removeAttr("selected");
+                $this.find("option[value='"+homematic.uiState["_"+id].Value+"']").attr("selected", true);
+
                 $this.multiselect($.extend({
                     multiple: false,
                     header: false,
