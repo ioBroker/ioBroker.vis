@@ -2,6 +2,7 @@
     "version": "0.9beta27",
     "name": "DashUI",
     "ident": "DASHUI",
+    "dirname": "dashui",
     "urlHomepage": "http://hobbyquaker.github.io/DashUI",
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.github.com/hobbyquaker/DashUI/master/dashui/io-addon.json"
