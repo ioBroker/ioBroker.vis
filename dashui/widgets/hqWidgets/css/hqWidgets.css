@@ -11,6 +11,13 @@ html,body {
 	-ms-user-select: none;
 	user-select: none;
 }
+.hq-no-space {
+    border:0px;
+    margin:0px;
+    padding:0px;
+    border-spacing:0px;
+    border-image-width:0px;
+}
 .hq-no-background-edit
 {
 	z-index:2; 

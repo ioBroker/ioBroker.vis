@@ -22,7 +22,7 @@
 
 // duiEdit - the DashUI Editor
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta27',
+    editVersion:        '0.9beta28',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -36,7 +36,7 @@ dui = $.extend(true, dui, {
                 var widget = dui.views[view].widgets[widgetId];
                 if (widget.data.hm_id != parseInt(widget.data.hm_id, 10)) {
                     if (homematic.regaIndex.Name[widget.data.hm_id]) {
-                        console.log(widget.data.hm_id+" -> "+homematic.regaIndex.Name[widget.data.hm_id][0]);
+                        //console.log(widget.data.hm_id+" -> "+homematic.regaIndex.Name[widget.data.hm_id][0]);
                         dui.views[view].widgets[widgetId].data.hm_id = homematic.regaIndex.Name[widget.data.hm_id][0];
                     }
                 }
@@ -51,17 +51,17 @@ dui = $.extend(true, dui, {
             $("#create_instance").hide();
             $("#instance").show();
 
-            console.log("adding Instance Variables");
+            //console.log("adding Instance Variables");
             var name = "dashui_"+dui.instance;
             dui.socket.emit("addStringVariable", name+"_cmd", "automatisch angelegt von DashUI.", "", function (cmd) {
                 dui.instanceCmd = cmd;
-                console.log("id "+name+"_cmd="+cmd);
+                //console.log("id "+name+"_cmd="+cmd);
                 dui.socket.emit("addStringVariable", name+"_view", "automatisch angelegt von DashUI.", "", function (view) {
                     dui.instanceView = view;
-                    console.log("id "+name+"_view="+view);
+                    //console.log("id "+name+"_view="+view);
                     dui.socket.emit("addStringVariable", name+"_data", "automatisch angelegt von DashUI.", "", function (data) {
                         dui.instanceData = data;
-                        console.log("id "+name+"_data="+data);
+                        //console.log("id "+name+"_data="+data);
                         storage.set(dui.storageKeyInstance, dui.instance);
 
                         dui.socket.emit("getIndex", function (index) {
@@ -96,15 +96,15 @@ dui = $.extend(true, dui, {
     },
     delView: function () {
         if (confirm("Really delete view "+dui.activeView+"?")) {
-                //console.log("delView "+dui.activeView);
+                ////console.log("delView "+dui.activeView);
                 delete dui.views[dui.activeView];
-                //console.log(dui.views);
+                ////console.log(dui.views);
                 dui.saveRemote();
                 window.location.href = "edit.html";
            }
     },
     dupView: function (val) {
-        console.log("dupView("+val+")");
+        //console.log("dupView("+val+")");
         if (val != "" && dui.views[val] === undefined) {
             dui.views[val] = $.extend(true, {}, dui.views[dui.activeView]);
             // Allen Widgets eine neue ID verpassen...
@@ -145,12 +145,19 @@ dui = $.extend(true, dui, {
         dui.clearWidgetHelper();
         $("#select_active_widget option[value='"+dui.activeWidget+"']").remove();
         $("#select_active_widget").multiselect("refresh");
-        $("#"+dui.activeWidget).remove();
+        
+		var widget_div = document.getElementById (dui.activeWidget);
+		if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit['delete']) {
+			widget_div.dashuiCustomEdit['delete'] (dui.activeWidget);
+		}
+        
+		$("#"+dui.activeWidget).remove();
         delete(dui.views[dui.activeView].widgets[dui.activeWidget]);
         dui.saveRemote();
         dui.inspectWidget("none");
     },
     addWidget: function (tpl, data, style) {
+        //console.log("addWidget");
         if (!$("#dui_container").find("#duiview_"+dui.activeView)) {
             $("#dui_container").append("<div id='"+dui.activeView+"'></div>");
         }
@@ -168,15 +175,19 @@ dui = $.extend(true, dui, {
                 "hm_id": 65535,
                 "hm_wid": undefined,
                 "factor": 1,
-                "digits": 6,
+                "digits": "",
+                "min": 0,
+                "max": 1,
+                "step": 0.01,
                 off_text: undefined,
                 on_text: undefined,
                 buttontext: undefined
             }, data))
         };
+        //console.log(dui.widgets[widgetId].data);
         $("#duiview_"+dui.activeView).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"], "view": dui.activeView}));
         if (!dui.views[dui.activeView]) {
-            //console.log("views["+dui.activeView+"]==undefined :-(");
+            ////console.log("views["+dui.activeView+"]==undefined :-(");
         }
 
         if (!dui.views[dui.activeView].widgets) {
@@ -209,7 +220,7 @@ dui = $.extend(true, dui, {
     dupWidget: function () {
         var activeView = dui.activeView;
         var targetView = $("#select_view_copy option:selected").val();
-        //console.log(activeView + "." + dui.activeWidget + " -> " + targetView);
+        ////console.log(activeView + "." + dui.activeWidget + " -> " + targetView);
         var tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;
         var data = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].data);
         var style = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].style);
@@ -238,7 +249,9 @@ dui = $.extend(true, dui, {
     inspectWidget: function (id) {
 	
         //console.log("inspectWidget("+id+")");
-
+        if (dui.widgets[id]) {
+            //console.log(dui.widgets[id].data);
+        }
         $("#select_active_widget option[value='"+id+"']").prop("selected", true);
         $("#select_active_widget").multiselect("refresh");
 
@@ -276,11 +289,18 @@ dui = $.extend(true, dui, {
 
         var widget_attrs  = $("#" + widget.tpl).attr("data-dashui-attrs").split(";");
         var widget_filter = $("#" + widget.tpl).attr("data-dashui-filter");
-        $('#widget_attrs_fix').show ();
+        $('#inspect_comment_tr').show ();
+        $('#inspect_class_tr').show ();
+        var widget_div = document.getElementById (dui.activeWidget);
+        var editParent = $("#widget_attrs").css({"width": "100%"});
        
+        // Edit all attributes
         for (var attr in widget_attrs) {
             if (widget_attrs[attr] != "") {
-                if (widget_attrs[attr] === "hm_id") {
+                if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit[widget_attrs[attr]]) {
+                    widget_div.dashuiCustomEdit[widget_attrs[attr]](dui.activeWidget, editParent);
+                } else if (widget_attrs[attr] === "hm_id") {
+                    // Edit for Homematic ID
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+':</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="5"><input type="button" id="inspect_'+widget_attrs[attr]+'_btn" value="..."  style="width:30px"><div id="inspect_'+widget_attrs[attr]+'_desc"></div></td></tr>');
                     document.getElementById ("inspect_"+widget_attrs[attr]+"_btn").jControl = widget_attrs[attr];
                     $("#inspect_"+widget_attrs[attr]+"_desc").html(dui.getObjDesc (widget.data[widget_attrs[attr]]));
@@ -296,17 +316,42 @@ dui = $.extend(true, dui, {
                                      homematic.regaObjects[value]["Type"] == "LEVEL")) {
                                     var parent = homematic.regaObjects[value]["Parent"];
                                     if (homematic.regaObjects[parent]["DPs"] !== undefined && 
-                                        homematic.regaObjects[parent]["DPs"]["WORKING"] !== undefined)
-                                    {
+                                        homematic.regaObjects[parent]["DPs"]["WORKING"] !== undefined) {
                                         $("#inspect_hm_wid").val(homematic.regaObjects[parent]["DPs"]["WORKING"]);
                                         $("#inspect_hm_wid").trigger('change');
                                     }
                                 }
                             }
+							// Try to find Function of the device and fill the Filter field
+							if (document.getElementById ('inspect_filterkey')) {
+								if ($('#inspect_filterkey').val() == "") {
+									var hm_id = value;
+									var func = null;
+									while (hm_id && homematic.regaObjects[hm_id]) {
+										for (var t = 0; t < homematic.regaIndex["ENUM_FUNCTIONS"].length; t++) {
+											var list = homematic.regaObjects[homematic.regaIndex["ENUM_FUNCTIONS"][t]];
+											for (var z = 0; z < list['Channels'].length; z++) {
+												if (list['Channels'][z] == hm_id) {
+													func = list.Name;
+													break;
+												}
+											}
+											if (func)
+												break;
+										}
+										if (func)
+											break;
+											
+										hm_id = homematic.regaObjects[hm_id]['Parent'];
+									}
+									if (func)
+										$('#inspect_filterkey').val(func).trigger ('change');
+								}
+                            }
                         }, widget_filter);
                     });
-                } else
-                if (widget_attrs[attr] === "hm_wid") {
+                } else if (widget_attrs[attr] === "hm_wid") {
+                    // Eidt for Homematic Working ID
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+':</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="5"><input type="button" id="inspect_'+widget_attrs[attr]+'_btn" value="..."  style="width:30px"><div id="inspect_'+widget_attrs[attr]+'_desc"></div></td></tr>');
                     document.getElementById ("inspect_"+widget_attrs[attr]+"_btn").jControl = widget_attrs[attr];
                     $("#inspect_"+widget_attrs[attr]+"_desc").html(dui.getObjDesc (widget.data[widget_attrs[attr]]));
@@ -318,8 +363,8 @@ dui = $.extend(true, dui, {
                             $("#inspect_"+obj).trigger('change');
                         }, 'WORKING');
                     });
-                } else
-                if (widget_attrs[attr] === "src") {
+                } else if (widget_attrs[attr] === "src") {
+                    // Image src
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+':</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/><input type="button" id="inspect_'+widget_attrs[attr]+'_btn" value="..."></td></tr>');
                     document.getElementById ("inspect_"+widget_attrs[attr]+"_btn").jControl = widget_attrs[attr];
                     // Select image Dialog
@@ -334,21 +379,22 @@ dui = $.extend(true, dui, {
                             }};
                         imageSelect.Show (settings);
                     });
-                } else
-                if (widget_attrs[attr] === "hqoptions") {
-                    //$("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+'</td><td><textarea id="inspect_'+widget_attrs[attr]+'" rows="2" cols="44"></textarea></td></tr>');
-                    $('#widget_attrs_fix').hide ();
+                } else if (widget_attrs[attr] === "hqoptions") {
+                    // hqWidgets options
+                    $('#inspect_comment_tr').hide ();
+                    $('#inspect_class_tr').hide ();
                     // Common settings
                     if (dui.binds.hqWidgetsExt) {
-                        hqWidgets.hqEditButton ({parent: $("#widget_attrs"), imgSelect: imageSelect, clrSelect: colorSelect, styleSelect: dui.styleSelector}, hqWidgets.Get (dui.activeWidget), function (editEl) {
+                        hqWidgets.hqEditButton ({parent: editParent, imgSelect: imageSelect, clrSelect: colorSelect, styleSelect: dui.styleSelector}, hqWidgets.Get (dui.activeWidget), function (editEl) {
                             // Special HM settings
-                            dui.binds.hqWidgetsExt.hqEditButton (hqWidgets.Get (dui.activeWidget), $("#widget_attrs"), $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);                    
+                            dui.binds.hqWidgetsExt.hqEditButton (hqWidgets.Get (dui.activeWidget), editParent, $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);                    
                         });
                     }
-                } else
-                if (widget_attrs[attr] === "weoid") {
+                } else if (widget_attrs[attr] === "weoid") {
+                    // Weather ID
                     $("#widget_attrs").append('<tr class="dashui-add-option"><td id="option_'+widget_attrs[attr]+'" ></td></tr>');
-                    $('#widget_attrs_fix').hide ();
+                    $('#inspect_comment_tr').hide ();
+                    $('#inspect_class_tr').hide ();
                     $('#option_'+widget_attrs[attr]).jweatherCity ({lang:'de', currentValue: widget.data[widget_attrs[attr]], onselect: function (wid, text, obj) {
                             dui.widgets[dui.activeWidget].data.attr('weoid', text);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
@@ -356,8 +402,8 @@ dui = $.extend(true, dui, {
                             dui.reRenderWidget(dui.activeWidget);					
                         }
                     });
-                }else
-                if (widget_attrs[attr] === "color") {
+                } else if (widget_attrs[attr] === "color") {
+                    // Color selector
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+':</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44" style="width:90%" /><input id="inspect_'+widget_attrs[attr]+'Btn"  style="width:8%" type="button" value="..."></td></tr>');
                     if (colorSelect) {
                         var btn = document.getElementById ("inspect_"+widget_attrs[attr]+"Btn");
@@ -374,10 +420,124 @@ dui = $.extend(true, dui, {
                             });
                         }
                     }
-                }else
-                if (widget_attrs[attr].slice(0,4) !== "html" && widget_attrs[attr] != 'hqoptions') {
+                } else if (widget_attrs[attr].indexOf ("nav_view") != -1) {
+                    // View selector
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+':</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/></td></tr>');
-                } else {
+					
+					// autocomplete for filter key
+					var elem = document.getElementById ('inspect_'+widget_attrs[attr]);
+					if (elem) {
+						elem._save = function () {
+							if (this.timer) 
+								clearTimeout (this.timer);
+								
+							this.timer = setTimeout (function(elem_) {
+								 // If really changed
+								var $this = $(elem_);
+								var attr = $this.attr("id").slice(8);
+								dui.widgets[dui.activeWidget].data.attr(attr, $this.val());
+								dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
+								var bt = $('#inspect_buttontext');
+								if (bt && bt.val() == "") {
+									bt.val ($this.val().charAt(0).toUpperCase() + $this.val().slice(1).toLowerCase()).trigger('change');
+								}
+								dui.reRenderWidget(dui.activeWidget);
+								dui.saveRemote();                  
+							}, 200, this);            
+						};
+						
+						$(elem).autocomplete({
+							minLength: 0,
+							source: function(request, response) {
+								var views = [];
+								for (var v in dui.views) {
+									views[views.length] = v;
+								}
+							
+								var data = $.grep(views, function(value) {
+									return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+								});            
+
+								response(data);
+							},
+							select: function (event, ui) {
+								this._save();               
+							},
+							change: function (event, ui) {
+								this._save();               
+							}
+						}).focus(function () {
+							$(this).autocomplete("search", "");
+						}).keyup (function () {
+							this._save();               
+						}).val(widget.data[widget_attrs[attr]]); 
+					}					
+					continue;
+				} else if (widget_attrs[attr].indexOf ("_effect") != -1) {
+                    // Effect selector
+                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+':</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/></td></tr>');
+					
+					// autocomplete for filter key
+					var elem = document.getElementById ('inspect_'+widget_attrs[attr]);
+					if (elem) {
+						elem._save = function () {
+							if (this.timer) 
+								clearTimeout (this.timer);
+								
+							this.timer = setTimeout (function(elem_) {
+								 // If really changed
+								var $this = $(elem_);
+								var attr = $this.attr("id").slice(8);
+								dui.widgets[dui.activeWidget].data.attr(attr, $this.val());
+								dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
+								dui.saveRemote();                  
+							}, 200, this);            
+						};
+						
+						$(elem).autocomplete({
+							minLength: 0,
+							source: function(request, response) {
+							var effects = ['',					
+										'show',
+										'blind',
+										'bounce',
+										'clip',
+										'drop',
+										'explode',
+										'fade',
+										'fold',
+										'highlight',
+										'puff',
+										'pulsate',
+										'scale',
+										'shake',
+										'size',
+										'slide'];
+							
+								var data = $.grep(effects, function(value) {
+									return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+								});            
+
+								response(data);
+							},
+							select: function (event, ui) {
+								this._save();               
+							},
+							change: function (event, ui) {
+								this._save();               
+							}
+						}).focus(function () {
+							$(this).autocomplete("search", "");
+						}).keyup (function () {
+							this._save();               
+						}).val(widget.data[widget_attrs[attr]]); 
+					}					
+					continue;
+				} else if (widget_attrs[attr].slice(0,4) !== "html" && widget_attrs[attr] != 'hqoptions') {
+                    // All other attributes
+                    $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+':</td><td><input type="text" id="inspect_'+widget_attrs[attr]+'" size="44"/></td></tr>');
+                }  else {
+                    // Text area
                     $("#widget_attrs").append('<tr id="option_'+widget_attrs[attr]+'" class="dashui-add-option"><td>'+this.translate(widget_attrs[attr])+':</td><td><textarea id="inspect_'+widget_attrs[attr]+'" rows="2" cols="44"></textarea></td></tr>');
                 }
 
@@ -389,7 +549,6 @@ dui = $.extend(true, dui, {
                             $("#inspect_"+attribute+"_desc").html(dui.getObjDesc ($(this).val()));
                         }
                         
-                        //console.log("change "+attribute);
                         dui.widgets[dui.activeWidget].data.attr(attribute, $(this).val());
                         dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = $(this).val();
                         dui.saveRemote();
@@ -404,16 +563,56 @@ dui = $.extend(true, dui, {
             $(this).val($this.css($(this).attr("id").slice(12)));
         });
 
+        // autocomplete for filter key
+        var elem = document.getElementById ('inspect_filterkey');
+        if (elem) {
+            dui.updateFilter();
+            elem._save = function () {
+                if (this.timer) 
+                    clearTimeout (this.timer);
+                    
+                this.timer = setTimeout (function(elem_) {
+                     // If really changed
+                    var $this = $(elem_);
+                    var attr = $this.attr("id").slice(8);
+                    dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
+                    dui.saveRemote();                  
+                }, 200, this);            
+            };
+            
+            $(elem).autocomplete({
+                minLength: 0,
+                source: function(request, response) {            
+                    var data = $.grep(dui.views[dui.activeView].filterList, function(value) {
+                        return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                    });            
+
+                    response(data);
+                },
+                select: function (event, ui) {
+                    this._save();               
+                },
+                change: function (event, ui) {
+                    this._save();               
+                }
+            }).focus(function () {
+                $(this).autocomplete("search", "");
+            }).keyup (function () {
+                this._save();               
+            }); 
+        }
+        
+        
         // Widget selektieren
         $("#select_active_widget option").removeAttr("selected");
         $("#select_active_widget option[value='"+id+"']").prop("selected", true);
-        //console.log($("#select_active_widget").html());
+        ////console.log($("#select_active_widget").html());
         $("#select_active_widget").multiselect("refresh");
 
-        //console.log("left:"+$this.css("left"));
-        //console.log("top:"+$this.css("top"));
-        //console.log("height:"+$this.outerHeight());
-        //console.log("width:"+$this.outerWidth());
+        ////console.log("left:"+$this.css("left"));
+        ////console.log("top:"+$this.css("top"));
+        ////console.log("height:"+$this.outerHeight());
+        ////console.log("width:"+$this.outerWidth());
 
         if ($("#snap_type option:selected").val() == 2) {
             var gridWidth = parseInt($("#grid_size").val(),10);
@@ -431,9 +630,23 @@ dui = $.extend(true, dui, {
             $this.css("left",x+"px").css("top",y+"px");
 
         }
-
-
+		var pos = $this.position ();
+		var w = $this.width ();
+		var h = $this.height ();
         $("#widget_helper")
+            .css("left", pos.left, -2)
+            .css("top", pos.top -2)
+            .css("height", $this.outerHeight()+2)
+            .css("width", $this.outerWidth()+2)
+            .show();
+
+        $("#widget_inner_helper")
+            .css("left", pos.left -1)
+            .css("top", pos.top -1)
+            .css("height", $this.outerHeight())
+            .css("width", $this.outerWidth())
+            .show();
+        /*$("#widget_helper")
             .css("left", pxAdd($this.css("left"), -2))
             .css("top", pxAdd($this.css("top"), -2))
             .css("height", $this.outerHeight()+2)
@@ -445,8 +658,7 @@ dui = $.extend(true, dui, {
             .css("top", pxAdd($this.css("top"), -1))
             .css("height", $this.outerHeight())
             .css("width", $this.outerWidth())
-            .show();
-
+            .show();*/
 
         // Interaktionen
         var resizableOptions;
@@ -486,28 +698,32 @@ dui = $.extend(true, dui, {
         if ($("#snap_type option:selected").val() == 2) {
             draggableOptions.grid = [gridWidth,gridWidth];
         }        
-        $this.draggable(draggableOptions).resizable($.extend({
-            stop: function(event, ui) {
-                var widget = ui.helper.attr("id")
-                $("#inspect_css_width").val(ui.size.width + "px");
-                $("#inspect_css_height").val(ui.size.height + "px");
-                if (!dui.views[dui.activeView].widgets[widget].style) {
-                    dui.views[dui.activeView].widgets[widget].style = {};
-                }
-                dui.views[dui.activeView].widgets[widget].style.width = ui.size.width;
-                dui.views[dui.activeView].widgets[widget].style.height = ui.size.height;
-                dui.saveRemote();
+        $this.draggable(draggableOptions);
+		if (resizableOptions.disabled !== true) {
+			resizableOptions.disabled = false;
+			$this.resizable($.extend({
+				stop: function(event, ui) {
+					var widget = ui.helper.attr("id")
+					$("#inspect_css_width").val(ui.size.width + "px");
+					$("#inspect_css_height").val(ui.size.height + "px");
+					if (!dui.views[dui.activeView].widgets[widget].style) {
+						dui.views[dui.activeView].widgets[widget].style = {};
+					}
+					dui.views[dui.activeView].widgets[widget].style.width = ui.size.width;
+					dui.views[dui.activeView].widgets[widget].style.height = ui.size.height;
+					dui.saveRemote();
 
-            },
-            resize: function (event,ui) {
-                $("#widget_helper")
-                    .css("width", (ui.element.outerWidth() + 2) + "px")
-                    .css("height", (ui.element.outerHeight() + 2)+ "px");
-                $("#widget_inner_helper")
-                    .css("width", ui.element.outerWidth() + "px")
-                    .css("height", ui.element.outerHeight() + "px");
-            }
-        }, resizableOptions));
+				},
+				resize: function (event,ui) {
+					$("#widget_helper")
+						.css("width", (ui.element.outerWidth() + 2) + "px")
+						.css("height", (ui.element.outerHeight() + 2)+ "px");
+					$("#widget_inner_helper")
+						.css("width", ui.element.outerWidth() + "px")
+						.css("height", ui.element.outerHeight() + "px");
+				}
+			}, resizableOptions));
+		}
 
         // Inspector aufrufen
         $("#inspect_wid").html(id);
@@ -619,8 +835,11 @@ dui = $.extend(true, dui, {
             var tpl = $("#select_tpl option:selected").val();
             var data = {
                 hm_id: 65535,
-                digits: 6,
-                factor: 1
+                digits: "",
+                factor: 1,
+                min: 0.00,
+                max: 1.00,
+                step: 0.01
             };
             dui.addWidget(tpl, data);
             $("#select_active_widget").append("<option value='"+dui.activeWidget+"'>"+dui.activeWidget+" ("+$("#"+dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
@@ -661,6 +880,9 @@ dui = $.extend(true, dui, {
         $(".dashui-inspect-css").change(function () {
             var $this = $(this);
             var style = $this.attr("id").substring(12);
+			if (!dui.views[dui.activeView].widgets[dui.activeWidget].style) {
+				dui.views[dui.activeView].widgets[dui.activeWidget].style = {};
+			}
             dui.views[dui.activeView].widgets[dui.activeWidget].style[style] = $this.val();
             dui.saveRemote();
             var activeWidget = $("#"+dui.activeWidget);
@@ -697,33 +919,42 @@ dui = $.extend(true, dui, {
             var $this = $(this);
             var attr = $this.attr("id").slice(17);
             var val = $this.val();
-            //console.log("change "+attr+" "+val);
+            ////console.log("change "+attr+" "+val);
             $("#duiview_"+dui.activeView).css(attr, val);
+			if (!dui.views[dui.activeView].settings.style) {
+				dui.views[dui.activeView].settings.style = {};
+			}
             dui.views[dui.activeView].settings.style[attr] = val;
             dui.saveRemote();
+        }).keyup(function () { 
+            $(this).trigger('change');
         });
         $(".dashui-inspect-view").change(function () {
             var $this = $(this);
             var attr = $this.attr("id").slice(13);
             var val = $this.val();
-            //console.log("change "+attr+" "+val);
+            ////console.log("change "+attr+" "+val);
             dui.views[dui.activeView].settings[attr] = val;
             dui.saveRemote();
+        }).keyup(function () { 
+            $(this).trigger('change');
         });
         $("#inspect_view_theme").change(function () {
             var theme = $("#inspect_view_theme option:selected").val();
-            console.log("change theme "+"css/"+theme+"/jquery-ui.min.css");
+            //console.log("change theme "+"css/"+theme+"/jquery-ui.min.css");
             dui.views[dui.activeView].settings.theme = theme;
             $("#jqui_theme").remove();
             $("style[data-href$='jquery-ui.min.css']").remove();
             $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+theme+'/jquery-ui.min.css" id="jqui_theme"/>');
             //attr("data-href", "css/"+theme+"/jquery-ui.min.css");
             dui.saveRemote();
+        }).keyup(function () { 
+            $(this).trigger('change');
         });
         $("#select_active_widget").change(function () {
             dui.inspectWidget($(this).val());
         });
-
+ 
         // Instances
         dui.instance = storage.get(dui.storageKeyInstance);
         if (!dui.instance) {
@@ -744,6 +975,32 @@ dui = $.extend(true, dui, {
         $("button").each (function (index) {
             $(this).html(dui.translate($( this ).text()));
         });
+    },
+    // collect all filter keys for given view
+    updateFilter: function () {
+        if (dui.activeView && dui.views) {
+            var widgets = dui.views[dui.activeView].widgets;
+            dui.views[dui.activeView].filterList = [];
+            
+            for (var widget in widgets) {
+                if (widgets[widget].data.filterkey != "" && widgets[widget].data.filterkey !== undefined) {
+					var isFound = false;
+					for (var z = 0; z < dui.views[dui.activeView].filterList.length; z++) {
+						if (dui.views[dui.activeView].filterList[z] == widgets[widget].data.filterkey) {
+							isFound = true;
+							break;
+						}
+					}					
+					if (!isFound) {
+						dui.views[dui.activeView].filterList[dui.views[dui.activeView].filterList.length] = widgets[widget].data.filterkey;
+					}
+                }
+            }
+            return dui.views[dui.activeView].filterList;
+        } else {
+            return [];
+        }
+
     },
     // Selector of styles (uses jquery themes)
     styleSelector: {
@@ -913,15 +1170,15 @@ dui = $.extend(true, dui, {
                             }
                         }
                     }
-                }
-                else
+                } else {
                     htmlElem.settings.styles = $.extend (htmlElem.settings.styles, this._internalList);
+                }
             }
             
             $('#'+nameImg).css  ({width: htmlElem.settings.height*2, height: htmlElem.settings.height - 4}).addClass ('ui-corner-all');
             $('#'+nameText).css ({width: htmlElem.settings.width});
             $('#'+nameBtn).button ({icons: {primary: "ui-icon-circle-triangle-s"}, text: false});
-            $('#'+nameBtn).click (htmlElem, function (e){
+            $('#'+nameBtn).click (htmlElem, function (e) {
                 dui.styleSelector._toggleDrop(e.data);
             });
             $('#'+nameBtn).height(htmlElem.settings.height).width(htmlElem.settings.height);
@@ -930,8 +1187,7 @@ dui = $.extend(true, dui, {
             if (htmlElem.settings.style != "") {
                 $('#'+nameImg).addClass (htmlElem.settings.style);
                 $('#'+nameText).html (this._findTitle(htmlElem.settings.styles, htmlElem.settings.style));
-            }
-            else {
+            } else {
                 $('#'+nameText).html ("None");
             }
             
@@ -987,13 +1243,15 @@ dui = $.extend(true, dui, {
                 //if ($(window).height() < elemBox.height() + elemBox.position().top) {
                 // Get position of last element
                 var iHeight = obj.settings.count * (obj.settings.height + 18);
-                if (iHeight > $(window).height() - elem.position().top - elem.height() - 5)
+                if (iHeight > $(window).height() - elem.position().top - elem.height() - 5) {
                     iHeight = $(window).height() - elem.position().top - elem.height() - 5;
-                else
+                } else {
                     iHeight += 5;
-                    
-                if (iHeight < 150)
+                }
+
+                if (iHeight < 150) {
                     iHeight = 150;
+                }
                 elemBox.height(iHeight + 5);
                     
                 var iWidth = $("#styleSelector"+obj.settings.id).width();
@@ -1047,7 +1305,7 @@ var imageSelect = {
     _soundImage: "sound.png",
     _curImage:   "",
     
-    Show:  function (options){
+    Show:  function (options) {
         var i = 0;
         
         if (this._selectText == "") {
@@ -1081,7 +1339,7 @@ var imageSelect = {
                 this.settings.onselect (imageSelect._pictDir+this.settings.result, this.settings.onselectArg);
             $( this ).remove ();
         }
-        dialog_buttons[this._cancelText] = function(){ 
+        dialog_buttons[this._cancelText] = function() {
             $( this ).dialog( "close" ); 
             $( this ).remove ();
         }   
@@ -1133,7 +1391,7 @@ var imageSelect = {
         }
         
         // Load directory
-        console.log("load directory "+ this._rootDir + this._curDir);
+        //console.log("load directory "+ this._rootDir + this._curDir);
         // Abfragen welche Bild-Dateien im Ordner "www/dashui/img/" vorhanden sind
         dui.socket.emit('readdir', this._rootDir + this._curDir, function(dirArr) {
             /*for (var i = 0; i < dirArr.length; i++) {
@@ -1175,7 +1433,7 @@ var imageSelect = {
         var col;
         var id = 0;
         var filters = null;
-        if (obj.settings.filter != null && obj.settings.filter != ''){
+        if (obj.settings.filter != null && obj.settings.filter != '') {
             filters = obj.settings.filter.split(';');
         } 
         
@@ -1194,7 +1452,7 @@ var imageSelect = {
                         sText += "</tr></table><table id='"+obj.settings.elemName+"_tbl1'>";
                         break;      
                     } 
-                    if (!isDir && filters){
+                    if (!isDir && filters) {
                         var isFound = false;
                         for(var i = 0; i < filters.length; i++) {
                             if (aImages[id].indexOf(filters[i]) != -1) {
@@ -1289,18 +1547,20 @@ var imageSelect = {
             
             if (image.isLast && obj.settings.curElement) image.current = obj.settings.curElement; 
             
-            image.bind ("load", {msg: image}, function (event){
+            image.bind ("load", {msg: image}, function (event) {
                 var obj_ = event.data.msg;
                 if (obj_.width() > obj_.iwidth || obj_.height() > obj_.iheight) {
-                    if (obj_.width() > obj_.height())
+                    if (obj_.width() > obj_.height()) {
                         obj_.css ({height: (obj_.height() / obj_.width())  *obj._iwidth,  width:  obj_.iwidth});
-                    else
+                    } else {
                         obj_.css ({width:  (obj_.width()  / obj_.height()) *obj_.iheight, height: obj_.iheight});
-                } 
-                if (obj_.isLast && obj_.current)
-                    $(obj_.parent.parent).animate ({scrollTop: obj_.current.image.position().top + obj_.current.image.height()}, 'fast');			
+                    }
+                }
+                if (obj_.isLast && obj_.current) {
+                    $(obj_.parent.parent).animate ({scrollTop: obj_.current.image.position().top + obj_.current.image.height()}, 'fast');
+                }
             });
-            image.error (function (){
+            image.error (function () {
                 $(this).hide();
             });
             img.bind ("mouseenter", {msg: img}, function (event) {
@@ -1310,11 +1570,12 @@ var imageSelect = {
             img.bind ("mouseleave", {msg: img}, function (event) {			
                 var obj = event.data.msg;
                 obj.removeClass("ui-state-hover");
-                if (obj == obj.parent.settings.curElement)
+                if (obj == obj.parent.settings.curElement) {
                     obj.addClass  ("ui-state-active");
-                else
+                } else {
                     obj.addClass  ("ui-state-default");
-            });				
+                }
+            });
             img.bind ("click", {msg: img}, function (event) {			
                 var obj_ = event.data.msg;
                 // back directory
@@ -1324,13 +1585,10 @@ var imageSelect = {
                     for (var t = 0; t < dirs.length - 2; t++)
                         imageSelect._curDir += dirs[t]+"/";
                     imageSelect.getFileList (obj);
-                }
-                else
-                if (obj_.result.indexOf ('.') == -1) {
+                } else if (obj_.result.indexOf ('.') == -1) {
                     imageSelect._curDir += obj_.result+"/";
                     imageSelect.getFileList (obj);
-                }
-                else {
+                } else {
                     obj.settings.result = imageSelect._curDir+obj_.result;
                     if (obj.settings.curElement) {
                         obj.settings.curElement.removeClass("ui-state-active").addClass("ui-state-default");
@@ -1340,8 +1598,7 @@ var imageSelect = {
                     $(obj).dialog('option', 'title', imageSelect._titleText + obj.settings.result);
                 }
             });				
-            img.bind ("dblclick", {msg: img}, function (event)
-            {			
+            img.bind ("dblclick", {msg: img}, function (event) {
                 var obj_ = event.data.msg;
                 obj.settings.result = imageSelect._pictDir + imageSelect._curDir + obj_.result;
                 if (obj.settings.onselect)
@@ -1367,9 +1624,7 @@ var imageSelect = {
         if (path != null && path != "") {
             if (root == undefined || root === null) {
                 root = imageSelect._pictDir;
-            }
-            else
-            if (path.length >= root.length) {
+            } else if (path.length >= root.length) {
                 if (path.substring(0, root.length) == root) {
                     path = path.substring (root.length);
                 }
@@ -1396,7 +1651,7 @@ var colorSelect = {
     _cancelText: "",    
     _titleText:  "",
     
-    Show:  function (options){
+    Show:  function (options) {
         var i = 0;
         
         if (this._selectText == "") {
@@ -1430,7 +1685,7 @@ var colorSelect = {
                 this.settings.onselect ($('#colortext').val(), this.settings.onselectArg);
             $( this ).remove ();
         }
-        dialog_buttons[this._cancelText] = function(){ 
+        dialog_buttons[this._cancelText] = function() {
             $( this ).dialog( "close" ); 
             $( this ).remove ();
         }   
@@ -1442,10 +1697,11 @@ var colorSelect = {
             modal:     true,
             buttons:   dialog_buttons
         });     
-        if (htmlElem.settings.current != null && htmlElem.settings.current != "")
+        if (htmlElem.settings.current != null && htmlElem.settings.current != "") {
             $('#colortext').val (htmlElem.settings.current);
-        else
+        } else {
             $('#colortext').val ('#FFFFFF');
+        }
         $('#colorpicker').farbtastic('#colortext');
     },
     GetColor: function () {
@@ -1604,40 +1860,44 @@ var hmSelect = {
 				'HM-WS550STH-O':     'TH_CS_thumb.png'
 			};	
 		}
-		if (this.images[type])
-			return this.deviceImgPath + this.images[type];
-		else
-			return "";
+		if (this.images[type]) {
+            return this.deviceImgPath + this.images[type];
+        } else {
+            return "";
+        }
 	}, // Get image for type
     _type2Str: function (type, subtype) {
         type    = parseInt (type);
         subtype = parseInt (subtype);
         switch (type) {
             case 2:
-                if (subtype == 6)
+                if (subtype == 6) {
                     return dui.translate('Alarm');
-                else
-                if (subtype == 2)
+                } else if (subtype == 2) {
                     return dui.translate('Logical');
-                else
-                return dui.translate('Boolean')+","+subtype;
-                
+                } else {
+                    return dui.translate('Boolean')+","+subtype;
+                }
+
             case 20:
-                if (subtype == 11)
+                if (subtype == 11) {
                     return dui.translate('String');
-                else
+                } else {
                     return dui.translate('String')+","+subtype;
+                }
             case 4:
-                if (subtype == 0)
+                if (subtype == 0) {
                     return dui.translate('Number');
-                else
+                } else {
                     return dui.translate('Number')+","+subtype;
-                    
+                }
+
             case 16:
-                if (subtype == 29)
+                if (subtype == 29) {
                     return dui.translate('Enum');
-                else
+                } else {
                     return dui.translate('Enum')+","+subtype;
+                }
             default:
                 return ''+type+","+subtype;
         }
@@ -1676,7 +1936,7 @@ var hmSelect = {
 			}
 		}
         else if (hmSelect.value != null && hmSelect.value != "") {
-			for(var i = 0; i < this.myVarsData.length; i++){
+			for(var i = 0; i < this.myVarsData.length; i++) {
 				if (hmSelect.value && this.myVarsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myVarsData[i].id;
 				}
@@ -1700,7 +1960,7 @@ var hmSelect = {
 				{name:'Description',index:'Description', width:400, sorttype:"text"},
 				{name:'_ID',        index:'_ID',         width:0,   hidden:true},
 			],
-			onSelectRow: function(id){ 
+			onSelectRow: function(id) {
 				value    = $("#hmVarsContent").jqGrid ('getCell', id, '_ID');
                 valueObj = null;
 				if (value != null && value != "") {
@@ -1762,7 +2022,7 @@ var hmSelect = {
             this.myProgsData = new Array ();
 		    var i = 0;
 			// Add all elements
-			for(var prog in programs){
+			for(var prog in programs) {
 				this.myProgsData[i] = {
 					id:           ""+(i+1), 
 					"Description":this._convertName(homematic.regaObjects[programs[prog]]["PrgInfo"]),
@@ -1783,7 +2043,7 @@ var hmSelect = {
 			}
 		}
         else if (hmSelect.value != null && hmSelect.value != "") {
-			for(var i = 0; i < this.myProgsData.length; i++){
+			for(var i = 0; i < this.myProgsData.length; i++) {
 				if (hmSelect.value && this.myProgsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myProgsData[i].id;
 				}
@@ -1805,7 +2065,7 @@ var hmSelect = {
 				{name:'Description', index:'Description', width:570, sorttype:"text"},
 				{name:'_ID',         index:'_ID',         width:0,   hidden:true},
 			],
-			onSelectRow: function(id){ 
+			onSelectRow: function(id) {
 				value    = $("#hmProgsContent").jqGrid ('getCell', id, "_ID");
                 valueObj = null;
 				if (value != null && value != "") {
@@ -1865,8 +2125,8 @@ var hmSelect = {
         
         while (result_room == "" && _id !== undefined) {
             for (var room in rooms) {
-                for (var k = 0; k < homematic.regaObjects[rooms[room]]["Channels"].length; k++){
-                    if (homematic.regaObjects[rooms[room]]["Channels"][k] == _id){
+                for (var k = 0; k < homematic.regaObjects[rooms[room]]["Channels"].length; k++) {
+                    if (homematic.regaObjects[rooms[room]]["Channels"][k] == _id) {
                         if (result_room.indexOf (homematic.regaObjects[rooms[room]]["Name"]) == -1) {
                             result_room = ((result_room == "") ? "" : ", ") + homematic.regaObjects[rooms[room]]["Name"];
                         }
@@ -1899,8 +2159,8 @@ var hmSelect = {
         
         while (result_func == "" && _id !== undefined) {
             for (var func in functions) {
-                for (var k = 0; k < homematic.regaObjects[functions[func]]["Channels"].length; k++){
-                    if (homematic.regaObjects[functions[func]]["Channels"][k] == _id){
+                for (var k = 0; k < homematic.regaObjects[functions[func]]["Channels"].length; k++) {
+                    if (homematic.regaObjects[functions[func]]["Channels"][k] == _id) {
                         if (homematic.regaObjects[functions[func]]["Name"] != "" &&
                             result_func.indexOf (homematic.regaObjects[functions[func]]["Name"]) == -1) {
                             result_func = ((result_func == "") ? "" : ", ") + homematic.regaObjects[functions[func]]["Name"];
@@ -1958,14 +2218,14 @@ var hmSelect = {
                 var iDevs = 0;
                 var iPnts = 0;
                 var iChns = 0;
-                for(var dev in devicesCCU){
+                for(var dev in devicesCCU) {
                     var idDev  = devicesCCU[dev];
                     var device = homematic.regaObjects[idDev];
                     var newChannels = new Object ();
                     iPnts = 0;
                     iChns = 0;
                     
-                    for (var chn in device.Channels){
+                    for (var chn in device.Channels) {
                         var idChn     = device["Channels"][chn];
                         var channel   = homematic.regaObjects[idChn];
                         var newPoints = new Object ();
@@ -2016,7 +2276,7 @@ var hmSelect = {
                     }
                     if (iChns > 0) {
                         if (iChns == 1 && iPnts == 0) {
-                            for (var idChn in newChannels){                    
+                            for (var idChn in newChannels) {
                                 newDevices[idChn] = {
                                     "Interface": device.Interface,
                                     "HssType":   device.HssType,
@@ -2062,7 +2322,7 @@ var hmSelect = {
                 }
                 var newDevices = new Object ();
                 var iChns = 0;
-                for(var dev in devicesCCU){
+                for(var dev in devicesCCU) {
                     var idDev  = devicesCCU[dev];
                     var device = homematic.regaObjects[idDev];
                     var isFound = false;
@@ -2091,7 +2351,7 @@ var hmSelect = {
                             };
                     }
                     else {
-                        for (var chn in device.Channels){
+                        for (var chn in device.Channels) {
                             var idChn   = device["Channels"][chn];
                             var channel = homematic.regaObjects[idChn];       
                             
@@ -2239,12 +2499,12 @@ var hmSelect = {
 		    var i = 0;
             
             // Calculate leafs
-			for(var dev in this._devices){
+			for (var dev in this._devices) {
                 if (this._devices[dev].cnt != undefined)
                     break;
                     
                 var iCnt = 0;
-                for (var chn in this._devices[dev].Channels){
+                for (var chn in this._devices[dev].Channels) {
                     iCnt++;
                     var iDps = 0;
                     for (var dp in this._devices[dev].Channels[chn].DPs) {
@@ -2257,15 +2517,15 @@ var hmSelect = {
             }            
                        
 			// Add all elements
-			for(var dev in this._devices){
+			for(var dev in this._devices) {
 				// Try to find room
-				if (this._devices[dev].room === undefined || this._devices[dev].room === null){
+				if (this._devices[dev].room === undefined || this._devices[dev].room === null) {
 					var arr = new Object ();
 					this._devices[dev].room = hmSelect._getRoom (homematic, dev, false);
 				}
                 
                 // Try to find function
-				if (this._devices[dev].func === undefined || this._devices[dev].func === null){
+				if (this._devices[dev].func === undefined || this._devices[dev].func === null) {
 					var arr = new Object ();
 					this._devices[dev].func = hmSelect._getFunction (homematic, dev, false);
 				}
@@ -2369,7 +2629,7 @@ var hmSelect = {
 				{name:'Address',  index:'Address',   width:220, sorttype:"text"},
 				{name:'_ID',      index:'_ID',       width:0,   hidden:true},
 			],
-			onSelectRow: function(id){ 
+			onSelectRow: function(id) {
 				value    = $("#hmDevsContent").jqGrid ('getCell', id, '_ID');
                 valueObj = (value != "" && value != null) ? hmSelect._devices[value] :null;
 
@@ -2492,13 +2752,12 @@ var hmSelect = {
             if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
                 $('#tabs-devs').prepend ("<div id='hmSelectFilter' class='ui-state-highlight'></div>");
                 $('#tabs-devs').prepend ("<p id='dashui-waitico'>Please wait...</p>");
-            }
-            else if (filter == 'variables') {
+            } else if (filter == 'variables') {
                 $('#tabs-vars').prepend ("<p id='dashui-waitico'>Please wait...</p>");
-            }
-            else
+            } else {
                 $('#tabs-progs').prepend ("<p id='dashui-waitico'>Please wait...</p>");
-                
+            }
+
             if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
                 $('#dev_select').click (function (e) {
                     var w = $('#hmSelect').dialog ("option", "width");
@@ -2530,7 +2789,7 @@ var hmSelect = {
 			if (_onsuccess)
 				_onsuccess (_userArg, value, valueObj);
 		}
-		dialog_buttons[this._cancelText] = function(){ 
+		dialog_buttons[this._cancelText] = function() {
 			$( this ).dialog( "close" ); 
 		}   
 		
@@ -2559,12 +2818,10 @@ var hmSelect = {
         $('#tabs-progs').height($('#hmSelect_tabs').height() - 60);
         
         this._buildDevicesGrid (homematic, filter, devFilter);
-        if (this.value != null && homematic.regaObjects[this.value] != null){
+        if (this.value != null && homematic.regaObjects[this.value] != null) {
             if (homematic.regaObjects[this.value]["TypeName"] != undefined && homematic.regaObjects[this.value]["TypeName"] == "VARDP") {
                 $('#var_select').trigger("click");
-            }
-            else
-            if (homematic.regaObjects[this.value]["TypeName"] != undefined && homematic.regaObjects[this.value]["TypeName"] == "PROGRAM") {
+            } else if (homematic.regaObjects[this.value]["TypeName"] != undefined && homematic.regaObjects[this.value]["TypeName"] == "PROGRAM") {
                 $('#prog_select').trigger("click");
             }
         }
@@ -2573,7 +2830,7 @@ var hmSelect = {
         // Custom filter
         var rows = $("#hmDevsContent").jqGrid('getGridParam', 'data');
         if (rows) {
-            for (var i = 0; i < rows.length; i++){
+            for (var i = 0; i < rows.length; i++) {
                 var isShow = true;
                 if (rows[i].level!="0")
                     continue;
@@ -2598,7 +2855,7 @@ var hmSelect = {
     _filterProgsApply: function () {
         // Custom filter
         var rows = $("#hmProgsContent").jqGrid('getGridParam', 'data');
-        for (var i = 0; i < rows.length; i++){
+        for (var i = 0; i < rows.length; i++) {
             var isShow = true;
             if (rows[i].level!="0")
                 continue;
@@ -2617,7 +2874,7 @@ var hmSelect = {
     _filterVarsApply: function () {
         // Custom filter
         var rows = $("#hmVarsContent").jqGrid('getGridParam', 'data');
-        for (var i = 0; i < rows.length; i++){
+        for (var i = 0; i < rows.length; i++) {
             var isShow = true;
             if (rows[i].level!="0")
                 continue;

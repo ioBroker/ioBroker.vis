@@ -231,8 +231,7 @@ var hqWidgets = {
     // Get button by elemName
     Get: function (buttonName) {
         var i=0;
-        while (this.gDynamics.gElements[i])
-        {
+        while (this.gDynamics.gElements[i]){
             if (this.gDynamics.gElements[i].advSettings.elemName == buttonName) {
                 return this.gDynamics.gElements[i];
             }
@@ -476,7 +475,18 @@ var hqWidgets = {
 
             return w;
         };
-        this.CyclicService ();
+        String.prototype.dimensions = function(font) {
+            var f = font || '10px "Tahoma", sans-serif',
+                    o = $('<div>' + this + '</div>')
+                            .css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hidden', 'font': f})
+                            .appendTo($('body')),
+                    w = {width: o.width(), height: o.height()};
+
+            o.remove();
+
+            return w;
+        };        
+		this.CyclicService ();
     },
     // HButton
     hqButton: function (options, advOptions) {	
@@ -514,6 +524,7 @@ var hqWidgets = {
             
             infoTextFont:     null,  // Font for the dynamic text in the middle of the button
             infoTextColor:    null,  // Color for the dynamic text in the middle of the button
+            infoTextColorActive:null,// Color for the dynamic text in the middle of the button in active state
             infoFormat:       "%s",  // format string for info
             infoCondition:    null,  // Condition like "> 0", " < 0", " >= 5", " == 6.7", "== 'true'" for active state
             infoIsHideInactive: false,// If hide if inactive state
@@ -895,7 +906,7 @@ var hqWidgets = {
 					this.intern._jright.prepend("<div id='"+this.advSettings.elemName+"_percent'></div>");
 					
 				this.intern._jPercent     =$('#'+this.advSettings.elemName+"_percent");
-				this.intern._jPercent.html("<table style='border:0px;margin:0px;padding:0px;border-spacing:0px;'><tr style='border:0px;margin:0px;padding:0px;border-spacing:0px;'><td style='border:0px;margin:0px;padding:0px;border-spacing:0px;'><img style='border-image-width:0px' src='" + hqWidgets.gOptions.gPictDir + "sun.png' /></td><td style='border:0px;margin:0px;padding:0px;border-spacing:0px;vertical-align:top' id='"+this.advSettings.elemName+"_percentValue'></td></tr></table>");
+				this.intern._jPercent.html("<table class='hq-no-space'><tr class='hq-no-space'><td class='hq-no-space'><img class='hq-no-space' src='" + hqWidgets.gOptions.gPictDir + "sun.png' /></td><td class='hq-no-space' stale='vertical-align:top' id='"+this.advSettings.elemName+"_percentValue'></td></tr></table>");
 				this.intern._jPercentValue=$('#'+this.advSettings.elemName+"_percentValue");
 				this.intern._jPercent.css({position: 'absolute', 
 										   top:(this.settings.hoursLastAction != -1) ? this.settings.width/2 -11: (this.settings.width - 9) / 2,
@@ -1280,7 +1291,7 @@ var hqWidgets = {
                 }
                 else
                 if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInfo) {
-                    this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, this.settings.infoTextColor); 
+                    this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, this.settings.infoTextColor, this.settings.infoTextColorActive); 
                 }
 				else
 				if (this.settings.buttonType == hqWidgets.gButtonType.gTypeMotion) {
@@ -1435,7 +1446,7 @@ var hqWidgets = {
                 this.intern._jelement.append ("<div id='"+this.advSettings.elemName+"_gauge'></div>");
                 this.intern._jgauge       = $('#'+this.advSettings.elemName+"_gauge");
                 this.intern._jgauge.css ({borderRadius: (this.settings.radius > 4) ? 4: this.settings.radius, position: 'absolute', 'border': '1px solid black'});
-                this.SetInfoText (this.dynStates.valueSet, this.settings.infoTextFont, this.settings.infoTextColor); 
+                this.SetInfoText (this.dynStates.valueSet, this.settings.infoTextFont, this.settings.infoTextColor, this.settings.infoTextColorActive); 
             }      
             // no else here !!!
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeCam ||
@@ -1886,7 +1897,7 @@ var hqWidgets = {
                     this.intern._jgauge.css ({left:0, top: this.settings.height - this.settings.height * pState / 100});
             }
             
-            this.SetInfoText (this.dynStates.valueSet, this.settings.infoTextFont, this.settings.infoTextColor); 
+            this.SetInfoText (this.dynStates.valueSet, this.settings.infoTextFont, this.settings.infoTextColor, this.settings.infoTextColorActive); 
             this.SetPercent (pState);
         }
         this._ShowLastActionTime = function () {
@@ -2281,18 +2292,21 @@ var hqWidgets = {
                 }
             }
         }	
-        this.SetInfoText = function (text, textFont, textColor) {
+        this.SetInfoText = function (text, textFont, textColor, activeTextColor) {
             if (this.settings.buttonType != hqWidgets.gButtonType.gTypeInfo &&
                 this.settings.buttonType != hqWidgets.gButtonType.gTypeGauge) 
                 return;
             if (text      === undefined || text      === null || text     === "") text      = null;
             if (textFont  ==  undefined || textFont  ==  null || textFont ==  "") textFont  = '20px "Tahoma", sans-serif';
             if (textColor ==  undefined || textColor ==  null || textColor==  "") textColor = "white"; 
+            if (activeTextColor ==  undefined || activeTextColor ==  null || activeTextColor==  "") activeTextColor = null; 
  
-            this.dynStates.infoText     = text;
-            this.settings.infoTextFont  = textFont;
-            this.settings.infoTextColor = textColor;
-              
+            this.dynStates.infoText           = text;
+            this.settings.infoTextFont        = textFont;
+            this.settings.infoTextColor       = textColor;
+            this.settings.infoTextColorActive = activeTextColor;
+            
+                
             if (text !== null && this.intern._jinfoText == null) {
                 this.intern._jelement.prepend("<div id='"+this.advSettings.elemName+"_infoText'></div>");
                 this.intern._jinfoText = jQuery('#'+this.advSettings.elemName + '_infoText');
@@ -2323,6 +2337,13 @@ var hqWidgets = {
                 else
                     this.SetState (hqWidgets.gState.gStateOff);
             
+                // Get active color
+                if (this.dynStates.state == hqWidgets.gState.gStateOn &&
+                    this.settings.infoTextColorActive != null && 
+                    this.settings.infoTextColorActive != "") {
+                    textColor = this.settings.infoTextColorActive;
+                }
+                
                 // format string
                 if (this.settings.infoFormat != null && this.settings.infoFormat != "") {
                     text += "";
@@ -2349,10 +2370,11 @@ var hqWidgets = {
                 this.intern._jinfoText.css({font: textFont, color: textColor});
                 this.intern._jinfoText.html ((text) || "");
                 if (text != null) {
-                    var w = text.width(textFont);
+                    var w = text.dimensions(textFont);
+					
                     // Place it in the middle
-                    this.intern._jinfoText.css({top:  (this.settings.height - this.intern._jinfoText.height()) / 2, 
-                                                left: (this.settings.width  - w) / 2,
+                    this.intern._jinfoText.css({top:  (this.settings.height - w.height) / 2, 
+                                                left: (this.settings.width  - w.width) / 2,
                                                 width: w});
                 }                                                  
             }
@@ -3461,8 +3483,9 @@ var hqWidgets = {
                 hqWidgets.gDynamics.gActiveElement = null;
         }	
         this.intern._element.parentQuery = this;
-        this.hide = function () {
-            this.intern._jelement.hide(); 
+        this.hide = function (isOnlyPanels) {
+			if (isOnlyPanels !== true)
+				this.intern._jelement.hide(); 
             if (this.intern._jright) 
                 this.intern._jright.hide (); 
             if (this.intern._jleft) 
@@ -3472,7 +3495,7 @@ var hqWidgets = {
             this.intern._jelement.show(); 
             if (this.intern._jright && (this.intern._jvalve || (this.intern._jrightText && this.intern._jrightText.html() != ""))) 
                 this.intern._jright.show (); 
-            if (this.intern._jleft && this.intern._isEditMode) 
+            if (this.intern._jleft && (this.intern._isEditMode || this.settings.showDescription)) 
                 this.intern._jleft.show ();
         }
         this.OnClick = function (isForce) {
@@ -3808,7 +3831,7 @@ var hqWidgets = {
             
             // InfoText and InfoTextCSS
             if (dynOptions.infoText !== undefined) 
-                this.SetInfoText (dynOptions.infoText, this.settings.infoTextFont, this.settings.infoTextColor);
+                this.SetInfoText (dynOptions.infoText, this.settings.infoTextFont, this.settings.infoTextColor, this.settings.infoTextColorActive);
         
             // Signal strength
             if (dynOptions.strength !== undefined) {
@@ -4136,25 +4159,28 @@ var hqWidgets = {
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInfo ||
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
                 if (options.infoTextFont !== undefined && options.infoTextColor !== undefined) 
-                    this.SetInfoText (this.dynStates.infoText, options.infoTextFont, options.infoTextColor);
+                    this.SetInfoText (this.dynStates.infoText, options.infoTextFont, options.infoTextColor, this.settings.infoTextColorActive);
                 else
                 if (options.infoTextColor !== undefined) 
-                    this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, options.infoTextColor);
+                    this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, options.infoTextColor, this.settings.infoTextColorActive);
                 else
                 if (options.infoTextFont !== undefined) 
-                    this.SetInfoText (this.dynStates.infoText, options.infoTextFont, this.settings.infoTextColor);
+                    this.SetInfoText (this.dynStates.infoText, options.infoTextFont, this.settings.infoTextColor, this.settings.infoTextColorActive);
+
+                if (options.infoTextColorActive !== undefined) 
+                    this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, this.settings.infoTextColor, options.infoTextColorActive);
                     
                 if (options.infoFormat !== undefined) {
                     this.settings.infoFormat = options.infoFormat;
-                    this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor);
+                    this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor, this.settings.infoTextColorActive);
                 }
                 if (options.infoCondition !== undefined) {
                     this.settings.infoCondition = options.infoCondition;
-                    this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor);
+                    this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor, this.settings.infoTextColorActive);
                 }
                 if (options.infoIsHideInactive !== undefined) {
                     this.settings.infoIsHideInactive = options.infoIsHideInactive;
-                    this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor);
+                    this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor, this.settings.infoTextColorActive);
                 }
             }
 

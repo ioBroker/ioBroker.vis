@@ -132,3 +132,9 @@ h4 {
     border-top: 1px dotted white;  
     border-left: 1px dotted white;
 }
+.no-spaces {
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    border-spacing:0px;
+}

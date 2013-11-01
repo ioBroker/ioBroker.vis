@@ -1,8 +1,8 @@
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgetsEdit.js"></script>
-<!--link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/jquery.multiselect.css"/>
-<link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/jquery.multiselect.filter.css"/>
-<script src="widgets/hqWidgets/js/jquery.multiselect.min.js"></script>
-<script src="widgets/hqWidgets/js/jquery.multiselect.filter.js"></script-->
+<link rel="stylesheet" type="text/css" href="../lib/css/jquery.multiselect-1.13.css"/>
+<link rel="stylesheet" type="text/css" href="../lib/css/jquery.multiselect.filter.css"/>
+<script src="../lib/js/jquery.multiselect-1.13.min.js"></script>
+<script src="../lib/js/jquery.multiselect.filter-1.5pre.js"></script>
 
 
 <script type="text/javascript">
@@ -278,6 +278,32 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                     title = title.substring(1);
                                 $('#inspect_title').val (title).trigger ('change');
                             }
+							// Try to find Function of the device and fill the Filter field
+							if (document.getElementById ('inspect_filterkey')) {
+								if ($('#inspect_filterkey').val() == "") {
+									var hm_id = value;
+									var func = null;
+									while (hm_id && homematic.regaObjects[hm_id]) {
+										for (var t = 0; t < homematic.regaIndex["ENUM_FUNCTIONS"].length; t++) {
+											var list = homematic.regaObjects[homematic.regaIndex["ENUM_FUNCTIONS"][t]];
+											for (var z = 0; z < list['Channels'].length; z++) {
+												if (list['Channels'][z] == hm_id) {
+													func = list.Name;
+													break;
+												}
+											}
+											if (func)
+												break;
+										}
+										if (func)
+											break;
+											
+										hm_id = homematic.regaObjects[hm_id]['Parent'];
+									}
+									if (func)
+										$('#inspect_filterkey').val(func).trigger ('change');
+								}
+                            }							
                         }
                     }
                     $("#inspect_"+obj).val(value).trigger("change");

@@ -3,7 +3,6 @@
 <link rel="stylesheet" href="widgets/colorpicker/css/farbtastic.css" type="text/css" />
 <script type="text/javascript" src="widgets/colorpicker/js/farbtastic.js"></script>
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgets.js"></script>
-<script type="text/javascript" src="widgets/hqWidgets/js/hqWidgetsLang.js"></script>
 
 
 <script type="text/javascript">
@@ -1339,12 +1338,12 @@ if ((typeof hqWidgets !== 'undefined')) {
 <script type="text/ejs" id="tplHqDoor" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Door" data-dashui-attrs="hm_id;hqoptions" data-hqwidgets-filter="HM-Sec-SC,HM-SCI-3-FM,HMW-Sen-SC-12-DR,HMW-IO-12-Sw14-DR">
     <%
     if (this && this.data && this.data.attr) {
-		if (this.data.attr('hqoptions')){
-			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
-		}
-		else {
-			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqDoor", this.view);
-		}
+    if (this.data.attr('hqoptions')){
+    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+    }
+    else {
+    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqDoor", this.view);
+    }
     }
     %>
 </script>

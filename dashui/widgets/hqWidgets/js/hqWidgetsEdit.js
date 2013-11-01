@@ -396,6 +396,8 @@ hqWidgets = $.extend (true, hqWidgets, {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Font:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextFont'  type='text' value='"+this.e_internal.attr.infoTextFont+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColor' type='text' value='"+this.e_internal.attr.infoTextColor+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_infoTextColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Active text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColorActive' type='text' value='"+this.e_internal.attr.infoTextColorActive+"'>";
+            sTextAdv += "<input id='"+this.e_settings.elemName+"_infoTextColorActiveBtn' style='width: 30px' type='button' value='...'></td></tr>";
         }
 
         // Percent min value, max value
@@ -504,7 +506,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             sTextAdv += "<option value='12' >"+hqWidgets.translate("Hide after 12 hours")+"</option>";
             sTextAdv += "<option value='24' >"+hqWidgets.translate("Hide after 1 day")+"</option>";
             sTextAdv += "<option value='24' >"+hqWidgets.translate("Hide after 2 days")+"</option>";
-            sTextAdv += "</select>";                
+            sTextAdv += "</select></td></tr>";                
         }
         
         // Format string
@@ -831,6 +833,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         this._EditTextHandler('infoText', '', true);   
         this._EditTextHandler('infoTextFont');   
         this._EditColorHandler('infoTextColor');   
+        this._EditColorHandler('infoTextColorActive');   
         this._EditTextHandler('infoFormat');   
         this._EditTextHandler('infoCondition');  
         
