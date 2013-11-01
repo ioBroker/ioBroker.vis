@@ -55,7 +55,7 @@
                 var $this = jQuery(el);
                 $this.click(function (e) {
                     if (dui.urlParams["edit"] !== "") {
-                        dui.changeView(options.nav_view, options.hideOptions, options.showOptions);
+                        dui.changeView(options.nav_view, options.hideOptions, options.showOptions, options.sync);
                         e.preventDefault();
                         return false;
                     }
@@ -202,8 +202,8 @@
 
 
 
-<script type="text/ejs" id="tplHtmlNav" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="navigation - HTML" data-dashui-attrs="html;nav_view;hide_effect;hide_duration;show_effect;show_duration">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %>>
+<script type="text/ejs" id="tplHtmlNav" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="navigation - HTML" data-dashui-attrs="html;nav_view;sync;hide_effect;hide_duration;hide_options;show_effect;show_options;show_duration;show_options">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:(data.attr('hide_options')?data.attr('hide_options'):{}),duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:(data.attr('show_options')?data.attr('show_options'):{}),duration:data.attr('show_duration')},sync:data.attr('sync')}) %>>
         <div class="dashui-widget-body">
             <%== this.data.attr('html') %>
         </div>
