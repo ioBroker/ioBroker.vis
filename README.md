@@ -31,6 +31,17 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta29
+
+* (Bluefox) Fix filter of untagged widgets
+* (Bluefox) Small errors fixed
+* (Bluefox) Format code with WebStorm/PhpStorm
+* (Bluefox) Fix possible error with Filter Bar
+* (Bluefox) Add filter icons
+* (Bluefox) Small changes
+* (Bluefox) Add Camera icon for filters
+* (Bluefox) Fix lastActionTime for widgets (use only states and not battery, percent and so on)
+
 ### 0.9beta28
 
 * (Bluefox) New widgets Filter Bar and Navigation Bar
