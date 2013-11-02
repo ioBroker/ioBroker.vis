@@ -196,7 +196,11 @@ dui = $.extend(true, dui, {
         if (!dui.views[dui.activeView].widgets[widgetId]) {
             dui.views[dui.activeView].widgets[widgetId] = {};
         }
-
+		
+		if (dui.views[dui.activeView].widgets[widgetId].data !== undefined) {
+			data = $.extend (data, dui.views[dui.activeView].widgets[widgetId].data, true);
+		}
+		
         dui.views[dui.activeView].widgets[widgetId] = {
             tpl: tpl,
             data: data,

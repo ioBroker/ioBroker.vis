@@ -43,9 +43,20 @@ jQuery.extend(true, dui.binds, {
                     duiWidget.data['baroptions'] = newOpt;
                     $(div).attr ('baroptions', newOpt);
                     console.log ("Stored: " + newOpt);
-                }
-                else
-                    console.log ("Cannot find " + duiWidget.advSettings.elemName + " in any view");
+                } else {
+					if (!dui.views[dui.activeView].widgets) {
+						dui.views[dui.activeView].widgets = {};
+					}
+					if (!dui.views[dui.activeView].widgets[div.barsIntern.wid]) {
+						dui.views[dui.activeView].widgets[div.barsIntern.wid] = {};
+					}
+					if (!dui.views[dui.activeView].widgets[div.barsIntern.wid].data) {
+						dui.views[dui.activeView].widgets[div.barsIntern.wid].data = {};
+					}
+                    dui.views[dui.activeView].widgets[div.barsIntern.wid].data['baroptions'] = newOpt;
+                    $(div).attr ('baroptions', newOpt);
+                    console.log ("Stored: " + newOpt);
+				}					
             }
             
             if (dui.binds.bars.editSaveTimer != null) {
@@ -989,9 +1000,9 @@ jQuery.extend(true, dui.binds, {
 								div.barsOptions.buttons[div.barsOptions.buttons.length] = {'image': "", "text" : s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(), "option": s};
 							}
 						}
+						// Save default configuration
+						dui.binds.bars.editSave(div);
 					}
-					// Save default configuration
-					dui.binds.bars.editSave(div);
 				}
             }
 			
