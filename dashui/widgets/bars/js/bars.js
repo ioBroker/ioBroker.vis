@@ -226,13 +226,94 @@ jQuery.extend(true, dui.binds, {
                 });
             }        
         },
+        _editStyleHandler: function (attr_name, div, filterFile, filterName, filterAttrs) {
+            var elem;
+            if ((elem = document.getElementById ('inspect_'+attr_name+'Parent')) != null) {
+                elem.ctrl     = div;
+                elem.ctrlAttr = attr_name;
+                if (dui.styleSelector) {
+                    dui.styleSelector.Show ({ width: 202,
+                        name:          'inspect__'+attr_name,
+                        style:         div.barsOptions[elem.ctrlAttr],
+                        parent:        $('#inspect_'+attr_name+'Parent'),
+                        filterFile:    filterFile,
+                        filterName:    filterName,
+                        filterAttrs:   filterAttrs,
+                        onchangeParam: elem,
+                        onchange: function (newStyle, obj) {
+                            var div_ = obj.ctrl;
+                            // If really changed
+                            if (div_.barsOptions[obj.ctrlAttr] != newStyle) {
+                                div_.barsOptions[obj.ctrlAttr] = newStyle;
+
+                                if (div_.barsOptions[obj.ctrlAttr] == "")
+                                    div_.barsOptions[obj.ctrlAttr] = null;
+
+                                dui.binds.bars.init (div_.barsIntern.wid);
+                                dui.binds.bars.editSave(div_);
+                            }
+                        }
+                    });
+                }
+                else {
+                    // set here just textbox to input desired style
+                }
+            }
+        },
+		_showGroupButton: function (groupName, div) {
+			var advBtn = document.getElementById (groupName + '_BtnGroup');
+			advBtn.obj       = div;
+			advBtn.groupName = groupName;
+			if (div.barsIntern[groupName+'Visible'] === undefined)
+				div.barsIntern[groupName+'Visible'] = false;
+				
+			advBtn.state = div.barsIntern[groupName+'Visible'];
+
+			$(advBtn).button({icons: {primary: (!advBtn.state) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
+				this.state = !(this.state);
+				this.obj.barsIntern[this.groupName+'Visible'] = this.state;
+				if (this.state) {
+					$(this).button("option", {icons: { primary: "ui-icon-carat-1-n" }});
+					var i = 0;
+					var btn_;
+					while (btn_ = document.getElementById (this.groupName + "" + i)) {
+						$(btn_).show();
+						i++;
+					}
+				}
+				else {
+					$(this).button("option", {icons: { primary: "ui-icon-carat-1-s" }});
+					var i = 0;
+					var btn__;
+					while (btn__ = document.getElementById (this.groupName + "" + i)) {
+						$(btn__).hide();
+						i++;
+					}
+				}
+			});
+			if (!advBtn.state) {
+				// Hide all
+				var i = 0;
+				var btn___;
+				while (btn___ = document.getElementById (groupName + "" + i)) {
+					$(btn___).hide();
+					i++;
+				}
+			}
+		},
 		drawButton: function (wid, i, opt) {
-            var style="style='"+(opt.bWidth ? ("width:"+opt.bWidth+"px;") : "")+(opt.bHeight ? ("height:"+opt.bHeight+"px;") : "");
-			var text = "<div id='"+wid+"_btn"+i+"' "+style+"' class='ui-state-default ui-button ui-widget'>\n";
+            var style="style='"+(opt.bWidth ? ("width:"+opt.bWidth+"px;") : "")+(opt.bHeight ? ("height:"+opt.bHeight+"px;") : "") + "'";
+			var cssClass = opt.bStyleNormal;
+			if (!cssClass || cssClass == "") {
+				cssClass = 'ui-state-default ui-button ui-widget';
+			}
+			
+			
+			var text = "<div id='"+wid+"_btn"+i+"' "+style+" class='"+cssClass+"'>\n";
 			var isTable = true || (opt.buttons[i].image && opt.buttons[i].text);
 			if (isTable) {
 				text += "<table "+style+" class='no-spaces'><tr style='width:100%;height:100%' class='no-spaces'>\n";
-				text += "<td class='no-spaces' style='width:"+opt.bOffset+"%; text-align: "+opt.bImageAlign+"'>\n";
+				text += "<td class='no-spaces' style='width:"+opt.bOffset+"%; vertical-align: bottom; text-align: "+opt.bImageAlign+"'>\n";
 			}
 			if (opt.buttons[i].image) {
 				text += "<img class='no-spaces' src='"+((opt.buttons[i].image.indexOf ("/") != -1) ? opt.buttons[i].image : "img/" + opt.buttons[i].image) +"'/>\n";
@@ -325,7 +406,51 @@ jQuery.extend(true, dui.binds, {
                     btn_.width(wMax);
                     btn_.height(hMax);
                     btn_.css ({'border-radius': div.barsOptions.bRadius});
-                    btn_.hover (function () { $(this).addClass ('ui-state-hover');},function () { $(this).removeClass ('ui-state-hover');});
+                    btn_.hover (function () { 
+						var div__ = this.ctrl;
+						if (this._state === 1) {
+							if (div__.barsOptions.bStyleActiveHover) {
+								$(this).removeClass (div__.barsOptions.bStyleActive);
+								$(this).removeClass (div__.barsOptions.bStyleNormal);
+								$(this).addClass (div__.barsOptions.bStyleActiveHover);
+							} else if (div__.barsOptions.bStyleNormalHover) {
+								$(this).removeClass (div__.barsOptions.bStyleActive);
+								$(this).removeClass (div__.barsOptions.bNormalActive);
+								$(this).addClass (div__.barsOptions.bStyleNormalHover);
+							} else {
+								$(this).addClass ('ui-state-hover');
+							}
+						}else  {
+							if (div__.barsOptions.bStyleNormalHover) {
+								$(this).removeClass (div__.barsOptions.bStyleActive);
+								$(this).removeClass (div__.barsOptions.bStyleNormal);
+								$(this).addClass (div__.barsOptions.bStyleNormalHover);
+							} else {
+								$(this).addClass ('ui-state-hover');
+							}
+						}
+					},
+					function () { 
+						var div__ = this.ctrl;
+						$(this).removeClass ('ui-state-hover');
+						$(this).removeClass (div__.barsOptions.bStyleActiveHover);
+						$(this).removeClass (div__.barsOptions.bStyleNormalHover);
+						
+						if (this._state === 1) {
+							if (div__.barsOptions.bStyleActive) {
+								$(this).removeClass (div__.barsOptions.bStyleNormalHover);
+								$(this).removeClass (div__.barsOptions.bStyleActiveHover);
+								$(this).removeClass (div__.barsOptions.bStyleNormal);
+								$(this).addClass (div__.barsOptions.bStyleActive);
+							}
+						}else  {
+							if (div__.barsOptions.bStyleNormal) {
+								$(this).removeClass (div__.barsOptions.bStyleActiveHover);
+								$(this).removeClass (div__.barsOptions.bStyleNormalHover);
+								$(this).addClass (div__.barsOptions.bStyleNormal);
+							}
+						}
+					});
                     btn_.click (function () { if (this.ctrl._onClick) this.ctrl._onClick (this, this.ctrl, this.ctrlId) });
                 }
             }
@@ -365,27 +490,28 @@ jQuery.extend(true, dui.binds, {
 		},
 		editButton: function (div, i, isInit) {
             var sText = "";
+			var iBtnCount = 0;
             if (!isInit) {
-                sText += "<tr><td colspan=2 class='bars_line'></td></tr>";
+                sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td colspan=2 class='bars_line'></td></tr>";
                 // Image
-                sText += "<tr><td>"+ dui.translate("Icon:")+"</td><td>";
+                sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("Icon:")+"</td><td>";
                 sText += "<input id='inspect_image"+i+"' style='width: "+(dui.binds.bars.width - 30)+"px' type='text' value='"+(div.barsOptions.buttons[i].image || "")+"'>";
                 sText += "<input id='inspect_image"+i+"Btn' style='width: 30px' type='button' value='...'>";
                 sText += "</td></tr>";
                     
                 // Name
-                sText += "<tr><td>"+ dui.translate("Caption:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_text"+i+"' type='text' value='"+(div.barsOptions.buttons[i].text || "")+"'></td></tr>";
+                sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("Caption:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_text"+i+"' type='text' value='"+(div.barsOptions.buttons[i].text || "")+"'></td></tr>";
                 
                 // option
                 if (div.barsIntern.wType == 'tplBarFilter') {
-                    sText += "<tr><td>"+ dui.translate("Filter key:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
+                    sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("Filter key:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
                 }
                 else{
-                    sText += "<tr><td>"+ dui.translate("Option:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' type='text' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
+                    sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("Option:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' type='text' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
                 }
                 
                 if (div.barsOptions.buttons.length > 1) {
-                    sText += "<tr><td></td><td>";
+                    sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td></td><td>";
                     if (i > 0) {
                         sText +="<input type='button' id='barsDel"+i+"' value='"+dui.translate('Delete')+"'>";
                         sText +="<input type='button' id='barsUp" +i+"' value='"+dui.translate('Up')+"'>";
@@ -517,7 +643,15 @@ jQuery.extend(true, dui.binds, {
             if (div.barsOptions) {
                 div.barsIntern.editParent = jParent;
                 var sText = "<table id='barsEditElements' style='width:100%'>";
-                sText += "<tr><td>"+ dui.translate("Bar type:")+"</td><td><select id='inspect_position' style='width: "+dui.binds.bars.width+"px'>";
+                sText += "<tr><td>"+dui.translate("Theme:")+"</td><td><input type='text' id='inspect_bTheme' value='"+(div.barsOptions.bTheme || "") + "' size='44' /></td></tr>";
+
+				if (div.barsIntern.wType == 'tplBarFilter') {
+					sText += "<tr><td>"+ dui.translate("One at time:")+"</td><td><input id='inspect_bOnlyOneSelected' type='checkbox' "+((div.barsOptions.bOnlyOneSelected ) ? "checked" : "")+"></td></tr>";  		
+				}
+
+				var iGeomCount = 0;
+                sText += "<tr><td colspan=2><button id='idGeometry_BtnGroup' class='groupButtonWidth'>"+dui.translate("Geometry...")+"</td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Bar type:")+"</td><td><select id='inspect_position' style='width: "+dui.binds.bars.width+"px'>";
                 sText += "<option value='0'>" +dui.translate("Horizontal")+"</option>";
                 sText += "<option value='1'>" +dui.translate("Vertical")+"</option>";
                 sText += "<option value='2'>" +dui.translate("Docked at top")+"</option>";
@@ -525,34 +659,42 @@ jQuery.extend(true, dui.binds, {
                 sText += "<option value='4'>" +dui.translate("Docked at left")+"</option>";
                 sText += "<option value='5'>" +dui.translate("Docked at right")+"</option>";
                 sText += "</select></td></tr>";           
+				sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td></td><td><input id='inspect_barShow' type='button' value='"+dui.translate("Show")+"'></td></tr>";  					
                 
-                sText += "<tr><td>"+ dui.translate("Button width:")+"</td><td id='inspect_bWidth' style='no-spaces'></td></tr>";
-                sText += "<tr><td>"+ dui.translate("Button height:")+"</td><td id='inspect_bHeight' style='no-spaces'></td></tr>";
-                sText += "<tr><td>"+ dui.translate("Button space:")+"</td><td id='inspect_bSpace' style='no-spaces'></td></tr>";
-                sText += "<tr><td>"+ dui.translate("Border radius:")+"</td><td id='inspect_bRadius' style='no-spaces'></td></tr>";
-                sText += "<tr><td>"+ dui.translate("Text offset %:")+"</td><td id='inspect_bOffset' style='no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button width:")+"</td><td id='inspect_bWidth' style='no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button height:")+"</td><td id='inspect_bHeight' style='no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button space:")+"</td><td id='inspect_bSpace' style='no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Border radius:")+"</td><td id='inspect_bRadius' style='no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Text offset %:")+"</td><td id='inspect_bOffset' style='no-spaces'></td></tr>";
 
-                sText += "<tr><td>"+ dui.translate("Image align:")+"</td><td><select id='inspect_bImageAlign' style='width: "+dui.binds.bars.width+"px'>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Image align:")+"</td><td><select id='inspect_bImageAlign' style='width: "+dui.binds.bars.width+"px'>";
                 sText += "<option value='center'>" +dui.translate("Center")+"</option>";
                 sText += "<option value='left'>"   +dui.translate("Left")+"</option>";
                 sText += "<option value='right'>"  +dui.translate("right")+"</option>";
                 sText += "</select></td></tr>";           
 
-                sText += "<tr><td>"+ dui.translate("Text align:")+"</td><td><select id='inspect_bTextAlign' style='width: "+dui.binds.bars.width+"px'>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Text align:")+"</td><td><select id='inspect_bTextAlign' style='width: "+dui.binds.bars.width+"px'>";
                 sText += "<option value='center'>" +dui.translate("Center")+"</option>";
                 sText += "<option value='left'>"   +dui.translate("Left")+"</option>";
                 sText += "<option value='right'>"  +dui.translate("right")+"</option>";
                 sText += "</select></td></tr>";           
 
-                sText += "<tr><td>"+dui.translate("Theme:")+"</td><td><input type='text' id='inspect_bTheme' value='"+(div.barsOptions.bTheme || "") + "' size='44' /></td></tr>";			
-				
-				sText += "<tr><td></td><td><input id='inspect_barShow' type='button' value='"+dui.translate("Show")+"'></td></tr>";  					
+                // Styles
+                var iStyleCount = 0;
+                sText += "<tr><td colspan=2><button id='idStyle_BtnGroup' class='groupButtonWidth'>"+dui.translate("Styles...")+"</td></tr>";
+                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Normal:")+"</td><td id='inspect_bStyleNormalParent' ></td></tr>";
+                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Normal hover:")+"</td><td id='inspect_bStyleNormalHoverParent' ></td></tr>";
+                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Active:")+"</td><td id='inspect_bStyleActiveParent'></td></tr>";
+                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Active hover:")+"</td><td id='inspect_bStyleActiveHoverParent' ></td></tr>";
+
 
                 // Add effects for filters
                 if (div.barsIntern.wType == 'tplBarFilter' ||
 				    div.barsIntern.wType == 'tplBarNavigator') {
+					var iEffectsCount = 0;
 					dui.updateFilter();
-                    sText += "<tr><td>"+ dui.translate("Hide effect:")+"</td><td><select id='inspect_bHideEffect' style='width: "+(dui.binds.bars.width - 40)+"px'>";
+					sText += "<tr><td colspan=2><button id='idEffect_BtnGroup' class='groupButtonWidth'>"+dui.translate("Effects...")+"</td></tr>";
+                    sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td>"+ dui.translate("Hide effect:")+"</td><td><select id='inspect_bHideEffect' style='width: "+(dui.binds.bars.width - 40)+"px'>";
 					var sEffects = "";
                     sEffects += "<option value=''>Show/Hide</option>";
                     //sEffects += "<option value='show'>Show/Hide</option>";
@@ -573,20 +715,20 @@ jQuery.extend(true, dui.binds, {
                     //sEffects += "<option value='transfer'>Transfer</option>";
                     sText += sEffects + "</select><input id='inspect_bHideEffectMs' value='"+div.barsOptions.bShowEffectMs+"' style='width:40px'></td></tr>";  
 
-                    sText += "<tr><td>"+ dui.translate("Show effect:")+"</td><td><select id='inspect_bShowEffect' style='width: "+(dui.binds.bars.width - 40)+"px'>";
+                    sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td>"+ dui.translate("Show effect:")+"</td><td><select id='inspect_bShowEffect' style='width: "+(dui.binds.bars.width - 40)+"px'>";
                     sText += sEffects + "</select><input id='inspect_bShowEffectMs' value='"+div.barsOptions.bShowEffectMs+"' style='width:40px'></td></tr>";     
                     
-					sText += "<tr><td></td><td><input id='inspect_test' type='button' value='"+dui.translate("Test")+"'></td></tr>";  		
+					sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td></td><td><input id='inspect_test' type='button' value='"+dui.translate("Test")+"'></td></tr>";  		
 
-					if (div.barsIntern.wType == 'tplBarFilter') {
-						sText += "<tr><td>"+ dui.translate("One at time:")+"</td><td><input id='inspect_bOnlyOneSelected' type='checkbox' "+((div.barsOptions.bOnlyOneSelected ) ? "checked" : "")+"></td></tr>";  		
-					}
                 }
+
                 
+				sText += "<tr><td colspan=2><button id='idButtons_BtnGroup' class='groupButtonWidth'>"+dui.translate("Buttons...")+"</td></tr>";
+
                 for (var m = 0; m < div.barsOptions.buttons.length; m++) {
                     sText += dui.binds.bars.editButton (div, m);
                 }   
-                sText += "<tr><td><input type='button' id='barsAdd' value='"+dui.translate("Add")+"'></td></tr></table>";
+                sText += "<tr id='idButtons"+(div.barsOptions.buttons.length*5)+"'><td><input type='button' id='barsAdd' value='"+dui.translate("Add")+"'></td></tr></table>";
                 $('#barsEditElements').remove ();
                 jParent.append (sText);
                 			
@@ -598,6 +740,8 @@ jQuery.extend(true, dui.binds, {
 						$('#inspect_css_left').val("auto").trigger("change");
 						$('#inspect_css_top').val("auto").trigger("change");
 					}
+					$('#inspect_barShow').button((div.barsOptions.position == dui.binds.bars.position.floatHorizontal || 
+										          div.barsOptions.position == dui.binds.bars.position.floatVertical) ? "disable" : "enable");
 				},
 				function (div, ctrlAttr, val) {
 					dui.inspectWidget (div.barsIntern.wid);
@@ -625,7 +769,14 @@ jQuery.extend(true, dui.binds, {
 					});            
 
 					response(data);
-				});                
+				});
+
+                // Style button
+				dui.binds.bars._showGroupButton ('idStyle',    div);
+				dui.binds.bars._showGroupButton ('idGeometry', div);
+				dui.binds.bars._showGroupButton ('idEffect',   div);
+				dui.binds.bars._showGroupButton ('idButtons',  div);
+
                 dui.binds.bars._editSliderHandler ("bWidth",  div, 10, 300);
                 dui.binds.bars._editSliderHandler ("bHeight", div, 10, 300);
                 dui.binds.bars._editSliderHandler ("bSpace",  div, 0,  50);
@@ -634,6 +785,12 @@ jQuery.extend(true, dui.binds, {
                 dui.binds.bars._editSelectHandler ("bTextAlign",  div, null, null);
                 dui.binds.bars._editSelectHandler ("bImageAlign", div, null, null);
                 dui.binds.bars._editCheckboxHandler ("bOnlyOneSelected", div);
+
+                dui.binds.bars._editStyleHandler ('bStyleNormal',      div, null, '-button', 'background');
+                dui.binds.bars._editStyleHandler ('bStyleNormalHover', div, null, '-button', 'background');
+                dui.binds.bars._editStyleHandler ('bStyleActive',      div, null, '-button', 'background');
+                dui.binds.bars._editStyleHandler ('bStyleActiveHover', div, null, '-button', 'background');
+
                 if (div.barsIntern.wType == 'tplBarFilter' ||
 				    div.barsIntern.wType == 'tplBarNavigator') {
                     dui.binds.bars._editSelectHandler ("bShowEffect", div, null, null);
@@ -680,7 +837,9 @@ jQuery.extend(true, dui.binds, {
 						this.parent.barsOptions.position != dui.binds.bars.position.floatVertical) {
 						$(this.parent).sidebar("open");
 					}
-				});
+				}).button((div.barsOptions.position == dui.binds.bars.position.floatHorizontal || 
+						   div.barsOptions.position == dui.binds.bars.position.floatVertical) ? "disable" : "enable");
+				
             }
         },	
 		editDelete: function (wid) {
@@ -711,11 +870,20 @@ jQuery.extend(true, dui.binds, {
 				}
 				if (isFound) {
 					htmlBtn._state = 1;
-					$(htmlBtn).addClass ('ui-state-active');
+					if (div.barsOptions.bStyleActive) {
+						$(htmlBtn).addClass (div.barsOptions.bStyleActive);
+						$(htmlBtn).removeClass (div.barsOptions.bStyleNormal);
+					} else {
+						$(htmlBtn).addClass ('ui-state-active');
+					}
 				}
 				else {
 					htmlBtn._state = 0;
 					$(htmlBtn).removeClass ('ui-state-active');
+					$(htmlBtn).removeClass (div.barsOptions.bStyleActive);
+					if (div.barsOptions.bStyleNormal) {
+						$(htmlBtn).addClass (div.barsOptions.bStyleNormal);
+					}
 				}
 			}
 		},
@@ -729,22 +897,26 @@ jQuery.extend(true, dui.binds, {
 		},
 		init: function(wid, options, view, wType) {
 			var settings = {
-				position: 0,
-                bWidth:   100,  // Width of the button. 0 - every button has own width
-                bHeight:  50,   // Height of the button. 0 - every button has own height
-                bSpace:   5,    // Between buttons
-                bRadius:  5,    // Button radius
-                bOffset:  0,    // 0% Image, 70% Text
-                bTextAlign:  'center',
-                bImageAlign: 'right',
-                bValue:   '',   // start value
-                bShowEffect: 'show',
-                bHideEffect: 'hide',
-                bShowEffectMs: 100,
-                bHideEffectMs: 100,
-				buttons:  [],
-				bOnlyOneSelected: false, // If only one element can be selected
-				bTheme:   "sidebar-dark"
+				position:          0,
+                bWidth:            100,  // Width of the button. 0 - every button has own width
+                bHeight:           50,   // Height of the button. 0 - every button has own height
+                bSpace:            5,    // Between buttons
+                bRadius:           5,    // Button radius
+                bOffset:           0,    // 0% Image, 70% Text
+                bTextAlign:        'center',
+                bImageAlign:       'right',
+                bValue:            '',   // start value
+                bShowEffect:       'show',
+                bHideEffect:       'show',
+                bShowEffectMs:     100,
+                bHideEffectMs:     100,
+				bStyleNormal:      null,
+				bStyleNormalHover: null,
+				bStyleActive:      null,
+				bStyleActiveHover: null,
+				buttons:           [],
+				bOnlyOneSelected:  false, // If only one element can be selected
+				bTheme:            "sidebar-dark"
 			};			
 							
 			if (document.getElementById (wid) == null) {
@@ -755,7 +927,7 @@ jQuery.extend(true, dui.binds, {
             var barsOptions = null;
 			
 			if (div.barsIntern) {
-				barsIntern = div.barsIntern;
+				barsIntern  = div.barsIntern;
 				barsOptions = div.barsOptions;
 			}
 			
@@ -785,8 +957,7 @@ jQuery.extend(true, dui.binds, {
 			}
 			if (!isFound) {
 				dui.binds.bars.created[dui.binds.bars.created.length] = wid;
-			}
-				
+			}		
 				
             if (wType !== undefined) {
                 if (options !== undefined) {
@@ -798,7 +969,7 @@ jQuery.extend(true, dui.binds, {
                     wType: wType,
                     view:  view,
                     editParent: null
-                };
+				};
 				if (dui.urlParams["edit"] === "") {
 					if (div.barsOptions.buttons.length == 0) {
 						if (div.barsIntern.wType == 'tplBarFilter') {
@@ -819,6 +990,8 @@ jQuery.extend(true, dui.binds, {
 							}
 						}
 					}
+					// Save default configuration
+					dui.binds.bars.editSave(div);
 				}
             }
 			
@@ -841,7 +1014,7 @@ jQuery.extend(true, dui.binds, {
                             if (isFound2) {
 								var htmlBtn2 = document.getElementById (div.barsIntern.wid+"_btn"+p);
 								if (htmlBtn2) {
-                                    htmlBtn2.state = 1;
+                                    htmlBtn2._state = 1;
 									$(htmlBtn2).addClass ('ui-state-active');
 								}
                             }
@@ -855,10 +1028,14 @@ jQuery.extend(true, dui.binds, {
 				    for (var u = 0; u < div.barsOptions.buttons.length; u++) {
 						if(v === div.barsOptions.buttons[u].option) {
 							var htmlBtn = document.getElementById (div.barsIntern.wid+"_btn"+u);
-								if (htmlBtn) {
-									htmlBtn.state = 1;
+							if (htmlBtn) {
+								htmlBtn._state = 1;
+								if (div.barsOptions.bStyleActive) {
+									$(htmlBtn).addClass (div.barsOptions.bStyleActive);
+								} else {
 									$(htmlBtn).addClass ('ui-state-active');
 								}
+							}
 							break;
 						}
 					}
@@ -883,6 +1060,11 @@ jQuery.extend(true, dui.binds, {
                                     var btn3 = document.getElementById(div.barsIntern.wid + "_btn" + f);
                                     btn3._state = 0;
                                     $(btn3).removeClass('ui-state-active');
+                                    $(btn3).removeClass(div.barsOptions.bStyleActive);
+									
+									if (div.barsOptions.bStyleNormal) {
+										$(btn3).addClass (div.barsOptions.bStyleNormal);
+									}
 								}
 								// Restore state
 								htmlBtn._state = actState;
@@ -890,11 +1072,21 @@ jQuery.extend(true, dui.binds, {
 						
 							if (htmlBtn._state === 1) {
 								htmlBtn._state = 0;
-								$(htmlBtn).removeClass ('ui-state-active');
+                                $(htmlBtn).removeClass('ui-state-active');
+								$(htmlBtn).removeClass(div.barsOptions.bStyleActive);
+								
+								if (div.barsOptions.bStyleNormal) {
+									$(htmlBtn).addClass (div.barsOptions.bStyleNormal);
+								}
 							}
 							else {
 								htmlBtn._state = 1;
-								$(htmlBtn).addClass ('ui-state-active');
+								$(htmlBtn).removeClass(div.barsOptions.bStyleNormal);
+								if (div.barsOptions.bStyleActive) {
+									$(htmlBtn).addClass (div.barsOptions.bStyleActive);
+								} else {
+									$(htmlBtn).addClass ('ui-state-active');
+								}
 							}
 							// install filters handler
 							if (div.barsIntern.wType == 'tplBarFilter') {
@@ -910,7 +1102,12 @@ jQuery.extend(true, dui.binds, {
 											for (var q = 0; q < div.barsOptions.buttons.length; q++) {
 												var btn = document.getElementById (div.barsIntern.wid+"_btn"+q);
 												btn._state = 0;
-												$(btn).removeClass ('ui-state-active');
+												$(btn).removeClass('ui-state-active');
+												$(btn).removeClass(div.barsOptions.bStyleActive);
+												
+												if (div.barsOptions.bStyleNormal) {
+													$(btn).addClass(div.barsOptions.bStyleNormal);
+												}											
 											}
 											break;
 										}
