@@ -1,8 +1,10 @@
 <link rel="stylesheet" href="widgets/hqWidgets/css/hqWidgets.css" type="text/css" />
 <link rel="stylesheet" href="widgets/hqWidgets/css/hqWidgetsButtons.css" type="text/css" />
 <link rel="stylesheet" href="widgets/colorpicker/css/farbtastic.css" type="text/css" />
+
 <script type="text/javascript" src="widgets/colorpicker/js/farbtastic.js"></script>
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgets.js"></script>
+<script type="text/javascript" src="widgets/hqWidgets/js/hqWidgetsLang.js"></script>
 
 
 <script type="text/javascript">
@@ -1186,29 +1188,31 @@ if ((typeof hqWidgets !== 'undefined')) {
                 while (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i]) {
                 
                     var change = {};
-                    change[dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option] = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.translateSignal (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option, newState);
+					var option = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option;
+					
+                    change[option] = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.translateSignal (option, newState);
                     change['isRefresh'] = false;
                     
-                    if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'isWorking') {
+                    if (option == 'isWorking') {
                         var t = 0;
                     }
                     
-                    if (lastchange != undefined) {
+                    if (lastchange != undefined && option == 'state') {
                         change['lastAction'] = lastchange;
                     }
 
-                    if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'lowBatteryS') {
+                    if (option == 'lowBatteryS') {
 						dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.batteryStates.sensors[dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index] = newState;
                         dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetStates ({'lowBattery': dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.getBatteryState (), 'lowBatteryDesc': "BAT:"+dui.getObjDesc (wid)});
 					}
                     else
-                    if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'lowBatteryH') {
+                    if (option == 'lowBatteryH') {
 						dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.batteryStates.handlers[dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index] = newState;
                         dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetStates ({'lowBattery': dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.getBatteryState (), 'lowBatteryDesc': "BAT:"+dui.getObjDesc (wid)});                        
 					}
                     else
                     // If new percent state
-                    if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'percentState') {
+                    if (option == 'percentState') {
                         var type = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.GetSettings('buttonType');
                         // Remove unknown state of the button and if dimmer select valid state
                         if (type == hqWidgets.gButtonType.gTypeDimmer)
@@ -1218,7 +1222,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                             change['state'] = hqWidgets.gState.gStateOff; // Remove unknown state
                     }
                     else
-                    if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'windowState') {
+                    if (option == 'windowState') {
                         change['state'] = hqWidgets.gState.gStateOff; // Remove unknown state
                         dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetWindowState (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index, (newState == true) ? hqWidgets.gWindowState.gWindowOpened : hqWidgets.gWindowState.gWindowClosed);
                         var hm_id = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.GetSettings("hm_id");
@@ -1228,7 +1232,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                         continue;
                     }
                     else
-                    if (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].option == 'handleState') {
+                    if (option == 'handleState') {
                         // 0. CLOSED, 1. TILTED, 2.OPEN ab  V1.6 ???
                         // 0. Closed, 1. tilted, 2.open bis V1.6
                         var wndState = undefined;

@@ -398,7 +398,7 @@ var hqWidgets = {
             result = "vor "+ Math.floor (seconds / 60)+" Min.";
         else
         if (seconds <= 3600*24)
-            result = "vor "+ Math.floor (seconds / 3600)+" St. und "+Math.floor (seconds / 60)+" Min.";
+            result = "vor "+ Math.floor (seconds / 3600)+" St. und "+(Math.floor (seconds / 60) % 60)+" Min.";
         else
         if (seconds > 3600*24 && seconds <= 3600*48)
             result = "gestern";

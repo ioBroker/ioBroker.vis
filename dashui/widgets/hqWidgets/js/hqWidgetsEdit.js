@@ -870,7 +870,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong) {
             this._EditCheckboxHandler ('ctrlActionBtn', false, false, true, function (isChecked, obj) {
-                document.getElementById(obj.e_settings.elemName+'_openDoorBttnText').disabled = !isChecked;
+                document.getElementById(obj.e_settings.elemName+'_ctrlBtnText').disabled = !isChecked;
             });
         }
         else {
@@ -881,8 +881,8 @@ hqWidgets = $.extend (true, hqWidgets, {
                 $('#'+obj.e_settings.elemName+'_ctrlBtnText').prop('disabled', !isChecked);
             });
         }
-        if (document.getElementById(this.e_settings.elemName+'_openDoorBttnText')) {
-            document.getElementById(this.e_settings.elemName+'_openDoorBttnText').disabled = !this.e_internal.attr.ctrlActionBtn;
+        if (document.getElementById(this.e_settings.elemName+'_ctrlBtnText')) {
+            document.getElementById(this.e_settings.elemName+'_ctrlBtnText').disabled = !this.e_internal.attr.ctrlActionBtn;
         }
         this._EditTextHandler ('ctrlBtnText');
         this._EditTextHandler ('hoursLastAction');
