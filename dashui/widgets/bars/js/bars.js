@@ -327,7 +327,7 @@ jQuery.extend(true, dui.binds, {
 				text += "<td class='no-spaces' style='width:"+opt.bOffset+"%; vertical-align: bottom; text-align: "+opt.bImageAlign+"'>\n";
 			}
 			if (opt.buttons[i].image) {
-				text += "<img class='no-spaces' src='"+((opt.buttons[i].image.indexOf ("/") != -1) ? opt.buttons[i].image : "img/" + opt.buttons[i].image) +"'/>\n";
+				text += "<img class='no-spaces' src='"+((opt.buttons[i].image.substring(0,4) == "img/") ? opt.buttons[i].image : "img/" + opt.buttons[i].image) +"' style='"+(opt.bWidth ? ("max-width:"+(opt.bWidth - 5)+"px;") : "")+(opt.bHeight ? ("max-height:"+(opt.bHeight - 5)+"px;") : "") + "' />\n";
 			}
 			if (isTable) {
 				text += "</td><td class='no-spaces' style='width:"+(100 - opt.bOffset)+"%; text-align: "+opt.bTextAlign+"'>\n";
