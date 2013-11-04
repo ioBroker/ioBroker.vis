@@ -1323,7 +1323,7 @@ var imageSelect = {
          // Define dialog buttons
         var dialog_buttons = {};
         dialog_buttons[this._uploadText] = function() {
-            $('#imageSelect').trigger('click');
+            $( this ).trigger('click');
         }
         dialog_buttons[this._selectText] = function() {
             $( this ).dialog( "close" );
@@ -1336,8 +1336,7 @@ var imageSelect = {
             $( this ).dialog( "close" );
             $( this ).remove ();
         }
-        $('#imageSelect')
-        .dialog({
+        $(htmlElem).dialog({
             resizable: true,
             height: $(window).height(),
             modal: true,
@@ -1345,9 +1344,7 @@ var imageSelect = {
             buttons: dialog_buttons
         });
 
-        document.getElementById ('imageSelect').ctrl = htmlElem;
-		
-        $('#imageSelect').dropzone({
+        $(htmlElem).dropzone({
             url: "/upload?path=./www/dashui/img/",
             acceptedFiles: "image/*",
             uploadMultiple: false,
@@ -1369,15 +1366,11 @@ var imageSelect = {
 
             },
             complete: function (e) {
-
-				console.log("ONSELECT");
-				console.log(imageSelect.settings.onselect);
-                if (this.element.ctrl.settings.onselect) {
-                    this.element.ctrl.settings.onselect ("img/"+imageSelect._curDir+ e.name, this.element.ctrl.settings.onselectArg);
+                if (this.element.settings.onselect) {
+                    this.element.settings.onselect ("img/"+imageSelect._curDir+ e.name, this.element.settings.onselectArg);
                 }
-                $("#imageSelect").dialog( "close" );
-                $("#imageSelect").remove ();
-
+                $(this.element).dialog( "close" );
+                $(this.element).remove ();
             },
             init: function () {
                 this.on("processing", function() {
@@ -1389,7 +1382,8 @@ var imageSelect = {
 
         // Show wait icon
         if (!document.getElementById ('dashui-waitico'))
-            $('#imageSelect').append("<p id='dashui-waitico'>Please wait...</p>");
+            $(htmlElem).append("<p id='dashui-waitico'>Please wait...</p>");
+			
         $('#dashui-waitico').show();
         this._rootDir = "www/dashui/img/";
         this._curDir = "";
