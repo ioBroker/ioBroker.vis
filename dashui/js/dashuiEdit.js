@@ -1345,7 +1345,8 @@ var imageSelect = {
             buttons: dialog_buttons
         });
 
-        var that = this;
+        document.getElementById ('imageSelect').ctrl = htmlElem;
+		
         $('#imageSelect').dropzone({
             url: "/upload?path=./www/dashui/img/",
             acceptedFiles: "image/*",
@@ -1369,10 +1370,10 @@ var imageSelect = {
             },
             complete: function (e) {
 
-console.log("ONSELECT");
-console.log(imageSelect.settings.onselect);
-                if (imageSelect.settings.onselect) {
-                    imageSelect.settings.onselect ("img/"+imageSelect._curDir+ e.name, that.settings.onselectArg);
+				console.log("ONSELECT");
+				console.log(imageSelect.settings.onselect);
+                if (this.element.ctrl.settings.onselect) {
+                    this.element.ctrl.settings.onselect ("img/"+imageSelect._curDir+ e.name, this.element.ctrl.settings.onselectArg);
                 }
                 $("#imageSelect").dialog( "close" );
                 $("#imageSelect").remove ();
@@ -2368,7 +2369,7 @@ var hmSelect = {
                     var isFound = false;
                     iChns = 0;                    
                     
-                    if (f === null || device.Interface == "CUxD")
+                    if (f === null)
                         isFound = true;
                     else {
                         for (var t = 0; t < f.length; t++) {
