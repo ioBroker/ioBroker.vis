@@ -30,10 +30,13 @@
 
     <script type="text/javascript" src="../lib/js/jqGrid/jquery.jqGrid-4.5.4.min.js"></script>
     <script type="text/javascript" src="../lib/js/jqGrid/i18n/grid.locale-en.js" ></script>
+
+    <script type="text/javascript" src="../lib/js/dropzone.js"></script>
+
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before dashui.js -->
     <script type="text/javascript" src="js/dashui.js"></script>
     <script type="text/javascript" src="js/dashuiEdit.js"></script>    
-    <script type="text/javascript" src="js/dashuiLang.js"></script>    
+    <script type="text/javascript" src="js/dashuiLang.js"></script>
 
 </head>
 <body>
@@ -99,11 +102,6 @@
                 <input type="button" class="dashui-editor" id="remove_instance" value="remove instance" />
 
                 </span>
-                <!--<h4>Views</h4>
-                <input class="dashui-editor" type="button" id="save_ccu" value="save views on ccu" />
-                <input class="dashui-editor" type="button" id="load_ccu" value="load views from ccu" />-->
-                <h4>Special</h4>
-                <input class="dashui-editor" type="button" id="convert_ids" value="Convert BidCos-Addrs to Rega-IDs" />
 
 
             </div>
@@ -214,6 +212,7 @@
                 </p>
             </div>
     </div>
+        <div style="display: none" id="uploadPreview"></div>
     <script type="text/javascript">
         dui.translateAll ();
     </script>
