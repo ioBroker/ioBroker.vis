@@ -27,24 +27,7 @@ dui = $.extend(true, dui, {
     selectView:         $("#select_view"),
     activeWidget:       "",
 
-    convertIds: function () {
-    // FOR 0.8.x -> 0.9.x Upgrade
-    // Replace all BidCos Addresses by their Regadom ID
 
-        for (var view in dui.views) {
-            for (var widgetId in dui.views[view].widgets) {
-                var widget = dui.views[view].widgets[widgetId];
-                if (widget.data.hm_id != parseInt(widget.data.hm_id, 10)) {
-                    if (homematic.regaIndex.Name[widget.data.hm_id]) {
-                        //console.log(widget.data.hm_id+" -> "+homematic.regaIndex.Name[widget.data.hm_id][0]);
-                        dui.views[view].widgets[widgetId].data.hm_id = homematic.regaIndex.Name[widget.data.hm_id][0];
-                    }
-                }
-            }
-        }
-
-
-    },
     startInstance: function () {
         if (dui.instance) {
             $("#dashui_instance").val(dui.instance);
@@ -1278,6 +1261,8 @@ dui = $.extend(true, dui, {
     }    
 });
 
+
+
 // Image selection Dialog
 var imageSelect = {
     // possible settings
@@ -1310,6 +1295,7 @@ var imageSelect = {
         if (this._selectText == "") {
             this._selectText = dui.translate ("Select");
             this._cancelText = dui.translate ("Cancel");
+            this._uploadText = dui.translate ("Upload");
             this._titleText  = dui.translate ("Selected image: ");
         }
            
@@ -1331,17 +1317,21 @@ var imageSelect = {
         $(htmlElem).css({'z-index': htmlElem.settings.zindex});
         
          // Define dialog buttons
-        var dialog_buttons = {}; 
-        dialog_buttons[this._selectText] = function() { 
-            $( this ).dialog( "close" ); 
+        var dialog_buttons = {};
+        dialog_buttons[this._uploadText] = function() {
+            $('#imageSelect').trigger('click');
+        }
+        dialog_buttons[this._selectText] = function() {
+            $( this ).dialog( "close" );
+
             if (this.settings.onselect)
                 this.settings.onselect (imageSelect._pictDir+this.settings.result, this.settings.onselectArg);
             $( this ).remove ();
         }
         dialog_buttons[this._cancelText] = function() {
-            $( this ).dialog( "close" ); 
+            $( this ).dialog( "close" );
             $( this ).remove ();
-        }   
+        }
         $('#imageSelect')
         .dialog({
             resizable: true,
@@ -1349,7 +1339,49 @@ var imageSelect = {
             modal: true,
             width: 600,
             buttons: dialog_buttons
-        });     
+        });
+
+        var that = this;
+        $('#imageSelect').dropzone({
+            url: "/upload?path=./www/dashui/img/",
+            acceptedFiles: "image/*",
+            uploadMultiple: false,
+            previewTemplate: '<div class="dz-preview dz-file-preview"><div class="dz-details"><div class="dz-filename"><span data-dz-name></span></div><br/>' +
+                '<div class="dz-size" data-dz-size></div><br/><img data-dz-thumbnail /></div><div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>' +
+                '<div class="dz-error-message"><span data-dz-errormessage></span></div></div>',
+            previewsContainer: "#uploadPreview",
+            clickable: true,
+            dragover: function (e) {
+                var el = $(e.toElement);
+                $(e.toElement).closest("li.ui-li").addClass("upload-start");
+            },
+            dragleave: function (e) {
+                $(e.toElement).closest("li.ui-li").removeClass("upload-start");
+            },
+            drop: function (e, ui) {
+                var closest = $(e.toElement).closest("li.ui-li");
+                closest.removeClass("upload-start");
+
+            },
+            complete: function (e) {
+
+console.log("ONSELECT");
+console.log(imageSelect.settings.onselect);
+                if (imageSelect.settings.onselect) {
+                    imageSelect.settings.onselect ("img/"+imageSelect._curDir+ e.name, that.settings.onselectArg);
+                }
+                $("#imageSelect").dialog( "close" );
+                $("#imageSelect").remove ();
+
+            },
+            init: function () {
+                this.on("processing", function() {
+                    this.options.url = "/upload?path=./www/dashui/img/"+imageSelect._curDir;
+                });
+            }
+
+        });
+
         // Show wait icon
         if (!document.getElementById ('dashui-waitico'))
             $('#imageSelect').append("<p id='dashui-waitico'>Please wait...</p>");
@@ -1390,14 +1422,8 @@ var imageSelect = {
         }
         
         // Load directory
-        //console.log("load directory "+ this._rootDir + this._curDir);
-        // Abfragen welche Bild-Dateien im Ordner "www/dashui/img/" vorhanden sind
         dui.socket.emit('readdir', this._rootDir + this._curDir, function(dirArr) {
-            /*for (var i = 0; i < dirArr.length; i++) {
-                //var id = parseInt(dirArr[i].replace(/\..*$/, ""), 10);
-                var id = dirArr[i].replace(/\..*$/, "");
-            }*/
-            imageSelect.showImages (dirArr, htmlElem);
+            imageSelect.showImages(dirArr, htmlElem);
         });
     },
     showImages: function (aImages, obj) {	
@@ -1406,25 +1432,32 @@ var imageSelect = {
         obj.settings.columns = Math.floor (($(obj).width()-30) / (obj.settings.iwidth+5));
         obj.settings.rows    = Math.floor (aImages.length / obj.settings.columns) + 2;
         
-        if (document.getElementById (obj.settings.elemName+"_tbl0"))
+        if (document.getElementById (obj.settings.elemName+"_tbl0")) {
             $('#'+obj.settings.elemName+"_tbl0").remove ();
-        if (document.getElementById (obj.settings.elemName+"_tbl1"))
-            $('#'+obj.settings.elemName+"_tbl1").remove ();  
-            
+        }
+        if (document.getElementById (obj.settings.elemName+"_tbl1")) {
+            $('#'+obj.settings.elemName+"_tbl1").remove ();
+        }
+
         // Remove directory image and place directories first
         var bImages = new Array ();
         var j = 0;
-        if (imageSelect._curDir != null && imageSelect._curDir != "")
+        if (imageSelect._curDir != null && imageSelect._curDir != "") {
             bImages[j++] = "..";
-            
-        for (var i = 0; i < aImages.length; i++)
-            if (aImages[i].indexOf ('.') == -1)
+        }
+
+        for (var i = 0; i < aImages.length; i++) {
+            if (aImages[i].indexOf ('.') == -1) {
                 bImages[j++] = aImages[i];
-                
-        for (var i = 0; i < aImages.length; i++)
-            if (aImages[i].indexOf ('.') != -1 && aImages[i] != imageSelect._dirImage)
+            }
+        }
+
+        for (var i = 0; i < aImages.length; i++) {
+            if (aImages[i].indexOf ('.') != -1 && aImages[i] != imageSelect._dirImage) {
                 bImages[j++] = aImages[i];
-            
+            }
+        }
+
         aImages = bImages;
         
         var sText = "<table id='"+obj.settings.elemName+"_tbl0'>";
@@ -1508,8 +1541,9 @@ var imageSelect = {
                 }
             }
             sText += "</tr>";
-            if (id >= aImages.length) 
+            if (id >= aImages.length) {
                 break;
+            }
         }
         
         sText += "</table>";//</div>";
@@ -1526,8 +1560,7 @@ var imageSelect = {
         
         obj.curElement = null;
         
-        for (i = 0; i < aImages.length; i++)
-        {
+        for (i = 0; i < aImages.length; i++) {
             var img   = $('#'+obj.settings.elemName+"_"+i);
             var image = $('#'+obj.settings.elemName+'_img'+i);
             img.addClass ("ui-state-default ui-widget-content").css({width: obj.settings.iwidth+4, height: obj.settings.iheight+4});           
@@ -1544,7 +1577,9 @@ var imageSelect = {
                 img.removeClass ("ui-state-default").addClass ("ui-state-active");
             }
             
-            if (image.isLast && obj.settings.curElement) image.current = obj.settings.curElement; 
+            if (image.isLast && obj.settings.curElement) {
+                image.current = obj.settings.curElement;
+            }
             
             image.bind ("load", {msg: image}, function (event) {
                 var obj_ = event.data.msg;
@@ -1600,8 +1635,10 @@ var imageSelect = {
             img.bind ("dblclick", {msg: img}, function (event) {
                 var obj_ = event.data.msg;
                 obj.settings.result = imageSelect._pictDir + imageSelect._curDir + obj_.result;
-                if (obj.settings.onselect)
+                if (obj.settings.onselect) {
+                    console.log(obj);
                     obj.settings.onselect (obj.settings.result, obj.settings.onselectArg);
+                }
                 $( obj ).dialog( "close" );
                 $( obj ).remove ();
             });				
@@ -2890,7 +2927,6 @@ var hmSelect = {
         }
     }
 };
-
 
 
 
