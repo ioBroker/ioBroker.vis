@@ -274,7 +274,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                                 newSettings[obj.ctrlAttr] = obj.parent.e_internal.attr[obj.ctrlAttr];
                                 obj.parent.e_internal.obj.SetSettings (newSettings, true);
                             }
-                        },
+                        }
                     });  
                 }
                 else {

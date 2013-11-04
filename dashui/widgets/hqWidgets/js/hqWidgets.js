@@ -2625,7 +2625,9 @@ var hqWidgets = {
                     if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGong ||
                         this.settings.buttonType == hqWidgets.gButtonType.gTypeCam) {
                         
-                        if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGong) this._PlayMelody();
+                        if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGong) {
+							this._PlayMelody();
+						}
                         
                         // Hide big window
                         if (this.intern._jbigWindow && hqWidgets.gDynamics.gActiveBig != null && hqWidgets.gDynamics.gActiveBig != this)
