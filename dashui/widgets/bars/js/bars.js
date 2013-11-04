@@ -523,15 +523,22 @@ jQuery.extend(true, dui.binds, {
                 
                 if (div.barsOptions.buttons.length > 1) {
                     sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td></td><td>";
+					sText += "<table class='no-space'><tr class='no-space'>";
                     if (i > 0) {
-                        sText +="<input type='button' id='barsDel"+i+"' value='"+dui.translate('Delete')+"'>";
-                        sText +="<input type='button' id='barsUp" +i+"' value='"+dui.translate('Up')+"'>";
-                    }
+                        sText +="<td style='width:90px' class='no-space'><button id='barsDel"+i+"'>"+dui.translate('Delete')+"</button></td>";
+                        sText +="<td style='width:90px' class='no-space'><button id='barsUp" +i+"'>"+dui.translate('Up')+"</button></td>";
+                    }else {
+						sText +="<td style='width:90px' class='no-space'></td><td style='width:90px' class='no-space'></td>";
+					}
+					
+					sText +="<td style='width:90px' class='no-space'>";
                     if (i != div.barsOptions.buttons.length - 1) {
-                        sText +="<input type='button' id='barsDown" +i+"' value='"+dui.translate('Down')+"'>";
+                        sText +="<button id='barsDown" +i+"'>"+dui.translate('Down')+"</button>";
                     }
+					sText +="</td>";
+					
                     
-                    sText += "</td></tr>";
+                    sText += "</tr></table></td></tr>";
                 }
                 
             }
@@ -592,7 +599,7 @@ jQuery.extend(true, dui.binds, {
                 // Use delete button
                 var btn = $('#barsDel'+i);
                 if (btn) {
-                    btn.button();
+                    btn.button({icons: {primary: "ui-icon ui-icon-circle-close"}});
                     var htmlbtn4 = document.getElementById ('barsDel'+i);
                     if (htmlbtn4) {
                         htmlbtn4.parent = div;
@@ -612,7 +619,7 @@ jQuery.extend(true, dui.binds, {
                 }
                 btn = $('#barsUp'+i);
                 if (btn) {
-                    btn.button( {icons: {primary: "ui-icon-carat-1-s"}});
+                    btn.button( {icons: {primary: "ui-icon-arrowthick-1-n"}});
                     var htmlbtn_ = document.getElementById ('barsUp'+i);
                     if (htmlbtn_) {
                         htmlbtn_.parent = div;
@@ -630,7 +637,7 @@ jQuery.extend(true, dui.binds, {
                 }
                 btn = $('#barsDown'+i);
                 if (btn) {
-                    btn.button({icons: {primary: "ui-icon-carat-1-n"}});
+                    btn.button({icons: {primary: "ui-icon-arrowthick-1-s"}});
                     var htmlbtn = document.getElementById ('barsDown'+i);
                     if (htmlbtn) {
                         htmlbtn.parent = div;
@@ -661,7 +668,7 @@ jQuery.extend(true, dui.binds, {
 				}
 
 				var iGeomCount = 0;
-                sText += "<tr><td colspan=2><button id='idGeometry_BtnGroup' class='groupButtonWidth'>"+dui.translate("Geometry...")+"</td></tr>";
+                sText += "<tr><td colspan=2><button id='idGeometry_BtnGroup' class='groupButtonWidth'>"+dui.translate("Geometry...")+"</button></td></tr>";
                 sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Bar type:")+"</td><td><select id='inspect_position' style='width: "+dui.binds.bars.width+"px'>";
                 sText += "<option value='0'>" +dui.translate("Horizontal")+"</option>";
                 sText += "<option value='1'>" +dui.translate("Vertical")+"</option>";
@@ -681,18 +688,18 @@ jQuery.extend(true, dui.binds, {
                 sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Image align:")+"</td><td><select id='inspect_bImageAlign' style='width: "+dui.binds.bars.width+"px'>";
                 sText += "<option value='center'>" +dui.translate("Center")+"</option>";
                 sText += "<option value='left'>"   +dui.translate("Left")+"</option>";
-                sText += "<option value='right'>"  +dui.translate("right")+"</option>";
+                sText += "<option value='right'>"  +dui.translate("Right")+"</option>";
                 sText += "</select></td></tr>";           
 
                 sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Text align:")+"</td><td><select id='inspect_bTextAlign' style='width: "+dui.binds.bars.width+"px'>";
                 sText += "<option value='center'>" +dui.translate("Center")+"</option>";
                 sText += "<option value='left'>"   +dui.translate("Left")+"</option>";
-                sText += "<option value='right'>"  +dui.translate("right")+"</option>";
+                sText += "<option value='right'>"  +dui.translate("Right")+"</option>";
                 sText += "</select></td></tr>";           
 
                 // Styles
                 var iStyleCount = 0;
-                sText += "<tr><td colspan=2><button id='idStyle_BtnGroup' class='groupButtonWidth'>"+dui.translate("Styles...")+"</td></tr>";
+                sText += "<tr><td colspan=2><button id='idStyle_BtnGroup' class='groupButtonWidth'>"+dui.translate("Styles...")+"</button></td></tr>";
                 sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Normal:")+"</td><td id='inspect_bStyleNormalParent' ></td></tr>";
                 sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Normal hover:")+"</td><td id='inspect_bStyleNormalHoverParent' ></td></tr>";
                 sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Active:")+"</td><td id='inspect_bStyleActiveParent'></td></tr>";
@@ -704,7 +711,7 @@ jQuery.extend(true, dui.binds, {
 				    div.barsIntern.wType == 'tplBarNavigator') {
 					var iEffectsCount = 0;
 					dui.updateFilter();
-					sText += "<tr><td colspan=2><button id='idEffect_BtnGroup' class='groupButtonWidth'>"+dui.translate("Effects...")+"</td></tr>";
+					sText += "<tr><td colspan=2><button id='idEffect_BtnGroup' class='groupButtonWidth'>"+dui.translate("Effects...")+"</button></td></tr>";
                     sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td>"+ dui.translate("Hide effect:")+"</td><td><select id='inspect_bHideEffect' style='width: "+(dui.binds.bars.width - 40)+"px'>";
 					var sEffects = "";
                     sEffects += "<option value=''>Show/Hide</option>";
@@ -734,12 +741,12 @@ jQuery.extend(true, dui.binds, {
                 }
 
                 
-				sText += "<tr><td colspan=2><button id='idButtons_BtnGroup' class='groupButtonWidth'>"+dui.translate("Buttons...")+"</td></tr>";
+				sText += "<tr><td colspan=2><button id='idButtons_BtnGroup' class='groupButtonWidth'>"+dui.translate("Buttons...")+"</button></td></tr>";
 
                 for (var m = 0; m < div.barsOptions.buttons.length; m++) {
                     sText += dui.binds.bars.editButton (div, m);
                 }   
-                sText += "<tr id='idButtons"+(div.barsOptions.buttons.length*5)+"'><td><input type='button' id='barsAdd' value='"+dui.translate("Add")+"'></td></tr></table>";
+                sText += "<tr id='idButtons"+(div.barsOptions.buttons.length*5)+"'><td><button id='barsAdd' >"+dui.translate("Add")+"</button></td></tr></table>";
                 $('#barsEditElements').remove ();
                 jParent.append (sText);
                 			
@@ -759,7 +766,7 @@ jQuery.extend(true, dui.binds, {
 				});
                 
                 document.getElementById ('barsAdd').parent = div;
-                $('#barsAdd').button().click (function () {
+                $('#barsAdd').button({icons : {primary :'ui-icon-circle-plus'}}).click (function () {
                     var div = this.parent;
                     div.barsOptions.buttons[div.barsOptions.buttons.length] = {"image": "", "text": "Caption", "option": ""};
                     dui.binds.bars.init (div.barsIntern.wid);

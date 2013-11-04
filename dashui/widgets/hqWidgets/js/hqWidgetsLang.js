@@ -67,7 +67,7 @@ hqWidgets = $.extend (hqWidgets, {
                 "Icon:"                     : {"en": "Icon:",           "de": "Kleinbild:"},
                 "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
                 "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
-                "Styles..."                 : {"en": "Styles...",       "de": "Stile..."},
+                "Styles..."                 : {"en": "Styles...",       "de": "Stil..."},
                 "jQuery Styles:"            : {"en": "Use&nbsp;jQuery&nbsp;Styles:", "de": "jQuery&nbsp;Stil&nbsp;anwenden:"},
                 "Radius:"                   : {"en": "Border&nbsp;Radius:", "de": "Eckenradius:"},
                 "Icon width:"               : {"en": "Icon width:",     "de": "Bildbreite:"},

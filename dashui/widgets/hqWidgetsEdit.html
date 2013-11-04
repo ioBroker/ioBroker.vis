@@ -763,7 +763,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Show loading:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_loader'>";
                 
                 // Show button
-                sTextChart = "<tr><td colspan=2><button id='idShowChart' class='groupButtonWidth'>"+dui.translate("Charts...")+"</td></tr>" + sTextChart;
+                sTextChart = "<tr><td colspan=2><button id='idShowChart' class='groupButtonWidth'>"+dui.translate("Charts...")+"</button></td></tr>" + sTextChart;
                 hqEditElem.e_settings.parent.append (sTextChart);
                 var advBtn = document.getElementById ('idShowChart');
                 advBtn.obj   = hqEditElem;
