@@ -876,7 +876,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                         btn.SetStates ({temperature: 0, valve: 0, humidity: 0, valueSet: 0});
                         btn = $.extend (btn, {translateSignal: function (option, value) {
                             if (option == "valueSet")
-                                return (value == 0) ? dui.translate ("Off") : ((value == 100) ? dui.Tramslate ("On") : value);
+                                return (value == 0) ? dui.translate ("Off") : ((value == 100) ? dui.translate ("On") : value);
                             else // temperature, humidity, valve
                                 return value;
                         }});  
