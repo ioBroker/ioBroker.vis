@@ -22,31 +22,33 @@
 
 var dui = {
 
-    version:            '0.9beta29',
-    storageKeyViews:    'dashuiViews',
-    storageKeySettings: 'dashuiSettings',
-    storageKeyInstance: 'dashuiInstance',
-    fileViews:          duiConfig.fileViews,
-    instance:           null,
-    urlParams:          {},
-    settings:           {},
-    views:              {},
-    widgets:            {},
-    activeView:         "",
-    defaultHmInterval:  duiConfig.defaultHmInterval,
-    listval:            [],
-    widgetSets:         duiConfig.widgetSets,
-    words:              null,
-    currentLang:        duiConfig.currentLang,
-    initialized:        false,
-    useCache:           true,
-    socket: {},
-    binds: {},
-    ccuIoDisconnected:  false,
-    instanceView: undefined,
-    instanceData: undefined,
-    instanceCmd: undefined,
-    viewsActiveFilter: {},
+    version:                '0.9beta29',
+    requiredCcuIoVersion:   '0.9.63',
+    storageKeyViews:        'dashuiViews',
+    storageKeySettings:     'dashuiSettings',
+    storageKeyInstance:     'dashuiInstance',
+    fileViews:              duiConfig.fileViews,
+    instance:               null,
+    urlParams:              {},
+    settings:               {},
+    views:                  {},
+    widgets:                {},
+    activeView:             "",
+    defaultHmInterval:      duiConfig.defaultHmInterval,
+    listval:                [],
+    widgetSets:             duiConfig.widgetSets,
+    words:                  null,
+    currentLang:            duiConfig.currentLang,
+    initialized:            false,
+    useCache:               true,
+    socket:                 {},
+    binds:                  {},
+    ccuIoDisconnected:      false,
+    instanceView:           undefined,
+    instanceData:           undefined,
+    instanceCmd:            undefined,
+    viewsActiveFilter:      {},
+
     bindInstance: function () {
         if (!dui.instanceCmd) {
             //console.log("can't bind instance :-(");
@@ -865,8 +867,16 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         $("#loading").append("Connecting to CCU.IO ...<br/>");
 
         dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host'));
+
+
+        dui.socket.emit('getVersion', function(version) {
+            if (version < dui.requiredCcuIoVersion) {
+                alert("Warning: requires CCU.IO version "+dui.requiredCcuIoVersion+" - found CCU.IO version "+version+" - please update CCU.IO.");
+            }
+        });
+
         dui.socket.on('event', function (obj) {
-            if (homematic.uiState["_" + obj[0]] !== undefined) {
+            if (obj && homematic.uiState["_" + obj[0]] !== undefined) {
                 var o = {};
                 o["_" + obj[0] + ".Value"] = obj[1];
                 o["_" + obj[0] + ".Timestamp"] = obj[2];
