@@ -274,7 +274,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                                 newSettings[obj.ctrlAttr] = obj.parent.e_internal.attr[obj.ctrlAttr];
                                 obj.parent.e_internal.obj.SetSettings (newSettings, true);
                             }
-                        },
+                        }
                     });  
                 }
                 else {
@@ -573,7 +573,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_settings.parent.append (sTextStyle);
         else 
         if (iStyleCount > 1) {
-            sTextStyle = "<tr><td colspan=2><button id='idShowStyle' class='groupButtonWidth'>"+hqWidgets.translate("Styles...")+"</td></tr>" + sTextStyle;
+            sTextStyle = "<tr><td colspan=2><button id='idShowStyle' class='groupButtonWidth'>"+hqWidgets.translate("Styles...")+"</button></td></tr>" + sTextStyle;
             this.e_settings.parent.append (sTextStyle);
             var advBtn = document.getElementById ('idShowStyle');
             advBtn.obj   = this;
@@ -618,7 +618,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         }
         else
         if (iAdvCount > 0) {
-            sTextAdv = "<tr><td colspan=2><button id='idShowAdv' class='groupButtonWidth'>"+hqWidgets.translate("Advanced...")+"</td></tr>" + sTextAdv;
+            sTextAdv = "<tr><td colspan=2><button id='idShowAdv' class='groupButtonWidth'>"+hqWidgets.translate("Advanced...")+"</button></td></tr>" + sTextAdv;
             this.e_settings.parent.append (sTextAdv);
             var advBtn = document.getElementById ('idShowAdv');
             advBtn.obj   = this;
@@ -659,7 +659,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.obj.controlsVisible = false;
 
         if (iCtrlCount > 0) {
-            sTextCtrl = "<tr><td colspan=2><button id='idShowCtrl' class='groupButtonWidth'>"+hqWidgets.translate("Control...")+"</td></tr>" + sTextCtrl;
+            sTextCtrl = "<tr><td colspan=2><button id='idShowCtrl' class='groupButtonWidth'>"+hqWidgets.translate("Control...")+"</button></td></tr>" + sTextCtrl;
             this.e_settings.parent.append (sTextCtrl);
             var ctrlBtn = document.getElementById ('idShowCtrl');
             ctrlBtn.obj   = this;
