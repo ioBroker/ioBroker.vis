@@ -31,6 +31,18 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta30
+
+* (Hobbyquaker) Bild-Upload
+* (Hobbyquaker) Bugfixes Basic-Widgets
+* (Bluefox) Fix translate error
+* (Bluefox) Translate bars and add icons to Add/Delete/Up/Down buttons
+* (Bluefox) Fix image for bars
+* (Bluefox) Small fixes for image select dialog
+* (Bluefox) Fixed Icon upload dialog
+* (Bluefox) Remove CUxD devices from standard HMselect dialog (It can be selected now with "Use no device filter" option)
+
+
 ### 0.9beta29
 
 * (Bluefox) Fix filter of untagged widgets
