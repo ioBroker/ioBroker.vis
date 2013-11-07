@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="css/backgrounds.css" />
     <link rel="stylesheet" href="css/dashui.css" />
     <link rel="stylesheet" href="../lib/css/jqGrid/ui.jqgrid-4.5.4.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="../lib/css/jquery.multiselect-1.13.css" type="text/css" />
+    <link rel="stylesheet" href="../lib/css/jquery.multiselect.filter.css" type="text/css" />
 
     <script src="../lib/js/jquery-1.10.2.min.js"></script>
     <script src="../socket.io/socket.io.js"></script>
@@ -27,6 +29,8 @@
     <script type="text/javascript" src="../lib/js/jquery.multiselect-1.13.js"></script>
     <script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
     <script type="text/javascript" src="js/jquery.dialogextend.min.js"></script>
+    <script type="text/javascript" src="../lib/js/jquery.multiselect-1.13.js"></script>
+    <script type="text/javascript" src="../lib/js/jquery.multiselect.filter-1.5pre.js"></script>
 
     <script type="text/javascript" src="../lib/js/jqGrid/jquery.jqGrid-4.5.4.min.js"></script>
     <script type="text/javascript" src="../lib/js/jqGrid/i18n/grid.locale-en.js" ></script>
@@ -160,7 +164,10 @@
                             <td>Class:</td><td><input size="48" type="text" id="inspect_class" class="dashui-inspect-widget"/></td>
                         </tr>
                         <tr>
-                            <td>Filter key:</td><td><input id="inspect_filterkey" class="dashui-inspect-widget"/></td>
+                            <td>Filter key:</td><td><input size="48" id="inspect_filterkey" class="dashui-inspect-widget"/></td>
+                        </tr>
+                        <tr>
+                            <td>Show in views:</td><td><select id="inspect_views" multiple="multiple"></select></td>
                         </tr>
 
                     </table>

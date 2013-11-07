@@ -124,67 +124,136 @@ dui = $.extend(true, dui, {
         }
         return key;
     },
-    delWidget: function () {
-        dui.clearWidgetHelper();
-        $("#select_active_widget option[value='"+dui.activeWidget+"']").remove();
-        $("#select_active_widget").multiselect("refresh");
-        
-		var widget_div = document.getElementById (dui.activeWidget);
+    getViewOfWidget: function (id) {
+		// find view of this widget
+		var view = null;
+		for (var v in dui.views) {
+			if (dui.views[v] && dui.views[v].widgets && dui.views[v].widgets[id]) {
+				view = v;
+				break;
+			}
+		}
+		
+		return view;
+	},
+	getViewsOfWidget: function (id) {
+		if (id.indexOf ('_') == -1) {
+			var view = dui.getViewOfWidget (id);
+			if (view) {
+				return [view];
+			} else {
+				return [];
+			}
+		} else {
+			var wids = id.split('_', 2);
+			var wid = wids[0];
+			var result = [];
+			for (var v in dui.views) {
+				if (dui.views[v].widgets[wid+'_'+v] !== undefined) {
+					result[result.length] = v;
+				}
+			}
+			return result;
+		}
+	},
+	delWidgetHelper: function (id, isAll) {
+		if (isAll && id.indexOf('_') != -1) {
+			var views = dui.getViewsOfWidget (id);
+			var wids = id.split('_', 2);
+			for (var i = 0; i < views.length; i++) {
+				dui.delWidgetHelper (wids[0] + '_' + views[i], false);
+			}
+			dui.inspectWidget("none");
+			return;
+		}
+	
+		if (id === undefined || id == null || id == "") {
+			return;
+		}
+		
+		$("#select_active_widget option[value='"+id+"']").remove();
+		$("#select_active_widget").multiselect("refresh");       
+		
+		var widget_div = document.getElementById (id);
 		if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit['delete']) {
-			widget_div.dashuiCustomEdit['delete'] (dui.activeWidget);
+			widget_div.dashuiCustomEdit['delete'] (id);
 		}
         
-		$("#"+dui.activeWidget).remove();
-        delete(dui.views[dui.activeView].widgets[dui.activeWidget]);
-        dui.saveRemote();
-        dui.inspectWidget("none");
+		$("#"+id).remove();
+        delete(dui.views[dui.activeView].widgets[id]);
+
+		if (dui.widgets[id]) {
+			delete dui.widgets[id]; 
+			var widgets = [];
+			// Delete old from array
+			for (var w in dui.widgets) {
+				if (w != id) {
+					widgets[w] = dui.widgets[w];
+				}
+			}
+			dui.widgets = widgets;
+		}		
+	},
+	delWidget: function () {
+		dui.clearWidgetHelper();
+		dui.delWidgetHelper (dui.activeWidget, true);
+		dui.saveRemote ();
+		dui.inspectWidget("none");
     },
-    addWidget: function (tpl, data, style) {
+    addWidget: function (tpl, data, style, wid, view) {
+		var isSelectWidget = (wid === undefined);
+		var isViewExist    = (document.getElementById("duiview_"+view) != null);
         //console.log("addWidget");
-        if (!$("#dui_container").find("#duiview_"+dui.activeView)) {
-            $("#dui_container").append("<div id='"+dui.activeView+"'></div>");
-        }
-        dui.clearWidgetHelper();
-
-        var widgetId = dui.nextWidget();
-
-        dui.widgets[widgetId] = {
-            wid: widgetId,
-            data: new can.Observe($.extend({
-                "wid": widgetId,
-                "title": undefined,
-                "subtitle": undefined,
-                "html": undefined,
-                "hm_id": 65535,
-                "hm_wid": undefined,
-                "factor": 1,
-                "digits": "",
-                "min": 0,
-                "max": 1,
-                "step": 0.01,
-                off_text: undefined,
-                on_text: undefined,
-                buttontext: undefined
-            }, data))
-        };
-        //console.log(dui.widgets[widgetId].data);
-        $("#duiview_"+dui.activeView).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"], "view": dui.activeView}));
-        if (!dui.views[dui.activeView]) {
-            //console.log("views["+dui.activeView+"]==undefined :-(");
-        }
-
-        if (!dui.views[dui.activeView].widgets) {
-            dui.views[dui.activeView].widgets = {};
-        }
-        if (!dui.views[dui.activeView].widgets[widgetId]) {
-            dui.views[dui.activeView].widgets[widgetId] = {};
-        }
-		
-		if (dui.views[dui.activeView].widgets[widgetId].data !== undefined) {
-			data = $.extend (data, dui.views[dui.activeView].widgets[widgetId].data, true);
+		if (view === undefined) {
+			view = dui.activeView;
 		}
 		
-        dui.views[dui.activeView].widgets[widgetId] = {
+        if (isSelectWidget && !isViewExist) {
+            $("#dui_container").append("<div id='"+view+"'></div>");
+			isViewExist = true;
+        }
+		
+		if (isSelectWidget) {
+			dui.clearWidgetHelper();
+		}
+
+        var widgetId = (wid === undefined) ? dui.nextWidget() : wid;
+
+		dui.widgets[widgetId] = {
+			wid: widgetId,
+			data: new can.Observe($.extend({
+				"wid": widgetId,
+				"title": undefined,
+				"subtitle": undefined,
+				"html": undefined,
+				"hm_id": 65535,
+				"hm_wid": undefined,
+				"factor": 1,
+				"digits": "",
+				"min": 0,
+				"max": 1,
+				"step": 0.01,
+				off_text: undefined,
+				on_text: undefined,
+				buttontext: undefined
+			}, data))
+		};
+		if (isViewExist) {
+			$("#duiview_"+view).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"], "view": view}));
+		}
+
+        if (!dui.views[view].widgets) {
+            dui.views[view].widgets = {};
+        }
+        if (!dui.views[view].widgets[widgetId]) {
+            dui.views[view].widgets[widgetId] = {};
+        }
+		
+		if (dui.views[view].widgets[widgetId].data !== undefined) {
+			data = $.extend (data, dui.views[view].widgets[widgetId].data, true);
+		}
+		
+        dui.views[view].widgets[widgetId] = {
             tpl: tpl,
             data: data,
             style: style
@@ -194,14 +263,21 @@ dui = $.extend(true, dui, {
             $("#"+widgetId).css(style);
         }
 
-        dui.binds.jqueryui._disable();
+		if (isSelectWidget) {
+			dui.binds.jqueryui._disable();
+		}
+		
         $("#"+widgetId).click(function (e) {
             e.preventDefault();
             e.stopPropagation();
             dui.inspectWidget(widgetId);
             return false;
         });
-        dui.activeWidget = widgetId;
+		
+		if (isSelectWidget) {
+			dui.activeWidget = widgetId;
+		}
+		
         return widgetId;
     },
     dupWidget: function () {
@@ -233,7 +309,79 @@ dui = $.extend(true, dui, {
             alert("Widget copied to view " + targetView + ".");
         }
     },
-    inspectWidget: function (id) {
+	renameWidget: function (oldId, newId) {
+		// find view of this widget
+		var view = dui.getViewOfWidget (oldId);
+		
+		// create new widget with the same properties
+		if (view) {
+			dui.addWidget (dui.views[view].widgets[oldId].tpl, dui.views[view].widgets[oldId].data, dui.views[view].widgets[oldId].style, newId, view);
+            $("#select_active_widget").append("<option value='"+newId+"'>"+newId+" ("+$("#"+dui.views[view].widgets[newId].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
+			dui.delWidgetHelper (oldId, false);
+		}
+		dui.inspectWidget(newId);
+		dui.saveRemote ();
+	},
+	// find this wid in all views, 
+	// delete where it is no more exist, 
+	// create where it should exist and
+	// sync data
+	syncWidget: function (id, views) {
+		// find view of this widget
+		var view = dui.getViewOfWidget (id);
+		
+		if (views === undefined) {
+			views = dui.getViewsOfWidget (id);
+		}
+		
+		if (view) {
+			if (views == null) {
+				views = [];
+			}
+		
+			if (views[view] === undefined) {
+				views[views.length] = view;
+			}
+			var wids = id.split('_', 2);
+			var wid = wids[0];
+			
+			// First sync views
+			for (var v_ in dui.views) {
+				var isFound = false;
+				if (v_ == view) {
+					continue;
+				}
+				
+				for (var i = 0; i < views.length; i++) {
+					if (views[i] == v_) {
+						isFound = true;
+						break;
+					}
+				}
+				
+				if (dui.views[v_].widgets[wid+'_'+v_] !== undefined) {
+					dui.delWidgetHelper (wid+'_'+v_, false);
+				}
+				
+				if (isFound) {	
+					// Create 
+					dui.addWidget (dui.views[view].widgets[id].tpl, dui.views[view].widgets[id].data, dui.views[view].widgets[id].style, wid+'_'+v_, v_);
+				}
+			}
+			
+			
+			if (views.length < 2 && (id.indexOf('_') != -1)) {
+				// rename this widget from "wid_view" to "wid"
+				var wids = id.split('_', 2);
+				dui.renameWidget (id, wids[0]);
+			}
+			else
+			if (views.length > 1 && (id.indexOf('_') == -1)) {
+				dui.renameWidget (id, id+'_'+view);
+			}
+		}
+	},
+	inspectWidget: function (id) {
 	
         //console.log("inspectWidget("+id+")");
         if (dui.widgets[id]) {
@@ -588,7 +736,39 @@ dui = $.extend(true, dui, {
                 this._save();               
             }); 
         }
-        
+		
+		$('#inspect_views').html("");
+		var views = dui.getViewsOfWidget (dui.activeWidget);
+		for (var v in dui.views) {
+			if (v != dui.activeView) {
+				var selected = "";
+				for (var i = 0; i < views.length; i++) {
+					if (views[i] == v) {
+						selected = "selected";
+						break;
+					}
+				}
+			
+				$("#inspect_views").append("<option value='"+v+"' "+ selected +">"+v+"</option>");
+			}
+		}
+		
+        $('#inspect_views').multiselect({
+			minWidth: 300,
+			height: 260,
+			noneSelectedText: dui.translate("Single view"),
+			selectedText: function(numChecked, numTotal, checkedItems){
+				var text = "";
+				for (var i = 0; i < checkedItems.length; i++) {
+					text += ((text == "") ? "" : ",") + checkedItems[i].title;
+				}
+				return text;
+			},
+			multiple: true
+		}).change (function () {
+			dui.syncWidget (dui.activeWidget, $(this).val());
+			dui.saveRemote ();
+		});
         
         // Widget selektieren
         $("#select_active_widget option").removeAttr("selected");
@@ -894,8 +1074,7 @@ dui = $.extend(true, dui, {
                                      height: activeWidget.height(),
                                      top:    activeWidget.position().top,
                                      left:   activeWidget.position().left,
-                                     zindex: activeWidget.zIndex()});
-                                     
+                                     zindex: activeWidget.zIndex()});             
                 }
             }
 

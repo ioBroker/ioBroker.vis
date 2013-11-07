@@ -723,6 +723,11 @@ var dui = {
 
     },
     saveRemote: function () {
+		// Sync widget before it will be saved
+		if (dui.activeWidget && dui.activeWidget.indexOf('_') != -1 && dui.syncWidget) {
+			dui.syncWidget (dui.activeWidget);
+		}
+	
         dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
             //console.log("Saved views on CCU.IO");
         });
