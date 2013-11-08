@@ -68,6 +68,19 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           });
                 }
                 else
+                if (wtype == 'tplHqIp') {
+                    opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeButton, 
+                                          iconName: 'pc.png', 
+                                          zindex: 2,
+										  radius: 15,
+										  styleNormal: 'hq-button-base-normal-hover',
+										  styleNormalHover: 'hq-button-base-normal',
+										  styleActive: 'hq-button-green-normal',
+										  styleActiveHover: 'hq-button-green-normal-hover',
+                                          hm_id: ''
+                                          });
+                }
+                else
                 if (wtype == 'tplHqInfo') {
                     opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeInfo, 
                                           zindex: 2,

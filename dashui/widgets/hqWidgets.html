@@ -876,7 +876,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                         btn.SetStates ({temperature: 0, valve: 0, humidity: 0, valueSet: 0});
                         btn = $.extend (btn, {translateSignal: function (option, value) {
                             if (option == "valueSet")
-                                return (value == 0) ? dui.translate ("Off") : ((value == 100) ? dui.Tramslate ("On") : value);
+                                return (value == 0) ? dui.translate ("Off") : ((value == 100) ? dui.translate ("On") : value);
                             else // temperature, humidity, valve
                                 return value;
                         }});  
@@ -1160,7 +1160,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Convert string to time
                         if (homematic.uiState["_"+hm_ids[i].hm_id] && homematic.uiState["_"+hm_ids[i].hm_id].Value !== undefined) {
                             var dt = undefined;
-                            if (homematic.uiState["_"+hm_ids[i].hm_id].LastChange !== undefined) {
+                            if (homematic.uiState["_"+hm_ids[i].hm_id].LastChange !== undefined &&
+							    homematic.uiState["_"+hm_ids[i].hm_id].LastChange != null) {
                                 dt = new Date(homematic.uiState["_"+hm_ids[i].hm_id].LastChange.replace(' ', 'T') + "Z");//('2011-04-11T11:51:00') "T" Means GMT (We do not have GMT)
 								dt.setMinutes(dt.getMinutes() + new Date().getTimezoneOffset());
 							}
@@ -1292,14 +1293,14 @@ if ((typeof hqWidgets !== 'undefined')) {
 <script type="text/ejs" id="tplHqDimmer" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Dimmer" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Dim1TPBU-FM,HM-LC-Dim1PWM-CV,HM-LC-Dim1T-FM,HM-LC-Dim1T-CV,HM-LC-Dim1T-PI,HM-LC-Dim1L-CV,HM-LC-Dim1L-Pl,HM-LC-Dim2L-SM,HMW-LC-Dim1L-DR">
     <%
     if (this && this.data && this.data.attr) {
-    if (this.data.attr('hqoptions')){
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		if (this.data.attr('hqoptions')){
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		} else {
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqDimmer", this.view);
+		}
     }
-    else {
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqDimmer", this.view);
-    }
-    }
-    %></script>
+    %>
+</script>
 <script type="text/ejs" id="tplHqShutter" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Window and Shutter" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Bl1-SM,HMW-LC-Bl1-DR,HM-LC-Bl1-FM,HM-LC-Bl1-PB-FM,HM-LC-Bl1PBU-FM;HM-Sec-SC,CC-SC-Rd-WM-W-R5,FHT80TF-2;HM-Sec-RHS">
     <%
     if (this && this.data && this.data.attr) {
@@ -1456,27 +1457,36 @@ if ((typeof hqWidgets !== 'undefined')) {
     }
     %>
 </script>
+<script type="text/ejs" id="tplHqIp" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Ping device" data-dashui-attrs="hqoptions" data-hqwidgets-filter="PING">
+    <%
+    if (this && this.data && this.data.attr) {
+		if (this.data.attr('hqoptions')){
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		} else {
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqIp", this.view);
+		}
+    }
+    %>
+</script>
 <script type="text/ejs" id="tplHqCharts" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Charts" data-dashui-attrs="hqoptions">
     <%
     if (this && this.data && this.data.attr) {
-    if (this.data.attr('hqoptions')){
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
-    }
-    else {
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqCharts", this.view);
-    }
+		if (this.data.attr('hqoptions')){
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		} else {
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqCharts", this.view);
+		}
     }
     %>
 </script>
 <script type="text/ejs" id="tplHqEventlist" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Eventlist" data-dashui-attrs="hqoptions">
     <%
     if (this && this.data && this.data.attr) {
-    if (this.data.attr('hqoptions')){
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
-    }
-    else {
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqEventlist", this.view);
-    }
+		if (this.data.attr('hqoptions')){
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		} else {
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqEventlist", this.view);
+		}
     }
     %>
 </script>
