@@ -478,6 +478,7 @@
             var val = parseFloat(str);
             var state;
             %>
+            <%  if (val === 0 || str === false || str === "false") { %>
             <%== this.data.attr("html_false") %>
             <% } else { %>
             <%== this.data.attr("html_true") %>
