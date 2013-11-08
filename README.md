@@ -31,6 +31,16 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta31
+
+* (Bluefox) Add feature: show in multiple views
+* (Bluefox) hqWidgets Add HM-LC-Bl1-PB-FM to Shutter aktor
+* (Bluefox) hqWidgets Add transparent style for buttons
+* (Hobbyquaker) jqui Widgets Bugfixes
+* (Hobbyquaker) Reload uiState on CCU.IO Reconnect
+
+
+
 ### 0.9beta30
 
 * (Hobbyquaker) Bild-Upload

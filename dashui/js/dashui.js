@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta30',
+    version:                '0.9beta31',
     requiredCcuIoVersion:   '0.9.63',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -727,7 +727,7 @@ var dui = {
     saveRemote: function () {
 		// Sync widget before it will be saved
 		if (dui.activeWidget && dui.activeWidget.indexOf('_') != -1 && dui.syncWidget) {
-			dui.syncWidget (dui.activeWidget);
+			dui.syncWidget(dui.activeWidget);
 		}
 	
         dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
@@ -918,6 +918,15 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
 
         dui.socket.on('reconnect', function () {
             $("#ccu-io-disconnect").dialog("close");
+            // Reload uiState
+            dui.socket.emit("getDatapoints", function (data) {
+                //console.log("datapoints loaded");
+                for (var dp in data) {
+                    homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
+                }
+            });
+
+
             dui.ccuIoDisconnected = false;
             //console.log((new Date()) + " socket.io reconnect");
         });
@@ -970,7 +979,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                 }
             })
         }
-    }, 30000);
+    }, 90000);
 
     dui.preloadImages(["/dashui/css/kian/images/modalClose.png"])
 

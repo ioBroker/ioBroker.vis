@@ -475,9 +475,8 @@
         <div>
             <%
             var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
-            var val = parseFloat(str,10);
+            var val = parseFloat(str);
             var state;
-            if (val == 0 || val === false || str == "false") {
             %>
             <%== this.data.attr("html_false") %>
             <% } else { %>
