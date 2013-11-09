@@ -786,7 +786,9 @@ var homematic = {
             o["_" + id + ".Value"] = val;
             o["_" + id + ".Timestamp"] = t;
             o["_" + id + ".Certain"] = false;
-            this.uiState.attr(o);
+			if (this.uiState["_" + id]) {
+				this.uiState.attr(o);
+			}
         }
     },
     stateDelayed: function (id, val) {
