@@ -31,6 +31,14 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta32
+* (Bluefox) Add hqWidgets/"Ping device" widget
+* (Bluefox) Add UP and DOWN buttons to Shutter control
+* (Bluefox) DashUI Bug: Check before control if ID exists
+* (Bluefox) hqWidgets / Info: Change condition. Warning! For all hqWidgets/INFO the condition must be changed
+* (Bluefox) Add initial value to filter bar
+* (Bluefox) Fixed Font by hqWidgets/Gauge
+
 ### 0.9beta31
 
 * (Bluefox) Add feature: show in multiple views
