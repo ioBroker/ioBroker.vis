@@ -8,6 +8,14 @@
 <h2><a name="Attribute" ></a>Beschreibung von Attributen</h2>
 <h3><a name="Common" ></a>Haupteinstell&uuml;ngen</h3>
 
+<h4><a name="FilterKey" ></a>Filter key</h4>
+<p>Gibt einen Schl&uuml;sselwort ein, &uuml;ber welches das Widget mit dem Filter ausgewertet wird.</p>
+
+<h4><a name="ShowInViews" ></a>Zeige in Views</h4>
+<p>Ein Widget kann in mehr als einem View gezeigt werden. Hier kann man einstellen in welchen Views es noch angezeigt werden soll.<br>
+Es erscheint an der gleichen Stelle in anderem View.</p>
+	
+	
 <h4><a name="TestStatus" ></a>Zustand antesten</h4>
 <p>Schaltet Widget in Aktivzustand und zur&uuml;ck, um im Edit-Modus den Aktivzustand zu testen. Zustand wird nicht gespeichert.</p>
 
@@ -174,6 +182,8 @@ Falls Homematic ID STATE ist. Dann kann man (muss aber nicht) noch Helligkeit-Da
 
 <h4>Haupteinstell&uuml;ngen</h4>
 <ul>
+	<li><a href="#FilterKey">Filter key</a></li>
+	<li><a href="#ShowInViews">Zeige in Views</a></li>
 	<li><a href="#TestStatus">Zustand antesten</a></li>
 	<li><a href="#normalIcon">Kleinbild</a></li>
  	<li><a href="#minmaxValue">Min Wert</a></li>
@@ -221,6 +231,49 @@ Alle Ger&auml;te, die LOWBAT Eigenschaft haben.
 
 <h4>Haupteinstell&uuml;ngen</h4>
 <ul>
+	<li><a href="#FilterKey">Filter key</a></li>
+	<li><a href="#ShowInViews">Zeige in Views</a></li>
+	<li><a href="#TestStatus">Zustand antesten</a></li>
+	<li><a href="#normalIcon">Kleinbild</a></li>
+	<li><a href="#description">Beschreibung</a></li>
+	<li><a href="#room">Raum</a></li>
+	<li><a href="#hmID">Homematic ID</a><br>
+Ger&auml;t ID von welchem Batteriezustand angezeigt werden soll.</li>
+</ul>
+
+<h4>Stile</h4>
+<ul>
+	<li><a href="#normalStyle">Normal</a></li>
+	<li><a href="#activeStyle">Aktive</a></li>
+</ul>
+
+
+<h4>Erweitert</h4>
+<ul>
+	<li><a href="#borderRadius">Eckenradius</a></li>
+	<li><a href="#jQueryStyles">jQuery Stil anwenden</a></li>
+	<li><a href="#imageWidth">Bildbreite</a></li>
+	<li><a href="#imageHeight">Bildh&ouml;he</a></li>
+	<li><a href="#imageSize">Bildgr&ouml;sse</a></li>
+	<li><a href="#iconOn">Aktivbild</a></li>
+	<li><a href="#hideIfInactive">Verstecken falls inaktiv</a></li>
+	<li><a href="#noBackground">Kein Hintergrund</a></li>
+	<li><a href="#showDescription">Zeige Beschreibung</a></li>
+</ul>
+<hr/>
+
+<h3><a name="tplHqIp" ></a>Ping device widget</h3>
+<img src="img/help/helpPingDevice.png"/><br>
+Dieses Widget stellt sehr schnell einen Device dar, welches &uuml;ber einen IP gepollt werden kann. 
+Allerdings muss das Ger&auml;t erst &uuml;ber PING Adapter konfiguriert werden soll.
+
+<h4>Unterst&uuml;tzte Ger&auml;te</h4>
+Alle Ger&auml;te, die im PING Adapter konfiguriert sind.
+
+<h4>Haupteinstell&uuml;ngen</h4>
+<ul>
+	<li><a href="#FilterKey">Filter key</a></li>
+	<li><a href="#ShowInViews">Zeige in Views</a></li>
 	<li><a href="#TestStatus">Zustand antesten</a></li>
 	<li><a href="#normalIcon">Kleinbild</a></li>
 	<li><a href="#description">Beschreibung</a></li>

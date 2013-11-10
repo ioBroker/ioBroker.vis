@@ -8,7 +8,7 @@
 <script type="text/javascript">
 if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) {
     $.extend(true, dui.binds.hqWidgetsExt, {
-        hqEditVersion: "0.1.8",
+        hqEditVersion: "0.1.9",
         hqEditTimerDetectMoving: null,
         hqEditSaveTimer : null,
         hqEditInit: function () {
@@ -64,6 +64,19 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeButton, 
                                           iconName: 'Lamp.png', 
                                           zindex: 2, 
+                                          hm_id: ''
+                                          });
+                }
+                else
+                if (wtype == 'tplHqIp') {
+                    opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeButton, 
+                                          iconName: 'pc.png', 
+                                          zindex: 2,
+										  radius: 15,
+										  styleNormal: 'hq-button-base-normal-hover',
+										  styleNormalHover: 'hq-button-base-normal',
+										  styleActive: 'hq-button-green-normal',
+										  styleActiveHover: 'hq-button-green-normal-hover',
                                           hm_id: ''
                                           });
                 }

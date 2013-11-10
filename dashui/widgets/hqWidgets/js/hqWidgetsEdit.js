@@ -120,13 +120,16 @@ hqWidgets = $.extend (true, hqWidgets, {
                         if (settings[name] != $(this).val()) {
                             settings[name] = $(this).val();
                             
-                            if (settings[name] == "")
+                            if (settings[name] == "" && name != 'infoFormat')
                                 settings[name] = null;
                             
                             if (name == 'ctrlBtnText') {            
                                 settings['ctrlActionBtn'] = (settings[name] != null);
                                 newSettings['ctrlActionBtn'] = settings['ctrlActionBtn'];
-                            }
+                            } else
+							if (name == 'infoCondition') {
+								settings['infoCondition'] = $('#'+this.parent.e_settings.elemName+'_infoConditionSelect').val() + $('#'+this.parent.e_settings.elemName+'_infoCondition').val();
+							}
                             
                             nSettings[name] = settings[name];
                             this.parent.e_internal.obj.SetSettings (newSettings, true);
@@ -155,8 +158,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                         elem_.parent.e_internal.timer=null;
                     }, this.parent.e_settings.timeout, this);
                 });            
-                if (this.e_settings.imgSelect)
-                {
+                if (this.e_settings.imgSelect) {
                     var btn = document.getElementById (this.e_settings.elemName+'_'+eee+'Btn');
                     if (btn) {
                         btn.ctrlAttr = eee;
@@ -295,9 +297,14 @@ hqWidgets = $.extend (true, hqWidgets, {
                 elem.parent   = this;
                 elem.ctrlAttr = eee;
                 $('#'+this.e_settings.elemName+'_'+eee).change (function () { 
-                    this.parent.e_internal.attr[this.ctrlAttr] = $(this).prop('value');
                     var newSettings = {};
-                    newSettings[this.ctrlAttr] = this.parent.e_internal.attr[this.ctrlAttr];
+					if (this.ctrlAttr == 'infoConditionSelect') {
+						newSettings['infoCondition'] = $('#'+this.parent.e_settings.elemName+'_infoConditionSelect').val() + $('#'+this.parent.e_settings.elemName+'_infoCondition').val();
+						this.parent.e_internal.attr[this.ctrlAttr] = newSettings['infoCondition'];
+					} else {
+						this.parent.e_internal.attr[this.ctrlAttr] = $(this).prop('value');
+						newSettings[this.ctrlAttr] = this.parent.e_internal.attr[this.ctrlAttr];
+					}
                     this.parent.e_internal.obj.SetSettings (newSettings, true);                            
                 });
             }        
@@ -517,8 +524,18 @@ hqWidgets = $.extend (true, hqWidgets, {
         
         // Active condition, If hide when incative state
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Active condition:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoCondition'  type='text' value='"+((this.e_internal.attr.infoCondition != undefined) ? this.e_internal.attr.infoCondition : "")+"'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Hide inactive:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_infoIsHideInactive' "+((this.e_internal.attr.infoIsHideInactive) ? "checked" : "")+">";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Active condition:") +"</td><td>\n";
+			var c    = ((this.e_internal.attr.infoCondition !== undefined && this.e_internal.attr.infoCondition.length > 3) ? this.e_internal.attr.infoCondition.substring(0,3) : "==");
+			var cval = ((this.e_internal.attr.infoCondition !== undefined && this.e_internal.attr.infoCondition.length > 3) ? this.e_internal.attr.infoCondition.substring(3) : "");
+			sTextAdv += "<select id='"+this.e_settings.elemName+"_infoConditionSelect' style='width:60px'>";
+			for(var t in hqWidgets.gOperations) {
+				sTextAdv += "<option value='"+hqWidgets.gOperations[t]+"' "+((c == hqWidgets.gOperations[t]) ? "selected" : "")+">"+hqWidgets.gOperations[t]+"</option>";
+			}
+			sTextAdv += "</select>";
+			sTextAdv += "<input style='width: "+(this.e_settings.width - 60)+"px' id='"+this.e_settings.elemName+"_infoCondition' type='text' value='"+cval+"'>\n";
+			sTextAdv += "</td></tr>";
+            
+			sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Hide inactive:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_infoIsHideInactive' "+((this.e_internal.attr.infoIsHideInactive) ? "checked" : "")+">";
         }  
         
         // Lowbat, If hide when incative state
@@ -835,7 +852,9 @@ hqWidgets = $.extend (true, hqWidgets, {
         this._EditColorHandler('infoTextColor');   
         this._EditColorHandler('infoTextColorActive');   
         this._EditTextHandler('infoFormat');   
-        this._EditTextHandler('infoCondition');  
+        this._EditTextHandler('infoCondition');
+        this._EditSelectHandler('infoConditionSelect');
+		
         
         this._EditTextHandler('staticText');   
         this._EditTextHandler('staticTextFont');   

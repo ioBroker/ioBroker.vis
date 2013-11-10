@@ -98,6 +98,8 @@ dui = $.extend(true, dui, {
                 "Action on click:" : {"en" : "Action on click:", "de": "Aktion beim Anklicken:"},
                 "Disable device filter:" : {"en" : "Disable device filter:", "de": "Schalte Ger&auml;tefilter aus:"},
                 "filter_key"       : {"en" : "Filter key:",  "de": "Filterwort:"},
+                "Show in views:"   : {"en" : "Show in views:","de": "Zeige in Views:"},
+                "Single mode"      : {"en" : "Only in actual view",  "de": "Nur im aktuellen View"},
 				// Bars
                 "One at time:"     : {"en" : "One at time:",  "de": "Nur eine auswahlbar:"},
                 "Geometry..."      : {"en" : "Geometry...",   "de": "Geometrie..."},

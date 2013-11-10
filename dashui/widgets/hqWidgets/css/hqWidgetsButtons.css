@@ -61,3 +61,29 @@
 .hq-button-no-background {
 	background:none;
 }
+
+.hq-button-green-normal,.hq-button-green-normal-hover,.hq-button-green-normal-active,.hq-button-green-normal-active-hover{
+	-moz-box-shadow:inset 3px 2px 7px 0px #d9fbbe;
+	-webkit-box-shadow:inset 3px 2px 7px 0px #d9fbbe;
+	box-shadow:inset 3px 2px 7px 0px #d9fbbe;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #b8e356), color-stop(1, #a5cc52) );
+	background:-moz-linear-gradient( center top, #b8e356 5%, #a5cc52 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8e356', endColorstr='#a5cc52');
+	background-color:#b8e356;
+	border:1px solid #83c41a;
+	display:inline-block;
+	color:#ffffff;
+	height:65px;
+	line-height:65px;
+	width:70px;
+}
+.hq-button-green-normal-hover,.hq-button-green-normal-active-hover{
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #a5cc52), color-stop(1, #b8e356) );
+	background:-moz-linear-gradient( center top, #a5cc52 5%, #b8e356 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#a5cc52', endColorstr='#b8e356');
+	background-color:#a5cc52;
+}
+.hq-button-green-normal-active {
+	position:relative;
+	top:1px;
+}
