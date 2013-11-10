@@ -4312,15 +4312,15 @@ var hqWidgets = {
                     
                 if (options.infoFormat !== undefined) {
                     this.settings.infoFormat = options.infoFormat;
-                    this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor, this.settings.infoTextColorActive);
+                    this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, this.settings.infoTextColor, this.settings.infoTextColorActive);
                 }
                 if (options.infoCondition !== undefined) {
                     this.settings.infoCondition = options.infoCondition;
-                    this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor, this.settings.infoTextColorActive);
+                    this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, this.settings.infoTextColor, this.settings.infoTextColorActive);
                 }
                 if (options.infoIsHideInactive !== undefined) {
                     this.settings.infoIsHideInactive = options.infoIsHideInactive;
-                    this.SetInfoText (this.dynStates.infoText, this.dynStates.infoTextFont, this.dynStates.infoTextColor, this.settings.infoTextColorActive);
+                    this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, this.settings.infoTextColor, this.settings.infoTextColorActive);
                 }
             }
 
