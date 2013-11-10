@@ -524,16 +524,16 @@ jQuery.extend(true, dui.binds, {
                 if (div.barsOptions.buttons.length > 1) {
                     sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td></td><td>";
 					sText += "<table class='no-space'><tr class='no-space'>";
+                    sText +="<td style='width:90px' class='no-space'><button id='barsDel"+i+"' style='height: 30px'>"+dui.translate('Delete')+"</button></td>";
                     if (i > 0) {
-                        sText +="<td style='width:90px' class='no-space'><button id='barsDel"+i+"'>"+dui.translate('Delete')+"</button></td>";
-                        sText +="<td style='width:90px' class='no-space'><button id='barsUp" +i+"'>"+dui.translate('Up')+"</button></td>";
+                        sText +="<td style='width:90px;text-align: center' class='no-space'><button id='barsUp" +i+"' style='height: 30px'>"+/*dui.translate('Up')*/""+"</button></td>";
                     }else {
 						sText +="<td style='width:90px' class='no-space'></td><td style='width:90px' class='no-space'></td>";
 					}
 					
 					sText +="<td style='width:90px' class='no-space'>";
                     if (i != div.barsOptions.buttons.length - 1) {
-                        sText +="<button id='barsDown" +i+"'>"+dui.translate('Down')+"</button>";
+                        sText +="<button id='barsDown" +i+"' style='height: 30px'>"+/*dui.translate('Down')*/""+"</button>";
                     }
 					sText +="</td>";
 					
@@ -665,6 +665,7 @@ jQuery.extend(true, dui.binds, {
 
 				if (div.barsIntern.wType == 'tplBarFilter') {
 					sText += "<tr><td>"+ dui.translate("One at time:")+"</td><td><input id='inspect_bOnlyOneSelected' type='checkbox' "+((div.barsOptions.bOnlyOneSelected ) ? "checked" : "")+"></td></tr>";  		
+					sText += "<tr><td>"+ dui.translate("Initial filter:")+"</td><td><input id='inspect_bValue' type='text' size='44' value='"+(div.barsOptions.bValue || "") + "'></td></tr>";  		
 				}
 
 				var iGeomCount = 0;
@@ -809,6 +810,52 @@ jQuery.extend(true, dui.binds, {
                 dui.binds.bars._editStyleHandler ('bStyleActive',      div, null, '-button', 'background');
                 dui.binds.bars._editStyleHandler ('bStyleActiveHover', div, null, '-button', 'background');
 
+				// Create autocomplete for initial value
+				if (div.barsIntern.wType == 'tplBarFilter') {
+                    var elem = document.getElementById ('inspect_bValue');
+                    if (elem) {
+                        elem.parent   = div;
+                        elem.ctrlAttr = 'bValue';
+                  
+                        $(elem).autocomplete({
+                            minLength: 0,
+                            source: function(request, response) {            
+                                var data = $.grep(dui.views[dui.activeView].filterList, function(value) {
+                                    return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                                });            
+
+                                response(data);
+                            },
+                            select: function (event, ui){
+                                // If really changed
+                                var div = this.parent;
+                                div.barsOptions[this.ctrlAttr] = ui.item.value;
+                                dui.binds.bars.editSave(div);
+                            },
+                            change: function (event, ui) {
+                                // If really changed
+                                var div = this.parent;
+                                div.barsOptions[this.ctrlAttr] = ui.item.value;
+                                dui.binds.bars.editSave(div);
+                            }
+                        }).focus(function () {
+                            $(this).autocomplete("search", "");
+                        }).keyup (function () {
+                            if (this.parent.timer) 
+                                clearTimeout (this.parent.timer);
+                                
+                            this.parent.timer = setTimeout (function(elem_) {
+                                 // If really changed
+                                var div = elem_.parent;
+                                div.barsOptions[elem_.ctrlAttr] = $(elem_).prop('value');
+                                dui.binds.bars.editSave(div);
+                                elem_.parent.timer=null;
+                            }, 200, this);
+                        });   
+                    }
+                }				
+				
+				
                 if (div.barsIntern.wType == 'tplBarFilter' ||
 				    div.barsIntern.wType == 'tplBarNavigator') {
                     dui.binds.bars._editSelectHandler ("bShowEffect", div, null, null);
@@ -1033,10 +1080,18 @@ jQuery.extend(true, dui.binds, {
 								var htmlBtn2 = document.getElementById (div.barsIntern.wid+"_btn"+p);
 								if (htmlBtn2) {
                                     htmlBtn2._state = 1;
-									$(htmlBtn2).addClass ('ui-state-active');
+									if (div.barsOptions.bStyleActive) {
+										$(htmlBtn2).addClass (div.barsOptions.bStyleActive);
+										$(htmlBtn2).removeClass (div.barsOptions.bStyleNormal);
+									} else {
+										$(htmlBtn2).addClass ('ui-state-active');
+									}
 								}
                             }
                         }
+						// Set active filter
+						dui.changeFilter (div.barsOptions.bValue, div.barsOptions.bShowEffect, div.barsOptions.bShowEffectMs, div.barsOptions.bHideEffect, div.barsOptions.bHideEffectMs);
+						
                     }
                 }
 				else
