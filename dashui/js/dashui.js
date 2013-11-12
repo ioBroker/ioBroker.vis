@@ -509,6 +509,10 @@ var dui = {
         if (dui.urlParams["edit"] !== "") {
             if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
                 $("#" + id).hide();
+				var btn;
+				if (hqWidgets && (btn = hqWidgets.Get(id))) {
+					btn.hide(true);
+				}
             }
         }
 
@@ -873,7 +877,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
 
         dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host'));
         dui.socket.on('event', function (obj) {
-            if (homematic.uiState["_" + obj[0]] !== undefined) {
+            if (obj != null && homematic.uiState["_" + obj[0]] !== undefined) {
                 var o = {};
                 o["_" + obj[0] + ".Value"] = obj[1];
                 o["_" + obj[0] + ".Timestamp"] = obj[2];

@@ -77,7 +77,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 										  styleNormalHover: 'hq-button-base-normal',
 										  styleActive: 'hq-button-green-normal',
 										  styleActiveHover: 'hq-button-green-normal-hover',
-                                          hm_id: ''
+                                          hm_id: '',
+										  exShowGrafik: 'no'
                                           });
                 }
                 else
@@ -135,7 +136,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 if (wtype == 'tplHqDoor') {
                     opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeDoor, 
                                           zindex: 3,
-                                          hm_id: ''
+                                          hm_id: '',
+										  exShowGrafik: 'no'
                                           });
                 }
                 else
@@ -319,8 +321,13 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 											
 										hm_id = homematic.regaObjects[hm_id]['Parent'];
 									}
-									if (func)
+									// Fill up automatically filter for ping
+									if (func == null && homematic.regaObjects[value]["HssType"] == "PING") {
+										func = "Network";
+									}
+									if (func) {
                                         jInspect_filter.val(func).trigger ('change');
+									}
 								}
                             }							
                         }
@@ -387,6 +394,22 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 					$('#idAdv'+(hqEditElem.e_internal.iAdvCount -1)).hide();
 				}
             }
+			else
+            if (opt.buttonType == hqWidgets.gButtonType.gTypeDoor ||
+			    opt.exShowGrafik !== undefined) {
+                // Add if show history
+                var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"'>\n";
+                    sTextAdv += "<td>"+ dui.translate("Action on click:") +"</td>\n";
+                    sTextAdv += "<td><select id='"+hqEditElem.e_settings.elemName+"_exShowGrafik'>";
+					sTextAdv += "  <option value='no'>" + dui.translate ("No action")+"</option>";
+					sTextAdv += "  <option value='history'>" + dui.translate ("History")+"</option>";
+					sTextAdv += "</select>";
+                parent.append (sTextAdv);
+                hqEditElem._EditSelectHandler('exShowGrafik');   
+				if (!hqEditElem.e_internal.obj.advancedVisible) {
+					$('#idAdv'+(hqEditElem.e_internal.iAdvCount -1)).hide();
+				}            
+			}
 			else
             if (opt.buttonType == hqWidgets.gButtonType.gTypeMotion) {
                 // Add ramp_time and on_time

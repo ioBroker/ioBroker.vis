@@ -403,7 +403,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Font:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextFont'  type='text' value='"+this.e_internal.attr.infoTextFont+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColor' type='text' value='"+this.e_internal.attr.infoTextColor+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_infoTextColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Active text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColorActive' type='text' value='"+this.e_internal.attr.infoTextColorActive+"'>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Active text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColorActive' type='text' value='"+(this.e_internal.attr.infoTextColorActive || "")+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_infoTextColorActiveBtn' style='width: 30px' type='button' value='...'></td></tr>";
         }
 
