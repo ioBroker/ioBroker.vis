@@ -533,7 +533,7 @@ var dui = {
         }
     },
     changeView: function (view, hideOptions, showOptions, sync) {
-        var effect = hideOptions && hideOptions.effect && hideOptions.effect !== "";
+        var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
         hideOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, hideOptions);
         showOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, showOptions);
 

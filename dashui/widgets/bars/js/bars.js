@@ -1096,7 +1096,7 @@ jQuery.extend(true, dui.binds, {
                 }
 				else
 				if (div.barsIntern.wType == 'tplBarNavigator') {
-					var v = dui.activeView;
+					var v = null;//dui.activeView;
 					if (!v) v =  div.barsIntern.view;
 				    for (var u = 0; u < div.barsOptions.buttons.length; u++) {
 						if(v === div.barsOptions.buttons[u].option) {
