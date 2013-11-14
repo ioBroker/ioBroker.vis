@@ -663,7 +663,8 @@ var hqWidgets = {
             temperature:   null,          // actual "is" temperature
             humidity:      null,          // humidity in %
             bigPinned:     false,         // If big window pinned or not
-            lastAction:    null,         // Since this time the element has actual status
+            lastAction:    null,          // Since this time the element has actual status
+			isVisible:     true,          // If widget visible
             infoWindow:  {
                 isEnabled: false,
                 width:     400,
@@ -1907,7 +1908,7 @@ var hqWidgets = {
             this.settings.windowConfig = this._GetWindowType ();
         }
         this._ShowAction = function () {
-            if (this.settings.showChanging) {
+            if (this.settings.showChanging && this.dynStates.isVisible) {
                 $('#'+this.advSettings.elemName+'_action1').stop().remove();
                 var text = "<div id='"+this.advSettings.elemName+"_action1' style='z-index:2000; top:"+(this.settings.y-3.5)+"px; left:"+(this.settings.x-3.5)+"px; width: "+this.settings.width+"px; height: "+this.settings.height+"px; position: absolute'></div>";
                 this.advSettings.parent.append(text);
@@ -2040,7 +2041,9 @@ var hqWidgets = {
                     // Show absolute time
                     if (this.settings.hoursLastAction < 0) {
                         if (this.settings.hoursLastAction == -2) {
-                            this.intern._jright.show ();
+							if (this.dynStates.isVisible){
+								this.intern._jright.show ();
+							}
                             this._ShowRightInfo (hqWidgets.TimeToString(this.dynStates.lastAction));
                         }
                         else {
@@ -2137,8 +2140,9 @@ var hqWidgets = {
 				}
 				if (!isPercentVisible && !isTextVisible) 
 					this.intern._jright.hide();
-				else
+				else if (this.dynStates.isVisible) {
 					this.intern._jright.show();
+				}
             }
         }
         this._UpdateSmallCam = function () {
@@ -3630,8 +3634,10 @@ var hqWidgets = {
                 this.intern._jright.hide (); 
             if (this.intern._jleft) 
                 this.intern._jleft.hide (); 
+			this.dynStates.isVisible = false;
         }
         this.show = function () {
+			this.dynStates.isVisible = true;
             this.intern._jelement.show(); 
             if (this.intern._jright && (this.intern._jvalve || (this.intern._jrightText && this.intern._jrightText.html() != ""))) 
                 this.intern._jright.show (); 

@@ -31,6 +31,13 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta33
+* (Hobbyquaker) hideSecond Attribut für simpleClock Widget
+* (Hobbyquaker) neues Widget: simpleDate
+* (Bluefox) Fix switch views if no effect selected
+* (Bluefox) Show History for hqWidgets/Door & Ping
+* (Bluefox) hide hqWidgets at start if filtered out
+
 ### 0.9beta32
 * (Bluefox) Add hqWidgets/"Ping device" widget
 * (Bluefox) Add UP and DOWN buttons to Shutter control

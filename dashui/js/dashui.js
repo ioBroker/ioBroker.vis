@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta32',
+    version:                '0.9beta33',
     requiredCcuIoVersion:   '0.9.74',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -511,6 +511,10 @@ var dui = {
         if (dui.urlParams["edit"] !== "") {
             if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
                 $("#" + id).hide();
+				var btn;
+				if (hqWidgets && (btn = hqWidgets.Get(id))) {
+					btn.hide(true);
+				}
             }
         }
 
@@ -531,7 +535,7 @@ var dui = {
         }
     },
     changeView: function (view, hideOptions, showOptions, sync) {
-        var effect = hideOptions && hideOptions.effect && hideOptions.effect !== "";
+        var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
         hideOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, hideOptions);
         showOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, showOptions);
 
@@ -883,7 +887,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         });
 
         dui.socket.on('event', function (obj) {
-            if (obj && homematic.uiState["_" + obj[0]] !== undefined) {
+            if (obj != null && homematic.uiState["_" + obj[0]] !== undefined) {
                 var o = {};
                 o["_" + obj[0] + ".Value"] = obj[1];
                 o["_" + obj[0] + ".Timestamp"] = obj[2];
