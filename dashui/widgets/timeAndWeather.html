@@ -11,28 +11,67 @@
 <script src="widgets/timeAndWeather/js/moreskins.js"></script-->
 
 <script language="javascript">
-    function startTime(elem)
-    {
-        var today=new Date();
-        var h=today.getHours();
-        var m=today.getMinutes();
-        var s=today.getSeconds();
+    function startTime(elem, hideSeconds) {
+        var today = new Date();
+        var h =     today.getHours();
+        var m =     today.getMinutes();
+        var s =     today.getSeconds();
         // add a zero in front of numbers<10
-        m=(m<10) ? ("0"+m): m;
-        s=(s<10) ? ("0"+s): s;
+        m = (m<10) ? ("0"+m) : m;
+        s = (s<10) ? ("0"+s) : s;
         var hl = document.getElementById(elem);
         if (hl) {
-            hl.innerHTML=h+":"+m+":"+s;
-            setTimeout(function(hl_){startTime(hl_)}, 1000, elem);
+            var str = h+":"+m;
+            if (!hideSeconds) {
+                str += ":"+s;
+            }
+            hl.innerHTML = str;
+            setTimeout(function(hl_, hideSeconds_){ startTime(hl_, hideSeconds_)}, 1000, elem, hideSeconds);
+        }
+    }
+    var wochentage = {
+        0: "Sonntag",
+        1: "Montag",
+        2: "Dienstag",
+        3: "Mittwoch",
+        4: "Donnerstag",
+        5: "Freitag",
+        6: "Samstag"
+    }
+    function startDate(elem, showWeekDay) {
+        var today = new Date();
+        var d =     today.getDate();
+        var dow =   today.getDay();
+        var m =     today.getMonth()+1;
+        var y =     today.getFullYear();
+        // add a zero in front of numbers<10
+        d = (d<10) ? ("0"+d) : d;
+        m = (m<10) ? ("0"+m) : m;
+        var hl = document.getElementById(elem);
+        if (hl) {
+            var str = d+"."+m+"."+y;
+            if (showWeekDay) {
+                str = wochentage[dow]+", "+str
+            }
+            hl.innerHTML = str;
+            setTimeout(function(hl_, showWeekDay_){ startDate(hl_, showWeekDay_)}, 1000, elem, showWeekDay);
         }
     }
 </script>
 
-<script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="">
+<script type="text/ejs" id="tplTwSimpleDate" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleDate" data-dashui-attrs="showWeekDay">
+    <%
+    var text = '<div class="dashui-widget date" id="'+this.data.attr('wid')+'" ></div>';
+    jQuery('#duiview_'+this.view).append(text);
+    startDate(this.data.attr('wid'), this.data.attr('showWeekDay'));
+    %>
+</script>
+
+<script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="hideSeconds">
     <%
         var text = '<div class="dashui-widget clock" id="'+this.data.attr('wid')+'" ></div>';
         jQuery('#duiview_'+this.view).append(text);
-        startTime (this.data.attr('wid'));
+        startTime(this.data.attr('wid'), this.data.attr('hideSeconds'));
     %>
 </script>
 <!--script type="text/ejs" id="tplTwCoolClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="CoolClock" data-dashui-attrs="" >
