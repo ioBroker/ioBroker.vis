@@ -163,6 +163,25 @@
                         homematic.setValue( id,  1-val);
                     });
                 }
+            },
+            iframeRefresh: function (el, src, refreshInterval) {
+                if (dui.urlParams["edit"] !== "" && refreshInterval > 0) {
+                    var $this = jQuery(el).parent().find("iframe");
+                    setInterval(function () {
+                        $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
+                    }, refreshInterval);
+                }
+            },
+            imgRefresh: function (el, src, refreshInterval) {
+                if (dui.urlParams["edit"] !== "" && refreshInterval > 0) {
+                    var $this = jQuery(el).parent().find("img");
+                    setInterval(function () {
+                            $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
+                    }, refreshInterval);
+                }
+            },
+            _disable: function () {
+                $(".editmode-helper").show();
             }
         }
     });
@@ -183,10 +202,22 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplImage" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Image" data-dashui-attrs="src">
+<script type="text/ejs" id="tplIFrame" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - iFrame" data-dashui-attrs="src;refreshInterval">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
+            <iframe src="<%= this.data.attr('src') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <div <%= (el) -> dui.binds.basic.iframeRefresh(el, data.attr("src"), data.attr("refreshInterval")) %> />
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplImage" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Image" data-dashui-attrs="src;refreshInterval">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <img src="<%== this.data.attr('src') %>" />
+            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
+            <img style="position:absolute" src="<%== this.data.attr('src') %>" />
+            <div <%= (el) -> dui.binds.basic.imgRefresh(el, data.attr("src"), data.attr("refreshInterval")) %> />
         </div>
     </div>
 </script>
