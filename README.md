@@ -6,30 +6,14 @@
 siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 
-## Todo/Roadmap
-
-### 0.9
-
-* "basic - hm_val valuelist-view-container" widget (bestimmte View in Container-Widget in abhängigkeit von Variable anzeigen)
-* "basic - static iframe" widget mit attribut refresh-interval, persistent
-
-### 1.0
-
-* Doku!
-* Alle vorhandenen Widgets testen & Bugs fixen
-* Bild-Upload (im Reiter Editor unterbringen?)
-* Editor: mehrere Widgets auf einmal Bewegen
-* Editor/CSS-Inspector: Zauberstab-tool um Style-Eigenschaften von anderen Widgets zu übernehmen
-* Noch mehr Widgets! :)
-* Editor "aufhübschen"
-* Einfache Installation gemeinsam mit CCU.IO
-* Web-based Setup
-* Javascript-Files minifiziert und teilweise gemerged ausliefern
-* Paket für Raspbian
-* RaspberryPi Speicherkartenimage
-* Mehr Widgets! Doku! ;-)
 
 ## Changelog
+
+### 0.9beta34
+* (Hobbyquaker) neues Widget "basic - static iFrame"
+* (Hobbyquaker) neues Widget "jqui - Icon HTTP GET"
+* (Hobbyquaker) Widget "basic - static image" refreshInterval Attribut hinzugefügt
+* (Hobbyquaker) Bugfix falls CCU.IO fehlerhafte regaObjects liefert
 
 ### 0.9beta33
 * (Hobbyquaker) hideSecond Attribut für simpleClock Widget

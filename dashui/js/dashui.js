@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta33',
+    version:                '0.9beta34',
     requiredCcuIoVersion:   '0.9.74',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -367,6 +367,7 @@ var dui = {
             //}
 
             if (dui.urlParams["edit"] === "") {
+                jQuery(".editmode-helper").show();
                 dui.binds.jqueryui._disable();
             }
 
@@ -963,7 +964,12 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                     $("#loading").append(".<br/>");
                     //console.log("datapoints loaded");
                     for (var dp in data) {
-                        homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
+                        try {
+                            homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
+                        } catch (e) {
+                            console.log(e);
+                            console.log(dp);
+                        }
                     }
                     $("#loading").append("Loading Widget-Sets...");
                     setTimeout(dui.init, 10);

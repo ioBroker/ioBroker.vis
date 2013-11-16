@@ -21,8 +21,9 @@
  */
 
 // duiEdit - the DashUI Editor
+
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta33',
+    editVersion:        '0.9beta34',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -264,6 +265,7 @@ dui = $.extend(true, dui, {
         }
 
 		if (isSelectWidget) {
+            dui.binds.basic._disable();
 			dui.binds.jqueryui._disable();
 		}
 		
@@ -3114,3 +3116,4 @@ function pxAdd(val, add) {
     var ret = parseInt(val.slice(0, -2), 10) + add;
     return ret + "px";
 }
+
