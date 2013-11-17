@@ -116,6 +116,8 @@ dui = $.extend(true, dui, {
         var key = "w" + (("000000" + next).slice(-5));
         for (var view in dui.views) {
             for (var wid in dui.views[view].widgets) {
+				wid = wid.split('_');
+				wid = wid[0];
                 used.push(wid);
             }
             while (used.indexOf(key) > -1) {

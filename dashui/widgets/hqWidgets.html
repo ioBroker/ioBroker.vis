@@ -467,6 +467,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                             var hm_idOff  = obj.GetSettings ('hm_idC_Off');
                             var hm_valOn  = obj.GetSettings ('ctrlValueOn');
                             var hm_valOff = obj.GetSettings ('ctrlValueOff');
+                            var htmlOn    = obj.GetSettings ('htmlValueOn');
+                            var htmlOff   = obj.GetSettings ('htmlValueOff');
                             
                             if (hm_idOn !== undefined && hm_idOn != null && hm_idOn != "") {
                                 // obj.SetStates ({isRefresh: true});
@@ -486,7 +488,17 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     homematic.setValue(hm_idOff, hm_valOff);                                
                                 else
                                     homematic.setValue(hm_idOn, hm_valOn);                                
-                            }                            
+                            } else 
+							// Call URL
+							if (htmlOn !== undefined && htmlOn != null && htmlOn != "") {
+                                // Get actual state
+                                var states = obj.GetStates ();
+								
+                                if (states.state == hqWidgets.gState.gStateOn && htmlOff != undefined && htmlOff != null && htmlOff != "")
+                                    dui.socket.emit("getUrl", htmlOff, function () {});
+                                else
+                                    dui.socket.emit("getUrl", htmlOn, function () {});                       								
+							}
                         }});
                         // Fill up the required IDs
                         var t = 0;

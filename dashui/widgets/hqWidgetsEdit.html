@@ -91,7 +91,9 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           ctrlActionBtn: false,
                                           ctrlQuestion: "",
                                           ctrlValueOn:  true,
-                                          ctrlValueOff: false
+                                          ctrlValueOff: false,
+										  htmlOn:       "",
+										  htmlOff:      ""
                                           });
                 }
                 else
@@ -434,14 +436,50 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     $('#idCtrl'+j).hide();
                     j++;
                 }            
+                parent.append("<tr id='idCtrl"+j+"'><td>"+ dui.translate("URL control:")  +"</td><td><input id='"+hqEditElem.e_settings.elemName+"_urlControl' type='checkbox'></td></tr>");j++;
+				var iUrlCtrlStart = j;
+				
+				
                 dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilters[devFiltersNum], hqEditElem, "hm_idC_On", 'idCtrl'+j);j++;
                 if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
                 parent.append("<tr id='idCtrl"+j+"'><td>"+ dui.translate("Control value (ON):")  +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_ctrlValueOn'  type='text' value='"+hqEditElem.e_internal.attr.ctrlValueOn +"'></td></tr>");j++;
                 dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilters[devFiltersNum], hqEditElem, "hm_idC_Off", 'idCtrl'+j);j++;
                 if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
                 parent.append("<tr id='idCtrl"+j+"'><td>"+ dui.translate("Control value (OFF):") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_ctrlValueOff' type='text' value='"+hqEditElem.e_internal.attr.ctrlValueOff+"'></td></tr>");j++;
+                if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
+				var iUrlCtrlStop = j;
+                parent.append("<tr id='idCtrl"+j+"'><td>"+ dui.translate("URL (ON):")  +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_htmlOn'  type='text' value='"+hqEditElem.e_internal.attr.htmlOn+"'></td></tr>");j++;
+                parent.append("<tr id='idCtrl"+j+"'><td>"+ dui.translate("URL (OFF):") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_htmlOff' type='text' value='"+hqEditElem.e_internal.attr.htmlOff+"'></td></tr>");j++;
                 hqEditElem._EditTextHandler('ctrlValueOn');   
                 hqEditElem._EditTextHandler('ctrlValueOff');   
+                hqEditElem._EditTextHandler('htmlOn');   
+                hqEditElem._EditTextHandler('htmlOff');
+
+				// If URL or homematic
+				var isUrl = ((hqEditElem.e_internal.attr.htmlOn  != undefined && hqEditElem.e_internal.attr.htmlOn  != "" && hqEditElem.e_internal.attr.htmlOn  != null) ||
+				             (hqEditElem.e_internal.attr.htmlOff != undefined && hqEditElem.e_internal.attr.htmlOff != "" && hqEditElem.e_internal.attr.htmlOff != null));
+				
+				var ctrl = document.getElementById (hqEditElem.e_settings.elemName+"_urlControl");
+				ctrl.startId = iUrlCtrlStart;
+				ctrl.stopId  = iUrlCtrlStop;
+				ctrl.elem = hqEditElem.e_settings.elemName;
+				$(ctrl).bind ("change", function () {
+					var obj = this.elem;
+					if (this.checked) {
+						for (var z = this.startId; z < this.stopId; z++) {
+							$('#idCtrl' + z).hide();
+						}
+						$('#idCtrl' + this.stopId).show().val("");
+						$('#idCtrl' + (this.stopId + 1)).show().val("");
+					} else {
+						for (var z = this.startId; z < this.stopId; z++) {
+							$('#idCtrl' + z).show();
+						}
+						$('#idCtrl' + this.stopId).hide().val("");
+						$('#idCtrl' + (this.stopId + 1)).hide().val("");
+					}
+				});
+				$(ctrl).trigger("change");
 
                 if (!hqEditElem.e_internal.obj.controlsVisible){
                     // Hide all                      
