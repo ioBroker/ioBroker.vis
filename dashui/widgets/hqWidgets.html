@@ -11,7 +11,7 @@
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
         hqWidgetsExt: {
-            version: "0.1.9",
+            version: "0.1.10",
             inited:  false,
             hqIgnoreNextUpdate: null, // id of controlled element
             hqMapping: {},
@@ -311,8 +311,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                             if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"]) {
                                 hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"],   option: 'percentState'}; // First is always main element
                                 hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"], option: 'isWorking'};
-                            }
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            } else if (homematic.regaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'percentState'};
                             }
                         }
@@ -869,6 +868,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                             var infoWindow = btn.GetInfoWindowSettings ();
                             infoWindow.isEnabled = false;
                             btn.SetInfoWindowSettings(infoWindow);
+							btn.SetStates ({percentState: 0, state: hqWidgets.gState.gStateOff});
                         }
                     }
                     else

@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.9",
+    version: "0.1.10",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -1452,9 +1452,7 @@ var hqWidgets = {
                     hqWidgets.gDynamics.gActiveBig.intern._jbigWindow.startPosOffset = 100 / hqWidgets.gDynamics.gActiveBig.intern._jbigWindow.bheight * yOffset;
                     hqWidgets.gDynamics.gActiveBig.intern._jbigWindow.SetPositionOffset (0);
                 }
-                this.intern._jbigWindow.bind ("mousedown", {msg: this}, function (event) {
-                    event.target.parentQuery.intern._jbigWindow.mouseDown (event.target.parentQuery, event.pageY);
-                });
+
                 big.addEventListener('touchstart', function(event) {
                     hqWidgets.gDynamics.gIsTouch=true;
                     event.target.parentQuery.intern._jbigWindow.mouseDown (event.target.parentQuery, event.touches[0].pageY);
@@ -1505,8 +1503,12 @@ var hqWidgets = {
 					if (this.parent.intern._jbigButtonDown) {
 						this.parent.intern._jbigButtonDown.show ();
 					}
+					this.parent.intern._jbigWindow.bind ("mousedown", {msg: this.parent}, function (event) {
+						event.target.parentQuery.intern._jbigWindow.mouseDown (event.target.parentQuery, event.pageY);
+					});
 				};
 				this.intern._jbigWindow.OnHide  = function () {
+					this.parent.intern._jbigWindow.unbind ("mousedown");
 					if (this.parent.intern._jbigButtonUp) {
 						this.parent.intern._jbigButtonUp.hide ();
 					}
@@ -2578,28 +2580,23 @@ var hqWidgets = {
                 if (this.settings.buttonType != hqWidgets.gButtonType.gTypeBlind) {
                     if (this.intern._isPressed)	
                         this._SetClass (this.intern._backMoving);
-                    else
-                    {
+                    else {
                         if (this.settings.isContextMenu) {
                             if (!this.settings.noBackground) {
                                 if (this.settings.isIgnoreEditMode)
                                     this._SetClass (this.intern._backOn);
                                 else
                                     this._SetClass (this.intern._backOff);
-                            }
-                            else
+                            } else
                                 this._SetClass ("hq-no-background-edit");
-                        }
-                        else {
+                        } else {
                             if (this.dynStates.state == hqWidgets.gState.gStateOn)
                             {
                                 if (this.intern._isPressed)
                                     this._SetClass (this.intern._backOnHover);
                                 else
                                     this._SetClass (this.intern._backOn);
-                            }
-                            else
-                            {
+                            } else {
                                 if (this.intern._isPressed)
                                     this._SetClass (this.intern._backOffHover);
                                 else
@@ -3233,10 +3230,10 @@ var hqWidgets = {
             if (this.intern._jelement.leaf) {
                 var i=0;
                 while (this.intern._jelement.leaf[i]) {
-                    if (this.intern._isEditMode && this.settings.iContextMenu)
+                    if (this.intern._isEditMode && this.settings.iContextMenu) {
                         this.intern._jelement.leaf[i].divs[0].hide();
-                    else
-                    {
+					}
+                    else {
                         this.intern._jelement.leaf[i].divs[0].show();
                         this.intern._jelement.leaf[i].divs[this.intern._jelement.leaf[i].blindIndex].animate ({height:this.intern._jelement.leaf[i].height * (this.dynStates.percentState / 100)}, 500);
                     }
@@ -3248,8 +3245,7 @@ var hqWidgets = {
             // If set all leafs to this state
             if (index==-1 && this.intern._jelement.leaf) {
                 var i=0;
-                while (this.intern._jelement.leaf[i])
-                {
+                while (this.intern._jelement.leaf[i]) {
                     this.SetWindowState(i, state, handleState);
                     i++;
                 }
