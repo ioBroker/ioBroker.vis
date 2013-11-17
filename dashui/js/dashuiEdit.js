@@ -174,6 +174,8 @@ dui = $.extend(true, dui, {
 		
 		$("#select_active_widget option[value='"+id+"']").remove();
 		$("#select_active_widget").multiselect("refresh");       
+
+		var view = dui.getViewOfWidget (id);
 		
 		var widget_div = document.getElementById (id);
 		if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit['delete']) {
@@ -181,8 +183,9 @@ dui = $.extend(true, dui, {
 		}
         
 		$("#"+id).remove();
-        delete(dui.views[dui.activeView].widgets[id]);
-
+		if (view) {
+			delete(dui.views[view].widgets[id]);
+		}
 		if (dui.widgets[id]) {
 			delete dui.widgets[id]; 
 			var widgets = [];
@@ -341,7 +344,15 @@ dui = $.extend(true, dui, {
 				views = [];
 			}
 		
-			if (views[view] === undefined) {
+			var isFound = false;
+			for (var i = 0; i < views.length; i++) {
+				if (views[i] == view) {
+					isFound = true;
+					break;
+				}
+			}
+		
+			if (!isFound) {
 				views[views.length] = view;
 			}
 			var wids = id.split('_', 2);
