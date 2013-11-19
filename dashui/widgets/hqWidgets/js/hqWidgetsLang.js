@@ -79,7 +79,11 @@ hqWidgets = $.extend (hqWidgets, {
                 "Show description:"         : {"en": "Show&nbsp;description:",      "de": "Zeige&nbspBeschreibung:"},
                 "Room:"                     : {"en": "Room:",           "de": "Raum:"},
                 "Min value:"                : {"en": "Min value:",      "de": "Min Wert:"},
-                "Max value:"                : {"en": "Max value:",      "de": "Max Wert:"}
+                "Max value:"                : {"en": "Max value:",      "de": "Max Wert:"},
+                "Not opened"                : {"en": "Not opened",      "de": "Geht nicht auf"},
+                "Left"                      : {"en": "Left",            "de": "Links"},
+                "Right"                     : {"en": "Right",           "de": "Rechts"},
+                "Top"                       : {"en": "Top",             "de": "Oben"}
            };
         }
         if (this.words[text]) {

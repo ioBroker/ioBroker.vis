@@ -537,6 +537,15 @@ var dui = {
     },
     changeView: function (view, hideOptions, showOptions, sync) {
         var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
+		if (!effect) {
+			effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && (showOptions.effect != "")
+		}
+		if (effect && (showOptions === undefined) && (showOptions.effect === undefined || showOptions.effect == "" || showOptions.effect == null)) {
+			showOptions = {effect: hideOptions.effect, options: {}, duration: hideOptions.duration};
+		}
+		if (effect && (hideOptions === undefined) && (hideOptions.effect === undefined || hideOptions.effect == "" || hideOptions.effect == null)) {
+			hideOptions = {effect: showOptions.effect, options: {}, duration: showOptions.duration};
+		}
         hideOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, hideOptions);
         showOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, showOptions);
 
@@ -878,7 +887,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         //console.log("socket.io")
         $("#loading").append("Connecting to CCU.IO ...<br/>");
 
-        dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host'));
+        dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host')+"?key="+socketSession);
 
 
         dui.socket.emit('getVersion', function(version) {

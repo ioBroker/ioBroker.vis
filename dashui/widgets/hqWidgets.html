@@ -11,7 +11,7 @@
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
         hqWidgetsExt: {
-            version: "0.1.9",
+            version: "0.1.10",
             inited:  false,
             hqIgnoreNextUpdate: null, // id of controlled element
             hqMapping: {},
@@ -311,8 +311,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                             if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"]) {
                                 hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"],   option: 'percentState'}; // First is always main element
                                 hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"], option: 'isWorking'};
-                            }
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            } else if (homematic.regaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'percentState'};
                             }
                         }
@@ -468,6 +467,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                             var hm_idOff  = obj.GetSettings ('hm_idC_Off');
                             var hm_valOn  = obj.GetSettings ('ctrlValueOn');
                             var hm_valOff = obj.GetSettings ('ctrlValueOff');
+                            var htmlOn    = obj.GetSettings ('htmlValueOn');
+                            var htmlOff   = obj.GetSettings ('htmlValueOff');
                             
                             if (hm_idOn !== undefined && hm_idOn != null && hm_idOn != "") {
                                 // obj.SetStates ({isRefresh: true});
@@ -487,7 +488,17 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     homematic.setValue(hm_idOff, hm_valOff);                                
                                 else
                                     homematic.setValue(hm_idOn, hm_valOn);                                
-                            }                            
+                            } else 
+							// Call URL
+							if (htmlOn !== undefined && htmlOn != null && htmlOn != "") {
+                                // Get actual state
+                                var states = obj.GetStates ();
+								
+                                if (states.state == hqWidgets.gState.gStateOn && htmlOff != undefined && htmlOff != null && htmlOff != "")
+                                    dui.socket.emit("getUrl", htmlOff, function () {});
+                                else
+                                    dui.socket.emit("getUrl", htmlOn, function () {});                       								
+							}
                         }});
                         // Fill up the required IDs
                         var t = 0;
@@ -869,6 +880,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                             var infoWindow = btn.GetInfoWindowSettings ();
                             infoWindow.isEnabled = false;
                             btn.SetInfoWindowSettings(infoWindow);
+							btn.SetStates ({percentState: 0, state: hqWidgets.gState.gStateOff});
                         }
                     }
                     else

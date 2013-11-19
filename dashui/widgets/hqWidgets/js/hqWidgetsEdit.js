@@ -365,6 +365,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                 sText += "<option value='"+hqWidgets.gSwingType.gSwingDeaf +"' " +((a[i] == hqWidgets.gSwingType.gSwingDeaf)  ? "selected" : "") +">"+hqWidgets.translate("Not opened")+"</option>";
                 sText += "<option value='"+hqWidgets.gSwingType.gSwingLeft +"' " +((a[i] == hqWidgets.gSwingType.gSwingLeft)  ? "selected" : "") +">"+hqWidgets.translate("Left")+"</option>";
                 sText += "<option value='"+hqWidgets.gSwingType.gSwingRight+"' " +((a[i] == hqWidgets.gSwingType.gSwingRight) ? "selected" : "") +">"+hqWidgets.translate("Right")+"</option>";
+                sText += "<option value='"+hqWidgets.gSwingType.gSwingTop  +"' " +((a[i] == hqWidgets.gSwingType.gSwingTop)   ? "selected" : "") +">"+hqWidgets.translate("Top")+"</option>";
                 sText += "</select></td></tr>";
             }
         }

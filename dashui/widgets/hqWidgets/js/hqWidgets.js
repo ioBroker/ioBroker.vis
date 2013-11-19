@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.9",
+    version: "0.1.10",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -107,7 +107,8 @@ var hqWidgets = {
         // Type of the leaf
         gSwingDeaf:  0, // Window or door cannot be opened
         gSwingLeft:  1, // Window or door opened on the right side
-        gSwingRight: 2  // Window or door opened on the left side
+        gSwingRight: 2, // Window or door opened on the left side
+		gSwingTop:   3  // Window opened on the top (like roof window)
     },
     // Window handle position
     gHandlePos: {
@@ -1081,11 +1082,13 @@ var hqWidgets = {
                 var h = wnd.divs[3].height();
                 var w = wnd.divs[3].width();
                 var size = (h > w) ? w : h;
-                wnd.divs[4].css({top: wnd.divs[3].height() / 2, height: size * 0.15});
+                wnd.divs[4].css({height: size * 0.15});
                 if (type == hqWidgets.gSwingType.gSwingLeft)
-                    wnd.divs[4].css({left: wnd.divs[2].width() - wnd.divs[4].width()});
-                else
-                    wnd.divs[4].css({left: 0});
+                    wnd.divs[4].css({left: wnd.divs[2].width() - wnd.divs[4].width(), top: wnd.divs[3].height() / 2});
+                else if (type == hqWidgets.gSwingType.gSwingTop)
+                    wnd.divs[4].css({left: (wnd.divs[2].width() - size * 0.15) / 2, top: 0});
+                else // Right
+                    wnd.divs[4].css({left: 0, top: wnd.divs[3].height() / 2});
             }
             
             this.intern._jelement.leaf[index] = wnd;
@@ -1452,9 +1455,7 @@ var hqWidgets = {
                     hqWidgets.gDynamics.gActiveBig.intern._jbigWindow.startPosOffset = 100 / hqWidgets.gDynamics.gActiveBig.intern._jbigWindow.bheight * yOffset;
                     hqWidgets.gDynamics.gActiveBig.intern._jbigWindow.SetPositionOffset (0);
                 }
-                this.intern._jbigWindow.bind ("mousedown", {msg: this}, function (event) {
-                    event.target.parentQuery.intern._jbigWindow.mouseDown (event.target.parentQuery, event.pageY);
-                });
+
                 big.addEventListener('touchstart', function(event) {
                     hqWidgets.gDynamics.gIsTouch=true;
                     event.target.parentQuery.intern._jbigWindow.mouseDown (event.target.parentQuery, event.touches[0].pageY);
@@ -1505,8 +1506,12 @@ var hqWidgets = {
 					if (this.parent.intern._jbigButtonDown) {
 						this.parent.intern._jbigButtonDown.show ();
 					}
+					this.parent.intern._jbigWindow.bind ("mousedown", {msg: this.parent}, function (event) {
+						event.target.parentQuery.intern._jbigWindow.mouseDown (event.target.parentQuery, event.pageY);
+					});
 				};
 				this.intern._jbigWindow.OnHide  = function () {
+					this.parent.intern._jbigWindow.unbind ("mousedown");
 					if (this.parent.intern._jbigButtonUp) {
 						this.parent.intern._jbigButtonUp.hide ();
 					}
@@ -2578,28 +2583,23 @@ var hqWidgets = {
                 if (this.settings.buttonType != hqWidgets.gButtonType.gTypeBlind) {
                     if (this.intern._isPressed)	
                         this._SetClass (this.intern._backMoving);
-                    else
-                    {
+                    else {
                         if (this.settings.isContextMenu) {
                             if (!this.settings.noBackground) {
                                 if (this.settings.isIgnoreEditMode)
                                     this._SetClass (this.intern._backOn);
                                 else
                                     this._SetClass (this.intern._backOff);
-                            }
-                            else
+                            } else
                                 this._SetClass ("hq-no-background-edit");
-                        }
-                        else {
+                        } else {
                             if (this.dynStates.state == hqWidgets.gState.gStateOn)
                             {
                                 if (this.intern._isPressed)
                                     this._SetClass (this.intern._backOnHover);
                                 else
                                     this._SetClass (this.intern._backOn);
-                            }
-                            else
-                            {
+                            } else {
                                 if (this.intern._isPressed)
                                     this._SetClass (this.intern._backOffHover);
                                 else
@@ -3233,10 +3233,10 @@ var hqWidgets = {
             if (this.intern._jelement.leaf) {
                 var i=0;
                 while (this.intern._jelement.leaf[i]) {
-                    if (this.intern._isEditMode && this.settings.iContextMenu)
+                    if (this.intern._isEditMode && this.settings.iContextMenu) {
                         this.intern._jelement.leaf[i].divs[0].hide();
-                    else
-                    {
+					}
+                    else {
                         this.intern._jelement.leaf[i].divs[0].show();
                         this.intern._jelement.leaf[i].divs[this.intern._jelement.leaf[i].blindIndex].animate ({height:this.intern._jelement.leaf[i].height * (this.dynStates.percentState / 100)}, 500);
                     }
@@ -3248,8 +3248,7 @@ var hqWidgets = {
             // If set all leafs to this state
             if (index==-1 && this.intern._jelement.leaf) {
                 var i=0;
-                while (this.intern._jelement.leaf[i])
-                {
+                while (this.intern._jelement.leaf[i]) {
                     this.SetWindowState(i, state, handleState);
                     i++;
                 }
@@ -3297,25 +3296,44 @@ var hqWidgets = {
                         var w = wnd.divs[3].width();
                         var size = (h > w) ? w : h;
                     
+						// Tilted
                         if (this.intern._jelement.leaf[index].handleState == hqWidgets.gHandlePos.gPosTilted) {
                             wnd.divs[4].addClass('hq-blind-handle-tilted hq-blind-handle-tilted-bg');
-                            wnd.divs[4].css({height: size * 0.15, width: 2});
-                            wnd.divs[4].css({top: wnd.divs[3].height() / 2});
+							if (wnd.style == hqWidgets.gSwingType.gSwingTop){
+								wnd.divs[4].css({height: size * 0.15, width: 2, top: 0});
+							}
+							else {
+								wnd.divs[4].css({height: size * 0.15, width: 2, top: wnd.divs[3].height() / 2});
+							}
                         }
-                        else
+                        else 
+						// Opened 
                         if (this.intern._jelement.leaf[index].handleState == hqWidgets.gHandlePos.gPosOpened) {
                             wnd.divs[4].addClass('hq-blind-handle-opened hq-blind-handle-opened-bg');
-                            wnd.divs[4].css({width: size * 0.15, height: 2});
-                            wnd.divs[4].css({top: (wnd.divs[3].height() - wnd.divs[4].height()) / 2});
+							if (wnd.style == hqWidgets.gSwingType.gSwingTop){
+								wnd.divs[4].css({height: size * 0.15, width: 2, top: 0});
+							}
+							else {
+								wnd.divs[4].css({width: size * 0.15, height: 2, top: (wnd.divs[3].height() - wnd.divs[4].height()) / 2});
+							}
                         }
+						// Closed
                         else {
                             wnd.divs[4].addClass('hq-blind-handle-closed hq-blind-handle-bg');
-                            wnd.divs[4].css({height: size * 0.15, width: 2});
-                            wnd.divs[4].css({top: wnd.divs[3].height() / 2});
+							if (wnd.style == hqWidgets.gSwingType.gSwingTop){
+								wnd.divs[4].css({width: size * 0.15, height: 2, top: 0});
+							}
+							else {
+								wnd.divs[4].css({height: size * 0.15, width: 2, top: wnd.divs[3].height() / 2});
+							}
                         }
                     
                         if (wnd.style == hqWidgets.gSwingType.gSwingLeft)
                             wnd.divs[4].css({left: wnd.divs[2].width() - wnd.divs[4].width()});
+						else
+                        if (wnd.style == hqWidgets.gSwingType.gSwingTop) {
+                            //wnd.divs[4].css({left: (wnd.divs[2].width() - size * 0.15) / 2});
+						}
                         else
                             wnd.divs[4].css({left: 0});
                     }
@@ -3331,8 +3349,11 @@ var hqWidgets = {
                
                     // Show tilted state
                     if (wnd.style && wnd.style != hqWidgets.gSwingType.gSwingDeaf && 
-                        state == hqWidgets.gWindowState.gWindowTilted) {
-                        if (!this.intern._isEditMode) wnd.state = hqWidgets.gOptions.gWindowTilted;
+                        (state == hqWidgets.gWindowState.gWindowTilted || wnd.style == hqWidgets.gSwingType.gSwingTop)) {
+						
+                        if (!this.intern._isEditMode) {
+							wnd.state = hqWidgets.gOptions.gWindowTilted;
+						}
                         wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3');
                         wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-opened-left');
                         wnd.divs[wnd.leafIndex].removeClass ('hq-blind-blind3-opened-right');
@@ -3341,11 +3362,15 @@ var hqWidgets = {
                         // Set handle state
                         wnd.divs[4].addClass('hq-blind-handle-tilted hq-blind-handle-bg');
                         wnd.divs[4].css({height: size * 0.15, width: 2});
-                        wnd.divs[4].css({top: wnd.divs[3].height() / 2});
-                        if (wnd.style == hqWidgets.gSwingType.gSwingLeft)
-                            wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 1});
-                        else
-                            wnd.divs[4].css({left: 0});
+                        if (wnd.style == hqWidgets.gSwingType.gSwingLeft) {
+                            wnd.divs[4].css({left: wnd.divs[3].width() - wnd.divs[4].width() - 1, top: wnd.divs[3].height() / 2});
+						} else 
+						if (wnd.style == hqWidgets.gSwingType.gSwingTop) {
+                            wnd.divs[4].css({left: wnd.divs[3].width() / 2 - 1, top: wnd.divs[4].width() + 1});
+						}
+                        else {
+                            wnd.divs[4].css({left: 0, top: wnd.divs[3].height() / 2});
+						}
                     }
                     else // Show opened state
                     if (wnd.style && wnd.style == hqWidgets.gSwingType.gSwingLeft) {
