@@ -7,7 +7,7 @@
                     $this.removeClass("ui-state-default").addClass("ui-state-active");
                 }
             },
-            classes: function (el) {
+            classes: function (el, reverse) {
                 var $this = jQuery(el);
                 $this.hover(function () {
                     $this.addClass("ui-state-hover");
@@ -25,13 +25,24 @@
                     } else {
                         val = newVal;
                     }
-                    if (val > 0) {
-                        $this.addClass("ui-state-active");
-                        $this.removeClass("ui-state-default");
+                    if (reverse) {
+                        if (val > 0) {
+                            $this.removeClass("ui-state-active");
+                            $this.addClass("ui-state-default");
+                        } else {
+                            $this.addClass("ui-state-active");
+                            $this.removeClass("ui-state-default");
+                        }
                     } else {
-                        $this.removeClass("ui-state-active");
-                        $this.addClass("ui-state-default");
+                        if (val > 0) {
+                            $this.addClass("ui-state-active");
+                            $this.removeClass("ui-state-default");
+                        } else {
+                            $this.removeClass("ui-state-active");
+                            $this.addClass("ui-state-default");
+                        }
                     }
+
 
                 });
                 var val = homematic.uiState.attr(id+".Value");

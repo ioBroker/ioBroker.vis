@@ -156,11 +156,15 @@
                 if (dui.urlParams["edit"] !== "") {
                     $this.click(function () {
                         var val = homematic.uiState["_"+id].Value;
-                        if (val === false || val === "false") { val = 0;}
-                        if (val === true || val === "true") { val = 1;}
-                        val = parseFloat(val);
-                        if (val >= 0.5) { val = 1; } else { val = 0; }
-                        homematic.setValue( id,  1-val);
+                        if (val === false || val === "false") {
+                            homematic.setValue(id, true);
+                        } else if (val === true || val === "true") {
+                            homematic.setValue(id, false);
+                        } else {
+                            val = parseFloat(val);
+                            if (val >= 0.5) { val = 1; } else { val = 0; }
+                            homematic.setValue( id,  1-val);
+                        }
                     });
                 }
             },
@@ -216,7 +220,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
-            <img style="position:absolute" src="<%== this.data.attr('src') %>" />
+            <img style="position:absolute; width:100%;" src="<%== this.data.attr('src') %>" />
             <div <%= (el) -> dui.binds.basic.imgRefresh(el, data.attr("src"), data.attr("refreshInterval")) %> />
         </div>
     </div>

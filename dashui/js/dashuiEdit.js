@@ -23,7 +23,7 @@
 // duiEdit - the DashUI Editor
 
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta34',
+    editVersion:        '0.9beta35',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -308,6 +308,9 @@ dui = $.extend(true, dui, {
             dui.addWidget(tpl, data, style);
             dui.saveRemote();
             dui.activeView = activeView;
+
+            // TODO Bug: (tritt nicht immer auf...) targetView wird angezeigt, auswählen von Widgets nicht mehr möglich
+
             alert("Widget copied to view " + targetView + ".");
         }
     },

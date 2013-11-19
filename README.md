@@ -9,6 +9,16 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta35
+* (Hobbyquaker) Bugfixes Widget-Sets basic, jqui und jqui-mfd
+* (Bluefox) Support of socket authentication
+* (Bluefox) Fix errors with widgets on more than one views. Data sometimes are not updated.
+* (Bluefox)	Fix hqWidgets/Shutter if no shutter used but only sensor
+* (Bluefox) Fix Shutter on touch devices.
+* (Bluefox) Support of roof window (handle is top)
+* (Bluefox) Fix very BAD Error!!! If widget used on multiple views, nextId will be calculated invalid
+* (Bluefox) Add URL control for hqWidgets/Info
+
 ### 0.9beta34
 * (Hobbyquaker) neues Widget "basic - static iFrame"
 * (Hobbyquaker) neues Widget "jqui - Icon HTTP GET"
