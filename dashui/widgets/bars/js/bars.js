@@ -76,7 +76,7 @@ jQuery.extend(true, dui.binds, {
                 elem.ctrlAttr = attr_name;
                 elem.parent   = div;
                 var parent = $('#inspect_' + attr_name);
-                parent.html("<table style='no-spaces'><tr style='no-spaces'><td style='no-spaces'><input type='text' size='3' value='" + div.barsOptions[attr_name] + "' id='inspect_" + attr_name + "_text'></td><td style='no-spaces'><div style='width: " + (dui.binds.bars.width - 40) + "px' id='inspect_" + attr_name + "_slider'></div></td></tr></table>");
+                parent.html("<table style='dashui-dashui-no-spaces'><tr style='dashui-dashui-no-spaces'><td style='dashui-dashui-no-spaces'><input type='text' size='3' value='" + div.barsOptions[attr_name] + "' id='inspect_" + attr_name + "_text'></td><td style='dashui-dashui-no-spaces'><div style='width: " + (dui.binds.bars.width - 40) + "px' id='inspect_" + attr_name + "_slider'></div></td></tr></table>");
 
                 var slider = document.getElementById ("inspect_" + attr_name+ "_slider");
                 var text   = document.getElementById ("inspect_" + attr_name+ "_text");
@@ -323,14 +323,14 @@ jQuery.extend(true, dui.binds, {
 			var text = "<div id='"+wid+"_btn"+i+"' "+style+" class='"+cssClass+"'>\n";
 			var isTable = true || (opt.buttons[i].image && opt.buttons[i].text);
 			if (isTable) {
-				text += "<table "+style+" class='no-spaces'><tr style='width:100%;height:100%' class='no-spaces'>\n";
-				text += "<td class='no-spaces' style='width:"+opt.bOffset+"%; vertical-align: bottom; text-align: "+opt.bImageAlign+"'>\n";
+				text += "<table "+style+" class='dashui-no-spaces'><tr style='width:100%;height:100%' class='dashui-no-spaces'>\n";
+				text += "<td class='dashui-no-spaces' style='width:"+opt.bOffset+"%; vertical-align: bottom; text-align: "+opt.bImageAlign+"'>\n";
 			}
 			if (opt.buttons[i].image) {
-				text += "<img class='no-spaces' src='"+((opt.buttons[i].image.substring(0,4) == "img/") ? opt.buttons[i].image : "img/" + opt.buttons[i].image) +"' style='"+(opt.bWidth ? ("max-width:"+(opt.bWidth - 5)+"px;") : "")+(opt.bHeight ? ("max-height:"+(opt.bHeight - 5)+"px;") : "") + "' />\n";
+				text += "<img class='dashui-no-spaces' src='"+((opt.buttons[i].image.substring(0,4) == "img/") ? opt.buttons[i].image : "img/" + opt.buttons[i].image) +"' style='"+(opt.bWidth ? ("max-width:"+(opt.bWidth - 5)+"px;") : "")+(opt.bHeight ? ("max-height:"+(opt.bHeight - 5)+"px;") : "") + "' />\n";
 			}
 			if (isTable) {
-				text += "</td><td class='no-spaces' style='width:"+(100 - opt.bOffset)+"%; text-align: "+opt.bTextAlign+"'>\n";
+				text += "</td><td class='dashui-no-spaces' style='width:"+(100 - opt.bOffset)+"%; text-align: "+opt.bTextAlign+"'>\n";
 			}
 			if (opt.buttons[i].text) {
 				text += "<span style='text-align: "+opt.bTextAlign+"'>" + opt.buttons[i].text + "</span>\n";
@@ -356,21 +356,21 @@ jQuery.extend(true, dui.binds, {
                 w = div.barsOptions.bWidth;
             }
 				
-			text += "<table style='width:"+w+"px; height:"+h+"px' class='no-spaces'>";
+			text += "<table style='width:"+w+"px; height:"+h+"px' class='dashui-no-spaces'>";
 			if (isHorizontal) {
-				text += "<tr class='no-spaces' style='height:"+div.barsOptions.bHeight+"px'>";
+				text += "<tr class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px'>";
 				for (var d = 0; d < div.barsOptions.buttons.length; d++) {
-					text += "<td class='no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, d, div.barsOptions) + "</td>";
+					text += "<td class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, d, div.barsOptions) + "</td>";
                                        if (d != div.barsOptions.buttons.length - 1)
-                                           text += "<td class='no-spaces' style='width:"+div.barsOptions.bSpace+"px'></td>";
+                                           text += "<td class='dashui-no-spaces' style='width:"+div.barsOptions.bSpace+"px'></td>";
 				}
 				text += "</tr>";
 			}
 			else {
 				for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-					text += "<tr class='no-spaces'  style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'><td class='no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, i, div.barsOptions) + "</td></tr>";
+					text += "<tr class='dashui-no-spaces'  style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'><td class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, i, div.barsOptions) + "</td></tr>";
                     if (i != div.barsOptions.buttons.length - 1)
-                        text += "<tr class='no-spaces'><td class='no-spaces' style='height:"+div.barsOptions.bSpace+"px'></td></tr>";
+                        text += "<tr class='dashui-no-spaces'><td class='dashui-no-spaces' style='height:"+div.barsOptions.bSpace+"px'></td></tr>";
 				}
 			}
 			text += "</table>";
@@ -669,7 +669,7 @@ jQuery.extend(true, dui.binds, {
 				}
 
 				var iGeomCount = 0;
-                sText += "<tr><td colspan=2><button id='idGeometry_BtnGroup' class='groupButtonWidth'>"+dui.translate("Geometry...")+"</button></td></tr>";
+                sText += "<tr><td colspan=2><button id='idGeometry_BtnGroup' class='dashui-group-button-width'>"+dui.translate("Geometry...")+"</button></td></tr>";
                 sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Bar type:")+"</td><td><select id='inspect_position' style='width: "+dui.binds.bars.width+"px'>";
                 sText += "<option value='0'>" +dui.translate("Horizontal")+"</option>";
                 sText += "<option value='1'>" +dui.translate("Vertical")+"</option>";
@@ -680,11 +680,11 @@ jQuery.extend(true, dui.binds, {
                 sText += "</select></td></tr>";           
 				sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td></td><td><input id='inspect_barShow' type='button' value='"+dui.translate("Show")+"'></td></tr>";  					
                 
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button width:")+"</td><td id='inspect_bWidth' style='no-spaces'></td></tr>";
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button height:")+"</td><td id='inspect_bHeight' style='no-spaces'></td></tr>";
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button space:")+"</td><td id='inspect_bSpace' style='no-spaces'></td></tr>";
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Border radius:")+"</td><td id='inspect_bRadius' style='no-spaces'></td></tr>";
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Text offset %:")+"</td><td id='inspect_bOffset' style='no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button width:")+"</td><td id='inspect_bWidth' style='dashui-no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button height:")+"</td><td id='inspect_bHeight' style='dashui-no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button space:")+"</td><td id='inspect_bSpace' style='dashui-no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Border radius:")+"</td><td id='inspect_bRadius' style='dashui-no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Text offset %:")+"</td><td id='inspect_bOffset' style='dashui-no-spaces'></td></tr>";
 
                 sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Image align:")+"</td><td><select id='inspect_bImageAlign' style='width: "+dui.binds.bars.width+"px'>";
                 sText += "<option value='center'>" +dui.translate("Center")+"</option>";
@@ -700,7 +700,7 @@ jQuery.extend(true, dui.binds, {
 
                 // Styles
                 var iStyleCount = 0;
-                sText += "<tr><td colspan=2><button id='idStyle_BtnGroup' class='groupButtonWidth'>"+dui.translate("Styles...")+"</button></td></tr>";
+                sText += "<tr><td colspan=2><button id='idStyle_BtnGroup' class='dashui-group-button-width'>"+dui.translate("Styles...")+"</button></td></tr>";
                 sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Normal:")+"</td><td id='inspect_bStyleNormalParent' ></td></tr>";
                 sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Normal hover:")+"</td><td id='inspect_bStyleNormalHoverParent' ></td></tr>";
                 sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Active:")+"</td><td id='inspect_bStyleActiveParent'></td></tr>";
@@ -712,7 +712,7 @@ jQuery.extend(true, dui.binds, {
 				    div.barsIntern.wType == 'tplBarNavigator') {
 					var iEffectsCount = 0;
 					dui.updateFilter();
-					sText += "<tr><td colspan=2><button id='idEffect_BtnGroup' class='groupButtonWidth'>"+dui.translate("Effects...")+"</button></td></tr>";
+					sText += "<tr><td colspan=2><button id='idEffect_BtnGroup' class='dashui-group-button-width'>"+dui.translate("Effects...")+"</button></td></tr>";
                     sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td>"+ dui.translate("Hide effect:")+"</td><td><select id='inspect_bHideEffect' style='width: "+(dui.binds.bars.width - 40)+"px'>";
 					var sEffects = "";
                     sEffects += "<option value=''>Show/Hide</option>";
@@ -742,7 +742,7 @@ jQuery.extend(true, dui.binds, {
                 }
 
                 
-				sText += "<tr><td colspan=2><button id='idButtons_BtnGroup' class='groupButtonWidth'>"+dui.translate("Buttons...")+"</button></td></tr>";
+				sText += "<tr><td colspan=2><button id='idButtons_BtnGroup' class='dashui-group-button-width'>"+dui.translate("Buttons...")+"</button></td></tr>";
 
                 for (var m = 0; m < div.barsOptions.buttons.length; m++) {
                     sText += dui.binds.bars.editButton (div, m);

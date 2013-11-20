@@ -490,10 +490,10 @@ hqWidgets = $.extend (true, hqWidgets, {
             sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.translate("Show control popup:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_ctrlActionBtn' "+(this.e_internal.attr.ctrlActionBtn ? "checked" : "")+" ></td></tr>";
             sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.translate("Control question:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlQuestion'  type='text' value='"+this.e_internal.attr.ctrlQuestion+"'></td></tr>";
             sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.translate("Control question image:")+"</td><td>";
-            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.translate("Button text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlBtnText'  type='text' value='"+this.e_internal.attr.ctrlBtnText+"'></td></tr>";
             sTextCtrl += "<input id='"+this.e_settings.elemName+"_ctrlQuestionImg' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.ctrlQuestionImg == undefined) ? "":this.e_internal.attr.ctrlQuestionImg)+"'>";
             sTextCtrl += "<input id='"+this.e_settings.elemName+"_ctrlQuestionImgBtn' style='width: 30px' type='button' value='...'>";
             sTextCtrl += "</td></tr>";
+            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.translate("Button text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlBtnText'  type='text' value='"+this.e_internal.attr.ctrlBtnText+"'></td></tr>";
         }
             
         // if hide last action info after x hours
@@ -591,7 +591,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_settings.parent.append (sTextStyle);
         else 
         if (iStyleCount > 1) {
-            sTextStyle = "<tr><td colspan=2><button id='idShowStyle' class='groupButtonWidth'>"+hqWidgets.translate("Styles...")+"</button></td></tr>" + sTextStyle;
+            sTextStyle = "<tr><td colspan=2><button id='idShowStyle' class='dashui-group-button-width'>"+hqWidgets.translate("Styles...")+"</button></td></tr>" + sTextStyle;
             this.e_settings.parent.append (sTextStyle);
             var advBtn = document.getElementById ('idShowStyle');
             advBtn.obj   = this;
@@ -636,7 +636,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         }
         else
         if (iAdvCount > 0) {
-            sTextAdv = "<tr><td colspan=2><button id='idShowAdv' class='groupButtonWidth'>"+hqWidgets.translate("Advanced...")+"</button></td></tr>" + sTextAdv;
+            sTextAdv = "<tr><td colspan=2><button id='idShowAdv' class='dashui-group-button-width'>"+hqWidgets.translate("Advanced...")+"</button></td></tr>" + sTextAdv;
             this.e_settings.parent.append (sTextAdv);
             var advBtn = document.getElementById ('idShowAdv');
             advBtn.obj   = this;
@@ -677,7 +677,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.obj.controlsVisible = false;
 
         if (iCtrlCount > 0) {
-            sTextCtrl = "<tr><td colspan=2><button id='idShowCtrl' class='groupButtonWidth'>"+hqWidgets.translate("Control...")+"</button></td></tr>" + sTextCtrl;
+            sTextCtrl = "<tr><td colspan=2><button id='idShowCtrl' class='dashui-group-button-width'>"+hqWidgets.translate("Control...")+"</button></td></tr>" + sTextCtrl;
             this.e_settings.parent.append (sTextCtrl);
             var ctrlBtn = document.getElementById ('idShowCtrl');
             ctrlBtn.obj   = this;

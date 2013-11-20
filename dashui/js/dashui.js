@@ -173,8 +173,7 @@ var dui = {
 
         dui.loadWidgetSets();
 
-        $("#loading").append(" done.<br/>");
-
+		dui.showWaitScreen(true, " done.<br/>", null, "+1");
 
         dui.initInstance();
         
@@ -196,13 +195,14 @@ var dui = {
     initNext: function () {
         if (!dui.views) {
             dui.loadRemote(function () {
-                $("#loading").html("").hide();
+				dui.showWaitScreen (false);
+
                 // Erststart.
                 dui.initViewObject();
             });
             return false;
         } else {
-            $("#loading").html("").hide();
+			dui.showWaitScreen (false);
         }
 
         var hash = window.location.hash.substring(1);
@@ -728,7 +728,7 @@ var dui = {
         window.location.reload();
     },
     loadRemote: function (callback) {
-        $("#loading").append("Please wait! Trying to load views from CCU.IO");
+		dui.showWaitScreen(true, "Please wait! Trying to load views from CCU.IO", null, "+1");
         dui.socket.emit("readFile", "dashui-views.json", function (data) {
             dui.views = data;
             if (!dui.views) {
@@ -777,7 +777,37 @@ var dui = {
     },
     translate: function (text) {
         return text;
-    }
+    },
+	showWaitScreen: function (isShow, appendText, newText, step) {
+		var waitScreen = document.getElementById ("waitScreen");
+		if (!waitScreen && isShow) {
+			$('body').append ("<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>");
+			waitScreen = document.getElementById ("waitScreen");
+		}
+		if (step === 0) {
+			waitScreen.step = 0;
+			$(".dashui-progressbar ").progressbar({value: 0}).height(19);
+		}
+		
+		if (isShow) {
+			$(waitScreen).show ();
+			if (newText !== null && newText !== undefined) {
+				$('#waitText').html (newText);
+			}
+			if (appendText !== null && appendText !== undefined) {
+				$('#waitText').append (appendText);
+			}			
+			if (step !== undefined) {
+				if (step === "+1") {					
+					step = waitScreen.step + 12.5;
+				}
+				waitScreen.step = step;
+				$(".dashui-progressbar ").progressbar("value", step);
+			}		
+		} else if (waitScreen) {
+			$(waitScreen).remove ();
+		}
+	}
 };
 
 var homematic = {
@@ -884,8 +914,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             dui.editInit();
         }
         
-        //console.log("socket.io")
-        $("#loading").append("Connecting to CCU.IO ...<br/>");
+		dui.showWaitScreen(true, null, "Connecting to CCU.IO ...<br/>", 0);
 
         dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host')+"?key="+socketSession);
 
@@ -959,19 +988,18 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             //console.log((new Date()) + " socket.io error");
         });
 
-        $("#loading").append("Loading ReGa Data");
+		dui.showWaitScreen(true, "Loading ReGa Data", null, "+1");
 
         dui.socket.emit("getIndex", function (index) {
-            $("#loading").append(".");
+			dui.showWaitScreen(true, ".", null, "+1");
             //console.log("index loaded");
             homematic.regaIndex = index;
             dui.socket.emit("getObjects", function (obj) {
-                $("#loading").append(".");
+				dui.showWaitScreen(true, ".", null, "+1");
                 //console.log("objects loaded")
                 homematic.regaObjects = obj;
                 dui.socket.emit("getDatapoints", function (data) {
-                    $("#loading").append(".<br/>");
-                    //console.log("datapoints loaded");
+					dui.showWaitScreen(true, ".<br>", null, "+1");
                     for (var dp in data) {
                         try {
                             homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
@@ -980,7 +1008,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                             console.log(dp);
                         }
                     }
-                    $("#loading").append("Loading Widget-Sets...");
+					dui.showWaitScreen(true, "Loading Widget-Sets...", null, "+1");
                     setTimeout(dui.init, 10);
 
                 });

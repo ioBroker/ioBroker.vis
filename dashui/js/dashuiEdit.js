@@ -255,19 +255,25 @@ dui = $.extend(true, dui, {
             dui.views[view].widgets[widgetId] = {};
         }
 		
+		if (!style) {
+			var jWidgetId = $('#'+widgetId);
+			style = dui.findFreePosition (view, widgetId, null, jWidgetId.width(), jWidgetId.height());
+		}
+		
 		if (dui.views[view].widgets[widgetId].data !== undefined) {
 			data = $.extend (data, dui.views[view].widgets[widgetId].data, true);
 		}
 		
         dui.views[view].widgets[widgetId] = {
-            tpl: tpl,
-            data: data,
+            tpl:   tpl,
+            data:  data,
             style: style
         };
 
         if (style) {
             $("#"+widgetId).css(style);
         }
+		
 
 		if (isSelectWidget) {
             dui.binds.basic._disable();
@@ -284,6 +290,8 @@ dui = $.extend(true, dui, {
 		if (isSelectWidget) {
 			dui.activeWidget = widgetId;
 		}
+		
+		dui.actionNewWidget (widgetId);
 		
         return widgetId;
     },
@@ -1148,7 +1156,114 @@ dui = $.extend(true, dui, {
         }
 
     },
-    translate: function (text) {
+    // Find free place for new widget
+	findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
+		var editPos = $('.ui-dialog:first').position ();
+		field = $.extend (field, {x: 0, y:0, width: editPos.left});
+		widgetWidth  = (widgetWidth  || 60);
+		widgetHeight = (widgetHeight || 60);
+		if (widgetWidth > field.width) {
+			field.width = widgetWidth + 1;
+		}
+		var step = 20;
+		var y = field.y;
+		var x = field.x || step;
+		
+		// Prepare coordinates
+		var positions = [];
+		for (var w in dui.views[view].widgets) {
+			if (w == id || !dui.views[view].widgets[w].tpl) {
+				continue;
+			}
+
+			if (dui.views[view].widgets[w].tpl.indexOf("Image") == -1 &&
+			    dui.views[view].widgets[w].tpl.indexOf("image") == -1) {
+				var jW = $('#'+w);
+				var s = jW.position();
+				s['width']  = jW.width();
+				s['height'] = jW.height();
+				if (s.width > 300 && s.height > 300) {
+					continue;
+				}
+				positions[positions.length] = s;
+			}
+		}
+		
+		while (!dui.checkPosition (positions, x, y, widgetWidth, widgetHeight)) {
+			x += step;
+			if (x + widgetWidth > field.width) {
+				x = field.x;
+				y += step;
+			}
+		};
+		
+		// No free place on the screen
+		if (y >= $(window).height ()) {
+			x = 50;
+			y = 50;
+		}
+		
+		return {left: x, top: y};
+	},
+	// Check overlapping
+	checkPosition: function (positions, x, y, widgetWidth, widgetHeight) {
+		for (var i = 0; i < positions.length; i++) {
+			var s = positions[i];
+			
+			if (((s.left <= x                && (s.left + s.width)  >= x) ||
+				 (s.left <= x + widgetWidth  && (s.left + s.width)  >= x + widgetWidth)) &&
+				((s.top  <= y                && (s.top  + s.height) >= y) ||
+				 (s.top  <= y + widgetHeight && (s.top  + s.height) >= y + widgetHeight))){
+				return false;
+			}
+			if (((x <= s.left                &&  s.left             <= x + widgetWidth) ||
+				 (x <= (s.left + s.width)    && (s.left + s.width)  <= x + widgetWidth)) &&
+				((y <= s.top                 && s.top               <= y + widgetHeight) ||
+				 (y <= (s.top  + s.height)   && (s.top  + s.height) <= y + widgetHeight))){
+				return false;
+			}			
+		}
+		return true;
+	},
+	actionNewWidget: function (id) {
+		var jID = $('#'+id);
+		var s = jID.position ();
+		s['width']  = jID.width();
+		s['height'] = jID.height();
+		s['radius'] = parseInt(jID.css('border-radius'));
+		var _css1 = {
+			left:        s.left - 3.5,
+			top:         s.top  - 3.5,
+			height:      s.height,
+			width:       s.width,
+			opacity:     1,
+			borderRadius: 15};
+
+		
+		var text = "<div id='"+id+"__action1' style='z-index:2000; top:"+(s.top-3.5)+"px; left:"+(s.left-3.5)+"px; width: "+s.width+"px; height: "+s.height+"px; position: absolute'></div>";
+		$('body').append(text);
+		var _css2 = {
+			left:        s.left - 4 - s.width,
+			top:         s.top  - 4 - s.height,
+			height:      s.height * 3,
+			width:       s.width  * 3,
+			opacity:     0,
+			//borderWidth: 1,
+			borderRadius: s['radius']+(s.height > s.width) ? s.width : s.height};
+
+		$('#'+id+'__action1').
+			addClass('dashui-show-new').
+			css(_css2).
+			animate(_css1, 1500, 'swing', function (){$(this).remove();});  
+
+		text = text.replace("action1", "action2");
+		$('body').append(text);
+		$('#'+id+'__action2').
+			addClass('dashui-show-new').
+			css(_css2).
+			animate(_css1, 3000, 'swing', function (){$(this).remove();});  
+	},
+	translate: function (text) {
         return text;
     },
     translateAll: function () {
