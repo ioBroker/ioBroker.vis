@@ -1,8 +1,8 @@
 /**
  *  DashUI
- *  https://github.com/hobbyquaker/dashui/
+ *  https://github.com/GermanBluefox/DashUI/
  *
- *  Copyright (c) 2013 hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013 Bluefox https://github.com/GermanBluefox
  *  MIT License (MIT)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -20,10 +20,9 @@
  *  SOFTWARE.
  */
 
-// duiEdit - the DashUI Editor
+// duiEdit - the DashUI Editor extensions
 
 dui = $.extend(true, dui, {
-    extEditVersion:     '0.9beta35',
     styleSelect: {
         // local variables
         _currentElement: 0,
