@@ -274,15 +274,15 @@ jQuery.extend(true, dui.binds, {
 		_showGroupButton: function (groupName, div) {
 			var advBtn = document.getElementById (groupName + '_BtnGroup');
 			advBtn.obj       = div;
-			advBtn.groupName = groupName;
-			if (div.barsIntern[groupName+'Visible'] === undefined)
-				div.barsIntern[groupName+'Visible'] = false;
-				
-			advBtn.state = div.barsIntern[groupName+'Visible'];
+			advBtn.groupName = groupName;				
+			advBtn.state = (dui.visibility) ? dui.visibility[groupName] : false;
 
 			$(advBtn).button({icons: {primary: (!advBtn.state) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
 				this.state = !(this.state);
-				this.obj.barsIntern[this.groupName+'Visible'] = this.state;
+				if (!dui.visibility) {
+					dui.visibility = {};
+				}
+				dui.visibility[this.groupName] = this.state;
 				if (this.state) {
 					$(this).button("option", {icons: { primary: "ui-icon-carat-1-n" }});
 					var i = 0;

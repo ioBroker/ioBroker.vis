@@ -595,11 +595,14 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_settings.parent.append (sTextStyle);
             var advBtn = document.getElementById ('idShowStyle');
             advBtn.obj   = this;
-            advBtn.state = this.e_internal.obj.stylesVisible;
+            advBtn.state = (hqWidgets.visibility) ? hqWidgets.visibility["Styles"] : false;
             
-            $('#idShowStyle').button({icons: {primary: (!this.e_internal.obj.stylesVisible) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
+            $('#idShowStyle').button({icons: {primary: (!advBtn.state) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
                 this.state = !(this.state);
-                this.obj.e_internal.obj.stylesVisible = this.state;
+				if (!hqWidgets.visibility) {
+					hqWidgets.visibility = {};
+				}
+				hqWidgets.visibility["Styles"] = this.state;
                 if (this.state) {
                     $('#idShowStyle').button("option", {icons: { primary: "ui-icon-carat-1-n" }});
                     var i = 0;
@@ -617,7 +620,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                     }                                        
                 }
             });
-            if (!this.e_internal.obj.stylesVisible) {
+            if (!advBtn.state) {
                 // Hide all                      
                 var i = 0;
                 while (document.getElementById ('idStyle'+i)) {
@@ -640,11 +643,14 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_settings.parent.append (sTextAdv);
             var advBtn = document.getElementById ('idShowAdv');
             advBtn.obj   = this;
-            advBtn.state = this.e_internal.obj.advancedVisible;
+            advBtn.state = (hqWidgets.visibility) ? hqWidgets.visibility["Advanced"] : false;
             
-            $('#idShowAdv').button({icons: {primary: (!this.e_internal.obj.advancedVisible) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
+            $('#idShowAdv').button({icons: {primary: (!advBtn.state) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
                 this.state = !(this.state);
-                this.obj.e_internal.obj.advancedVisible = this.state;
+				if (!hqWidgets.visibility) {
+					hqWidgets.visibility = {};
+				}
+				hqWidgets.visibility["Advanced"] = this.state;
                 if (this.state) {
                     $('#idShowAdv').button("option", {icons: { primary: "ui-icon-carat-1-n" }});
                     var i = 0;
@@ -662,7 +668,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                     }                                        
                 }
             });
-            if (!this.e_internal.obj.advancedVisible){
+            if (!advBtn.state){
                 // Hide all                      
                 var i = 0;
                 while (document.getElementById ('idAdv'+i)) {
@@ -681,11 +687,14 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_settings.parent.append (sTextCtrl);
             var ctrlBtn = document.getElementById ('idShowCtrl');
             ctrlBtn.obj   = this;
-            ctrlBtn.state = this.e_internal.obj.controlsVisible;
+            ctrlBtn.state = (hqWidgets.visibility) ? hqWidgets.visibility["Control"] : false;
             
-            $('#idShowCtrl').button({icons: {primary: (!this.e_internal.obj.controlsVisible) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
+            $('#idShowCtrl').button({icons: {primary: (!advBtn.state) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
                 this.state = !(this.state);
-                this.obj.e_internal.obj.controlsVisible = this.state;
+				if (!hqWidgets.visibility) {
+					hqWidgets.visibility = {};
+				}
+				hqWidgets.visibility["Control"] = this.state;
                 if (this.state) {
                     $('#idShowCtrl').button("option", {icons: { primary: "ui-icon-carat-1-n" }});
                     var i = 0;
@@ -703,7 +712,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                     }                                        
                 }
             });
-            if (!this.e_internal.obj.controlsVisible){
+            if (!advBtn.state){
                 // Hide all                      
                 var i = 0;
                 while (document.getElementById ('idCtrl'+i)) {
