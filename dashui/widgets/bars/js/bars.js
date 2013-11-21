@@ -517,6 +517,9 @@ jQuery.extend(true, dui.binds, {
                 if (div.barsIntern.wType == 'tplBarFilter') {
                     sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("Filter key:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
                 }
+                if (div.barsIntern.wType == 'tplBarNavigator') {
+                    sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("View name:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' type='text' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
+                }
                 else{
                     sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("Option:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' type='text' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
                 }
@@ -572,6 +575,62 @@ jQuery.extend(true, dui.binds, {
                                 // If really changed
                                 var div = this.parent;
                                 div.barsOptions.buttons[this.ctrlId][this.ctrlAttr] = $(this).prop('value');
+                                dui.binds.bars.init (div.barsIntern.wid);
+                                dui.binds.bars.editSave(div);
+                            }
+                        }).focus(function () {
+                            $(this).autocomplete("search", "");
+                        }).keyup (function () {
+                            if (this.parent.timer) 
+                                clearTimeout (this.parent.timer);
+                                
+                            this.parent.timer = setTimeout (function(elem_) {
+                                 // If really changed
+                                var div = elem_.parent;
+                                div.barsOptions.buttons[elem_.ctrlId][elem_.ctrlAttr] = $(elem_).prop('value');
+                                dui.binds.bars.init (div.barsIntern.wid);
+                                dui.binds.bars.editSave(div);
+                                elem_.parent.timer=null;
+                            }, 200, this);
+                        });   
+                    }
+                }
+                else
+				if (div.barsIntern.wType == 'tplBarNavigator') {
+                    var elem = document.getElementById ('inspect_option'+i);
+                    if (elem) {
+                        elem.parent   = div;
+                        elem.ctrlAttr = 'option';
+                        elem.ctrlId   = i;
+                  
+                        $(elem).autocomplete({
+                            minLength: 0,
+                            source: function(request, response) {
+								var views = [];
+								for (var v in dui.views) {
+									views[views.length] = v;
+								}
+                                var data = $.grep(views, function(value) {
+                                    return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                                });            
+
+                                response(data);
+                            },
+                            select: function (event, ui){
+                                // If really changed
+                                var div = this.parent;
+                                div.barsOptions.buttons[this.ctrlId][this.ctrlAttr] = ui.item.value;
+                                dui.binds.bars.init (div.barsIntern.wid);
+                                dui.binds.bars.editSave(div);
+                            },
+                            change: function (event, ui) {
+                                // If really changed
+                                var div = this.parent;
+                                div.barsOptions.buttons[this.ctrlId][this.ctrlAttr] = $(this).prop('value');
+								if (!div.barsOptions.buttons[this.ctrlId]['text']) {
+									var s = div.barsOptions.buttons[this.ctrlId][this.ctrlAttr];
+									$("inpect_text").val(s.charAt(0).toUpperCase() + s.slice(1).toLowerCase());
+								}
                                 dui.binds.bars.init (div.barsIntern.wid);
                                 dui.binds.bars.editSave(div);
                             }
