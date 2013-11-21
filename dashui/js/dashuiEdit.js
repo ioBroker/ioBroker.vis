@@ -799,45 +799,38 @@ dui = $.extend(true, dui, {
         // Widget selektieren
         $("#select_active_widget option").removeAttr("selected");
         $("#select_active_widget option[value='"+id+"']").prop("selected", true);
-        //console.log($("#select_active_widget").html());
         $("#select_active_widget").multiselect("refresh");
 
-        //console.log("left:"+$this.css("left"));
-        //console.log("top:"+$this.css("top"));
-        //console.log("height:"+$this.outerHeight());
-        //console.log("width:"+$this.outerWidth());
-
         if ($("#snap_type option:selected").val() == 2) {
-            var gridWidth = parseInt($("#grid_size").val(),10);
+            var gridWidth = parseInt($("#grid_size").val());
 
             if (gridWidth < 1 || isNaN(gridWidth) ) {
                 gridWidth = 10;
             }
 
-            var x = parseFloat($this.css("left").slice(0,-2)),
-                y = parseFloat($this.css("top").slice(0,-2));
+            var x = parseInt($this.css("left")),
+                y = parseInt($this.css("top"));
 
             x = Math.floor(x / gridWidth) * gridWidth;
             y = Math.floor(y / gridWidth) * gridWidth;
 
-            $this.css("left",x+"px").css("top",y+"px");
-
+            $this.css({"left": x, "top": y});
         }
 		var pos = $this.position ();
 		var w = $this.width ();
 		var h = $this.height ();
         $("#widget_helper")
-            .css("left", pos.left, -2)
-            .css("top", pos.top -2)
-            .css("height", $this.outerHeight()+2)
-            .css("width", $this.outerWidth()+2)
+            .css("left", pos.left - 2)
+            .css("top",  pos.top  - 2)
+            .css("height", $this.outerHeight() + 2)
+            .css("width",  $this.outerWidth()  + 2)
             .show();
 
         $("#widget_inner_helper")
-            .css("left", pos.left -1)
-            .css("top", pos.top -1)
+            .css("left", pos.left - 1)
+            .css("top",  pos.top  - 1)
             .css("height", $this.outerHeight())
-            .css("width", $this.outerWidth())
+            .css("width",  $this.outerWidth())
             .show();
 
         // Interaktionen
@@ -864,11 +857,11 @@ dui = $.extend(true, dui, {
             },
             drag: function(event, ui) {
                 $("#widget_helper")
-                    .css("left", (ui.position.left - 2) + "px")
-                    .css("top", (ui.position.top - 2) + "px");
+                    .css("left", ui.position.left - 2)
+                    .css("top",  ui.position.top - 2);
                 $("#widget_inner_helper")
-                    .css("left", (ui.position.left - 1) + "px")
-                    .css("top", (ui.position.top - 1) + "px");
+                    .css("left", ui.position.left - 1)
+                    .css("top", ui.position.top - 1);
                 
             }
         };
