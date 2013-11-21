@@ -179,9 +179,9 @@ jQuery.extend(true, dui.binds, {
                             onselectArg: this.ctrlAttr + "" + i,
                             filter:      ".png;.gif;.jpg;.bmp",
                             onselect:    function (img, ctrlAttr) {
-                                $('#inspect_'+ctrlAttr).val(imageSelect.GetFileName(img, "img/")).trigger("change");
+                                $('#inspect_'+ctrlAttr).val(dui.imageSelect.GetFileName(img, "img/")).trigger("change");
                             }};
-                        imageSelect.Show (_settings);                    
+                        dui.imageSelect.Show (_settings);                    
                     });
                 }
             }	
@@ -242,8 +242,8 @@ jQuery.extend(true, dui.binds, {
             if ((elem = document.getElementById ('inspect_'+attr_name+'Parent')) != null) {
                 elem.ctrl     = div;
                 elem.ctrlAttr = attr_name;
-                if (dui.styleSelector) {
-                    dui.styleSelector.Show ({ width: 202,
+                if (dui.styleSelect) {
+                    dui.styleSelect.Show ({ width: 202,
                         name:          'inspect__'+attr_name,
                         style:         div.barsOptions[elem.ctrlAttr],
                         parent:        $('#inspect_'+attr_name+'Parent'),
@@ -620,6 +620,11 @@ jQuery.extend(true, dui.binds, {
                                 // If really changed
                                 var div = this.parent;
                                 div.barsOptions.buttons[this.ctrlId][this.ctrlAttr] = ui.item.value;
+								if (!div.barsOptions.buttons[this.ctrlId]['text']) {
+									var s = div.barsOptions.buttons[this.ctrlId][this.ctrlAttr];
+									div.barsOptions.buttons[this.ctrlId]['text'] = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+									$("#inspect_text"+this.ctrlId).val(div.barsOptions.buttons[this.ctrlId]['text']).trigger("change");
+								}
                                 dui.binds.bars.init (div.barsIntern.wid);
                                 dui.binds.bars.editSave(div);
                             },
@@ -629,7 +634,8 @@ jQuery.extend(true, dui.binds, {
                                 div.barsOptions.buttons[this.ctrlId][this.ctrlAttr] = $(this).prop('value');
 								if (!div.barsOptions.buttons[this.ctrlId]['text']) {
 									var s = div.barsOptions.buttons[this.ctrlId][this.ctrlAttr];
-									$("inpect_text").val(s.charAt(0).toUpperCase() + s.slice(1).toLowerCase());
+									div.barsOptions.buttons[this.ctrlId]['text'] = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+									$("#inspect_text"+this.ctrlId).val(div.barsOptions.buttons[this.ctrlId]['text']).trigger("change");
 								}
                                 dui.binds.bars.init (div.barsIntern.wid);
                                 dui.binds.bars.editSave(div);
@@ -644,6 +650,11 @@ jQuery.extend(true, dui.binds, {
                                  // If really changed
                                 var div = elem_.parent;
                                 div.barsOptions.buttons[elem_.ctrlId][elem_.ctrlAttr] = $(elem_).prop('value');
+								if (!div.barsOptions.buttons[elem_.ctrlId]['text']) {
+									var s = div.barsOptions.buttons[elem_.ctrlId][elem_.ctrlAttr];
+									div.barsOptions.buttons[elem_.ctrlId]['text'] = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+									$("#inspect_text"+elem_.ctrlId).val(div.barsOptions.buttons[elem_.ctrlId]['text']).trigger("change");
+								}
                                 dui.binds.bars.init (div.barsIntern.wid);
                                 dui.binds.bars.editSave(div);
                                 elem_.parent.timer=null;

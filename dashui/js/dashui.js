@@ -300,8 +300,8 @@ var dui = {
 
 
             // Init background selector
-            if (dui.styleSelector) {
-                dui.styleSelector.Show({ width: 202,
+            if (dui.styleSelect) {
+                dui.styleSelect.Show({ width: 202,
                     name:       "inspect_view_bkg_def",
                     filterFile: "backgrounds.css",
                     style:      dui.views[dui.activeView].settings.style['background_class'],
@@ -660,8 +660,8 @@ var dui = {
 
         if (dui.urlParams['edit'] === "") {
             // Init background selector
-            if (dui.styleSelector) {
-                dui.styleSelector.Show({ width: 202,
+            if (dui.styleSelect) {
+                dui.styleSelect.Show({ width: 202,
                     name:       "inspect_view_bkg_def",
                     filterFile: "backgrounds.css",
                     style:      dui.views[view].settings.style.background_class,
