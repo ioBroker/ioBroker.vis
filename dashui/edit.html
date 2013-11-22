@@ -41,11 +41,12 @@
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before dashui.js -->
     <script type="text/javascript" src="js/dashui.js"></script>
     <script type="text/javascript" src="js/dashuiEdit.js"></script>    
+    <script type="text/javascript" src="js/dashuiEditExt.js"></script>    
     <script type="text/javascript" src="js/dashuiLang.js"></script>
 
 </head>
 <body>
-    <div id="loading" style="background-color:#999; z-index: 5000; padding:20px; position: absolute; top: 0; left: 0; height:100%; width:100%"></div>
+	<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>
 
     <div id="dui_container" style="position: absolute; top: 0; left: 0; height:100%; width:100%">
         <div id="widget_helper">

@@ -81,7 +81,7 @@
     display:none;
     margin-top: 30px;
 }
-.selectEditWidth {
+.dashui-select-edit-width {
     width:180px;
 }
 
@@ -118,7 +118,7 @@ a.ui-dialog-titlebar-restore {
     margin-top: 5px !important;
     margin-left:5px !important;
 }
-.groupButtonWidth {
+.dashui-group-button-width {
     width:350px;
 }
 h4 {
@@ -132,9 +132,42 @@ h4 {
     border-top: 1px dotted white;  
     border-left: 1px dotted white;
 }
-.no-spaces {
+.dashui-no-spaces {
     padding: 0px;
     margin: 0px;
     border: 0px;
     border-spacing:0px;
+}
+.dashui-wait-screen {
+	width: 100%;
+	height: 100%;
+	z-index: 5000;
+/*	background: -moz-linear-gradient(top,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%); 
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0)));
+	background: -webkit-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); 
+	background: -o-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); 
+	background: -ms-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+	background: linear-gradient(to bottom,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); 
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); */
+}
+.dashui-progressbar {
+	position: absolute;
+	top: 50%;
+	left: 40%;
+	width: 20%;
+}
+
+.dashui-wait-text {
+	position: absolute;
+	top: 10%;
+	left: 38%;
+	font-family: 'trebuchet MS', sans-serif;
+	color: #525252;
+	font-size: 1.5em;
+	font-weight: bold;
+	font-variant: small-caps;
+}
+.dashui-show-new {
+	border: 5px dotted rgba(167,232,226,0.9) ;
+	z-index: 25;
 }
