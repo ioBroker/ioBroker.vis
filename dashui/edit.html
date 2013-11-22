@@ -42,6 +42,7 @@
     <script type="text/javascript" src="js/dashui.js"></script>
     <script type="text/javascript" src="js/dashuiEdit.js"></script>    
     <script type="text/javascript" src="js/dashuiEditExt.js"></script>    
+    <script type="text/javascript" src="js/dashuiWizard.js"></script>    
     <script type="text/javascript" src="js/dashuiLang.js"></script>
 
 </head>
@@ -62,6 +63,7 @@
                 <li><a href="#tabs-3">CSS Inspector</a></li>
                 <li><a href="#tabs-2">Homematic</a></li>
                 <li><a href="#tabs-6">Editor</a></li>
+                <li><a href="#tabs-7">Wizard</a></li>
                 <li><a href="#tabs-5">Info</a></li>
 
             </ul>
@@ -188,7 +190,15 @@
 
             </div>
 
-
+            <div id="tabs-7" class="ui-widget-content">
+				<table>
+					<tr><td class='translate'>Room:</td>    <td><select id="wizard_rooms"></select></td></tr>
+					<tr><td class='translate'>Function:</td><td><select id="wizard_funcs"></select></td></tr>
+					<tr><td class='translate'>Widget:</td>  <td><select id="wizard_widgets"></select></td></tr>
+				</table>
+				<input class="dashui-editor translate" type="button" id="wizard_run" value='Run'/> 
+            </div>
+			
             <div id="tabs-5" class="ui-widget-content">
 
                     <ul style="font-size: 1.1em; line-height: 2em;">

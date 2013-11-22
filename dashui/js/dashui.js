@@ -240,93 +240,9 @@ var dui = {
 
         // EDIT mode
         if (dui.urlParams["edit"] === "") {
-            // DashUI Editor Init
-
-            var sel;
-
-            var keys = Object.keys(dui.views),
-                i, k, len = keys.length;
-
-            keys.sort();
-
-            for (i = 0; i < len; i++) {
-                k = keys[i];
-
-                if (k == dui.activeView) {
-                    $("#inspect_view").html(dui.activeView);
-                    sel = " selected";
-                } else {
-                    sel = "";
-                }
-                $("#select_view").append("<option value='" + k + "'" + sel + ">" + k + "</option>")
-                $("#select_view_copy").append("<option value='" + k + "'" + sel + ">" + k + "</option>")
-            }
-            $("#select_view").multiselect("refresh");
-            $("#select_view_copy").multiselect("refresh");
-            $("#select_view").change(function () {
-                dui.changeView($(this).val());
-            });
-
-            $("#select_set").change(dui.refreshWidgetSelect);
-            $("#select_set").html("");
-
-            for (i = 0; i < dui.widgetSets.length; i++) {
-                if (dui.widgetSets[i].name !== undefined) {
-                    $("#select_set").append("<option value='" + dui.widgetSets[i].name + "'>" + dui.widgetSets[i].name + "</option>");
-                } else {
-                    $("#select_set").append("<option value='" + dui.widgetSets[i] + "'>" + dui.widgetSets[i] + "</option>");
-                }
-            }
-            $("#select_set").multiselect("refresh");
-            dui.refreshWidgetSelect();
-
-
-            //console.log("TOOLBOX OPEN");
-            $("#dui_editor").dialog("open");
-            dui.binds.jqueryui._disable();
-
-            // Create background_class property if does not exist
-            if (dui.views[dui.activeView] != undefined) {
-                if (dui.views[dui.activeView].settings == undefined) {
-                    dui.views[dui.activeView].settings = new Object();
-                }
-                if (dui.views[dui.activeView].settings.style == undefined) {
-                    dui.views[dui.activeView].settings.style = new Object();
-                }
-                if (dui.views[dui.activeView].settings.style['background_class'] == undefined) {
-                    dui.views[dui.activeView].settings.style['background_class'] = "";
-                }
-            }
-
-
-            // Init background selector
-            if (dui.styleSelect) {
-                dui.styleSelect.Show({ width: 202,
-                    name:       "inspect_view_bkg_def",
-                    filterFile: "backgrounds.css",
-                    style:      dui.views[dui.activeView].settings.style['background_class'],
-                    parent:     $('#inspect_view_bkg_parent'),
-                    onchange:   function (newStyle, obj) {
-                        if (dui.views[dui.activeView].settings.style['background_class']) {
-                            $("#duiview_" + dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
-                        }
-                        dui.views[dui.activeView].settings.style['background_class'] = newStyle;
-                        $("#duiview_" + dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
-                    }
-                });
-            }
-
-            
+            dui.editInitNext ();
         }
         this.initialized = true;
-    },
-    refreshWidgetSelect: function () {
-        $("#select_tpl").html("");
-        var current_set = $("#select_set option:selected").val();
-        $(".dashui-tpl[data-dashui-set='" + current_set + "']").each(function () {
-            $("#select_tpl").append("<option value='" + $(this).attr("id") + "'>" + $(this).attr("data-dashui-name") + "</option>")
-        });
-        $("#select_tpl").multiselect("refresh");
     },
     initViewObject: function () {
         dui.views = {view1: {settings: {style: {}}, widgets: {}}};

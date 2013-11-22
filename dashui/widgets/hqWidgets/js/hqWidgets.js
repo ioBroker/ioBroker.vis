@@ -2102,12 +2102,15 @@ var hqWidgets = {
 					if (this.intern._jPercent) {
 						if (newPercent == "" || newPercent == null)
 							this.intern._jPercent.hide ();
-						else
+						else if(this.dynStates.isVisible) {
 							this.intern._jPercent.show ();
+						}
 					}
 					
                     if (w) {
-						this.intern._jright.stop().show ();
+						if(this.dynStates.isVisible) {
+							this.intern._jright.stop().show ();
+						}
 						if (this.intern._jrightText) {
 							this.intern._jrightText.css({left: (this.intern._jelement.width()/2 + 8 + ((this.settings.radius < 3) ? 8 : 0))});
 							this.intern._jrightText.html(newText);
