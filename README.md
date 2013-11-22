@@ -9,6 +9,14 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta36
+
+* (Bluefox) Extend Navigation bar: Better View name edition.
+* (Bluefox) Fill the name of the Button by NavigationBar
+* (Bluefox) Fix edit selector.
+* (Bluefox) Store visibility of edit groups global and not for every widget.
+* (Hobbyquaker) Neue Widgets für DWD-Wetterwarnungen (Widget-Set "weather-adapter")
+
 ### 0.9beta35
 * (Hobbyquaker) Bugfixes Widget-Sets basic, jqui und jqui-mfd
 * (Bluefox) Support of socket authentication
