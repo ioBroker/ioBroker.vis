@@ -11,7 +11,7 @@
 <script src="widgets/timeAndWeather/js/moreskins.js"></script-->
 
 <script language="javascript">
-    function startTime(elem, hideSeconds) {
+    function startTime(view, elem, hideSeconds, timerId) {
         var today = new Date();
         var h =     today.getHours();
         var m =     today.getMinutes();
@@ -19,14 +19,21 @@
         // add a zero in front of numbers<10
         m = (m<10) ? ("0"+m) : m;
         s = (s<10) ? ("0"+s) : s;
+        h = (h<10) ? ("0"+h) : h;
         var hl = document.getElementById(elem);
-        if (hl) {
-            var str = h+":"+m;
-            if (!hideSeconds) {
-                str += ":"+s;
-            }
-            hl.innerHTML = str;
-            setTimeout(function(hl_, hideSeconds_){ startTime(hl_, hideSeconds_)}, 1000, elem, hideSeconds);
+		if (hideSeconds === "false") {
+			hideSeconds = false;
+		}
+		if (!hl) {
+			$('#duiview_'+view).append('<div class="dashui-widget clock" id="'+elem+'" ></div>');
+			hl = document.getElementById(elem);
+			hl.dashId = today.getTime();
+		}
+        if (hl && (timerId === undefined || hl.dashId == timerId)) {
+            hl.innerHTML = h+":"+m + ((!hideSeconds) ? (":"+s) : "");
+            hl.dashTimer = setTimeout(startTime, 
+				(!!hideSeconds) ? (60 - today.getSeconds()) : 1000, 
+				view, elem, hideSeconds, hl.dashId);
         }
     }
     var wochentage = {
@@ -38,7 +45,7 @@
         5: "Freitag",
         6: "Samstag"
     }
-    function startDate(elem, showWeekDay) {
+    function startDate(view, elem, showWeekDay, timerId) {
         var today = new Date();
         var d =     today.getDate();
         var dow =   today.getDay();
@@ -47,31 +54,31 @@
         // add a zero in front of numbers<10
         d = (d<10) ? ("0"+d) : d;
         m = (m<10) ? ("0"+m) : m;
+		if (showWeekDay === "false") {
+			showWeekDay = false;
+		}
         var hl = document.getElementById(elem);
-        if (hl) {
-            var str = d+"."+m+"."+y;
-            if (showWeekDay) {
-                str = wochentage[dow]+", "+str
-            }
-            hl.innerHTML = str;
-            setTimeout(function(hl_, showWeekDay_){ startDate(hl_, showWeekDay_)}, 1000, elem, showWeekDay);
+		if (!hl) {
+			$('#duiview_'+view).append('<div class="dashui-widget date" id="'+elem+'" ></div>');
+			hl = document.getElementById(elem);
+			hl.dashId = (new Date()).getTime();
+		}
+        if (hl && (timerId === undefined || hl.dashId == timerId)) {
+            hl.innerHTML = ((showWeekDay) ? wochentage[dow]+", " : "") + d+"."+m+"."+y;
+            hl.dashTimer = setTimeout(startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, hl.dashId);
         }
     }
 </script>
 
 <script type="text/ejs" id="tplTwSimpleDate" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleDate" data-dashui-attrs="showWeekDay">
     <%
-    var text = '<div class="dashui-widget date" id="'+this.data.attr('wid')+'" ></div>';
-    jQuery('#duiview_'+this.view).append(text);
-    startDate(this.data.attr('wid'), this.data.attr('showWeekDay'));
+		startDate(this.view, this.data.attr('wid'), this.data.attr('showWeekDay'));
     %>
 </script>
 
 <script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="hideSeconds">
     <%
-        var text = '<div class="dashui-widget clock" id="'+this.data.attr('wid')+'" ></div>';
-        jQuery('#duiview_'+this.view).append(text);
-        startTime(this.data.attr('wid'), this.data.attr('hideSeconds'));
+        startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'));
     %>
 </script>
 <!--script type="text/ejs" id="tplTwCoolClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="CoolClock" data-dashui-attrs="" >
