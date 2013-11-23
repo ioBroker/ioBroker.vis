@@ -209,7 +209,7 @@ dui = $.extend(true, dui, {
     addWidget: function (tpl, data, style, wid, view) {
 		var isSelectWidget = (wid === undefined);
 		var isViewExist    = (document.getElementById("duiview_"+view) != null);
-        //console.log("addWidget");
+
 		if (view === undefined) {
 			view = dui.activeView;
 		}
@@ -819,19 +819,7 @@ dui = $.extend(true, dui, {
 		var pos = $this.position ();
 		var w = $this.width ();
 		var h = $this.height ();
-        $("#widget_helper")
-            .css("left", pos.left - 2)
-            .css("top",  pos.top  - 2)
-            .css("height", $this.outerHeight() + 2)
-            .css("width",  $this.outerWidth()  + 2)
-            .show();
-
-        $("#widget_inner_helper")
-            .css("left", pos.left - 1)
-            .css("top",  pos.top  - 1)
-            .css("height", $this.outerHeight())
-            .css("width",  $this.outerWidth())
-            .show();
+        $("#widget_helper").css({left: pos.left - 2, top:  pos.top - 2,  height: $this.outerHeight() + 2, width: $this.outerWidth()  + 2}).show();
 
         // Interaktionen
         var resizableOptions;
@@ -856,13 +844,7 @@ dui = $.extend(true, dui, {
 
             },
             drag: function(event, ui) {
-                $("#widget_helper")
-                    .css("left", ui.position.left - 2)
-                    .css("top",  ui.position.top - 2);
-                $("#widget_inner_helper")
-                    .css("left", ui.position.left - 1)
-                    .css("top", ui.position.top - 1);
-                
+                $("#widget_helper").css({left: ui.position.left - 2, top: ui.position.top - 2});               
             }
         };
         if ($("#snap_type option:selected").val() == 1) {
@@ -888,12 +870,7 @@ dui = $.extend(true, dui, {
 
 				},
 				resize: function (event,ui) {
-					$("#widget_helper")
-						.css("width", (ui.element.outerWidth() + 2) + "px")
-						.css("height", (ui.element.outerHeight() + 2)+ "px");
-					$("#widget_inner_helper")
-						.css("width", ui.element.outerWidth() + "px")
-						.css("height", ui.element.outerHeight() + "px");
+					$("#widget_helper").css({width: ui.element.outerWidth() + 2, height: ui.element.outerHeight() + 2});
 				}
 			}, resizableOptions));
 		}
@@ -907,18 +884,7 @@ dui = $.extend(true, dui, {
         }
     },
     clearWidgetHelper: function () {
-        $("#widget_helper")
-            .css("left", 0)
-            .css("top", 0)
-            .css("height", 0)
-            .css("width", 0)
-            .hide();
-        $("#widget_inner_helper")
-            .css("left", 0)
-            .css("top", 0)
-            .css("height", 0)
-            .css("width", 0)
-            .hide();
+        $("#widget_helper").hide();
     },
     editInit: function () {
         $(".dashui-version").html(dui.version);
@@ -945,7 +911,6 @@ dui = $.extend(true, dui, {
 
         $("#tabs").tabs();
         $("#widget_helper").hide();
-        $("#widget_inner_helper").hide();
 
         $("input.dashui-editor").each(function () {
             $(this).button();
@@ -1060,17 +1025,10 @@ dui = $.extend(true, dui, {
             dui.saveRemote();
             var activeWidget = $("#"+dui.activeWidget);
             $("#"+dui.activeWidget).css(style, $this.val());
-            $("#widget_helper")
-                .css("left", parseInt(activeWidget.css("left")) - 2)
-                .css("top",  parseInt(activeWidget.css("top"))  - 2)
-                .css("height", activeWidget.outerHeight() + 2)
-                .css("width",  activeWidget.outerWidth()  + 2);
-
-            $("#widget_inner_helper")
-                .css("left", parseInt(activeWidget.css("left")) - 1)
-                .css("top",  parseInt(activeWidget.css("top"))  - 1)
-                .css("height", activeWidget.outerHeight())
-                .css("width",  activeWidget.outerWidth());
+            $("#widget_helper").css( {left:   parseInt(activeWidget.css("left")) - 2,
+                                      top:    parseInt(activeWidget.css("top"))  - 2,
+                                      height: activeWidget.outerHeight() + 2,
+                                      width:  activeWidget.outerWidth()  + 2});
 
             // Update hqWidgets if width or height changed
             if (dui.views[dui.activeView].widgets[dui.activeWidget] && hqWidgets) {
@@ -1197,7 +1155,7 @@ dui = $.extend(true, dui, {
 
 		// Init background selector
 		if (dui.styleSelect) {
-			dui.styleSelect.Show({ width: 202,
+			dui.styleSelect.Show({ width: 180,
 				name:       "inspect_view_bkg_def",
 				filterFile: "backgrounds.css",
 				style:      dui.views[dui.activeView].settings.style['background_class'],
@@ -1322,14 +1280,18 @@ dui = $.extend(true, dui, {
 		$('#'+id+'__action1').
 			addClass('dashui-show-new').
 			css(_css2).
-			animate(_css1, 1500, 'swing', function (){$(this).remove();});  
+			animate(_css1, 1500, 'swing', function (){
+				$(this).remove();
+			}).click (function () {
+				$(this).stop ().remove ();
+			});
 
 		text = text.replace("action1", "action2");
 		$('body').append(text);
 		$('#'+id+'__action2').
 			addClass('dashui-show-new').
 			css(_css2).
-			animate(_css1, 3000, 'swing', function (){$(this).remove();});  
+			animate(_css1, 3000, 'swing', function (){$(this).remove();});
 	},
 	translate: function (text) {
         return text;

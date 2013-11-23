@@ -44,7 +44,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         var e_settings = {
             parent:      null,
             elemName:    'inspect',
-            width:       200,
+            width:       305,
             imgSelect:   null,   // image selection dialog
             timeout:     500,    // object update timeout
             clrSelect:   null,   // color selection dialog
@@ -256,7 +256,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                 elem.parent   = this;
                 elem.ctrlAttr = eee;
                 if (this.e_settings.styleSelect) {
-                    this.e_settings.styleSelect.Show ({ width: 202,
+                    this.e_settings.styleSelect.Show ({ width: 180,
                         name:          this.e_settings.elemName+'_'+eee,
                         style:         this.e_internal.attr[elem.ctrlAttr],     
                         parent:        $('#'+this.e_settings.elemName+'_'+eee+'Parent'),
@@ -317,13 +317,13 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {
-            sText += "<tr id='tr"+this.e_settings.elemName+"_state'><td>"+ hqWidgets.translate("Test state:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_state'>";
+            sText += "<tr id='tr"+this.e_settings.elemName+"_state'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Test state:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_state'>";
         }
         
         // Simulate click
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam  ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong) {
-            sText += "<tr><td></td><td><input type='button' value='"+hqWidgets.translate("Simulate click")+"' id='"+this.e_settings.elemName+"_popUp'>";
+            sText += "<tr><td class='hq-edit-td-caption'></td><td><input type='button' value='"+hqWidgets.translate("Simulate click")+"' id='"+this.e_settings.elemName+"_popUp'>";
         }
         
         // Radius and Is Use jQuery Style
@@ -333,14 +333,14 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeImage && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeBlind && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Radius:")+"</td><td id='"+this.e_settings.elemName+"_radius'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Radius:")+"</td><td id='"+this.e_settings.elemName+"_radius'></td></tr>";
             if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge)
-                sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("jQuery Styles:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_usejQueryStyle' "+((this.e_internal.attr.usejQueryStyle) ? "checked" : "")+">";
+                sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("jQuery Styles:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_usejQueryStyle' "+((this.e_internal.attr.usejQueryStyle) ? "checked" : "")+">";
         }
 
         // Door swing type
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeDoor) {
-            sText += "<tr><td>"+ hqWidgets.translate("Slide:")+"</td><td><select style='width: "+this.e_settings.width+"px'  id='"+this.e_settings.elemName+"_door'>";
+            sText += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Slide:")+"</td><td><select style='width: "+this.e_settings.width+"px'  id='"+this.e_settings.elemName+"_door'>";
             sText += "<option value='"+hqWidgets.gSwingType.gSwingLeft +"' "+((this.e_internal.attr.doorType == hqWidgets.gSwingType.gSwingLeft)  ? "selected" : "") +">"+hqWidgets.translate("Left")+"</option>";
             sText += "<option value='"+hqWidgets.gSwingType.gSwingRight+"' "+((this.e_internal.attr.doorType == hqWidgets.gSwingType.gSwingRight) ? "selected" : "") +">"+hqWidgets.translate("Right")+"</option>";
             sText += "</select></td></tr>";
@@ -351,7 +351,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             var wnd = this.e_internal.attr.windowConfig;
             var a = wnd.split(',');
             
-            sText += "<tr><td>"+ hqWidgets.translate("Slide&nbsp;count:")+"</td><td><select style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_wndCount'>";
+            sText += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Slide&nbsp;count:")+"</td><td><select style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_wndCount'>";
             sText += "<option value='1' "+((a.length==1) ? "selected" : "") +">1</option>";
             sText += "<option value='2' "+((a.length==2) ? "selected" : "") +">2</option>";
             sText += "<option value='3' "+((a.length==3) ? "selected" : "") +">3</option>";
@@ -361,7 +361,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             var i;
             for (i =0 ; i < a.length; i++)
             {
-                sText += "<tr><td>"+ hqWidgets.translate("Slide&nbsp;type:")+"</td><td><select style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_wnd"+i+"'>";
+                sText += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Slide&nbsp;type:")+"</td><td><select style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_wnd"+i+"'>";
                 sText += "<option value='"+hqWidgets.gSwingType.gSwingDeaf +"' " +((a[i] == hqWidgets.gSwingType.gSwingDeaf)  ? "selected" : "") +">"+hqWidgets.translate("Not opened")+"</option>";
                 sText += "<option value='"+hqWidgets.gSwingType.gSwingLeft +"' " +((a[i] == hqWidgets.gSwingType.gSwingLeft)  ? "selected" : "") +">"+hqWidgets.translate("Left")+"</option>";
                 sText += "<option value='"+hqWidgets.gSwingType.gSwingRight+"' " +((a[i] == hqWidgets.gSwingType.gSwingRight) ? "selected" : "") +">"+hqWidgets.translate("Right")+"</option>";
@@ -376,13 +376,13 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeText  && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam   && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {
-            sText += "<tr><td>"+ hqWidgets.translate("Icon:")+"</td><td>";
+            sText += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Icon:")+"</td><td>";
             sText += "<input id='"+this.e_settings.elemName+"_iconName' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.iconName==undefined) ? "" : this.e_internal.attr.iconName)+"'>";
             sText += "<input id='"+this.e_settings.elemName+"_iconNameBtn' style='width: 30px' type='button' value='...'>";
             sText += "</td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Icon width:")+"</td><td id='"+this.e_settings.elemName+"_btIconWidth'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Icon height:")+"</td><td id='"+this.e_settings.elemName+"_btIconHeight'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Icon size:")+"</td><td><input id='"+this.e_settings.elemName+"_iconAutoBtn' type='button' value='Auto'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Icon width:")+"</td><td id='"+this.e_settings.elemName+"_btIconWidth'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Icon height:")+"</td><td id='"+this.e_settings.elemName+"_btIconHeight'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Icon size:")+"</td><td><input id='"+this.e_settings.elemName+"_iconAutoBtn' type='button' value='Auto'></td></tr>";
         }
         
         // Info Text color, font, type
@@ -400,35 +400,35 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLowbat && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeMotion) {
             if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge)
-                sText    += "<tr><td>"+ hqWidgets.translate("Test text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoText'  type='text' value='"+(this.e_internal.obj.dynStates.infoText || "")+"'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Font:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextFont'  type='text' value='"+this.e_internal.attr.infoTextFont+"'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColor' type='text' value='"+this.e_internal.attr.infoTextColor+"'>";
+                sText    += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Test text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoText'  type='text' value='"+(this.e_internal.obj.dynStates.infoText || "")+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Font:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextFont'  type='text' value='"+this.e_internal.attr.infoTextFont+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColor' type='text' value='"+this.e_internal.attr.infoTextColor+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_infoTextColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Active text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColorActive' type='text' value='"+(this.e_internal.attr.infoTextColorActive || "")+"'>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Active text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColorActive' type='text' value='"+(this.e_internal.attr.infoTextColorActive || "")+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_infoTextColorActiveBtn' style='width: 30px' type='button' value='...'></td></tr>";
         }
 
         // Percent min value, max value
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeMotion) {
-            sText    += "<tr><td>"+ hqWidgets.translate("Min value:")  +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueMin'  type='text' value='"+this.e_internal.obj.settings.valueMin+"'></td></tr>";
-            sText    += "<tr><td>"+ hqWidgets.translate("Max value:")  +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueMax'  type='text' value='"+this.e_internal.obj.settings.valueMax+"'></td></tr>";
+            sText    += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Min value:")  +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueMin'  type='text' value='"+this.e_internal.obj.settings.valueMin+"'></td></tr>";
+            sText    += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Max value:")  +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueMax'  type='text' value='"+this.e_internal.obj.settings.valueMax+"'></td></tr>";
         }
         
         // Gauge test value, gauge color
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge) {
-            sText    += "<tr><td>"+ hqWidgets.translate("Test value:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueSet'  type='text' value='"+((this.e_internal.obj.settings.valueMax - this.e_internal.obj.settings.valueMin) / 2)+"'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_gaugeColor' type='text' value='"+this.e_internal.attr.gaugeColor+"'>";
+            sText    += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Test value:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_valueSet'  type='text' value='"+((this.e_internal.obj.settings.valueMax - this.e_internal.obj.settings.valueMin) / 2)+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_gaugeColor' type='text' value='"+this.e_internal.attr.gaugeColor+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_gaugeColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Horizontal:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_gaugeHorz' "+((this.e_internal.attr.gaugeHorz) ? "checked" : "")+">";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("From top/left:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_gaugeStart' "+((this.e_internal.attr.gaugeStart) ? "checked" : "")+">";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Horizontal:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_gaugeHorz' "+((this.e_internal.attr.gaugeHorz) ? "checked" : "")+">";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("From top/left:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_gaugeStart' "+((this.e_internal.attr.gaugeStart) ? "checked" : "")+">";
         }        
         
         // Static Text color, font, type
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeText) {
             sText    += "<tr><td>"+ hqWidgets.translate("Text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_staticText'  type='text' value='"+this.e_internal.attr.staticText+"'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Font:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_staticTextFont'  type='text' value='"+this.e_internal.attr.staticTextFont+"'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_staticTextColor' type='text' value='"+this.e_internal.attr.staticTextColor+"'>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Font:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_staticTextFont'  type='text' value='"+this.e_internal.attr.staticTextFont+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_staticTextColor' type='text' value='"+this.e_internal.attr.staticTextColor+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_staticTextColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
         }  
 
@@ -441,7 +441,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td id='td1_"+this.e_settings.elemName+"_iconOn'>"+ hqWidgets.translate("Icon active:")+"</td><td id='td2_"+this.e_settings.elemName+"_iconOn'>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td  class='hq-edit-td-caption' id='td1_"+this.e_settings.elemName+"_iconOn'>"+ hqWidgets.translate("Icon active:")+"</td><td id='td2_"+this.e_settings.elemName+"_iconOn'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_iconOn' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.iconOn == undefined) ? "":this.e_internal.attr.iconOn)+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_iconOnBtn' style='width: 30px' type='button' value='...'>";
             sTextAdv += "</td></tr>";
@@ -450,36 +450,36 @@ hqWidgets = $.extend (true, hqWidgets, {
         // Camera URL, pop up delay, if show open door button
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong) {
-            var s = "<td>"+ hqWidgets.translate("Camera URL:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ipCamImageURL'  type='text' value='"+(this.e_internal.attr.ipCamImageURL || "")+"'></td></tr>";
+            var s = "<td class='hq-edit-td-caption'>"+ hqWidgets.translate("Camera URL:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ipCamImageURL'  type='text' value='"+(this.e_internal.attr.ipCamImageURL || "")+"'></td></tr>";
             if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam)
                 sText += "<tr>"+s;
             else
                 sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'>"+s;
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Show Pop up:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_isPopupEnabled' "+((this.e_internal.attr.isPopupEnabled) ? "checked" : "")+">";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Pop up delay (ms):") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_popUpDelay'  type='text' value='"+this.e_internal.attr.popUpDelay+"'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Open door button:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_ctrlActionBtn' "+(this.e_internal.attr.ctrlActionBtn ? "checked" : "")+" ></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Open door text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlBtnText'  type='text' value='"+this.e_internal.attr.ctrlBtnText+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Show Pop up:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_isPopupEnabled' "+((this.e_internal.attr.isPopupEnabled) ? "checked" : "")+">";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Pop up delay (ms):") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_popUpDelay'  type='text' value='"+this.e_internal.attr.popUpDelay+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Open door button:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_ctrlActionBtn' "+(this.e_internal.attr.ctrlActionBtn ? "checked" : "")+" ></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Open door text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlBtnText'  type='text' value='"+this.e_internal.attr.ctrlBtnText+"'></td></tr>";
         }
 
         // Camera update interval for small image
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Small image update(sec):") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ipCamUpdateSec'  type='text' value='"+this.e_internal.attr.ipCamUpdateSec+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Small image update(sec):") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ipCamUpdateSec'  type='text' value='"+this.e_internal.attr.ipCamUpdateSec+"'></td></tr>";
         }
         
         // Show percent
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeBlind || 
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Show percent:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_isShowPercent' "+((this.e_internal.attr.isShowPercent) ? "checked" : "")+"></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Show percent:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_isShowPercent' "+((this.e_internal.attr.isShowPercent) ? "checked" : "")+"></td></tr>";
         }
         
         // gong wav, gong question, gong question image
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong) {
-            sText    += "<tr><td>"+ hqWidgets.translate("Gong wav file:")+"</td><td>";
+            sText    += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Gong wav file:")+"</td><td>";
             sText    += "<input id='"+this.e_settings.elemName+"_gongMelody' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.gongMelody == undefined) ? "":this.e_internal.attr.gongMelody)+"'>";
             sText    += "<input id='"+this.e_settings.elemName+"_gongMelodyBtn' style='width: 30px' type='button' value='...'>";
             sText    += "</td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Gong question:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlQuestion'  type='text' value='"+this.e_internal.attr.ctrlQuestion+"'></td></tr>";
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Gong question image:")+"</td><td>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Gong question:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlQuestion'  type='text' value='"+this.e_internal.attr.ctrlQuestion+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Gong question image:")+"</td><td>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_ctrlQuestionImg' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.ctrlQuestionImg == undefined) ? "":this.e_internal.attr.ctrlQuestionImg)+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_ctrlQuestionImgBtn' style='width: 30px' type='button' value='...'>";
             sTextAdv += "</td></tr>";
@@ -487,13 +487,13 @@ hqWidgets = $.extend (true, hqWidgets, {
         
         // Control question, Control question image
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo) {
-            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.translate("Show control popup:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_ctrlActionBtn' "+(this.e_internal.attr.ctrlActionBtn ? "checked" : "")+" ></td></tr>";
-            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.translate("Control question:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlQuestion'  type='text' value='"+this.e_internal.attr.ctrlQuestion+"'></td></tr>";
-            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.translate("Control question image:")+"</td><td>";
+            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Show control popup:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_ctrlActionBtn' "+(this.e_internal.attr.ctrlActionBtn ? "checked" : "")+" ></td></tr>";
+            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Control question:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlQuestion'  type='text' value='"+this.e_internal.attr.ctrlQuestion+"'></td></tr>";
+            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Control question image:")+"</td><td>";
             sTextCtrl += "<input id='"+this.e_settings.elemName+"_ctrlQuestionImg' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.ctrlQuestionImg == undefined) ? "":this.e_internal.attr.ctrlQuestionImg)+"'>";
             sTextCtrl += "<input id='"+this.e_settings.elemName+"_ctrlQuestionImgBtn' style='width: 30px' type='button' value='...'>";
             sTextCtrl += "</td></tr>";
-            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td>"+ hqWidgets.translate("Button text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlBtnText'  type='text' value='"+this.e_internal.attr.ctrlBtnText+"'></td></tr>";
+            sTextCtrl += "<tr id='idCtrl"+(iCtrlCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Button text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlBtnText'  type='text' value='"+this.e_internal.attr.ctrlBtnText+"'></td></tr>";
         }
             
         // if hide last action info after x hours
@@ -505,7 +505,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDimmer && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge  && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLowbat) {            
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td id='td1_"+this.e_settings.elemName+"_hoursLastAction'>"+ hqWidgets.translate("Last action:")+"</td><td id='td2_"+this.e_settings.elemName+"_hoursLastAction'><select id='"+this.e_settings.elemName+"_hoursLastAction' style='width: "+this.e_settings.width+"px'>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption' id='td1_"+this.e_settings.elemName+"_hoursLastAction'>"+ hqWidgets.translate("Last action:")+"</td><td id='td2_"+this.e_settings.elemName+"_hoursLastAction'><select id='"+this.e_settings.elemName+"_hoursLastAction' style='width: "+this.e_settings.width+"px'>";
             sTextAdv += "<option value='-1' >"+hqWidgets.translate("Do not show")+"</option>";
             sTextAdv += "<option value='-2'>" +hqWidgets.translate("Show always")+"</option>";
             sTextAdv += "<option value='1' >" +hqWidgets.translate("Hide after 1 hour")+"</option>";
@@ -520,12 +520,12 @@ hqWidgets = $.extend (true, hqWidgets, {
         // Format string
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo  ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGauge) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Format string:")    +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoFormat'     type='text' value='"+this.e_internal.attr.infoFormat+"'></td></tr>";        
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Format string:")    +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoFormat'     type='text' value='"+this.e_internal.attr.infoFormat+"'></td></tr>";
         }
         
         // Active condition, If hide when incative state
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Active condition:") +"</td><td>\n";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Active condition:") +"</td><td>\n";
 			var c    = ((this.e_internal.attr.infoCondition !== undefined && this.e_internal.attr.infoCondition.length > 3) ? this.e_internal.attr.infoCondition.substring(0,3) : "==");
 			var cval = ((this.e_internal.attr.infoCondition !== undefined && this.e_internal.attr.infoCondition.length > 3) ? this.e_internal.attr.infoCondition.substring(3) : "");
 			sTextAdv += "<select id='"+this.e_settings.elemName+"_infoConditionSelect' style='width:60px'>";
@@ -536,7 +536,7 @@ hqWidgets = $.extend (true, hqWidgets, {
 			sTextAdv += "<input style='width: "+(this.e_settings.width - 60)+"px' id='"+this.e_settings.elemName+"_infoCondition' type='text' value='"+cval+"'>\n";
 			sTextAdv += "</td></tr>";
             
-			sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Hide inactive:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_infoIsHideInactive' "+((this.e_internal.attr.infoIsHideInactive) ? "checked" : "")+">";
+			sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Hide inactive:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_infoIsHideInactive' "+((this.e_internal.attr.infoIsHideInactive) ? "checked" : "")+">";
         }  
         
         // Lowbat, If hide when incative state
@@ -549,7 +549,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeButton ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong   ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("No background:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_noBackground' "+((this.e_internal.attr.noBackground) ? "checked" : "")+">";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("No background:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_noBackground' "+((this.e_internal.attr.noBackground) ? "checked" : "")+">";
         }
         
         // Styles
@@ -561,26 +561,26 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeDimmer || 
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLowbat || 
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeMotion) {
-            sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.translate("Normal:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalParent' ></td></tr>";
+            sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Normal:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalParent' ></td></tr>";
             if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLowbat) {
-                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ hqWidgets.translate("Normal hover:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalHoverParent' ></td></tr>";
+                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Normal hover:")+"</td><td id='"+this.e_settings.elemName+"_styleNormalHoverParent' ></td></tr>";
             }
             if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeOutTemp && 
                 this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeInTemp) {
-                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td id='td1_"+this.e_settings.elemName+"_styleActiveParent'>"+ hqWidgets.translate("Active:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveParent'></td></tr>";
+                sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td class='hq-edit-td-caption' id='td1_"+this.e_settings.elemName+"_styleActiveParent'>"+ hqWidgets.translate("Active:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveParent'></td></tr>";
                 if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeLowbat) {
-                    sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td id='td1_"+this.e_settings.elemName+"_styleActiveHoverParent'>"+ hqWidgets.translate("Active hover:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveHoverParent' ></td></tr>";
+                    sTextStyle += "<tr id='idStyle"+(iStyleCount++)+"'><td class='hq-edit-td-caption' id='td1_"+this.e_settings.elemName+"_styleActiveHoverParent'>"+ hqWidgets.translate("Active hover:")+"</td><td id='"+this.e_settings.elemName+"_styleActiveHoverParent' ></td></tr>";
                 }
             }
         }
         
         // If show description
-        sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td>"+ hqWidgets.translate("Show description:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_showDescription' "+(this.e_internal.attr.showDescription ? "checked" : "")+" ></td></tr>";
+        sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Show description:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_showDescription' "+(this.e_internal.attr.showDescription ? "checked" : "")+" ></td></tr>";
         
         
         // Description and Room
-        sText += "<tr><td>"+ hqWidgets.translate("Description:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_title' type='text' value='"+((this.e_internal.attr.title) || "")+"'></td></tr>";
-        sText += "<tr><td>"+ hqWidgets.translate("Room:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_room' type='text' value='"+((this.e_internal.attr.room) || "")+"'></td></tr>";
+        sText += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Description:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_title' type='text' value='"+((this.e_internal.attr.title) || "")+"'></td></tr>";
+        sText += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Room:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_room' type='text' value='"+((this.e_internal.attr.room) || "")+"'></td></tr>";
 
         // Show all styles
         if (this.e_internal.obj.stylesVisible === undefined)

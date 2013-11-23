@@ -80,11 +80,11 @@
                 <h4>View Attributes</h4>
                 <table>
                     <tr>
-                        <td>comment</td><td><input size="48" type="text" id="inspect_view_comment" class="dashui-inspect-view"/></td>
+                        <td class="dashui-edit-td-caption translate">comment</td><td class="dashui-edit-td-field"><input size="48" type="text" id="inspect_view_comment" class="dashui-inspect-view dashui-edit-textbox"/></td>
                     </tr>
                     <tr>
-                        <td>theme</td><td>
-                            <select id="inspect_view_theme" class="dashui-editor" data-multiselect-width="300" data-multiselect-height="180">
+                        <td class="dashui-edit-td-caption translate">theme</td><td class="dashui-edit-td-field">
+                            <select id="inspect_view_theme" class="dashui-editor dashui-edit-select" data-multiselect-width="300" data-multiselect-height="180">
                                 <option value="start">start</option>
                                 <option value="dhive">dark-hive</option>
                                 <option value="kian">kiandra</option>
@@ -93,11 +93,11 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>class</td><td><input size="48" type="text" id="inspect_view_class" class="dashui-inspect-view"/></td>
+                        <td class="dashui-edit-td-caption translate">class</td><td class="dashui-edit-td-field"><input size="48" type="text" id="inspect_view_class" class="dashui-inspect-view dashui-edit-textbox"/></td>
 
                     </tr>
                     <tr>
-                        <td>default_filter_key</td><td><input size="48" type="text" id="inspect_view_filterkey" class="dashui-inspect-view"/></td>
+                        <td class="dashui-edit-td-caption translate">default_filter_key</td><td class="dashui-edit-td-field"><input size="48" type="text" id="inspect_view_filterkey" class="dashui-inspect-view dashui-edit-textbox"/></td>
                     </tr>
 
 
@@ -162,16 +162,16 @@
                     <h4>Widget Attributes:</h4>
                     <table id="widget_attrs_fix">
                         <tr id="inspect_comment_tr">
-                            <td>Comment:</td><td><input size="48" type="text" id="inspect_comment" class="dashui-inspect-widget"/></td>
+                            <td class="dashui-edit-td-caption translate">comment</td><td class="dashui-edit-td-field"><input type="text" id="inspect_comment" class="dashui-inspect-widget dashui-edit-textbox"/></td>
                         </tr>
                         <tr id="inspect_class_tr">
-                            <td>Class:</td><td><input size="48" type="text" id="inspect_class" class="dashui-inspect-widget"/></td>
+                            <td class="dashui-edit-td-caption translate">class</td><td class="dashui-edit-td-field"><input type="text" id="inspect_class" class="dashui-inspect-widget dashui-edit-textbox"/></td>
                         </tr>
                         <tr>
-                            <td>Filter key:</td><td><input size="48" id="inspect_filterkey" class="dashui-inspect-widget"/></td>
+                            <td class="dashui-edit-td-caption translate">filter_key</td><td class="dashui-edit-td-field"><input id="inspect_filterkey" class="dashui-inspect-widget dashui-edit-textbox"/></td>
                         </tr>
                         <tr>
-                            <td>Show in views:</td><td><select id="inspect_views" multiple="multiple"></select></td>
+                            <td class="dashui-edit-td-caption translate">Show in views:</td><td class="dashui-edit-td-field"><select id="inspect_views" multiple="multiple" class="dashui-edit-select"></select></td>
                         </tr>
 
                     </table>

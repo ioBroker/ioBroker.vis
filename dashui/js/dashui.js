@@ -577,7 +577,7 @@ var dui = {
         if (dui.urlParams['edit'] === "") {
             // Init background selector
             if (dui.styleSelect) {
-                dui.styleSelect.Show({ width: 202,
+                dui.styleSelect.Show({ width: 180,
                     name:       "inspect_view_bkg_def",
                     filterFile: "backgrounds.css",
                     style:      dui.views[view].settings.style.background_class,

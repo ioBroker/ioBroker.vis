@@ -19,6 +19,9 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 							if (pos.left == 0 && pos.top == 0) {
 								// suspicious
 								btn_.intern._jelement = $('#' + btn_.advSettings.elemName);
+								pos = btn_.intern._jelement.position();
+								pos.top  = Math.round (pos.top);
+								pos.left = Math.round (pos.left);
 							}
 							
                             // If position changed
@@ -776,13 +779,13 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 }
                 
                 // Is Show Navigator
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Navigator:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_navigator' class='dashui-select-edit-width'>";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Navigator:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_navigator' class='dashui-edit-select'>";
                 sTextChart += "<option value=''     >"+dui.translate("Show top and bottom")+"</option>";
                 sTextChart += "<option value='true' >"+dui.translate("Show bottom")+"</option>";
                 sTextChart += "<option value='false'>"+dui.translate("Do not show")+"</option>";
                 sTextChart += "</select>";                
                 // Load from CCU: 1h, 2h, 6h, 12h, 1d, 3d, 5d, 1w, 2w, 1m, 3m, 6m, 1y, All
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Load period:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_period' class='dashui-select-edit-width'>";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Load period:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_period' class='dashui-edit-select'>";
                 sTextChart += "<option value='1'    >"+dui.translate("1 Hour")+"</option>";
                 sTextChart += "<option value='2'    >"+dui.translate("2 Hours")+"</option>";
                 sTextChart += "<option value='6'    >"+dui.translate("6 Hours")+"</option>";
@@ -800,7 +803,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 sTextChart += "</select>";
 
                 // Theme: none, grid, dark-green, skies, dark-blue, gray 
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Theme:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_theme' class='dashui-select-edit-width'>";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Theme:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_theme' class='dashui-edit-select'>";
                 sTextChart += "<option value=''          >-</option>";
                 sTextChart += "<option value='grid'      >Grid</option>";
                 sTextChart += "<option value='dark-green'>Dark green</option>";
@@ -811,7 +814,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 // Description left and right
                 sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Description with percent:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_percentaxis'>";
                 // Zoom: 1h, 2h, 6h, 12h, 1d, 3d, 5d, 1w, 2w, 1m, 3m, 6m, 1y, Auto
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Zoom level:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_range' class='dashui-select-edit-width'>";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Zoom level:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_range' class='dashui-edit-select'>";
                 sTextChart += "<option value='1'   >"+dui.translate("1 Hour")+"</option>";
                 sTextChart += "<option value='2'   >"+dui.translate("2 Hours")+"</option>";
                 sTextChart += "<option value='6'   >"+dui.translate("6 Hours")+"</option>";
@@ -832,7 +835,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 // Dynamic aggregation
                 sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Dynamic aggregation:")+"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_grouping'>";
                 // Legend: Left, In chart, hide
-                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Legend:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_legend' class='dashui-select-edit-width'>";
+                sTextChart += "<tr id='iCharts"+(iChartCount++)+"'><td>"+ dui.translate("Legend:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_legend' class='dashui-edit-select'>";
                 sTextChart += "<option value=''      >"+dui.translate("Left")+"</option>";
                 sTextChart += "<option value='inline'>"+dui.translate("Inside")+"</option>";
                 sTextChart += "<option value='false' >"+dui.translate("Hide")+"</option>";
@@ -949,12 +952,12 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 sText += "<tr><td>"+ dui.translate("Show loading:") +"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_exLoading' "+(hqEditElem.e_internal.attr.exLoading ? "checked" : "")+" ></td></tr>";
                 sText += "<tr><td>"+ dui.translate("Only states:") +"</td><td><input type='checkbox' id='"+hqEditElem.e_settings.elemName+"_exStatesOnly' "+(hqEditElem.e_internal.attr.exStatesOnly ? "checked" : "")+" ></td></tr>";
                 sText += "<tr><td>"+ dui.translate("Width:") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_exWidth'  type='text' value='"+hqEditElem.e_internal.attr.exWidth+"'></td></tr>";
-                sText += "<tr><td>"+ dui.translate("Show types:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_exTypes' class='dashui-select-edit-width'>";
+                sText += "<tr><td>"+ dui.translate("Show types:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_exTypes' class='dashui-edit-select'>";
                 sText += "<option value='0'>"+dui.translate("All")+"</option>";
                 sText += "<option value='1'>"+dui.translate("Only devices")+"</option>";
                 sText += "<option value='2'>"+dui.translate("Only variables")+"</option>";
                 sText += "</select>";                
-                sText += "<tr><td>"+ dui.translate("On one page:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_exPcount' class='dashui-select-edit-width'>";
+                sText += "<tr><td>"+ dui.translate("On one page:")+"</td><td><select id='"+hqEditElem.e_settings.elemName+"_exPcount' class='dashui-edit-select'>";
                 sText += "<option value='25'>25</option>";
                 sText += "<option value='50'>50</option>";
                 sText += "<option value='100'>100</option>";

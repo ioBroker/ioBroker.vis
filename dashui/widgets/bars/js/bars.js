@@ -12,7 +12,7 @@ jQuery.extend(true, dui.binds, {
 			filters:    0,
 			navigation: 1
 		},
-        width: 240, // width of edit fields
+        width: 308, // width of edit fields
 		created: [],
 		themes: [{css_class: 'sidebar-dark', name: 'Dark glass'},
 				 {css_class: 'sidebar-blue', name: 'Blue glass'},
@@ -243,7 +243,7 @@ jQuery.extend(true, dui.binds, {
                 elem.ctrl     = div;
                 elem.ctrlAttr = attr_name;
                 if (dui.styleSelect) {
-                    dui.styleSelect.Show ({ width: 202,
+                    dui.styleSelect.Show ({ width: 180,
                         name:          'inspect__'+attr_name,
                         style:         div.barsOptions[elem.ctrlAttr],
                         parent:        $('#inspect_'+attr_name+'Parent'),
@@ -505,27 +505,27 @@ jQuery.extend(true, dui.binds, {
             if (!isInit) {
                 sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td colspan=2 class='bars_line'></td></tr>";
                 // Image
-                sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("Icon:")+"</td><td>";
+                sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Icon:")+"</td><td>";
                 sText += "<input id='inspect_image"+i+"' style='width: "+(dui.binds.bars.width - 30)+"px' type='text' value='"+(div.barsOptions.buttons[i].image || "")+"'>";
                 sText += "<input id='inspect_image"+i+"Btn' style='width: 30px' type='button' value='...'>";
                 sText += "</td></tr>";
                     
                 // Name
-                sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("Caption:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_text"+i+"' type='text' value='"+(div.barsOptions.buttons[i].text || "")+"'></td></tr>";
+                sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Caption:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_text"+i+"' type='text' value='"+(div.barsOptions.buttons[i].text || "")+"'></td></tr>";
                 
                 // option
                 if (div.barsIntern.wType == 'tplBarFilter') {
-                    sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("Filter key:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
+                    sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Filter key:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
                 }
                 if (div.barsIntern.wType == 'tplBarNavigator') {
                     sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("View name:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' type='text' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
                 }
                 else{
-                    sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("Option:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' type='text' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
+                    sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Option:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' type='text' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
                 }
                 
                 if (div.barsOptions.buttons.length > 1) {
-                    sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td></td><td>";
+                    sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td class='dashui-edit-td-caption'></td><td>";
 					sText += "<table class='no-space'><tr class='no-space'>";
                     sText +="<td style='width:90px' class='no-space'><button id='barsDel"+i+"' style='height: 30px'>"+dui.translate('Delete')+"</button></td>";
                     if (i > 0) {
@@ -731,16 +731,16 @@ jQuery.extend(true, dui.binds, {
             if (div.barsOptions) {
                 div.barsIntern.editParent = jParent;
                 var sText = "<table id='barsEditElements' style='width:100%'>";
-                sText += "<tr><td>"+dui.translate("Theme:")+"</td><td><input type='text' id='inspect_bTheme' value='"+(div.barsOptions.bTheme || "") + "' size='44' /></td></tr>";
+                sText += "<tr><td class='dashui-edit-td-caption'>"+dui.translate("Theme:")+"</td><td class='dashui-edit-td-field'><input type='text' id='inspect_bTheme' value='"+(div.barsOptions.bTheme || "") + "' size='44' /></td></tr>";
 
 				if (div.barsIntern.wType == 'tplBarFilter') {
-					sText += "<tr><td>"+ dui.translate("One at time:")+"</td><td><input id='inspect_bOnlyOneSelected' type='checkbox' "+((div.barsOptions.bOnlyOneSelected ) ? "checked" : "")+"></td></tr>";  		
-					sText += "<tr><td>"+ dui.translate("Initial filter:")+"</td><td><input id='inspect_bValue' type='text' size='44' value='"+(div.barsOptions.bValue || "") + "'></td></tr>";  		
+					sText += "<tr><td class='dashui-edit-td-caption'>"+ dui.translate("One at time:")+"</td><td class='dashui-edit-td-field'><input id='inspect_bOnlyOneSelected' type='checkbox' "+((div.barsOptions.bOnlyOneSelected ) ? "checked" : "")+"></td></tr>";
+					sText += "<tr><td class='dashui-edit-td-caption'>"+ dui.translate("Initial filter:")+"</td><td class='dashui-edit-td-field'><input id='inspect_bValue' type='text' size='44' value='"+(div.barsOptions.bValue || "") + "'></td></tr>";
 				}
 
 				var iGeomCount = 0;
                 sText += "<tr><td colspan=2><button id='idGeometry_BtnGroup' class='dashui-group-button-width'>"+dui.translate("Geometry...")+"</button></td></tr>";
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Bar type:")+"</td><td><select id='inspect_position' style='width: "+dui.binds.bars.width+"px'>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Bar type:")+"</td><td class='dashui-edit-td-field'><select id='inspect_position' style='width: "+dui.binds.bars.width+"px'>";
                 sText += "<option value='0'>" +dui.translate("Horizontal")+"</option>";
                 sText += "<option value='1'>" +dui.translate("Vertical")+"</option>";
                 sText += "<option value='2'>" +dui.translate("Docked at top")+"</option>";
@@ -748,21 +748,21 @@ jQuery.extend(true, dui.binds, {
                 sText += "<option value='4'>" +dui.translate("Docked at left")+"</option>";
                 sText += "<option value='5'>" +dui.translate("Docked at right")+"</option>";
                 sText += "</select></td></tr>";           
-				sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td></td><td><input id='inspect_barShow' type='button' value='"+dui.translate("Show")+"'></td></tr>";  					
+				sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'></td><td class='dashui-edit-td-field'><input id='inspect_barShow' type='button' value='"+dui.translate("Show")+"'></td></tr>";
                 
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button width:")+"</td><td id='inspect_bWidth' style='dashui-no-spaces'></td></tr>";
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button height:")+"</td><td id='inspect_bHeight' style='dashui-no-spaces'></td></tr>";
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Button space:")+"</td><td id='inspect_bSpace' style='dashui-no-spaces'></td></tr>";
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Border radius:")+"</td><td id='inspect_bRadius' style='dashui-no-spaces'></td></tr>";
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Text offset %:")+"</td><td id='inspect_bOffset' style='dashui-no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Button width:")+"</td><td id='inspect_bWidth' class='dashui-edit-td-field dashui-no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Button height:")+"</td><td id='inspect_bHeight' class='dashui-edit-td-field dashui-no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Button space:")+"</td><td id='inspect_bSpace' class='dashui-edit-td-field dashui-no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Border radius:")+"</td><td id='inspect_bRadius' class='dashui-edit-td-field dashui-no-spaces'></td></tr>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Text offset %:")+"</td><td id='inspect_bOffset' class='dashui-edit-td-field dashui-no-spaces'></td></tr>";
 
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Image align:")+"</td><td><select id='inspect_bImageAlign' style='width: "+dui.binds.bars.width+"px'>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Image align:")+"</td><td><select id='inspect_bImageAlign' style='width: "+dui.binds.bars.width+"px'>";
                 sText += "<option value='center'>" +dui.translate("Center")+"</option>";
                 sText += "<option value='left'>"   +dui.translate("Left")+"</option>";
                 sText += "<option value='right'>"  +dui.translate("Right")+"</option>";
                 sText += "</select></td></tr>";           
 
-                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td>"+ dui.translate("Text align:")+"</td><td><select id='inspect_bTextAlign' style='width: "+dui.binds.bars.width+"px'>";
+                sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Text align:")+"</td><td><select id='inspect_bTextAlign' style='width: "+dui.binds.bars.width+"px'>";
                 sText += "<option value='center'>" +dui.translate("Center")+"</option>";
                 sText += "<option value='left'>"   +dui.translate("Left")+"</option>";
                 sText += "<option value='right'>"  +dui.translate("Right")+"</option>";
@@ -771,10 +771,10 @@ jQuery.extend(true, dui.binds, {
                 // Styles
                 var iStyleCount = 0;
                 sText += "<tr><td colspan=2><button id='idStyle_BtnGroup' class='dashui-group-button-width'>"+dui.translate("Styles...")+"</button></td></tr>";
-                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Normal:")+"</td><td id='inspect_bStyleNormalParent' ></td></tr>";
-                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Normal hover:")+"</td><td id='inspect_bStyleNormalHoverParent' ></td></tr>";
-                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Active:")+"</td><td id='inspect_bStyleActiveParent'></td></tr>";
-                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td>"+ dui.translate("Active hover:")+"</td><td id='inspect_bStyleActiveHoverParent' ></td></tr>";
+                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Normal:")+"</td><td id='inspect_bStyleNormalParent' ></td></tr>";
+                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Normal hover:")+"</td><td id='inspect_bStyleNormalHoverParent' ></td></tr>";
+                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Active:")+"</td><td id='inspect_bStyleActiveParent'></td></tr>";
+                sText += "<tr id='idStyle"+(iStyleCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Active hover:")+"</td><td id='inspect_bStyleActiveHoverParent' ></td></tr>";
 
 
                 // Add effects for filters
@@ -783,7 +783,7 @@ jQuery.extend(true, dui.binds, {
 					var iEffectsCount = 0;
 					dui.updateFilter();
 					sText += "<tr><td colspan=2><button id='idEffect_BtnGroup' class='dashui-group-button-width'>"+dui.translate("Effects...")+"</button></td></tr>";
-                    sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td>"+ dui.translate("Hide effect:")+"</td><td><select id='inspect_bHideEffect' style='width: "+(dui.binds.bars.width - 40)+"px'>";
+                    sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Hide effect:")+"</td><td><select id='inspect_bHideEffect' style='width: "+(dui.binds.bars.width - 40)+"px'>";
 					var sEffects = "";
                     sEffects += "<option value=''>Show/Hide</option>";
                     //sEffects += "<option value='show'>Show/Hide</option>";
@@ -804,10 +804,10 @@ jQuery.extend(true, dui.binds, {
                     //sEffects += "<option value='transfer'>Transfer</option>";
                     sText += sEffects + "</select><input id='inspect_bHideEffectMs' value='"+div.barsOptions.bShowEffectMs+"' style='width:40px'></td></tr>";  
 
-                    sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td>"+ dui.translate("Show effect:")+"</td><td><select id='inspect_bShowEffect' style='width: "+(dui.binds.bars.width - 40)+"px'>";
+                    sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Show effect:")+"</td><td><select id='inspect_bShowEffect' style='width: "+(dui.binds.bars.width - 40)+"px'>";
                     sText += sEffects + "</select><input id='inspect_bShowEffectMs' value='"+div.barsOptions.bShowEffectMs+"' style='width:40px'></td></tr>";     
                     
-					sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td></td><td><input id='inspect_test' type='button' value='"+dui.translate("Test")+"'></td></tr>";  		
+					sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td class='dashui-edit-td-caption'></td><td><input id='inspect_test' type='button' value='"+dui.translate("Test")+"'></td></tr>";
 
                 }
 
@@ -817,7 +817,7 @@ jQuery.extend(true, dui.binds, {
                 for (var m = 0; m < div.barsOptions.buttons.length; m++) {
                     sText += dui.binds.bars.editButton (div, m);
                 }   
-                sText += "<tr id='idButtons"+(div.barsOptions.buttons.length*5)+"'><td><button id='barsAdd' >"+dui.translate("Add")+"</button></td></tr></table>";
+                sText += "<tr id='idButtons"+(div.barsOptions.buttons.length*5)+"'><td class='dashui-edit-td-caption'><button id='barsAdd' >"+dui.translate("Add")+"</button></td></tr></table>";
                 $('#barsEditElements').remove ();
                 jParent.append (sText);
                 			

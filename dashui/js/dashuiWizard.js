@@ -39,18 +39,18 @@ dui = $.extend(true, dui, {
 	},
 	fillWizard: function () {
 		var elems = homematic.regaIndex['ENUM_ROOMS'];// IDs of all ROOMS
-		var jSelect = $('#wizard_rooms').html("").addClass('dashui-select-edit-width');
+		var jSelect = $('#wizard_rooms').html("").addClass('dashui-edit-select');
 		jSelect.append('<option value="">'+dui.translate("All")+'</option>');
 		for (var r in elems) {
 			jSelect.append("<option value='"+elems[r]+"'>"+homematic.regaObjects[elems[r]]["Name"]+"</option>\n");
 		}
 		elems = homematic.regaIndex['ENUM_FUNCTIONS'];// IDs of all ROOMS
-		jSelect = $('#wizard_funcs').html("").addClass('dashui-select-edit-width');
+		jSelect = $('#wizard_funcs').html("").addClass('dashui-edit-select');
 		jSelect.append('<option value="">'+dui.translate("All")+'</option>');
 		for (var r in elems) {
 			jSelect.append("<option value='"+elems[r]+"'>"+homematic.regaObjects[elems[r]]["Name"]+"</option>\n");
 		}
-		jSelect = $('#wizard_widgets').html("").addClass('dashui-select-edit-width');
+		jSelect = $('#wizard_widgets').html("").addClass('dashui-edit-select');
 		jSelect.append('<option value="">'+dui.translate("All")+'</option>');
 		for (var r in dui.hm2Widget) {
 			for (var i = 0; i < dui.widgetSets.length; i++) {
