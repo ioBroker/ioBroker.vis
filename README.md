@@ -9,6 +9,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta37
+* (Hobbyquaker) Neue Hue-Widgets im Widget-Set jqui-mfd
+
 ### 0.9beta36
 
 * (Bluefox) Extend Navigation bar: Better View name edition.
