@@ -1,3 +1,15 @@
+<style type="text/css">
+ .hue-slider-hue.ui-slider {
+     background-image: url(widgets/jqui/img/hue.png);
+     background-size: 100%;
+ }
+
+ .hue-slider-ct.ui-slider {
+     background-image: url(widgets/jqui/img/ct.png);
+     background-size: 100%;
+ }
+</style>
+
 
 <script type="text/ejs" id="tplMfdLight" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Light/Dimmer" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
@@ -172,6 +184,8 @@
     </div>
 </script>
 
+
+
 <script type="text/ejs" id="tplMfdSocket" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Socket" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px">
         <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['img/mfd/message_socket_on.png','img/mfd/message_socket_off.png']);  %>>
@@ -235,7 +249,7 @@
     <% } %>
 </div></div>
 </script>
-<script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal" data-dashui-filter="LEVEL" >
+<script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal" >
     <div data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el, true) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
@@ -369,3 +383,249 @@
     </div>
 </script>
 
+<script type="text/ejs" id="tplMfdHueDimmerDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_DIMMABLE_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal" >
+    <%
+
+    if (!homematic.regaObjects[this.data.hm_id] || (homematic.regaObjects[this.data.hm_id].HssType != "HUE_DIMMABLE_PLUG-IN_UNIT" && homematic.regaObjects[this.data.hm_id].HssType != "HUE_DIMMABLE_LIGHT")) {
+        console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_COLOR_LIGHT/HUE_DIMMABLE_PLUG-IN_UNIT Channel!");
+        var hueIDs = {
+            STATE: 65535,
+            LEVEL: 65535,
+            SAT: 65535,
+            HUE: 65535,
+        };
+    } else {
+        var hueIDs = {
+            STATE: homematic.regaObjects[this.data.hm_id].DPs.STATE,
+            LEVEL: homematic.regaObjects[this.data.hm_id].DPs.LEVEL,
+        };
+    }
+    %>
+    <div data-hm-id="<%= hueIDs.STATE %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <%
+    var str = homematic.uiState.attr('_' + hueIDs.LEVEL + '.Value');
+    var val = (parseFloat(str) + 1) / 255;
+
+    if (val == 1) {
+    %>
+    <img width="100%" src="img/mfd/light_light_dim_100.png"/>
+    <% } else if (val >= 0.9) { %>
+    <img width="100%" src="img/mfd/light_light_dim_90.png"/>
+    <% } else if (val >= 0.8) { %>
+    <img width="100%" src="img/mfd/light_light_dim_80.png"/>
+    <% } else if (val >= 0.7) { %>
+    <img width="100%" src="img/mfd/light_light_dim_70.png"/>
+    <% } else if (val >= 0.6) { %>
+    <img width="100%" src="img/mfd/light_light_dim_60.png"/>
+    <% } else if (val >= 0.5) { %>
+    <img width="100%" src="img/mfd/light_light_dim_50.png"/>
+    <% } else if (val >= 0.4) { %>
+    <img width="100%" src="img/mfd/light_light_dim_40.png"/>
+    <% } else if (val >= 0.3) { %>
+    <img width="100%" src="img/mfd/light_light_dim_30.png"/>
+    <% } else if (val >= 0.2) { %>
+    <img width="100%" src="img/mfd/light_light_dim_20.png"/>
+    <% } else if (val >= 0.1) { %>
+    <img width="100%" src="img/mfd/light_light_dim_10.png"/>
+    <% } else if (val >= 0.01) { %>
+    <img width="100%" src="img/mfd/light_light_dim_00.png"/>
+    <% } else { %>
+    <img width="100%" src="img/mfd/light_light_dim.png"/>
+    <% } %>
+    </div>
+    <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
+
+        <br/>
+        <span id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= hueIDs.STATE %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio_off" name="<%= this.data.attr('wid') %>_radio" value="false" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_off">aus</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio_on" name="<%= this.data.attr('wid') %>_radio" value="true"/><label for="<%= this.data.attr('wid') %>_radio_on">an</label>
+        </span>
+
+
+
+        <br/><br/>
+        Helligkeit
+        <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= hueIDs.LEVEL %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
+
+
+    </div>
+    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:320,modal:data.attr('modal')},true) %> />
+    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") == 'true') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplMfdLivingColorDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_COLOR_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal" >
+    <%
+    if (!homematic.regaObjects[this.data.hm_id] || homematic.regaObjects[this.data.hm_id].HssType != "HUE_COLOR_LIGHT") {
+        console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_COLOR_LIGHT Channel!");
+        var hueIDs = {
+            STATE: 65535,
+            LEVEL: 65535,
+            SAT: 65535,
+            HUE: 65535,
+        };
+    } else {
+        var hueIDs = {
+            STATE: homematic.regaObjects[this.data.hm_id].DPs.STATE,
+            LEVEL: homematic.regaObjects[this.data.hm_id].DPs.LEVEL,
+            SAT: homematic.regaObjects[this.data.hm_id].DPs.SAT,
+            HUE: homematic.regaObjects[this.data.hm_id].DPs.HUE,
+        };
+    }
+    %>
+    <div data-hm-id="<%= hueIDs.STATE %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <%
+    var str = homematic.uiState.attr('_' + hueIDs.LEVEL + '.Value');
+    var val = (parseFloat(str) + 1) / 255;
+
+    if (val == 1) {
+    %>
+    <img width="100%" src="img/mfd/light_light_dim_100.png"/>
+    <% } else if (val >= 0.9) { %>
+    <img width="100%" src="img/mfd/light_light_dim_90.png"/>
+    <% } else if (val >= 0.8) { %>
+    <img width="100%" src="img/mfd/light_light_dim_80.png"/>
+    <% } else if (val >= 0.7) { %>
+    <img width="100%" src="img/mfd/light_light_dim_70.png"/>
+    <% } else if (val >= 0.6) { %>
+    <img width="100%" src="img/mfd/light_light_dim_60.png"/>
+    <% } else if (val >= 0.5) { %>
+    <img width="100%" src="img/mfd/light_light_dim_50.png"/>
+    <% } else if (val >= 0.4) { %>
+    <img width="100%" src="img/mfd/light_light_dim_40.png"/>
+    <% } else if (val >= 0.3) { %>
+    <img width="100%" src="img/mfd/light_light_dim_30.png"/>
+    <% } else if (val >= 0.2) { %>
+    <img width="100%" src="img/mfd/light_light_dim_20.png"/>
+    <% } else if (val >= 0.1) { %>
+    <img width="100%" src="img/mfd/light_light_dim_10.png"/>
+    <% } else if (val >= 0.01) { %>
+    <img width="100%" src="img/mfd/light_light_dim_00.png"/>
+    <% } else { %>
+    <img width="100%" src="img/mfd/light_light_dim.png"/>
+    <% } %>
+    </div>
+    <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
+
+        <br/>
+        <span id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= hueIDs.STATE %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio_off" name="<%= this.data.attr('wid') %>_radio" value="false" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_off">aus</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio_on" name="<%= this.data.attr('wid') %>_radio" value="true"/><label for="<%= this.data.attr('wid') %>_radio_on">an</label>
+        </span>
+
+
+
+        <br/><br/>
+        Helligkeit
+        <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= hueIDs.LEVEL %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
+        <br/>
+
+        <br/>
+        <div class="hue-mode-hue">
+            <div class="sliderJQUI hue-slider-hue" style="width:90%" id="<%= this.data.attr('wid') %>_hue_hue_slider" data-hm-id="<%= hueIDs.HUE %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:65535,step:1}) %> />
+            <br/>
+            Sättigung
+            <div class="sliderJQUI hue-slider-sat" style="width:90%" id="<%= this.data.attr('wid') %>_hue_sat_slider" data-hm-id="<%= hueIDs.SAT %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
+        </div>
+
+    </div>
+    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:320,modal:data.attr('modal')},true) %> />
+    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") == 'true') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplMfdHueDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_EXTENDED_COLOR_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal" >
+    <%
+    if (!homematic.regaObjects[this.data.hm_id] || homematic.regaObjects[this.data.hm_id].HssType != "HUE_EXTENDED_COLOR_LIGHT") {
+    console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_EXTENDED_COLOR_LIGHT Channel!");
+    var hueIDs = {
+    STATE: 65535,
+    LEVEL: 65535,
+    COLORMODE: 65535,
+    CT: 65535,
+    SAT: 65535,
+    HUE: 65535,
+    };
+    } else {
+    var hueIDs = {
+    STATE: homematic.regaObjects[this.data.hm_id].DPs.STATE,
+    LEVEL: homematic.regaObjects[this.data.hm_id].DPs.LEVEL,
+    COLORMODE: homematic.regaObjects[this.data.hm_id].DPs.COLORMODE,
+    CT: homematic.regaObjects[this.data.hm_id].DPs.CT,
+    SAT: homematic.regaObjects[this.data.hm_id].DPs.SAT,
+    HUE: homematic.regaObjects[this.data.hm_id].DPs.HUE,
+    };
+    }
+    %>
+    <div data-hm-id="<%= hueIDs.STATE %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <%
+    var str = homematic.uiState.attr('_' + hueIDs.LEVEL + '.Value');
+    var val = (parseFloat(str) + 1) / 255;
+
+    if (val == 1) {
+    %>
+    <img width="100%" src="img/mfd/light_light_dim_100.png"/>
+    <% } else if (val >= 0.9) { %>
+    <img width="100%" src="img/mfd/light_light_dim_90.png"/>
+    <% } else if (val >= 0.8) { %>
+    <img width="100%" src="img/mfd/light_light_dim_80.png"/>
+    <% } else if (val >= 0.7) { %>
+    <img width="100%" src="img/mfd/light_light_dim_70.png"/>
+    <% } else if (val >= 0.6) { %>
+    <img width="100%" src="img/mfd/light_light_dim_60.png"/>
+    <% } else if (val >= 0.5) { %>
+    <img width="100%" src="img/mfd/light_light_dim_50.png"/>
+    <% } else if (val >= 0.4) { %>
+    <img width="100%" src="img/mfd/light_light_dim_40.png"/>
+    <% } else if (val >= 0.3) { %>
+    <img width="100%" src="img/mfd/light_light_dim_30.png"/>
+    <% } else if (val >= 0.2) { %>
+    <img width="100%" src="img/mfd/light_light_dim_20.png"/>
+    <% } else if (val >= 0.1) { %>
+    <img width="100%" src="img/mfd/light_light_dim_10.png"/>
+    <% } else if (val >= 0.01) { %>
+    <img width="100%" src="img/mfd/light_light_dim_00.png"/>
+    <% } else { %>
+    <img width="100%" src="img/mfd/light_light_dim.png"/>
+    <% } %>
+    </div>
+    <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
+
+        <br/>
+        <span id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= hueIDs.STATE %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio_off" name="<%= this.data.attr('wid') %>_radio" value="false" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_off">aus</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio_on" name="<%= this.data.attr('wid') %>_radio" value="true"/><label for="<%= this.data.attr('wid') %>_radio_on">an</label>
+        </span>
+
+        <span style="padding-left: 25px" id="<%= this.data.attr('wid') %>_radio_cm"  data-hm-id="<%= hueIDs.COLORMODE %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio_cm_ct" name="<%= this.data.attr('wid') %>_radio_ct" value="ct" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_cm_ct">weiß</label>
+        <input type="radio" id="<%= this.data.attr('wid') %>_radio_cm_hue" name="<%= this.data.attr('wid') %>_radio_cm" value="hue"/><label for="<%= this.data.attr('wid') %>_radio_cm_hue">farbe</label>
+        </span>
+
+        <br/><br/>
+        Helligkeit
+        <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= hueIDs.LEVEL %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
+        <br/>
+
+        <br/>
+        <div class="hue-mode-ct">
+            <div class="sliderJQUI hue-slider-ct" style="width:90%" id="<%= this.data.attr('wid') %>_hue_ct_slider" data-hm-id="<%= hueIDs.CT %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:153,max:500,step:1}) %> />
+        </div>
+        <div class="hue-mode-hue">
+            <div class="sliderJQUI hue-slider-hue" style="width:90%" id="<%= this.data.attr('wid') %>_hue_hue_slider" data-hm-id="<%= hueIDs.HUE %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:65535,step:1}) %> />
+            <br/>
+            Sättigung
+            <div class="sliderJQUI hue-slider-sat" style="width:90%" id="<%= this.data.attr('wid') %>_hue_sat_slider" data-hm-id="<%= hueIDs.SAT %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
+        </div>
+
+    </div>
+    <div class="pupup-helper" <%= (el) -> dui.binds.jqueryui.hueColormode(el, hueIDs.COLORMODE) %> />
+    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:320,modal:data.attr('modal')},true) %> />
+    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") == 'true') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
+    </div>
+</script>
