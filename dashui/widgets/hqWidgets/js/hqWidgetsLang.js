@@ -65,25 +65,24 @@ hqWidgets = $.extend (hqWidgets, {
                 "Battery problem"           : {"en": "Battery problem", "de": "Akku-Problem"},
                 "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
                 "Icon:"                     : {"en": "Icon:",           "de": "Kleinbild:"},
-                "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
-                "Test state:"               : {"en": "Test state:",     "de": "Zustand antesten:"},
                 "Styles..."                 : {"en": "Styles...",       "de": "Stil..."},
-                "jQuery Styles:"            : {"en": "Use&nbsp;jQuery&nbsp;Styles:", "de": "jQuery&nbsp;Stil&nbsp;anwenden:"},
-                "Radius:"                   : {"en": "Border&nbsp;Radius:", "de": "Eckenradius:"},
+                "jQuery Styles:"            : {"en": "Use jQuery Styles:","de": "jQuery Stil anwenden:"},
+                "Radius:"                   : {"en": "Border Radius:",  "de": "Eckenradius:"},
                 "Icon width:"               : {"en": "Icon width:",     "de": "Bildbreite:"},
                 "Icon height:"              : {"en": "Icon height:",    "de": "Bildh&ouml;he:"},
                 "Icon size:"                : {"en": "Icon size:",      "de": "Bildgr&ouml;&szlig;e:"},
-                "Icon active:"              : {"en": "Active&nbsp;icon:","de": "Aktivbild:"},
-                "Hide inactive:"            : {"en": "Hide&nbsp;if&nbsp;incative:", "de": "Verstecken&nbsp;falls&nbsp;inaktiv:"},
-                "No background:"            : {"en": "No&nbsp;background:",         "de": "Kein&nbsp;Hintergrund:"},
-                "Show description:"         : {"en": "Show&nbsp;description:",      "de": "Zeige&nbspBeschreibung:"},
+                "Icon active:"              : {"en": "Active icon:",    "de": "Aktivbild:"},
+                "Hide inactive:"            : {"en": "Hide if incative:","de": "Verstecken falls inaktiv:"},
+                "No background:"            : {"en": "No background:",  "de": "Kein Hintergrund:"},
+                "Show description:"         : {"en": "Show description:","de": "Zeige Beschreibung:"},
                 "Room:"                     : {"en": "Room:",           "de": "Raum:"},
                 "Min value:"                : {"en": "Min value:",      "de": "Min Wert:"},
                 "Max value:"                : {"en": "Max value:",      "de": "Max Wert:"},
                 "Not opened"                : {"en": "Not opened",      "de": "Geht nicht auf"},
                 "Left"                      : {"en": "Left",            "de": "Links"},
                 "Right"                     : {"en": "Right",           "de": "Rechts"},
-                "Top"                       : {"en": "Top",             "de": "Oben"}
+                "Top"                       : {"en": "Top",             "de": "Oben"},
+                "YYYY.MM.DD hh:mm:ss"       : {"en": "YYYY.MM.DD hh:mm:ss", "de": "JJJJ.MM.TT SS:mm:ss"}
            };
         }
         if (this.words[text]) {

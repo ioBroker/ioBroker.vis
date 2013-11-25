@@ -18,6 +18,24 @@ html,body {
     border-spacing:0px;
     border-image-width:0px;
 }
+
+.hq-edit-td-caption {
+    width: 26%;
+}
+.hq-edit-td-field {
+    width: 74%;
+}
+.hq-edit-textbox {
+    width: 100%;
+}
+.hq-edit-select {
+    width: auto;
+}
+.hq-group-button-width {
+    width:100%;
+    font-weight: bold;
+}
+
 .hq-no-background-edit
 {
 	z-index:2; 

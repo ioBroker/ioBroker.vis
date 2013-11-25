@@ -38,8 +38,9 @@
 }
 #widget_inner_helper {
     border: 1px dashed black;
-    z-index: 90;
     pointer-events:none;
+	width:100%;
+	height:100%;
 }
 
 .dashui-widget-button {
@@ -81,9 +82,7 @@
     display:none;
     margin-top: 30px;
 }
-.dashui-select-edit-width {
-    width:180px;
-}
+
 
 
 button.ui-dialog-titlebar-close {
@@ -117,9 +116,6 @@ a.ui-dialog-titlebar-restore {
 .ui-dialog-titlebar-minimize span{
     margin-top: 5px !important;
     margin-left:5px !important;
-}
-.dashui-group-button-width {
-    width:350px;
 }
 h4 {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
@@ -168,6 +164,23 @@ h4 {
 	font-variant: small-caps;
 }
 .dashui-show-new {
-	border: 5px dotted rgba(167,232,226,0.9) ;
-	z-index: 25;
+	border: 3px dotted rgba(167,232,226,0.9) ;
+	z-index: 1;
+    pointer-events:none;
+}
+.dashui-edit-td-caption {
+	width: 26%;
+}
+.dashui-edit-td-field {
+	width: 74%;
+}
+.dashui-edit-textbox {
+	width: 100%;
+}
+.dashui-edit-select {
+	width: auto;
+}
+.dashui-group-button-width {
+    width:100%;
+    font-weight: bold;
 }

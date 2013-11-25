@@ -457,44 +457,68 @@ if ((typeof hqWidgets !== 'undefined')) {
                             var hm_idOff  = obj.GetSettings ('hm_idC_Off');
                             var hm_valOn  = obj.GetSettings ('ctrlValueOn');
                             var hm_valOff = obj.GetSettings ('ctrlValueOff');
-                            var htmlOn    = obj.GetSettings ('htmlValueOn');
-                            var htmlOff   = obj.GetSettings ('htmlValueOff');
+                            var htmlOn    = obj.GetSettings ('htmlOn');
+                            var htmlOff   = obj.GetSettings ('htmlOff');
+							
+							var hm_id     = btn.GetSettings("hm_id");
+							var isChangeState = (!hm_id && 
+							  hm_idOn  !== undefined && hm_idOn  != null && hm_idOn  != "" && 
+							  hm_idOff !== undefined && hm_idOff != null && hm_idOff != "");
                             
-                            if (hm_idOn !== undefined && hm_idOn != null && hm_idOn != "") {
-                                // obj.SetStates ({isRefresh: true});
-                                if (hm_valOn === undefined || hm_valOn == null || hm_valOn == "")
+                            if (hm_idOn) {
+                                if (hm_valOn === undefined || hm_valOn == null == hm_valOn == "")
                                     hm_valOn = true;
                                     
-                                if (hm_valOff === undefined || hm_valOff == null || hm_valOff == "")
+                                if (hm_valOff === undefined || hm_valOff == null == hm_valOff == "")
                                     hm_valOff = hm_valOn;
                                     
                                 //If control depends of state
-                                if (hm_idOff === undefined || hm_idOff == null || hm_idOff == "")
+                                if (!hm_idOff)
                                     hm_idOff = hm_idOn;
                                     
                                 var states = obj.GetStates ();
                                 // Get actual state
-                                if (states.state == hqWidgets.gState.gStateOn)
-                                    homematic.setValue(hm_idOff, hm_valOff);                                
-                                else
+                                if (states.state == hqWidgets.gState.gStateOn) {
+                                    homematic.setValue(hm_idOff, hm_valOff);
+									if (isChangeState) {
+										obj.SetStates({state: hqWidgets.gState.gStateOff});
+									}
+								} else {
                                     homematic.setValue(hm_idOn, hm_valOn);                                
+									if (isChangeState) {
+										obj.SetStates({state: hqWidgets.gState.gStateOn});
+									}
+								}
                             } else 
 							// Call URL
-							if (htmlOn !== undefined && htmlOn != null && htmlOn != "") {
+							if (htmlOn) {
+								isChangeState = (!hm_id && htmlOn && htmlOff);
+								
+                                //If control depends of state
+                                if (!htmlOff)
+                                    htmlOff = htmlOn;
+
                                 // Get actual state
                                 var states = obj.GetStates ();
 								
-                                if (states.state == hqWidgets.gState.gStateOn && htmlOff != undefined && htmlOff != null && htmlOff != "")
+                                if (states.state == hqWidgets.gState.gStateOn) {
                                     dui.socket.emit("getUrl", htmlOff, function () {});
-                                else
-                                    dui.socket.emit("getUrl", htmlOn, function () {});                       								
+									if (isChangeState) {
+										obj.SetStates({state: hqWidgets.gState.gStateOff});
+									}
+								} else {
+                                    dui.socket.emit("getUrl", htmlOn, function () {});
+									if (isChangeState) {
+										obj.SetStates({state: hqWidgets.gState.gStateOn});
+									}
+								}
 							}
                         }});
                         // Fill up the required IDs
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "" && homematic.regaObjects[opt["hm_id"]]) {
                             hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'infoText'};
-                        }  
+                        }				
                     }                
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeMotion) {
@@ -973,6 +997,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                         btn = $.extend (btn, {translateSignal: function (option, value) {
                             return value;
                         }});
+						
+						// Remove not ready icon if no status given
+						if (opt.buttonType == hqWidgets.gButtonType.gTypeInfo) {
+							var hm_id = btn.GetSettings("hm_id");
+							if (hm_id == null || hm_id == "") {
+								btn.SetStates ({state: hqWidgets.gState.gStateOff});
+							}
+						}
                     }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeMotion) {
