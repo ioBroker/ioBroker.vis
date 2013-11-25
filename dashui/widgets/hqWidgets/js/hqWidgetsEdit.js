@@ -284,7 +284,7 @@ hqWidgets = $.extend (true, hqWidgets, {
                 }                
             }	
         }
-        this._EditSelectHandler = function (eee) {
+        this._EditSelectHandler = function (eee, onchange) {
             var elem;
             if ((elem = document.getElementById (this.e_settings.elemName+'_'+eee)) != null) {
                 // Set actual value
@@ -294,8 +294,9 @@ hqWidgets = $.extend (true, hqWidgets, {
                         break;
                     }
                 
-                elem.parent   = this;
-                elem.ctrlAttr = eee;
+                elem.parent    = this;
+                elem.ctrlAttr  = eee;
+				elem._onchange = onchange;
                 $('#'+this.e_settings.elemName+'_'+eee).change (function () { 
                     var newSettings = {};
 					if (this.ctrlAttr == 'infoConditionSelect') {
@@ -305,7 +306,10 @@ hqWidgets = $.extend (true, hqWidgets, {
 						this.parent.e_internal.attr[this.ctrlAttr] = $(this).prop('value');
 						newSettings[this.ctrlAttr] = this.parent.e_internal.attr[this.ctrlAttr];
 					}
-                    this.parent.e_internal.obj.SetSettings (newSettings, true);                            
+                    this.parent.e_internal.obj.SetSettings (newSettings, true);
+					if (this._onchange) {
+						this._onchange (this.parent, this.ctrlAttr, this.parent.e_internal.attr[this.ctrlAttr]);
+					}
                 });
             }        
         }          
@@ -515,7 +519,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             sTextAdv += "<option value='24' >"+hqWidgets.translate("Hide after 1 day")+"</option>";
             sTextAdv += "<option value='24' >"+hqWidgets.translate("Hide after 2 days")+"</option>";
             sTextAdv += "</select></td></tr>";                
-            sTextAdv += "<tr id='idCtrl"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Action time format:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_timeFormat'  type='text' value='"+(this.e_internal.attr.timeFormat || "") + "'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Action time format:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_timeFormat'  type='text' value='"+(this.e_internal.attr.timeFormat || "") + "'></td></tr>";
         }
         
         // Format string
@@ -882,8 +886,14 @@ hqWidgets = $.extend (true, hqWidgets, {
         
         this._EditTextHandler('title');   
         this._EditTextHandler('room');   
-        this._EditSelectHandler('hoursLastAction');   
-        this._EditTextHandler('timeFormat');   
+        this._EditSelectHandler('hoursLastAction', function (obj, attr, value) {
+			$('#'+obj.e_settings.elemName+"_timeFormat").prop("disabled", (value != "-2"));
+		});   
+        this._EditTextHandler('timeFormat');
+		var e = document.getElementById (this.e_settings.elemName+"_timeFormat");
+		if (e) {
+			$(e).prop("disabled", (this.e_internal.attr.hoursLastAction != "-2"));
+		}
                
         this._EditCheckboxHandler ('infoIsHideInactive', false, false, true);
         this._EditCheckboxHandler ('noBackground', false, false, true);
