@@ -81,7 +81,8 @@ hqWidgets = $.extend (hqWidgets, {
                 "Not opened"                : {"en": "Not opened",      "de": "Geht nicht auf"},
                 "Left"                      : {"en": "Left",            "de": "Links"},
                 "Right"                     : {"en": "Right",           "de": "Rechts"},
-                "Top"                       : {"en": "Top",             "de": "Oben"}
+                "Top"                       : {"en": "Top",             "de": "Oben"},
+                "YYYY.MM.DD hh:mm:ss"       : {"en": "YYYY.MM.DD hh:mm:ss", "de": "JJJJ.MM.TT SS:mm:ss"}
            };
         }
         if (this.words[text]) {

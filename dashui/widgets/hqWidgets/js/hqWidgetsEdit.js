@@ -515,6 +515,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             sTextAdv += "<option value='24' >"+hqWidgets.translate("Hide after 1 day")+"</option>";
             sTextAdv += "<option value='24' >"+hqWidgets.translate("Hide after 2 days")+"</option>";
             sTextAdv += "</select></td></tr>";                
+            sTextAdv += "<tr id='idCtrl"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Action time format:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_timeFormat'  type='text' value='"+(this.e_internal.attr.timeFormat || "") + "'></td></tr>";
         }
         
         // Format string
@@ -882,6 +883,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         this._EditTextHandler('title');   
         this._EditTextHandler('room');   
         this._EditSelectHandler('hoursLastAction');   
+        this._EditTextHandler('timeFormat');   
                
         this._EditCheckboxHandler ('infoIsHideInactive', false, false, true);
         this._EditCheckboxHandler ('noBackground', false, false, true);

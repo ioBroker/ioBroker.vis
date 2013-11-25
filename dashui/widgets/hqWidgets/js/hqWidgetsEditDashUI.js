@@ -443,8 +443,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 sTextC += "<tr id='idHmCtrl"+k+"'><td>"+ dui.translate("Control value (OFF):") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_ctrlValueOff' type='text' value='"+hqEditElem.e_internal.attr.ctrlValueOff+"'></td></tr>";k++;
 				
 				var m = 0;
-                sTextC += "<tr id='idCtrlUrl"+m+"'><td>"+ dui.translate("URL (ON):")  +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_htmlOn'  type='text' value='"+hqEditElem.e_internal.attr.htmlOn+"'></td></tr>";m++;
-                sTextC += "<tr id='idCtrlUrl"+m+"'><td>"+ dui.translate("URL (OFF):") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_htmlOff' type='text' value='"+hqEditElem.e_internal.attr.htmlOff+"'></td></tr></table></td></tr>";m++;
+                sTextC += "<tr id='idCtrlUrl"+m+"'><td>"+ dui.translate("URL (ON):")  +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_htmlOn'  type='text' value='"+(hqEditElem.e_internal.attr.htmlOn  || "")+"'></td></tr>";m++;
+                sTextC += "<tr id='idCtrlUrl"+m+"'><td>"+ dui.translate("URL (OFF):") +"</td><td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_htmlOff' type='text' value='"+(hqEditElem.e_internal.attr.htmlOff || "")+"'></td></tr></table></td></tr>";m++;
                 parent.append(sTextC);
                 
 				if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;

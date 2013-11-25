@@ -416,31 +416,62 @@ var hqWidgets = {
         return result;
     },
     // Format timr
-    TimeToString: function (time) {
+    TimeToString: function (time, timeFormat) {
+		if (!timeFormat) {
+			timeFormat = "YYYY.MM.DD hh:mm:ss";
+		}
+		// Translate format from german
+		timeFormat = timeFormat.replace ("JJ", "YY").replace ("JJ", "YY").replace ("J", "Y");
+		timeFormat = timeFormat.replace ("SS", "hh").replace ("S", "h");
+		timeFormat = timeFormat.replace ("TT", "DD").replace ("T", "D");
+	
         var dateStr = "";
-        var t = time.getFullYear();
-        t = (t < 10) ? "0" + t : "" + t;
-        dateStr += t + ".";
+        var year = time.getFullYear();
+		if (timeFormat.indexOf ("YYYY") == -1) {
+			year = parseInt (year) % 100;
+			if (timeFormat.indexOf ("YY") == -1) {
+				year = parseInt (year) % 10;
+			}
+		}
+		timeFormat = timeFormat.replace("YYY", "Y").replace("YY", "Y");
         
-        t = time.getMonth() + 1;
-        t = (t < 10) ? "0" + t : "" + t;
-        dateStr += t + ".";
+        var month = time.getMonth() + 1;
+		if (timeFormat.indexOf ("MM") != -1) {
+			month = (month < 10) ? "0" + month : "" + month;
+			timeFormat = timeFormat.replace("MM", "M");
+		}
         
-        t = time.getDate();
-        t = (t < 10) ? "0" + t : "" + t;
-        dateStr += t + " ";
+        var day  = time.getDate();
+		if (timeFormat.indexOf ("DD") != -1) {
+			day = (day < 10) ? "0" + day : "" + day;
+			timeFormat = timeFormat.replace("DD", "D");
+		}
         
-        t = time.getHours();
-        t = (t < 10) ? "0" + t : "" + t;
-        dateStr += t + ":";
+        var hours = time.getHours();
+		if (timeFormat.indexOf ("hh") != -1) {
+			hours = (hours < 10) ? "0" + hours : "" + hours;
+			timeFormat = timeFormat.replace("hh", "h");
+		}
 
-        t = time.getMinutes();
-        t = (t < 10) ? "0" + t : "" + t;
-        dateStr += t + ":";
+        var minutes = time.getMinutes();
+		if (timeFormat.indexOf ("mm") != -1) {
+			minutes = (minutes < 10) ? "0" + minutes : "" + minutes;
+			timeFormat = timeFormat.replace("mm", "m");
+		}
 
-        t = time.getSeconds();
-        t = (t < 10) ? "0" + t : "" + t;
-        dateStr += t;
+        var seconds = time.getSeconds();
+		if (timeFormat.indexOf ("ss") != -1) {
+			seconds = (seconds < 10) ? "0" + seconds : "" + seconds;
+			timeFormat = timeFormat.replace("ss", "s");
+		}
+		dateStr = timeFormat;
+		dateStr = dateStr.replace ("Y", year);
+		dateStr = dateStr.replace ("M", month);
+		dateStr = dateStr.replace ("D", day);
+		dateStr = dateStr.replace ("h", hours);
+		dateStr = dateStr.replace ("m", minutes);
+		dateStr = dateStr.replace ("s", seconds);
+		
         return dateStr;
     },
     // Install document handlers
@@ -595,6 +626,8 @@ var hqWidgets = {
             infoFormat:       "%s",  // format string for info
             infoCondition:    null,  // Condition like ">  0", "<  0", ">  5", "== 6.7", "== true" for active state
             infoIsHideInactive: false,// If hide if inactive state
+			
+			timeFormat:       hqWidgets.translate ("YYYY.MM.DD hh:mm:ss"), // Time format
             
             iconOn:           null,  // Button active image
             iconName:         null,  // Button inactive image
@@ -2049,13 +2082,13 @@ var hqWidgets = {
 							if (this.dynStates.isVisible){
 								this.intern._jright.show ();
 							}
-                            this._ShowRightInfo (hqWidgets.TimeToString(this.dynStates.lastAction));
+                            this._ShowRightInfo (hqWidgets.TimeToString(this.dynStates.lastAction, this.settings.timeFormat));
                         }
                         else {
                             // Check the interval
                             var seconds = ((new Date()).getTime () -  this.dynStates.lastAction.getTime()) / 1000;
                             if (seconds / 3600 <= ((-1) * this.settings.hoursLastAction)) {
-                                this._ShowRightInfo (hqWidgets.TimeToString(this.dynStates.lastAction));
+                                this._ShowRightInfo (hqWidgets.TimeToString(this.dynStates.lastAction, this.settings.timeFormat));
                             }
                             else
                                 this._ShowRightInfo (null);

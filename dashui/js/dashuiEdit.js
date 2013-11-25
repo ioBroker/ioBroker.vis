@@ -223,7 +223,7 @@ dui = $.extend(true, dui, {
 			dui.clearWidgetHelper();
 		}
 
-        var widgetId = (wid === undefined) ? dui.nextWidget() : wid;
+        var widgetId = wid || dui.nextWidget();
 
 		dui.widgets[widgetId] = {
 			wid: widgetId,
@@ -1185,7 +1185,7 @@ dui = $.extend(true, dui, {
 	// Find free place for new widget
 	findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
 		var editPos = $('.ui-dialog:first').position ();
-		field = $.extend (field, {x: 0, y:0, width: editPos.left});
+		field = $.extend ({x: 0, y:0, width: editPos.left}, field);
 		widgetWidth  = (widgetWidth  || 60);
 		widgetHeight = (widgetHeight || 60);
 		if (widgetWidth > field.width) {
@@ -1217,7 +1217,7 @@ dui = $.extend(true, dui, {
 		
 		while (!dui.checkPosition (positions, x, y, widgetWidth, widgetHeight)) {
 			x += step;
-			if (x + widgetWidth > field.width) {
+			if (x + widgetWidth > field.x + field.width) {
 				x = field.x;
 				y += step;
 			}
