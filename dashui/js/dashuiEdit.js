@@ -23,7 +23,7 @@
 // duiEdit - the DashUI Editor
 
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta37',
+    editVersion:        '0.9beta38',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -206,7 +206,7 @@ dui = $.extend(true, dui, {
 		dui.saveRemote ();
 		dui.inspectWidget("none");
     },
-    addWidget: function (tpl, data, style, wid, view) {
+    addWidget: function (tpl, data, style, wid, view, hidden) {
 		var isSelectWidget = (wid === undefined);
 		var isViewExist    = (document.getElementById("duiview_"+view) != null);
 
@@ -215,6 +215,9 @@ dui = $.extend(true, dui, {
 		}
 		
         if (isSelectWidget && !isViewExist) {
+
+            // TODO @Bluefox: Warum wird die View hier nicht gerendert? Könnte doch schon existieren?
+
             $("#dui_container").append("<div id='"+view+"'></div>");
 			isViewExist = true;
         }
@@ -315,14 +318,10 @@ dui = $.extend(true, dui, {
             }, 50);
         } else {
             if ($("#dui_container").find("#duiview_"+targetView).html() == undefined) {
-                dui.renderView(targetView);
+                dui.renderView(targetView, true, true);
             }
-            dui.activeView = targetView;
-            dui.addWidget(tpl, data, style);
+            dui.addWidget(tpl, data, style, dui.nextWidget(), targetView, true);
             dui.saveRemote();
-            dui.activeView = activeView;
-
-            // TODO Bug: (tritt nicht immer auf...) targetView wird angezeigt, auswählen von Widgets nicht mehr möglich
 
             alert("Widget copied to view " + targetView + ".");
         }
@@ -892,7 +891,7 @@ dui = $.extend(true, dui, {
            .dialog({
             modal: false,
             autoOpen: false,
-            width:  500,
+            width:  555,
             height: 610,
             position: { my: "right top", at: "right top", of: window },
             dialogClass: "dui-editor-dialog",

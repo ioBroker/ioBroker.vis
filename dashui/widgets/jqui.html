@@ -46,8 +46,8 @@
 
                 });
                 var val = homematic.uiState.attr(id+".Value");
-                if (val === true) { val = 1; }
-                if (val === false) { val = 0; }
+                if (val === true || val === "true") { val = 1; }
+                if (val === false || val === "false") { val = 0; }
                 if (reverse) {
                     if (val == 1) {
                         $this.removeClass("ui-state-active");
