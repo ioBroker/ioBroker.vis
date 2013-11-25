@@ -461,13 +461,15 @@ if ((typeof hqWidgets !== 'undefined')) {
                             var htmlOff   = obj.GetSettings ('htmlOff');
 							
 							var hm_id     = btn.GetSettings("hm_id");
-							var isChangeState = (!hm_id && hm_valOn &&  hm_valOff);
+							var isChangeState = (!hm_id && 
+							  hm_idOn  !== undefined && hm_idOn  != null && hm_idOn  != "" && 
+							  hm_idOff !== undefined && hm_idOff != null && hm_idOff != "");
                             
                             if (hm_idOn) {
-                                if (!hm_valOn)
+                                if (hm_valOn === undefined || hm_valOn == null == hm_valOn == "")
                                     hm_valOn = true;
                                     
-                                if (!hm_valOff)
+                                if (hm_valOff === undefined || hm_valOff == null == hm_valOff == "")
                                     hm_valOff = hm_valOn;
                                     
                                 //If control depends of state
