@@ -465,6 +465,7 @@ if ((typeof hqWidgets !== 'undefined')) {
 							  hm_idOn  !== undefined && hm_idOn  != null && hm_idOn  != "" && 
 							  hm_idOff !== undefined && hm_idOff != null && hm_idOff != "");
                             
+                            console.log ("Contorl ON:'" + hm_idOn+ "', OFF:'" + hm_idOff + "' and  + hm_id: '"+ hm_id + "'");
                             if (hm_idOn) {
                                 if (hm_valOn === undefined || hm_valOn == null == hm_valOn == "")
                                     hm_valOn = true;
@@ -480,13 +481,11 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 // Get actual state
                                 if (states.state == hqWidgets.gState.gStateOn) {
                                     homematic.setValue(hm_idOff, hm_valOff);
-                                    console.log ("Contorl "+ hm_idOff + " with " + hm_valOff + ", isChangeState is " + isChangeState);
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOff});
 									}
 								} else {
                                     homematic.setValue(hm_idOn, hm_valOn);                                
-                                    console.log ("Contorl "+ hm_idOn + " with " + hm_valOn + ", isChangeState is " + isChangeState);
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOn});
 									}
