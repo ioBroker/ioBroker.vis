@@ -292,7 +292,7 @@ dui = $.extend(true, dui, {
 		
 		if (isSelectWidget) {
 			dui.activeWidget = widgetId;
-			dui.actionNewWidget (widgetId);
+			dui.actionNewWidget(widgetId);
 		}
 		
 		
@@ -1091,7 +1091,9 @@ dui = $.extend(true, dui, {
             $(this).trigger('change');
         });
         $("#select_active_widget").change(function () {
-            dui.inspectWidget($(this).val());
+            var widgetId = $(this).val();
+            dui.inspectWidget(widgetId);
+            dui.actionNewWidget(widgetId);
         });
  
         // Instances
