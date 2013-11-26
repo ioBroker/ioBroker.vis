@@ -861,7 +861,6 @@ dui = $.extend(true, dui, {
         obj.draggable(draggableOptions);
     },
     resizable: function (obj) {
-    console.log("resizable "+obj.attr("id"));
         var resizableOptions;
         if (obj.attr("data-dashui-resizable")) {
             resizableOptions = $.parseJSON(obj.attr("data-dashui-resizable"));
