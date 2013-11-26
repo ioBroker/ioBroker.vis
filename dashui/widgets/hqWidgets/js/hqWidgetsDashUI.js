@@ -480,11 +480,13 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 // Get actual state
                                 if (states.state == hqWidgets.gState.gStateOn) {
                                     homematic.setValue(hm_idOff, hm_valOff);
+                                    console.log ("Contorl "+ hm_idOff + " with " + hm_valOff + ", isChangeState is " + isChangeState);
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOff});
 									}
 								} else {
                                     homematic.setValue(hm_idOn, hm_valOn);                                
+                                    console.log ("Contorl "+ hm_idOn + " with " + hm_valOn + ", isChangeState is " + isChangeState);
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOn});
 									}
