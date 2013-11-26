@@ -216,9 +216,7 @@ dui = $.extend(true, dui, {
 		
         if (isSelectWidget && !isViewExist) {
 
-            // TODO @Bluefox: Warum wird die View hier nicht gerendert? Könnte doch schon existieren?
-
-            $("#dui_container").append("<div id='"+view+"'></div>");
+            dui.renderView (view, true, false);
 			isViewExist = true;
         }
 		
@@ -956,7 +954,7 @@ dui = $.extend(true, dui, {
             var tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;
             var widgetSet = $("#"+tpl).attr("data-dashui-set");
             var docUrl = "widgets/"+widgetSet+"/doc.html#"+tpl;
-            window.open(docUrl,"WidgetDoc", "height=640,width=500,status=yes,toolbar=no,menubar=no,location=no");
+            window.open(docUrl,"WidgetDoc", "height=640,width=500,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no,location=no");
         });
 
         $("#convert_ids").click(dui.convertIds);
