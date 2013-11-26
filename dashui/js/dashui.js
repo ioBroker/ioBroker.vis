@@ -56,6 +56,13 @@ var dui = {
         }
         //console.log("bind instance id="+dui.instanceCmd);
 
+        // Todo Instanzen umbauen DashUI
+        // socket.on("dashuiCmd") statt bind auf Variable (auf Varible kann verzichtet werden, instanceData als Param übergeben)
+        // Todo Instanzen umbauen CCU.IO
+        // CCU.IO Script-Engine Addin mit Methode dashui.cmd()
+        // CCU.IO erweitern: Objekt-Paramter "_persistent" - setObject fügt Objekt dann einer regaObjectsCache.json und regaIndexCache.json (ccu.io/datastore) hinzu die von CCU.IO beim Neustart wieder eingelesen wird.
+        // CCU.IO neue Methode um freie ID in gegebenem ID-Bereich zu erhalten
+
         homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
             var cmd = newVal;
             //console.log("external command cmd=" + cmd);
@@ -264,7 +271,7 @@ var dui = {
         if (!noThemeChange) {
             $("style[data-href$='jquery-ui.min.css']").remove();
             $("link[href$='jquery-ui.min.css']").remove();
-            $("head").prepend('<link rel="stylesheet" type="text/css" href="css/' + dui.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
+            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
         }
 
         if ($("#dui_container").find("#duiview_" + view).html() === undefined) {
@@ -500,9 +507,9 @@ var dui = {
 
 
                     if ($("link[href$='jquery-ui.min.css']").length ==  0) {
-                        $("head").prepend('<link rel="stylesheet" type="text/css" href="css/' + dui.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
+                        $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
                     } else {
-                        $("link[href$='jquery-ui.min.css']").attr("href", 'css/' + dui.views[view].settings.theme + '/jquery-ui.min.css');
+                        $("link[href$='jquery-ui.min.css']").attr("href", '../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css');
                     }
                     $("style[data-href$='jquery-ui.min.css']").remove();
 
@@ -522,9 +529,9 @@ var dui = {
 
                 if (dui.views[dui.activeView].settings.theme != dui.views[view].settings.theme) {
                     if ($("link[href$='jquery-ui.min.css']").length ==  0) {
-                        $("head").prepend('<link rel="stylesheet" type="text/css" href="css/' + dui.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
+                        $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
                     } else {
-                        $("link[href$='jquery-ui.min.css']").attr("href", 'css/' + dui.views[view].settings.theme + '/jquery-ui.min.css');
+                        $("link[href$='jquery-ui.min.css']").attr("href", '../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css');
                     }
                     $("style[data-href$='jquery-ui.min.css']").remove();
                 }
@@ -551,6 +558,7 @@ var dui = {
         });
 
         if (dui.instance) {
+
             homematic.setValue(dui.instanceView, dui.activeView);
         }
 
@@ -946,6 +954,6 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         }
     }, 90000);
 
-    dui.preloadImages(["/dashui/css/kian/images/modalClose.png"])
+    dui.preloadImages(["../lib/css/themes/jquery-ui/kian/images/modalClose.png"])
 
 })(jQuery);

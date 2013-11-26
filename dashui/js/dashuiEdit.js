@@ -36,6 +36,9 @@ dui = $.extend(true, dui, {
             $("#instance").show();
 
             //console.log("adding Instance Variables");
+
+            // TODO statt CCU-Variablen CCU.IO-Variablen und Script-Engine "Add in"
+
             var name = "dashui_"+dui.instance;
             dui.socket.emit("addStringVariable", name+"_cmd", "automatisch angelegt von DashUI.", "", function (cmd) {
                 dui.instanceCmd = cmd;
@@ -1084,7 +1087,7 @@ dui = $.extend(true, dui, {
             dui.views[dui.activeView].settings.theme = theme;
             $("#jqui_theme").remove();
             $("style[data-href$='jquery-ui.min.css']").remove();
-            $("head").prepend('<link rel="stylesheet" type="text/css" href="css/'+theme+'/jquery-ui.min.css" id="jqui_theme"/>');
+            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/'+theme+'/jquery-ui.min.css" id="jqui_theme"/>');
             //attr("data-href", "css/"+theme+"/jquery-ui.min.css");
             dui.saveRemote();
         }).keyup(function () { 
