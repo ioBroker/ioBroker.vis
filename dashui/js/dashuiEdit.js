@@ -23,7 +23,7 @@
 // duiEdit - the DashUI Editor
 
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta38',
+    editVersion:        '0.9beta39',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -713,7 +713,8 @@ dui = $.extend(true, dui, {
                         dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = $(this).val();
                         dui.saveRemote();
                         dui.reRenderWidget(dui.activeWidget);
-                    }).keyup(function () { 
+
+                    }).keyup(function () {
                         $(this).trigger('change');
                     });
             }
@@ -821,19 +822,24 @@ dui = $.extend(true, dui, {
         $("#widget_helper").css({left: pos.left - 2, top:  pos.top - 2,  height: $this.outerHeight() + 2, width: $this.outerWidth()  + 2}).show();
 
         // Interaktionen
-        var resizableOptions;
-        if ($this.attr("data-dashui-resizable")) {
-            resizableOptions = $.parseJSON($this.attr("data-dashui-resizable"));
+        dui.draggable($this);
+        dui.resizable($this);
+
+        // Inspector aufrufen
+        $("#inspect_wid").html(id);
+        $("#inspect_wid2").html(id);
+        var tabActive = $("#tabs").tabs("option", "active");
+        if (tabActive !== 1 && tabActive !== 2) {
+            $("#tabs").tabs("option", "active", 1);
         }
-        if (!resizableOptions) {
-            resizableOptions = {};
-        }
+    },
+    draggable: function (obj) {
         var draggableOptions = {
             cancel: false,
             stop: function(event, ui) {
                 var widget = ui.helper.attr("id")
                 $("#inspect_css_top").val(ui.position.top + "px");
-                $("#inspect_css_left").val(ui.position.left + "px");              
+                $("#inspect_css_left").val(ui.position.left + "px");
                 if (!dui.views[dui.activeView].widgets[widget].style) {
                     dui.views[dui.activeView].widgets[widget].style = {};
                 }
@@ -843,7 +849,7 @@ dui = $.extend(true, dui, {
 
             },
             drag: function(event, ui) {
-                $("#widget_helper").css({left: ui.position.left - 2, top: ui.position.top - 2});               
+                $("#widget_helper").css({left: ui.position.left - 2, top: ui.position.top - 2});
             }
         };
         if ($("#snap_type option:selected").val() == 1) {
@@ -851,35 +857,37 @@ dui = $.extend(true, dui, {
         }
         if ($("#snap_type option:selected").val() == 2) {
             draggableOptions.grid = [gridWidth,gridWidth];
-        }        
-        $this.draggable(draggableOptions);
-		if (resizableOptions.disabled !== true) {
-			resizableOptions.disabled = false;
-			$this.resizable($.extend({
-				stop: function(event, ui) {
-					var widget = ui.helper.attr("id")
-					$("#inspect_css_width").val(ui.size.width + "px");
-					$("#inspect_css_height").val(ui.size.height + "px");
-					if (!dui.views[dui.activeView].widgets[widget].style) {
-						dui.views[dui.activeView].widgets[widget].style = {};
-					}
-					dui.views[dui.activeView].widgets[widget].style.width = ui.size.width;
-					dui.views[dui.activeView].widgets[widget].style.height = ui.size.height;
-					dui.saveRemote();
+        }
+        obj.draggable(draggableOptions);
+    },
+    resizable: function (obj) {
+    console.log("resizable "+obj.attr("id"));
+        var resizableOptions;
+        if (obj.attr("data-dashui-resizable")) {
+            resizableOptions = $.parseJSON(obj.attr("data-dashui-resizable"));
+        }
+        if (!resizableOptions) {
+            resizableOptions = {};
+        }
+        if (resizableOptions.disabled !== true) {
+            resizableOptions.disabled = false;
+            obj.resizable($.extend({
+                stop: function(event, ui) {
+                    var widget = ui.helper.attr("id")
+                    $("#inspect_css_width").val(ui.size.width + "px");
+                    $("#inspect_css_height").val(ui.size.height + "px");
+                    if (!dui.views[dui.activeView].widgets[widget].style) {
+                        dui.views[dui.activeView].widgets[widget].style = {};
+                    }
+                    dui.views[dui.activeView].widgets[widget].style.width = ui.size.width;
+                    dui.views[dui.activeView].widgets[widget].style.height = ui.size.height;
+                    dui.saveRemote();
 
-				},
-				resize: function (event,ui) {
-					$("#widget_helper").css({width: ui.element.outerWidth() + 2, height: ui.element.outerHeight() + 2});
-				}
-			}, resizableOptions));
-		}
-
-        // Inspector aufrufen
-        $("#inspect_wid").html(id);
-        $("#inspect_wid2").html(id);
-        var tabActive = $("#tabs").tabs("option", "active");
-        if (tabActive !== 1 && tabActive !== 2) {
-            $("#tabs").tabs("option", "active", 1);
+                },
+                resize: function (event,ui) {
+                    $("#widget_helper").css({width: ui.element.outerWidth() + 2, height: ui.element.outerHeight() + 2});
+                }
+            }, resizableOptions));
         }
     },
     clearWidgetHelper: function () {
@@ -1013,6 +1021,9 @@ dui = $.extend(true, dui, {
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
             dui.saveRemote();
             dui.reRenderWidget(dui.activeWidget);
+            dui.resizable($("#"+dui.activeWidget));
+
+
         });
         $(".dashui-inspect-css").change(function () {
             var $this = $(this);

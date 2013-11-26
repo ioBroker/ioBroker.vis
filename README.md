@@ -9,6 +9,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta39
+* (Hobbyquaker) Bugfix: Edit-Mode: Widget resize funktionierte nicht nach Änderung von Attributen im Reiter Widget
+
 ### 0.9beta38
 * (Bluefox) Fix hqWidget/Info - Control
 * (Bluefox) Fix time format editing
