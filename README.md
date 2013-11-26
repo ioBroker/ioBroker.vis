@@ -12,6 +12,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ### 0.9beta39
 * (Hobbyquaker) Bugfix: Edit-Mode: Widget resize funktionierte nicht nach Änderung von Attributen im Reiter Widget
 * (Hobbyquaker) Editor: Tab Scrolling
+* (Hobbyquaker) Editor: Animation wenn Widget per Dropdown ausgewählt wird
 * (Hobbyquaker) Mehr jquery-ui Themes, werden nun aus ccu.io/lib geladen
 
 
