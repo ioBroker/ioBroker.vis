@@ -9,6 +9,27 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta38
+* (Bluefox) Fix hqWidget/Info - Control
+* (Bluefox) Fix time format editing
+* (Bluefox) hqWidgets/Info change status, if On and Off IDs are set
+* (Bluefox) Support of TimeFormat for last action in hqWidgets
+* (Bluefox) Wizard preparation: now Only On/Off and LowBat are usable
+* (Bluefox) Editable text-shadow CSS property for all widgets
+* (Bluefox) Add favicon
+* (Bluefox) Make widget immediately movable after creation
+* (Bluefox) Try to format edit mode
+* (Bluefox) Fix and improve simple clock
+* (Bluefox) Preparation for widget
+* (Bluefox) hqWidget: Fix show last activation time if widget is filtered out
+* (Bluefox) Translate edit buttons
+* (Bluefox) Move some function from dashui.js to edit
+* (Hobbyquaker) Fixed Bug on copying Widget to another View
+* (Hobbyquaker) jqui Bugfix classes bind
+
+### 0.9beta37
+* (Hobbyquaker) Neue Hue-Widgets im Widget-Set jqui-mfd
+
 ### 0.9beta36
 
 * (Bluefox) Extend Navigation bar: Better View name edition.

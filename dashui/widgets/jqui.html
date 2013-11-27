@@ -18,15 +18,15 @@
 
                 homematic.uiState.bind(id+".Value", function( e, newVal, oldVal ) {
                     var val;
-                    if (newVal === false) {
+                    if (newVal === false || newVal === "false") {
                         val = 0;
-                    } else if (newVal === true) {
+                    } else if (newVal === true || newVal === "true") {
                         val = 1;
                     } else {
                         val = newVal;
                     }
                     if (reverse) {
-                        if (val > 0) {
+                        if (val == 1) {
                             $this.removeClass("ui-state-active");
                             $this.addClass("ui-state-default");
                         } else {
@@ -46,14 +46,24 @@
 
                 });
                 var val = homematic.uiState.attr(id+".Value");
-                if (val === true) { val = 1; }
-                if (val === false) { val = 0; }
-                if (val === 0) {
-                    $this.removeClass("ui-state-active");
-                    $this.addClass("ui-state-default");
+                if (val === true || val === "true") { val = 1; }
+                if (val === false || val === "false") { val = 0; }
+                if (reverse) {
+                    if (val == 1) {
+                        $this.removeClass("ui-state-active");
+                        $this.addClass("ui-state-default");
+                    } else {
+                        $this.addClass("ui-state-active");
+                        $this.removeClass("ui-state-default");
+                    }
                 } else {
-                    $this.addClass("ui-state-active");
-                    $this.removeClass("ui-state-default");
+                    if (val > 0) {
+                        $this.addClass("ui-state-active");
+                        $this.removeClass("ui-state-default");
+                    } else {
+                        $this.removeClass("ui-state-active");
+                        $this.addClass("ui-state-default");
+                    }
                 }
 
             },
@@ -229,7 +239,7 @@
                 $this.slider("value", parseFloat(homematic.uiState.attr(hm_id+".Value")));
 
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                    console.log("slider newVal="+JSON.stringify(newVal));
+                   // console.log("slider newVal="+JSON.stringify(newVal));
                     $this.slider("value", parseFloat(newVal));
                 });
             },
@@ -317,12 +327,33 @@
             },
             iconHttpGet: function (el, url) {
                 $this = jQuery(el).parent().find("a.widget-link");
-                console.log($this);
+                //console.log($this);
                 $this.click(function (e) {
-                    console.log("click http get");
+                    //console.log("click http get");
                     dui.socket.emit("getUrl", url, function () {});
                     e.preventDefault();
                 });
+            },
+            hueColormode: function (el, idColormode) {
+                $hue = jQuery(el).parent().find(".hue-mode-hue");
+                $ct = jQuery(el).parent().find(".hue-mode-ct");
+                if (homematic.uiState.attr("_"+idColormode+".Value") == "ct") {
+                    $hue.hide();
+                    $ct.show();
+                } else {
+                    $ct.hide();
+                    $hue.show();
+                }
+                homematic.uiState.bind("_"+idColormode+".Value", function( e, newVal, oldVal ) {
+                    if (newVal == "ct") {
+                        $hue.hide();
+                        $ct.show();
+                    } else {
+                        $ct.hide();
+                        $hue.show();
+                    }
+                });
+
             },
             _disable: function () {
                 jQuery("div#dui_container").find(".ui-slider").each(function () {

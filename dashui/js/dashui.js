@@ -22,8 +22,8 @@
 
 var dui = {
 
-    version:                '0.9beta36',
-    requiredCcuIoVersion:   '0.9.74',
+    version:                '0.9beta38',
+    requiredCcuIoVersion:   '0.9.78',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
     storageKeyInstance:     'dashuiInstance',
@@ -230,7 +230,6 @@ var dui = {
 
         $("#active_view").html(dui.activeView);
 
-        dui.changeView(dui.activeView);
 
         // Navigation
         $(window).bind('hashchange', function (e) {
@@ -243,6 +242,8 @@ var dui = {
             dui.editInitNext ();
         }
         this.initialized = true;
+		// If this function called earlier, it makes problems under FireFox.
+        dui.changeView(dui.activeView);
     },
     initViewObject: function () {
         dui.views = {view1: {settings: {style: {}}, widgets: {}}};
