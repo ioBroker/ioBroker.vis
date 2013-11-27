@@ -414,24 +414,37 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon link" data-dashui-attrs="src;href;target;alt;text">
+<script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon link" data-dashui-attrs="src;href;target;alt;text;invert_icon">
+    <%
+    var styles = "";
+    if (this.data.invert_icon == "true") {
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
-            <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+            <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
         </div>
     </div>
 </script>
 
 <script type="text/ejs" id="tplIconHttpGet" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon HTTP GET" data-dashui-attrs="url;src;alt;text">
+    <%
+    var styles = "";
+    if (this.data.invert_icon == "true") {
+    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
-            <a class="widget-link" href="#" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+            <a class="widget-link" href="#" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
             <div <%= (el) -> dui.binds.jqueryui.iconHttpGet(el, data.attr('url')) %> />
         </div>
     </div>
 </script>
 
 <script type="text/ejs" id="tplJquiDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - HTML - Dialog" data-dashui-attrs="html;html_dialog;title;modal;width;height;persistent">
+
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
             <%== this.data.attr("html") %>
@@ -443,10 +456,16 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon - Dialog" data-dashui-attrs="src;alt;text;html_dialog;title;modal;width;height;persistent">
+<script type="text/ejs" id="tplJquiIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon - Dialog" data-dashui-attrs="src;alt;text;html_dialog;title;modal;width;height;persistent;invert_icon">
+    <%
+    var styles = "";
+    if (this.data.invert_icon == "true") {
+    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
-            <img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
             <%== this.data.attr("html_dialog") %>
@@ -470,10 +489,17 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src;alt;text;contains_view;title;modal;width;height;persistent">
+<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src;alt;text;contains_view;title;modal;width;height;persistent;invert_icon">
+    <%
+    var styles = "";
+    if (this.data.invert_icon == "true") {
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
-        <img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+        <img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
         <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
@@ -677,10 +703,16 @@
 
 
 
-<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon State" data-dashui-attrs="hm_id;value;text;src;alt">
+<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon State" data-dashui-attrs="hm_id;value;text;src;alt;invert_icon">
+    <%
+    var styles = "";
+    if (this.data.invert_icon == "true") {
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.state(el); dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
-            <img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
     </div>
 </script>
@@ -688,10 +720,16 @@
 
 
 
-<script type="text/ejs" id="tplIconProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon ProgramExecute" data-dashui-attrs="hm_id;text;src;alt">
+<script type="text/ejs" id="tplIconProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon ProgramExecute" data-dashui-attrs="hm_id;text;src;alt;invert_icon">
+    <%
+    var styles = "";
+    if (this.data.invert_icon == "true") {
+    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.program(el); dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
-            <img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img src="<%== this.data.attr('src') %>" style="<%= styles %>; vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
     </div>
 </script>
