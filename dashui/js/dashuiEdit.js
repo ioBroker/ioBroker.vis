@@ -1113,7 +1113,7 @@ dui = $.extend(true, dui, {
 			$("#select_view_copy").append("<option value='" + k + "'" + sel + ">" + k + "</option>")
 		}
 		$("#select_view").multiselect("refresh");
-		$("#select_view_copy").multiselect("refresh");
+		$("#select_view_copy").multiselect({minWidth: 200}).multiselect("refresh");
 		$("#select_view").change(function () {
 			dui.changeView($(this).val());
 		});

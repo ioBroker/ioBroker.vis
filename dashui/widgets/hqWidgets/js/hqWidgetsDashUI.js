@@ -465,7 +465,6 @@ if ((typeof hqWidgets !== 'undefined')) {
 							  hm_idOn  !== undefined && hm_idOn  != null && hm_idOn  != "" && 
 							  hm_idOff !== undefined && hm_idOff != null && hm_idOff != "");
                             
-                            console.log ("Contorl ON:'" + hm_idOn+ "', OFF:'" + hm_idOff + "' and  + hm_id: '"+ hm_id + "'");
                             if (hm_idOn) {
                                 if (hm_valOn === undefined || hm_valOn == null == hm_valOn == "")
                                     hm_valOn = true;

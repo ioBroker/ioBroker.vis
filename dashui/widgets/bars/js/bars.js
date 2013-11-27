@@ -352,7 +352,7 @@ jQuery.extend(true, dui.binds, {
                 h = div.barsOptions.bHeight;
             }
             else  {
-                h = div.barsOptions.bHeight * div.barsOptions.buttons.length + div.barsOptions.bSpace * (div.barsOptions.buttons.length - 1);
+                h = div.barsOptions.bHeight * div.barsOptions.buttons.length + div.barsOptions.bSpace * (div.barsOptions.buttons.length - 1) + 15;
                 w = div.barsOptions.bWidth;
             }
 				
@@ -366,7 +366,7 @@ jQuery.extend(true, dui.binds, {
 				}
 				text += "</tr>";
 			}
-			else {
+			else { // vertical
 				for (var i = 0; i < div.barsOptions.buttons.length; i++) {
 					text += "<tr class='dashui-no-spaces'  style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'><td class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, i, div.barsOptions) + "</td></tr>";
                     if (i != div.barsOptions.buttons.length - 1)
@@ -517,6 +517,7 @@ jQuery.extend(true, dui.binds, {
                 if (div.barsIntern.wType == 'tplBarFilter') {
                     sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td class='dashui-edit-td-caption'>"+ dui.translate("Filter key:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
                 }
+				else
                 if (div.barsIntern.wType == 'tplBarNavigator') {
                     sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ dui.translate("View name:") +"</td><td><input style='width: "+dui.binds.bars.width+"px' id='inspect_option"+i+"' type='text' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
                 }

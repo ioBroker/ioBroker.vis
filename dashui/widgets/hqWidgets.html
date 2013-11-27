@@ -8,7 +8,7 @@
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgetsLang.js"></script>
 
 
-<script type="text/ejs" id="tplHqButton" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="On/Off" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM,HMW-IO-12-Sw14-DR,HMW-IO-12-Sw7-DR">
+<script type="text/ejs" id="tplHqButton" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="On/Off" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM,HMW-IO-12-Sw14-DR,HMW-IO-12-Sw7-DR,HM-ES-PMSw1-Pl">
     <%
     if (this && this.data && this.data.attr) {
     if (this.data.attr('hqoptions')){
@@ -34,13 +34,12 @@
 <script type="text/ejs" id="tplHqShutter" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Window and Shutter" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-LC-Bl1-SM,HMW-LC-Bl1-DR,HM-LC-Bl1-FM,HM-LC-Bl1-PB-FM,HM-LC-Bl1PBU-FM;HM-Sec-SC,CC-SC-Rd-WM-W-R5,FHT80TF-2;HM-Sec-RHS">
     <%
     if (this && this.data && this.data.attr) {
-    if (this.data.attr('hqoptions')){
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
-    }
-    else {
-    dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqShutter", this.view);
-    }
-    }
+		if (this.data.attr('hqoptions')){
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		} else {
+			dui.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqShutter", this.view);
+		}
+	}
     %>
 </script>
 <script type="text/ejs" id="tplHqInTemp" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Inside temperature" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-CC-TC,HM-CC-RT-DN;HM-CC-VD">
