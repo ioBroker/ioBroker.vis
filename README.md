@@ -15,6 +15,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Hobbyquaker) Editor: Animation wenn Widget per Dropdown ausgewählt wird
 * (Hobbyquaker) Mehr jquery-ui Themes, werden nun aus ccu.io/lib geladen
 * (Hobbyquaker) CSS-Stealer: es können eine oder mehrere Style-Eigenschaften eines anderen Widgets "geklaut" werden
+* (Hobbyquaker) alle jqui-mfd-Widgets und alle jqui-Icon-Widgets mit zusätzlichem Attribut "invert_icon" ausgestattet (macht aus weissen Icons schwarze Icons und umgekehrt)
 * (Bluefox) Fix doc window in FireFox (Show scrollbars)
 
 
