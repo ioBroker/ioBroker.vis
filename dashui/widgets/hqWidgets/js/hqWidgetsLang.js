@@ -82,7 +82,7 @@ hqWidgets = $.extend (hqWidgets, {
                 "Left"                      : {"en": "Left",            "de": "Links"},
                 "Right"                     : {"en": "Right",           "de": "Rechts"},
                 "Top"                       : {"en": "Top",             "de": "Oben"},
-                "YYYY.MM.DD hh:mm:ss"       : {"en": "YYYY.MM.DD hh:mm:ss", "de": "JJJJ.MM.TT SS:mm:ss"}
+                "YYYY.MM.DD hh:mm:ss"       : {"en": "YYYY.MM.DD hh:mm:ss", "de": "TT.MM.JJJJ SS:mm:ss"}
            };
         }
         if (this.words[text]) {
