@@ -14,6 +14,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Hobbyquaker) Editor: Tab Scrolling
 * (Hobbyquaker) Editor: Animation wenn Widget per Dropdown ausgewählt wird
 * (Hobbyquaker) Mehr jquery-ui Themes, werden nun aus ccu.io/lib geladen
+* (Hobbyquaker) CSS-Stealer: es können eine oder mehrere Style-Eigenschaften eines anderen Widgets "geklaut" werden
+* (Bluefox) Fix doc window in FireFox (Show scrollbars)
+
 
 
 ### 0.9beta38

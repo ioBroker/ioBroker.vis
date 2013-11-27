@@ -204,3 +204,16 @@ div#dui_editor {
     overflow-y:hidden;
     oberflow-x:scroll;
 }
+
+div.dashui-widget-tools {
+    height: 100%;
+    margin-bottom: 70px;
+}
+
+.dashui-steal-css, .dashui-clear-css {
+    display: inline-block;
+}
+
+.dashui-steal-cursor {
+    cursor: crosshair !important;
+}

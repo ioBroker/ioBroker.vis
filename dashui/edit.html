@@ -146,23 +146,139 @@
                 <div class="dashui-widget-tools">
                     <h4>Widget: <span id="inspect_wid"></span></h4>
                     <table>
-                        <tr><td>left</td><td><input size="12" type="text" id="inspect_css_left" class="dashui-inspect-css"/></td>
-                            <td>top</td><td><input size="12" type="text" id="inspect_css_top" class="dashui-inspect-css"/></td></tr>
-                        <tr><td>width</td><td><input size="12" type="text" id="inspect_css_width" class="dashui-inspect-css"/></td>
-                            <td>height</td><td><input  size="12" type="text" id="inspect_css_height" class="dashui-inspect-css"/></td></tr>
-                        <tr><td>padding</td><td><input size="12" type="text" id="inspect_css_padding" class="dashui-inspect-css"/></td>
-                            <td>margin</td><td><input size="12" type="text" id="inspect_css_margin" class="dashui-inspect-css" disabled="disabled"/></td></tr>
-                        <tr><td>text-align</td><td><input size="12" type="text" id="inspect_css_text-align" class="dashui-inspect-css"/></td>
-                            <td>vertical-align</td><td><input size="12" type="text" id="inspect_css_vertical-align" class="dashui-inspect-css" disabled="disabled"/></td></tr>
-                        <tr><td>border-radius</td><td><input size="12" type="text" id="inspect_css_border-radius" class="dashui-inspect-css"/></td>
-                            <td>z-index</td><td><input size="12" type="text" id="inspect_css_z-index" class="dashui-inspect-css"/></td></tr>
-                        <tr><td>color</td><td ><input size="12" type="text" id="inspect_css_color" class="dashui-inspect-css"/></td>
-                            <td>background-size</td><td><input size="12" type="text" id="inspect_css_background-size" class="dashui-inspect-css"/></td></tr>
-                        <tr><td>font</td><td colspan="3"><input size="48" type="text" id="inspect_css_font" class="dashui-inspect-css"/></td></tr>
-                        <tr><td>background</td><td colspan="3"><input size="48" type="text" id="inspect_css_background" class="dashui-inspect-css"/></td></tr>
-                        <tr><td>border</td><td colspan="3"><input size="48" type="text" id="inspect_css_border" class="dashui-inspect-css"/></td></tr>
-                        <tr><td>box-shadow</td><td colspan="3"><input size="48" type="text" id="inspect_css_box-shadow" class="dashui-inspect-css"/></td></tr>
-                        <tr><td>text-shadow</td><td colspan="3"><input size="48" type="text" id="inspect_css_text-shadow" class="dashui-inspect-css"/></td></tr>
+                        <tr>
+                            <td>left</td>
+                            <td>
+                                <input size="12" type="text" id="inspect_css_left" class="dashui-inspect-css"/>
+                                <input id="steal_left" type="checkbox" data-dashui-steal="left" class="dashui-steal-css"/><label for="steal_left">steal</label>
+                                <a data-dashui-clear="0px" class="dashui-clear-css"></a>
+                            </td>
+
+                            <td>top</td>
+                            <td><input size="12" type="text" id="inspect_css_top" class="dashui-inspect-css"/>
+                                <input id="steal_top" type="checkbox" data-dashui-steal="top" class="dashui-steal-css"/><label for="steal_top">steal</label>
+                                <a data-dashui-clear="0px" class="dashui-clear-css">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>width</td>
+                            <td><input size="12" type="text" id="inspect_css_width" class="dashui-inspect-css"/>
+                                <input id="steal_width" type="checkbox" data-dashui-steal="width" class="dashui-steal-css"/><label for="steal_width">steal</label>
+                                <a data-dashui-clear="60px" class="dashui-clear-css"></a>
+                            </td>
+                            <td>height</td>
+                            <td>
+                                <input  size="12" type="text" id="inspect_css_height" class="dashui-inspect-css"/>
+                                <input id="steal_height" type="checkbox" data-dashui-steal="height" class="dashui-steal-css"/><label for="steal_height">steal</label>
+                                <a data-dashui-clear="32px" class="dashui-clear-css"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>padding</td>
+                            <td>
+                                <input size="12" type="text" id="inspect_css_padding" class="dashui-inspect-css"/>
+                                <input id="steal_padding" type="checkbox" data-dashui-steal="left" class="dashui-steal-css"/><label for="steal_padding">steal</label>
+                                <a data-dashui-clear="0" class="dashui-clear-css"></a>
+                            </td>
+
+                            <td>margin</td>
+                            <td>
+                                <input size="12" type="text" id="inspect_css_margin" class="dashui-inspect-css" disabled="disabled"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>text-align</td>
+                            <td>
+                                <input size="12" type="text" id="inspect_css_text-align" class="dashui-inspect-css"/>
+                                <input id="steal_textAlign" type="checkbox" data-dashui-steal="text-align" class="dashui-steal-css"/><label for="steal_textAlign">steal</label>
+                                <a data-dashui-clear="center" class="dashui-clear-css"></a>
+                            </td>
+
+                            <td>vertical-align</td>
+                            <td>
+                                <input size="12" type="text" id="inspect_css_vertical-align" class="dashui-inspect-css" disabled="disabled"/>
+                                <input id="steal_verticalAlign" type="checkbox" data-dashui-steal="vertical-align" class="dashui-steal-css"/>
+                                <label for="steal_verticalAlign">steal</label>
+                                <a data-dashui-clear="middle" class="dashui-clear-css"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>border-radius</td>
+                            <td>
+                                <input size="12" type="text" id="inspect_css_border-radius" class="dashui-inspect-css"/>
+                                <input id="steal_BorderRadius" type="checkbox" data-dashui-steal="border-radius" class="dashui-steal-css"/>
+                                <label for="steal_BorderRadius">steal</label>
+                                <a data-dashui-clear="" class="dashui-clear-css"></a>
+                            </td>
+                            <td>z-index</td>
+                            <td>
+                                <input size="12" type="text" id="inspect_css_z-index" class="dashui-inspect-css"/>
+                                <input id="steal_zIndex" type="checkbox" data-dashui-steal="z-index" class="dashui-steal-css"/>
+                                <label for="steal_zIndex">steal</label>
+                                <a data-dashui-clear="" class="dashui-clear-css"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>color</td>
+                            <td>
+                                <input size="12" type="text" id="inspect_css_color" class="dashui-inspect-css"/>
+                                <input id="steal_color" type="checkbox" data-dashui-steal="vertical-color" class="dashui-steal-css"/>
+                                <label for="steal_color">steal</label>
+                                <a data-dashui-clear="" class="dashui-clear-css"></a>
+                            </td>
+                            <td>background-size</td>
+                            <td>
+                                <input size="12" type="text" id="inspect_css_background-size" class="dashui-inspect-css"/>
+                                <input id="steal_backgroundSize" type="checkbox" data-dashui-steal="background-size" class="dashui-steal-css"/>
+                                <label for="steal_backgroundSize">steal</label>
+                                <a data-dashui-clear="" class="dashui-clear-css"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>font</td>
+                            <td colspan="3">
+                                <input size="48" type="text" id="inspect_css_font" class="dashui-inspect-css"/>
+                                <input id="steal_font" type="checkbox" data-dashui-steal="font" class="dashui-steal-css"/>
+                                <label for="steal_font">steal</label>
+                                <a data-dashui-clear="" class="dashui-clear-css"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>background</td>
+                            <td colspan="3">
+                                <input size="48" type="text" id="inspect_css_background" class="dashui-inspect-css"/>
+                                <input id="steal_background" type="checkbox" data-dashui-steal="background" class="dashui-steal-css"/>
+                                <label for="steal_background">steal</label>
+                                <a data-dashui-clear="" class="dashui-clear-css"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>border</td>
+                            <td colspan="3">
+                                <input size="48" type="text" id="inspect_css_border" class="dashui-inspect-css"/>
+                                <input id="steal_border" type="checkbox" data-dashui-steal="border" class="dashui-steal-css"/>
+                                <label for="steal_border">steal</label>
+                                <a data-dashui-clear="" class="dashui-clear-css"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>box-shadow</td>
+                            <td colspan="3">
+                                <input size="48" type="text" id="inspect_css_box-shadow" class="dashui-inspect-css"/>
+                                <input id="steal_boxShadow" type="checkbox" data-dashui-steal="box-shadow" class="dashui-steal-css"/>
+                                <label for="steal_boxShadow">steal</label>
+                                <a data-dashui-clear="" class="dashui-clear-css"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>text-shadow</td>
+                            <td colspan="3">
+                                <input size="48" type="text" id="inspect_css_text-shadow" class="dashui-inspect-css"/>
+                                <input id="steal_textShadow" type="checkbox" data-dashui-steal="text-shadow" class="dashui-steal-css"/>
+                                <label for="steal_textShadow">steal</label>
+                                <a data-dashui-clear="" class="dashui-clear-css"></a>
+                            </td>
+                        </tr>
                     </table>
                 </div>
             </div>

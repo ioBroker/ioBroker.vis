@@ -27,6 +27,7 @@ dui = $.extend(true, dui, {
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
+    isStealCss:         false,
 
 
     startInstance: function () {
@@ -285,10 +286,14 @@ dui = $.extend(true, dui, {
 		}
 		
         $("#"+widgetId).click(function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            dui.inspectWidget(widgetId);
-            return false;
+            console.log("click "+widgetId+" isStealCss="+dui.isStealCss);
+            if (!dui.isStealCss) {
+
+                e.preventDefault();
+                e.stopPropagation();
+                dui.inspectWidget(widgetId);
+                return false;
+            }
         });
 		
 		if (isSelectWidget) {
@@ -408,8 +413,8 @@ dui = $.extend(true, dui, {
 		}
 	},
 	inspectWidget: function (id) {
-	
-        //console.log("inspectWidget("+id+")");
+
+        if (dui.isStealCss) { return false; }
         if (dui.widgets[id]) {
             //console.log(dui.widgets[id].data);
         }
@@ -1055,6 +1060,9 @@ dui = $.extend(true, dui, {
         }).keyup (function () {
             $(this).trigger("change");
         });
+
+        dui.initStealHandlers();
+
         $(".dashui-inspect-view-css").change(function () {
             var $this = $(this);
             var attr = $this.attr("id").slice(17);
@@ -1093,6 +1101,7 @@ dui = $.extend(true, dui, {
         });
         $("#select_active_widget").change(function () {
             var widgetId = $(this).val();
+            console.log("select_active_widget change "+widgetId);
             dui.inspectWidget(widgetId);
             dui.actionNewWidget(widgetId);
         });
@@ -1346,6 +1355,72 @@ dui = $.extend(true, dui, {
             return dui.views[dui.activeView].filterList;
         } else {
             return [];
+        }
+    },
+    initStealHandlers: function () {
+        $(".dashui-steal-css").each(function () {
+            $(this).button({
+                icons: {
+                    primary: "ui-icon-star"
+                },
+                text: false
+            }).click(function (e) {
+                if (!$(this).attr("checked")) {
+                    $(this).attr("checked", true);
+                }
+                var isSelected = false;
+                $(".dashui-steal-css").each(function () {
+                    if ($(this).attr("checked")) {
+                        isSelected = true;
+                    }
+                });
+
+                if (isSelected && !dui.isStealCss) {
+                    dui.stealCssMode();
+                } else {
+
+                }
+                e.stopPropagation();
+
+            });
+        })
+    },
+    stealCssMode: function () {
+        dui.isStealCss = true;
+        $(".dashui-widget").one("click", function (e) {
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+            e.preventDefault();
+
+            dui.stealCss(e);
+        });
+        $("#dui_container").addClass("dashui-steal-cursor");
+    },
+    stealCss: function (e) {
+        if (dui.isStealCss) {
+            var target= "#"+dui.activeWidget;
+            var src= "#"+e.currentTarget.id;
+
+            $(".dashui-steal-css").each(function () {
+                if ($(this).attr("checked")) {
+                    var cssAttribute = $(this).attr("data-dashui-steal");
+                    var val = $(src).css(cssAttribute)
+                    $(target).css(cssAttribute, val);
+                    dui.views[dui.activeView].widgets[dui.activeWidget].style[cssAttribute] = val;
+
+                }
+            });
+
+            dui.saveRemote();
+
+            setTimeout(function () {
+                dui.isStealCss = false;
+                dui.inspectWidget(target.slice(1));
+                $(".dashui-steal-css").removeAttr("checked").button("refresh");
+                $("#dui_container").removeClass("dashui-steal-cursor");
+            }, 200);
+
+
         }
     }
 });
