@@ -23,8 +23,28 @@
 
 dui = $.extend(true, dui, {
 	hm2Widget: {
-		'tplHqButton' : {findImage: false, hssType: ['HM-LC-Sw1-Pl', 'HM-LC-Sw1-FM']},
-		'tplHqLowbat' : {findImage: true,  hssType: ['HM-PB-4-WM', 'HM-PB-2-WM', 'HM-PB-4Dis-WM', 'HM-SCI-3-FM'], point: "LOWBAT"}
+		'tplHqButton' : {findImage: false, hssType: ['HM-LC-Sw1-Pl', 'HM-LC-Sw1-FM', 'HM-LC-Sw1-PB-FM', 'HM-LC-Sw2-PB-FM', 'HM-LC-Sw2-FM','HM-ES-PMSw1-Pl','HM-LC-Sw1PBU-FM','HM-LC-Sw1-SM','HM-LC-Sw4-SM']},
+		'tplHqLowbat' : {findImage: true,  hssType: ['HM-PB-4-WM', 'HM-PB-2-WM', 'HM-PB-4Dis-WM', 
+		                                             'HM-PB-2-WM55','HM-CC-VD',//'HM-SCI-3-FM',
+													 'HM-Sec-WDS','HM-Sec-SD','HM-Sec-TiS',
+													 'HM-RC-4-2', 'HM-RC-Key4-2', 'HM-RC-Sec4-2',
+													 'HM-RC-4', 'HM-RC-4-B', 'HM-RC-Sec3', 
+													 'HM-RC-Key3', 'HM-RC-Key3-B', 'HM-RC-12', 
+													 'HM-RC-12-B', 'HM-RC-19', 'HM-RC-19-B',
+													 'HM-RC-P1', 'HM-PB-6-WM55', 'HM-Sen-EP', 
+													 'HM-SCI-3-FM', 'HM-SwI-3-FM', 'HM-PBI-4-FM',
+													 'HM-LC-Sw4-Ba-PCB', 'HM-WDS30-OT2-SM','HM-Sen-Wa-Od',
+													 'HM-Dis-TD-T'], point: "LOWBAT"},
+		'tplHqMotion' : {findImage: false, hssType: ['HM-Sen-MDIR-O', 'HM-Sec-MDIR'], point: 'MOTION'},
+		'tplHqIp'     : {findImage: false, hssType: ['PING']},
+		'tplHqGong'   : {findImage: false, hssType: ['HM-OU-CF-PL', 'HM-OU-CFM-Pl']},
+		'tplHqOutTemp': {findImage: false, hssType: ['HM-WDC7000','HM-WDS10-TH-O','HM-WDS40-TH-I','HM-WDS100-C6-O','HM-WDS30-T-O']},
+		'tplHqInTemp' : {findImage: false, hssType: ['HM-CC-TC','HM-CC-RT-DN'], aux: [{hssType: ['HM-CC-VD'], attr:'hm_idV'}], useDevice: true},
+		'tplHqShutter': {findImage: false, hssType: ['HM-LC-Bl1-SM','HMW-LC-Bl1-DR','HM-LC-Bl1-FM','HM-LC-Bl1-PB-FM','HM-LC-Bl1PBU-FM'], 
+		                 aux : [{hssType: ['HM-Sec-RHS'], attr:'hm_id_hnd0'}, 
+						        {hssType: ['HM-Sec-SC','CC-SC-Rd-WM-W-R5','FHT80TF-2'],  attr:'hm_id0'}]},
+		'tplHqDimmer' : {findImage: false, hssType: ['HM-LC-Dim1TPBU-FM','HM-LC-Dim1PWM-CV','HM-LC-Dim1T-FM','HM-LC-Dim1T-CV','HM-LC-Dim1T-PI','HM-LC-Dim1L-CV','HM-LC-Dim1L-Pl','HM-LC-Dim2L-SM','HMW-LC-Dim1L-DR']},
+		'tplHqLock'   : {findImage: false, hssType: ['HM-Sec-Key-S']}
 	},
 	hmDeviceToWidget: function (device) {
 		for (var w in dui.hm2Widget) {
@@ -80,8 +100,31 @@ dui = $.extend(true, dui, {
 					}
 				}
 			}
-		}
+		} else
+		if (dui.hm2Widget[widgetName].useDevice) {
+			while (homematic.regaObjects[channel]["Parent"]) {
+				channel = homematic.regaObjects[channel]["Parent"];
+			}
+		}	
 		return channel;
+	},
+	findUniqueDeviceInRoom: function (devNames, roomID) {
+		var idFound = null;
+		// Find all HM Devices belongs to this room
+		var elems = homematic.regaObjects[roomID]["Channels"];
+		for (var i = 0; i < elems.length; i++) {
+			var devID = homematic.regaObjects[elems[i]]["Parent"];
+			for(var j = 0;j < devNames.length; j++) {
+				if (homematic.regaObjects[devID]["HssType"] == devNames[j]) {
+					if (idFound) {
+						return null;
+					}
+					idFound = elems[i];
+					break;
+				}
+			}
+		}
+		return idFound;
 	},
 	wizardCreateWidget: function (view, roomID, func, widgetName, devID, channel, point, pos) {
 		var field = null;
@@ -112,14 +155,25 @@ dui = $.extend(true, dui, {
 		if (dui.hm2Widget[widgetName].findImage) {
 			hqoptions['iconName'] = hmSelect._getImage(homematic.regaObjects[devID].HssType);
 		}
+		if (dui.hm2Widget[widgetName].aux) {
+			for (var t = 0; t < dui.hm2Widget[widgetName].aux.length; t++) {
+				// Try to find if only one device are in the room
+				var hmId = dui.findUniqueDeviceInRoom (dui.hm2Widget[widgetName].aux[t].hssType, roomID);
+				if (hmId) {
+					hqoptions[dui.hm2Widget[widgetName].aux[t].attr] = hmId;
+				}
+			}
+		}
 		
 		var data = {"filterkey":func, "hqoptions": JSON.stringify (hqoptions)};
-		return dui.addWidget (widgetName, data, style, null, view);
+		var wid = dui.addWidget (widgetName, data, style, null, view);
+        $("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
+		return wid;
 	},
 	wizardRunOneRoom: function (view, roomID, funcs, widgets) {
 		// Find first created element belongs to this room
 		var pos = null;
-		
+		var idCreated = null;
 		for (var w in dui.views[view].widgets) {
 			var wObj = dui.views[view].widgets[w];
 			if (wObj.data.hqoptions && 
@@ -175,10 +229,14 @@ dui = $.extend(true, dui, {
 				}
 								
 				if (!isFound) {
+					if (pos == null && idCreated) {
+						return idCreated;
+					}
 					// Create this widget
 					var widgetId = dui.wizardCreateWidget (view, roomID, func, widgetName, devID, elems[i], hm_id, pos);
+
 					if (pos == null) {
-						return widgetId;
+						idCreated = widgetId;
 					}
 				}
 			}
