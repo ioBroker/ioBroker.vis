@@ -9,6 +9,14 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta40
+* (Bluefox) Change default time format for german to TT.MM.JJJJ hh:mm:ss
+* (Bluefox)	Update hqWidgetsDashUI.js
+* (Bluefox) Wizard should be ready now
+* (Bluefox) Fix hmSelect Dialog to find images for some new types
+* (Bluefox) Small bug fixes in bars
+* (Bluefox) Add HM-ES-PMSw1-Pl to hqWidgets/On-Off
+
 ### 0.9beta39
 * (Hobbyquaker) Bugfix: Edit-Mode: Widget resize funktionierte nicht nach Änderung von Attributen im Reiter Widget
 * (Hobbyquaker) Editor: Tab Scrolling
