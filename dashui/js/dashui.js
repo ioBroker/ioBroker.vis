@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta40',
+    version:                '0.9beta41',
     requiredCcuIoVersion:   '0.9.78',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -56,12 +56,11 @@ var dui = {
         }
         //console.log("bind instance id="+dui.instanceCmd);
 
-        // Todo Instanzen umbauen DashUI
+        // Todo Instanzen umbauen DashUI (kommt wenn CCU.IO 1.0 released ist)
         // socket.on("dashuiCmd") statt bind auf Variable (auf Varible kann verzichtet werden, instanceData als Param übergeben)
         // Todo Instanzen umbauen CCU.IO
         // CCU.IO Script-Engine Addin mit Methode dashui.cmd()
-        // CCU.IO erweitern: Objekt-Paramter "_persistent" - setObject fügt Objekt dann einer regaObjectsCache.json und regaIndexCache.json (ccu.io/datastore) hinzu die von CCU.IO beim Neustart wieder eingelesen wird.
-        // CCU.IO neue Methode um freie ID in gegebenem ID-Bereich zu erhalten
+
 
         homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
             var cmd = newVal;

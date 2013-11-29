@@ -9,6 +9,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta41
+* (Hobbyquaker) Bugfix jqui Icon ProgramExecute (dui.binds.basic.program)
+* (Hobbyquaker) Style-Korrekturen Editor-Dialog
+
 ### 0.9beta40
 * (Bluefox) Change default time format for german to TT.MM.JJJJ hh:mm:ss
 * (Bluefox)	Update hqWidgetsDashUI.js
