@@ -186,9 +186,9 @@ h4 {
 }
 
 .dashui-edit-tab {
-    width: 100%;
-    min-width: 555px;
-    height: 100%;
+
+    height: 90%;
+    height: calc(100% - 60px);
     overflow-y: scroll;
 
 }
@@ -205,10 +205,6 @@ div#dui_editor {
     oberflow-x:scroll;
 }
 
-div.dashui-widget-tools {
-    height: 100%;
-    margin-bottom: 70px;
-}
 
 .dashui-steal-css, .dashui-clear-css {
     display: inline-block;

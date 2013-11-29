@@ -904,7 +904,8 @@ dui = $.extend(true, dui, {
            .dialog({
             modal: false,
             autoOpen: false,
-            width:  555,
+            width:  562,
+            minWidth: 562,
             height: 610,
             position: { my: "right top", at: "right top", of: window },
             dialogClass: "dui-editor-dialog",
