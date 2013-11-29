@@ -9,6 +9,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta42
+* (Bluefox) Add invert state to hqButton and hqDoor
+* (Bluefox) Small changes in Wizard (All except "Low battery")
+
 ### 0.9beta41
 * (Hobbyquaker) Bugfix jqui Icon ProgramExecute (dui.binds.basic.program)
 * (Hobbyquaker) Style-Korrekturen Editor-Dialog
