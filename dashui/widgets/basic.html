@@ -44,7 +44,7 @@
             },
             program: function (el) {
                 var $this = jQuery(el);
-                var hm_id = "_" + $this.attr("data-hm-id");
+                var hm_id = $this.attr("data-hm-id");
                 $this.click(function (e) {
                     if (dui.urlParams["edit"] !== "") {
                         dui.socket.emit("programExecute", [hm_id]);
