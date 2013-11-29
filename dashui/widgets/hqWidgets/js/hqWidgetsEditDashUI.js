@@ -59,7 +59,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeButton, 
                                           iconName: 'Lamp.png', 
                                           zindex: 2, 
-                                          hm_id: ''
+                                          hm_id: '',
+										  invertState: false
                                           });
                 }
                 else
@@ -134,7 +135,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeDoor, 
                                           zindex: 3,
                                           hm_id: '',
-										  exShowGrafik: 'no'
+										  exShowGrafik: 'no',
+										  invertState: false
                                           });
                 }
                 else
@@ -382,6 +384,20 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             var opt = obj.GetSettings (false, false);
             var devFilters = (devFilter) ? devFilter.split (';') : [null, null];
             var devFiltersNum = 0;
+					
+			// Invert state
+			if (opt.buttonType == hqWidgets.gButtonType.gTypeButton ||
+				opt.buttonType == hqWidgets.gButtonType.gTypeDoor) {
+                var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"'>\n";
+                    sTextAdv += "<td>"+ dui.translate("Invert state:") +"</td>\n";
+                    sTextAdv += "<td><input id='"+hqEditElem.e_settings.elemName+"_invertState' type='checkbox' "+(hqEditElem.e_internal.attr.invertState ? "checked": "")+"></td></tr>";
+                parent.append (sTextAdv);
+                hqEditElem._EditCheckboxHandler ('invertState', false, false, true, null);
+				if (!hqWidgets.visibility || !hqWidgets.visibility["Advanced"]) {
+					$('#idAdv'+(hqEditElem.e_internal.iAdvCount -1)).hide();
+				}
+			}
+			
             if (opt.buttonType == hqWidgets.gButtonType.gTypeDimmer) {
                 // Add ramp_time and on_time
                 var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"'>\n";
@@ -389,7 +405,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     sTextAdv += "<td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_dimmerRampTime' type='text' value='"+hqEditElem.e_internal.attr.dimmerRampTime+"'></td></tr>";
                 parent.append (sTextAdv);
                 hqEditElem._EditTextHandler ('dimmerRampTime');
-				if (!hqEditElem.e_internal.obj.advancedVisible) {
+				if (!hqWidgets.visibility || !hqWidgets.visibility["Advanced"]) {
 					$('#idAdv'+(hqEditElem.e_internal.iAdvCount -1)).hide();
 				}
             }
@@ -405,7 +421,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 					sTextAdv += "</select>";
                 parent.append (sTextAdv);
                 hqEditElem._EditSelectHandler('exShowGrafik');   
-				if (!hqEditElem.e_internal.obj.advancedVisible) {
+				if (!hqWidgets.visibility || !hqWidgets.visibility["Advanced"]) {
 					$('#idAdv'+(hqEditElem.e_internal.iAdvCount -1)).hide();
 				}            
 			}
@@ -421,7 +437,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 					sTextAdv += "</select>";
                 parent.append (sTextAdv);
                 hqEditElem._EditSelectHandler('exShowGrafik');   
-				if (!hqEditElem.e_internal.obj.advancedVisible) {
+				if (!hqWidgets.visibility || !hqWidgets.visibility["Advanced"]) {
 					$('#idAdv'+(hqEditElem.e_internal.iAdvCount -1)).hide();
 				}            
 			}
@@ -501,7 +517,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             }
             
             // Edit hm_id with help of dialog
-            if (opt["hm_id"] != undefined && 
+            if (opt["hm_id"] !== undefined && 
                 opt.buttonTypeEx != hqWidgets.gButtonType.gTypeCharts &&
                 opt.buttonTypeEx != hqWidgets.gButtonType.gTypeEventlist) {              
                 if (opt.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
@@ -752,14 +768,13 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
             }
             
+			
             // Hichcharts settings
             if (opt.buttonType  == hqWidgets.gButtonType.gTypeInTemp  || 
                 opt.buttonType  == hqWidgets.gButtonType.gTypeOutTemp ||
                 (opt.buttonTypeEx !== undefined &&
                  opt.buttonTypeEx == hqWidgets.gButtonType.gTypeCharts)){
-                if (hqEditElem.e_internal.obj.advancedVisible === undefined)
-                    hqEditElem.e_internal.obj.advancedVisible = false;
-                    
+				                   
                 var sTextChart    = "";
                 var iChartCount   = 0;
                 

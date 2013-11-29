@@ -170,6 +170,10 @@ dui = $.extend(true, dui, {
         $("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
 		return wid;
 	},
+	// Create Date, time, history and may be weather
+	wizardRunGeneral: function (view) {
+	
+	},
 	wizardRunOneRoom: function (view, roomID, funcs, widgets) {
 		// Find first created element belongs to this room
 		var pos = null;
@@ -199,8 +203,15 @@ dui = $.extend(true, dui, {
 			var widgetName = dui.hmDeviceToWidget (homematic.regaObjects[devID]["HssType"]);
 			if (widgetName) {
 				// filter out not selected widgets
-				if (widgets && widgetName != widgets) {
-					continue;
+				if (widgets) {
+					if (widgets == "_nobat") {
+						if (widgetName == "tplHqLowbat") {
+							continue;
+						}
+					} else 
+					if (widgetName != widgets) {
+						continue;				
+					}
 				}
 			
 				var isFound = false;
@@ -249,15 +260,23 @@ dui = $.extend(true, dui, {
 		if (!room) {
 			var elems = homematic.regaIndex['ENUM_ROOMS'];// IDs of all ROOMS
 			for (var r in elems) {
-				var wid = dui.wizardRunOneRoom (view, elems[r], $('#wizard_funcs').val(), $('#wizard_widgets').val());
-				if (wid) {
-					widgetIds[widgetIds.length] = wid;
+				if (room != '_general') {
+					var wid = dui.wizardRunOneRoom (view, elems[r], $('#wizard_funcs').val(), $('#wizard_widgets').val());
+					if (wid) {
+						widgetIds[widgetIds.length] = wid;
+					}
+				} else {
+					dui.wizardRunGeneral (view);
 				}
 			}		
 		} else {
-			var wid = dui.wizardRunOneRoom (view, room, $('#wizard_funcs').val(), $('#wizard_widgets').val());
-			if (wid) {
-				widgetIds[widgetIds.length] = wid;
+			if (room != '_general') {
+				var wid = dui.wizardRunOneRoom (view, room, $('#wizard_funcs').val(), $('#wizard_widgets').val());
+				if (wid) {
+					widgetIds[widgetIds.length] = wid;
+				}
+			} else {
+				dui.wizardRunGeneral (view);
 			}
 		}
 		if (widgetIds.length) {
@@ -270,18 +289,21 @@ dui = $.extend(true, dui, {
 	},
 	fillWizard: function () {
 		var elems = homematic.regaIndex['ENUM_ROOMS'];// IDs of all ROOMS
-		var jSelect = $('#wizard_rooms').html("").addClass('dashui-edit-select');
-		jSelect.append('<option value="">'+dui.translate("All")+'</option>');
+		var jSelect = $('#wizard_rooms').html("").addClass('dashui-wizard-select');
 		for (var r in elems) {
 			jSelect.append("<option value='"+elems[r]+"'>"+homematic.regaObjects[elems[r]]["Name"]+"</option>\n");
 		}
+		jSelect.append('<option value="_general">'+dui.translate("General")+'</option>');
+		jSelect.append('<option value="">'+dui.translate("All")+'</option>');
+		
 		elems = homematic.regaIndex['ENUM_FUNCTIONS'];// IDs of all ROOMS
-		jSelect = $('#wizard_funcs').html("").addClass('dashui-edit-select');
+		jSelect = $('#wizard_funcs').html("").addClass('dashui-wizard-select');
 		jSelect.append('<option value="">'+dui.translate("All")+'</option>');
 		for (var r in elems) {
 			jSelect.append("<option value='"+elems[r]+"'>"+homematic.regaObjects[elems[r]]["Name"]+"</option>\n");
 		}
-		jSelect = $('#wizard_widgets').html("").addClass('dashui-edit-select');
+		jSelect = $('#wizard_widgets').html("").addClass('dashui-wizard-select');
+		jSelect.append('<option value="_nobat">'+dui.translate("All except Low battery")+'</option>');
 		jSelect.append('<option value="">'+dui.translate("All")+'</option>');
 		for (var r in dui.hm2Widget) {
 			for (var i = 0; i < dui.widgetSets.length; i++) {

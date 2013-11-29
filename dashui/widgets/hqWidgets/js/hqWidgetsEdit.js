@@ -635,10 +635,6 @@ hqWidgets = $.extend (true, hqWidgets, {
             }
         }
         
-        // Show all advanced settigs
-        if (this.e_internal.obj.advancedVisible === undefined)
-            this.e_internal.obj.advancedVisible = false;
-        
         if (iAdvCount == 1) {
             this.e_settings.parent.append (sTextAdv);
         }

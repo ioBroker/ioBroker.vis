@@ -122,6 +122,9 @@ dui = $.extend(true, dui, {
                 "filter_key"       : {"en" : "Filter key:",  "de": "Filterwort:"},
                 "Show in views:"   : {"en" : "Show in views:","de": "Zeige in Views:"},
                 "Single mode"      : {"en" : "Only in actual view",  "de": "Nur in aktueller View"},
+                "Invert state:"    : {"en" : "Invert state:", "de": "Invertiere Zustand:"},
+                "All except Low battery": {"en" : "All except 'Battery Indicator'", "de": "Alle außer 'Battery Indicator'"},
+                "General"          : {"en" : "General",       "de": "Allgemein"},
 				// Bars
                 "One at time:"     : {"en" : "One at time:",  "de": "Nur eine auswahlbar:"},
                 "Geometry..."      : {"en" : "Geometry...",   "de": "Geometrie..."},

@@ -266,7 +266,12 @@ if ((typeof hqWidgets !== 'undefined')) {
 										
 										obj.SetStates ({state: state, isRefresh: true});
 										// Send command to HM
-										homematic.setValue(hm_id, (state == hqWidgets.gState.gStateOn)); 
+										var invertState = obj.GetSettings("invertState");
+										if (invertState) {
+											homematic.setValue(hm_id, (state != hqWidgets.gState.gStateOn)); 
+										} else {
+											homematic.setValue(hm_id, (state == hqWidgets.gState.gStateOn)); 
+										}
 									}
 								}                                
 							}});
@@ -852,8 +857,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                             if (option == 'lowBattery' || option == 'isWorking') {
                                 return (value === true || value === "true") ? true : false;
                             }
-                            else
-                                return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
+                            else {
+								var invertState = btn.GetSettings("invertState");
+                                if (invertState) {
+									return (value === true || value === "true") ? hqWidgets.gState.gStateOff : hqWidgets.gState.gStateOn;
+								} else {
+									return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
+								}
+							}
                         }});
                     }
                     else
@@ -1029,6 +1040,22 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 return value;
                         }});
                     }
+                    else
+                    if (opt.buttonType == hqWidgets.gButtonType.gTypeDoor) {
+                        btn = $.extend (btn, {translateSignal: function (option, value) {
+                            if (option == 'lowBattery' || option == 'isWorking') {
+                                return (value === true || value === "true") ? true : false;
+                            }
+                            else {
+								var invertState = btn.GetSettings("invertState");
+                                if (invertState) {
+									return (value === true || value === "true") ? hqWidgets.gState.gStateOff : hqWidgets.gState.gStateOn;
+								} else {
+									return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
+								}
+							}                        
+						}});					
+					}
                     else {
                         btn = $.extend (btn, {translateSignal: function (option, value) {
                             if (option == 'lowBattery' || option == 'isWorking') {
