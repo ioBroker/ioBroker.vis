@@ -180,6 +180,9 @@ h4 {
 .dashui-edit-select {
 	width: auto;
 }
+.dashui-wizard-select {
+	width: 200px;
+}
 .dashui-group-button-width {
     width:100%;
     font-weight: bold;

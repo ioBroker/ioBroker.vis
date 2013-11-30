@@ -219,6 +219,13 @@ var dui = {
                 dui.activeView = view;
                 break;
             }
+            if (typeof io == "undefined") {
+                if (dui.activeView == "") {
+                    dui.views["DemoView"] = {};
+                    dui.activeView = "DemoView";
+                }
+                dui.showWaitScreen (false);
+            }
 
             if (dui.activeView == "") {
                 alert("unexpected error - this should not happen :(")
@@ -638,8 +645,6 @@ var dui = {
 
         }
 
-
-        //console.log("activeView="+dui.activeView);
         return;
     },
     addView: function (view) {
@@ -653,24 +658,41 @@ var dui = {
     },
     loadRemote: function (callback) {
 		dui.showWaitScreen(true, "Please wait! Trying to load views from CCU.IO", null, "+1");
-        dui.socket.emit("readFile", "dashui-views.json", function (data) {
-            dui.views = data;
-            if (!dui.views) {
-                alert("No Views found on CCU.IO");
-            }
-            callback();
-        });
-
+        if (typeof io != "undefined") {
+            dui.socket.emit("readFile", "dashui-views.json", function (data) {
+                dui.views = data;
+                if (!dui.views) {
+                    alert("No Views found on CCU.IO");
+                }
+                callback();
+            });
+        } else {
+            $.ajax({
+                url: "../datastore/dashui-views.json",
+                type: "get",
+                async: false,
+                dataType: "text",
+                cache: dui.useCache,
+                success: function (data) {
+                    dui.views = $.parseJSON(data);
+                    if (!dui.views) {
+                        alert("No Views found on CCU.IO");
+                    }
+                    callback ();
+                }
+            });
+       }
     },
     saveRemote: function () {
 		// Sync widget before it will be saved
 		if (dui.activeWidget && dui.activeWidget.indexOf('_') != -1 && dui.syncWidget) {
 			dui.syncWidget(dui.activeWidget);
 		}
-	
-        dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
-            //console.log("Saved views on CCU.IO");
-        });
+	    if (typeof io == "undefined") {
+            dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
+                //console.log("Saved views on CCU.IO");
+            });
+        }
     },
     getObjDesc: function (id) {
         if (homematic.regaObjects[id] !== undefined) {
@@ -765,7 +787,9 @@ var homematic = {
         var attr = "_" + id;
         if (!this.setStateTimers[id]) {
             //console.log("setState id="+id+" val="+val);
-            dui.socket.emit("setState", [id, val]);
+            if (typeof io != "undefined") {
+                dui.socket.emit("setState", [id, val]);
+            }
 
             this.setState.removeAttr(attr);
             this.setStateTimers[id] = setTimeout(function () {
@@ -838,121 +862,131 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             dui.editInit();
         }
         
-		dui.showWaitScreen(true, null, "Connecting to CCU.IO ...<br/>", 0);
+		if (typeof io !== "undefined") {
+			dui.showWaitScreen(true, null, "Connecting to CCU.IO ...<br/>", 0);
 
-        dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host')+"?key="+socketSession);
-
-
-        dui.socket.emit('getVersion', function(version) {
-            if (version < dui.requiredCcuIoVersion) {
-                alert("Warning: requires CCU.IO version "+dui.requiredCcuIoVersion+" - found CCU.IO version "+version+" - please update CCU.IO.");
-            }
-        });
-
-        dui.socket.on('event', function (obj) {
-            if (obj != null && homematic.uiState["_" + obj[0]] !== undefined) {
-                var o = {};
-                o["_" + obj[0] + ".Value"] = obj[1];
-                o["_" + obj[0] + ".Timestamp"] = obj[2];
-                o["_" + obj[0] + ".Certain"] = obj[3];
-                homematic.uiState.attr(o);
-                
-                // Ich habe keine Ahnung, aber bind("change") funktioniert einfach nicht 
-                if (dui.binds.hqWidgetsExt && dui.binds.hqWidgetsExt.hqMonitor && obj[3])
-                    dui.binds.hqWidgetsExt.hqMonitor(obj[0], obj[1]);
-            }
-            else {
-                //console.log("Datenpunkte sind noch nicht geladen!");
-            }
-        });
-
-        dui.socket.on('connect', function () {
-            $("#ccu-io-disconnect").dialog("close");
-            //console.log((new Date()) + " socket.io connect");
-        });
-
-        dui.socket.on('connecting', function () {
-            //console.log((new Date()) + " socket.io connecting");
-        });
-
-        dui.socket.on('disconnect', function () {
-            //console.log((new Date()) + " socket.io disconnect");
-            $("#ccu-io-disconnect").dialog("open");
-            dui.ccuIoDisconnected = true;
-        });
-
-        dui.socket.on('disconnecting', function () {
-            //console.log((new Date()) + " socket.io disconnecting");
-        });
-
-        dui.socket.on('reconnect', function () {
-            $("#ccu-io-disconnect").dialog("close");
-            // Reload uiState
-            dui.socket.emit("getDatapoints", function (data) {
-                //console.log("datapoints loaded");
-                for (var dp in data) {
-                    homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
-                }
-            });
+			dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host')+"?key="+socketSession);
 
 
-            dui.ccuIoDisconnected = false;
-            //console.log((new Date()) + " socket.io reconnect");
-        });
+			dui.socket.emit('getVersion', function(version) {
+				if (version < dui.requiredCcuIoVersion) {
+					alert("Warning: requires CCU.IO version "+dui.requiredCcuIoVersion+" - found CCU.IO version "+version+" - please update CCU.IO.");
+				}
+			});
 
-        dui.socket.on('reconnecting', function () {
-            //console.log((new Date()) + " socket.io reconnecting");
-        });
+			dui.socket.on('event', function (obj) {
+				if (obj != null && homematic.uiState["_" + obj[0]] !== undefined) {
+					var o = {};
+					o["_" + obj[0] + ".Value"] = obj[1];
+					o["_" + obj[0] + ".Timestamp"] = obj[2];
+					o["_" + obj[0] + ".Certain"] = obj[3];
+					homematic.uiState.attr(o);
+					
+					// Ich habe keine Ahnung, aber bind("change") funktioniert einfach nicht 
+					if (dui.binds.hqWidgetsExt && dui.binds.hqWidgetsExt.hqMonitor && obj[3])
+						dui.binds.hqWidgetsExt.hqMonitor(obj[0], obj[1]);
+				}
+				else {
+					//console.log("Datenpunkte sind noch nicht geladen!");
+				}
+			});
 
-        dui.socket.on('reconnect_failed', function () {
-            //console.log((new Date()) + " socket.io reconnect failed");
-        });
+			dui.socket.on('connect', function () {
+				$("#ccu-io-disconnect").dialog("close");
+				//console.log((new Date()) + " socket.io connect");
+			});
 
-        dui.socket.on('error', function () {
-            //console.log((new Date()) + " socket.io error");
-        });
+			dui.socket.on('connecting', function () {
+				//console.log((new Date()) + " socket.io connecting");
+			});
+
+			dui.socket.on('disconnect', function () {
+				//console.log((new Date()) + " socket.io disconnect");
+				$("#ccu-io-disconnect").dialog("open");
+				dui.ccuIoDisconnected = true;
+			});
+
+			dui.socket.on('disconnecting', function () {
+				//console.log((new Date()) + " socket.io disconnecting");
+			});
+
+			dui.socket.on('reconnect', function () {
+				$("#ccu-io-disconnect").dialog("close");
+				// Reload uiState
+				dui.socket.emit("getDatapoints", function (data) {
+					//console.log("datapoints loaded");
+					for (var dp in data) {
+						homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
+					}
+				});
+
+
+				dui.ccuIoDisconnected = false;
+				//console.log((new Date()) + " socket.io reconnect");
+			});
+
+			dui.socket.on('reconnecting', function () {
+				//console.log((new Date()) + " socket.io reconnecting");
+			});
+
+			dui.socket.on('reconnect_failed', function () {
+				//console.log((new Date()) + " socket.io reconnect failed");
+			});
+
+			dui.socket.on('error', function () {
+				//console.log((new Date()) + " socket.io error");
+			});
+		} else {
+            dui.showWaitScreen(true, null, "Local demo mode ...<br/>", 0);
+        }
 
 		dui.showWaitScreen(true, "Loading ReGa Data", null, "+1");
 
-        dui.socket.emit("getIndex", function (index) {
-			dui.showWaitScreen(true, ".", null, "+1");
-            //console.log("index loaded");
-            homematic.regaIndex = index;
-            dui.socket.emit("getObjects", function (obj) {
+		if (typeof io != "undefined") {
+			dui.socket.emit("getIndex", function (index) {
 				dui.showWaitScreen(true, ".", null, "+1");
-                //console.log("objects loaded")
-                homematic.regaObjects = obj;
-                dui.socket.emit("getDatapoints", function (data) {
-					dui.showWaitScreen(true, ".<br>", null, "+1");
-                    for (var dp in data) {
-                        try {
-                            homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
-                        } catch (e) {
-                            console.log(e);
-                            console.log(dp);
-                        }
-                    }
-					dui.showWaitScreen(true, "Loading Widget-Sets...", null, "+1");
-                    setTimeout(dui.init, 10);
+				//console.log("index loaded");
+				homematic.regaIndex = index;
+				dui.socket.emit("getObjects", function (obj) {
+					dui.showWaitScreen(true, ".", null, "+1");
+					//console.log("objects loaded")
+					homematic.regaObjects = obj;
+					dui.socket.emit("getDatapoints", function (data) {
+						dui.showWaitScreen(true, ".<br>", null, "+1");
+						for (var dp in data) {
+							try {
+								homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
+							} catch (e) {
+								console.log(e);
+								console.log(dp);
+							}
+						}
+						dui.showWaitScreen(true, "Loading Widget-Sets...", null, "+1");
+						setTimeout(dui.init, 10);
 
-                });
-            });
-        });
-
+					});
+				});
+			});
+		} else {
+            dui.showWaitScreen(true, "Loading Widget-Sets...", null, "+1");
+            setTimeout(dui.init, 10);
+        }
     });
 
-    // Auto-Reconnect
-    setInterval(function () {
-        if (dui.ccuIoDisconnected) {
-            //console.log("trying to force reconnect...");
-            $.ajax({
-                url: "/dashui/index.html",
-                success: function () {
-                    window.location.reload();
-                }
-            })
-        }
-    }, 90000);
+	if (typeof io !== "undefined") {
+		// Auto-Reconnect
+		setInterval(function () {
+			if (dui.ccuIoDisconnected) {
+				//console.log("trying to force reconnect...");
+				$.ajax({
+					url: "/dashui/index.html",
+					success: function () {
+						window.location.reload();
+					}
+				})
+			}
+		}, 90000);
+	}
 
     dui.preloadImages(["../lib/css/themes/jquery-ui/kian/images/modalClose.png"])
 
