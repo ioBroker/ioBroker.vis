@@ -214,7 +214,7 @@ dui = $.extend(true, dui, {
             
             // Build dropdown box
             if (document.getElementById ("styleSelectBox"+options.name) == undefined) {
-                var text = "<form id='styleSelectBox"+options.name+"' style='z-index:1'>";
+                var text = "<form id='styleSelectBox"+options.name+"' style='z-index:4'>";
                 var i = 0;
                 for (var st in htmlElem.settings.styles) {
                     text += "<input type='radio' id='styleSelectBox"+options.name+""+i+"' name='radio' /><label for='styleSelectBox"+options.name+""+i+"'>";
