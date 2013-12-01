@@ -190,8 +190,8 @@ h4 {
 
 .dashui-edit-tab {
 
-    height: 90%;
-    height: calc(100% - 60px);
+    height: 80%;
+    height: calc(100% - 100px);
     overflow-y: scroll;
 
 }

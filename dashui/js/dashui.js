@@ -219,6 +219,7 @@ var dui = {
                 dui.activeView = view;
                 break;
             }
+			// Create default view in demo mode
             if (typeof io == "undefined") {
                 if (dui.activeView == "") {
                     dui.views["DemoView"] = {};
@@ -667,6 +668,7 @@ var dui = {
                 callback();
             });
         } else {
+			// Load from ../datastore/dashui-views.json the demo views
             $.ajax({
                 url: "../datastore/dashui-views.json",
                 type: "get",
@@ -688,7 +690,7 @@ var dui = {
 		if (dui.activeWidget && dui.activeWidget.indexOf('_') != -1 && dui.syncWidget) {
 			dui.syncWidget(dui.activeWidget);
 		}
-	    if (typeof io == "undefined") {
+	    if (typeof io != "undefined") {
             dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
                 //console.log("Saved views on CCU.IO");
             });
@@ -862,7 +864,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             dui.editInit();
         }
         
-		if (typeof io !== "undefined") {
+		if (typeof io != "undefined") {
 			dui.showWaitScreen(true, null, "Connecting to CCU.IO ...<br/>", 0);
 
 			dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host')+"?key="+socketSession);
@@ -973,7 +975,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         }
     });
 
-	if (typeof io !== "undefined") {
+	if (typeof io != "undefined") {
 		// Auto-Reconnect
 		setInterval(function () {
 			if (dui.ccuIoDisconnected) {

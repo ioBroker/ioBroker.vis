@@ -845,6 +845,7 @@ var hmSelect = {
 				'HM-PB-6-WM55':      '86_hm-pb-6-wm55_thumb.png',
 				'HM-RC-Key4-2':      '85_hm-rc-key4-2_thumb.png',
 				'HM-RC-4-2':         '84_hm-rc-4-2_thumb.png',
+				'HM-Sen-Wa-Od':      '82_hm-sen-wa-od_thumb.png',
 				'HM-Sen-WA-OD':      '82_hm-sen-wa-od_thumb.png',
 				'HM-Dis-TD-T':       '81_hm-dis-td-t_thumb.png',
 				'HM-Sen-MDIR-O':     '80_hm-sen-mdir-o_thumb.png',
@@ -909,6 +910,7 @@ var hmSelect = {
 				'HM-RC-P1':          '21_hm-rc-p1_thumb.png',
 				'HM-RC-19':          '20_hm-rc-19_thumb.png',
 				'HM-RC-19-B':        '20_hm-rc-19_thumb.png',
+				'HM-RC-19-SW':       '20_hm-rc-19_thumb.png',
 				'HM-RC-12':          '19_hm-rc-12_thumb.png',
 				'HM-RC-12-B':        '19_hm-rc-12_thumb.png',
 				'HM-RC-4':           '18_hm-rc-4_thumb.png',
@@ -935,7 +937,8 @@ var hmSelect = {
 				'HM-WDS30-T-O':      'IP65_G201_thumb.png',
 				'HM-WDS100-C6-O':    'WeatherCombiSensor_thumb.png',
 				'HM-WDS10-TH-O':     'TH_CS_thumb.png',
-				'HM-WS550STH-O':     'TH_CS_thumb.png'
+				'HM-WS550STH-O':     'TH_CS_thumb.png',
+				'HM-WDS30-OT2-SM':   'IP65_G201_thumb.png'
 			};	
 		}
 		if (this.images[type]) {
