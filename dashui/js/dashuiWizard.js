@@ -170,9 +170,41 @@ dui = $.extend(true, dui, {
         $("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
 		return wid;
 	},
+	wizardIsWidgetExists: function (view, widgetName) {
+		for (var w in dui.views[view].widgets) {
+			if (dui.views[view].widgets[w].tpl == widgetName) {
+				return true;
+			}
+		}
+		return false;
+	},
 	// Create Date, time, history and may be weather
 	wizardRunGeneral: function (view) {
+		var data = {
+			hm_id: 65535,
+			digits: "",
+			factor: 1,
+			min: 0.00,
+			max: 1.00,
+			step: 0.01
+		};
 	
+		if (!dui.wizardIsWidgetExists (view, "tplTwSimpleClock")) {
+			var wid = dui.addWidget ("tplTwSimpleClock", {"hideSeconds": "true"});
+			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
+		}
+		if (!dui.wizardIsWidgetExists (view, "tplTwSimpleDate")) {
+			var wid = dui.addWidget ("tplTwSimpleDate", {"showWeekDay": "true"});
+			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
+		}
+		if (!dui.wizardIsWidgetExists (view, "tplTwYahooWeather")) {
+			var wid = dui.addWidget ("tplTwYahooWeather", data, {"width": 205, "height": 229});
+			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
+		}
+		if (!dui.wizardIsWidgetExists (view, "tplHqEventlist")) {
+			var wid = dui.addWidget ("tplHqEventlist", data);
+			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
+		}
 	},
 	wizardRunOneRoom: function (view, roomID, funcs, widgets) {
 		// Find first created element belongs to this room
@@ -286,6 +318,9 @@ dui = $.extend(true, dui, {
 			}
 			dui.inspectWidget(widgetIds[widgetIds.length - 1]);
 		}
+		
+		// Save the changes
+		dui.binds.hqWidgetsExt.hqEditSave ();
 	},
 	fillWizard: function () {
 		var elems = homematic.regaIndex['ENUM_ROOMS'];// IDs of all ROOMS
