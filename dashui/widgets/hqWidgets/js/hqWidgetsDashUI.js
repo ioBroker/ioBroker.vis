@@ -1271,7 +1271,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                     change[option] = dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.translateSignal (option, newState);
                     change['isRefresh'] = false;
                     
-                    if (lastchange != undefined && option == 'state') {
+                    if (lastchange != undefined && (option == 'state' || option == 'infoText')) {
                         change['lastAction'] = lastchange;
                     }
 
