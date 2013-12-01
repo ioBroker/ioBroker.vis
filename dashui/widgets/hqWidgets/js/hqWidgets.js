@@ -673,8 +673,7 @@ var hqWidgets = {
             gaugeHorz:        false,
             gaugeColor:       'blue',
 
-            hideValve:        false, // if the valve status must be shown
-			hideHumidity:     false  // if hide humidity by temperature
+            hideValve:        false  // if the valve status must be shown
         };
         
         // Dynamical states (will not be stored)
@@ -699,6 +698,7 @@ var hqWidgets = {
             bigPinned:     false,         // If big window pinned or not
             lastAction:    null,          // Since this time the element has actual status
 			isVisible:     true,          // If widget visible
+			hideHumidity:  false,         // if hide humidity by temperature
             infoWindow:  {
                 isEnabled: false,
                 width:     400,
@@ -1989,7 +1989,7 @@ var hqWidgets = {
                 else {
                     if (this.intern._jtemp) {
                         this.intern._jtemp.show ();
-                        this.intern._jhumid.show ();
+                        if (!this.dynStates.hideHumidity) this.intern._jhumid.show ();
                         this.intern._jsetTemp.hide ();
                     }
                 }
@@ -2659,7 +2659,7 @@ var hqWidgets = {
                     }
                 }                
                 if (this.intern._jtemp)        this.intern._jtemp.stop().show();
-                if (this.intern._jhumid)       this.intern._jhumid.stop().show();
+                if (this.intern._jhumid && !this.dynStates.hideHumidity) this.intern._jhumid.stop().show();
                 if (this.intern._jinfoText)    this.intern._jinfoText.stop().show();
                 if (this.intern._jleft && !this.settings.showDescription) this.intern._jleft.stop().hide();
                 if (this.intern._jbattery)     this.intern._jbattery.stop().show();
@@ -3454,11 +3454,17 @@ var hqWidgets = {
                     else
                         this.intern._jsettemp.html(hqWidgets.TempFormat(temp.valueSet) + hqWidgets.gOptions.gTempSymbol);
                 }
-                if (temp.temperature!=undefined && this.intern._jtemp)   this.intern._jtemp.html(hqWidgets.TempFormat(temp.temperature) + hqWidgets.gOptions.gTempSymbol);
-				if (this.settings.hideHumidity === false) {
-					if (temp.humidity   !=undefined && this.intern._jhumid)  this.intern._jhumid.html(Math.round(temp.humidity)+'%');
+                if (temp.temperature !== undefined && this.intern._jtemp) { 
+					this.intern._jtemp.html(hqWidgets.TempFormat(temp.temperature) + hqWidgets.gOptions.gTempSymbol);
 				}
-				else if (this.intern._jhumid){
+				
+				var hideHumidity = (temp.hideHumidity === undefined) ? this.dynStates.hideHumidity : temp.hideHumidity;
+				if (hideHumidity != true) {
+					if (temp.humidity !== undefined && this.intern._jhumid) {
+						this.intern._jhumid.show();
+						this.intern._jhumid.html(Math.round(temp.humidity)+'%');
+					}
+				} else if (this.intern._jhumid){
 					this.intern._jhumid.hide();
 				}
                 if (this.settings.hideValve  !=undefined && this.intern._jvalve)  {

@@ -999,8 +999,8 @@ var hmSelect = {
 				this.myVarsData[i] = {
 					id:           ""+(i+1), 
 					"Type":       this._type2Str(variObj["ValueType"], variObj["ValueSubType"]),
-					"Description":this._convertName(variObj["DPInfo"]),
-					"Unit":       this._convertName(variObj["ValueUnit"]),
+					"Description":this._convertName(variObj["DPInfo"] || ""),
+					"Unit":       this._convertName(variObj["ValueUnit"] || ""),
 					"Name":       this._convertName(variObj["Name"]),
 					"data":       /*vari.substring(1) + "[" + */this._convertName(variObj["Name"])/* + "]"*/,
                     "_ID":        variables[vari],

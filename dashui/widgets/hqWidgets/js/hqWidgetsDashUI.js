@@ -362,9 +362,17 @@ if ((typeof hqWidgets !== 'undefined')) {
 							if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
                                 isHM_CC_RT_DN = true;
 								var controlId = homematic.regaObjects[opt['hm_id']]["Channels"][4];
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["SET_TEMPERATURE"],     option: 'valueSet'}; // First is always control element
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["ACTUAL_TEMPERATURE "], option: 'temperature'}; 
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["VALVE_STATE"],         option: 'valve'};	
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["SET_TEMPERATURE"],    option: 'valueSet'}; // First is always control element
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["ACTUAL_TEMPERATURE"], option: 'temperature'}; 
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["VALVE_STATE"],        option: 'valve'};	
+								adv = $.extend (adv, {'hideHumidity': true});
+							}
+                            else 
+							if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["DPs"] && homematic.regaObjects[opt['hm_id']]["DPs"]["ACTUAL_TEMPERATURE"]) {
+                                isHM_CC_RT_DN = true;
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["SET_TEMPERATURE"],    option: 'valueSet'}; // First is always control element
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["ACTUAL_TEMPERATURE"], option: 'temperature'}; 
+                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["VALVE_STATE"],        option: 'valve'};	
 								adv = $.extend (adv, {'hideHumidity': true});
 							}
                             else if (homematic.regaObjects[opt["hm_id"]]){
