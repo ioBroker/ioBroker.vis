@@ -938,7 +938,9 @@ var hmSelect = {
 				'HM-WDS100-C6-O':    'WeatherCombiSensor_thumb.png',
 				'HM-WDS10-TH-O':     'TH_CS_thumb.png',
 				'HM-WS550STH-O':     'TH_CS_thumb.png',
-				'HM-WDS30-OT2-SM':   'IP65_G201_thumb.png'
+				'HM-WDS30-OT2-SM':   'IP65_G201_thumb.png',
+				'SONOS_ROOT':        'sonos.png',
+				'PING':              'pc.png'
 			};	
 		}
 		if (this.images[type]) {
@@ -1445,7 +1447,10 @@ var hmSelect = {
                             
                                 for (var dp in channel["DPs"]) {
                                     var idPnt = channel["DPs"][dp];
-                                    var point = homematic.regaObjects[idPnt];                        
+                                    var point = homematic.regaObjects[idPnt];
+									if (point === undefined) {
+										continue;
+									}
                                     var name = this._convertName(point.Name);
                                     if (f == null) {
                                         newPoints [idPnt] = point;
