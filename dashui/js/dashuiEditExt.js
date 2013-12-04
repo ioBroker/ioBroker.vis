@@ -1802,14 +1802,14 @@ var hmSelect = {
             var text = "<div id='hmSelect_tabs'>";
             text += "  <ul>";
             var i = 0;
-            if (devFilter == undefined || this._ignoreFilter) {
+            if (devFilter === undefined || devFilter == "" || this._ignoreFilter) {
                 if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
                     text += "    <li><a href='#tabs-devs'  id='dev_select'>Devices</a></li>";
                 }
-                if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'variables'))) {           
+                if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'variables'))) {           
                     text += "    <li><a href='#tabs-vars'  id='var_select'>Variables</a></li>";
                 }
-                if (this._ignoreFilter || (devFilter == undefined && ( filter == 'all' || filter == 'programs'))) {           
+                if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && ( filter == 'all' || filter == 'programs'))) {           
                     text += "    <li><a href='#tabs-progs' id='prog_select'>Functions</a></li>";
                 }
                 text += "  </ul>";
@@ -1817,10 +1817,10 @@ var hmSelect = {
             if (this._ignoreFilter || filter == 'all' || (filter != 'variables' && filter != 'programs')) {           
                 text += "  <div id='tabs-devs' style='padding: 3px'></div>";
             }
-            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'variables'))) {           
+            if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'variables'))) {           
                 text += "  <div id='tabs-vars' style='padding: 3px'></div>";
             }
-            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'programs'))) {       
+            if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'programs'))) {       
                 text += "  <div id='tabs-progs' style='padding: 3px'></div>";
             }            
             text += "</div>";
@@ -1828,10 +1828,10 @@ var hmSelect = {
             if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
                 $("#tabs-devs").append  ("<table id='hmDevsContent'></table>");     
             }                
-            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'variables'))) {           
+            if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'variables'))) {           
                 $("#tabs-vars").append  ("<table id='hmVarsContent'></table>");        
             }
-            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'programs'))) {       
+            if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'programs'))) {       
                  $("#tabs-progs").append ("<table id='hmProgsContent'></table>");      
             }            
             
@@ -1852,12 +1852,12 @@ var hmSelect = {
                     //hmSelect._onResize ();
                 });
             }
-            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'variables'))) {           
+            if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'variables'))) {           
                 $('#var_select').click (function (e) {
                     hmSelect._buildVarsGrid (homematic);
                 });
             }
-            if (this._ignoreFilter || (devFilter == undefined && (filter == 'all' || filter == 'programs'))) {       
+            if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'programs'))) {       
                 $('#prog_select').click (function (e) {
                     hmSelect._buildProgsGrid (homematic);
                 });

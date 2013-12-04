@@ -868,9 +868,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             else {
 								var invertState = btn.GetSettings("invertState");
                                 if (invertState) {
-									return (value === true || value === "true") ? hqWidgets.gState.gStateOff : hqWidgets.gState.gStateOn;
+									return (value === true || value === "true" || value === 1 || value === "1") ? hqWidgets.gState.gStateOff : hqWidgets.gState.gStateOn;
 								} else {
-									return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
+									return (value === true || value === "true" || value === 1 || value === "1") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
 								}
 							}
                         }});
@@ -1029,7 +1029,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeMotion) {
                         btn = $.extend (btn, {translateSignal: function (option, value) {
                             if (option == 'lowBattery' || option == 'isWorking') {
-                                return (value === true || value === "true") ? true : false;
+                                return (value === true || value === "true" || value === 1 || value === "1") ? true : false;
                             }
                             else
                             if (option == "percentState") {
@@ -1057,9 +1057,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             else {
 								var invertState = btn.GetSettings("invertState");
                                 if (invertState) {
-									return (value === true || value === "true") ? hqWidgets.gState.gStateOff : hqWidgets.gState.gStateOn;
+									return (value === true || value === "true" || value === 1 || value === "1") ? hqWidgets.gState.gStateOff : hqWidgets.gState.gStateOn;
 								} else {
-									return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
+									return (value === true || value === "true" || value === 1 || value === "1") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
 								}
 							}                        
 						}});					
@@ -1070,7 +1070,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 return (value === true || value === "true") ? true : false;
                             }
                             else
-                            return (value === true || value === "true") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
+                            return (value === true || value === "true" || value === 1 || value === "1") ? hqWidgets.gState.gStateOn : hqWidgets.gState.gStateOff;
                         }});
                     }
 					// Show history or grafic
