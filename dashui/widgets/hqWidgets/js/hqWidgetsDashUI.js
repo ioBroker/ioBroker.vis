@@ -311,20 +311,18 @@ if ((typeof hqWidgets !== 'undefined')) {
                             }
                         }
                         for (var i = 0; i < 4; i++) {
-                            if (homematic.regaObjects[opt["hm_id"]]) {
-                                if (opt['hm_id'+i] != undefined) {
-                                    if (opt['hm_id'+i] != null && opt['hm_id'+i] != "") {
-                                        hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id'+i]]["DPs"]["STATE"],  option: 'windowState',  index:i};
-                                        hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryS',  index:i};
-                                    }
-                                }
-                                if (opt['hm_id_hnd'+i] != undefined) {
-                                    if (opt['hm_id_hnd'+i] != null && opt['hm_id_hnd'+i] != "") {
-                                        hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["STATE"],  option: 'handleState',  index:i};
-                                        hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryH',  index:i};
-                                    }
-                                }
-                            }
+							if (opt['hm_id'+i] && homematic.regaObjects[opt['hm_id'+i]] && homematic.regaObjects[opt['hm_id'+i]]["DPs"]) {
+								if (homematic.regaObjects[opt['hm_id'+i]]["DPs"]["STATE"])
+									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id'+i]]["DPs"]["STATE"],  option: 'windowState',  index:i};
+								if (homematic.regaObjects[opt['hm_id'+i]]["DPs"]["LOWBAT"])
+									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryS',  index:i};
+							}
+							if (opt['hm_id_hnd'+i] && homematic.regaObjects[opt['hm_id_hnd'+i]] && homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]) {
+								if (homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["STATE"])
+									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["STATE"],  option: 'handleState',  index:i};
+								if (homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["LOWBAT"])
+									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryH',  index:i};
+							}
                         }                   
                     }
                     else

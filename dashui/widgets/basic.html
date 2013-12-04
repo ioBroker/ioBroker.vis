@@ -327,20 +327,18 @@
 <script type="text/ejs" id="tplValueBool" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Bool HTML" data-dashui-attrs="html_prepend;html_append;hm_id;html_false;html_true">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="background-color:#ccc; width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" >
         <div class="dashui-widget-body">
-            <div>
-                <%== this.data.attr("html_prepend") %>
-                <%
-                var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
-                var val = parseFloat(str);
-                var state;
-                if (str === false || str === "false" || val == 0) {
-                %>
-                <%== this.data.attr("html_false") %>
-                <% } else { %>
-                <%== this.data.attr("html_true") %>
-                <% } %>
-                <%== this.data.attr("html_append") %>
-            </div>
+			<%== this.data.attr("html_prepend") %>
+			<%
+			var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
+			var val = parseFloat(str);
+			var state;
+			if (str === false || str === "false" || val == 0) {
+			%>
+			<%== this.data.attr("html_false") %>
+			<% } else { %>
+			<%== this.data.attr("html_true") %>
+			<% } %>
+			<%== this.data.attr("html_append") %>
         </div>
     </div>
 </script>
@@ -348,11 +346,9 @@
 <script type="text/ejs" id="tplValueBoolCheckbox" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - Bool Checkbox" data-dashui-attrs="html_prepend;html_append;hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>" >
         <div class="dashui-widget-body">
-            <div>
-                <%== this.data.attr("html_prepend") %>
-                <input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox" id="<%= this.data.attr('wid') %>_checkbox" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.checkbox(el) %>/>
-                <%== this.data.attr("html_append") %>
-            </div>
+			<%== this.data.attr("html_prepend") %>
+			<input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox" id="<%= this.data.attr('wid') %>_checkbox" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.checkbox(el) %>/>
+			<%== this.data.attr("html_append") %>
         </div>
     </div>
 </script>
@@ -360,15 +356,13 @@
 <script type="text/ejs" id="tplValueBoolSelect" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - Bool Select" data-dashui-attrs="html_prepend;html_append;hm_id;text_true;text_false">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>" >
         <div class="dashui-widget-body">
-            <div>
-                <%== this.data.attr("html_prepend") %>
-                <select id="<%= this.data.attr('wid') %>_select" data-hm-id="<%= this.data.attr('hm_id') %>">
-                    <option value="0" selected="selected"><%= this.data.attr('text_false') %></option>
-                    <option value="1"><%= this.data.attr('text_true') %></option>
-                </select>
-                <div <%= (el) -> dui.binds.basic.select(el) %>></div>
-                <%== this.data.attr("html_append") %>
-            </div>
+			<%== this.data.attr("html_prepend") %>
+			<select id="<%= this.data.attr('wid') %>_select" data-hm-id="<%= this.data.attr('hm_id') %>">
+				<option value="0" selected="selected"><%= this.data.attr('text_false') %></option>
+				<option value="1"><%= this.data.attr('text_true') %></option>
+			</select>
+			<div <%= (el) -> dui.binds.basic.select(el) %>></div>
+			<%== this.data.attr("html_append") %>
         </div>
     </div>
 </script>
@@ -377,20 +371,18 @@
 <script type="text/ejs" id="tplValueBoolCtrl" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - Bool HTML" data-dashui-attrs="html_prepend;html_append;hm_id;html_false;html_true">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="background-color:#ccc; width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.toggle(el) %>>
         <div class="dashui-widget-body">
-            <div>
-                <%== this.data.attr("html_prepend") %>
-                <%
-                var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
-                var val = parseFloat(str);
-                var state;
-                if (val === 0 || str === "false" || str === false) {
-                %>
-                <%== this.data.attr("html_false") %>
-                <% } else { %>
-                <%== this.data.attr("html_true") %>
-                <% } %>
-                <%== this.data.attr("html_append") %>
-            </div>
+			<%== this.data.attr("html_prepend") %>
+			<%
+			var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
+			var val = parseFloat(str);
+			var state;
+			if (val === 0 || str === "false" || str === false) {
+			%>
+			<%== this.data.attr("html_false") %>
+			<% } else { %>
+			<%== this.data.attr("html_true") %>
+			<% } %>
+			<%== this.data.attr("html_append") %>
         </div>
     </div>
 </script>
@@ -398,9 +390,7 @@
 <script type="text/ejs" id="tplBasicState" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - HTML State" data-dashui-attrs="html;hm_id;value">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="background-color:#ccc; width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.state(el) %>>
         <div class="dashui-widget-body">
-            <div>
-                <%== this.data.attr("html") %>
-            </div>
+			<%== this.data.attr("html") %>
         </div>
     </div>
 </script>
