@@ -467,19 +467,24 @@ var dui = {
         }
     },
     changeView: function (view, hideOptions, showOptions, sync) {
+
         var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
 		if (!effect) {
 			effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && (showOptions.effect != "")
 		}
-		if (effect && (showOptions === undefined) && (showOptions.effect === undefined || showOptions.effect == "" || showOptions.effect == null)) {
+		if (effect && ((showOptions === undefined) || !showOptions.effect)) {
 			showOptions = {effect: hideOptions.effect, options: {}, duration: hideOptions.duration};
 		}
-		if (effect && (hideOptions === undefined) && (hideOptions.effect === undefined || hideOptions.effect == "" || hideOptions.effect == null)) {
+		if (effect && ((hideOptions === undefined) || !hideOptions.effect)) {
 			hideOptions = {effect: showOptions.effect, options: {}, duration: showOptions.duration};
 		}
         hideOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, hideOptions);
         showOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, showOptions);
-
+		if (hideOptions.effect == "show") {
+			effect = false;
+		}	
+		
+		
         if (dui.inspectWidget) {
             dui.inspectWidget("none");
             dui.clearWidgetHelper();
