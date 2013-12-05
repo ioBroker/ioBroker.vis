@@ -875,11 +875,17 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
 			dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host')+"?key="+socketSession);
 
 
+
+
 			dui.socket.emit('getVersion', function(version) {
 				if (version < dui.requiredCcuIoVersion) {
 					alert("Warning: requires CCU.IO version "+dui.requiredCcuIoVersion+" - found CCU.IO version "+version+" - please update CCU.IO.");
 				}
 			});
+
+            dui.socket.on('refreshAddons', function () {
+                window.location.reload();
+            });
 
 			dui.socket.on('event', function (obj) {
 				if (obj != null && homematic.uiState["_" + obj[0]] !== undefined) {
