@@ -3932,7 +3932,7 @@ var hqWidgets = {
                             });
                         }
                     }
-                    else {
+                    else if (this.intern._jbigWindow) {
                         var xx = this.dynStates.infoWindow.x;
                         var yy = this.dynStates.infoWindow.y;
                         var ww = this.dynStates.infoWindow.width;
@@ -3942,35 +3942,38 @@ var hqWidgets = {
                             
                         if (yy != null)
                             this.intern._jbigWindow.css ({top: yy, left:xx});
+						
+						this.intern._jbigWindow.OnShow = function () {
+							this.parent.intern._jbigWindow.bind("resize", {msg: this.parent}, function (e)	{
+								var obj = e.data.msg;                        
+								if (obj.dynStates.infoWindow.onResize)
+									obj.dynStates.infoWindow.onResize (obj, obj.intern._jbigWindow.jbigWindowContent);
+							});
+							
+							if (this.parent.dynStates.infoWindow.onShow)
+								this.parent.dynStates.infoWindow.onShow (this.parent, this.parent.intern._jbigWindow.jbigWindowContent);
+						}             
+						
+						this.intern._jbigWindow.OnHide = function () {
+							this.parent.intern._jbigWindow.bind("resize", null, null);
+							var obj = this.parent;
+							var pos = obj.intern._jbigWindow.position ();
+							obj.dynStates.infoWindow.x      = Math.round(pos.left);
+							obj.dynStates.infoWindow.y      = Math.round(pos.top);
+							obj.dynStates.infoWindow.height = Math.round(obj.intern._jbigWindow.height());
+							obj.dynStates.infoWindow.width  = Math.round(obj.intern._jbigWindow.width());
+							obj.intern._jbigWindow.bheight  = obj.dynStates.infoWindow.height;
+							obj.intern._jbigWindow.bwidth   = obj.dynStates.infoWindow.width;
+							obj.intern._jbigWindow.x        = obj.dynStates.infoWindow.x;
+							obj.intern._jbigWindow.y        = obj.dynStates.infoWindow.y;
+							if (this.parent.dynStates.infoWindow.onHide)
+								this.parent.dynStates.infoWindow.onHide (this.parent, this.parent.intern._jbigWindow.jbigWindowContent);
+						}    
                     }
-                    
-                    this.intern._jbigWindow.OnShow = function () {
-                        this.parent.intern._jbigWindow.bind("resize", {msg: this.parent}, function (e)	{
-                            var obj = e.data.msg;                        
-                            if (obj.dynStates.infoWindow.onResize)
-                                obj.dynStates.infoWindow.onResize (obj, obj.intern._jbigWindow.jbigWindowContent);
-                        });
-                        
-                        if (this.parent.dynStates.infoWindow.onShow)
-                            this.parent.dynStates.infoWindow.onShow (this.parent, this.parent.intern._jbigWindow.jbigWindowContent);
-                    }             
-                    
-                    this.intern._jbigWindow.OnHide = function () {
-                        this.parent.intern._jbigWindow.bind("resize", null, null);
-                        var obj = this.parent;
-                        var pos = obj.intern._jbigWindow.position ();
-                        obj.dynStates.infoWindow.x      = Math.round(pos.left);
-                        obj.dynStates.infoWindow.y      = Math.round(pos.top);
-                        obj.dynStates.infoWindow.height = Math.round(obj.intern._jbigWindow.height());
-                        obj.dynStates.infoWindow.width  = Math.round(obj.intern._jbigWindow.width());
-                        obj.intern._jbigWindow.bheight  = obj.dynStates.infoWindow.height;
-                        obj.intern._jbigWindow.bwidth   = obj.dynStates.infoWindow.width;
-                        obj.intern._jbigWindow.x        = obj.dynStates.infoWindow.x;
-                        obj.intern._jbigWindow.y        = obj.dynStates.infoWindow.y;
-                        if (this.parent.dynStates.infoWindow.onHide)
-                            this.parent.dynStates.infoWindow.onHide (this.parent, this.parent.intern._jbigWindow.jbigWindowContent);
-                    }    
-                }
+					else {
+						console.log ("Why this.intern._jbigWindow does not exist");
+					}
+				}
                 else {
                     if (this.intern._jbigWindow) {
                         this.intern._jbigWindow.remove ();
