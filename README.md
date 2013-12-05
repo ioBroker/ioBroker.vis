@@ -9,6 +9,22 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta43
+* (Bluefox) Fix style selector together with slider
+* (Bluefox) Support of local mode. DashUI can be started locally without CCU.IO for Demo
+* (Bluefox) Fix demo mode Add one image for device in HM Select dialog
+* (Bluefox) Fix problem with Edit dialog and still hidden control elements because of CSS
+* (Bluefox) Fix problem with initial LastAction show for hqWidgets/Info
+* (Bluefox) Add Common room to Wizard
+* (Bluefox) Fix HM-CC-RT-DN
+* (Bluefox) Show all variables in HM_Dialog
+* (Bluefox) Fix small error in tplHmWindowRotary
+* (Bluefox) Add Sonos images to HM_Dialog
+* (Bluefox) Fix HmSelect Dialog for variables
+* (Bluefox) Remove wrong div by basic widgets
+* (Bluefox) Fix Window without shutter
+* (Bluefox) Fix error with ipCam
+
 ### 0.9beta42
 * (Bluefox) Add invert state to hqButton and hqDoor
 * (Bluefox) Small changes in Wizard (All except "Low battery")
