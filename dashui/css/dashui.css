@@ -190,8 +190,8 @@ h4 {
 
 .dashui-edit-tab {
 
-    height: 80%;
-    height: calc(100% - 100px);
+    height: 90%;
+    height: calc(100% - 60px);
     overflow-y: scroll;
 
 }
@@ -200,7 +200,7 @@ div#tabs {
 
     height: 100%;
     overflow: hidden;
-    min-width: 545px;
+    min-width: 563px;
 }
 
 div#dui_editor {
