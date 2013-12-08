@@ -23,7 +23,7 @@
 // duiEdit - the DashUI Editor
 
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta43',
+    editVersion:        '0.9beta44',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -1106,7 +1106,40 @@ dui = $.extend(true, dui, {
             dui.inspectWidget(widgetId);
             dui.actionNewWidget(widgetId);
         });
- 
+
+        $("#screen_size_x").change(function () {
+            var x = $("#screen_size_x").val();
+            var y = $("#screen_size_y").val();
+            if (x > 0) {
+                $("#size_x").css("left", (parseInt(x,10)+1)+"px").show();
+                $("#size_y").css("width", (parseInt(x,10)+3)+"px");
+                if (y > 0) {
+                    $("#size_x").css("height", (parseInt(y,10)+3)+"px");
+                }
+            } else {
+                $("#size_x").hide();
+            }
+            dui.views[dui.activeView].settings.sizex = x;
+            dui.saveRemote();
+        }).keyup(function() { $(this).trigger("change"); });
+
+        $("#screen_size_y").change(function () {
+            var x = $("#screen_size_x").val();
+            var y = $("#screen_size_y").val();
+            if (y > 0) {
+                $("#size_y").css("top", (parseInt(y,10)+1)+"px").show();
+                $("#size_x").css("height", (parseInt(y,10)+3)+"px");
+                if (x > 0) {
+                    $("#size_y").css("width", (parseInt(x,10)+3)+"px");
+                }
+            } else {
+                $("#size_y").hide();
+
+            }
+            dui.views[dui.activeView].settings.sizey = y;
+            dui.saveRemote();
+        }).keyup(function() { $(this).trigger("change"); });
+
         // Instances
         dui.instance = storage.get(dui.storageKeyInstance);
         if (!dui.instance) {

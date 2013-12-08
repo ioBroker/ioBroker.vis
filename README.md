@@ -9,6 +9,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta44
+* (Hobbyquaker) Screen-size indicator
+
 ### 0.9beta43
 * (Bluefox) Fix style selector together with slider
 * (Bluefox) Support of local mode. DashUI can be started locally without CCU.IO for Demo

@@ -58,6 +58,8 @@
         <div id="widget_helper">
             <div id="widget_inner_helper"></div>
         </div>
+        <div id="size_x" style="display:none; z-index: 99; position: absolute; top: 0px; width:0px; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
+        <div id="size_y" style="display:none; z-index: 99; position: absolute; left: 0px; height:0px; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
     </div>
 
     <div id="dui_editor" title="">
@@ -324,13 +326,28 @@
             </div>
 
             <div class="dashui-edit-tab" id="tabs-6" class="ui-widget-content">
-                Snap
+                <h4>Snapping</h4>
                 <select id="snap_type">
                     <option value="0" selected="selected">disabled</option>
                     <option value="1">elements</option>
                     <option value="2">grid</option>
-                </select><br/>
+                </select><br/><br/>
                 grid size <input id="grid_size" type="text" value=""/><br/>
+
+                <h4>Screensize</h4>
+                <table>
+                    <tr>
+                        <td>Width</td>
+                        <td><input id="screen_size_x" type="number" value=""/></td>
+                    </tr>
+                    <tr>
+                        <td>Height</td>
+                        <td><input id="screen_size_y" type="number" value=""/></td>
+                    </tr>
+                </table>
+
+
+
 
             </div>
 
@@ -374,10 +391,14 @@
                     HomeMatic und das HomeMatic Logo sind eingetragene Warenzeichen der eQ-3 AG
                 </p>
             </div>
-    </div>
+        </div>
         <div style="display: none" id="uploadPreview"></div>
+    </div>
+
+
     <script type="text/javascript">
         dui.translateAll ();
     </script>
+
 </body>
 </html>

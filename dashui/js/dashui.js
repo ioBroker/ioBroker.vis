@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta43',
+    version:                '0.9beta44',
     requiredCcuIoVersion:   '0.9.78',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -616,6 +616,9 @@ var dui = {
 
             $("#inspect_view").html(view);
 
+            $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
+            $("#screen_size_y").val(dui.views[dui.activeView].settings.sizey || "").trigger("change");
+
             $("#select_active_widget").html("<option value='none'>none selected</option>");
             for (var widget in dui.views[dui.activeView].widgets) {
                 var obj = $("#" + dui.views[dui.activeView].widgets[widget].tpl);
@@ -663,7 +666,7 @@ var dui = {
         window.location.reload();
     },
     loadRemote: function (callback) {
-		dui.showWaitScreen(true, "Please wait! Trying to load views from CCU.IO", null, "+1");
+		dui.showWaitScreen(true, "Loading Views...", null, "+1");
         if (typeof io != "undefined") {
             dui.socket.emit("readFile", "dashui-views.json", function (data) {
                 dui.views = data;
