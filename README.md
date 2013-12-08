@@ -10,7 +10,8 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ## Changelog
 
 ### 0.9beta44
-* (Hobbyquaker) Screen-size indicator
+* (Hobbyquaker) Screen-size indicator (rot/grüne Linien die anzeigen wie groß der Bildschirm ist, einstellbar im Tab "Editor")
+* (Hobbyquaker) refreshAddons (über CCU.IO Oberfläche kann DashUI veranlasst werden sich neu zu laden)
 
 ### 0.9beta43
 * (Bluefox) Fix style selector together with slider
