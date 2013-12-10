@@ -1144,8 +1144,16 @@ var hqWidgets = {
         };
         this._PlayMelody = function () {
             if (this.settings.gongMelody) {
-                $("#sound_").remove()
-                $('body').append('<embed id="sound_" autostart="true" hidden="true" src="' + ((this.settings.gongMelody.indexOf('/') == -1) ? hqWidgets.gOptions.gPictDir : "") + this.settings.gongMelody + '" />');
+                //$('body').append('<embed id="sound_" autostart="true" hidden="true" src="' + ((this.settings.gongMelody.indexOf('/') == -1) ? hqWidgets.gOptions.gPictDir : "") + this.settings.gongMelody + '" />');
+				if (!document.getElementById ('sound_')) {
+					$('body').append('<audio id="sound_"  preload="auto" autobuffer></audio>');
+				}
+				
+				var d = new Date ();
+				$('#sound_').off('canplaythrough').on('canplaythrough', function() {   
+					this.play ();
+				});
+				document.getElementById('sound_').src = ((this.settings.gongMelody.indexOf('/') == -1) ? hqWidgets.gOptions.gPictDir : "") + this.settings.gongMelody;
             }        
         }
         // Set current style class for background (timems - time in ms for effects

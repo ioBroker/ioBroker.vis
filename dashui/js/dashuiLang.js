@@ -125,6 +125,9 @@ dui = $.extend(true, dui, {
                 "Invert state:"    : {"en" : "Invert state:", "de": "Invertiere Zustand:"},
                 "All except Low battery": {"en" : "All except 'Battery Indicator'", "de": "Alle außer 'Battery Indicator'"},
                 "General"          : {"en" : "General",       "de": "Allgemein"},
+                "hideSeconds"      : {"en" : "Hide seconds",  "de": "Zeige keine Sekunden"},
+                "blink"            : {"en" : "Blink",         "de": "Blinken"},
+                "showWeekDay"      : {"en" : "Show day of week", "de": "Wochenstag"},
 				// Bars
                 "One at time:"     : {"en" : "One at time:",  "de": "Nur eine auswahlbar:"},
                 "Geometry..."      : {"en" : "Geometry...",   "de": "Geometrie..."},
@@ -157,8 +160,7 @@ dui = $.extend(true, dui, {
                 "Docked at right"  : {"en" : "Docked at right","de": "Angedockt rechts"},
                 "Center"           : {"en" : "Center",        "de": "In der MItte"},
                 "Left"             : {"en" : "Left",          "de": "Links"},
-                "Right"            : {"en" : "Right",         "de": "Rechts"},
-				
+                "Right"            : {"en" : "Right",         "de": "Rechts"}				
             };
         }
         if (this.words[text]) {

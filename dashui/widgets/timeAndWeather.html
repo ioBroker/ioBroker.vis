@@ -11,29 +11,56 @@
 <script src="widgets/timeAndWeather/js/moreskins.js"></script-->
 
 <script language="javascript">
-    function startTime(view, elem, hideSeconds, timerId) {
+	function fontWidth (text, font) {
+		var f = font || '10px "Tahoma", sans-serif',
+				o = $('<div>' + this + '</div>')
+						.css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hidden', 'font': f})
+						.appendTo($('body')),
+				w = o.width();
+
+		o.remove();
+
+		return w;
+	};
+
+	
+	function startTime(view, elem, hideSeconds, blink, timerId) {
         var today = new Date();
         var h =     today.getHours();
         var m =     today.getMinutes();
         var s =     today.getSeconds();
         // add a zero in front of numbers<10
         m = (m<10) ? ("0"+m) : m;
-        s = (s<10) ? ("0"+s) : s;
+		if (!hideSeconds) {
+			s = (s<10) ? ("0"+s) : s;
+		}
         h = (h<10) ? ("0"+h) : h;
         var hl = document.getElementById(elem);
 		if (hideSeconds === "false") {
 			hideSeconds = false;
 		}
 		if (!hl) {
-			$('#duiview_'+view).append('<div class="dashui-widget clock" id="'+elem+'" ></div>');
+			if (hideSeconds) {
+				$('#duiview_'+view).append('<div class="dashui-widget clock" id="'+elem+'" ></div>');				
+			} else {
+				$('#duiview_'+view).append('<div class="dashui-widget clock" id="'+elem+'" ></div>');
+			}
 			hl = document.getElementById(elem);
 			hl.dashId = today.getTime();
 		}
         if (hl && (timerId === undefined || hl.dashId == timerId)) {
-            hl.innerHTML = h+":"+m + ((!hideSeconds) ? (":"+s) : "");
-            hl.dashTimer = setTimeout(startTime, 
-				(!!hideSeconds) ? (60 - today.getSeconds()) : 1000, 
-				view, elem, hideSeconds, hl.dashId);
+			if (hideSeconds) {
+				hl.innerHTML = '<table><tr><td>'+h+'</td><td id="'+elem+'_space">:</td><td>'+m+'</td></tr></table>';
+				if (blink && (s%2)) {
+					var r = $('#'+elem+'_space');
+					var w = r.width();
+					r.css({width: w});
+					r.html(" ");
+				}
+			} else {
+				hl.innerHTML = h+":"+m+":"+s;
+			}
+            hl.dashTimer = setTimeout(startTime, 1000, view, elem, hideSeconds, blink, hl.dashId);
         }
     }
     var wochentage = {
@@ -70,15 +97,15 @@
     }
 </script>
 
-<script type="text/ejs" id="tplTwSimpleDate" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleDate" data-dashui-attrs="showWeekDay">
+<script type="text/ejs" id="tplTwSimpleDate" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleDate" data-dashui-attrs="showWeekDay/checkbox">
     <%
 		startDate(this.view, this.data.attr('wid'), this.data.attr('showWeekDay'));
     %>
 </script>
 
-<script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="hideSeconds">
+<script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="hideSeconds/checkbox;blink/checkbox">
     <%
-        startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'));
+        startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'),this.data.attr('blink'));
     %>
 </script>
 <!--script type="text/ejs" id="tplTwCoolClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="CoolClock" data-dashui-attrs="" >

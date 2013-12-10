@@ -49,7 +49,6 @@
     <script type="text/javascript" src="js/dashuiEditExt.js"></script>    
     <script type="text/javascript" src="js/dashuiWizard.js"></script>    
     <script type="text/javascript" src="js/dashuiLang.js"></script>
-
 </head>
 <body>
 	<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>
@@ -76,13 +75,13 @@
             </ul>
             <div class="dashui-edit-tab" id="tabs-1">
                 <h4>New View</h4>
-                <input id="new_view_name" type="text" /><input class="dashui-editor" id="add_view" type="button" value="Add View"/>
-                <input class="dashui-editor" id="dup_view" type="button" value="Duplicate current view"/>
+                <input id="new_view_name" type="text" /><button class="dashui-editor" id="add_view" type="button">add_view</button>
+                <button class="dashui-editor" id="dup_view" type="button">dup_view</button>
 
 
-                <h4>Current View</h4><select id="select_view" class="dashui-editor-large"></select><input class="dashui-editor" id="del_view" type="button" value="Delete View"/>
+                <h4>Current View</h4><select id="select_view" class="dashui-editor-large"></select><button class="dashui-editor" id="del_view" type="button" >del_view</button>
                 <br><br>
-                <input id="new_name" type="text" /><input class="dashui-editor" id="rename_view" type="button" value="Rename View"/>
+                <input id="new_name" type="text" /><button class="dashui-editor" id="rename_view" type="button">rename_view</button>
 
                 <h4>View Attributes</h4>
                 <table>
@@ -134,9 +133,9 @@
             </div>
             <div class="dashui-edit-tab" id="tabs-2">
                 <h4>External Commands</h4>
-                <input type="button" class="dashui-editor" id="create_instance" value="create instance" />
+                <button type="button" class="dashui-editor" id="create_instance">create_instance</button>
                 <span id="instance">Instance ID <input type="input" id="dashui_instance" disabled="disabled"/>
-                <input type="button" class="dashui-editor" id="remove_instance" value="remove instance" />
+                <button type="button" class="dashui-editor" id="remove_instance">remove_instance</button>
 
                 </span>
 
@@ -292,19 +291,19 @@
             <div class="dashui-edit-tab" id="tabs-4" class="ui-widget-content">
                 <h4>Add Widget:</h4>
                 <select id="select_set" class="dashui-editor" data-multiselect-width="425" data-multiselect-height="400"></select></br>
-                <select id="select_tpl" class="dashui-editor" data-multiselect-width="425" data-multiselect-height="360"></select><input class="dashui-editor" type="button" id="add_widget" value="add widget" />
+                <select id="select_tpl" class="dashui-editor" data-multiselect-width="425" data-multiselect-height="360"></select><button class="dashui-editor" type="button" id="add_widget">add_widget</button>
                 <h4>Inspecting Widget:</h4> <select id="select_active_widget" class="dashui-editor" data-multiselect-width="425" data-multiselect-height="265"></select><br/><br/>
                 <div class="dashui-widget-tools">
                     <table><tr>
                         <td>
-                            <input type="button" class="dashui-editor" id="del_widget" value="delete" />
-                            <input type="button" class="dashui-editor" id="dup_widget" value="copy to:" />
+                            <button type="button" class="dashui-editor" id="del_widget" >del_widget</button>
+                            <button type="button" class="dashui-editor" id="dup_widget" >dup_widget</button>
                         </td>
                         <td>
                             <select class="dashui-editor" id="select_view_copy"></select>
                         </td>
                     </tr></table>
-                    <input type="button" class="dashui-editor" id="widget_doc" value="Widget-Documentation" />
+                    <button type="button" class="dashui-editor" id="widget_doc">widget_doc</button>
                     <h4>Widget Attributes:</h4>
                     <table id="widget_attrs_fix">
                         <tr id="inspect_comment_tr">
@@ -357,7 +356,7 @@
 					<tr><td class='translate'>Function:</td><td><select id="wizard_funcs"></select></td></tr>
 					<tr><td class='translate'>Widget:</td>  <td><select id="wizard_widgets"></select></td></tr>
 				</table>
-				<input class="dashui-editor translate" type="button" id="wizard_run" value='Run'/> 
+				<button class="dashui-editor translate" type="button" id="wizard_run">wizard_run</button> 
             </div>
 			
             <div class="dashui-edit-tab" id="tabs-5" class="ui-widget-content">

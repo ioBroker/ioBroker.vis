@@ -1267,6 +1267,19 @@ if ((typeof hqWidgets !== 'undefined')) {
             },
             hqMonitor: function (wid, newState, lastchange) {
                 
+				if (wid == "72900") {
+					if (newState) {
+						var d = new Date ();
+						$('#sound__').remove ();
+						$('body').append('<audio id="sound__"  preload="auto" autobuffer></audio>');										
+						$('#sound__').on('canplaythrough', function() {   
+							this.play ();
+						});
+						document.getElementById('sound__').src = "../say.mp3?"+d.getTime();
+					}
+					else
+						return;
+				}	
                 //console.log(wid+"["+dui.getObjDesc (wid)+"] = "+newState);
                 var i = 0;
                 while (dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i]) {

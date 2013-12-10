@@ -218,7 +218,8 @@ dui = $.extend(true, dui, {
                 var i = 0;
                 for (var st in htmlElem.settings.styles) {
                     text += "<input type='radio' id='styleSelectBox"+options.name+""+i+"' name='radio' /><label for='styleSelectBox"+options.name+""+i+"'>";
-                    text += "<table><tr><td width='"+(htmlElem.settings.height*2+4)+"px'><div class='ui-corner-all "+htmlElem.settings.styles[st].style+"' style='width:"+(htmlElem.settings.height*2)+"px; height:"+(htmlElem.settings.height-4)+"px'></div></td><td width=10></td><td style='text-align: left; vertical-align: middle;'><div style='text-align: left; vertical-align: middle;'>";
+                    text += "<table><tr><td width='"+(htmlElem.settings.height*2+4)+"px'><div class='ui-corner-all "+htmlElem.settings.styles[st].style+"' style='padding: 0px; margin; 0px; z-index: auto; display: block; position: relative; width:"+(htmlElem.settings.height*2)+"px; height:"+(htmlElem.settings.height-4)+"px'></div></td><td width=10></td>";
+					text += "<td style='text-align: left; vertical-align: middle;'><div style='text-align: left; vertical-align: middle;'>";
                     text += ((st != "")?st:htmlElem.settings.styles[st].style)+"</div></td></tr></table>";
                     text += "</label><br>";
                     i++;

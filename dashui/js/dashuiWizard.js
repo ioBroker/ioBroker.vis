@@ -350,7 +350,7 @@ dui = $.extend(true, dui, {
 				});	
 			}
 		}
-		$( "#wizard_run" ).bind( "click", function() {
+		$( "#wizard_run" ).button ({icons: {primary: "ui-icon-wrench"}}).bind( "click", function() {
 			dui.wizardRun(dui.activeView);
 		});
 	}
