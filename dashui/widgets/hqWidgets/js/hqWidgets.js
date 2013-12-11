@@ -1644,6 +1644,17 @@ var hqWidgets = {
                         if (elem.settings["ipCamVideoURL"] != null && elem.settings["ipCamVideoURL"] != "") {
                             // activate video
                             //http://192.168.1.8/videostream.cgi?user=xxx&pwd=xxx
+                            // Show last loaded image
+                            if (elem.intern._jbigWindow.jbigImage) {
+							
+                                elem.intern._jbigWindow.jbigImage.attr ('src', elem.settings["ipCamVideoURL"]);
+								
+                                elem.intern._jbigWindow.bind("resize", {msg: elem}, function (e)	{
+                                    var big = e.data.msg.intern._jbigWindow;
+                                    big.jbigImage.height(big.height() - big.jbigWindowHdr.height() - 15 - ((big.jbigWindowBtns) ? big.jbigWindowBtns.height(): 0) );
+                                });
+                                elem.intern._jbigWindow.trigger("resize");
+                            }
                         }
                         else {
                             // Show last loaded image
@@ -1677,6 +1688,7 @@ var hqWidgets = {
                             clearTimeout(elem.intern._ipCamBigTimer);
                             elem.intern._ipCamBigTimer = null;
                             elem.intern._jbigWindow.jbigImage.load(null);
+							elem.intern._jbigWindow.jbigImage.attr ('src', "");
                         }
                     }
                     

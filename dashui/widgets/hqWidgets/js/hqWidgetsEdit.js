@@ -455,11 +455,13 @@ hqWidgets = $.extend (true, hqWidgets, {
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong) {
             var s = "<td class='hq-edit-td-caption'>"+ hqWidgets.translate("Camera URL:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ipCamImageURL'  type='text' value='"+(this.e_internal.attr.ipCamImageURL || "")+"'></td></tr>";
-            if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam)
+            if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam) {
                 sText += "<tr>"+s;
-            else
+				sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Video URL:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ipCamVideoURL'  type='text' value='"+(this.e_internal.attr.ipCamVideoURL || "")+"'></td></tr>";
+            }else{
                 sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'>"+s;
-            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Show Pop up:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_isPopupEnabled' "+((this.e_internal.attr.isPopupEnabled) ? "checked" : "")+">";
+            }
+			sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Show Pop up:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_isPopupEnabled' "+((this.e_internal.attr.isPopupEnabled) ? "checked" : "")+">";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Pop up delay (ms):") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_popUpDelay'  type='text' value='"+this.e_internal.attr.popUpDelay+"'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Open door button:") +"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_ctrlActionBtn' "+(this.e_internal.attr.ctrlActionBtn ? "checked" : "")+" ></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Open door text:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_ctrlBtnText'  type='text' value='"+this.e_internal.attr.ctrlBtnText+"'></td></tr>";
@@ -903,6 +905,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             document.getElementById(obj.e_settings.elemName+'_hoursLastAction').disabled = isChecked;
         });
         this._EditTextHandler('ipCamImageURL');   
+        this._EditTextHandler('ipCamVideoURL');   
         this._EditTextHandler('popUpDelay');   
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong) {
