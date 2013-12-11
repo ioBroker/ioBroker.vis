@@ -50,12 +50,12 @@
 		}
         if (hl && (timerId === undefined || hl.dashId == timerId)) {
 			if (hideSeconds) {
-				hl.innerHTML = '<table><tr><td>'+h+'</td><td id="'+elem+'_space">:</td><td>'+m+'</td></tr></table>';
+				hl.innerHTML = h+'<span style="display:inline-block" id="'+elem+'_space">:</span>'+m;
 				if (blink && (s%2)) {
 					var r = $('#'+elem+'_space');
 					var w = r.width();
 					r.css({width: w});
-					r.html(" ");
+					r.html("&nbsp;");
 				}
 			} else {
 				hl.innerHTML = h+":"+m+":"+s;
