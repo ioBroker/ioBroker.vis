@@ -128,6 +128,7 @@ dui = $.extend(true, dui, {
                 "hideSeconds"      : {"en" : "Hide seconds",  "de": "Zeige keine Sekunden"},
                 "blink"            : {"en" : "Blink",         "de": "Blinken"},
                 "showWeekDay"      : {"en" : "Show day of week", "de": "Wochenstag"},
+                "noClass"          : {"en" : "No predefined style", "de": "Kein vordefinierter Stil"},
 				// Bars
                 "One at time:"     : {"en" : "One at time:",  "de": "Nur eine auswahlbar:"},
                 "Geometry..."      : {"en" : "Geometry...",   "de": "Geometrie..."},
