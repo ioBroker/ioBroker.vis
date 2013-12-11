@@ -414,10 +414,10 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon link" data-dashui-attrs="src;href;target;alt;text;invert_icon">
+<script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon link" data-dashui-attrs="src;href;target;alt;text;invert_icon/checkbox">
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
@@ -431,7 +431,7 @@
 <script type="text/ejs" id="tplIconHttpGet" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon HTTP GET" data-dashui-attrs="url;src;alt;text">
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
@@ -456,10 +456,10 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon - Dialog" data-dashui-attrs="src;alt;text;html_dialog;title;modal;width;height;persistent;invert_icon">
+<script type="text/ejs" id="tplJquiIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon - Dialog" data-dashui-attrs="src;alt;text;html_dialog;title;modal;width;height;persistent;invert_icon/checkbox">
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
@@ -489,10 +489,10 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src;alt;text;contains_view;title;modal;width;height;persistent;invert_icon">
+<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src;alt;text;contains_view;title;modal;width;height;persistent;invert_icon/checkbox">
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
@@ -703,10 +703,10 @@
 
 
 
-<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon State" data-dashui-attrs="hm_id;value;text;src;alt;invert_icon">
+<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon State" data-dashui-attrs="hm_id;value;text;src;alt;invert_icon/checkbox">
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
@@ -720,10 +720,10 @@
 
 
 
-<script type="text/ejs" id="tplIconProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon ProgramExecute" data-dashui-attrs="hm_id;text;src;alt;invert_icon">
+<script type="text/ejs" id="tplIconProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon ProgramExecute" data-dashui-attrs="hm_id;text;src;alt;invert_icon/checkbox">
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>

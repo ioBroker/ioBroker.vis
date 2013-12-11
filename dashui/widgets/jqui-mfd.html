@@ -11,12 +11,12 @@
 </style>
 
 
-<script type="text/ejs" id="tplMfdLight" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Light/Dimmer" data-dashui-attrs="hm_id;invert_icon">
+<script type="text/ejs" id="tplMfdLight" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Light/Dimmer" data-dashui-attrs="hm_id;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
         <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']);  %>>
         <%
         var styles = "";
-        if (this.data.invert_icon == "true") {
+        if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
 
@@ -50,18 +50,18 @@
         <% } else if (val >= 0.01) { %>
         <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_00.png"/>
         <% } else { %>
-        <img style="muh  <%= (this.data.invert_icon == "true" ? "dashui-filter-invert" : "") %>" width="100%" src="img/mfd/light_light_dim.png"/>
+        <img style="muh  <%= (this.data.invert_icon === "true" || this.data.invert_icon === true ? "dashui-filter-invert" : "") %>" width="100%" src="img/mfd/light_light_dim.png"/>
         <% } %>
     </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplMfdLightCtrl" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Light" data-dashui-attrs="hm_id;invert_icon">
+<script type="text/ejs" id="tplMfdLightCtrl" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Light" data-dashui-attrs="hm_id;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-button ui-corner-all ui-state-default  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %>>
     <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']);  %>>
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
@@ -99,12 +99,12 @@
     </div>
     </div>
 </script>
-<script type="text/ejs" id="tplMfdLightOnOffDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Light + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;invert_icon">
+<script type="text/ejs" id="tplMfdLightOnOffDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Light + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
@@ -149,12 +149,12 @@
     <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") != '') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
-<script type="text/ejs" id="tplMfdLightDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Dimmer + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal;invert_icon">
+<script type="text/ejs" id="tplMfdLightDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Dimmer + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
@@ -209,12 +209,12 @@
 
 
 
-<script type="text/ejs" id="tplMfdSocket" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Socket" data-dashui-attrs="hm_id;invert_icon">
+<script type="text/ejs" id="tplMfdSocket" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Socket" data-dashui-attrs="hm_id;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px">
         <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['img/mfd/message_socket_on.png','img/mfd/message_socket_off.png']);  %>>
         <%
         var styles = "";
-        if (this.data.invert_icon == "true") {
+        if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
 
@@ -231,12 +231,12 @@
     </div>
     </div>
 </script>
-<script type="text/ejs" id="tplMfdSocketCtrl" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Socket" data-dashui-attrs="hm_id;invert_icon">
+<script type="text/ejs" id="tplMfdSocketCtrl" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Socket" data-dashui-attrs="hm_id;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px"  <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %> >
     <div class="dashui-widget-body" <%= (el) -> dui.preloadImages(['img/mfd/message_socket_on.png','img/mfd/message_socket_off.png']);  %>>
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
@@ -255,11 +255,11 @@
 </script>
 
 
-<script type="text/ejs" id="tplMfdShutter" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Shutter" data-dashui-attrs="hm_id;invert_icon">
+<script type="text/ejs" id="tplMfdShutter" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Shutter" data-dashui-attrs="hm_id;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el, true) %>><div class="dashui-widget-body">
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
@@ -289,12 +289,12 @@
     <% } %>
 </div></div>
 </script>
-<script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal;invert_icon" >
+<script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal;invert_icon/checkbox" >
     <div data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el, true) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
@@ -342,12 +342,12 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplMfdHeating" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Heizung + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;invert_icon">
+<script type="text/ejs" id="tplMfdHeating" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Heizung + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%">
         <%
         var styles = "";
-        if (this.data.invert_icon == "true") {
+        if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
         %>
@@ -375,12 +375,12 @@
 </script>
 
 
-<script type="text/ejs" id="tplMfdWindow" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Fenster Drehgriff" data-dashui-attrs="hm_id;invert_icon">
+<script type="text/ejs" id="tplMfdWindow" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Fenster Drehgriff" data-dashui-attrs="hm_id;invert_icon/checkbox">
     <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;" >
         <div class="dashui-widget-body">
             <%
             var styles = "";
-            if (this.data.invert_icon == "true") {
+            if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
                 styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
             switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) {
@@ -396,12 +396,12 @@
         </div>
     </div>
 </script>
-<script type="text/ejs" id="tplMfdWindowBool" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Fenster" data-dashui-attrs="hm_id;invert_icon">
+<script type="text/ejs" id="tplMfdWindowBool" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Fenster" data-dashui-attrs="hm_id;invert_icon/checkbox">
     <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;"  >
         <div class="dashui-widget-body">
             <%
             var styles = "";
-            if (this.data.invert_icon == "true") {
+            if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
                  styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
             switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) {
@@ -414,12 +414,12 @@
         </div>
     </div>
 </script>
-<script type="text/ejs" id="tplMfdRoofWindowBool" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Dachfenster" data-dashui-attrs="hm_id;invert_icon">
+<script type="text/ejs" id="tplMfdRoofWindowBool" class="dashui-tpl"  data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Dachfenster" data-dashui-attrs="hm_id;invert_icon/checkbox">
     <div class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" style="height:76px; width:76px;">
         <div class="dashui-widget-body">
             <%
             var styles = "";
-            if (this.data.invert_icon == "true") {
+            if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
             switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) {
@@ -432,12 +432,12 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplMfdDoor" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Türe" data-dashui-attrs="hm_id;invert_icon">
+<script type="text/ejs" id="tplMfdDoor" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Türe" data-dashui-attrs="hm_id;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px;">
         <div class="dashui-widget-body">
             <%
             var styles = "";
-            if (this.data.invert_icon == "true") {
+            if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
             switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) {
@@ -449,12 +449,12 @@
         </div>
     </div>
 </script>
-<script type="text/ejs" id="tplMfdGarage" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Garage" data-dashui-attrs="hm_id;invert_icon">
+<script type="text/ejs" id="tplMfdGarage" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_val - Garage" data-dashui-attrs="hm_id;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px;">
         <div class="dashui-widget-body">
             <%
             var styles = "";
-            if (this.data.invert_icon == "true") {
+            if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
             switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) {
@@ -467,10 +467,10 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplMfdHueDimmerDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_DIMMABLE_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal;invert_icon" >
+<script type="text/ejs" id="tplMfdHueDimmerDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_DIMMABLE_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal;invert_icon/checkbox" >
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
@@ -544,10 +544,10 @@
 </script>
 
 
-<script type="text/ejs" id="tplMfdLivingColorDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_COLOR_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal;invert_icon" >
+<script type="text/ejs" id="tplMfdLivingColorDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_COLOR_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal;invert_icon/checkbox" >
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
@@ -631,10 +631,10 @@
 </script>
 
 
-<script type="text/ejs" id="tplMfdHueDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_EXTENDED_COLOR_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal;invert_icon" >
+<script type="text/ejs" id="tplMfdHueDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_EXTENDED_COLOR_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal;invert_icon/checkbox" >
     <%
     var styles = "";
-    if (this.data.invert_icon == "true") {
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
