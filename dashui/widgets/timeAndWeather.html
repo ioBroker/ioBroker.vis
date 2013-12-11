@@ -24,7 +24,7 @@
 	};
 
 	
-	function startTime(view, elem, hideSeconds, blink, timerId) {
+	function startTime(view, elem, hideSeconds, blink, noClass, timerId) {
         var today = new Date();
         var h =     today.getHours();
         var m =     today.getMinutes();
@@ -41,9 +41,9 @@
 		}
 		if (!hl) {
 			if (hideSeconds) {
-				$('#duiview_'+view).append('<div class="dashui-widget clock" id="'+elem+'" ></div>');				
+				$('#duiview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' clock') + '" id="'+elem+'" ></div>');				
 			} else {
-				$('#duiview_'+view).append('<div class="dashui-widget clock" id="'+elem+'" ></div>');
+				$('#duiview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' clock') + '" id="'+elem+'" ></div>');
 			}
 			hl = document.getElementById(elem);
 			hl.dashId = today.getTime();
@@ -60,7 +60,7 @@
 			} else {
 				hl.innerHTML = h+":"+m+":"+s;
 			}
-            hl.dashTimer = setTimeout(startTime, 1000, view, elem, hideSeconds, blink, hl.dashId);
+            hl.dashTimer = setTimeout(startTime, 1000, view, elem, hideSeconds, blink, noClass, hl.dashId);
         }
     }
     var wochentage = {
@@ -72,7 +72,7 @@
         5: "Freitag",
         6: "Samstag"
     }
-    function startDate(view, elem, showWeekDay, timerId) {
+    function startDate(view, elem, showWeekDay, noClass, timerId) {
         var today = new Date();
         var d =     today.getDate();
         var dow =   today.getDay();
@@ -86,26 +86,26 @@
 		}
         var hl = document.getElementById(elem);
 		if (!hl) {
-			$('#duiview_'+view).append('<div class="dashui-widget date" id="'+elem+'" ></div>');
+			$('#duiview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' date') + '" id="'+elem+'" ></div>');
 			hl = document.getElementById(elem);
 			hl.dashId = (new Date()).getTime();
 		}
         if (hl && (timerId === undefined || hl.dashId == timerId)) {
             hl.innerHTML = ((showWeekDay) ? wochentage[dow]+", " : "") + d+"."+m+"."+y;
-            hl.dashTimer = setTimeout(startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, hl.dashId);
+            hl.dashTimer = setTimeout(startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId);
         }
     }
 </script>
 
-<script type="text/ejs" id="tplTwSimpleDate" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleDate" data-dashui-attrs="showWeekDay/checkbox">
+<script type="text/ejs" id="tplTwSimpleDate" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleDate" data-dashui-attrs="showWeekDay/checkbox;noClass/checkbox">
     <%
-		startDate(this.view, this.data.attr('wid'), this.data.attr('showWeekDay'));
+		startDate(this.view, this.data.attr('wid'), this.data.attr('showWeekDay'), this.data.attr('noClass'));
     %>
 </script>
 
-<script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="hideSeconds/checkbox;blink/checkbox">
+<script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="hideSeconds/checkbox;blink/checkbox;noClass/checkbox">
     <%
-        startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'),this.data.attr('blink'));
+        startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'),this.data.attr('blink'), this.data.attr('noClass'));
     %>
 </script>
 <!--script type="text/ejs" id="tplTwCoolClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="CoolClock" data-dashui-attrs="" >
