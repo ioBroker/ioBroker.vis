@@ -9,6 +9,21 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta45
+* (Bluefox) The edit buttons have the icons now
+* (Bluefox) Fix small problem in StyleSelector
+* (Bluefox) Translate simpleTime and simpleDate
+* (Bluefox) Play sound with HTML5 tag
+* (Bluefox) Support of "say it" adapter in dashui.
+* (Bluefox) Additional properties by swipe: body background
+* (Bluefox) Blink feature by simpleClock (active only if no seconds are visible)
+* (Bluefox)	Create alarm.png
+* (Bluefox) Feature: do not use predefined class for simpleClock and simpleDate
+* (Bluefox) Translate noClass for simpleClock and simpleDate
+* (Hobbyquaker) simpleClock table entfernt
+* (Hobbyquaker) Widget-Sets basic/jqui/jqui-mfd /checkbox für ein paar Attribute angewendet
+
+
 ### 0.9beta44
 * (Hobbyquaker) Screen-size indicator (rot/grüne Linien die anzeigen wie groß der Bildschirm ist, einstellbar im Tab "Editor")
 * (Hobbyquaker) refreshAddons (über CCU.IO Oberfläche kann DashUI veranlasst werden sich neu zu laden)
@@ -324,7 +339,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ### 0.9dev
 
 * (Hobbyquaker, Bluefox)    Anpassung an CCU.IO, Bugfixes
-* (Smiling-Jack)            Swipe-Widget (Navigation via Touch-Gesten)
+* (Smiling-Jack)* (Bluefox) Swipe-Widget (Navigation via Touch-Gesten)
 * Neuer Contributor: Smiling-Jack - Herzlich Willkommen! :-)
 
 ### 0.8.4-0.8.6
