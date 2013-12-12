@@ -381,7 +381,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam   && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {
             sText += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Icon:")+"</td><td>";
-            sText += "<input id='"+this.e_settings.elemName+"_iconName' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.iconName==undefined) ? "" : this.e_internal.attr.iconName)+"'>";
+            sText += "<input id='"+this.e_settings.elemName+"_iconName' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+(this.e_internal.attr.iconName || "")+"'>";
             sText += "<input id='"+this.e_settings.elemName+"_iconNameBtn' style='width: 30px' type='button' value='...'>";
             sText += "</td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Icon width:")+"</td><td id='"+this.e_settings.elemName+"_btIconWidth'></td></tr>";
@@ -446,7 +446,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeCam    && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeGauge) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td  class='hq-edit-td-caption' id='td1_"+this.e_settings.elemName+"_iconOn'>"+ hqWidgets.translate("Icon active:")+"</td><td id='td2_"+this.e_settings.elemName+"_iconOn'>";
-            sTextAdv += "<input id='"+this.e_settings.elemName+"_iconOn' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+((this.e_internal.attr.iconOn == undefined) ? "":this.e_internal.attr.iconOn)+"'>";
+            sTextAdv += "<input id='"+this.e_settings.elemName+"_iconOn' style='width: "+(this.e_settings.width - 30)+"px' type='text' value='"+(this.e_internal.attr.iconOn || "")+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_iconOnBtn' style='width: 30px' type='button' value='...'>";
             sTextAdv += "</td></tr>";
         } 

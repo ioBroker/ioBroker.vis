@@ -57,13 +57,13 @@ var hqWidgets = {
                                     // like callback (imageList, userParam);
                                     // e.g. "function GetFiles (callback, param) { if (callback) callback (aImages, param); }"
         gTempSymbol:   '&#176;C',   // Farenheit or celcius
-        gIsTouchDevice: false,      // if desctop or touch device
+        gIsTouchDevice: false       // if desctop or touch device
     },
     // Button states
     gState: {
         gStateUnknown :0,
         gStateOn      :1, // On
-        gStateOff     :2, // Off
+        gStateOff     :2  // Off
     },   
 	// Active condition operations
 	gOperations: {
@@ -73,7 +73,7 @@ var hqWidgets = {
 		ls: "<  ",
 		gre:">= ",
 		lse:"<= ",
-		has:"has",
+		has:"has"
 	},
     // Button Types
     gButtonType: {
@@ -93,7 +93,7 @@ var hqWidgets = {
         gTypeCam    : 13,  // Ip Camera
         gTypeGong   : 14,  // Gong indicator with camera view on knock
         gTypeGauge  : 15,
-        gTypeLowbat : 16,  // Show widget only if low battery problem
+        gTypeLowbat : 16   // Show widget only if low battery problem
     },
     gWindowState: {
         // State of the leaf
@@ -2430,17 +2430,39 @@ var hqWidgets = {
         }	
         // Set icon in ON state
         this.SetIconOn = function (iconName_) {
-            if (iconName_!== undefined && iconName_ != null && iconName_ != "" && this.intern._jcenter)
-            {
+            if (iconName_) {
                 this.settings.iconOn = ((iconName_.indexOf ("/") != -1) ? "" : hqWidgets.gOptions.gPictDir) + iconName_;
+				if (!document.getElementById(this.advSettings.elemName+"_center")) {
+                    this.intern._jelement.prepend("<img id='"+this.advSettings.elemName+"_center'></img>");
+					this.intern._jcenter = $('#'+this.advSettings.elemName + '_center');
+                    this.intern._jcenter.css({position: 'absolute', 
+                                                top:      ((this.intern._jelement.height()- this.settings.btIconHeight)/2), 
+                                                left:     ((this.intern._jelement.width() - this.settings.btIconWidth) /2), 
+                                                'z-index':'10', 
+                                                width:     this.settings.btIconWidth, 
+                                                height:    this.settings.btIconHeight});
+					if (this.settings.iconName) {
+						if (this.dynStates.state == hqWidgets.gState.gStateOff) {
+							this.intern._jcenter.attr('src', this.settings.iconName);
+							this.intern._jcenter.show();
+						}
+					} else
+					{
+						if (this.dynStates.state != hqWidgets.gState.gStateOn) {
+							this.intern._jcenter.hide();
+						}
+					}
+				}
+				
                 if (this.dynStates.state == hqWidgets.gState.gStateOn) {
-                    this.intern._jcenter.attr('src', this.settings.iconOn);
+					this.intern._jcenter.attr('src', this.settings.iconOn);
+					this.intern._jcenter.show();
                 }
+                this.intern._jcenter.addClass('hq-no-select');
             }
-            else
-            {
+            else {
                 this.settings.iconOn = null;
-                if (this.settings.iconName != null && this.intern._jcenter) {
+                if (this.settings.iconName && this.intern._jcenter) {
                     this.intern._jcenter.attr('src', this.settings.iconName);
                 }
             }
@@ -2451,9 +2473,10 @@ var hqWidgets = {
             this.settings.iconName = (iconName_ != null && iconName_ != "") ? (((iconName_.indexOf ("/") != -1) ? "" : hqWidgets.gOptions.gPictDir) + iconName_) : null;
         
             if (this.settings.iconName) {
-                if (!document.getElementById(this.advSettings.elemName+"_center")) 
+                if (!document.getElementById(this.advSettings.elemName+"_center")) {
                     this.intern._jelement.prepend("<img id='"+this.advSettings.elemName+"_center' src='"+this.settings.iconName+"'></img>");
-                this.intern._jcenter = $('#'+this.advSettings.elemName + '_center');
+					this.intern._jcenter = $('#'+this.advSettings.elemName + '_center');
+				}
 
                 if (this.settings.buttonType != hqWidgets.gButtonType.gTypeImage) {
                     this.intern._jcenter.css({position: 'absolute', 
@@ -2476,17 +2499,15 @@ var hqWidgets = {
                     else
                         this.intern._jcenter.css({height:'auto'});
                 }
-                if (this.dynStates.state == hqWidgets.gState.gStateOff || 
-                    this.settings.iconOn == undefined || 
-                    this.settings.iconOn == null || 
-                    this.settings.iconOn == "") {
+                if (this.dynStates.state == hqWidgets.gState.gStateOff || !this.settings.iconOn) {
                     if (this.settings.iconName != null) {
                         this.intern._jcenter.attr('src', this.settings.iconName);
+						this.intern._jcenter.show();
                     }
                 }
                     
                 this.intern._jcenter.addClass('hq-no-select');
-                this.intern._jcenter.show();
+                
             }
             else {
                 if (this.intern._jcenter) {
@@ -2672,8 +2693,14 @@ var hqWidgets = {
             else {// not Edit mode
                 if (this.intern._jcenter) {
                     if (this.settings.buttonType != hqWidgets.gButtonType.gTypeImage) {
-                        if (!this.intern._isPressed)  
-                            this.intern._jcenter.stop().show();
+                        if (!this.intern._isPressed) { 
+							if (this.settings.iconName && this.dynStates.state == hqWidgets.gState.gStateOff) {
+								this.intern._jcenter.stop().show();
+							} else
+							if (this.settings.iconOn && this.dynStates.state == hqWidgets.gState.gStateOn){
+								this.intern._jcenter.stop().show();
+							}
+						}
                         else
                             this.intern._jcenter.stop().hide();
                     }
@@ -2696,10 +2723,8 @@ var hqWidgets = {
                     if (this.intern._jdoor)
                         this.ShowDoorState ();
                     else
-                    if (this.settings.buttonType != hqWidgets.gButtonType.gTypeBlind)
-                    {
-                        if (this.dynStates.state == hqWidgets.gState.gStateOn)
-                        {
+                    if (this.settings.buttonType != hqWidgets.gButtonType.gTypeBlind) {
+                        if (this.dynStates.state == hqWidgets.gState.gStateOn) {
                             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
                                 this.show();
                             }
@@ -2708,8 +2733,7 @@ var hqWidgets = {
                                 this._SetClass (this.intern._backOnHover);
                             else
                                 this._SetClass (this.intern._backOn);
-                        }
-                        else
+                        } else
                         {
                             // Hide element if lowbat is false
                             if (this.dynStates.state == hqWidgets.gState.gStateOff && 
@@ -2724,40 +2748,33 @@ var hqWidgets = {
                                 this._SetClass (this.intern._backOff);
                         }	
                     }
-                    else
-                    {
+                    else {
                         this.SetWindowState(-1, hqWidgets.gWindowState.gWindowUpdate);
                         this.ShowBlindState();
                     }
                     
-                    if (this.intern._jicon)
-                    {
+                    if (this.intern._jicon) {
                         if (this.dynStates.isRefresh)
                         {
                             this.intern._jicon.addClass("ui-icon-refresh");
                             this.intern._jicon.removeClass("ui-icon-gear");
                             this.intern._jicon.show();
-                        }
-                        else
+                        } else
                         {
                             this.intern._jicon.removeClass("ui-icon-refresh");
-                            if (this.dynStates.isWorking)
-                            {
+                            if (this.dynStates.isWorking) {
                                 this.intern._jicon.addClass("ui-icon-gear");
                                 this.intern._jicon.show();
                             }
-                            else
-                            {
+                            else {
                                 this.intern._jicon.removeClass("ui-icon-gear");
                                 this.intern._jicon.hide();
                             }
                         }
                     }
                 }
-                else
-                {
-                    if (this.intern._jicon)
-                    {
+                else {
+                    if (this.intern._jicon) {
                         this.intern._jicon.show();
                         this.intern._jicon.removeClass("ui-icon-refresh");
                         this.intern._jicon.removeClass("ui-icon-gear");
@@ -2772,8 +2789,7 @@ var hqWidgets = {
                     else
                     if (this.settings.buttonType != hqWidgets.gButtonType.gTypeBlind)
                         this._SetClass (this.intern._backOff, 100);
-                    else
-                    {
+                    else {
                         this.SetWindowState(-1, hqWidgets.gWindowState.gWindowUpdate);
                         this.ShowBlindState();
                     }
@@ -2805,11 +2821,17 @@ var hqWidgets = {
                 if (this.settings.iconOn) {
                     if (this.dynStates.state == hqWidgets.gState.gStateOn) {
                         this.intern._jcenter.attr('src', this.settings.iconOn);
+						this.intern._jcenter.show();
                     }
-                    else 
-                    if (this.settings.iconName != null) {
-                        this.intern._jcenter.attr('src', this.settings.iconName);
-                    }
+                    else {
+						if (this.settings.iconName) {
+							this.intern._jcenter.attr('src', this.settings.iconName);
+							this.intern._jcenter.show();
+						} else 
+						{
+							this.intern._jcenter.hide();
+						}
+					}
                 }
                                 
                 // Show information window if state chaged to true
