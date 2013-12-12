@@ -448,6 +448,7 @@ var dui = {
 					btn.hide(true);
 				}
             }
+
         }
 
         if (widget.style) {
@@ -464,6 +465,13 @@ var dui = {
                 e.preventDefault();
                 return false;
             });
+
+            if (dui.activeWidget == id) {
+                dui.draggable($("#"+id));
+                dui.resizable($("#"+id));
+            }
+
+
         }
     },
     changeView: function (view, hideOptions, showOptions, sync) {

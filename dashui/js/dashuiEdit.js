@@ -758,6 +758,8 @@ dui = $.extend(true, dui, {
                         dui.saveRemote();
                         dui.reRenderWidget(dui.activeWidget);
 
+
+
                     }).keyup(function () {
                         $(this).trigger('change');
                     });
@@ -1063,7 +1065,6 @@ dui = $.extend(true, dui, {
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
             dui.saveRemote();
             dui.reRenderWidget(dui.activeWidget);
-            dui.resizable($("#"+dui.activeWidget));
         });
 		
         $(".dashui-inspect-css").change(function () {
