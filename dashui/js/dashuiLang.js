@@ -112,7 +112,7 @@ dui = $.extend(true, dui, {
                 "remove_instance"  : {"en" : "Remove instance","de": "Instanz löschen"}, 
                 "add_widget"       : {"en" : "Add widget",    "de": "Einfügen"},
                 "del_widget"       : {"en" : "Delete widget", "de": "Löschen"},
-                "dup_widget"       : {"en" : "Copy widget to:","de": "Widget kopieren nach:"},
+                "dup_widget"       : {"en" : "Copy to:","de": "Kopieren nach:"},
                 "widget_doc"       : {"en" : "Widget help",   "de": "Widgethilfe"},
                 "Add Widget:"      : {"en" : "Add Widget:",   "de": "Widget einf&uuml;gen:"},
                 "Inspecting Widget:":{"en" : "Inspecting Widget:", "de": "Widget inspizieren:"},

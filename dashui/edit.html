@@ -67,9 +67,9 @@
                 <li><a href="#tabs-1">Views</a></li>
                 <li><a href="#tabs-4">Widgets</a></li>
                 <li><a href="#tabs-3">CSS Inspector</a></li>
-                <li><a href="#tabs-2">Homematic</a></li>
-                <li><a href="#tabs-6">Editor</a></li>
-                <li><a href="#tabs-7">Wizard</a></li>
+                <li><a href="#tabs-2">Misc</a></li>
+                <!--<li><a href="#tabs-6">Editor</a></li>
+                <li><a href="#tabs-7">Wizard</a></li>-->
                 <li><a href="#tabs-5">Info</a></li>
 
             </ul>
@@ -90,7 +90,7 @@
                     </tr>
                     <tr>
                         <td class="dashui-edit-td-caption translate">theme</td><td class="dashui-edit-td-field">
-                            <select id="inspect_view_theme" class="dashui-editor dashui-edit-select" data-multiselect-width="300" data-multiselect-height="180">
+                            <select id="inspect_view_theme" class="dashui-editor dashui-edit-select" data-multiselect-width="250" data-multiselect-height="180">
                                 <option value="black-tie">black-tie</option>
                                 <option value="blitzer">blitzer</option>
                                 <option value="cupertino">cupertino</option>
@@ -132,6 +132,45 @@
                 </table>
             </div>
             <div class="dashui-edit-tab" id="tabs-2">
+                <h4>Snapping</h4>
+                <table>
+                    <tr>
+                        <td>
+                            <select id="snap_type">
+                                <option value="0" selected="selected">disabled</option>
+                                <option value="1">elements</option>
+                                <option value="2">grid</option>
+                            </select>
+                        </td>
+                        <td>
+                            grid size <input id="grid_size" type="number" value=""/><br/>
+                        </td>
+                    </tr>
+                </table>
+
+
+                <h4>Screensize</h4>
+                <table>
+                    <tr>
+                        <td>Width</td>
+                        <td><input id="screen_size_x" type="number" value=""/></td>
+                    </tr>
+                    <tr>
+                        <td>Height</td>
+                        <td><input id="screen_size_y" type="number" value=""/></td>
+                    </tr>
+                </table>
+
+                <h4>Wizard</h4>
+                <table>
+                    <tr><td class='translate'>Room:</td>    <td><select id="wizard_rooms"></select></td></tr>
+                    <tr><td class='translate'>Function:</td><td><select id="wizard_funcs"></select></td></tr>
+                    <tr><td class='translate'>Widget:</td>  <td><select id="wizard_widgets"></select></td></tr>
+                </table>
+                <button class="dashui-editor translate" type="button" id="wizard_run">wizard_run</button>
+
+
+
                 <h4>External Commands</h4>
                 <button type="button" class="dashui-editor" id="create_instance">create_instance</button>
                 <span id="instance">Instance ID <input type="input" id="dashui_instance" disabled="disabled"/>
@@ -151,137 +190,137 @@
                 </table>
                 <div class="dashui-widget-tools">
                     <h4>Widget: <span id="inspect_wid"></span></h4>
-                    <table>
+                    <table id="css_table">
                         <tr>
                             <td>left</td>
                             <td>
-                                <input size="12" type="text" id="inspect_css_left" class="dashui-inspect-css"/>
-                                <input id="steal_left" type="checkbox" data-dashui-steal="left" class="dashui-steal-css"/><label for="steal_left">steal</label>
+                                <input size="8" type="text" id="inspect_css_left" class="dashui-inspect-css"/>
+                                <input id="steal_left" type="checkbox" data-dashui-steal="left" class="dashui-steal-css"/><label class="dashui-steal-label" for="steal_left">steal</label>
                                 <a data-dashui-clear="0px" class="dashui-clear-css"></a>
                             </td>
 
                             <td>top</td>
-                            <td><input size="12" type="text" id="inspect_css_top" class="dashui-inspect-css"/>
-                                <input id="steal_top" type="checkbox" data-dashui-steal="top" class="dashui-steal-css"/><label for="steal_top">steal</label>
+                            <td><input size="8" type="text" id="inspect_css_top" class="dashui-inspect-css"/>
+                                <input id="steal_top" type="checkbox" data-dashui-steal="top" class="dashui-steal-css"/><label class="dashui-steal-label" for="steal_top">steal</label>
                                 <a data-dashui-clear="0px" class="dashui-clear-css">
                             </td>
                         </tr>
                         <tr>
                             <td>width</td>
-                            <td><input size="12" type="text" id="inspect_css_width" class="dashui-inspect-css"/>
-                                <input id="steal_width" type="checkbox" data-dashui-steal="width" class="dashui-steal-css"/><label for="steal_width">steal</label>
+                            <td><input size="8" type="text" id="inspect_css_width" class="dashui-inspect-css"/>
+                                <input id="steal_width" type="checkbox" data-dashui-steal="width" class="dashui-steal-css"/><label class="dashui-steal-label" for="steal_width">steal</label>
                                 <a data-dashui-clear="60px" class="dashui-clear-css"></a>
                             </td>
                             <td>height</td>
                             <td>
-                                <input  size="12" type="text" id="inspect_css_height" class="dashui-inspect-css"/>
-                                <input id="steal_height" type="checkbox" data-dashui-steal="height" class="dashui-steal-css"/><label for="steal_height">steal</label>
+                                <input size="8" type="text" id="inspect_css_height" class="dashui-inspect-css"/>
+                                <input id="steal_height" type="checkbox" data-dashui-steal="height" class="dashui-steal-css"/><label class="dashui-steal-label" for="steal_height">steal</label>
                                 <a data-dashui-clear="32px" class="dashui-clear-css"></a>
                             </td>
                         </tr>
                         <tr>
                             <td>padding</td>
                             <td>
-                                <input size="12" type="text" id="inspect_css_padding" class="dashui-inspect-css"/>
-                                <input id="steal_padding" type="checkbox" data-dashui-steal="left" class="dashui-steal-css"/><label for="steal_padding">steal</label>
+                                <input size="8" type="text" id="inspect_css_padding" class="dashui-inspect-css"/>
+                                <input id="steal_padding" type="checkbox" data-dashui-steal="left" class="dashui-steal-css"/><label class="dashui-steal-label" for="steal_padding">steal</label>
                                 <a data-dashui-clear="0" class="dashui-clear-css"></a>
                             </td>
 
                             <td>margin</td>
                             <td>
-                                <input size="12" type="text" id="inspect_css_margin" class="dashui-inspect-css" disabled="disabled"/>
+                                <input size="8" type="text" id="inspect_css_margin" class="dashui-inspect-css" disabled="disabled"/>
                             </td>
                         </tr>
                         <tr>
                             <td>text-align</td>
                             <td>
-                                <input size="12" type="text" id="inspect_css_text-align" class="dashui-inspect-css"/>
-                                <input id="steal_textAlign" type="checkbox" data-dashui-steal="text-align" class="dashui-steal-css"/><label for="steal_textAlign">steal</label>
+                                <input size="8" type="text" id="inspect_css_text-align" class="dashui-inspect-css"/>
+                                <input id="steal_textAlign" type="checkbox" data-dashui-steal="text-align" class="dashui-steal-css"/><label class="dashui-steal-label" for="steal_textAlign">steal</label>
                                 <a data-dashui-clear="center" class="dashui-clear-css"></a>
                             </td>
 
                             <td>vertical-align</td>
                             <td>
-                                <input size="12" type="text" id="inspect_css_vertical-align" class="dashui-inspect-css" disabled="disabled"/>
+                                <input size="8" type="text" id="inspect_css_vertical-align" class="dashui-inspect-css" disabled="disabled"/>
                                 <input id="steal_verticalAlign" type="checkbox" data-dashui-steal="vertical-align" class="dashui-steal-css"/>
-                                <label for="steal_verticalAlign">steal</label>
+                                <label class="dashui-steal-label" for="steal_verticalAlign">steal</label>
                                 <a data-dashui-clear="middle" class="dashui-clear-css"></a>
                             </td>
                         </tr>
                         <tr>
                             <td>border-radius</td>
                             <td>
-                                <input size="12" type="text" id="inspect_css_border-radius" class="dashui-inspect-css"/>
+                                <input size="8" type="text" id="inspect_css_border-radius" class="dashui-inspect-css"/>
                                 <input id="steal_BorderRadius" type="checkbox" data-dashui-steal="border-radius" class="dashui-steal-css"/>
-                                <label for="steal_BorderRadius">steal</label>
+                                <label class="dashui-steal-label" for="steal_BorderRadius">steal</label>
                                 <a data-dashui-clear="" class="dashui-clear-css"></a>
                             </td>
                             <td>z-index</td>
                             <td>
-                                <input size="12" type="text" id="inspect_css_z-index" class="dashui-inspect-css"/>
+                                <input size="8" type="text" id="inspect_css_z-index" class="dashui-inspect-css"/>
                                 <input id="steal_zIndex" type="checkbox" data-dashui-steal="z-index" class="dashui-steal-css"/>
-                                <label for="steal_zIndex">steal</label>
+                                <label class="dashui-steal-label" for="steal_zIndex">steal</label>
                                 <a data-dashui-clear="" class="dashui-clear-css"></a>
                             </td>
                         </tr>
                         <tr>
                             <td>color</td>
                             <td>
-                                <input size="12" type="text" id="inspect_css_color" class="dashui-inspect-css"/>
+                                <input size="8" type="text" id="inspect_css_color" class="dashui-inspect-css"/>
                                 <input id="steal_color" type="checkbox" data-dashui-steal="color" class="dashui-steal-css"/>
-                                <label for="steal_color">steal</label>
+                                <label class="dashui-steal-label" for="steal_color">steal</label>
                                 <a data-dashui-clear="" class="dashui-clear-css"></a>
                             </td>
                             <td>background-size</td>
                             <td>
-                                <input size="12" type="text" id="inspect_css_background-size" class="dashui-inspect-css"/>
+                                <input size="8" type="text" id="inspect_css_background-size" class="dashui-inspect-css"/>
                                 <input id="steal_backgroundSize" type="checkbox" data-dashui-steal="background-size" class="dashui-steal-css"/>
-                                <label for="steal_backgroundSize">steal</label>
+                                <label class="dashui-steal-label" for="steal_backgroundSize">steal</label>
                                 <a data-dashui-clear="" class="dashui-clear-css"></a>
                             </td>
                         </tr>
                         <tr>
                             <td>font</td>
                             <td colspan="3">
-                                <input size="48" type="text" id="inspect_css_font" class="dashui-inspect-css"/>
+                                <input size="40" type="text" id="inspect_css_font" class="dashui-inspect-css"/>
                                 <input id="steal_font" type="checkbox" data-dashui-steal="font" class="dashui-steal-css"/>
-                                <label for="steal_font">steal</label>
+                                <label class="dashui-steal-label" for="steal_font">steal</label>
                                 <a data-dashui-clear="" class="dashui-clear-css"></a>
                             </td>
                         </tr>
                         <tr>
                             <td>background</td>
                             <td colspan="3">
-                                <input size="48" type="text" id="inspect_css_background" class="dashui-inspect-css"/>
+                                <input size="40" type="text" id="inspect_css_background" class="dashui-inspect-css"/>
                                 <input id="steal_background" type="checkbox" data-dashui-steal="background" class="dashui-steal-css"/>
-                                <label for="steal_background">steal</label>
+                                <label class="dashui-steal-label" for="steal_background">steal</label>
                                 <a data-dashui-clear="" class="dashui-clear-css"></a>
                             </td>
                         </tr>
                         <tr>
                             <td>border</td>
                             <td colspan="3">
-                                <input size="48" type="text" id="inspect_css_border" class="dashui-inspect-css"/>
+                                <input size="40" type="text" id="inspect_css_border" class="dashui-inspect-css"/>
                                 <input id="steal_border" type="checkbox" data-dashui-steal="border" class="dashui-steal-css"/>
-                                <label for="steal_border">steal</label>
+                                <label class="dashui-steal-label" for="steal_border">steal</label>
                                 <a data-dashui-clear="" class="dashui-clear-css"></a>
                             </td>
                         </tr>
                         <tr>
                             <td>box-shadow</td>
                             <td colspan="3">
-                                <input size="48" type="text" id="inspect_css_box-shadow" class="dashui-inspect-css"/>
+                                <input size="40" type="text" id="inspect_css_box-shadow" class="dashui-inspect-css"/>
                                 <input id="steal_boxShadow" type="checkbox" data-dashui-steal="box-shadow" class="dashui-steal-css"/>
-                                <label for="steal_boxShadow">steal</label>
+                                <label class="dashui-steal-label" for="steal_boxShadow">steal</label>
                                 <a data-dashui-clear="" class="dashui-clear-css"></a>
                             </td>
                         </tr>
                         <tr>
                             <td>text-shadow</td>
                             <td colspan="3">
-                                <input size="48" type="text" id="inspect_css_text-shadow" class="dashui-inspect-css"/>
+                                <input size="40" type="text" id="inspect_css_text-shadow" class="dashui-inspect-css"/>
                                 <input id="steal_textShadow" type="checkbox" data-dashui-steal="text-shadow" class="dashui-steal-css"/>
-                                <label for="steal_textShadow">steal</label>
+                                <label class="dashui-steal-label" for="steal_textShadow">steal</label>
                                 <a data-dashui-clear="" class="dashui-clear-css"></a>
                             </td>
                         </tr>
@@ -290,20 +329,26 @@
             </div>
             <div class="dashui-edit-tab" id="tabs-4" class="ui-widget-content">
                 <h4>Add Widget:</h4>
-                <select id="select_set" class="dashui-editor" data-multiselect-width="425" data-multiselect-height="400"></select></br>
-                <select id="select_tpl" class="dashui-editor" data-multiselect-width="425" data-multiselect-height="360"></select><button class="dashui-editor" type="button" id="add_widget">add_widget</button>
-                <h4>Inspecting Widget:</h4> <select id="select_active_widget" class="dashui-editor" data-multiselect-width="425" data-multiselect-height="265"></select><br/><br/>
+                <select id="select_set" class="dashui-editor" data-multiselect-width="350" data-multiselect-height="400"></select></br>
+                <select id="select_tpl" class="dashui-editor" data-multiselect-width="350" data-multiselect-height="360"></select><button class="dashui-editor" type="button" id="add_widget">add_widget</button>
+                <h4>Inspecting Widget:</h4> <select id="select_active_widget" class="dashui-editor" data-multiselect-width="350" data-multiselect-height="265"></select><br/><br/>
                 <div class="dashui-widget-tools">
                     <table><tr>
                         <td>
                             <button type="button" class="dashui-editor" id="del_widget" >del_widget</button>
+                        </td>
+                        <td>
+                            <button type="button" class="dashui-editor" id="widget_doc">widget_doc</button>
+                        </td>
+                    </tr></table>
+                    <table><tr>
+                        <td>
                             <button type="button" class="dashui-editor" id="dup_widget" >dup_widget</button>
                         </td>
                         <td>
                             <select class="dashui-editor" id="select_view_copy"></select>
                         </td>
                     </tr></table>
-                    <button type="button" class="dashui-editor" id="widget_doc">widget_doc</button>
                     <h4>Widget Attributes:</h4>
                     <table id="widget_attrs_fix">
                         <tr id="inspect_comment_tr">
@@ -324,8 +369,8 @@
                 </div>
             </div>
 
-            <div class="dashui-edit-tab" id="tabs-6" class="ui-widget-content">
-                <h4>Snapping</h4>
+            <!-- <div class="dashui-edit-tab" id="tabs-6" class="ui-widget-content">
+               <h4>Snapping</h4>
                 <select id="snap_type">
                     <option value="0" selected="selected">disabled</option>
                     <option value="1">elements</option>
@@ -344,26 +389,21 @@
                         <td><input id="screen_size_y" type="number" value=""/></td>
                     </tr>
                 </table>
+            </div>-->
 
-
-
-
-            </div>
-
-            <div class="dashui-edit-tab" id="tabs-7" class="ui-widget-content">
+           <!-- <div class="dashui-edit-tab" id="tabs-7" class="ui-widget-content">
 				<table>
 					<tr><td class='translate'>Room:</td>    <td><select id="wizard_rooms"></select></td></tr>
 					<tr><td class='translate'>Function:</td><td><select id="wizard_funcs"></select></td></tr>
 					<tr><td class='translate'>Widget:</td>  <td><select id="wizard_widgets"></select></td></tr>
 				</table>
 				<button class="dashui-editor translate" type="button" id="wizard_run">wizard_run</button> 
-            </div>
+            </div>-->
 			
             <div class="dashui-edit-tab" id="tabs-5" class="ui-widget-content">
 
                     <ul style="font-size: 1.1em; line-height: 2em;">
                         <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank">Webseite</a></li>
-                        <li><a href="https://github.com/hobbyquaker/DashUI/wiki/" target="_blank">Widget-Wiki</a></li>
                         <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank">Unterstützung</a></li>
                         <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank">Änderungs-Historie</a></li>
                     </ul>

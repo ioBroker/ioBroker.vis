@@ -23,7 +23,7 @@
 // duiEdit - the DashUI Editor
 
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta45',
+    editVersion:        '0.9beta46',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -944,8 +944,8 @@ dui = $.extend(true, dui, {
            .dialog({
             modal: false,
             autoOpen: false,
-            width:  562,
-            minWidth: 572,
+            width:  420,
+            minWidth: 420,
             height: 610,
             position: { my: "right top", at: "right top", of: window },
             dialogClass: "dui-editor-dialog",
@@ -988,7 +988,7 @@ dui = $.extend(true, dui, {
                 header: false,
                 noneSelectedText: false,
                 selectedList: 1,
-                minWidth: 320,
+                minWidth: 250,
                 height: 410
 
             });

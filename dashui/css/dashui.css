@@ -117,11 +117,11 @@ a.ui-dialog-titlebar-restore {
     margin-top: 5px !important;
     margin-left:5px !important;
 }
-h4 {
+.dashui-edit-tab h4 {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 12pt;
 	font-weight: bold;
-	padding-top: 4px;
+	padding-top: 0;
 	padding-bottom: 0px;
 	padding-left: 6px;
     width: 100%;
@@ -190,9 +190,11 @@ h4 {
 
 .dashui-edit-tab {
 
-    height: 90%;
-    height: calc(100% - 60px);
+    height: 80%;
+    height: calc(100% - 50px);
     overflow-y: scroll;
+    padding-left:5px !important;
+    padding-top:0px !important;
 
 }
 
@@ -200,7 +202,7 @@ div#tabs {
 
     height: 100%;
     overflow: hidden;
-    min-width: 563px;
+    min-width: 360px;
 }
 
 div#dui_editor {
@@ -215,4 +217,17 @@ div#dui_editor {
 
 .dashui-steal-cursor {
     cursor: crosshair !important;
+}
+
+.dashui-inspect-css {
+    font-size: 11px !important;
+}
+
+.dashui-steal-label {
+    width: 17px;
+    height: 17px;
+}
+#css_table {
+    width: 400px;
+    font-size: 11px;
 }
