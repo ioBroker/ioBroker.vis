@@ -2215,10 +2215,10 @@ var hqWidgets = {
                 this.intern._iuCamUpdateTimer = null;
             }
             
-            if (this.intern._ipCamImageURL == null && this.settings.ipCamImageURL != null && this.settings.ipCamImageURL != "") {
+            if (this.intern._ipCamImageURL == null && this.settings.ipCamImageURL) {
                 this.intern._ipCamImageURL = this.settings.ipCamImageURL + ((this.settings.ipCamImageURL.indexOf ('?') > 0) ? '&' : '?');
             }
-            if (!this.intern._jcenter && this.intern._ipCamImageURL != null && this.intern._ipCamImageURL != "") {
+            if (!this.intern._jcenter && this.intern._ipCamImageURL) {
                if (!document.getElementById(this.advSettings.elemName+"_center")) 
                     this.intern._jelement.prepend("<img id='"+this.advSettings.elemName+"_center'></img>");
                     
@@ -2510,7 +2510,7 @@ var hqWidgets = {
                 
             }
             else {
-                if (this.intern._jcenter) {
+                if (this.intern._jcenter && this.settings.buttonType != hqWidgets.gButtonType.gTypeCam) {
                     this.intern._jcenter.hide();
                     this.intern._jcenter.html("");
                 }

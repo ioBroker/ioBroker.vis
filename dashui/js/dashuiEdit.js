@@ -536,7 +536,7 @@ dui = $.extend(true, dui, {
                         }, 'WORKING');
                     });
                 } else 
-				if (wid_attr === "src") {
+				if (wid_attr.indexOf ("src") == wid_attr.length - 3) {
                     // Image src
                     $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44"/><input type="button" id="inspect_'+wid_attr+'_btn" value="..."></td></tr>');
                     document.getElementById ("inspect_"+wid_attr+"_btn").jControl = wid_attr;
