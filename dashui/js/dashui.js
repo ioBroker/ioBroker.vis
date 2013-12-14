@@ -899,7 +899,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
 					homematic.uiState.attr(o);
 					
 					// Ich habe keine Ahnung, aber bind("change") funktioniert einfach nicht 
-					if (dui.binds.hqWidgetsExt && dui.binds.hqWidgetsExt.hqMonitor && obj[3])
+					if (dui.binds.hqWidgetsExt && dui.binds.hqWidgetsExt.hqMonitor && (obj[3] || (homematic.regaObjects[obj[0]] && homematic.regaObjects[obj[0]]["TypeName"] == "VARDP")))
 						dui.binds.hqWidgetsExt.hqMonitor(obj[0], obj[1]);
 				}
 				else {
