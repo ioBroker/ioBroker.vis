@@ -9,6 +9,11 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta47
+* (Bluefox) "basic - hm_val HTML 8" padding entfernt
+* (Hobbyquaker) fancyswitch Bugfix: initialer Status
+* (Hobbyquaker) "basic hm_val - Bool HTML" grauen Hintergrund entfernt
+
 ### 0.9beta46
 * (Hobbyquaker) Re-arranged Editor Dialog, more compact, style changes
 * (Hobbyquaker) Bugfix: Resizable and Draggable where lost after widget attribute change
