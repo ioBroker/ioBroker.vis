@@ -46,6 +46,24 @@
                     }
                 });
 
+
+                var newVal = homematic.uiState.attr(hm_id+".Value");
+                var num = parseFloat(newVal, 10);
+                if (num > 0 || newVal == "true" || newVal == true) {
+                    if (reverse) {
+                        $this.css('background-position', 'right');
+                    } else {
+                        $this.css('background-position', 'left');
+                    }
+                } else {
+                    if (reverse) {
+                        $this.css('background-position', 'left');
+                    } else {
+                        $this.css('background-position', 'right');
+                    }
+                }
+
+
                 $this.css('background', 'url("'+src+'")');
                 $this.find('.fancy-on_off').css('display','none');
                 $this.find('.fancy-on, .fancy-off').css('text-indent','-10000px');
