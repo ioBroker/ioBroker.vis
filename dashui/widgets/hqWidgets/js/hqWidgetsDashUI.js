@@ -1214,7 +1214,10 @@ if ((typeof hqWidgets !== 'undefined')) {
                             var iWnd = obj.GetInfoWindowSettings ();
                             var infoWindow = {'x': Math.round(iWnd.x), 'y': Math.round(iWnd.y), 'width': Math.round(iWnd.width), 'height': Math.round(iWnd.height)};
                             dui.binds.hqWidgetsExt.hqEditStoreInfoWindow (obj, infoWindow);
-                        };                     
+	                        if (obj.dynStates.infoWindow._onHide) {
+								obj.dynStates.infoWindow._onHide (obj);
+							}
+						};                     
                         btn.SetInfoWindowSettings (infoWindow);
                     }
                 }
