@@ -31,7 +31,7 @@
                 var hm_id = "_" + id;
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     var num = parseFloat(newVal, 10);
-                    if (num > 0 || newVal == "true" || newVal == true) {
+                    if (num !== 0 || newVal === "true" || newVal === true) {
                         if (reverse) {
                             $this.css('background-position', 'right');
                         } else {
@@ -46,10 +46,13 @@
                     }
                 });
 
+                $this.css('background', 'url("'+src+'")');
+                $this.find('.fancy-on_off').css('display','none');
+                $this.find('.fancy-on, .fancy-off').css('text-indent','-10000px');
 
                 var newVal = homematic.uiState.attr(hm_id+".Value");
                 var num = parseFloat(newVal, 10);
-                if (num > 0 || newVal == "true" || newVal == true) {
+                if (num > 0 || newVal === "true" || newVal === true) {
                     if (reverse) {
                         $this.css('background-position', 'right');
                     } else {
@@ -64,9 +67,6 @@
                 }
 
 
-                $this.css('background', 'url("'+src+'")');
-                $this.find('.fancy-on_off').css('display','none');
-                $this.find('.fancy-on, .fancy-off').css('text-indent','-10000px');
                 if (dui.urlParams["edit"] !== "") {
                     $this.find("input.fancy-on_off").change(function() {
                         var val = $(this).val();
