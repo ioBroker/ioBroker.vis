@@ -28,6 +28,7 @@ dui = $.extend(true, dui, {
     selectView:         $("#select_view"),
     activeWidget:       "",
     isStealCss:         false,
+    gridWidth:          undefined,
 
 
     startInstance: function () {
@@ -848,17 +849,17 @@ dui = $.extend(true, dui, {
         $("#select_active_widget").multiselect("refresh");
 
         if ($("#snap_type option:selected").val() == 2) {
-            var gridWidth = parseInt($("#grid_size").val());
+            dui.gridWidth = parseInt($("#grid_size").val());
 
-            if (gridWidth < 1 || isNaN(gridWidth) ) {
-                gridWidth = 10;
+            if (dui.gridWidth < 1 || isNaN(dui.gridWidth) ) {
+                dui.gridWidth = 10;
             }
 
             var x = parseInt($this.css("left")),
                 y = parseInt($this.css("top"));
 
-            x = Math.floor(x / gridWidth) * gridWidth;
-            y = Math.floor(y / gridWidth) * gridWidth;
+            x = Math.floor(x / dui.gridWidth) * dui.gridWidth;
+            y = Math.floor(y / dui.gridWidth) * dui.gridWidth;
 
             $this.css({"left": x, "top": y});
         }
@@ -902,7 +903,7 @@ dui = $.extend(true, dui, {
             draggableOptions.snap = "#dui_container div.dashui-widget";
         }
         if ($("#snap_type option:selected").val() == 2) {
-            draggableOptions.grid = [gridWidth,gridWidth];
+            draggableOptions.grid = [dui.gridWidth,dui.gridWidth];
         }
         obj.draggable(draggableOptions);
     },
