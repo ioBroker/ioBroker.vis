@@ -99,7 +99,7 @@
     </div>
     </div>
 </script>
-<script type="text/ejs" id="tplMfdLightOnOffDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Light + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;invert_icon/checkbox">
+<script type="text/ejs" id="tplMfdLightOnOffDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Light + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose/checkbox;invert_icon/checkbox;modal/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
@@ -145,11 +145,11 @@
         <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">an</label>
     </div>
     </div>
-    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200},true) %> />
-    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") != '') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
+    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200,modal:data.attr("modal")},true) %> />
+    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
-<script type="text/ejs" id="tplMfdLightDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Dimmer + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal;invert_icon/checkbox">
+<script type="text/ejs" id="tplMfdLightDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Dimmer + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
@@ -203,7 +203,7 @@
     <%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) * 100).toFixed(0) %>%
     </div>
     <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200,modal:data.attr('modal')},true) %> />
-    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") == 'true') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
+    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("modal") === true) { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
 
@@ -289,7 +289,7 @@
     <% } %>
 </div></div>
 </script>
-<script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;modal;invert_icon/checkbox" >
+<script type="text/ejs" id="tplMfdShutterDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Shutter + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox" >
     <div data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el, true) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
@@ -338,11 +338,11 @@
     <%= (homematic.uiState.attr("_" + this.data.hm_id + ".Value") * 100).toFixed(0) %>%
     </div>
     <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:200,modal:data.attr('modal')},true) %> />
-    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") != '') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
+    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
 
-<script type="text/ejs" id="tplMfdHeating" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Heizung + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose;invert_icon/checkbox">
+<script type="text/ejs" id="tplMfdHeating" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hm_ctrl - Heizung + jqui Dialog" data-dashui-attrs="hm_id;hm_wid;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%">
         <%
@@ -370,7 +370,7 @@
     <%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value"))).toFixed(1) %>°C
     </div>
     <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:600,height:200},true) %> />
-    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") != '') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
+    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
 
@@ -467,7 +467,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplMfdHueDimmerDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_DIMMABLE_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal;invert_icon/checkbox" >
+<script type="text/ejs" id="tplMfdHueDimmerDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_DIMMABLE_LIGHT" data-dashui-attrs="hm_id;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox" >
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -539,12 +539,12 @@
 
     </div>
     <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:320,modal:data.attr('modal')},true) %> />
-    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") == 'true') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
+    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
 
 
-<script type="text/ejs" id="tplMfdLivingColorDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_COLOR_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal;invert_icon/checkbox" >
+<script type="text/ejs" id="tplMfdLivingColorDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_COLOR_LIGHT" data-dashui-attrs="hm_id;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox" >
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -626,12 +626,12 @@
 
     </div>
     <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:320,modal:data.attr('modal')},true) %> />
-    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") == 'true') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
+    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
 
 
-<script type="text/ejs" id="tplMfdHueDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_EXTENDED_COLOR_LIGHT" data-dashui-attrs="hm_id;title;autoclose;modal;invert_icon/checkbox" >
+<script type="text/ejs" id="tplMfdHueDialog" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="hue_ctrl - jqui Dialog HUE_EXTENDED_COLOR_LIGHT" data-dashui-attrs="hm_id;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox" >
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -724,6 +724,6 @@
     </div>
     <div class="pupup-helper" <%= (el) -> dui.binds.jqueryui.hueColormode(el, hueIDs.COLORMODE) %> />
     <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:440,height:320,modal:data.attr('modal')},true) %> />
-    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") == 'true') { dui.binds.jqueryui.dialogAutoClose(el) } %> />
+    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
