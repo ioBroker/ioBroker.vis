@@ -256,7 +256,7 @@
 </script>
 
 <script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Number" data-dashui-attrs="html_prepend;html_append_singular;html_append_plural;hm_id;digits;factor">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
                 <%== this.data.attr("html_prepend") %><%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) * this.data.factor).toFixed(this.data.digits) %><%== (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
@@ -266,7 +266,7 @@
 </script>
 
 <script type="text/ejs" id="tplValueString" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - String" data-dashui-attrs="html_prepend;html_append;hm_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="background-color:#ccc; top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
                 <%== this.data.attr("html_prepend") %><%= homematic.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
