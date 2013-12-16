@@ -369,7 +369,7 @@
     <br/>
     <%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value"))).toFixed(1) %>°C
     </div>
-    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:600,height:200},true) %> />
+    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el,{width:600,height:200,modal:data.attr("modal")},true) %> />
     <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { dui.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
