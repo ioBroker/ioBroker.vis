@@ -222,6 +222,7 @@
             slider: function (el, options) {
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
+                var wid = $this.attr("data-hm-wid");
 
                 var settings = $.extend({
                     min: parseFloat(options.min) || 0.00,
@@ -240,7 +241,9 @@
 
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                    // console.log("slider newVal="+JSON.stringify(newVal));
-                    $this.slider("value", parseFloat(newVal));
+                    if (homematic.uiState.attr("_"+wid+".Value") != true) {
+                        $this.slider("value", parseFloat(newVal));
+                    }
                 });
             },
             button: function (el, value) {
