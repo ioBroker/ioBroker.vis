@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta47',
+    version:                '0.9beta48',
     requiredCcuIoVersion:   '1.0.5',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -48,7 +48,9 @@ var dui = {
     instanceData:           undefined,
     instanceCmd:            undefined,
     viewsActiveFilter:      {},
-
+    touchUserCss: function () {
+        dui.socket.emit("touchFile", "www/dashui/css/dashui-user.css");
+    };
     bindInstance: function () {
         if (!dui.instanceCmd) {
             //console.log("can't bind instance :-(");
@@ -176,6 +178,7 @@ var dui = {
         if (this.initialized) {
             return;
         }
+
 
         dui.loadWidgetSets();
 
@@ -885,6 +888,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
 
 			dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host')+"?key="+socketSession);
 
+            dui.touchUserCss();
 
 
 
