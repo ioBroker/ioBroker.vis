@@ -112,18 +112,23 @@
                             'outline' : 'none',
                             'cursor' : 'text'
                         }).change(function () {
-                            homematic.setValue(id,  jQuery(this).val());
-
+                            homematic.setValue(id, jQuery(this).val());
                         });
+
 
                 var hm_id = "_" + id;
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (digits && digits != "") {
                         newVal = parseFloat(newVal).toFixed(digits);
                     }
+
                     $this.val(newVal);
                 });
-                $this.val(homematic.uiState[hm_id].Value);
+                var val = homematic.uiState[hm_id].Value;
+                if (digits && digits != "") {
+                    val = parseFloat(homematic.uiState[hm_id].Value).toFixed(digits);
+                }
+                $this.val(val);
             },
             inputDatetime: function (el, options) {
                 var $this = jQuery(el);
@@ -195,6 +200,11 @@
                     jQuery(input).val(newVal);
 
                 });
+                var newVal = homematic.uiState[hm_id].Value;
+                if (digits && digits != "") {
+                    newVal = parseFloat(newVal).toFixed(digits);
+                }
+                jQuery(input).val(newVal);
             },
             multiselect: function (el, options) {
                 var $this = jQuery(el);
@@ -549,10 +559,9 @@
 </script>
 
 <script type="text/ejs" id="tplJquiInput" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Input" data-dashui-attrs="label;hm_id;digits;size">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr("wid") %>">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:275px;height:44px;" id="<%= this.data.attr("wid") %>">
         <div class="dashui-widget-body">
-            <label for="<%= this.data.attr('wid') %>_input"><%= this.data.attr('label') %></label>
-            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.input(el, data.digits); %> />
+            <label for="<%= this.data.attr('wid') %>_input"><%= this.data.attr('label') %></label><input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.input(el, data.digits); %> />
         </div>
     </div>
 </script>
@@ -579,7 +588,7 @@
 </script>
 
 <script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Input Datetime" data-dashui-attrs="hm_id;size">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr("wid") %>">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
         <div class="dashui-widget-body">
             <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.inputDatetime(el); %> />
         </div>
@@ -587,7 +596,7 @@
 </script>
 
 <script type="text/ejs" id="tplJquiInputSet" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Input + Set-Button" data-dashui-attrs="title;buttontext;hm_id;unit;digits;size">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:300px;height:44px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('title') %></label>
             <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" style="font-size: 1.1em !important; padding-bottom:8px;"/>
@@ -616,10 +625,6 @@
         </div>
     </div>
 </script>
-
-
-
-
 
 <script type="text/ejs" id="tplJquiRadio" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Radiobuttons on/off" data-dashui-attrs="off_text;on_text;hm_id">
     <div style="top:0px; left:0px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
