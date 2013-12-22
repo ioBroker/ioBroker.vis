@@ -76,8 +76,10 @@ dui = $.extend(true, dui, {
         var val = $("#new_name").val();
         if (val != "" && dui.views[val] === undefined) {
             dui.views[val] = $.extend(true, {}, dui.views[dui.activeView]);
-            delete(dui.views[dui.activeView]);
-            storage.set(dui.storageKeyViews, dui.views);
+            $("#dui_container").hide();
+            delete dui.views[dui.activeView];
+            dui.saveRemote();
+            dui.activeView = val;
             dui.renderView(val);
             dui.changeView(val);
             window.location.reload();
