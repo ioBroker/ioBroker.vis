@@ -30,19 +30,25 @@
                 var id = $this.attr("data-hm-id");
                 var hm_id = "_" + id;
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+
                     var num = parseFloat(newVal, 10);
-                    if (num !== 0 || newVal === "true" || newVal === true) {
+                    if (num > 0 || newVal === "true" || newVal === true) {
                         if (reverse) {
                             $this.css('background-position', 'right');
                         } else {
                             $this.css('background-position', 'left');
                         }
+                        $this.find("input.fancy-on_off[value='0']").removeAttr("checked");
+                        $this.find("input.fancy-on_off[value='1']").attr("checked", true);
+
                     } else {
                         if (reverse) {
                             $this.css('background-position', 'left');
                         } else {
                             $this.css('background-position', 'right');
                         }
+                        $this.find("input.fancy-on_off[value='1']").removeAttr("checked");
+                        $this.find("input.fancy-on_off[value='0']").attr("checked", true);
                     }
                 });
 
