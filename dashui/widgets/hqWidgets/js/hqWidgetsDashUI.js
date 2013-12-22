@@ -1269,7 +1269,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                 $('#'+el).attr ('hqoptions', newOpt);  
             },
             hqMonitor: function (wid, newState, lastchange) {
-                
+
+                // Play sound in the browser
 				if (wid == "72900") {
 					if (newState) {
 						var d = new Date ();
@@ -1278,7 +1279,12 @@ if ((typeof hqWidgets !== 'undefined')) {
 						$('#sound__').on('canplaythrough', function() {   
 							this.play ();
 						});
-						document.getElementById('sound__').src = "../say.mp3?"+d.getTime();
+                        if (homematic.uiState["_72901"] && homematic.uiState["_72901"].Value) {
+						    document.getElementById('sound__').src = "../" + homematic.uiState["_72901"].Value + "?"+d.getTime();
+                        }
+                        else{
+                            document.getElementById('sound__').src = "../say.mp3?"+d.getTime();
+                        }
 					}
 					else
 						return;

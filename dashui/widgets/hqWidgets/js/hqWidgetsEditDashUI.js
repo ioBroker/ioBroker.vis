@@ -410,13 +410,13 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 				}
             }
 			else
-            if (opt.buttonType == hqWidgets.gButtonType.gTypeDoor ||
-			    opt.exShowGrafik !== undefined) {
+            if (opt.buttonType == hqWidgets.gButtonType.gTypeMotion) {
                 // Add ramp_time and on_time
                 var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"'>\n";
                     sTextAdv += "<td>"+ dui.translate("Action on click:") +"</td>\n";
                     sTextAdv += "<td><select id='"+hqEditElem.e_settings.elemName+"_exShowGrafik'>";
 					sTextAdv += "  <option value='no'>" + dui.translate ("No action")+"</option>";
+					sTextAdv += "  <option value='grafic'>" + dui.translate ("Chart")+"</option>";
 					sTextAdv += "  <option value='history'>" + dui.translate ("History")+"</option>";
 					sTextAdv += "</select>";
                 parent.append (sTextAdv);
@@ -426,13 +426,13 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 				}            
 			}
 			else
-            if (opt.buttonType == hqWidgets.gButtonType.gTypeMotion) {
+            if (opt.buttonType == hqWidgets.gButtonType.gTypeDoor ||
+			    opt.exShowGrafik !== undefined) {
                 // Add ramp_time and on_time
                 var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"'>\n";
                     sTextAdv += "<td>"+ dui.translate("Action on click:") +"</td>\n";
                     sTextAdv += "<td><select id='"+hqEditElem.e_settings.elemName+"_exShowGrafik'>";
 					sTextAdv += "  <option value='no'>" + dui.translate ("No action")+"</option>";
-					sTextAdv += "  <option value='grafic'>" + dui.translate ("Chart")+"</option>";
 					sTextAdv += "  <option value='history'>" + dui.translate ("History")+"</option>";
 					sTextAdv += "</select>";
                 parent.append (sTextAdv);
