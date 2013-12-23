@@ -50,7 +50,7 @@ var dui = {
     viewsActiveFilter:      {},
     touchUserCss: function () {
         dui.socket.emit("touchFile", "www/dashui/css/dashui-user.css");
-    };
+    },
     bindInstance: function () {
         if (!dui.instanceCmd) {
             //console.log("can't bind instance :-(");
