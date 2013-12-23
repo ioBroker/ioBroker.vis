@@ -660,6 +660,7 @@
 
 <script type="text/ejs" id="tplJquiSelectList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Select ValueList" data-dashui-attrs="off_text;on_text;hm_id;values;texts;width;height">
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
+        <div class="editmode-helper"></div>
         <div class="dashui-widget-body" >
             <select id="<%= this.data.attr('wid') %>_multiselect" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300),height: (data.height ? data.height : 220)})},250) %> >
             <%
