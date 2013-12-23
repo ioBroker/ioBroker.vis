@@ -1,5 +1,74 @@
 <script type="text/javascript">
     jQuery.extend(true, dui.binds, {
+        stateful: {
+            view: function (el, viewArr, persistent) {
+                var $this = jQuery(el);
+                var hm_id = "_" + $this.attr("data-hm-id");
+                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    var view = viewArr[newVal];
+                    if (!persistent) {
+                        $this.parent().find("div.dashui-view").remove();
+                    } else {
+                        $this.parent().find("div.dashui-view").hide().appendTo(jQuery("#dui_container"));
+                    }
+                    if (dui.views[view]) {
+                        dui.renderView(view);
+                        jQuery("#duiview_"+view).appendTo($this);
+                        jQuery("#duiview_"+view).show();
+                    }
+                });
+            },
+            iframe: function (el, srcArr, refreshInterval) {
+                var $this = jQuery(el);
+                var hm_id = "_" + $this.attr("data-hm-id");
+                var $this = jQuery(el).parent().find("iframe");
+                var id = $this.attr("data-hm-id");
+                var hm_id = "_" + id;
+
+                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    $this.attr("src", srcArr[newVal]);
+                });
+
+                if (homematic.uiState[hm_id]) {
+                    $this.attr("src", srcArr[homematic.uiState[hm_id].Value]);
+                }
+
+                if (refreshInterval > 0) {
+                    setInterval(function () {
+                        var val;
+                        if (homematic.uiState[hm_id]) {
+                            val = homematic.uiState[hm_id].Value;
+                        }
+                        var src = srcArr[val];
+                        $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
+                    }, refreshInterval);
+                }
+            },
+            image: function (el, srcArr, refreshInterval) {
+                var $this = jQuery(el).parent().find("img");
+                var id = $this.attr("data-hm-id");
+                var hm_id = "_" + id;
+
+                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    $this.attr("src", srcArr[newVal]);
+                });
+
+                if (homematic.uiState[hm_id]) {
+                    $this.attr("src", srcArr[homematic.uiState[hm_id].Value]);
+                }
+
+                if (refreshInterval > 0) {
+                    setInterval(function () {
+                        var val;
+                        if (homematic.uiState[hm_id]) {
+                            val = homematic.uiState[hm_id].Value;
+                        }
+                        var src = srcArr[val];
+                        $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
+                    }, refreshInterval);
+                }
+            }
+        },
         container: function (el, view) {
             var $this = jQuery(el);
             if (dui.views[view]) {
@@ -191,12 +260,9 @@
     });
 </script>
 
-<script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - view in widget" data-dashui-attrs="contains_view">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
-        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
-        </div>
-    </div>
-</script>
+
+        <-- Basic Widgets -->
+
 
 <script type="text/ejs" id="tplHtml" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - HTML" data-dashui-attrs="html">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
@@ -209,8 +275,7 @@
 <script type="text/ejs" id="tplIFrame" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - iFrame" data-dashui-attrs="src;refreshInterval">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
-            <iframe src="<%= this.data.attr('src') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <div class="editmode-helper"></div><iframe src="<%= this.data.attr('src') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
             <div <%= (el) -> dui.binds.basic.iframeRefresh(el, data.attr("src"), data.attr("refreshInterval")) %> />
         </div>
     </div>
@@ -219,7 +284,7 @@
 <script type="text/ejs" id="tplImage" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Image" data-dashui-attrs="src;refreshInterval">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
+            <div class="editmode-helper"></div>
             <img style="position:absolute; width:100%;" src="<%== this.data.attr('src') %>" />
             <div <%= (el) -> dui.binds.basic.imgRefresh(el, data.attr("src"), data.attr("refreshInterval")) %> />
         </div>
@@ -234,6 +299,69 @@
     </div>
 </script>
 
+<!-- basic Container -->
+
+<script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - view in widget" data-dashui-attrs="contains_view">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
+        <div class="editmode-helper"></div>
+        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+        </div>
+    </div>
+</script>
+
+
+<!-- Stateful Widgets -->
+
+<script type="text/ejs" id="tplStatefulContainerView8" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="stateful/container - view in widget 8" data-dashui-attrs="hm_id;persistent/checkbox;contains_view_0;contains_view_1;contains_view_2;contains_view_3;contains_view_4;contains_view_5;contains_view_6;contains_view_7">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
+        <div class="editmode-helper"></div>
+        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view_0') %>" class="dashui-widget-body">
+            <div class="dashui-view-container" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.stateful.view(el, [data.attr("contains_view_0"), data.attr("contains_view_1"), data.attr("contains_view_2"), data.attr("contains_view_3"), data.attr("contains_view_4"), data.attr("contains_view_5"), data.attr("contains_view_6"), data.attr("contains_view_7")], data.attr("persistent")) %> />
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplStatefulIFrame8" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="stateful - iFrame 8" data-dashui-attrs="hm_id;refreshInterval;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+        <div class="editmode-helper"></div>
+        <div class="dashui-widget-body">
+            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
+            <iframe class="dashui-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" src="<%= this.data.attr('src_0') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <div <%= (el) -> dui.binds.stateful.iframe(el, [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")], data.attr("refreshInterval")) %> />
+        </div>
+    </div>
+</script>
+
+        <!-- TODO
+<script type="text/ejs" id="tplStatefulIFrame8Persistent" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="stateful - iFrame 8 (persistent)" data-dashui-attrs="hm_id;refreshInterval;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+          <div class="editmode-helper"></div>
+          <div class="dashui-widget-body">
+            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
+            <iframe class="dashui-widget-element" src="<%= this.data.attr('src_0') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="dashui-widget-element" src="<%= this.data.attr('src_1') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="dashui-widget-element" src="<%= this.data.attr('src_2') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="dashui-widget-element" src="<%= this.data.attr('src_3') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="dashui-widget-element" src="<%= this.data.attr('src_4') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="dashui-widget-element" src="<%= this.data.attr('src_5') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="dashui-widget-element" src="<%= this.data.attr('src_6') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="dashui-widget-element" src="<%= this.data.attr('src_7') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <div <%= (el) -> dui.binds.stateful.iframe(el, [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7"]), data.attr("refreshInterval")) %> />
+        </div>
+    </div>
+</script>
+-->
+
+<script type="text/ejs" id="tplStatefulImage8" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="stateful - Image 8" data-dashui-attrs="hm_id;refreshInterval;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <div class="editmode-helper"></div>
+        <div class="dashui-widget-body">
+            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
+            <img class="dashui-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" style="position:absolute; width:100%;" src="<%== this.data.attr('src_0') %>" />
+            <div <%= (el) -> dui.binds.stateful.image(el, [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")], data.attr("refreshInterval")) %> />
+        </div>
+    </div>
+</script>
 
 
 
