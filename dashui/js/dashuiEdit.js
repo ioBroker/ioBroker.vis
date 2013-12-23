@@ -427,7 +427,10 @@ dui = $.extend(true, dui, {
         // Alle Widgets de-selektieren und Interaktionen entfernen
         $(".dashui-widget").each(function() { $(this).removeClass("dashui-widget-edit");
             if ($(this).hasClass("ui-draggable")) {
-                $(this).draggable("destroy").resizable("destroy");
+                $(this).draggable("destroy");
+            }
+            if ($(this).hasClass("ui-resizable")) {
+                $(this).resizable("destroy");
             }
         });
 
@@ -447,17 +450,27 @@ dui = $.extend(true, dui, {
         dui.activeWidget = id;
         var widget = dui.views[dui.activeView].widgets[id];
 
+        if (!widget) {
+            console.log("inspectWidget Widget undefined");
+        }
+
         // Inspector aufbauen
         $(".dashui-widget-tools").show();
 
         $(".dashui-inspect-widget").each(function () {
             var $this = $(this);
             var attr = $this.attr("id").slice(8);
-            $this.val(dui.views[dui.activeView].widgets[dui.activeWidget].data[attr]);
+            if (dui.views[dui.activeView].widgets[dui.activeWidget]) {
+                $this.val(dui.views[dui.activeView].widgets[dui.activeWidget].data[attr]);
+            }
         });
 
-        var widget_attrs  = $("#" + widget.tpl).attr("data-dashui-attrs").split(";");
-        var widget_filter = $("#" + widget.tpl).attr("data-dashui-filter");
+
+
+            var widget_attrs  = $("#" + widget.tpl).attr("data-dashui-attrs").split(";");
+            var widget_filter = $("#" + widget.tpl).attr("data-dashui-filter");
+
+
         $('#inspect_comment_tr').show ();
         $('#inspect_class_tr').show ();
         var widget_div = document.getElementById (dui.activeWidget);
