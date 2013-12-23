@@ -9,6 +9,20 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta48
+* (Hobbyquaker) neue Widgets im Widget-set "basic": stateful (anzeige von iFrame, View oder Bild in Abhängigkeit von Zustand)
+* (Hobbyquaker) neuer Style für editmode-helper
+* (Hobbyquaker, Bluefox) Support für dashui-user.css
+* (Hobbyquaker) Bugfix Widget jqui input: initialer Zustand
+* (Hobbyquaker) Bugfix Widget fancyswitch
+* (Hobbyquaker) Bugfix View umbenennen
+* (Bluefox) Fix problem with chart and hqWidget/Motion detector
+* (Hobbyquaker) Basic Widgets: unnötige Borders entfernt
+* (Hobbyquaker) Bugfix jqui Slider - kein Update wenn WORKING=true
+* (Hobbyquaker) Style-Anpassung Editor
+* (Hobbyquaker) Fixed jqui/jqui-mfd Modal and Autoclose Attributes
+
+
 ### 0.9beta47
 * (Bluefox) "basic - hm_val HTML 8" padding entfernt
 * (Hobbyquaker) fancyswitch Bugfix: initialer Status
