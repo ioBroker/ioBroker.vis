@@ -846,6 +846,7 @@ var hmSelect = {
 				'HM-PB-6-WM55':      '86_hm-pb-6-wm55_thumb.png',
 				'HM-RC-Key4-2':      '85_hm-rc-key4-2_thumb.png',
 				'HM-RC-4-2':         '84_hm-rc-4-2_thumb.png',
+                'HM-CC-RT-DN':       '83_hm-cc-rt-dn_thumb.png',
 				'HM-Sen-Wa-Od':      '82_hm-sen-wa-od_thumb.png',
 				'HM-Sen-WA-OD':      '82_hm-sen-wa-od_thumb.png',
 				'HM-Dis-TD-T':       '81_hm-dis-td-t_thumb.png',
