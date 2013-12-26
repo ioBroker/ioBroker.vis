@@ -291,9 +291,12 @@ var dui = {
             if (dui.views[view].settings.style.background_class) {
                 $("#duiview_" + view).addClass(dui.views[view].settings.style.background_class);
             }
+			
+			dui.views[view].rerender = true;
 
             for (var id in dui.views[view].widgets) {
-                dui.renderWidget(view, id);
+				if (dui.views[view].widgets[id].tpl.substring(0,5) != "tplHq")
+					dui.renderWidget(view, id);
             }
 
             //if (dui.activeView != view) {
@@ -306,17 +309,6 @@ var dui = {
             }
 
         }
-
-        /* Das versursacht "Flicker" beim Wechsel der VIew und sollte an dieser Stelle
-            nicht notwendig sein (background_class wird bereits in Zeile 350 beim
-            Rendern der View gesetzt)
-
-        else
-        // Set background style
-        if (dui.views[view].settings.style.background_class !== undefined) {
-            $("#duiview_"+view).addClass(dui.views[view].settings.style.background_class);
-        } */
-
         // Views in Container verschieben
         $("#duiview_" + view).find("div[id$='container']").each(function () {
             //console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
@@ -336,6 +328,14 @@ var dui = {
 
         if (!showEffectComing) {
             $("#duiview_" + view).show();
+			
+			if (dui.views[view].rerender) {
+				dui.views[view].rerender = false;
+				for (var id in dui.views[view].widgets) {
+					if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
+						dui.renderWidget(view, id);
+				}
+			}
         }
     },
     preloadImages: function (srcs) {
@@ -525,6 +525,13 @@ var dui = {
 
                 if (sync) {
                     $("#duiview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
+						if (dui.views[view].rerender) {
+							dui.views[view].rerender = false;
+							for (var id in dui.views[view].widgets) {
+								if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
+									dui.renderWidget(view, id);
+							}
+						}
                     });
                 }
                 $("#duiview_" + dui.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
@@ -539,6 +546,13 @@ var dui = {
 
                     if (!sync) {
                         $("#duiview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
+							if (dui.views[view].rerender) {
+								dui.views[view].rerender = false;
+								for (var id in dui.views[view].widgets) {
+									if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
+										dui.renderWidget(view, id);
+								}
+							}
                         });
                     }
                 });
