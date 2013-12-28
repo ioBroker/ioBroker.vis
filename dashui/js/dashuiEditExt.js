@@ -1151,7 +1151,7 @@ var hmSelect = {
 				{name:'_ID',         index:'_ID',         width:0,   hidden:true}
 			],
 			onSelectRow: function(id) {
-				var value    = $("#hmProgsContent").jqGrid ('getCell', id, "_ID");
+				value    = $("#hmProgsContent").jqGrid ('getCell', id, "_ID");
                 valueObj = null;
 				if (value != null && value != "") {
 					$(":button:contains('"+hmSelect._selectText+"')").prop("disabled", false).removeClass("ui-state-disabled");
