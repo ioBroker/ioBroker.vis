@@ -922,6 +922,17 @@ var hqWidgets = {
                 }
                 this.intern._jbigWindow.OnHide = function () {
                     this.parent.intern._jbigWindow.bind("resize", null, null);
+					// Store position
+                    var obj = this.parent;
+                    var pos = obj.intern._jbigWindow.position ();
+                    obj.dynStates.infoWindow.x      = pos.left;
+                    obj.dynStates.infoWindow.y      = pos.top;
+                    obj.dynStates.infoWindow.height = obj.intern._jbigWindow.height();
+                    obj.dynStates.infoWindow.width  = obj.intern._jbigWindow.width();
+                    obj.intern._jbigWindow.bheight  = obj.dynStates.infoWindow.height;
+                    obj.intern._jbigWindow.bwidth   = obj.dynStates.infoWindow.width;
+                    obj.intern._jbigWindow.x        = obj.dynStates.infoWindow.x;
+                    obj.intern._jbigWindow.y        = obj.dynStates.infoWindow.y;
                     if (this.parent.dynStates.infoWindow.onHide)
                         this.parent.dynStates.infoWindow.onHide (this.parent, this.parent.intern._jbigWindow.jbigWindowContent);
                     if (this.parent.dynStates.infoWindow._onHide)
