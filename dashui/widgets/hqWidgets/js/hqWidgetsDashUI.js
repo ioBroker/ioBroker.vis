@@ -296,8 +296,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     hm_id = homematic.regaObjects[hm_id]["DPs"]["LEVEL"];
                                 }
                                 obj.SetStates ({isRefresh: true});
-                                // Send command to HM
-                                homematic.setValue( hm_id, (100 - state) / 100);  
+								// Send command to HM
+								var invertState = obj.GetSettings("invertState");
+								if (invertState) {
+									homematic.setValue( hm_id, state / 100);
+								} 
+								else {
+									homematic.setValue( hm_id, (100 - state) / 100);
+								}
                             }                                
                         }});
                         // Fill up the required IDs
@@ -896,8 +902,14 @@ if ((typeof hqWidgets !== 'undefined')) {
 														    return false;
 														},
 							translateSignal: function (option, value) {
-								if (option == "percentState")
-									return Math.floor (100 - (value * 100));
+								if (option == "percentState") {
+									var invertState = btn.GetSettings("invertState");
+									if (invertState) {
+										return Math.floor (value * 100);
+									} else {
+										return Math.floor (100 - (value * 100));
+									}
+								}
 								else
 								if (option == "handleState")
 									return value;
