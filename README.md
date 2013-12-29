@@ -9,6 +9,12 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta49
+* (Bluefox) Fix the Problem with hqWidgets: hqWidgets will be shown wrong if view is invisible during render.
+* (Bluefox) Fix hmSelect dialog for programs.
+* (Bluefox) Fix problem with popup in hqWidgest
+* (Hobbyquaker) Fix initial state jqui select
+
 ### 0.9beta48
 * (Hobbyquaker) neue Widgets im Widget-set "basic": stateful (anzeige von iFrame, View oder Bild in Abhängigkeit von Zustand)
 * (Hobbyquaker) neuer Style für editmode-helper
