@@ -223,6 +223,11 @@
                 });
 
                 var hm_id = "_" + id;
+
+                $this.find("option:selected").removeAttr("selected");
+                $this.find("option[value='"+homematic.uiState[hm_id].Value+"']").attr("selected", true);
+                $this.multiselect("refresh");
+
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.find("option:selected").removeAttr("selected");
                     $this.find("option[value='"+newVal+"']").attr("selected", true);
