@@ -117,8 +117,15 @@
 .dc_city {
     font-weight:bold;
     font-size:12pt;
+	position: absolute;
+	top: 180px
 }
-
+.dc_actual {
+	position: absolute;
+	top: 120px;
+	left: 60px;
+	font-size: 32px;
+}
 .dc_temp {
     font-size:30pt;
     padding:0;
@@ -174,15 +181,26 @@
 .dc_forecast_container .dc_current .dc_high_low {
     font-size:12pt;
     clear:both;
+	top: 160px;
+	left: 40px;
+	position: absolute;
 }
 
 .dc_forecast_container .dc_current .dc_city, .dc_forecast_container .dc_current .dc_text {
     width:100%;
     text-align:center;
 }
-
+.dc_image {
+	top: 0px;
+	left: 15px;
+	height: 230px;
+	position: absolute;
+	width: 500px;
+}
 .dc_forecast_container .dc_current .dc_text {
     margin-top:6px;
+	position: absolute;
+	top: 205px;
 }
 
 .dc_forecast_container .dc_forecast {
@@ -211,6 +229,7 @@
 
 .dc_forecast_container .dc_forecast li img {
     width:96px;
+	margin: 0 20px;
 }
 
 .dc_forecast_container .dc_update {
