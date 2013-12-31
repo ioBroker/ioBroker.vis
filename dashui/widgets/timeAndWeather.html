@@ -108,7 +108,10 @@
 </script>
 <script type="text/ejs" id="tplTwCoolClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="CoolClock" data-dashui-attrs="theme/fancy,swissRail,chunkySwiss,machine,simonbaird_com,classic,modern,simple,securephp,Tes2,Lev,Sand,Sun,Tor,Cold,Babosa,Tumb,Stone,Disc,watermelon;noSeconds/checkbox;showDigital/checkbox;showAmPm/checkbox" >
     <%
-	var style  = dui.views[this.view].widgets[this.data.attr('wid')].style;
+	var style = null;
+	if ( dui.views[this.view] && dui.views[this.view].widgets[this.data.attr('wid')] && dui.views[this.view].widgets[this.data.attr('wid')].style) {
+		style = dui.views[this.view].widgets[this.data.attr('wid')].style;
+	}
 	var radius = 85;
 	if (style) {
 		radius = style.width || 85;
