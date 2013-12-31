@@ -6,6 +6,8 @@
 <script src="widgets/timeAndWeather/js/flipclock/flipclock.min.js"></script>
 <script src="widgets/timeAndWeather/js/jquery.jdigiclock.js"></script>
 <script src="widgets/timeAndWeather/js/jquery.zweatherfeed.js"></script>
+<script type="text/javascript" src="widgets/timeAndWeather/js/coolclock.js"></script>
+<script type="text/javascript" src="widgets/timeAndWeather/js/moreskins.js"></script>
 
 <!--script src="widgets/timeAndWeather/js/coolclock.js"></script>
 <script src="widgets/timeAndWeather/js/moreskins.js"></script-->
@@ -40,11 +42,7 @@
 			hideSeconds = false;
 		}
 		if (!hl) {
-			if (hideSeconds) {
-				$('#duiview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' clock') + '" id="'+elem+'" ></div>');				
-			} else {
-				$('#duiview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' clock') + '" id="'+elem+'" ></div>');
-			}
+			$('#duiview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' clock') + '" id="'+elem+'" ></div>');				
 			hl = document.getElementById(elem);
 			hl.dashId = today.getTime();
 		}
@@ -108,14 +106,36 @@
         startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'),this.data.attr('blink'), this.data.attr('noClass'));
     %>
 </script>
-<!--script type="text/ejs" id="tplTwCoolClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="CoolClock" data-dashui-attrs="" >
+<script type="text/ejs" id="tplTwCoolClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="CoolClock" data-dashui-attrs="theme/fancy,swissRail,chunkySwiss,machine,simonbaird_com,classic,modern,simple,securephp,Tes2,Lev,Sand,Sun,Tor,Cold,Babosa,Tumb,Stone,Disc,watermelon;noSeconds/checkbox;showDigital/checkbox;showAmPm/checkbox" >
     <%
-    var text = '<canvas style="position: absolute; width:85px; height: 85px" id="'+this.data.attr('wid')+'" class="CoolClock:Skin:Radius:noSeconds:GMTOffset" data-dashui-resizable=';
-        text += "'" + '{"disabled":true}' + "'></canvas>";
+	var style  = dui.views[this.view].widgets[this.data.attr('wid')].style;
+	var radius = 85;
+	if (style) {
+		radius = style.width || 85;
+		if ((style.height || 85) < radius)
+			radius = (style.height || 85);
+		radius = Math.round(radius / 2);	
+	}
+	
+	var myClass = 'CoolClock:'+(this.data.attr('theme') || 'classic')+':'+radius+':'+(this.data.attr('noSeconds') ? 'noSeconds' : '')+'::'+(this.data.attr('showDigital') ? 'showDigital' : '') + '::'+(this.data.attr('showAmPm') ? 'showAmPm' : '');
+    var text = '<div id="'+this.data.attr('wid')+'" data-myclass="'+myClass+'" class="dashui-widget"><canvas style="width:100%; height:100%" class="'+myClass+'"></canvas></div>';
     jQuery('#duiview_'+this.view).append(text);
+	jQuery('#'+this.data.attr('wid')).bind("resize", function () {
+		var t = jQuery(this);
+		var myClass = t.attr('data-myclass');
+		var myClasses = myClass.split(':');
+		myClasses[2] = t.width();
+		if (t.height() < myClasses[2])
+			myClasses[2] = t.height();
+		myClasses[2] = Math.round(myClasses[2] / 2);
+		myClass = myClasses.join(':');
+		t.html('<canvas class="'+myClass+'"></canvas>');
+		CoolClock.findAndCreateClocks();
+		console.log("done");
+	});
     CoolClock.findAndCreateClocks();
     %>
-</script-->
+</script>
 
 <script type="text/ejs" id="tplTwFlipClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="FlipClock" data-dashui-attrs="">
     

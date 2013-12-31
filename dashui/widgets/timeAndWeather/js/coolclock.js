@@ -14,8 +14,6 @@ CoolClock.config = {
 	defaultFont: "15px sans-serif",
 	// Should be in skin probably...
 	// (TODO: allow skinning of digital display)
-	showSecs: true,
-	showAmPm: true,
 
 	skins:	{
 		// There are more skins in moreskins.js
@@ -76,6 +74,7 @@ CoolClock.prototype = {
 		this.showDigital    = typeof options.showDigital == "boolean" ? options.showDigital : false;
 		this.logClock       = typeof options.logClock == "boolean" ? options.logClock : false;
 		this.logClockRev    = typeof options.logClock == "boolean" ? options.logClockRev : false;
+		this.showAmPm       = typeof options.showAmPm == "boolean" ? options.showAmPm : false;
 
 		this.tickDelay      = CoolClock.config[ this.showSecondHand ? "tickDelay" : "longTickDelay" ];
 
@@ -185,10 +184,10 @@ CoolClock.prototype = {
 	timeText: function(hour,min,sec) {
 		var c = CoolClock.config;
 		return '' +
-			(c.showAmPm ? ((hour%12)==0 ? 12 : (hour%12)) : hour) + ':' +
+			(this.showAmPm ? ((hour%12)==0 ? 12 : (hour%12)) : hour) + ':' +
 			this.lpad2(min) +
-			(c.showSecs ? ':' + this.lpad2(sec) : '') +
-			(c.showAmPm ? (hour < 12 ? ' am' : ' pm') : '')
+			(c.showSecondHand ? ':' + this.lpad2(sec) : '') +
+			(this.showAmPm ? (hour < 12 ? ' am' : ' pm') : '')
 		;
 	},
 
@@ -349,7 +348,8 @@ CoolClock.findAndCreateClocks = function() {
 				gmtOffset:      fields[4],
 				showDigital:    fields[5]=='showDigital',
 				logClock:       fields[6]=='logClock',
-				logClockRev:    fields[6]=='logClockRev'
+				logClockRev:    fields[6]=='logClockRev',
+				showAmPm:       fields[7]=='showAmPm'
 			});
 		}
 	}
