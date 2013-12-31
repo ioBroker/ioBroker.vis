@@ -208,5 +208,15 @@ CoolClock.config.skins = {
 		minuteHand:       { lineWidth: 2, startAt: -20, endAt: 80, color: "#7c8c03", alpha: .9 },
 		secondHand:       { lineWidth: 2, startAt: 70, endAt: 94, color: "#d93d04", alpha: .85 },
 		secondDecoration: { lineWidth: 1, startAt: 70, radius: 3, fillColor: "red", color: "black", alpha: .7 }
+	},
+	classicWhite: {
+		outerBorder:      { lineWidth: 185, radius: 1, color: "#8AB3FF", alpha: 1 },
+		smallIndicator:   { lineWidth: 2, startAt: 89, endAt: 94, color: "#94AEE3", alpha: 1 },
+		largeIndicator:   { lineWidth: 4, startAt: 83, endAt: 94, color: "#94AEE3", alpha: 1 },
+		hourHand:         { lineWidth: 5, startAt: 0, endAt: 60, color: "white", alpha: 1 },
+		minuteHand:       { lineWidth: 4, startAt: 0, endAt: 80, color: "white", alpha: 1 },
+		secondHand:       { lineWidth: 1, startAt: -20, endAt: 85, color: "#FFCFCF", alpha: .95 },
+		secondDecoration: { lineWidth: 3, startAt: 0, radius: 2, fillColor: "white", color: "white", alpha: 1 },
+		font:             { "font-family": "arial", color: "#FFFFFF", "font-size": 14 }
 	}
 };
