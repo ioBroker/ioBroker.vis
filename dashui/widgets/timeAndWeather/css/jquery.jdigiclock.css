@@ -113,7 +113,10 @@
     float:left;
     margin:65px 0 0 45px;
 }
-
+.dc_city_main {
+    font-weight:bold;
+    font-size:12pt;
+}
 .dc_city {
     font-weight:bold;
     font-size:12pt;

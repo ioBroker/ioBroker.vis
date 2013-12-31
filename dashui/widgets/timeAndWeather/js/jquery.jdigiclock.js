@@ -294,13 +294,14 @@ var jdigiclockCounter = 0;
 		el.find('#weather'+el.o.curID+' .dc_loading, #forecast_cAntainer'+el.o.curID+' .dc_loading').hide();
 
 		var curr_temp = '<p class="">' + data.curr_temp + '&deg;<span class="dc_metric">' + metric + '</span></p>';
-
+		var curr_img0 = "";
 		if (data.curr_icon.indexOf("http://") == -1)
-            el.find('#weather'+el.o.curID).css('background','url(' + el.weatherImagesPath + data.curr_icon + '.png) 50% 100% no-repeat');
+            curr_img0 = el.weatherImagesPath + data.curr_icon + '.png';
 		else
-			el.find('#weather'+el.o.curID).css('background','url('+ data.curr_icon + ') 50% 100% no-repeat');
-		var weather = '<div id="local'+el.o.curID+'" class="dc_local"><p class="dc_city">' + data.city + '</p><p>' + data.curr_text + '</p></div>';
+			curr_img0 = data.curr_icon;
+		var weather = '<div id="local'+el.o.curID+'" class="dc_local"><p class="dc_city_main">' + data.city + '</p><p>' + data.curr_text + '</p></div>';
 		weather += '<div id="temp'+el.o.curID+'" class="dc_temp"><p id="date'+el.o.curID+'" class="dc_date">' + el.currDate + '</p>' + curr_temp + '</div>';
+		weather += '<img id="img0_'+el.o.curID+'" src="'+curr_img0+'" style="position: absolute; top: 20px; left: 160px; width: 333px; height: 240px">';
 		el.find('#weather'+el.o.curID+'').html(weather);
 
 		// forecast
