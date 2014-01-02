@@ -104,11 +104,12 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 }
                 else
                 if (wtype == 'tplHqShutter') {
-                    opt = $.extend (opt, {buttonType: hqWidgets.gButtonType.gTypeBlind, 
+                    opt = $.extend (opt, {buttonType:   hqWidgets.gButtonType.gTypeBlind, 
                                           windowConfig: hqWidgets.gSwingType.gSwingLeft, 
                                           zindex: 3,
                                           hm_id: '',
-                                          newVersion: true
+                                          newVersion: true,
+										  invertState: false
                                           });
                 }
                 else
@@ -387,7 +388,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 					
 			// Invert state
 			if (opt.buttonType == hqWidgets.gButtonType.gTypeButton ||
-				opt.buttonType == hqWidgets.gButtonType.gTypeDoor) {
+				opt.buttonType == hqWidgets.gButtonType.gTypeDoor   ||
+				opt.buttonType == hqWidgets.gButtonType.gTypeBlind) {
                 var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"'>\n";
                     sTextAdv += "<td>"+ dui.translate("Invert state:") +"</td>\n";
                     sTextAdv += "<td><input id='"+hqEditElem.e_settings.elemName+"_invertState' type='checkbox' "+(hqEditElem.e_internal.attr.invertState ? "checked": "")+"></td></tr>";

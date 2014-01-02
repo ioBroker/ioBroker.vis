@@ -294,27 +294,34 @@ var jdigiclockCounter = 0;
 		el.find('#weather'+el.o.curID+' .dc_loading, #forecast_cAntainer'+el.o.curID+' .dc_loading').hide();
 
 		var curr_temp = '<p class="">' + data.curr_temp + '&deg;<span class="dc_metric">' + metric + '</span></p>';
-
+		var curr_img0 = "";
 		if (data.curr_icon.indexOf("http://") == -1)
-			el.find('#weather'+el.o.curID).css('background','url(' + el.weatherImagesPath + data.curr_icon + '.png) 50% 100% no-repeat');
+            curr_img0 = el.weatherImagesPath + data.curr_icon + '.png';
 		else
-			el.find('#weather'+el.o.curID).css('background','url('+ data.curr_icon + ') 50% 100% no-repeat');
-		var weather = '<div id="local'+el.o.curID+'" class="dc_local"><p class="dc_city">' + data.city + '</p><p>' + data.curr_text + '</p></div>';
+			curr_img0 = data.curr_icon;
+		var weather = '<div id="local'+el.o.curID+'" class="dc_local"><p class="dc_city_main">' + data.city + '</p><p>' + data.curr_text + '</p></div>';
 		weather += '<div id="temp'+el.o.curID+'" class="dc_temp"><p id="date'+el.o.curID+'" class="dc_date">' + el.currDate + '</p>' + curr_temp + '</div>';
+		weather += '<img id="img0_'+el.o.curID+'" src="'+curr_img0+'" style="position: absolute; top: 20px; left: 160px; width: 333px; height: 240px">';
 		el.find('#weather'+el.o.curID+'').html(weather);
 
 		// forecast
-		el.find('#forecast_cAntainer'+el.o.curID+'').append('<div id="current'+el.o.curID+'" class="dc_current"></div>');
+		el.find('#forecast_cAntainer'+el.o.curID+'').append('<div id="current'+el.o.curID+'" class="dc_current" style="height:238px"></div>');
+		curr_temp = curr_temp.replace ('class=""', 'class="dc_actual"');
 		var curr_for = curr_temp + '<p class="dc_high_low">' + data.forecast[0].day_htemp + '&deg;&nbsp;/&nbsp;' + data.forecast[0].day_ltemp + '&deg;</p>';
 		curr_for    += '<p class="dc_city">' + data.city + '</p>';
 		curr_for    += '<p class="dc_text">' + data.forecast[0].day_text + '</p>';
 		
+		var curr_img = "";
 		if (data.forecast[0].day_icon.indexOf("http://") == -1)
-			el.find('#current'+el.o.curID).css('background','url(' + el.weatherImagesPath + data.forecast[0].day_icon + '.png) 50% 0 no-repeat').append(curr_for);
+			curr_img = 'background: url(' + el.weatherImagesPath + data.forecast[0].day_icon + '.png) 50% 0 no-repeat';
 		else
-			el.find('#current'+el.o.curID).css('background','url('+data.forecast[0].day_icon + ') 100% 0 no-repeat').css('background-size', '100% auto').append(curr_for);
+			curr_img = 'background: url('+data.forecast[0].day_icon + ') 100% 0 no-repeat; background-size: 80% auto';
+		curr_for += '<div class="dc_image" style="'+curr_img+'"></div>';
+		
+		
+		el.find('#current'+el.o.curID).append(curr_for);
 
-		el.find('#forecast_cAntainer'+el.o.curID).append('<ul id="forecast'+el.o.curID+'" class="dc_forecast"></ul>');
+		el.find('#forecast_cAntainer'+el.o.curID).append('<ul id="forecast'+el.o.curID+'" class="dc_forecast" style="position: absolute; top:238px"></ul>');
 		data.forecast.shift();
 		for (var i in data.forecast) {
 			var d_date = new Date(data.forecast[i].day_date);
@@ -334,7 +341,7 @@ var jdigiclockCounter = 0;
 			el.find('#forecast'+el.o.curID).append(forecast);
 		}
 
-		el.find('#forecast_cAntainer'+el.o.curID).append('<div id="update'+el.o.curID+'" class="dc_update"><img src="'+el.clockImagesPath+'../refresh_01.png" alt="reload" title="reload" id="reload'+el.o.curID+'" />' + el.timeUpdate + '</div>');
+		el.find('#forecast_cAntainer'+el.o.curID).append('<div id="update'+el.o.curID+'" class="dc_update" style="position: absolute; top:365px; left:200px"><img src="'+el.clockImagesPath+'../refresh_01.png" alt="reload" title="reload" id="reload'+el.o.curID+'" />' + el.timeUpdate + '</div>');
 
 		$('#reload'+el.o.curID+'').click(function() {
 			el.find('#weather'+el.o.curID).html('');
