@@ -9,6 +9,15 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta50
+* (Bluefox) Support invert position for hqWidget/Blinds
+* (Bluefox) Fix timeAndWeather/htcWeather the second page.
+* (Bluefox) Support of new timeAndWeather/CoolClock Widget
+* (Bluefox) Fix error in CoolClock
+* (Bluefox) Fix timeAndWeather/htcWeather
+* (Bluefox) Add classicWhite skin to CoolClock
+
+
 ### 0.9beta49
 * (Bluefox) Fix the Problem with hqWidgets: hqWidgets will be shown wrong if view is invisible during render.
 * (Bluefox) Fix hmSelect dialog for programs.
