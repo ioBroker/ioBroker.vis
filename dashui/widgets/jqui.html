@@ -7,17 +7,12 @@
                     $this.removeClass("ui-state-default").addClass("ui-state-active");
                 }
             },
-            classes: function (el, reverse) {
+            active: function(el, reverse, _value) {
                 var $this = jQuery(el);
-                $this.hover(function () {
-                    $this.addClass("ui-state-hover");
-                }, function () {
-                    $this.removeClass("ui-state-hover");
-                });
                 var id = "_" + $this.attr("data-hm-id");
-
                 homematic.uiState.bind(id+".Value", function( e, newVal, oldVal ) {
                     var val;
+                    var value = _value;
                     if (newVal === false || newVal === "false") {
                         val = 0;
                     } else if (newVal === true || newVal === "true") {
@@ -25,46 +20,60 @@
                     } else {
                         val = newVal;
                     }
+                    console.log("classes bind "+newVal+" "+value);
                     if (reverse) {
-                        if (val == 1) {
+                        if ((!value && val == 1) || (value && val != value)) {
                             $this.removeClass("ui-state-active");
-                            $this.addClass("ui-state-default");
+                            //$this.addClass("ui-state-default");
                         } else {
                             $this.addClass("ui-state-active");
-                            $this.removeClass("ui-state-default");
+                            //$this.removeClass("ui-state-default");
                         }
                     } else {
-                        if (val > 0) {
+                        if ((!value && val > 0) || (value && val == value)) {
                             $this.addClass("ui-state-active");
-                            $this.removeClass("ui-state-default");
+                            //$this.removeClass("ui-state-default");
                         } else {
                             $this.removeClass("ui-state-active");
-                            $this.addClass("ui-state-default");
+                            //$this.addClass("ui-state-default");
                         }
                     }
 
 
                 });
                 var val = homematic.uiState.attr(id+".Value");
+                var value = _value;
                 if (val === true || val === "true") { val = 1; }
                 if (val === false || val === "false") { val = 0; }
                 if (reverse) {
-                    if (val == 1) {
+                    if ((!value && val == 1) || (value && val != value)) {
                         $this.removeClass("ui-state-active");
-                        $this.addClass("ui-state-default");
+                        //$this.addClass("ui-state-default");
                     } else {
                         $this.addClass("ui-state-active");
-                        $this.removeClass("ui-state-default");
+                        //$this.removeClass("ui-state-default");
                     }
                 } else {
-                    if (val > 0) {
+                    if ((!value && val > 0) || (value && val == value)) {
                         $this.addClass("ui-state-active");
-                        $this.removeClass("ui-state-default");
+                        //$this.removeClass("ui-state-default");
                     } else {
                         $this.removeClass("ui-state-active");
-                        $this.addClass("ui-state-default");
+                        //$this.addClass("ui-state-default");
                     }
                 }
+
+            },
+            classes: function (el, reverse, _value) {
+                var $this = jQuery(el);
+                $this.hover(function () {
+                    $this.addClass("ui-state-hover");
+                }, function () {
+                    $this.removeClass("ui-state-hover");
+                });
+                var id = "_" + $this.attr("data-hm-id");
+                dui.binds.jqueryui.active(el, reverse, _value);
+
 
             },
             dialog: function (el, options, persistent) {
@@ -615,7 +624,7 @@
     <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
         <div class="dashui-widget-body" >
             <%== this.data.attr("html_prepend") %>
-            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.button(el); dui.binds.basic.state(el); %> />
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.jqueryui.button(el, data.value); dui.binds.basic.state(el); %> />
             <%== this.data.attr("html_append") %>
         </div>
     </div>
@@ -724,7 +733,7 @@
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
-    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.state(el); dui.binds.jqueryui.classes(el) %>>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.state(el); dui.binds.jqueryui.classes(el, null, data.value) %>>
         <div class="dashui-widget-body">
             <img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
