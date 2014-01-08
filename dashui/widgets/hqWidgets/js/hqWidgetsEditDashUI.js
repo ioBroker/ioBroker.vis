@@ -99,7 +99,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           zindex: 3,
                                           hm_id: '',
                                           hoursLastAction:-1,
-                                          dimmerRampTime: 0.5
+                                          dimmerRampTime: 0.5,
+                                          startValue: 100
                                           });
                 }
                 else
@@ -405,10 +406,17 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 var sTextAdv  = "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"'>\n";
                     sTextAdv += "<td>"+ dui.translate("ramp_time:") +"</td>\n";
                     sTextAdv += "<td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_dimmerRampTime' type='text' value='"+hqEditElem.e_internal.attr.dimmerRampTime+"'></td></tr>";
+                // Start value
+                sTextAdv += "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"'>\n";
+                sTextAdv += "<td>"+ dui.translate("startValue") +":</td>\n";
+                sTextAdv += "<td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_startValue' type='text' value='"+hqEditElem.e_internal.attr.startValue+"'></td></tr>";
+
                 parent.append (sTextAdv);
                 hqEditElem._EditTextHandler ('dimmerRampTime');
+                hqEditElem._EditTextHandler ('startValue');
 				if (!hqWidgets.visibility || !hqWidgets.visibility["Advanced"]) {
-					$('#idAdv'+(hqEditElem.e_internal.iAdvCount -1)).hide();
+					$('#idAdv'+(hqEditElem.e_internal.iAdvCount -2)).hide();
+                    $('#idAdv'+(hqEditElem.e_internal.iAdvCount -1)).hide();
 				}
             }
 			else

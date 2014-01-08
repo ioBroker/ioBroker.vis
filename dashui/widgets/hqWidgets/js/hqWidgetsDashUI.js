@@ -191,6 +191,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     time_id = null;
                                 }
                                 if (what == 'state') {
+                                    var startValue = obj.GetSettings ('startValue') || 1;
+
                                     // Send on time to dimmer
                                     if (time_id != null) {
                                         if (homematic.regaObjects[time_id] && homematic.regaObjects[time_id]["DPs"] && homematic.regaObjects[time_id]["DPs"]["RAMP_TIME"]) {
@@ -204,7 +206,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                         if (on_time !== undefined && on_time != null && on_time != "") {
                                             homematic.setValue( time_id, parseFloat(on_time));
                                         }
-                                        homematic.setValue( hm_id, 1);
+                                        homematic.setValue( hm_id, startValue);
                                     } else {
                                         obj.SetStates ({percentState: 0, state: hqWidgets.gState.gStateOff, isRefresh: true});
                                         // Send command to HM
@@ -613,12 +615,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 action: function (obj, what, state) {                                    
                                     var hm_id = obj.GetSettings ('hm_idL');
                                     if (hm_id != null && hm_id != "") {
-                                        if (homematic.regaObjects[hm_id] && homematic.regaObjects['hm_id']["DPs"] && homematic.regaObjects['hm_id']["DPs"]["OPEN"]) {
-                                            hm_id = homematic.regaObjects['hm_id']["DPs"]["OPEN"];
+                                        if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["OPEN"]) {
+                                            hm_id = homematic.regaObjects[hm_id]["DPs"]["OPEN"];
                                         }
                                         else
-                                        if (homematic.regaObjects[hm_id] && homematic.regaObjects['hm_id']["DPs"] && homematic.regaObjects['hm_id']["DPs"]["STATE"]) {
-                                            hm_id = homematic.regaObjects['hm_id']["DPs"]["STATE"];
+                                        if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["STATE"]) {
+                                            hm_id = homematic.regaObjects[hm_id]["DPs"]["STATE"];
                                         }
                                         // Send command to HM
                                         homematic.setValue( hm_id, true);
