@@ -192,7 +192,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 }
                                 if (what == 'state') {
                                     var startValue = obj.GetSettings ('startValue') || 100;
-                                    startValue = parseInt (startValue) / 100;
+                                    startValue = parseInt (startValue);
 
                                     // Send on time to dimmer
                                     if (time_id != null) {
@@ -202,12 +202,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                                         }
                                     }
                                     if (state != hqWidgets.gState.gStateOn) {
-                                        obj.SetStates ({percentState: 100, state: hqWidgets.gState.gStateOn, isRefresh: true});
+                                        obj.SetStates ({percentState: startValue, state: hqWidgets.gState.gStateOn, isRefresh: true});
                                         // Send command to HM
                                         if (on_time !== undefined && on_time != null && on_time != "") {
                                             homematic.setValue( time_id, parseFloat(on_time));
                                         }
-                                        homematic.setValue( hm_id, startValue);
+                                        homematic.setValue( hm_id, startValue / 100);
                                     } else {
                                         obj.SetStates ({percentState: 0, state: hqWidgets.gState.gStateOff, isRefresh: true});
                                         // Send command to HM
