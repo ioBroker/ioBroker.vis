@@ -409,7 +409,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 // Start value
                 sTextAdv += "<tr id='idAdv"+(hqEditElem.e_internal.iAdvCount++)+"'>\n";
                 sTextAdv += "<td>"+ dui.translate("startValue") +":</td>\n";
-                sTextAdv += "<td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_startValue' type='text' value='"+hqEditElem.e_internal.attr.startValue+"'></td></tr>";
+                sTextAdv += "<td><input style='width: "+hqEditElem.e_settings.width+"px' id='"+hqEditElem.e_settings.elemName+"_startValue' type='text' value='"+(hqEditElem.e_internal.attr.startValue || 100)+"'></td></tr>";
 
                 parent.append (sTextAdv);
                 hqEditElem._EditTextHandler ('dimmerRampTime');
