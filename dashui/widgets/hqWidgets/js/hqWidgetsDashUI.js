@@ -191,7 +191,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     time_id = null;
                                 }
                                 if (what == 'state') {
-                                    var startValue = obj.GetSettings ('startValue') || 1;
+                                    var startValue = obj.GetSettings ('startValue') || 100;
+                                    startValue = parseInt (startValue) / 100;
 
                                     // Send on time to dimmer
                                     if (time_id != null) {
