@@ -40,7 +40,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 
 // Main object and container
 var hqWidgets = {
-    version: "0.1.10",
+    version: "0.1.11",
     gOptions: {
         // ======== Global variables ============
         gBtWidth:      45,          // Width of the button >= gBtHeight
@@ -608,7 +608,7 @@ var hqWidgets = {
             noBackground:     false,    // If show background or just text or image
             btIconWidth:      hqWidgets.gOptions.gBtIconWidth,  // Width of the icon
             btIconHeight:     hqWidgets.gOptions.gBtIconHeight, // Height of the icon
-            
+
             //styles
             styleNormal:      null,
             styleNormalHover: null,
@@ -619,6 +619,7 @@ var hqWidgets = {
             buttonType:       hqWidgets.gButtonType.gTypeButton,// button type
             doorType:         hqWidgets.gSwingType.gSwingLeft,  // Swing direction for door
             windowConfig:     hqWidgets.gSwingType.gSwingDeaf,  // Window configuration and state
+            doNotAnimate:     false, // disable animation of popUp for slow devices
             
             infoTextFont:     null,  // Font for the dynamic text in the middle of the button
             infoTextColor:    null,  // Color for the dynamic text in the middle of the button
@@ -660,7 +661,7 @@ var hqWidgets = {
             ctrlActionBtn:    false, // Show action button on ip camera big window
             ctrlQuestion:     hqWidgets.translate("Open the door?"), // Text for the door bell question
             ctrlQuestionImg:  "DoorOpen.png", // Icon by question
-            ctrlBtnText:      hqWidgets.translate("Open&nbsp;lock"), // Action button text for camera popup
+            ctrlBtnText:      hqWidgets.translate("Open lock"), // Action button text for camera popup
 
             hoursLastAction:  -1,    // If the last action time must be shown (-1 - do not show, 0 -always show, x - not older as x hours, -2 show absolute time always, "-x" - show absolute time x hours
             stateTimeout:     600,   // 5 min state timeout
@@ -1334,9 +1335,13 @@ var hqWidgets = {
                         this.intern._jelement.prepend("<div id='"+this.advSettings.elemName+"_humid'></div>");
                     this.intern._jtemp=$('#'+this.advSettings.elemName+"_temp");
                     this.intern._jhumid=$('#'+this.advSettings.elemName+"_humid");
-                    this.intern._jtemp.css({position: 'absolute', top:this.settings.height/2-11, left:0, height: 15, width: this.settings.width, 'z-index':'11', fontSize:11, 'font-weight':'bold', color:'black'}); // Set size
+                    this.intern._jtemp.css({position: 'absolute', left:0, height: 15, width: this.settings.width, 'z-index':'11', 'font-weight':'bold', color: this.settings.infoTextColor || 'black'}); // Set size
+                    this.intern._jtemp.css({'font': this.settings.infoTextFont || "bold 11px 'Tahoma', sans-serif"});
+                    var w = "0".dimensions (this.settings.infoTextFont || "bold 11px 'Tahoma', sans-serif");
+                    this.intern._jtemp.css({top:this.settings.height / 2 - w.height});
                     this.intern._jtemp.css("text-align", "center").show();
-                    this.intern._jhumid.css({position: 'absolute', top:this.settings.height/2+1, left:0, height: 15, width: this.settings.width, 'z-index':'11', fontSize:11, 'font-weight':'normal', color:'darkblue'}); // Set size
+                    this.intern._jhumid.css({position: 'absolute', top:this.settings.height/2+1, left:0, height: 15, width: this.settings.width, 'z-index':'11', 'font-weight':'normal', color:'darkblue'}); // Set size
+                    this.intern._jhumid.css({font: this.settings.infoTextFont ? this.settings.infoTextFont.replace("bold", "") : "11px 'Tahoma', sans-serif"});
                     this.intern._jhumid.css("text-align", "center").show();
                     this.intern._jtemp.addClass('hq-no-select');
                     this.intern._jhumid.addClass('hq-no-select');
@@ -2402,11 +2407,14 @@ var hqWidgets = {
 					this.intern._jinfoText.css({top: (this.settings.height - this.intern._jinfoText.height()) / 2, left: (this.settings.width - this.intern._jinfoText.width()) / 2 });
                 }
 				
-                if (this.intern._jtemp)
-                    this.intern._jtemp.css({top:this.settings.height/2-11, width: this.settings.width}); // Set size
+                if (this.intern._jtemp) {
+                    this.intern._jtemp.css({'font': this.settings.infoTextFont || "bold 11px 'Tahoma', sans-serif"});
+                    var w = "0".dimensions (this.settings.infoTextFont || "bold 11px 'Tahoma', sans-serif");
+                    this.intern._jtemp.css({top:this.settings.height / 2 - w.height, width: this.settings.width}); // Set size
+                }
                 
                 if (this.intern._jhumid)
-                    this.intern._jhumid.css({top:this.settings.height/2+1, width: this.settings.width}); // Set size
+                    this.intern._jhumid.css({top:this.settings.height / 2 + 1, width: this.settings.width}); // Set size
                 
                 if (this.intern._jright) {
                     if (this.intern._jrightText)
@@ -3144,8 +3152,9 @@ var hqWidgets = {
             this.intern._jroom.html(this.settings.room);
         }
         this.ShowBigWindow = function (isShow, delay, customTimeout)	{
-            if (isShow && hqWidgets.gDynamics.gShownBig != null && hqWidgets.gDynamics.gShownBig != this)
+            if (isShow && hqWidgets.gDynamics.gShownBig != null && hqWidgets.gDynamics.gShownBig != this) {
                 hqWidgets.gDynamics.gShownBig.ShowBigWindow(false);
+            }
             
             this.intern._isBigVisible = isShow;
             if (isShow) {
@@ -3160,114 +3169,163 @@ var hqWidgets = {
                             hqWidgets.gDynamics.gShownBig.intern._timerID = null;
                             hqWidgets.gDynamics.gShownBig.ShowBigWindow(false); 
                         } 
-                        hqWidgets.gDynamics.gShownBig=null;
+                        hqWidgets.gDynamics.gShownBig = null;
                     }, customTimeout);
                 }
                 
                 this.intern._jbigWindow.show();
-                if (this.intern._jbigWindow.bwidth == undefined) {
-                    this.intern._jbigWindow.bheight = this.intern._jbigWindow.height();
-                    this.intern._jbigWindow.bwidth  = this.intern._jbigWindow.width();
-                    this.intern._jbigWindow.x       = this.intern._jbigWindow.position().left;
-                    this.intern._jbigWindow.y       = this.intern._jbigWindow.position().top;
-                }
-                this.intern._jbigWindow.css ({top:    this.settings.y, 
-                                              left:   this.settings.x, 
-                                              width:  this.intern._jelement.width(), 
-                                              height: this.intern._jelement.height(),
-                                              'z-index': 22
-                                              });
-                                                
-                this.intern._jbigWindow.animate ({top:    this.intern._jbigWindow.y, 
-                                                  left:   this.intern._jbigWindow.x, 
-                                                  width:  this.intern._jbigWindow.bwidth, 
-                                                  height: this.intern._jbigWindow.bheight}, 500);
-                if (this.intern._jbigWindow.buttons) {
-                    setTimeout (function () {
-                        var i;
-                        for (i=0;i<3;i++) hqWidgets.gDynamics.gShownBig.intern._jbigWindow.buttons[i].show();
-                    }, 500);	
-                }
-                else
-                if (this.intern._jbigBlind1 != null) {
-                    this.intern._jbigBlind1.css({height:this.intern._jbigWindow.bheight * this.dynStates.percentState / 100});
-                    if (this.settings.isShowPercent && this.intern._jbigWindow && this.intern._jbigWindow.jtext) {
-                        this.intern._jbigWindow.jtext.html(this.dynStates.percentState+"%");
-                    }            
-					if (this.intern._jbigWindow.OnShow){
-						setTimeout (function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
-					}                
-                }
-                else
-                if (this.intern._jbigWindow.jbigImage) {
-                    setTimeout (function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
-                }
-                else 
-                if (this.intern._jbigWindow.OnShow){
-                    setTimeout (function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
-                }                
-            }
-            else {
-                hqWidgets.gDynamics.gShownBig = this;
-                
-                // remember position if it was moved
-                if (this.settings.buttonType == hqWidgets.gButtonType.gTypeCam ||
-                    this.settings.buttonType == hqWidgets.gButtonType.gTypeGong) {
-                    if (!hqWidgets.gOptions.gIsTouchDevice) {
-                        this.intern._jbigWindow.bheight = this.intern._jbigWindow.height();
-                        this.intern._jbigWindow.bwidth  = this.intern._jbigWindow.width();
-                    }
-                    this.intern._jbigWindow.x       = this.intern._jbigWindow.position().left;
-                    this.intern._jbigWindow.y       = this.intern._jbigWindow.position().top;
-                }
-                
-                if (this.intern._timerID) {
-                    clearTimeout (this.intern._timerID);
-                    this.intern._timerID = null;
-                }
-                 
-                if (this.intern._jbigWindow.jbigImage) {
-                    this.intern._jbigWindow.OnHide ();
-                }
-                else 
-                if (this.intern._jbigWindow.OnHide)
-                    this.intern._jbigWindow.OnHide ();
-                
-                if (delay) {
-                    setTimeout (function (){
-                        if (hqWidgets.gDynamics.gShownBig != null)
-                        {
-                            hqWidgets.gDynamics.gShownBig.intern._jbigWindow.animate ({
-                                                                     top:    hqWidgets.gDynamics.gShownBig.settings.y, 
-                                                                     left:   hqWidgets.gDynamics.gShownBig.settings.x, 
-                                                                     width:  hqWidgets.gDynamics.gShownBig.intern._jelement.width(), 
-                                                                     height: hqWidgets.gDynamics.gShownBig.intern._jelement.height()}, 500);
-                                                                     
-                            setTimeout(function(elem) {elem.intern._jbigWindow.hide();}, 500, hqWidgets.gDynamics.gShownBig);
-                            
-                            if (hqWidgets.gDynamics.gShownBig.intern._jbigWindow.buttons)	{
-                                var i;
-                                for (i=0; i<3; i++)
-                                    hqWidgets.gDynamics.gShownBig.intern._jbigWindow.buttons[i].hide();
-                            }
-                            hqWidgets.gDynamics.gShownBig = null;
-                        }
-                    }, delay);
-                }
-                else {
-                    hqWidgets.gDynamics.gShownBig.intern._jbigWindow.animate ({top:    this.settings.y, 
-                                                             left:   this.settings.x, 
-                                                             width:  this.intern._jelement.width(), 
-                                                             height: this.intern._jelement.height()}, 500);
-                                                             
-                    setTimeout(function(elem) {elem.intern._jbigWindow.hide();}, 500, this);
+
+                if (this.settings.doNotAnimate || !this.settings.showChanging) {
+                    this.intern._jbigWindow.css ({
+                        top:    this.intern._jbigWindow.y,
+                        left:   this.intern._jbigWindow.x,
+                        width:  this.intern._jbigWindow.bwidth,
+                        height: this.intern._jbigWindow.bheight,
+                        'z-index': 22
+                    });
                     if (this.intern._jbigWindow.buttons) {
                         var i;
-                        for (i=0;i<3;i++)
-                            this.intern._jbigWindow.buttons[i].hide();
+                        for (i=0;i<3;i++) hqWidgets.gDynamics.gShownBig.intern._jbigWindow.buttons[i].show();
                     }
-                    hqWidgets.gDynamics.gShownBig = null;
-                }	
+                    else
+                    if (this.intern._jbigBlind1 != null) {
+                        this.intern._jbigBlind1.css({height:this.intern._jbigWindow.bheight * this.dynStates.percentState / 100});
+                        if (this.settings.isShowPercent && this.intern._jbigWindow && this.intern._jbigWindow.jtext) {
+                            this.intern._jbigWindow.jtext.html(this.dynStates.percentState+"%");
+                        }
+                        if (this.intern._jbigWindow.OnShow){
+                            this.intern._jbigWindow.OnShow();
+                        }
+                    }
+                    else
+                    if (this.intern._jbigWindow.jbigImage) {
+                        this.intern._jbigWindow.OnShow();
+                    }
+                    else
+                    if (this.intern._jbigWindow.OnShow){
+                        this.intern._jbigWindow.OnShow();;
+                    }
+                }
+                else {
+                    if (this.intern._jbigWindow.bwidth == undefined) {
+                        this.intern._jbigWindow.bheight = this.intern._jbigWindow.height();
+                        this.intern._jbigWindow.bwidth  = this.intern._jbigWindow.width();
+                        this.intern._jbigWindow.x       = this.intern._jbigWindow.position().left;
+                        this.intern._jbigWindow.y       = this.intern._jbigWindow.position().top;
+                    }
+
+                    this.intern._jbigWindow.css ({top:    this.settings.y,
+                                                  left:   this.settings.x,
+                                                  width:  this.intern._jelement.width(),
+                                                  height: this.intern._jelement.height(),
+                                                  'z-index': 22
+                                                  });
+
+                    this.intern._jbigWindow.animate ({top:    this.intern._jbigWindow.y,
+                                                      left:   this.intern._jbigWindow.x,
+                                                      width:  this.intern._jbigWindow.bwidth,
+                                                      height: this.intern._jbigWindow.bheight}, 500);
+                    if (this.intern._jbigWindow.buttons) {
+                        setTimeout (function () {
+                            var i;
+                            for (i=0;i<3;i++) hqWidgets.gDynamics.gShownBig.intern._jbigWindow.buttons[i].show();
+                        }, 500);
+                    }
+                    else
+                    if (this.intern._jbigBlind1 != null) {
+                        this.intern._jbigBlind1.css({height:this.intern._jbigWindow.bheight * this.dynStates.percentState / 100});
+                        if (this.settings.isShowPercent && this.intern._jbigWindow && this.intern._jbigWindow.jtext) {
+                            this.intern._jbigWindow.jtext.html(this.dynStates.percentState+"%");
+                        }
+                        if (this.intern._jbigWindow.OnShow){
+                            setTimeout (function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
+                        }
+                    }
+                    else
+                    if (this.intern._jbigWindow.jbigImage) {
+                        setTimeout (function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
+                    }
+                    else
+                    if (this.intern._jbigWindow.OnShow){
+                        setTimeout (function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
+                    }
+                }
+            }
+            else {
+                if (this.intern._jbigWindow.is(':visible')) {
+                    hqWidgets.gDynamics.gShownBig = this;
+
+                    // remember position if it was moved
+                    if (this.settings.buttonType == hqWidgets.gButtonType.gTypeCam ||
+                        this.settings.buttonType == hqWidgets.gButtonType.gTypeGong) {
+
+                        if (!hqWidgets.gOptions.gIsTouchDevice) {
+                            this.intern._jbigWindow.bheight = this.intern._jbigWindow.height();
+                            this.intern._jbigWindow.bwidth  = this.intern._jbigWindow.width();
+                        }
+                        this.intern._jbigWindow.x = this.intern._jbigWindow.position().left;
+                        this.intern._jbigWindow.y = this.intern._jbigWindow.position().top;
+                    }
+
+                    if (this.intern._timerID) {
+                        clearTimeout (this.intern._timerID);
+                        this.intern._timerID = null;
+                    }
+
+                    if (this.intern._jbigWindow.jbigImage) {
+                        this.intern._jbigWindow.OnHide ();
+                    }
+                    else
+                    if (this.intern._jbigWindow.OnHide)
+                        this.intern._jbigWindow.OnHide ();
+
+                    if (delay) {
+                        setTimeout (function (){
+                            if (hqWidgets.gDynamics.gShownBig != null) {
+                                if (this.settings.doNotAnimate || !this.settings.showChanging) {
+                                    hqWidgets.gDynamics.gShownBig.intern._jbigWindow.hide();
+                                }
+                                else {
+                                    hqWidgets.gDynamics.gShownBig.intern._jbigWindow.animate ({
+                                                                             top:    hqWidgets.gDynamics.gShownBig.settings.y,
+                                                                             left:   hqWidgets.gDynamics.gShownBig.settings.x,
+                                                                             width:  hqWidgets.gDynamics.gShownBig.intern._jelement.width(),
+                                                                             height: hqWidgets.gDynamics.gShownBig.intern._jelement.height()}, 500);
+
+                                    setTimeout(function(elem) {elem.intern._jbigWindow.hide();}, 500, hqWidgets.gDynamics.gShownBig);
+                                }
+
+                                if (hqWidgets.gDynamics.gShownBig.intern._jbigWindow.buttons)	{
+                                    var i;
+                                    for (i=0; i<3; i++)
+                                        hqWidgets.gDynamics.gShownBig.intern._jbigWindow.buttons[i].hide();
+                                }
+
+                                hqWidgets.gDynamics.gShownBig = null;
+                            }
+                        }, delay);
+                    }
+                    else {
+                        if (this.settings.doNotAnimate || !this.settings.showChanging) {
+                            this.intern._jbigWindow.hide();
+                        }
+                        else{
+                            hqWidgets.gDynamics.gShownBig.intern._jbigWindow.animate ({
+                                top:    this.settings.y,
+                                left:   this.settings.x,
+                                width:  this.intern._jelement.width(),
+                                height: this.intern._jelement.height()}, 500);
+
+                            setTimeout(function(elem) {elem.intern._jbigWindow.hide();}, 500, this);
+                        }
+                        if (this.intern._jbigWindow.buttons) {
+                            var i;
+                            for (i=0;i<3;i++)
+                                this.intern._jbigWindow.buttons[i].hide();
+                        }
+                        hqWidgets.gDynamics.gShownBig = null;
+                    }
+                }
             }
         }
         this.SetPercent = function (percent, isForSet, isForce)	{
@@ -3494,6 +3552,17 @@ var hqWidgets = {
             }
         };
         this.SetTemperature = function (temp)	{
+            if (temp === "changeFont") {
+                if (this.intern._jtemp) {
+                    this.intern._jtemp.css ({font: this.settings.infoTextFont || "bold 11px 'Tahoma', sans-serif", color: this.settings.infoTextColor || 'black'});
+                    var dim = "0".dimensions (this.settings.infoTextFont || "bold 11px 'Tahoma', sans-serif");
+                    this.intern._jtemp.css({top:this.settings.height / 2 - dim.height});
+                }
+                if (this.intern._jhumid && this.settings.infoTextFont) {
+                    this.intern._jhumid.css ({font: this.settings.infoTextFont ? this.settings.infoTextFont.replace("bold", "") : "11px 'Tahoma', sans-serif"});
+                }
+            }
+            else
             if (temp) {
                 // State is no more unknown 
                 if (temp.temperature !== undefined && temp.temperature != null && this.dynStates.state == hqWidgets.gState.gStateUnknown)
@@ -4453,6 +4522,18 @@ var hqWidgets = {
                 }
             }
 
+            if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp ||
+                this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
+                if (options.infoTextFont !== undefined) {
+                    this.settings.infoTextFont = options.infoTextFont;
+                }
+                if (options.infoTextColor !== undefined) {
+                    this.settings.infoTextColor = options.infoTextColor;
+                }
+
+                this.SetTemperature ("changeFont");
+            }
+
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge) {
                 var isSet = false;
                 if (options.valueMin !== undefined) {
@@ -4715,5 +4796,5 @@ var hqWidgets = {
                     
             e.data.msg.SetSize (e.data.msg.intern._jelement.width(), e.data.msg.intern._jelement.height());
         });
-    },
+    }
 };

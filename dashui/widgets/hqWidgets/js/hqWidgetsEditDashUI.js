@@ -1,6 +1,6 @@
 if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) {
     $.extend(true, dui.binds.hqWidgetsExt, {
-        hqEditVersion: "0.1.10",
+        hqEditVersion: "0.1.11",
         hqEditTimerDetectMoving: null,
         hqEditSaveTimer : null,
         hqEditInit: function () {

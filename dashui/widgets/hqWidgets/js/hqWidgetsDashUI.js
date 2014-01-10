@@ -1,7 +1,7 @@
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
         hqWidgetsExt: {
-            version: "0.1.10",
+            version: "0.1.11",
             inited:  false,
             hqIgnoreNextUpdate: null, // id of controlled element
             hqMapping: {},
