@@ -9,6 +9,20 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta51
+* (Hobbyquaker) Bugfix CCU.IO Version Check
+* (Bluefox) Fix hqWidget/ipCam => Open function
+* (Bluefox) Fix bars: image source not only in dashui/img/
+* (Bluefox) Add startValue for hqWidget/Dimmer
+* (Bluefox) Trim styleSelection drop down box to 150px.
+* (Bluefox) Write startValue 100 if not exists.
+* (Bluefox) startValue in % from 0 to 100.
+* (Bluefox) Fix error with Dimmer and startValue display.
+* (Bluefox) Add do not animate property to hqWidgets
+* (Bluefox) Add font property to hqWidgets/Temperature and Inside Temperature
+* (Bluefox) Add basic/Bool ctrl SVG
+* (Bluefox) Add background option to basic navigation HTML
+
 ### 0.9beta50
 * (Bluefox) Support invert position for hqWidget/Blinds
 * (Bluefox) Fix timeAndWeather/htcWeather the second page.
