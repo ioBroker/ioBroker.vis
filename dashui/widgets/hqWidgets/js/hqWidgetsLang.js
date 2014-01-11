@@ -49,7 +49,7 @@ hqWidgets = $.extend (hqWidgets, {
                 "Open door button:"         : {"en": "Open door button:",  "de": "'Tur aufmachen' Knopf:"},
                 "Small image update(sec):"  : {"en": "Small image update(sec):",    "de": "Kleines Bild erneuern(Sek):"},
                 "Open door text:"           : {"en": "Open door text:", "de": "Knopfbeschrieftung:"},
-                "Open&nbsp;lock"            : {"en": "Open&nbsp;lock",  "de": "Aufmachen"},
+                "Open lock"                 : {"en": "Open",            "de": "Aufmachen"},
                 "Open the door?"            : {"en": "Open the door?",  "de": "Tur aufmachen?"},
                 "Simulate click"            : {"en": "Simulate click",  "de": "Simuliere Click"},
                 "Test state"                : {"en": "Test state",      "de": "Zustand testen"},

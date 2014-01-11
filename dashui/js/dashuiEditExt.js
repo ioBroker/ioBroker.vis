@@ -264,16 +264,17 @@ dui = $.extend(true, dui, {
                 var elemBox = $("#styleSelectBox"+obj.settings.id);		
                 //if ($(window).height() < elemBox.height() + elemBox.position().top) {
                 // Get position of last element
-                var iHeight = obj.settings.count * (obj.settings.height + 18);
-                if (iHeight > $(window).height() - elem.position().top - elem.height() - 5) {
-                    iHeight = $(window).height() - elem.position().top - elem.height() - 5;
+                var iHeight = 150;/*obj.settings.count * (obj.settings.height + 18);
+                var wHeight = $(window).height() - $(window).scrollTop();
+                if (iHeight > wHeight - elem.offset().top - elem.height() - 5) {
+                    iHeight = wHeight - elem.offset().top - elem.height() - 5;
                 } else {
                     iHeight += 5;
                 }
 
-                if (iHeight < 150) {
-                    iHeight = 150;
-                }
+                if (iHeight > obj.settings.height * 4) {
+                    iHeight = obj.settings.height * 4;
+                }*/
                 elemBox.height(iHeight + 5);
                     
                 var iWidth = $("#styleSelect"+obj.settings.id).width();

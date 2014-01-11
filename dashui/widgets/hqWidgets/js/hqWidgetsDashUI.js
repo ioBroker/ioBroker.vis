@@ -1,7 +1,7 @@
 if ((typeof hqWidgets !== 'undefined')) {
     jQuery.extend(true, dui.binds, {
         hqWidgetsExt: {
-            version: "0.1.10",
+            version: "0.1.11",
             inited:  false,
             hqIgnoreNextUpdate: null, // id of controlled element
             hqMapping: {},
@@ -191,6 +191,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     time_id = null;
                                 }
                                 if (what == 'state') {
+                                    var startValue = obj.GetSettings ('startValue') || 100;
+                                    startValue = parseInt (startValue);
+
                                     // Send on time to dimmer
                                     if (time_id != null) {
                                         if (homematic.regaObjects[time_id] && homematic.regaObjects[time_id]["DPs"] && homematic.regaObjects[time_id]["DPs"]["RAMP_TIME"]) {
@@ -199,12 +202,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                                         }
                                     }
                                     if (state != hqWidgets.gState.gStateOn) {
-                                        obj.SetStates ({percentState: 100, state: hqWidgets.gState.gStateOn, isRefresh: true});
+                                        obj.SetStates ({percentState: startValue, state: hqWidgets.gState.gStateOn, isRefresh: true});
                                         // Send command to HM
                                         if (on_time !== undefined && on_time != null && on_time != "") {
                                             homematic.setValue( time_id, parseFloat(on_time));
                                         }
-                                        homematic.setValue( hm_id, 1);
+                                        homematic.setValue( hm_id, startValue / 100);
                                     } else {
                                         obj.SetStates ({percentState: 0, state: hqWidgets.gState.gStateOff, isRefresh: true});
                                         // Send command to HM
@@ -613,12 +616,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 action: function (obj, what, state) {                                    
                                     var hm_id = obj.GetSettings ('hm_idL');
                                     if (hm_id != null && hm_id != "") {
-                                        if (homematic.regaObjects[hm_id] && homematic.regaObjects['hm_id']["DPs"] && homematic.regaObjects['hm_id']["DPs"]["OPEN"]) {
-                                            hm_id = homematic.regaObjects['hm_id']["DPs"]["OPEN"];
+                                        if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["OPEN"]) {
+                                            hm_id = homematic.regaObjects[hm_id]["DPs"]["OPEN"];
                                         }
                                         else
-                                        if (homematic.regaObjects[hm_id] && homematic.regaObjects['hm_id']["DPs"] && homematic.regaObjects['hm_id']["DPs"]["STATE"]) {
-                                            hm_id = homematic.regaObjects['hm_id']["DPs"]["STATE"];
+                                        if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["STATE"]) {
+                                            hm_id = homematic.regaObjects[hm_id]["DPs"]["STATE"];
                                         }
                                         // Send command to HM
                                         homematic.setValue( hm_id, true);

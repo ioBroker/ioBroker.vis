@@ -48,7 +48,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             imgSelect:   null,   // image selection dialog
             timeout:     500,    // object update timeout
             clrSelect:   null,   // color selection dialog
-            styleSelect: null,   // style selection dialog
+            styleSelect: null    // style selection dialog
         };
         var e_internal = {
             attr:            null,
@@ -65,7 +65,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             infoColorChanged:null,
             parent:          null,
             state:           hqWidgets.gState.gStateOff, // Simulate state
-            extra:           null,
+            extra:           null
         };
         this.e_settings = $.extend (e_settings, options);
         
@@ -388,7 +388,26 @@ hqWidgets = $.extend (true, hqWidgets, {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Icon height:")+"</td><td id='"+this.e_settings.elemName+"_btIconHeight'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Icon size:")+"</td><td><input id='"+this.e_settings.elemName+"_iconAutoBtn' type='button' value='Auto'></td></tr>";
         }
-        
+
+        // Do not show animation
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeBlind  ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLock ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeMotion ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCharts ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeEventlist) {
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("No animation:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_doNotAnimate' "+((this.e_internal.attr.doNotAnimate) ? "checked" : "")+">";
+        }
+
+        // Do not show status change
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeButton  ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong  ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeDimmer  ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeDoor) {
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Animation:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_showChanging' "+((this.e_internal.attr.showChanging) ? "checked" : "")+">";
+        }
+
         // Info Text color, font, type
         if (this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeDoor   && 
             this.e_internal.attr.buttonType != hqWidgets.gButtonType.gTypeText   && 
@@ -410,6 +429,14 @@ hqWidgets = $.extend (true, hqWidgets, {
             sTextAdv += "<input id='"+this.e_settings.elemName+"_infoTextColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Active text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColorActive' type='text' value='"+(this.e_internal.attr.infoTextColorActive || "")+"'>";
             sTextAdv += "<input id='"+this.e_settings.elemName+"_infoTextColorActiveBtn' style='width: 30px' type='button' value='...'></td></tr>";
+        }
+
+        // Info Text color, font, type for Temperature
+        if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInTemp ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Font:") +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextFont'  type='text' value='"+(this.e_internal.attr.infoTextFont || 'bold 11px "Tahoma", sans-serif')+"'></td></tr>";
+            sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Text color:")+"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoTextColor' type='text' value='"+(this.e_internal.attr.infoTextColor || 'black')+"'>";
+            sTextAdv += "<input id='"+this.e_settings.elemName+"_infoTextColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
         }
 
         // Percent min value, max value
@@ -881,7 +908,9 @@ hqWidgets = $.extend (true, hqWidgets, {
         this._EditCheckboxHandler ('gaugeStart', false, false, true);
         this._EditCheckboxHandler ('showDescription', false, false, true);
         this._EditCheckboxHandler ('isPopupEnabled', false, false, true);
-        
+        this._EditCheckboxHandler ('doNotAnimate', false, false, true);
+        this._EditCheckboxHandler ('showChanging', false, false, true);
+
         this._EditTextHandler('title');   
         this._EditTextHandler('room');   
         this._EditSelectHandler('hoursLastAction', function (obj, attr, value) {
@@ -978,7 +1007,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             position: null,
             onchange: null,   //- function (newPos, param)
             onchangePrm: null,
-            orientation: 'horizontal',
+            orientation: 'horizontal'
         };
         var internal = {
             elemName:   null,
@@ -994,7 +1023,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             handler:    null,
             changed:    null, // function
             timer:      null,
-            text:       null,
+            text:       null
         };
         
         this.settings = $.extend (settings, options);
@@ -1187,5 +1216,5 @@ hqWidgets = $.extend (true, hqWidgets, {
             return this;
         }	
         this.SetPosition ((this.settings.position !== null) ? this.settings.position : this.settings.min);
-    },
+    }
 });

@@ -129,6 +129,7 @@ dui = $.extend(true, dui, {
                 "blink"            : {"en" : "Blink",         "de": "Blinken"},
                 "showWeekDay"      : {"en" : "Show day of week", "de": "Wochenstag"},
                 "noClass"          : {"en" : "No predefined style", "de": "Kein vordefinierter Stil"},
+                "startValue"       : {"en" : "ON value [1-100]%", "de": "EIN Wert [1-100]%"},
 				// Bars
                 "One at time:"     : {"en" : "One at time:",  "de": "Nur eine auswahlbar:"},
                 "Geometry..."      : {"en" : "Geometry...",   "de": "Geometrie..."},
