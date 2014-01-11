@@ -124,6 +124,9 @@
                 var $this = jQuery(el);
                 $this.click(function (e) {
                     if (dui.urlParams["edit"] !== "") {
+                        if (options.background) {
+                            $('body').css({background: options.background});
+                        }
                         dui.changeView(options.nav_view, options.hideOptions, options.showOptions, options.sync);
                         e.preventDefault();
                         return false;
@@ -253,6 +256,71 @@
                     }, refreshInterval);
                 }
             },
+            showSvg: function (myClass, view, wid, hm_id, opacity, svg_false, svg_true, style) {
+                var obj = {myClass:myClass, view:view, wid:wid, hm_id:hm_id, opacity:opacity, svg_false:svg_false, svg_true:svg_true};
+                console.log("test");
+                if (document.getElementById (wid)) {
+                    $('#'+wid).remove ();
+                }
+                var str = homematic.uiState.attr("_" + hm_id + ".Value");
+                var val = parseFloat(str);
+                var sText = '<svg class="dashui-widget ' + (myClass || "")+ '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="'+wid+'" data-hm-id="'+hm_id+'">';
+                if (dui.urlParams["edit"] === "") {
+                    if (opacity === undefined || opacity === null || opacity === "")
+                        opacity = 1;
+
+                    if (parseFloat(opacity) < 0.2) {
+                        opacity = 0.2;
+                    }
+                }
+                if (val === 0 || str === "false" || str === false || str === null) {
+                    // try to analyse
+                    sText += svg_false;
+                }
+                else {
+                    sText += svg_true;
+                }
+                sText += '</svg>';
+                $('#duiview_'+view).append (sText);
+
+                $("#"+wid).children().attr("data-wid", wid);
+                $("#"+wid).children().attr("data-hm-id", hm_id);
+                $("#"+wid).children().attr("opacity", opacity);
+                if ($("#"+wid).children()[0])
+                    $("#"+wid).children()[0]._obj = obj;
+
+                if (style) {
+                    $("#"+wid).css(style);
+                }
+
+                if (dui.urlParams["edit"] !== "") {
+                    $("#"+wid).children().click(function () {
+                        var $this = $(this);
+                        var id = $this.attr("data-hm-id");
+                        var val = homematic.uiState["_"+id].Value;
+                        if (val === false || val === "false") {
+                            homematic.setValue(id, true);
+                        } else if (val === true || val === "true") {
+                            homematic.setValue(id, false);
+                        } else {
+                            val = parseFloat(val);
+                            if (val >= 0.5) { val = 1; } else { val = 0; }
+                            homematic.setValue( id,  1-val);
+                        }
+                        var el = $('#'+obj.wid);
+                        this._obj.style = {
+                            "position":'absolute',
+                            top:    el.position().top,
+                            width:  el.width(),
+                            left:   el.position().left,
+                            height: el.height()
+                        }
+                        setTimeout(function(obj){
+                            dui.binds.basic.showSvg (obj.myClass, obj.view, obj.wid, obj.hm_id, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
+                        }, 200, this._obj);
+                    });
+                }
+            },
             _disable: function () {
                 $(".editmode-helper").show();
             }
@@ -332,7 +400,7 @@
     </div>
 </script>
 
-        <!-- TODO
+<!-- TODO
 <script type="text/ejs" id="tplStatefulIFrame8Persistent" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="stateful - iFrame 8 (persistent)" data-dashui-attrs="hm_id;refreshInterval;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
           <div class="editmode-helper"></div>
@@ -365,8 +433,8 @@
 
 
 
-<script type="text/ejs" id="tplHtmlNav" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="navigation - HTML" data-dashui-attrs="html;nav_view;sync;hide_effect;hide_duration;hide_options;show_effect;show_options;show_duration;show_options">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:(data.attr('hide_options')?data.attr('hide_options'):{}),duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:(data.attr('show_options')?data.attr('show_options'):{}),duration:data.attr('show_duration')},sync:data.attr('sync')}) %>>
+<script type="text/ejs" id="tplHtmlNav" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="navigation - HTML" data-dashui-attrs="html;nav_view;sync;hide_effect;hide_duration;hide_options;show_effect;show_duration;show_options;body-background">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:(data.attr('hide_options')?data.attr('hide_options'):{}),duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:(data.attr('show_options')?data.attr('show_options'):{}),duration:data.attr('show_duration')},sync:data.attr('sync'),background:data.attr('body-background')}) %>>
         <div class="dashui-widget-body">
             <%== this.data.attr('html') %>
         </div>
@@ -403,8 +471,6 @@
     </div>
 </script>
 
-
-
 <script type="text/ejs" id="tplValueStringRaw" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - String (unescaped)" data-dashui-attrs="html_prepend;html_append;hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
@@ -414,6 +480,7 @@
         </div>
     </div>
 </script>
+
 <script type="text/ejs" id="tplValueStringImg" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - String img src" data-dashui-attrs="html_prepend;html_append;hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
@@ -495,7 +562,6 @@
     </div>
 </script>
 
-
 <script type="text/ejs" id="tplValueBoolCtrl" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - Bool HTML" data-dashui-attrs="html_prepend;html_append;hm_id;html_false;html_true">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.toggle(el) %>>
         <div class="dashui-widget-body">
@@ -506,13 +572,17 @@
 			var state;
 			if (val === 0 || str === "false" || str === false) {
 			%>
-			<%== this.data.attr("html_false") %>
+			    <%== this.data.attr("html_false") %>
 			<% } else { %>
-			<%== this.data.attr("html_true") %>
+			    <%== this.data.attr("html_true") %>
 			<% } %>
 			<%== this.data.attr("html_append") %>
         </div>
     </div>
+</script>
+
+<script type="text/ejs" id="tplValueBoolCtrlSvg" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - Bool SVG" data-dashui-attrs="hm_id;svg_false;svg_true;opacity">
+    <% dui.binds.basic.showSvg(this.data.attr('class'), this.view, this.data.attr('wid'), this.data.attr('hm_id'),this.data.attr("opacity"),this.data.attr("svg_false"),this.data.attr("svg_true")) %>
 </script>
 
 <script type="text/ejs" id="tplBasicState" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_ctrl - HTML State" data-dashui-attrs="html;hm_id;value">

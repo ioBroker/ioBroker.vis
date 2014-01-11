@@ -48,7 +48,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             imgSelect:   null,   // image selection dialog
             timeout:     500,    // object update timeout
             clrSelect:   null,   // color selection dialog
-            styleSelect: null,   // style selection dialog
+            styleSelect: null    // style selection dialog
         };
         var e_internal = {
             attr:            null,
@@ -65,7 +65,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             infoColorChanged:null,
             parent:          null,
             state:           hqWidgets.gState.gStateOff, // Simulate state
-            extra:           null,
+            extra:           null
         };
         this.e_settings = $.extend (e_settings, options);
         
@@ -1007,7 +1007,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             position: null,
             onchange: null,   //- function (newPos, param)
             onchangePrm: null,
-            orientation: 'horizontal',
+            orientation: 'horizontal'
         };
         var internal = {
             elemName:   null,
@@ -1023,7 +1023,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             handler:    null,
             changed:    null, // function
             timer:      null,
-            text:       null,
+            text:       null
         };
         
         this.settings = $.extend (settings, options);
@@ -1216,5 +1216,5 @@ hqWidgets = $.extend (true, hqWidgets, {
             return this;
         }	
         this.SetPosition ((this.settings.position !== null) ? this.settings.position : this.settings.min);
-    },
+    }
 });
