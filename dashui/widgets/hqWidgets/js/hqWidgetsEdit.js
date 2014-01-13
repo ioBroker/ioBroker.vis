@@ -391,14 +391,14 @@ hqWidgets = $.extend (true, hqWidgets, {
 
         // Do not show animation
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeBlind     ||
- +          this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLock      ||
- +          this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam       ||
- +          this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong      ||
- +          this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeMotion    ||
- +          this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCharts    ||
- +          this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeEventlist ||
- +          this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInTemp    ||
- +          this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLock      ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCam       ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong      ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeMotion    ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCharts    ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeEventlist ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInTemp    ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("No animation:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_doNotAnimate' "+((this.e_internal.attr.doNotAnimate) ? "checked" : "")+">";
         }
 
