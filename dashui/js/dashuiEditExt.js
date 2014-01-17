@@ -1815,13 +1815,13 @@ var hmSelect = {
             var i = 0;
             if (devFilter === undefined || devFilter == "" || this._ignoreFilter) {
                 if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
-                    text += "    <li><a href='#tabs-devs'  id='dev_select'>Devices</a></li>";
+                    text += "    <li><a href='#tabs-devs'  id='dev_select'>"+dui.translate("Devices")+"</a></li>";
                 }
                 if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'variables'))) {           
-                    text += "    <li><a href='#tabs-vars'  id='var_select'>Variables</a></li>";
+                    text += "    <li><a href='#tabs-vars'  id='var_select'>"+dui.translate("Variables")+"</a></li>";
                 }
                 if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && ( filter == 'all' || filter == 'programs'))) {           
-                    text += "    <li><a href='#tabs-progs' id='prog_select'>Functions</a></li>";
+                    text += "    <li><a href='#tabs-progs' id='prog_select'>"+dui.translate("Programs")+"</a></li>";
                 }
                 text += "  </ul>";
             }

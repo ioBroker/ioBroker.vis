@@ -162,7 +162,10 @@ dui = $.extend(true, dui, {
                 "Docked at right"  : {"en" : "Docked at right","de": "Angedockt rechts"},
                 "Center"           : {"en" : "Center",        "de": "In der MItte"},
                 "Left"             : {"en" : "Left",          "de": "Links"},
-                "Right"            : {"en" : "Right",         "de": "Rechts"}				
+                "Right"            : {"en" : "Right",         "de": "Rechts"},
+                "Programs"         : {"en" : "Programs",      "de": "Programme"},
+                "Variables"        : {"en" : "Variables",     "de": "Variablen"},
+                "Devices"          : {"en" : "Devices",       "de": "Geräte"}
             };
         }
         if (this.words[text]) {
