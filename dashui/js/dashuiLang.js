@@ -25,8 +25,8 @@ dui = $.extend(true, dui, {
     translate: function (text) {
         if (!this.words) {
             this.words = {
-                "hm_id"            : {"en": "Homematic ID"},
-                "hm_ids"           : {"en": "Homematic IDs"},
+                "hm_id"            : {"en": "ID"},
+                "hm_ids"           : {"en": "IDs"},
                 "hm_id0"           : {"en": "Swing ID 1",    "de": "Fensterblatt 1"},
                 "hm_id1"           : {"en": "Swing ID 2",    "de": "Fensterblatt 2"},
                 "hm_id2"           : {"en": "Swing ID 3",    "de": "Fensterblatt 3"},
@@ -39,13 +39,13 @@ dui = $.extend(true, dui, {
                 "hm_idB"           : {"en": "Brightness ID", "de": "Lichthelligkeit&nbsp;ID"},
                 "hm_idL"           : {"en": "Lock ID",       "de": "Schloss ID"},
                 "hm_wid"           : {"en": "Working ID"},
-                "hm_idC_On"        : {"en": "HM ID for ON",  "de": "HM ID für ON"},
-                "hm_idC_Off"       : {"en": "HM ID for OFF", "de": "HM ID für OFF"},
+                "hm_idC_On"        : {"en": "ID for ON",  "de": "ID für ON"},
+                "hm_idC_Off"       : {"en": "ID for OFF", "de": "ID für OFF"},
                 "default_filter_key":{"en": "Default filter:","de": "Voreingestellter Filter:"},
                 "class"             :{"en": "CSS Class",     "de": "CSS Klasse:"},
                 "theme"             :{"en": "Theme:",        "de": "Thema:"},
                 "comment"          : {"en" : "Comment:",     "de": "Kommentar:"},
-                "Select HM parameter" : {"en" : "Select HM parameter", "de": "HM parameter ausw&auml;hlen"},	
+                "Select HM parameter" : {"en" : "Select ID", "de": "ID ausw&auml;hlen"},
                 "Select"           : {"en" : "Select",       "de": "Auswählen"},
                 "Cancel"           : {"en" : "Cancel",       "de": "Abbrechen"},	
                 "None"             : {"en": "None",          "de": "Vorgegeben"},
