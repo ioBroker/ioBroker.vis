@@ -989,7 +989,14 @@ var hmSelect = {
         }
     },
     _buildVarsGrid: function (homematic) {
-        var variables  = homematic.regaIndex["VARDP"]; // IDs of all devices
+        var variables  = homematic.regaIndex["VARDP"]; // IDs of all VARDP
+        // Add Alarm-Variables
+        var alarms = homematic.regaIndex["ALARMDP"];
+        for (var i=0; i<alarms.length; i++) {
+            variables.push(alarms[i]);
+        }
+        variables.sort();
+
 		var selectedId = null;
                 
         var w = $('#hmSelect').dialog ("option", "width");
@@ -998,8 +1005,9 @@ var hmSelect = {
 		if (this.myVarsData == null) {
             this.myVarsData = new Array ();
 		    var i = 0;
-			// Add all elements
-			for(var vari in variables) {
+
+            // Add all elements
+            for(var vari in variables) {
                 var variObj = homematic.regaObjects[variables[vari]];
 				this.myVarsData[i] = {
 					id:           ""+(i+1), 
