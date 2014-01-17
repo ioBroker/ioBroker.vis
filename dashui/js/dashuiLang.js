@@ -25,7 +25,7 @@ dui = $.extend(true, dui, {
     translate: function (text) {
         if (!this.words) {
             this.words = {
-                "hm_id"            : {"en": "ID"},
+                "hm_id"            : {"en": "id"},
                 "hm_ids"           : {"en": "IDs"},
                 "hm_id0"           : {"en": "Swing ID 1",    "de": "Fensterblatt 1"},
                 "hm_id1"           : {"en": "Swing ID 2",    "de": "Fensterblatt 2"},
@@ -39,13 +39,13 @@ dui = $.extend(true, dui, {
                 "hm_idB"           : {"en": "Brightness ID", "de": "Lichthelligkeit&nbsp;ID"},
                 "hm_idL"           : {"en": "Lock ID",       "de": "Schloss ID"},
                 "hm_wid"           : {"en": "Working ID"},
-                "hm_idC_On"        : {"en": "ID for ON",  "de": "ID für ON"},
-                "hm_idC_Off"       : {"en": "ID for OFF", "de": "ID für OFF"},
+                "hm_idC_On"        : {"en": "id on",  "de": "id an"},
+                "hm_idC_Off"       : {"en": "id off", "de": "id aus"},
                 "default_filter_key":{"en": "Default filter:","de": "Voreingestellter Filter:"},
                 "class"             :{"en": "CSS Class",     "de": "CSS Klasse:"},
                 "theme"             :{"en": "Theme:",        "de": "Thema:"},
                 "comment"          : {"en" : "Comment:",     "de": "Kommentar:"},
-                "Select HM parameter" : {"en" : "Select ID", "de": "ID ausw&auml;hlen"},
+                "Select HM parameter" : {"en" : "Select id", "de": "id ausw&auml;hlen"},
                 "Select"           : {"en" : "Select",       "de": "Auswählen"},
                 "Cancel"           : {"en" : "Cancel",       "de": "Abbrechen"},	
                 "None"             : {"en": "None",          "de": "Vorgegeben"},
