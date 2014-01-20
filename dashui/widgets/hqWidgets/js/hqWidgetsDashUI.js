@@ -410,6 +410,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             }
                             else if (homematic.regaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'temperature'};
+                                if (opt["hm_idH"] && homematic.regaObjects[opt["hm_idH"]]){
+	                                hm_ids[t++] = {'hm_id': opt['hm_idH'], option: 'humidity'};
+                                }
                             }
                         }  
                     }
