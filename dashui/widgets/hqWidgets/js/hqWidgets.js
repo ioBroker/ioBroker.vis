@@ -536,6 +536,14 @@ var hqWidgets = {
 		var c = cond.substring(0,3);
 		var cval = cond.substring(3);
 		
+		if (value === null || value === undefined) {
+			value = "";
+		}
+		if (c === "null" || c == "''" || c == "\"\"") {
+			c = "";
+		}
+		
+		
 		// If substring
 		if (c == hqWidgets.gOperations.has) {
 			value = value.toString();
