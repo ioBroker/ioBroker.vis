@@ -38,7 +38,7 @@ dui = $.extend(true, dui, {
                 "hm_idV"           : {"en": "Valve",         "de": "Ventilsteuerung"},
                 "hm_idB"           : {"en": "Brightness ID", "de": "Lichthelligkeit&nbsp;ID"},
                 "hm_idL"           : {"en": "Lock ID",       "de": "Schloss ID"},
-                "hm_idH"           : {"en": "Humidity ID",   "de": "Humidity ID"},
+                "hm_idH"           : {"en": "Humidity ID",   "de": "Feuchtigkeit ID"},
                 "hm_wid"           : {"en": "Working ID"},
                 "hm_idC_On"        : {"en": "HM ID for ON",  "de": "HM ID für ON"},
                 "hm_idC_Off"       : {"en": "HM ID for OFF", "de": "HM ID für OFF"},
