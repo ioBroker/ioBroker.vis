@@ -129,6 +129,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           iconName: 'Temperature.png', 
                                           zindex: 2,
                                           hm_id: '',
+                                          hm_idH: '',
                                           hoursLastAction:-1
                                           });
                 }
@@ -762,6 +763,11 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             else
             if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp) {
                 dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilters[devFiltersNum], hqEditElem, 'hm_idV');
+                if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
+            }
+            else
+            if (opt.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
+                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilters[devFiltersNum], hqEditElem, 'hm_idH');
                 if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
             }
             else
