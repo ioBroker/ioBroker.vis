@@ -539,10 +539,9 @@ var hqWidgets = {
 		if (value === null || value === undefined) {
 			value = "";
 		}
-		if (c === "null" || c == "''" || c == "\"\"") {
-			c = "";
+		if (cval === "null" || cval == "''" || cval == "\"\"") {
+			cval = "";
 		}
-		
 		
 		// If substring
 		if (c == hqWidgets.gOperations.has) {
