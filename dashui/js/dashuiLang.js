@@ -167,8 +167,8 @@ dui = $.extend(true, dui, {
             };
         }
         if (this.words[text]) {
-            if (this.words[text][this.currentLang])
-                return this.words[text][this.currentLang];
+            if (this.words[text][this.language])
+                return this.words[text][this.language];
             else 
             if (this.words[text]["en"])
                 return this.words[text]["en"];
