@@ -9,6 +9,11 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta52
+* (Bluefox) Change image path calculation
+* (Bluefox) Bugfixes
+* (Geolin) Widgets Set "Basic" hm_val - Drehgriff und hm_val - TFK: Bugfix, beliebiger HTML Code für die Zustände
+
 ### 0.9beta51
 * (Hobbyquaker) Bugfix CCU.IO Version Check
 * (Bluefox) Fix hqWidget/ipCam => Open function
