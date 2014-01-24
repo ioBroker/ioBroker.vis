@@ -641,28 +641,27 @@
     </div>
 </script>
 
-
-<script type="text/ejs" id="tplHmWindowRotary" class="dashui-tpl"  data-dashui-set="basic" data-dashui-name="hm_val - Drehgriff" data-dashui-attrs="hm_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>">
+<script type="text/ejs" id="tplHmWindowRotary" class="dashui-tpl"  data-dashui-set="basic" data-dashui-name="hm_val - Drehgriff" data-dashui-attrs="hm_id;html_closed;html_tilt;html_open">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:100px;height:20px" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case 0: %>
-            <img height="28px" src="/ise/img/window/closed.png"/>
-            <% break; case 1: %>
-            <img height="28px" src="/ise/img/window/open_v.png"/>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case 0: case "false": case false: %>
+            <%== this.data.attr("html_closed") %>
+            <% break; case 1: case true: %>
+            <%== this.data.attr("html_tilt") %>
             <% break; case 2: %>
-            <img height="28px" src="/ise/img/window/open_h.png"/>
+            <%== this.data.attr("html_open") %>
             <% } %>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplHmWindow" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - TFK" data-dashui-attrs="hm_id">
-    <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:80px">
+<script type="text/ejs" id="tplHmWindow" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - TFK" data-dashui-attrs="hm_id;html_closed;html_open">
+    <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:20px;width:100px">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "true": %>
-            <img height="100%" src="/ise/img/window/open_h.png"/>
+            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "true": case true: %>
+            <%== this.data.attr("html_open") %>
             <% break; default: %>
-            <img height="100%" src="/ise/img/window/closed.png"/>
+            <%== this.data.attr("html_closed") %>
             <% } %>
         </div>
     </div>
