@@ -164,9 +164,9 @@ dui = $.extend(true, dui, {
                 "Center"           : {"en" : "Center",        "de": "In der MItte",        "ru": "В середине"},
                 "Left"             : {"en" : "Left",          "de": "Links",               "ru": "Слева"},
                 "Right"            : {"en" : "Right",         "de": "Rechts",              "ru": "Справа"},
-                "Programs"         : {"en" : "Programs",      "de": "Programme"},
-                "Variables"        : {"en" : "Variables",     "de": "Variablen"},
-                "Devices"          : {"en" : "Devices",       "de": "Geräte"}
+                "Programs"         : {"en" : "Programs",      "de": "Programme"            "ru": "Программы"},
+                "Variables"        : {"en" : "Variables",     "de": "Variablen"            "ru": "Переменные"},
+                "Devices"          : {"en" : "Devices",       "de": "Geräte"               "ru": "Устройства"}
 
             };
         }
