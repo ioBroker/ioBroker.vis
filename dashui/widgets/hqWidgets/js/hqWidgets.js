@@ -536,6 +536,13 @@ var hqWidgets = {
 		var c = cond.substring(0,3);
 		var cval = cond.substring(3);
 		
+		if (value === null || value === undefined) {
+			value = "";
+		}
+		if (cval === "null" || cval == "''" || cval == "\"\"") {
+			cval = "";
+		}
+		
 		// If substring
 		if (c == hqWidgets.gOperations.has) {
 			value = value.toString();
@@ -2539,7 +2546,7 @@ var hqWidgets = {
             if (this.settings.buttonType != hqWidgets.gButtonType.gTypeInfo &&
                 this.settings.buttonType != hqWidgets.gButtonType.gTypeGauge) 
                 return;
-            if (text      === undefined || text      === null || text     === "") text      = null;
+            if (text      === undefined || text      === null) text      = null;
             if (textFont  ==  undefined || textFont  ==  null || textFont ==  "") textFont  = '20px "Tahoma", sans-serif';
             if (textColor ==  undefined || textColor ==  null || textColor==  "") textColor = "white"; 
             if (activeTextColor ==  undefined || activeTextColor ==  null || activeTextColor==  "") activeTextColor = null; 

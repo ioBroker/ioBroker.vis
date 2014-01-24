@@ -129,6 +129,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                                           iconName: 'Temperature.png', 
                                           zindex: 2,
                                           hm_id: '',
+                                          hm_idH: '',
                                           hoursLastAction:-1
                                           });
                 }
@@ -256,7 +257,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             var devFilters = (devFilter) ? devFilter.split (';') : [null, null];
             
 			if (!document.getElementById ('inspect_'+attr))
-				parent.append('<tr '+((groupID === undefined) ? '': 'id="'+groupID+'"') + ' class="dashui-add-option"><td>'+dui.translate(attr)+':</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+opt[attr]+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
+				parent.append('<tr '+((groupID === undefined) ? '': 'id="'+groupID+'"') + ' class="dashui-add-option"><td>'+dui.translate(attr)+':</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+(opt[attr] || "")+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
             
 			document.getElementById ("inspect_"+attr).jControl         = attr;
             document.getElementById ("inspect_"+attr)._onChange        = onChange;
@@ -762,6 +763,11 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             else
             if (opt.buttonType == hqWidgets.gButtonType.gTypeInTemp) {
                 dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilters[devFiltersNum], hqEditElem, 'hm_idV');
+                if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
+            }
+            else
+            if (opt.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
+                dui.binds.hqWidgetsExt.hqEditHmID (obj, parent, devFilters[devFiltersNum], hqEditElem, 'hm_idH');
                 if (devFilters[devFiltersNum+1] !== undefined) devFiltersNum++;
             }
             else

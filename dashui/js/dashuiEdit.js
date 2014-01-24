@@ -586,7 +586,7 @@ dui = $.extend(true, dui, {
                     $("#widget_attrs").append('<tr class="dashui-add-option"><td id="option_'+wid_attr+'" ></td></tr>');
                     $('#inspect_comment_tr').hide ();
                     $('#inspect_class_tr').hide ();
-                    $('#option_'+wid_attr).jweatherCity ({lang:'de', currentValue: widget.data[wid_attr], onselect: function (wid, text, obj) {
+                    $('#option_'+wid_attr).jweatherCity ({lang: dui.language, currentValue: widget.data[wid_attr], onselect: function (wid, text, obj) {
                             dui.widgets[dui.activeWidget].data.attr('weoid', text);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
                             dui.saveRemote();
@@ -730,20 +730,89 @@ dui = $.extend(true, dui, {
 				} else 
 				if (wid_attr.slice(0,4) !== "html" && wid_attr != 'hqoptions') {
 					if (wid_attrs.length > 1) {
-						if (wid_attrs[1] == "checkbox") {
-							isValueSet = true;
-							// All other attributes
-							$("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><input id="inspect_'+wid_attr+'" type="checkbox"' +(widget.data[wid_attr] ? "checked": "")+'></td></tr>');
-						} else {
-							// Select
-							var values = wid_attrs[1].split(',');
-							var text = '<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><select id="inspect_'+wid_attr+'">';
-							for (var t = 0; t < values.length; t++) {
-								text += "<option value='"+values[t]+"' "+((values[t] == widget.data[wid_attr]) ? "selected" : "")+">"+this.translate(values[t])+"</option>";
+						var type = wid_attrs[1];
+						
+						// If description is JSON object
+						if (type.indexOf ('{') != -1) {
+							try {
+								type = jQuery.parseJSON( type );
 							}
-							text += "</select></td></tr>";
-							$("#widget_attrs").append(text);
-							isValueSet = true;
+							catch (e) {
+								type = null;
+								$("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44"/></td></tr>');
+							}
+						}
+						
+						if (type !== null) {
+							if (typeof type == 'object') {
+								var title = this.translate(wid_attr);
+								var hint  = "";
+								if (type["name"]) {
+									if (typeof type["name"] == 'object') {
+										if (type["name"][this.language]) {
+											title = type["name"][this.language];
+										} else
+										if (type["name"]['en']) {
+											title = type["name"]['en'];
+										}
+									}
+									else {
+										title = type["name"];
+									}
+								}
+								
+								
+								if (type['type'] == "checkbox") {
+									isValueSet = true;
+									// All other attributes
+									$("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption" title="'+hint+'">'+title+':</td><td><input title="'+hint+'" id="inspect_'+wid_attr+'" type="checkbox"' +(widget.data[wid_attr] ? "checked": "")+'></td></tr>');
+								} else 
+								if (type['type'] == "view") {
+								} else
+								if (type['type'] == "color") {
+								} else
+								if (type['type'] == "font") {
+								} else
+								if (type['type'] == "rooms") {
+								} else
+								if (type['type'] == "favorites") {
+								} else
+								if (type['type'] == "functions") {
+								} else
+								if (type['type'] == "rooms") {
+								} else
+								if (type['type'] == "select") {
+									// Select
+									var values = type['values'];
+									var text = '<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><select id="inspect_'+wid_attr+'">';
+									for (var t = 0; t < values.length; t++) {
+										text += "<option value='"+values[t]+"' "+((values[t] == widget.data[wid_attr]) ? "selected" : "")+">"+this.translate(values[t])+"</option>";
+									}
+									text += "</select></td></tr>";
+									$("#widget_attrs").append(text);
+									isValueSet = true;
+								}
+							
+							}
+							else { // Simple type
+								if (type == "checkbox") {
+									isValueSet = true;
+									// All other attributes
+									$("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><input id="inspect_'+wid_attr+'" type="checkbox"' +(widget.data[wid_attr] ? "checked": "")+'></td></tr>');
+								} else {
+									// Select
+									var values = wid_attrs[1].split(',');
+									var text = '<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><select id="inspect_'+wid_attr+'">';
+									for (var t = 0; t < values.length; t++) {
+										text += "<option value='"+values[t]+"' "+((values[t] == widget.data[wid_attr]) ? "selected" : "")+">"+this.translate(values[t])+"</option>";
+									}
+									text += "</select></td></tr>";
+									$("#widget_attrs").append(text);
+									isValueSet = true;
+								}
+
+							}
+							
 						}
 					} else {
 						// All other attributes

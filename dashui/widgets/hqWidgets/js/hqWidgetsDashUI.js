@@ -410,6 +410,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             }
                             else if (homematic.regaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'temperature'};
+                                if (opt["hm_idH"] && homematic.regaObjects[opt["hm_idH"]]){
+	                                hm_ids[t++] = {'hm_id': opt['hm_idH'], option: 'humidity'};
+                                }
                             }
                         }  
                     }
@@ -1285,7 +1288,7 @@ if ((typeof hqWidgets !== 'undefined')) {
             },
             hqMonitor: function (wid, newState, lastchange) {
 
-                // Play sound in the browser
+                // Play sound in the browser for sayIt adapter
 				if (wid == "72900") {
 					if (newState) {
 						var d = new Date ();
@@ -1317,7 +1320,11 @@ if ((typeof hqWidgets !== 'undefined')) {
                     if (lastchange != undefined && (option == 'state' || option == 'infoText')) {
                         change['lastAction'] = lastchange;
                     }
-
+					
+					if (option == 'infoText') {
+                    	change[option] = change[option] || "";
+                    }
+                    else
                     if (option == 'lowBatteryS') {
 						dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.batteryStates.sensors[dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].index] = newState;
                         dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.SetStates ({'lowBattery': dui.binds.hqWidgetsExt.hqMapping[wid+'_'+i].button.getBatteryState (), 'lowBatteryDesc': "BAT:"+dui.getObjDesc (wid)});

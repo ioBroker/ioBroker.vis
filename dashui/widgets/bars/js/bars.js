@@ -179,7 +179,7 @@ jQuery.extend(true, dui.binds, {
                             onselectArg: this.ctrlAttr + "" + i,
                             filter:      ".png;.gif;.jpg;.bmp",
                             onselect:    function (img, ctrlAttr) {
-                                $('#inspect_'+ctrlAttr).val(dui.imageSelect.GetFileName(img, "img/")).trigger("change");
+                                $('#inspect_'+ctrlAttr).val(img).trigger("change");
                             }};
                         dui.imageSelect.Show (_settings);                    
                     });

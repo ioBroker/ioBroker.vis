@@ -38,7 +38,7 @@ var dui = {
     listval:                [],
     widgetSets:             duiConfig.widgetSets,
     words:                  null,
-    currentLang:            duiConfig.currentLang,
+    language:               duiConfig.currentLang,
     initialized:            false,
     useCache:               true,
     socket:                 {},
@@ -773,10 +773,10 @@ var dui = {
 		if (isShow) {
 			$(waitScreen).show ();
 			if (newText !== null && newText !== undefined) {
-				$('#waitText').html (newText);
+				$('#waitText').html (dui.translate(newText));
 			}
 			if (appendText !== null && appendText !== undefined) {
-				$('#waitText').append (appendText);
+				$('#waitText').append (dui.translate(appendText));
 			}			
 			if (step !== undefined) {
 				if (step === "+1") {					
@@ -985,6 +985,9 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
 					for (var dp in data) {
 						homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
 					}
+					// Get CCU.IO language
+					var l = homematic.uiState.attr("_69999.Value");
+					dui.language = l || dui.language;	
 				});
 
 
@@ -1028,6 +1031,11 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
 								console.log(dp);
 							}
 						}
+						
+						// Get CCU.IO language
+						var l = homematic.uiState.attr("_69999.Value");
+						dui.language = l || dui.language;	
+
 						dui.showWaitScreen(true, "Loading Widget-Sets...", null, "+1");
 						setTimeout(dui.init, 10);
 

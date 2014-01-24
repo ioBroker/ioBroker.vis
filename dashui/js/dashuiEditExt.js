@@ -943,7 +943,8 @@ var hmSelect = {
 				'HM-WS550STH-O':     'TH_CS_thumb.png',
 				'HM-WDS30-OT2-SM':   'IP65_G201_thumb.png',
 				'SONOS_ROOT':        'sonos.png',
-				'PING':              'pc.png'
+				'PING':              'pc.png',
+                'Alarm':             'alarm.png'
 			};	
 		}
 		if (this.images[type]) {
