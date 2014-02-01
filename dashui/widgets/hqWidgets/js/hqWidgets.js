@@ -634,6 +634,7 @@ var hqWidgets = {
             infoFormat:       "%s",  // format string for info
             infoCondition:    null,  // Condition like ">  0", "<  0", ">  5", "== 6.7", "== true" for active state
             infoIsHideInactive: false,// If hide if inactive state
+            infoAccuracy:     null,  // Number of digits after point or "" if no float
 			
 			timeFormat:       hqWidgets.translate ("YYYY.MM.DD hh:mm:ss"), // Time format
             
@@ -2093,7 +2094,7 @@ var hqWidgets = {
             }
         }	
         this._ShowGauge = function () {
-            var pState = Math.round ((this.dynStates.valueSet - this.settings.valueMin) / (this.settings.valueMax - this.settings.valueMin) * 100, 1);
+            var pState = Math.round((this.dynStates.valueSet - this.settings.valueMin) / (this.settings.valueMax - this.settings.valueMin) * 100);
             if (pState < 0)   pState = 0;
             if (pState > 100) pState = 100;
             this.intern._jgauge.css({background: this.settings.gaugeColor});
@@ -2590,23 +2591,16 @@ var hqWidgets = {
                 // format string
                 if (this.settings.infoFormat != null && this.settings.infoFormat != "") {
                     text += "";
-
-                    // try to cut the float value
-                    if (text.indexOf ('.') != -1) {
-                        var f = parseFloat(text);
-                        var t = text;
-                        while (t.length > 0 && t[t.length-1] == 0)
-                            t = t.substring (0, t.length -1);
-                        if (t[t.length-1] == '.')
-                            t = t.substring (0, t.length -1);
-                        
-                        if (f+"" == t) {// it is float 
-                            // leave only one digit after point
-                            f = Math.floor (f*10);
-                            f = f / 10;
-                            text = f+"";
+                    if (this.settings.infoAccuracy !== undefined && 
+                        this.settings.infoAccuracy !== null &&
+                        this.settings.infoAccuracy !== "") {
+                        var t = text.replace (",",".");
+                        text = parseFloat(text).toFixed(parseInt (this.settings.infoAccuracy))+"";
+                        if (hqWidgets.gOptions.gLocale == 'de' ||  hqWidgets.gOptions.gLocale == 'ru') {
+                        	text = text.replace (".", ",");
                         }
                     }
+
                     text = this.settings.infoFormat.replace ("%s", text);
                 } else {
 					// If no format, no text
@@ -4260,7 +4254,7 @@ var hqWidgets = {
             }
 
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeGauge && dynOptions.valueSet !== undefined) {
-                this.dynStates.valueSet = parseInt(dynOptions.valueSet);
+                this.dynStates.valueSet = parseFloat(dynOptions.valueSet);
                 dynOptions.state = hqWidgets.gState.gStateOff;
                 this._ShowGauge ();
             }
@@ -4525,6 +4519,10 @@ var hqWidgets = {
                 }
                 if (options.infoIsHideInactive !== undefined) {
                     this.settings.infoIsHideInactive = options.infoIsHideInactive;
+                    this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, this.settings.infoTextColor, this.settings.infoTextColorActive);
+                }
+                if (options.infoAccuracy !== undefined) {
+                    this.settings.infoAccuracy = options.infoAccuracy;
                     this.SetInfoText (this.dynStates.infoText, this.settings.infoTextFont, this.settings.infoTextColor, this.settings.infoTextColorActive);
                 }
             }

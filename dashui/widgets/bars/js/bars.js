@@ -1,3 +1,41 @@
+// Init words
+dui.translate("");
+// Add words for bars
+jQuery.extend(true, dui.words, {
+	// Bars
+	"One at time:"     : {"en" : "One at time:",  "de": "Nur eine auswahlbar:","ru": "Только один фильтр:"},
+	"Geometry..."      : {"en" : "Geometry...",   "de": "Geometrie...",        "ru": "Позиция и размер..."},
+	"Show"             : {"en" : "Show",          "de": "Zeigen",              "ru": "Показать"},
+	"Bar type:"        : {"en" : "Bar type:",     "de": "Bartyp:",             "ru": "Тип:"},
+	"Button width:"    : {"en" : "Button width:", "de": "Knopfbreite:",        "ru": "Ширина кнопок:"},
+	"Button height:"   : {"en" : "Button height:","de": "Knopfh&ouml;he:",     "ru": "Высота кнопок:"},
+	"Button space:"    : {"en" : "Button space:", "de": "Zwischenplatz:",      "ru": "Промежуток:"},
+	"Border radius:"   : {"en" : "Border radius:","de": "Randradius:",         "ru": "Радиус закруглений:"},
+	"Text offset %:"   : {"en" : "Text offset %:","de": "Textoffset in %:",    "ru": "Смещение текста в %:"},
+	"Text align:"      : {"en" : "Text align:",   "de": "Textausrichtung:",    "ru": "Позиция текста:"},
+	"Image align:"     : {"en" : "Image align:",  "de": "Bildausrichtung:",    "ru": "Позиция миниатюры:"},
+	"Effects..."       : {"en" : "Effects...",    "de": "Effekte...",          "ru": "Эффекты..."},
+	"Hide effect:"     : {"en" : "Hide effect:",  "de": "Verbergeneffekt:",    "ru": "Исчезновение:"},
+	"Show effect:"     : {"en" : "Show effect:",  "de": "Anzeigeeffekt:",      "ru": "Появление:"},
+	"Test"             : {"en" : "Test",          "de": "Test",                "ru": "Тест"},
+	"Buttons..."       : {"en" : "Buttons...",    "de": "Kn&ouml;pfe",         "ru": "Кнопки..."},
+	"Icon:"            : {"en" : "Icon:",         "de": "Bildchen:",           "ru": "Миниатюра:"},
+	"Caption:"         : {"en" : "Caption:",      "de": "Beschriftung:",       "ru": "Подпись:"},
+	"Filter key:"      : {"en" : "Filter key:",   "de": "Filterwort:",         "ru": "Значение фильтра:"},
+	"Add"              : {"en" : "Add",           "de": "Neu",                 "ru": "Добавить"},
+	"Up"               : {"en" : "Up",            "de": "Nach oben",           "ru": "На верх"},
+	"Down"             : {"en" : "Down",          "de": "Nach unten",          "ru": "Вниз"},
+	"Delete"           : {"en" : "Delete",        "de": "L&ouml;schen",        "ru": "Удалить"},
+	"Horizontal"       : {"en" : "Horizontal",    "de": "Horizontal",          "ru": "Горизонтально"},
+	"Vertical"         : {"en" : "Vertical",      "de": "Senkrecht",           "ru": "Вертикально"},
+	"Docked at top"    : {"en" : "Docked at top", "de": "Angedockt oben",      "ru": "Панель сверху"},
+	"Docked at bottom" : {"en" : "Docked at bottom", "de": "Angedockt unten",  "ru": "Панель снизу"},
+	"Docked at left"   : {"en" : "Docked at left","de": "Angedockt links",     "ru": "Панель слева"},
+	"Docked at right"  : {"en" : "Docked at right","de": "Angedockt rechts",   "ru": "Панель справа"},
+	"Center"           : {"en" : "Center",        "de": "In der MItte",        "ru": "В середине"},
+	"Left"             : {"en" : "Left",          "de": "Links",               "ru": "Слева"},
+	"Right"            : {"en" : "Right",         "de": "Rechts",              "ru": "Справа"}
+});
 jQuery.extend(true, dui.binds, {
 	bars: {
 		position : {

@@ -455,6 +455,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             sTextAdv += "<input id='"+this.e_settings.elemName+"_gaugeColorBtn' style='width: 30px' type='button' value='...'></td></tr>";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Horizontal:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_gaugeHorz' "+((this.e_internal.attr.gaugeHorz) ? "checked" : "")+">";
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("From top/left:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_gaugeStart' "+((this.e_internal.attr.gaugeStart) ? "checked" : "")+">";
+            sText    += "<tr><td class='hq-edit-td-caption'>"+ hqWidgets.translate("Accuracy:")  +"</td><td><input style='width: "+this.e_settings.width+"px' id='"+this.e_settings.elemName+"_infoAccuracy'  type='text' value='"+((this.e_internal.obj.settings.infoAccuracy === undefined || this.e_internal.obj.settings.infoAccuracy == null) ? "" : this.e_internal.obj.settings.infoAccuracy)+"'></td></tr>";
         }        
         
         // Static Text color, font, type
@@ -906,6 +907,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         this._EditColorHandler('gaugeColor');   
         this._EditTextHandler('valueMin');   
         this._EditTextHandler('valueMax');   
+        this._EditTextHandler('infoAccuracy');
         this._EditCheckboxHandler ('gaugeHorz', false, false, true);
         this._EditCheckboxHandler ('gaugeStart', false, false, true);
         this._EditCheckboxHandler ('showDescription', false, false, true);

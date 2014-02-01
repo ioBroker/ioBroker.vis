@@ -20,7 +20,17 @@
  *  SOFTWARE.
  */
  // duiEdit - the DashUI Editor Wizard
-
+// Init words
+dui.translate("");
+// Add words for bars
+jQuery.extend(true, dui.words, {
+	"All except Low battery": {"en" : "All except 'Battery Indicator'", "de": "Alle außer 'Battery Indicator'", "ru": "Все, кроме 'Battery Indicator'"},
+	"Place following widget to the room and start wizard again": {
+		"en" : "Place following widget to the room and start wizard again", 
+		"de" : "Platziere diesen Widget auf dem View im zugehörigen Raum und starte Wizard neu", 
+		"ru" : "Поместите элемент в комнате, где он должен быть и запустите Помошника снова"
+		}
+});
 dui = $.extend(true, dui, {
 	hm2Widget: {
 		'tplHqButton' : {findImage: false, hssType: ['HM-LC-Sw1-Pl', 'HM-LC-Sw1-FM', 'HM-LC-Sw1-PB-FM', 'HM-LC-Sw2-PB-FM', 'HM-LC-Sw2-FM','HM-ES-PMSw1-Pl','HM-LC-Sw1PBU-FM','HM-LC-Sw1-SM','HM-LC-Sw4-SM']},
@@ -312,7 +322,7 @@ dui = $.extend(true, dui, {
 			}
 		}
 		if (widgetIds.length) {
-			window.alert ("Place following widget to the room and start wizard again");
+			window.alert (dui.translate ("Place following widget to the room and start wizard again"));
 			for (var i = 0; i < widgetIds.length; i++) {
 				dui.actionNewWidget (widgetIds[i]);
 			}

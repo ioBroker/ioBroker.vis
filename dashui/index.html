@@ -6,7 +6,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="mobile-web-app-capable" content="yes">
-	<link href="img/favicon.png" rel="shortcut icon" type="image/x-icon" />
+	<meta name="viewport" content="width=device-width">
+    <link href="img/favicon.png" rel="shortcut icon" type="image/x-icon" />
 
     <title>DashUI</title>
 
@@ -36,7 +37,19 @@
     <script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
 
     <script type="text/javascript" src="../lib/js/jqGrid/jquery.jqGrid-4.5.4.min.js"></script>
-    <script type="text/javascript" src="../lib/js/jqGrid/i18n/grid.locale-en.js" ></script>
+    <script type="text/javascript" src="../lang/lang.js"></script>
+    <script type="text/javascript">
+        if (ccuIoLang == 'de') {
+            document.write ("<script type='text/javascript' src='../lib/js/jqGrid/i18n/grid.locale-de.js'>"+"</scr"+"ipt>\n");
+        }
+        else
+        if (ccuIoLang == 'ru') {
+            document.write ("<script type='text/javascript' src='../lib/js/jqGrid/i18n/grid.locale-ru.js'>"+"</scr"+"ipt>\n");
+        }
+        else {
+            document.write ("<script type='text/javascript' src='../lib/js/jqGrid/i18n/grid.locale-en.js'>"+"</scr"+"ipt>\n");
+        }
+    </script>
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before dashui.js -->
     <script type="text/javascript" src="js/dashui.js"></script>
 
@@ -44,6 +57,6 @@
 <body>
 	<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>
     <div id="dui_container" style="position: absolute; top: 0; left: 0; height:100%; width:100%"></div>
-    <div id="ccu-io-disconnect"><span style="padding: 10px"><img src="img/disconnect.png" style="padding-right: 20px" width="50" height="50" align="middle"/>Keine Verbindung zu CCU.IO</span></div>
+    <div id="ccu-io-disconnect"><span style="padding: 10px"><img src="img/disconnect.png" style="padding-right: 20px" width="50" height="50" align="middle"/><span class="translate">No connection to CCU.IO</span></span></div>
 </body>
 </html>

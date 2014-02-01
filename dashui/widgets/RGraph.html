@@ -1,0 +1,247 @@
+<!--script src="widgets/RGraph/libraries/RGraph.common.core.js" ></script>
+<script src="widgets/RGraph/libraries/RGraph.common.core.js" ></script>
+<script src="widgets/RGraph/libraries/RGraph.common.effects.js" ></script>
+<script src="widgets/RGraph/libraries/RGraph.common.dynamic.js" ></script>
+<script src="widgets/RGraph/libraries/RGraph.common.tooltips.js" ></script>
+<script src="widgets/RGraph/libraries/RGraph.thermometer.js" ></script>
+<script src="widgets/RGraph/libraries/RGraph.gauge.js" ></script-->
+
+<script language="javascript">
+    // Init words
+    dui.translate("");
+    // Add words for bars
+    jQuery.extend(true, dui.words, {
+        "min"                : {"en": "Min value:",      "de": "Min Wert:",             "ru": "Мин. значение:"},
+        "max"                : {"en": "Max value:",      "de": "Max Wert:",             "ru": "Макс. значение:"},
+        "show_scale"         : {"en": "Show scale:",     "de": "Zeige Skala:",          "ru": "Показать шкалу:"}
+    });
+    var rgraphElements = [];
+    // Register callback in dashUI
+    function initRgraph () {
+        if (!dui.binds.RGraph) {
+            dui.binds.RGraph = true;
+            dui.registerOnChange (onchangeRGraph, null);
+            console.log("A");
+        }
+    }
+
+    // Callback from DashUI if some object changed
+    function onchangeRGraph (arg, objId, newState, isFromDevice, lastchange) {
+        if (rgraphElements[objId]) {
+            for (var i = 0, len = rgraphElements[objId].length; i < len; i++) {
+                var elem = document.getElementById (rgraphElements[objId][i]);
+                if (elem) {
+                    if (elem.rgraphValueChange) {
+                        elem.rgraphValueChange (newState, isFromDevice);
+                    }
+                }
+            }
+        }
+    }
+
+    // Create or replace div with canvas inside it
+    function createCanvas (view, wid, _class, hm_id, width, height) {
+        initRgraph ();
+        if (!rgraphElements[hm_id] || rgraphElements[hm_id].indexOf (wid) == -1) {
+            if (!rgraphElements[hm_id]) {
+                rgraphElements[hm_id] = [wid];
+            }
+            else {
+                rgraphElements[hm_id].push (wid);
+            }
+        }
+        var style    = dui.views[view].widgets[wid] ? dui.views[view].widgets[wid].style : {};
+        style.width  = style.width  || width;
+        style.height = style.height || height;
+        
+        $('#'+wid).remove ();
+        $('#duiview_' + view).append ('<div class="dashui-widget '+(_class || "")+'" id="'+wid+'" data-hm-id="'+hm_id+'" >'+
+                                      '<canvas class="dashui-widget" id="c'+wid+'" ></canvas></div>');
+        $('#'+wid).css(style);
+        // Canvas understand no Style, so set width and height extra
+        var can = document.getElementById ('c' + wid);
+        can.width  = style.width;
+        can.height = style.height;
+    }
+</script>
+
+<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min;max;color;show_scale/checkbox">
+    <%
+        createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), this.data.attr('hm_id'), 400, 100);
+
+        var str = homematic.uiState.attr("_" + this.data.attr('hm_id') + ".Value");
+        if (str === null || str === undefined) str = this.data.attr("min");
+        var t = new RGraph.Thermometer("c"+this.data.attr('wid'), parseFloat(this.data.attr("min")), parseFloat(this.data.attr("max")), parseFloat(str));
+        if (this.data.attr('color')) {
+            var color = this.data.attr('color');
+            t.colorsParsed = false;
+            t.properties['chart.colors'] = ["Gradient("+color+")"];
+        }
+        if (this.data.attr("show_scale")) {
+            t.Set('scale.visible', true);
+        }
+
+        t.Draw();
+        var elem = document.getElementById (this.data.attr('wid'));
+        elem.rgraph = t;
+        jQuery('#'+this.data.attr('wid')).bind("resize", function () {
+            var div = jQuery(this);
+            var can = document.getElementById ('c' + div.attr('id'));
+            
+            can.width  = div.width();
+            can.height = div.height ();
+            
+            this.rgraph.Draw();
+        });
+
+        elem.rgraphValueChange = function (newValue, isFromDevice) {
+            this.rgraph.value = parseFloat(newValue);
+            RGraph.Effects.Thermometer.Grow(this.rgraph);
+        }
+
+    %>
+</script>
+<script type="text/ejs" id="tplRGgauge" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Gauge-Basic" data-dashui-attrs="hm_id/id;hm_id_2/id;hm_id_3/id;min;max;a_start;a_end;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;color_ranges/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size;centerpin_radius;title;title_color/color;title_font/fontName;title_size;title_bottom;title_bottom_color/color;title_bottom_font/fontName;title_bottom_size;labels_color/color;labels_centered/checkbox;labels_offset">
+    <%
+        createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), this.data.attr('hm_id'), 200, 200);
+
+        var str = homematic.uiState.attr("_" + this.data.attr('hm_id') + ".Value");
+        if (str === null || str === undefined) str = this.data.attr("min");
+
+        var str2 = this.data.attr('hm_id_2') ? homematic.uiState.attr("_" + this.data.attr('hm_id_2') + ".Value") : null;
+        if (str2 === undefined) str2 = this.data.attr("min");
+
+        var str3 = this.data.attr('hm_id_3') ? homematic.uiState.attr("_" + this.data.attr('hm_id_3') + ".Value") : null;
+        if (str3 === undefined) str3 = this.data.attr("min");
+
+        var values = [parseFloat(str) || 0];
+        if (str2 !== null) {
+            values[1] = str2 || 0;
+
+            if (str3 !== null) {
+                values[2] = str3 || 0;
+            }
+        }
+
+
+        var t = new RGraph.Gauge("c"+this.data.attr('wid'), parseFloat(this.data.attr("min")), parseFloat(this.data.attr("max")), values);
+
+        if (this.data.attr("a_start") !== "" && this.data.attr("a_start") !== null && this.data.attr("a_start") !== undefined) {
+            var f = parseFloat(this.data.attr("a_start"));
+            f = f * PI / 180;
+            t.Set('angles.start', f);
+        }
+        if (this.data.attr("a_end") !== "" && this.data.attr("a_end") !== null && this.data.attr("a_end") !== undefined) {
+            var f = parseFloat(this.data.attr("a_end"));
+            f = f * PI / 180;
+            t.Set('angles.end', f);
+        }
+        console.log("A");
+        if (this.data.attr("shadow")) {
+            t.Set('shadow', true);
+        }
+        if (this.data.attr("text_color")) {
+            t.Set('text.color', this.data.attr("text_color"));
+        }
+        if (this.data.attr("ticks_big_color")) {
+            t.Set('tickmarks.big.color', this.data.attr("ticks_big_color"));
+        }
+        if (this.data.attr("ticks_mid_color")) {
+            t.Set('tickmarks.medium.color', this.data.attr("ticks_mid_color"));
+        }
+        if (this.data.attr("ticks_small_color")) {
+            t.Set('tickmarks.small.color', this.data.attr("ticks_small_color"));
+        }
+        if (this.data.attr("border_outer_color")) {
+            t.Set('border.outer', this.data.attr("border_outer_color"));
+        }
+        if (this.data.attr("border_inner_color")) {
+            t.Set('border.inner', this.data.attr("border_inner_color"));
+        }
+        if (this.data.attr("color_ranges")) {
+            var colors = this.data.attr("color_ranges").split(":");
+            t.Set('colors.ranges', colors);
+        }
+        if (this.data.attr("back_color")) {
+            t.Set('background.color', this.data.attr("back_color"));
+        }
+        if (this.data.attr("needle_colors")) {
+            var colors = this.data.attr("needle_colors").split(":");
+            t.Set('needle.colors', colors);
+        }
+        if (this.data.attr("border_outline_color")) {
+            t.Set('border.outline', this.data.attr("border_outline_color"));
+        }
+        if (this.data.attr("needle_type")) {
+            t.Set('needle.type', this.data.attr("needle_type"));
+        }
+        if (this.data.attr("needle_tail")) {
+            t.Set('needle.tail', this.data.attr("needle_tail"));
+        }
+        if (this.data.attr("needle_size")) {
+            var f = parseFloat (this.data.attr("needle_size"));
+            t.Set('needle.size', f);
+        }
+        if (this.data.attr("centerpin_radius")) {
+            var f = parseFloat (this.data.attr("centerpin_radius"));
+            t.Set('centerpin.radius', f);
+        }
+        if (this.data.attr("title")) {
+            t.Set('title.top', this.data.attr("title"));
+        }
+        if (this.data.attr("title_color")) {
+            t.Set('title.top.color', this.data.attr("title_color"));
+        }
+        if (this.data.attr("title_size")) {
+            var f = parseFloat (this.data.attr("title_size"));
+            t.Set('title.top.size', f);
+        }
+        if (this.data.attr("title_font")) {
+            t.Set('title.top.font', this.data.attr("title_font"));
+        }
+        if (this.data.attr("title_bottom")) {
+            t.Set('title.bottom', this.data.attr("title_bottom"));
+        }
+        if (this.data.attr("title_bottom_color")) {
+            t.Set('title.bottom.color', this.data.attr("title_bottom_color"));
+        }
+        if (this.data.attr("title_bottom_size")) {
+            var f = parseFloat (this.data.attr("title_bottom_size"));
+            t.Set('title.bottom.size', f);
+        }
+        if (this.data.attr("title_bottom_font")) {
+            t.Set('title.bottom.font', this.data.attr("title_bottom_font"));
+        }
+        if (this.data.attr("labels_centered")) {
+            t.Set('labels.centered', this.data.attr("labels_centered"));
+        }
+        if (this.data.attr("labels_offset") !== "" && this.data.attr("labels_offset") !== null && this.data.attr("labels_offset") !== undefined) {
+            var f = parseFloat (this.data.attr("labels_offset"));
+            t.Set('labels.offset', f);
+        }
+        if (this.data.attr("labels_color") !== "") {
+            t.Set('text.color', this.data.attr("labels_color"));
+        }
+        if (this.data.attr("background_gradient")) {
+            t.Set('background.gradient', true);
+        }
+        t.Draw();
+        var elem = document.getElementById (this.data.attr('wid'));
+        elem.rgraph = t;
+        jQuery('#'+this.data.attr('wid')).bind("resize", function () {
+            var div = jQuery(this);
+            var can = document.getElementById ('c' + div.attr('id'));
+
+            can.width  = div.width();
+            can.height = div.height ();
+
+            this.rgraph.Draw();
+        });
+
+        elem.rgraphValueChange = function (newValue, isFromDevice) {
+            this.rgraph.value = parseFloat(newValue);
+            RGraph.Effects.Thermometer.Grow(this.rgraph);
+        }
+
+    %>
+</script>

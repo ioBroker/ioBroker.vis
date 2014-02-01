@@ -21,11 +21,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                     });
                 
                 // Init hqWidgets engine
-                hqWidgets.Init ({gPictDir: "widgets/hqWidgets/img/"});
+                hqWidgets.Init ({gPictDir: "widgets/hqWidgets/img/", gLocale: dui.language});
                 if (hqWidgets.version != dui.binds.hqWidgetsExt.version) {
                     window.alert ("The versions of hqWidgets.js and hqWidgets.html are different. Expected version of hqWidgets.js is " +dui.binds.hqWidgetsExt.version);
                 }
                 
+                                // Why this does not work?
                 /*homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
                     if (how != "set") 
                         return;
@@ -36,8 +37,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                     if (i != -1)
                         attr = attr.substring (0, i);
                     if (homematic.uiState["_" + attr]["Certain"])
-                        dui.binds.hqWidgetsExt.hqMonitor (attr, homematic.uiState["_" + attr]["Value"], homematic.uiState["_" + attr]["Timestamp"]);
+                        dui.binds.hqWidgetsExt.hqMonitor (this, attr, homematic.uiState["_" + attr]["Value"], true, homematic.uiState["_" + attr]["Timestamp"]);
                 });*/
+                dui.registerOnChange (dui.binds.hqWidgetsExt.hqMonitor, this);
                 
                 if (dui.binds.hqWidgetsExt.hqEditInit) {
                     dui.binds.hqWidgetsExt.hqEditInit ();
@@ -1268,7 +1270,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 dt = new Date(homematic.uiState["_"+hm_ids[i].hm_id].LastChange.replace(' ', 'T') + "Z");//('2011-04-11T11:51:00') "T" Means GMT (We do not have GMT)
 								dt.setMinutes(dt.getMinutes() + new Date().getTimezoneOffset());
 							}
-                            this.hqMonitor (hm_ids[i].hm_id, homematic.uiState["_"+hm_ids[i].hm_id].Value, dt);
+                            this.hqMonitor (this, hm_ids[i].hm_id, homematic.uiState["_"+hm_ids[i].hm_id].Value, true, dt);
                         }
                         else {
                             if (homematic.uiState["_"+hm_ids[i].hm_id]) 
@@ -1286,8 +1288,10 @@ if ((typeof hqWidgets !== 'undefined')) {
                 var newOpt = JSON.stringify (btn.GetSettings (false, true));
                 $('#'+el).attr ('hqoptions', newOpt);  
             },
-            hqMonitor: function (wid, newState, lastchange) {
-
+            hqMonitor: function (arg, wid, newState, isFromDevice, lastchange) {
+                if (!isFromDevice) {
+                    return;
+                }
                 // Play sound in the browser for sayIt adapter
 				if (wid == "72900") {
 					if (newState) {

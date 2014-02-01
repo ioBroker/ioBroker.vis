@@ -13,6 +13,19 @@
 <script src="widgets/timeAndWeather/js/moreskins.js"></script-->
 
 <script language="javascript">
+	// Init words
+	dui.translate("");
+	// Add words for bars
+	jQuery.extend(true, dui.words, {
+		"hideSeconds"      : {"en" : "Hide seconds",  "de": "Zeige keine Sekunden","ru": "Скрыть секунды"},
+		"blink"            : {"en" : "Blink",         "de": "Blinken",             "ru": "Мигать"},
+		"showWeekDay"      : {"en" : "Show day of week", "de": "Wochenstag",       "ru": "День недели"},
+		"noClass"          : {"en" : "No predefined style", "de": "Kein vordefinierter Stil","ru": "Не применять стиль по умолчанию"},
+        "weoid"            : {"en" : "City",          "de": "Stadt",                "ru": "Город"},
+        "City:"            : {"en" : "City:",         "de": "Stadt:",               "ru": "Город:"}
+	});
+
+
 	function fontWidth (text, font) {
 		var f = font || '10px "Tahoma", sans-serif',
 				o = $('<div>' + this + '</div>')
@@ -62,13 +75,13 @@
         }
     }
     var wochentage = {
-        0: "Sonntag",
-        1: "Montag",
-        2: "Dienstag",
-        3: "Mittwoch",
-        4: "Donnerstag",
-        5: "Freitag",
-        6: "Samstag"
+        0: {"en": "Sunday",   "de": "Sonntag",    "ru": "Воскресенье"},
+        1: {"en": "Minday",   "de": "Montag",     "ru": "Понедельник"},
+        2: {"en": "Tuesday",  "de": "Dienstag",   "ru": "Вторник"},
+        3: {"en": "Wensday",  "de": "Mittwoch",   "ru": "Среда"},
+        4: {"en": "Thursday", "de": "Donnerstag", "ru": "Четверг"},
+        5: {"en": "Friday",   "de": "Freitag",    "ru": "Пятница"},
+        6: {"en": "Saturday", "de": "Samstag",    "ru": "Суббота"}
     }
     function startDate(view, elem, showWeekDay, noClass, timerId) {
         var today = new Date();
@@ -76,6 +89,7 @@
         var dow =   today.getDay();
         var m =     today.getMonth()+1;
         var y =     today.getFullYear();
+        
         // add a zero in front of numbers<10
         d = (d<10) ? ("0"+d) : d;
         m = (m<10) ? ("0"+m) : m;
@@ -89,7 +103,7 @@
 			hl.dashId = (new Date()).getTime();
 		}
         if (hl && (timerId === undefined || hl.dashId == timerId)) {
-            hl.innerHTML = ((showWeekDay) ? wochentage[dow]+", " : "") + d+"."+m+"."+y;
+            hl.innerHTML = ((showWeekDay) ? wochentage[dow][dui.language]+", " : "") + d+"."+m+"."+y;
             hl.dashTimer = setTimeout(startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId);
         }
     }

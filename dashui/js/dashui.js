@@ -38,7 +38,7 @@ var dui = {
     listval:                [],
     widgetSets:             duiConfig.widgetSets,
     words:                  null,
-    language:               duiConfig.currentLang,
+    language:               ccuIoLang || 'en',
     initialized:            false,
     useCache:               true,
     socket:                 {},
@@ -47,7 +47,9 @@ var dui = {
     instanceView:           undefined,
     instanceData:           undefined,
     instanceCmd:            undefined,
+    onChangeCallbacks:      [],
     viewsActiveFilter:      {},
+    toLoadSetsCount:        0, // Count of widget sets that should be loaded
     touchUserCss: function () {
         dui.socket.emit("touchFile", "www/dashui/css/dashui-user.css");
     },
@@ -104,19 +106,19 @@ var dui = {
         //storage.set(dui.storageKeyInstance, null);
         //var name = "dashui_"+dui.instance;
         // TODO REMOVE INSTANCE
-       /* $.homematic("delVariable", name + "_cmd",
-            function () {
-                $.homematic("delVariable", name + "_data",
-                    function () {
-                        $.homematic("delVariable", name + "_view", function() { window.location.reload(); });
-                    }
-                );
-            }
-        );*/
+        /* $.homematic("delVariable", name + "_cmd",
+         function () {
+         $.homematic("delVariable", name + "_data",
+         function () {
+         $.homematic("delVariable", name + "_view", function() { window.location.reload(); });
+         }
+         );
+         }
+         );*/
 
 
     },
-    loadWidgetSet: function (name) {
+    loadWidgetSet: function (name, callback) {
         //console.log("loadWidgetSet("+name+")");
         $.ajax({
             url: "widgets/" + name + ".html",
@@ -126,27 +128,80 @@ var dui = {
             cache: dui.useCache,
             success: function (data) {
                 jQuery("head").append(data);
+                dui.toLoadSetsCount--;
+                dui.showWaitScreen(true, " " + dui.toLoadSetsCount, null);
+                if (dui.toLoadSetsCount <= 0) {
+                    setTimeout (callback, 50);
+                }
             }
         });
     },
-    loadWidgetSets: function () {
-        for (var i = 0; i < dui.widgetSets.length; i++) {
+    // Return as array used widgetSets or null if no imformation about it
+    getUsedWidgetSets: function () {
+        var widgetSets = [];
 
-            if (dui.widgetSets[i].name !== undefined) {
-                dui.loadWidgetSet(dui.widgetSets[i].name);
-                
-                if (dui.urlParams['edit'] === "" && dui.widgetSets[i].edit) {
-                    dui.loadWidgetSet(dui.widgetSets[i].edit);
+        if (!dui.views) return null;
+
+        for (var view in dui.views) {
+            for (var id in dui.views[view].widgets) {
+                // Views are not yet converted and have no widgetSet information)
+                if (!dui.views[view].widgets[id].widgetSet) {
+                    return null;
+                } else
+                if (widgetSets.indexOf (dui.views[view].widgets[id].widgetSet) == -1) {
+                    widgetSets.push(dui.views[view].widgets[id].widgetSet);
+
+                    // Extra dependencies, "jqui" needs "basic"
+                    if (dui.views[view].widgets[id].widgetSet == "jqui") {
+                        if (widgetSets.indexOf ("basic") == -1) {
+                            widgetSets.push ("basic");
+                        }
+                    }
+                    else // "jqui-mfd" needs "jqui" and "basic"
+                    if (dui.views[view].widgets[id].widgetSet == "jqui-mfd") {
+                        if (widgetSets.indexOf ("basic") == -1) {
+                            widgetSets.push ("basic");
+                        }
+                        if (widgetSets.indexOf ("jqui") == -1) {
+                            widgetSets.push ("jqui");
+                        }
+                    }
                 }
-            } else {
-                dui.loadWidgetSet(dui.widgetSets[i]);
             }
+        }
+        return widgetSets;
+    },
+    loadWidgetSets: function (callback) {
+        dui.showWaitScreen(true, "Loading Widget-Sets...", null, "+1");
+        var arrSets = [];
+
+        // Get list of used widget sets. if Edit mode list is null.
+        var widgetSets = (dui.urlParams['edit'] === "") ? null: dui.getUsedWidgetSets ();
+
+        // Firts calculate how many sets to load
+        for (var i = 0; i < dui.widgetSets.length; i++) {
+            var name = dui.widgetSets[i].name || dui.widgetSets[i];
+
+            // Skip unused widget sets in non-edit mode
+            if (widgetSets && widgetSets.indexOf (name) == -1) {
+                continue;
+            }
+
+            arrSets[arrSets.length] = name;
+
+            if (dui.urlParams['edit'] === "" && dui.widgetSets[i].edit) {
+                arrSets[arrSets.length] = dui.widgetSets[i].edit;
+            }
+        }
+        dui.toLoadSetsCount = arrSets.length;
+
+        for (var i = 0, len = dui.toLoadSetsCount; i < len; i++) {
+            setTimeout (dui.loadWidgetSet, 100, arrSets[i], callback);
         }
     },
     initInstance: function () {
         dui.instance = storage.get(dui.storageKeyInstance);
         if (dui.instance) {
-
 
             $("#dashui_instance").val(dui.instance);
             $("#create_instance").hide();
@@ -179,13 +234,8 @@ var dui = {
             return;
         }
 
-
-        dui.loadWidgetSets();
-
-		dui.showWaitScreen(true, " done.<br/>", null, "+1");
-
         dui.initInstance();
-        
+
         var settings = storage.get(dui.storageKeySettings);
         if (settings) {
             dui.settings = $.extend(dui.settings, settings);
@@ -195,23 +245,21 @@ var dui = {
         if (dui.binds.hqWidgetsExt) {
             dui.binds.hqWidgetsExt.hqInit();
         }
-            
+
         //dui.loadLocal();
-        dui.loadRemote(dui.initNext);
-
-
+        dui.loadRemote(dui.loadWidgetSets, dui.initNext);
     },
     initNext: function () {
         if (!dui.views) {
             dui.loadRemote(function () {
-				dui.showWaitScreen (false);
+                dui.showWaitScreen (false);
 
                 // Erststart.
                 dui.initViewObject();
             });
             return false;
         } else {
-			dui.showWaitScreen (false);
+            dui.showWaitScreen (false);
         }
 
         var hash = window.location.hash.substring(1);
@@ -222,7 +270,7 @@ var dui = {
                 dui.activeView = view;
                 break;
             }
-			// Create default view in demo mode
+            // Create default view in demo mode
             if (typeof io == "undefined") {
                 if (dui.activeView == "") {
                     dui.views["DemoView"] = {};
@@ -259,7 +307,7 @@ var dui = {
             dui.editInitNext ();
         }
         this.initialized = true;
-		// If this function called earlier, it makes problems under FireFox.
+        // If this function called earlier, it makes problems under FireFox.
         dui.changeView(dui.activeView);
     },
     initViewObject: function () {
@@ -268,6 +316,7 @@ var dui = {
         window.location.href = './?edit';
     },
     renderView: function (view, noThemeChange, showEffectComing) {
+        var isViewsWereConverted = false; // Widgets in the views hav no information which WidgetSet they use, this info must be added and this flag says if that happens to store the views
 
         if (!dui.views[view].settings.theme) {
             dui.views[view].settings.theme = "dhive";
@@ -291,17 +340,31 @@ var dui = {
             if (dui.views[view].settings.style.background_class) {
                 $("#duiview_" + view).addClass(dui.views[view].settings.style.background_class);
             }
-			
-			dui.views[view].rerender = true;
 
+            dui.views[view].rerender = true;
+
+            // Render all non-hqWidgets widgets
             for (var id in dui.views[view].widgets) {
-				if (dui.views[view].widgets[id].tpl.substring(0,5) != "tplHq")
-					dui.renderWidget(view, id);
-            }
+                if (dui.views[view].widgets[id].tpl.substring(0,5) != "tplHq") {
+                    dui.renderWidget(view, id);
 
-            //if (dui.activeView != view) {
-            //    $("#duiview_"+view).hide();
-            //}
+                    // Try to complete the widgetSet information to optimize the loading of widgetSets
+                    if (!dui.views[view].widgets[id].widgetSet) {
+                        var obj = $("#" + dui.views[view].widgets[id].tpl);
+                        if (obj) {
+                            dui.views[view].widgets[id].widgetSet = obj.attr("data-dashui-set");
+                            isViewsWereConverted = true;
+                        }
+                    }
+                }
+                // It is hqWidgets
+                else {
+                    if (!dui.views[view].widgets[id].widgetSet) {
+                        dui.views[view].widgets[id].widgetSet = "hqWidgets";
+                        isViewsWereConverted = true;
+                    }
+                }
+            }
 
             if (dui.urlParams["edit"] === "") {
                 jQuery(".editmode-helper").show();
@@ -328,14 +391,20 @@ var dui = {
 
         if (!showEffectComing) {
             $("#duiview_" + view).show();
-			
-			if (dui.views[view].rerender) {
-				dui.views[view].rerender = false;
-				for (var id in dui.views[view].widgets) {
-					if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
-						dui.renderWidget(view, id);
-				}
-			}
+
+            if (dui.views[view].rerender) {
+                dui.views[view].rerender = false;
+                // render all hqWidgets
+                for (var id in dui.views[view].widgets) {
+                    if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
+                        dui.renderWidget(view, id);
+                }
+            }
+        }
+
+        // Store modified view
+        if (isViewsWereConverted) {
+            dui.saveRemote ();
         }
     },
     preloadImages: function (srcs) {
@@ -359,71 +428,71 @@ var dui = {
         if (filter == "") {
             // show all
             for (var widget in widgets) {
-				if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
+                if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
                     $("#" + widget).show(showEffect, null, parseInt(showDuration));
-				}
+                }
             }
-			// Show hqWidgets
-			if (hqWidgets) {
+            // Show hqWidgets
+            if (hqWidgets) {
                 setTimeout(function () {
-					var btn;
-					for (var widget in widgets) {
+                    var btn;
+                    for (var widget in widgets) {
                         if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "" && (btn = hqWidgets.Get(widget))) {
                             btn.show();
-						}
-					}
-				}, parseInt(showDuration) + 10);
-			}				
-		} else if (filter == "$") {
-			var btn;
+                        }
+                    }
+                }, parseInt(showDuration) + 10);
+            }
+        } else if (filter == "$") {
+            var btn;
             // hide all
             for (var widget in widgets) {
                 if (hqWidgets && (btn = hqWidgets.Get(widget))) {
                     btn.hide(true);
-				}
+                }
                 $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
             }
-		} else {
+        } else {
             dui.viewsActiveFilter[dui.activeView] = filter.split(",");
             for (var widget in widgets) {
                 //console.log(widgets[widget]);
                 if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
-					if (dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
-						var btn;
+                    if (dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
+                        var btn;
                         if (hqWidgets && (btn = hqWidgets.Get(widget))) {
                             btn.hide(true);
-						}
+                        }
                         $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
-					} else {
+                    } else {
                         $("#" + widget).show(showEffect, null, parseInt(showDuration));
-					}
-				}
+                    }
+                }
             }
-			if (hqWidgets) {
+            if (hqWidgets) {
                 setTimeout(function () {
-					var btn;
-					// Show hqWidgets
-					for (var widget in widgets) {
+                    var btn;
+                    // Show hqWidgets
+                    for (var widget in widgets) {
                         if (btn = hqWidgets.Get(widget)) {
-							if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
-								if (!(dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
+                            if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
+                                if (!(dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
                                     btn.show();
-								}
-							}
-						}
-					}						
-				}, parseInt(showDuration) + 10);
-			}
-			
+                                }
+                            }
+                        }
+                    }
+                }, parseInt(showDuration) + 10);
+            }
+
         }
 
-		if (dui.binds.bars && dui.binds.bars.filterChanged) {
+        if (dui.binds.bars && dui.binds.bars.filterChanged) {
             dui.binds.bars.filterChanged(dui.activeView, filter);
-		}
+        }
     },
     renderWidget: function (view, id) {
         var widget = dui.views[view].widgets[id];
-        
+
         //console.log("renderWidget("+view+","+id+")");
         // Add to the global array of widgets
         dui.widgets[id] = {
@@ -434,22 +503,22 @@ var dui = {
         };
         //console.log(widget);
         // Register hm_id to detect changes
-       // if (widget.data.hm_id != 65535)
-         //   $.homematic("addUiState", widget.data.hm_id, widget.data.hm_wid);
-        
+        // if (widget.data.hm_id != 65535)
+        //   $.homematic("addUiState", widget.data.hm_id, widget.data.hm_wid);
+
         var widgetData = dui.widgets[id]["data"];
         widgetData.hm_id = widgetData.hm_id; //$.homematic("escape", widgetData.hm_id);
-        
+
         // Append html element to view
         $("#duiview_" + view).append(can.view(widget.tpl, {hm: homematic.uiState["_" + widget.data.hm_id], data: widgetData, view: view}));
 
         if (dui.urlParams["edit"] !== "") {
             if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
                 $("#" + id).hide();
-				var btn;
-				if (hqWidgets && (btn = hqWidgets.Get(id))) {
-					btn.hide(true);
-				}
+                var btn;
+                if (hqWidgets && (btn = hqWidgets.Get(id))) {
+                    btn.hide(true);
+                }
             }
 
         }
@@ -457,14 +526,14 @@ var dui = {
         if (widget.style) {
             $("#" + id).css(widget.style);
         }
-        
+
         // If edit mode, bind on click event to open this widget in edit dialog
         if (dui.urlParams["edit"] === "") {
             $("#" + id).click(function (e) {
                 if (dui.activeWidget != id) {
                     dui.inspectWidget(id);
                 }
-                
+
                 e.preventDefault();
                 return false;
             });
@@ -480,26 +549,25 @@ var dui = {
     changeView: function (view, hideOptions, showOptions, sync) {
 
         var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
-		if (!effect) {
-			effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && (showOptions.effect != "")
-		}
-		if (effect && ((showOptions === undefined) || !showOptions.effect)) {
-			showOptions = {effect: hideOptions.effect, options: {}, duration: hideOptions.duration};
-		}
-		if (effect && ((hideOptions === undefined) || !hideOptions.effect)) {
-			hideOptions = {effect: showOptions.effect, options: {}, duration: showOptions.duration};
-		}
+        if (!effect) {
+            effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && (showOptions.effect != "")
+        }
+        if (effect && ((showOptions === undefined) || !showOptions.effect)) {
+            showOptions = {effect: hideOptions.effect, options: {}, duration: hideOptions.duration};
+        }
+        if (effect && ((hideOptions === undefined) || !hideOptions.effect)) {
+            hideOptions = {effect: showOptions.effect, options: {}, duration: showOptions.duration};
+        }
         hideOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, hideOptions);
         showOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, showOptions);
-		if (hideOptions.effect == "show") {
-			effect = false;
-		}	
-		
-		
+        if (hideOptions.effect == "show") {
+            effect = false;
+        }
+
         if (dui.inspectWidget) {
             dui.inspectWidget("none");
             dui.clearWidgetHelper();
-            $("#select_active_widget").html("<option value='none'>none selected</option>");
+            $("#select_active_widget").html("<option value='none' class='translate'>none selected</option>");
         }
 
         if (!dui.views[view]) {
@@ -509,8 +577,6 @@ var dui = {
             }
             view = prop;
         }
-
-
 
         if (dui.activeView !== view) {
 
@@ -525,13 +591,13 @@ var dui = {
 
                 if (sync) {
                     $("#duiview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
-						if (dui.views[view].rerender) {
-							dui.views[view].rerender = false;
-							for (var id in dui.views[view].widgets) {
-								if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
-									dui.renderWidget(view, id);
-							}
-						}
+                        if (dui.views[view].rerender) {
+                            dui.views[view].rerender = false;
+                            for (var id in dui.views[view].widgets) {
+                                if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
+                                    dui.renderWidget(view, id);
+                            }
+                        }
                     });
                 }
                 $("#duiview_" + dui.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
@@ -546,13 +612,13 @@ var dui = {
 
                     if (!sync) {
                         $("#duiview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
-							if (dui.views[view].rerender) {
-								dui.views[view].rerender = false;
-								for (var id in dui.views[view].widgets) {
-									if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
-										dui.renderWidget(view, id);
-								}
-							}
+                            if (dui.views[view].rerender) {
+                                dui.views[view].rerender = false;
+                                for (var id in dui.views[view].widgets) {
+                                    if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
+                                        dui.renderWidget(view, id);
+                                }
+                            }
                         });
                     }
                 });
@@ -690,18 +756,18 @@ var dui = {
         dui.changeView(view);
         window.location.reload();
     },
-    loadRemote: function (callback) {
-		dui.showWaitScreen(true, "Loading Views...", null, "+1");
+    loadRemote: function (callback, callbackArg) {
+        dui.showWaitScreen(true, "Loading Views...<br/>", null, "+1");
         if (typeof io != "undefined") {
             dui.socket.emit("readFile", "dashui-views.json", function (data) {
                 dui.views = data;
                 if (!dui.views) {
                     alert("No Views found on CCU.IO");
                 }
-                callback();
+                callback(callbackArg);
             });
         } else {
-			// Load from ../datastore/dashui-views.json the demo views
+            // Load from ../datastore/dashui-views.json the demo views
             $.ajax({
                 url: "../datastore/dashui-views.json",
                 type: "get",
@@ -710,20 +776,20 @@ var dui = {
                 cache: dui.useCache,
                 success: function (data) {
                     dui.views = $.parseJSON(data);
+                    callback (callbackArg);
                     if (!dui.views) {
                         alert("No Views found on CCU.IO");
                     }
-                    callback ();
                 }
             });
-       }
+        }
     },
     saveRemote: function () {
-		// Sync widget before it will be saved
-		if (dui.activeWidget && dui.activeWidget.indexOf('_') != -1 && dui.syncWidget) {
-			dui.syncWidget(dui.activeWidget);
-		}
-	    if (typeof io != "undefined") {
+        // Sync widget before it will be saved
+        if (dui.activeWidget && dui.activeWidget.indexOf('_') != -1 && dui.syncWidget) {
+            dui.syncWidget(dui.activeWidget);
+        }
+        if (typeof io != "undefined") {
             dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
                 //console.log("Saved views on CCU.IO");
             });
@@ -736,13 +802,13 @@ var dui = {
             if (p !== undefined && homematic.regaObjects[p]["DPs"] !== undefined) {
                 parent = homematic.regaObjects[p]["Name"] + "/";
             } else if (homematic.regaObjects[id]["TypeName"] !== undefined) {
-                if (homematic.regaObjects[id]["TypeName"] == "VARDP") {  
+                if (homematic.regaObjects[id]["TypeName"] == "VARDP") {
                     parent = dui.translate("Variable") + " / ";
                 } else if (homematic.regaObjects[id]["TypeName"] == "PROGRAM") {
                     parent = dui.translate("Program") + " / ";
                 }
             }
-        
+
             if (homematic.regaObjects[id]["Address"] !== undefined) {
                 return parent + homematic.regaObjects[id]["Name"] + "/" + homematic.regaObjects[id]["Address"];
             } else {
@@ -756,39 +822,94 @@ var dui = {
         }
         return "";
     },
+    translateAll: function (lang) {
+        lang  = lang || dui.language || 'en';
+
+        $(".translate").each(function (idx) {
+            var curlang = $(this).attr ('data-lang');
+            var text    = $(this).html ();
+            if (curlang != lang) {
+                if (curlang) {
+                    text = dui.translateBack (text, curlang);
+                }
+
+                var transText = dui.translate (text, lang);
+                if (transText) {
+                    $(this).html (transText);
+                    $(this).attr ('data-lang', lang);
+                }
+            }
+        });
+    },
     translate: function (text) {
+        if (!this.words) {
+            this.words = {
+                "No connection to CCU.IO"    : {"en" : "No connection to CCU.IO", "de": "Keine Verbindung zu CCU.IO", "ru": "Нет соединения с CCU.IO"},
+                "Loading Widget-Sets..."    : {"en" : "Loading Widget-Sets...", "de": "Lade Widget-Sätze...", "ru": "Загрузка наборов элементов..."},
+                " done.<br/>"      : {"en" : " done.<br/>",     "de": " - erledigt.<br/>",         "ru": ". Закончено.<br/>"},
+                "Loading Views...<br/>" : {"en" : "Loading Views...<br/>","de": "Lade Views...<br/>",     "ru": "Загрузка пользовательских страниц...<br/>"},
+                "Connecting to CCU.IO ...<br/>": {"en" : "Connecting to CCU.IO ...<br/>", "de": "Verbinde mit CCU.IO ...<br/>", "ru": "Соединение с CCU.IO ...<br/>"},
+                "Loading ReGa Data": {"en" : "Loading data from CCU", "de": "Lade Daten aus CCU", "ru": "Загрузка данных с CCU"}
+            };
+        }
+        if (this.words[text]) {
+            if (this.words[text][this.language])
+                return this.words[text][this.language];
+            else
+            if (this.words[text]["en"])
+                return this.words[text]["en"];
+        }
+
         return text;
     },
-	showWaitScreen: function (isShow, appendText, newText, step) {
-		var waitScreen = document.getElementById ("waitScreen");
-		if (!waitScreen && isShow) {
-			$('body').append ("<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>");
-			waitScreen = document.getElementById ("waitScreen");
-		}
-		if (step === 0) {
-			waitScreen.step = 0;
-			$(".dashui-progressbar ").progressbar({value: 0}).height(19);
-		}
-		
-		if (isShow) {
-			$(waitScreen).show ();
-			if (newText !== null && newText !== undefined) {
-				$('#waitText').html (dui.translate(newText));
-			}
-			if (appendText !== null && appendText !== undefined) {
-				$('#waitText').append (dui.translate(appendText));
-			}			
-			if (step !== undefined) {
-				if (step === "+1") {					
-					step = waitScreen.step + 12.5;
-				}
-				waitScreen.step = step;
-				$(".dashui-progressbar ").progressbar("value", step);
-			}		
-		} else if (waitScreen) {
-			$(waitScreen).remove ();
-		}
-	}
+    showWaitScreen: function (isShow, appendText, newText, step) {
+        var waitScreen = document.getElementById ("waitScreen");
+        if (!waitScreen && isShow) {
+            $('body').append ("<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>");
+            waitScreen = document.getElementById ("waitScreen");
+        }
+        if (step === 0) {
+            waitScreen.step = 0;
+            $(".dashui-progressbar ").progressbar({value: 0}).height(19);
+        }
+
+        if (isShow) {
+            $(waitScreen).show ();
+            if (newText !== null && newText !== undefined) {
+                $('#waitText').html (dui.translate(newText));
+            }
+            if (appendText !== null && appendText !== undefined) {
+                $('#waitText').append (dui.translate(appendText));
+            }
+            if (step !== undefined) {
+                if (step === "+1") {
+                    step = waitScreen.step + 12.5;
+                }
+                waitScreen.step = step;
+                $(".dashui-progressbar ").progressbar("value", step);
+            }
+        } else if (waitScreen) {
+            $(waitScreen).remove ();
+        }
+    },
+    registerOnChange: function (callback, arg) {
+        for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
+            if (this.onChangeCallbacks[i].callback == callback &&
+                this.onChangeCallbacks[i].arg      == arg) {
+                return;
+            }
+        }
+        this.onChangeCallbacks[this.onChangeCallbacks.length] = {callback: callback, arg: arg};
+    },
+    unregisterOnChange: function (callback, arg) {
+        for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
+            if (this.onChangeCallbacks[i].callback == callback &&
+                (arg == undefined || this.onChangeCallbacks[i].arg == arg)) {
+                this.onChangeCallbacks.slice (i, 1);
+                return;
+            }
+        }
+    }
 };
 
 var homematic = {
@@ -813,9 +934,9 @@ var homematic = {
             o["_" + id + ".Value"] = val;
             o["_" + id + ".Timestamp"] = t;
             o["_" + id + ".Certain"] = false;
-			if (this.uiState["_" + id]) {
-				this.uiState.attr(o);
-			}
+            if (this.uiState["_" + id]) {
+                this.uiState.attr(o);
+            }
         }
     },
     stateDelayed: function (id, val) {
@@ -877,7 +998,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                 e.preventDefault();
             }
         });
-
+        dui.translateAll ();
         dui.preloadImages(["img/disconnect.png"]);
 
         $("#ccu-io-disconnect").dialog({
@@ -896,11 +1017,11 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         if (!autoRefresh && dui.editInit) {
             dui.editInit();
         }
-        
-		if (typeof io != "undefined") {
-			dui.showWaitScreen(true, null, "Connecting to CCU.IO ...<br/>", 0);
 
-			dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host')+"?key="+socketSession);
+        if (typeof io != "undefined") {
+            dui.showWaitScreen(true, null, "Connecting to CCU.IO ...<br/>", 0);
+
+            dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host')+"?key="+socketSession);
 
             dui.touchUserCss();
 
@@ -931,137 +1052,135 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                 return updateAvailable;
             }
 
-			dui.socket.emit('getVersion', function(version) {
-				if (compareVersion(version, dui.requiredCcuIoVersion)) {
-					alert("Warning: requires CCU.IO version "+dui.requiredCcuIoVersion+" - found CCU.IO version "+version+" - please update CCU.IO.");
-				}
-			});
+            dui.socket.emit('getVersion', function(version) {
+                if (compareVersion(version, dui.requiredCcuIoVersion)) {
+                    alert("Warning: requires CCU.IO version "+dui.requiredCcuIoVersion+" - found CCU.IO version "+version+" - please update CCU.IO.");
+                }
+            });
 
             dui.socket.on('refreshAddons', function () {
                 window.location.reload();
             });
 
-			dui.socket.on('event', function (obj) {
-				if (obj != null && homematic.uiState["_" + obj[0]] !== undefined) {
-					var o = {};
-					o["_" + obj[0] + ".Value"] = obj[1];
-					o["_" + obj[0] + ".Timestamp"] = obj[2];
-					o["_" + obj[0] + ".Certain"] = obj[3];
-					homematic.uiState.attr(o);
-					
-					// Ich habe keine Ahnung, aber bind("change") funktioniert einfach nicht 
-					if (dui.binds.hqWidgetsExt && dui.binds.hqWidgetsExt.hqMonitor && (obj[3] || (homematic.regaObjects[obj[0]] && homematic.regaObjects[obj[0]]["TypeName"] == "VARDP")))
-						dui.binds.hqWidgetsExt.hqMonitor(obj[0], obj[1]);
-				}
-				else {
-					//console.log("Datenpunkte sind noch nicht geladen!");
-				}
-			});
+            dui.socket.on('event', function (obj) {
+                if (obj != null && homematic.uiState["_" + obj[0]] !== undefined) {
+                    var o = {};
+                    o["_" + obj[0] + ".Value"]     = obj[1];
+                    o["_" + obj[0] + ".Timestamp"] = obj[2];
+                    o["_" + obj[0] + ".Certain"]   = obj[3];
+                    homematic.uiState.attr(o);
 
-			dui.socket.on('connect', function () {
-				$("#ccu-io-disconnect").dialog("close");
-				//console.log((new Date()) + " socket.io connect");
-			});
+                    // Inform other widgets, that does not support canJS
+                    for (var i = 0, len = dui.onChangeCallbacks.length; i < len; i++) {
+                        dui.onChangeCallbacks[i].callback(dui.onChangeCallbacks[i].arg, obj[0], obj[1], obj[3] || (homematic.regaObjects[obj[0]] && homematic.regaObjects[obj[0]]["TypeName"] == "VARDP"));
+                    }
+                }
+                else {
+                    //console.log("Datenpunkte sind noch nicht geladen!");
+                }
+            });
 
-			dui.socket.on('connecting', function () {
-				//console.log((new Date()) + " socket.io connecting");
-			});
+            dui.socket.on('connect', function () {
+                $("#ccu-io-disconnect").dialog("close");
+                //console.log((new Date()) + " socket.io connect");
+            });
 
-			dui.socket.on('disconnect', function () {
-				//console.log((new Date()) + " socket.io disconnect");
-				$("#ccu-io-disconnect").dialog("open");
-				dui.ccuIoDisconnected = true;
-			});
+            dui.socket.on('connecting', function () {
+                //console.log((new Date()) + " socket.io connecting");
+            });
 
-			dui.socket.on('disconnecting', function () {
-				//console.log((new Date()) + " socket.io disconnecting");
-			});
+            dui.socket.on('disconnect', function () {
+                //console.log((new Date()) + " socket.io disconnect");
+                $("#ccu-io-disconnect").dialog("open");
+                dui.ccuIoDisconnected = true;
+            });
 
-			dui.socket.on('reconnect', function () {
-				$("#ccu-io-disconnect").dialog("close");
-				// Reload uiState
-				dui.socket.emit("getDatapoints", function (data) {
-					//console.log("datapoints loaded");
-					for (var dp in data) {
-						homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
-					}
-					// Get CCU.IO language
-					var l = homematic.uiState.attr("_69999.Value");
-					dui.language = l || dui.language;	
-				});
+            dui.socket.on('disconnecting', function () {
+                //console.log((new Date()) + " socket.io disconnecting");
+            });
+
+            dui.socket.on('reconnect', function () {
+                $("#ccu-io-disconnect").dialog("close");
+                // Reload uiState
+                dui.socket.emit("getDatapoints", function (data) {
+                    //console.log("datapoints loaded");
+                    for (var dp in data) {
+                        homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
+                    }
+                    // Get CCU.IO language
+                    var l = homematic.uiState.attr("_69999.Value");
+                    dui.language = l || dui.language;
+                });
 
 
-				dui.ccuIoDisconnected = false;
-				//console.log((new Date()) + " socket.io reconnect");
-			});
+                dui.ccuIoDisconnected = false;
+                //console.log((new Date()) + " socket.io reconnect");
+            });
 
-			dui.socket.on('reconnecting', function () {
-				//console.log((new Date()) + " socket.io reconnecting");
-			});
+            dui.socket.on('reconnecting', function () {
+                //console.log((new Date()) + " socket.io reconnecting");
+            });
 
-			dui.socket.on('reconnect_failed', function () {
-				//console.log((new Date()) + " socket.io reconnect failed");
-			});
+            dui.socket.on('reconnect_failed', function () {
+                //console.log((new Date()) + " socket.io reconnect failed");
+            });
 
-			dui.socket.on('error', function () {
-				//console.log((new Date()) + " socket.io error");
-			});
-		} else {
+            dui.socket.on('error', function () {
+                //console.log((new Date()) + " socket.io error");
+            });
+        } else {
             dui.showWaitScreen(true, null, "Local demo mode ...<br/>", 0);
         }
 
-		dui.showWaitScreen(true, "Loading ReGa Data", null, "+1");
+        dui.showWaitScreen(true, "Loading ReGa Data", null, "+1");
 
-		if (typeof io != "undefined") {
-			dui.socket.emit("getIndex", function (index) {
-				dui.showWaitScreen(true, ".", null, "+1");
-				//console.log("index loaded");
-				homematic.regaIndex = index;
-				dui.socket.emit("getObjects", function (obj) {
-					dui.showWaitScreen(true, ".", null, "+1");
-					//console.log("objects loaded")
-					homematic.regaObjects = obj;
-					dui.socket.emit("getDatapoints", function (data) {
-						dui.showWaitScreen(true, ".<br>", null, "+1");
-						for (var dp in data) {
-							try {
-								homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
-							} catch (e) {
-								console.log(e);
-								console.log(dp);
-							}
-						}
-						
-						// Get CCU.IO language
-						var l = homematic.uiState.attr("_69999.Value");
-						dui.language = l || dui.language;	
+        if (typeof io != "undefined") {
+            dui.socket.emit("getIndex", function (index) {
+                dui.showWaitScreen(true, ".", null, "+1");
+                //console.log("index loaded");
+                homematic.regaIndex = index;
+                dui.socket.emit("getObjects", function (obj) {
+                    dui.showWaitScreen(true, ".", null, "+1");
+                    //console.log("objects loaded")
+                    homematic.regaObjects = obj;
+                    dui.socket.emit("getDatapoints", function (data) {
+                        dui.showWaitScreen(true, ".<br>", null, "+1");
+                        for (var dp in data) {
+                            try {
+                                homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
+                            } catch (e) {
+                                console.log(e);
+                                console.log(dp);
+                            }
+                        }
 
-						dui.showWaitScreen(true, "Loading Widget-Sets...", null, "+1");
-						setTimeout(dui.init, 10);
+                        // Get CCU.IO language
+                        var l = homematic.uiState.attr("_69999.Value");
+                        dui.language = l || dui.language;
 
-					});
-				});
-			});
-		} else {
-            dui.showWaitScreen(true, "Loading Widget-Sets...", null, "+1");
+                        setTimeout(dui.init, 10);
+                    });
+                });
+            });
+        } else {
             setTimeout(dui.init, 10);
         }
     });
 
-	if (typeof io != "undefined") {
-		// Auto-Reconnect
-		setInterval(function () {
-			if (dui.ccuIoDisconnected) {
-				//console.log("trying to force reconnect...");
-				$.ajax({
-					url: "/dashui/index.html",
-					success: function () {
-						window.location.reload();
-					}
-				})
-			}
-		}, 90000);
-	}
+    if (typeof io != "undefined") {
+        // Auto-Reconnect
+        setInterval(function () {
+            if (dui.ccuIoDisconnected) {
+                //console.log("trying to force reconnect...");
+                $.ajax({
+                    url: "/dashui/index.html",
+                    success: function () {
+                        window.location.reload();
+                    }
+                })
+            }
+        }, 90000);
+    }
 
     dui.preloadImages(["../lib/css/themes/jquery-ui/kian/images/modalClose.png"])
 

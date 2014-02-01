@@ -500,7 +500,7 @@ var jdigiclockCounter = 0;
                 
                 var $this = $(this);
                 var o = options;
-				$this._showCitySelector ($this, o.currentValue, (o.lang== 'de') ? 'Stadt:' : 'City:', o.onselect, o.onselectArg);
+				$this._showCitySelector ($this, o.currentValue, dui.translate ('City:'), o.onselect, o.onselectArg);
 			});
 		}
 	});

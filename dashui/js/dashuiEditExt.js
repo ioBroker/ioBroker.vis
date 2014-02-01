@@ -1,8 +1,8 @@
 /**
  *  DashUI
- *  https://github.com/GermanBluefox/DashUI/
+ *  https://github.com/hobbyquaker/dashui/
  *
- *  Copyright (c) 2013 Bluefox https://github.com/GermanBluefox
+ *  Copyright (c) 2013-2014 Bluefox https://github.com/GermanBluefox
  *  MIT License (MIT)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -21,7 +21,29 @@
  */
 
 // duiEdit - the DashUI Editor extensions
-
+// Init words
+dui.translate("");
+// Add words for bars
+$.extend(true, dui.words, {
+	"Select HM parameter" : {"en" : "Select object ID", "de": "Objekt ID ausw&auml;hlen",       "ru": "Выбрать ID объекта"},	
+	"Select"           : {"en" : "Select",       "de": "Auswählen",            "ru": "Выбрать"},
+	"Cancel"           : {"en" : "Cancel",       "de": "Abbrechen",            "ru": "Отмена"},	
+	"None"             : {"en": "None",          "de": "Vorgegeben",           "ru": "---"},
+	"Default"          : {"en": "Default",       "de": "Vorgegeben",           "ru": "По умолчанию"},
+	"Name"             : {"en" : "Name",         "de": "Name",                 "ru": "Имя"},	
+	"Location"         : {"en" : "Location",     "de": "Raum",                 "ru": "Комната"},	
+	"Interface"        : {"en" : "Interface",    "de": "Schnittstelle",        "ru": "Интерфейс"},	
+	"Type"             : {"en" : "Type",         "de": "Typ",                  "ru": "Тип"},	
+	"Address"          : {"en" : "Address",      "de": "Adresse",              "ru": "Адрес"},	
+	"Function"         : {"en" : "Function",     "de": "Gewerk",               "ru": "Функционал"},	
+	"Disable device filter:" : {"en" : "Disable device filter:", "de": "Schalte Ger&auml;tefilter aus:", "ru": "Убрать фильтр по устройствам:"},
+	"Rooms"            : {"en" : "Rooms",        "de": "R&auml;ume",           "ru": "Комнаты"},
+	"Functions"        : {"en" : "Functions",    "de": "Gewerke",              "ru": "Функции"},
+	"Selected image: " : {"en" : "Selected file: ","de": "Ausgewählte Datei: ","ru": "Выбраный файл: "},
+	"Programs"         : {"en" : "Programs",      "de": "Programme",           "ru": "Программы"},
+	"Variables"        : {"en" : "Variables",     "de": "Variablen",           "ru": "Переменные"},
+	"Devices"          : {"en" : "Devices",       "de": "Geräte",              "ru": "Устройства"}
+});
 dui = $.extend(true, dui, {
     styleSelect: {
         // local variables
