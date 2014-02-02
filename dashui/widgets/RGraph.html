@@ -1,19 +1,73 @@
-<!--script src="widgets/RGraph/libraries/RGraph.common.core.js" ></script>
+<script src="widgets/RGraph/libraries/RGraph.common.core.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.common.core.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.common.effects.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.common.dynamic.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.common.tooltips.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.thermometer.js" ></script>
-<script src="widgets/RGraph/libraries/RGraph.gauge.js" ></script-->
+<script src="widgets/RGraph/libraries/RGraph.gauge.js" ></script>
 
 <script language="javascript">
     // Init words
     dui.translate("");
     // Add words for bars
     jQuery.extend(true, dui.words, {
-        "min"                : {"en": "Min value:",      "de": "Min Wert:",             "ru": "Мин. значение:"},
-        "max"                : {"en": "Max value:",      "de": "Max Wert:",             "ru": "Макс. значение:"},
-        "show_scale"         : {"en": "Show scale:",     "de": "Zeige Skala:",          "ru": "Показать шкалу:"}
+        "min_value"          : {"en": "Min value",      "de": "Min Wert",             "ru": "Мин. значение"},
+        "max_value"          : {"en": "Max value",      "de": "Max Wert",             "ru": "Макс. значение"},
+        "width"              : {"en": "Widget width",   "de": "Widgetbreite",         "ru": "Ширина элемента"},
+        "control"            : {"en": "Control",        "de": "Steuerung",            "ru": "Контроль"},
+        "factor"             : {"en": "Multiply factor","de": "Wert multiplizieren",  "ru": "Фактор-множитель"},
+        "value_offset"       : {"en": "Offset factor",  "de": "Offsetwert",           "ru": "Фактор сдвига"},
+        "color"              : {"en": "Color",          "de": "Farbe",                "ru": "Цвет"},
+        "show_scale"         : {"en": "Show scale",     "de": "Zeige Skala",          "ru": "Показать шкалу"},
+        "labels_color"       : {"en": "Labels color",   "de": "Labelfarbe",           "ru": "Цвет подписей шкалы"},
+        "labels_font"        : {"en": "Labels font",    "de": "Labelfont",            "ru": "Шрифт подписей шкалы"},
+        "labels_size"        : {"en": "Labels font size","de": "Labelsfontgröße",     "ru": "Размер подписей шкалы"},
+        "title"              : {"en": "Title",          "de": "Titel",                "ru": "Подпись"},
+        "title_side"         : {"en": "Side title",     "de": "Sitentitel",           "ru": "Вертикальная подпись"},
+        "title_side_font"    : {"en": "Side title font","de": "Sitentitelfont",       "ru": "Шрифт вертикальной подписи"},
+        "title_side_size"    : {"en": "Side title font size","de": "Sitentitelfontgröße","ru": "Размер вертикальной подписи"},
+        "shadow"             : {"en": "Show shadow",    "de": "Zeige Schatten",       "ru": "Показать тень"},
+        "ticksize"           : {"en": "Tick length",    "de": "Zeichenlänge",         "ru": "Длина штриха"},
+        "units_pre"          : {"en": "Units pre",      "de": "Einheitsprefix",       "ru": "Префикс"},
+        "units_post"         : {"en": "Units post",     "de": "Einheitspostfix",      "ru": "Суффикс"},
+        "scale_decimals"     : {"en": "Scale decimals", "de": "Nachkommazeichen bei Skala","ru": "Чисел после запятой шкалы"},
+        "show_value"         : {"en": "Show value",     "de": "Zeige Wert",           "ru": "Показать значение"},
+        "value_decimals"     : {"en": "Value decimals", "de": "Nachkommazeichen beim Wert","ru": "Чисел после запятой значения"},
+        "labels_count"       : {"en": "Labels count",   "de": "Anzahl von Labels",    "ru": "Кол-во подписей в шкале"},
+        // Gauge
+        "hm_id_2"            : {"en": "Second object ID",    "de": "Zweite ObjektID",          "ru": "ID второго объекта"},
+        "hm_id_3"            : {"en": "Third object ID",     "de": "Dritte ObjektID",          "ru": "ID третьего объекта"},
+        "a_start"            : {"en": "Scale start",         "de": "Anfang von Skala",         "ru": "Начало шкалы"},
+        "a_end"              : {"en": "Scale end",           "de": "Ende von Skala",           "ru": "Конец шкалы"},
+        "ticks_big_color"    : {"en": "Big tick color",      "de": "Farbe von langen Ticks",   "ru": "Цвет длинных штрихов"},
+        "ticks_small_color"  : {"en": "Small tick color",    "de": "Farbe von kurzen Ticks",   "ru": "Цвет коротких штрихов"},
+        "border_outer_color" : {"en": "Outer border color",  "de": "Aussenrand-Farbe",         "ru": "Цвет внешней каймы"},
+        "border_inner_color" : {"en": "Inner border color",  "de": "Innenrabd-Farbe",          "ru": "Цвет внутренней каймы"},
+        "back_color"         : {"en": "Background color",    "de": "Hintergrund-Farbe",        "ru": "Цвет фона"},
+        "background_gradient": {"en": "Gradient background", "de": "Hintergrund mit Gradient", "ru": "Фон с градиентом"},
+        "border_outline_color" : {"en": "Outline border color","de": "Abgrenzungrand-Farbe",   "ru": "Цвет границы"},
+        "needle_colors"      : {"en": "Needle colors",       "de": "Zeigerfarben",             "ru": "Цвет стрелки"},
+        "needle_type"        : {"en": "Needle type",         "de": "Zeigertyp",                "ru": "Тип стрелки"},
+        "needle_tail"        : {"en": "Show needle tail",    "de": "Zeige Zeigerschwanz",      "ru": "Показать хвостик стрелки"},
+        "needle_size"        : {"en": "Needle size",         "de": "Zeigergröße",              "ru": "Размер стрелки"},
+        "centerpin_radius"   : {"en": "Center radius",       "de": "Radius von Mittelpunkt",   "ru": "Радиус центральной точки"},
+        "centerpin_color"    : {"en": "Center color",        "de": "Farbe von Mittelpunkt",    "ru": "Цвет центральной точки"},
+        "title_color"        : {"en": "Top title color",     "de": "Obere Beschriftungsfarbe", "ru": "Цвет верхней подписи"},
+        "title_font"         : {"en": "Top title font",      "de": "Oberer Beschriftungsfont", "ru": "Шрифт верхней подписи"},
+        "title_size"         : {"en": "Top title size",      "de": "Obere Beschriftungsgröße", "ru": "Размер верхней подписи"},
+        "title_pos"          : {"en": "Top title position",  "de": "Obere Beschriftungs- Position","ru": "Положение верхней подписи"},
+        "title_bottom"       : {"en": "Bottom title",        "de": "Untere Beschriftung",      "ru": "Нижняя подпись"},
+        "title_bottom_color" : {"en": "Bottom title color",  "de": "Untere Beschriftungsfarbe","ru": "Цвет нижней подписи"},
+        "title_bottom_font"  : {"en": "Bottom title font",   "de": "Unterer Beschriftungfont", "ru": "Шрифт нижней подписи"},
+        "title_bottom_size"  : {"en": "Bottom title size",   "de": "Untere Beschriftungsgröße","ru": "Размер верхней подписи"},
+        "title_bottom_pos"   : {"en": "Bottom title position","de": "Untere Beschriftungs- Position","ru": "Положение нижней подписи"},
+        "labels_centered"    : {"en": "Centered labels",     "de": "Labels zentriert",         "ru": "Подписи шкалы ближе к границе"},
+        "labels_offset"      : {"en": "Labels offset",       "de": "Offsetlables",             "ru": "Сдвиг подписей шкалы"},
+        "red_start"          : {"en": "End of third sector", "de": "Ende von dritten Sektor",  "ru": "Конец третьего сектора"},
+        "red_color"          : {"en": "Color of third sector", "de": "Farbe von dritten Sektor","ru": "Цвет третьего сектора"},
+        "yellow_color"       : {"en": "Color of second sector","de": "Farbe von zweten Sektor","ru": "Цвет второго сектора"},
+        "green_color"        : {"en": "Color of first sector", "de": "Farbe von ersten Sektor","ru": "Цвет первого сектора"},
+        "green_end"          : {"en": "End of first sector",   "de": "Ende von ersten Sektor", "ru": "Конец первого сектора"}
     });
     var rgraphElements = [];
     // Register callback in dashUI
@@ -40,8 +94,20 @@
     }
 
     // Create or replace div with canvas inside it
-    function createCanvas (view, wid, _class, hm_id, width, height) {
+    function createCanvas (view, wid, _class, hm_id, width, height, canvas_width, canvas_height) {
         initRgraph ();
+        if (typeof hm_id == "object" || typeof hm_id == "array") {
+            for (var i = 0, len = hm_id.length; i < len; i++)
+            if (hm_id[i] && (!rgraphElements[hm_id[i]] || rgraphElements[hm_id[i]].indexOf (wid) == -1)) {
+                if (!rgraphElements[hm_id[i]]) {
+                    rgraphElements[hm_id[i]] = [wid];
+                }
+                else {
+                    rgraphElements[hm_id[i]].push (wid);
+                }
+            }
+        }
+        else
         if (!rgraphElements[hm_id] || rgraphElements[hm_id].indexOf (wid) == -1) {
             if (!rgraphElements[hm_id]) {
                 rgraphElements[hm_id] = [wid];
@@ -60,25 +126,104 @@
         $('#'+wid).css(style);
         // Canvas understand no Style, so set width and height extra
         var can = document.getElementById ('c' + wid);
-        can.width  = style.width;
-        can.height = style.height;
+        canvas_width  = canvas_width || style.width;
+        canvas_height = canvas_height || style.height;
+        can.width  = canvas_width;
+        can.height = canvas_height;
     }
 </script>
 
-<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min;max;color;show_scale/checkbox">
+<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];width/slider,1,500,1;control/checkbox;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontName;labels_size/slider,1,100;title;title_side;title_side_font/fontName;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1">
     <%
-        createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), this.data.attr('hm_id'), 400, 100);
+        createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), this.data.attr('hm_id'), 100, 400);
 
         var str = homematic.uiState.attr("_" + this.data.attr('hm_id') + ".Value");
-        if (str === null || str === undefined) str = this.data.attr("min");
-        var t = new RGraph.Thermometer("c"+this.data.attr('wid'), parseFloat(this.data.attr("min")), parseFloat(this.data.attr("max")), parseFloat(str));
+        if (str === null || str === undefined) str = this.data.attr("min_value");
+        var t = new RGraph.Thermometer("c"+this.data.attr('wid'), parseFloat(this.data.attr("min_value")), parseFloat(this.data.attr("max_value")), parseFloat(str));
         if (this.data.attr('color')) {
             var color = this.data.attr('color');
             t.colorsParsed = false;
             t.properties['chart.colors'] = ["Gradient("+color+")"];
         }
+        console.log("B");
         if (this.data.attr("show_scale")) {
             t.Set('scale.visible', true);
+        }
+        if (this.data.attr("shadow") !== "" && this.data.attr("shadow") !== null && this.data.attr("shadow") !== undefined) {
+            t.Set('shadow', (this.data.attr("shadow") == "true" || this.data.attr("shadow") == true));
+        }
+        if (this.data.attr("control") !== "" && this.data.attr("control") !== null && this.data.attr("control") !== undefined) {
+            t.Set('adjustable', (this.data.attr("control") == "true" || this.data.attr("control") == true));
+            t.Set ("hm_id", this.data.attr('hm_id'));
+            if (dui.urlParams["edit"] !== "") {
+                RGraph.AddCustomEventListener (t, "onadjust", function (obj) {
+                    if (obj.setTimer) {
+                        clearTimeout (obj.setTimer);
+                    }
+                    obj.setTimer = setTimeout (function (o) {
+                        homematic.setValue(o.properties["chart.hm_id"], o.value);
+                        }, 300, obj);
+                });
+            }
+        }
+        if (this.data.attr("labels_color") !== "") {
+            t.Set('text.color', this.data.attr("labels_color"));
+        }
+        if (this.data.attr("labels_font") !== "") {
+            t.Set('text.font', this.data.attr("labels_font"));
+        }
+        if (this.data.attr("labels_size") !== "") {
+            var f = parseFloat (this.data.attr("labels_size"));
+            t.Set('text.size', f);
+        }
+        if (this.data.attr('width') !== "") {
+            var f = parseFloat (this.data.attr("width"));
+            t.Set('width', f);
+        }
+        if (this.data.attr("title") !== "") {
+            t.Set('title', this.data.attr("title"));
+        }
+        if (this.data.attr("title_side") !== "") {
+            t.Set('title.side', this.data.attr("title_side"));
+        }
+        if (this.data.attr("title_side_font") !== "") {
+            t.Set('title.side.font', this.data.attr("title_side_font"));
+        }
+        if (this.data.attr("title_side_size") !== "") {
+            var f = parseFloat (this.data.attr("title_side_size"));
+            t.Set('title.side.size', f);
+        }
+        if (this.data.attr("ticksize") !== "") {
+            var f = parseFloat (this.data.attr("ticksize"));
+            t.Set('ticksize', f);
+        }
+        if (this.data.attr("units_pre") !== "") {
+            t.Set('units.pre', this.data.attr("units_pre"));
+        }
+        if (this.data.attr("units_post") !== "") {
+            t.Set('units.post', this.data.attr("units_post"));
+        }
+        if (this.data.attr("scale_decimals") !== "") {
+            var f = parseFloat (this.data.attr("scale_decimals"));
+            t.Set('scale.decimals', f);
+        }
+
+        if (this.data.attr("show_value") !== "" && this.data.attr("show_value") !== null && this.data.attr("show_value") !== undefined) {
+            t.Set('value.label', (this.data.attr("show_value") == "true" || this.data.attr("show_value") == true));
+        }
+        if (this.data.attr("value_decimals") !== "") {
+            var f = parseFloat (this.data.attr("value_decimals"));
+            t.Set('value.label.decimals', f);
+        }
+        if (this.data.attr("labels_count") !== "" && this.data.attr("labels_count") !== null && this.data.attr("labels_count") !== undefined) {
+            var f = parseFloat (this.data.attr("labels_count"));
+            t.Set('labels.count', f);
+        }
+        if (dui.language == 'de' || dui.language == 'ru' ) {
+            t.Set('scale.point', ',');
+            t.Set('scale.thousand', '.');
+            t.Set('value.label.point', ',');
+            t.Set('value.label.thousand', '.');
         }
 
         t.Draw();
@@ -101,18 +246,18 @@
 
     %>
 </script>
-<script type="text/ejs" id="tplRGgauge" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Gauge-Basic" data-dashui-attrs="hm_id/id;hm_id_2/id;hm_id_3/id;min;max;a_start;a_end;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;color_ranges/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size;centerpin_radius;title;title_color/color;title_font/fontName;title_size;title_bottom;title_bottom_color/color;title_bottom_font/fontName;title_bottom_size;labels_color/color;labels_centered/checkbox;labels_offset">
+<script type="text/ejs" id="tplRGgauge" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Gauge-Basic" data-dashui-attrs="hm_id/id;hm_id_2/id;hm_id_3/id;min_value[0];max_value[100];factor[1];offset_value[0];control/checkbox;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;title;title_color/color;title_font/fontName;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontName;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;labels_color[#000000]/color;labels_font/fontName;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1">
     <%
-        createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), this.data.attr('hm_id'), 200, 200);
+        createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), [this.data.attr('hm_id'), this.data.attr('hm_id_2'), this.data.attr('hm_id_3')], 200, 200);
 
         var str = homematic.uiState.attr("_" + this.data.attr('hm_id') + ".Value");
-        if (str === null || str === undefined) str = this.data.attr("min");
+        if (str === null || str === undefined) str = this.data.attr("min_value");
 
         var str2 = this.data.attr('hm_id_2') ? homematic.uiState.attr("_" + this.data.attr('hm_id_2') + ".Value") : null;
-        if (str2 === undefined) str2 = this.data.attr("min");
+        if (str2 === undefined) str2 = this.data.attr("min_value");
 
         var str3 = this.data.attr('hm_id_3') ? homematic.uiState.attr("_" + this.data.attr('hm_id_3') + ".Value") : null;
-        if (str3 === undefined) str3 = this.data.attr("min");
+        if (str3 === undefined) str3 = this.data.attr("min_value");
 
         var values = [parseFloat(str) || 0];
         if (str2 !== null) {
@@ -122,9 +267,63 @@
                 values[2] = str3 || 0;
             }
         }
+        var factor = this.data.attr("factor") || 1;
+        factor = parseFloat(factor);
 
+        var offset = this.data.attr("offset_value") || 0;
+        offset = parseFloat(offset);
 
-        var t = new RGraph.Gauge("c"+this.data.attr('wid'), parseFloat(this.data.attr("min")), parseFloat(this.data.attr("max")), values);
+        values[0] = values[0] * factor + offset;
+
+        var t = new RGraph.Gauge("c"+this.data.attr('wid'), parseFloat(this.data.attr("min_value")), parseFloat(this.data.attr("max_value")), values);
+
+        t.Set ("hm_id",   this.data.attr('hm_id'));
+        t.Set ("hm_id_2", this.data.attr('hm_id_2'));
+        t.Set ("hm_id_3", this.data.attr('hm_id_3'));
+        t.Set ("factor", factor);
+        t.Set ("value_offset", offset);
+
+        if (this.data.attr("control") !== "" && this.data.attr("control") !== null && this.data.attr("control") !== undefined) {
+            if ((this.data.attr("control") == "true" || this.data.attr("control") == true)) {
+                t.Set('adjustable', true);
+
+                RGraph.AddCustomEventListener (t, "onadjust", function (obj) {
+                    var hm_id_2 = obj.Get("hm_id_2");
+                    var hm_id_3 = obj.Get("hm_id_3");
+
+                    var values = [obj.value];
+                    var str2 = hm_id_2 ? homematic.uiState.attr("_" + hm_id_2 + ".Value") : null;
+                    if (str2 === undefined) str2 = obj.min;
+
+                    var str3 = hm_id_3 ? homematic.uiState.attr("_" + hm_id_3 + ".Value") : null;
+                    if (str3 === undefined) str3 = obj.min;
+
+                    if (str2 !== null) {
+                        values[1] = str2 || 0;
+                        if (values[1] > obj.max) values[1] = obj.max;
+
+                        if (str3 !== null) {
+                            values[2] = str3 || 0;
+                            if (values[2] > obj.max) values[2] = obj.max;
+                        }
+                    }
+                    values[0] = values[0] * factor + offset;
+                    obj.value = values;
+                    obj.Draw ();
+
+                    if (dui.urlParams["edit"] !== "") {
+                        if (obj.setTimer) {
+                            clearTimeout (obj.setTimer);
+                        }
+                        obj.setTimer = setTimeout (function (o) {
+                            var factor  = o.Get("factor");
+                            var offset  = o.Get("value_offset");
+                            homematic.setValue(o.Get("hm_id"), (o.value[0] - offset) / factor);
+                        }, 300, obj);
+                    }
+                });
+            }
+        }
 
         if (this.data.attr("a_start") !== "" && this.data.attr("a_start") !== null && this.data.attr("a_start") !== undefined) {
             var f = parseFloat(this.data.attr("a_start"));
@@ -136,12 +335,21 @@
             f = f * PI / 180;
             t.Set('angles.end', f);
         }
-        console.log("A");
         if (this.data.attr("shadow")) {
             t.Set('shadow', true);
         }
-        if (this.data.attr("text_color")) {
-            t.Set('text.color', this.data.attr("text_color"));
+        if (this.data.attr("value_text")) {
+            t.Set('value.text', true);
+        }
+        if (this.data.attr("value_text_pos") !== null && this.data.attr("value_text_pos") !== undefined && this.data.attr("value_text_pos") !== "") {
+            var f = parseFloat (this.data.attr("value_text_pos"));
+            t.Set('value.text.y.pos', f);
+        }
+        if (this.data.attr("value_units_pre")) {
+            t.Set('value.text.units.pre', this.data.attr("value_units_pre"));
+        }
+        if (this.data.attr("value_units_post")) {
+            t.Set('value.text.units.post', this.data.attr("value_units_post"));
         }
         if (this.data.attr("ticks_big_color")) {
             t.Set('tickmarks.big.color', this.data.attr("ticks_big_color"));
@@ -186,6 +394,9 @@
             var f = parseFloat (this.data.attr("centerpin_radius"));
             t.Set('centerpin.radius', f);
         }
+        if (this.data.attr("centerpin_color")) {
+            t.Set('centerpin.color', this.data.attr("centerpin_color"));
+        }
         if (this.data.attr("title")) {
             t.Set('title.top', this.data.attr("title"));
         }
@@ -198,6 +409,10 @@
         }
         if (this.data.attr("title_font")) {
             t.Set('title.top.font', this.data.attr("title_font"));
+        }
+        if (this.data.attr("title_pos") !== null && this.data.attr("title_pos") !== undefined && this.data.attr("title_pos") !== "") {
+            var f = parseFloat (this.data.attr("title_pos"));
+            t.Set('title.top.pos', f);
         }
         if (this.data.attr("title_bottom")) {
             t.Set('title.bottom', this.data.attr("title_bottom"));
@@ -212,6 +427,10 @@
         if (this.data.attr("title_bottom_font")) {
             t.Set('title.bottom.font', this.data.attr("title_bottom_font"));
         }
+        if (this.data.attr("title_bottom_pos") !== null && this.data.attr("title_bottom_pos") !== undefined && this.data.attr("title_bottom_pos") !== "") {
+            var f = parseFloat (this.data.attr("title_bottom_pos"));
+            t.Set('title.bottom.pos', f);
+        }
         if (this.data.attr("labels_centered")) {
             t.Set('labels.centered', this.data.attr("labels_centered"));
         }
@@ -222,8 +441,34 @@
         if (this.data.attr("labels_color") !== "") {
             t.Set('text.color', this.data.attr("labels_color"));
         }
+        if (this.data.attr("labels_font") !== "") {
+            t.Set('text.font', this.data.attr("labels_font"));
+        }
+        if (this.data.attr("labels_size") !== "") {
+            var f = parseFloat (this.data.attr("labels_size"));
+            t.Set('text.size', f);
+        }
         if (this.data.attr("background_gradient")) {
             t.Set('background.gradient', true);
+        }
+        if (this.data.attr("red_color") !== "") {
+            t.Set('red.color', this.data.attr("red_color"));
+        }
+        if (this.data.attr("red_start") !== "") {
+            var f = parseFloat (this.data.attr("red_start"));
+            f = f * parseFloat(this.data.attr("max_value"));
+            t.Set('red.start', f);
+        }
+        if (this.data.attr("yellow_color") !== "") {
+            t.Set('yellow.color', this.data.attr("yellow_color"));
+        }
+        if (this.data.attr("green_color") !== "") {
+            t.Set('green.color', this.data.attr("green_color"));
+        }
+        if (this.data.attr("green_end") !== "") {
+            var f = parseFloat (this.data.attr("green_end"));
+            f = f * parseFloat(this.data.attr("max_value"));
+            t.Set('green.end', f);
         }
         t.Draw();
         var elem = document.getElementById (this.data.attr('wid'));
@@ -239,9 +484,32 @@
         });
 
         elem.rgraphValueChange = function (newValue, isFromDevice) {
-            this.rgraph.value = parseFloat(newValue);
-            RGraph.Effects.Thermometer.Grow(this.rgraph);
-        }
+            var hm_id_2 = this.rgraph.Get("hm_id_2");
+            var hm_id_3 = this.rgraph.Get("hm_id_3");
+            var factor  = this.rgraph.Get("factor");
+            var offset  = this.rgraph.Get("value_offset");
 
+            var str = homematic.uiState.attr("_" + this.rgraph.Get('hm_id') + ".Value");
+            if (str === null || str === undefined) str = this.rgraph.min;
+
+            var str2 = hm_id_2 ? homematic.uiState.attr("_" + hm_id_2 + ".Value") : null;
+            if (str2 === undefined) str2 = this.rgraph.min;
+
+            var str3 = hm_id_3 ? homematic.uiState.attr("_" + hm_id_3 + ".Value") : null;
+            if (str3 === undefined) str3 = this.rgraph.min;
+
+            var values = [parseFloat(str) || 0];
+            if (str2 !== null) {
+                values[1] = str2 || 0;
+
+                if (str3 !== null) {
+                    values[2] = str3 || 0;
+                }
+            }
+            values[0] = values[0] * factor + offset;
+
+            this.rgraph.value = values;
+            RGraph.Effects.Gauge.Grow(this.rgraph);
+        }
     %>
 </script>

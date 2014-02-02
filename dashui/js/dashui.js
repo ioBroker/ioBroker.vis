@@ -149,21 +149,14 @@ var dui = {
                     return null;
                 } else
                 if (widgetSets.indexOf (dui.views[view].widgets[id].widgetSet) == -1) {
-                    widgetSets.push(dui.views[view].widgets[id].widgetSet);
+                    var wset = dui.views[view].widgets[id].widgetSet;
+                    widgetSets.push(wset);
 
-                    // Extra dependencies, "jqui" needs "basic"
-                    if (dui.views[view].widgets[id].widgetSet == "jqui") {
-                        if (widgetSets.indexOf ("basic") == -1) {
-                            widgetSets.push ("basic");
-                        }
-                    }
-                    else // "jqui-mfd" needs "jqui" and "basic"
-                    if (dui.views[view].widgets[id].widgetSet == "jqui-mfd") {
-                        if (widgetSets.indexOf ("basic") == -1) {
-                            widgetSets.push ("basic");
-                        }
-                        if (widgetSets.indexOf ("jqui") == -1) {
-                            widgetSets.push ("jqui");
+                    if (duiConfig.dependencies && duiConfig.dependencies[wset]) {
+                        for (var u = 0, ulen = duiConfig.dependencies[wset].length; u < ulen; u++) {
+                            if (widgetSets.indexOf (duiConfig.dependencies[wset][u]) == -1) {
+                                widgetSets.push (duiConfig.dependencies[wset][u]);
+                            }
                         }
                     }
                 }

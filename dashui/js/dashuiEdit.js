@@ -478,7 +478,7 @@ dui = $.extend(true, dui, {
     },
     editFontName: function (widget, wid_attr) {
         // Select
-        var values = ["Impact", "Arial", "Helvetica"];
+        var values = ["", "Arial", "Times", "Andale Mono", "Comic Sans", "Impact"];
         dui.editSelect (widget, wid_attr, values);
     },
     editCheckbox: function (widget, wid_attr) {
@@ -633,7 +633,59 @@ dui = $.extend(true, dui, {
                 }};
             dui.imageSelect.Show (settings);
         });
+    },
+    editSlider: function (widget, wid_attr, min, max, step) {
+        min = (min === undefined || min === null || min == "") ? 0 : parseFloat(min);
+        max = (max === undefined || max === null || max == "") ? 0 : parseFloat(max);
+        step = (!step) ? (max - min) / 100 : parseFloat(step);
+        // Image src
+        $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><table style="width:100%" class="dashui-no-spaces"><tr class="dashui-no-spaces"><td  class="dashui-no-spaces" style="width:50px"><input type="text" id="inspect_'+wid_attr+'" size="5"/></td><td  class="dashui-no-spaces" style="width:20px">'+min+'</td><td><div id="inspect_'+wid_attr+'_slider"></div></td><td  class="dashui-no-spaces" style="width:20px;text-align:right">'+max+'</td></tr></table></td></tr>');
 
+        var slider = $( "#inspect_"+wid_attr+"_slider");
+        slider.slider({
+            value: widget.data[wid_attr],
+            min: min,
+            max: max,
+            step: step,
+            slide: function( event, ui ) {
+                /*if (this.timer)
+                    clearTimeout (this.timer);
+
+                this.timer = setTimeout (function(elem_, value) {
+                    // If really changed
+                    var $this = $(elem_);
+                    var attr = $this.attr("id").slice(8);
+                    var text = $("#inspect_"+wid_attr);
+                    if (text.val() != value) {
+                        text.val(value).trigger("change");
+                    }
+                }, 200, this, ui.value);*/
+                var $this = $(this);
+                var attr = $this.attr("id").slice(8);
+                var text = $("#inspect_"+wid_attr);
+                if (text.val() != ui.value) {
+                    text.val(ui.value).trigger("change");
+                }
+            }
+        })
+        var inspect = $("#inspect_"+wid_attr);
+
+        inspect.val(widget.data[wid_attr]);
+
+        inspect.change(function () {
+            var attribute = $(this).attr("id").slice(8);
+            var val = $(this).val();
+            var slider = $( "#inspect_"+wid_attr+"_slider");
+            if (slider.slider("option", "value") != val) {
+                slider.slider("option", "value", val);
+            }
+            dui.widgets[dui.activeWidget].data.attr(attribute, val);
+            dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
+            dui.saveRemote();
+            dui.reRenderWidget(dui.activeWidget);
+        }).keyup(function () {
+            $(this).trigger('change');
+        });
     },
     inspectWidget: function (id) {
 
@@ -696,12 +748,39 @@ dui = $.extend(true, dui, {
         // Edit all attributes
         for (var attr in widget_attrs) {
             if (widget_attrs[attr] != "") {
+                // Format: attr_name[default_value]/type
+                // Type format: id - Object ID Dialog
+                //              checkbox
+                //              image
+                //              color
+                //              views
+                //              effect
+                //              fontName
+                //              slide,min,max,step - Default step is ((max - min) / 100)
+                //              select_value1,select_value2,...
+
 				var isValueSet = false;
 				var wid_attrs = widget_attrs[attr].split('/');
 				var wid_attr  = wid_attrs[0];
+                // Try to extract default value
+                var uu = wid_attr.indexOf ("[");
+                if (uu != -1) {
+                    var defaultValue = wid_attr.substring (uu + 1);
+                    defaultValue = defaultValue.substring (0, defaultValue.length -1);
+                    wid_attr = wid_attr.substring(0,uu);
+                    if (widget.data[wid_attr] == null || widget.data[wid_attr] === undefined) {
+                        widget.data[wid_attr] = defaultValue;
+                        dui.reRenderWidget(dui.activeWidget);
+                    }
+                }
                 var type = (wid_attrs.length > 1) ? wid_attrs[1] : null;
                 if (type && type.indexOf (",") != -1) {
-                    type = "select";
+                    if (type.substring (0, "slider".length) == "slider") {
+                        type = "slider";
+                    }
+                    else {
+                        type = "select";
+                    }
                 }
 					
                 if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit[wid_attr]) {
@@ -763,6 +842,12 @@ dui = $.extend(true, dui, {
                 if (type === "fontName") {
                     isValueSet = true;
                     dui.editFontName (widget, wid_attr);
+                } else
+                if (type === "slider") {
+                    isValueSet = true;
+                    var values = wid_attrs[1].split(',');
+                    dui.editSlider (widget, wid_attr, values[1], values[2], values[3]);
+                    continue;
                 } else
                 if (type === "select") {
                     isValueSet = true;
@@ -873,12 +958,9 @@ dui = $.extend(true, dui, {
                         dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
                         dui.saveRemote();
                         dui.reRenderWidget(dui.activeWidget);
-
-
-
-                    }).keyup(function () {
-                        $(this).trigger('change');
-                    });
+                }).keyup(function () {
+                    $(this).trigger('change');
+                });
             }
         }
 

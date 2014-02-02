@@ -96,7 +96,8 @@
             'chart.tooltips.effect':        'fade',
             'chart.tooltips.event':         'onclick',
             'chart.highlight.stroke':       'rgba(0,0,0,0)',
-            'chart.highlight.fill':         'rgba(255,255,255,0.7)'
+            'chart.highlight.fill':         'rgba(255,255,255,0.7)',
+            'chart.width':                  null
         }
 
 
@@ -137,6 +138,7 @@
         var ca   = this.canvas;
         var co   = ca.getContext('2d');
         var prop = this.properties;
+        var ca_width = prop['chart.width'] || ca.width;
         //var $jq  = jQuery;
 
 
@@ -170,6 +172,7 @@
             }
             
             prop[name.toLowerCase()] = value;
+            ca_width = prop['chart.width'] || ca.width;
     
             return this;
         }
@@ -332,10 +335,10 @@
         */
         this.DrawBackground = function ()
         {
-            var bulbRadius = (ca.width - this.gutterLeft - this.gutterRight) / 2;
+            var bulbRadius = (ca_width - this.gutterLeft - this.gutterRight) / 2;
             
             // This is the radius/x/y of the top "semi-circle"
-            this.bulbTopRadius  = (ca.width - this.gutterLeft - this.gutterRight - 24)/ 2
+            this.bulbTopRadius  = (ca_width - this.gutterLeft - this.gutterRight - 24)/ 2
             this.bulbTopCenterX = this.gutterLeft + bulbRadius;
             this.bulbTopCenterY = this.gutterTop + bulbRadius;
     
@@ -355,7 +358,7 @@
                     RG.SetShadow(this, prop['chart.shadow.color'], prop['chart.shadow.offsetx'], prop['chart.shadow.offsety'], prop['chart.shadow.blur']);
                 }
     
-                co.fillRect(this.gutterLeft + 12,this.gutterTop + bulbRadius,ca.width - this.gutterLeft - this.gutterRight - 24, ca.height - this.gutterTop - this.gutterBottom - bulbRadius - bulbRadius);
+                co.fillRect(this.gutterLeft + 12,this.gutterTop + bulbRadius,ca_width - this.gutterLeft - this.gutterRight - 24, ca.height - this.gutterTop - this.gutterBottom - bulbRadius - bulbRadius);
                 
                 // Bottom bulb
                 co.arc(this.bulbBottomCenterX, this.bulbBottomCenterY, bulbRadius, 0, TWOPI, 0);
@@ -372,23 +375,23 @@
             // Draw the white inner content background that creates the border
             co.beginPath();
                 co.fillStyle = 'white';
-                co.fillRect(this.gutterLeft + 12 + 1,this.gutterTop + bulbRadius,ca.width - this.gutterLeft - this.gutterRight - 24 - 2,ca.height - this.gutterTop - this.gutterBottom - bulbRadius - bulbRadius);
+                co.fillRect(this.gutterLeft + 12 + 1,this.gutterTop + bulbRadius,ca_width - this.gutterLeft - this.gutterRight - 24 - 2,ca.height - this.gutterTop - this.gutterBottom - bulbRadius - bulbRadius);
                 co.arc(this.gutterLeft + bulbRadius, ca.height - this.gutterBottom - bulbRadius, bulbRadius - 1, 0, TWOPI, 0);
-                co.arc(this.gutterLeft + bulbRadius,this.gutterTop + bulbRadius,((ca.width - this.gutterLeft - this.gutterRight - 24)/ 2) - 1,0,TWOPI,0);
+                co.arc(this.gutterLeft + bulbRadius,this.gutterTop + bulbRadius,((ca_width - this.gutterLeft - this.gutterRight - 24)/ 2) - 1,0,TWOPI,0);
             co.fill();
     
             // Draw the bottom content of the thermometer
             co.beginPath();
                 co.fillStyle = prop['chart.colors'][0];
                 co.arc(this.gutterLeft + bulbRadius, ca.height - this.gutterBottom - bulbRadius, bulbRadius - 1, 0, TWOPI, 0);
-                co.rect(this.gutterLeft + 12 + 1, ca.height - this.gutterBottom - bulbRadius - bulbRadius,ca.width - this.gutterLeft - this.gutterRight - 24 - 2, bulbRadius);
+                co.rect(this.gutterLeft + 12 + 1, ca.height - this.gutterBottom - bulbRadius - bulbRadius,ca_width - this.gutterLeft - this.gutterRight - 24 - 2, bulbRadius);
             co.fill();
 
 
             // Save the X/Y/width/height
             this.graphArea[0] = this.gutterLeft + 12 + 1;
             this.graphArea[1] = this.gutterTop + bulbRadius;
-            this.graphArea[2] = ca.width - this.gutterLeft - this.gutterRight - 24 - 2;
+            this.graphArea[2] = ca_width - this.gutterLeft - this.gutterRight - 24 - 2;
             this.graphArea[3] = (ca.height - this.gutterBottom - bulbRadius - bulbRadius) - (this.graphArea[1]);
         }
 
@@ -443,8 +446,8 @@
             // Right hand side tickmarks
                 co.beginPath();
                     for (var i=this.graphArea[1]; i<=(this.graphArea[1] + this.graphArea[3]); i += (this.graphArea[3] / 10)) {
-                        co.moveTo(ca.width - (this.gutterRight + 12), Math.round(i));
-                        co.lineTo(ca.width - (this.gutterRight + 12 + ticksize), Math.round(i));
+                        co.moveTo(ca_width - (this.gutterRight + 12), Math.round(i));
+                        co.lineTo(ca_width - (this.gutterRight + 12 + ticksize), Math.round(i));
                     }
                 co.stroke();
         }
@@ -508,7 +511,7 @@
             co.fillStyle = prop['chart.text.color'];
                 RG.Text2(this, {'font': prop['chart.text.font'],
                                 'size': prop['chart.text.size'] + 2,
-                                'x':this.gutterLeft + ((ca.width - this.gutterLeft - this.gutterRight) / 2),
+                                'x':this.gutterLeft + ((ca_width - this.gutterLeft - this.gutterRight) / 2),
                                 'y': this.gutterTop,
                                 'text': String(prop['chart.title']),
                                 'valign':'center',
@@ -564,7 +567,7 @@
     
             for (var i=1; i<=numLabels; ++i) {
     
-                var x          = ca.width - this.gutterRight;
+                var x          = ca_width - this.gutterRight;
                 var y          = ca.height - this.gutterBottom - (2 * this.bulbRadius) - ((this.graphArea[3] / numLabels) * i);
                 var text       = RG.number_format(this, String((this.min + (i * step)).toFixed(decimals)), units_pre, units_post);
     
@@ -705,7 +708,7 @@
     
             if (
                    mouseXY[0] > this.gutterLeft
-                && mouseXY[0] < (ca.width - this.gutterRight)
+                && mouseXY[0] < (ca_width - this.gutterRight)
                 && mouseXY[1] >= this.gutterTop
                 && mouseXY[1] <= (ca.height - this.gutterBottom)
                 ) {
@@ -889,7 +892,7 @@
                 var parts = RegExp.$1.split(':');
     
                 // Create the gradient
-                var grad = co.createLinearGradient(prop['chart.gutter.left'], 0, ca.width - prop['chart.gutter.right'],0);
+                var grad = co.createLinearGradient(prop['chart.gutter.left'], 0, ca_width - prop['chart.gutter.right'],0);
     
                 var diff = 1 / (parts.length - 1);
 
