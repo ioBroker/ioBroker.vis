@@ -23,7 +23,7 @@
 // duiEdit - the DashUI Editor
 
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta52',
+    editVersion:        '0.9beta53',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
