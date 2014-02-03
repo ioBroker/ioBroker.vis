@@ -121,7 +121,7 @@ dui = $.extend(true, dui, {
 	        }
 	
 	    }
-	    console.log ("trans: " + text);
+	    //console.log ("trans: " + text);
 	    return text;
     },
     translateBack: function (text, lang) {
@@ -136,7 +136,7 @@ dui = $.extend(true, dui, {
 	            return word;
 	    }
 	
-	    console.log ("back: " + text);
+	    //console.log ("back: " + text);
 	    return text;
 	}
 });
