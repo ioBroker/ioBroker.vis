@@ -745,9 +745,10 @@ var dui = {
             return false;
         }
         dui.views[view] = {settings: {style: {}}, widgets: {}};
-        dui.saveRemote();
-        dui.changeView(view);
-        window.location.reload();
+        dui.saveRemote(function () {
+            dui.changeView(view);
+            window.location.reload();
+        });
     },
     loadRemote: function (callback, callbackArg) {
         dui.showWaitScreen(true, "Loading Views...<br/>", null, "+1");
@@ -777,13 +778,16 @@ var dui = {
             });
         }
     },
-    saveRemote: function () {
+    saveRemote: function (cb) {
         // Sync widget before it will be saved
         if (dui.activeWidget && dui.activeWidget.indexOf('_') != -1 && dui.syncWidget) {
             dui.syncWidget(dui.activeWidget);
         }
         if (typeof io != "undefined") {
             dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
+                if (cb) {
+                    cb();
+                }
                 //console.log("Saved views on CCU.IO");
             });
         }

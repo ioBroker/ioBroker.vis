@@ -103,10 +103,12 @@ dui = $.extend(true, dui, {
                 dui.views[val].widgets[dui.nextWidget()] = dui.views[val].widgets[widget];
                 delete dui.views[val].widgets[widget];
             }
-            dui.saveRemote();
-            dui.renderView(val);
-            dui.changeView(val);
-            window.location.reload();
+            dui.saveRemote(function () {
+                dui.renderView(val);
+                dui.changeView(val);
+                window.location.reload();
+            });
+
         }
     },
     checkNewView: function() {
