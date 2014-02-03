@@ -17,12 +17,6 @@
                         jQuery("#duiview_"+view).show();
                     }
                 });
-                var view = viewArr[homematic.uiState.attr(hm_id+".Value")];
-                if (dui.views[view]) {
-                    dui.renderView(view);
-                    jQuery("#duiview_"+view).appendTo($this);
-                    jQuery("#duiview_"+view).show();
-                }
             },
             iframe: function (el, srcArr, refreshInterval) {
                 var $this = jQuery(el);
@@ -392,7 +386,7 @@
         <%
             var viewArr = [data.attr("contains_view_0"), data.attr("contains_view_1"), data.attr("contains_view_2"), data.attr("contains_view_3"), data.attr("contains_view_4"), data.attr("contains_view_5"), data.attr("contains_view_6"), data.attr("contains_view_7")];
         %>
-        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= viewArr[homematic.uiState.attr("_"+data.attr('hm_id')+".Value")] %>" class="dashui-widget-body">
+        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= viewArr[homematic.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" class="dashui-widget-body">
             <div class="dashui-view-container" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
         </div>
     </div>
@@ -403,8 +397,11 @@
         <div class="editmode-helper"></div>
         <div class="dashui-widget-body">
             <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
-            <iframe class="dashui-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" src="<%= this.data.attr('src_0') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
-            <div <%= (el) -> dui.binds.stateful.iframe(el, [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")], data.attr("refreshInterval")) %> />
+            <%
+                var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];
+            %>
+            <iframe class="dashui-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" src="<%== srcArr[homematic.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <div <%= (el) -> dui.binds.stateful.iframe(el, srcArr, data.attr("refreshInterval")) %> />
         </div>
     </div>
 </script>
@@ -434,8 +431,11 @@
         <div class="editmode-helper"></div>
         <div class="dashui-widget-body">
             <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
-            <img class="dashui-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" style="position:absolute; width:100%;" src="<%== this.data.attr('src_0') %>" />
-            <div <%= (el) -> dui.binds.stateful.image(el, [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")], data.attr("refreshInterval")) %> />
+            <%
+                var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];
+            %>
+            <img class="dashui-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" style="position:absolute; width:100%;" src="<%== srcArr[homematic.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" />
+            <div <%= (el) -> dui.binds.stateful.image(el, srcArr, data.attr("refreshInterval")) %> />
         </div>
     </div>
 </script>
