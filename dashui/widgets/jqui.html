@@ -180,6 +180,7 @@
                     $this.val(newVal);
 
                 });
+                $this.val(homematic.uiState.attr(hm_id+".Value"));
             },
             inputset: function (el, options) {
                 var digits = options;
