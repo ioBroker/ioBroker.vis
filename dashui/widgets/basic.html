@@ -17,6 +17,12 @@
                         jQuery("#duiview_"+view).show();
                     }
                 });
+                var view = viewArr[homematic.uiState.attr(hm_id+".Value")];
+                if (dui.views[view]) {
+                    dui.renderView(view);
+                    jQuery("#duiview_"+view).appendTo($this);
+                    jQuery("#duiview_"+view).show();
+                }
             },
             iframe: function (el, srcArr, refreshInterval) {
                 var $this = jQuery(el);
@@ -383,8 +389,11 @@
 <script type="text/ejs" id="tplStatefulContainerView8" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="stateful/container - view in widget 8" data-dashui-attrs="hm_id;persistent/checkbox;contains_view_0;contains_view_1;contains_view_2;contains_view_3;contains_view_4;contains_view_5;contains_view_6;contains_view_7">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
         <div class="editmode-helper"></div>
-        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view_0') %>" class="dashui-widget-body">
-            <div class="dashui-view-container" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.stateful.view(el, [data.attr("contains_view_0"), data.attr("contains_view_1"), data.attr("contains_view_2"), data.attr("contains_view_3"), data.attr("contains_view_4"), data.attr("contains_view_5"), data.attr("contains_view_6"), data.attr("contains_view_7")], data.attr("persistent")) %> />
+        <%
+            var viewArr = [data.attr("contains_view_0"), data.attr("contains_view_1"), data.attr("contains_view_2"), data.attr("contains_view_3"), data.attr("contains_view_4"), data.attr("contains_view_5"), data.attr("contains_view_6"), data.attr("contains_view_7")];
+        %>
+        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= viewArr[homematic.uiState.attr("_"+data.attr('hm_id')+".Value")] %>" class="dashui-widget-body">
+            <div class="dashui-view-container" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
         </div>
     </div>
 </script>
