@@ -471,7 +471,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - HTML - Dialog" data-dashui-attrs="html;html_dialog;title;modal;width;height;persistent">
+<script type="text/ejs" id="tplJquiDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - HTML - Dialog" data-dashui-attrs="html;html_dialog;title;modal/checkbox;width;height;persistent/checkbox">
 
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
@@ -484,7 +484,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon - Dialog" data-dashui-attrs="src;alt;text;html_dialog;title;modal;width;height;persistent;invert_icon/checkbox">
+<script type="text/ejs" id="tplJquiIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon - Dialog" data-dashui-attrs="src;alt;text;html_dialog;title;modal/checkbox;width;height;persistent;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -504,7 +504,7 @@
 
 
 
-<script type="text/ejs" id="tplContainerDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - HTML - view in jqui Dialog" data-dashui-attrs="html;contains_view;title;modal;width;height;persistent">
+<script type="text/ejs" id="tplContainerDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - HTML - view in jqui Dialog" data-dashui-attrs="html;contains_view;title;modal/checkbox;width;height;persistent/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
             <%== this.data.attr("html") %>
@@ -517,7 +517,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src;alt;text;contains_view;title;modal;width;height;persistent;invert_icon/checkbox">
+<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src;alt;text;contains_view;title;modal/checkbox;width;height;persistent/checkbox;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -537,7 +537,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplContainerButtonDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Button - view in jqui Dialog" data-dashui-attrs="html_prepend;html_append;buttontext;contains_view;title;modal;width;height;persistent">
+<script type="text/ejs" id="tplContainerButtonDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Button - view in jqui Dialog" data-dashui-attrs="html_prepend;html_append;buttontext;contains_view;title;modal/checkbox;width;height;persistent">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
             <%== this.data.attr("html_prepend") %>
@@ -602,10 +602,11 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Input Datetime" data-dashui-attrs="hm_id;size">
+<script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Input Datetime" data-dashui-attrs="hm_id;size;timeOnly/checkbox;hideSeconds/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
+        <div class="editmode-helper"></div>
         <div class="dashui-widget-body">
-            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.inputDatetime(el); %> />
+            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.inputDatetime(el, {timeOnly:data.attr("timeOnly"),showSecond:!data.attr("hideSeconds")}); %> />
         </div>
     </div>
 </script>
