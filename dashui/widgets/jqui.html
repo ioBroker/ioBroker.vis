@@ -139,6 +139,40 @@
                 }
                 $this.val(val);
             },
+            inputDate: function (el, options) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                var datepickerOptions = jQuery.extend(true, {
+                    dateFormat:'yy-mm-dd',
+                    monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" ],
+                    monthNames: [ "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" ],
+                    dayNamesMin: [ "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" ],
+                    showAnim: "fadeIn",
+                    firstDay: 1,
+                    currentText: "Heute",
+                    closeText: "Schließen"
+
+                }, options);
+
+                $this.addClass("ui-widget ui-button ui-corner-all ui-state-default")
+                    .css({
+                        'font' : 'inherit',
+                        //'color' : 'inherit',
+                        'text-align' : 'left',
+                        'outline' : 'none',
+                        'cursor' : 'text'
+                    })
+                    .datepicker(datepickerOptions);
+
+                $this.change(function () {
+                    homematic.setValue(id,  jQuery(this).val());
+                });
+                var hm_id = "_" + id;
+                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    $this.val(newVal);
+                });
+                $this.val(homematic.uiState.attr(hm_id+".Value"));
+            },
             inputDatetime: function (el, options) {
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
@@ -173,12 +207,10 @@
                         }).datetimepicker(timepickerOptions).button();
                 $this.change(function () {
                    homematic.setValue(id,  jQuery(this).val());
-
                 });
                 var hm_id = "_" + id;
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.val(newVal);
-
                 });
                 $this.val(homematic.uiState.attr(hm_id+".Value"));
             },
@@ -602,6 +634,14 @@
     </div>
 </script>
 
+<script type="text/ejs" id="tplJquiInputDate" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Input Date" data-dashui-attrs="hm_id;size">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
+        <div class="editmode-helper"></div>
+        <div class="dashui-widget-body">
+            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.inputDate(el); %> />
+        </div>
+    </div>
+</script>
 <script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Input Datetime" data-dashui-attrs="hm_id;size;timeOnly/checkbox;hideSeconds/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
         <div class="editmode-helper"></div>
