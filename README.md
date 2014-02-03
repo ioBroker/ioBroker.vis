@@ -9,6 +9,18 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta53
+* (Lueghi) Übersetzungen
+* (Bluefox) Neue Widgets: RGraph / Thermometer and RGRaph / Gauge
+* (Bluefox) Do not load unused widgetSets
+* (Bluefox) Übersetzungen
+* (Hobbyquaker) Bugfix beim Anlegen und Duplizieren von Views
+* (Hobbyquaker) Bugfix initialer Status von Stateful-Widgets
+* (Hobbyquaker) Bugfix initialer Status von Widget jqui Datetime
+* (Hobbyquaker) Widget jqui Input Datetime - neue Attribute: hideSeconds, timeOnly
+* (Hobbyquaker) neues Widget: jqui Input Date
+
+
 ### 0.9beta52
 * (Bluefox) Change image path calculation
 * (Bluefox) Bugfixes
