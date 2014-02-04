@@ -1170,6 +1170,14 @@ dui = $.extend(true, dui, {
         $("#tabs").tabs();
         $("#widget_helper").hide();
 
+        $("#language [value='"+(ccuIoLang || 'en')+"']").attr("selected", "selected");
+
+        $("#language").change(function () {
+            dui.language = $(this).val();
+            ccuIoLang = dui.language;
+            dui.translateAll (dui.language);
+        });
+
         $("input.dashui-editor").each(function () {
             $(this).button();
         });
