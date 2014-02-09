@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta53',
+    version:                '0.9beta54',
     requiredCcuIoVersion:   '1.0.8',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -131,7 +131,7 @@ var dui = {
                 dui.toLoadSetsCount--;
                 dui.showWaitScreen(true, " <span style='font-size: 10px;'>" + dui.toLoadSetsCount+ "</span>", null);
                 if (dui.toLoadSetsCount <= 0) {
-                    setTimeout (callback, 50);
+                    setTimeout(callback, 50);
                 }
             }
         });
@@ -146,6 +146,7 @@ var dui = {
             for (var id in dui.views[view].widgets) {
                 // Views are not yet converted and have no widgetSet information)
                 if (!dui.views[view].widgets[id].widgetSet) {
+                    console.log("Views "+view+" has no widgetSet information. Please edit this view.");
                     return null;
                 } else
                 if (widgetSets.indexOf (dui.views[view].widgets[id].widgetSet) == -1) {
@@ -165,7 +166,7 @@ var dui = {
         return widgetSets;
     },
     loadWidgetSets: function (callback) {
-        dui.showWaitScreen(true, "Loading Widget-Sets...", null, "+1");
+        dui.showWaitScreen(true, "Loading Widget-Sets ...", null, "+1");
         var arrSets = [];
 
         // Get list of used widget sets. if Edit mode list is null.
@@ -245,14 +246,14 @@ var dui = {
     initNext: function () {
         if (!dui.views) {
             dui.loadRemote(function () {
-                dui.showWaitScreen (false);
+                dui.showWaitScreen(false);
 
                 // Erststart.
                 dui.initViewObject();
             });
             return false;
         } else {
-            dui.showWaitScreen (false);
+            dui.showWaitScreen(false);
         }
 
         var hash = window.location.hash.substring(1);
@@ -269,7 +270,7 @@ var dui = {
                     dui.views["DemoView"] = {};
                     dui.activeView = "DemoView";
                 }
-                dui.showWaitScreen (false);
+                dui.showWaitScreen(false);
             }
 
             if (dui.activeView == "") {
@@ -751,7 +752,7 @@ var dui = {
         });
     },
     loadRemote: function (callback, callbackArg) {
-        dui.showWaitScreen(true, "Loading Views...<br/>", null, "+1");
+        dui.showWaitScreen(true, "Loading Views ...<br/>", null, "+1");
         if (typeof io != "undefined") {
             dui.socket.emit("readFile", "dashui-views.json", function (data) {
                 dui.views = data;
@@ -842,11 +843,11 @@ var dui = {
         if (!this.words) {
             this.words = {
                 "No connection to CCU.IO"    : {"en" : "No connection to CCU.IO", "de": "Keine Verbindung zu CCU.IO", "ru": "Нет соединения с CCU.IO"},
-                "Loading Widget-Sets..."    : {"en" : "Loading Widget-Sets...", "de": "Lade Widget-Sätze...", "ru": "Загрузка наборов элементов..."},
+                "Loading Widget-Sets ..."    : {"en" : "Loading Widget-Sets ...", "de": "Lade Widget-Sätze ...", "ru": "Загрузка наборов элементов..."},
                 " done.<br/>"      : {"en" : " done.<br/>",     "de": " - erledigt.<br/>",         "ru": ". Закончено.<br/>"},
-                "Loading Views...<br/>" : {"en" : "Loading Views...<br/>","de": "Lade Views...<br/>",     "ru": "Загрузка пользовательских страниц...<br/>"},
+                "Loading Views ...<br/>" : {"en" : "Loading Views ...<br/>","de": "Lade Views ...<br/>",     "ru": "Загрузка пользовательских страниц...<br/>"},
                 "Connecting to CCU.IO ...<br/>": {"en" : "Connecting to CCU.IO ...<br/>", "de": "Verbinde mit CCU.IO ...<br/>", "ru": "Соединение с CCU.IO ...<br/>"},
-                "Loading ReGa Data": {"en" : "Loading data from CCU", "de": "Lade Daten aus CCU", "ru": "Загрузка данных с CCU"}
+                "Loading ReGa Data": {"en" : "Loading data ", "de": "Lade Daten ", "ru": "Загрузка данных с CCU.IO "}
             };
         }
         if (this.words[text]) {
@@ -860,10 +861,10 @@ var dui = {
         return text;
     },
     showWaitScreen: function (isShow, appendText, newText, step) {
-        var waitScreen = document.getElementById ("waitScreen");
+        var waitScreen = document.getElementById("waitScreen");
         if (!waitScreen && isShow) {
             $('body').append ("<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>");
-            waitScreen = document.getElementById ("waitScreen");
+            waitScreen = document.getElementById("waitScreen");
         }
         if (step === 0) {
             waitScreen.step = 0;
@@ -1146,8 +1147,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                             try {
                                 homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
                             } catch (e) {
-                                console.log(e);
-                                console.log(dp);
+                                console.log(e+" - "+dp);
                             }
                         }
 

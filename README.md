@@ -9,6 +9,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta54
+* (Hobbyquaker) removed double meta viewport width
+
 ### 0.9beta53
 * (Lueghi) Übersetzungen
 * (Bluefox) Neue Widgets: RGraph / Thermometer and RGRaph / Gauge
