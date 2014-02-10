@@ -752,7 +752,7 @@ var dui = {
         });
     },
     loadRemote: function (callback, callbackArg) {
-        dui.showWaitScreen(true, "Loading Views ...<br/>", null, "+1");
+        dui.showWaitScreen(true, "Loading Views ...", null, "+1");
         if (typeof io != "undefined") {
             dui.socket.emit("readFile", "dashui-views.json", function (data) {
                 dui.views = data;
@@ -845,7 +845,7 @@ var dui = {
                 "No connection to CCU.IO"    : {"en" : "No connection to CCU.IO", "de": "Keine Verbindung zu CCU.IO", "ru": "Нет соединения с CCU.IO"},
                 "Loading Widget-Sets ..."    : {"en" : "Loading Widget-Sets ...", "de": "Lade Widget-Sätze ...", "ru": "Загрузка наборов элементов..."},
                 " done.<br/>"      : {"en" : " done.<br/>",     "de": " - erledigt.<br/>",         "ru": ". Закончено.<br/>"},
-                "Loading Views ...<br/>" : {"en" : "Loading Views ...<br/>","de": "Lade Views ...<br/>",     "ru": "Загрузка пользовательских страниц...<br/>"},
+                "Loading Views ..." : {"en" : "Loading Views ...<br/>","de": "Lade Views ...<br/>",     "ru": "Загрузка пользовательских страниц...<br/>"},
                 "Connecting to CCU.IO ...<br/>": {"en" : "Connecting to CCU.IO ...<br/>", "de": "Verbinde mit CCU.IO ...<br/>", "ru": "Соединение с CCU.IO ...<br/>"},
                 "Loading ReGa Data": {"en" : "Loading data ", "de": "Lade Daten ", "ru": "Загрузка данных с CCU.IO "}
             };
