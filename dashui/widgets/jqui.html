@@ -605,7 +605,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiInput" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Input" data-dashui-attrs="label;hm_id;digits;size">
+<script type="text/ejs" id="tplJquiInput" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input" data-dashui-attrs="label;hm_id;digits;size">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:275px;height:44px;" id="<%= this.data.attr("wid") %>">
         <div class="dashui-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%= this.data.attr('label') %></label><input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.input(el, data.digits); %> />
@@ -613,7 +613,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiBool" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon Bool" data-dashui-attrs="label;hm_id;html_true;html_false">
+<script type="text/ejs" id="tplJquiBool" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Bool" data-dashui-attrs="label;hm_id;html_true;html_false">
 
     <div class="ui-widget ui-corner-all ui-state-default dashui-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %>>
     <div class="dashui-widget-body">
@@ -634,7 +634,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiInputDate" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Input Date" data-dashui-attrs="hm_id;size">
+<script type="text/ejs" id="tplJquiInputDate" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input Date" data-dashui-attrs="hm_id;size">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
         <div class="editmode-helper"></div>
         <div class="dashui-widget-body">
@@ -642,7 +642,7 @@
         </div>
     </div>
 </script>
-<script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Input Datetime" data-dashui-attrs="hm_id;size;timeOnly/checkbox;hideSeconds/checkbox">
+<script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input Datetime" data-dashui-attrs="hm_id;size;timeOnly/checkbox;hideSeconds/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
         <div class="editmode-helper"></div>
         <div class="dashui-widget-body">
@@ -651,7 +651,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiInputSet" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Input + Set-Button" data-dashui-attrs="title;buttontext;hm_id;unit;digits;size">
+<script type="text/ejs" id="tplJquiInputSet" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input + Set-Button" data-dashui-attrs="title;buttontext;hm_id;unit;digits;size">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:300px;height:44px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('title') %></label>
@@ -662,7 +662,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiButtonState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Button State" data-dashui-attrs="html_prepend;html_append;buttontext;value;hm_id;">
+<script type="text/ejs" id="tplJquiButtonState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Button State" data-dashui-attrs="html_prepend;html_append;buttontext;value;hm_id;">
     <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
         <div class="dashui-widget-body" >
             <%== this.data.attr("html_prepend") %>
@@ -672,7 +672,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiButtonRunProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Button ProgramExecute" data-dashui-attrs="html_prepend;html_append;buttontext;hm_id">
+<script type="text/ejs" id="tplJquiButtonRunProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Button ProgramExecute" data-dashui-attrs="html_prepend;html_append;buttontext;hm_id">
     <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
         <div class="dashui-widget-body" >
             <%== this.data.attr("html_prepend") %>
@@ -682,7 +682,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiRadio" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Radiobuttons on/off" data-dashui-attrs="off_text;on_text;hm_id">
+<script type="text/ejs" id="tplJquiRadio" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons on/off" data-dashui-attrs="off_text;on_text;hm_id">
     <div style="top:0px; left:0px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="dashui-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
@@ -694,7 +694,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Radiobuttons ValueList" data-dashui-attrs="hm_id;values;texts">
+<script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons ValueList" data-dashui-attrs="hm_id;values;texts">
     <div style="top:0px; left:0px; width:250px; height:38px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="dashui-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.radio(el)},100) %> >
@@ -714,7 +714,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiSelectList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Select ValueList" data-dashui-attrs="off_text;on_text;hm_id;values;texts;width;height">
+<script type="text/ejs" id="tplJquiSelectList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Select ValueList" data-dashui-attrs="off_text;on_text;hm_id;values;texts;width;height">
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="editmode-helper"></div>
         <div class="dashui-widget-body" >
@@ -735,7 +735,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiRadioSteps" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Radiobuttons 25%" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplJquiRadioSteps" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons 25%" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
         <div class="dashui-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
@@ -749,7 +749,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiSliderVertical" data-dashui-attrs="hm_id;hm_wid;min;max;step" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Slider vertical">
+<script type="text/ejs" id="tplJquiSliderVertical" data-dashui-attrs="hm_id;hm_wid;min;max;step" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Slider vertical">
     <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minWidth":23, "maxWidth":23}' class="dashui-widget" style="width:23px; height:160px; overflow:visible !important;">
         <div class="dashui-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
             <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step),orientation:"vertical"}) %> /></div>
@@ -757,7 +757,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiSlider" data-dashui-attrs="hm_id;hm_wid;min;max;step" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Slider horizontal">
+<script type="text/ejs" id="tplJquiSlider" data-dashui-attrs="hm_id;hm_wid;min;max;step" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Slider horizontal">
     <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minHeight":23, "maxHeight":23}' class="dashui-widget" style="height:23; width:160px; overflow:visible !important;">
         <div class="dashui-widget-body <%== this.data.attr('class') %>" style="padding: 4px;">
             <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> dui.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step)}) %> /></div>
@@ -768,7 +768,7 @@
 
 
 
-<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon State" data-dashui-attrs="hm_id;value;text;src;alt;invert_icon/checkbox">
+<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon State" data-dashui-attrs="hm_id;value;text;src;alt;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -785,7 +785,7 @@
 
 
 
-<script type="text/ejs" id="tplIconProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="hm_ctrl - Icon ProgramExecute" data-dashui-attrs="hm_id;text;src;alt;invert_icon/checkbox">
+<script type="text/ejs" id="tplIconProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon ProgramExecute" data-dashui-attrs="hm_id;text;src;alt;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
