@@ -10,7 +10,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ## Changelog
 
 ### 0.9beta55
-* (Hobbyquaker) lib Update: jQuery 1.11.0
+* (Hobbyquaker) lib Update: jQuery 1.11.0 (erfordert CCU.IO >= 1.0.24)
 * (Hobbyquaker) neues Widget: basic - val - AckFlag HTML
 * (Hobbyquaker) neues Widget: basic - val - LastChange Timestamp
 * (Hobbyquaker) neues Widget: jqui - ctrl - Icon Increment
