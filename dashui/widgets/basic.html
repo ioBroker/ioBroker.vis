@@ -107,7 +107,16 @@
                 if (val === "false") { val = false; }
                 $this.click(function (e) {
                     if (dui.urlParams["edit"] !== "") {
-                        homematic.setValue( $this.attr("data-hm-id"), val);
+                        homematic.setValue($this.attr("data-hm-id"), val);
+                    }
+                });
+            },
+            increment: function (el) {
+                var $this = jQuery(el);
+                var hm_id = "_" + $this.attr("data-hm-id");
+                $this.click(function (e) {
+                    if (dui.urlParams["edit"] !== "") {
+                        homematic.setValue($this.attr("data-hm-id"), homematic.uiState[hm_id].Value + parseFloat($this.attr("data-dashui-step")));
                     }
                 });
             },

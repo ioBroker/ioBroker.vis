@@ -782,8 +782,19 @@
     </div>
 </script>
 
-
-
+<script type="text/ejs" id="tplIconInc" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Increment" data-dashui-attrs="hm_id;step;active_value;text;src;alt;invert_icon/checkbox">
+    <%
+    var styles = "";
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-dashui-step="<%= this.data.attr('step') %>" data-hm-val="<%= this.data.attr('active_value') %>" <%= (el) -> dui.binds.basic.increment(el); dui.binds.jqueryui.classes(el, null, data.active_value) %>>
+        <div class="dashui-widget-body">
+            <img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+        </div>
+    </div>
+</script>
 
 <script type="text/ejs" id="tplIconProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon ProgramExecute" data-dashui-attrs="hm_id;text;src;alt;invert_icon/checkbox">
     <%
