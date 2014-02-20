@@ -342,7 +342,7 @@ var dui = {
         window.location.href = './?edit';
     },
     renderView: function (view, noThemeChange, hidden) {
-        console.log("renderView("+view+","+noThemeChange+","+hidden+")");
+        //console.log("renderView("+view+","+noThemeChange+","+hidden+")");
 
         if (!dui.views[view]) {
             return false;
@@ -404,7 +404,7 @@ var dui = {
             }
 
         } else {
-            console.log("renderView("+view+") - view already rendered");
+            //console.log("renderView("+view+") - view already rendered");
         }
         // Views in Container verschieben
         $("#duiview_" + view).find("div[id$='container']").each(function () {
