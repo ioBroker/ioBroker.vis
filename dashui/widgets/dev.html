@@ -4,7 +4,7 @@
         <h3 style="margin-bottom:0px;">homematic.uiState = {</h3>
         <table style="white-space: nowrap;">
             <% homematic.uiState.each(function(i, obj) { %>
-            <tr><td>"<%= obj %>":</td><td colspan="2"><%= JSON.stringify({Value:homematic.uiState.attr(obj+".Value"),Timestamp:homematic.uiState.attr(obj+".Timestamp"),Certain:homematic.uiState.attr(obj+".Certain")}) %>,</td></tr>
+            <tr><td>"<%= obj %>":</td><td colspan="2"><%= JSON.stringify({Value:homematic.uiState.attr(obj+".Value"),Timestamp:homematic.uiState.attr(obj+".Timestamp"),Certain:homematic.uiState.attr(obj+".Certain"),LastChange:homematic.uiState.attr(obj+".LastChange")}) %>,</td></tr>
             <% }) %>
         </table>
         }

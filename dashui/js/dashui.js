@@ -920,15 +920,20 @@ var homematic = {
         //console.log("setValue("+id+","+val+")");
 
         // Check if this ID is a programm
-        if (homematic.regaObjects [id] &&
-            homematic.regaObjects [id]["TypeName"] !== undefined &&
-            homematic.regaObjects [id]["TypeName"] == "PROGRAM") {
+        if (homematic.regaObjects[id] &&
+            homematic.regaObjects[id]["TypeName"] !== undefined &&
+            homematic.regaObjects[id]["TypeName"] == "PROGRAM") {
             dui.socket.emit("programExecute", [id]);
         }  else {
             this.setState.attr("_" + id, {Value: val});
             var d = new Date();
             var t = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
             var o = {};
+            if (this.uiState.attr("_"+id+".Value") != val) {
+                o["_" + id + ".LastChange"] = t;
+            } else {
+                o["_" + id + ".LastChange"] = this.uiState.attr("_"+id+".LastChange");
+            }
             o["_" + id + ".Value"] = val;
             o["_" + id + ".Timestamp"] = t;
             o["_" + id + ".Certain"] = false;
@@ -1066,6 +1071,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                     o["_" + obj[0] + ".Value"]     = obj[1];
                     o["_" + obj[0] + ".Timestamp"] = obj[2];
                     o["_" + obj[0] + ".Certain"]   = obj[3];
+                    o["_" + obj[0] + ".LastChange"]   = obj[4];
                     homematic.uiState.attr(o);
 
                     // Inform other widgets, that does not support canJS
@@ -1103,7 +1109,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                 dui.socket.emit("getDatapoints", function (data) {
                     //console.log("datapoints loaded");
                     for (var dp in data) {
-                        homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
+                        homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
                     }
                     // Get CCU.IO language
                     var l = homematic.uiState.attr("_69999.Value");
@@ -1145,7 +1151,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                         dui.showWaitScreen(true, ".<br>", null, "+1");
                         for (var dp in data) {
                             try {
-                                homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], LastChange: data[dp][3]});
+                                homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
                             } catch (e) {
                                 console.log(e+" - "+dp);
                             }

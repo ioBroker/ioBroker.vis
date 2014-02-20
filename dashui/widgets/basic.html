@@ -111,12 +111,23 @@
                     }
                 });
             },
-            increment: function (el) {
+            increment: function (el, minmax, delay, interval) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
+
                 $this.click(function (e) {
                     if (dui.urlParams["edit"] !== "") {
-                        homematic.setValue($this.attr("data-hm-id"), homematic.uiState[hm_id].Value + parseFloat($this.attr("data-dashui-step")));
+                        var step = parseFloat($this.attr("data-dashui-step")),
+                            tmp = homematic.uiState[hm_id].Value + step;
+                        if (step < 0) {
+                            if (tmp >= mixmax) {
+                                homematic.setValue($this.attr("data-hm-id"), tmp);
+                            }
+                        } else {
+                            if (tmp <= minmax) {
+                                homematic.setValue($this.attr("data-hm-id"), tmp);
+                            }
+                        }
                     }
                 });
             },
@@ -499,7 +510,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueTimestamp" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Lastchange Timestamp" data-dashui-attrs="html_prepend;html_append;hm_id">
+<script type="text/ejs" id="tplValueTimestamp" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Timestamp" data-dashui-attrs="html_prepend;html_append;hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -509,6 +520,15 @@
     </div>
 </script>
 
+<script type="text/ejs" id="tplValueLastchange" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Lastchange Timestamp" data-dashui-attrs="html_prepend;html_append;hm_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <div data-hm-id="<%= this.data.attr('hm_id') %>">
+                <%== this.data.attr("html_prepend") %><%== homematic.uiState.attr("_" + this.data.hm_id + ".LastChange") %><%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+</script>
 
 <script type="text/ejs" id="tplValueStringImg" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - String img src" data-dashui-attrs="html_prepend;html_append;hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
