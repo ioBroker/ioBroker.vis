@@ -23,7 +23,7 @@
 // duiEdit - the DashUI Editor
 
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta55',
+    editVersion:        '0.9beta56',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -31,47 +31,7 @@ dui = $.extend(true, dui, {
     gridWidth:          undefined,
 
 
-    startInstance: function () {
-        if (dui.instance) {
-            $("#dashui_instance").val(dui.instance);
-            $("#create_instance").hide();
-            $("#instance").show();
 
-            //console.log("adding Instance Variables");
-
-            // TODO statt CCU-Variablen CCU.IO-Variablen und Script-Engine "Add in"
-
-            var name = "dashui_"+dui.instance;
-            dui.socket.emit("addStringVariable", name+"_cmd", "automatisch angelegt von DashUI.", "", function (cmd) {
-                dui.instanceCmd = cmd;
-                //console.log("id "+name+"_cmd="+cmd);
-                dui.socket.emit("addStringVariable", name+"_view", "automatisch angelegt von DashUI.", "", function (view) {
-                    dui.instanceView = view;
-                    //console.log("id "+name+"_view="+view);
-                    dui.socket.emit("addStringVariable", name+"_data", "automatisch angelegt von DashUI.", "", function (data) {
-                        dui.instanceData = data;
-                        //console.log("id "+name+"_data="+data);
-                        storage.set(dui.storageKeyInstance, dui.instance);
-
-                        dui.socket.emit("getIndex", function (index) {
-                            homematic.regaIndex = index;
-                            dui.socket.emit("getObjects", function (obj) {
-                                homematic.regaObjects = obj;
-                                dui.bindInstance();
-                            });
-                        });
-
-                    });
-                });
-            });
-        }
-    },
-    createInstance: function () {
-        dui.instance = (Math.random() * 4294967296).toString(16);
-        dui.instance = "0000000" + dui.instance;
-        dui.instance = dui.instance.substr(-8);
-        dui.startInstance();
-    },
     renameView: function () {
         var val = $("#new_name").val();
         if (val != "" && dui.views[val] === undefined) {
