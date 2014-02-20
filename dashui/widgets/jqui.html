@@ -20,7 +20,6 @@
                     } else {
                         val = newVal;
                     }
-                    console.log("classes bind "+newVal+" "+value);
                     if (reverse) {
                         if ((!value && val == 1) || (value && val != value)) {
                             $this.removeClass("ui-state-active");
@@ -782,7 +781,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplIconInc" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Increment" data-dashui-attrs="hm_id;step;minmax;text;src;alt;repeat_delay;repeat_interval;invert_icon/checkbox">
+<script type="text/ejs" id="tplIconInc" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Increment" data-dashui-attrs="hm_id;step;minmax;text;src;alt;repeat_delay[800];repeat_interval[800];invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {

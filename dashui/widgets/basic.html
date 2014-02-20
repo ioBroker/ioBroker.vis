@@ -1,5 +1,7 @@
 <script type="text/javascript">
+
     jQuery.extend(true, dui.binds, {
+        pressed: undefined,
         stateful: {
             view: function (el, viewArr, persistent) {
                 var $this = jQuery(el);
@@ -112,15 +114,16 @@
                 });
             },
             increment: function (el, minmax, delay, interval) {
-                var $this = jQuery(el);
-                var hm_id = "_" + $this.attr("data-hm-id");
 
-                $this.click(function (e) {
+                jQuery(el).click(function (e) {
+                    clearInterval(dui.binds.basic.pressed);
+                    var $this = $(this);
+                    var hm_id = "_" + $this.attr("data-hm-id");
                     if (dui.urlParams["edit"] !== "") {
                         var step = parseFloat($this.attr("data-dashui-step")),
-                            tmp = homematic.uiState[hm_id].Value + step;
+                            tmp = parseFloat(homematic.uiState[hm_id].Value) + step;
                         if (step < 0) {
-                            if (tmp >= mixmax) {
+                            if (tmp >= minmax) {
                                 homematic.setValue($this.attr("data-hm-id"), tmp);
                             }
                         } else {
@@ -130,6 +133,35 @@
                         }
                     }
                 });
+                if (interval) {
+                    jQuery(el).mousedown(function (e) {
+                        var $this = $(this);
+                        var hm_id = "_" + $this.attr("data-hm-id");
+                        dui.binds.basic.pressed = setInterval(function ($that) {
+                            var hm_id = "_" + $this.attr("data-hm-id");
+                            if (dui.urlParams["edit"] !== "") {
+                                var step = parseFloat($this.attr("data-dashui-step")),
+                                        tmp = parseFloat(homematic.uiState[hm_id].Value) + step;
+                                if (step < 0) {
+                                    if (tmp >= minmax) {
+                                        homematic.setValue($this.attr("data-hm-id"), tmp);
+                                    } else {
+                                        clearInterval(dui.binds.basic.pressed);
+                                    }
+                                } else {
+                                    if (tmp <= minmax) {
+                                        homematic.setValue($this.attr("data-hm-id"), tmp);
+                                    } else {
+                                        clearInterval(dui.binds.basic.pressed);
+                                    }
+                                }
+                            }
+                        }, interval, $this);
+
+                    });
+
+
+                }
             },
             program: function (el) {
                 var $this = jQuery(el);
@@ -346,6 +378,13 @@
             }
         }
     });
+
+    jQuery(document).mouseup(function () {
+        if (dui.binds.basic.pressed) {
+            clearInterval(dui.binds.basic.pressed);
+        }
+    });
+
 </script>
 
 
