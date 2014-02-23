@@ -105,9 +105,14 @@
                 var val = $this.attr("data-hm-val");
                 if (val === "true") { val = true; }
                 if (val === "false") { val = false; }
-                $this.click(function (e) {
+                $this.on('click', function (e) {
                     if (dui.urlParams["edit"] !== "") {
-                        homematic.setValue( $this.attr("data-hm-id"), val);
+                        homematic.setValue($this.attr("data-hm-id"), val);
+                    }
+                });
+	         $this.on('touchend',function (e) {
+                    if (dui.urlParams["edit"] !== "") {
+                        homematic.setValue($this.attr("data-hm-id"), val);
                     }
                 });
             },
@@ -226,11 +231,23 @@
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
                 if (dui.urlParams["edit"] !== "") {
-                    $this.click(function () {
+                    $this.on('touchend', function () {
                         var val = homematic.uiState["_"+id].Value;
-                        if (val === false || val === "false") {
+                        if (val === false ||Â val === "false") {
                             homematic.setValue(id, true);
-                        } else if (val === true || val === "true") {
+                        } else if (val === true ||Â val === "true") {
+                            homematic.setValue(id, false);
+                        } else {
+                            val = parseFloat(val);
+                            if (val >= 0.5) { val = 1; } else { val = 0; }
+                            homematic.setValue( id,  1-val);
+                        }
+                    });
+                    $this.on('click', function () {
+                        var val = homematic.uiState["_"+id].Value;
+                        if (val === false ||Â val === "false") {
+                            homematic.setValue(id, true);
+                        } else if (val === true ||Â val === "true") {
                             homematic.setValue(id, false);
                         } else {
                             val = parseFloat(val);
