@@ -226,6 +226,9 @@
             t.Set('value.label.thousand', '.');
         }
 
+        // Clear the background
+        t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
+
         t.Draw();
         var elem = document.getElementById (this.data.attr('wid'));
         elem.rgraph = t;
@@ -236,12 +239,16 @@
             
             can.width  = div.width();
             can.height = div.height ();
-            
+
+            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+
             this.rgraph.Draw();
         });
 
         elem.rgraphValueChange = function (newValue, isFromDevice) {
             this.rgraph.value = parseFloat(newValue);
+            // Clear the background
+            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
             if (this.rgraph.Get("animate")) {
                 RGraph.Effects.Thermometer.Grow(this.rgraph);
             }
@@ -475,6 +482,10 @@
             f = f * parseFloat(this.data.attr("max_value"));
             t.Set('green.end', f);
         }
+
+        // Clear the background
+        t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
+
         t.Draw();
         t.Set('animate', this.data.attr("animate") == "true" || this.data.attr("animate") == true)
         var elem = document.getElementById (this.data.attr('wid'));
@@ -485,6 +496,8 @@
 
             can.width  = div.width();
             can.height = div.height ();
+
+            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
             this.rgraph.Draw();
         });
@@ -515,6 +528,9 @@
             values[0] = values[0] * factor + offset;
 
             this.rgraph.value = values;
+            // Clear the background
+            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+
             if (this.rgraph.Get("animate")) {
                 RGraph.Effects.Gauge.Grow(this.rgraph);
             }
