@@ -322,11 +322,38 @@
                 }
             },
             editNote: function (wid, max_width, min_width, min_height, hm_id) {
-				$this = jQuery('#div_'+wid);
+                if (dui.urlParams["edit"] === "") return;
+                if (max_width != '') {
+                    max_width = parseInt (max_width);
+                }
+                else {
+                    max_width = 400;
+                }
+                if (min_width != '') {
+                    min_width = parseInt (min_width);
+                }
+                else {
+                    min_width = 40;
+                }
+
+                if (min_height != '') {
+                    min_height = parseInt (min_height);
+                }
+                else {
+                    min_height = 15;
+                }
+                if (hm_id != '') {
+                    hm_id = parseInt (hm_id);
+                }
+                else {
+                    hm_id = null;
+                }
+                $this = jQuery('#div_'+wid);
 				jQuery('body').append("<div id='dlg_"+wid+"' title='Edit note'>"+
 								  "<textarea style='width:95%;height:92%' id='text_"+wid+"'>"+$this.text()+"</textarea></div>");
 
-				var buttons = [];
+                console.log("Test");
+				var buttons = {};
 				buttons["Clear"] = function() {
 					jQuery('#text_'+$(this).attr("data-id")).val("");
 				};
@@ -344,7 +371,9 @@
 					else {
 						jQuery('#'+dlg.attr("data-id")).css({width: max_width, height: 'auto'}); 
 					}
-					homematic.setValue(hm_id, text);
+                    if (hm_id) {
+					    homematic.setValue(hm_id, text);
+                    }
 					dlg.dialog( "close" );
 					dlg.remove();
 				};
@@ -359,7 +388,7 @@
 					height: 300,
 					modal: true,
 					buttons: buttons
-				});
+                    });
 			},
 			_disable: function () {
                 $(".editmode-helper").show();
@@ -734,9 +763,9 @@
     </div>
 </script>
 <script type="text/ejs" id="tplNote" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Note" data-dashui-attrs="hm_id;max_width[300];html_prepend;html_append;test_text">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:50px;height:50px;border:1px solid #888" id="<%= this.data.attr('wid') %>" onclick="editNote('<%= this.data.attr('wid') %>', <%= this.data.attr('max_width') %>, <%= this.data.attr('min_width') %>, <%= this.data.attr('min_height') %>, <%= this.data.attr('hm_id') %>)">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:50px;height:50px;border:1px solid #888;background:yellow" id="<%= this.data.attr('wid') %>" onclick="dui.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= this.data.attr('hm_id') %>')">
 		<div data-hm-id="<%= this.data.attr('hm_id') %>" id="div_<%= this.data.attr('wid') %>">
-			<%== this.data.attr("html_prepend") %><%= homematic.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
+			<%== this.data.attr("html_prepend") %><%= homematic.uiState.attr("_" + this.data.hm_id + ".Value") == null ? "" : homematic.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
 		</div>
     </div>
 </script>
