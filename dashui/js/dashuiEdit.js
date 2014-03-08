@@ -1066,6 +1066,18 @@ dui = $.extend(true, dui, {
             $this.css({"left": x, "top": y});
         }
 		var pos = $this.position ();
+        // May be bug?
+        if (pos.left == 0 && pos.top == 0) {
+            pos.left = $this[0].style.left;
+            pos.top  = $this[0].style.top;
+            if (typeof pos.left == "string") {
+                pos.left = parseInt (pos.left.replace("px", ""));
+            }
+            if (typeof pos.top == "string") {
+                pos.top = parseInt (pos.top.replace("px", ""));
+            }
+
+        }
 		var w = $this.width ();
 		var h = $this.height ();
         $("#widget_helper").css({left: pos.left - 2, top:  pos.top - 2,  height: $this.outerHeight() + 2, width: $this.outerWidth()  + 2}).show();
