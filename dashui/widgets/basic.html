@@ -348,7 +348,7 @@
                 else {
                     hm_id = null;
                 }
-                $this = jQuery('#div_'+wid);
+				$this = jQuery('#div_'+wid);
 				jQuery('body').append("<div id='dlg_"+wid+"' title='Edit note'>"+
 								  "<textarea style='width:95%;height:92%' id='text_"+wid+"'>"+$this.text()+"</textarea></div>");
 
@@ -372,7 +372,7 @@
 						jQuery('#'+dlg.attr("data-id")).css({width: max_width, height: 'auto'}); 
 					}
                     if (hm_id) {
-					    homematic.setValue(hm_id, text);
+						homematic.setValue(hm_id, text);
                     }
 					dlg.dialog( "close" );
 					dlg.remove();
@@ -388,7 +388,7 @@
 					height: 300,
 					modal: true,
 					buttons: buttons
-                    });
+				});
 			},
 			_disable: function () {
                 $(".editmode-helper").show();
@@ -767,5 +767,10 @@
 		<div data-hm-id="<%= this.data.attr('hm_id') %>" id="div_<%= this.data.attr('wid') %>">
 			<%== this.data.attr("html_prepend") %><%= homematic.uiState.attr("_" + this.data.hm_id + ".Value") == null ? "" : homematic.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
 		</div>
+    </div>
+</script>
+<script type="text/ejs" id="tplFrame" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Border" data-dashui-attrs="title['Title'];title_font;title_color[black]/color;title_back/color;title_top[-10]/slider,-20,20,1;title_left[15]/slider,-20,30,1">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="overflow:visible;width:50px;height:50px;border:1px solid #888" id="<%= this.data.attr('wid') %>" >
+        <div style="position:absolute;top:<%= this.data.attr('title_top') %>px;left:<%= this.data.attr('title_left') %>px;color:<%== this.data.attr('title_color') %>;background:<%== this.data.attr('title_back') %>;font:<%== this.data.attr('title_font') %>"><%== this.data.attr('title') %></div>
     </div>
 </script>
