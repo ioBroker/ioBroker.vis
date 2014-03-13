@@ -138,7 +138,7 @@
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                    if (newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
+                    if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
                         }
