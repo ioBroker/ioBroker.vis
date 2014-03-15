@@ -15,6 +15,8 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Hobbyquaker) neues Widget: dev - Debug uiState[id]
 * (Hobbyquaker) neues Widget: basic - LastChange Timestamp
 * (Hobbyquaker) Bugfix: jqui slider initial state
+* (Hobbyquaker) Debug Widgets für uiState und setState getrennt
+* (Hobbyquaker) Style Korrekturen - Whitespace in Funktionsaufrufen - bitte in Zukunft an diesen Styleguide halten: https://github.com/hobbyquaker/Javascript
 * (geolin) Basic Changed state and toggle Eventhandler to support Touchevents (touchend). (Click Event did not work on Windows 8.1 Prof. Tablet with Chrome installed).
 * (Thorque) Adding a new widget: jqui Icon Toggle
 * (Bluefox) Remove double include in RGraph
@@ -24,7 +26,6 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Bluefox) New Widget: basic - Note
 * (Bluefox) Fix Basic- RedNumber if value null
 * (Bluefox) new widget basic-tplFrame
-* (Hobbyquaker) Style Korrekturen - Whitespace in Funktionsaufrufen - bitte in Zukunft an diesen Styleguide halten: https://github.com/hobbyquaker/Javascript
 
 ### 0.9beta55
 * (Hobbyquaker) lib Update: jQuery 1.11.0 (erfordert CCU.IO >= 1.0.24)
