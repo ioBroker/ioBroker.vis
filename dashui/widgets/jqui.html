@@ -279,21 +279,21 @@
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
                 var wid = $this.attr("data-hm-wid");
+                var hm_id = "_" + id;
+
 
                 var settings = $.extend({
                     min: parseFloat(options.min) || 0.00,
                     max: parseFloat(options.max) || 1.00,
                     step: parseFloat(options.step) || 0.01,
+                    value: parseFloat(homematic.uiState.attr(hm_id+".Value")),
                     slide: function (e, ui) {
                         // Slider -> Observable
                         homematic.setValue(id, ui.value); //.toFixed(6));
                     }
                 }, options);
 
-                var hm_id = "_" + id;
-
                 $this.slider(settings);
-                $this.slider("value", parseFloat(homematic.uiState.attr(hm_id+".Value")));
 
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                    // console.log("slider newVal="+JSON.stringify(newVal));
