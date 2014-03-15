@@ -9,10 +9,27 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta56
+* (Hobbyquaker) neue Widgets: special - Instance, special - preRenderView
+* (Hobbyquaker) Instanzen: CCU.IO Variablen
+* (Hobbyquaker) neues Widget: dev - Debug uiState[id]
+* (Hobbyquaker) neues Widget: basic - LastChange Timestamp
+* (Hobbyquaker) Bugfix: jqui slider initial state
+* (geolin) Basic Changed state and toggle Eventhandler to support Touchevents (touchend). (Click Event did not work on Windows 8.1 Prof. Tablet with Chrome installed).
+* (Thorque) Adding a new widget: jqui Icon Toggle
+* (Bluefox) Remove double include in RGraph
+* (Bluefox) Add switch language for DashUI (settings is not stored)
+* (Bluefox) Fix bug with the shadow of RGraph
+* (Bluefox) Fix bug with helper selection box
+* (Bluefox) New Widget: basic - Note
+* (Bluefox) Fix Basic- RedNumber if value null
+* (Bluefox) new widget basic-tplFrame
+* (Hobbyquaker) Style Korrekturen - Whitespace in Funktionsaufrufen - bitte in Zukunft an diesen Styleguide halten: https://github.com/hobbyquaker/Javascript
+
 ### 0.9beta55
 * (Hobbyquaker) lib Update: jQuery 1.11.0 (erfordert CCU.IO >= 1.0.24)
 * (Hobbyquaker) neues Widget: basic - val - AckFlag HTML
-* (Hobbyquaker) neues Widget: basic - val - LastChange Timestamp
+* (Hobbyquaker) neues Widget: basic - val - Timestamp
 * (Hobbyquaker) neues Widget: jqui - ctrl - Icon Increment
 
 ### 0.9beta54
