@@ -44,7 +44,6 @@ hqWidgets = $.extend (hqWidgets, {
                 "IP Camera"                 : {"en": "IP Camera",       "de": "IP Kamera",             "ru": "IP Камера"},
                 "Description:"              : {"en": "Description:",    "de": "Beschreibung:",         "ru": "Описание:"},
                 "Close"                     : {"en": "Hide",            "de": "Abbrechen",             "ru": "Отмена"},
-                "Slide count:"                     : {"en": "Hide",            "de": "Abbrechen",             "ru": "Отмена"},
                 "Advanced..."               : {"en": "Advanced...",     "de": "Erweitert...",          "ru": "Продвинутые..."},
                 "Pop up delay (ms):"        : {"en": "Pop up delay (ms):", "de": "Verzogerung (ms)",   "ru": "Задержка закрытия (мс):"},
                 "Open door button:"         : {"en": "Open door button:",  "de": "'Tur aufmachen' Knopf:", "ru": "Кнопка 'Открыть дверь':"},

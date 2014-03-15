@@ -1,5 +1,4 @@
 <script src="widgets/RGraph/libraries/RGraph.common.core.js" ></script>
-<script src="widgets/RGraph/libraries/RGraph.common.core.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.common.effects.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.common.dynamic.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.common.tooltips.js" ></script>
@@ -23,9 +22,9 @@
         "labels_font"        : {"en": "Labels font",    "de": "Labelfont",            "ru": "Шрифт подписей шкалы"},
         "labels_size"        : {"en": "Labels font size","de": "Labelsfontgröße",     "ru": "Размер подписей шкалы"},
         "title"              : {"en": "Title",          "de": "Titel",                "ru": "Подпись"},
-        "title_side"         : {"en": "Side title",     "de": "Sitentitel",           "ru": "Вертикальная подпись"},
-        "title_side_font"    : {"en": "Side title font","de": "Sitentitelfont",       "ru": "Шрифт вертикальной подписи"},
-        "title_side_size"    : {"en": "Side title font size","de": "Sitentitelfontgröße","ru": "Размер вертикальной подписи"},
+        "title_side"         : {"en": "Side title",     "de": "Seitentitel",           "ru": "Вертикальная подпись"},
+        "title_side_font"    : {"en": "Side title font","de": "Seitentitelfont",       "ru": "Шрифт вертикальной подписи"},
+        "title_side_size"    : {"en": "Side title font size","de": "Seitentitelfontgröße","ru": "Размер вертикальной подписи"},
         "shadow"             : {"en": "Show shadow",    "de": "Zeige Schatten",       "ru": "Показать тень"},
         "ticksize"           : {"en": "Tick length",    "de": "Zeichenlänge",         "ru": "Длина штриха"},
         "units_pre"          : {"en": "Units pre",      "de": "Einheitsprefix",       "ru": "Префикс"},
@@ -34,6 +33,7 @@
         "show_value"         : {"en": "Show value",     "de": "Zeige Wert",           "ru": "Показать значение"},
         "value_decimals"     : {"en": "Value decimals", "de": "Nachkommazeichen beim Wert","ru": "Чисел после запятой значения"},
         "labels_count"       : {"en": "Labels count",   "de": "Anzahl von Labels",    "ru": "Кол-во подписей в шкале"},
+        "animate"            : {"en": "Show animation", "de": "Zeige Animation",      "ru": "Плавное изменение"},
         // Gauge
         "hm_id_2"            : {"en": "Second object ID",    "de": "Zweite ObjektID",          "ru": "ID второго объекта"},
         "hm_id_3"            : {"en": "Third object ID",     "de": "Dritte ObjektID",          "ru": "ID третьего объекта"},
@@ -133,7 +133,7 @@
     }
 </script>
 
-<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];width/slider,1,500,1;control/checkbox;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontName;labels_size/slider,1,100;title;title_side;title_side_font/fontName;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1">
+<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];width/slider,1,500,1;control/checkbox;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontName;labels_size/slider,1,100;title;title_side;title_side_font/fontName;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
     <%
         createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), this.data.attr('hm_id'), 100, 400);
 
@@ -226,27 +226,39 @@
             t.Set('value.label.thousand', '.');
         }
 
+        // Clear the background
+        t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
+
         t.Draw();
         var elem = document.getElementById (this.data.attr('wid'));
         elem.rgraph = t;
+        t.Set('animate', this.data.attr("animate") == "true" || this.data.attr("animate") == true)
         jQuery('#'+this.data.attr('wid')).bind("resize", function () {
             var div = jQuery(this);
             var can = document.getElementById ('c' + div.attr('id'));
             
             can.width  = div.width();
             can.height = div.height ();
-            
+
+            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+
             this.rgraph.Draw();
         });
 
         elem.rgraphValueChange = function (newValue, isFromDevice) {
             this.rgraph.value = parseFloat(newValue);
-            RGraph.Effects.Thermometer.Grow(this.rgraph);
+            // Clear the background
+            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+            if (this.rgraph.Get("animate")) {
+                RGraph.Effects.Thermometer.Grow(this.rgraph);
+            }
+            else {
+                this.rgraph.Draw();
+            }
         }
-
     %>
 </script>
-<script type="text/ejs" id="tplRGgauge" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Gauge-Basic" data-dashui-attrs="hm_id/id;hm_id_2/id;hm_id_3/id;min_value[0];max_value[100];factor[1];offset_value[0];control/checkbox;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;title;title_color/color;title_font/fontName;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontName;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;labels_color[#000000]/color;labels_font/fontName;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1">
+<script type="text/ejs" id="tplRGgauge" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Gauge-Basic" data-dashui-attrs="hm_id/id;hm_id_2/id;hm_id_3/id;min_value[0];max_value[100];factor[1];value_offset[0];control/checkbox;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;title;title_color/color;title_font/fontName;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontName;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;labels_color[#000000]/color;labels_font/fontName;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1;animate/checkbox">
     <%
         createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), [this.data.attr('hm_id'), this.data.attr('hm_id_2'), this.data.attr('hm_id_3')], 200, 200);
 
@@ -270,7 +282,7 @@
         var factor = this.data.attr("factor") || 1;
         factor = parseFloat(factor);
 
-        var offset = this.data.attr("offset_value") || 0;
+        var offset = this.data.attr("value_offset") || 0;
         offset = parseFloat(offset);
 
         values[0] = values[0] * factor + offset;
@@ -470,7 +482,12 @@
             f = f * parseFloat(this.data.attr("max_value"));
             t.Set('green.end', f);
         }
+
+        // Clear the background
+        t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
+
         t.Draw();
+        t.Set('animate', this.data.attr("animate") == "true" || this.data.attr("animate") == true)
         var elem = document.getElementById (this.data.attr('wid'));
         elem.rgraph = t;
         jQuery('#'+this.data.attr('wid')).bind("resize", function () {
@@ -479,6 +496,8 @@
 
             can.width  = div.width();
             can.height = div.height ();
+
+            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
             this.rgraph.Draw();
         });
@@ -509,7 +528,15 @@
             values[0] = values[0] * factor + offset;
 
             this.rgraph.value = values;
-            RGraph.Effects.Gauge.Grow(this.rgraph);
+            // Clear the background
+            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+
+            if (this.rgraph.Get("animate")) {
+                RGraph.Effects.Gauge.Grow(this.rgraph);
+            }
+            else {
+                this.rgraph.Draw();
+            }
         }
     %>
 </script>

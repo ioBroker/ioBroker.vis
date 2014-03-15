@@ -2,8 +2,8 @@
 dui.translate("");
 // Add words for bars
 jQuery.extend(true, dui.words, {
-    "hm_id"            : {"en": "Object ID",     "de": "Objekt ID",            "ru": "ID объекта:"},
-	"hm_ids"           : {"en": "Object IDs",    "de": "Objekt IDs",           "ru": "ID объектов:"},
+    "hm_id"            : {"en": "Object ID",     "de": "Objekt ID",            "ru": "ID объекта"},
+	"hm_ids"           : {"en": "Object IDs",    "de": "Objekt IDs",           "ru": "ID объектов"},
 	"hm_id0"           : {"en": "Swing ID 1",    "de": "Fensterblatt 1",       "ru": "Первая створка"},
 	"hm_id1"           : {"en": "Swing ID 2",    "de": "Fensterblatt 2",       "ru": "Вторая створка"},
 	"hm_id2"           : {"en": "Swing ID 3",    "de": "Fensterblatt 3",       "ru": "Третья створка"},

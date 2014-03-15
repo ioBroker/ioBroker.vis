@@ -359,12 +359,19 @@
                 }
     
                 co.fillRect(this.gutterLeft + 12,this.gutterTop + bulbRadius,ca_width - this.gutterLeft - this.gutterRight - 24, ca.height - this.gutterTop - this.gutterBottom - bulbRadius - bulbRadius);
-                
-                // Bottom bulb
-                co.arc(this.bulbBottomCenterX, this.bulbBottomCenterY, bulbRadius, 0, TWOPI, 0);
-                
-                // Top bulb (which is actually a semi-circle)
-                co.arc(this.bulbTopCenterX,this.bulbTopCenterY,this.bulbTopRadius,0,TWOPI,0);
+
+                try {
+                    // Bottom bulb
+                    co.arc(this.bulbBottomCenterX, this.bulbBottomCenterY, bulbRadius, 0, TWOPI, 0);
+
+                    // Top bulb (which is actually a semi-circle)
+                    co.arc(this.bulbTopCenterX,this.bulbTopCenterY,this.bulbTopRadius,0,TWOPI,0);
+                }
+                catch (e)
+                {
+
+                }
+
             co.fill();
             
             // Save the radius of the top semi circle
