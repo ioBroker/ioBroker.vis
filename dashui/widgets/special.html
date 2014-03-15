@@ -14,7 +14,12 @@
                     }
                 }
             },
-            instance: dui.initInstance
+            instance: function(el) {
+                if (dui.urlParams["edit"] === "") {
+                    jQuery(el).parent().parent().show();
+                }
+                dui.initInstance();
+            }
         }
     });
 
@@ -29,11 +34,11 @@
 </script>
 
 
-<script type="text/ejs" id="tplInitInstance" class="dashui-tpl" data-dashui-set="special" data-dashui-name="special - create Instance" data-dashui-attrs="prerender">
+<script type="text/ejs" id="tplInitInstance" class="dashui-tpl" data-dashui-set="special" data-dashui-name="special - create Instance" data-dashui-attrs="">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="display:none; width: 320px; height: 20px; background-color: #333; color: #eee; border: 2px dashed red; opacity:0.8;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <b>Instance</b>
-            <div <%= (el) -> dui.binds.special.instance() %>></div>
+            <div <%= (el) -> dui.binds.special.instance(el) %>></div>
         </div>
     </div>
 </script>
