@@ -136,6 +136,8 @@ var dui = {
         }
         console.log("bind instance id="+dui.instanceCmd);
 
+        homematic.uiState.attr("_"+ dui.instanceCmd, {Value:''});
+
         homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
             var cmd = newVal;
             console.log("external command cmd=" + cmd);
@@ -248,6 +250,8 @@ var dui = {
 
                 dui.bindInstance();
 
+            } else {
+                console.log("instance var not found");
             }
         } else {
             dui.createInstance();
