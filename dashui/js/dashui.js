@@ -47,6 +47,7 @@ var dui = {
     instanceView:           undefined,
     instanceData:           undefined,
     instanceCmd:            undefined,
+    instanceReady:          false,
     onChangeCallbacks:      [],
     viewsActiveFilter:      {},
     toLoadSetsCount:        0, // Count of widget sets that should be loaded
@@ -130,6 +131,12 @@ var dui = {
         }
     },
     bindInstance: function () {
+
+        if (dui.instanceReady) {
+            console.log("instance already binded");
+            return;
+        }
+
         if (!dui.instanceCmd) {
             console.log("can't bind instance :-(");
             return false;
@@ -178,6 +185,8 @@ var dui = {
             }
 
         });
+        dui.instanceReady = true;
+
     },
     removeInstance: function () {
         storage.set(dui.storageKeyInstance, null);
@@ -186,6 +195,7 @@ var dui = {
         dui.socket.emit("delObject", dui.instanceView);
         $("#instance").hide();
         $("#create_instance").show();
+        dui.instanceReady = false;
     },
     createInstance: function () {
         dui.instance = (Math.random() * 4294967296).toString(16);
