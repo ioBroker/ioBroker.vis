@@ -285,9 +285,9 @@
                 if (dui.urlParams["edit"] !== "") {
                     $this.on('touchend', function () {
                         var val = homematic.uiState["_"+id].Value;
-                        if (val === false ||Â val === "false") {
+                        if (val === false || val === "false") {
                             homematic.setValue(id, true);
-                        } else if (val === true ||Â val === "true") {
+                        } else if (val === true || val === "true") {
                             homematic.setValue(id, false);
                         } else {
                             val = parseFloat(val);
@@ -297,9 +297,9 @@
                     });
                     $this.on('click', function () {
                         var val = homematic.uiState["_"+id].Value;
-                        if (val === false ||Â val === "false") {
+                        if (val === false || val === "false") {
                             homematic.setValue(id, true);
-                        } else if (val === true ||Â val === "true") {
+                        } else if (val === true || val === "true") {
                             homematic.setValue(id, false);
                         } else {
                             val = parseFloat(val);
