@@ -179,8 +179,11 @@ var dui = {
     },
     removeInstance: function () {
         storage.set(dui.storageKeyInstance, null);
-        // TODO REMOVE INSTANCE Variables from ccu.io
-
+        dui.socket.emit("delObject", dui.instanceCmd);
+        dui.socket.emit("delObject", dui.instanceData);
+        dui.socket.emit("delObject", dui.instanceView);
+        $("#instance").hide();
+        $("#create_instance").show();
     },
     createInstance: function () {
         dui.instance = (Math.random() * 4294967296).toString(16);
