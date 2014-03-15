@@ -766,7 +766,7 @@ dui = $.extend(true, dui, {
                         }, 'WORKING');
                     });*/
                 } else 
-				if (wid_attr.indexOf ("src") == wid_attr.length - 3 || type == "image") {
+				if (wid_attr.indexOf ("src") == 0 || type == "image") {
                     dui.editImage (widget, wid_attr);
                 } else
 				if (wid_attr === "hqoptions") {

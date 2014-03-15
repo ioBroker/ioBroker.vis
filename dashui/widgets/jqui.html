@@ -447,7 +447,15 @@
                     //e.preventDefault();
                     //return false;
                 //});
+            },
 
+            itoggle: function(el, i1, i2){
+                console.log(el.src+" "+i1+" "+i2);
+                if (el.src.indexOf(i1, el.src.length - i1.length) !== -1){
+                    el.src = i2;
+                }else{
+                    el.src = i1;
+                }
             }
         }
     });
@@ -629,6 +637,35 @@
             <% } %>
 
         </div>
+    </div>
+    </div>
+</script>
+
+
+<script>
+
+</script>
+<script type="text/ejs" id="tplJquiToogle" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Toggle" data-dashui-attrs="label;hm_id;src_true;alt_true;src_false;alt_false;invert_icon/checkbox">
+
+    <div class="ui-widget ui-corner-all ui-state-default dashui-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %>>
+    <div class="dashui-widget-body">
+        <%
+        var styles = "";
+        if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+            styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        }
+        %>
+        <%
+        var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
+        var val = parseFloat(str);
+        var state;
+        %>
+
+        <%  if (val === 0 || str === false || str === "false") { %>
+        <img src="<%== this.data.attr('src_false') %>" onclick="dui.binds.jqueryui.itoggle(this, '<%== this.data.attr('src_true') %>','<%== this.data.attr('src_false') %>');" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt_false') %>" />
+        <% } else { %>
+        <img src="<%== this.data.attr('src_true') %>" onclick="dui.binds.jqueryui.itoggle(this, '<%== this.data.attr('src_true') %>','<%== this.data.attr('src_false') %>');" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt_true') %>" />
+        <% } %>
     </div>
     </div>
 </script>
