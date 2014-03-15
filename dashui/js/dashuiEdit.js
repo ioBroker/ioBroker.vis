@@ -702,8 +702,8 @@ dui = $.extend(true, dui, {
         var widget_attrs  = $("#" + widget.tpl).attr("data-dashui-attrs").split(";");
         var widget_filter = $("#" + widget.tpl).attr("data-dashui-filter");
 
-        $('#inspect_comment_tr').show ();
-        $('#inspect_class_tr').show ();
+        $('#inspect_comment_tr').show();
+        $('#inspect_class_tr').show();
         var widget_div = document.getElementById (dui.activeWidget);
         var editParent = $("#widget_attrs").css({"width": "100%"});
        
@@ -725,7 +725,7 @@ dui = $.extend(true, dui, {
 				var wid_attrs = widget_attrs[attr].split('/');
 				var wid_attr  = wid_attrs[0];
                 // Try to extract default value
-                var uu = wid_attr.indexOf ("[");
+                var uu = wid_attr.indexOf("[");
                 if (uu != -1) {
                     var defaultValue = wid_attr.substring (uu + 1);
                     defaultValue = defaultValue.substring (0, defaultValue.length -1);
@@ -736,8 +736,8 @@ dui = $.extend(true, dui, {
                     }
                 }
                 var type = (wid_attrs.length > 1) ? wid_attrs[1] : null;
-                if (type && type.indexOf (",") != -1) {
-                    if (type.substring (0, "slider".length) == "slider") {
+                if (type && type.indexOf(",") != -1) {
+                    if (type.substring(0, "slider".length) == "slider") {
                         type = "slider";
                     }
                     else {
@@ -749,10 +749,10 @@ dui = $.extend(true, dui, {
                     widget_div.dashuiCustomEdit[wid_attr](dui.activeWidget, editParent);
                 } else 
 				if (wid_attr === "hm_id" || type == "id") {
-                    dui.editObjectID (widget, wid_attr, widget_filter);
+                    dui.editObjectID(widget, wid_attr, widget_filter);
                 } else 
 				if (wid_attr === "hm_wid") {
-                    dui.editObjectID (widget, wid_attr, 'WORKING');
+                    dui.editObjectID(widget, wid_attr, 'WORKING');
                     /*// Eidt for Homematic Working ID
                     $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="5"><input type="button" id="inspect_'+wid_attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+wid_attr+'_desc"></div></td></tr>');
                     document.getElementById ("inspect_"+wid_attr+"_btn").jControl = wid_attr;
@@ -766,16 +766,16 @@ dui = $.extend(true, dui, {
                         }, 'WORKING');
                     });*/
                 } else 
-				if (wid_attr.indexOf ("src") == 0 || type == "image") {
-                    dui.editImage (widget, wid_attr);
+				if (wid_attr.indexOf("src") == 0 || type == "image") {
+                    dui.editImage(widget, wid_attr);
                 } else
 				if (wid_attr === "hqoptions") {
                     // hqWidgets options
-                    $('#inspect_comment_tr').hide ();
-                    $('#inspect_class_tr').hide ();
+                    $('#inspect_comment_tr').hide();
+                    $('#inspect_class_tr').hide();
                     // Common settings
                     if (dui.binds.hqWidgetsExt) {
-                        hqWidgets.hqEditButton ({parent: editParent, imgSelect: dui.imageSelect, clrSelect: colorSelect, styleSelect: dui.styleSelect}, hqWidgets.Get (dui.activeWidget), function (editEl) {
+                        hqWidgets.hqEditButton({parent: editParent, imgSelect: dui.imageSelect, clrSelect: colorSelect, styleSelect: dui.styleSelect}, hqWidgets.Get (dui.activeWidget), function (editEl) {
                             // Special HM settings
                             dui.binds.hqWidgetsExt.hqEditButton (hqWidgets.Get (dui.activeWidget), editParent, $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);                    
                         });
@@ -784,9 +784,9 @@ dui = $.extend(true, dui, {
 				if (wid_attr === "weoid") {
                     // Weather ID
                     $("#widget_attrs").append('<tr class="dashui-add-option"><td id="option_'+wid_attr+'" ></td></tr>');
-                    $('#inspect_comment_tr').hide ();
-                    $('#inspect_class_tr').hide ();
-                    $('#option_'+wid_attr).jweatherCity ({lang: dui.language, currentValue: widget.data[wid_attr], onselect: function (wid, text, obj) {
+                    $('#inspect_comment_tr').hide();
+                    $('#inspect_class_tr').hide();
+                    $('#option_'+wid_attr).jweatherCity({lang: dui.language, currentValue: widget.data[wid_attr], onselect: function (wid, text, obj) {
                             dui.widgets[dui.activeWidget].data.attr('weoid', text);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
                             dui.saveRemote();
@@ -795,41 +795,41 @@ dui = $.extend(true, dui, {
                     });
                 } else 
 				if (wid_attr === "color" || type == "color") {
-                    dui.editColor (widget, wid_attr);
+                    dui.editColor(widget, wid_attr);
                 } else
                 if (type === "checkbox") {
                     isValueSet = true;
-                    dui.editCheckbox (widget, wid_attr);
+                    dui.editCheckbox(widget, wid_attr);
                 } else
                 if (type === "fontName") {
                     isValueSet = true;
-                    dui.editFontName (widget, wid_attr);
+                    dui.editFontName(widget, wid_attr);
                 } else
                 if (type === "slider") {
                     isValueSet = true;
                     var values = wid_attrs[1].split(',');
-                    dui.editSlider (widget, wid_attr, values[1], values[2], values[3]);
+                    dui.editSlider(widget, wid_attr, values[1], values[2], values[3]);
                     continue;
                 } else
                 if (type === "select") {
                     isValueSet = true;
                     var values = wid_attrs[1].split(',');
-                    dui.editSelect (widget, wid_attr, values);
+                    dui.editSelect(widget, wid_attr, values);
                 } else
-                if (wid_attr.indexOf ("nav_view") != -1|| type == "views") {
-				    dui.editViewName (widget, wid_attr);
+                if (wid_attr.indexOf("nav_view") != -1|| type == "views") {
+				    dui.editViewName(widget, wid_attr);
 					continue;
 				} else 
-				if (wid_attr.indexOf ("_effect") != -1 || type == "effect") {
-                    dui.editEffects (widget, wid_attr);
+				if (wid_attr.indexOf("_effect") != -1 || type == "effect") {
+                    dui.editEffects(widget, wid_attr);
 					continue;
 				} else 
 				if (wid_attr.slice(0,4) !== "html") {
                     if (type !== null) {
 						// If description is JSON object
-						if (type.indexOf ('{') != -1) {
+						if (type.indexOf('{') != -1) {
 							try {
-								type = jQuery.parseJSON( type );
+								type = jQuery.parseJSON(type);
 							}
 							catch (e) {
 								type = null;
