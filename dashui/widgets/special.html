@@ -19,6 +19,17 @@
                     jQuery(el).parent().parent().show();
                 }
                 dui.initInstance();
+            },
+            unfocus: function(el) {
+                if (dui.urlParams["edit"] === "") {
+                    jQuery(el).parent().parent().show();
+                }
+                jQuery("*").mouseup(function() {
+                    jQuery(this).blur();
+                });
+                jQuery("*").on('touchend', function() {
+                    jQuery(this).blur();
+                });
             }
         }
     });
@@ -39,6 +50,16 @@
         <div class="dashui-widget-body">
             <b>Instance</b>
             <div <%= (el) -> dui.binds.special.instance(el) %>></div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplUnFocus" class="dashui-tpl" data-dashui-set="special" data-dashui-name="special - remove Focus" data-dashui-attrs="">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="display:none; width: 320px; height: 20px; background-color: #333; color: #eee; border: 2px dashed red; opacity:0.8;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <b>Remove Focus</b>
+            <div <%= (el) -> dui.binds.special.unfocus(el) %>></div>
         </div>
     </div>
 </script>
