@@ -13,6 +13,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Hobbyquaker) neues Widget: special - remove Focus
 * (Hobbyquaker) Bugfix Widget jqui - ctrl - Icon Bool
 * (Hobbyquaker) Widget jqui - ctrl Icon Increment: Delay implementiert
+* (Hobbyquaker) Markieren unterbunden
 
 ### 0.9beta56
 * (Hobbyquaker) neue Widgets: special - Instance, special - preRenderView
