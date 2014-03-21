@@ -220,7 +220,8 @@
                     }
                 });
                 if (dui.urlParams["edit"] !== "") {
-                    if (homematic.uiState.attr(hm_id+".Value") == 0) {
+                    var newVal = homematic.uiState.attr(hm_id+".Value");
+                    if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         $this.hide();
                     }
                 }
