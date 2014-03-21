@@ -280,33 +280,23 @@
                 });
             },
             toggle: function (el) {
+                function toggle() {
+                    var val = homematic.uiState["_"+id].Value;
+                    if (val === false || val === "false") {
+                        homematic.setValue(id, true);
+                    } else if (val === true || val === "true") {
+                        homematic.setValue(id, false);
+                    } else {
+                        val = parseFloat(val);
+                        if (val >= 0.5) { val = 1; } else { val = 0; }
+                        homematic.setValue( id,  1-val);
+                    }
+                }
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
                 if (dui.urlParams["edit"] !== "") {
-                    $this.on('touchend', function () {
-                        var val = homematic.uiState["_"+id].Value;
-                        if (val === false || val === "false") {
-                            homematic.setValue(id, true);
-                        } else if (val === true || val === "true") {
-                            homematic.setValue(id, false);
-                        } else {
-                            val = parseFloat(val);
-                            if (val >= 0.5) { val = 1; } else { val = 0; }
-                            homematic.setValue( id,  1-val);
-                        }
-                    });
-                    $this.on('click', function () {
-                        var val = homematic.uiState["_"+id].Value;
-                        if (val === false || val === "false") {
-                            homematic.setValue(id, true);
-                        } else if (val === true || val === "true") {
-                            homematic.setValue(id, false);
-                        } else {
-                            val = parseFloat(val);
-                            if (val >= 0.5) { val = 1; } else { val = 0; }
-                            homematic.setValue( id,  1-val);
-                        }
-                    });
+                    $this.on('touchend', toggle);
+                    $this.on('click', toggle);
                 }
             },
             iframeRefresh: function (el, src, refreshInterval) {
