@@ -133,15 +133,15 @@ var dui = {
     bindInstance: function () {
 
         if (dui.instanceReady) {
-            console.log("instance already binded");
+            //console.log("instance already binded");
             return;
         }
 
         if (!dui.instanceCmd) {
-            console.log("can't bind instance :-(");
+            //console.log("can't bind instance :-(");
             return false;
         }
-        console.log("bind instance id="+dui.instanceCmd);
+        //console.log("bind instance id="+dui.instanceCmd);
 
         homematic.uiState.attr("_"+ dui.instanceCmd, {Value:''});
         homematic.uiState.attr("_"+ dui.instanceData, {Value:''});
@@ -149,11 +149,11 @@ var dui = {
 
         homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
             var cmd = newVal;
-            console.log("external command cmd=" + cmd);
+            //console.log("external command cmd=" + cmd);
 
             if (cmd !== "") {
                 var data = homematic.uiState.attr("_" + dui.instanceData + ".Value");
-                console.log("external command cmd=" + cmd + " data=" + data);
+                //console.log("external command cmd=" + cmd + " data=" + data);
 
                 // external Commands
                 switch (cmd) {
@@ -239,7 +239,7 @@ var dui = {
     },
     initInstance: function () {
         dui.instance = storage.get(dui.storageKeyInstance);
-        console.log("initInstance "+dui.instance);
+        //console.log("initInstance "+dui.instance);
         if (dui.instance) {
 
             $("#dashui_instance").val(dui.instance);
@@ -249,7 +249,7 @@ var dui = {
             var cmdVarName =  "dashui_" + dui.instance + "_cmd";
             var viewVarName = "dashui_" + dui.instance + "_view";
             var dataVarName = "dashui_" + dui.instance + "_data";
-            console.log(cmdVarName);
+            //console.log(cmdVarName);
             var cmdId = homematic.regaIndex.Name[cmdVarName];
             if (cmdId) {
 
@@ -261,7 +261,7 @@ var dui = {
                 dui.instanceView = homematic.regaIndex.Name[viewVarName][0];
                 dui.instanceData = homematic.regaIndex.Name[dataVarName][0];
 
-                console.log("instance ids: "+dui.instanceCmd+" "+dui.instanceView+" "+dui.instanceData);
+                //console.log("instance ids: "+dui.instanceCmd+" "+dui.instanceView+" "+dui.instanceData);
 
                 dui.bindInstance();
 
