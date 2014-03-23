@@ -24,11 +24,26 @@
                 if (dui.urlParams["edit"] === "") {
                     jQuery(el).parent().parent().show();
                 }
+
                 jQuery("*").mouseup(function() {
-                    jQuery(this).blur();
+                    var $this = jQuery(this);
+                    if ($this.is("textarea")) {
+                        return;
+                    }
+                    if ($this.is("input") && ($this.attr("type") == "text" || $this.attr("type") == "number" || $this.attr("type") == "password")) {
+                        return;
+                    }
+                    $this.blur();
                 });
                 jQuery("*").on('touchend', function() {
-                    jQuery(this).blur();
+                    var $this = jQuery(this);
+                    if ($this.is("textarea")) {
+                        return;
+                    }
+                    if ($this.is("input") && ($this.attr("type") == "text" || $this.attr("type") == "number" || $this.attr("type") == "password")) {
+                        return;
+                    }
+                    $this.blur();
                 });
             }
         }
