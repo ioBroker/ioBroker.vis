@@ -11,8 +11,11 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.9beta58
 * (Hobbyquaker) Fehler abgefangen falls parsen der dashui-views.json fehlschlägt (erfodert CCU.IO 1.0.28)
-* (Hobbyquaker) Fix Zeitstempel formatierung
+* (Hobbyquaker) Bugfix Zeitstempel Formatierung
 * (Hobbyquaker) neues Widget: dev - Debug uiState[id] History
+* (Hobbyquaker) Bugfix Widget special - remove Focus - Fokus nicht entfernen auf Eingabefeldern
+* (Hobbyquaker) Attribut widgetSet wird in addWidget-Methode gesetzt
+* (Hobbyquaker) Code cleanup
 
 ### 0.9beta57
 * (Hobbyquaker) neues Widget: special - remove Focus
