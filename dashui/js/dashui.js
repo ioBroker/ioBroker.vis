@@ -23,7 +23,7 @@
 var dui = {
 
     version:                '0.9beta58',
-    requiredCcuIoVersion:   '1.0.26',
+    requiredCcuIoVersion:   '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
     storageKeyInstance:     'dashuiInstance',

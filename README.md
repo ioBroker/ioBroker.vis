@@ -9,6 +9,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta58
+* (Hobbyquaker) Fehler abgefangen falls parsen der dashui-views.json fehlschlägt (erfodert CCU.IO 1.0.28)
+
 ### 0.9beta57
 * (Hobbyquaker) neues Widget: special - remove Focus
 * (Hobbyquaker) Bugfix Widget jqui - ctrl - Icon Bool
