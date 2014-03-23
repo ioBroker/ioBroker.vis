@@ -990,7 +990,7 @@ var homematic = {
         }  else {
             this.setState.attr("_" + id, {Value: val});
             var d = new Date();
-            var t = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+            var t = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
             var o = {};
             if (this.uiState.attr("_"+id+".Value") != val) {
                 o["_" + id + ".LastChange"] = t;
