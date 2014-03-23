@@ -233,11 +233,12 @@ dui = $.extend(true, dui, {
 		if(dui.views[view].widgets[widgetId].data !== undefined) {
 			data = $.extend(data, dui.views[view].widgets[widgetId].data, true);
 		}
-		
+
         dui.views[view].widgets[widgetId] = {
-            tpl:   tpl,
-            data:  data,
-            style: style
+            tpl:        tpl,
+            data:       data,
+            style:      style,
+            widgetSet:  $("#" + tpl).attr("data-dashui-set")
         };
 
         if (style) {
@@ -249,7 +250,8 @@ dui = $.extend(true, dui, {
             dui.binds.basic._disable();
 			dui.binds.jqueryui._disable();
 		}
-		
+
+
         $("#"+widgetId).click(function (e) {
             console.log("click "+widgetId+" isStealCss="+dui.isStealCss);
             if (!dui.isStealCss) {
@@ -1199,26 +1201,22 @@ dui = $.extend(true, dui, {
 
         // Button Click Handler
 
-		$("#widget_doc").button ({icons: {primary: "ui-icon ui-icon-script"}}).click(function () {
+		$("#widget_doc").button({icons: {primary: "ui-icon ui-icon-script"}}).click(function () {
             var tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;
             var widgetSet = $("#"+tpl).attr("data-dashui-set");
             var docUrl = "widgets/"+widgetSet+"/doc.html#"+tpl;
             window.open(docUrl,"WidgetDoc", "height=640,width=500,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no,location=no");
         });
 
-        $("#convert_ids").click(dui.convertIds);
-        $("#clear_cache").click(function() {
-            // TODO - Entfällt $.homematic("clearCache");
-        });
-        $("#refresh").click(function() {
-            // TODO Entfällt $.homematic("refreshVisible");
-        });
-		$("#del_widget").button ({icons: {primary: "ui-icon-trash"}}).click(dui.delWidget);
 
-		$("#dup_widget").button ({icons: {primary: "ui-icon-copy"}}).click(dui.dupWidget);
+		$("#del_widget").button({icons: {primary: "ui-icon-trash"}}).click(dui.delWidget);
 
-		$("#add_widget").button ({icons: {primary: "ui-icon-plusthick"}}).click(function () {
+		$("#dup_widget").button({icons: {primary: "ui-icon-copy"}}).click(dui.dupWidget);
+
+		$("#add_widget").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
             var tpl = $("#select_tpl option:selected").val();
+
+            // Widget attributs default values
             var data = {
                 hm_id: 65535,
                 digits: "",
@@ -1227,27 +1225,29 @@ dui = $.extend(true, dui, {
                 max: 1.00,
                 step: 0.01
             };
+
             dui.addWidget(tpl, data);
+
             $("#select_active_widget").append("<option value='"+dui.activeWidget+"'>"+dui.activeWidget+" ("+$("#"+dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
 
             setTimeout(function () { dui.inspectWidget(dui.activeWidget) }, 50);
 
         });
-		$("#add_view").button ({icons: {primary: "ui-icon-plusthick"}}).click(function () {
+		$("#add_view").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
             dui.addView(dui.checkNewView());
         });
-		$("#dup_view").button ({icons: {primary: "ui-icon-copy"}}).click(function () {
+		$("#dup_view").button({icons: {primary: "ui-icon-copy"}}).click(function () {
             dui.dupView(dui.checkNewView());
         });
-		$("#del_view").button ({icons: {primary: "ui-icon-trash"}}).click(function () {
+		$("#del_view").button({icons: {primary: "ui-icon-trash"}}).click(function () {
             dui.delView(dui.activeView);
         });
-		$("#rename_view").button ({icons: {primary: "ui-icon-pencil"}}).click(function () {
+		$("#rename_view").button({icons: {primary: "ui-icon-pencil"}}).click(function () {
             dui.renameView(dui.activeView, $("#new_name").val());
         });
 
-		$("#create_instance").button ({icons: {primary: "ui-icon-plus"}}).click(dui.createInstance);
-		$("#remove_instance").button ({icons: {primary: "ui-icon-trash"}}).click(dui.removeInstance);
+		$("#create_instance").button({icons: {primary: "ui-icon-plus"}}).click(dui.createInstance);
+		$("#remove_instance").button({icons: {primary: "ui-icon-trash"}}).click(dui.removeInstance);
 
         // Inspector Change Handler
         $(".dashui-inspect-widget").change(function () {

@@ -73,7 +73,7 @@ var dui = {
             }
         });
     },
-    // Return as array used widgetSets or null if no imformation about it
+    // Return as array used widgetSets or null if no information about it
     getUsedWidgetSets: function () {
         var widgetSets = [];
 
@@ -83,17 +83,15 @@ var dui = {
             for (var id in dui.views[view].widgets) {
                 // Views are not yet converted and have no widgetSet information)
                 if (!dui.views[view].widgets[id].widgetSet) {
-                    console.log("Views "+view+" has no widgetSet information. Please edit this view.");
                     return null;
-                } else
-                if (widgetSets.indexOf (dui.views[view].widgets[id].widgetSet) == -1) {
+                } else if (widgetSets.indexOf(dui.views[view].widgets[id].widgetSet) == -1) {
                     var wset = dui.views[view].widgets[id].widgetSet;
                     widgetSets.push(wset);
 
                     if (duiConfig.dependencies && duiConfig.dependencies[wset]) {
                         for (var u = 0, ulen = duiConfig.dependencies[wset].length; u < ulen; u++) {
-                            if (widgetSets.indexOf (duiConfig.dependencies[wset][u]) == -1) {
-                                widgetSets.push (duiConfig.dependencies[wset][u]);
+                            if (widgetSets.indexOf(duiConfig.dependencies[wset][u]) == -1) {
+                                widgetSets.push(duiConfig.dependencies[wset][u]);
                             }
                         }
                     }
@@ -291,7 +289,6 @@ var dui = {
             dui.binds.hqWidgetsExt.hqInit();
         }
 
-        //dui.loadLocal();
         dui.loadRemote(dui.loadWidgetSets, dui.initNext);
     },
     initNext: function () {
