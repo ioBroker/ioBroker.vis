@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta57',
+    version:                '0.9beta58',
     requiredCcuIoVersion:   '1.0.26',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -813,12 +813,16 @@ var dui = {
     loadRemote: function (callback, callbackArg) {
         dui.showWaitScreen(true, "Loading Views ...", null, "+1");
         if (typeof io != "undefined") {
-            dui.socket.emit("readFile", "dashui-views.json", function (data) {
-                dui.views = data;
-                if (!dui.views) {
-                    alert("No Views found on CCU.IO");
+            dui.socket.emit("readFile", "dashui-views.json", function (data, err) {
+                if (err) {
+                    alert("Error parse dashui-views.json");
+                } else {
+                    dui.views = data;
+                    if (!dui.views) {
+                        alert("No Views found on CCU.IO");
+                    }
+                    callback(callbackArg);
                 }
-                callback(callbackArg);
             });
         } else {
             // Load from ../datastore/dashui-views.json the demo views
