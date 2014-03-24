@@ -256,8 +256,12 @@ var dui = {
                     .append('<div class="dashui-dummy" data-hm-id="' + dui.instanceData + '"></div>');
 
                 dui.instanceCmd = cmdId[0];
-                dui.instanceView = homematic.regaIndex.Name[viewVarName][0];
-                dui.instanceData = homematic.regaIndex.Name[dataVarName][0];
+                if (homematic.regaIndex.Name[viewVarName]) {
+                    dui.instanceView = homematic.regaIndex.Name[viewVarName][0];
+                }
+                if (homematic.regaIndex.Name[dataVarName]) {
+                    dui.instanceData = homematic.regaIndex.Name[dataVarName][0];
+                }
 
                 //console.log("instance ids: "+dui.instanceCmd+" "+dui.instanceView+" "+dui.instanceData);
 
