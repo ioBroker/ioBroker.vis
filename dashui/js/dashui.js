@@ -715,8 +715,7 @@ var dui = {
             $("#duiview_" + cview).show();
         });
 
-        if (dui.instance) {
-
+        if (dui.instanceView) {
             homematic.setValue(dui.instanceView, dui.activeView);
         }
 
