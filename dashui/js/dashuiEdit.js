@@ -253,7 +253,7 @@ dui = $.extend(true, dui, {
 
 
         $("#"+widgetId).click(function (e) {
-            console.log("click "+widgetId+" isStealCss="+dui.isStealCss);
+            //console.log("click "+widgetId+" isStealCss="+dui.isStealCss);
             if (!dui.isStealCss) {
 
                 e.preventDefault();
