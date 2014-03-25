@@ -372,9 +372,7 @@ dui = $.extend(true, dui, {
 				// rename this widget from "wid_view" to "wid"
 				var wids = id.split('_', 2);
 				dui.renameWidget(id, wids[0]);
-			}
-			else
-			if (views.length > 1 && (id.indexOf('_') == -1)) {
+			} else if (views.length > 1 && (id.indexOf('_') == -1)) {
 				dui.renameWidget(id, id+'_'+view);
 			}
 		}
@@ -393,7 +391,8 @@ dui = $.extend(true, dui, {
                 if (document.getElementById('inspect_hm_wid')) {
                     if (homematic.regaObjects[value]["Type"] !== undefined && homematic.regaObjects[value]["Parent"] !== undefined &&
                         (homematic.regaObjects[value]["Type"] == "STATE" ||
-                            homematic.regaObjects[value]["Type"] == "LEVEL")) {
+                        homematic.regaObjects[value]["Type"] == "LEVEL")) {
+
                         var parent = homematic.regaObjects[value]["Parent"];
                         if (homematic.regaObjects[parent]["DPs"] !== undefined &&
                             homematic.regaObjects[parent]["DPs"]["WORKING"] !== undefined) {
@@ -741,37 +740,32 @@ dui = $.extend(true, dui, {
                 if (type && type.indexOf(",") != -1) {
                     if (type.substring(0, "slider".length) == "slider") {
                         type = "slider";
-                    }
-                    else {
+                    } else {
                         type = "select";
                     }
                 }
 					
                 if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit[wid_attr]) {
                     widget_div.dashuiCustomEdit[wid_attr](dui.activeWidget, editParent);
-                } else 
-				if (wid_attr === "hm_id" || type == "id") {
-                    dui.editObjectID(widget, wid_attr, widget_filter);
-                } else 
-				if (wid_attr === "hm_wid") {
+                } else if (wid_attr === "hm_wid") {
                     dui.editObjectID(widget, wid_attr, 'WORKING');
                     /*// Eidt for Homematic Working ID
-                    $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="5"><input type="button" id="inspect_'+wid_attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+wid_attr+'_desc"></div></td></tr>');
-                    document.getElementById ("inspect_"+wid_attr+"_btn").jControl = wid_attr;
-                    $("#inspect_"+wid_attr+"_desc").html(dui.getObjDesc (widget.data[wid_attr]));
-                    // Select Homematic ID Dialog
-                    $("#inspect_"+wid_attr+"_btn").click ( function () {
-                        hmSelect.value = $("#inspect_"+this.jControl).val();
-                        hmSelect.show (homematic, this.jControl, function (obj, value) {
-                            $("#inspect_"+obj).val(value);
-                            $("#inspect_"+obj).trigger('change');
-                        }, 'WORKING');
-                    });*/
-                } else 
-				if (wid_attr.indexOf("src") == 0 || type == "image") {
+                     $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="5"><input type="button" id="inspect_'+wid_attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+wid_attr+'_desc"></div></td></tr>');
+                     document.getElementById ("inspect_"+wid_attr+"_btn").jControl = wid_attr;
+                     $("#inspect_"+wid_attr+"_desc").html(dui.getObjDesc (widget.data[wid_attr]));
+                     // Select Homematic ID Dialog
+                     $("#inspect_"+wid_attr+"_btn").click ( function () {
+                     hmSelect.value = $("#inspect_"+this.jControl).val();
+                     hmSelect.show (homematic, this.jControl, function (obj, value) {
+                     $("#inspect_"+obj).val(value);
+                     $("#inspect_"+obj).trigger('change');
+                     }, 'WORKING');
+                     });*/
+                } else if (wid_attr.slice(-3) === "_id" || type == "id") {
+                    dui.editObjectID(widget, wid_attr, widget_filter);
+                } else if (wid_attr.indexOf("src") == 0 || type == "image") {
                     dui.editImage(widget, wid_attr);
-                } else
-				if (wid_attr === "hqoptions") {
+                } else if (wid_attr === "hqoptions") {
                     // hqWidgets options
                     $('#inspect_comment_tr').hide();
                     $('#inspect_class_tr').hide();
@@ -782,8 +776,7 @@ dui = $.extend(true, dui, {
                             dui.binds.hqWidgetsExt.hqEditButton (hqWidgets.Get (dui.activeWidget), editParent, $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);                    
                         });
                     }
-                } else 
-				if (wid_attr === "weoid") {
+                } else if (wid_attr === "weoid") {
                     // Weather ID
                     $("#widget_attrs").append('<tr class="dashui-add-option"><td id="option_'+wid_attr+'" ></td></tr>');
                     $('#inspect_comment_tr').hide();
@@ -795,38 +788,30 @@ dui = $.extend(true, dui, {
                             dui.reRenderWidget(dui.activeWidget);					
                         }
                     });
-                } else 
-				if (wid_attr === "color" || type == "color") {
+                } else if (wid_attr === "color" || type == "color") {
                     dui.editColor(widget, wid_attr);
-                } else
-                if (type === "checkbox") {
+                } else if (type === "checkbox") {
                     isValueSet = true;
                     dui.editCheckbox(widget, wid_attr);
-                } else
-                if (type === "fontName") {
+                } else if (type === "fontName") {
                     isValueSet = true;
                     dui.editFontName(widget, wid_attr);
-                } else
-                if (type === "slider") {
+                } else if (type === "slider") {
                     isValueSet = true;
                     var values = wid_attrs[1].split(',');
                     dui.editSlider(widget, wid_attr, values[1], values[2], values[3]);
                     continue;
-                } else
-                if (type === "select") {
+                } else if (type === "select") {
                     isValueSet = true;
                     var values = wid_attrs[1].split(',');
                     dui.editSelect(widget, wid_attr, values);
-                } else
-                if (wid_attr.indexOf("nav_view") != -1|| type == "views") {
+                } else if (wid_attr.indexOf("nav_view") != -1|| type == "views") {
 				    dui.editViewName(widget, wid_attr);
 					continue;
-				} else 
-				if (wid_attr.indexOf("_effect") != -1 || type == "effect") {
+				} else if (wid_attr.indexOf("_effect") != -1 || type == "effect") {
                     dui.editEffects(widget, wid_attr);
 					continue;
-				} else 
-				if (wid_attr.slice(0,4) !== "html") {
+				} else if (wid_attr.slice(0,4) !== "html") {
                     if (type !== null) {
 						// If description is JSON object
 						if (type.indexOf('{') != -1) {
@@ -847,12 +832,10 @@ dui = $.extend(true, dui, {
 									if (typeof type["name"] == 'object') {
 										if (type["name"][this.language]) {
 											title = type["name"][this.language];
-										} else
-										if (type["name"]['en']) {
+										} else if (type["name"]['en']) {
 											title = type["name"]['en'];
 										}
-									}
-									else {
+									} else {
 										title = type["name"];
 									}
 								}
@@ -862,22 +845,21 @@ dui = $.extend(true, dui, {
 									isValueSet = true;
 									// All other attributes
 									$("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption" title="'+hint+'">'+title+':</td><td><input title="'+hint+'" id="inspect_'+wid_attr+'" type="checkbox"' +(widget.data[wid_attr] ? "checked": "")+'></td></tr>');
-								} else 
-								if (type['type'] == "view") {
-								} else
-								if (type['type'] == "color") {
-								} else
-								if (type['type'] == "font") {
-								} else
-								if (type['type'] == "rooms") {
-								} else
-								if (type['type'] == "favorites") {
-								} else
-								if (type['type'] == "functions") {
-								} else
-								if (type['type'] == "rooms") {
-								} else
-								if (type['type'] == "select") {
+								} else if (type['type'] == "view") {
+
+								} else if (type['type'] == "color") {
+
+								} else if (type['type'] == "font") {
+
+								} else if (type['type'] == "rooms") {
+
+								} else if (type['type'] == "favorites") {
+
+								} else if (type['type'] == "functions") {
+
+								} else if (type['type'] == "rooms") {
+
+								} else if (type['type'] == "select") {
 									// Select
 									var values = type['values'];
 									var text = '<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><select id="inspect_'+wid_attr+'">';
@@ -889,8 +871,7 @@ dui = $.extend(true, dui, {
 									isValueSet = true;
 								}
 							
-							}
-							else { // Simple type
+							} else { // Simple type
 								console.log ("Error: " + wid_attr +" Type: " + type );
 							}
 						}
@@ -1650,8 +1631,7 @@ dui = $.extend(true, dui, {
 		                $(this).attr ('data-lang', lang);
 		            }
 		        }
-	        }
-	        else {
+	        } else {
 		        var curlang = $(this).attr ('data-lang');
 		        if (curlang != lang) {
 		            if (curlang) {
