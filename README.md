@@ -5,9 +5,16 @@
 
 siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
-
-
 ## Changelog
+
+### 0.9beta59
+* (Hobbyquaker) Bugfix Instance (hat dazu geführt das Chrome/Android unter Umständen nach "lade Daten..." hängengeblieben ist)
+* (Hobbyquaker) Bugfix Widget jqui - Icon Toggle: Binding neu aufgebaut (Flicker bei Aktualisierungen verhindern)
+* (Hobbyquaker) Bugfix beim Neuladen der Datenpunkte nach Socket.IO-Reconnect
+* (Hobbyquaker) Bugfix beim unterbinden von Markierung auf Android/Webkit
+* (Hobbyquaker) Neues Widget: basic - val - Show on Value (Wird nur angezeigt wenn Datenpunkt ein vorgegebenen Wert beinhaltet)
+* (Hobbyquaker) Neues Widget: colorpicker - ctrl rgb spectrum
+* (Hobbyquaker) unfertige colorpicker Widgets auskommentiert
 
 ### 0.9beta58
 * (Hobbyquaker) Fehler abgefangen falls parsen der dashui-views.json fehlschlägt (erfodert CCU.IO 1.0.28)
