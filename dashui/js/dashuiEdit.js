@@ -929,7 +929,13 @@ dui = $.extend(true, dui, {
         }
 
         $(".dashui-inspect-css").each(function () {
-            $(this).val($this.css($(this).attr("id").slice(12)));
+            var attr = $(this).attr("id").slice(12)
+            var css = $this.css(attr);
+            //console.log(attr + " " + css);
+            if (attr == "background") {
+                // TODO - überflüssige Attribute löschen für Android-Browser
+            }
+            $(this).val(css);
         });
 
         // autocomplete for filter key
