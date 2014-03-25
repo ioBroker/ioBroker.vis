@@ -1170,9 +1170,14 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                 $("#ccu-io-disconnect").dialog("close");
                 // Reload uiState
                 dui.socket.emit("getDatapoints", function (data) {
-                    //console.log("datapoints loaded");
                     for (var dp in data) {
-                        homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
+                        var obj = data[dp];
+                        var o = {};
+                        o["_" + dp + ".Value"]     = obj[0];
+                        o["_" + dp + ".Timestamp"] = obj[1];
+                        o["_" + dp + ".Certain"]   = obj[2];
+                        o["_" + dp + ".LastChange"]   = obj[3];
+                        homematic.uiState.attr(o);
                     }
                     // Get CCU.IO language
                     var l = homematic.uiState.attr("_69999.Value");
