@@ -408,9 +408,8 @@ var dui = {
                             isViewsConverted = true;
                         }
                     }
-                }
-                // It is hqWidgets
-                else {
+                } else {
+                    // It is hqWidgets
                     if (!dui.views[view].widgets[id].widgetSet) {
                         dui.views[view].widgets[id].widgetSet = "hqWidgets";
                         isViewsConverted = true;
@@ -914,11 +913,11 @@ var dui = {
             };
         }
         if (this.words[text]) {
-            if (this.words[text][this.language])
+            if (this.words[text][this.language]) {
                 return this.words[text][this.language];
-            else
-            if (this.words[text]["en"])
+            } else if (this.words[text]["en"]) {
                 return this.words[text]["en"];
+            }
         }
 
         return text;
@@ -1141,8 +1140,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                     for (var i = 0, len = dui.onChangeCallbacks.length; i < len; i++) {
                         dui.onChangeCallbacks[i].callback(dui.onChangeCallbacks[i].arg, obj[0], obj[1], obj[3] || (homematic.regaObjects[obj[0]] && homematic.regaObjects[obj[0]]["TypeName"] == "VARDP"));
                     }
-                }
-                else {
+                } else {
                     //console.log("Datenpunkte sind noch nicht geladen!");
                 }
             });

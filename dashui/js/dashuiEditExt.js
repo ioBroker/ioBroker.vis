@@ -172,8 +172,7 @@ dui = $.extend(true, dui, {
             
             if (options.styles) {
                 htmlElem.settings.styles = $.extend (htmlElem.settings.styles, options.styles);
-            }
-            else {
+            } else {
                 // IF filter defined
                 if (htmlElem.settings.filterFile != null || htmlElem.settings.filterName != null) {
                     var filters = null;
@@ -280,8 +279,7 @@ dui = $.extend(true, dui, {
                 $("#styleSelectBox"+obj.settings.id).css ({display: "none"});
                 $("#styleSelectB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
                 obj.settings.dropOpened = false;
-            }
-            else {
+            } else {
                 var elem = $('#styleSelect'+obj.settings.id);		
                 var elemBox = $("#styleSelectBox"+obj.settings.id);		
                 //if ($(window).height() < elemBox.height() + elemBox.position().top) {
@@ -563,16 +561,13 @@ dui = $.extend(true, dui, {
 						// File or directory
 						if (aImages[id] == "..") {
 							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._dirImage+"\" title='"+dui.translate ("Back")+"'";
-						}
-						else 
+						} else 
 						if (isDir) {
 							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._dirImage+"\" title='"+aImages[id]+"' ";
-						}
-						else 
+						} else 
 						if (aImages[id].indexOf(".wav") != -1 || aImages[id].indexOf(".mp3") != -1) {
 							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._soundImage+"\" title='"+aImages[id]+"' ";                    
-						}
-						else {
+						} else {
 							sText += "title='"+aImages[id]+"' ";
 						}
 						sText += " />";
@@ -581,16 +576,14 @@ dui = $.extend(true, dui, {
 							sText += "</td></tr><tr><td style='font-size:0.6em;font-weight:normal'>";
 							if (aImages[id] == "..") {
 								sText += "<span class='ui-icon ui-icon-arrowreturnthick-1-w' style='top:50%; left:50%'></span>";
-							}
-							else {
+							} else {
 								sText += aImages[id];
 							}
 							sText += "</td></tr></table>";
 						}
 						id++;
 						sText += "</td>";	
-					}
-					else {
+					} else {
 						sText += "<td colspan='"+(obj.settings.columns-col)+"'></td>";
 						break;
 					}
@@ -705,8 +698,7 @@ dui = $.extend(true, dui, {
 			// Show active image
 			if (dui.imageSelect._curImage != null && dui.imageSelect._curImage != "") { 
 				$(obj).dialog('option', 'title', dui.imageSelect._titleText + dui.imageSelect._curDir + dui.imageSelect._curImage);
-			}
-			else {
+			} else {
 				$(obj).dialog('option', 'title', dui.imageSelect._titleText + dui.imageSelect._curDir);
 			}
 		},
@@ -1051,8 +1043,7 @@ var hmSelect = {
 				}
                 i++;
 			}
-		}
-        else if (hmSelect.value != null && hmSelect.value != "") {
+		} else if (hmSelect.value != null && hmSelect.value != "") {
 			for(var i = 0; i < this.myVarsData.length; i++) {
 				if (hmSelect.value && this.myVarsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myVarsData[i].id;
@@ -1158,8 +1149,7 @@ var hmSelect = {
 				}
                 i++;
 			}
-		}
-        else if (hmSelect.value != null && hmSelect.value != "") {
+		} else if (hmSelect.value != null && hmSelect.value != "") {
 			for(var i = 0; i < this.myProgsData.length; i++) {
 				if (hmSelect.value && this.myProgsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myProgsData[i].id;
@@ -1378,8 +1368,7 @@ var hmSelect = {
                                     break;
                                 }
                                 iPnts = 0;
-                            }
-                            else {
+                            } else {
                                 newChannels[idChn] = {
                                     "HssType":   channel.HssType,
                                     "Address":   channel.Address,
@@ -1405,8 +1394,7 @@ var hmSelect = {
                                 break;
                             }
                             iChns = 0;
-                        }
-                        else {
+                        } else {
                             newDevices[idDev] = { 
                                 "Interface": device.Interface,
                                 "HssType":   device.HssType,
@@ -1445,9 +1433,9 @@ var hmSelect = {
                     var isFound = false;
                     iChns = 0;                    
                     
-                    if (f === null)
+                    if (f === null) {
                         isFound = true;
-                    else {
+                    } else {
                         for (var t = 0; t < f.length; t++) {
                             if (device.HssType.indexOf (f[t]) != -1) {
                                 isFound = true;
@@ -1466,8 +1454,7 @@ var hmSelect = {
                                     "Address":   device.Interface + "." + device.Address,
                                     "Name":      device.Name
                             };
-                    }
-                    else {
+                    } else {
                         for (var chn in device.Channels) {
                             var idChn   = device["Channels"][chn];
                             var channel = homematic.regaObjects[idChn];       
@@ -1490,8 +1477,7 @@ var hmSelect = {
                                         newPoints [idPnt] = point;
                                         newPoints [idPnt]["Type"] = dp;
                                         iPnts++;
-                                    }
-                                    else {
+                                    } else {
                                         for (var t = 0; t < f.length; t++) {
                                             if (name.indexOf (f[t]) != -1) {
                                                 newPoints [idPnt] = point;
@@ -1516,8 +1502,7 @@ var hmSelect = {
                                             break;
                                         }
                                         iPnts = 0;
-                                    }  
-                                    else {
+                                    } else {
                                         newDevices[idChn] = {
                                                 "Interface": device.Interface,
                                                 "HssType":   device.HssType,
@@ -1531,8 +1516,7 @@ var hmSelect = {
                                         }                                      
                                     }                                    
                                 }
-                            }
-                            else {
+                            } else {
                                 newDevices[idChn] = {
                                         "Interface": device["Interface"],
                                         "HssType":   device["HssType"],
@@ -1719,8 +1703,7 @@ var hmSelect = {
 					}
 				}				
 			}
-		}
-        else if (hmSelect.value != null && hmSelect.value != "") {
+		} else if (hmSelect.value != null && hmSelect.value != "") {
             // Just find the selected element
             for (var i = 0; i < this.mydata.length; i++) {
                 if (this.mydata[i]["_ID"] == hmSelect.value) {
