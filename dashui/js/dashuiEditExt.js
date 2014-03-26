@@ -1058,7 +1058,7 @@ var hmSelect = {
 			height:      $('#tabs-vars').height() - 35,
 			autowidth:   true,
 			shrinkToFit: false,
-			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Type'), dui.translate ('Unit'), dui.translate ('Description'), ''],
+			colNames:['Id', dui.translate('Name'), '', dui.translate('Type'), dui.translate('Unit'), dui.translate('Description'), ''],
 			colModel:[
                 {name:'id',         index:'id',          width:1,   hidden:true, key:true},
 				{name:'Name',       index:'Name',        width:250, sortable:"text"},
@@ -1164,7 +1164,7 @@ var hmSelect = {
 			height:      $('#tabs-progs').height() - 35,
 			autowidth:   true,
 			shrinkToFit: false,
-			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Description'), ''],
+			colNames:['Id', dui.translate('Name'), '', dui.translate('Description'), ''],
 			colModel:[
                 {name:'id',          index:'id',          width:1,   hidden:true, key:true},
 				{name:'Name',        index:'Name',        width:250, sortable:"text"},
@@ -1560,7 +1560,7 @@ var hmSelect = {
             }
             text += "</select>\n";
             if (filter != "all" || devFilter != null || devFilter != "") {
-                text += dui.translate ("Disable device filter:") + "<input type='checkbox' id='hmSelectIgnoreFilter' "+ (this._ignoreFilter ? "checked" : "") +">";
+                text += dui.translate("Disable device filter:") + "<input type='checkbox' id='hmSelectIgnoreFilter' "+ (this._ignoreFilter ? "checked" : "") +">";
             }
             $("#hmSelectFilter").append (text);
             
@@ -1720,7 +1720,7 @@ var hmSelect = {
 			height:      $('#tabs-devs').height() - 35 - $('#hmSelectFilter').height (),
 			autowidth:   true,
 			shrinkToFit: false,
-			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Location'), dui.translate ('Interface'), dui.translate ('Type'), dui.translate ('Function'), dui.translate ('Address'), ''],
+			colNames:['Id', dui.translate('Name'), '', dui.translate('Location'), dui.translate('Interface'), dui.translate('Type'), dui.translate('Function'), dui.translate('Address'), ''],
 			colModel:[
                 {name:'id',       index:'id',        width:1,   hidden:true, key:true},
 				{name:'Name',     index:'Name',      width:250, sortable:"text"},
@@ -1815,7 +1815,7 @@ var hmSelect = {
 		_userArg = userArg || null;
 		_onsuccess = onSuccess || null;
 		if (!document.getElementById ("hmSelect")) {
-			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate ("Select HM parameter") + "'></div>");
+			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate("Select HM parameter") + "'></div>");
             var text = "<div id='hmSelect_tabs'>";
             text += "  <ul>";
             var i = 0;
@@ -1883,14 +1883,14 @@ var hmSelect = {
         $("#hmSelect_tabs").tabs();
         
         // Define dialog buttons
-		this._selectText = dui.translate ("Select");
-		this._cancelText = dui.translate ("Cancel");
+		this._selectText = dui.translate("Select");
+		this._cancelText = dui.translate("Cancel");
         
 		var dialog_buttons = {}; 
 		dialog_buttons[this._selectText] = function() { 
 			$( this ).dialog( "close" ); 
 			if (_onsuccess)
-				_onsuccess (_userArg, value, valueObj);
+				_onsuccess(_userArg, value, valueObj);
 		}
 		dialog_buttons[this._cancelText] = function() {
 			$( this ).dialog( "close" ); 
@@ -1910,14 +1910,14 @@ var hmSelect = {
 		});
         $('#dashui-waitico').show().css({top: ($("#hmSelect").height() + $('#dashui-waitico').height())/2});
         $('#dashui-waitico').hide();
-        $('#hmSelect_tabs').width  ($('#hmSelect').width());
-        $('#hmSelect_tabs').height ($('#hmSelect').height()  - 12);
+        $('#hmSelect_tabs').width($('#hmSelect').width());
+        $('#hmSelect_tabs').height($('#hmSelect').height()  - 12);
         
-        $('#tabs-devs').width  ($('#hmSelect_tabs').width()  - 6);
-        $('#tabs-devs').height ($('#hmSelect_tabs').height() - 60);
-        $('#tabs-vars').width  ($('#hmSelect_tabs').width()  - 6);
-        $('#tabs-vars').height ($('#hmSelect_tabs').height() - 60);
-        $('#tabs-progs').width ($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-devs').width($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-devs').height($('#hmSelect_tabs').height() - 60);
+        $('#tabs-vars').width($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-vars').height($('#hmSelect_tabs').height() - 60);
+        $('#tabs-progs').width($('#hmSelect_tabs').width()  - 6);
         $('#tabs-progs').height($('#hmSelect_tabs').height() - 60);
         
         this._buildDevicesGrid (homematic, filter, devFilter);
@@ -1939,16 +1939,16 @@ var hmSelect = {
                     continue;
                 if (hmSelect._filter != null) {
                     for (var j = 0; j < hmSelect._filter.rules.length; j++) {
-                        if (rows[i][hmSelect._filter.rules[j].field].indexOf (hmSelect._filter.rules[j].data) == -1) {
+                        if (rows[i][hmSelect._filter.rules[j].field].indexOf(hmSelect._filter.rules[j].data) == -1) {
                             isShow = false;
                             break;
                         }
                     }
                 }
-                if (isShow && hmSelect._filterLoc != "" && rows[i]['Location'].indexOf (hmSelect._filterLoc) == -1) {
+                if (isShow && hmSelect._filterLoc != "" && rows[i]['Location'].indexOf(hmSelect._filterLoc) == -1) {
                     isShow = false;
                 }
-                if (isShow && hmSelect._filterFunc != "" && rows[i]['Function'].indexOf (hmSelect._filterFunc) == -1) {
+                if (isShow && hmSelect._filterFunc != "" && rows[i]['Function'].indexOf(hmSelect._filterFunc) == -1) {
                     isShow = false;
                 }            
                 $("#"+rows[i].id,"#hmDevsContent").css({display: (isShow) ? "":"none"});
@@ -1964,7 +1964,7 @@ var hmSelect = {
                 continue;
             if (hmSelect._progsFilter != null) {
                 for (var j = 0; j < hmSelect._progsFilter.rules.length; j++) {
-                    if (rows[i][hmSelect._progsFilter.rules[j].field].indexOf (hmSelect._progsFilter.rules[j].data) == -1) {
+                    if (rows[i][hmSelect._progsFilter.rules[j].field].indexOf(hmSelect._progsFilter.rules[j].data) == -1) {
                         isShow = false;
                         break;
                     }
@@ -1983,7 +1983,7 @@ var hmSelect = {
                 continue;
             if (hmSelect._varsFilter != null) {
                 for (var j = 0; j < hmSelect._varsFilter.rules.length; j++) {
-                    if (rows[i][hmSelect._varsFilter.rules[j].field].indexOf (hmSelect._varsFilter.rules[j].data) == -1) {
+                    if (rows[i][hmSelect._varsFilter.rules[j].field].indexOf(hmSelect._varsFilter.rules[j].data) == -1) {
                         isShow = false;
                         break;
                     }

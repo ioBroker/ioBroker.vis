@@ -890,10 +890,10 @@ var dui = {
             var text    = $(this).html ();
             if (curlang != lang) {
                 if (curlang) {
-                    text = dui.translateBack (text, curlang);
+                    text = dui.translateBack(text, curlang);
                 }
 
-                var transText = dui.translate (text, lang);
+                var transText = dui.translate(text, lang);
                 if (transText) {
                     $(this).html (transText);
                     $(this).attr ('data-lang', lang);

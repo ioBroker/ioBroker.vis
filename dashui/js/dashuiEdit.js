@@ -109,7 +109,7 @@ dui = $.extend(true, dui, {
 		return view;
 	},
 	getViewsOfWidget: function (id) {
-		if (id.indexOf ('_') == -1) {
+		if (id.indexOf('_') == -1) {
 			var view = dui.getViewOfWidget(id);
 			if (view) {
 				return [view];
@@ -1585,10 +1585,10 @@ dui = $.extend(true, dui, {
 	        var text    = $(this).html ();
 	        if (curlang != lang) {
 	            if (curlang) {
-	                text = dui.translateBack (text, curlang);
+	                text = dui.translateBack(text, curlang);
 	            }
 	
-	            var transText = dui.translate (text, lang);
+	            var transText = dui.translate(text, lang);
 	            if (transText) {
 	                $(this).html (transText);
 	                $(this).attr ('data-lang', lang);
@@ -1601,10 +1601,10 @@ dui = $.extend(true, dui, {
 	        var curlang = $(this).attr ('data-lang');
 	        if (curlang != lang) {
 	            if (curlang) {
-	                text = dui.translateBack (text, curlang);
+	                text = dui.translateBack(text, curlang);
 	            }
 	
-	            var transText = dui.translate (text, lang);
+	            var transText = dui.translate(text, lang);
 	            if (transText) {
 	                $(this).attr ('value', transText);
 	                $(this).attr ('data-lang', lang);
@@ -1614,18 +1614,18 @@ dui = $.extend(true, dui, {
 	    $(".translateB").each(function (idx) {
 	        //<span class="ui-button-text">Save</span>
 	        var text = $( this ).html ();
-	        if (text.indexOf ("<span") != -1) {
-                var i = text.indexOf ('<span class="ui-button-text">');
+	        if (text.indexOf("<span") != -1) {
+                var i = text.indexOf('<span class="ui-button-text">');
                 var t = text.substring (i + '<span class="ui-button-text">'.length);
-                var q = t.indexOf ("</span>");
+                var q = t.indexOf("</span>");
                 t = t.substring(0,q);
 		        var curlang = $(this).attr ('data-lang');
 		        if (curlang != lang) {
 		            if (curlang) {
-		                text = dui.translateBack (t, curlang);
+		                text = dui.translateBack(t, curlang);
 		            }
 		
-		            var transText = dui.translate (t, lang);
+		            var transText = dui.translate(t, lang);
 		            if (transText) {
 		                $(this).html (text.substring (0,i+'<span class="ui-button-text">'.length) + transText + '</span>');
 		                $(this).attr ('data-lang', lang);
@@ -1635,10 +1635,10 @@ dui = $.extend(true, dui, {
 		        var curlang = $(this).attr ('data-lang');
 		        if (curlang != lang) {
 		            if (curlang) {
-		                text = dui.translateBack (text, curlang);
+		                text = dui.translateBack(text, curlang);
 		            }
 		
-		            var transText = dui.translate (text, lang);
+		            var transText = dui.translate(text, lang);
 		            if (transText) {
 		                $(this).html (transText);
 		                $(this).attr ('data-lang', lang);
