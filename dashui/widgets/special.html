@@ -21,6 +21,7 @@
                 dui.initInstance();
             },
             unfocusInitialized: false,
+            unfocusTimer: null,
             unfocus: function(el) {
                 if (dui.binds.special.unfocusInitialized) {
                     return;
@@ -39,7 +40,14 @@
                     if ($this.is("input") && ($this.attr("type") == "text" || $this.attr("type") == "number" || $this.attr("type") == "password")) {
                         return;
                     }
-                    $this.blur();
+                    if (dui.binds.special.unfocusTimer) {
+                        clearTimeout(dui.binds.special.unfocusTimer);
+                    }
+                    dui.binds.special.unfocusTimer = setTimeout(function (_this) {
+                        // TODO - Funktioniert nicht mit Android/Webkit :-(
+                        _this.trigger("blur");
+                    }, 100, $this);
+
                 }
 
                 jQuery("*").mouseup(function() {
@@ -51,9 +59,7 @@
                 jQuery("*").on('touchcancel', function() {
                     removeFocus(this);
                 });
-                jQuery("*").on('touchleave', function() {
-                    removeFocus(this);
-                });
+
             }
         }
     });
