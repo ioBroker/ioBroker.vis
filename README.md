@@ -7,6 +7,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta60
+* (Hobbyquaker) Bugfix toggle Binding (betrifft verschiedene basic/jqui/jqui-mfd Widgets)
+* (Hobbyquaker) Code cleanup
+
 ### 0.9beta59
 * (Hobbyquaker) Bugfix Instance (hat dazu geführt das Chrome/Android unter Umständen nach "lade Daten..." hängengeblieben ist)
 * (Hobbyquaker) Bugfix Widget jqui - Icon Toggle: Binding neu aufgebaut (Flicker bei Aktualisierungen verhindern)
