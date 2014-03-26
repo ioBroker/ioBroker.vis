@@ -112,7 +112,7 @@
                         homematic.setValue($this.attr("data-hm-id"), val);
                     }
                 });
-	            $this.on('touchend',function (e) {
+                $this.on('touchend',function (e) {
                     if (dui.urlParams["edit"] !== "") {
                         homematic.setValue($this.attr("data-hm-id"), val);
                     }
@@ -330,7 +330,8 @@
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
                 if (dui.urlParams["edit"] !== "") {
-                    $this.on('touchend', toggle);
+                    // @geolin - musste das wieder entfernen - das führt zu doppelter Ausführung (Gerät geht kurz an und sofort wieder aus bzw umgekehrt)
+                    //$this.on('touchend', toggle);
                     $this.on('click', toggle);
                 }
             },
