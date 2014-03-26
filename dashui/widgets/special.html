@@ -25,8 +25,8 @@
                     jQuery(el).parent().parent().show();
                 }
 
-                jQuery("*").mouseup(function() {
-                    var $this = jQuery(this);
+                function removeFocus(that) {
+                    var $this = jQuery(that);
                     if ($this.is("textarea")) {
                         return;
                     }
@@ -34,16 +34,19 @@
                         return;
                     }
                     $this.blur();
+                }
+
+                jQuery("*").mouseup(function() {
+                    removeFocus(this);
                 });
                 jQuery("*").on('touchend', function() {
-                    var $this = jQuery(this);
-                    if ($this.is("textarea")) {
-                        return;
-                    }
-                    if ($this.is("input") && ($this.attr("type") == "text" || $this.attr("type") == "number" || $this.attr("type") == "password")) {
-                        return;
-                    }
-                    $this.blur();
+                    removeFocus(this);
+                });
+                jQuery("*").on('touchcancel', function() {
+                    removeFocus(this);
+                });
+                jQuery("*").on('touchleave', function() {
+                    removeFocus(this);
                 });
             }
         }
