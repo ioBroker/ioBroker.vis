@@ -20,7 +20,13 @@
                 }
                 dui.initInstance();
             },
+            unfocusInitialized: false,
             unfocus: function(el) {
+                if (dui.binds.special.unfocusInitialized) {
+                    return;
+                } else {
+                    dui.binds.special.unfocusInitialized = true;
+                }
                 if (dui.urlParams["edit"] === "") {
                     jQuery(el).parent().parent().show();
                 }
