@@ -112,11 +112,14 @@
                         homematic.setValue($this.attr("data-hm-id"), val);
                     }
                 });
+                // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
+                /*
                 $this.on('touchend',function (e) {
                     if (dui.urlParams["edit"] !== "") {
                         homematic.setValue($this.attr("data-hm-id"), val);
                     }
                 });
+                */
             },
             increment: function (el, minmax, delay, interval) {
 
