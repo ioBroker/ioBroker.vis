@@ -688,7 +688,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><img src='<%== homematic.uiState.attr("_" + this.data.hm_id + ".Value") %>' width="100%"/><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><img <%= homematic.uiState.attr("_" + this.data.hm_id + ".Value" ) ? "src='" +  homematic.uiState.attr("_" + this.data.hm_id + ".Value" ) + "'" : "" %> width="100%"/><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
