@@ -830,7 +830,7 @@
     %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-dashui-step="<%= this.data.attr('step') %>" data-hm-val="<%= this.data.attr('active_value') %>" <%= (el) -> dui.binds.basic.increment(el,data.minmax,data.repeat_delay,data.repeat_interval); dui.binds.jqueryui.classes(el, null, data.minmax) %>>
         <div class="dashui-widget-body">
-            <img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
     </div>
 </script>
