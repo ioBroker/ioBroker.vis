@@ -527,7 +527,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div class="editmode-helper"></div>
-            <img style="position:absolute; width:100%;" src="<%== this.data.attr('src') %>" />
+            <img style="position:absolute; width:100%;" <%= this.data.attr('src') ? 'src="'+this.data.attr('src')+'"' : '' %> />
             <div <%= (el) -> dui.binds.basic.imgRefresh(el, data.attr("src"), data.attr("refreshInterval")) %> />
         </div>
     </div>
