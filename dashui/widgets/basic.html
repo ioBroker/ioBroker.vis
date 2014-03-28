@@ -541,6 +541,12 @@
     </div>
 </script>
 
+<script type="text/ejs" id="tplFrame" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Border" data-dashui-attrs="title['Title'];title_font;title_color[black]/color;title_back/color;title_top[-10]/slider,-20,20,1;title_left[15]/slider,-20,30,1">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="overflow:visible;width:50px;height:50px;border:1px solid #888" id="<%= this.data.attr('wid') %>" >
+        <div style="position:absolute;top:<%= this.data.attr('title_top') %>px;left:<%= this.data.attr('title_left') %>px;color:<%== this.data.attr('title_color') %>;background:<%== this.data.attr('title_back') %>;font:<%== this.data.attr('title_font') %>"><%== this.data.attr('title') %></div>
+    </div>
+</script>
+
 <!-- basic Container -->
 
 <script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - view in widget" data-dashui-attrs="contains_view">
@@ -923,8 +929,4 @@
 		</div>
     </div>
 </script>
-<script type="text/ejs" id="tplFrame" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Border" data-dashui-attrs="title['Title'];title_font;title_color[black]/color;title_back/color;title_top[-10]/slider,-20,20,1;title_left[15]/slider,-20,30,1">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="overflow:visible;width:50px;height:50px;border:1px solid #888" id="<%= this.data.attr('wid') %>" >
-        <div style="position:absolute;top:<%= this.data.attr('title_top') %>px;left:<%= this.data.attr('title_left') %>px;color:<%== this.data.attr('title_color') %>;background:<%== this.data.attr('title_back') %>;font:<%== this.data.attr('title_font') %>"><%== this.data.attr('title') %></div>
-    </div>
-</script>
+
