@@ -13,6 +13,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Hobbyquaker) Bugfix Widget jqui - ctrl - slider. Wert wird auf 0 gesetzt falls isNaN
 * (Hobbyquaker) Widget "colorpicker rgb spectrum" fertiggestellt
 * (Hobbyquaker) neues Widget "colorpicker rgb farbtastic"
+* (Hobbyquaker) Fehler abgefangen falls versucht wird ein Widget zu rendern dessen Template nicht vorhanden ist
 
 ### 0.9beta60
 * (Hobbyquaker) Bugfix toggle Binding (betrifft verschiedene basic/jqui/jqui-mfd Widgets)
