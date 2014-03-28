@@ -293,6 +293,10 @@
                     }
                 }, options);
 
+                if (isNaN(settings.value)) {
+                    settings.value = 0;
+                }
+
                 $this.slider(settings);
 
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
