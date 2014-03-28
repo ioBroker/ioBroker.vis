@@ -500,7 +500,7 @@
     %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
-            <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+            <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
         </div>
     </div>
 </script>
