@@ -616,7 +616,7 @@
 <script type="text/ejs" id="tplJquiIconNav" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="navigation - Icon" data-dashui-attrs="src;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
     <div data-dashui-nav="<%= this.data.attr('nav_view') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el); dui.binds.jqueryui.navigationActive(el, data.attr('nav_view')); dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %>>
         <div class="dashui-widget-body">
-            <img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
 
         </div>
     </div>
