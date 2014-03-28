@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta60',
+    version:                '0.9beta61',
     requiredCcuIoVersion:   '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -562,42 +562,45 @@ var dui = {
         var widgetData = dui.widgets[id]["data"];
         widgetData.hm_id = widgetData.hm_id; //$.homematic("escape", widgetData.hm_id);
 
-        // Append html element to view
-        $("#duiview_" + view).append(can.view(widget.tpl, {hm: homematic.uiState["_" + widget.data.hm_id], data: widgetData, view: view}));
+        try {
+            // Append html element to view
+            $("#duiview_" + view).append(can.view(widget.tpl, {hm: homematic.uiState["_" + widget.data.hm_id], data: widgetData, view: view}));
 
-        if (dui.urlParams["edit"] !== "") {
-            if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
-                $("#" + id).hide();
-                var btn;
-                if (hqWidgets && (btn = hqWidgets.Get(id))) {
-                    btn.hide(true);
-                }
-            }
-
-        }
-
-        if (widget.style) {
-            $("#" + id).css(widget.style);
-        }
-
-        // If edit mode, bind on click event to open this widget in edit dialog
-        if (dui.urlParams["edit"] === "") {
-            $("#" + id).click(function (e) {
-                if (dui.activeWidget != id) {
-                    dui.inspectWidget(id);
+            if (dui.urlParams["edit"] !== "") {
+                if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
+                    $("#" + id).hide();
+                    var btn;
+                    if (hqWidgets && (btn = hqWidgets.Get(id))) {
+                        btn.hide(true);
+                    }
                 }
 
-                e.preventDefault();
-                return false;
-            });
-
-            if (dui.activeWidget == id) {
-                dui.draggable($("#"+id));
-                dui.resizable($("#"+id));
             }
 
+            if (widget.style) {
+                $("#" + id).css(widget.style);
+            }
 
+            // If edit mode, bind on click event to open this widget in edit dialog
+            if (dui.urlParams["edit"] === "") {
+                $("#" + id).click(function (e) {
+                    if (dui.activeWidget != id) {
+                        dui.inspectWidget(id);
+                    }
+
+                    e.preventDefault();
+                    return false;
+                });
+
+                if (dui.activeWidget == id) {
+                    dui.draggable($("#"+id));
+                    dui.resizable($("#"+id));
+                }
+            }
+        } catch (e) {
+            alert("Error: can't render "+widget.tpl+" "+id+"\n\n"+e);
         }
+
     },
     changeView: function (view, hideOptions, showOptions, sync) {
 
