@@ -172,8 +172,7 @@ dui = $.extend(true, dui, {
             
             if (options.styles) {
                 htmlElem.settings.styles = $.extend (htmlElem.settings.styles, options.styles);
-            }
-            else {
+            } else {
                 // IF filter defined
                 if (htmlElem.settings.filterFile != null || htmlElem.settings.filterName != null) {
                     var filters = null;
@@ -280,8 +279,7 @@ dui = $.extend(true, dui, {
                 $("#styleSelectBox"+obj.settings.id).css ({display: "none"});
                 $("#styleSelectB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
                 obj.settings.dropOpened = false;
-            }
-            else {
+            } else {
                 var elem = $('#styleSelect'+obj.settings.id);		
                 var elemBox = $("#styleSelectBox"+obj.settings.id);		
                 //if ($(window).height() < elemBox.height() + elemBox.position().top) {
@@ -563,16 +561,13 @@ dui = $.extend(true, dui, {
 						// File or directory
 						if (aImages[id] == "..") {
 							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._dirImage+"\" title='"+dui.translate ("Back")+"'";
-						}
-						else 
+						} else 
 						if (isDir) {
 							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._dirImage+"\" title='"+aImages[id]+"' ";
-						}
-						else 
+						} else 
 						if (aImages[id].indexOf(".wav") != -1 || aImages[id].indexOf(".mp3") != -1) {
 							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._soundImage+"\" title='"+aImages[id]+"' ";                    
-						}
-						else {
+						} else {
 							sText += "title='"+aImages[id]+"' ";
 						}
 						sText += " />";
@@ -581,16 +576,14 @@ dui = $.extend(true, dui, {
 							sText += "</td></tr><tr><td style='font-size:0.6em;font-weight:normal'>";
 							if (aImages[id] == "..") {
 								sText += "<span class='ui-icon ui-icon-arrowreturnthick-1-w' style='top:50%; left:50%'></span>";
-							}
-							else {
+							} else {
 								sText += aImages[id];
 							}
 							sText += "</td></tr></table>";
 						}
 						id++;
 						sText += "</td>";	
-					}
-					else {
+					} else {
 						sText += "<td colspan='"+(obj.settings.columns-col)+"'></td>";
 						break;
 					}
@@ -705,8 +698,7 @@ dui = $.extend(true, dui, {
 			// Show active image
 			if (dui.imageSelect._curImage != null && dui.imageSelect._curImage != "") { 
 				$(obj).dialog('option', 'title', dui.imageSelect._titleText + dui.imageSelect._curDir + dui.imageSelect._curImage);
-			}
-			else {
+			} else {
 				$(obj).dialog('option', 'title', dui.imageSelect._titleText + dui.imageSelect._curDir);
 			}
 		},
@@ -1051,8 +1043,7 @@ var hmSelect = {
 				}
                 i++;
 			}
-		}
-        else if (hmSelect.value != null && hmSelect.value != "") {
+		} else if (hmSelect.value != null && hmSelect.value != "") {
 			for(var i = 0; i < this.myVarsData.length; i++) {
 				if (hmSelect.value && this.myVarsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myVarsData[i].id;
@@ -1067,7 +1058,7 @@ var hmSelect = {
 			height:      $('#tabs-vars').height() - 35,
 			autowidth:   true,
 			shrinkToFit: false,
-			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Type'), dui.translate ('Unit'), dui.translate ('Description'), ''],
+			colNames:['Id', dui.translate('Name'), '', dui.translate('Type'), dui.translate('Unit'), dui.translate('Description'), ''],
 			colModel:[
                 {name:'id',         index:'id',          width:1,   hidden:true, key:true},
 				{name:'Name',       index:'Name',        width:250, sortable:"text"},
@@ -1158,8 +1149,7 @@ var hmSelect = {
 				}
                 i++;
 			}
-		}
-        else if (hmSelect.value != null && hmSelect.value != "") {
+		} else if (hmSelect.value != null && hmSelect.value != "") {
 			for(var i = 0; i < this.myProgsData.length; i++) {
 				if (hmSelect.value && this.myProgsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myProgsData[i].id;
@@ -1174,7 +1164,7 @@ var hmSelect = {
 			height:      $('#tabs-progs').height() - 35,
 			autowidth:   true,
 			shrinkToFit: false,
-			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Description'), ''],
+			colNames:['Id', dui.translate('Name'), '', dui.translate('Description'), ''],
 			colModel:[
                 {name:'id',          index:'id',          width:1,   hidden:true, key:true},
 				{name:'Name',        index:'Name',        width:250, sortable:"text"},
@@ -1378,8 +1368,7 @@ var hmSelect = {
                                     break;
                                 }
                                 iPnts = 0;
-                            }
-                            else {
+                            } else {
                                 newChannels[idChn] = {
                                     "HssType":   channel.HssType,
                                     "Address":   channel.Address,
@@ -1405,8 +1394,7 @@ var hmSelect = {
                                 break;
                             }
                             iChns = 0;
-                        }
-                        else {
+                        } else {
                             newDevices[idDev] = { 
                                 "Interface": device.Interface,
                                 "HssType":   device.HssType,
@@ -1445,9 +1433,9 @@ var hmSelect = {
                     var isFound = false;
                     iChns = 0;                    
                     
-                    if (f === null)
+                    if (f === null) {
                         isFound = true;
-                    else {
+                    } else {
                         for (var t = 0; t < f.length; t++) {
                             if (device.HssType.indexOf (f[t]) != -1) {
                                 isFound = true;
@@ -1466,8 +1454,7 @@ var hmSelect = {
                                     "Address":   device.Interface + "." + device.Address,
                                     "Name":      device.Name
                             };
-                    }
-                    else {
+                    } else {
                         for (var chn in device.Channels) {
                             var idChn   = device["Channels"][chn];
                             var channel = homematic.regaObjects[idChn];       
@@ -1490,8 +1477,7 @@ var hmSelect = {
                                         newPoints [idPnt] = point;
                                         newPoints [idPnt]["Type"] = dp;
                                         iPnts++;
-                                    }
-                                    else {
+                                    } else {
                                         for (var t = 0; t < f.length; t++) {
                                             if (name.indexOf (f[t]) != -1) {
                                                 newPoints [idPnt] = point;
@@ -1516,8 +1502,7 @@ var hmSelect = {
                                             break;
                                         }
                                         iPnts = 0;
-                                    }  
-                                    else {
+                                    } else {
                                         newDevices[idChn] = {
                                                 "Interface": device.Interface,
                                                 "HssType":   device.HssType,
@@ -1531,8 +1516,7 @@ var hmSelect = {
                                         }                                      
                                     }                                    
                                 }
-                            }
-                            else {
+                            } else {
                                 newDevices[idChn] = {
                                         "Interface": device["Interface"],
                                         "HssType":   device["HssType"],
@@ -1576,7 +1560,7 @@ var hmSelect = {
             }
             text += "</select>\n";
             if (filter != "all" || devFilter != null || devFilter != "") {
-                text += dui.translate ("Disable device filter:") + "<input type='checkbox' id='hmSelectIgnoreFilter' "+ (this._ignoreFilter ? "checked" : "") +">";
+                text += dui.translate("Disable device filter:") + "<input type='checkbox' id='hmSelectIgnoreFilter' "+ (this._ignoreFilter ? "checked" : "") +">";
             }
             $("#hmSelectFilter").append (text);
             
@@ -1719,8 +1703,7 @@ var hmSelect = {
 					}
 				}				
 			}
-		}
-        else if (hmSelect.value != null && hmSelect.value != "") {
+		} else if (hmSelect.value != null && hmSelect.value != "") {
             // Just find the selected element
             for (var i = 0; i < this.mydata.length; i++) {
                 if (this.mydata[i]["_ID"] == hmSelect.value) {
@@ -1737,7 +1720,7 @@ var hmSelect = {
 			height:      $('#tabs-devs').height() - 35 - $('#hmSelectFilter').height (),
 			autowidth:   true,
 			shrinkToFit: false,
-			colNames:['Id', dui.translate ('Name'), '', dui.translate ('Location'), dui.translate ('Interface'), dui.translate ('Type'), dui.translate ('Function'), dui.translate ('Address'), ''],
+			colNames:['Id', dui.translate('Name'), '', dui.translate('Location'), dui.translate('Interface'), dui.translate('Type'), dui.translate('Function'), dui.translate('Address'), ''],
 			colModel:[
                 {name:'id',       index:'id',        width:1,   hidden:true, key:true},
 				{name:'Name',     index:'Name',      width:250, sortable:"text"},
@@ -1832,7 +1815,7 @@ var hmSelect = {
 		_userArg = userArg || null;
 		_onsuccess = onSuccess || null;
 		if (!document.getElementById ("hmSelect")) {
-			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate ("Select HM parameter") + "'></div>");
+			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate("Select HM parameter") + "'></div>");
             var text = "<div id='hmSelect_tabs'>";
             text += "  <ul>";
             var i = 0;
@@ -1900,14 +1883,14 @@ var hmSelect = {
         $("#hmSelect_tabs").tabs();
         
         // Define dialog buttons
-		this._selectText = dui.translate ("Select");
-		this._cancelText = dui.translate ("Cancel");
+		this._selectText = dui.translate("Select");
+		this._cancelText = dui.translate("Cancel");
         
 		var dialog_buttons = {}; 
 		dialog_buttons[this._selectText] = function() { 
 			$( this ).dialog( "close" ); 
 			if (_onsuccess)
-				_onsuccess (_userArg, value, valueObj);
+				_onsuccess(_userArg, value, valueObj);
 		}
 		dialog_buttons[this._cancelText] = function() {
 			$( this ).dialog( "close" ); 
@@ -1927,14 +1910,14 @@ var hmSelect = {
 		});
         $('#dashui-waitico').show().css({top: ($("#hmSelect").height() + $('#dashui-waitico').height())/2});
         $('#dashui-waitico').hide();
-        $('#hmSelect_tabs').width  ($('#hmSelect').width());
-        $('#hmSelect_tabs').height ($('#hmSelect').height()  - 12);
+        $('#hmSelect_tabs').width($('#hmSelect').width());
+        $('#hmSelect_tabs').height($('#hmSelect').height()  - 12);
         
-        $('#tabs-devs').width  ($('#hmSelect_tabs').width()  - 6);
-        $('#tabs-devs').height ($('#hmSelect_tabs').height() - 60);
-        $('#tabs-vars').width  ($('#hmSelect_tabs').width()  - 6);
-        $('#tabs-vars').height ($('#hmSelect_tabs').height() - 60);
-        $('#tabs-progs').width ($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-devs').width($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-devs').height($('#hmSelect_tabs').height() - 60);
+        $('#tabs-vars').width($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-vars').height($('#hmSelect_tabs').height() - 60);
+        $('#tabs-progs').width($('#hmSelect_tabs').width()  - 6);
         $('#tabs-progs').height($('#hmSelect_tabs').height() - 60);
         
         this._buildDevicesGrid (homematic, filter, devFilter);
@@ -1956,16 +1939,16 @@ var hmSelect = {
                     continue;
                 if (hmSelect._filter != null) {
                     for (var j = 0; j < hmSelect._filter.rules.length; j++) {
-                        if (rows[i][hmSelect._filter.rules[j].field].indexOf (hmSelect._filter.rules[j].data) == -1) {
+                        if (rows[i][hmSelect._filter.rules[j].field].indexOf(hmSelect._filter.rules[j].data) == -1) {
                             isShow = false;
                             break;
                         }
                     }
                 }
-                if (isShow && hmSelect._filterLoc != "" && rows[i]['Location'].indexOf (hmSelect._filterLoc) == -1) {
+                if (isShow && hmSelect._filterLoc != "" && rows[i]['Location'].indexOf(hmSelect._filterLoc) == -1) {
                     isShow = false;
                 }
-                if (isShow && hmSelect._filterFunc != "" && rows[i]['Function'].indexOf (hmSelect._filterFunc) == -1) {
+                if (isShow && hmSelect._filterFunc != "" && rows[i]['Function'].indexOf(hmSelect._filterFunc) == -1) {
                     isShow = false;
                 }            
                 $("#"+rows[i].id,"#hmDevsContent").css({display: (isShow) ? "":"none"});
@@ -1981,7 +1964,7 @@ var hmSelect = {
                 continue;
             if (hmSelect._progsFilter != null) {
                 for (var j = 0; j < hmSelect._progsFilter.rules.length; j++) {
-                    if (rows[i][hmSelect._progsFilter.rules[j].field].indexOf (hmSelect._progsFilter.rules[j].data) == -1) {
+                    if (rows[i][hmSelect._progsFilter.rules[j].field].indexOf(hmSelect._progsFilter.rules[j].data) == -1) {
                         isShow = false;
                         break;
                     }
@@ -2000,7 +1983,7 @@ var hmSelect = {
                 continue;
             if (hmSelect._varsFilter != null) {
                 for (var j = 0; j < hmSelect._varsFilter.rules.length; j++) {
-                    if (rows[i][hmSelect._varsFilter.rules[j].field].indexOf (hmSelect._varsFilter.rules[j].data) == -1) {
+                    if (rows[i][hmSelect._varsFilter.rules[j].field].indexOf(hmSelect._varsFilter.rules[j].data) == -1) {
                         isShow = false;
                         break;
                     }

@@ -12,21 +12,151 @@
             /*jscolor: function (el) {
                 var myPicker = new jscolor.color(document.getElementById(jQuery(el).parent().attr('id')+"_jscolor"), {})
 
-            }*/
-            spectrum: function (el) {
-                var $this = jQuery(el);
-                $this.spectrum();
+            },*/
+            rgb2hex: function (r,g,b) {
+                return "#" + ("0"+r.toString(16)).slice(-2) + ("0"+g.toString(16)).slice(-2) + ("0"+b.toString(16)).slice(-2);
             },
-            farbtastic: function (el) {
+            hex2rgb: function (hex) {
+                var r = parseInt(hex.substr(1, 2), 16);
+                var g = parseInt(hex.substr(3, 2), 16);
+                var b = parseInt(hex.substr(5, 2), 16);
+                return {r: r, g: g, b: b};
+            },
+            farbtastic: function (el, r_id, g_id, b_id, factor) {
                 var $this = jQuery(el);
-                $this.prev().farbtastic($this);
+                $this.hide();
+
+                r_id = r_id || 65535;
+                g_id = g_id || 65535;
+                b_id = b_id || 65535;
+
+                if (!homematic.uiState["_"+r_id] || !homematic.uiState["_"+g_id] || !homematic.uiState["_"+b_id]) {
+                    return;
+                }
+
+                var ft = $.farbtastic($this.prev(), function () {
+                    var color = dui.binds.colorpicker.hex2rgb(this.color);
+                    var r = (parseFloat(color.r) / factor).toFixed(3);
+                    var g = (parseFloat(color.g) / factor).toFixed(3);
+                    var b = (parseFloat(color.b) / factor).toFixed(3);
+                    if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+                        homematic.uiState["_"+r_id].Value = r;
+                        homematic.uiState["_"+g_id].Value = g;
+                        homematic.uiState["_"+b_id].Value = b;
+                        homematic.setValue(r_id, r);
+                        homematic.setValue(g_id, g);
+                        homematic.setValue(b_id, b);
+                    }
+                });
+
+                var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
+                var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
+                var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                ft.setColor(dui.binds.colorpicker.rgb2hex(r,g,b));
+
+                homematic.uiState.bind("_"+r_id+".Value", function( e, newVal, oldVal ) {
+                    var r = parseInt(parseFloat(newVal) * factor, 10);
+                    var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
+                    var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                    ft.setColor(dui.binds.colorpicker.rgb2hex(r,g,b));
+                });
+                homematic.uiState.bind("_"+g_id+".Value", function( e, newVal, oldVal ) {
+                    var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
+                    var g = parseInt(parseFloat(newVal) * factor, 10);
+                    var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                    ft.setColor(dui.binds.colorpicker.rgb2hex(r,g,b));
+                });
+                homematic.uiState.bind("_"+b_id+".Value", function( e, newVal, oldVal ) {
+                    var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
+                    var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
+                    var b = parseInt(parseFloat(newVal) * factor, 10);
+                    ft.setColor(dui.binds.colorpicker.rgb2hex(r,g,b));
+                });
+
+
+
+            },
+            spectrum: function (el, r_id, g_id, b_id, factor) {
+                r_id = r_id || 65535;
+                g_id = g_id || 65535;
+                b_id = b_id || 65535;
+
+                if (!homematic.uiState["_"+r_id] || !homematic.uiState["_"+g_id] || !homematic.uiState["_"+b_id]) {
+                    return;
+                }
+
+                var $this = jQuery(el);
+
+                $this.spectrum({
+                    preferredFormat: "rgb"
+                });
+
+                var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
+                var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
+                var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                $this.spectrum("set", {r:r, g:g, b:b});
+
+                homematic.uiState.bind("_"+r_id+".Value", function( e, newVal, oldVal ) {
+                    var r = parseInt(parseFloat(newVal) * factor, 10);
+                    var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
+                    var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                    $this.spectrum("set", {r:r, g:g, b:b});
+                });
+                homematic.uiState.bind("_"+g_id+".Value", function( e, newVal, oldVal ) {
+                    var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
+                    var g = parseInt(parseFloat(newVal) * factor, 10);
+                    var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                    $this.spectrum("set", {r:r, g:g, b:b});
+                });
+                homematic.uiState.bind("_"+b_id+".Value", function( e, newVal, oldVal ) {
+                    var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
+                    var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
+                    var b = parseInt(parseFloat(newVal) * factor, 10);
+                    $this.spectrum("set", {r:r, g:g, b:b});
+                });
+
+                $this.change(function() {
+                    console.log($this.val());
+                    var color = $this.spectrum("get").toRgb();
+                    var r = (parseFloat(color.r) / factor).toFixed(3);
+                    var g = (parseFloat(color.g) / factor).toFixed(3);
+                    var b = (parseFloat(color.b) / factor).toFixed(3);
+                    if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+                        homematic.uiState["_"+r_id].Value = r;
+                        homematic.uiState["_"+g_id].Value = g;
+                        homematic.uiState["_"+b_id].Value = b;
+                        homematic.setValue(r_id, r);
+                        homematic.setValue(g_id, g);
+                        homematic.setValue(b_id, b);
+                    }
+
+                });
             }
         }
     });
 </script>
 
+<script type="text/ejs" id="tplRGBSpectrum" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="ctrl - rgb spectrum" data-dashui-attrs="red_id[65535];green_id[65535];blue_id[65535];divisor[255]">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="editmode-helper"></div>
+        <div class="dashui-widget-body">
+            <input id="<%= this.data.attr('wid') %>_spectrum" value="" <%= (el) -> dui.binds.colorpicker.spectrum(el, data.attr('red_id'), data.attr('green_id'), data.attr('blue_id'), data.attr('divisor')) %>>
+        </div>
+    </div>
+</script>
 
 
+<script type="text/ejs" id="tplRGBFarbtastic" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="ctrl - rgb farbtastic" data-dashui-attrs="red_id[65535];green_id[65535];blue_id[65535];divisor[255]">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 196px; height: 196px;" id="<%= this.data.attr('wid') %>">
+        <div class="editmode-helper"></div>
+        <div class="dashui-widget-body">
+            <div id="<%= this.data.attr('wid') %>_farbtastic"></div>
+            <input id="<%= this.data.attr('wid') %>_farbtastic_input" value="" <%= (el) -> dui.binds.colorpicker.farbtastic(el, data.attr('red_id'), data.attr('green_id'), data.attr('blue_id'), data.attr('divisor')) %>>
+        </div>
+    </div>
+</script>
+
+        <!--
 
 <script type="text/ejs" id="tplJscolor" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="jscolor" data-dashui-attrs="hue_id;sat_id;bri_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
@@ -38,14 +168,6 @@
 </script>
 
 
-<script type="text/ejs" id="tplFarbtastic" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="hue_ctrl - farbtastic (unfertig)" data-dashui-attrs="lamp_id;program_id;hue_id;sat_id;bri_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <div id="<%= this.data.attr('wid') %>_farbtastic"></div>
-            <input id="<%= this.data.attr('wid') %>_farbtastic_input" value="" <%= (el) -> dui.binds.colorpicker.farbtastic(el) %>>
-        </div>
-    </div>
-</script>
 
 
 
@@ -85,6 +207,7 @@
     </div>
 </script>
 
+
 <script type="text/ejs" id="tplDmxSpectrum" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="dmx_ctrl - spectrum (unfertig)" data-dashui-attrs="program_id;red_channel;green_channel;blue_channel">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
@@ -93,3 +216,5 @@
     </div>
 </script>
 
+
+-->

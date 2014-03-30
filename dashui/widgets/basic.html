@@ -1,5 +1,7 @@
 <script type="text/javascript">
+
     jQuery.extend(true, dui.binds, {
+        pressed: undefined,
         stateful: {
             view: function (el, viewArr, persistent) {
                 var $this = jQuery(el);
@@ -105,20 +107,85 @@
                 var val = $this.attr("data-hm-val");
                 if (val === "true") { val = true; }
                 if (val === "false") { val = false; }
-                $this.click(function (e) {
+                $this.on('click', function (e) {
                     if (dui.urlParams["edit"] !== "") {
                         homematic.setValue($this.attr("data-hm-id"), val);
                     }
                 });
-            },
-            increment: function (el) {
-                var $this = jQuery(el);
-                var hm_id = "_" + $this.attr("data-hm-id");
-                $this.click(function (e) {
+                // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
+                /*
+                $this.on('touchend',function (e) {
                     if (dui.urlParams["edit"] !== "") {
-                        homematic.setValue($this.attr("data-hm-id"), homematic.uiState[hm_id].Value + parseFloat($this.attr("data-dashui-step")));
+                        homematic.setValue($this.attr("data-hm-id"), val);
                     }
                 });
+                */
+            },
+            increment: function (el, minmax, delay, interval) {
+
+                jQuery(el).click(function (e) {
+                    clearTimeout(dui.binds.basic.pressed);
+                    if (dui.binds.basic.pressedNext) {
+                        dui.binds.basic.pressedNext = false;
+                        return;
+                    }
+                    var $this = $(this);
+                    var hm_id = "_" + $this.attr("data-hm-id");
+                    if (dui.urlParams["edit"] !== "") {
+                        var step = parseFloat($this.attr("data-dashui-step")),
+                            tmp = parseFloat(homematic.uiState[hm_id].Value) + step;
+                        if (step < 0) {
+                            if (tmp >= minmax) {
+                                homematic.setValue($this.attr("data-hm-id"), tmp);
+                            }
+                        } else {
+                            if (tmp <= minmax) {
+                                homematic.setValue($this.attr("data-hm-id"), tmp);
+                            }
+                        }
+                    }
+                });
+                if (interval) {
+                    function fInterval($that) {
+                        dui.binds.basic.pressedNext = true;
+                        var hm_id = "_" + $that.attr("data-hm-id");
+                        if (dui.urlParams["edit"] !== "") {
+                            var step = parseFloat($that.attr("data-dashui-step")),
+                                    tmp = parseFloat(homematic.uiState[hm_id].Value) + step;
+                            if (step < 0) {
+                                if (tmp >= minmax) {
+                                    homematic.setValue($that.attr("data-hm-id"), tmp);
+                                    dui.binds.basic.pressed = setTimeout(function ($_that) {
+                                        fInterval($_that);
+                                    }, interval, $that);
+                                }
+                            } else {
+                                if (tmp <= minmax) {
+                                    homematic.setValue($that.attr("data-hm-id"), tmp);
+                                    dui.binds.basic.pressed = setTimeout(function ($_that) {
+                                        fInterval($_that);
+                                    }, interval, $that);
+                                }
+                            }
+                        }
+                    }
+                    function intervalStart(e) {
+
+                        dui.binds.basic.pressedNext = false;
+                        var $this = $(this);
+                        var hm_id = "_" + $this.attr("data-hm-id");
+                        dui.binds.basic.pressed = setTimeout(function ($that) {
+                            fInterval($that);
+                        }, delay, $this);
+                    }
+                    jQuery(el).on('mousedown', intervalStart);
+                    jQuery(el).on('touchstart', intervalStart);
+                    jQuery(el).on('touchend', function () {
+                        clearTimeout(dui.binds.basic.pressed);
+                    });
+
+
+                }
             },
             program: function (el) {
                 var $this = jQuery(el);
@@ -147,7 +214,7 @@
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                    if (newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
+                    if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
                         }
@@ -156,7 +223,8 @@
                     }
                 });
                 if (dui.urlParams["edit"] !== "") {
-                    if (homematic.uiState.attr(hm_id+".Value") == 0) {
+                    var newVal = homematic.uiState.attr(hm_id+".Value");
+                    if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         $this.hide();
                     }
                 }
@@ -176,6 +244,24 @@
                 if (dui.urlParams["edit"] !== "") {
                     if (parseFloat(homematic.uiState.attr(hm_id+".Value")) != 0 && homematic.uiState.attr(hm_id+".Value") !== false) {
                      $this.hide();
+                    }
+                }
+            },
+            showOnValue: function (el, val) {
+                var $this = jQuery(el);
+                var hm_id = "_" + $this.attr("data-hm-id");
+                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                    if (newVal != val) {
+                        if (dui.urlParams["edit"] !== "") {
+                            $this.hide();
+                        }
+                    } else {
+                        $this.show();
+                    }
+                });
+                if (dui.urlParams["edit"] !== "") {
+                    if (homematic.uiState.attr(hm_id+".Value") != val) {
+                        $this.hide();
                     }
                 }
             },
@@ -232,21 +318,24 @@
                 });
             },
             toggle: function (el) {
+                function toggle() {
+                    var val = homematic.uiState["_"+id].Value;
+                    if (val === false || val === "false") {
+                        homematic.setValue(id, true);
+                    } else if (val === true || val === "true") {
+                        homematic.setValue(id, false);
+                    } else {
+                        val = parseFloat(val);
+                        if (val >= 0.5) { val = 1; } else { val = 0; }
+                        homematic.setValue( id,  1-val);
+                    }
+                }
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
                 if (dui.urlParams["edit"] !== "") {
-                    $this.click(function () {
-                        var val = homematic.uiState["_"+id].Value;
-                        if (val === false || val === "false") {
-                            homematic.setValue(id, true);
-                        } else if (val === true || val === "true") {
-                            homematic.setValue(id, false);
-                        } else {
-                            val = parseFloat(val);
-                            if (val >= 0.5) { val = 1; } else { val = 0; }
-                            homematic.setValue( id,  1-val);
-                        }
-                    });
+                    // @geolin - musste das wieder entfernen - das führt zu doppelter Ausführung (Gerät geht kurz an und sofort wieder aus bzw umgekehrt)
+                    //$this.on('touchend', toggle);
+                    $this.on('click', toggle);
                 }
             },
             iframeRefresh: function (el, src, refreshInterval) {
@@ -330,11 +419,87 @@
                     });
                 }
             },
-            _disable: function () {
+            editNote: function (wid, max_width, min_width, min_height, hm_id) {
+                if (dui.urlParams["edit"] === "") return;
+                if (max_width != '') {
+                    max_width = parseInt (max_width);
+                }
+                else {
+                    max_width = 400;
+                }
+                if (min_width != '') {
+                    min_width = parseInt (min_width);
+                }
+                else {
+                    min_width = 40;
+                }
+
+                if (min_height != '') {
+                    min_height = parseInt (min_height);
+                }
+                else {
+                    min_height = 15;
+                }
+                if (hm_id != '') {
+                    hm_id = parseInt (hm_id);
+                }
+                else {
+                    hm_id = null;
+                }
+				$this = jQuery('#div_'+wid);
+				jQuery('body').append("<div id='dlg_"+wid+"' title='Edit note'>"+
+								  "<textarea style='width:95%;height:92%' id='text_"+wid+"'>"+$this.text()+"</textarea></div>");
+
+                console.log("Test");
+				var buttons = {};
+				buttons["Clear"] = function() {
+					jQuery('#text_'+$(this).attr("data-id")).val("");
+				};
+				
+				buttons["Ok"] = function() {
+					var dlg = $(this);
+					var text = $('#text_'+dlg.attr("data-id")).val();
+					console.log(text + " " + dlg.attr("data-id"));
+					text = text.replace ("\n", "<br>\n");
+
+					jQuery('#div_'+dlg.attr("data-id")).html (text);
+					if (text == "") {
+						jQuery('#'+dlg.attr("data-id")).css({width: min_width, height: min_height});
+					}
+					else {
+						jQuery('#'+dlg.attr("data-id")).css({width: max_width, height: 'auto'}); 
+					}
+                    if (hm_id) {
+						homematic.setValue(hm_id, text);
+                    }
+					dlg.dialog( "close" );
+					dlg.remove();
+				};
+						
+				buttons["Cancel"] = function() {
+					jQuery(this).dialog( "close" );
+					jQuery(this).remove();
+				};
+								  
+				jQuery('#dlg_'+wid).attr("data-id", wid).dialog({
+					width:  500,
+					height: 300,
+					modal: true,
+					buttons: buttons
+				});
+			},
+			_disable: function () {
                 $(".editmode-helper").show();
             }
         }
     });
+
+    jQuery(document).mouseup(function () {
+        if (dui.binds.basic.pressed) {
+            clearInterval(dui.binds.basic.pressed);
+        }
+    });
+
 </script>
 
 
@@ -362,7 +527,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div class="editmode-helper"></div>
-            <img style="position:absolute; width:100%;" src="<%== this.data.attr('src') %>" />
+            <img style="position:absolute; width:100%;" <%= this.data.attr('src') ? 'src="'+this.data.attr('src')+'"' : '' %> />
             <div <%= (el) -> dui.binds.basic.imgRefresh(el, data.attr("src"), data.attr("refreshInterval")) %> />
         </div>
     </div>
@@ -373,6 +538,12 @@
         <div class="dashui-widget-body">
             <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr("target") %>" alt="<%== this.data.attr("alt") %>" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%"><%== this.data.attr("html") %></div></a>
         </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplFrame" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Border" data-dashui-attrs="title['Title'];title_font;title_color[black]/color;title_back/color;title_top[-10]/slider,-20,20,1;title_left[15]/slider,-20,30,1">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="overflow:visible;width:50px;height:50px;border:1px solid #888" id="<%= this.data.attr('wid') %>" >
+        <div style="position:absolute;top:<%= this.data.attr('title_top') %>px;left:<%= this.data.attr('title_left') %>px;color:<%== this.data.attr('title_color') %>;background:<%== this.data.attr('title_back') %>;font:<%== this.data.attr('title_font') %>"><%== this.data.attr('title') %></div>
     </div>
 </script>
 
@@ -499,7 +670,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueTimestamp" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Lastchange Timestamp" data-dashui-attrs="html_prepend;html_append;hm_id">
+<script type="text/ejs" id="tplValueTimestamp" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Timestamp" data-dashui-attrs="html_prepend;html_append;hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -509,12 +680,21 @@
     </div>
 </script>
 
+<script type="text/ejs" id="tplValueLastchange" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Lastchange Timestamp" data-dashui-attrs="html_prepend;html_append;hm_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <div data-hm-id="<%= this.data.attr('hm_id') %>">
+                <%== this.data.attr("html_prepend") %><%== homematic.uiState.attr("_" + this.data.hm_id + ".LastChange") %><%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+</script>
 
 <script type="text/ejs" id="tplValueStringImg" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - String img src" data-dashui-attrs="html_prepend;html_append;hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><img src='<%== homematic.uiState.attr("_" + this.data.hm_id + ".Value") %>' width="100%"/><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><img <%= homematic.uiState.attr("_" + this.data.hm_id + ".Value" ) ? "src='" +  homematic.uiState.attr("_" + this.data.hm_id + ".Value" ) + "'" : "" %> width="100%"/><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -658,6 +838,15 @@
     </div>
 </script>
 
+<script type="text/ejs" id="tplShowValue" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Show on Value" data-dashui-attrs="hm_id;value;html;html_prepend;html_append">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.showOnValue(el, data.attr('value')) %>>
+        <div class="dashui-widget-body">
+            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+
 <script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Red Number" data-dashui-attrs="hm_id;html_prepend;html_append_singular;html_append_plural">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.hideOnFalse(el) %>>
         <div class="dashui-widget-body" >
@@ -731,6 +920,13 @@
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
             </div>
         </div>
+    </div>
+</script>
+<script type="text/ejs" id="tplNote" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Note" data-dashui-attrs="hm_id;max_width[300];html_prepend;html_append;test_text">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:50px;height:50px;border:1px solid #888;background:yellow" id="<%= this.data.attr('wid') %>" onclick="dui.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= this.data.attr('hm_id') %>')">
+		<div data-hm-id="<%= this.data.attr('hm_id') %>" id="div_<%= this.data.attr('wid') %>">
+			<%== this.data.attr("html_prepend") %><%= homematic.uiState.attr("_" + this.data.hm_id + ".Value") == null ? "" : homematic.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
+		</div>
     </div>
 </script>
 

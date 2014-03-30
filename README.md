@@ -5,14 +5,65 @@
 
 siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
-
-
 ## Changelog
+
+### 0.9beta61
+* (Hobbyquaker) Bugfix state Binding (betrifft verschiedene basic/jqui/jqui-mfd Widgets)
+* (Hobbyquaker) Bugfix diverse Widgets basic und jqui: Workaround für 404 __!!__ - siehe https://github.com/bitovi/canjs/issues/157
+* (Hobbyquaker) Bugfix Widget jqui - ctrl - slider. Wert wird auf 0 gesetzt falls isNaN
+* (Hobbyquaker) Widget "colorpicker rgb spectrum" fertiggestellt
+* (Hobbyquaker) neues Widget "colorpicker rgb farbtastic"
+* (Hobbyquaker) Fehler abgefangen falls versucht wird ein Widget zu rendern dessen Template nicht vorhanden ist
+
+### 0.9beta60
+* (Hobbyquaker) Bugfix toggle Binding (betrifft verschiedene basic/jqui/jqui-mfd Widgets)
+* (Hobbyquaker) Code cleanup
+
+### 0.9beta59
+* (Hobbyquaker) Bugfix Instance (hat dazu geführt das Chrome/Android unter Umständen nach "lade Daten..." hängengeblieben ist)
+* (Hobbyquaker) Bugfix Widget jqui - Icon Toggle: Binding neu aufgebaut (Flicker bei Aktualisierungen verhindern)
+* (Hobbyquaker) Bugfix beim Neuladen der Datenpunkte nach Socket.IO-Reconnect
+* (Hobbyquaker) Bugfix beim unterbinden von Markierung auf Android/Webkit
+* (Hobbyquaker) Neues Widget: basic - val - Show on Value (Wird nur angezeigt wenn Datenpunkt ein vorgegebenen Wert beinhaltet)
+* (Hobbyquaker) Neues Widget: colorpicker - ctrl rgb spectrum
+* (Hobbyquaker) unfertige colorpicker Widgets auskommentiert
+
+### 0.9beta58
+* (Hobbyquaker) Fehler abgefangen falls parsen der dashui-views.json fehlschlägt (erfodert CCU.IO 1.0.28)
+* (Hobbyquaker) Bugfix Zeitstempel Formatierung
+* (Hobbyquaker) neues Widget: dev - Debug uiState[id] History
+* (Hobbyquaker) Bugfix Widget special - remove Focus - Fokus nicht entfernen auf Eingabefeldern
+* (Hobbyquaker) Attribut widgetSet wird in addWidget-Methode gesetzt
+* (Hobbyquaker) Code cleanup
+
+### 0.9beta57
+* (Hobbyquaker) neues Widget: special - remove Focus
+* (Hobbyquaker) Bugfix Widget jqui - ctrl - Icon Bool
+* (Hobbyquaker) Widget jqui - ctrl Icon Increment: Delay implementiert
+* (Hobbyquaker) Markieren unterbunden
+
+### 0.9beta56
+* (Hobbyquaker) neue Widgets: special - Instance, special - preRenderView
+* (Hobbyquaker) Instanzen: CCU.IO Variablen
+* (Hobbyquaker) neues Widget: dev - Debug uiState[id]
+* (Hobbyquaker) neues Widget: basic - LastChange Timestamp
+* (Hobbyquaker) Bugfix: jqui slider initial state
+* (Hobbyquaker) Debug Widgets für uiState und setState getrennt
+* (Hobbyquaker) Style Korrekturen - Whitespace in Funktionsaufrufen - bitte in Zukunft an diesen Styleguide halten: https://github.com/hobbyquaker/Javascript
+* (geolin) Basic Changed state and toggle Eventhandler to support Touchevents (touchend). (Click Event did not work on Windows 8.1 Prof. Tablet with Chrome installed).
+* (Thorque) Adding a new widget: jqui Icon Toggle
+* (Bluefox) Remove double include in RGraph
+* (Bluefox) Add switch language for DashUI (settings is not stored)
+* (Bluefox) Fix bug with the shadow of RGraph
+* (Bluefox) Fix bug with helper selection box
+* (Bluefox) New Widget: basic - Note
+* (Bluefox) Fix Basic- RedNumber if value null
+* (Bluefox) new widget basic-tplFrame
 
 ### 0.9beta55
 * (Hobbyquaker) lib Update: jQuery 1.11.0 (erfordert CCU.IO >= 1.0.24)
 * (Hobbyquaker) neues Widget: basic - val - AckFlag HTML
-* (Hobbyquaker) neues Widget: basic - val - LastChange Timestamp
+* (Hobbyquaker) neues Widget: basic - val - Timestamp
 * (Hobbyquaker) neues Widget: jqui - ctrl - Icon Increment
 
 ### 0.9beta54

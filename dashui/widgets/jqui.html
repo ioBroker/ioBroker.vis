@@ -20,7 +20,6 @@
                     } else {
                         val = newVal;
                     }
-                    console.log("classes bind "+newVal+" "+value);
                     if (reverse) {
                         if ((!value && val == 1) || (value && val != value)) {
                             $this.removeClass("ui-state-active");
@@ -280,21 +279,25 @@
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
                 var wid = $this.attr("data-hm-wid");
+                var hm_id = "_" + id;
+
 
                 var settings = $.extend({
                     min: parseFloat(options.min) || 0.00,
                     max: parseFloat(options.max) || 1.00,
                     step: parseFloat(options.step) || 0.01,
+                    value: parseFloat(homematic.uiState.attr(hm_id+".Value")),
                     slide: function (e, ui) {
                         // Slider -> Observable
                         homematic.setValue(id, ui.value); //.toFixed(6));
                     }
                 }, options);
 
-                var hm_id = "_" + id;
+                if (isNaN(settings.value)) {
+                    settings.value = 0;
+                }
 
                 $this.slider(settings);
-                $this.slider("value", parseFloat(homematic.uiState.attr(hm_id+".Value")));
 
                 homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                    // console.log("slider newVal="+JSON.stringify(newVal));
@@ -448,7 +451,25 @@
                     //e.preventDefault();
                     //return false;
                 //});
+            },
 
+            itoggle: function(el){
+                var $this = jQuery(el).parent();
+                var id = "_" + $this.parent().attr("data-hm-id") + ".Value";
+                var val = homematic.uiState.attr(id);
+                if (val === true || val === "true" || parseFloat(val) > 0) {
+                    $this.find(".imgToggleFalse").hide();
+                    $this.find(".imgToggleTrue").show();
+                }
+                homematic.uiState.bind(id, function(e, val) {
+                    if (val === true || val === "true" || parseFloat(val) > 0) {
+                        $this.find(".imgToggleFalse").hide();
+                        $this.find(".imgToggleTrue").show();
+                    } else {
+                        $this.find(".imgToggleTrue").hide();
+                        $this.find(".imgToggleFalse").show();
+                    }
+                });
             }
         }
     });
@@ -483,7 +504,7 @@
     %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
-            <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+            <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
         </div>
     </div>
 </script>
@@ -497,7 +518,7 @@
     %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
-            <a class="widget-link" href="#" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+            <a class="widget-link" href="#" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
             <div <%= (el) -> dui.binds.jqueryui.iconHttpGet(el, data.attr('url')) %> />
         </div>
     </div>
@@ -525,7 +546,7 @@
     %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
-            <img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
             <%== this.data.attr("html_dialog") %>
@@ -559,7 +580,7 @@
 
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
-        <img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+        <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
         <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
@@ -599,7 +620,7 @@
 <script type="text/ejs" id="tplJquiIconNav" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="navigation - Icon" data-dashui-attrs="src;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
     <div data-dashui-nav="<%= this.data.attr('nav_view') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el); dui.binds.jqueryui.navigationActive(el, data.attr('nav_view')); dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %>>
         <div class="dashui-widget-body">
-            <img src="<%== this.data.attr('src') %>" style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
 
         </div>
     </div>
@@ -622,15 +643,37 @@
             var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
             var val = parseFloat(str);
             var state;
+            if (str === false || str === "false" || val == 0) {
             %>
-            <%  if (val === 0 || str === false || str === "false") { %>
             <%== this.data.attr("html_false") %>
             <% } else { %>
             <%== this.data.attr("html_true") %>
             <% } %>
 
+
         </div>
     </div>
+    </div>
+</script>
+
+
+<script>
+
+</script>
+<script type="text/ejs" id="tplJquiToogle" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Toggle" data-dashui-attrs="label;hm_id;src_true;alt_true;src_false;alt_false;invert_icon/checkbox">
+
+    <div class="ui-widget ui-corner-all ui-state-default dashui-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %>>
+        <div class="dashui-widget-body">
+            <%
+            var styles = "";
+            if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+                styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+            }
+            %>
+            <img class="imgToggleFalse" <%= this.data.attr('src_false') ? 'src="' +  this.data.attr('src_false') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt_false') %>" />
+            <img class="imgToggleTrue" <%= this.data.attr('src_true') ? 'src="' +  this.data.attr('src_true') + '"' : '' %> style="<%= styles %> display:none;vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt_true') %>" />
+            <div <%= (el) -> dui.binds.jqueryui.itoggle(el) %>></div>
+        </div>
     </div>
 </script>
 
@@ -777,21 +820,21 @@
     %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.state(el); dui.binds.jqueryui.classes(el, null, data.value) %>>
         <div class="dashui-widget-body">
-            <img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplIconInc" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Increment" data-dashui-attrs="hm_id;step;active_value;text;src;alt;invert_icon/checkbox">
+<script type="text/ejs" id="tplIconInc" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Increment" data-dashui-attrs="hm_id;step;minmax;text;src;alt;repeat_delay[800];repeat_interval[800];invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
-    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-dashui-step="<%= this.data.attr('step') %>" data-hm-val="<%= this.data.attr('active_value') %>" <%= (el) -> dui.binds.basic.increment(el); dui.binds.jqueryui.classes(el, null, data.active_value) %>>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-dashui-step="<%= this.data.attr('step') %>" data-hm-val="<%= this.data.attr('active_value') %>" <%= (el) -> dui.binds.basic.increment(el,data.minmax,data.repeat_delay,data.repeat_interval); dui.binds.jqueryui.classes(el, null, data.minmax) %>>
         <div class="dashui-widget-body">
-            <img src="<%== this.data.attr('src') %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
     </div>
 </script>
@@ -805,7 +848,7 @@
     %>
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.program(el); dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
-            <img src="<%== this.data.attr('src') %>" style="<%= styles %>; vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %>; vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
     </div>
 </script>

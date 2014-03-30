@@ -23,7 +23,7 @@
 // duiEdit - the DashUI Editor
 
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta55',
+    editVersion:        '0.9beta61',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
@@ -31,47 +31,7 @@ dui = $.extend(true, dui, {
     gridWidth:          undefined,
 
 
-    startInstance: function () {
-        if (dui.instance) {
-            $("#dashui_instance").val(dui.instance);
-            $("#create_instance").hide();
-            $("#instance").show();
 
-            //console.log("adding Instance Variables");
-
-            // TODO statt CCU-Variablen CCU.IO-Variablen und Script-Engine "Add in"
-
-            var name = "dashui_"+dui.instance;
-            dui.socket.emit("addStringVariable", name+"_cmd", "automatisch angelegt von DashUI.", "", function (cmd) {
-                dui.instanceCmd = cmd;
-                //console.log("id "+name+"_cmd="+cmd);
-                dui.socket.emit("addStringVariable", name+"_view", "automatisch angelegt von DashUI.", "", function (view) {
-                    dui.instanceView = view;
-                    //console.log("id "+name+"_view="+view);
-                    dui.socket.emit("addStringVariable", name+"_data", "automatisch angelegt von DashUI.", "", function (data) {
-                        dui.instanceData = data;
-                        //console.log("id "+name+"_data="+data);
-                        storage.set(dui.storageKeyInstance, dui.instance);
-
-                        dui.socket.emit("getIndex", function (index) {
-                            homematic.regaIndex = index;
-                            dui.socket.emit("getObjects", function (obj) {
-                                homematic.regaObjects = obj;
-                                dui.bindInstance();
-                            });
-                        });
-
-                    });
-                });
-            });
-        }
-    },
-    createInstance: function () {
-        dui.instance = (Math.random() * 4294967296).toString(16);
-        dui.instance = "0000000" + dui.instance;
-        dui.instance = dui.instance.substr(-8);
-        dui.startInstance();
-    },
     renameView: function () {
         var val = $("#new_name").val();
         if (val != "" && dui.views[val] === undefined) {
@@ -149,8 +109,8 @@ dui = $.extend(true, dui, {
 		return view;
 	},
 	getViewsOfWidget: function (id) {
-		if (id.indexOf ('_') == -1) {
-			var view = dui.getViewOfWidget (id);
+		if (id.indexOf('_') == -1) {
+			var view = dui.getViewOfWidget(id);
 			if (view) {
 				return [view];
 			} else {
@@ -170,10 +130,10 @@ dui = $.extend(true, dui, {
 	},
 	delWidgetHelper: function (id, isAll) {
 		if (isAll && id.indexOf('_') != -1) {
-			var views = dui.getViewsOfWidget (id);
+			var views = dui.getViewsOfWidget(id);
 			var wids = id.split('_', 2);
 			for (var i = 0; i < views.length; i++) {
-				dui.delWidgetHelper (wids[0] + '_' + views[i], false);
+				dui.delWidgetHelper(wids[0] + '_' + views[i], false);
 			}
 			dui.inspectWidget("none");
 			return;
@@ -186,11 +146,11 @@ dui = $.extend(true, dui, {
 		$("#select_active_widget option[value='"+id+"']").remove();
 		$("#select_active_widget").multiselect("refresh");       
 
-		var view = dui.getViewOfWidget (id);
+		var view = dui.getViewOfWidget(id);
 		
-		var widget_div = document.getElementById (id);
+		var widget_div = document.getElementById(id);
 		if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit['delete']) {
-			widget_div.dashuiCustomEdit['delete'] (id);
+			widget_div.dashuiCustomEdit['delete'](id);
 		}
         
 		$("#"+id).remove();
@@ -211,8 +171,8 @@ dui = $.extend(true, dui, {
 	},
 	delWidget: function () {
 		dui.clearWidgetHelper();
-		dui.delWidgetHelper (dui.activeWidget, true);
-		dui.saveRemote ();
+		dui.delWidgetHelper(dui.activeWidget, true);
+		dui.saveRemote();
 		dui.inspectWidget("none");
     },
     addWidget: function (tpl, data, style, wid, view, hidden) {
@@ -225,7 +185,7 @@ dui = $.extend(true, dui, {
 		
         if (isSelectWidget && !isViewExist) {
 
-            dui.renderView (view, true, false);
+            dui.renderView(view, true, false);
 			isViewExist = true;
         }
 		
@@ -270,14 +230,15 @@ dui = $.extend(true, dui, {
 			style = dui.findFreePosition (view, widgetId, null, jWidgetId.width(), jWidgetId.height());
 		}
 		
-		if (dui.views[view].widgets[widgetId].data !== undefined) {
-			data = $.extend (data, dui.views[view].widgets[widgetId].data, true);
+		if(dui.views[view].widgets[widgetId].data !== undefined) {
+			data = $.extend(data, dui.views[view].widgets[widgetId].data, true);
 		}
-		
+
         dui.views[view].widgets[widgetId] = {
-            tpl:   tpl,
-            data:  data,
-            style: style
+            tpl:        tpl,
+            data:       data,
+            style:      style,
+            widgetSet:  $("#" + tpl).attr("data-dashui-set")
         };
 
         if (style) {
@@ -289,9 +250,10 @@ dui = $.extend(true, dui, {
             dui.binds.basic._disable();
 			dui.binds.jqueryui._disable();
 		}
-		
+
+
         $("#"+widgetId).click(function (e) {
-            console.log("click "+widgetId+" isStealCss="+dui.isStealCss);
+            //console.log("click "+widgetId+" isStealCss="+dui.isStealCss);
             if (!dui.isStealCss) {
 
                 e.preventDefault();
@@ -339,16 +301,16 @@ dui = $.extend(true, dui, {
     },
 	renameWidget: function (oldId, newId) {
 		// find view of this widget
-		var view = dui.getViewOfWidget (oldId);
+		var view = dui.getViewOfWidget(oldId);
 		
 		// create new widget with the same properties
 		if (view) {
-			dui.addWidget (dui.views[view].widgets[oldId].tpl, dui.views[view].widgets[oldId].data, dui.views[view].widgets[oldId].style, newId, view);
+			dui.addWidget(dui.views[view].widgets[oldId].tpl, dui.views[view].widgets[oldId].data, dui.views[view].widgets[oldId].style, newId, view);
             $("#select_active_widget").append("<option value='"+newId+"'>"+newId+" ("+$("#"+dui.views[view].widgets[newId].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
-			dui.delWidgetHelper (oldId, false);
+			dui.delWidgetHelper(oldId, false);
 		}
 		dui.inspectWidget(newId);
-		dui.saveRemote ();
+		dui.saveRemote();
 	},
 	// find this wid in all views, 
 	// delete where it is no more exist, 
@@ -356,10 +318,10 @@ dui = $.extend(true, dui, {
 	// sync data
 	syncWidget: function (id, views) {
 		// find view of this widget
-		var view = dui.getViewOfWidget (id);
+		var view = dui.getViewOfWidget(id);
 		
 		if (views === undefined) {
-			views = dui.getViewsOfWidget (id);
+			views = dui.getViewsOfWidget(id);
 		}
 		
 		if (view) {
@@ -396,12 +358,12 @@ dui = $.extend(true, dui, {
 				}
 				
 				if (dui.views[v_].widgets[wid+'_'+v_] !== undefined) {
-					dui.delWidgetHelper (wid+'_'+v_, false);
+					dui.delWidgetHelper(wid+'_'+v_, false);
 				}
 				
 				if (isFound) {	
 					// Create 
-					dui.addWidget (dui.views[view].widgets[id].tpl, dui.views[view].widgets[id].data, dui.views[view].widgets[id].style, wid+'_'+v_, v_);
+					dui.addWidget(dui.views[view].widgets[id].tpl, dui.views[view].widgets[id].data, dui.views[view].widgets[id].style, wid+'_'+v_, v_);
 				}
 			}
 			
@@ -409,29 +371,28 @@ dui = $.extend(true, dui, {
 			if (views.length < 2 && (id.indexOf('_') != -1)) {
 				// rename this widget from "wid_view" to "wid"
 				var wids = id.split('_', 2);
-				dui.renameWidget (id, wids[0]);
-			}
-			else
-			if (views.length > 1 && (id.indexOf('_') == -1)) {
-				dui.renameWidget (id, id+'_'+view);
+				dui.renameWidget(id, wids[0]);
+			} else if (views.length > 1 && (id.indexOf('_') == -1)) {
+				dui.renameWidget(id, id+'_'+view);
 			}
 		}
 	},
     editObjectID: function (widget, wid_attr, widget_filter) {
         // Edit for Homematic ID
         $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="5"><input type="button" id="inspect_'+wid_attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+wid_attr+'_desc"></div></td></tr>');
-        document.getElementById ("inspect_"+wid_attr+"_btn").jControl = wid_attr;
-        $("#inspect_"+wid_attr+"_desc").html(dui.getObjDesc (widget.data[wid_attr]));
+        document.getElementById("inspect_"+wid_attr+"_btn").jControl = wid_attr;
+        $("#inspect_"+wid_attr+"_desc").html(dui.getObjDesc(widget.data[wid_attr]));
         // Select Homematic ID Dialog
-        $("#inspect_"+wid_attr+"_btn").click ( function () {
+        $("#inspect_"+wid_attr+"_btn").click( function () {
             hmSelect.value = $("#inspect_"+this.jControl).val();
-            hmSelect.show (homematic, this.jControl, function (obj, value) {
+            hmSelect.show(homematic, this.jControl, function (obj, value) {
                 $("#inspect_"+obj).val(value);
                 $("#inspect_"+obj).trigger('change');
-                if (document.getElementById ('inspect_hm_wid')) {
+                if (document.getElementById('inspect_hm_wid')) {
                     if (homematic.regaObjects[value]["Type"] !== undefined && homematic.regaObjects[value]["Parent"] !== undefined &&
                         (homematic.regaObjects[value]["Type"] == "STATE" ||
-                            homematic.regaObjects[value]["Type"] == "LEVEL")) {
+                        homematic.regaObjects[value]["Type"] == "LEVEL")) {
+
                         var parent = homematic.regaObjects[value]["Parent"];
                         if (homematic.regaObjects[parent]["DPs"] !== undefined &&
                             homematic.regaObjects[parent]["DPs"]["WORKING"] !== undefined) {
@@ -441,7 +402,7 @@ dui = $.extend(true, dui, {
                     }
                 }
                 // Try to find Function of the device and fill the Filter field
-                if (document.getElementById ('inspect_filterkey')) {
+                if (document.getElementById('inspect_filterkey')) {
                     if ($('#inspect_filterkey').val() == "") {
                         var hm_id = value;
                         var func = null;
@@ -463,7 +424,7 @@ dui = $.extend(true, dui, {
                             hm_id = homematic.regaObjects[hm_id]['Parent'];
                         }
                         if (func)
-                            $('#inspect_filterkey').val(func).trigger ('change');
+                            $('#inspect_filterkey').val(func).trigger('change');
                     }
                 }
             }, widget_filter);
@@ -481,7 +442,7 @@ dui = $.extend(true, dui, {
     editFontName: function (widget, wid_attr) {
         // Select
         var values = ["", "Arial", "Times", "Andale Mono", "Comic Sans", "Impact"];
-        dui.editSelect (widget, wid_attr, values);
+        dui.editSelect(widget, wid_attr, values);
     },
     editCheckbox: function (widget, wid_attr) {
         // All other attributes
@@ -491,7 +452,7 @@ dui = $.extend(true, dui, {
         // Color selector
         $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44" style="width:90%" /><input id="inspect_'+wid_attr+'Btn"  style="width:8%" type="button" value="..."></td></tr>');
         if (colorSelect) {
-            var btn = document.getElementById ("inspect_"+wid_attr+"Btn");
+            var btn = document.getElementById("inspect_"+wid_attr+"Btn");
             if (btn) {
                 btn.ctrlAttr = wid_attr;
                 $(btn).bind("click", {msg: this}, function (event) {
@@ -501,7 +462,7 @@ dui = $.extend(true, dui, {
                         onselect:    function (img, ctrlAttr) {
                             $('#inspect_'+ctrlAttr).val(colorSelect.GetColor()).trigger("change");
                         }};
-                    colorSelect.Show (_settings);
+                    colorSelect.Show(_settings);
                 });
             }
         }
@@ -511,13 +472,13 @@ dui = $.extend(true, dui, {
         $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44"/></td></tr>');
 
         // autocomplete for filter key
-        var elem = document.getElementById ('inspect_'+wid_attr);
+        var elem = document.getElementById('inspect_'+wid_attr);
         if (elem) {
             elem._save = function () {
                 if (this.timer)
-                    clearTimeout (this.timer);
+                    clearTimeout(this.timer);
 
-                this.timer = setTimeout (function(elem_) {
+                this.timer = setTimeout(function(elem_) {
                     // If really changed
                     var $this = $(elem_);
                     var attr = $this.attr("id").slice(8);
@@ -525,7 +486,7 @@ dui = $.extend(true, dui, {
                     dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
                     var bt = $('#inspect_buttontext');
                     if (bt && bt.val() == "") {
-                        bt.val ($this.val().charAt(0).toUpperCase() + $this.val().slice(1).toLowerCase()).trigger('change');
+                        bt.val($this.val().charAt(0).toUpperCase() + $this.val().slice(1).toLowerCase()).trigger('change');
                     }
                     dui.reRenderWidget(dui.activeWidget);
                     dui.saveRemote();
@@ -554,7 +515,7 @@ dui = $.extend(true, dui, {
                 }
             }).focus(function () {
                     $(this).autocomplete("search", "");
-                }).keyup (function () {
+                }).keyup(function () {
                 this._save();
             }).val(widget.data[wid_attr]);
         }
@@ -564,13 +525,13 @@ dui = $.extend(true, dui, {
         $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44"/></td></tr>');
 
         // autocomplete for filter key
-        var elem = document.getElementById ('inspect_'+wid_attr);
+        var elem = document.getElementById('inspect_'+wid_attr);
         if (elem) {
             elem._save = function () {
-                if (this.timer)
-                    clearTimeout (this.timer);
+                if(this.timer)
+                    clearTimeout(this.timer);
 
-                this.timer = setTimeout (function(elem_) {
+                this.timer = setTimeout(function(elem_) {
                     // If really changed
                     var $this = $(elem_);
                     var attr = $this.attr("id").slice(8);
@@ -614,7 +575,7 @@ dui = $.extend(true, dui, {
                 }
             }).focus(function () {
                     $(this).autocomplete("search", "");
-                }).keyup (function () {
+                }).keyup(function () {
                 this._save();
             }).val(widget.data[wid_attr]);
         }
@@ -622,9 +583,9 @@ dui = $.extend(true, dui, {
     editImage: function (widget, wid_attr) {
         // Image src
         $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44"/><input type="button" id="inspect_'+wid_attr+'_btn" value="..."></td></tr>');
-        document.getElementById ("inspect_"+wid_attr+"_btn").jControl = wid_attr;
+        document.getElementById("inspect_"+wid_attr+"_btn").jControl = wid_attr;
         // Select image Dialog
-        $("#inspect_"+wid_attr+"_btn").click ( function () {
+        $("#inspect_"+wid_attr+"_btn").click( function () {
             var settings = {
                 current: $("#inspect_"+this.jControl).val(),
                 onselectArg: this.jControl,
@@ -633,7 +594,7 @@ dui = $.extend(true, dui, {
                     $("#inspect_"+obj).val(img);
                     $("#inspect_"+obj).trigger("change");
                 }};
-            dui.imageSelect.Show (settings);
+            dui.imageSelect.Show(settings);
         });
     },
     editSlider: function (widget, wid_attr, min, max, step) {
@@ -742,9 +703,9 @@ dui = $.extend(true, dui, {
         var widget_attrs  = $("#" + widget.tpl).attr("data-dashui-attrs").split(";");
         var widget_filter = $("#" + widget.tpl).attr("data-dashui-filter");
 
-        $('#inspect_comment_tr').show ();
-        $('#inspect_class_tr').show ();
-        var widget_div = document.getElementById (dui.activeWidget);
+        $('#inspect_comment_tr').show();
+        $('#inspect_class_tr').show();
+        var widget_div = document.getElementById(dui.activeWidget);
         var editParent = $("#widget_attrs").css({"width": "100%"});
        
         // Edit all attributes
@@ -765,7 +726,7 @@ dui = $.extend(true, dui, {
 				var wid_attrs = widget_attrs[attr].split('/');
 				var wid_attr  = wid_attrs[0];
                 // Try to extract default value
-                var uu = wid_attr.indexOf ("[");
+                var uu = wid_attr.indexOf("[");
                 if (uu != -1) {
                     var defaultValue = wid_attr.substring (uu + 1);
                     defaultValue = defaultValue.substring (0, defaultValue.length -1);
@@ -776,100 +737,86 @@ dui = $.extend(true, dui, {
                     }
                 }
                 var type = (wid_attrs.length > 1) ? wid_attrs[1] : null;
-                if (type && type.indexOf (",") != -1) {
-                    if (type.substring (0, "slider".length) == "slider") {
+                if (type && type.indexOf(",") != -1) {
+                    if (type.substring(0, "slider".length) == "slider") {
                         type = "slider";
-                    }
-                    else {
+                    } else {
                         type = "select";
                     }
                 }
 					
                 if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit[wid_attr]) {
                     widget_div.dashuiCustomEdit[wid_attr](dui.activeWidget, editParent);
-                } else 
-				if (wid_attr === "hm_id" || type == "id") {
-                    dui.editObjectID (widget, wid_attr, widget_filter);
-                } else 
-				if (wid_attr === "hm_wid") {
-                    dui.editObjectID (widget, wid_attr, 'WORKING');
+                } else if (wid_attr === "hm_wid") {
+                    dui.editObjectID(widget, wid_attr, 'WORKING');
                     /*// Eidt for Homematic Working ID
-                    $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="5"><input type="button" id="inspect_'+wid_attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+wid_attr+'_desc"></div></td></tr>');
-                    document.getElementById ("inspect_"+wid_attr+"_btn").jControl = wid_attr;
-                    $("#inspect_"+wid_attr+"_desc").html(dui.getObjDesc (widget.data[wid_attr]));
-                    // Select Homematic ID Dialog
-                    $("#inspect_"+wid_attr+"_btn").click ( function () {
-                        hmSelect.value = $("#inspect_"+this.jControl).val();
-                        hmSelect.show (homematic, this.jControl, function (obj, value) {
-                            $("#inspect_"+obj).val(value);
-                            $("#inspect_"+obj).trigger('change');
-                        }, 'WORKING');
-                    });*/
-                } else 
-				if (wid_attr.indexOf ("src") == wid_attr.length - 3 || type == "image") {
-                    dui.editImage (widget, wid_attr);
-                } else
-				if (wid_attr === "hqoptions") {
+                     $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="5"><input type="button" id="inspect_'+wid_attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+wid_attr+'_desc"></div></td></tr>');
+                     document.getElementById ("inspect_"+wid_attr+"_btn").jControl = wid_attr;
+                     $("#inspect_"+wid_attr+"_desc").html(dui.getObjDesc (widget.data[wid_attr]));
+                     // Select Homematic ID Dialog
+                     $("#inspect_"+wid_attr+"_btn").click ( function () {
+                     hmSelect.value = $("#inspect_"+this.jControl).val();
+                     hmSelect.show (homematic, this.jControl, function (obj, value) {
+                     $("#inspect_"+obj).val(value);
+                     $("#inspect_"+obj).trigger('change');
+                     }, 'WORKING');
+                     });*/
+                } else if (wid_attr.slice(-3) === "_id" || type == "id") {
+                    dui.editObjectID(widget, wid_attr, widget_filter);
+                } else if (wid_attr.indexOf("src") == 0 || type == "image") {
+                    dui.editImage(widget, wid_attr);
+                } else if (wid_attr === "hqoptions") {
                     // hqWidgets options
-                    $('#inspect_comment_tr').hide ();
-                    $('#inspect_class_tr').hide ();
+                    $('#inspect_comment_tr').hide();
+                    $('#inspect_class_tr').hide();
                     // Common settings
                     if (dui.binds.hqWidgetsExt) {
-                        hqWidgets.hqEditButton ({parent: editParent, imgSelect: dui.imageSelect, clrSelect: colorSelect, styleSelect: dui.styleSelect}, hqWidgets.Get (dui.activeWidget), function (editEl) {
+                        hqWidgets.hqEditButton({parent: editParent, imgSelect: dui.imageSelect, clrSelect: colorSelect, styleSelect: dui.styleSelect}, hqWidgets.Get (dui.activeWidget), function (editEl) {
                             // Special HM settings
                             dui.binds.hqWidgetsExt.hqEditButton (hqWidgets.Get (dui.activeWidget), editParent, $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);                    
                         });
                     }
-                } else 
-				if (wid_attr === "weoid") {
+                } else if (wid_attr === "weoid") {
                     // Weather ID
                     $("#widget_attrs").append('<tr class="dashui-add-option"><td id="option_'+wid_attr+'" ></td></tr>');
-                    $('#inspect_comment_tr').hide ();
-                    $('#inspect_class_tr').hide ();
-                    $('#option_'+wid_attr).jweatherCity ({lang: dui.language, currentValue: widget.data[wid_attr], onselect: function (wid, text, obj) {
+                    $('#inspect_comment_tr').hide();
+                    $('#inspect_class_tr').hide();
+                    $('#option_'+wid_attr).jweatherCity({lang: dui.language, currentValue: widget.data[wid_attr], onselect: function (wid, text, obj) {
                             dui.widgets[dui.activeWidget].data.attr('weoid', text);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
                             dui.saveRemote();
                             dui.reRenderWidget(dui.activeWidget);					
                         }
                     });
-                } else 
-				if (wid_attr === "color" || type == "color") {
-                    dui.editColor (widget, wid_attr);
-                } else
-                if (type === "checkbox") {
+                } else if (wid_attr === "color" || type == "color") {
+                    dui.editColor(widget, wid_attr);
+                } else if (type === "checkbox") {
                     isValueSet = true;
-                    dui.editCheckbox (widget, wid_attr);
-                } else
-                if (type === "fontName") {
+                    dui.editCheckbox(widget, wid_attr);
+                } else if (type === "fontName") {
                     isValueSet = true;
-                    dui.editFontName (widget, wid_attr);
-                } else
-                if (type === "slider") {
+                    dui.editFontName(widget, wid_attr);
+                } else if (type === "slider") {
                     isValueSet = true;
                     var values = wid_attrs[1].split(',');
-                    dui.editSlider (widget, wid_attr, values[1], values[2], values[3]);
+                    dui.editSlider(widget, wid_attr, values[1], values[2], values[3]);
                     continue;
-                } else
-                if (type === "select") {
+                } else if (type === "select") {
                     isValueSet = true;
                     var values = wid_attrs[1].split(',');
-                    dui.editSelect (widget, wid_attr, values);
-                } else
-                if (wid_attr.indexOf ("nav_view") != -1|| type == "views") {
-				    dui.editViewName (widget, wid_attr);
+                    dui.editSelect(widget, wid_attr, values);
+                } else if (wid_attr.indexOf("nav_view") != -1|| type == "views") {
+				    dui.editViewName(widget, wid_attr);
 					continue;
-				} else 
-				if (wid_attr.indexOf ("_effect") != -1 || type == "effect") {
-                    dui.editEffects (widget, wid_attr);
+				} else if (wid_attr.indexOf("_effect") != -1 || type == "effect") {
+                    dui.editEffects(widget, wid_attr);
 					continue;
-				} else 
-				if (wid_attr.slice(0,4) !== "html") {
+				} else if (wid_attr.slice(0,4) !== "html") {
                     if (type !== null) {
 						// If description is JSON object
-						if (type.indexOf ('{') != -1) {
+						if (type.indexOf('{') != -1) {
 							try {
-								type = jQuery.parseJSON( type );
+								type = jQuery.parseJSON(type);
 							}
 							catch (e) {
 								type = null;
@@ -885,12 +832,10 @@ dui = $.extend(true, dui, {
 									if (typeof type["name"] == 'object') {
 										if (type["name"][this.language]) {
 											title = type["name"][this.language];
-										} else
-										if (type["name"]['en']) {
+										} else if (type["name"]['en']) {
 											title = type["name"]['en'];
 										}
-									}
-									else {
+									} else {
 										title = type["name"];
 									}
 								}
@@ -900,22 +845,21 @@ dui = $.extend(true, dui, {
 									isValueSet = true;
 									// All other attributes
 									$("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption" title="'+hint+'">'+title+':</td><td><input title="'+hint+'" id="inspect_'+wid_attr+'" type="checkbox"' +(widget.data[wid_attr] ? "checked": "")+'></td></tr>');
-								} else 
-								if (type['type'] == "view") {
-								} else
-								if (type['type'] == "color") {
-								} else
-								if (type['type'] == "font") {
-								} else
-								if (type['type'] == "rooms") {
-								} else
-								if (type['type'] == "favorites") {
-								} else
-								if (type['type'] == "functions") {
-								} else
-								if (type['type'] == "rooms") {
-								} else
-								if (type['type'] == "select") {
+								} else if (type['type'] == "view") {
+
+								} else if (type['type'] == "color") {
+
+								} else if (type['type'] == "font") {
+
+								} else if (type['type'] == "rooms") {
+
+								} else if (type['type'] == "favorites") {
+
+								} else if (type['type'] == "functions") {
+
+								} else if (type['type'] == "rooms") {
+
+								} else if (type['type'] == "select") {
 									// Select
 									var values = type['values'];
 									var text = '<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><select id="inspect_'+wid_attr+'">';
@@ -927,8 +871,7 @@ dui = $.extend(true, dui, {
 									isValueSet = true;
 								}
 							
-							}
-							else { // Simple type
+							} else { // Simple type
 								console.log ("Error: " + wid_attr +" Type: " + type );
 							}
 						}
@@ -967,7 +910,13 @@ dui = $.extend(true, dui, {
         }
 
         $(".dashui-inspect-css").each(function () {
-            $(this).val($this.css($(this).attr("id").slice(12)));
+            var attr = $(this).attr("id").slice(12)
+            var css = $this.css(attr);
+            //console.log(attr + " " + css);
+            if (attr == "background") {
+                // TODO - überflüssige Attribute löschen für Android-Browser
+            }
+            $(this).val(css);
         });
 
         // autocomplete for filter key
@@ -1066,6 +1015,18 @@ dui = $.extend(true, dui, {
             $this.css({"left": x, "top": y});
         }
 		var pos = $this.position ();
+        // May be bug?
+        if (pos.left == 0 && pos.top == 0) {
+            pos.left = $this[0].style.left;
+            pos.top  = $this[0].style.top;
+            if (typeof pos.left == "string") {
+                pos.left = parseInt (pos.left.replace("px", ""));
+            }
+            if (typeof pos.top == "string") {
+                pos.top = parseInt (pos.top.replace("px", ""));
+            }
+
+        }
 		var w = $this.width ();
 		var h = $this.height ();
         $("#widget_helper").css({left: pos.left - 2, top:  pos.top - 2,  height: $this.outerHeight() + 2, width: $this.outerWidth()  + 2}).show();
@@ -1170,6 +1131,14 @@ dui = $.extend(true, dui, {
         $("#tabs").tabs();
         $("#widget_helper").hide();
 
+        $("#language [value='"+(ccuIoLang || 'en')+"']").attr("selected", "selected");
+
+        $("#language").change(function () {
+            dui.language = $(this).val();
+            ccuIoLang = dui.language;
+            dui.translateAll (dui.language);
+        });
+
         $("input.dashui-editor").each(function () {
             $(this).button();
         });
@@ -1219,26 +1188,22 @@ dui = $.extend(true, dui, {
 
         // Button Click Handler
 
-		$("#widget_doc").button ({icons: {primary: "ui-icon ui-icon-script"}}).click(function () {
+		$("#widget_doc").button({icons: {primary: "ui-icon ui-icon-script"}}).click(function () {
             var tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;
             var widgetSet = $("#"+tpl).attr("data-dashui-set");
             var docUrl = "widgets/"+widgetSet+"/doc.html#"+tpl;
             window.open(docUrl,"WidgetDoc", "height=640,width=500,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no,location=no");
         });
 
-        $("#convert_ids").click(dui.convertIds);
-        $("#clear_cache").click(function() {
-            // TODO - Entfällt $.homematic("clearCache");
-        });
-        $("#refresh").click(function() {
-            // TODO Entfällt $.homematic("refreshVisible");
-        });
-		$("#del_widget").button ({icons: {primary: "ui-icon-trash"}}).click(dui.delWidget);
 
-		$("#dup_widget").button ({icons: {primary: "ui-icon-copy"}}).click(dui.dupWidget);
+		$("#del_widget").button({icons: {primary: "ui-icon-trash"}}).click(dui.delWidget);
 
-		$("#add_widget").button ({icons: {primary: "ui-icon-plusthick"}}).click(function () {
+		$("#dup_widget").button({icons: {primary: "ui-icon-copy"}}).click(dui.dupWidget);
+
+		$("#add_widget").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
             var tpl = $("#select_tpl option:selected").val();
+
+            // Widget attributs default values
             var data = {
                 hm_id: 65535,
                 digits: "",
@@ -1247,27 +1212,29 @@ dui = $.extend(true, dui, {
                 max: 1.00,
                 step: 0.01
             };
+
             dui.addWidget(tpl, data);
+
             $("#select_active_widget").append("<option value='"+dui.activeWidget+"'>"+dui.activeWidget+" ("+$("#"+dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
 
             setTimeout(function () { dui.inspectWidget(dui.activeWidget) }, 50);
 
         });
-		$("#add_view").button ({icons: {primary: "ui-icon-plusthick"}}).click(function () {
+		$("#add_view").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
             dui.addView(dui.checkNewView());
         });
-		$("#dup_view").button ({icons: {primary: "ui-icon-copy"}}).click(function () {
+		$("#dup_view").button({icons: {primary: "ui-icon-copy"}}).click(function () {
             dui.dupView(dui.checkNewView());
         });
-		$("#del_view").button ({icons: {primary: "ui-icon-trash"}}).click(function () {
+		$("#del_view").button({icons: {primary: "ui-icon-trash"}}).click(function () {
             dui.delView(dui.activeView);
         });
-		$("#rename_view").button ({icons: {primary: "ui-icon-pencil"}}).click(function () {
+		$("#rename_view").button({icons: {primary: "ui-icon-pencil"}}).click(function () {
             dui.renameView(dui.activeView, $("#new_name").val());
         });
 
-		$("#create_instance").button ({icons: {primary: "ui-icon-plus"}}).click(dui.createInstance);
-		$("#remove_instance").button ({icons: {primary: "ui-icon-trash"}}).click(dui.removeInstance);
+		$("#create_instance").button({icons: {primary: "ui-icon-plus"}}).click(dui.createInstance);
+		$("#remove_instance").button({icons: {primary: "ui-icon-trash"}}).click(dui.removeInstance);
 
         // Inspector Change Handler
         $(".dashui-inspect-widget").change(function () {
@@ -1618,10 +1585,10 @@ dui = $.extend(true, dui, {
 	        var text    = $(this).html ();
 	        if (curlang != lang) {
 	            if (curlang) {
-	                text = dui.translateBack (text, curlang);
+	                text = dui.translateBack(text, curlang);
 	            }
 	
-	            var transText = dui.translate (text, lang);
+	            var transText = dui.translate(text, lang);
 	            if (transText) {
 	                $(this).html (transText);
 	                $(this).attr ('data-lang', lang);
@@ -1634,10 +1601,10 @@ dui = $.extend(true, dui, {
 	        var curlang = $(this).attr ('data-lang');
 	        if (curlang != lang) {
 	            if (curlang) {
-	                text = dui.translateBack (text, curlang);
+	                text = dui.translateBack(text, curlang);
 	            }
 	
-	            var transText = dui.translate (text, lang);
+	            var transText = dui.translate(text, lang);
 	            if (transText) {
 	                $(this).attr ('value', transText);
 	                $(this).attr ('data-lang', lang);
@@ -1647,32 +1614,31 @@ dui = $.extend(true, dui, {
 	    $(".translateB").each(function (idx) {
 	        //<span class="ui-button-text">Save</span>
 	        var text = $( this ).html ();
-	        if (text.indexOf ("<span") != -1) {
-                var i = text.indexOf ('<span class="ui-button-text">');
+	        if (text.indexOf("<span") != -1) {
+                var i = text.indexOf('<span class="ui-button-text">');
                 var t = text.substring (i + '<span class="ui-button-text">'.length);
-                var q = t.indexOf ("</span>");
+                var q = t.indexOf("</span>");
                 t = t.substring(0,q);
 		        var curlang = $(this).attr ('data-lang');
 		        if (curlang != lang) {
 		            if (curlang) {
-		                text = dui.translateBack (t, curlang);
+		                text = dui.translateBack(t, curlang);
 		            }
 		
-		            var transText = dui.translate (t, lang);
+		            var transText = dui.translate(t, lang);
 		            if (transText) {
 		                $(this).html (text.substring (0,i+'<span class="ui-button-text">'.length) + transText + '</span>');
 		                $(this).attr ('data-lang', lang);
 		            }
 		        }
-	        }
-	        else {
+	        } else {
 		        var curlang = $(this).attr ('data-lang');
 		        if (curlang != lang) {
 		            if (curlang) {
-		                text = dui.translateBack (text, curlang);
+		                text = dui.translateBack(text, curlang);
 		            }
 		
-		            var transText = dui.translate (text, lang);
+		            var transText = dui.translate(text, lang);
 		            if (transText) {
 		                $(this).html (transText);
 		                $(this).attr ('data-lang', lang);
