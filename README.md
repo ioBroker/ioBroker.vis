@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta64
+* (Hobbyquaker) Fehler abgefangen in inspectWidget-Methode
+
 ### 0.9beta63
 * (Hobbyquaker) Bugfix: betrifft viele Widgets, habe beim Refactoring ein Fehler gemacht...
 
