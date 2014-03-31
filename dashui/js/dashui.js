@@ -598,7 +598,7 @@ var dui = {
                 }
             }
         } catch (e) {
-            alert("Error: can't render "+widget.tpl+" "+id+"\n\n"+e);
+            console.log("Error: can't render "+widget.tpl+" "+id+"\n\n"+e);
         }
 
     },
