@@ -6,7 +6,7 @@
             view: function (el, viewArr, persistent) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     var view = viewArr[newVal];
                     if (!persistent) {
                         $this.parent().find("div.dashui-view").remove();
@@ -27,19 +27,19 @@
                 var id = $this.attr("data-hm-id");
                 var hm_id = "_" + id;
 
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.attr("src", srcArr[newVal]);
                 });
 
-                if (homematic.uiState[hm_id]) {
-                    $this.attr("src", srcArr[homematic.uiState[hm_id].Value]);
+                if (localData.uiState[hm_id]) {
+                    $this.attr("src", srcArr[localData.uiState[hm_id].Value]);
                 }
 
                 if (refreshInterval > 0) {
                     setInterval(function () {
                         var val;
-                        if (homematic.uiState[hm_id]) {
-                            val = homematic.uiState[hm_id].Value;
+                        if (localData.uiState[hm_id]) {
+                            val = localData.uiState[hm_id].Value;
                         }
                         var src = srcArr[val];
                         $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
@@ -51,19 +51,19 @@
                 var id = $this.attr("data-hm-id");
                 var hm_id = "_" + id;
 
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.attr("src", srcArr[newVal]);
                 });
 
-                if (homematic.uiState[hm_id]) {
-                    $this.attr("src", srcArr[homematic.uiState[hm_id].Value]);
+                if (localData.uiState[hm_id]) {
+                    $this.attr("src", srcArr[localData.uiState[hm_id].Value]);
                 }
 
                 if (refreshInterval > 0) {
                     setInterval(function () {
                         var val;
-                        if (homematic.uiState[hm_id]) {
-                            val = homematic.uiState[hm_id].Value;
+                        if (localData.uiState[hm_id]) {
+                            val = localData.uiState[hm_id].Value;
                         }
                         var src = srcArr[val];
                         $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
@@ -101,15 +101,15 @@
                 });
 
             },
-            state: function (el) {
+            state: function (el, id) {
                 var $this = jQuery(el);
-                var hm_id = "_" + $this.attr("data-hm-id");
+                var hm_id = (id ? "_" + id : "_" + $this.attr("data-hm-id"));
                 var val = $this.attr("data-hm-val");
                 if (val === "true") { val = true; }
                 if (val === "false") { val = false; }
                 $this.on('click', function (e) {
                     if (dui.urlParams["edit"] !== "") {
-                        homematic.setValue($this.attr("data-hm-id"), val);
+                        localData.setValue($this.attr("data-hm-id"), val);
                     }
                 });
                 // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
@@ -133,14 +133,14 @@
                     var hm_id = "_" + $this.attr("data-hm-id");
                     if (dui.urlParams["edit"] !== "") {
                         var step = parseFloat($this.attr("data-dashui-step")),
-                            tmp = parseFloat(homematic.uiState[hm_id].Value) + step;
+                            tmp = parseFloat(localData.uiState[hm_id].Value) + step;
                         if (step < 0) {
                             if (tmp >= minmax) {
-                                homematic.setValue($this.attr("data-hm-id"), tmp);
+                                localData.setValue($this.attr("data-hm-id"), tmp);
                             }
                         } else {
                             if (tmp <= minmax) {
-                                homematic.setValue($this.attr("data-hm-id"), tmp);
+                                localData.setValue($this.attr("data-hm-id"), tmp);
                             }
                         }
                     }
@@ -151,17 +151,17 @@
                         var hm_id = "_" + $that.attr("data-hm-id");
                         if (dui.urlParams["edit"] !== "") {
                             var step = parseFloat($that.attr("data-dashui-step")),
-                                    tmp = parseFloat(homematic.uiState[hm_id].Value) + step;
+                                    tmp = parseFloat(localData.uiState[hm_id].Value) + step;
                             if (step < 0) {
                                 if (tmp >= minmax) {
-                                    homematic.setValue($that.attr("data-hm-id"), tmp);
+                                    localData.setValue($that.attr("data-hm-id"), tmp);
                                     dui.binds.basic.pressed = setTimeout(function ($_that) {
                                         fInterval($_that);
                                     }, interval, $that);
                                 }
                             } else {
                                 if (tmp <= minmax) {
-                                    homematic.setValue($that.attr("data-hm-id"), tmp);
+                                    localData.setValue($that.attr("data-hm-id"), tmp);
                                     dui.binds.basic.pressed = setTimeout(function ($_that) {
                                         fInterval($_that);
                                     }, interval, $that);
@@ -213,7 +213,7 @@
             hideOnFalse: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -223,7 +223,7 @@
                     }
                 });
                 if (dui.urlParams["edit"] !== "") {
-                    var newVal = homematic.uiState.attr(hm_id+".Value");
+                    var newVal = localData.uiState.attr(hm_id+".Value");
                     if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         $this.hide();
                     }
@@ -232,7 +232,7 @@
             hideOnTrue: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (newVal === true || parseFloat(newVal) > 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -242,7 +242,7 @@
                     }
                 });
                 if (dui.urlParams["edit"] !== "") {
-                    if (parseFloat(homematic.uiState.attr(hm_id+".Value")) != 0 && homematic.uiState.attr(hm_id+".Value") !== false) {
+                    if (parseFloat(localData.uiState.attr(hm_id+".Value")) != 0 && localData.uiState.attr(hm_id+".Value") !== false) {
                      $this.hide();
                     }
                 }
@@ -250,7 +250,7 @@
             showOnValue: function (el, val) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (newVal != val) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -260,7 +260,7 @@
                     }
                 });
                 if (dui.urlParams["edit"] !== "") {
-                    if (homematic.uiState.attr(hm_id+".Value") != val) {
+                    if (localData.uiState.attr(hm_id+".Value") != val) {
                         $this.hide();
                     }
                 }
@@ -268,22 +268,22 @@
             checkbox: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (newVal === false || parseFloat(newVal) === 0.0) {
                         $this.removeAttr("checked");
                     } else {
                         $this.prop("checked", true);
                     }
                 });
-                if (homematic.uiState.attr(hm_id+".Value")) {
+                if (localData.uiState.attr(hm_id+".Value")) {
                     $this.prop("checked", true);
                 }
                 if (dui.urlParams["edit"] !== "") {
                     $this.change(function () {
                         if ($this.prop("checked")) {
-                            homematic.setValue( $this.attr("data-hm-id"),  true);
+                            localData.setValue( $this.attr("data-hm-id"),  true);
                         } else {
-                            homematic.setValue( $this.attr("data-hm-id"),  false);
+                            localData.setValue( $this.attr("data-hm-id"),  false);
                         }
                     });
                 }
@@ -292,12 +292,12 @@
                 var $this = jQuery(el).prev();
                 var id = $this.attr("data-hm-id");
                 $this.change(function () {
-                    console.log("uiState " + homematic.uiState.attr("_"+$this.attr("data-hm-id")));
+                    console.log("uiState " + localData.uiState.attr("_"+$this.attr("data-hm-id")));
                     console.log("setState " + $this.find("option:selected").val());
-                    homematic.setValue( $this.attr("data-hm-id"),  $this.find("option:selected").val());
+                    localData.setValue( $this.attr("data-hm-id"),  $this.find("option:selected").val());
                 });
                 var hm_id = "_" + id;
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     console.log("newVal="+newVal+" oldVal="+oldVal);
                     if (newVal == "false" || parseFloat(newVal) == 0) {
                         if ($this.find("option[value='1']").prop("selected")) {
@@ -319,15 +319,15 @@
             },
             toggle: function (el) {
                 function toggle() {
-                    var val = homematic.uiState["_"+id].Value;
+                    var val = localData.uiState["_"+id].Value;
                     if (val === false || val === "false") {
-                        homematic.setValue(id, true);
+                        localData.setValue(id, true);
                     } else if (val === true || val === "true") {
-                        homematic.setValue(id, false);
+                        localData.setValue(id, false);
                     } else {
                         val = parseFloat(val);
                         if (val >= 0.5) { val = 1; } else { val = 0; }
-                        homematic.setValue( id,  1-val);
+                        localData.setValue( id,  1-val);
                     }
                 }
                 var $this = jQuery(el);
@@ -360,7 +360,7 @@
                 if (document.getElementById (wid)) {
                     $('#'+wid).remove ();
                 }
-                var str = homematic.uiState.attr("_" + hm_id + ".Value");
+                var str = localData.uiState.attr("_" + hm_id + ".Value");
                 var val = parseFloat(str);
                 var sText = '<svg class="dashui-widget ' + (myClass || "")+ '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="'+wid+'" data-hm-id="'+hm_id+'">';
                 if (dui.urlParams["edit"] === "") {
@@ -395,15 +395,15 @@
                     $("#"+wid).children().click(function () {
                         var $this = $(this);
                         var id = $this.attr("data-hm-id");
-                        var val = homematic.uiState["_"+id].Value;
+                        var val = localData.uiState["_"+id].Value;
                         if (val === false || val === "false") {
-                            homematic.setValue(id, true);
+                            localData.setValue(id, true);
                         } else if (val === true || val === "true") {
-                            homematic.setValue(id, false);
+                            localData.setValue(id, false);
                         } else {
                             val = parseFloat(val);
                             if (val >= 0.5) { val = 1; } else { val = 0; }
-                            homematic.setValue( id,  1-val);
+                            localData.setValue( id,  1-val);
                         }
                         var el = $('#'+obj.wid);
                         this._obj.style = {
@@ -470,7 +470,7 @@
 						jQuery('#'+dlg.attr("data-id")).css({width: max_width, height: 'auto'}); 
 					}
                     if (hm_id) {
-						homematic.setValue(hm_id, text);
+						localData.setValue(hm_id, text);
                     }
 					dlg.dialog( "close" );
 					dlg.remove();

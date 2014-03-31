@@ -10,7 +10,7 @@
             active: function(el, reverse, _value) {
                 var $this = jQuery(el);
                 var id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(id+".Value", function( e, newVal, oldVal ) {
                     var val;
                     var value = _value;
                     if (newVal === false || newVal === "false") {
@@ -40,7 +40,7 @@
 
 
                 });
-                var val = homematic.uiState.attr(id+".Value");
+                var val = localData.uiState.attr(id+".Value");
                 var value = _value;
                 if (val === true || val === "true") { val = 1; }
                 if (val === false || val === "false") { val = 0; }
@@ -120,21 +120,21 @@
                             'outline' : 'none',
                             'cursor' : 'text'
                         }).change(function () {
-                            homematic.setValue(id, jQuery(this).val());
+                            localData.setValue(id, jQuery(this).val());
                         });
 
 
                 var hm_id = "_" + id;
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (digits && digits != "") {
                         newVal = parseFloat(newVal).toFixed(digits);
                     }
 
                     $this.val(newVal);
                 });
-                var val = homematic.uiState[hm_id].Value;
+                var val = localData.uiState[hm_id].Value;
                 if (digits && digits != "") {
-                    val = parseFloat(homematic.uiState[hm_id].Value).toFixed(digits);
+                    val = parseFloat(localData.uiState[hm_id].Value).toFixed(digits);
                 }
                 $this.val(val);
             },
@@ -164,13 +164,13 @@
                     .datepicker(datepickerOptions);
 
                 $this.change(function () {
-                    homematic.setValue(id,  jQuery(this).val());
+                    localData.setValue(id,  jQuery(this).val());
                 });
                 var hm_id = "_" + id;
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.val(newVal);
                 });
-                $this.val(homematic.uiState.attr(hm_id+".Value"));
+                $this.val(localData.uiState.attr(hm_id+".Value"));
             },
             inputDatetime: function (el, options) {
                 var $this = jQuery(el);
@@ -205,13 +205,13 @@
                             'cursor' : 'text'
                         }).datetimepicker(timepickerOptions).button();
                 $this.change(function () {
-                   homematic.setValue(id,  jQuery(this).val());
+                   localData.setValue(id,  jQuery(this).val());
                 });
                 var hm_id = "_" + id;
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.val(newVal);
                 });
-                $this.val(homematic.uiState.attr(hm_id+".Value"));
+                $this.val(localData.uiState.attr(hm_id+".Value"));
             },
             inputset: function (el, options) {
                 var digits = options;
@@ -222,7 +222,7 @@
 
                 $this.button().click(function () {
                     //console.log("inputset click " + input)
-                    homematic.setValue(id,  jQuery(input).val());
+                    localData.setValue(id,  jQuery(input).val());
 
                 });
                 $this.prev().button().addClass("ui-state-default")
@@ -234,14 +234,14 @@
                             'cursor' : 'text'
                         });
                 var hm_id = "_" + id;
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (digits && digits != "") {
                         newVal = parseFloat(newVal).toFixed(digits);
                     }
                     jQuery(input).val(newVal);
 
                 });
-                var newVal = homematic.uiState[hm_id].Value;
+                var newVal = localData.uiState[hm_id].Value;
                 if (digits && digits != "") {
                     newVal = parseFloat(newVal).toFixed(digits);
                 }
@@ -252,7 +252,7 @@
                 var id = $this.attr("data-hm-id");
 
                 $this.find("option:selected").removeAttr("selected");
-                $this.find("option[value='"+homematic.uiState["_"+id].Value+"']").attr("selected", true);
+                $this.find("option[value='"+localData.uiState["_"+id].Value+"']").attr("selected", true);
 
                 $this.multiselect($.extend({
                     multiple: false,
@@ -260,16 +260,16 @@
                     noneSelectedText: false,
                     selectedList: 1
                 }, options)).change(function () {
-                    homematic.setValue(id,  $this.find("option:selected").val());
+                    localData.setValue(id,  $this.find("option:selected").val());
                 });
 
                 var hm_id = "_" + id;
 
                 $this.find("option:selected").removeAttr("selected");
-                $this.find("option[value='"+homematic.uiState[hm_id].Value+"']").attr("selected", true);
+                $this.find("option[value='"+localData.uiState[hm_id].Value+"']").attr("selected", true);
                 $this.multiselect("refresh");
 
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.find("option:selected").removeAttr("selected");
                     $this.find("option[value='"+newVal+"']").attr("selected", true);
                     $this.multiselect("refresh");
@@ -286,10 +286,10 @@
                     min: parseFloat(options.min) || 0.00,
                     max: parseFloat(options.max) || 1.00,
                     step: parseFloat(options.step) || 0.01,
-                    value: parseFloat(homematic.uiState.attr(hm_id+".Value")),
+                    value: parseFloat(localData.uiState.attr(hm_id+".Value")),
                     slide: function (e, ui) {
                         // Slider -> Observable
-                        homematic.setValue(id, ui.value); //.toFixed(6));
+                        localData.setValue(id, ui.value); //.toFixed(6));
                     }
                 }, options);
 
@@ -299,9 +299,9 @@
 
                 $this.slider(settings);
 
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                    // console.log("slider newVal="+JSON.stringify(newVal));
-                    if (homematic.uiState.attr("_"+wid+".Value") != true) {
+                    if (localData.uiState.attr("_"+wid+".Value") != true) {
                         $this.slider("value", parseFloat(newVal));
                     }
                 });
@@ -352,7 +352,7 @@
 
                 // Observable -> Buttonset
                 var hm_id = "_" + id
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.find("input").removeAttr("checked");
                     if (newVal === true) {
                         newVal = 1;
@@ -368,7 +368,7 @@
                     });
                 });
 
-                var val = homematic.uiState.attr(hm_id+".Value");
+                var val = localData.uiState.attr(hm_id+".Value");
 
                 if (val === true) { val = 1; }
                 if (val === false) { val = 0; }
@@ -383,7 +383,7 @@
                 // Buttonset -> Observable
                 $this.find("input").click(function () {
                     if (dui.urlParams["edit"] !== "") {
-                        homematic.setValue(id,  $(this).val());
+                        localData.setValue(id,  $(this).val());
                     }
                 });
 
@@ -400,14 +400,14 @@
             hueColormode: function (el, idColormode) {
                 $hue = jQuery(el).parent().find(".hue-mode-hue");
                 $ct = jQuery(el).parent().find(".hue-mode-ct");
-                if (homematic.uiState.attr("_"+idColormode+".Value") == "ct") {
+                if (localData.uiState.attr("_"+idColormode+".Value") == "ct") {
                     $hue.hide();
                     $ct.show();
                 } else {
                     $ct.hide();
                     $hue.show();
                 }
-                homematic.uiState.bind("_"+idColormode+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind("_"+idColormode+".Value", function( e, newVal, oldVal ) {
                     if (newVal == "ct") {
                         $hue.hide();
                         $ct.show();
@@ -456,12 +456,12 @@
             itoggle: function(el){
                 var $this = jQuery(el).parent();
                 var id = "_" + $this.parent().attr("data-hm-id") + ".Value";
-                var val = homematic.uiState.attr(id);
+                var val = localData.uiState.attr(id);
                 if (val === true || val === "true" || parseFloat(val) > 0) {
                     $this.find(".imgToggleFalse").hide();
                     $this.find(".imgToggleTrue").show();
                 }
-                homematic.uiState.bind(id, function(e, val) {
+                localData.uiState.bind(id, function(e, val) {
                     if (val === true || val === "true" || parseFloat(val) > 0) {
                         $this.find(".imgToggleFalse").hide();
                         $this.find(".imgToggleTrue").show();
@@ -705,6 +705,7 @@
     </div>
 </script>
 
+
 <script type="text/ejs" id="tplJquiButtonState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Button State" data-dashui-attrs="html_prepend;html_append;buttontext;value;hm_id;">
     <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
         <div class="dashui-widget-body" >
@@ -778,6 +779,8 @@
     </div>
 </script>
 
+
+
 <script type="text/ejs" id="tplJquiRadioSteps" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons 25%" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
         <div class="dashui-widget-body" >
@@ -821,6 +824,22 @@
     <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.state(el); dui.binds.jqueryui.classes(el, null, data.value) %>>
         <div class="dashui-widget-body">
             <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplIconStateBool" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon State / val - Icon Bool" data-dashui-attrs="click_id;click_value;hm_id;false_text;true_text;false_src;true_src;false_alt;true_alt;invert_icon/checkbox">
+    <%
+    var styles = "";
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.state(el); dui.binds.jqueryui.classes(el, null, data.value) %>>
+        <div class="dashui-widget-body">
+            <img class="tplImgFalse" <%= this.data.attr('false_src') ? 'src="' +  this.data.attr('false_src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('false_alt') %>" /><%= this.data.attr('false_text') %>
+            <img class="tplImgTrue" <%= this.data.attr('true_src') ? 'src="' +  this.data.attr('true_src') + '"' : '' %> style="display: hidden; <%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('true_alt') %>" /><%= this.data.attr('true_text') %>
+            <div <%= (el) -> dui.binds.jqueryui.itoggle(el) %>></div>
         </div>
     </div>
 </script>

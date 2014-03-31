@@ -141,16 +141,16 @@ var dui = {
         }
         //console.log("bind instance id="+dui.instanceCmd);
 
-        homematic.uiState.attr("_"+ dui.instanceCmd, {Value:''});
-        homematic.uiState.attr("_"+ dui.instanceData, {Value:''});
-        homematic.uiState.attr("_"+ dui.instanceView, {Value:dui.activeView});
+        localData.uiState.attr("_"+ dui.instanceCmd, {Value:''});
+        localData.uiState.attr("_"+ dui.instanceData, {Value:''});
+        localData.uiState.attr("_"+ dui.instanceView, {Value:dui.activeView});
 
-        homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
+        localData.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
             var cmd = newVal;
             //console.log("external command cmd=" + cmd);
 
             if (cmd !== "") {
-                var data = homematic.uiState.attr("_" + dui.instanceData + ".Value");
+                var data = localData.uiState.attr("_" + dui.instanceData + ".Value");
                 //console.log("external command cmd=" + cmd + " data=" + data);
 
                 // external Commands
@@ -178,7 +178,7 @@ var dui = {
                 }
 
                 // remove command
-                homematic.setValue(dui.instanceCmd, "");
+                localData.setValue(dui.instanceCmd, "");
 
             }
 
@@ -248,7 +248,7 @@ var dui = {
             var viewVarName = "dashui_" + dui.instance + "_view";
             var dataVarName = "dashui_" + dui.instance + "_data";
             //console.log(cmdVarName);
-            var cmdId = homematic.regaIndex.Name[cmdVarName];
+            var cmdId = localData.metaIndex.Name[cmdVarName];
             if (cmdId) {
 
                 $("body").append('<div class="dashui-dummy" data-hm-id="' + dui.instanceView + '"></div>')
@@ -256,11 +256,11 @@ var dui = {
                     .append('<div class="dashui-dummy" data-hm-id="' + dui.instanceData + '"></div>');
 
                 dui.instanceCmd = cmdId[0];
-                if (homematic.regaIndex.Name[viewVarName]) {
-                    dui.instanceView = homematic.regaIndex.Name[viewVarName][0];
+                if (localData.metaIndex.Name[viewVarName]) {
+                    dui.instanceView = localData.metaIndex.Name[viewVarName][0];
                 }
-                if (homematic.regaIndex.Name[dataVarName]) {
-                    dui.instanceData = homematic.regaIndex.Name[dataVarName][0];
+                if (localData.metaIndex.Name[dataVarName]) {
+                    dui.instanceData = localData.metaIndex.Name[dataVarName][0];
                 }
 
                 //console.log("instance ids: "+dui.instanceCmd+" "+dui.instanceView+" "+dui.instanceData);
@@ -564,7 +564,7 @@ var dui = {
 
         try {
             // Append html element to view
-            $("#duiview_" + view).append(can.view(widget.tpl, {hm: homematic.uiState["_" + widget.data.hm_id], data: widgetData, view: view}));
+            $("#duiview_" + view).append(can.view(widget.tpl, {hm: localData.uiState["_" + widget.data.hm_id], data: widgetData, view: view}));
 
             if (dui.urlParams["edit"] !== "") {
                 if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
@@ -718,7 +718,7 @@ var dui = {
         });
 
         if (dui.instanceView) {
-            homematic.setValue(dui.instanceView, dui.activeView);
+            localData.setValue(dui.instanceView, dui.activeView);
         }
 
         if (window.location.hash.slice(1) != view) {
@@ -859,23 +859,23 @@ var dui = {
         }
     },
     getObjDesc: function (id) {
-        if (homematic.regaObjects[id] !== undefined) {
+        if (localData.metaObjects[id] !== undefined) {
             var parent = "";
-            var p = homematic.regaObjects[id]["Parent"];
-            if (p !== undefined && homematic.regaObjects[p]["DPs"] !== undefined) {
-                parent = homematic.regaObjects[p]["Name"] + "/";
-            } else if (homematic.regaObjects[id]["TypeName"] !== undefined) {
-                if (homematic.regaObjects[id]["TypeName"] == "VARDP") {
+            var p = localData.metaObjects[id]["Parent"];
+            if (p !== undefined && localData.metaObjects[p]["DPs"] !== undefined) {
+                parent = localData.metaObjects[p]["Name"] + "/";
+            } else if (localData.metaObjects[id]["TypeName"] !== undefined) {
+                if (localData.metaObjects[id]["TypeName"] == "VARDP") {
                     parent = dui.translate("Variable") + " / ";
-                } else if (homematic.regaObjects[id]["TypeName"] == "PROGRAM") {
+                } else if (localData.metaObjects[id]["TypeName"] == "PROGRAM") {
                     parent = dui.translate("Program") + " / ";
                 }
             }
 
-            if (homematic.regaObjects[id]["Address"] !== undefined) {
-                return parent + homematic.regaObjects[id]["Name"] + "/" + homematic.regaObjects[id]["Address"];
+            if (localData.metaObjects[id]["Address"] !== undefined) {
+                return parent + localData.metaObjects[id]["Name"] + "/" + localData.metaObjects[id]["Address"];
             } else {
-                return parent + homematic.regaObjects[id]["Name"];
+                return parent + localData.metaObjects[id]["Name"];
             }
 
         } else if (id == 41) {
@@ -975,19 +975,19 @@ var dui = {
     }
 };
 
-var homematic = {
+var localData = {
     uiState: new can.Observe({"_65535": {"Value": null}}),
     setState: new can.Observe({"_65535": {"Value": null}}),
-    regaIndex: {},
-    regaObjects: {},
+    metaIndex: {},
+    metaObjects: {},
     setStateTimers: {},
     setValue: function (id, val) {
         //console.log("setValue("+id+","+val+")");
 
         // Check if this ID is a programm
-        if (homematic.regaObjects[id] &&
-            homematic.regaObjects[id]["TypeName"] !== undefined &&
-            homematic.regaObjects[id]["TypeName"] == "PROGRAM") {
+        if (localData.metaObjects[id] &&
+            localData.metaObjects[id]["TypeName"] !== undefined &&
+            localData.metaObjects[id]["TypeName"] == "PROGRAM") {
             dui.socket.emit("programExecute", [id]);
         }  else {
             this.setState.attr("_" + id, {Value: val});
@@ -1017,21 +1017,21 @@ var homematic = {
 
             this.setState.removeAttr(attr);
             this.setStateTimers[id] = setTimeout(function () {
-                if (homematic.setState[attr]) {
-                    homematic.setStateTimers[id] = undefined;
-                    homematic.stateDelayed(id, homematic.setState.attr(attr + ".Value"));
+                if (localData.setState[attr]) {
+                    localData.setStateTimers[id] = undefined;
+                    localData.stateDelayed(id, localData.setState.attr(attr + ".Value"));
                 }
-                homematic.setStateTimers[id] = undefined;
+                localData.setStateTimers[id] = undefined;
             }, 1000);
         }
     }
 }
 
-homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
+localData.setState.bind("change", function (e, attr, how, newVal, oldVal) {
     //console.log("homematic setState change "+how+" "+attr+" "+newVal);
     if (how == "set" || how == "add") {
         var id = parseInt(attr.slice(1), 10);
-        homematic.stateDelayed(id, newVal.Value);
+        localData.stateDelayed(id, newVal.Value);
     }
 });
 
@@ -1131,17 +1131,17 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             });
 
             dui.socket.on('event', function (obj) {
-                if (obj != null && homematic.uiState["_" + obj[0]] !== undefined) {
+                if (obj != null && localData.uiState["_" + obj[0]] !== undefined) {
                     var o = {};
                     o["_" + obj[0] + ".Value"]     = obj[1];
                     o["_" + obj[0] + ".Timestamp"] = obj[2];
                     o["_" + obj[0] + ".Certain"]   = obj[3];
                     o["_" + obj[0] + ".LastChange"]   = obj[4];
-                    homematic.uiState.attr(o);
+                    localData.uiState.attr(o);
 
                     // Inform other widgets, that does not support canJS
                     for (var i = 0, len = dui.onChangeCallbacks.length; i < len; i++) {
-                        dui.onChangeCallbacks[i].callback(dui.onChangeCallbacks[i].arg, obj[0], obj[1], obj[3] || (homematic.regaObjects[obj[0]] && homematic.regaObjects[obj[0]]["TypeName"] == "VARDP"));
+                        dui.onChangeCallbacks[i].callback(dui.onChangeCallbacks[i].arg, obj[0], obj[1], obj[3] || (localData.metaObjects[obj[0]] && localData.metaObjects[obj[0]]["TypeName"] == "VARDP"));
                     }
                 } else {
                     //console.log("Datenpunkte sind noch nicht geladen!");
@@ -1178,10 +1178,10 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
                         o["_" + dp + ".Timestamp"] = obj[1];
                         o["_" + dp + ".Certain"]   = obj[2];
                         o["_" + dp + ".LastChange"]   = obj[3];
-                        homematic.uiState.attr(o);
+                        localData.uiState.attr(o);
                     }
                     // Get CCU.IO language
-                    var l = homematic.uiState.attr("_69999.Value");
+                    var l = localData.uiState.attr("_69999.Value");
                     dui.language = l || dui.language;
                 });
 
@@ -1211,23 +1211,23 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             dui.socket.emit("getIndex", function (index) {
                 dui.showWaitScreen(true, ".", null, "+1");
                 //console.log("index loaded");
-                homematic.regaIndex = index;
+                localData.metaIndex = index;
                 dui.socket.emit("getObjects", function (obj) {
                     dui.showWaitScreen(true, ".", null, "+1");
                     //console.log("objects loaded")
-                    homematic.regaObjects = obj;
+                    localData.metaObjects = obj;
                     dui.socket.emit("getDatapoints", function (data) {
                         dui.showWaitScreen(true, ".<br>", null, "+1");
                         for (var dp in data) {
                             try {
-                                homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
+                                localData.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
                             } catch (e) {
                                 console.log(e+" - "+dp);
                             }
                         }
 
                         // Get CCU.IO language
-                        var l = homematic.uiState.attr("_69999.Value");
+                        var l = localData.uiState.attr("_69999.Value");
                         dui.language = l || dui.language;
 
                         setTimeout(dui.init, 10);

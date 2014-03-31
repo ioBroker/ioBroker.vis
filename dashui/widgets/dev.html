@@ -2,9 +2,9 @@
     jQuery.extend(true, dui.binds, {
         debug: {
             history: function (el, id) {
-                homematic.uiState.bind("_"+id+".Value", function( e, newVal, oldVal ) {
-                    var timestamp = homematic.uiState["_"+id].Timestamp;
-                    var ack = homematic.uiState["_"+id].Ack;
+                localData.uiState.bind("_"+id+".Value", function( e, newVal, oldVal ) {
+                    var timestamp = localData.uiState["_"+id].Timestamp;
+                    var ack = localData.uiState["_"+id].Ack;
                     var type = typeof newVal;
 
                     var row = "<tr><td width='70px'>"+type+"</td><td style='padding-right: 18px'>"+JSON.stringify(newVal)+"</td><td width='100px'>"+timestamp+"</td><td width='40px'>"+ack+"</td></tr>";

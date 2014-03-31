@@ -46,10 +46,10 @@
                 $this.knobRot(options);
                 $this.bind("knobrefresh", function (a) {
                     var val = (a.target.value / factor);
-                    homematic.setValue(id, val);
+                    localData.setValue(id, val);
                 });
                 var hm_id = "_" + id;
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (isNaN(newVal)) {
                         newVal = 0;
                     }
@@ -65,12 +65,12 @@
                 $this.knob({
                     change: function (val) {
                         if (dui.urlParams["edit"] !== "") {
-                            homematic.setValue(id, val/100);
+                            localData.setValue(id, val/100);
                         }
                     }
                 });
                 var hm_id = "_" + id;
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.val(newVal*100).trigger("change");
                 });
             },
@@ -81,7 +81,7 @@
                         snap: 5,
                         turn: function (val) {
                             if (dui.urlParams["edit"] !== "") {
-                                homematic.setValue(id, val.toFixed(2));
+                                localData.setValue(id, val.toFixed(2));
                             }
                         }
                     });

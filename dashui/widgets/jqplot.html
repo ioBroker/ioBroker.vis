@@ -22,11 +22,11 @@
                         }
                     }, options);
                     var id = "_"+$this.attr("data-hm-id");
-                    var series = [[homematic.uiState[id].Value]];
+                    var series = [[localData.uiState[id].Value]];
                     console.log("jqplot");
                     console.log(series);
                     var plot = jQuery.jqplot($this.attr("id"), series, jqplotOptions);
-                    homematic.uiState.bind(id+".Value", function(e, newVal, oldVal ) {
+                    localData.uiState.bind(id+".Value", function(e, newVal, oldVal ) {
                         plot.series[0].data = [[1,newVal]];
                         console.log("jqplot");
                         console.log(series);

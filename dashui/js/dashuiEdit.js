@@ -215,7 +215,7 @@ dui = $.extend(true, dui, {
 			}, data))
 		};
 		if (isViewExist) {
-			$("#duiview_"+view).append(can.view(tpl, {hm: homematic.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"], "view": view}));
+			$("#duiview_"+view).append(can.view(tpl, {hm: localData.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"], "view": view}));
 		}
 
         if (!dui.views[view].widgets) {
@@ -385,18 +385,18 @@ dui = $.extend(true, dui, {
         // Select Homematic ID Dialog
         $("#inspect_"+wid_attr+"_btn").click( function () {
             hmSelect.value = $("#inspect_"+this.jControl).val();
-            hmSelect.show(homematic, this.jControl, function (obj, value) {
+            hmSelect.show(localData, this.jControl, function (obj, value) {
                 $("#inspect_"+obj).val(value);
                 $("#inspect_"+obj).trigger('change');
                 if (document.getElementById('inspect_hm_wid')) {
-                    if (homematic.regaObjects[value]["Type"] !== undefined && homematic.regaObjects[value]["Parent"] !== undefined &&
-                        (homematic.regaObjects[value]["Type"] == "STATE" ||
-                        homematic.regaObjects[value]["Type"] == "LEVEL")) {
+                    if (localData.metaObjects[value]["Type"] !== undefined && localData.metaObjects[value]["Parent"] !== undefined &&
+                        (localData.metaObjects[value]["Type"] == "STATE" ||
+                        localData.metaObjects[value]["Type"] == "LEVEL")) {
 
-                        var parent = homematic.regaObjects[value]["Parent"];
-                        if (homematic.regaObjects[parent]["DPs"] !== undefined &&
-                            homematic.regaObjects[parent]["DPs"]["WORKING"] !== undefined) {
-                            $("#inspect_hm_wid").val(homematic.regaObjects[parent]["DPs"]["WORKING"]);
+                        var parent = localData.metaObjects[value]["Parent"];
+                        if (localData.metaObjects[parent]["DPs"] !== undefined &&
+                            localData.metaObjects[parent]["DPs"]["WORKING"] !== undefined) {
+                            $("#inspect_hm_wid").val(localData.metaObjects[parent]["DPs"]["WORKING"]);
                             $("#inspect_hm_wid").trigger('change');
                         }
                     }
@@ -406,9 +406,9 @@ dui = $.extend(true, dui, {
                     if ($('#inspect_filterkey').val() == "") {
                         var hm_id = value;
                         var func = null;
-                        while (hm_id && homematic.regaObjects[hm_id]) {
-                            for (var t = 0; t < homematic.regaIndex["ENUM_FUNCTIONS"].length; t++) {
-                                var list = homematic.regaObjects[homematic.regaIndex["ENUM_FUNCTIONS"][t]];
+                        while (hm_id && localData.metaObjects[hm_id]) {
+                            for (var t = 0; t < localData.metaIndex["ENUM_FUNCTIONS"].length; t++) {
+                                var list = localData.metaObjects[localData.metaIndex["ENUM_FUNCTIONS"][t]];
                                 for (var z = 0; z < list['Channels'].length; z++) {
                                     if (list['Channels'][z] == hm_id) {
                                         func = list.Name;
@@ -421,7 +421,7 @@ dui = $.extend(true, dui, {
                             if (func)
                                 break;
 
-                            hm_id = homematic.regaObjects[hm_id]['Parent'];
+                            hm_id = localData.metaObjects[hm_id]['Parent'];
                         }
                         if (func)
                             $('#inspect_filterkey').val(func).trigger('change');

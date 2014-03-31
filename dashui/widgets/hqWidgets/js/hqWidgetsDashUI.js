@@ -6,7 +6,7 @@ if ((typeof hqWidgets !== 'undefined')) {
             hqIgnoreNextUpdate: null, // id of controlled element
             hqMapping: {},
             hqInit: function () {
-                if (homematic === undefined || homematic.uiState === undefined || homematic.uiState.bind === undefined )
+                if (localData === undefined || localData.uiState === undefined || localData.uiState.bind === undefined )
                     return;
                     
                 if (dui.binds.hqWidgetsExt.inited)
@@ -187,8 +187,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                             var hm_id   = obj.GetSettings ('hm_id');
                             var time_id = hm_id;
                             if (hm_id != null && hm_id != "") {
-                                if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["LEVEL"]) {
-                                    hm_id = homematic.regaObjects[hm_id]["DPs"]["LEVEL"];
+                                if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["LEVEL"]) {
+                                    hm_id = localData.metaObjects[hm_id]["DPs"]["LEVEL"];
                                 } else {
                                     time_id = null;
                                 }
@@ -198,8 +198,8 @@ if ((typeof hqWidgets !== 'undefined')) {
 
                                     // Send on time to dimmer
                                     if (time_id != null) {
-                                        if (homematic.regaObjects[time_id] && homematic.regaObjects[time_id]["DPs"] && homematic.regaObjects[time_id]["DPs"]["RAMP_TIME"]) {
-                                            time_id = homematic.regaObjects[time_id]["DPs"]["RAMP_TIME"];
+                                        if (localData.metaObjects[time_id] && localData.metaObjects[time_id]["DPs"] && localData.metaObjects[time_id]["DPs"]["RAMP_TIME"]) {
+                                            time_id = localData.metaObjects[time_id]["DPs"]["RAMP_TIME"];
                                             var on_time = obj.GetSettings ('dimmerRampTime');
                                         }
                                     }
@@ -207,16 +207,16 @@ if ((typeof hqWidgets !== 'undefined')) {
                                         obj.SetStates ({percentState: startValue, state: hqWidgets.gState.gStateOn, isRefresh: true});
                                         // Send command to HM
                                         if (on_time !== undefined && on_time != null && on_time != "") {
-                                            homematic.setValue( time_id, parseFloat(on_time));
+                                            localData.setValue( time_id, parseFloat(on_time));
                                         }
-                                        homematic.setValue( hm_id, startValue / 100);
+                                        localData.setValue( hm_id, startValue / 100);
                                     } else {
                                         obj.SetStates ({percentState: 0, state: hqWidgets.gState.gStateOff, isRefresh: true});
                                         // Send command to HM
                                         if (on_time !== undefined && on_time != null && on_time != "") {
-                                            homematic.setValue( time_id, parseFloat(on_time));
+                                            localData.setValue( time_id, parseFloat(on_time));
                                         }
-                                        homematic.setValue( hm_id, 0);
+                                        localData.setValue( hm_id, 0);
                                     }
                                 } else {
                                     if (state != 0) {
@@ -227,21 +227,21 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     }
                                     //console.log ("SetState: "+ hm_id + " = " + (state / 100));
                                     // Send command to HM
-                                    homematic.setValue( hm_id, state / 100);                                  
+                                    localData.setValue( hm_id, state / 100);
                                 }  
                             }                                                
                         }});
                         // Fill up the required IDs
                         var w = 0;
                         if (opt["hm_id"] != null && opt["hm_id"] != "") {
-                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"]) {
-                                hm_ids[w++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"],    option: 'percentState'}; // First is always main element
-                                hm_ids[w++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"],  option: 'isWorking'};
-                                if (homematic.regaObjects[opt["hm_id"]]["DPs"]["RAMP_TIME"]) {
-                                    hm_ids[w++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["RAMP_TIME"],option: 'dimmerRampTime'};
+                            if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["DPs"] && localData.metaObjects[opt["hm_id"]]["DPs"]["LEVEL"]) {
+                                hm_ids[w++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["LEVEL"],    option: 'percentState'}; // First is always main element
+                                hm_ids[w++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["WORKING"],  option: 'isWorking'};
+                                if (localData.metaObjects[opt["hm_id"]]["DPs"]["RAMP_TIME"]) {
+                                    hm_ids[w++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["RAMP_TIME"],option: 'dimmerRampTime'};
                                 }
                             }
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[w++] = {'hm_id': opt['hm_id'], option: 'percentState'};
                             }
                         }                        
@@ -253,15 +253,15 @@ if ((typeof hqWidgets !== 'undefined')) {
 								var hm_id = obj.GetSettings ('hm_id');
 								if (hm_id != null && hm_id != "") {
 									
-									if (homematic.regaObjects [opt['hm_id']] && 
-										homematic.regaObjects [opt['hm_id']]["TypeName"] !== undefined && 
-										homematic.regaObjects [opt['hm_id']]["TypeName"] == "PROGRAM") {
-										console.log ("Activate programm " + homematic.regaObjects [opt['hm_id']]["Name"]);
+									if (localData.metaObjects [opt['hm_id']] &&
+										localData.metaObjects [opt['hm_id']]["TypeName"] !== undefined &&
+										localData.metaObjects [opt['hm_id']]["TypeName"] == "PROGRAM") {
+										console.log ("Activate programm " + localData.metaObjects [opt['hm_id']]["Name"]);
 										dui.socket.emit("programExecute", [opt['hm_id']]);
 									}
 									else {    
-										if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["DPs"] && homematic.regaObjects[opt['hm_id']]["DPs"]["STATE"])
-											hm_id = homematic.regaObjects[opt['hm_id']]["DPs"]["STATE"];
+										if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["DPs"] && localData.metaObjects[opt['hm_id']]["DPs"]["STATE"])
+											hm_id = localData.metaObjects[opt['hm_id']]["DPs"]["STATE"];
 										if (state != hqWidgets.gState.gStateOn) {
 											state = hqWidgets.gState.gStateOn;
 										}
@@ -273,9 +273,9 @@ if ((typeof hqWidgets !== 'undefined')) {
 										// Send command to HM
 										var invertState = obj.GetSettings("invertState");
 										if (invertState) {
-											homematic.setValue(hm_id, (state != hqWidgets.gState.gStateOn)); 
+											localData.setValue(hm_id, (state != hqWidgets.gState.gStateOn));
 										} else {
-											homematic.setValue(hm_id, (state == hqWidgets.gState.gStateOn)); 
+											localData.setValue(hm_id, (state == hqWidgets.gState.gStateOn));
 										}
 									}
 								}                                
@@ -284,10 +284,10 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Fill up the required IDs
                         var z = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
-                            if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["DPs"] && homematic.regaObjects[opt['hm_id']]["DPs"]["STATE"]) {
-                                hm_ids[z++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["STATE"], option: 'state'};
+                            if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["DPs"] && localData.metaObjects[opt['hm_id']]["DPs"]["STATE"]) {
+                                hm_ids[z++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["STATE"], option: 'state'};
                             }
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[z++] = {'hm_id': opt["hm_id"], option: 'state'};
                             }
                         }
@@ -297,42 +297,42 @@ if ((typeof hqWidgets !== 'undefined')) {
                         adv = $.extend (adv, {action: function (obj, what, state) {
                             var hm_id = obj.GetSettings ('hm_id');
                             if (hm_id != null && hm_id != "") {
-                                if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["LEVEL"]) {
-                                    hm_id = homematic.regaObjects[hm_id]["DPs"]["LEVEL"];
+                                if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["LEVEL"]) {
+                                    hm_id = localData.metaObjects[hm_id]["DPs"]["LEVEL"];
                                 }
                                 obj.SetStates ({isRefresh: true});
 								// Send command to HM
 								var invertState = obj.GetSettings("invertState");
 								if (invertState) {
-									homematic.setValue( hm_id, state / 100);
+									localData.setValue( hm_id, state / 100);
 								} 
 								else {
-									homematic.setValue( hm_id, (100 - state) / 100);
+									localData.setValue( hm_id, (100 - state) / 100);
 								}
                             }                                
                         }});
                         // Fill up the required IDs
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
-                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"]) {
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["LEVEL"],   option: 'percentState'}; // First is always main element
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"], option: 'isWorking'};
-                            } else if (homematic.regaObjects[opt["hm_id"]]){
+                            if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["DPs"] && localData.metaObjects[opt["hm_id"]]["DPs"]["LEVEL"]) {
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["LEVEL"],   option: 'percentState'}; // First is always main element
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["WORKING"], option: 'isWorking'};
+                            } else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'percentState'};
                             }
                         }
                         for (var i = 0; i < 4; i++) {
-							if (opt['hm_id'+i] && homematic.regaObjects[opt['hm_id'+i]] && homematic.regaObjects[opt['hm_id'+i]]["DPs"]) {
-								if (homematic.regaObjects[opt['hm_id'+i]]["DPs"]["STATE"])
-									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id'+i]]["DPs"]["STATE"],  option: 'windowState',  index:i};
-								if (homematic.regaObjects[opt['hm_id'+i]]["DPs"]["LOWBAT"])
-									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryS',  index:i};
+							if (opt['hm_id'+i] && localData.metaObjects[opt['hm_id'+i]] && localData.metaObjects[opt['hm_id'+i]]["DPs"]) {
+								if (localData.metaObjects[opt['hm_id'+i]]["DPs"]["STATE"])
+									hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id'+i]]["DPs"]["STATE"],  option: 'windowState',  index:i};
+								if (localData.metaObjects[opt['hm_id'+i]]["DPs"]["LOWBAT"])
+									hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryS',  index:i};
 							}
-							if (opt['hm_id_hnd'+i] && homematic.regaObjects[opt['hm_id_hnd'+i]] && homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]) {
-								if (homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["STATE"])
-									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["STATE"],  option: 'handleState',  index:i};
-								if (homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["LOWBAT"])
-									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id_hnd'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryH',  index:i};
+							if (opt['hm_id_hnd'+i] && localData.metaObjects[opt['hm_id_hnd'+i]] && localData.metaObjects[opt['hm_id_hnd'+i]]["DPs"]) {
+								if (localData.metaObjects[opt['hm_id_hnd'+i]]["DPs"]["STATE"])
+									hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id_hnd'+i]]["DPs"]["STATE"],  option: 'handleState',  index:i};
+								if (localData.metaObjects[opt['hm_id_hnd'+i]]["DPs"]["LOWBAT"])
+									hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id_hnd'+i]]["DPs"]["LOWBAT"], option: 'lowBatteryH',  index:i};
 							}
                         }                   
                     }
@@ -341,57 +341,57 @@ if ((typeof hqWidgets !== 'undefined')) {
                         adv = $.extend (adv, {action: function (obj, what, state) {
                             var hm_id = obj.GetSettings ('hm_id');
                             if (hm_id != null && hm_id != "") {
-                                if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["Channels"]) {
-									if (homematic.regaObjects[opt['hm_id']]["HssType"] == "HM-CC-TC") {
-										hm_id = homematic.regaObjects[homematic.regaObjects[opt['hm_id']]["Channels"][2]]["DPs"]["SETPOINT"];
+                                if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["Channels"]) {
+									if (localData.metaObjects[opt['hm_id']]["HssType"] == "HM-CC-TC") {
+										hm_id = localData.metaObjects[localData.metaObjects[opt['hm_id']]["Channels"][2]]["DPs"]["SETPOINT"];
 									}
 									else // HM-CC-RT-DN
-									if (homematic.regaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
-										hm_id = homematic.regaObjects[homematic.regaObjects[opt['hm_id']]["Channels"][4]]["DPs"]["SET_TEMPERATURE"];
+									if (localData.metaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
+										hm_id = localData.metaObjects[localData.metaObjects[opt['hm_id']]["Channels"][4]]["DPs"]["SET_TEMPERATURE"];
 									}
                                 }
 
                                 console.log ("SetTemp: "+ hm_id + " = " + state);
                                 // Send command to HM
-                                homematic.setValue (hm_id, state);                                  
+                                localData.setValue (hm_id, state);
                             }                                
                         }});
                         // Fill up the required IDs
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
 							var isHM_CC_RT_DN = false;
-                            if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["HssType"] == "HM-CC-TC") {
-                                var weatherId = homematic.regaObjects[opt['hm_id']]["Channels"][1];
-                                var controlId = homematic.regaObjects[opt['hm_id']]["Channels"][2];
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["SETPOINT"],    option: 'valueSet'}; // First is always control element
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[weatherId]["DPs"]["TEMPERATURE"], option: 'temperature'}; 
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[weatherId]["DPs"]["HUMIDITY"],    option: 'humidity'};
+                            if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["HssType"] == "HM-CC-TC") {
+                                var weatherId = localData.metaObjects[opt['hm_id']]["Channels"][1];
+                                var controlId = localData.metaObjects[opt['hm_id']]["Channels"][2];
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[controlId]["DPs"]["SETPOINT"],    option: 'valueSet'}; // First is always control element
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[weatherId]["DPs"]["TEMPERATURE"], option: 'temperature'};
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[weatherId]["DPs"]["HUMIDITY"],    option: 'humidity'};
                             }
                             else 
-							if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
+							if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
                                 isHM_CC_RT_DN = true;
-								var controlId = homematic.regaObjects[opt['hm_id']]["Channels"][4];
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["SET_TEMPERATURE"],    option: 'valueSet'}; // First is always control element
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["ACTUAL_TEMPERATURE"], option: 'temperature'}; 
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[controlId]["DPs"]["VALVE_STATE"],        option: 'valve'};	
+								var controlId = localData.metaObjects[opt['hm_id']]["Channels"][4];
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[controlId]["DPs"]["SET_TEMPERATURE"],    option: 'valueSet'}; // First is always control element
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[controlId]["DPs"]["ACTUAL_TEMPERATURE"], option: 'temperature'};
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[controlId]["DPs"]["VALVE_STATE"],        option: 'valve'};
 								adv = $.extend (adv, {'hideHumidity': true});
 							}
                             else 
-							if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["DPs"] && homematic.regaObjects[opt['hm_id']]["DPs"]["ACTUAL_TEMPERATURE"]) {
+							if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["DPs"] && localData.metaObjects[opt['hm_id']]["DPs"]["ACTUAL_TEMPERATURE"]) {
                                 isHM_CC_RT_DN = true;
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["SET_TEMPERATURE"],    option: 'valueSet'}; // First is always control element
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["ACTUAL_TEMPERATURE"], option: 'temperature'}; 
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["VALVE_STATE"],        option: 'valve'};	
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["SET_TEMPERATURE"],    option: 'valueSet'}; // First is always control element
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["ACTUAL_TEMPERATURE"], option: 'temperature'};
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["VALVE_STATE"],        option: 'valve'};
 								adv = $.extend (adv, {'hideHumidity': true});
 							}
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'temperature'};
                             }
 							if (!isHM_CC_RT_DN) {
 								if (opt["hm_idV"]) {
-									if (homematic.regaObjects[opt["hm_idV"]] && homematic.regaObjects[opt["hm_idV"]]["DPs"])
-										hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_idV"]]["DPs"]["VALVE_STATE"], option: 'valve'};
-									else if (homematic.regaObjects[opt["hm_idV"]])
+									if (localData.metaObjects[opt["hm_idV"]] && localData.metaObjects[opt["hm_idV"]]["DPs"])
+										hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_idV"]]["DPs"]["VALVE_STATE"], option: 'valve'};
+									else if (localData.metaObjects[opt["hm_idV"]])
 										hm_ids[t++] = {'hm_id': opt["hm_idV"], option: 'valve'};
 									adv = $.extend (adv, {'hideValve': false});
 								}
@@ -406,13 +406,13 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Fill up the required IDs
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
-                            if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["DPs"]) {
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["TEMPERATURE"], option: 'temperature'}; 
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["HUMIDITY"],    option: 'humidity'};
+                            if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["DPs"]) {
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["TEMPERATURE"], option: 'temperature'};
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["HUMIDITY"],    option: 'humidity'};
                             }
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'temperature'};
-                                if (opt["hm_idH"] && homematic.regaObjects[opt["hm_idH"]]){
+                                if (opt["hm_idH"] && localData.metaObjects[opt["hm_idH"]]){
 	                                hm_ids[t++] = {'hm_id': opt['hm_idH'], option: 'humidity'};
                                 }
                             }
@@ -423,13 +423,13 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Fill up the required IDs
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
-                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"],  option: 'state'}; 
-                                if (homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"] !== undefined) {
-                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};
+                            if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["DPs"] && localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"],  option: 'state'};
+                                if (localData.metaObjects[opt['hm_id']]["DPs"]["LOWBAT"] !== undefined) {
+                                    hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};
                                 }                                
                             }
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'state'};
                             }
                         }  
@@ -443,34 +443,34 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 if (state == hqWidgets.gLockType.gLockClose ||
                                     state == hqWidgets.gLockType.gLockOpen)
                                 {
-                                    if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["STATE"]){
-                                        hm_id = homematic.regaObjects[hm_id]["DPs"]["STATE"];
+                                    if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["STATE"]){
+                                        hm_id = localData.metaObjects[hm_id]["DPs"]["STATE"];
 									}
                                      // Send command to HM
-                                    homematic.setValue( hm_id, (state == hqWidgets.gLockType.gLockClose) ? false : true);
+                                    localData.setValue( hm_id, (state == hqWidgets.gLockType.gLockClose) ? false : true);
                                 }
                                 else { // Open door
-                                    if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["OPEN"])
-                                        hm_id = homematic.regaObjects[hm_id]["DPs"]["OPEN"];
+                                    if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["OPEN"])
+                                        hm_id = localData.metaObjects[hm_id]["DPs"]["OPEN"];
                                     // Send command to HM
-                                    homematic.setValue( hm_id, true);
+                                    localData.setValue( hm_id, true);
                                 }
                             }                            
                         }});
                         // Fill up the required IDs
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
-                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"],   option: 'state'}; 
-                                if (homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"]) {
-                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["WORKING"], option: 'isWorking'};
+                            if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["DPs"] && localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"],   option: 'state'};
+                                if (localData.metaObjects[opt["hm_id"]]["DPs"]["WORKING"]) {
+                                    hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["WORKING"], option: 'isWorking'};
                                 }
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["OPEN"],    option: 'open'}; 
-								if (homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"] !== undefined)
-									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};   
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["OPEN"],    option: 'open'};
+								if (localData.metaObjects[opt['hm_id']]["DPs"]["LOWBAT"] !== undefined)
+									hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};
                                 //hm_ids[t++] = {'hm_id': opt['hm_id'] + ".WORKING", option: 'isWorking'};
                             }
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'state'};
                             }
                         }  
@@ -504,12 +504,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 var states = obj.GetStates ();
                                 // Get actual state
                                 if (states.state == hqWidgets.gState.gStateOn) {
-                                    homematic.setValue(hm_idOff, hm_valOff);
+                                    localData.setValue(hm_idOff, hm_valOff);
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOff});
 									}
 								} else {
-                                    homematic.setValue(hm_idOn, hm_valOn);                                
+                                    localData.setValue(hm_idOn, hm_valOn);
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOn});
 									}
@@ -541,7 +541,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                         }});
                         // Fill up the required IDs
                         var t = 0;
-                        if (opt['hm_id'] != null && opt['hm_id'] != "" && homematic.regaObjects[opt["hm_id"]]) {
+                        if (opt['hm_id'] != null && opt['hm_id'] != "" && localData.metaObjects[opt["hm_id"]]) {
                             hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'infoText'};
                         }				
                     }                
@@ -563,48 +563,48 @@ if ((typeof hqWidgets !== 'undefined')) {
                         var t = 0;
                         if (opt["hm_id"] != null && opt["hm_id"] != "") {
                             var isBright = false;
-                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"]) {
-                                if (homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"]) {
-                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"],      option: 'state'}; // First is always main element
-                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["BRIGHTNESS"],  option: 'percentState'};                         
+                            if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["DPs"]) {
+                                if (localData.metaObjects[opt["hm_id"]]["DPs"]["MOTION"]) {
+                                    hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["MOTION"],      option: 'state'}; // First is always main element
+                                    hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["BRIGHTNESS"],  option: 'percentState'};
 									opt = $.extend (opt, {'isShowPercent': true});
                                     isBright = true;
                                 }
                                                       
                                 else 
-                                if (homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"]){
-                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"], option: 'state'};  
+                                if (localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"]){
+                                    hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"], option: 'state'};
 									opt = $.extend (opt, {'isShowPercent': false});
                                 }
 								// no else here
-                                if (homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"] !== undefined) {
-                                    hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};
+                                if (localData.metaObjects[opt['hm_id']]["DPs"]["LOWBAT"] !== undefined) {
+                                    hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};
 									opt = $.extend (opt, {'isShowPercent': false});
                                 }                                
                             }
                             else
-                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["Name"] && homematic.regaObjects[opt["hm_id"]]["Name"].indexOf(".MOTION") != -1) {
+                            if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["Name"] && localData.metaObjects[opt["hm_id"]]["Name"].indexOf(".MOTION") != -1) {
                                 hm_ids[t++] = {'hm_id': opt["hm_id"],      option: 'state'}; // First is always main element
                                 
-                                if (homematic.regaObjects[opt["hm_id"]]["Parent"]) {
-                                    var parent = homematic.regaObjects[opt["hm_id"]]["Parent"];
-                                    if (homematic.regaObjects[parent] && homematic.regaObjects[parent]["DPs"] && homematic.regaObjects[parent]["DPs"]["BRIGHTNESS"]) {
-                                        hm_ids[t++] = {'hm_id': homematic.regaObjects[parent]["DPs"]["BRIGHTNESS"],  option: 'percentState'};                         
+                                if (localData.metaObjects[opt["hm_id"]]["Parent"]) {
+                                    var parent = localData.metaObjects[opt["hm_id"]]["Parent"];
+                                    if (localData.metaObjects[parent] && localData.metaObjects[parent]["DPs"] && localData.metaObjects[parent]["DPs"]["BRIGHTNESS"]) {
+                                        hm_ids[t++] = {'hm_id': localData.metaObjects[parent]["DPs"]["BRIGHTNESS"],  option: 'percentState'};
                                         opt = $.extend (opt, {'isShowPercent': true});
                                         isBright = true;
-                                        parent = homematic.regaObjects[parent]["Parent"];
-                                        if (parent != null && homematic.regaObjects[parent] && 
-                                            homematic.regaObjects[parent]["Channels"] && homematic.regaObjects[parent]["Channels"][0]) {
-                                            parent = homematic.regaObjects[parent]["Channels"][0];
-                                            if (homematic.regaObjects[parent]["DPs"] && homematic.regaObjects[parent]["DPs"]["LOWBAT"]) {
-                                                hm_ids[t++] = {'hm_id': homematic.regaObjects[parent]["DPs"]["LOWBAT"], option: 'lowBattery'};
+                                        parent = localData.metaObjects[parent]["Parent"];
+                                        if (parent != null && localData.metaObjects[parent] &&
+                                            localData.metaObjects[parent]["Channels"] && localData.metaObjects[parent]["Channels"][0]) {
+                                            parent = localData.metaObjects[parent]["Channels"][0];
+                                            if (localData.metaObjects[parent]["DPs"] && localData.metaObjects[parent]["DPs"]["LOWBAT"]) {
+                                                hm_ids[t++] = {'hm_id': localData.metaObjects[parent]["DPs"]["LOWBAT"], option: 'lowBattery'};
                                             
                                             }
                                         }
                                     }
                                 }
                             }          
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt["hm_id"], option: 'state'};                                    
                             }
                             
@@ -621,34 +621,34 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 action: function (obj, what, state) {                                    
                                     var hm_id = obj.GetSettings ('hm_idL');
                                     if (hm_id != null && hm_id != "") {
-                                        if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["OPEN"]) {
-                                            hm_id = homematic.regaObjects[hm_id]["DPs"]["OPEN"];
+                                        if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["OPEN"]) {
+                                            hm_id = localData.metaObjects[hm_id]["DPs"]["OPEN"];
                                         }
                                         else
-                                        if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["STATE"]) {
-                                            hm_id = homematic.regaObjects[hm_id]["DPs"]["STATE"];
+                                        if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["STATE"]) {
+                                            hm_id = localData.metaObjects[hm_id]["DPs"]["STATE"];
                                         }
                                         // Send command to HM
-                                        homematic.setValue( hm_id, true);
+                                        localData.setValue( hm_id, true);
                                     }                            
                                 }});
                         }                    
                         // Fill up the required IDs
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
-                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"], option: 'state'}; 
+                            if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["DPs"] && localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"], option: 'state'};
                             }
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'state'};
                             }
                         }
                          
                         if (opt['hm_idL'] != null && opt['hm_idL'] != "") {
-                            if (homematic.regaObjects[opt["hm_idL"]] && homematic.regaObjects[opt["hm_idL"]]["DPs"] && homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"]) {
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"], option: 'open'};
+                            if (localData.metaObjects[opt["hm_idL"]] && localData.metaObjects[opt["hm_idL"]]["DPs"] && localData.metaObjects[opt["hm_idL"]]["DPs"]["STATE"]) {
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_idL"]]["DPs"]["STATE"], option: 'open'};
 							}
-                            else if (homematic.regaObjects[opt["hm_idL"]])
+                            else if (localData.metaObjects[opt["hm_idL"]])
                                 hm_ids[t++] = {'hm_id': opt['hm_idL'], option: 'open'};
                         }     
                           
@@ -661,23 +661,23 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 if (what == 'open') {
                                     var hm_id = obj.GetSettings ('hm_idL');
                                     if (hm_id != null && hm_id != "") {
-                                        if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["OPEN"]) {
-                                            hm_id = homematic.regaObjects[hm_id]["DPs"]["OPEN"];
+                                        if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["OPEN"]) {
+                                            hm_id = localData.metaObjects[hm_id]["DPs"]["OPEN"];
                                         }
                                         // Send command to HM
-                                        homematic.setValue( hm_id, true);
+                                        localData.setValue( hm_id, true);
                                     }   
                                 }
                                 else { // Play melody or blink with LED
                                     var hm_id = obj.GetSettings ('hm_id');
                                     if (hm_id != null && hm_id != "") {
-                                        if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
-                                            hm_id = homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"];
+                                        if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["DPs"] && localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
+                                            hm_id = localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"];
                                         }
                                         // Send command to HM
-                                        homematic.setValue( hm_id, true);
+                                        localData.setValue( hm_id, true);
                                         // Switch of in 2 seconds
-                                        setTimeout (function (id) { homematic.setValue( id, false);}, 2000, hm_id);
+                                        setTimeout (function (id) { localData.setValue( id, false);}, 2000, hm_id);
                                     }                            
                                 }  
                             }                                
@@ -685,22 +685,22 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Fill up the required IDs
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
-                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"], option: 'state'}; 
-								if (homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"] !== undefined)
-									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};   
+                            if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["DPs"] && localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"], option: 'state'};
+								if (localData.metaObjects[opt['hm_id']]["DPs"]["LOWBAT"] !== undefined)
+									hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'lowBattery'};
                             }
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'state'};
                             }
                         }  
                         if (opt['hm_idL'] != null && opt['hm_idL'] != "") {
-                            if (homematic.regaObjects[opt["hm_idL"]] && homematic.regaObjects[opt["hm_idL"]]["DPs"] && homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"]) {
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt["hm_idL"]]["DPs"]["STATE"], option: 'open'};
-								if (homematic.regaObjects[opt['hm_idL']]["DPs"]["LOWBAT"] !== undefined)
-									hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_idL']]["DPs"]["LOWBAT"], option: 'lowBattery'};   
+                            if (localData.metaObjects[opt["hm_idL"]] && localData.metaObjects[opt["hm_idL"]]["DPs"] && localData.metaObjects[opt["hm_idL"]]["DPs"]["STATE"]) {
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_idL"]]["DPs"]["STATE"], option: 'open'};
+								if (localData.metaObjects[opt['hm_idL']]["DPs"]["LOWBAT"] !== undefined)
+									hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_idL']]["DPs"]["LOWBAT"], option: 'lowBattery'};
 							}
-                            else if (homematic.regaObjects[opt["hm_idL"]])
+                            else if (localData.metaObjects[opt["hm_idL"]])
                                 hm_ids[t++] = {'hm_id': opt['hm_idL'], option: 'open'};
                         }
                     }   
@@ -715,7 +715,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeGauge) {
                         // Fill up the required IDs
                         var t = 0;
-                        if (opt['hm_id'] != null && opt['hm_id'] != "" && homematic.regaObjects[opt["hm_id"]]) {
+                        if (opt['hm_id'] != null && opt['hm_id'] != "" && localData.metaObjects[opt["hm_id"]]) {
                             hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'valueSet'}; 
                         }  
                     }
@@ -724,10 +724,10 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Fill up the required IDs
                         var t = 0;
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
-                            if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["LOWBAT"]) {
-                                hm_ids[t++] = {'hm_id': homematic.regaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'state'};   
+                            if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["DPs"] && localData.metaObjects[opt["hm_id"]]["DPs"]["LOWBAT"]) {
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["LOWBAT"], option: 'state'};
                             }
-                            else if (homematic.regaObjects[opt["hm_id"]]){
+                            else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'state'};
                             }
                         }  
@@ -982,15 +982,15 @@ if ((typeof hqWidgets !== 'undefined')) {
                         var points = [];
                         if (hm_id != null && hm_id != "") {
                             var cnt = 0;
-                            if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"] && homematic.regaObjects[hm_id]["DPs"]["TEMPERATURE"]) {
-                                points[cnt++] = homematic.regaObjects[hm_id]["DPs"]["TEMPERATURE"];
-                                points[cnt++] = homematic.regaObjects[hm_id]["DPs"]["HUMIDITY"];
+                            if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["TEMPERATURE"]) {
+                                points[cnt++] = localData.metaObjects[hm_id]["DPs"]["TEMPERATURE"];
+                                points[cnt++] = localData.metaObjects[hm_id]["DPs"]["HUMIDITY"];
                             }
                             else
-                            if (homematic.regaObjects[opt['hm_id']] && homematic.regaObjects[opt['hm_id']]["Channels"] && homematic.regaObjects[opt['hm_id']]["Channels"][1]) {
-                                var weatherId = homematic.regaObjects[opt['hm_id']]["Channels"][1];
-                                points[cnt++] = homematic.regaObjects[weatherId]["DPs"]["TEMPERATURE"]; 
-                                points[cnt++] = homematic.regaObjects[weatherId]["DPs"]["HUMIDITY"];
+                            if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["Channels"] && localData.metaObjects[opt['hm_id']]["Channels"][1]) {
+                                var weatherId = localData.metaObjects[opt['hm_id']]["Channels"][1];
+                                points[cnt++] = localData.metaObjects[weatherId]["DPs"]["TEMPERATURE"];
+                                points[cnt++] = localData.metaObjects[weatherId]["DPs"]["HUMIDITY"];
                             }
                         }
                         if (points[0]) {
@@ -1133,17 +1133,17 @@ if ((typeof hqWidgets !== 'undefined')) {
 						if (opt["exShowGrafik"] === 'grafic') {
 							// Show grafik
 							var hm_id = opt['hm_id'];
-							if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["DPs"]) {
-								if (homematic.regaObjects[hm_id]["DPs"]["MOTION"]) {
-									hm_id = homematic.regaObjects[opt["hm_id"]]["DPs"]["BRIGHTNESS"];
+							if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"]) {
+								if (localData.metaObjects[hm_id]["DPs"]["MOTION"]) {
+									hm_id = localData.metaObjects[opt["hm_id"]]["DPs"]["BRIGHTNESS"];
 								}                                                          
 							}
 							else
-							if (homematic.regaObjects[hm_id] && homematic.regaObjects[hm_id]["Name"] && homematic.regaObjects[hm_id]["Name"].indexOf(".MOTION") != -1) {
-								if (homematic.regaObjects[hm_id]["Parent"]) {
-									var parent = homematic.regaObjects[hm_id]["Parent"];
-									if (homematic.regaObjects[parent] && homematic.regaObjects[parent]["DPs"] && homematic.regaObjects[parent]["DPs"]["BRIGHTNESS"]) {
-										hm_id = homematic.regaObjects[parent]["DPs"]["BRIGHTNESS"];
+							if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["Name"] && localData.metaObjects[hm_id]["Name"].indexOf(".MOTION") != -1) {
+								if (localData.metaObjects[hm_id]["Parent"]) {
+									var parent = localData.metaObjects[hm_id]["Parent"];
+									if (localData.metaObjects[parent] && localData.metaObjects[parent]["DPs"] && localData.metaObjects[parent]["DPs"]["BRIGHTNESS"]) {
+										hm_id = localData.metaObjects[parent]["DPs"]["BRIGHTNESS"];
 									}
 								}
 							}          
@@ -1183,23 +1183,23 @@ if ((typeof hqWidgets !== 'undefined')) {
 														 'src="'+src;
 								var url = "";
 								var hm_id = opt['hm_id'];
-								if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"]) {
-									hm_id = homematic.regaObjects[opt["hm_id"]]["DPs"]["MOTION"];
+								if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["DPs"] && localData.metaObjects[opt["hm_id"]]["DPs"]["MOTION"]) {
+									hm_id = localData.metaObjects[opt["hm_id"]]["DPs"]["MOTION"];
 									url += ((url !="") ? "&" : "?") + "value=true&compact=true";
 								} else
-								if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["Name"] && homematic.regaObjects[opt["hm_id"]]["Name"].indexOf(".MOTION") != -1) {
+								if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["Name"] && localData.metaObjects[opt["hm_id"]]["Name"].indexOf(".MOTION") != -1) {
 									hm_id = opt["hm_id"];
 									url += ((url !="") ? "&" : "?") + "value=true&compact=true";                                    
 								} else
-								if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["DPs"] && homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
-									hm_id = homematic.regaObjects[opt["hm_id"]]["DPs"]["STATE"];
-									if (homematic.regaObjects[opt["hm_id"]]["HssType"] == "PING") {
+								if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["DPs"] && localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"]) {
+									hm_id = localData.metaObjects[opt["hm_id"]]["DPs"]["STATE"];
+									if (localData.metaObjects[opt["hm_id"]]["HssType"] == "PING") {
 										url += ((url !="") ? "&" : "?") + "true=online&false=offline&compact=true";
 									} else {
 										url += ((url !="") ? "&" : "?") + "true=opened&false=closed&compact=true";
 									}
 								} else
-								if (homematic.regaObjects[opt["hm_id"]] && homematic.regaObjects[opt["hm_id"]]["Name"] && homematic.regaObjects[opt["hm_id"]]["Name"].indexOf(".STATE") != -1) {
+								if (localData.metaObjects[opt["hm_id"]] && localData.metaObjects[opt["hm_id"]]["Name"] && localData.metaObjects[opt["hm_id"]]["Name"].indexOf(".STATE") != -1) {
 									hm_id = opt["hm_id"];
 									url += ((url !="") ? "&" : "?") + "true=opened&false=closed&compact=true";                                    
 								}
@@ -1263,17 +1263,17 @@ if ((typeof hqWidgets !== 'undefined')) {
                         dui.binds.hqWidgetsExt.hqMapping[hm_ids[i].hm_id+'_'+j] = {button: btn, option: hm_ids[i].option, index: hm_ids[i].index};
                         // Set actual state
                         // Convert string to time
-                        if (homematic.uiState["_"+hm_ids[i].hm_id] && homematic.uiState["_"+hm_ids[i].hm_id].Value !== undefined) {
+                        if (localData.uiState["_"+hm_ids[i].hm_id] && localData.uiState["_"+hm_ids[i].hm_id].Value !== undefined) {
                             var dt = undefined;
-                            if (homematic.uiState["_"+hm_ids[i].hm_id].LastChange !== undefined &&
-							    homematic.uiState["_"+hm_ids[i].hm_id].LastChange != null) {
-                                dt = new Date(homematic.uiState["_"+hm_ids[i].hm_id].LastChange.replace(' ', 'T') + "Z");//('2011-04-11T11:51:00') "T" Means GMT (We do not have GMT)
+                            if (localData.uiState["_"+hm_ids[i].hm_id].LastChange !== undefined &&
+							    localData.uiState["_"+hm_ids[i].hm_id].LastChange != null) {
+                                dt = new Date(localData.uiState["_"+hm_ids[i].hm_id].LastChange.replace(' ', 'T') + "Z");//('2011-04-11T11:51:00') "T" Means GMT (We do not have GMT)
 								dt.setMinutes(dt.getMinutes() + new Date().getTimezoneOffset());
 							}
-                            this.hqMonitor (this, hm_ids[i].hm_id, homematic.uiState["_"+hm_ids[i].hm_id].Value, true, dt);
+                            this.hqMonitor (this, hm_ids[i].hm_id, localData.uiState["_"+hm_ids[i].hm_id].Value, true, dt);
                         }
                         else {
-                            if (homematic.uiState["_"+hm_ids[i].hm_id]) 
+                            if (localData.uiState["_"+hm_ids[i].hm_id])
                                 console.log("DATAPOINT " + hm_ids[i].hm_id + " does not exist in homematic.uiState !!!!!!!!!!!!!!");
                             else
                                 console.log("DATAPOINT " + hm_ids[i].hm_id + " does not have Value!!!!!!!!!!!!!!");
@@ -1301,8 +1301,8 @@ if ((typeof hqWidgets !== 'undefined')) {
 						$('#sound__').on('canplaythrough', function() {   
 							this.play ();
 						});
-                        if (homematic.uiState["_72901"] && homematic.uiState["_72901"].Value) {
-						    document.getElementById('sound__').src = "../" + homematic.uiState["_72901"].Value + "?"+d.getTime();
+                        if (localData.uiState["_72901"] && localData.uiState["_72901"].Value) {
+						    document.getElementById('sound__').src = "../" + localData.uiState["_72901"].Value + "?"+d.getTime();
                         }
                         else{
                             document.getElementById('sound__').src = "../say.mp3?"+d.getTime();
