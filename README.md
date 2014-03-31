@@ -7,6 +7,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta62
+* (Hobbyquaker) neues Widget-Set: LCARS (Star Trek)
+* (Hobbyquaker) Refactoring
+
 ### 0.9beta61
 * (Hobbyquaker) Bugfix state Binding (betrifft verschiedene basic/jqui/jqui-mfd Widgets)
 * (Hobbyquaker) Bugfix diverse Widgets basic und jqui: Workaround für 404 __!!__ - siehe https://github.com/bitovi/canjs/issues/157
