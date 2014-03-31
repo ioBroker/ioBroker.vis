@@ -1,0 +1,301 @@
+<!--
+    TODO - Warpcore Widget - Bind speed to datapoint
+    TODO - Button Widgets: adjustable width
+    TODO - Button Widgets: Variants with binding (sub)title to datapoint
+    TODO - Slider Widgets
+    TODO - Bar Widgets
+    TODO - 4way Controller Widget
+-->
+<link rel="stylesheet" href="widgets/lcars/lcars.css" type="text/css"/>
+<script type="text/javascript" src="widgets/lcars/jquery.lcars.js"></script>
+<script type="text/javascript">
+    jQuery.extend(true, dui.binds, {
+        lcars: {
+            color: function (name) {
+                switch (name) {
+                    case "orange":
+                        return "#ff9900";
+                        break;
+                    case "purple":
+                        return "#cc99cc";
+                        break;
+                    case "blue":
+                        return "#9999ff";
+                        break;
+                    case "lightBlue":
+                        return "#9999cc";
+                        break;
+                    case "red":
+                        return "#cc0000";
+                        break;
+                    case "lightRed":
+                        return "#cc6666";
+                        break;
+                    case "tan":
+                        return "#ff9966";
+                        break;
+                    case "lightTan":
+                        return "#ffcc99";
+                        break;
+                    case "pink":
+                        return "#cc6699";
+                        break;
+                    case "white":
+                        return "#ccccff";
+                        break;
+                    default:
+                        return "#ffffff";
+
+                }
+            },
+            button: function (el, options, id, val, color_active) {
+                var $this = jQuery(el);
+                $this.lcarsButton(options);
+                var newVal = localData.uiState["_"+id].Value;
+                if (newVal === "true" || newVal === true) { newVal = 1; }
+                if (val == newVal) {
+                    $this.css("background-color", dui.binds.lcars.color(color_active));
+                    $this.find(".B_titleL").css("color", dui.binds.lcars.color(color_active));
+                }
+                localData.uiState.bind("_"+id+".Value", function( e, newVal, oldVal ) {
+                    if (newVal === "true" || newVal === true) { newVal = 1; }
+                    if (val == newVal) {
+                        $this.css("background-color", dui.binds.lcars.color(color_active));
+                        $this.find(".B_titleL").css("color", dui.binds.lcars.color(color_active));
+                    } else {
+                        $this.css("background-color", dui.binds.lcars.color(options.color));
+                        $this.find(".B_titleL").css("color", dui.binds.lcars.color(options.color));
+                    }
+                });
+
+            },
+            warpcoreInterval: {},
+            warpcore: function (el, id, speed, wid) {
+                var d = 114;
+                var i = 0;
+                $this = jQuery(el).prev();
+                if (dui.binds.lcars.warpcoreInterval[wid]) {
+                    clearInterval(dui.binds.lcars.warpcoreInterval[wid]);
+                }
+                dui.binds.lcars.warpcoreInterval[wid] = setInterval(function (_this) {
+                    i += 1;
+                    if (i > 4) { i = 0; }
+                    _this.css("background-position-x", -d * i);
+                },speed, $this);
+
+            },
+            dnaInterval: {},
+            dna: function (el, id, speed, wid) {
+                var i = 0;
+                $this = jQuery(el).prev();
+                if (dui.binds.lcars.dnaInterval[wid]) {
+                    clearInterval(dui.binds.lcars.dnaInterval[wid]);
+                }
+                dui.binds.lcars.dnaInterval[wid] = setInterval(function (_this) {
+                    i += 1;
+                    if (i > 283) { i = 0; }
+                    _this.css("background-position-x", i);
+                }, speed, $this);
+
+            },
+            randomNumber: function () {
+                return ("00" + parseInt((Math.random() * 1000), 10)).slice(-3);
+            },
+            randomInterval: {},
+            random: function (el, rows, cols, speed, wid) {
+                var $this = jQuery(el).prev();
+                var $table = $this.find("table");
+                if (dui.binds.lcars.randomInterval[wid]) {
+                    clearInterval(dui.binds.lcars.randomInterval[wid]);
+                }
+                dui.binds.lcars.randomInterval[wid] = setInterval(function (_table) {
+                    if (_table.find("tr").length >= rows) {
+                        _table.html("");
+                    }
+                    var colsHtml = "";
+                    for (var j = 0; j < cols; j++) {
+                        colsHtml += dui.binds.lcars.randomNumber()+"</td><td>";
+                    }
+                    _table.append("<tr><td>"+colsHtml+"</td></tr>");
+
+                }, speed, $table);
+
+
+            },
+            nav: function (el, nav_view, color_active) {
+                var $this = jQuery(el).prev();
+
+                if (dui.activeView == nav_view) {
+                    $this.css("background-color", color_active);
+                }
+
+                $this.click(function () {
+                    if (dui.urlParams["edit"] !== "") {
+                        dui.changeView(nav_view);
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+
+            }
+        }
+    });
+</script>
+
+<!--<script type="text/ejs" id="tplLcarsSidePanel" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="navigation - Side-Panel" data-dashui-attrs="html">
+    <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 88px; height: 550px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <ul id="side-panel" class="side-panel">
+                <li style="height: 74px; background-color: rgb(153, 153, 255);"><div style="line-height: 128px;"><span style="padding-right:2px"><a href="index.html">Test1</a></span></div></li>
+                <li style="height: 74px; background-color: rgb(204, 153, 204);"><span style="padding-right:2px"><a href="css.html">Test2</a></span></li>
+                <li style="height: 74px; background-color: rgb(153, 153, 255);"><span style="padding-right:2px"><a href="debug.html">Test3</a></span></li>
+                <li style="height: 74px; background-color: rgb(204, 153, 204);"><span style="padding-right:2px"><a href="mobile.html">Test4</a></span></li>
+                <li style="height: 74px; background-color: rgb(153, 153, 255);"><span style="padding-right:2px">Test5</span></li><li style="height: 218px; border-bottom-style: none; background-color: rgb(204, 153, 204);"><span style="padding-right:2px">781</span></li>
+            </ul>
+        </div>
+    </div>
+</script>-->
+
+
+<script type="text/ejs" id="tplLcarsHtmlNav" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="navigation - HTML" data-dashui-attrs="html;nav_view;color_default/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 88px; height: 74px; font-family: lcars_font; font-size:30px; text-align: right; " id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="background-color: <%= dui.binds.lcars.color(data.attr('color_default')) %>">
+            <span style="padding-right:4px"><%== this.data.attr('html') %></a>
+        </div>
+        <div <%= (el) -> dui.binds.lcars.nav(el, data.attr("nav_view"), data.attr("color_active")) %>></div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplLcarsHTML" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Text/HTML" data-dashui-attrs="html;lcars_color/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="font-family: lcars_font; letter-spacing: 1px; font-size: 30px; top:0px; left: 0px; width: 260px; height: 32px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="padding:0;margin:0;color: <%= dui.binds.lcars.color(this.data.attr('lcars_color')) %>">
+            <%== this.data.attr('html') %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplLcarsLine" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Line" data-dashui-attrs="edge_type/1,2;edge_direction/tl,tr,br,bl;lcars_color/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 195px; height: 25px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="padding:0;margin:0;background-color: <%= dui.binds.lcars.color(this.data.attr('lcars_color')) %>">
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplLcarsLineTop" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Line-Top" data-dashui-attrs="lcars_color/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+    <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <div class="line-top" style="background-color:<%= dui.binds.lcars.color(this.data.attr('lcars_color')) %>;margin-bottom:-3px;"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplLcarsLineBottom" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Line-Bottom" data-dashui-attrs="lcars_color/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+    <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <div class="line-bottom" style="background-color:<%= dui.binds.lcars.color(this.data.attr('lcars_color')) %>;margin-bottom:-3px;"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplLcarsEdge" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Edge" data-dashui-attrs="edge_type/1,2;edge_direction/tl,tr,br,bl;lcars_color/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+    <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 195px; height: 83px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="padding:0;margin:0;background-color: <%= dui.binds.lcars.color(this.data.attr('lcars_color')) %>">
+            <img width="100%" height="100%" style="padding:0;margin:0;border:none;" src="widgets/lcars/edge<%= this.data.attr('edge_type') %>-<%= this.data.attr('edge_direction') %>.png">
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplLcarsFrame" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Frame" data-dashui-attrs="frame_type[1]/1,2;frame_direction[r]/r,l">
+    <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 32px; height: 215px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="padding:0;margin:0">
+            <img width="100%" height="100%" style="padding:0;margin:0;border:none;" <%= (this.data.attr('frame_type') && this.data.attr('frame_direction') ? 'src="widgets/lcars/frame' + this.data.attr('frame_type') +'-' + this.data.attr('frame_direction') + '.png"' : '') %>>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplLcarsUfpLogo" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - UFP Logo" data-dashui-attrs="">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 531px; height: 409px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <img width="100%" src="widgets/lcars/ufp.png"/>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplLcarsSfLogo" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Starfleet Logo" data-dashui-attrs="lcars_color/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 161px; height: 171px ;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="background-color: <%= dui.binds.lcars.color(this.data.attr('lcars_color')) %>">
+            <img width="100%" src="widgets/lcars/starfleet.png"/>
+        </div>
+    </div>
+</script>
+
+
+
+
+<script type="text/ejs" id="tplLcarsDna" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - DNA" data-dashui-attrs="speed[50]">
+    <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 560px; height: 48px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="padding:0;margin:0">
+            <div style="width:100%;height:100%;background-image: url('widgets/lcars/dna.png')"></div>
+            <div <%= (el) -> dui.binds.lcars.dna(el, undefined, data.attr('speed'), data.attr('wid')) %>></div>
+        </div>
+    </div>
+</script>
+
+
+
+
+<script type="text/ejs" id="tplLcarsRandom" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Random Numbers" data-dashui-attrs="rows[6];cols[4];speed[1000];lcars_color/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="font-family: lcars_font; letter-spacing: 1px; font-size: 30px; top:0px; left: 0px; width: 260px; height: 32px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="padding:0;margin:0;color: <%= dui.binds.lcars.color(this.data.attr('lcars_color')) %>">
+            <table style="width:100%">
+
+            </table>
+        </div>
+        <div <%= (el) -> dui.binds.lcars.random(el, data.attr('rows'), data.attr('cols'), data.attr('speed'), data.attr('wid')) %>></div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplLcarsWarpcoreFix" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Warpcore" data-dashui-attrs="speed[500]">
+    <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 114px; height: 317px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="padding:0;margin:0">
+            <div style="width:100%;height:100%;background-image: url('widgets/lcars/warpcore.png')"></div>
+            <div <%= (el) -> dui.binds.lcars.warpcore(el, undefined, data.attr('speed'), data.attr('wid')) %>></div>
+        </div>
+    </div>
+</script>
+<!--
+<script type="text/ejs" id="tplLcarsWarpcore" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="val - Warpcore" data-dashui-attrs="id">
+    <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 114px; height: 317px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="padding:0;margin:0">
+            <div style="width:100%;height:100%;background-image: url('widgets/lcars/warpcore.png')"></div>
+            <div <%= (el) -> dui.binds.lcars.warpcore(el, data.attr('id'), null, data.attr('wid')) %>></div>
+        </div>
+    </div>
+</script>
+-->
+<script type="text/ejs" id="tplLcarsButton" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="ctrl - Button State" data-dashui-attrs="hm_id;value;title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;extended/checkbox;width[230];color_default/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white" >
+    <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.state(el) %> >
+        <div class="dashui-widget-body">
+           <span <%= (el) -> dui.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')}}, data.attr('hm_id'), data.attr('value'), data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplLcarsButtonInc" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="ctrl - Button Increment" data-dashui-attrs="hm_id;step[0.01];minmax[1];repeat_delay[800];repeat_interval[800];title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;extended/checkbox;width[230];color_default/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+    <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>" data-dashui-step="<%= this.data.attr('step') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.increment(el, data.attr('minmax'), data.attr('repeat_delay'), data.attr('repeat_interval')) %>>
+        <div class="dashui-widget-body">
+            <span <%= (el) -> dui.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')}}, data.attr('hm_id'), data.attr('minmax'), data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplLcarsButtonToggle" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="ctrl - Button Toggle" data-dashui-attrs="hm_id;title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;extended/checkbox;width[230];color_default/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+    <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>" data-dashui-step="<%= this.data.attr('step') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.toggle(el) %>>
+        <div class="dashui-widget-body">
+            <span <%= (el) -> dui.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')}}, data.attr('hm_id'), 1, data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+        </div>
+    </div>
+</script>
+
