@@ -662,10 +662,18 @@ dui = $.extend(true, dui, {
         // Alle Widgets de-selektieren und Interaktionen entfernen
         $(".dashui-widget").each(function() { $(this).removeClass("dashui-widget-edit");
             if ($(this).hasClass("ui-draggable")) {
-                $(this).draggable("destroy");
+                try {
+                    $(this).draggable("destroy");
+                } catch (e) {
+                    console.log("inspectWidget "+id+" "+e)
+                }
             }
             if ($(this).hasClass("ui-resizable")) {
-                $(this).resizable("destroy");
+                try {
+                    $(this).resizable("destroy");
+                } catch (e) {
+                    console.log("inspectWidget "+id+" "+e)
+                }
             }
         });
 
