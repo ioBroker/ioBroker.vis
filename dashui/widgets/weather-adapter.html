@@ -3,7 +3,7 @@
 
         <div class="dashui-widget-body">
             <div data-hm-id="70000">
-                <%== homematic.uiState.attr("_70000.Value") %>
+                <%== localData.uiState.attr("_70000.Value") %>
             </div>
         </div>
     </div>
@@ -20,9 +20,9 @@
         ];
     %>
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 160px; height: 21px;  font-family: Arial; " id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(homematic.uiState.attr("_70052.Value"),10)] %>;">
+        <div class="dashui-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(localData.uiState.attr("_70052.Value"),10)] %>;">
             <div data-hm-id="700053">
-                <%== homematic.uiState.attr("_70053.Value") %>
+                <%== localData.uiState.attr("_70053.Value") %>
             </div>
         </div>
     </div>
@@ -40,12 +40,12 @@
         ];
         %>
 
-        <div class="dashui-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(homematic.uiState.attr("_70052.Value"),10)] %>;">
+        <div class="dashui-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(localData.uiState.attr("_70052.Value"),10)] %>;">
             <div style="font-size: 1.5em; font-weight: bold;" data-hm-id="70054">
-                <%== homematic.uiState.attr("_70054.Value") %>
+                <%== localData.uiState.attr("_70054.Value") %>
             </div>
-            <p><%== homematic.uiState.attr("_70055.Value") %><br/>
-            <%== homematic.uiState.attr("_70050.Value") %> - <%== homematic.uiState.attr("_70051.Value") %></p>
+            <p><%== localData.uiState.attr("_70055.Value") %><br/>
+            <%== localData.uiState.attr("_70050.Value") %> - <%== localData.uiState.attr("_70051.Value") %></p>
         </div>
     </div>
 </script>

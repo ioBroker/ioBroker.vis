@@ -640,7 +640,7 @@
     <div class="dashui-widget-body">
         <div>
             <%
-            var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
+            var str = localData.uiState.attr("_" + this.data.hm_id + ".Value");
             var val = parseFloat(str);
             var state;
             if (str === false || str === "false" || val == 0) {

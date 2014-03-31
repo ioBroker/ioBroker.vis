@@ -137,7 +137,7 @@
     <%
         createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), this.data.attr('hm_id'), 100, 400);
 
-        var str = homematic.uiState.attr("_" + this.data.attr('hm_id') + ".Value");
+        var str = localData.uiState.attr("_" + this.data.attr('hm_id') + ".Value");
         if (str === null || str === undefined) str = this.data.attr("min_value");
         var t = new RGraph.Thermometer("c"+this.data.attr('wid'), parseFloat(this.data.attr("min_value")), parseFloat(this.data.attr("max_value")), parseFloat(str));
         if (this.data.attr('color')) {
@@ -161,7 +161,7 @@
                         clearTimeout (obj.setTimer);
                     }
                     obj.setTimer = setTimeout (function (o) {
-                        homematic.setValue(o.properties["chart.hm_id"], o.value);
+                        localData.setValue(o.properties["chart.hm_id"], o.value);
                         }, 300, obj);
                 });
             }
@@ -262,13 +262,13 @@
     <%
         createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), [this.data.attr('hm_id'), this.data.attr('hm_id_2'), this.data.attr('hm_id_3')], 200, 200);
 
-        var str = homematic.uiState.attr("_" + this.data.attr('hm_id') + ".Value");
+        var str = localData.uiState.attr("_" + this.data.attr('hm_id') + ".Value");
         if (str === null || str === undefined) str = this.data.attr("min_value");
 
-        var str2 = this.data.attr('hm_id_2') ? homematic.uiState.attr("_" + this.data.attr('hm_id_2') + ".Value") : null;
+        var str2 = this.data.attr('hm_id_2') ? localData.uiState.attr("_" + this.data.attr('hm_id_2') + ".Value") : null;
         if (str2 === undefined) str2 = this.data.attr("min_value");
 
-        var str3 = this.data.attr('hm_id_3') ? homematic.uiState.attr("_" + this.data.attr('hm_id_3') + ".Value") : null;
+        var str3 = this.data.attr('hm_id_3') ? localData.uiState.attr("_" + this.data.attr('hm_id_3') + ".Value") : null;
         if (str3 === undefined) str3 = this.data.attr("min_value");
 
         var values = [parseFloat(str) || 0];
@@ -304,10 +304,10 @@
                     var hm_id_3 = obj.Get("hm_id_3");
 
                     var values = [obj.value];
-                    var str2 = hm_id_2 ? homematic.uiState.attr("_" + hm_id_2 + ".Value") : null;
+                    var str2 = hm_id_2 ? localData.uiState.attr("_" + hm_id_2 + ".Value") : null;
                     if (str2 === undefined) str2 = obj.min;
 
-                    var str3 = hm_id_3 ? homematic.uiState.attr("_" + hm_id_3 + ".Value") : null;
+                    var str3 = hm_id_3 ? localData.uiState.attr("_" + hm_id_3 + ".Value") : null;
                     if (str3 === undefined) str3 = obj.min;
 
                     if (str2 !== null) {
@@ -330,7 +330,7 @@
                         obj.setTimer = setTimeout (function (o) {
                             var factor  = o.Get("factor");
                             var offset  = o.Get("value_offset");
-                            homematic.setValue(o.Get("hm_id"), (o.value[0] - offset) / factor);
+                            localData.setValue(o.Get("hm_id"), (o.value[0] - offset) / factor);
                         }, 300, obj);
                     }
                 });
@@ -508,13 +508,13 @@
             var factor  = this.rgraph.Get("factor");
             var offset  = this.rgraph.Get("value_offset");
 
-            var str = homematic.uiState.attr("_" + this.rgraph.Get('hm_id') + ".Value");
+            var str = localData.uiState.attr("_" + this.rgraph.Get('hm_id') + ".Value");
             if (str === null || str === undefined) str = this.rgraph.min;
 
-            var str2 = hm_id_2 ? homematic.uiState.attr("_" + hm_id_2 + ".Value") : null;
+            var str2 = hm_id_2 ? localData.uiState.attr("_" + hm_id_2 + ".Value") : null;
             if (str2 === undefined) str2 = this.rgraph.min;
 
-            var str3 = hm_id_3 ? homematic.uiState.attr("_" + hm_id_3 + ".Value") : null;
+            var str3 = hm_id_3 ? localData.uiState.attr("_" + hm_id_3 + ".Value") : null;
             if (str3 === undefined) str3 = this.rgraph.min;
 
             var values = [parseFloat(str) || 0];
