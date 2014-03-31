@@ -318,6 +318,8 @@
                 });
             },
             toggle: function (el) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
                 function toggle() {
                     var val = localData.uiState["_"+id].Value;
                     if (val === false || val === "false") {
@@ -330,8 +332,6 @@
                         localData.setValue( id,  1-val);
                     }
                 }
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
                 if (dui.urlParams["edit"] !== "") {
                     // @geolin - musste das wieder entfernen - das führt zu doppelter Ausführung (Gerät geht kurz an und sofort wieder aus bzw umgekehrt)
                     //$this.on('touchend', toggle);
