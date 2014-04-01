@@ -319,8 +319,7 @@
                 var id = $this.attr("data-hm-id");
                 $this.button().click(function () {
                     if (dui.urlParams["edit"] !== "") {
-                        dui.socket.emit("programExecute", [id]);
-                        //$.homematic("programExecute", id);
+                        dui.conn.execProgramm(hm_id);
                     }
                 });
             },

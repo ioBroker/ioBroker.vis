@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
 
-    <meta charset="ISO-8859-1">
+    <meta charset="utf-8">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 
     <link rel="stylesheet" href="../lib/css/themes/jquery-ui/dhive/jquery-ui.min.css" id="jqui_theme"/>
     <link rel="stylesheet" href="../lib/css/jquery.multiselect-1.13.css" />
-    <link rel="stylesheet" href="css/jquery-ui-timepicker-addon.css" />
+    <link rel="stylesheet" href="../lib/css/jquery-ui-timepicker-addon-1.2.2.css" />
     <link rel="stylesheet" href="css/backgrounds.css" />
     <link rel="stylesheet" href="css/dashui.css" />
     <link rel="stylesheet" href="css/dashui-user.css" />
@@ -21,11 +21,14 @@
 
     <script src="../lib/js/jquery-1.11.0.min.js"></script>
     <script src="../auth/auth.js" type="text/javascript"></script>
+    <!-- remove comments if socket.io used for communication -->
     <script src="../socket.io/socket.io.js"></script>
+    <!-- remove comments if signalR used for communication -->
+    <!--script src="../lib/js/jquery.signalR-2.0.2.js"></script><script src="/signalr/hubs"></script-->
 
-    <script type="text/javascript" src="js/can.jquery.min.js"></script>
-    <script type="text/javascript" src="js/loStorage.js"></script>
-    <script type="text/javascript" src="js/jquery.base64.min.js"></script>
+    <script type="text/javascript" src="../lib/js/can-1.1.4.jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/js/loStorage.js"></script>
+    <script type="text/javascript" src="../lib/js/jquery.base64.min.js"></script>
 
 
     <!--script src="http://raspberrypi:2100/socket.io/socket.io.js"></script-->
@@ -34,7 +37,7 @@
     <script type="text/javascript" src="../lib/js/jquery-ui-1.10.3.full.min.js"></script>
     <script type="text/javascript" src="../lib/js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="../lib/js/jquery.multiselect-1.13.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
+    <script type="text/javascript" src="../lib/js/jquery-ui-timepicker-addon-1.2.2.js"></script>
 
     <script type="text/javascript" src="../lib/js/jqGrid/jquery.jqGrid-4.5.4.min.js"></script>
     <script type="text/javascript" src="../lang/lang.js"></script>
@@ -57,6 +60,6 @@
 <body>
 	<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>
     <div id="dui_container" style="position: absolute; top: 0; left: 0; height:100%; width:100%"></div>
-    <div id="ccu-io-disconnect"><span style="padding: 10px"><img src="img/disconnect.png" style="padding-right: 20px" width="50" height="50" align="middle"/><span class="translate">No connection to CCU.IO</span></span></div>
+    <div id="ccu-io-disconnect"><span style="padding: 10px"><img src="img/disconnect.png" style="padding-right: 20px" width="50" height="50" align="middle"/><span class="translate">No connection to Server</span></span></div>
 </body>
 </html>

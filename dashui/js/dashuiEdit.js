@@ -178,6 +178,10 @@ dui = $.extend(true, dui, {
     addWidget: function (tpl, data, style, wid, view, hidden) {
 		var isSelectWidget = (wid === undefined);
 		var isViewExist    = (document.getElementById("duiview_"+view) != null);
+                var renderVisible  = data.renderVisible;
+                if (renderVisible) {
+                     delete data.renderVisible;
+                }
 
 		if (view === undefined) {
 			view = dui.activeView;
@@ -214,6 +218,9 @@ dui = $.extend(true, dui, {
 				buttontext: undefined
 			}, data))
 		};
+                if (renderVisible) {
+                    dui.widgets[widgetId].renderVisible = true;
+                }
 		if (isViewExist) {
 			$("#duiview_"+view).append(can.view(tpl, {hm: localData.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"], "view": view}));
 		}
@@ -240,17 +247,22 @@ dui = $.extend(true, dui, {
             style:      style,
             widgetSet:  $("#" + tpl).attr("data-dashui-set")
         };
+        if (renderVisible) {
+            dui.views[view].widgets[widgetId].renderVisible = true;
+        }
 
         if (style) {
             $("#"+widgetId).css(style);
         }
 		
-
-		if (isSelectWidget) {
-            dui.binds.basic._disable();
-			dui.binds.jqueryui._disable();
-		}
-
+	if (isSelectWidget) {
+            if (dui.binds.basic) {
+                dui.binds.basic._disable();
+            }
+            if (dui.binds.jqueryui) {
+                dui.binds.jqueryui._disable();
+            }
+	}
 
         $("#"+widgetId).click(function (e) {
             //console.log("click "+widgetId+" isStealCss="+dui.isStealCss);
@@ -406,22 +418,24 @@ dui = $.extend(true, dui, {
                     if ($('#inspect_filterkey').val() == "") {
                         var hm_id = value;
                         var func = null;
-                        while (hm_id && localData.metaObjects[hm_id]) {
-                            for (var t = 0; t < localData.metaIndex["ENUM_FUNCTIONS"].length; t++) {
-                                var list = localData.metaObjects[localData.metaIndex["ENUM_FUNCTIONS"][t]];
-                                for (var z = 0; z < list['Channels'].length; z++) {
-                                    if (list['Channels'][z] == hm_id) {
-                                        func = list.Name;
-                                        break;
+                        if (localData.metaIndex["ENUM_FUNCTIONS"]) {
+                            while (hm_id && localData.metaObjects[hm_id]) {
+                                for (var t = 0; t < localData.metaIndex["ENUM_FUNCTIONS"].length; t++) {
+                                    var list = localData.metaObjects[localData.metaIndex["ENUM_FUNCTIONS"][t]];
+                                    for (var z = 0; z < list['Channels'].length; z++) {
+                                        if (list['Channels'][z] == hm_id) {
+                                            func = list.Name;
+                                            break;
+                                        }
                                     }
+                                    if (func)
+                                        break;
                                 }
                                 if (func)
                                     break;
-                            }
-                            if (func)
-                                break;
 
-                            hm_id = localData.metaObjects[hm_id]['Parent'];
+                                hm_id = localData.metaObjects[hm_id]['Parent'];
+                            }
                         }
                         if (func)
                             $('#inspect_filterkey').val(func).trigger('change');
@@ -478,7 +492,7 @@ dui = $.extend(true, dui, {
                 if (this.timer)
                     clearTimeout(this.timer);
 
-                this.timer = setTimeout(function(elem_) {
+                this.timer = _setTimeout(function(elem_) {
                     // If really changed
                     var $this = $(elem_);
                     var attr = $this.attr("id").slice(8);
@@ -531,7 +545,7 @@ dui = $.extend(true, dui, {
                 if(this.timer)
                     clearTimeout(this.timer);
 
-                this.timer = setTimeout(function(elem_) {
+                this.timer = _setTimeout(function(elem_) {
                     // If really changed
                     var $this = $(elem_);
                     var attr = $this.attr("id").slice(8);
@@ -614,7 +628,7 @@ dui = $.extend(true, dui, {
                 /*if (this.timer)
                     clearTimeout (this.timer);
 
-                this.timer = setTimeout (function(elem_, value) {
+                this.timer = _setTimeout (function(elem_, value) {
                     // If really changed
                     var $this = $(elem_);
                     var attr = $this.attr("id").slice(8);
@@ -719,7 +733,8 @@ dui = $.extend(true, dui, {
         // Edit all attributes
         for (var attr in widget_attrs) {
             if (widget_attrs[attr] != "") {
-                // Format: attr_name[default_value]/type
+                // Format: attr_name(start-end)[default_value]/type
+                // attr_name can be extended with numbers (1-2) means it will be attr_name1 and attr_name2 created 
                 // Type format: id - Object ID Dialog
                 //              checkbox
                 //              image
@@ -734,186 +749,234 @@ dui = $.extend(true, dui, {
 				var wid_attrs = widget_attrs[attr].split('/');
 				var wid_attr  = wid_attrs[0];
                 // Try to extract default value
-                var uu = wid_attr.indexOf("[");
+                var uu = wid_attr.indexOf ("[");
+                var defaultValue = null;
                 if (uu != -1) {
                     var defaultValue = wid_attr.substring (uu + 1);
                     defaultValue = defaultValue.substring (0, defaultValue.length -1);
                     wid_attr = wid_attr.substring(0,uu);
-                    if (widget.data[wid_attr] == null || widget.data[wid_attr] === undefined) {
-                        widget.data[wid_attr] = defaultValue;
-                        dui.reRenderWidget(dui.activeWidget);
-                    }
                 }
                 var type = (wid_attrs.length > 1) ? wid_attrs[1] : null;
-                if (type && type.indexOf(",") != -1) {
-                    if (type.substring(0, "slider".length) == "slider") {
+                if (type && type.indexOf (",") != -1) {
+                    if (type.substring (0, "slider".length) == "slider") {
                         type = "slider";
                     } else {
                         type = "select";
                     }
                 }
-					
-                if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit[wid_attr]) {
-                    widget_div.dashuiCustomEdit[wid_attr](dui.activeWidget, editParent);
-                } else if (wid_attr === "hm_wid") {
-                    dui.editObjectID(widget, wid_attr, 'WORKING');
-                    /*// Eidt for Homematic Working ID
-                     $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="5"><input type="button" id="inspect_'+wid_attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+wid_attr+'_desc"></div></td></tr>');
-                     document.getElementById ("inspect_"+wid_attr+"_btn").jControl = wid_attr;
-                     $("#inspect_"+wid_attr+"_desc").html(dui.getObjDesc (widget.data[wid_attr]));
-                     // Select Homematic ID Dialog
-                     $("#inspect_"+wid_attr+"_btn").click ( function () {
-                     hmSelect.value = $("#inspect_"+this.jControl).val();
-                     hmSelect.show (homematic, this.jControl, function (obj, value) {
-                     $("#inspect_"+obj).val(value);
-                     $("#inspect_"+obj).trigger('change');
-                     }, 'WORKING');
-                     });*/
-                } else if (wid_attr.slice(-3) === "_id" || type == "id") {
-                    dui.editObjectID(widget, wid_attr, widget_filter);
-                } else if (wid_attr.indexOf("src") == 0 || type == "image") {
-                    dui.editImage(widget, wid_attr);
-                } else if (wid_attr === "hqoptions") {
-                    // hqWidgets options
-                    $('#inspect_comment_tr').hide();
-                    $('#inspect_class_tr').hide();
-                    // Common settings
-                    if (dui.binds.hqWidgetsExt) {
-                        hqWidgets.hqEditButton({parent: editParent, imgSelect: dui.imageSelect, clrSelect: colorSelect, styleSelect: dui.styleSelect}, hqWidgets.Get (dui.activeWidget), function (editEl) {
-                            // Special HM settings
-                            dui.binds.hqWidgetsExt.hqEditButton (hqWidgets.Get (dui.activeWidget), editParent, $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);                    
-                        });
+                // Try to extract repeat value
+                var uu = wid_attr.indexOf ("(");
+                var instancesStart = null;
+                var instancesStop  = null;
+                if (uu != -1) {
+                    var instances = wid_attr.substring (uu + 1);
+                    instances = instances.substring (0, instances.length - 1);
+                    wid_attr = wid_attr.substring(0,uu);
+                    // Now instances has 1-8
+                    instances = instances.split('-');
+                    if (instances.length > 1) {
+                        instancesStart = parseInt (instances[0]);
+                        instancesStop  = parseInt (instances[1]);
+                        if (instancesStart > instancesStop) {
+                            var tmp = instancesStop;
+                            instancesStop = instancesStart;
+                            instancesStart = tmp;
+                        }
+                        instancesStop++;
                     }
-                } else if (wid_attr === "weoid") {
-                    // Weather ID
-                    $("#widget_attrs").append('<tr class="dashui-add-option"><td id="option_'+wid_attr+'" ></td></tr>');
+                }
+                
+                do 
+                {
+                    var wid_attr_ = wid_attr + ((instancesStart !== null) ? instancesStart : "");
+                    var isCustomEdit = false;
+
+                    if (defaultValue !== null && (widget.data[wid_attr_] == null || widget.data[wid_attr_] === undefined)) {
+                        widget.data[wid_attr_] = defaultValue;
+                        dui.reRenderWidget(dui.activeWidget);
+                    }
+
+                    if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit[wid_attr_]) {
+                        widget_div.dashuiCustomEdit[wid_attr_](dui.activeWidget, editParent);
+                    } else
+                    if (wid_attr_ === "hm_id" || type == "id") {
+                        dui.editObjectID (widget, wid_attr_, widget_filter);
+                    } else
+                    if (wid_attr_ === "hm_wid") {
+                        dui.editObjectID (widget, wid_attr_, 'WORKING');
+                        /*// Eidt for localData Working ID
+                         $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td>'+this.translate(wid_attr_)+':</td><td><input type="text" id="inspect_'+wid_attr_+'" size="5"><input type="button" id="inspect_'+wid_attr_+'_btn" value="..."  style="width:30px"><div id="inspect_'+wid_attr_+'_desc"></div></td></tr>');
+                         document.getElementById ("inspect_"+wid_attr_+"_btn").jControl = wid_attr_;
+                         $("#inspect_"+wid_attr_+"_desc").html(dui.getObjDesc (widget.data[wid_attr_]));
+                         // Select localData ID Dialog
+                         $("#inspect_"+wid_attr_+"_btn").click ( function () {
+                         hmSelect.value = $("#inspect_"+this.jControl).val();
+                         hmSelect.show (localData, this.jControl, function (obj, value) {
+                         $("#inspect_"+obj).val(value);
+                         $("#inspect_"+obj).trigger('change');
+                         }, 'WORKING');
+                         });*/
+                    } else
+                    if (wid_attr_.indexOf ("src") == wid_attr_.length - 3 || type == "image") {
+                        dui.editImage (widget, wid_attr_);
+                    } else
+                    if (wid_attr_ === "hqoptions") {
+                        // hqWidgets options
+                        $('#inspect_comment_tr').hide ();
+                        $('#inspect_class_tr').hide ();
+                        // Common settings
+                        if (dui.binds.hqWidgetsExt) {
+                        hqWidgets.hqEditButton({parent: editParent, imgSelect: dui.imageSelect, clrSelect: colorSelect, styleSelect: dui.styleSelect}, hqWidgets.Get (dui.activeWidget), function (editEl) {
+                                // Special HM settings
+                                dui.binds.hqWidgetsExt.hqEditButton (hqWidgets.Get (dui.activeWidget), editParent, $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);
+                            });
+                        }
+                } else if (wid_attr_ === "weoid") {
+                        // Weather ID
+                    $("#widget_attrs").append('<tr class="dashui-add-option"><td id="option_'+wid_attr_+'" ></td></tr>');
                     $('#inspect_comment_tr').hide();
                     $('#inspect_class_tr').hide();
-                    $('#option_'+wid_attr).jweatherCity({lang: dui.language, currentValue: widget.data[wid_attr], onselect: function (wid, text, obj) {
+                    $('#option_'+wid_attr_).jweatherCity({lang: dui.language, currentValue: widget.data[wid_attr_], onselect: function (wid, text, obj) {
                             dui.widgets[dui.activeWidget].data.attr('weoid', text);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
                             dui.saveRemote();
-                            dui.reRenderWidget(dui.activeWidget);					
+                            dui.reRenderWidget(dui.activeWidget);
                         }
-                    });
-                } else if (wid_attr === "color" || type == "color") {
-                    dui.editColor(widget, wid_attr);
+                        });
+                } else if (wid_attr_ === "color" || type == "color") {
+                    dui.editColor(widget, wid_attr_);
                 } else if (type === "checkbox") {
                     isValueSet = true;
-                    dui.editCheckbox(widget, wid_attr);
+                    dui.editCheckbox(widget, wid_attr_);
                 } else if (type === "fontName") {
                     isValueSet = true;
-                    dui.editFontName(widget, wid_attr);
+                    dui.editFontName(widget, wid_attr_);
                 } else if (type === "slider") {
-                    isValueSet = true;
-                    var values = wid_attrs[1].split(',');
-                    dui.editSlider(widget, wid_attr, values[1], values[2], values[3]);
-                    continue;
-                } else if (type === "select") {
-                    isValueSet = true;
-                    var values = wid_attrs[1].split(',');
-                    dui.editSelect(widget, wid_attr, values);
-                } else if (wid_attr.indexOf("nav_view") != -1|| type == "views") {
-				    dui.editViewName(widget, wid_attr);
-					continue;
-				} else if (wid_attr.indexOf("_effect") != -1 || type == "effect") {
-                    dui.editEffects(widget, wid_attr);
-					continue;
-				} else if (wid_attr.slice(0,4) !== "html") {
-                    if (type !== null) {
-						// If description is JSON object
+                        isValueSet = true;
+                        var values = wid_attrs[1].split(',');
+                        dui.editSlider (widget, wid_attr_, values[1], values[2], values[3]);
+                        isCustomEdit = true;
+                    } else
+                    if (type === "select") {
+                        isValueSet = true;
+                        var values = wid_attrs[1].split(',');
+                        dui.editSelect (widget, wid_attr_, values);
+                    } else
+                    if (wid_attr_.indexOf ("nav_view") != -1|| type == "views") {
+                        dui.editViewName (widget, wid_attr_);
+                        isCustomEdit = true;
+                    } else
+                    if (wid_attr_.indexOf ("_effect") != -1 || type == "effect") {
+                        dui.editEffects (widget, wid_attr_);
+                        isCustomEdit = true;
+                    } else
+                    if (wid_attr_.slice(0,4) !== "html") {
+                        if (type !== null) {
+                            // If description is JSON object
 						if (type.indexOf('{') != -1) {
-							try {
+                                try {
 								type = jQuery.parseJSON(type);
-							}
-							catch (e) {
-								type = null;
-								$("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44"/></td></tr>');
-							}
-						}
-						
-						if (type !== null) {
-							if (typeof type == 'object') {
-								var title = this.translate(wid_attr);
-								var hint  = "";
-								if (type["name"]) {
-									if (typeof type["name"] == 'object') {
-										if (type["name"][this.language]) {
-											title = type["name"][this.language];
-										} else if (type["name"]['en']) {
-											title = type["name"]['en'];
-										}
-									} else {
-										title = type["name"];
-									}
-								}
-								
-								
-								if (type['type'] == "checkbox") {
-									isValueSet = true;
-									// All other attributes
-									$("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption" title="'+hint+'">'+title+':</td><td><input title="'+hint+'" id="inspect_'+wid_attr+'" type="checkbox"' +(widget.data[wid_attr] ? "checked": "")+'></td></tr>');
-								} else if (type['type'] == "view") {
+                                }
+                                catch (e) {
+                                    type = null;
+                                    $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><input type="text" id="inspect_'+wid_attr_+'" size="44"/></td></tr>');
+                                }
+                            }
 
-								} else if (type['type'] == "color") {
+                            if (type !== null) {
+                                if (typeof type == 'object') {
+                                    var title = this.translate(wid_attr_);
+                                    var hint  = "";
+                                    if (type["name"]) {
+                                        if (typeof type["name"] == 'object') {
+                                            if (type["name"][this.language]) {
+                                                title = type["name"][this.language];
+                                            } else
+                                            if (type["name"]['en']) {
+                                                title = type["name"]['en'];
+                                            }
+                                        }
+                                        else {
+                                            title = type["name"];
+                                        }
+                                    }
 
-								} else if (type['type'] == "font") {
 
-								} else if (type['type'] == "rooms") {
+                                    if (type['type'] == "checkbox") {
+                                        isValueSet = true;
+                                        // All other attributes
+                                        $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption" title="'+hint+'">'+title+':</td><td><input title="'+hint+'" id="inspect_'+wid_attr_+'" type="checkbox"' +(widget.data[wid_attr_] ? "checked": "")+'></td></tr>');
+                                    } else
+                                    if (type['type'] == "view") {
+                                    } else
+                                    if (type['type'] == "color") {
+                                    } else
+                                    if (type['type'] == "font") {
+                                    } else
+                                    if (type['type'] == "rooms") {
+                                    } else
+                                    if (type['type'] == "favorites") {
+                                    } else
+                                    if (type['type'] == "functions") {
+                                    } else
+                                    if (type['type'] == "rooms") {
+                                    } else
+                                    if (type['type'] == "select") {
+                                        // Select
+                                        var values = type['values'];
+                                        var text = '<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><select id="inspect_'+wid_attr_+'">';
+                                        for (var t = 0; t < values.length; t++) {
+                                            text += "<option value='"+values[t]+"' "+((values[t] == widget.data[wid_attr_]) ? "selected" : "")+">"+this.translate(values[t])+"</option>";
+                                        }
+                                        text += "</select></td></tr>";
+                                        $("#widget_attrs").append(text);
+                                        isValueSet = true;
+                                    }
 
-								} else if (type['type'] == "favorites") {
-
-								} else if (type['type'] == "functions") {
-
-								} else if (type['type'] == "rooms") {
-
-								} else if (type['type'] == "select") {
-									// Select
-									var values = type['values'];
-									var text = '<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><select id="inspect_'+wid_attr+'">';
-									for (var t = 0; t < values.length; t++) {
-										text += "<option value='"+values[t]+"' "+((values[t] == widget.data[wid_attr]) ? "selected" : "")+">"+this.translate(values[t])+"</option>";
-									}
-									text += "</select></td></tr>";
-									$("#widget_attrs").append(text);
-									isValueSet = true;
-								}
-							
-							} else { // Simple type
-								console.log ("Error: " + wid_attr +" Type: " + type );
-							}
-						}
-					} else {
-						// html
-						$("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44"/></td></tr>');
-					}
-                } else {
-                    // Text area
-                    $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><textarea id="inspect_'+wid_attr+'" rows="2" cols="44"></textarea></td></tr>');
-                }
-				
-				var inspect = $("#inspect_"+wid_attr);
-                
-				if (!isValueSet) {
-					inspect.val(widget.data[wid_attr]);
-				}
-                inspect.change(function () {
-                        var attribute = $(this).attr("id").slice(8);
-                        var val = $(this).val();
-                        if (this.type == "checkbox") {
-							val = $(this).prop("checked");
-						}
-
-						if (attribute == "hm_id" || attribute == "hm_wid") {
-                            $("#inspect_"+attribute+"_desc").html(dui.getObjDesc (val));
+                                }
+                                else { // Simple type
+                                    console.log ("Error: " + wid_attr_ +" Type: " + type );
+                                }
+                            }
+                        } else {
+                            // html
+                            $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><input type="text" id="inspect_'+wid_attr_+'" size="44"/></td></tr>');
                         }
-                        dui.widgets[dui.activeWidget].data.attr(attribute, val);
-                        dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
-                        dui.saveRemote();
-                        dui.reRenderWidget(dui.activeWidget);
-                }).keyup(function () {
-                    $(this).trigger('change');
-                });
+                    } else {
+                        // Text area
+                        $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><textarea id="inspect_'+wid_attr_+'" rows="2" cols="44"></textarea></td></tr>');
+                    }
+
+                    if (!isCustomEdit) {
+                        var inspect = $("#inspect_"+wid_attr_);
+
+                        if (!isValueSet) {
+                            inspect.val(widget.data[wid_attr_]);
+                        }
+                        inspect.change(function () {
+                            var attribute = $(this).attr("id").slice(8);
+                            var val = $(this).val();
+                            if (this.type == "checkbox") {
+                                val = $(this).prop("checked");
+                            }
+
+                            if (attribute == "hm_id" || attribute == "hm_wid") {
+                                $("#inspect_"+attribute+"_desc").html(dui.getObjDesc (val));
+                            }
+                            dui.widgets[dui.activeWidget].data.attr(attribute, val);
+                            dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
+                            dui.saveRemote();
+                            dui.reRenderWidget(dui.activeWidget);
+                        }).keyup(function () {
+                                $(this).trigger('change');
+                        });
+                    }
+
+                    if (instancesStart !== null) {
+                        instancesStart++;
+                    }
+                }
+                while (instancesStart != instancesStop);
             }
         }
 
@@ -935,7 +998,7 @@ dui = $.extend(true, dui, {
                 if (this.timer) 
                     clearTimeout (this.timer);
                     
-                this.timer = setTimeout (function(elem_) {
+                this.timer = _setTimeout (function(elem_) {
                      // If really changed
                     var $this = $(elem_);
                     var attr = $this.attr("id").slice(8);
@@ -1027,11 +1090,11 @@ dui = $.extend(true, dui, {
         if (pos.left == 0 && pos.top == 0) {
             pos.left = $this[0].style.left;
             pos.top  = $this[0].style.top;
-            if (typeof pos.left == "string") {
-                pos.left = parseInt (pos.left.replace("px", ""));
+            if (typeof pos.left == 'string') {
+                pos.left = parseInt (pos.left.replace('px', ''));
             }
-            if (typeof pos.top == "string") {
-                pos.top = parseInt (pos.top.replace("px", ""));
+            if (typeof pos.top == 'string') {
+                pos.top = parseInt (pos.top.replace('px', ''));
             }
 
         }
@@ -1210,7 +1273,7 @@ dui = $.extend(true, dui, {
 
 		$("#add_widget").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
             var tpl = $("#select_tpl option:selected").val();
-
+            var renderVisible = $('#'+tpl).attr("data-dashui-render-visible");
             // Widget attributs default values
             var data = {
                 hm_id: 65535,
@@ -1220,7 +1283,9 @@ dui = $.extend(true, dui, {
                 max: 1.00,
                 step: 0.01
             };
-
+            if (renderVisible) {
+                data.renderVisible = true;
+            }
             dui.addWidget(tpl, data);
 
             $("#select_active_widget").append("<option value='"+dui.activeWidget+"'>"+dui.activeWidget+" ("+$("#"+dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
@@ -1269,7 +1334,7 @@ dui = $.extend(true, dui, {
                                       width:  activeWidget.outerWidth()  + 2});
 
             // Update hqWidgets if width or height changed
-            if (dui.views[dui.activeView].widgets[dui.activeWidget] && hqWidgets) {
+            if (dui.views[dui.activeView].widgets[dui.activeWidget] && typeof hqWidgets != "undefined") {
                 var hq = hqWidgets.Get (dui.activeWidget);
                 if (hq != null) {
                     hq.SetSettings ({width:  activeWidget.width(), 
@@ -1423,7 +1488,9 @@ dui = $.extend(true, dui, {
 
 		//console.log("TOOLBOX OPEN");
 		$("#dui_editor").dialog("open");
+        if (dui.binds.jqueryui) {
 		dui.binds.jqueryui._disable();
+        }
 
 		// Create background_class property if does not exist
 		if (dui.views[dui.activeView] != undefined) {
@@ -1572,7 +1639,7 @@ dui = $.extend(true, dui, {
 				$(this).stop ().remove ();
 			});
 
-		text = text.replace("action1", "action2");
+		text = text.replace('action1', 'action2');
 		$('body').append(text);
 		$('#'+id+'__action2').
 			addClass('dashui-show-new').

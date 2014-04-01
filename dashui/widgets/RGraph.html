@@ -4,6 +4,7 @@
 <script src="widgets/RGraph/libraries/RGraph.common.tooltips.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.thermometer.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.gauge.js" ></script>
+<script src="widgets/RGraph/libraries/RGraph.line.js" ></script>
 
 <script language="javascript">
     // Init words
@@ -69,6 +70,7 @@
         "green_color"        : {"en": "Color of first sector", "de": "Farbe von ersten Sektor","ru": "Цвет первого сектора"},
         "green_end"          : {"en": "End of first sector",   "de": "Ende von ersten Sektor", "ru": "Конец первого сектора"}
     });
+
     var rgraphElements = [];
     // Register callback in dashUI
     function initRgraph () {
@@ -86,9 +88,32 @@
                 var elem = document.getElementById (rgraphElements[objId][i]);
                 if (elem) {
                     if (elem.rgraphValueChange) {
-                        elem.rgraphValueChange (newState, isFromDevice);
+                        elem.rgraphValueChange (objId, newState, isFromDevice);
                     }
                 }
+            }
+        }
+    }
+
+    function registerObjIds (wid, objId) {
+        if (typeof objId == "object" || typeof objId == "array") {
+            for (var i = 0, len = objId.length; i < len; i++)
+                if (objId[i] && (!rgraphElements[objId[i]] || rgraphElements[objId[i]].indexOf (wid) == -1)) {
+                    if (!rgraphElements[objId[i]]) {
+                        rgraphElements[objId[i]] = [wid];
+                    }
+                    else {
+                        rgraphElements[objId[i]].push (wid);
+                    }
+                }
+        }
+        else
+        if (!rgraphElements[objId] || rgraphElements[objId].indexOf (wid) == -1) {
+            if (!rgraphElements[objId]) {
+                rgraphElements[objId] = [wid];
+            }
+            else {
+                rgraphElements[objId].push (wid);
             }
         }
     }
@@ -96,26 +121,7 @@
     // Create or replace div with canvas inside it
     function createCanvas (view, wid, _class, hm_id, width, height, canvas_width, canvas_height) {
         initRgraph ();
-        if (typeof hm_id == "object" || typeof hm_id == "array") {
-            for (var i = 0, len = hm_id.length; i < len; i++)
-            if (hm_id[i] && (!rgraphElements[hm_id[i]] || rgraphElements[hm_id[i]].indexOf (wid) == -1)) {
-                if (!rgraphElements[hm_id[i]]) {
-                    rgraphElements[hm_id[i]] = [wid];
-                }
-                else {
-                    rgraphElements[hm_id[i]].push (wid);
-                }
-            }
-        }
-        else
-        if (!rgraphElements[hm_id] || rgraphElements[hm_id].indexOf (wid) == -1) {
-            if (!rgraphElements[hm_id]) {
-                rgraphElements[hm_id] = [wid];
-            }
-            else {
-                rgraphElements[hm_id].push (wid);
-            }
-        }
+        registerObjIds (wid, hm_id);
         var style    = dui.views[view].widgets[wid] ? dui.views[view].widgets[wid].style : {};
         style.width  = style.width  || width;
         style.height = style.height || height;
@@ -130,6 +136,45 @@
         canvas_height = canvas_height || style.height;
         can.width  = canvas_width;
         can.height = canvas_height;
+    }
+
+    function updateChart (wid) {
+        var div = document.getElementById (wid);
+        var can = document.getElementById ('c' + wid);
+
+        if (div && can) {
+            if (div._timeout) {
+                clearTimeout (div._timeout);
+            }
+
+            var updateInterval = div.rgraph.Get("update_interval");
+            var values = div.rgraph.Get("my_values");
+            var len = div.rgraph.original_data.length;
+            if (!values) {
+                len = 0;
+            }
+            else
+            if (len > values.length) {
+                len = values.length;
+            }
+            for (var j = 0; j < len; j++) {
+                var d1 = div.rgraph.original_data[j];
+                // Add some data to the data arrays
+                /*var r1 = RGraph.random(
+                        RGraph.is_null(d1[d1.length - 1]) ? 26 : d1[d1.length - 1] - 2,
+                        RGraph.is_null(d1[d1.length - 1]) ? 24 : d1[d1.length - 1] + 2
+                );
+                r1 = Math.max(r1, 0);
+                r1 = Math.min(r1, 50);*/
+
+                d1.push(values[j]);
+                div.rgraph.original_data[j] = RGraph.array_shift(d1);
+            }
+
+            RGraph.Clear (can);
+            div.rgraph.Draw();
+            div._timeout = _setTimeout (updateChart, updateInterval, wid);
+        }
     }
 </script>
 
@@ -160,7 +205,7 @@
                     if (obj.setTimer) {
                         clearTimeout (obj.setTimer);
                     }
-                    obj.setTimer = setTimeout (function (o) {
+                    obj.setTimer = _setTimeout (function (o) {
                         localData.setValue(o.properties["chart.hm_id"], o.value);
                         }, 300, obj);
                 });
@@ -227,7 +272,8 @@
         }
 
         // Clear the background
-        t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
+        RGraph.Clear (t.canvas);
+        //t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
 
         t.Draw();
         var elem = document.getElementById (this.data.attr('wid'));
@@ -239,16 +285,17 @@
             
             can.width  = div.width();
             can.height = div.height ();
-
-            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+            RGraph.Clear (can);
+            //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
             this.rgraph.Draw();
         });
 
-        elem.rgraphValueChange = function (newValue, isFromDevice) {
+        elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
             this.rgraph.value = parseFloat(newValue);
             // Clear the background
-            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+            RGraph.Clear(this.rgraph.canvas);
+            //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
             if (this.rgraph.Get("animate")) {
                 RGraph.Effects.Thermometer.Grow(this.rgraph);
             }
@@ -327,7 +374,7 @@
                         if (obj.setTimer) {
                             clearTimeout (obj.setTimer);
                         }
-                        obj.setTimer = setTimeout (function (o) {
+                        obj.setTimer = _setTimeout (function (o) {
                             var factor  = o.Get("factor");
                             var offset  = o.Get("value_offset");
                             localData.setValue(o.Get("hm_id"), (o.value[0] - offset) / factor);
@@ -484,7 +531,8 @@
         }
 
         // Clear the background
-        t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
+        RGraph.Clear(t.canvas);
+        //t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
 
         t.Draw();
         t.Set('animate', this.data.attr("animate") == "true" || this.data.attr("animate") == true)
@@ -497,12 +545,13 @@
             can.width  = div.width();
             can.height = div.height ();
 
-            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+            RGraph.Clear (can);
+            //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
             this.rgraph.Draw();
         });
 
-        elem.rgraphValueChange = function (newValue, isFromDevice) {
+        elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
             var hm_id_2 = this.rgraph.Get("hm_id_2");
             var hm_id_3 = this.rgraph.Get("hm_id_3");
             var factor  = this.rgraph.Get("factor");
@@ -529,7 +578,8 @@
 
             this.rgraph.value = values;
             // Clear the background
-            this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+            RGraph.Clear(this.rgraph.canvas);
+            //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
             if (this.rgraph.Get("animate")) {
                 RGraph.Effects.Gauge.Grow(this.rgraph);
@@ -538,5 +588,246 @@
                 this.rgraph.Draw();
             }
         }
+    %>
+</script>
+<script type="text/ejs" id="tplRLiveChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="LiveChart" data-dashui-attrs="hm_id(1-8)/id;line_color(1-8)[black]/color;line_thick(1-8)[1]/slider,0.5,5,0.5;min_value[0];max_value[100];factor[1];value_offset[0];update_interval[5000]/slider,100,20000,100;title;title_x;title_y;num_hlines[3]/slider,0,20,1;spline/checkbox;filled/checkbox;hm_id_show(1-8)/id;">
+    <%
+        var wid = this.data.attr('wid');
+        var elem_ = document.getElementById (wid);
+        var oldIDs = null;
+        var oldValues = null;
+        if (elem_) {
+            if (elem_._timeout) {
+                clearTimeout (elem_._timeout);
+                elem_._timeout = null;
+            }
+            // save data
+            if (elem.rgraph) {
+                oldIDs    = elem.rgraph.Get("hm_ids");
+                oldValues = RGraph.array_clone(elem.rgraph.original_data);
+            }
+        }
+
+        var pointsCount = 250;
+        var len = 1;
+        var IDs = [];
+        var IDs_show = [];
+        var colors = [];
+        var thickness = [];
+        var id;
+        var validColor = 'black';
+        var validThickness = 1;
+        // Read IDs, colors and line thickness
+        while (id = this.data.attr('hm_id'+ len)) {
+            IDs.push(id);
+            // If ID changed
+            if (oldIDs && IDs[IDs.length - 1] != oldIDs[IDs.length - 1]){
+                oldValues = null;
+                oldIDs    = null;
+            }
+            IDs_show[IDs.length - 1] = this.data.attr('hm_id_show'+ len);
+            id = this.data.attr('line_color' + len);
+            if (id) {
+                validColor = id;
+            }
+            colors.push (validColor);
+
+            id = this.data.attr('line_thick' + len);
+            if (id) {
+                validThickness = id;
+            }
+            thickness.push (validThickness);
+
+            len++;
+        }
+
+        createCanvas (this.view, wid, this.data.attr('class'), IDs, 200, 200);
+        registerObjIds (wid, IDs_show);
+
+        var factor = this.data.attr('factor') || 1;
+        factor = parseFloat(factor);
+
+        var offset = this.data.attr('value_offset') || 0;
+        offset = parseFloat(offset);
+
+        var min_value = this.data.attr('min_value') || 0;
+        min_value = parseFloat(min_value);
+
+        var max_value = this.data.attr('max_value') || 0;
+        max_value = parseFloat(max_value);
+
+        var values = [];
+        for (var i = 0, len = IDs.length; i < len; i++) {
+            values[i] = localData.uiState.attr('_' + IDs[i] + '.Value');
+            if (values[i] === null || values[i] === undefined) {
+                values[i] = min_value;
+            }
+            values[i] = parseFloat (values[i]);
+            values[i] = values[i] * factor + offset;
+        }
+
+        var elem = document.getElementById (wid);
+        var can  = document.getElementById ('c'+wid);
+
+        var arr = [];
+        console.log("test");
+        if (!oldValues) {
+            // Pre-pad the arrays with "pointsCount" null values
+            for (var i = 0, len = IDs.length; i < len; i++) {
+                arr[i] = [];
+                for (var j = 0, jlen = pointsCount - 1; j < jlen; j++) {
+                    arr[i].push(null);
+                }
+                arr[i].push(values[i]);
+            }
+        }
+        else {
+            for (var i = 0, len = IDs.length; i < len; i++) {
+                arr[i] = RGraph.array_shift(oldValues[i]);
+                arr[i].push(values[i]);
+            }
+        }
+
+        var update_interval = this.data.attr('update_interval') || 1000;
+        update_interval = parseInt(update_interval);
+
+        var t = new RGraph.Line ("c"+wid, arr);
+
+        t.Set ("hm_ids",      IDs);
+        t.Set ("hm_show_ids", IDs_show);
+        t.Set ("my_values", values);
+        t.Set ("update_interval", update_interval);
+        t.Set ("factor", factor);
+        t.Set ("value_offset", offset);
+       
+        t.Set('background.grid.vlines', false);
+        t.Set('background.barcolor1', 'white');
+        t.Set('background.barcolor2', 'white');
+
+        var text = this.data.attr('title');
+        if (text) {
+            t.Set('title', text);
+            t.Set('title.vpos', 0.5);
+        }
+        text = this.data.attr('title_x');
+        if (text) {
+            t.Set('title.xaxis', text);
+            t.Set('title.xaxis.pos', 0.5);
+        }
+        text = this.data.attr('title_y');
+        if (text) {
+            t.Set('title.yaxis', text);
+            t.Set('title.yaxis.pos', 0.5);
+        }
+
+        var my_colors = RGraph.array_clone(colors);
+        t.Set('my_colors', my_colors);
+        // Set visibility of charts
+        for (var i = 0, len = IDs_show.length; i < len; i++){
+            if (IDs_show[i]) {
+                var isVisible = localData.uiState.attr("_" + IDs_show[i] + ".Value");
+                if (isVisible == "false" || isVisible === false) {
+                    colors[i] = 'rgba(0,0,0,0)';
+                }
+            }
+        }
+        t.Set('colors', colors);
+        t.Set('linewidth', thickness);
+        //obj.Set('ylabels.inside', true);
+        t.Set('xticks', 0);
+        t.Set('yaxispos', 'right');
+        t.Set('ymin', min_value);
+        t.Set('ymax', max_value);
+
+        text = this.data.attr('filled');
+        if (text) {
+            t.Set('filled', (text == 'true' || text === true));
+        }
+        else {
+            t.Set('filled', false);
+        }
+
+        text = this.data.attr('spline');
+        if (text) {
+            t.Set('spline', (text == 'true' || text === true));
+        }
+        else {
+            t.Set('spline', false);
+        }
+
+        text = this.data.attr('num_hlines');
+        if (text) {
+            t.Set('background.grid.autofit.numhlines', parseInt(text));
+        }
+
+        var grad = t.context.createLinearGradient(0,0,0,250);
+        grad.addColorStop(0, '#efefef');
+        grad.addColorStop(0.9, 'rgba(0,0,0,0)');
+
+        t.Set('fillstyle', [grad]);
+
+        RGraph.Clear(t.canvas);
+        t.Draw();
+
+        elem.rgraph = t;
+        jQuery(elem).bind("resize", function () {
+            if (this._resizeTimer){
+                clearTimeout (this._resizeTimer);
+            }
+            this._resizeTimer = _setTimeout (function (_wid) {
+                var _div = document.getElementById (_wid);
+                var div  = jQuery(_div);
+                var can  = document.getElementById ('c' + _wid);
+
+                can.width  = div.width();
+                can.height = div.height ();
+
+                RGraph.Clear (can);
+                _div.rgraph.Draw();
+            }, 500, this.id);
+        });
+
+        elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
+            var IDs      = this.rgraph.Get("hm_ids");
+            var IDs_show = this.rgraph.Get("hm_show_ids");
+
+            for (var i = 0, len = IDs.length; i < len; i++){
+                if (IDs[i] == objId) {
+                    var values = this.rgraph.Get("my_values");
+                    var factor = this.rgraph.Get("factor");
+                    var offset = this.rgraph.Get("value_offset");
+
+                    values[i] = localData.uiState.attr("_" + IDs[i] + ".Value");
+                    if (values[i] === null || values[i] === undefined) {
+                        values[i] = this.rgraph.min;
+                    }
+                    values[i] = parseFloat(values[i]);
+                    values[i] = values[i] * factor + offset
+
+                    return;
+                }
+            }
+            for (var i = 0, len = IDs_show.length; i < len; i++){
+                if (IDs_show[i] && IDs_show[i] == objId) {
+                    var colors    = this.rgraph.Get("colors");
+                    var my_colors = this.rgraph.Get("my_colors");
+                    var isVisible = localData.uiState.attr("_" + IDs_show[i] + ".Value");
+                    if (isVisible == "false" || isVisible === false) {
+                        colors[i] = 'rgba(0,0,0,0)';
+                    }
+                    else {
+                        colors[i] = my_colors[i];
+                    }
+                    this.rgraph.Set("colors", colors);
+                    var updateInterval = this.rgraph.Get("update_interval");
+                    this._timeout = _setTimeout (updateChart, 100, this.id);
+                    //RGraph.Clear (this.rgraph.canvas);
+                    //this.rgraph.rgraph.Draw();
+                    return;
+                }
+            }
+        }
+        elem._timeout = _setTimeout (updateChart, update_interval, wid);
+
     %>
 </script>

@@ -155,14 +155,14 @@
                             if (step < 0) {
                                 if (tmp >= minmax) {
                                     localData.setValue($that.attr("data-hm-id"), tmp);
-                                    dui.binds.basic.pressed = setTimeout(function ($_that) {
+                                    dui.binds.basic.pressed = _setTimeout(function ($_that) {
                                         fInterval($_that);
                                     }, interval, $that);
                                 }
                             } else {
                                 if (tmp <= minmax) {
                                     localData.setValue($that.attr("data-hm-id"), tmp);
-                                    dui.binds.basic.pressed = setTimeout(function ($_that) {
+                                    dui.binds.basic.pressed = _setTimeout(function ($_that) {
                                         fInterval($_that);
                                     }, interval, $that);
                                 }
@@ -174,7 +174,7 @@
                         dui.binds.basic.pressedNext = false;
                         var $this = $(this);
                         var hm_id = "_" + $this.attr("data-hm-id");
-                        dui.binds.basic.pressed = setTimeout(function ($that) {
+                        dui.binds.basic.pressed = _setTimeout(function ($that) {
                             fInterval($that);
                         }, delay, $this);
                     }
@@ -192,7 +192,7 @@
                 var hm_id = $this.attr("data-hm-id");
                 $this.click(function (e) {
                     if (dui.urlParams["edit"] !== "") {
-                        dui.socket.emit("programExecute", [hm_id]);
+                        dui.conn.execProgramm(hm_id);
                     }
                 });
             },
@@ -275,7 +275,10 @@
                         $this.prop("checked", true);
                     }
                 });
-                if (localData.uiState.attr(hm_id+".Value")) {
+                if (localData.uiState.attr(hm_id+".Value") == "True" ||
+                    localData.uiState.attr(hm_id+".Value") == "true" ||
+                    localData.uiState.attr(hm_id+".Value") == true   ||
+                    localData.uiState.attr(hm_id+".Value") == 1) {
                     $this.prop("checked", true);
                 }
                 if (dui.urlParams["edit"] !== "") {
@@ -413,7 +416,7 @@
                             left:   el.position().left,
                             height: el.height()
                         }
-                        setTimeout(function(obj){
+                        _setTimeout(function(obj){
                             dui.binds.basic.showSvg (obj.myClass, obj.view, obj.wid, obj.hm_id, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
                         }, 200, this._obj);
                     });
@@ -541,12 +544,17 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplFrame" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Border" data-dashui-attrs="title['Title'];title_font;title_color[black]/color;title_back/color;title_top[-10]/slider,-20,20,1;title_left[15]/slider,-20,30,1">
+<script type="text/ejs" id="tplFrame" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Border" data-dashui-attrs="title['Title'];title_font;title_color[black]/color;title_back/color;title_top[-10]/slider,-20,20,1;title_left[15]/slider,-20,30,1;header_height[0]/slider,0,100,1;header_color[black]/color">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="overflow:visible;width:50px;height:50px;border:1px solid #888" id="<%= this.data.attr('wid') %>" >
+        <% if (this.data.attr('header_height')) { %>
+	    <div style="width:100%;height:<%= this.data.attr('header_height') %>px;background-color:<%= this.data.attr('header_color') %>">
+		<% } %>
         <div style="position:absolute;top:<%= this.data.attr('title_top') %>px;left:<%= this.data.attr('title_left') %>px;color:<%== this.data.attr('title_color') %>;background:<%== this.data.attr('title_back') %>;font:<%== this.data.attr('title_font') %>"><%== this.data.attr('title') %></div>
+        <% if (this.data.attr('header_height')) { %>
+        </div>
+		<% } %>
     </div>
 </script>
-
 <!-- basic Container -->
 
 <script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - view in widget" data-dashui-attrs="contains_view">
@@ -640,8 +648,8 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Number" data-dashui-attrs="html_prepend;html_append_singular;html_append_plural;hm_id;digits;factor">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
+<script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Number" data-dashui-attrs="html_prepend;html_append_singular;html_append_plural;hm_id;digits;factor;hm_id_state/id;class_true;class_false">
+    <div class="dashui-widget <%== (localData.uiState.attr("_" + this.data.hm_id_state + ".Value") == "true" ||  localData.uiState.attr("_" + this.data.hm_id_state + ".Value") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
                 <%== this.data.attr("html_prepend") %><%= (parseFloat(localData.uiState.attr("_" + this.data.hm_id + ".Value")) * this.data.factor).toFixed(this.data.digits) %><%== (parseFloat(localData.uiState.attr("_" + this.data.hm_id + ".Value")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
@@ -916,7 +924,7 @@
 
 <script type="text/ejs" id="tplValueFloatBarVertical" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Bar Vertical" data-dashui-attrs="hm_id;factor;color;border;shadow;reverse/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:20px;height:240px;border:1px solid #888" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body" style="<%= (this.data.reverse === "true" || this.data.reverse === true ? "position:absolute; bottom:0%; " : "") %>background-color:<%= this.data.color %>;border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;height:<%=  localData.uiState.attr('_' + this.data.hm_id + '.Value') * this.data.factor %>%;">
+        <div class="dashui-widget-body" style="<%= "height:"+parseInt(localData.uiState.attr('_' + this.data.hm_id + '.Value'))* this.data.factor+"%;" %><%= (this.data.reverse === "true" || this.data.reverse === true ? "left:0px;position:absolute;bottom:0%;" : "") %>border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;background-color:<%= this.data.color %>">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
             </div>
         </div>

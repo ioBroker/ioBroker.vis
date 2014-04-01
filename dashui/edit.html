@@ -7,7 +7,7 @@
 		For local start lib directory from ccu.io is required and datastore in ../ directory.
 	-->
 	
-    <meta charset="ISO-8859-1">
+    <meta charset="utf-8">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link href="img/faviconEdit.png" rel="shortcut icon" type="image/x-icon" />
@@ -15,27 +15,31 @@
 
     <link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/dhive/jquery-ui.min.css" id="jqui_theme"/>
     <link rel="stylesheet" href="../lib/css/jquery.multiselect-1.13.css" />
-    <link rel="stylesheet" href="css/jquery-ui-timepicker-addon.css" />
+    <link rel="stylesheet" href="../lib/css/jquery-ui-timepicker-addon-1.2.2.css" />
     <link rel="stylesheet" href="css/backgrounds.css" />
     <link rel="stylesheet" href="css/dashui.css" />
     <link rel="stylesheet" href="css/dashui-user.css" />
     <link rel="stylesheet" href="../lib/css/jqGrid/ui.jqgrid-4.5.4.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="../lib/css/jquery.multiselect-1.13.css" type="text/css" />
     <link rel="stylesheet" href="../lib/css/jquery.multiselect.filter.css" type="text/css" />
+    <link rel="stylesheet" href="widgets/colorpicker/css/farbtastic.css" type="text/css" />
 
     <script src="../lib/js/jquery-1.11.0.min.js"></script>
     <script src="../auth/auth.js" type="text/javascript"></script>
+    <!-- remove comments if socket.io used for communication -->
     <script src="../socket.io/socket.io.js"></script>
+    <!-- remove comments if signalR used for communication -->
+    <!--script src="../lib/js/jquery.signalR-2.0.2.js"></script><script src="/signalr/hubs"></script-->
 
-    <script type="text/javascript" src="js/can.jquery.min.js"></script>
-    <script type="text/javascript" src="js/loStorage.js"></script>
-    <script type="text/javascript" src="js/jquery.base64.min.js"></script>
+    <script type="text/javascript" src="../lib/js/can-1.1.4.jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/js/loStorage.js"></script>
+    <script type="text/javascript" src="../lib/js/jquery.base64.min.js"></script>
 
     <script type="text/javascript" src="../lib/js/jquery-ui-1.10.3.full.min.js"></script>
     <script type="text/javascript" src="../lib/js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="../lib/js/jquery.multiselect-1.13.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
-    <script type="text/javascript" src="js/jquery.dialogextend.min.js"></script>
+    <script type="text/javascript" src="../lib/js/jquery-ui-timepicker-addon-1.2.2.js"></script>
+    <script type="text/javascript" src="../lib/js/jquery.dialogextend-2.0.2.min.js"></script>
     <script type="text/javascript" src="../lib/js/jquery.multiselect-1.13.js"></script>
     <script type="text/javascript" src="../lib/js/jquery.multiselect.filter-1.5pre.js"></script>
 
@@ -54,6 +58,8 @@
         }
     </script>
     <script type="text/javascript" src="../lib/js/dropzone.js"></script>
+    <script type="text/javascript" src="widgets/colorpicker/js/farbtastic.js"></script>
+
 
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before dashui.js -->
     <script type="text/javascript" src="js/dashui.js"></script>
@@ -222,7 +228,7 @@
                             <td class="translate">top</td>
                             <td><input size="8" type="text" id="inspect_css_top" class="dashui-inspect-css"/>
                                 <input id="steal_top" type="checkbox" data-dashui-steal="top" class="dashui-steal-css"/><label class="dashui-steal-label" for="steal_top">steal</label>
-                                <a data-dashui-clear="0px" class="dashui-clear-css">
+                                <a data-dashui-clear="0px" class="dashui-clear-css"></a>
                             </td>
                         </tr>
                         <tr>
