@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta64',
+    version:                '0.9beta65',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -271,10 +271,6 @@ var dui = {
     init: function () {
         if (this.initialized) {
             return;
-        }
-
-        if (storage.get(dui.storageKeyInstance)) {
-            dui.initInstance();
         }
 
         var settings = storage.get(dui.storageKeySettings);
@@ -755,11 +751,10 @@ var dui = {
                 dui.conn.getDataObjects(function (data) {
                     localData.metaObjects = data;
                 });
-                dui.conn.getDataIndex (function (data) {
+                dui.conn.getDataIndex(function (data) {
                     localData.metaIndex = data;
                 });
             }
-
 
 
             // Init background selector
@@ -1165,8 +1160,12 @@ var localData = {
                             dui.conn.getDataObjects(function (data) {
                                 localData.metaObjects = data;
                             });
-                            dui.conn.getDataIndex (function (data) {
+                            dui.conn.getDataIndex(function (data) {
                                 localData.metaIndex = data;
+                                if (storage.get(dui.storageKeyInstance)) {
+                                    dui.initInstance();
+                                }
+
                             });
                         }
                     });
@@ -1472,8 +1471,7 @@ var servConn = {
                 var data;
                 try {
                     data = JSON.parse(jsonString);
-                }
-                catch (e) {
+                } catch (e) {
                     console.log ("readDir: Invalid JSON string - " + e);
                     data = null;
                 }
@@ -1515,19 +1513,17 @@ var servConn = {
                             data[_data[i].name.replace(/\./g, '_')] = _data[i];
                         }
                     }
-                }
-                catch (e) {
+                } catch (e) {
                     console.log ("getDataPoints: Invalid JSON string - " + e);
                     data = null;
                 }
 
-
-                if (callback)
+                if (callback) {
                     callback (data);
-            })
-        }
-        else //socket.io
-        if (this._type == 1) {
+                }
+            });
+        } else if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {console.log ("socket.io not initialized"); return; }
             this._socket.emit('getDatapoints', function(data) {
                 var _data = {};
@@ -1546,8 +1542,9 @@ var servConn = {
         }
     },
     getDataObjects: function (callback) {
-        //SignalR
+        //console.log("getDataObjects");
         if (this._type == 0) {
+            //SignalR
             this._hub.server.getDataObjects ().done(function (jsonString) {
                 var data = {};
                 try {
@@ -1558,8 +1555,7 @@ var servConn = {
                             data[_data[i].name.replace(/\./g, '_')] = _data[i];
                         }
                     }
-                }
-                catch (e) {
+                } catch (e) {
                     console.log ("getDataObjects: Invalid JSON string - " + e);
                     data = null;
                 }
@@ -1568,9 +1564,8 @@ var servConn = {
                 if (callback)
                     callback (data);
             })
-        }
-        else //socket.io
-        if (this._type == 1) {
+        } else if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {console.log ("socket.io not initialized"); return; }
             this._socket.emit('getObjects', function(data) {
                 if (callback)
@@ -1579,14 +1574,14 @@ var servConn = {
         }
     },
     getDataIndex: function (callback) {
-        //SignalR
+        //console.log("getDataIndex");
         if (this._type == 0) {
+            //SignalR
             if (callback) {
-                callback (null);
+                callback(null);
             }
-        }
-        else //socket.io
-        if (this._type == 1) {
+        } else  if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {console.log ("socket.io not initialized"); return; }
             this._socket.emit('getIndex', function(data) {
                 if (callback)
