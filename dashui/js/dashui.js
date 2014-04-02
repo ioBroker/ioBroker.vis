@@ -1160,7 +1160,7 @@ var localData = {
                         dui.language = l || dui.language;
 
                         // If metaIndex required, load it
-                        if (dui.conn.getType() == 1 /* socekt.io */) {
+                        if (dui.conn.getType() == 1 /* socket.io */) {
                             // Read all dataobjects from server
                             dui.conn.getDataObjects(function (data) {
                                 localData.metaObjects = data;
