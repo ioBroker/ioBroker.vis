@@ -861,6 +861,9 @@ var dui = {
         }
         
         dui.conn.writeFile("dashui-views.json", JSON.stringify(dui.views), function () {
+            if (cb) {
+                cb();
+            }
             //console.log("Saved views on Server");
         });
     },
