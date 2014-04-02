@@ -1,5 +1,7 @@
 var duiConfig = {
 
+    // TODO why not {name: "jqui", depends: ["basic"]} instead of extra dependencies object?
+
     widgetSets: [
         "basic",
         "bars",
