@@ -4,7 +4,7 @@
 <script src="widgets/RGraph/libraries/RGraph.common.tooltips.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.thermometer.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.gauge.js" ></script>
-<script src="widgets/RGraph/libraries/RGraph.line.js" ></script>
+<!--<script src="widgets/RGraph/libraries/RGraph.line.js" ></script>-->
 
 <script language="javascript">
     // Init words
@@ -590,6 +590,7 @@
         }
     %>
 </script>
+<!--
 <script type="text/ejs" id="tplRLiveChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="LiveChart" data-dashui-attrs="hm_id(1-8)/id;line_color(1-8)[black]/color;line_thick(1-8)[1]/slider,0.5,5,0.5;min_value[0];max_value[100];factor[1];value_offset[0];update_interval[5000]/slider,100,20000,100;title;title_x;title_y;num_hlines[3]/slider,0,20,1;spline/checkbox;filled/checkbox;hm_id_show(1-8)/id;">
     <%
         var wid = this.data.attr('wid');
@@ -830,4 +831,4 @@
         elem._timeout = _setTimeout (updateChart, update_interval, wid);
 
     %>
-</script>
+</script>-->
