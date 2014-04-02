@@ -80,7 +80,7 @@
                 dui.binds.lcars.warpcoreInterval[wid] = setInterval(function (_this) {
                     i += 1;
                     if (i > 4) { i = 0; }
-                    _this.css("background-position-x", -d * i);
+                    _this.css("background-position", -d * i);
                 },speed, $this);
 
             },
@@ -94,7 +94,7 @@
                 dui.binds.lcars.dnaInterval[wid] = setInterval(function (_this) {
                     i += 1;
                     if (i > 283) { i = 0; }
-                    _this.css("background-position-x", i);
+                    _this.css("background-position", i);
                 }, speed, $this);
 
             },
