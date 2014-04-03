@@ -1,14 +1,14 @@
     /**
-    * o-------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free software, licensed    |
-    * | under the MIT license - so it's free to use for all purposes. Extended        |
-    * | support is available if required and donations are always welcome! You can    |
-    * | read more here:                                                               |
-    * |                         http://www.rgraph.net/support                         |
-    * o-------------------------------------------------------------------------------o
+    * o--------------------------------------------------------------------------------o
+    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
+    * | under the MIT license - so it's free to use for all purposes. If you want to   |
+    * | donate to help keep the project going then you can do so here:                 |
+    * |                                                                                |
+    * |                             http://www.rgraph.net/donate                       |
+    * o--------------------------------------------------------------------------------o
     */
-    
-    if (typeof(RGraph) == 'undefined') RGraph = {};
+
+    RGraph = window.RGraph || {isRGraph: true};
 
     /**
     * The bar chart constructor
@@ -18,9 +18,11 @@
     */
     RGraph.Funnel = function (id, data)
     {
+        var tmp = RGraph.getCanvasTag(id);
+
         // Get the canvas and context objects
-        this.id                = id;
-        this.canvas            = document.getElementById(typeof id === 'object' ? id.id : id);
+        this.id                = tmp[0];
+        this.canvas            = tmp[1];
         this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
         this.canvas.__object__ = this;
         this.type              = 'funnel';
@@ -29,12 +31,13 @@
         this.uid               = RGraph.CreateUID();
         this.canvas.uid        = this.canvas.uid ? this.canvas.uid : RGraph.CreateUID();
         this.coordsText        = [];
+        this.original_colors   = [];
 
 
         /**
         * Compatibility with older browsers
         */
-        RGraph.OldBrowserCompat(this.context);
+        //RGraph.OldBrowserCompat(this.context);
 
 
         // Check for support
@@ -46,7 +49,8 @@
         /**
         * The funnel charts properties
         */
-        this.properties = {
+        this.properties =
+        {
             'chart.strokestyle':           'rgba(0,0,0,0)',
             'chart.gutter.left':           25,
             'chart.gutter.right':          25,
@@ -150,21 +154,25 @@
 
 
 
-        ///////////////////////////////// SHORT PROPERTIES /////////////////////////////////
-
-
-
-
-        var RG   = RGraph;
-        var ca   = this.canvas;
-        var co   = ca.getContext('2d');
-        var prop = this.properties;
-        //var $jq  = jQuery;
-
-
-
-
-        //////////////////////////////////// METHODS ///////////////////////////////////////
+        // Short variable names
+        var RG    = RGraph;
+        var ca    = this.canvas;
+        var co    = ca.getContext('2d');
+        var prop  = this.properties;
+        var jq    = jQuery;
+        var pa    = RG.Path;
+        var win   = window;
+        var doc   = document;
+        var ma    = Math;
+        
+        
+        
+        /**
+        * "Decorate" the object with the generic effects if the effects library has been included
+        */
+        if (RG.Effects && typeof RG.Effects.decorate === 'function') {
+            RG.Effects.decorate(this);
+        }
 
 
 
@@ -175,6 +183,7 @@
         * @param name  string The name of the property to set
         * @param value mixed  The value of the property
         */
+        this.set =
         this.Set = function (name, value)
         {
             name = name.toLowerCase();
@@ -189,7 +198,7 @@
             prop[name] = value;
 
             return this;
-        }
+        };
 
 
 
@@ -199,6 +208,7 @@
         * 
         * @param name  string The name of the property to get
         */
+        this.get =
         this.Get = function (name)
         {
             /**
@@ -209,7 +219,7 @@
             }
     
             return prop[name.toLowerCase()];
-        }
+        };
 
 
 
@@ -217,6 +227,7 @@
         /**
         * The function you call to draw the bar chart
         */
+        this.draw =
         this.Draw = function ()
         {
             /**
@@ -289,7 +300,7 @@
             RG.FireCustomEvent(this, 'ondraw');
 
             return this;
-        }
+        };
 
 
 
@@ -297,6 +308,7 @@
         /**
         * This function actually draws the chart
         */
+        this.drawFunnel =
         this.DrawFunnel = function ()
         {
             var width     = ca.width - this.gutterLeft - this.gutterRight;
@@ -400,7 +412,7 @@
             if (prop['chart.key'] && prop['chart.key'].length) {
                 RG.DrawKey(this, prop['chart.key'], prop['chart.colors']);
             }
-        }
+        };
 
 
 
@@ -408,6 +420,7 @@
         /**
         * Draws the labels
         */
+        this.drawLabels =
         this.DrawLabels = function ()
         {
             /**
@@ -512,7 +525,7 @@
                     }
                 }
             }
-        }
+        };
 
 
 
@@ -550,7 +563,7 @@
             }
     
             return null;
-        }
+        };
 
 
 
@@ -560,6 +573,7 @@
         * 
         * @param object shape The shape to highlight
         */
+        this.highlight =
         this.Highlight = function (shape)
         {
             if (prop['chart.tooltips.highlight']) {
@@ -579,7 +593,7 @@
                 co.stroke();
                 co.fill();
             }
-        }
+        };
 
 
 
@@ -604,7 +618,7 @@
     
                 return this;
             }
-        }
+        };
 
 
 
@@ -670,7 +684,7 @@
                 tooltip.style.left = (canvasXY[0] + coordX - (width / 2)) + 'px';
                 img.style.left = ((width * 0.5) - 8.5) + 'px';
             }
-        }
+        };
 
 
 
@@ -680,6 +694,15 @@
         */
         this.parseColors = function ()
         {
+            // Save the original colors so that they can be restored when the canvas is reset
+            if (this.original_colors.length === 0) {
+                this.original_colors['chart.colors']           = RG.array_clone(prop['chart.colors']);
+                this.original_colors['chart.key.colors'] = RG.array_clone(prop['chart.key.colors']);
+                this.original_colors['chart.highlight.fill']   = RG.array_clone(prop['chart.highlight.fill']);
+                this.original_colors['chart.highlight.stroke'] = RG.array_clone(prop['chart.highlight.stroke']);
+                this.original_colors['chart.strokestyle']      = RG.array_clone(prop['chart.strokestyle']);
+            }
+
             var colors = prop['chart.colors'];
     
             for (var i=0; i<colors.length; ++i) {
@@ -697,7 +720,7 @@
             prop['chart.strokestyle'] = this.parseSingleColorForVerticalGradient(prop['chart.strokestyle']);
             prop['chart.highlight.stroke'] = this.parseSingleColorForHorizontalGradient(prop['chart.highlight.stroke']);
             prop['chart.highlight.fill']   = this.parseSingleColorForHorizontalGradient(prop['chart.highlight.fill']);
-        }
+        };
 
 
 
@@ -728,7 +751,7 @@
             }
                 
             return grad ? grad : color;
-        }
+        };
 
 
 
@@ -757,9 +780,9 @@
                     grad.addColorStop(j * diff, RG.trim(parts[j]));
                 }
             }
-                
+
             return grad ? grad : color;
-        }
+        };
 
 
 
@@ -793,7 +816,27 @@
                 // Reset the linewidth
                 co.lineWidth = pre_linewidth;
             }
-        }
+        };
+
+
+
+
+        /**
+        * Using a function to add events makes it easier to facilitate method chaining
+        * 
+        * @param string   type The type of even to add
+        * @param function func 
+        */
+        this.on = function (type, func)
+        {
+            if (type.substr(0,2) !== 'on') {
+                type = 'on' + type;
+            }
+            
+            this[type] = func;
+    
+            return this;
+        };
 
 
 
@@ -802,4 +845,6 @@
         * Always now regsiter the object
         */
         RG.Register(this);
-    }
+    };
+// version: 2014-03-28
+

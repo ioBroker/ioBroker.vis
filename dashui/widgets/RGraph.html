@@ -2,8 +2,10 @@
 <script src="widgets/RGraph/libraries/RGraph.common.effects.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.common.dynamic.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.common.tooltips.js" ></script>
+<script src="widgets/RGraph/libraries/RGraph.common.key.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.thermometer.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.gauge.js" ></script>
+<script src="widgets/RGraph/libraries/RGraph.bar.js" ></script>
 <script src="widgets/RGraph/libraries/RGraph.line.js" ></script>
 
 <script language="javascript">
@@ -95,7 +97,7 @@
         }
     }
 
-    function registerObjIds (wid, objId) {
+    function registerRObjIds (wid, objId) {
         if (typeof objId == "object" || typeof objId == "array") {
             for (var i = 0, len = objId.length; i < len; i++)
                 if (objId[i] && (!rgraphElements[objId[i]] || rgraphElements[objId[i]].indexOf (wid) == -1)) {
@@ -121,7 +123,7 @@
     // Create or replace div with canvas inside it
     function createCanvas (view, wid, _class, hm_id, width, height, canvas_width, canvas_height) {
         initRgraph ();
-        registerObjIds (wid, hm_id);
+        registerRObjIds (wid, hm_id);
         var style    = dui.views[view].widgets[wid] ? dui.views[view].widgets[wid].style : {};
         style.width  = style.width  || width;
         style.height = style.height || height;
@@ -159,13 +161,6 @@
             }
             for (var j = 0; j < len; j++) {
                 var d1 = div.rgraph.original_data[j];
-                // Add some data to the data arrays
-                /*var r1 = RGraph.random(
-                        RGraph.is_null(d1[d1.length - 1]) ? 26 : d1[d1.length - 1] - 2,
-                        RGraph.is_null(d1[d1.length - 1]) ? 24 : d1[d1.length - 1] + 2
-                );
-                r1 = Math.max(r1, 0);
-                r1 = Math.min(r1, 50);*/
 
                 d1.push(values[j]);
                 div.rgraph.original_data[j] = RGraph.array_shift(d1);
@@ -176,6 +171,31 @@
             div._timeout = _setTimeout (updateChart, updateInterval, wid);
         }
     }
+
+    function updateBar (wid) {
+        var div = document.getElementById (wid);
+        var can = document.getElementById ('c' + wid);
+
+        if (div && can) {
+            if (div._timeout) {
+                clearTimeout (div._timeout);
+            }
+
+            var options = div.rgraph.Get("my_options");
+            var values  = div.rgraph.Get("my_values");
+
+            div.rgraph.data = values;
+            div.rgraph.data_arr = RGraph.array_linearize(values);
+
+            RGraph.Clear (can);
+            div.rgraph.Draw();
+
+            if (options.update_interval) {
+                div._timeout = _setTimeout(updateBar, options.update_interval, wid);
+            }
+        }
+    }
+
 </script>
 
 <script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];width/slider,1,500,1;control/checkbox;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontName;labels_size/slider,1,100;title;title_side;title_side_font/fontName;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
@@ -590,7 +610,7 @@
         }
     %>
 </script>
-<script type="text/ejs" id="tplRLiveChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="LiveChart" data-dashui-attrs="hm_id(1-8)/id;line_color(1-8)[black]/color;line_thick(1-8)[1]/slider,0.5,5,0.5;min_value[0];max_value[100];factor[1];value_offset[0];update_interval[5000]/slider,100,20000,100;title;title_x;title_y;num_hlines[3]/slider,0,20,1;spline/checkbox;filled/checkbox;hm_id_show(1-8)/id;">
+<script type="text/ejs" id="tplRLiveChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="LiveChart" data-dashui-attrs="hm_id(1-8)/id;line_color(1-8)[black]/color;line_thick(1-8)[1]/slider,0.5,5,0.5;min_value[0];max_value[0];factor[1];value_offset[0];update_interval[5000]/slider,100,20000,100;points_count[250]/slider,10,2000,10;title;title_x;title_y;num_hlines[3]/slider,0,20,1;spline/checkbox;filled/checkbox;hm_id_show(1-8)/id;">
     <%
         var wid = this.data.attr('wid');
         var elem_ = document.getElementById (wid);
@@ -608,7 +628,7 @@
             }
         }
 
-        var pointsCount = 250;
+        var pointsCount = parseInt(this.data.attr('points_count')) || 250;
         var len = 1;
         var IDs = [];
         var IDs_show = [];
@@ -642,7 +662,7 @@
         }
 
         createCanvas (this.view, wid, this.data.attr('class'), IDs, 200, 200);
-        registerObjIds (wid, IDs_show);
+        registerRObjIds (wid, IDs_show);
 
         var factor = this.data.attr('factor') || 1;
         factor = parseFloat(factor);
@@ -827,7 +847,236 @@
                 }
             }
         }
-        elem._timeout = _setTimeout (updateChart, update_interval, wid);
+
+        if (update_interval) {
+            elem._timeout = _setTimeout (updateChart, update_interval, wid);
+        }
+
+    %>
+</script>
+<script type="text/ejs" id="tplRBarChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="BarChart" data-dashui-attrs="hm_id(1-8)/id;name(1-8);filled_color[black]/color;empty_color[white]/color;label_color[black]/color;max_value(1-8);factor[1];value_offset[0];update_interval[0]/slider,0,20000,100;title;legend/checkbox;filled_text[Level];empty_text[Empty];labels_above[true]/checkbox;label_size[12]/slider,1,40,1;labels_above_angle/checkbox;decimals[2]/slider,0,10,1;shadow/checkbox;gutter_left[45]/slider,0,200,1;horz_margin[15]/slider,0,200,1;bar_labels_color[black]/color;bar_labels_bold/checkbox;bar_labels_center/checkbox;num_hlines/slider,0,20,1">
+    <%
+        console.log ("tplRBarChart");
+        var wid = this.data.attr('wid')
+
+        var factor = this.data.attr('factor') || 1;
+        factor = parseFloat(factor);
+
+        var offset = this.data.attr('value_offset') || 0;
+        offset = parseFloat(offset);
+
+        var len = 1;
+        var IDs = [];
+        var id;
+        var values = [];
+        var names  = [];
+        var max_values = [];
+        var valid_max = null;
+
+        // Read IDs and max values
+        while (id = this.data.attr('hm_id'+ len)) {
+            IDs.push(id);
+
+            id = this.data.attr('name' + len);
+            names.push (id || "");
+
+            id = this.data.attr('max_value' + len);
+            if (id || valid_max) {
+                max_values.push (id);
+                valid_max = id;
+            }
+
+            len++;
+        }
+
+        if (!valid_max) {
+            max_values = null;
+        } else {
+            for (var i = max_values.length, len = IDs.length; i < len; i++) {
+                max_values.push(valid_max);
+            }
+        }
+
+        var values  = [];
+        for (var i = 0, len = IDs.length; i < len; i++) {
+            values[i] = [];
+            var val = localData.uiState.attr('_' + IDs[i] + '.Value');
+            if (val === null || val === undefined) {
+                val = min_value;
+            }
+            val = parseFloat (val);
+            val = val * factor + offset;
+            if (val < 0) {
+                val = 0;
+            }
+
+            if (max_values) {
+                values[i][0] = max_values[i] - val;
+                if (values[i][0] < 0) {
+                    values[i][0] = 0;
+                }
+                values[i][1] = val;
+            } else {
+                values[i][0] = val;
+            }
+
+        }
+
+        var options = {
+            IDs:          IDs,
+            names:        names,
+            labels_above_angle:  this.data.attr('labels_above_angle'),
+            filled_color: this.data.attr('filled_color'),
+            empty_color:  this.data.attr('empty_color'),
+            factor:       factor,
+            offset:       offset,
+            title:        this.data.attr('title')   || "",
+            update_interval: parseInt (this.data.attr('update_interval')) || 0,
+            max_values:   max_values,
+            filled_text:  this.data.attr('filled_text') || false,
+            empty_text:   this.data.attr('empty_text') || false,
+            legend:       this.data.attr('legend')  || false,
+            label_size:   parseInt(this.data.attr('label_size')),
+            label_color:  this.data.attr('label_color'),
+            labels_above: this.data.attr('labels_above'),
+            decimals:     parseInt(this.data.attr('decimals')),
+            shadow:       this.data.attr('shadow'),
+            bar_labels_color: this.data.attr('bar_labels_color'),
+            bar_labels_bold: this.data.attr('bar_labels_bold'),
+            bar_labels_center: this.data.attr('bar_labels_center'),
+            gutter_left:  parseInt(this.data.attr('gutter_left')) || 45,
+            horz_margin:  parseInt(this.data.attr('horz_margin')) || 15,
+            defaultWidth: 200,
+            defaultHeight:400
+        };
+        options.bar_labels_bold = !(options.bar_labels_bold != "true" && options.bar_labels_bold !== true);
+
+
+        createCanvas (this.view, wid, this.data.attr('class'), IDs, 200, 200);
+
+        var elem = document.getElementById (wid);
+        var can  = document.getElementById ('c'+wid);
+
+        var t = new RGraph.Bar ("c"+wid, values);
+
+        t.Set ("my_options", options);
+        t.Set ("my_values",  values);
+
+        t.set('grouping', 'stacked');
+        t.set('labels', options.names);
+        t.set('labels.above.angle', options.labels_above_angle);
+        t.set('labels.above', options.labels_above);
+        t.set('labels.above.size', parseInt(options.label_size) || 12);
+        //t.set('labels.above.color', options.label_color);
+        t.set('labels.above.decimals', options.decimals);
+        t.set('linewidth', 1);
+        t.set('strokestyle', 'black');
+        t.set('colors', max_values ? [options.empty_color, options.filled_color] : [options.filled_color]);
+        t.set('shadow', options.shadow);
+        t.set('shadow.offsetx', 1);
+        t.set('shadow.offsety', 1);
+        t.set('shadow.blue', 5);
+        t.set('hmargin', parseInt(options.horz_margin));
+        t.set('gutter.left', parseInt(options.gutter_left));
+        t.set('background.grid.vlines', false);
+        t.set('background.grid.border', false);
+        t.set('axis.color', '#ccc');
+        t.set('noyaxis', true);
+        t.set('labels.above.color', options.label_color);
+        t.set('title', options.title);
+
+        if (options.legend) {
+            t.set('key', max_values ? [options.empty_text || ' ', options.filled_text || ' '] : options.filled_text || ' ');
+            t.set('key.position.gutter.boxed', true);
+            t.set('key.position', 'gutter');
+            t.set('key.position.x', t.canvas.width - 300)
+            t.set('key.position.y', 20)
+            t.set('key.colors', max_values ? [options.empty_color, options.filled_color] : [options.filled_color]);
+        }
+
+        text = this.data.attr('num_hlines');
+        if (text) {
+            t.Set('background.grid.autofit.numhlines', parseInt(text));
+        }
+
+        RGraph.Clear(t.canvas);
+        t.on('draw', function (obj) {
+            var values  = obj.Get("my_values");
+            var options = obj.Get("my_options");
+            if (values.length > 0 && values[0].length > 1)  {
+                obj.context.fillStyle = options.bar_labels_color;
+                for (var i = 0, len = obj.coords.length; i < len; ++i) {
+                    if (i%2 == 0) continue;
+                    RGraph.Text2(obj.context, {
+                                               font:   'Verdana',
+                                               'bold':  options.bar_labels_bold,
+                                               'size':  options.label_size,
+                                               'x':     obj.coords[i][0] + (obj.coords[i][2] / 2),
+                                               'y':     options.bar_labels_center ? (obj.coords[i][1] + (obj.coords[i][3] / 2)) : (obj.coords[i][1] + obj.coords[i][3] - options.label_size),
+                                               'text':  obj.data_arr[i].toFixed(options.decimals),
+                                               'valign':'center',
+                                               'halign':'center'
+                                              });
+                }
+            }
+        })
+        .draw();
+
+        elem.rgraph = t;
+        jQuery(elem).bind("resize", function () {
+            if (this._resizeTimer){
+                clearTimeout (this._resizeTimer);
+            }
+            this._resizeTimer = _setTimeout (function (_wid) {
+                var _div = document.getElementById (_wid);
+                var div  = jQuery(_div);
+                var can  = document.getElementById ('c' + _wid);
+
+                can.width  = div.width();
+                can.height = div.height ();
+
+                RGraph.Clear (can);
+                _div.rgraph.Draw();
+            }, 500, this.id);
+        });
+
+        elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
+            var options = this.rgraph.Get("my_options");
+            var isFound = false;
+
+            for (var i = 0, len = options.IDs.length; i < len; i++){
+                if (options.IDs[i] == objId) {
+                    var values  = this.rgraph.Get("my_values");
+                    var val = localData.uiState.attr("_" + options.IDs[i] + ".Value");
+                    if (val === null || val === undefined) {
+                        val = this.rgraph.min;
+                    }
+                    val = parseFloat(val);
+                    val = val * factor + offset;
+                    if (val < 0) {
+                        val = 0;
+                    }
+                    if (values[i].length > 1) {
+                        values[i][0] = options.max_values[i] - val;
+                        if (values[i][0] < 0) {
+                            values[i][0] = 0;
+                        }
+                        values[i][1] = val;
+                    }
+                    else {
+                        values[i][0] = val;
+                    }
+                    isFound = true;
+                    //return;
+                }
+            }
+            if (isFound && !options.update_interval) {
+                updateBar (this.id);
+            }
+        }
+        if (options.update_interval) {
+            elem._timeout = _setTimeout(updateBar, options.update_interval, wid);
+        }
 
     %>
 </script>

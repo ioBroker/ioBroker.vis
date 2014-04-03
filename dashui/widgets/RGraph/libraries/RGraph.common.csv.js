@@ -1,20 +1,30 @@
     /**
-    * o-------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free software, licensed    |
-    * | under the MIT license - so it's free to use for all purposes. Extended        |
-    * | support is available if required and donations are always welcome! You can    |
-    * | read more here:                                                               |
-    * |                         http://www.rgraph.net/support                         |
-    * o-------------------------------------------------------------------------------o
+    * o--------------------------------------------------------------------------------o
+    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
+    * | under the MIT license - so it's free to use for all purposes. If you want to   |
+    * | donate to help keep the project going then you can do so here:                 |
+    * |                                                                                |
+    * |                             http://www.rgraph.net/donate                       |
+    * o--------------------------------------------------------------------------------o
     */
 
     /**
     * Initialise the various objects
     */
-    if (typeof(RGraph) == 'undefined') RGraph = {isRGraph:true,type:'common'};
+    RGraph = window.RGraph || {isRGraph: true};
+
+
+
 
     RGraph.CSV = function (url, func)
     {
+        var RG  = RGraph,
+            ua  = navigator.userAgent,
+            ma  = Math;
+
+
+
+
         /**
         * Some default values
         */
@@ -92,18 +102,19 @@
                         if (!obj.numcols) {
                             obj.numcols = row.length;
                         }
-    
+
                         /**
                         * If the cell is purely made up of numbers - convert it
                         */
                         for (var j=0; j<row.length; j+=1) {
-                            if ((/^[0-9.]+$/).test(row[j])) {
+                            if ((/^\-?[0-9.]+$/).test(row[j])) {
                                 row[j] = parseFloat(row[j]);
                             }
-                                
+
                             // Assign the split-up-row back to the data array
                             obj.data[i] = row;
                         }
+
                     }
 
                     // Call the ready function straight away
@@ -162,3 +173,5 @@
         // Fetch the CSV file
         this.fetch();
     }
+// version: 2014-03-28
+

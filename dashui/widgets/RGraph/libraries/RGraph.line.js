@@ -1,14 +1,16 @@
     /**
-    * o-------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free software, licensed    |
-    * | under the MIT license - so it's free to use for all purposes. Extended        |
-    * | support is available if required and donations are always welcome! You can    |
-    * | read more here:                                                               |
-    * |                         http://www.rgraph.net/support                         |
-    * o-------------------------------------------------------------------------------o
+    * o--------------------------------------------------------------------------------o
+    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
+    * | under the MIT license - so it's free to use for all purposes. If you want to   |
+    * | donate to help keep the project going then you can do so here:                 |
+    * |                                                                                |
+    * |                             http://www.rgraph.net/donate                       |
+    * o--------------------------------------------------------------------------------o
     */
-    
-    if (typeof(RGraph) == 'undefined') RGraph = {};
+    RGraph = window.RGraph || {isRGraph: true};
+
+
+
 
     /**
     * The line chart constructor
@@ -18,9 +20,11 @@
     */
     RGraph.Line = function (id)
     {
+        var tmp = RGraph.getCanvasTag(id);
+
         // Get the canvas and context objects
-        this.id                = id;
-        this.canvas            = document.getElementById(typeof id === 'object' ? id.id : id);
+        this.id                = tmp[0];
+        this.canvas            = tmp[1];
         this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
         this.canvas.__object__ = this;
         this.type              = 'line';
@@ -41,11 +45,12 @@
         /**
         * Compatibility with older browsers
         */
-        RGraph.OldBrowserCompat(this.context);
+        //RGraph.OldBrowserCompat(this.context);
 
 
         // Various config type stuff
-        this.properties = {
+        this.properties =
+        {
             'chart.background.barcolor1':   'rgba(0,0,0,0)',
             'chart.background.barcolor2':   'rgba(0,0,0,0)',
             'chart.background.grid':        1,
@@ -70,6 +75,7 @@
             'chart.background.image.w':     null,
             'chart.background.image.h':     null,
             'chart.background.image.align': null,
+            'chart.background.color':       null,
             'chart.labels':                 null,
             'chart.labels.ingraph':         null,
             'chart.labels.above':           false,
@@ -81,11 +87,11 @@
             'chart.smallyticks':            3,
             'chart.largeyticks':            5,
             'chart.numyticks':              10,
-            'chart.linewidth':              1.01,
+            'chart.linewidth':              2.01,
             'chart.colors':                 ['red', '#0f0', '#00f', '#f0f', '#ff0', '#0ff','green','pink','blue','black'],
             'chart.hmargin':                0,
             'chart.tickmarks.dot.color':    'white',
-            'chart.tickmarks':              null,
+            'chart.tickmarks':              'endcircle',
             'chart.tickmarks.linewidth':    null,
             'chart.ticksize':               3,
             'chart.gutter.left':            25,
@@ -129,7 +135,7 @@
             'chart.title.y':                null,
             'chart.title.halign':           null,
             'chart.title.valign':           null,
-            'chart.shadow':                 false,
+            'chart.shadow':                 true,
             'chart.shadow.offsetx':         2,
             'chart.shadow.offsety':         2,
             'chart.shadow.blur':            3,
@@ -228,7 +234,8 @@
             'chart.curvy':                    false,
             'chart.line.visible':             true,
             'chart.events.click':             null,
-            'chart.events.mousemove':         null
+            'chart.events.mousemove':         null,
+            'chart.drawingcache':             false
         }
 
         /**
@@ -294,21 +301,25 @@
 
 
 
-        ///////////////////////////////// SHORT PROPERTIES /////////////////////////////////
-
-
-
-
+        // Short variable names
         var RG   = RGraph;
         var ca   = this.canvas;
         var co   = ca.getContext('2d');
         var prop = this.properties;
-        //var $jq  = jQuery;
-
-
-
-
-        //////////////////////////////////// METHODS ///////////////////////////////////////
+        var jq   = jQuery;
+        var pa   = RG.Path;
+        var win  = window;
+        var doc  = document;
+        var ma   = Math;
+        
+        
+        
+        /**
+        * "Decorate" the object with the generic effects if the effects library has been included
+        */
+        if (RG.Effects && typeof RG.Effects.decorate === 'function') {
+            RG.Effects.decorate(this);
+        }
 
 
 
@@ -320,6 +331,7 @@
         * @param string name The name of the property
         * @param mixed value The value of the property
         */
+        this.set =
         this.Set = function (name, value)
         {
             name = name.toLowerCase();
@@ -410,7 +422,7 @@
             this.properties[name] = value;
     
             return this;
-        }
+        };
 
 
 
@@ -420,6 +432,7 @@
         * 
         * @param string name The name of the property
         */
+        this.get =
         this.Get = function (name)
         {
             /**
@@ -437,7 +450,7 @@
             }
     
             return prop[name];
-        }
+        };
 
 
 
@@ -460,6 +473,7 @@
         *        |
         *        +-DrawSpline()
         */
+        this.draw =
         this.Draw = function ()
         {
             // MUST be the first thing done!
@@ -501,16 +515,17 @@
             * Check for Chrome 6 and shadow
             * 
             * TODO Remove once it's been fixed (for a while)
+            * 07/03/2014 - Removed
             * 29/10/2011 - Looks like it's been fixed as long the linewidth is at least 1.01
             * SEARCH TAGS: CHROME FIX SHADOW BUG
             */
-            if (   prop['chart.shadow']
-                && ISCHROME
-                && prop['chart.linewidth'] <= 1
-                && prop['chart.chromefix']
-                && prop['chart.shadow.blur'] > 0) {
-                    alert('[RGRAPH WARNING] Chrome has a shadow bug, meaning you should increase the linewidth to at least 1.01');
-            }
+            //if (   prop['chart.shadow']
+            //    && RG.ISCHROME
+            //    && prop['chart.linewidth'] <= 1
+            //    && prop['chart.chromefix']
+            //    && prop['chart.shadow.blur'] > 0) {
+            //        alert('[RGRAPH WARNING] Chrome has a shadow bug, meaning you should increase the linewidth to at least 1.01');
+            //}
     
     
             // Reset the data back to that which was initially supplied
@@ -629,7 +644,7 @@
             //
             // 19th Dec 2010 - removed for Opera since it can be reported incorrectly whn there
             // are multiple graphs on the page
-            if (prop['chart.xaxispos'] == 'bottom' && this.hasnegativevalues && !ISOPERA) {
+            if (prop['chart.xaxispos'] == 'bottom' && this.hasnegativevalues && !RG.ISOPERA) {
                 alert('[LINE] You have negative values and the X axis is at the bottom. This is not good...');
             }
     
@@ -638,7 +653,10 @@
             }
             
             // Progressively Draw the chart
-            RG.background.Draw(this);
+            RG.cachedDraw(this, 'background', function (obj)
+            {
+                RG.background.Draw(obj);
+            });
     
             /**
             * Draw any horizontal bars that have been defined
@@ -935,7 +953,7 @@
             RG.FireCustomEvent(this, 'ondraw');
             
             return this;
-        }
+        };
 
 
 
@@ -943,12 +961,13 @@
         /**
         * Draws the axes
         */
+        this.drawAxes =
         this.DrawAxes = function ()
         {
-            var RG   = RGraph;
-            var ca   = this.canvas;
-            var co   = this.context;
-            var prop = this.properties;
+            //var RG   = RGraph;
+            //var ca   = this.canvas;
+            //var co   = this.context;
+            //var prop = this.properties;
     
             // Don't draw the axes?
             if (prop['chart.noaxes']) {
@@ -962,7 +981,7 @@
             co.lineCap     = 'butt';
             co.strokeStyle = prop['chart.axis.color'];
             co.beginPath();
-    
+
             // Draw the X axis
             if (prop['chart.noxaxis'] == false) {
                 if (prop['chart.xaxispos'] == 'center') {
@@ -1126,7 +1145,7 @@
             }
     
             co.stroke();
-        }
+        };
 
 
 
@@ -1134,6 +1153,7 @@
         /**
         * Draw the text labels for the axes
         */
+        this.drawLabels =
         this.DrawLabels = function ()
         {
             co.strokeStyle = 'black';
@@ -1605,11 +1625,12 @@
         /**
         * Draws the line
         */
+        this.drawLine =
         this.DrawLine = function (lineData, color, fill, linewidth, tickmarks, index)
         {
-            var ca   = this.canvas;
-            var co   = this.context;
-            var prop = this.properties;
+            //var ca   = this.canvas;
+            //var co   = this.context;
+            //var prop = this.properties;
     
             // This facilitates the Rise animation (the Y value only)
             if (prop['chart.animation.unfold.y'] && prop['chart.animation.factor'] != 1) {
@@ -1689,7 +1710,7 @@
             /**
             * For IE only: Draw the shadow ourselves as ExCanvas doesn't produce shadows
             */
-            if (ISOLD && prop['chart.shadow']) {
+            if (RG.ISOLD && prop['chart.shadow']) {
                 this.DrawIEShadow(lineCoords, co.shadowColor);
             }
     
@@ -1748,7 +1769,7 @@
     
                     } else {
     
-                        if (/*ISOLD && */yPos == null) {
+                        if (RG.ISOLD && yPos == null) {
                             // Nada
                         } else {
                             co.moveTo(xPos + 1, yPos);
@@ -1843,19 +1864,19 @@
             * FIXME this may need removing when Chrome is fixed
             * SEARCH TAGS: CHROME SHADOW BUG
             */
-            if (ISCHROME && prop['chart.shadow'] && prop['chart.chromefix'] && prop['chart.shadow.blur'] > 0) {
-    
-                for (var i=lineCoords.length - 1; i>=0; --i) {
-                    if (
-                           typeof(lineCoords[i][1]) != 'number'
-                        || (typeof(lineCoords[i+1]) == 'object' && typeof(lineCoords[i+1][1]) != 'number')
-                       ) {
-                        co.moveTo(lineCoords[i][0],lineCoords[i][1]);
-                    } else {
-                        co.lineTo(lineCoords[i][0],lineCoords[i][1]);
-                    }
-                }
-            }
+            //if (false && RGraph.ISCHROME && prop['chart.shadow'] && prop['chart.chromefix'] && prop['chart.shadow.blur'] > 0) {
+            //
+            //    for (var i=lineCoords.length - 1; i>=0; --i) {
+            //        if (
+            //               typeof(lineCoords[i][1]) != 'number'
+            //            || (typeof(lineCoords[i+1]) == 'object' && typeof(lineCoords[i+1][1]) != 'number')
+            //           ) {
+            //            co.moveTo(lineCoords[i][0],lineCoords[i][1]);
+            //        } else {
+            //            co.lineTo(lineCoords[i][0],lineCoords[i][1]);
+            //        }
+            //    }
+            //}
     
             co.stroke();
     
@@ -1934,7 +1955,7 @@
             // Draw something off canvas to skirt an annoying bug
             co.beginPath();
             co.arc(ca.width + 50000, ca.height + 50000, 2, 0, 6.38, 1);
-        }
+        };
 
 
 
@@ -1947,6 +1968,7 @@
         * @param color str  The color of the tickmark
         * @param       bool Whether the tick is a shadow. If it is, it gets offset by the shadow offset
         */
+        this.drawTick =
         this.DrawTick = function (lineData, xPos, yPos, color, isShadow, prevX, prevY, tickmarks, index)
         {
             // Various conditions mean no tick
@@ -1977,7 +1999,7 @@
     
                 if (tickmarks == 'circle'|| tickmarks == 'filledcircle' || (tickmarks == 'endcircle' && (index == 0 || index == (lineData.length - 1)))) {
                     co.beginPath();
-                    co.arc(xPos + offset, yPos + offset, prop['chart.ticksize'], 0, 360 / (180 / PI), false);
+                    co.arc(xPos + offset, yPos + offset, prop['chart.ticksize'], 0, 360 / (180 / RG.PI), false);
     
                     if (tickmarks == 'filledcircle') {
                         co.fillStyle = isShadow ? prop['chart.shadow.color'] : co.strokeStyle;
@@ -2053,7 +2075,7 @@
     
                     // The outer white circle
                     co.beginPath();
-                    co.arc(xPos, yPos, prop['chart.ticksize'], 0, 360 / (180 / PI), false);
+                    co.arc(xPos, yPos, prop['chart.ticksize'], 0, 360 / (180 / RG.PI), false);
                     co.closePath();
     
     
@@ -2064,7 +2086,7 @@
                     co.beginPath();
                     co.fillStyle   = color;
                     co.strokeStyle = color;
-                    co.arc(xPos, yPos, prop['chart.ticksize'] - 2, 0, 360 / (180 / PI), false);
+                    co.arc(xPos, yPos, prop['chart.ticksize'] - 2, 0, 360 / (180 / RG.PI), false);
     
                     co.closePath();
     
@@ -2137,10 +2159,10 @@
     
                 co.beginPath();
                     co.moveTo(Math.round(xPos), Math.round(yPos));
-                    co.arc(Math.round(xPos), Math.round(yPos), 7, a - 0.5 - (document.all ? 0.1 : 0.01), a - 0.4, false);
+                    co.arc(Math.round(xPos), Math.round(yPos), 7, a - 0.5 - (doc.all ? 0.1 : 0.01), a - 0.4, false);
     
                     co.moveTo(Math.round(xPos), Math.round(yPos));
-                    co.arc(Math.round(xPos), Math.round(yPos), 7, a + 0.5 + (document.all ? 0.1 : 0.01), a + 0.5, true);
+                    co.arc(Math.round(xPos), Math.round(yPos), 7, a + 0.5 + (doc.all ? 0.1 : 0.01), a + 0.5, true);
                 co.stroke();
                 co.fill();
 
@@ -2153,7 +2175,7 @@
             } else if (typeof(tickmarks) == 'function') {
                 tickmarks(this, lineData, lineData[index], index, xPos, yPos, color, prevX, prevY);
             }
-        }
+        };
 
 
 
@@ -2161,12 +2183,13 @@
         /**
         * Draws a filled range if necessary
         */
+        this.drawRange =
         this.DrawRange = function ()
         {
-            var RG   = RGraph;
-            var ca   = this.canvas;
-            var co   = this.context;
-            var prop = this.properties;
+            //var RG   = RGraph;
+            //var ca   = this.canvas;
+            //var co   = this.context;
+            //var prop = this.properties;
     
             /**
             * Fill the range if necessary
@@ -2235,7 +2258,7 @@
                     co.restore();
                 }
             }
-        }
+        };
 
 
 
@@ -2245,6 +2268,7 @@
         * 
         * @param array coords The coordinates of the line
         */
+        this.redrawLine =
         this.RedrawLine = function (coords, color, linewidth, index)
         {
             var ca   = this.canvas;
@@ -2269,7 +2293,7 @@
 
 
 
-            if (!ISOLD && (prop['chart.curvy'] || prop['chart.spline'])) {
+            if (!RG.ISOLD && (prop['chart.curvy'] || prop['chart.spline'])) {
                 this.DrawCurvyLine(coords, !prop['chart.line.visible'] ? 'rgba(0,0,0,0)' : color, linewidth, index);
                 return;
             }
@@ -2310,7 +2334,7 @@
                     || penUp == true
                    ) && (!prop['chart.outofbounds'] || yPos == null || prevY == null) ) {
     
-                    if (ISOLD && yPos == null) {
+                    if (RG.ISOLD && yPos == null) {
                         // ...?
                     } else {
                         co.moveTo(coords[i][0], coords[i][1]);
@@ -2351,7 +2375,7 @@
                     }
                 }
             }
-        }
+        };
 
 
 
@@ -2361,11 +2385,12 @@
         * 
         * @param array coords The coords for the line
         */
+        this.drawIEShadow =
         this.DrawIEShadow = function (coords, color)
         {
-            var ca   = this.canvas;
-            var co   = this.context;
-            var prop = this.properties;
+            //var ca   = this.canvas;
+            //var co   = this.context;
+            //var prop = this.properties;
     
             var offsetx = prop['chart.shadow.offsetx'];
             var offsety = prop['chart.shadow.offsety'];
@@ -2383,7 +2408,7 @@
             }
     
             co.stroke();
-        }
+        };
 
 
 
@@ -2391,11 +2416,12 @@
         /**
         * Draw the backdrop
         */
+        this.drawBackdrop =
         this.DrawBackdrop = function (coords, color)
         {
-            var ca   = this.canvas;
-            var co   = this.context;
-            var prop = this.properties;
+            //var ca   = this.canvas;
+            //var co   = this.context;
+            //var prop = this.properties;
     
             var size = prop['chart.backdrop.size'];
             co.lineWidth = size;
@@ -2404,7 +2430,7 @@
             var yCoords = [];
     
             co.beginPath();
-                if (prop['chart.curvy'] && !ISOLD) {
+                if (prop['chart.curvy'] && !RG.ISOLD) {
                     
                     // The DrawSpline function only takes the Y coords so extract them from the coords that have
                     // (which are X/Y pairs)
@@ -2425,7 +2451,7 @@
             // Reset the alpha value
             co.globalAlpha = 1;
             RG.NoShadow(this);
-        }
+        };
 
 
 
@@ -2433,6 +2459,7 @@
         /**
         * Returns the linewidth
         */
+        this.getLineWidth =
         this.GetLineWidth = function (i)
         {
             var linewidth = prop['chart.linewidth'];
@@ -2449,7 +2476,7 @@
     
                 alert('[LINE] Error! chart.linewidth should be a single number or an array of one or more numbers');
             }
-        }
+        };
 
 
 
@@ -2515,7 +2542,7 @@
                             return {0:obj, 1:x, 2:y, 3:i, 'object': obj, 'x': x, 'y': y, 'index': i, 'tooltip': tooltip};
                 }
             }
-        }
+        };
 
 
 
@@ -2523,12 +2550,13 @@
         /**
         * Draws the above line labels
         */
+        this.drawAboveLabels =
         this.DrawAboveLabels = function ()
         {
-            var RG   = RGraph;
-            var ca   = this.canvas;
-            var co   = this.context;
-            var prop = this.properties;
+            //var RG   = RGraph;
+            //var ca   = this.canvas;
+            //var co   = this.context;
+            //var prop = this.properties;
     
             var context    = co;
             var size       = prop['chart.labels.above.size'];
@@ -2556,7 +2584,7 @@
             }
             
             co.fill();
-        }
+        };
 
 
 
@@ -2564,13 +2592,14 @@
         /**
         * Draw a curvy line.
         */
+        this.drawCurvyLine =
         this.DrawCurvyLine = function (coords, color, linewidth, index)
         {
-            var ca   = this.canvas;
-            var co   = this.context;
-            var prop = this.properties;
+            //var ca   = this.canvas;
+            //var co   = this.context;
+            //var prop = this.properties;
 
-            if (ISOLD) {
+            if (RG.ISOLD) {
                 return;
             }
     
@@ -2598,7 +2627,7 @@
             co.beginPath();    
             this.DrawSpline(co, yCoords, color, index);
             co.stroke();
-        }
+        };
 
 
 
@@ -2643,7 +2672,7 @@
                 value += obj.min;
                 return value;
             }
-        }
+        };
 
 
 
@@ -2653,13 +2682,14 @@
         * 
         * @param object shape The shape to highlight
         */
+        this.highlight =
         this.Highlight = function (shape)
         {
             if (prop['chart.tooltips.highlight']) {
                 // Add the new highlight
                 RG.Highlight.Point(this, shape);
             }
-        }
+        };
 
 
 
@@ -2673,8 +2703,8 @@
         */
         this.getObjectByXY = function (e)
         {
-            var ca      = this.canvas;
-            var prop    = this.properties;
+            //var ca      = this.canvas;
+            //var prop    = this.properties;
             var mouseXY = RG.getMouseXY(e);
     
             // The 5 is so that the cursor doesn't have to be over the graphArea to trigger the hotspot
@@ -2687,7 +2717,7 @@
     
                 return this;
             }
-        }
+        };
 
 
 
@@ -2697,8 +2727,9 @@
         * 
         * @param object e The event object
         */
+        this.adjusting_mousemove =
         this.Adjusting_mousemove = function (e)
-        {    
+        {
             /**
             * Handle adjusting for the Bar
             */
@@ -2714,12 +2745,12 @@
     
                     this.original_data[shape['dataset']][shape['index_adjusted']] = Number(value);
     
-                    RG.RedrawCanvas(e.target);
+                    RG.redrawCanvas(e.target);
                     
-                    RG.FireCustomEvent(this, 'onadjust');
+                    RG.fireCustomEvent(this, 'onadjust');
                 }
             }
-        }
+        };
 
 
 
@@ -2732,9 +2763,9 @@
         */
         this.getYCoord = function (value)
         {
-            var ca      = this.canvas;
-            var co      = this.context;
-            var prop    = this.properties;
+            //var ca      = this.canvas;
+            //var co      = this.context;
+            //var prop    = this.properties;
     
             if (typeof(value) != 'number') {
                 return null;
@@ -2788,7 +2819,7 @@
             }
             
             return y;
-        }
+        };
 
 
 
@@ -2803,9 +2834,9 @@
         */
         this.positionTooltip = function (obj, x, y, tooltip, idx)
         {
-            var ca      = obj.canvas;
-            var co      = obj.context;
-            var prop    = obj.properties;
+            //var ca      = obj.canvas;
+            //var co      = obj.context;
+            //var prop    = obj.properties;
     
             var coordX     = obj.coords[tooltip.__index__][0];
             var coordY     = obj.coords[tooltip.__index__][1];
@@ -2837,7 +2868,7 @@
                 img.style.left = ((width * 0.2) - 8.5) + 'px';
     
             // RIGHT edge
-            } else if ((canvasXY[0] + coordX + (width / 2)) > document.body.offsetWidth) {
+            } else if ((canvasXY[0] + coordX + (width / 2)) > doc.body.offsetWidth) {
                 tooltip.style.left = canvasXY[0] + coordX - (width * 0.8) + 'px';
                 img.style.left = ((width * 0.8) - 8.5) + 'px';
     
@@ -2846,7 +2877,7 @@
                 tooltip.style.left = (canvasXY[0] + coordX - (width * 0.5)) + 'px';
                 img.style.left = ((width * 0.5) - 8.5) + 'px';
             }
-        }
+        };
 
 
 
@@ -2857,6 +2888,7 @@
         * @param object context The  2D context
         * @param array  coords  The coordinates
         */
+        this.drawSpline =
         this.DrawSpline = function (context, coords, color, index)
         {
             // Commented out on 26th Oct 2013
@@ -2883,6 +2915,9 @@
                 }
             }
 
+
+
+
             /**
             * Get the Points array in the format we want - first value should be null along with the lst value
             */
@@ -2894,9 +2929,6 @@
             //P.push(null);
     
             for (var j=1; j<P.length-2; ++j) {
-                if (P[j] === null)
-                    continue;
-
                 for (var t=0; t<10; ++t) {
                     
                     var yCoord = Spline( t/10, P[j-1], P[j], P[j+1], P[j+2] );
@@ -2909,6 +2941,10 @@
                     }
                 }
             }
+
+
+
+
 
             // Draw the last section
             co.lineTo(((j-1) * interval) + gutterLeft + hmargin, P[j]);
@@ -2928,7 +2964,7 @@
                              ((2*P0 - (5*P1) + (4*P2) - P3) * (t*t) +
                              ((0-P0) + (3*P1)- (3*P2) + P3) * (t*t*t)));
             }
-        }
+        };
 
 
 
@@ -2946,16 +2982,16 @@
                 this.original_colors['chart.background.barcolor1']  = prop['chart.background.barcolor1'];
                 this.original_colors['chart.background.barcolor2']  = prop['chart.background.barcolor2'];
                 this.original_colors['chart.background.grid.color'] = prop['chart.background.grid.color'];
+                this.original_colors['chart.background.color']      = prop['chart.background.color'];
                 this.original_colors['chart.text.color']            = prop['chart.text.color'];
                 this.original_colors['chart.crosshairs.color']      = prop['chart.crosshairs.color'];
                 this.original_colors['chart.annotate.color']        = prop['chart.annotate.color'];
                 this.original_colors['chart.title.color']           = prop['chart.title.color'];
                 this.original_colors['chart.title.yaxis.color']     = prop['chart.title.yaxis.color'];
                 this.original_colors['chart.key.background']        = prop['chart.key.background'];
-                this.original_colors['chart.axis.color']            = prop['chart.key.background'];
+                this.original_colors['chart.axis.color']            = prop['chart.axis.color'];
                 this.original_colors['chart.highlight.fill']        = prop['chart.highlight.fill'];
             }
-
             
             
             
@@ -2996,6 +3032,7 @@
             var properties = ['chart.background.barcolor1',
                               'chart.background.barcolor2',
                               'chart.background.grid.color',
+                              'chart.background.color',
                               'chart.text.color',
                               'chart.crosshairs.color',
                               'chart.annotate.color',
@@ -3008,7 +3045,7 @@
             for (var i=0; i<properties.length; ++i) {
                 prop[properties[i]] = this.parseSingleColorForGradient(prop[properties[i]]);
             }
-        }
+        };
 
 
 
@@ -3018,9 +3055,9 @@
         */
         this.parseSingleColorForGradient = function (color)
         {
-            var RG = RGraph;
-            var ca = this.canvas;
-            var co = this.context;
+            //var RG = RGraph;
+            //var ca = this.canvas;
+            //var co = this.context;
             
             if (!color || typeof(color) != 'string') {
                 return color;
@@ -3029,9 +3066,9 @@
             /**
             * Horizontal or vertical gradient
             */
-            var dir = typeof(arguments[1]) == 'string' ? arguments[1] : 'horizontal';
+            var dir = typeof(arguments[1]) == 'string' ? arguments[1] : 'vertical';
     
-            if (color.match(/^gradient\((.*)\)$/i)) {
+            if (typeof color === 'string' && color.match(/^gradient\((.*)\)$/i)) {
     
                 var parts = RegExp.$1.split(':');
     
@@ -3039,7 +3076,7 @@
                 if (dir == 'horizontal') {
                     var grad = co.createLinearGradient(0,0,ca.width,0);
                 } else {
-                    var grad = co.createLinearGradient(0,0,0,ca.height);
+                    var grad = co.createLinearGradient(0,ca.height - prop['chart.gutter.bottom'],0,prop['chart.gutter.top']);
                 }
     
                 var diff = 1 / (parts.length - 1);
@@ -3052,7 +3089,7 @@
             }
     
             return grad ? grad : color;
-        }
+        };
 
 
 
@@ -3060,11 +3097,12 @@
         /**
         * Sets the appropriate shadow
         */
+        this.setShadow =
         this.SetShadow = function (i)
         {
-            var ca   = this.canvas;
-            var co   = this.context;
-            var prop = this.properties;
+            //var ca   = this.canvas;
+            //var co   = this.context;
+            //var prop = this.properties;
     
             if (prop['chart.shadow']) {
                 /**
@@ -3090,7 +3128,7 @@
                 co.shadowOffsetX = prop['chart.shadow.offsetx'];
                 co.shadowOffsetY = prop['chart.shadow.offsety'];
             }
-        }
+        };
 
 
 
@@ -3104,7 +3142,7 @@
         this.interactiveKeyHighlight = function (index)
         {
             var coords = this.coords2[index];
-            
+
             if (coords) {
 
                 var pre_linewidth = co.lineWidth;
@@ -3135,7 +3173,516 @@
                 co.lineWidth = pre_linewidth;
                 co.lineCap = pre_linecap;
             }
-        }
+        };
+
+
+
+
+        /**
+        * Using a function to add events makes it easier to facilitate method chaining
+        * 
+        * @param string   type The type of even to add
+        * @param function func 
+        */
+        this.on = function (type, func)
+        {
+            if (type.substr(0,2) !== 'on') {
+                type = 'on' + type;
+            }
+            
+            this[type] = func;
+    
+            return this;
+        };
+
+
+
+
+        /**
+        * Trace
+        * 
+        * This effect is for the Line chart, uses the jQuery library and slowly
+        * uncovers the Line , but you can see the background of the chart. This effect
+        * is quite new (1/10/2011) and as such should be used with caution.
+        * 
+        * @param object   An object of configuration. You can give 'duration' or 'frames' here.
+        * @param function An optional callback function
+        */
+        this.trace = function ()
+        {
+            var obj = this;
+            var callback = typeof arguments[1] === 'function' ? arguments[1] : function () {};
+            var opt      = arguments[0] || {};
+            
+            if (opt.frames) {
+                opt.duration = (opt.frames / 60) * 1000;
+            }
+
+            if (!opt.duration) {
+                opt.duration = 1500;
+            }
+
+            RG.clear(obj.canvas);
+            RG.redrawCanvas(obj.canvas);
+
+            /**
+            * Create the DIV that the second canvas will sit in
+            */
+            var div = doc.createElement('DIV');
+                var xy = RG.getCanvasXY(obj.canvas);
+                div.id = '__rgraph_trace_animation_' + RG.random(0, 4351623) + '__';
+                div.style.left = xy[0] + 'px';
+                div.style.top = xy[1] + 'px';
+                div.style.width = obj.Get('chart.gutter.left');
+                div.style.height = obj.canvas.height + 'px';
+                div.style.position = 'absolute';
+                div.style.overflow = 'hidden';
+            doc.body.appendChild(div);
+            
+            obj.canvas.__rgraph_trace_div__ = div;
+    
+            /**
+            * Make the second canvas
+            */
+            var id      = '__rgraph_line_trace_animation_' + RG.random(0, 99999999) + '__';
+            var canvas2 = doc.createElement('CANVAS');
+    
+    
+    
+    
+            // Copy the 3D CSS transformation properties across from the original canvas
+            var properties = ['WebkitTransform','MozTransform','OTransform','MSTransform','transform'];
+            
+            for (i in properties) {
+                var name = properties[i];
+                if (typeof obj.canvas.style[name] === 'string' && obj.canvas.style[name]) {
+                    canvas2.style[name] = obj.canvas.style[name];
+                }
+            }
+            
+            
+    
+            obj.canvas.__rgraph_line_canvas2__  = canvas2;
+            canvas2.width                       = obj.canvas.width;
+            canvas2.height                      = obj.canvas.height;
+            canvas2.style.position              = 'absolute';
+            canvas2.style.left                  = 0;
+            canvas2.style.top                   = 0;
+    
+    
+            // This stops the clear effect clearing the canvas - which can happen if you have multiple canvas tags on the page all with
+            // dynamic effects that do redrawing
+            canvas2.noclear = true;
+    
+            canvas2.id         = id;
+            div.appendChild(canvas2);
+    
+            var reposition_canvas2 = function (e)
+            {
+                var xy = RG.getCanvasXY(obj.canvas);
+                
+                div.style.left = xy[0] + 'px';
+                div.style.top = xy[1] + 'px';
+            }
+            window.addEventListener('resize', reposition_canvas2, false)
+            
+            /**
+            * Make a copy of the original Line object
+            */
+            var obj2 = new RG.Line(id, RG.array_clone(obj.original_data));
+            
+            // Remove the new line from the ObjectRegistry so that it isn't redawn
+            RG.ObjectRegistry.Remove(obj2);
+    
+            for (i in obj.properties) {
+                if (typeof i === 'string') {
+                    obj2.Set(i, obj.properties[i]);
+                }
+            }
+    
+            //obj2.Set('chart.tooltips', null);
+            obj2.Set('labels', []);
+            obj2.Set('background.grid', false);
+            obj2.Set('background.barcolor1', 'rgba(0,0,0,0)');
+            obj2.Set('background.barcolor2', 'rgba(0,0,0,0)');
+            obj2.Set('ylabels', false);
+            obj2.Set('noaxes', true);
+            obj2.Set('title', '');
+            obj2.Set('title.xaxis', '');
+            obj2.Set('title.yaxis', '');
+            obj2.Set('filled.accumulative', obj.Get('chart.filled.accumulative'));
+            obj.Set('key', []);
+            obj2.Draw();
+            
+            obj.canvas.__rgraph_trace_obj2__ = obj2;
+    
+    
+            /**
+            * This effectively hides the line
+            */
+            obj.Set('line.visible', false);
+            obj.Set('colors', ['rgba(0,0,0,0)']);
+            if (obj.Get('filled')) {
+                var original_fillstyle = obj.Get('chart.fillstyle');
+                obj.Set('fillstyle', 'rgba(0,0,0,0)');
+                obj.Set('animation.trace.original.fillstyle', original_fillstyle);
+            }
+    
+            RG.clear(obj.canvas);
+            //obj.Draw();
+            RG.redrawCanvas(obj.canvas);
+            
+            /**
+            * Place a DIV over the canvas to stop interaction with it
+            */
+            if (!obj.canvas.__rgraph_trace_cover__) {
+                var div2 = doc.createElement('DIV');
+                    div2.id = '__rgraph_trace_animation_' + RG.random(0, 4351623) + '__';
+                    div2.style.left = xy[0] + 'px';
+                    div2.style.top = xy[1] + 'px';
+                    div2.style.width = obj.canvas.width + 'px';
+                    div2.style.height = obj.canvas.height + 'px';
+                    div2.style.position = 'absolute';
+                    div2.style.overflow = 'hidden';
+                    div2.style.backgroundColor = 'rgba(0,0,0,0)';
+                    div.div2 = div2;
+                    obj.canvas.__rgraph_trace_cover__ = div2;
+                doc.body.appendChild(div2);
+            } else {
+                div2 = obj.canvas.__rgraph_trace_cover__;
+            }
+
+
+
+            /**
+            * Get rid of the second canvas and turn the line back on
+            * on the original.
+            */
+            trace_complete = function (obj)
+            {
+                var obj2 = obj.canvas.__rgraph_trace_obj2__;
+    
+                // Remove the window resize listener
+                win.removeEventListener('resize', reposition_canvas2, false);
+    
+                div.style.display = 'none';
+                div2.style.display = 'none';
+    
+                //div.removeChild(canvas2);
+                obj.Set('line.visible', true);
+                
+                // Revert the filled status back to as it was
+                obj.Set('filled', RGraph.array_clone(obj2.Get('chart.filled')));
+                obj.Set('fillstyle', obj.Get('chart.animation.trace.original.fillstyle'));
+                obj.Set('colors', RGraph.array_clone(obj2.Get('chart.colors')));
+                obj.Set('key', RGraph.array_clone(obj2.Get('chart.key')));
+    
+                RGraph.RedrawCanvas(obj.canvas);
+    
+                obj.canvas.__rgraph_trace_div__.style.display    = 'none';
+                obj.canvas.__rgraph_line_canvas2__.style.display = 'none';
+                obj.canvas.__rgraph_trace_cover__.style.display  = 'none';
+                obj.canvas.__rgraph_trace_div__    = null;
+                obj.canvas.__rgraph_line_canvas2__ = null;
+                obj.canvas.__rgraph_trace_cover__  = null;
+                
+                
+                callback(obj);
+            };
+            
+            
+            
+    
+            /**
+            * Animate the DIV that contains the canvas
+            */
+            jq('#' + div.id).animate({
+                width: obj.canvas.width - obj.gutterRight + 'px'
+            }, opt.duration, function () {trace_complete(obj)});
+            
+            return this;
+        };
+
+
+
+
+        /**
+        * Unfold
+        * 
+        * This effect gradually increases the X/Y coordinatesfrom 0
+        * 
+        * @param object obj The chart object
+        */
+        this.unfold = function ()
+        {
+            var obj                        = this;
+            var opt                        = arguments[0] ? arguments[0] : {};
+            var frames                     = opt.frames ? opt.frames : 30;
+            var frame                      = 0;
+            var callback                   = arguments[1] ? arguments[1] : function () {};
+            var initial                    = prop['chart.animation.unfold.initial'];
+            
+            prop['chart.animation.factor'] = prop['chart.animation.unfold.initial'];
+
+            function iterator ()
+            {
+                prop['chart.animation.factor'] = ((1 - initial) * (frame / frames)) + initial;
+    
+                RG.clear(obj.canvas);
+                RG.redrawCanvas(obj.canvas);
+    
+                if (frame < frames) {
+                    frame++;
+                    RG.Effects.updateCanvas(iterator);
+                } else {
+                    callback(obj);
+                }
+            }
+
+
+            iterator();
+
+            return this;
+        };
+
+
+
+
+        /**
+        * Trace2
+        * 
+        * This is a new version of the Trace effect which no longer requires jQuery and is more compatible
+        * with other effects (eg Expand). This new effect is considerably simpler and less code.
+        * 
+        * @param object     Options for the effect. Currently only "frames" is available.
+        * @param int        A function that is called when the ffect is complete
+        */
+        this.trace2 = function ()
+        {
+            var obj       = this;
+            var callback  = arguments[2];
+            var opt       = arguments[0] || {};
+            var frames    = opt.frames || 30;
+            var frame     = 0;
+            var callback = arguments[1] || function () {};
+
+            obj.Set('animation.trace.clip', 0);
+    
+            function iterator ()
+            {
+                RG.clear(obj.canvas);
+                RG.redrawCanvas(obj.canvas);
+
+                if (frame++ < frames) {
+                    obj.Set('animation.trace.clip', frame / frames);
+                    RG.Effects.updateCanvas(iterator);
+                } else {
+                    callback(obj);
+                }
+            }
+            
+            iterator();
+            
+            return this;
+        };
+
+
+
+
+        /**
+        * FoldToCenter
+        * 
+        * Line chart  FoldTocenter
+        * 
+        * @param object   OPTIONAL An object map of options
+        * @param function OPTIONAL A callback to run when the effect is complete
+        */
+        this.foldtocenter =
+        this.foldToCenter = function ()
+        {
+            var obj      = this;
+            var opt      = arguments[0] || {};
+            var frames   = opt.frames || 30;
+            var frame    = 0;
+            var callback = arguments[1] || function () {};
+            var center_value = obj.scale2.max / 2;
+
+            obj.Set('chart.ymax', obj.scale2.max);
+            
+            var original_data = RG.array_clone(obj.original_data);
+            
+            function iterator ()
+            {
+                for (var i=0,len=obj.data.length; i<len; ++i) {
+                    if (obj.data[i].length) {
+                        for (var j=0,len2=obj.data[i].length; j<len2; ++j) {
+                            
+                            var dataset = obj.original_data[i];
+
+                            if (dataset[j] > center_value) {
+                                dataset[j] = original_data[i][j] - ((original_data[i][j] - center_value) * (frame / frames));
+                            } else {
+                                dataset[j] = original_data[i][j] + (((center_value - original_data[i][j]) / frames) * frame);
+                            }
+                        }
+                    }
+                }
+                
+                RG.clear(obj.canvas);
+                RG.redrawCanvas(obj.canvas)
+    
+                if (frame++ < frames) {
+                    RG.Effects.updateCanvas(iterator);
+                } else {
+                    callback(obj);
+                }
+            }
+
+
+
+            iterator();
+
+
+
+            return this;
+        };
+
+
+
+
+        /**
+        * UnfoldFromCenterTrace effect
+        * 
+        * @param object   An object containing options
+        * @param function A callback function
+        */
+        this.unfoldFromCenterTrace =
+        this.unfoldFromCenterTrace2 = function ()
+        {
+            var obj      = this;
+            var opt      = arguments[0] || {};
+            var frames   = opt.frames || 30;
+            var frame    = 0;
+            var data     = RG.array_clone(obj.original_data);
+            var callback = arguments[1] || function () {};
+
+
+
+            // Draw the chart once to get the scale values
+            obj.canvas.style.visibility = 'hidden';
+            obj.Draw();
+            var max = obj.scale2.max;
+            RG.clear(obj.canvas);
+            obj.canvas.style.visibility = 'visible';
+
+
+
+
+            /**
+            * When the Trace function finishes it calls this function
+            */
+            var unfoldCallback = function ()
+            {
+                obj.original_data = data;
+                obj.unfoldFromCenter({frames: frames / 2}, callback);
+            };
+
+
+
+            /**
+            * Determine the mid-point
+            */
+            var half = obj.Get('chart.xaxispos') == 'center' ? obj.min : ((obj.max - obj.min) / 2) + obj.min;
+            obj.Set('chart.ymax', obj.max);
+    
+            for (var i=0,len=obj.original_data.length; i<len; ++i) {
+                for (var j=0; j<obj.original_data[i].length; ++j) {
+                    obj.original_data[i][j] = (obj.Get('chart.filled') && obj.Get('chart.filled.accumulative') && i > 0) ? 0 : half;
+                }
+            }
+
+            RG.clear(obj.canvas);
+            obj.trace2({frames: frames / 2}, unfoldCallback);
+        };
+
+
+
+
+        /**
+        * UnfoldFromCenter
+        * 
+        * Line chart  unfold from center
+        * 
+        * @param object An option map of properties. Only frames is supported: {frames: 30}
+        * @param function An optional callback
+        */
+        this.unfoldFromCenter = function ()
+        {
+            var obj           = this;
+            var opt           = arguments[0] || {};
+            var frames        = opt.frames || 30;
+            var frame         = 0;
+            var callback      = arguments[1] || function () {};
+            
+            // Draw the chart once to get the scale values
+            obj.canvas.style.visibility = 'hidden';
+            obj.Draw();
+            var max = obj.scale2.max;
+            RG.clear(obj.canvas);
+            obj.canvas.style.visibility = 'visible';
+
+            var center_value  = obj.Get('chart.xaxispos') === 'center' ? prop['chart.ymin'] : ((obj.max - obj.min) / 2) + obj.min;
+            var original_data = RG.array_clone(obj.original_data);
+            var steps         = null;
+            
+            obj.Set('chart.ymax', max);
+
+            if (!steps) {
+            
+                steps = [];
+            
+                for (var dataset=0,len=original_data.length; dataset<len; ++dataset) {
+    
+                    steps[dataset] = []
+    
+                    for (var i=0,len2=original_data[dataset].length; i<len2; ++i) {
+                        if (prop['chart.filled'] && prop['chart.filled.accumulative'] && dataset > 0) {
+                            steps[dataset][i] = original_data[dataset][i] / frames;
+                            obj.original_data[dataset][i] = center_value;
+                        } else {
+                            steps[dataset][i] = (original_data[dataset][i] - center_value) / frames;
+                            obj.original_data[dataset][i] = center_value;
+                        }
+                    }
+                }
+            }
+
+            function unfoldFromCenter ()
+            {
+                for (var dataset=0; dataset<original_data.length; ++dataset) {
+                    for (var i=0; i<original_data[dataset].length; ++i) {
+                        obj.original_data[dataset][i] += steps[dataset][i];
+                    }
+                }
+
+                RG.clear(obj.canvas);
+                RG.redrawCanvas(obj.canvas);
+    
+                if (--frames > 0) {
+                    RG.Effects.updateCanvas(unfoldFromCenter);
+                } else {
+                    obj.original_data = RG.array_clone(original_data);
+                    RG.clear(obj.canvas);
+                    RG.redrawCanvas(obj.canvas);
+
+                    callback(obj);
+                }
+            }
+            
+            unfoldFromCenter();
+            
+            return this;
+        };
 
 
 
@@ -3144,4 +3691,6 @@
         * Register the object so it is redrawn when necessary
         */
         RG.Register(this);
-    }
+    };
+// version: 2014-03-28
+

@@ -1,14 +1,16 @@
     /**
-    * o-------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free software, licensed    |
-    * | under the MIT license - so it's free to use for all purposes. Extended        |
-    * | support is available if required and donations are always welcome! You can    |
-    * | read more here:                                                               |
-    * |                         http://www.rgraph.net/support                         |
-    * o-------------------------------------------------------------------------------o
+    * o--------------------------------------------------------------------------------o
+    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
+    * | under the MIT license - so it's free to use for all purposes. If you want to   |
+    * | donate to help keep the project going then you can do so here:                 |
+    * |                                                                                |
+    * |                             http://www.rgraph.net/donate                       |
+    * o--------------------------------------------------------------------------------o
     */
+    RGraph = window.RGraph || {isRGraph: true};
 
-    if (typeof(RGraph) == 'undefined') RGraph = {};
+
+
 
     /**
     * The progress bar constructor
@@ -19,12 +21,16 @@
     */
     RGraph.VProgress = function (id, value, max)
     {
-        this.id                = id;
-        this.max               = max;
-        this.value             = value;
-        this.canvas            = document.getElementById(typeof id === 'object' ? id.id : id);
+        var tmp = RGraph.getCanvasTag(id);
+
+        // Get the canvas and context objects
+        this.id                = tmp[0];
+        this.canvas            = tmp[1];
         this.context           = this.canvas.getContext('2d');
         this.canvas.__object__ = this;
+
+        this.max               = max;
+        this.value             = value;
         this.type              = 'vprogress';
         this.coords            = [];
         this.isRGraph          = true;
@@ -33,14 +39,16 @@
         this.canvas.uid        = this.canvas.uid ? this.canvas.uid : RGraph.CreateUID();
         this.colorsParsed      = false;
         this.coordsText        = [];
+        this.original_colors   = [];
 
 
         /**
         * Compatibility with older browsers
         */
-        RGraph.OldBrowserCompat(this.context);
+        //RGraph.OldBrowserCompat(this.context);
 
-        this.properties = {
+        this.properties =
+        {
             'chart.colors':             ['Gradient(white:#0c0)','Gradient(white:red)','Gradient(white:green)','yellow','pink','cyan','black','white','gray'],
             'chart.strokestyle.inner':  '#999',
             'chart.strokestyle.outer':  '#999',
@@ -71,7 +79,6 @@
             'chart.title.side.size':    12,
             'chart.title.side.color':   'black',
             'chart.title.side.bold':    true,
-            
             'chart.text.size':          10,
             'chart.text.color':         'black',
             'chart.text.font':          'Arial',
@@ -185,21 +192,25 @@
 
 
 
-        ///////////////////////////////// SHORT PROPERTIES /////////////////////////////////
-
-
-
-
-        var RG   = RGraph;
-        var ca   = this.canvas;
-        var co   = ca.getContext('2d');
-        var prop = this.properties;
-        //var $jq  = jQuery;
-
-
-
-
-        //////////////////////////////////// METHODS ///////////////////////////////////////
+        // Short variable names
+        var RG    = RGraph;
+        var ca    = this.canvas;
+        var co    = ca.getContext('2d');
+        var prop  = this.properties;
+        var jq    = jQuery;
+        var pa    = RG.Path;
+        var win   = window;
+        var doc   = document;
+        var ma    = Math;
+        
+        
+        
+        /**
+        * "Decorate" the object with the generic effects if the effects library has been included
+        */
+        if (RG.Effects && typeof RG.Effects.decorate === 'function') {
+            RG.Effects.decorate(this);
+        }
 
 
 
@@ -210,6 +221,7 @@
         * @param string name  The name of the property to set
         * @param string value The value of the poperty
         */
+        this.set =
         this.Set = function (name, value)
         {
             /**
@@ -232,7 +244,7 @@
             prop[name.toLowerCase()] = value;
     
             return this;
-        }
+        };
 
 
 
@@ -242,6 +254,7 @@
         * 
         * @param string name  The name of the property to get
         */
+        this.get =
         this.Get = function (name)
         {
             /**
@@ -252,7 +265,7 @@
             }
     
             return prop[name.toLowerCase()];
-        }
+        };
 
 
 
@@ -260,6 +273,7 @@
         /**
         * Draws the progress bar
         */
+        this.draw =
         this.Draw = function ()
         {
             /**
@@ -357,7 +371,7 @@
             RG.FireCustomEvent(this, 'ondraw');
             
             return this;
-        }
+        };
 
 
 
@@ -365,6 +379,7 @@
         /**
         * Draw the bar itself
         */
+        this.drawbar =
         this.Drawbar = function ()
         {
             /**
@@ -390,7 +405,7 @@
             }
     
             // Draw the shadow for MSIE
-            if (ISOLD && prop['chart.shadow']) {
+            if (RGraph.ISOLD && prop['chart.shadow']) {
                 co.fillStyle = prop['chart.shadow.color'];
                 co.fillRect(this.gutterLeft + prop['chart.shadow.offsetx'], this.gutterTop + prop['chart.shadow.offsety'], this.width, this.height);
             }
@@ -410,12 +425,12 @@
             var barHeight  = (ca.height - this.gutterTop - this.gutterBottom) * (RG.array_sum(this.value) / this.max);
     
             // Draw the actual bar itself
-            if (typeof(this.value) == 'number') {
+            if (typeof this.value == 'number') {
     
                 co.lineWidth   = 1;
                 co.strokeStyle = prop['chart.strokestyle.inner'];
     
-            } else if (typeof(this.value) == 'object') {
+            } else if (typeof this.value == 'object') {
     
                 co.beginPath();
                 co.strokeStyle = prop['chart.strokestyle.inner'];
@@ -472,7 +487,7 @@
             co.beginPath();
             co.strokeStyle = prop['chart.strokestyle.inner'];
     
-            if (typeof(this.value) == 'number') {
+            if (typeof this.value == 'number') {
                 
                 if (prop['chart.border.inner']) {
                     co.strokeRect(this.gutterLeft + margin, this.gutterTop + this.height - barHeight, this.width - margin - margin, barHeight);
@@ -534,7 +549,7 @@
                                 'tag': 'label.inner'
                                });
             }
-        }
+        };
 
 
 
@@ -542,6 +557,7 @@
         /**
         * The function that draws the tick marks.
         */
+        this.drawTickMarks =
         this.DrawTickMarks = function ()
         {
             co.strokeStyle = prop['chart.tickmarks.color'];
@@ -559,7 +575,7 @@
                     }
                 co.stroke();
             }
-        }
+        };
 
 
 
@@ -567,6 +583,7 @@
         /**
         * The function that draws the labels
         */
+        this.drawLabels =
         this.DrawLabels = function ()
         {
             if (!RG.is_null(prop['chart.labels.specific'])) {
@@ -628,7 +645,7 @@
                                    });
                 }
             }
-        }
+        };
 
 
 
@@ -636,6 +653,7 @@
         /**
         * Draws titles
         */
+        this.drawTitles =
         this.DrawTitles = function ()
         {
             var text_size  = prop['chart.text.size'];
@@ -676,7 +694,7 @@
                                 'tag': 'title.side'
                                });
             }
-        }
+        };
 
 
 
@@ -691,7 +709,7 @@
         {
             var mouseCoords = RG.getMouseXY(e)
     
-            for (var i=0; i<this.coords.length; i++) {
+            for (var i=0,len=this.coords.length; i<len; i++) {
     
                 var mouseCoords = RG.getMouseXY(e);
                 var mouseX = mouseCoords[0];
@@ -715,7 +733,7 @@
                                        'tooltip': tooltip };
                 }
             }
-        }
+        };
 
 
 
@@ -741,7 +759,7 @@
             if (value < this.min) value = this.min;
 
             return value;
-        }
+        };
 
 
 
@@ -751,11 +769,12 @@
         * 
         * @param object shape The shape to highlight
         */
+        this.highlight =
         this.Highlight = function (shape)
         {
             // Add the new highlight
             RG.Highlight.Rect(this, shape);
-        }
+        };
 
 
 
@@ -780,15 +799,17 @@
 
                 return this;
             }
-        }
+        };
 
 
 
 
         /**
         * This function allows the VProgress to be  adjustable.
+        * UPDATE: Not any more
         */
-        this.AllowAdjusting = function () {return;}
+        this.allowAdjusting =
+        this.AllowAdjusting = function () {return;};
 
 
 
@@ -798,6 +819,7 @@
         * 
         * @param object e The event object
         */
+        this.adjusting_mousemove =
         this.Adjusting_mousemove = function (e)
         {
             /**
@@ -808,16 +830,16 @@
                 var mouseXY = RG.getMouseXY(e);
                 var value   = this.getValue(e);
                 
-                if (typeof(value) == 'number') {
+                if (typeof value === 'number') {
     
                     // Fire the onadjust event
                     RG.FireCustomEvent(this, 'onadjust');
         
                     this.value = Number(value.toFixed(prop['chart.scale.decimals']));
-                    RG.Redraw();
+                    RG.RedrawCanvas(this.canvas);
                 }
             }
-        }
+        };
 
 
 
@@ -825,6 +847,7 @@
         /**
         * Draws chart.labels.specific
         */
+        this.drawSpecificLabels =
         this.DrawSpecificLabels = function ()
         {
             var labels = prop['chart.labels.specific'];
@@ -854,7 +877,7 @@
                     }
                 co.fill();
             }
-        }
+        };
 
 
 
@@ -902,7 +925,7 @@
                 img.style.left = ((width * 0.1) - 8.5) + 'px';
     
             // RIGHT edge
-            } else if ((canvasXY[0] + coordX + (coordW / 2) + (width / 2)) > document.body.offsetWidth) {
+            } else if ((canvasXY[0] + coordX + (coordW / 2) + (width / 2)) > doc.body.offsetWidth) {
                 tooltip.style.left = canvasXY[0] + coordX - (width * 0.9) + (coordW / 2) + 'px';
                 img.style.left = ((width * 0.9) - 8.5) + 'px';
     
@@ -911,7 +934,7 @@
                 tooltip.style.left = (canvasXY[0] + coordX + (coordW / 2) - (width * 0.5)) + 'px';
                 img.style.left = ((width * 0.5) - 8.5) + 'px';
             }
-        }
+        };
 
 
 
@@ -933,7 +956,7 @@
             coord = ca.height - coord - prop['chart.gutter.bottom'];
             
             return coord;
-        }
+        };
 
 
 
@@ -958,7 +981,7 @@
             }
     
             return false;
-        }
+        };
 
 
 
@@ -968,12 +991,30 @@
         */
         this.parseColors = function ()
         {
+            // Save the original colors so that they can be restored when the canvas is reset
+            if (this.original_colors.length === 0) {
+                this.original_colors['chart.colors']            = RG.array_clone(prop['chart.colors']);
+                this.original_colors['chart.tickmarks.color']   = RG.array_clone(prop['chart.tickmarks.color']);
+                this.original_colors['chart.strokestyle.inner'] = RG.array_clone(prop['chart.strokestyle.inner']);
+                this.original_colors['chart.strokestyle.outer'] = RG.array_clone(prop['chart.strokestyle.outer']);
+                this.original_colors['chart.highlight.fill']    = RG.array_clone(prop['chart.highlight.fill']);
+                this.original_colors['chart.highlight.stroke']  = RG.array_clone(prop['chart.highlight.stroke']);
+                this.original_colors['chart.highlight.color']   = RG.array_clone(prop['chart.highlight.color']);
+            }
+
             var colors = prop['chart.colors'];
     
-            for (var i=0; i<colors.length; ++i) {
+            for (var i=0,len=colors.length; i<len; ++i) {
                 colors[i] = this.parseSingleColorForGradient(colors[i]);
             }
-        }
+    
+            prop['chart.tickmarks.color']   = this.parseSingleColorForGradient(prop['chart.tickmarks.color']);
+            prop['chart.strokestyle.inner'] = this.parseSingleColorForGradient(prop['chart.strokestyle.inner']);
+            prop['chart.strokestyle.outer'] = this.parseSingleColorForGradient(prop['chart.strokestyle.outer']);
+            prop['chart.highlight.fill']    = this.parseSingleColorForGradient(prop['chart.highlight.fill']);
+            prop['chart.highlight.stroke']  = this.parseSingleColorForGradient(prop['chart.highlight.stroke']);
+            prop['chart.background.color']  = this.parseSingleColorForGradient(prop['chart.background.color']);
+        };
 
 
 
@@ -983,7 +1024,7 @@
         */
         this.parseSingleColorForGradient = function (color)
         {
-            if (!color || typeof(color) != 'string') {
+            if (!color || typeof color != 'string') {
                 return color;
             }
     
@@ -997,7 +1038,7 @@
     
                 grad.addColorStop(0, RG.trim(parts[0]));
     
-                for (var j=1; j<parts.length; ++j) {
+                for (var j=1,len=parts.length; j<len; ++j) {
                     grad.addColorStop(j * diff, RG.trim(parts[j]));
                 }
                 
@@ -1005,7 +1046,7 @@
             }
     
             return grad ? grad : color;
-        }
+        };
 
 
 
@@ -1013,6 +1054,7 @@
         /**
         * Draws the bevel effect
         */
+        this.drawBevel =
         this.DrawBevel = function ()
         {
             // In case of multiple segments - this adds up all the lengths
@@ -1038,7 +1080,7 @@
                 co.stroke();
     
             co.restore();
-        }
+        };
 
 
 
@@ -1065,7 +1107,110 @@
             
             // Reset the linewidth
             co.lineWidth    = 1;
-        }
+        };
+
+
+
+
+        /**
+        * Using a function to add events makes it easier to facilitate method chaining
+        * 
+        * @param string   type The type of even to add
+        * @param function func 
+        */
+        this.on = function (type, func)
+        {
+            if (type.substr(0,2) !== 'on') {
+                type = 'on' + type;
+            }
+            
+            this[type] = func;
+    
+            return this;
+        };
+
+
+
+
+        /**
+        * HProgress Grow effect (which is also the VPogress Grow effect)
+        * 
+        * @param object obj The chart object
+        */
+        this.grow   = function ()
+        {
+            var obj           = this;
+            var canvas        = obj.canvas;
+            var context       = obj.context;
+            var initial_value = obj.currentValue;
+            var opt           = arguments[0] || {};
+            var numFrames     = opt.frames || 30;
+            var frame         = 0
+            var callback      = arguments[1] || function () {};
+    
+            if (typeof obj.value === 'object') {
+    
+                if (RGraph.is_null(obj.currentValue)) {
+                    obj.currentValue = [];
+                    for (var i=0; i<obj.value.length; ++i) {
+                        obj.currentValue[i] = 0;
+                    }
+                }
+    
+                var diff      = [];
+                var increment = [];
+    
+                for (var i=0; i<obj.value.length; ++i) {
+                    diff[i]      = obj.value[i] - Number(obj.currentValue[i]);
+                    increment[i] = diff[i] / numFrames;
+                }
+                
+                if (initial_value == null) {
+                    initial_value = [];
+                    for (var i=0; i< obj.value.length; ++i) {
+                        initial_value[i] = 0;
+                    }
+                }
+    
+            } else {
+    
+                var diff = obj.value - Number(obj.currentValue);
+                var increment = diff  / numFrames;
+            }
+
+
+
+
+
+
+            function iterator ()
+            {
+                frame++;
+    
+                if (frame <= numFrames) {
+    
+                    if (typeof obj.value == 'object') {
+                        obj.value = [];
+                        for (var i=0; i<initial_value.length; ++i) {
+                            obj.value[i] = initial_value[i] + (increment[i] * frame);
+                        }
+                    } else {
+                        obj.value = initial_value + (increment * frame);
+                    }
+    
+                    RGraph.clear(obj.canvas);
+                    RGraph.redrawCanvas(obj.canvas);
+                    
+                    RGraph.Effects.updateCanvas(iterator);
+                } else {
+                    callback();
+                }
+            }
+            
+            iterator();
+            
+            return this;
+        };
 
 
 
@@ -1074,4 +1219,6 @@
         * The chart is now always registered
         */
         RG.Register(this);
-    }
+    };
+// version: 2014-03-28
+

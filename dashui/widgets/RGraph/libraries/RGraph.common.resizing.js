@@ -1,31 +1,43 @@
     /**
-    * o-------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free software, licensed    |
-    * | under the MIT license - so it's free to use for all purposes. Extended        |
-    * | support is available if required and donations are always welcome! You can    |
-    * | read more here:                                                               |
-    * |                         http://www.rgraph.net/support                         |
-    * o-------------------------------------------------------------------------------o
+    * o--------------------------------------------------------------------------------o
+    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
+    * | under the MIT license - so it's free to use for all purposes. If you want to   |
+    * | donate to help keep the project going then you can do so here:                 |
+    * |                                                                                |
+    * |                             http://www.rgraph.net/donate                       |
+    * o--------------------------------------------------------------------------------o
     */
+    RGraph = window.RGraph || {isRGraph: true};
 
-    if (typeof(RGraph) == 'undefined') RGraph = {isRGraph:true,type:'common'};
+// Module pattern
+(function (win, doc, undefined)
+{
+    var RG  = RGraph,
+        ua  = navigator.userAgent,
+        ma  = Math;
 
-
-    /**
-    * This is an array of CSS properties that should be preserved when adding theplaceholder DIV
-    */
-    __rgraph_resizing_preserve_css_properties__ = [];
 
     /**
     * This function can be used to allow resizing
     * 
     * @param object obj Your graph object
     */
+    RGraph.allowResizing =
     RGraph.AllowResizing = function (obj)
     {
         if (obj.Get('chart.resizable')) {
+        
+            /**
+            * Turn off the drawing caache
+            */
+            var objects = RG.ObjectRegistry.getObjectsByCanvasID(obj.canvas.id);
+            for (var i=0,len=objects.length; i<len; ++i) {
+                objects[i].Set('drawingcache', false);
+            }
+
             var canvas  = obj.canvas;
             var context = obj.context;
+
             var resizeHandle = 15;
             RGraph.Resizing.canvas = canvas;
             RGraph.Resizing.placeHolders = [];
@@ -208,7 +220,11 @@
                     canvas.style.left            = (RGraph.Resizing.originalCanvasX  - 1) + 'px';
                     canvas.style.top             = (RGraph.Resizing.originalCanvasY - 1) + 'px';
 
-                    canvas.width = parseInt(div.style.width);
+
+                    /**
+                    * Set the dimensions of the canvas using the HTML attributes
+                    */
+                    canvas.width  = parseInt(div.style.width);
                     canvas.height = parseInt(div.style.height);
 
 
@@ -216,8 +232,8 @@
                     * Because resizing the canvas resets any tranformation - the antialias fix needs to be reapplied.
                     */
                     canvas.getContext('2d').translate(0.5,0.5);
-                    
-                    
+
+
                     /**
                     * Reset the gradient parsing status by setting all of the color values back to their original
                     * values before Draw was first called
@@ -258,6 +274,7 @@
 
 
             var window_onmouseup = MouseupFunc;
+            
             // Install the function as an event listener - but only once
             if (typeof(canvas.rgraph_resize_window_mouseup_listener_installed) != 'boolean') {
                 window.addEventListener('mouseup', window_onmouseup, false);
@@ -302,7 +319,7 @@
                         canvas.style.cursor = 'default';
                     }
                 }
-            }
+            };
             // Install the function as an event listener - but only once
             if (typeof(canvas.rgraph_resize_mousemove_listener_installed) != 'boolean') {
                 canvas.addEventListener('mousemove', canvas_onmousemove, false);
@@ -315,7 +332,8 @@
             {
                 e.target.style.cursor = 'default';
                 e.target.title        = '';
-            }
+            };
+
             // Install the function as an event listener - but only once
             if (typeof(canvas.rgraph_resize_mouseout_listener_installed) != 'boolean') {
                 canvas.addEventListener('mouseout', canvas_onmouseout, false);
@@ -438,12 +456,24 @@
                     for (var i=0; i<objects.length; i+=1) {
                         RGraph.resetColorsToOriginalValues(objects[i]);
                     }
-                    
-                    
-                    // Redraw the canvas
+
+
+
+                    /**
+                    * Clear the drawing cache
+                    */
+                    obj.drawingCache = [];
+
+
+
+                    /**
+                    * Redraw the canvas
+                    */
                     RGraph.Redraw();
                     
-                    // Set the width and height on the DIV
+                    /**
+                    * Set the width and height on the DIV
+                    */
                     if (RGraph.Resizing.div) {
                         RGraph.Resizing.div.style.width  = canvas.__original_width__ + 'px';
                         RGraph.Resizing.div.style.height = canvas.__original_height__ + 'px';
@@ -455,7 +485,8 @@
                     RGraph.FireCustomEvent(canvas.__object__, 'onresize');
                     RGraph.FireCustomEvent(canvas.__object__, 'onresizeend');
                 }
-            }
+            };
+
             // Install the function as an event listener - but only once
             if (typeof(canvas.rgraph_resize_mousedown_listener_installed) != 'boolean') {
                 canvas.addEventListener('mousedown', canvas_onmousedown, false);
@@ -507,4 +538,12 @@
             }
             */
         }
-    }
+    };
+
+
+
+
+// End module pattern
+})(window, document);
+// version: 2014-03-28
+
