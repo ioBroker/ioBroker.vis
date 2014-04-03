@@ -35,7 +35,7 @@ var dui = {
     activeView:             "",
     widgetSets:             duiConfig.widgetSets,
     words:                  null,
-    language:               ccuIoLang || 'en',
+    language:               (typeof ccuIoLang === 'undefined') ? 'en': (ccuIoLang || 'en'),
     initialized:            false,
     useCache:               true,
     binds:                  {},
@@ -118,9 +118,16 @@ var dui = {
         }
         dui.toLoadSetsCount = arrSets.length;
 
-        for (var i = 0, len = dui.toLoadSetsCount; i < len; i++) {
-            _setTimeout (dui.loadWidgetSet, 100, arrSets[i], callback);
+        if (dui.toLoadSetsCount) {
+            for(var i = 0, len = dui.toLoadSetsCount; i < len; i++) {
+                _setTimeout (dui.loadWidgetSet, 100, arrSets[i], callback);
+            }
+        } else {
+            if (callback) {
+                callback();
+            }
         }
+
     },
     bindInstance: function () {
 
@@ -1329,7 +1336,17 @@ var servConn = {
         {
             this._type = 1;
             if (typeof io != "undefined") {
-                this._socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host')+"?key="+socketSession);
+                if (typeof socketSession == 'undefined') {
+                    socketSession = 'nokey';
+                }
+                var url;
+                if (duiConfig.connLink) {
+                    url = duiConfig.connLink;
+                } else {
+                    url = $(location).attr('protocol') + '//' + $(location).attr('host');
+                }
+
+                this._socket = io.connect(url+'?key='+socketSession);
                 this._socket._myParent = this;
 
                 this._socket.on('connect', function () {
@@ -1383,7 +1400,12 @@ var servConn = {
         if (type == 2 || type == "local")
         {
             this._type = 2;
-        }
+
+            this._isConnected = true;
+            if (this._connCallbacks.onConnChange){
+                this._connCallbacks.onConnChange (this._isConnected);
+            }
+       }
     },
     getVersion: function (callback) {
         //SignalR
@@ -1422,17 +1444,23 @@ var servConn = {
         if (this._type == 2) {
             // Load from ../datastore/dashui-views.json the demo views
             $.ajax({
-                url: "../datastore/"+filename,
-                type: "get",
+                url: '../datastore/' + filename,
+                type: 'get',
                 async: false,
-                dataType: "text",
+                dataType: 'text',
                 cache: dui.useCache,
                 success: function (data) {
                     dui.views = $.parseJSON(data);
-                    callback (callbackArg);
+                    if (typeof dui.views == "string") {
+                        dui.views = $.parseJSON(dui.views);
+                    }
+                    callback (dui.views);
                     if (!dui.views) {
                         alert("No Views found on Server");
                     }
+                },
+                error: function (state) {
+                    window.alert('Cannot get '+ location.href+'datastore/'+filename + '\n' + state.statusText);
                 }
             });
         }
