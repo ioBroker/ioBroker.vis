@@ -79,7 +79,7 @@
         if (!dui.binds.RGraph) {
             dui.binds.RGraph = true;
             dui.registerOnChange (onchangeRGraph, null);
-            console.log("A");
+            //console.log("A");
         }
     }
 
@@ -210,7 +210,7 @@
             t.colorsParsed = false;
             t.properties['chart.colors'] = ["Gradient("+color+")"];
         }
-        console.log("B");
+        //console.log("B");
         if (this.data.attr("show_scale")) {
             t.Set('scale.visible', true);
         }
@@ -690,7 +690,7 @@
         var can  = document.getElementById ('c'+wid);
 
         var arr = [];
-        console.log("test");
+        //console.log("test");
         if (!oldValues) {
             // Pre-pad the arrays with "pointsCount" null values
             for (var i = 0, len = IDs.length; i < len; i++) {
@@ -856,7 +856,7 @@
 </script>
 <script type="text/ejs" id="tplRBarChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="BarChart" data-dashui-attrs="hm_id(1-8)/id;name(1-8);filled_color[black]/color;empty_color[white]/color;label_color[black]/color;max_value(1-8);factor[1];value_offset[0];update_interval[0]/slider,0,20000,100;title;legend/checkbox;filled_text[Level];empty_text[Empty];labels_above[true]/checkbox;label_size[12]/slider,1,40,1;labels_above_angle/checkbox;decimals[2]/slider,0,10,1;shadow/checkbox;gutter_left[45]/slider,0,200,1;horz_margin[15]/slider,0,200,1;bar_labels_color[black]/color;bar_labels_bold/checkbox;bar_labels_center/checkbox;num_hlines/slider,0,20,1">
     <%
-        console.log ("tplRBarChart");
+        //console.log ("tplRBarChart");
         var wid = this.data.attr('wid')
 
         var factor = this.data.attr('factor') || 1;
