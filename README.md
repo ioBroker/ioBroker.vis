@@ -13,8 +13,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Bluefox) Remove js files provided by ccu.io/www/lib
 * (Bluefox) Fix saveRemote function
 * (Bluefox) Fix small syntax errors
+* (Bluefox) Add connection parameter to config.js
+* (Bluefox) Make offline mode passable
 * (Hobbyquaker) Fix initInstance() call
-* (Hobbyquaker) Fix Widget "lcars - worpcore", "lcars - dna" in Firefox
+* (Hobbyquaker) Fix Widget "lcars - warpcore", "lcars - dna" in Firefox
 * (Hobbyquaker) Fix diverse Widgets lcars default Attribute
 
 ### 0.9beta64
