@@ -21,18 +21,10 @@
 
     <script src="../lib/js/jquery-1.11.0.min.js"></script>
     <script src="../auth/auth.js" type="text/javascript"></script>
-    <!-- remove comments if socket.io used for communication -->
-    <script src="../socket.io/socket.io.js"></script>
-    <!-- remove comments if signalR used for communication -->
-    <!--script src="../lib/js/jquery.signalR-2.0.2.js"></script><script src="/signalr/hubs"></script-->
 
     <script type="text/javascript" src="../lib/js/can-1.1.4.jquery.min.js"></script>
     <script type="text/javascript" src="../lib/js/loStorage.js"></script>
     <script type="text/javascript" src="../lib/js/jquery.base64.min.js"></script>
-
-
-    <!--script src="http://raspberrypi:2100/socket.io/socket.io.js"></script-->
-
 
     <script type="text/javascript" src="../lib/js/jquery-ui-1.10.3.full.min.js"></script>
     <script type="text/javascript" src="../lib/js/jquery.ui.touch-punch.min.js"></script>
@@ -42,18 +34,31 @@
     <script type="text/javascript" src="../lib/js/jqGrid/jquery.jqGrid-4.5.4.min.js"></script>
     <script type="text/javascript" src="../lang/lang.js"></script>
     <script type="text/javascript">
-        if (ccuIoLang == 'de') {
-            document.write ("<script type='text/javascript' src='../lib/js/jqGrid/i18n/grid.locale-de.js'>"+"</scr"+"ipt>\n");
-        }
-        else
-        if (ccuIoLang == 'ru') {
-            document.write ("<script type='text/javascript' src='../lib/js/jqGrid/i18n/grid.locale-ru.js'>"+"</scr"+"ipt>\n");
-        }
-        else {
-            document.write ("<script type='text/javascript' src='../lib/js/jqGrid/i18n/grid.locale-en.js'>"+"</scr"+"ipt>\n");
-        }
+        if (typeof ccuIoLang !== 'undefined') {
+			if (ccuIoLang == 'de') {
+				document.write ("<script type='text/javascript' src='../lib/js/jqGrid/i18n/grid.locale-de.js'>"+"</scr"+"ipt>\n");
+			}
+			else
+			if (ccuIoLang == 'ru') {
+				document.write ("<script type='text/javascript' src='../lib/js/jqGrid/i18n/grid.locale-ru.js'>"+"</scr"+"ipt>\n");
+			}
+			else {
+				document.write ("<script type='text/javascript' src='../lib/js/jqGrid/i18n/grid.locale-en.js'>"+"</scr"+"ipt>\n");
+			}
+		}
+		else {
+			document.write ("<script type='text/javascript' src='../lib/js/jqGrid/i18n/grid.locale-en.js'>"+"</scr"+"ipt>\n");
+		}
     </script>
+
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before dashui.js -->
+    <!-- Communication part -->
+    <script src="../auth/auth.js" type="text/javascript"></script>
+    <!-- remove comments if socket.io used for communication -->
+    <script type="text/javascript">document.write ('<script src="'+(duiConfig.connLink||'')+'/socket.io/socket.io.js">'+'</scr'+'ipt>\n')</script>
+    <!-- remove comments if signalR used for communication -->
+    <!--script src="../lib/js/jquery.signalR-2.0.2.js"></script><script type="text/javascript">document.write ('<script type="text/javascript" src="'+duiConfig.connLink+'/signalr/hubs">'+'</scr'+'ipt>\n');</script-->
+
     <script type="text/javascript" src="js/dashui.js"></script>
 
 </head>

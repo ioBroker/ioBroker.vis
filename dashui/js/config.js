@@ -26,6 +26,7 @@ var duiConfig = {
         "jqui-mfd": ["basic", "jqui"],
         "lcars":    ["basic"]
     },
-    currentLang:        "de"
+    currentLang:        "de",
+	connLink: ""
 
 };

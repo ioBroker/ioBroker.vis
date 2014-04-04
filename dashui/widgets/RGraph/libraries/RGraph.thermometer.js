@@ -1,14 +1,16 @@
     /**
-    * o-------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free software, licensed    |
-    * | under the MIT license - so it's free to use for all purposes. Extended        |
-    * | support is available if required and donations are always welcome! You can    |
-    * | read more here:                                                               |
-    * |                         http://www.rgraph.net/support                         |
-    * o-------------------------------------------------------------------------------o
+    * o--------------------------------------------------------------------------------o
+    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
+    * | under the MIT license - so it's free to use for all purposes. If you want to   |
+    * | donate to help keep the project going then you can do so here:                 |
+    * |                                                                                |
+    * |                             http://www.rgraph.net/donate                       |
+    * o--------------------------------------------------------------------------------o
     */
+    RGraph = window.RGraph || {isRGraph: true};
 
-    if (typeof(RGraph) == 'undefined') RGraph = {};
+
+
 
     /**
     * The chart constructor. This function sets up the object. It takes the ID (the HTML attribute) of the canvas as the
@@ -23,8 +25,11 @@
     */
     RGraph.Thermometer = function (id, min, max, value)
     {
-        this.id                = id;
-        this.canvas            = document.getElementById(typeof id === 'object' ? id.id : id);
+        var tmp = RGraph.getCanvasTag(id);
+
+        // Get the canvas and context objects
+        this.id                = tmp[0];
+        this.canvas            = tmp[1];
         this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
         this.canvas.__object__ = this;
         this.uid               = RGraph.CreateUID();
@@ -43,11 +48,13 @@
         this.bulbTopCenterX    = 0
         this.bulbTopCenterY    = 0;
         this.coordsText        = [];
+        this.original_colors   = [];
 
-        RGraph.OldBrowserCompat(this.context);
+        //RGraph.OldBrowserCompat(this.context);
 
 
-        this.properties = {
+        this.properties =
+        {
             'chart.colors':                 ['Gradient(#c00:red:#f66:#fcc)'],
             'chart.gutter.left':            15,
             'chart.gutter.right':           15,
@@ -89,6 +96,7 @@
             'chart.scale.decimals':         0,
             'chart.annotatable':            false,
             'chart.annotate.color':         'black',
+            'chart.scale.decimals':         0,
             'chart.scale.point':            '.',
             'chart.scale.thousand':         ',',
             'chart.tooltips':               null,
@@ -96,8 +104,7 @@
             'chart.tooltips.effect':        'fade',
             'chart.tooltips.event':         'onclick',
             'chart.highlight.stroke':       'rgba(0,0,0,0)',
-            'chart.highlight.fill':         'rgba(255,255,255,0.7)',
-            'chart.width':                  null
+            'chart.highlight.fill':         'rgba(255,255,255,0.7)'
         }
 
 
@@ -129,22 +136,25 @@
 
 
 
-        ///////////////////////////////// SHORT PROPERTIES /////////////////////////////////
-
-
-
-
-        var RG   = RGraph;
-        var ca   = this.canvas;
-        var co   = ca.getContext('2d');
-        var prop = this.properties;
-        var ca_width = prop['chart.width'] || ca.width;
-        //var $jq  = jQuery;
-
-
-
-
-        //////////////////////////////////// METHODS ///////////////////////////////////////
+        // Short variable names
+        var RG    = RGraph;
+        var ca    = this.canvas;
+        var co    = ca.getContext('2d');
+        var prop  = this.properties;
+        var jq    = jQuery;
+        var pa    = RG.Path;
+        var win   = window;
+        var doc   = document;
+        var ma    = Math;
+        
+        
+        
+        /**
+        * "Decorate" the object with the generic effects if the effects library has been included
+        */
+        if (RG.Effects && typeof RG.Effects.decorate === 'function') {
+            RG.Effects.decorate(this);
+        }
 
 
 
@@ -155,6 +165,7 @@
         * @param name  string The name of the property to set
         * @param value mixed  The value of the property
         */
+        this.set =
         this.Set = function (name, value)
         {
             /**
@@ -172,10 +183,9 @@
             }
             
             prop[name.toLowerCase()] = value;
-            ca_width = prop['chart.width'] || ca.width;
     
             return this;
-        }
+        };
 
 
 
@@ -185,6 +195,7 @@
         * 
         * @param name  string The name of the property to get
         */
+        this.get =
         this.Get = function (name)
         {
             /**
@@ -195,14 +206,15 @@
             }
     
             return prop[name];
-        }
-    
-    
-    
-    
+        };
+
+
+
+
         /**
         * Draws the thermometer
         */
+        this.draw =
         this.Draw = function ()
         {
             /**
@@ -324,7 +336,7 @@
             RG.FireCustomEvent(this, 'ondraw');
 
             return this;
-        }
+        };
     
     
     
@@ -333,12 +345,13 @@
         /**
         * Draws the thermometer itself
         */
+        this.drawBackground =
         this.DrawBackground = function ()
         {
-            var bulbRadius = (ca_width - this.gutterLeft - this.gutterRight) / 2;
+            var bulbRadius = (ca.width - this.gutterLeft - this.gutterRight) / 2;
             
             // This is the radius/x/y of the top "semi-circle"
-            this.bulbTopRadius  = (ca_width - this.gutterLeft - this.gutterRight - 24)/ 2
+            this.bulbTopRadius  = (ca.width - this.gutterLeft - this.gutterRight - 24)/ 2
             this.bulbTopCenterX = this.gutterLeft + bulbRadius;
             this.bulbTopCenterY = this.gutterTop + bulbRadius;
     
@@ -357,21 +370,14 @@
                 if (prop['chart.shadow']) {
                     RG.SetShadow(this, prop['chart.shadow.color'], prop['chart.shadow.offsetx'], prop['chart.shadow.offsety'], prop['chart.shadow.blur']);
                 }
-    
-                co.fillRect(this.gutterLeft + 12,this.gutterTop + bulbRadius,ca_width - this.gutterLeft - this.gutterRight - 24, ca.height - this.gutterTop - this.gutterBottom - bulbRadius - bulbRadius);
 
-                try {
-                    // Bottom bulb
-                    co.arc(this.bulbBottomCenterX, this.bulbBottomCenterY, bulbRadius, 0, TWOPI, 0);
-
-                    // Top bulb (which is actually a semi-circle)
-                    co.arc(this.bulbTopCenterX,this.bulbTopCenterY,this.bulbTopRadius,0,TWOPI,0);
-                }
-                catch (e)
-                {
-
-                }
-
+                co.fillRect(this.gutterLeft + 12,this.gutterTop + bulbRadius,ca.width - this.gutterLeft - this.gutterRight - 24, ca.height - this.gutterTop - this.gutterBottom - bulbRadius - bulbRadius);
+                
+                // Bottom bulb
+                co.arc(this.bulbBottomCenterX, this.bulbBottomCenterY, bulbRadius, 0, RG.TWOPI, 0);
+                
+                // Top bulb (which is actually a semi-circle)
+                co.arc(this.bulbTopCenterX,this.bulbTopCenterY,this.bulbTopRadius,0,RG.TWOPI,0);
             co.fill();
             
             // Save the radius of the top semi circle
@@ -382,25 +388,25 @@
             // Draw the white inner content background that creates the border
             co.beginPath();
                 co.fillStyle = 'white';
-                co.fillRect(this.gutterLeft + 12 + 1,this.gutterTop + bulbRadius,ca_width - this.gutterLeft - this.gutterRight - 24 - 2,ca.height - this.gutterTop - this.gutterBottom - bulbRadius - bulbRadius);
-                co.arc(this.gutterLeft + bulbRadius, ca.height - this.gutterBottom - bulbRadius, bulbRadius - 1, 0, TWOPI, 0);
-                co.arc(this.gutterLeft + bulbRadius,this.gutterTop + bulbRadius,((ca_width - this.gutterLeft - this.gutterRight - 24)/ 2) - 1,0,TWOPI,0);
+                co.fillRect(this.gutterLeft + 12 + 1,this.gutterTop + bulbRadius,ca.width - this.gutterLeft - this.gutterRight - 24 - 2,ca.height - this.gutterTop - this.gutterBottom - bulbRadius - bulbRadius);
+                co.arc(this.gutterLeft + bulbRadius, ca.height - this.gutterBottom - bulbRadius, bulbRadius - 1, 0, RG.TWOPI, 0);
+                co.arc(this.gutterLeft + bulbRadius,this.gutterTop + bulbRadius,((ca.width - this.gutterLeft - this.gutterRight - 24)/ 2) - 1,0,RG.TWOPI,0);
             co.fill();
     
             // Draw the bottom content of the thermometer
             co.beginPath();
                 co.fillStyle = prop['chart.colors'][0];
-                co.arc(this.gutterLeft + bulbRadius, ca.height - this.gutterBottom - bulbRadius, bulbRadius - 1, 0, TWOPI, 0);
-                co.rect(this.gutterLeft + 12 + 1, ca.height - this.gutterBottom - bulbRadius - bulbRadius,ca_width - this.gutterLeft - this.gutterRight - 24 - 2, bulbRadius);
+                co.arc(this.gutterLeft + bulbRadius, ca.height - this.gutterBottom - bulbRadius, bulbRadius - 1, 0, RG.TWOPI, 0);
+                co.rect(this.gutterLeft + 12 + 1, ca.height - this.gutterBottom - bulbRadius - bulbRadius,ca.width - this.gutterLeft - this.gutterRight - 24 - 2, bulbRadius);
             co.fill();
 
 
             // Save the X/Y/width/height
             this.graphArea[0] = this.gutterLeft + 12 + 1;
             this.graphArea[1] = this.gutterTop + bulbRadius;
-            this.graphArea[2] = ca_width - this.gutterLeft - this.gutterRight - 24 - 2;
+            this.graphArea[2] = ca.width - this.gutterLeft - this.gutterRight - 24 - 2;
             this.graphArea[3] = (ca.height - this.gutterBottom - bulbRadius - bulbRadius) - (this.graphArea[1]);
-        }
+        };
 
 
     
@@ -408,6 +414,7 @@
         /**
         * This draws the bar that indicates the value of the thermometer
         */
+        this.drawBar =
         this.DrawBar = function ()
         {
             var barHeight = ((this.value - this.min) / (this.max - this.min)) * this.graphArea[3];
@@ -417,8 +424,8 @@
                 co.fillStyle = prop['chart.colors'][0];
                 
                 // This solves an issue with ExCanvas showing a whiite cutout in the chart
-                if (ISOLD) {
-                    co.arc(this.bulbBottomCenterX, this.bulbBottomCenterY, this.bulbBottomRadius - 1, 0, TWOPI, false)
+                if (RGraph.ISOLD) {
+                    co.arc(this.bulbBottomCenterX, this.bulbBottomCenterY, this.bulbBottomRadius - 1, 0, RG.TWOPI, false)
                 }
 
 
@@ -429,7 +436,7 @@
             co.fill();
             
             this.coords[0] = [this.graphArea[0],this.graphArea[1] + this.graphArea[3] - barHeight,this.graphArea[2],barHeight];
-        }
+        };
 
 
 
@@ -437,6 +444,7 @@
         /**
         * Draws the tickmarks of the thermometer
         */
+        this.drawTickMarks =
         this.DrawTickMarks = function ()
         {
             co.strokeStyle = 'black'
@@ -453,11 +461,11 @@
             // Right hand side tickmarks
                 co.beginPath();
                     for (var i=this.graphArea[1]; i<=(this.graphArea[1] + this.graphArea[3]); i += (this.graphArea[3] / 10)) {
-                        co.moveTo(ca_width - (this.gutterRight + 12), Math.round(i));
-                        co.lineTo(ca_width - (this.gutterRight + 12 + ticksize), Math.round(i));
+                        co.moveTo(ca.width - (this.gutterRight + 12), Math.round(i));
+                        co.lineTo(ca.width - (this.gutterRight + 12 + ticksize), Math.round(i));
                     }
                 co.stroke();
-        }
+        };
 
 
 
@@ -466,6 +474,7 @@
         * Draws the labels of the thermometer. Now (4th August 2011) draws
         * the scale too
         */
+        this.drawLabels =
         this.DrawLabels = function ()
         {
             /**
@@ -505,7 +514,7 @@
             if (prop['chart.scale.visible']) {
                 this.DrawScale();
             }
-        }
+        };
 
 
 
@@ -513,12 +522,13 @@
         /**
         * Draws the title
         */
+        this.drawTitle =
         this.DrawTitle = function ()
         {
             co.fillStyle = prop['chart.text.color'];
                 RG.Text2(this, {'font': prop['chart.text.font'],
                                 'size': prop['chart.text.size'] + 2,
-                                'x':this.gutterLeft + ((ca_width - this.gutterLeft - this.gutterRight) / 2),
+                                'x':this.gutterLeft + ((ca.width - this.gutterLeft - this.gutterRight) / 2),
                                 'y': this.gutterTop,
                                 'text': String(prop['chart.title']),
                                 'valign':'center',
@@ -526,7 +536,7 @@
                                 'bold':true,
                                 'tag': 'title'
                                });
-        }
+        };
 
 
 
@@ -534,6 +544,7 @@
         /**
         * Draws the title
         */
+        this.drawSideTitle =
         this.DrawSideTitle = function ()
         {
             var font = prop['chart.title.side.font'] ? prop['chart.title.side.font'] : prop['chart.text.font'];
@@ -551,7 +562,7 @@
                             'bold':prop['chart.title.side.bold'],
                             'tag': 'title.side'
                            });
-        }
+        };
 
 
 
@@ -559,6 +570,7 @@
         /**
         * Draw the scale if requested
         */
+        this.drawScale =
         this.DrawScale = function ()
         {
             var numLabels = prop['chart.labels.count']; // The -1 is so that  the number of labels tallies with what is displayed
@@ -574,7 +586,7 @@
     
             for (var i=1; i<=numLabels; ++i) {
     
-                var x          = ca_width - this.gutterRight;
+                var x          = ca.width - this.gutterRight;
                 var y          = ca.height - this.gutterBottom - (2 * this.bulbRadius) - ((this.graphArea[3] / numLabels) * i);
                 var text       = RG.number_format(this, String((this.min + (i * step)).toFixed(decimals)), units_pre, units_post);
     
@@ -597,7 +609,7 @@
                             'valign':'center',
                             'tag': 'scale'
                            });
-        }
+        };
 
 
 
@@ -640,7 +652,7 @@
             }
             
             return null;
-        }
+        };
 
 
 
@@ -672,7 +684,7 @@
             value = Math.min(value, this.max);
     
             return value;
-        }
+        };
 
 
 
@@ -682,6 +694,7 @@
         * 
         * @param object shape The shape to highlight
         */
+        this.highlight =
         this.Highlight = function (shape)
         {
             if (prop['chart.tooltips.highlight']) {
@@ -693,11 +706,11 @@
                     co.strokeStyle = prop['chart.highlight.stroke'];
                     co.fillStyle   = prop['chart.highlight.fill'];
                     co.rect(shape['x'],shape['y'],shape['width'],shape['height'] + this.bulbBottomRadius);
-                    co.arc(this.bulbBottomCenterX, this.bulbBottomCenterY, this.bulbBottomRadius - 1, 0, TWOPI, false);
+                    co.arc(this.bulbBottomCenterX, this.bulbBottomCenterY, this.bulbBottomRadius - 1, 0, RG.TWOPI, false);
                 co.stroke;
                 co.fill();
             }
-        }
+        };
 
 
 
@@ -715,14 +728,14 @@
     
             if (
                    mouseXY[0] > this.gutterLeft
-                && mouseXY[0] < (ca_width - this.gutterRight)
+                && mouseXY[0] < (ca.width - this.gutterRight)
                 && mouseXY[1] >= this.gutterTop
                 && mouseXY[1] <= (ca.height - this.gutterBottom)
                 ) {
     
                 return this;
             }
-        }
+        };
 
 
 
@@ -732,6 +745,7 @@
         * 
         * @param object e The event object
         */
+        this.adjusting_mousemove =
         this.Adjusting_mousemove = function (e)
         {
             /**
@@ -749,10 +763,10 @@
     
                     this.value = Number(value.toFixed(prop['chart.scale.decimals']));
     
-                    RG.RedrawCanvas(ca);
+                    RG.redrawCanvas(ca);
                 }
             }
-        }
+        };
 
 
 
@@ -783,7 +797,7 @@
             
             // By default any overflow is hidden
             tooltip.style.overflow = '';
-    
+
             // The arrow
             var img = new Image();
                 img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAFCAYAAACjKgd3AAAARUlEQVQYV2NkQAN79+797+RkhC4M5+/bd47B2dmZEVkBCgcmgcsgbAaA9GA1BCSBbhAuA/AagmwQPgMIGgIzCD0M0AMMAEFVIAa6UQgcAAAAAElFTkSuQmCC';
@@ -800,7 +814,7 @@
                 img.style.left = ((width * 0.1) - 8.5) + 'px';
     
             // RIGHT edge
-            } else if ((canvasXY[0] + coordX + (width / 2)) > document.body.offsetWidth) {
+            } else if ((canvasXY[0] + coordX + (width / 2)) > doc.body.offsetWidth) {
                 tooltip.style.left = canvasXY[0] + coordX - (width * 0.9) + (coordW / 2) + 'px';
                 img.style.left = ((width * 0.9) - 8.5) + 'px';
     
@@ -809,7 +823,7 @@
                 tooltip.style.left = (canvasXY[0] + coordX + (coordW / 2) - (width * 0.5)) + 'px';
                 img.style.left = ((width * 0.5) - 8.5) + 'px';
             }
-        }
+        };
 
 
 
@@ -828,7 +842,7 @@
             var y = (this.graphArea[1] + this.graphArea[3]) - (((value - this.min) / (this.max - this.min)) * this.graphArea[3]);
     
             return y;
-        }
+        };
 
 
 
@@ -865,7 +879,7 @@
             }
     
             return false;
-        }
+        };
 
 
 
@@ -875,12 +889,21 @@
         */
         this.parseColors = function ()
         {
+            // Save the original colors so that they can be restored when the canvas is reset
+            if (this.original_colors.length === 0) {
+                this.original_colors['chart.colors'] = RG.array_clone(prop['chart.colors']);
+            }
+
+
+
+
+
             var colors = prop['chart.colors'];
     
             for (var i=0; i<colors.length; ++i) {
                 colors[i] = this.parseSingleColorForGradient(colors[i]);
             }
-        }
+        };
 
 
 
@@ -890,40 +913,96 @@
         */
         this.parseSingleColorForGradient = function (color)
         {
-            if (!color || typeof(color) != 'string') {
+            if (!color) {
                 return color;
             }
     
-            if (color.match(/^gradient\((.*)\)$/i)) {
+            if (typeof color === 'string' && color.match(/^gradient\((.*)\)$/i)) {
                 
                 var parts = RegExp.$1.split(':');
     
                 // Create the gradient
-                var grad = co.createLinearGradient(prop['chart.gutter.left'], 0, ca_width - prop['chart.gutter.right'],0);
+                var grad = co.createLinearGradient(prop['chart.gutter.left'], 0, ca.width - prop['chart.gutter.right'],0);
     
                 var diff = 1 / (parts.length - 1);
-
-                try {
-                    grad.addColorStop(0, RG.trim(parts[0]));
-                }
-                catch(e)
-                {
-                    console.log (e);
-                }
+    
+                grad.addColorStop(0, RG.trim(parts[0]));
 
                 for (var j=1; j<parts.length; ++j) {
-                    try {
-                        grad.addColorStop(j * diff, RG.trim(parts[j]));
-                    }
-                    catch(e)
-                    {
-                        console.log (e);
-                    }
+                    grad.addColorStop(j * diff, RG.trim(parts[j]));
                 }
             }
                 
             return grad ? grad : color;
-        }
+        };
+
+
+
+
+        /**
+        * Using a function to add events makes it easier to facilitate method chaining
+        * 
+        * @param string   type The type of even to add
+        * @param function func 
+        */
+        this.on = function (type, func)
+        {
+            if (type.substr(0,2) !== 'on') {
+                type = 'on' + type;
+            }
+            
+            this[type] = func;
+    
+            return this;
+        };
+
+
+
+
+        /**
+        * Gauge Grow
+        * 
+        * This effect gradually increases the represented value
+        * 
+        * @param object   obj The chart object
+        * @param              Not used - pass null
+        * @param function     An optional callback function
+        */
+        this.grow = function ()
+        {
+            var obj       = this;
+            var callback  = arguments[1] || function () {};
+            var opt       = arguments[0] || {};
+            var frames    = opt.frames ? opt.frames : 30;
+            var origValue = Number(obj.currentValue);
+            var newValue  = obj.value;            
+                newValue = ma.min(newValue, this.max);
+                newValue = ma.max(newValue, this.min);
+            var diff      = newValue - origValue;
+            var step      = (diff / frames);
+            var frame     = 0;
+            
+
+            function iterate ()
+            {
+                // Set the new value
+                obj.value = (step * frame) + origValue;
+
+                RGraph.clear(obj.canvas);
+                RGraph.redrawCanvas(obj.canvas);
+    
+                if (frame < frames) {
+                    frame++;
+                    RGraph.Effects.updateCanvas(iterate);
+                } else {
+                    callback(obj);
+                }
+            }
+    
+            iterate();
+            
+            return this;
+        };
 
 
 
@@ -932,4 +1011,6 @@
         * Now, because canvases can support multiple charts, canvases must always be registered
         */
         RG.Register(this);
-    }
+    };
+// version: 2014-03-28
+

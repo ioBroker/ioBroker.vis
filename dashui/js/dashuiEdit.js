@@ -1202,7 +1202,7 @@ dui = $.extend(true, dui, {
         $("#tabs").tabs();
         $("#widget_helper").hide();
 
-        $("#language [value='"+(ccuIoLang || 'en')+"']").attr("selected", "selected");
+        $("#language [value='"+ ((typeof ccuIoLang === 'undefined') ? 'en' : (ccuIoLang || 'en'))+"']").attr("selected", "selected");
 
         $("#language").change(function () {
             dui.language = $(this).val();
@@ -1816,6 +1816,6 @@ dui = $.extend(true, dui, {
 });
 
 $(document).ready(function () {
-    dui.translateAll (ccuIoLang);
+    dui.translateAll ((typeof ccuIoLang === 'undefined') ? 'en' : (ccuIoLang || 'en'));
 });
 

@@ -1,14 +1,16 @@
     /**
-    * o-------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free software, licensed    |
-    * | under the MIT license - so it's free to use for all purposes. Extended        |
-    * | support is available if required and donations are always welcome! You can    |
-    * | read more here:                                                               |
-    * |                         http://www.rgraph.net/support                         |
-    * o-------------------------------------------------------------------------------o
+    * o--------------------------------------------------------------------------------o
+    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
+    * | under the MIT license - so it's free to use for all purposes. If you want to   |
+    * | donate to help keep the project going then you can do so here:                 |
+    * |                                                                                |
+    * |                             http://www.rgraph.net/donate                       |
+    * o--------------------------------------------------------------------------------o
     */
-    
-    if (typeof(RGraph) == 'undefined') RGraph = {};
+    RGraph = window.RGraph || {isRGraph: true};
+
+
+
 
     /**
     * The LED lights constructor
@@ -18,9 +20,11 @@
     */
     RGraph.LED = function (id, text)
     {
+        var tmp = RGraph.getCanvasTag(id);
+
         // Get the canvas and context objects
-        this.id                = id;
-        this.canvas            = document.getElementById(typeof id === 'object' ? id.id : id);
+        this.id                = tmp[0];
+        this.canvas            = tmp[1];
         this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
         this.canvas.__object__ = this;
         this.type              = 'led';
@@ -28,12 +32,13 @@
         this.uid               = RGraph.CreateUID();
         this.canvas.uid        = this.canvas.uid ? this.canvas.uid : RGraph.CreateUID();
         this.colorsParsed      = false;
+        this.original_colors   = [];
 
 
         /**
         * Compatibility with older browsers
         */
-        RGraph.OldBrowserCompat(this.context);
+        //RGraph.OldBrowserCompat(this.context);
 
 
         /**
@@ -109,9 +114,11 @@
         }
 
         // Various config type stuff
-        this.properties = {
+        this.properties =
+        {
             'chart.dark':          '#eee',
             'chart.light':         '#f66',
+            'chart.tooltips':      null,
             'chart.zoom.factor':   1.5,
             'chart.zoom.fade.in':  true,
             'chart.zoom.fade.out': true,
@@ -128,6 +135,15 @@
             'chart.radius':                   null
         }
 
+        
+        
+        
+
+        
+        
+        
+        
+        
         // Check for support
         if (!this.canvas) {
             alert('[LED] No canvas support');
@@ -148,22 +164,27 @@
 
 
 
-
-        ///////////////////////////////// SHORT PROPERTIES /////////////////////////////////
-
-
-
-
+        
+        // Short variable names
         var RG   = RGraph;
         var ca   = this.canvas;
         var co   = ca.getContext('2d');
         var prop = this.properties;
-        //var $jq  = jQuery;
+        var jq   = jQuery;
+        var pa   = RG.Path;
+        var win  = window;
+        var doc  = document;
+        var ma   = Math;
+        
+        
+        
+        /**
+        * "Decorate" the object with the generic effects if the effects library has been included
+        */
+        if (RG.Effects && typeof RG.Effects.decorate === 'function') {
+            RG.Effects.decorate(this);
+        }
 
-
-
-
-        //////////////////////////////////// METHODS ///////////////////////////////////////
 
 
 
@@ -174,6 +195,7 @@
         * @param name  string The name of the property to set
         * @param value mixed  The value of the property
         */
+        this.set =
         this.Set = function (name, value)
         {
             name = name.toLowerCase();
@@ -188,7 +210,7 @@
             prop[name.toLowerCase()] = value;
     
             return this;
-        }
+        };
 
 
 
@@ -198,6 +220,7 @@
         * 
         * @param name  string The name of the property to get
         */
+        this.get =
         this.Get = function (name)
         {
             /**
@@ -208,7 +231,7 @@
             }
     
             return prop[name.toLowerCase()];
-        }
+        };
 
 
 
@@ -216,6 +239,7 @@
         /**
         * This draws the LEDs
         */
+        this.draw =
         this.Draw = function ()
         {
             /**
@@ -273,7 +297,7 @@
             RG.FireCustomEvent(this, 'ondraw');
             
             return this;
-        }
+        };
 
 
 
@@ -284,6 +308,7 @@
         * @param string lights The lights to draw to draw
         * @param int    index  The position of the letter
         */
+        this.drawLetter =
         this.DrawLetter = function (letter, index)
         {
             var light    = prop['chart.light'];
@@ -322,13 +347,13 @@
                     co.fillStyle   = (lights[i][j] ? light : dark);
                     co.strokeStyle = (lights[i][j] ? '#ccc' : 'rgba(0,0,0,0)');
                     co.beginPath();
-                    co.arc(x, y, radius, 0, 6.28, 0);
+                    co.arc(x, y, radius, 0, RG.TWOPI, 0);
     
                     co.stroke();
                     co.fill();
                 }
             }
-        }
+        };
 
 
 
@@ -341,7 +366,7 @@
         this.getValue = function (e)
         {
             return this.text;
-        }
+        };
 
 
 
@@ -351,9 +376,15 @@
         */
         this.parseColors = function ()
         {
-            if (typeof(prop['chart.dark']) == 'string') prop['chart.dark'] = this.parseSingleColorForGradient(prop['chart.dark']);
-            if (typeof(prop['chart.light']) == 'string') prop['chart.light'] = this.parseSingleColorForGradient(prop['chart.light']);
-        }
+            // Save the original colors so that they can be restored when the canvas is reset
+            if (this.original_colors.length === 0) {
+                this.original_colors['chart.dark']  = RG.array_clone(prop['chart.dark']);
+                this.original_colors['chart.light'] = RG.array_clone(prop['chart.light']);
+            }
+
+            prop['chart.dark'] = this.parseSingleColorForGradient(prop['chart.dark']);
+            prop['chart.light'] = this.parseSingleColorForGradient(prop['chart.light']);
+        };
 
 
 
@@ -363,10 +394,10 @@
         */
         this.parseSingleColorForGradient = function (color)
         {
-            if (color.match(/^gradient\((.*)\)$/i)) {
+            if (typeof color === 'string' && color.match(/^gradient\((.*)\)$/i)) {
     
                 var parts = RegExp.$1.split(':');
-    
+
                 // Create the gradient
                 var grad = co.createLinearGradient(0,0,0,ca.height);
     
@@ -378,12 +409,44 @@
                     grad.addColorStop(j * diff, RG.trim(parts[j]));
                 }
             }
-            
+
             return grad ? grad : color;
+        };
+
+
+
+
+        /**
+        * Using a function to add events makes it easier to facilitate method chaining
+        * 
+        * @param string   type The type of even to add
+        * @param function func 
+        */
+        this.on = function (type, func)
+        {
+            if (type.substr(0,2) !== 'on') {
+                type = 'on' + type;
+            }
+            
+            this[type] = func;
+    
+            return this;
+        };
+        
+        
+        
+        
+        /**
+        * A placeholder
+        */
+        this.getObjectByXY = function ()
+        {
         }
 
 
 
 
         RG.Register(this);
-    }
+    };
+// version: 2014-03-28
+

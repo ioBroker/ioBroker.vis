@@ -7,6 +7,16 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta65
+* (Bluefox) Communication adapter to abstract the transport layer
+* (Bluefox) New widgets: Rgraph/LiveChart, Highchart/LiveChart, Highchart/Bars, Highchart/Clock
+* (Bluefox) Remove js files provided by ccu.io/www/lib
+* (Bluefox) Fix saveRemote function
+* (Bluefox) Fix small syntax errors
+* (Hobbyquaker) Fix initInstance() call
+* (Hobbyquaker) Fix Widget "lcars - worpcore", "lcars - dna" in Firefox
+* (Hobbyquaker) Fix diverse Widgets lcars default Attribute
+
 ### 0.9beta64
 * (Hobbyquaker) Fehler abgefangen in inspectWidget-Methode
 

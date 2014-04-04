@@ -275,26 +275,26 @@
     </div>
 </script>
 -->
-<script type="text/ejs" id="tplLcarsButton" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="ctrl - Button State" data-dashui-attrs="hm_id;value;title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;extended/checkbox;width[230];color_default/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white" >
+<script type="text/ejs" id="tplLcarsButton" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="ctrl - Button State" data-dashui-attrs="hm_id;value;title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;color_default[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white" >
     <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.state(el) %> >
         <div class="dashui-widget-body">
-           <span <%= (el) -> dui.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')}}, data.attr('hm_id'), data.attr('value'), data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+           <span <%= (el) -> dui.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')}, data.attr('hm_id'), data.attr('value'), data.attr('color_active')) %>><%= this.data.attr('title') %></span>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplLcarsButtonInc" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="ctrl - Button Increment" data-dashui-attrs="hm_id;step[0.01];minmax[1];repeat_delay[800];repeat_interval[800];title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;extended/checkbox;width[230];color_default/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+<script type="text/ejs" id="tplLcarsButtonInc" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="ctrl - Button Increment" data-dashui-attrs="hm_id;step[0.01];minmax[1];repeat_delay[800];repeat_interval[800];title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;width[230];color_default[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
     <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>" data-dashui-step="<%= this.data.attr('step') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.increment(el, data.attr('minmax'), data.attr('repeat_delay'), data.attr('repeat_interval')) %>>
         <div class="dashui-widget-body">
-            <span <%= (el) -> dui.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')}}, data.attr('hm_id'), data.attr('minmax'), data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+            <span <%= (el) -> dui.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')},data.attr('hm_id'), data.attr('minmax'), data.attr('color_active')) %>><%= this.data.attr('title') %></span>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplLcarsButtonToggle" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="ctrl - Button Toggle" data-dashui-attrs="hm_id;title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;extended/checkbox;width[230];color_default/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
+<script type="text/ejs" id="tplLcarsButtonToggle" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="ctrl - Button Toggle" data-dashui-attrs="hm_id;title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;width[230];color_default[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
     <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>" data-dashui-step="<%= this.data.attr('step') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> dui.binds.basic.toggle(el) %>>
         <div class="dashui-widget-body">
-            <span <%= (el) -> dui.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')}}, data.attr('hm_id'), 1, data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+            <span <%= (el) -> dui.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')}, data.attr('hm_id'), 1, data.attr('color_active')) %>><%= this.data.attr('title') %></span>
         </div>
     </div>
 </script>
