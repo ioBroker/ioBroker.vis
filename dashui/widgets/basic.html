@@ -121,6 +121,8 @@
                 });
                 */
             },
+            pressed: null,
+            pressedNext: null,
             increment: function (el, minmax, delay, interval) {
 
                 jQuery(el).click(function (e) {
@@ -155,14 +157,12 @@
                             if (step < 0) {
                                 if (tmp >= minmax) {
                                     localData.setValue($that.attr("data-hm-id"), tmp);
-                                    dui.binds.basic.pressed = _setTimeout(function ($_that) {
-                                        fInterval($_that);
-                                    }, interval, $that);
+                                    dui.binds.basic.pressed = setTimeout(fInterval, interval, $that);
                                 }
                             } else {
                                 if (tmp <= minmax) {
                                     localData.setValue($that.attr("data-hm-id"), tmp);
-                                    dui.binds.basic.pressed = _setTimeout(function ($_that) {
+                                    dui.binds.basic.pressed = setTimeout(function ($_that) {
                                         fInterval($_that);
                                     }, interval, $that);
                                 }
@@ -174,13 +174,14 @@
                         dui.binds.basic.pressedNext = false;
                         var $this = $(this);
                         var hm_id = "_" + $this.attr("data-hm-id");
-                        dui.binds.basic.pressed = _setTimeout(function ($that) {
-                            fInterval($that);
-                        }, delay, $this);
+                        dui.binds.basic.pressed = setTimeout(fInterval, delay, $this);
                     }
                     jQuery(el).on('mousedown', intervalStart);
                     jQuery(el).on('touchstart', intervalStart);
                     jQuery(el).on('touchend', function () {
+                        clearTimeout(dui.binds.basic.pressed);
+                    });
+                    jQuery(el).on('mouseup', function () {
                         clearTimeout(dui.binds.basic.pressed);
                     });
 
