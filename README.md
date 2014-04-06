@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta66
+* (Hobbyquaker) Fix increment bind
+
 ### 0.9beta65
 * (Bluefox) Communication adapter to abstract the transport layer
 * (Bluefox) New widgets: Rgraph/LiveChart, Highchart/LiveChart, Highchart/Bars, Highchart/Clock
