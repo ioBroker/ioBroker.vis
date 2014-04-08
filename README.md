@@ -7,6 +7,12 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta67
+* (Hobbyquaker) jqui Dialog Widgets: new Attribute preload
+* (BKo) new Widget SliderTabs
+* (Smiling-Jack) Fixes Swipe
+* (Smiling-Jack) neues Widget: Karusell
+
 ### 0.9beta66
 * (Hobbyquaker) Fix increment bind
 
