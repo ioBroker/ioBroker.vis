@@ -656,7 +656,7 @@ var dui = {
                                     dui.renderWidget(view, id);
                             }
                         }
-                    });
+                    }).dequeue();
                 }
                 $("#duiview_" + dui.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
                     var list = $("link[href$='jquery-ui.min.css']");

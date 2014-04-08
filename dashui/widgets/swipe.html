@@ -1,49 +1,111 @@
 <script type="text/javascript" src="widgets/swipe/js/jquery.touchSwipe.min.js"></script>
+<script type="text/javascript" src="widgets/swipe/js/jquery.roundabout.js"></script>
+<script type="text/javascript" src="widgets/swipe/js/jquery.roundabout-shapes.js"></script>
+<script type="text/javascript" src="widgets/swipe/js/jquery.event.drag-2.2.js"></script>
+<script type="text/javascript" src="widgets/swipe/js/jquery.event.drop-2.2.js"></script>
+<link rel="stylesheet" type="text/css" href="widgets/swipe/css/swipe.css"/>
 <script type="text/javascript">
-	jQuery.extend(true, dui.binds, {
-		swipe: {
+    jQuery.extend(true, dui.binds, {
+        swipe: {
 
-			swipe_nav: function(el) {
-				if (dui.urlParams["edit"] !== "") {
-					
-					$('body').swipe({
-						swipeLeft: function() {
-							var $this = $("#duiview_"+dui.activeView).find("[id$=swipe]")
-							
-							if ($this.attr('data-body-backround')) {
-								$('body').css({background: $this.attr('data-body-backround')});
-							}
+            swipe_nav: function (el, data) {
+                console.log(data);
+                var $this = jQuery(el);
 
-							if ($this.attr('Left-nav_view') != undefined && $this.attr('Left-nav_view') != null){
-								dui.changeView($this.attr('Left-nav_view'), {effect:"slide",options:{direction: "left"},duration:$this.attr('duration')},{effect:"slide",options:{direction: "right"},duration:$this.attr('duration')},true)
-							}
-						},
-						swipeRight: function() {
-							var $this = $("#duiview_"+dui.activeView).find("[id$=swipe]")
-							
-							if ($this.attr('data-body-backround')) {
-								$('body').css({background: $this.attr('data-body-backround')});
-							}
-							
-							if ($this.attr('Right-nav_view')!= undefined && $this.attr('Right-nav_view') != null){
-								dui.changeView($this.attr('Right-nav_view'), {effect:"slide",options:{direction: "right"},duration:$this.attr('duration')},{effect:"slide",options:{direction: "left"},duration:$this.attr('duration')},true)
-							}
-						}
-					});
-				}
-			}
-		}
-	});
+                setTimeout(function () {
+                    var $view = $($this).parent();
+
+                    if (dui.urlParams["edit"] !== "") {
+                        $($view).swipe({
+                            swipeLeft: function () {
+                                dui.changeView(data["Left-nav_view"], {effect: "slide", options: {direction: "left", queue: false}, duration: $this.attr('duration')}, {effect: "slide", options: {direction: "right", queue: false}, duration: $this.attr('duration')},true)
+                            },
+                            swipeRight: function () {
+                                dui.changeView(data["Right-nav_view"], {effect: "slide", options: {direction: "right", queue: false}, duration: $this.attr('duration')}, {effect: "slide", options: {direction: "left", queue: false}, duration: $this.attr('duration')},true)
+                            }
+                        });
+
+                    }
+                }, 1);
+
+            },
+
+            karu: function (el, _child_view) {
+                var $this = jQuery(el);
+
+
+                $($this).toggleClass("hallo");
+
+                setTimeout(function () {
+                    var $child_view = $($this).find('#duiview_' + _child_view);
+
+                    var $all = $($this).find(".dashui-widget");
+
+
+                    if (dui.urlParams["edit"] !== "") {
+
+                        $.each($all, function () {
+
+                            var id = $(this).attr("id")
+                            var id_old_pos = $("#" + id).position();
+
+                            var id_and_childs = $($child_view).children('[id^=' + id + ']');
+
+                            if (id_and_childs.length == 1) {
+                                $("#" + id).css({
+                                    top: 0,
+                                    left: 0
+                                });
+                                $(id_and_childs).wrapAll('<li class="li_karu"></li>');
+                            } else {
+
+                                $(id_and_childs).wrapAll('<div id="wrap_' + id + '" style="position:absolute;height:50px;width:50px; left:' + id_old_pos.left * -1 + 'px;top:' + id_old_pos.top * -1 + 'px"  ></div>');
+                                $("#wrap_" + id).wrap('<li class="li_karu"></li>');
+                            }
+
+                        });
+
+                        $($($child_view).children('.li_karu')).append('<div class="karu_blocking"></div>');
+                        $($($child_view).children('.li_karu')).wrapAll("<ul style='height: 100%; width: 100%' id='karu'></ul>");
+
+
+                        $("#karu").roundabout({
+                            clickToFocus: true,
+                            enableDrag: true,
+                            dragFactor: 2,
+                            minZ: 1,
+                            maxZ: 100,
+                            tilt: -2,
+                            minOpacity: 0.2,
+                            minScale: 1,
+                            childSelector: ".li_karu",
+                            triggerFocusEvents: true,
+                            triggerBlurEvents: true
+                        });
+
+
+                        $(".li_karu").bind('roundFocus', function () {
+                            var child = $(this).children();
+                            $(child[1]).removeClass("karu_blocking")
+                        });
+                        $(".li_karu").bind('roundBlur', function () {
+                            var child = $(this).children();
+                            $(child[1]).addClass("karu_blocking")
+                        });
+                    }
+                }, 0);
+            }
+        }
+    });
 </script>
 
-<script type="text/ejs" id="tplswipe" class="dashui-tpl" data-dashui-set="swipe" data-dashui-name="swipe Navigation" data-dashui-attrs="Left-nav_view;Right-nav_view;duration;body-background">
+<script type="text/ejs" id="tplswipe" class="dashui-tpl" data-dashui-set="swipe" data-dashui-name="swipe Navigation" data-dashui-attrs="Left-nav_view;Right-nav_view;duration">
 
-  <div class = "dashui-widget <%== this.data.attr('class') %>" style="width: 90px; height: 60px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.swipe.swipe_nav(el) %>>
+  <div class = "dashui-widget <%== this.data.attr('class') %>" style="width: 90px; height: 60px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.swipe.swipe_nav(el,data) %>>
     <div id="<%= this.data.attr('wid') %>_swipe"  class="dashui-widget-body"
       Left-nav_view="<%= this.data.attr('Left-nav_view') %>" 
       Right-nav_view="<%= this.data.attr('Right-nav_view') %>" 
-      duration="<%= this.data.attr('duration') %>" 
-	  data-body-backround="<%= this.data.attr('body-background') %>">
+      duration="<%= this.data.attr('duration') %>" >
 
       <%if (dui.urlParams["edit"] == "") {%>
         <div class="dashui-widget-body" style="width: 70px; height: 40px; border: 1px solid #000; margin:10px 0px 0px 10px; ; background: #FF0000">
@@ -52,4 +114,28 @@
       <% } %>          
     </div>
   </div>
+
+
+
+
+
+
+
+
+</script>
+<script type="text/ejs" id="tplkaru" class="dashui-tpl" data-dashui-set="swipe" data-dashui-name="Karusell" data-dashui-attrs="contains_view">
+
+  <div class = "dashui-widget <%== this.data.attr('class') %>" style="width: 300px; height: 100px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.swipe.karu(el,data.attr('contains_view')) %>>
+   <div class="editmode-helper"></div>
+        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+        </div>
+  </div>
+
+
+
+
+
+
+
+
 </script>

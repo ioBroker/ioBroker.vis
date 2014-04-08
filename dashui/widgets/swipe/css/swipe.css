@@ -1,0 +1,28 @@
+.roundabout-holder {
+list-style: none;
+position:absolute;
+left:0;
+right:0;
+margin-left:auto ;
+margin-right:auto;
+    overflow: visible;
+    width: calc(100% - 100px) !important;
+
+}
+.roundabout-moveable-item {
+text-align:  left;
+
+}
+
+.li_karu{
+    background-color: transparent;
+    width: 100px;
+    height: 100px;
+}
+.karu_blocking{
+    position:relative;
+    z-index: 149;
+    width: 100px;
+    height: 100px;
+    background-color: transparent;
+}
