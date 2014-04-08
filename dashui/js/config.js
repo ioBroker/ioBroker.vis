@@ -5,6 +5,7 @@ var duiConfig = {
     widgetSets: [
         "basic",
         "bars",
+        "bko",
         "colorpicker",
         "fancyswitch",
         "highcharts",

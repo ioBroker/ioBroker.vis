@@ -1,0 +1,68 @@
+<link rel="stylesheet" href="widgets/bko/styles/jquery.sliderTabs.css">
+<script src="widgets/bko/jquery.sliderTabs.js"></script> 
+<script type="text/javascript">
+    jQuery.extend(true, dui.binds, {
+        bko: {
+            stabs: function (el, stheight, stwidth, stshowtabs, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8) {
+                var $this = jQuery(el);
+                var tabs = new Array("", tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8);
+
+                for (var i = 2; i <= stshowtabs; i++) {
+                    var ul = $this.find( "ul" );
+                    $( "<li><a href='#st"+i+"'>"+tabs[i]+"</a></li>" ).appendTo( ul );
+                }
+
+		  $this.sliderTabs({
+                    height: stheight,
+                    width: stwidth
+                });
+            }
+        }
+    });
+</script>
+
+<script type="text/ejs" id="tplSTab" class="dashui-tpl" data-dashui-set="bko" data-dashui-name="SliderTabs" data-dashui-attrs="Height[400];Width[300];show_tabs[3];title_tab_1[Tab1];contains_view_1;title_tab_2[Tab2];contains_view_2;title_tab_3[Tab3];contains_view_3;title_tab_4[Tab4];contains_view_4;title_tab_5[Tab5];contains_view_5;title_tab_6[Tab6];contains_view_6;title_tab_7[Tab7];contains_view_7;title_tab_8[Tab8];contains_view_8">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 250px; height: 250px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <span <%= (el) -> dui.binds.bko.stabs(el, data.attr('Height'), data.attr('Width'), data.attr('show_tabs'), data.attr('title_tab_1'), data.attr('title_tab_2'), data.attr('title_tab_3'), data.attr('title_tab_4'), data.attr('title_tab_5'), data.attr('title_tab_6'), data.attr('title_tab_7'), data.attr('title_tab_8')) %>><%= this.data.attr('title') %>
+                <!-- Unordered list representing the tabs -->
+                <ul>
+                    <li><a href="#st1"><%= this.data.attr('title_tab_1') %></a></li>
+                </ul>
+
+                <div id="st1">
+                    <div class="editmode-helper"></div>
+                    <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view_1') %>" class="dashui-widget-body"></div>
+                </div>
+                <div id="st2">
+                    <div class="editmode-helper"></div>
+                    <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view_2') %>" class="dashui-widget-body"></div>
+                </div>
+                <div id="st3">
+                    <div class="editmode-helper"></div>
+                    <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view_3') %>" class="dashui-widget-body"></div>
+                </div>
+                <div id="st4">
+                    <div class="editmode-helper"></div>
+                    <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view_4') %>" class="dashui-widget-body"></div>
+                </div>
+                <div id="st5">
+                    <div class="editmode-helper"></div>
+                    <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view_5') %>" class="dashui-widget-body"></div>
+                </div>
+                <div id="st6">
+                    <div class="editmode-helper"></div>
+                    <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view_6') %>" class="dashui-widget-body"></div>
+                </div>
+                <div id="st7">
+                    <div class="editmode-helper"></div>
+                    <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view_7') %>" class="dashui-widget-body"></div>
+                </div>
+                <div id="st8">
+                    <div class="editmode-helper"></div>
+                    <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view_8') %>" class="dashui-widget-body"></div>
+                </div>
+            </span>
+        </div>
+    </div>
+</script>
