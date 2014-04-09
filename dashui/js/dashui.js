@@ -59,7 +59,7 @@ var dui = {
             cache: dui.useCache,
             success: function (data) {
                 jQuery("head").append(data);
-                dui.toLoadSetsCount--;
+                dui.toLoadSetsCount -= 1;
                 if (dui.toLoadSetsCount <= 0) {
                     setTimeout(callback, 50);
                 } else {
