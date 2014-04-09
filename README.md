@@ -8,7 +8,8 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ## Changelog
 
 ### 0.9beta69
-* (Hobbyquaker) Fix loadRemote
+* (Hobbyquaker) Fix loadRemote - eventuell eine Ursache für iPad-Bugs
+* (Hobbyquaker) Fix getDatapoints - direktes befüllen des Canjs Observable, sollte Ladezeit wieder verbessern
 * (Hobbyquaker) Waitscreen umgebaut, Progressbar verbessert
 
 ### 0.9beta68
