@@ -205,7 +205,7 @@ var dui = {
         $("#create_instance").hide();
         $("#instance").show();
 
-        console.log("create instance "+dui.instance);
+        //console.log("create instance "+dui.instance);
 
         dui.conn.addObject(69800, {
             _findNextId: true,
@@ -213,7 +213,7 @@ var dui = {
             Name: "dashui_"+dui.instance+"_cmd",
             TypeName: "VARDP"
         }, function (cid) {
-            console.log("create var "+cid);
+            //console.log("create var "+cid);
             dui.instanceCmd = cid;
             dui.conn.addObject(69801, {
                 _findNextId: true,
@@ -221,7 +221,7 @@ var dui = {
                 Name: "dashui_"+dui.instance+"_view",
                 TypeName: "VARDP"
             }, function (vid) {
-                console.log("create var "+vid);
+                //console.log("create var "+vid);
                 dui.instanceView = vid;
                 dui.conn.addObject(69802, {
                     _findNextId: true,
@@ -229,7 +229,7 @@ var dui = {
                     Name: "dashui_"+dui.instance+"_data",
                     TypeName: "VARDP"
                 }, function (did) {
-                    console.log("create var "+did);
+                    //console.log("create var "+did);
                     dui.instanceData = did;
                     dui.bindInstance();
                 });
@@ -653,7 +653,7 @@ var dui = {
                             dui.views[view].rerender = false;
                             for (var id in dui.views[view].widgets) {
                                 if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq" ||
-                                    dui.views[view].widget[id].renderVisible)
+                                    dui.views[view].widgets[id].renderVisible)
                                     dui.renderWidget(view, id);
                             }
                         }
@@ -837,8 +837,11 @@ var dui = {
     },
     loadRemote: function (callback, callbackArg) {
         dui.showWaitScreen(true, "<br/>Loading Views...<br/>", null, "+1");
-        dui.conn.readFile("dashui-views.json", function (data) {
-            if (data){
+        dui.conn.readFile("dashui-views.json", function (data, err) {
+            if (err) {
+                alert("dashui-views.json "+err);
+            }
+            if (data) {
                 if (typeof data == "string") {
                     dui.views = JSON.parse(data);
                 } else {
@@ -1328,7 +1331,6 @@ var servConn = {
 
         } else if (type == 1 || type == "socket.io") {
             this._type = 1;
-            // Todo - Where is io declared?
             if (typeof io != "undefined") {
                 if (typeof socketSession == 'undefined') {
                     socketSession = 'nokey';
@@ -1430,9 +1432,9 @@ var servConn = {
                 console.log("socket.io not initialized");
                 return;
             }
-            this._socket.emit('readFile', filename, function(data) {
+            this._socket.emit('readFile', filename, function(data, err) {
                 if (callback) {
-                    callback(data);
+                    callback(data, err);
                 }
             });
         } else if (this._type == 2) {
@@ -1578,7 +1580,6 @@ var servConn = {
             //socket.io
 
             if (this._socket == null) {
-                console.log("socket.io not initialized");
                 return;
             }
             this._socket.emit('getDatapoints', function(data) {
@@ -1594,13 +1595,15 @@ var servConn = {
                         o["_" + dp + ".LastChange"]   = obj[3];
                         // Todo - wofür ist das .Name Attribut?
                         o["_" + dp + ".Name"] = dp;
+                        localData.uiState.attr(o);
                     }
-                    localData.uiState.attr(o);
+
+                }
+                if (callback) {
+                    callback();
                 }
             });
-            if (callback) {
-                callback();
-            }
+
         }
     },
     getDataObjects: function (callback) {
@@ -1682,7 +1685,7 @@ var servConn = {
     delObject: function (objId) {
         if (this._type == 0) {
             //SignalR
-            this._hub.server.deleleObject (objId);
+            this._hub.server.deleteObject(objId);
         } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
@@ -1691,7 +1694,13 @@ var servConn = {
             }
             this._socket.emit('delObject', objId);
         }
-    }, // Depricated
+    }, // Deprecated
+    // TODO @Bluefox: Why deprecated? Ursprüngliches Konzept war dass der Value eines Homematic-Programms true/false ist und angibt
+    // ob ein Programm aktiv/inaktiv ist -> HM-Script Methode .Active()
+    // Eigentlich wirft der Umbau den Du da vor geraumer Zeit in CCU.IO vorgenommen hast (damit über den Value ein Programm
+    // angetriggert werden kann) dieses Konzept über den Haufen. Wirkt sich bei mir persönlich an der Stelle nicht aus
+    // da ich keine Homematic-Programme verwende, aber ...
+    // ... LessonsLearned: Wir müssen häufiger und mehr kommunizieren bevor wir solche Änderungen vornehmen :)
     execProgramm: function (objId) {
         //socket.io
         if (this._type == 1) {
