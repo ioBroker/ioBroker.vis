@@ -81,7 +81,7 @@
                     jQuery(el).parent().find("div.dashui-widget-body").click(function () {
                         var id = jQuery(this).parent().attr("id") + "_dialog";
                         if ((!preload || preload == "false") && jQuery("#"+id).html().replace(/\s/g, '') == "") {
-                            console.log("dialog "+id+" inserting html");
+                            //console.log("dialog "+id+" inserting html");
                             jQuery("#"+id).html(html);
                         }
                         if (persistent) {
