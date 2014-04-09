@@ -315,7 +315,6 @@ var dui = {
                 break;
             }
             // Create default view in demo mode
-            // Todo - Where is io declared?
             if (typeof io == "undefined") {
                 if (dui.activeView == "") {
                     dui.views["DemoView"] = {};
@@ -1263,7 +1262,6 @@ var servConn = {
 
         // If autodetect
         if (type === undefined) {
-            // Todo - Where is io declared?
             if (typeof io != "undefined") {
                 type = 1; // socket.io
             } else if (typeof $ != "undefined" && typeof $.connection != "undefined") {
