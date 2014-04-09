@@ -2,7 +2,7 @@
  *  DashUI
  *  https://github.com/hobbyquaker/dashui/
  *
- *  Copyright (c) 2013 hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
  *  MIT License (MIT)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -23,14 +23,12 @@
 // duiEdit - the DashUI Editor
 
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta68',
+    editVersion:        '0.9beta69',
     toolbox:            $("#dui_editor"),
     selectView:         $("#select_view"),
     activeWidget:       "",
     isStealCss:         false,
     gridWidth:          undefined,
-
-
 
     renameView: function () {
         var val = $("#new_name").val();
