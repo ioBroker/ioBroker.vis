@@ -64,7 +64,7 @@ var dui = {
                     dui.showWaitScreen(true, null, null, 100);
                     setTimeout(callback, 100);
                 } else {
-                    dui.showWaitScreen(true, " <span style='font-size: 10px;'>" + dui.toLoadSetsCount+ "</span>", null, parseInt((100-dui.waitScreenVal) / dui.toLoadSetsCount, 10));
+                    dui.showWaitScreen(true, null /*" <span style='font-size: 10px;'>" + dui.toLoadSetsCount+ "</span>"*/, null, parseInt((100-dui.waitScreenVal) / dui.toLoadSetsCount, 10));
                 }
             }
         });
@@ -97,7 +97,7 @@ var dui = {
         return widgetSets;
     },
     loadWidgetSets: function (callback) {
-        dui.showWaitScreen(true, "Loading Widget-Sets ...", null, 20);
+        dui.showWaitScreen(true, "Loading Widget-Sets ... <span id='widgetset_counter'></span>", null, 20);
         var arrSets = [];
 
         // Get list of used widget sets. if Edit mode list is null.
@@ -119,6 +119,7 @@ var dui = {
             }
         }
         dui.toLoadSetsCount = arrSets.length;
+        $("#widgetset_counter").html("<span style='font-size:10px'>("+(dui.toLoadSetsCount-1)+")</span>");
 
         if (dui.toLoadSetsCount) {
             for(var i = 0, len = dui.toLoadSetsCount; i < len; i++) {

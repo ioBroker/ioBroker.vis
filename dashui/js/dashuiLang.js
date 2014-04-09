@@ -76,7 +76,7 @@ dui = $.extend(true, dui, {
                 "Uncheck all"      : {"en" : "Uncheck all",  "de": "Alle unselektieren",   "ru": "Убрать все"},
                 "Select options"   : {"en" : "Select options","de": "Selekteingensch.",    "ru": "Свойства выбора"},
                 "Änderungs-Historie": {"en" : "Change log",  "de": "Änderungs-Historie:",  "ru": "Список изменений"},
-                "Loading Widget-Sets ..."    : {"en" : "Loading Widget-Sets ...", "de": "Lade Widget-Sätze ...", "ru": "Загрузка наборов элементов..."},
+                "Loading Widget-Sets ... <span id='widgetset_counter'></span>"    : {"en" : "Loading Widget-Sets ... <span id='widgetset_counter'></span>", "de": "Lade Widget-Sätze ... <span id='widgetset_counter'></span>", "ru": "Загрузка наборов элементов... <span id='widgetset_counter'></span>"},
                 " done.<br/>"      : {"en" : " done.<br/>",     "de": " - erledigt.<br/>",         "ru": ". Закончено.<br/>"},
                 "<br/>Loading Views...<br/>" : {"en" : "<br/>Loading Views...<br/>","de": "<br/>Lade Views ...<br/>",     "ru": "<br/>Загрузка пользовательских страниц...<br/>"},
                 "Connecting to Server ...<br/>": {"en" : "Connecting to Server ...<br/>", "de": "Verbinde mit Server ...<br/>", "ru": "Соединение с Server ...<br/>"},
