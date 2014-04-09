@@ -397,9 +397,7 @@ var dui = {
 
             // Render all non-hqWidgets widgets
             for (var id in dui.views[view].widgets) {
-                if (dui.views[view].widgets[id].tpl.substring(0,5) != "tplHq" &&
-                    !dui.views[view].widgets[id].renderVisible
-                    ) {
+                if (dui.views[view].widgets[id].tpl.substring(0,5) != "tplHq" && !dui.views[view].widgets[id].renderVisible) {
                     dui.renderWidget(view, id);
 
                     // Try to complete the widgetSet information to optimize the loading of widgetSets
@@ -452,9 +450,9 @@ var dui = {
                 dui.views[view].rerender = false;
                 // render all hqWidgets
                 for (var id in dui.views[view].widgets) {
-                    if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq" ||
-                        dui.views[view].widgets[id].renderVisible)
+                    if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq" || dui.views[view].widgets[id].renderVisible) {
                         dui.renderWidget(view, id);
+                    }
                 }
             }
         }
@@ -490,7 +488,7 @@ var dui = {
                 }
             }
             // Show hqWidgets
-            if (hqWidgets) {
+            if (typeof hqWidgets != "undefined") {
                 setTimeout(function () {
                     var btn;
                     for (var widget in widgets) {
@@ -516,8 +514,10 @@ var dui = {
                 if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
                     if (dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
                         var btn;
-                        if (hqWidgets && (btn = hqWidgets.Get(widget))) {
-                            btn.hide(true);
+                        if (typeof hqWidgets != "undefined") {
+                            if (btn = hqWidgets.Get(widget)) {
+                                btn.hide(true);
+                            }
                         }
                         $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
                     } else {
@@ -525,7 +525,7 @@ var dui = {
                     }
                 }
             }
-            if (hqWidgets) {
+            if (typeof hqWidgets != "undefined") {
                 setTimeout(function () {
                     var btn;
                     // Show hqWidgets
@@ -607,7 +607,6 @@ var dui = {
 
     },
     changeView: function (view, hideOptions, showOptions, sync) {
-
         var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
         if (!effect) {
             effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && (showOptions.effect != "")
@@ -677,7 +676,7 @@ var dui = {
                                 dui.views[view].rerender = false;
                                 for (var id in dui.views[view].widgets) {
                                     if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq" ||
-                                        dui.views[view].widget[id].renderVisible)
+                                        dui.views[view].widgets[id].renderVisible)
                                         dui.renderWidget(view, id);
                                 }
                             }
@@ -715,7 +714,6 @@ var dui = {
             }
         }
 
-        //console.log("changeView("+view+")");
         dui.activeView = view;
 
         $("#duiview_" + view).find("div[id$='container']").each(function () {
