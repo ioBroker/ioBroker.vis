@@ -1161,7 +1161,8 @@ var localData = {
                         dui.language = l || dui.language;
 
                         // If metaIndex required, load it
-                        if (dui.conn.getType() == 1 /* socket.io */) {
+                        if (dui.conn.getType() == 1) {
+                            /* socket.io */
                             // Read all dataobjects from server
                             dui.conn.getDataObjects(function (data) {
                                 localData.metaObjects = data;
@@ -1475,19 +1476,21 @@ var servConn = {
         }
     },
     writeFile: function (filename, data, callback) {
-        //SignalR
+
         if (this._type == 0) {
+            //SignalR
             this._hub.server.writeFile (filename, JSON.stringify(data)).done(function (isOk) {
-                if (callback)
+                if (callback) {
                     callback(isOk);
-            })
-        }
-        else //socket.io
-        if (this._type == 1) {
+                }
+            });
+        } else if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {console.log("socket.io not initialized"); return; }
             this._socket.emit('writeFile', filename, data, function(isOk) {
-                if (callback)
+                if (callback) {
                     callback(isOk);
+                }
             });
         }
     },
@@ -1503,33 +1506,33 @@ var servConn = {
                     data = null;
                 }
 
-                if (callback)
+                if (callback) {
                     callback (data);
-            })
-        }
-        else //socket.io
-        if (this._type == 1) {
+                }
+            });
+        } else if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {console.log("socket.io not initialized"); return; }
             this._socket.emit('readdir', dirname, function(data) {
-                if (callback)
+                if (callback) {
                     callback(data);
+                }
             });
         }
     },
     setPointValue: function (pointName, value) {
-        //SignalR
         if (this._type == 0) {
+            //SignalR
             this._hub.server.setDataPoint ({name: pointName, val: value});
-        }
-        else //socket.io
-        if (this._type == 1) {
+        } else if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {console.log("socket.io not initialized"); return; }
             this._socket.emit('setState', [pointName, value]);
         }
     },
     getDataPoints: function (callback) {
-        //SignalR
         if (this._type == 0) {
+            //SignalR
             this._hub.server.getDataPoints ().done(function (jsonString) {
                 var data = {};
                 try {
@@ -1546,11 +1549,13 @@ var servConn = {
                 }
 
                 if (callback) {
-                    callback (data);
+                    callback(data);
                 }
             });
+
         } else if (this._type == 1) {
             //socket.io
+
             if (this._socket == null) {console.log("socket.io not initialized"); return; }
             this._socket.emit('getDatapoints', function(data) {
                 var _data = {};
@@ -1562,9 +1567,9 @@ var servConn = {
                     _data[id].lc   = data[id][3];
                     _data[id].name = id;
                 }
-
-                if (callback)
+                if (callback) {
                     callback(_data);
+                }
             });
         }
     },
@@ -1587,10 +1592,10 @@ var servConn = {
                     data = null;
                 }
 
-
-                if (callback)
+                if (callback) {
                     callback (data);
-            })
+                }
+            });
         } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {console.log("socket.io not initialized"); return; }
@@ -1607,7 +1612,7 @@ var servConn = {
             if (callback) {
                 callback(null);
             }
-        } else  if (this._type == 1) {
+        } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {console.log("socket.io not initialized"); return; }
             this._socket.emit('getIndex', function(data) {
@@ -1620,26 +1625,27 @@ var servConn = {
         //SignalR
         if (this._type == 0) {
             this._hub.server.addObject (objId, obj).done(function (cid) {
-                if (callback)
+                if (callback) {
                     callback (cid);
-            })
+                }
+            });
         }
-        else //socket.io
-        if (this._type == 1) {
+        else if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {console.log("socket.io not initialized"); return; }
             this._socket.emit('setObject', objId, obj, function(cid) {
-                if (callback)
+                if (callback) {
                     callback(cid);
+                }
             });
         }
     },
     delObject: function (objId) {
-        //SignalR
         if (this._type == 0) {
+            //SignalR
             this._hub.server.deleleObject (objId);
-        }
-        else //socket.io
-        if (this._type == 1) {
+        } else if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {console.log("socket.io not initialized"); return; }
             this._socket.emit('delObject', objId);
         }
@@ -1652,19 +1658,20 @@ var servConn = {
         }
     },
     getUrl: function (url, callback) {
-        //SignalR
         if (this._type == 0) {
+            //SignalR
             this._hub.server.getUrl (url).done(function (jsonString) {
-                if (callback)
+                if (callback) {
                     callback (data);
-            })
-        }
-        else //socket.io
-        if (this._type == 1) {
+                }
+            });
+        } else if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {console.log("socket.io not initialized"); return; }
             this._socket.emit('getUrl', url, function(data) {
-                if (callback)
+                if (callback) {
                     callback(data);
+                }
             });
         }
     }
