@@ -60,9 +60,10 @@ var dui = {
             success: function (data) {
                 jQuery("head").append(data);
                 dui.toLoadSetsCount--;
-                dui.showWaitScreen(true, " <span style='font-size: 10px;'>" + dui.toLoadSetsCount+ "</span>", null);
                 if (dui.toLoadSetsCount <= 0) {
                     setTimeout(callback, 50);
+                } else {
+                    dui.showWaitScreen(true, " <span style='font-size: 10px;'>" + dui.toLoadSetsCount+ "</span>", null, parseInt((100-dui.waitScreenVal) / dui.toLoadSetsCount, 10));
                 }
             }
         });
@@ -95,7 +96,7 @@ var dui = {
         return widgetSets;
     },
     loadWidgetSets: function (callback) {
-        dui.showWaitScreen(true, "Loading Widget-Sets ...", null, "+1");
+        dui.showWaitScreen(true, "Loading Widget-Sets ...", null, 20);
         var arrSets = [];
 
         // Get list of used widget sets. if Edit mode list is null.
@@ -836,7 +837,7 @@ var dui = {
         });
     },
     loadRemote: function (callback, callbackArg) {
-        dui.showWaitScreen(true, "<br/>Loading Views...<br/>", null, "+1");
+        dui.showWaitScreen(true, "<br/>Loading Views...<br/>", null, 12.5);
         dui.conn.readFile("dashui-views.json", function (data, err) {
             if (err) {
                 alert("dashui-views.json "+err);
@@ -940,16 +941,16 @@ var dui = {
 
         return text;
     },
+    waitScreenVal: 0,
     showWaitScreen: function (isShow, appendText, newText, step) {
         var waitScreen = document.getElementById("waitScreen");
         if (!waitScreen && isShow) {
-            $('body').append ("<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>");
+            $('body').append("<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>");
             waitScreen = document.getElementById("waitScreen");
+            dui.waitScreenVal = 0;
         }
-        if (step === 0) {
-            waitScreen.step = 0;
-            $(".dashui-progressbar ").progressbar({value: 0}).height(19);
-        }
+
+        $(".dashui-progressbar").progressbar({value: dui.waitScreenVal}).height(19);
 
         if (isShow) {
             $(waitScreen).show();
@@ -960,11 +961,11 @@ var dui = {
                 $('#waitText').append(dui.translate(appendText));
             }
             if (step !== undefined) {
-                if (step === "+1") {
-                    step = waitScreen.step + 12.5;
-                }
-                waitScreen.step = step;
-                $(".dashui-progressbar ").progressbar("value", step);
+                dui.waitScreenVal += step;
+                setTimeout(function (_val) {
+                    $(".dashui-progressbar").progressbar("value", _val);
+                }, 0, dui.waitScreenVal)
+
             }
         } else if (waitScreen) {
             $(waitScreen).remove();
@@ -1214,7 +1215,7 @@ var localData = {
             }
         });
 
-        dui.showWaitScreen(true, 'Loading data objects', null, '+1');
+        dui.showWaitScreen(true, 'Loading data objects', null, 15);
     });
     // Auto-Reconnect
     setInterval(function () {
