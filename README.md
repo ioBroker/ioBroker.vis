@@ -18,6 +18,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.9beta66
 * (Hobbyquaker) Fix increment bind
+* (Hobbyquaker) prevent longClick for IE
 
 ### 0.9beta65
 * (Bluefox) Communication adapter to abstract the transport layer
