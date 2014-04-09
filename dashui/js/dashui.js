@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta67',
+    version:                '0.9beta68',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -862,7 +862,7 @@ var dui = {
             dui.syncWidget(dui.activeWidget);
         }
         
-        dui.conn.writeFile("dashui-views.json", JSON.stringify(dui.views), function () {
+        dui.conn.writeFile("dashui-views.json", dui.views, function () {
             if (cb) {
                 cb();
             }
@@ -1478,7 +1478,7 @@ var servConn = {
     writeFile: function (filename, data, callback) {
         //SignalR
         if (this._type == 0) {
-            this._hub.server.writeFile (filename, data).done(function (isOk) {
+            this._hub.server.writeFile (filename, JSON.stringify(data)).done(function (isOk) {
                 if (callback)
                     callback(isOk);
             })

@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta68
+* (Hobbyquaker) fixed double JSON.stringify on saveRemote()
+
 ### 0.9beta67
 * (Hobbyquaker) jqui Dialog Widgets: new Attribute preload
 * (BKo) new Widget SliderTabs
