@@ -61,7 +61,8 @@ var dui = {
                 jQuery("head").append(data);
                 dui.toLoadSetsCount -= 1;
                 if (dui.toLoadSetsCount <= 0) {
-                    setTimeout(callback, 50);
+                    dui.showWaitScreen(true, null, null, 100);
+                    setTimeout(callback, 100);
                 } else {
                     dui.showWaitScreen(true, " <span style='font-size: 10px;'>" + dui.toLoadSetsCount+ "</span>", null, parseInt((100-dui.waitScreenVal) / dui.toLoadSetsCount, 10));
                 }
