@@ -7,9 +7,13 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta70
+* (Hobbyquaker) Fix changeView() - Views wurden überlagert dargestellt, Navigation hat nicht immer funktioniert
+* (Hobbyquaker) Fix changeFilter() - Filter haben nicht funktioniert wenn keine hqWidgets vorhanden waren
+
 ### 0.9beta69
-* (Hobbyquaker) Fix loadRemote - eventuell eine Ursache für iPad-Bugs
-* (Hobbyquaker) Fix getDatapoints - direktes befüllen des Canjs Observable, sollte Ladezeit wieder verbessern
+* (Hobbyquaker) Fix loadRemote() - eventuell eine Ursache für iPad-Bugs
+* (Hobbyquaker) Fix getDataPoints() - direktes befüllen des Canjs Observable, sollte Ladezeit wieder verbessern
 * (Hobbyquaker) Waitscreen umgebaut, Progressbar verbessert
 
 ### 0.9beta68
