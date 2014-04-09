@@ -2,7 +2,7 @@
  *  DashUI
  *  https://github.com/hobbyquaker/dashui/
  *
- *  Copyright (c) 2013 hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
  *  MIT License (MIT)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -22,7 +22,7 @@
 
 var dui = {
 
-    version:                '0.9beta68',
+    version:                '0.9beta69',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -314,6 +314,7 @@ var dui = {
                 break;
             }
             // Create default view in demo mode
+            // Todo - Where is io declared?
             if (typeof io == "undefined") {
                 if (dui.activeView == "") {
                     dui.views["DemoView"] = {};
@@ -839,7 +840,7 @@ var dui = {
         dui.conn.readFile("dashui-views.json", function (data) {
             if (data){
                 if (typeof data == "string") {
-                    dui.views = $.parseJSON(data);
+                    dui.views = JSON.parse(data);
                 } else {
                     dui.views = data;
                 }
@@ -900,8 +901,8 @@ var dui = {
         lang  = lang || dui.language || 'en';
 
         $(".translate").each(function (idx) {
-            var curlang = $(this).attr ('data-lang');
-            var text    = $(this).html ();
+            var curlang = $(this).attr('data-lang');
+            var text    = $(this).html();
             if (curlang != lang) {
                 if (curlang) {
                     text = dui.translateBack(text, curlang);
@@ -909,8 +910,8 @@ var dui = {
 
                 var transText = dui.translate(text, lang);
                 if (transText) {
-                    $(this).html (transText);
-                    $(this).attr ('data-lang', lang);
+                    $(this).html(transText);
+                    $(this).attr('data-lang', lang);
                 }
             }
         });
@@ -948,12 +949,12 @@ var dui = {
         }
 
         if (isShow) {
-            $(waitScreen).show ();
+            $(waitScreen).show();
             if (newText !== null && newText !== undefined) {
-                $('#waitText').html (dui.translate(newText));
+                $('#waitText').html(dui.translate(newText));
             }
             if (appendText !== null && appendText !== undefined) {
-                $('#waitText').append (dui.translate(appendText));
+                $('#waitText').append(dui.translate(appendText));
             }
             if (step !== undefined) {
                 if (step === "+1") {
@@ -963,7 +964,7 @@ var dui = {
                 $(".dashui-progressbar ").progressbar("value", step);
             }
         } else if (waitScreen) {
-            $(waitScreen).remove ();
+            $(waitScreen).remove();
         }
     },
     registerOnChange: function (callback, arg) {
@@ -979,7 +980,7 @@ var dui = {
         for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
             if (this.onChangeCallbacks[i].callback == callback &&
                 (arg == undefined || this.onChangeCallbacks[i].arg == arg)) {
-                this.onChangeCallbacks.slice (i, 1);
+                this.onChangeCallbacks.slice(i, 1);
                 return;
             }
         }
@@ -1134,7 +1135,7 @@ var localData = {
             return updateAvailable;
         }
         dui.conn = servConn;
-        dui.conn.init ({
+        dui.conn.init({
             onConnChange: function (isConnected) {
                 if (isConnected) {
                     if (dui.isFirstTime) {
@@ -1151,11 +1152,8 @@ var localData = {
                     //console.log((new Date()) + " socket.io connect");
 
                     // Read all datapoints from server
-                    dui.conn.getDataPoints(function (data) {
-                        for (var dp in data) {
+                    dui.conn.getDataPoints(function () {
 
-                            localData.uiState.attr('_' + dp, { Name: data[dp].name, Value: data[dp].val, Timestamp: data[dp].ts, Certain: data[dp].ack});
-                        }
                         // Get Server language
                         var l = localData.uiState.attr("_69999.Value") || localData.uiState.attr("_System_Language");
                         dui.language = l || dui.language;
@@ -1172,7 +1170,6 @@ var localData = {
                                 if (storage.get(dui.storageKeyInstance)) {
                                     dui.initInstance();
                                 }
-
                             });
                         }
                     });
@@ -1183,8 +1180,7 @@ var localData = {
                         setTimeout(dui.init, 10);
                     }
                     dui.isFirstTime = false;
-                }
-                else{
+                } else {
                     //console.log((new Date()) + " socket.io disconnect");
                     $("#ccu-io-disconnect").dialog("open");
                     dui.serverDisconnected = true;
@@ -1205,12 +1201,11 @@ var localData = {
 
                     localData.uiState.attr(o);
 
-                    // Inform other widgets, that does not support canJS
+                    // Inform other widgets, that do not support canJS
                     for (var i = 0, len = dui.onChangeCallbacks.length; i < len; i++) {
                         dui.onChangeCallbacks[i].callback(dui.onChangeCallbacks[i].arg, name, obj.val, obj.ack || (localData.metaObjects[name] && localData.metaObjects[name]["TypeName"] == "VARDP"));
                     }
-                }
-                else {
+                } else {
                     //console.log('Datenpunkte sind noch nicht geladen!');
                 }
             }
@@ -1227,7 +1222,7 @@ var localData = {
                 success: function () {
                     window.location.reload();
                 }
-            })
+            });
         }
     }, 30000);
 
@@ -1236,6 +1231,9 @@ var localData = {
 })(jQuery);
 
 ////// ----------------------- Connection "class" ---------------------- ////////////
+
+// Todo - Why not members of the dui Object? Keep the global Namespace clean. Don't rely on $ === jQuery.
+
 var connCallbacks = {
     onConnChange: null,
     onUpdate:     null,
@@ -1254,25 +1252,22 @@ var servConn = {
     getType: function () {
         return this._type;
     },
-    init:   function (connCallbacks, type) {
+    init: function (connCallbacks, type) {
         if (typeof type == "string") {
             type = type.toLowerCase();
         }
 
         // If autodetect
         if (type === undefined) {
+            // Todo - Where is io declared?
             if (typeof io != "undefined") {
                 type = 1; // socket.io
-            }
-            else
-            if (typeof $ != "undefined" && typeof $.connection != "undefined") {
+            } else if (typeof $ != "undefined" && typeof $.connection != "undefined") {
                 type = 0; // SignalR
-            }
-            else {
+            } else {
                 type = 2; // local demo
             }
         }
-
 
         this._connCallbacks = connCallbacks;
 
@@ -1297,43 +1292,43 @@ var servConn = {
 
             this._hub.client.updatePointValue = function (model) {
                 if (that._connCallbacks.onUpdate) {
-                    that._connCallbacks.onUpdate ({name: model.name, val: model.val, ts: model.ts, ack: model.ack});
+                    that._connCallbacks.onUpdate({name: model.name, val: model.val, ts: model.ts, ack: model.ack});
                 }
             };
             this._hub.client.refresh = function () {
                 if (that._connCallbacks.onRefresh) {
-                    that._connCallbacks.onRefresh ();
+                    that._connCallbacks.onRefresh();
                 }
             };
             $.connection.hub.start().done(function () {
-                that. _isConnected = true;
+                that._isConnected = true;
                 if (that._connCallbacks.onConnChange){
-                    that._connCallbacks.onConnChange (that. _isConnected);
+                    that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
             $.connection.hub.reconnecting(function() {
-                that. _isConnected = false;
+                that._isConnected = false;
                 if (that._connCallbacks.onConnChange){
-                    that._connCallbacks.onConnChange (that. _isConnected);
+                    that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
             $.connection.hub.reconnected(function() {
-                that. _isConnected = true;
+                that._isConnected = true;
                 if (that._connCallbacks.onConnChange){
-                    that._connCallbacks.onConnChange (that. _isConnected);
+                    that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
             $.connection.hub.disconnected(function() {
-                that. _isConnected = false;
+                that._isConnected = false;
                 if (that._connCallbacks.onConnChange){
-                    that._connCallbacks.onConnChange (that. _isConnected);
+                    that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
-        }
-        else
-        if (type == 1 || type == "socket.io")
-        {
+
+
+        } else if (type == 1 || type == "socket.io") {
             this._type = 1;
+            // Todo - Where is io declared?
             if (typeof io != "undefined") {
                 if (typeof socketSession == 'undefined') {
                     socketSession = 'nokey';
@@ -1345,31 +1340,31 @@ var servConn = {
                     url = $(location).attr('protocol') + '//' + $(location).attr('host');
                 }
 
-                this._socket = io.connect(url+'?key='+socketSession);
+                this._socket = io.connect(url + '?key=' + socketSession);
                 this._socket._myParent = this;
 
                 this._socket.on('connect', function () {
                     this._myParent._isConnected = true;
                     if (this._myParent._connCallbacks.onConnChange){
-                        this._myParent._connCallbacks.onConnChange (this._myParent._isConnected);
+                        this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
                 });
 
                 this._socket.on('disconnect', function () {
                     this._myParent._isConnected = false;
                     if (this._myParent._connCallbacks.onConnChange){
-                        this._myParent._connCallbacks.onConnChange (this._myParent._isConnected);
+                        this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
                 });
                 this._socket.on('reconnect', function () {
                     this._myParent._isConnected = true;
                     if (this._myParent._connCallbacks.onConnChange){
-                        this._myParent._connCallbacks.onConnChange (this._myParent._isConnected);
+                        this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
                 });
                 this._socket.on('refreshAddons', function () {
                     if (this._myParent._connCallbacks.onRefresh){
-                        this._myParent._connCallbacks.onRefresh ();
+                        this._myParent._connCallbacks.onRefresh();
                     }
                 });
 
@@ -1386,37 +1381,35 @@ var servConn = {
                     o.lc   = obj[4];
 
                     if (this._myParent._connCallbacks.onUpdate){
-                        this._myParent._connCallbacks.onUpdate (o);
+                        this._myParent._connCallbacks.onUpdate(o);
                     }
 
                 });
-            }
-            else{
+            } else {
                 console.log("socket.io not initialized");
             }
-        }
-        else
-        if (type == 2 || type == "local")
-        {
+        } else if (type == 2 || type == "local") {
             this._type = 2;
 
             this._isConnected = true;
             if (this._connCallbacks.onConnChange){
-                this._connCallbacks.onConnChange (this._isConnected);
+                this._connCallbacks.onConnChange(this._isConnected);
             }
        }
     },
     getVersion: function (callback) {
-        //SignalR
         if (this._type == 0) {
-            this._hub.server.getVersion ().done(function (version) {
+            //SignalR
+            this._hub.server.getVersion().done(function (version) {
                 if (callback)
                     callback(version);
             })
-        }
-        else //socket.io
-        if (this._type == 1) {
-            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
             this._socket.emit('getVersion', function(version) {
                 if (callback)
                     callback(version);
@@ -1424,23 +1417,26 @@ var servConn = {
         }
     },
     readFile: function (filename, callback) {
-        //SignalR
         if (this._type == 0) {
-            this._hub.server.readFile (filename).done(function (data) {
-                if (callback)
+            //SignalR
+            this._hub.server.readFile(filename).done(function (data) {
+                if (callback) {
                     callback(data);
-            })
-        }
-        else //socket.io
-        if (this._type == 1) {
-            if (this._socket == null) {console.log("socket.io not initialized"); return; }
-            this._socket.emit('readFile', filename, function(data) {
-                if (callback)
-                    callback(data);
+                }
             });
-        }
-        else //local
-        if (this._type == 2) {
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
+            this._socket.emit('readFile', filename, function(data) {
+                if (callback) {
+                    callback(data);
+                }
+            });
+        } else if (this._type == 2) {
+            //local
             // Load from ../datastore/dashui-views.json the demo views
             $.ajax({
                 url: '../datastore/' + filename,
@@ -1453,7 +1449,7 @@ var servConn = {
                     if (typeof dui.views == "string") {
                         dui.views = $.parseJSON(dui.views);
                     }
-                    callback (dui.views);
+                    callback(dui.views);
                     if (!dui.views) {
                         alert("No Views found on Server");
                     }
@@ -1465,12 +1461,11 @@ var servConn = {
         }
     },
     touchFile: function (filename) {
-        //SignalR
         if (this._type == 0) {
+            //SignalR
             this._hub.server.touchFile (filename);
-        }
-        else //socket.io
-        if (this._type == 1) {
+        } else if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {console.log("socket.io not initialized"); return; }
             this._socket.emit('touchFile', filename);
         }
@@ -1512,7 +1507,10 @@ var servConn = {
             });
         } else if (this._type == 1) {
             //socket.io
-            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
             this._socket.emit('readdir', dirname, function(data) {
                 if (callback) {
                     callback(data);
@@ -1523,17 +1521,25 @@ var servConn = {
     setPointValue: function (pointName, value) {
         if (this._type == 0) {
             //SignalR
-            this._hub.server.setDataPoint ({name: pointName, val: value});
+            this._hub.server.setDataPoint({name: pointName, val: value});
         } else if (this._type == 1) {
             //socket.io
-            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
             this._socket.emit('setState', [pointName, value]);
         }
     },
     getDataPoints: function (callback) {
+
+        // @Bluefox: befüllen des Canjs Observable direkt hier, keine Übergabe mehr an Callback - imho schöner als 2x über das Array zu laufen
+        //              im Socket.IO Teil passt das, aber für SignalR wird das Array immer noch 2x durchlaufen...
+
         if (this._type == 0) {
             //SignalR
-            this._hub.server.getDataPoints ().done(function (jsonString) {
+
+            this._hub.server.getDataPoints().done(function (jsonString) {
                 var data = {};
                 try {
                     var _data = JSON.parse(jsonString);
@@ -1548,29 +1554,53 @@ var servConn = {
                     data = null;
                 }
 
+                for (var dp in data) {
+                    // Todo check if this works
+                    var obj = data[dp];
+                    if (!localData.uiState["_"+dp]) {
+                        localData.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
+                    } else {
+                        var o = {};
+                        o["_" + dp + ".Value"]     = obj.val;
+                        o["_" + dp + ".Timestamp"] = obj.ts;
+                        o["_" + dp + ".Certain"]   = obj.ack;
+                        o["_" + dp + ".LastChange"]   = obj.lc;
+                        // Todo - wofür ist das .Name Attribut?
+                        o["_" + dp + ".Name"] = dp;
+                    }
+                }
                 if (callback) {
-                    callback(data);
+                    callback();
                 }
             });
 
         } else if (this._type == 1) {
             //socket.io
 
-            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
             this._socket.emit('getDatapoints', function(data) {
-                var _data = {};
-                for (var id in data) {
-                    _data[id] = {};
-                    _data[id].val  = data[id][0];
-                    _data[id].ts   = data[id][1];
-                    _data[id].ack  = data[id][2];
-                    _data[id].lc   = data[id][3];
-                    _data[id].name = id;
-                }
-                if (callback) {
-                    callback(_data);
+                for (var dp in data) {
+                    var obj = data[dp];
+                    if (!localData.uiState["_"+dp]) {
+                        localData.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
+                    } else {
+                        var o = {};
+                        o["_" + dp + ".Value"]     = obj[0];
+                        o["_" + dp + ".Timestamp"] = obj[1];
+                        o["_" + dp + ".Certain"]   = obj[2];
+                        o["_" + dp + ".LastChange"]   = obj[3];
+                        // Todo - wofür ist das .Name Attribut?
+                        o["_" + dp + ".Name"] = dp;
+                    }
+                    localData.uiState.attr(o);
                 }
             });
+            if (callback) {
+                callback();
+            }
         }
     },
     getDataObjects: function (callback) {
@@ -1593,15 +1623,19 @@ var servConn = {
                 }
 
                 if (callback) {
-                    callback (data);
+                    callback(data);
                 }
             });
         } else if (this._type == 1) {
             //socket.io
-            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
             this._socket.emit('getObjects', function(data) {
-                if (callback)
+                if (callback) {
                     callback(data);
+                }
             });
         }
     },
@@ -1614,7 +1648,10 @@ var servConn = {
             }
         } else if (this._type == 1) {
             //socket.io
-            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
             this._socket.emit('getIndex', function(data) {
                 if (callback)
                     callback(data);
@@ -1626,13 +1663,15 @@ var servConn = {
         if (this._type == 0) {
             this._hub.server.addObject (objId, obj).done(function (cid) {
                 if (callback) {
-                    callback (cid);
+                    callback(cid);
                 }
             });
-        }
-        else if (this._type == 1) {
+        } else if (this._type == 1) {
             //socket.io
-            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
             this._socket.emit('setObject', objId, obj, function(cid) {
                 if (callback) {
                     callback(cid);
@@ -1646,14 +1685,20 @@ var servConn = {
             this._hub.server.deleleObject (objId);
         } else if (this._type == 1) {
             //socket.io
-            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
             this._socket.emit('delObject', objId);
         }
     }, // Depricated
     execProgramm: function (objId) {
         //socket.io
         if (this._type == 1) {
-            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
             this._socket.emit('programExecute', [objId]);
         }
     },
@@ -1662,12 +1707,15 @@ var servConn = {
             //SignalR
             this._hub.server.getUrl (url).done(function (jsonString) {
                 if (callback) {
-                    callback (data);
+                    callback(data);
                 }
             });
         } else if (this._type == 1) {
             //socket.io
-            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
             this._socket.emit('getUrl', url, function(data) {
                 if (callback) {
                     callback(data);
@@ -1686,6 +1734,6 @@ if (!Array.prototype.indexOf) {
         return -1;
     }
 }
-function _setTimeout (func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
-    setTimeout (function () {func(arg1, arg2, arg3, arg4, arg5, arg6);}, timeout);
+function _setTimeout(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
+    setTimeout(function () {func(arg1, arg2, arg3, arg4, arg5, arg6);}, timeout);
 }
