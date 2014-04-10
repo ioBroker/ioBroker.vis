@@ -2,9 +2,9 @@
     jQuery.extend(true, dui.binds, {
         debug: {
             history: function (el, id) {
-                homematic.uiState.bind("_"+id+".Value", function( e, newVal, oldVal ) {
-                    var timestamp = homematic.uiState["_"+id].Timestamp;
-                    var ack = homematic.uiState["_"+id].Ack;
+                localData.uiState.bind("_"+id+".Value", function( e, newVal, oldVal ) {
+                    var timestamp = localData.uiState["_"+id].Timestamp;
+                    var ack = localData.uiState["_"+id].Ack;
                     var type = typeof newVal;
 
                     var row = "<tr><td width='70px'>"+type+"</td><td style='padding-right: 18px'>"+JSON.stringify(newVal)+"</td><td width='100px'>"+timestamp+"</td><td width='40px'>"+ack+"</td></tr>";
@@ -19,10 +19,10 @@
 <script type="text/ejs" id="tplJqhm" class="dashui-tpl" data-dashui-set="dev" data-dashui-name="Debug uiState" data-dashui-attrs="">
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr("wid") %>" style="border:1px solid black; background-color:#333; color: #eee; font-family: courier; font-size:11px; padding: 4px; max-height:600px;">
         <div class="dashui-widget-body" style="overflow-y: scroll; overflow-x: hidden;">
-            <h3 style="margin-bottom:0px;">homematic.uiState = {</h3>
+            <h3 style="margin-bottom:0px;">localData.uiState = {</h3>
             <table style="white-space: nowrap;">
-                <% homematic.uiState.each(function(i, obj) { %>
-                <tr><td>"<%= obj %>":</td><td colspan="2"><%= JSON.stringify({Value:homematic.uiState.attr(obj+".Value"),Timestamp:homematic.uiState.attr(obj+".Timestamp"),Certain:homematic.uiState.attr(obj+".Certain"),LastChange:homematic.uiState.attr(obj+".LastChange")}) %>,</td></tr>
+                <% localData.uiState.each(function(i, obj) { %>
+                <tr><td>"<%= obj %>":</td><td colspan="2"><%= JSON.stringify({Value:localData.uiState.attr(obj+".Value"),Timestamp:localData.uiState.attr(obj+".Timestamp"),Certain:localData.uiState.attr(obj+".Certain"),LastChange:localData.uiState.attr(obj+".LastChange")}) %>,</td></tr>
                 <% }) %>
             </table>
             }
@@ -35,7 +35,7 @@
         <div class="dashui-widget-body" style="overflow-y: scroll; overflow-x: hidden;">
             <% var obj = "_" + this.data.attr("hm_id") %>
             <table style="white-space: nowrap;">
-                <tr><td>homematic.uiState.<%= obj %> = </td><td colspan="2"><%= JSON.stringify({Value:homematic.uiState.attr(obj+".Value"),Timestamp:homematic.uiState.attr(obj+".Timestamp"),Certain:homematic.uiState.attr(obj+".Certain"),LastChange:homematic.uiState.attr(obj+".LastChange")}) %></td></tr>
+                <tr><td>localData.uiState.<%= obj %> = </td><td colspan="2"><%= JSON.stringify({Value:localData.uiState.attr(obj+".Value"),Timestamp:localData.uiState.attr(obj+".Timestamp"),Certain:localData.uiState.attr(obj+".Certain"),LastChange:localData.uiState.attr(obj+".LastChange")}) %></td></tr>
             </table>
         </div>
     </div>
@@ -58,11 +58,11 @@
 <script type="text/ejs" id="tplDebugSetState" class="dashui-tpl" data-dashui-set="dev" data-dashui-name="Debug setState" data-dashui-attrs="">
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr("wid") %>" style="border:1px solid black; background-color:#333; color: #eee; font-family: courier; font-size:11px; padding: 4px; max-height:400px;">
         <div class="dashui-widget-body" style="overflow-y: scroll; overflow-x: hidden;">
-            <h3 style="margin-bottom:0px;">homematic.setState = {</h3>
+            <h3 style="margin-bottom:0px;">localData.setState = {</h3>
             <table>
-                <% homematic.setState.each(function(i, obj) { %>
+                <% localData.setState.each(function(i, obj) { %>
                 <% if (obj != '_65535') { %>
-                <tr><td>"<%= obj %>":{</td><td>"Value":"<%= homematic.setState.attr(obj + ".Value") %>",</td><td>"Timestamp":"<%= homematic.setState.attr(obj + ".Timestamp") %>"}</td></tr>
+                <tr><td>"<%= obj %>":{</td><td>"Value":"<%= localData.setState.attr(obj + ".Value") %>",</td><td>"Timestamp":"<%= localData.setState.attr(obj + ".Timestamp") %>"}</td></tr>
                 <% } %>
                 <% }) %>
             </table>

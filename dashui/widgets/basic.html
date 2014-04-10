@@ -6,7 +6,7 @@
             view: function (el, viewArr, persistent) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     var view = viewArr[newVal];
                     if (!persistent) {
                         $this.parent().find("div.dashui-view").remove();
@@ -27,19 +27,19 @@
                 var id = $this.attr("data-hm-id");
                 var hm_id = "_" + id;
 
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.attr("src", srcArr[newVal]);
                 });
 
-                if (homematic.uiState[hm_id]) {
-                    $this.attr("src", srcArr[homematic.uiState[hm_id].Value]);
+                if (localData.uiState[hm_id]) {
+                    $this.attr("src", srcArr[localData.uiState[hm_id].Value]);
                 }
 
                 if (refreshInterval > 0) {
                     setInterval(function () {
                         var val;
-                        if (homematic.uiState[hm_id]) {
-                            val = homematic.uiState[hm_id].Value;
+                        if (localData.uiState[hm_id]) {
+                            val = localData.uiState[hm_id].Value;
                         }
                         var src = srcArr[val];
                         $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
@@ -51,19 +51,19 @@
                 var id = $this.attr("data-hm-id");
                 var hm_id = "_" + id;
 
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     $this.attr("src", srcArr[newVal]);
                 });
 
-                if (homematic.uiState[hm_id]) {
-                    $this.attr("src", srcArr[homematic.uiState[hm_id].Value]);
+                if (localData.uiState[hm_id]) {
+                    $this.attr("src", srcArr[localData.uiState[hm_id].Value]);
                 }
 
                 if (refreshInterval > 0) {
                     setInterval(function () {
                         var val;
-                        if (homematic.uiState[hm_id]) {
-                            val = homematic.uiState[hm_id].Value;
+                        if (localData.uiState[hm_id]) {
+                            val = localData.uiState[hm_id].Value;
                         }
                         var src = srcArr[val];
                         $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
@@ -101,26 +101,28 @@
                 });
 
             },
-            state: function (el) {
+            state: function (el, id) {
                 var $this = jQuery(el);
-                var hm_id = "_" + $this.attr("data-hm-id");
+                var hm_id = (id ? "_" + id : "_" + $this.attr("data-hm-id"));
                 var val = $this.attr("data-hm-val");
                 if (val === "true") { val = true; }
                 if (val === "false") { val = false; }
                 $this.on('click', function (e) {
                     if (dui.urlParams["edit"] !== "") {
-                        homematic.setValue($this.attr("data-hm-id"), val);
+                        localData.setValue($this.attr("data-hm-id"), val);
                     }
                 });
                 // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
                 /*
                 $this.on('touchend',function (e) {
                     if (dui.urlParams["edit"] !== "") {
-                        homematic.setValue($this.attr("data-hm-id"), val);
+                        localData.setValue($this.attr("data-hm-id"), val);
                     }
                 });
                 */
             },
+            pressed: null,
+            pressedNext: null,
             increment: function (el, minmax, delay, interval) {
 
                 jQuery(el).click(function (e) {
@@ -133,14 +135,14 @@
                     var hm_id = "_" + $this.attr("data-hm-id");
                     if (dui.urlParams["edit"] !== "") {
                         var step = parseFloat($this.attr("data-dashui-step")),
-                            tmp = parseFloat(homematic.uiState[hm_id].Value) + step;
+                            tmp = parseFloat(localData.uiState[hm_id].Value) + step;
                         if (step < 0) {
                             if (tmp >= minmax) {
-                                homematic.setValue($this.attr("data-hm-id"), tmp);
+                                localData.setValue($this.attr("data-hm-id"), tmp);
                             }
                         } else {
                             if (tmp <= minmax) {
-                                homematic.setValue($this.attr("data-hm-id"), tmp);
+                                localData.setValue($this.attr("data-hm-id"), tmp);
                             }
                         }
                     }
@@ -151,17 +153,15 @@
                         var hm_id = "_" + $that.attr("data-hm-id");
                         if (dui.urlParams["edit"] !== "") {
                             var step = parseFloat($that.attr("data-dashui-step")),
-                                    tmp = parseFloat(homematic.uiState[hm_id].Value) + step;
+                                    tmp = parseFloat(localData.uiState[hm_id].Value) + step;
                             if (step < 0) {
                                 if (tmp >= minmax) {
-                                    homematic.setValue($that.attr("data-hm-id"), tmp);
-                                    dui.binds.basic.pressed = setTimeout(function ($_that) {
-                                        fInterval($_that);
-                                    }, interval, $that);
+                                    localData.setValue($that.attr("data-hm-id"), tmp);
+                                    dui.binds.basic.pressed = setTimeout(fInterval, interval, $that);
                                 }
                             } else {
                                 if (tmp <= minmax) {
-                                    homematic.setValue($that.attr("data-hm-id"), tmp);
+                                    localData.setValue($that.attr("data-hm-id"), tmp);
                                     dui.binds.basic.pressed = setTimeout(function ($_that) {
                                         fInterval($_that);
                                     }, interval, $that);
@@ -174,13 +174,14 @@
                         dui.binds.basic.pressedNext = false;
                         var $this = $(this);
                         var hm_id = "_" + $this.attr("data-hm-id");
-                        dui.binds.basic.pressed = setTimeout(function ($that) {
-                            fInterval($that);
-                        }, delay, $this);
+                        dui.binds.basic.pressed = setTimeout(fInterval, delay, $this);
                     }
                     jQuery(el).on('mousedown', intervalStart);
                     jQuery(el).on('touchstart', intervalStart);
                     jQuery(el).on('touchend', function () {
+                        clearTimeout(dui.binds.basic.pressed);
+                    });
+                    jQuery(el).on('mouseup', function () {
                         clearTimeout(dui.binds.basic.pressed);
                     });
 
@@ -192,7 +193,7 @@
                 var hm_id = $this.attr("data-hm-id");
                 $this.click(function (e) {
                     if (dui.urlParams["edit"] !== "") {
-                        dui.socket.emit("programExecute", [hm_id]);
+                        dui.conn.execProgramm(hm_id);
                     }
                 });
             },
@@ -213,7 +214,7 @@
             hideOnFalse: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -223,7 +224,7 @@
                     }
                 });
                 if (dui.urlParams["edit"] !== "") {
-                    var newVal = homematic.uiState.attr(hm_id+".Value");
+                    var newVal = localData.uiState.attr(hm_id+".Value");
                     if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         $this.hide();
                     }
@@ -232,7 +233,7 @@
             hideOnTrue: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (newVal === true || parseFloat(newVal) > 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -242,7 +243,7 @@
                     }
                 });
                 if (dui.urlParams["edit"] !== "") {
-                    if (parseFloat(homematic.uiState.attr(hm_id+".Value")) != 0 && homematic.uiState.attr(hm_id+".Value") !== false) {
+                    if (parseFloat(localData.uiState.attr(hm_id+".Value")) != 0 && localData.uiState.attr(hm_id+".Value") !== false) {
                      $this.hide();
                     }
                 }
@@ -250,7 +251,7 @@
             showOnValue: function (el, val) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (newVal != val) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -260,7 +261,7 @@
                     }
                 });
                 if (dui.urlParams["edit"] !== "") {
-                    if (homematic.uiState.attr(hm_id+".Value") != val) {
+                    if (localData.uiState.attr(hm_id+".Value") != val) {
                         $this.hide();
                     }
                 }
@@ -268,22 +269,25 @@
             checkbox: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     if (newVal === false || parseFloat(newVal) === 0.0) {
                         $this.removeAttr("checked");
                     } else {
                         $this.prop("checked", true);
                     }
                 });
-                if (homematic.uiState.attr(hm_id+".Value")) {
+                if (localData.uiState.attr(hm_id+".Value") == "True" ||
+                    localData.uiState.attr(hm_id+".Value") == "true" ||
+                    localData.uiState.attr(hm_id+".Value") == true   ||
+                    localData.uiState.attr(hm_id+".Value") == 1) {
                     $this.prop("checked", true);
                 }
                 if (dui.urlParams["edit"] !== "") {
                     $this.change(function () {
                         if ($this.prop("checked")) {
-                            homematic.setValue( $this.attr("data-hm-id"),  true);
+                            localData.setValue( $this.attr("data-hm-id"),  true);
                         } else {
-                            homematic.setValue( $this.attr("data-hm-id"),  false);
+                            localData.setValue( $this.attr("data-hm-id"),  false);
                         }
                     });
                 }
@@ -292,12 +296,12 @@
                 var $this = jQuery(el).prev();
                 var id = $this.attr("data-hm-id");
                 $this.change(function () {
-                    console.log("uiState " + homematic.uiState.attr("_"+$this.attr("data-hm-id")));
+                    console.log("uiState " + localData.uiState.attr("_"+$this.attr("data-hm-id")));
                     console.log("setState " + $this.find("option:selected").val());
-                    homematic.setValue( $this.attr("data-hm-id"),  $this.find("option:selected").val());
+                    localData.setValue( $this.attr("data-hm-id"),  $this.find("option:selected").val());
                 });
                 var hm_id = "_" + id;
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     console.log("newVal="+newVal+" oldVal="+oldVal);
                     if (newVal == "false" || parseFloat(newVal) == 0) {
                         if ($this.find("option[value='1']").prop("selected")) {
@@ -318,20 +322,20 @@
                 });
             },
             toggle: function (el) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
                 function toggle() {
-                    var val = homematic.uiState["_"+id].Value;
+                    var val = localData.uiState["_"+id].Value;
                     if (val === false || val === "false") {
-                        homematic.setValue(id, true);
+                        localData.setValue(id, true);
                     } else if (val === true || val === "true") {
-                        homematic.setValue(id, false);
+                        localData.setValue(id, false);
                     } else {
                         val = parseFloat(val);
                         if (val >= 0.5) { val = 1; } else { val = 0; }
-                        homematic.setValue( id,  1-val);
+                        localData.setValue( id,  1-val);
                     }
                 }
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
                 if (dui.urlParams["edit"] !== "") {
                     // @geolin - musste das wieder entfernen - das führt zu doppelter Ausführung (Gerät geht kurz an und sofort wieder aus bzw umgekehrt)
                     //$this.on('touchend', toggle);
@@ -360,7 +364,7 @@
                 if (document.getElementById (wid)) {
                     $('#'+wid).remove ();
                 }
-                var str = homematic.uiState.attr("_" + hm_id + ".Value");
+                var str = localData.uiState.attr("_" + hm_id + ".Value");
                 var val = parseFloat(str);
                 var sText = '<svg class="dashui-widget ' + (myClass || "")+ '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="'+wid+'" data-hm-id="'+hm_id+'">';
                 if (dui.urlParams["edit"] === "") {
@@ -395,15 +399,15 @@
                     $("#"+wid).children().click(function () {
                         var $this = $(this);
                         var id = $this.attr("data-hm-id");
-                        var val = homematic.uiState["_"+id].Value;
+                        var val = localData.uiState["_"+id].Value;
                         if (val === false || val === "false") {
-                            homematic.setValue(id, true);
+                            localData.setValue(id, true);
                         } else if (val === true || val === "true") {
-                            homematic.setValue(id, false);
+                            localData.setValue(id, false);
                         } else {
                             val = parseFloat(val);
                             if (val >= 0.5) { val = 1; } else { val = 0; }
-                            homematic.setValue( id,  1-val);
+                            localData.setValue( id,  1-val);
                         }
                         var el = $('#'+obj.wid);
                         this._obj.style = {
@@ -413,7 +417,7 @@
                             left:   el.position().left,
                             height: el.height()
                         }
-                        setTimeout(function(obj){
+                        _setTimeout(function(obj){
                             dui.binds.basic.showSvg (obj.myClass, obj.view, obj.wid, obj.hm_id, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
                         }, 200, this._obj);
                     });
@@ -470,7 +474,7 @@
 						jQuery('#'+dlg.attr("data-id")).css({width: max_width, height: 'auto'}); 
 					}
                     if (hm_id) {
-						homematic.setValue(hm_id, text);
+						localData.setValue(hm_id, text);
                     }
 					dlg.dialog( "close" );
 					dlg.remove();
@@ -541,12 +545,17 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplFrame" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Border" data-dashui-attrs="title['Title'];title_font;title_color[black]/color;title_back/color;title_top[-10]/slider,-20,20,1;title_left[15]/slider,-20,30,1">
+<script type="text/ejs" id="tplFrame" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Border" data-dashui-attrs="title['Title'];title_font;title_color[black]/color;title_back/color;title_top[-10]/slider,-20,20,1;title_left[15]/slider,-20,30,1;header_height[0]/slider,0,100,1;header_color[black]/color">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="overflow:visible;width:50px;height:50px;border:1px solid #888" id="<%= this.data.attr('wid') %>" >
+        <% if (this.data.attr('header_height')) { %>
+	    <div style="width:100%;height:<%= this.data.attr('header_height') %>px;background-color:<%= this.data.attr('header_color') %>">
+		<% } %>
         <div style="position:absolute;top:<%= this.data.attr('title_top') %>px;left:<%= this.data.attr('title_left') %>px;color:<%== this.data.attr('title_color') %>;background:<%== this.data.attr('title_back') %>;font:<%== this.data.attr('title_font') %>"><%== this.data.attr('title') %></div>
+        <% if (this.data.attr('header_height')) { %>
+        </div>
+		<% } %>
     </div>
 </script>
-
 <!-- basic Container -->
 
 <script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - view in widget" data-dashui-attrs="contains_view">
@@ -566,7 +575,7 @@
         <%
             var viewArr = [data.attr("contains_view_0"), data.attr("contains_view_1"), data.attr("contains_view_2"), data.attr("contains_view_3"), data.attr("contains_view_4"), data.attr("contains_view_5"), data.attr("contains_view_6"), data.attr("contains_view_7")];
         %>
-        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= viewArr[homematic.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" class="dashui-widget-body">
+        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= viewArr[localData.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" class="dashui-widget-body">
             <div class="dashui-view-container" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
         </div>
     </div>
@@ -580,7 +589,7 @@
             <%
                 var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];
             %>
-            <iframe class="dashui-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" src="<%== srcArr[homematic.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="dashui-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" src="<%== srcArr[localData.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
             <div <%= (el) -> dui.binds.stateful.iframe(el, srcArr, data.attr("refreshInterval")) %> />
         </div>
     </div>
@@ -614,7 +623,7 @@
             <%
                 var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];
             %>
-            <img class="dashui-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" style="position:absolute; width:100%;" src="<%== srcArr[homematic.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" />
+            <img class="dashui-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" style="position:absolute; width:100%;" src="<%== srcArr[localData.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" />
             <div <%= (el) -> dui.binds.stateful.image(el, srcArr, data.attr("refreshInterval")) %> />
         </div>
     </div>
@@ -640,11 +649,11 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Number" data-dashui-attrs="html_prepend;html_append_singular;html_append_plural;hm_id;digits;factor">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
+<script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Number" data-dashui-attrs="html_prepend;html_append_singular;html_append_plural;hm_id;digits;factor;hm_id_state/id;class_true;class_false">
+    <div class="dashui-widget <%== (localData.uiState.attr("_" + this.data.hm_id_state + ".Value") == "true" ||  localData.uiState.attr("_" + this.data.hm_id_state + ".Value") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%= (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) * this.data.factor).toFixed(this.data.digits) %><%== (parseFloat(homematic.uiState.attr("_" + this.data.hm_id + ".Value")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+                <%== this.data.attr("html_prepend") %><%= (parseFloat(localData.uiState.attr("_" + this.data.hm_id + ".Value")) * this.data.factor).toFixed(this.data.digits) %><%== (parseFloat(localData.uiState.attr("_" + this.data.hm_id + ".Value")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
             </div>
         </div>
     </div>
@@ -654,7 +663,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%= homematic.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%= localData.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -664,7 +673,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%== homematic.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== localData.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -674,7 +683,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%== homematic.uiState.attr("_" + this.data.hm_id + ".Timestamp") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== localData.uiState.attr("_" + this.data.hm_id + ".Timestamp") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -684,7 +693,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%== homematic.uiState.attr("_" + this.data.hm_id + ".LastChange") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== localData.uiState.attr("_" + this.data.hm_id + ".LastChange") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -694,7 +703,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><img <%= homematic.uiState.attr("_" + this.data.hm_id + ".Value" ) ? "src='" +  homematic.uiState.attr("_" + this.data.hm_id + ".Value" ) + "'" : "" %> width="100%"/><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><img <%= localData.uiState.attr("_" + this.data.hm_id + ".Value" ) ? "src='" +  localData.uiState.attr("_" + this.data.hm_id + ".Value" ) + "'" : "" %> width="100%"/><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -703,7 +712,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%= list[parseInt(homematic.uiState.attr("_" + this.data.hm_id + ".Value"),10)] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%= list[parseInt(localData.uiState.attr("_" + this.data.hm_id + ".Value"),10)] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -713,16 +722,16 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%== list[parseInt(homematic.uiState.attr("_" + this.data.hm_id + ".Value"),10)] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%== list[parseInt(localData.uiState.attr("_" + this.data.hm_id + ".Value"),10)] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
 </script>
 <script type="text/ejs" id="tplValueListHtml8" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - ValueList HTML 8" data-dashui-attrs="html_prepend;html_append;hm_id;value0;value1;value2;value3;value4;value5;value6;value7;style0;style1;style2;style3;style4;style5;style6;style7">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body" style="<% var slist = [data.style0,data.style1,data.style2,data.style3,data.style4,data.style5,data.style6,data.style7]; %><%== slist[parseInt((homematic.uiState.attr("_" + this.data.hm_id + ".Value") == true ? 1 : (homematic.uiState.attr("_" + this.data.hm_id + ".Value") == false ? 0 : homematic.uiState.attr("_" + this.data.hm_id + ".Value"))),10)] %>">
+        <div class="dashui-widget-body" style="<% var slist = [data.style0,data.style1,data.style2,data.style3,data.style4,data.style5,data.style6,data.style7]; %><%== slist[parseInt((localData.uiState.attr("_" + this.data.hm_id + ".Value") == true ? 1 : (localData.uiState.attr("_" + this.data.hm_id + ".Value") == false ? 0 : localData.uiState.attr("_" + this.data.hm_id + ".Value"))),10)] %>">
         <div data-hm-id="<%= this.data.attr('hm_id') %>">
-            <%== this.data.attr("html_prepend") %><% var list = [data.value0,data.value1,data.value2,data.value3,data.value4,data.value5,data.value6,data.value7]; %><%== list[parseInt((homematic.uiState.attr("_" + this.data.hm_id + ".Value") == true ? 1 : (homematic.uiState.attr("_" + this.data.hm_id + ".Value") == false ? 0 : homematic.uiState.attr("_" + this.data.hm_id + ".Value"))),10)] %><%== this.data.attr("html_append") %>
+            <%== this.data.attr("html_prepend") %><% var list = [data.value0,data.value1,data.value2,data.value3,data.value4,data.value5,data.value6,data.value7]; %><%== list[parseInt((localData.uiState.attr("_" + this.data.hm_id + ".Value") == true ? 1 : (localData.uiState.attr("_" + this.data.hm_id + ".Value") == false ? 0 : localData.uiState.attr("_" + this.data.hm_id + ".Value"))),10)] %><%== this.data.attr("html_append") %>
         </div>
     </div>
     </div>
@@ -733,7 +742,7 @@
         <div class="dashui-widget-body">
             <%== this.data.attr("html_prepend") %>
             <%
-            var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
+            var str = localData.uiState.attr("_" + this.data.hm_id + ".Value");
             var val = parseFloat(str);
             var state;
             if (str === false || str === "false" || val == 0) {
@@ -753,7 +762,7 @@
         <div class="dashui-widget-body">
             <%== this.data.attr("html_prepend") %>
             <%
-            var str = homematic.uiState.attr("_" + this.data.hm_id + ".Certain");
+            var str = localData.uiState.attr("_" + this.data.hm_id + ".Certain");
             var val = parseFloat(str);
             var state;
             if (str === false || str === "false" || val == 0) {
@@ -796,7 +805,7 @@
         <div class="dashui-widget-body">
 			<%== this.data.attr("html_prepend") %>
 			<%
-			var str = homematic.uiState.attr("_" + this.data.hm_id + ".Value");
+			var str = localData.uiState.attr("_" + this.data.hm_id + ".Value");
 			var val = parseFloat(str);
 			var state;
 			if (val === 0 || str === "false" || str === false) {
@@ -850,7 +859,7 @@
 <script type="text/ejs" id="tplRedNumber" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Red Number" data-dashui-attrs="hm_id;html_prepend;html_append_singular;html_append_plural">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.hideOnFalse(el) %>>
         <div class="dashui-widget-body" >
-            <%== this.data.attr("html_prepend") %><%= parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) %><%== (parseInt(homematic.uiState.attr("_"+this.data.hm_id+".Value"), 10) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+            <%== this.data.attr("html_prepend") %><%= parseInt(localData.uiState.attr("_"+this.data.hm_id+".Value"), 10) %><%== (parseInt(localData.uiState.attr("_"+this.data.hm_id+".Value"), 10) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
         </div>
     </div>
 </script>
@@ -858,7 +867,7 @@
 <script type="text/ejs" id="tplBulbOnOff" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Bulb on/off" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case false: case "false": %>
+            <% switch (localData.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case false: case "false": %>
             <img src="img/bulb_off.png" width="100%"/>
             <% break; default: %>
             <img src="img/bulb_on.png" width="100%"/>
@@ -870,7 +879,7 @@
 <script type="text/ejs" id="tplBulbOnOffCtrl" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="ctrl - Bulb on/off" data-dashui-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.basic.toggle(el) %>>
     <div class="dashui-widget-body">
-        <% switch (homematic.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": case false: %>
+        <% switch (localData.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": case false: %>
         <img src="img/bulb_off.png" width="100%"/>
         <% break; default: %>
         <img src="img/bulb_on.png" width="100%"/>
@@ -882,7 +891,7 @@
 <script type="text/ejs" id="tplHmWindowRotary" class="dashui-tpl"  data-dashui-set="basic" data-dashui-name="val - Drehgriff" data-dashui-attrs="hm_id;html_closed;html_tilt;html_open">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:100px;height:20px" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case 0: case "false": case false: %>
+            <% switch (localData.uiState.attr("_" + this.data.hm_id + ".Value")) { case 0: case "false": case false: %>
             <%== this.data.attr("html_closed") %>
             <% break; case 1: case true: %>
             <%== this.data.attr("html_tilt") %>
@@ -896,7 +905,7 @@
 <script type="text/ejs" id="tplHmWindow" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - TFK" data-dashui-attrs="hm_id;html_closed;html_open">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:20px;width:100px">
         <div class="dashui-widget-body">
-            <% switch (homematic.uiState.attr("_" + this.data.hm_id + ".Value")) { case "true": case true: %>
+            <% switch (localData.uiState.attr("_" + this.data.hm_id + ".Value")) { case "true": case true: %>
             <%== this.data.attr("html_open") %>
             <% break; default: %>
             <%== this.data.attr("html_closed") %>
@@ -907,7 +916,7 @@
 
 <script type="text/ejs" id="tplValueFloatBar" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Bar Horizontal" data-dashui-attrs="hm_id;factor;color;border;shadow;reverse/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:240px;height:20px;border:1px solid #888" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body" style="<%= (this.data.reverse === "true" || this.data.reverse === true ? "float:right; " : "") %>background-color:<%= this.data.color %>;border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;width:<%= homematic.uiState.attr('_' + this.data.hm_id + '.Value') * this.data.factor %>%;">
+        <div class="dashui-widget-body" style="<%= (this.data.reverse === "true" || this.data.reverse === true ? "float:right; " : "") %>background-color:<%= this.data.color %>;border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;width:<%= localData.uiState.attr('_' + this.data.hm_id + '.Value') * this.data.factor %>%;">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
             </div>
         </div>
@@ -916,7 +925,7 @@
 
 <script type="text/ejs" id="tplValueFloatBarVertical" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Bar Vertical" data-dashui-attrs="hm_id;factor;color;border;shadow;reverse/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:20px;height:240px;border:1px solid #888" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body" style="<%= (this.data.reverse === "true" || this.data.reverse === true ? "position:absolute; bottom:0%; " : "") %>background-color:<%= this.data.color %>;border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;height:<%=  homematic.uiState.attr('_' + this.data.hm_id + '.Value') * this.data.factor %>%;">
+        <div class="dashui-widget-body" style="<%= "height:"+parseInt(localData.uiState.attr('_' + this.data.hm_id + '.Value'))* this.data.factor+"%;" %><%= (this.data.reverse === "true" || this.data.reverse === true ? "left:0px;position:absolute;bottom:0%;" : "") %>border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;background-color:<%= this.data.color %>">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
             </div>
         </div>
@@ -925,7 +934,7 @@
 <script type="text/ejs" id="tplNote" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Note" data-dashui-attrs="hm_id;max_width[300];html_prepend;html_append;test_text">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:50px;height:50px;border:1px solid #888;background:yellow" id="<%= this.data.attr('wid') %>" onclick="dui.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= this.data.attr('hm_id') %>')">
 		<div data-hm-id="<%= this.data.attr('hm_id') %>" id="div_<%= this.data.attr('wid') %>">
-			<%== this.data.attr("html_prepend") %><%= homematic.uiState.attr("_" + this.data.hm_id + ".Value") == null ? "" : homematic.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
+			<%== this.data.attr("html_prepend") %><%= localData.uiState.attr("_" + this.data.hm_id + ".Value") == null ? "" : localData.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
 		</div>
     </div>
 </script>

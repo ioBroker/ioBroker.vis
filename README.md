@@ -7,6 +7,53 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta71
+* (Hobbyquaker) Fix Name Attribute on init uiState - Bedienung war nicht mehr möglich
+
+### 0.9beta70
+* (Hobbyquaker) Fix changeView() - Views wurden überlagert dargestellt, Navigation hat nicht immer funktioniert
+* (Hobbyquaker) Fix changeFilter() - Filter haben nicht funktioniert wenn keine hqWidgets vorhanden waren
+
+### 0.9beta69
+* (Hobbyquaker) Fix loadRemote() - eventuell eine Ursache für iPad-Bugs
+* (Hobbyquaker) Fix getDataPoints() - direktes befüllen des Canjs Observable, sollte Ladezeit wieder verbessern
+* (Hobbyquaker) Waitscreen umgebaut, Progressbar verbessert
+
+### 0.9beta68
+* (Hobbyquaker) Fix double JSON.stringify on saveRemote()
+
+### 0.9beta67
+* (Hobbyquaker) jqui Dialog Widgets: new Attribute preload
+* (BKo) new Widget SliderTabs
+* (Smiling-Jack) Fixes Swipe
+* (Smiling-Jack) neues Widget: Karusell
+
+### 0.9beta66
+* (Hobbyquaker) Fix increment bind
+* (Hobbyquaker) prevent longClick for IE
+
+### 0.9beta65
+* (Bluefox) Communication adapter to abstract the transport layer
+* (Bluefox) New widgets: Rgraph/LiveChart, Highchart/LiveChart, Highchart/Bars, Highchart/Clock
+* (Bluefox) Remove js files provided by ccu.io/www/lib
+* (Bluefox) Fix saveRemote function
+* (Bluefox) Fix small syntax errors
+* (Bluefox) Add connection parameter to config.js
+* (Bluefox) Make offline mode passable
+* (Hobbyquaker) Fix initInstance() call
+* (Hobbyquaker) Fix Widget "lcars - warpcore", "lcars - dna" in Firefox
+* (Hobbyquaker) Fix diverse Widgets lcars default Attribute
+
+### 0.9beta64
+* (Hobbyquaker) Fehler abgefangen in inspectWidget-Methode
+
+### 0.9beta63
+* (Hobbyquaker) Bugfix: betrifft viele Widgets, habe beim Refactoring ein Fehler gemacht...
+
+### 0.9beta62
+* (Hobbyquaker) neues Widget-Set: LCARS (Star Trek)
+* (Hobbyquaker) Refactoring
+
 ### 0.9beta61
 * (Hobbyquaker) Bugfix state Binding (betrifft verschiedene basic/jqui/jqui-mfd Widgets)
 * (Hobbyquaker) Bugfix diverse Widgets basic und jqui: Workaround für 404 __!!__ - siehe https://github.com/bitovi/canjs/issues/157

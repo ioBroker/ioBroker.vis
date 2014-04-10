@@ -30,7 +30,7 @@
                 g_id = g_id || 65535;
                 b_id = b_id || 65535;
 
-                if (!homematic.uiState["_"+r_id] || !homematic.uiState["_"+g_id] || !homematic.uiState["_"+b_id]) {
+                if (!localData.uiState["_"+r_id] || !localData.uiState["_"+g_id] || !localData.uiState["_"+b_id]) {
                     return;
                 }
 
@@ -40,35 +40,35 @@
                     var g = (parseFloat(color.g) / factor).toFixed(3);
                     var b = (parseFloat(color.b) / factor).toFixed(3);
                     if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
-                        homematic.uiState["_"+r_id].Value = r;
-                        homematic.uiState["_"+g_id].Value = g;
-                        homematic.uiState["_"+b_id].Value = b;
-                        homematic.setValue(r_id, r);
-                        homematic.setValue(g_id, g);
-                        homematic.setValue(b_id, b);
+                        localData.uiState["_"+r_id].Value = r;
+                        localData.uiState["_"+g_id].Value = g;
+                        localData.uiState["_"+b_id].Value = b;
+                        localData.setValue(r_id, r);
+                        localData.setValue(g_id, g);
+                        localData.setValue(b_id, b);
                     }
                 });
 
-                var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
-                var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
-                var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                var r = parseInt(parseFloat(localData.uiState["_"+r_id].Value) * factor, 10);
+                var g = parseInt(parseFloat(localData.uiState["_"+g_id].Value) * factor, 10);
+                var b = parseInt(parseFloat(localData.uiState["_"+b_id].Value) * factor, 10);
                 ft.setColor(dui.binds.colorpicker.rgb2hex(r,g,b));
 
-                homematic.uiState.bind("_"+r_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind("_"+r_id+".Value", function( e, newVal, oldVal ) {
                     var r = parseInt(parseFloat(newVal) * factor, 10);
-                    var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
-                    var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                    var g = parseInt(parseFloat(localData.uiState["_"+g_id].Value) * factor, 10);
+                    var b = parseInt(parseFloat(localData.uiState["_"+b_id].Value) * factor, 10);
                     ft.setColor(dui.binds.colorpicker.rgb2hex(r,g,b));
                 });
-                homematic.uiState.bind("_"+g_id+".Value", function( e, newVal, oldVal ) {
-                    var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
+                localData.uiState.bind("_"+g_id+".Value", function( e, newVal, oldVal ) {
+                    var r = parseInt(parseFloat(localData.uiState["_"+r_id].Value) * factor, 10);
                     var g = parseInt(parseFloat(newVal) * factor, 10);
-                    var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                    var b = parseInt(parseFloat(localData.uiState["_"+b_id].Value) * factor, 10);
                     ft.setColor(dui.binds.colorpicker.rgb2hex(r,g,b));
                 });
-                homematic.uiState.bind("_"+b_id+".Value", function( e, newVal, oldVal ) {
-                    var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
-                    var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
+                localData.uiState.bind("_"+b_id+".Value", function( e, newVal, oldVal ) {
+                    var r = parseInt(parseFloat(localData.uiState["_"+r_id].Value) * factor, 10);
+                    var g = parseInt(parseFloat(localData.uiState["_"+g_id].Value) * factor, 10);
                     var b = parseInt(parseFloat(newVal) * factor, 10);
                     ft.setColor(dui.binds.colorpicker.rgb2hex(r,g,b));
                 });
@@ -81,7 +81,7 @@
                 g_id = g_id || 65535;
                 b_id = b_id || 65535;
 
-                if (!homematic.uiState["_"+r_id] || !homematic.uiState["_"+g_id] || !homematic.uiState["_"+b_id]) {
+                if (!localData.uiState["_"+r_id] || !localData.uiState["_"+g_id] || !localData.uiState["_"+b_id]) {
                     return;
                 }
 
@@ -91,26 +91,26 @@
                     preferredFormat: "rgb"
                 });
 
-                var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
-                var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
-                var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                var r = parseInt(parseFloat(localData.uiState["_"+r_id].Value) * factor, 10);
+                var g = parseInt(parseFloat(localData.uiState["_"+g_id].Value) * factor, 10);
+                var b = parseInt(parseFloat(localData.uiState["_"+b_id].Value) * factor, 10);
                 $this.spectrum("set", {r:r, g:g, b:b});
 
-                homematic.uiState.bind("_"+r_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind("_"+r_id+".Value", function( e, newVal, oldVal ) {
                     var r = parseInt(parseFloat(newVal) * factor, 10);
-                    var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
-                    var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                    var g = parseInt(parseFloat(localData.uiState["_"+g_id].Value) * factor, 10);
+                    var b = parseInt(parseFloat(localData.uiState["_"+b_id].Value) * factor, 10);
                     $this.spectrum("set", {r:r, g:g, b:b});
                 });
-                homematic.uiState.bind("_"+g_id+".Value", function( e, newVal, oldVal ) {
-                    var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
+                localData.uiState.bind("_"+g_id+".Value", function( e, newVal, oldVal ) {
+                    var r = parseInt(parseFloat(localData.uiState["_"+r_id].Value) * factor, 10);
                     var g = parseInt(parseFloat(newVal) * factor, 10);
-                    var b = parseInt(parseFloat(homematic.uiState["_"+b_id].Value) * factor, 10);
+                    var b = parseInt(parseFloat(localData.uiState["_"+b_id].Value) * factor, 10);
                     $this.spectrum("set", {r:r, g:g, b:b});
                 });
-                homematic.uiState.bind("_"+b_id+".Value", function( e, newVal, oldVal ) {
-                    var r = parseInt(parseFloat(homematic.uiState["_"+r_id].Value) * factor, 10);
-                    var g = parseInt(parseFloat(homematic.uiState["_"+g_id].Value) * factor, 10);
+                localData.uiState.bind("_"+b_id+".Value", function( e, newVal, oldVal ) {
+                    var r = parseInt(parseFloat(localData.uiState["_"+r_id].Value) * factor, 10);
+                    var g = parseInt(parseFloat(localData.uiState["_"+g_id].Value) * factor, 10);
                     var b = parseInt(parseFloat(newVal) * factor, 10);
                     $this.spectrum("set", {r:r, g:g, b:b});
                 });
@@ -122,12 +122,12 @@
                     var g = (parseFloat(color.g) / factor).toFixed(3);
                     var b = (parseFloat(color.b) / factor).toFixed(3);
                     if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
-                        homematic.uiState["_"+r_id].Value = r;
-                        homematic.uiState["_"+g_id].Value = g;
-                        homematic.uiState["_"+b_id].Value = b;
-                        homematic.setValue(r_id, r);
-                        homematic.setValue(g_id, g);
-                        homematic.setValue(b_id, b);
+                        localData.uiState["_"+r_id].Value = r;
+                        localData.uiState["_"+g_id].Value = g;
+                        localData.uiState["_"+b_id].Value = b;
+                        localData.setValue(r_id, r);
+                        localData.setValue(g_id, g);
+                        localData.setValue(b_id, b);
                     }
 
                 });

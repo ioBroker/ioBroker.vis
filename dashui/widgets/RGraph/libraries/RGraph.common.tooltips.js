@@ -1,22 +1,36 @@
     /**
-    * o-------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free software, licensed    |
-    * | under the MIT license - so it's free to use for all purposes. Extended        |
-    * | support is available if required and donations are always welcome! You can    |
-    * | read more here:                                                               |
-    * |                         http://www.rgraph.net/support                         |
-    * o-------------------------------------------------------------------------------o
+    * o--------------------------------------------------------------------------------o
+    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
+    * | under the MIT license - so it's free to use for all purposes. If you want to   |
+    * | donate to help keep the project going then you can do so here:                 |
+    * |                                                                                |
+    * |                             http://www.rgraph.net/donate                       |
+    * o--------------------------------------------------------------------------------o
     */
+    RGraph = window.RGraph || {isRGraph: true};
 
-    if (typeof(RGraph) == 'undefined') RGraph = {isRGraph:true,type:'common'};
-    
+
+
+
+// Module pattern
+(function (win, doc, undefined)
+{
+    var RG  = RGraph,
+        ua  = navigator.userAgent,
+        ma  = Math;
+
+
+
+
     /**
     * This is used in two functions, hence it's here
     */
-    RGraph.tooltips           = {};
-    RGraph.tooltips.padding   = '3px';
-    RGraph.tooltips.font_face = 'Tahoma';
-    RGraph.tooltips.font_size = '10pt';
+    RG.tooltips           = {};
+    RG.tooltips.padding   = '3px';
+    RG.tooltips.font_face = 'Tahoma';
+    RG.tooltips.font_size = '10pt';
+
+
 
 
     /**
@@ -31,7 +45,8 @@
     * @param int     idx    The index of the tooltip in the graph objects tooltip array
     * @param object  e      The event object
     */
-    RGraph.Tooltip = function (obj, text, x, y, idx, e)
+    RG.tooltip =
+    RG.Tooltip = function (obj, text, x, y, idx, e)
     {
         /**
         * chart.tooltip.override allows you to totally take control of rendering the tooltip yourself
@@ -208,8 +223,8 @@
         /**
         * Fire the tooltip event
         */
-        RGraph.FireCustomEvent(obj, 'ontooltip');
-    }
+        RG.FireCustomEvent(obj, 'ontooltip');
+    };
     
 
 
@@ -218,7 +233,7 @@
     /**
     * 
     */
-    RGraph.getTooltipTextFromDIV = function (text)
+    RG.getTooltipTextFromDIV = function (text)
     {
         // This regex is duplicated firher down on roughly line 888
         var result = /^id:(.*)/.exec(text);
@@ -230,13 +245,13 @@
         }
         
         return text;
-    }
+    };
 
 
     /**
     * 
     */
-    RGraph.getTooltipWidth = function (text, obj)
+    RG.getTooltipWidth = function (text, obj)
     {
         var div = document.createElement('DIV');
             div.className             = obj.Get('chart.tooltips.css.class');
@@ -253,13 +268,14 @@
         document.body.appendChild(div);
 
         return div.offsetWidth;
-    }
+    };
 
 
     /**
     * Hides the currently shown tooltip
     */
-    RGraph.HideTooltip = function ()
+    RG.hideTooltip =
+    RG.HideTooltip = function ()
     {
         var tooltip = RGraph.Registry.Get('chart.tooltip');
         var uid     = arguments[0] && arguments[0].uid ? arguments[0].uid : null;
@@ -270,7 +286,7 @@
             tooltip.style.visibility = 'hidden';
             RGraph.Registry.Set('chart.tooltip', null);
         }
-    }
+    };
 
     
     
@@ -469,7 +485,8 @@
     * 
     * @param object obj The chart object
     */
-    RGraph.PreLoadTooltipImages = function (obj)
+    RG.preLoadTooltipImages =
+    RG.PreLoadTooltipImages = function (obj)
     {
         var tooltips = obj.Get('chart.tooltips');
         
@@ -514,7 +531,7 @@
                 document.body.removeChild(div);
             }
         }
-    }
+    };
 
 
 
@@ -522,7 +539,8 @@
     /**
     * This is the tooltips canvas onmousemove listener
     */
-    RGraph.Tooltips_mousemove  = function (obj, e)
+    RG.tooltips_mousemove =
+    RG.Tooltips_mousemove = function (obj, e)
     {
         var shape = obj.getShape(e);
         var changeCursor_tooltips = false
@@ -572,4 +590,12 @@
         }
 
         return changeCursor_tooltips;
-    }
+    };
+
+
+
+
+// End module pattern
+})(window, document);
+// version: 2014-03-28
+

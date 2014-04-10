@@ -1,72 +1,75 @@
     /**
-    * o-------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free software, licensed    |
-    * | under the MIT license - so it's free to use for all purposes. Extended        |
-    * | support is available if required and donations are always welcome! You can    |
-    * | read more here:                                                               |
-    * |                         http://www.rgraph.net/support                         |
-    * o-------------------------------------------------------------------------------o
+    * o--------------------------------------------------------------------------------o
+    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
+    * | under the MIT license - so it's free to use for all purposes. If you want to   |
+    * | donate to help keep the project going then you can do so here:                 |
+    * |                                                                                |
+    * |                             http://www.rgraph.net/donate                       |
+    * o--------------------------------------------------------------------------------o
     */
 
     /**
     * Initialise the various objects
     */
-    if (typeof(RGraph) == 'undefined') RGraph = {isRGraph:true,type:'common'};
+    RGraph = window.RGraph || {isRGraph: true};
+
+
+
+
+// Module pattern
+(function (win, doc, undefined)
+{
+    var RG = RGraph,
+        ua = navigator.userAgent,
+        ma = Math;
+
 
 
 
     /**
     * This is the window click event listener. It redraws all canvas tags on the page.
     */
+    RGraph.installWindowMousedownListener =
     RGraph.InstallWindowMousedownListener = function (obj)
     {
-        if (!window.__rgraph_mousedown_event_listener_installed__) {
-            var func = function (e)
+        if (!RGraph.window_mousedown_event_listener) {
+
+            RGraph.window_mousedown_event_listener = function (e)
             {
                 /**
                 * For firefox add the window.event object
                 */
-                if (navigator.userAgent.indexOf('Firefox') >= 0) window.event = e;
+                if (navigator.userAgent.indexOf('Firefox') >= 0) win.event = e;
                 
                 e = RGraph.FixEventObject(e);
     
-    
-                /**
-                * First fire the user specified window.onmousedown_rgraph listener if there is any.
-                */
-    
-                if (typeof(window.onmousedown_rgraph) == 'function') {
-                    window.onmousedown_rgraph(e);
-                }
-    
 
                 if (RGraph.HideTooltip && RGraph.Registry.Get('chart.tooltip')) {
-                    RGraph.Clear(RGraph.Registry.Get('chart.tooltip').__canvas__);
-                    RGraph.Redraw();
-                    RGraph.HideTooltip();
+                    RGraph.clear(RGraph.Registry.Get('chart.tooltip').__canvas__);
+                    RGraph.redraw();
+                    RGraph.hideTooltip();
                 }
-            }
-            window.addEventListener('mousedown', func, false);
-            
-            // Set this so the event listener isnt repeatedly installed
-            window.__rgraph_mousedown_event_listener_installed__ = func;
+            };
+            win.addEventListener('mousedown', RGraph.window_mousedown_event_listener, false);
         }
-    }
+    };
+
 
 
 
     /**
     * This is the window click event listener. It redraws all canvas tags on the page.
     */
+    RGraph.installWindowMouseupListener =
     RGraph.InstallWindowMouseupListener = function (obj)
     {
-        if (!window.__rgraph_mouseup_event_listener_installed__) {
-            var func = function (e)
+        if (!RGraph.window_mouseup_event_listener) {
+            RGraph.window_mouseup_event_listener = function (e)
             {
                 /**
                 * For firefox add the window.event object
                 */
-                if (navigator.userAgent.indexOf('Firefox') >= 0) window.event = e;
+                if (navigator.userAgent.indexOf('Firefox') >= 0) win.event = e;
                 
                 e = RGraph.FixEventObject(e);
     
@@ -77,13 +80,6 @@
                 if (RGraph.Annotating_window_onmouseup) {
                     RGraph.Annotating_window_onmouseup(e);
                     return;
-                }
-    
-                /**
-                * First fire the user specified window.onmouseup_rgraph listener if there is any
-                */
-                if (typeof(window.onmouseup_rgraph) == 'function') {
-                    window.onmouseup_rgraph(e);
                 }
     
                 /**
@@ -118,16 +114,10 @@
                 if (!noredraw) {
                     RGraph.Redraw();
                 }
-            }
-            window.addEventListener('mouseup', func, false);
-
-            // Set this so the event listener isn't repeatedly installed
-            window.__rgraph_mouseup_event_listener_installed__ = func;
+            };
+            win.addEventListener('mouseup', RGraph.window_mouseup_event_listener, false);
         }
-    }
-
-
-
+    };
 
 
 
@@ -137,11 +127,14 @@
     * canvas. The mouseup event then checks the relevant object.
     * 
     * @param object obj The chart object
+    * 
+    * RGraph.window_mouseup_event_listener
     */
+    RGraph.installCanvasMouseupListener =
     RGraph.InstallCanvasMouseupListener = function (obj)
     {
-        if (!obj.canvas.__rgraph_mouseup_event_listener_installed__) {
-            var func = function (e)
+        if (!obj.canvas.rgraph_mouseup_event_listener) {
+            obj.canvas.rgraph_mouseup_event_listener = function (e)
             {
                 /**
                 * For firefox add the window.event object
@@ -149,14 +142,6 @@
                 if (navigator.userAgent.indexOf('Firefox') >= 0) window.event = e;
     
                 e = RGraph.FixEventObject(e);
-    
-    
-                /**
-                * First fire the user specified onmouseup listener if there is any
-                */
-                if (typeof(e.target.onmouseup_rgraph) == 'function') {
-                    e.target.onmouseup_rgraph(e);
-                }
     
     
                 // *************************************************************************
@@ -170,7 +155,7 @@
                 //var objects = RGraph.ObjectRegistry.getObjectsByCanvasID(e.target.id);
 
                 if (objects) {
-                    for (var i=0; i<objects.length; ++i) {
+                    for (var i=0,len=objects.length; i<len; i+=1) {
                         
                         var obj = objects[i];
                         var id  = objects[i].id;
@@ -181,14 +166,12 @@
                         // ========================================================================
                         var link = obj.Get('link');
                         
-                        if (obj.type == 'drawing.text') {
-                            if (typeof link === 'string') {
-                                
-                                var link_target  = obj.Get('link.target');
-                                var link_options = obj.Get('link.options');
+                        if (obj.type == 'drawing.text' && typeof link === 'string') {
 
-                                window.open(link, link_target ? link_target : null, link_options);
-                            }
+                            var link_target  = obj.Get('link.target');
+                            var link_options = obj.Get('link.options');
+
+                            window.open(link, link_target ? link_target : null, link_options);
                         }
 
     
@@ -222,13 +205,7 @@
                                         var x = e.pageX;
                                         var y = e.pageY;
                                     }
-                                    
-                                    // Taken out November 2012
-                                    //if (obj.Get('chart.tooltips.coords.page')) {
-                                    //    var x = e.pageX;
-                                    //    var y = e.pageY;
-                                    //}
-    
+
                                     RGraph.Clear(obj.canvas);
                                     RGraph.Redraw();
                                     obj.Highlight(shape);
@@ -237,6 +214,7 @@
     
                                     // Add the shape that triggered the tooltip
                                     if (RGraph.Registry.Get('chart.tooltip')) {
+                                        
                                         RGraph.Registry.Get('chart.tooltip').__shape__ = shape;
     
                                         RGraph.EvaluateCursor(e);
@@ -276,13 +254,10 @@
                         }
                     }
                 }
-            }
-            obj.canvas.addEventListener('mouseup', func, false);
-        
-            // Set this so the canvas mouseup event listener isn't repeatedly installed
-            obj.canvas.__rgraph_mouseup_event_listener_installed__ = func;
+            };
+            obj.canvas.addEventListener('mouseup', obj.canvas.rgraph_mouseup_event_listener, false);
         }
-    }
+    };
 
 
 
@@ -292,25 +267,18 @@
     * 
     * @param object obj The chart object
     */
+    RGraph.installCanvasMousemoveListener =
     RGraph.InstallCanvasMousemoveListener = function (obj)
     {
-        if (!obj.canvas.__rgraph_mousemove_event_listener_installed__) {
-            var func = function (e)
+        if (!obj.canvas.rgraph_mousemove_event_listener) {
+            obj.canvas.rgraph_mousemove_event_listener = function (e)
             {
                 /**
                 * For firefox add the window.event object
                 */
                 if (navigator.userAgent.indexOf('Firefox') >= 0) window.event = e;
                 e = RGraph.FixEventObject(e);
-    
-    
 
-                /**
-                * First fire the user specified onmousemove listener if there is any
-                */
-                if (typeof(e.target.onmousemove_rgraph) == 'function') {
-                    e.target.onmousemove_rgraph(e);
-                }
     
     
     
@@ -320,8 +288,8 @@
                 var objects = RGraph.ObjectRegistry.getObjectsByXY(e);
                 //var objects = RGraph.ObjectRegistry.getObjectsByCanvasID(e.target.id);
 
-                if (objects && objects.length) {
-                    for (var i=0; i<objects.length; ++i) {
+                if (objects && objects.length > 0) {
+                    for (var i=0,len=objects.length; i<len; i+=1) {
     
                         var obj = objects[i];
                         var id  = obj.id;
@@ -342,7 +310,7 @@
                         
                         var func = obj.Get('chart.events.mousemove');
     
-                        if (!func && typeof(obj.onmousemove) == 'function') {
+                        if (!func && typeof obj.onmousemove == 'function') {
                             var func = obj.onmousemove;
                         }
     
@@ -392,7 +360,7 @@
 
                             RGraph.Clear(obj.canvas);
                             RGraph.Redraw();
-                            obj.canvas.__rgraph_mouseup_event_listener_installed__(e);
+                            obj.canvas.rgraph_mouseup_event_listener(e);
     
                             return;
                         }
@@ -429,12 +397,12 @@
             
             
                 // ================================================================================================ //
-                // Interactive key
+                // Interactive key No LONGER REQUIRED
                 // ================================================================================================ //
     
     
-                if (typeof(InteractiveKey_line_mousemove) == 'function') InteractiveKey_line_mousemove(e);
-                if (typeof(InteractiveKey_pie_mousemove) == 'function') InteractiveKey_pie_mousemove(e);
+                //if (typeof InteractiveKey_line_mousemove == 'function') InteractiveKey_line_mousemove(e);
+                //if (typeof InteractiveKey_pie_mousemove == 'function') InteractiveKey_pie_mousemove(e);
     
     
                 // ================================================================================================ //
@@ -452,13 +420,11 @@
                 * Determine the pointer
                 */
                 RGraph.EvaluateCursor(e);
-            }
-            obj.canvas.addEventListener('mousemove', func, false);
-
-            // Set this so the event listener isn't constantly added
-            obj.canvas.__rgraph_mousemove_event_listener_installed__ = func;
+            };
+            obj.canvas.addEventListener('mousemove', obj.canvas.rgraph_mousemove_event_listener, false);
         }
-    }
+    };
+
 
 
 
@@ -467,10 +433,11 @@
     * 
     * @param object obj The chart object
     */
+    RGraph.installCanvasMousedownListener =
     RGraph.InstallCanvasMousedownListener = function (obj)
     {
-        if (!obj.canvas.__rgraph_mousedown_event_listener_installed__) {
-            var func = function (e)
+        if (!obj.canvas.rgraph_mousedown_event_listener) {
+            obj.canvas.rgraph_mousedown_event_listener = function (e)
             {
                 /**
                 * For firefox add the window.event object
@@ -478,14 +445,7 @@
                 if (navigator.userAgent.indexOf('Firefox') >= 0) window.event = e;
                 
                 e = RGraph.FixEventObject(e);
-    
-    
-                /**
-                * First fire the user specified onmousedown listener if there is any
-                */
-                if (typeof(e.target.onmousedown_rgraph) == 'function') {
-                    e.target.onmousedown_rgraph(e);
-                }
+
     
                 /**
                 * Annotating
@@ -500,7 +460,7 @@
                 if (obj) {
 
                     var id = obj.id;
-    
+
                     /*************************************************************
                     * Handle adjusting for all object types
                     *************************************************************/
@@ -550,7 +510,7 @@
                             RGraph.Redraw();
         
                             // Call the mousemove event listener so that the canvas is adjusted even though the mouse isn't moved
-                            obj.canvas.__rgraph_mousemove_event_listener_installed__(e);
+                            obj.canvas.rgraph_mousemove_event_listener(e);
                         }
                     }
     
@@ -558,13 +518,10 @@
                     RGraph.Clear(obj.canvas);
                     RGraph.Redraw();
                 }
-            }
-            obj.canvas.addEventListener('mousedown', func, false);
-            
-            obj.canvas.__rgraph_mousedown_event_listener_installed__ = func;
+            };
+            obj.canvas.addEventListener('mousedown', obj.canvas.rgraph_mousedown_event_listener, false);
         }
-    }
-
+    };
 
 
 
@@ -574,10 +531,11 @@
     * 
     * @param object obj The chart object
     */
+    RGraph.installCanvasClickListener =
     RGraph.InstallCanvasClickListener = function (obj)
     {
-        if (!obj.canvas.__rgraph_click_event_listener_installed__) {
-            var func = function (e)
+        if (!obj.canvas.rgraph_click_event_listener) {
+            obj.canvas.rgraph_click_event_listener = function (e)
             {
                 /**
                 * For firefox add the window.event object
@@ -586,17 +544,9 @@
                 
                 e = RGraph.FixEventObject(e);
     
-    
-                /**
-                * First fire the user specified onmousedown listener if there is any
-                */
-                if (typeof(e.target.onclick_rgraph) == 'function') {
-                    e.target.onclick_rgraph(e);
-                }
-    
                 var objects = RGraph.ObjectRegistry.getObjectsByXY(e);
 
-                for (var i=0; i<objects.length; ++i) {
+                for (var i=0,len=objects.length; i<len; i+=1) {
 
                     var obj   = objects[i];
                     var id    = obj.id;
@@ -611,7 +561,7 @@
                         func = obj.onclick;
                     }
     
-                    if (shape && typeof(func) == 'function') {
+                    if (shape && typeof func == 'function') {
                         func(e, shape);
                         
                         /**
@@ -655,20 +605,22 @@
                         break;
                     }
                 }
-            }
-            obj.canvas.addEventListener('click', func, false);
-            
-            obj.canvas.__rgraph_click_event_listener_installed__ = func;
+            };
+            obj.canvas.addEventListener('click', obj.canvas.rgraph_click_event_listener, false);
         }
-    }
+    };
+
 
 
 
     /**
     * This function evaluates the various cursor settings and if there's one for pointer, changes it to that
     */
+    //RGraph.evaluateCursor =
+    RGraph.evaluateCursor =
     RGraph.EvaluateCursor = function (e)
     {
+        var obj     = null;
         var mouseXY = RGraph.getMouseXY(e);
         var mouseX  = mouseXY[0];
         var mouseY  = mouseXY[1];
@@ -679,7 +631,7 @@
         */
         var objects = RGraph.ObjectRegistry.getObjectsByCanvasID(canvas.id);
         
-        for (var i=0; i<objects.length; ++i) {
+        for (var i=0,len=objects.length; i<len; i+=1) {
             if ((objects[i].getShape && objects[i].getShape(e)) || (objects[i].overChartArea && objects[i].overChartArea(e))) {
                 var obj = objects[i];
                 var id  = obj.id;
@@ -753,7 +705,7 @@
         */
         var objects = RGraph.ObjectRegistry.objects.byCanvasID;
 
-        for (var i=0; i<objects.length; ++i) {
+        for (var i=0,len=objects.length; i<len; i+=1) {
             if (objects[i] && objects[i][1].Get('chart.resizable')) {
                 var resizable = true;
             }
@@ -775,7 +727,7 @@
         
 
         // =========================================================================
-        // Resize cursor
+        // Resize cursor - check mouseis in bottom left corner and if it is change it
         // =========================================================================
 
 
@@ -790,7 +742,7 @@
 
 
 
-        if (typeof(mouse_over_key) == 'boolean' && mouse_over_key) {
+        if (typeof mouse_over_key == 'boolean' && mouse_over_key) {
             e.target.style.cursor = 'pointer';
         }
 
@@ -841,7 +793,7 @@
         if (obj && obj.type === 'drawing.text' && shape && typeof obj.Get('link') === 'string') {
             e.target.style.cursor = 'pointer';
         }
-    }
+    };
 
 
 
@@ -861,17 +813,17 @@
         }
 
         // Get the tooltip text
-        if (typeof(tooltips) == 'function') {
+        if (typeof tooltips == 'function') {
             var text = tooltips(idx);
 
         // A single tooltip. Only supported by the Scatter chart
-        } else if (typeof(tooltips) == 'string') {
+        } else if (typeof tooltips == 'string') {
             var text = tooltips;
 
-        } else if (typeof(tooltips) == 'object' && typeof(tooltips)[idx] == 'function') {
+        } else if (typeof tooltips == 'object' && typeof tooltips[idx] == 'function') {
             var text = tooltips[idx](idx);
 
-        } else if (typeof(tooltips)[idx] == 'string' && tooltips[idx]) {
+        } else if (typeof tooltips[idx] == 'string' && tooltips[idx]) {
             var text = tooltips[idx];
 
         } else {
@@ -886,7 +838,8 @@
 
         // Conditional in case the tooltip file isn't included
         return RGraph.getTooltipTextFromDIV ? RGraph.getTooltipTextFromDIV(text) : text;
-    }
+    };
+
 
 
 
@@ -895,6 +848,7 @@
     * 
     * @param object obj The graph object (from which we can get the context and canvas as required)
     */
+    RGraph.drawCrosshairs =
     RGraph.DrawCrosshairs = function (e, obj)
     {
         var e            = RGraph.FixEventObject(e);
@@ -907,9 +861,12 @@
         var gutterRight  = obj.gutterRight;
         var gutterTop    = obj.gutterTop;
         var gutterBottom = obj.gutterBottom;
+        var Mathround    = Math.round;
         var prop         = obj.properties;
+        var co           = obj.context;
+        var ca           = obj.canvas;
 
-        RGraph.RedrawCanvas(obj.canvas);
+        RGraph.RedrawCanvas(ca);
 
         if (   x >= gutterLeft
             && y >= gutterTop
@@ -918,10 +875,10 @@
            ) {
 
             var linewidth = prop['chart.crosshairs.linewidth'] ? prop['chart.crosshairs.linewidth'] : 1;
-            obj.context.lineWidth = linewidth ? linewidth : 1;
+            co.lineWidth = linewidth ? linewidth : 1;
 
-            obj.context.beginPath();
-            obj.context.strokeStyle = prop['chart.crosshairs.color'];
+            co.beginPath();
+            co.strokeStyle = prop['chart.crosshairs.color'];
 
 
 
@@ -941,12 +898,12 @@
             
                     for (var i=0; i<obj.coords.length; ++i) {
                     
-                        var len = RGraph.getHypLength(obj.coords[i][0], obj.coords[i][1], x, y);
+                        var length = RGraph.getHypLength(obj.coords[i][0], obj.coords[i][1], x, y);
             
                         // Check the mouse X coordinate
-                        if (typeof(dist) != 'number' || len < dist) {
+                        if (typeof dist != 'number' || length < dist) {
                             var point = i;
-                            var dist = len;
+                            var dist = length;
                         }
                     }
                 
@@ -957,12 +914,12 @@
                     for (var dataset=0; dataset<obj.coords2.length; ++dataset) {
                         for (var point=0; point<obj.coords2[dataset].length; ++point) {
                             if (obj.coords2[dataset][point][0] == x && obj.coords2[dataset][point][1] == y) {
-                                obj.canvas.__crosshairs_snap_dataset__ = dataset;
-                                obj.canvas.__crosshairs_snap_point__   = point;
+                                ca.__crosshairs_snap_dataset__ = dataset;
+                                ca.__crosshairs_snap_point__   = point;
                             }
                         }
                     }
-            
+
                 } else {
             
                     for (var i=0; i<obj.coords.length; ++i) {
@@ -980,8 +937,9 @@
                         }
             
                     }
-                    obj.canvas.__crosshairs_snap_dataset__ = dataset;
-                    obj.canvas.__crosshairs_snap_point__   = point;
+                    ca.__crosshairs_snap_dataset__ = dataset;
+                    ca.__crosshairs_snap_point__   = point;
+
             
                     x = obj.coords[dataset][point][0];
                     y = obj.coords[dataset][point][1];
@@ -995,17 +953,17 @@
 
             // Draw a top vertical line
             if (prop['chart.crosshairs.vline']) {
-                obj.context.moveTo(Math.round(x), Math.round(gutterTop));
-                obj.context.lineTo(Math.round(x), Math.round(height - gutterBottom));
+                co.moveTo(Mathround(x), Mathround(gutterTop));
+                co.lineTo(Mathround(x), Mathround(height - gutterBottom));
             }
 
             // Draw a horizontal line
             if (prop['chart.crosshairs.hline']) {
-                obj.context.moveTo(Math.round(gutterLeft), Math.round(y));
-                obj.context.lineTo(Math.round(width - gutterRight), Math.round(y));
+                co.moveTo(Mathround(gutterLeft), Mathround(y));
+                co.lineTo(Mathround(width - gutterRight), Mathround(y));
             }
 
-            obj.context.stroke();
+            co.stroke();
             
             
             /**
@@ -1025,7 +983,7 @@
 
                 var div      = RGraph.Registry.Get('chart.coordinates.coords.div');
                 var mouseXY  = RGraph.getMouseXY(e);
-                var canvasXY = RGraph.getCanvasXY(obj.canvas);
+                var canvasXY = RGraph.getCanvasXY(ca);
                 
                 if (!div) {
                     var div = document.createElement('DIV');
@@ -1044,7 +1002,7 @@
                     
                     RGraph.Registry.Set('chart.coordinates.coords.div', div);
                 }
-                
+
                 // Convert the X/Y pixel coords to correspond to the scale
                 div.style.opacity = 1;
                 div.style.display = 'inline';
@@ -1061,9 +1019,9 @@
 
                 obj.canvas.addEventListener('mouseout', RGraph.HideCrosshairCoords, false);
 
-                obj.canvas.__crosshairs_labels__ = div;
-                obj.canvas.__crosshairs_x__ = xCoord;
-                obj.canvas.__crosshairs_y__ = yCoord;
+                ca.__crosshairs_labels__ = div;
+                ca.__crosshairs_x__ = xCoord;
+                ca.__crosshairs_y__ = yCoord;
 
             } else if (prop['chart.crosshairs.coords']) {
                 alert('[RGRAPH] Showing crosshair coordinates is only supported on the Scatter chart');
@@ -1077,4 +1035,9 @@
         } else {
             RGraph.HideCrosshairCoords();
         }
-    }
+    };
+
+// End module pattern
+})(window, document);
+// version: 2014-03-28
+

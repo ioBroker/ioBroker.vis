@@ -2,7 +2,7 @@
  *  DashUI
  *  https://github.com/hobbyquaker/dashui/
  *
- *  Copyright (c) 2013 hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
  *  MIT License (MIT)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -22,28 +22,24 @@
 
 var dui = {
 
-    version:                '0.9beta61',
-    requiredCcuIoVersion:   '1.0.28',
+    version:                '0.9beta71',
+    requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
     storageKeyInstance:     'dashuiInstance',
-    fileViews:              duiConfig.fileViews,
     instance:               null,
     urlParams:              {},
     settings:               {},
     views:                  {},
     widgets:                {},
     activeView:             "",
-    defaultHmInterval:      duiConfig.defaultHmInterval,
-    listval:                [],
     widgetSets:             duiConfig.widgetSets,
     words:                  null,
-    language:               ccuIoLang || 'en',
+    language:               (typeof ccuIoLang === 'undefined') ? 'en': (ccuIoLang || 'en'),
     initialized:            false,
     useCache:               true,
-    socket:                 {},
     binds:                  {},
-    ccuIoDisconnected:      false,
+    serverDisconnected:     false,
     instanceView:           undefined,
     instanceData:           undefined,
     instanceCmd:            undefined,
@@ -51,9 +47,7 @@ var dui = {
     onChangeCallbacks:      [],
     viewsActiveFilter:      {},
     toLoadSetsCount:        0, // Count of widget sets that should be loaded
-    touchUserCss: function () {
-        dui.socket.emit("touchFile", "www/dashui/css/dashui-user.css");
-    },
+    isFirstTime:            true,
 
     loadWidgetSet: function (name, callback) {
         //console.log("loadWidgetSet("+name+")");
@@ -65,10 +59,12 @@ var dui = {
             cache: dui.useCache,
             success: function (data) {
                 jQuery("head").append(data);
-                dui.toLoadSetsCount--;
-                dui.showWaitScreen(true, " <span style='font-size: 10px;'>" + dui.toLoadSetsCount+ "</span>", null);
+                dui.toLoadSetsCount -= 1;
                 if (dui.toLoadSetsCount <= 0) {
-                    setTimeout(callback, 50);
+                    dui.showWaitScreen(true, null, null, 100);
+                    setTimeout(callback, 100);
+                } else {
+                    dui.showWaitScreen(true, null /*" <span style='font-size: 10px;'>" + dui.toLoadSetsCount+ "</span>"*/, null, parseInt((100-dui.waitScreenVal) / dui.toLoadSetsCount, 10));
                 }
             }
         });
@@ -101,7 +97,7 @@ var dui = {
         return widgetSets;
     },
     loadWidgetSets: function (callback) {
-        dui.showWaitScreen(true, "Loading Widget-Sets ...", null, "+1");
+        dui.showWaitScreen(true, "Loading Widget-Sets ... <span id='widgetset_counter'></span>", null, 20);
         var arrSets = [];
 
         // Get list of used widget sets. if Edit mode list is null.
@@ -123,10 +119,18 @@ var dui = {
             }
         }
         dui.toLoadSetsCount = arrSets.length;
+        $("#widgetset_counter").html("<span style='font-size:10px'>("+(dui.toLoadSetsCount-1)+")</span>");
 
-        for (var i = 0, len = dui.toLoadSetsCount; i < len; i++) {
-            setTimeout (dui.loadWidgetSet, 100, arrSets[i], callback);
+        if (dui.toLoadSetsCount) {
+            for(var i = 0, len = dui.toLoadSetsCount; i < len; i++) {
+                _setTimeout (dui.loadWidgetSet, 100, arrSets[i], callback);
+            }
+        } else {
+            if (callback) {
+                callback();
+            }
         }
+
     },
     bindInstance: function () {
 
@@ -141,16 +145,16 @@ var dui = {
         }
         //console.log("bind instance id="+dui.instanceCmd);
 
-        homematic.uiState.attr("_"+ dui.instanceCmd, {Value:''});
-        homematic.uiState.attr("_"+ dui.instanceData, {Value:''});
-        homematic.uiState.attr("_"+ dui.instanceView, {Value:dui.activeView});
+        localData.uiState.attr("_"+ dui.instanceCmd, {Value:''});
+        localData.uiState.attr("_"+ dui.instanceData, {Value:''});
+        localData.uiState.attr("_"+ dui.instanceView, {Value:dui.activeView});
 
-        homematic.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
+        localData.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
             var cmd = newVal;
             //console.log("external command cmd=" + cmd);
 
             if (cmd !== "") {
-                var data = homematic.uiState.attr("_" + dui.instanceData + ".Value");
+                var data = localData.uiState.attr("_" + dui.instanceData + ".Value");
                 //console.log("external command cmd=" + cmd + " data=" + data);
 
                 // external Commands
@@ -178,7 +182,7 @@ var dui = {
                 }
 
                 // remove command
-                homematic.setValue(dui.instanceCmd, "");
+                localData.setValue(dui.instanceCmd, "");
 
             }
 
@@ -188,9 +192,9 @@ var dui = {
     },
     removeInstance: function () {
         storage.set(dui.storageKeyInstance, null);
-        dui.socket.emit("delObject", dui.instanceCmd);
-        dui.socket.emit("delObject", dui.instanceData);
-        dui.socket.emit("delObject", dui.instanceView);
+        dui.conn.delObject(dui.instanceCmd);
+        dui.conn.delObject(dui.instanceData);
+        dui.conn.delObject(dui.instanceView);
         $("#instance").hide();
         $("#create_instance").show();
         dui.instanceReady = false;
@@ -204,31 +208,31 @@ var dui = {
         $("#create_instance").hide();
         $("#instance").show();
 
-        console.log("create instance "+dui.instance);
+        //console.log("create instance "+dui.instance);
 
-        dui.socket.emit("setObject", 69800, {
+        dui.conn.addObject(69800, {
             _findNextId: true,
             _persistent: true,
             Name: "dashui_"+dui.instance+"_cmd",
             TypeName: "VARDP"
         }, function (cid) {
-            console.log("create var "+cid);
+            //console.log("create var "+cid);
             dui.instanceCmd = cid;
-            dui.socket.emit("setObject", 69801, {
+            dui.conn.addObject(69801, {
                 _findNextId: true,
                 _persistent: true,
                 Name: "dashui_"+dui.instance+"_view",
                 TypeName: "VARDP"
             }, function (vid) {
-                console.log("create var "+vid);
+                //console.log("create var "+vid);
                 dui.instanceView = vid;
-                dui.socket.emit("setObject", 69802, {
+                dui.conn.addObject(69802, {
                     _findNextId: true,
                     _persistent: true,
                     Name: "dashui_"+dui.instance+"_data",
                     TypeName: "VARDP"
                 }, function (did) {
-                    console.log("create var "+did);
+                    //console.log("create var "+did);
                     dui.instanceData = did;
                     dui.bindInstance();
                 });
@@ -248,7 +252,7 @@ var dui = {
             var viewVarName = "dashui_" + dui.instance + "_view";
             var dataVarName = "dashui_" + dui.instance + "_data";
             //console.log(cmdVarName);
-            var cmdId = homematic.regaIndex.Name[cmdVarName];
+            var cmdId = localData.metaIndex.Name[cmdVarName];
             if (cmdId) {
 
                 $("body").append('<div class="dashui-dummy" data-hm-id="' + dui.instanceView + '"></div>')
@@ -256,11 +260,11 @@ var dui = {
                     .append('<div class="dashui-dummy" data-hm-id="' + dui.instanceData + '"></div>');
 
                 dui.instanceCmd = cmdId[0];
-                if (homematic.regaIndex.Name[viewVarName]) {
-                    dui.instanceView = homematic.regaIndex.Name[viewVarName][0];
+                if (localData.metaIndex.Name[viewVarName]) {
+                    dui.instanceView = localData.metaIndex.Name[viewVarName][0];
                 }
-                if (homematic.regaIndex.Name[dataVarName]) {
-                    dui.instanceData = homematic.regaIndex.Name[dataVarName][0];
+                if (localData.metaIndex.Name[dataVarName]) {
+                    dui.instanceData = localData.metaIndex.Name[dataVarName][0];
                 }
 
                 //console.log("instance ids: "+dui.instanceCmd+" "+dui.instanceView+" "+dui.instanceData);
@@ -277,10 +281,6 @@ var dui = {
     init: function () {
         if (this.initialized) {
             return;
-        }
-
-        if (storage.get(dui.storageKeyInstance)) {
-            dui.initInstance();
         }
 
         var settings = storage.get(dui.storageKeySettings);
@@ -300,7 +300,7 @@ var dui = {
             dui.loadRemote(function () {
                 dui.showWaitScreen(false);
 
-                // Erststart.
+                // First start.
                 dui.initViewObject();
             });
             return false;
@@ -310,7 +310,7 @@ var dui = {
 
         var hash = window.location.hash.substring(1);
 
-        // View ausgewäfhlt?
+        // View selected?
         if (hash == "") {
             for (var view in dui.views) {
                 dui.activeView = view;
@@ -397,7 +397,7 @@ var dui = {
 
             // Render all non-hqWidgets widgets
             for (var id in dui.views[view].widgets) {
-                if (dui.views[view].widgets[id].tpl.substring(0,5) != "tplHq") {
+                if (dui.views[view].widgets[id].tpl.substring(0,5) != "tplHq" && !dui.views[view].widgets[id].renderVisible) {
                     dui.renderWidget(view, id);
 
                     // Try to complete the widgetSet information to optimize the loading of widgetSets
@@ -419,9 +419,10 @@ var dui = {
 
             if (dui.urlParams["edit"] === "") {
                 jQuery(".editmode-helper").show();
-                dui.binds.jqueryui._disable();
+                if (dui.binds.jqueryui) {
+                    dui.binds.jqueryui._disable();
+                }
             }
-
         } else {
             //console.log("renderView("+view+") - view already rendered");
         }
@@ -449,8 +450,9 @@ var dui = {
                 dui.views[view].rerender = false;
                 // render all hqWidgets
                 for (var id in dui.views[view].widgets) {
-                    if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
+                    if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq" || dui.views[view].widgets[id].renderVisible) {
                         dui.renderWidget(view, id);
+                    }
                 }
             }
         }
@@ -486,7 +488,7 @@ var dui = {
                 }
             }
             // Show hqWidgets
-            if (hqWidgets) {
+            if (typeof hqWidgets != "undefined") {
                 setTimeout(function () {
                     var btn;
                     for (var widget in widgets) {
@@ -512,8 +514,10 @@ var dui = {
                 if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
                     if (dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
                         var btn;
-                        if (hqWidgets && (btn = hqWidgets.Get(widget))) {
-                            btn.hide(true);
+                        if (typeof hqWidgets != "undefined") {
+                            if (btn = hqWidgets.Get(widget)) {
+                                btn.hide(true);
+                            }
                         }
                         $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
                     } else {
@@ -521,7 +525,7 @@ var dui = {
                     }
                 }
             }
-            if (hqWidgets) {
+            if (typeof hqWidgets != "undefined") {
                 setTimeout(function () {
                     var btn;
                     // Show hqWidgets
@@ -564,7 +568,7 @@ var dui = {
 
         try {
             // Append html element to view
-            $("#duiview_" + view).append(can.view(widget.tpl, {hm: homematic.uiState["_" + widget.data.hm_id], data: widgetData, view: view}));
+            $("#duiview_" + view).append(can.view(widget.tpl, {hm: localData.uiState['_' + widget.data.hm_id], data: widgetData, view: view}));
 
             if (dui.urlParams["edit"] !== "") {
                 if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
@@ -598,12 +602,11 @@ var dui = {
                 }
             }
         } catch (e) {
-            alert("Error: can't render "+widget.tpl+" "+id+"\n\n"+e);
+            console.log("Error: can't render "+widget.tpl+" "+id+"\n\n"+e);
         }
 
     },
     changeView: function (view, hideOptions, showOptions, sync) {
-
         var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
         if (!effect) {
             effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && (showOptions.effect != "")
@@ -650,19 +653,20 @@ var dui = {
                         if (dui.views[view].rerender) {
                             dui.views[view].rerender = false;
                             for (var id in dui.views[view].widgets) {
-                                if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
+                                if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq" ||
+                                    dui.views[view].widgets[id].renderVisible)
                                     dui.renderWidget(view, id);
                             }
                         }
                     }).dequeue();
                 }
                 $("#duiview_" + dui.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
+                    var list = $("link[href$='jquery-ui.min.css']");
 
-
-                    if ($("link[href$='jquery-ui.min.css']").length ==  0) {
+                    if (list.length ==  0) {
                         $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
                     } else {
-                        $("link[href$='jquery-ui.min.css']").attr("href", '../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css');
+                        list.attr("href", '../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css');
                     }
                     $("style[data-href$='jquery-ui.min.css']").remove();
 
@@ -671,7 +675,8 @@ var dui = {
                             if (dui.views[view].rerender) {
                                 dui.views[view].rerender = false;
                                 for (var id in dui.views[view].widgets) {
-                                    if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq")
+                                    if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq" ||
+                                        dui.views[view].widgets[id].renderVisible)
                                         dui.renderWidget(view, id);
                                 }
                             }
@@ -709,7 +714,6 @@ var dui = {
             }
         }
 
-        //console.log("changeView("+view+")");
         dui.activeView = view;
 
         $("#duiview_" + view).find("div[id$='container']").each(function () {
@@ -718,11 +722,13 @@ var dui = {
         });
 
         if (dui.instanceView) {
-            homematic.setValue(dui.instanceView, dui.activeView);
+            localData.setValue(dui.instanceView, dui.activeView);
         }
 
         if (window.location.hash.slice(1) != view) {
-            history.pushState({}, "", "#" + view);
+            if (history && history.pushState) {
+                history.pushState({}, "", "#" + view);
+            }
         }
 
         // Navigation-Widgets
@@ -738,10 +744,27 @@ var dui = {
             }
         });
 
-
         // --------- Editor -----------------
 
         if (dui.urlParams['edit'] === "") {
+
+            // Load meta data if not yet loaded
+            var isMetaLoaded = false;
+            for (var v in localData.metaObjects) {
+                isMetaLoaded = true;
+                break;
+            }
+            if (!isMetaLoaded) {
+                // Read all dataobjects from server
+                dui.conn.getDataObjects(function (data) {
+                    localData.metaObjects = data;
+                });
+                dui.conn.getDataIndex(function (data) {
+                    localData.metaIndex = data;
+                });
+            }
+
+
             // Init background selector
             if (dui.styleSelect) {
                 dui.styleSelect.Show({ width: 180,
@@ -813,84 +836,76 @@ var dui = {
         });
     },
     loadRemote: function (callback, callbackArg) {
-        dui.showWaitScreen(true, "Loading Views ...", null, "+1");
-        if (typeof io != "undefined") {
-            dui.socket.emit("readFile", "dashui-views.json", function (data, err) {
-                if (err) {
-                    alert("Error parse dashui-views.json");
+        dui.showWaitScreen(true, "<br/>Loading Views...<br/>", null, 12.5);
+        dui.conn.readFile("dashui-views.json", function (data, err) {
+            if (err) {
+                alert("dashui-views.json "+err);
+            }
+            if (data) {
+                if (typeof data == "string") {
+                    dui.views = JSON.parse(data);
                 } else {
                     dui.views = data;
-                    if (!dui.views) {
-                        alert("No Views found on CCU.IO");
-                    }
-                    callback(callbackArg);
                 }
-            });
-        } else {
-            // Load from ../datastore/dashui-views.json the demo views
-            $.ajax({
-                url: "../datastore/dashui-views.json",
-                type: "get",
-                async: false,
-                dataType: "text",
-                cache: dui.useCache,
-                success: function (data) {
-                    dui.views = $.parseJSON(data);
-                    callback (callbackArg);
-                    if (!dui.views) {
-                        alert("No Views found on CCU.IO");
-                    }
-                }
-            });
-        }
+            } else {
+                dui.views = null;
+            }
+
+            if (callback) {
+                callback(callbackArg);
+            }
+            if (!dui.views) {
+                alert("No Views found on Server");
+            }            
+        });       
     },
     saveRemote: function (cb) {
         // Sync widget before it will be saved
         if (dui.activeWidget && dui.activeWidget.indexOf('_') != -1 && dui.syncWidget) {
             dui.syncWidget(dui.activeWidget);
         }
-        if (typeof io != "undefined") {
-            dui.socket.emit("writeFile", "dashui-views.json", dui.views, function () {
-                if (cb) {
-                    cb();
-                }
-                //console.log("Saved views on CCU.IO");
-            });
-        }
+        
+        dui.conn.writeFile("dashui-views.json", dui.views, function () {
+            if (cb) {
+                cb();
+            }
+            //console.log("Saved views on Server");
+        });
     },
     getObjDesc: function (id) {
-        if (homematic.regaObjects[id] !== undefined) {
+        if (localData.metaObjects[id] !== undefined) {
             var parent = "";
-            var p = homematic.regaObjects[id]["Parent"];
-            if (p !== undefined && homematic.regaObjects[p]["DPs"] !== undefined) {
-                parent = homematic.regaObjects[p]["Name"] + "/";
-            } else if (homematic.regaObjects[id]["TypeName"] !== undefined) {
-                if (homematic.regaObjects[id]["TypeName"] == "VARDP") {
+            var p = localData.metaObjects[id]["Parent"];
+            if (p !== undefined && localData.metaObjects[p]["DPs"] !== undefined) {
+                parent = localData.metaObjects[p]["Name"] + "/";
+            } else if (localData.metaObjects[id]["TypeName"] !== undefined) {
+                if (localData.metaObjects[id]["TypeName"] == "VARDP") {
                     parent = dui.translate("Variable") + " / ";
-                } else if (homematic.regaObjects[id]["TypeName"] == "PROGRAM") {
+                } else if (localData.metaObjects[id]["TypeName"] == "PROGRAM") {
                     parent = dui.translate("Program") + " / ";
                 }
             }
 
-            if (homematic.regaObjects[id]["Address"] !== undefined) {
-                return parent + homematic.regaObjects[id]["Name"] + "/" + homematic.regaObjects[id]["Address"];
-            } else {
-                return parent + homematic.regaObjects[id]["Name"];
+            if (localData.metaObjects[id]["Address"] !== undefined) {
+                return parent + localData.metaObjects[id]["Name"] + "/" + localData.metaObjects[id]["Address"];
+            } else if (localData.metaObjects[id]["Name"]){
+                return parent + localData.metaObjects[id]["Name"];
+            } else if (localData.metaObjects[id]["name"]){
+                return parent + localData.metaObjects[id]["name"];
             }
-
         } else if (id == 41) {
             return dui.translate("Service messages");
         } else if (id == 40) {
             return dui.translate("Alarms");
         }
-        return "";
+        return id;
     },
     translateAll: function (lang) {
         lang  = lang || dui.language || 'en';
 
         $(".translate").each(function (idx) {
-            var curlang = $(this).attr ('data-lang');
-            var text    = $(this).html ();
+            var curlang = $(this).attr('data-lang');
+            var text    = $(this).html();
             if (curlang != lang) {
                 if (curlang) {
                     text = dui.translateBack(text, curlang);
@@ -898,8 +913,8 @@ var dui = {
 
                 var transText = dui.translate(text, lang);
                 if (transText) {
-                    $(this).html (transText);
-                    $(this).attr ('data-lang', lang);
+                    $(this).html(transText);
+                    $(this).attr('data-lang', lang);
                 }
             }
         });
@@ -907,12 +922,12 @@ var dui = {
     translate: function (text) {
         if (!this.words) {
             this.words = {
-                "No connection to CCU.IO"    : {"en" : "No connection to CCU.IO", "de": "Keine Verbindung zu CCU.IO", "ru": "Нет соединения с CCU.IO"},
-                "Loading Widget-Sets ..."    : {"en" : "Loading Widget-Sets ...", "de": "Lade Widget-Sätze ...", "ru": "Загрузка наборов элементов..."},
+                "No connection to Server"    : {"en" : "No connection to Server", "de": "Keine Verbindung zu Server", "ru": "Нет соединения с Server"},
+                "Loading Widget-Sets..."    : {"en" : "Loading Widget-Sets...", "de": "Lade Widget-Sätze...", "ru": "Загрузка наборов элементов..."},
                 " done.<br/>"      : {"en" : " done.<br/>",     "de": " - erledigt.<br/>",         "ru": ". Закончено.<br/>"},
-                "Loading Views ..." : {"en" : "Loading Views ...<br/>","de": "Lade Views ...<br/>",     "ru": "Загрузка пользовательских страниц...<br/>"},
-                "Connecting to CCU.IO ...<br/>": {"en" : "Connecting to CCU.IO ...<br/>", "de": "Verbinde mit CCU.IO ...<br/>", "ru": "Соединение с CCU.IO ...<br/>"},
-                "Loading ReGa Data": {"en" : "Loading data ", "de": "Lade Daten ", "ru": "Загрузка данных с CCU.IO "}
+                "<br/>Loading Views...<br/>" : {"en" : "<br/>Loading Views...<br/>","de": "<br/>Lade Views...<br/>",     "ru": "<br/>Загрузка пользовательских страниц...<br/>"},
+                "Connecting to Server ...<br/>": {"en" : "Connecting to Server ...<br/>", "de": "Verbinde mit Server ...<br/>", "ru": "Соединение с Server ...<br/>"},
+                "Loading data objects": {"en" : "Loading data...", "de": "Lade Daten...", "ru": "Загрузка данных..."}
             };
         }
         if (this.words[text]) {
@@ -925,34 +940,34 @@ var dui = {
 
         return text;
     },
+    waitScreenVal: 0,
     showWaitScreen: function (isShow, appendText, newText, step) {
         var waitScreen = document.getElementById("waitScreen");
         if (!waitScreen && isShow) {
-            $('body').append ("<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>");
+            $('body').append("<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>");
             waitScreen = document.getElementById("waitScreen");
-        }
-        if (step === 0) {
-            waitScreen.step = 0;
-            $(".dashui-progressbar ").progressbar({value: 0}).height(19);
+            dui.waitScreenVal = 0;
         }
 
+        $(".dashui-progressbar").progressbar({value: dui.waitScreenVal}).height(19);
+
         if (isShow) {
-            $(waitScreen).show ();
+            $(waitScreen).show();
             if (newText !== null && newText !== undefined) {
-                $('#waitText').html (dui.translate(newText));
+                $('#waitText').html(dui.translate(newText));
             }
             if (appendText !== null && appendText !== undefined) {
-                $('#waitText').append (dui.translate(appendText));
+                $('#waitText').append(dui.translate(appendText));
             }
             if (step !== undefined) {
-                if (step === "+1") {
-                    step = waitScreen.step + 12.5;
-                }
-                waitScreen.step = step;
-                $(".dashui-progressbar ").progressbar("value", step);
+                dui.waitScreenVal += step;
+                setTimeout(function (_val) {
+                    $(".dashui-progressbar").progressbar("value", _val);
+                }, 0, dui.waitScreenVal)
+
             }
         } else if (waitScreen) {
-            $(waitScreen).remove ();
+            $(waitScreen).remove();
         }
     },
     registerOnChange: function (callback, arg) {
@@ -968,27 +983,31 @@ var dui = {
         for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
             if (this.onChangeCallbacks[i].callback == callback &&
                 (arg == undefined || this.onChangeCallbacks[i].arg == arg)) {
-                this.onChangeCallbacks.slice (i, 1);
+                this.onChangeCallbacks.slice(i, 1);
                 return;
             }
         }
     }
 };
 
-var homematic = {
-    uiState: new can.Observe({"_65535": {"Value": null}}),
-    setState: new can.Observe({"_65535": {"Value": null}}),
-    regaIndex: {},
-    regaObjects: {},
+var localData = {
+    // All values of objects
+    uiState:        new can.Observe({"_65535": {"Value": null}}),
+    // Set values of objects
+    setState:       new can.Observe({"_65535": {"Value": null}}),
+    // Index arrays, like "functions", "rooms", "devices", and so on
+    metaIndex:      {},
+    // Array with all objects (Descriptions of objects)
+    metaObjects:    {},
     setStateTimers: {},
     setValue: function (id, val) {
         //console.log("setValue("+id+","+val+")");
 
         // Check if this ID is a programm
-        if (homematic.regaObjects[id] &&
-            homematic.regaObjects[id]["TypeName"] !== undefined &&
-            homematic.regaObjects[id]["TypeName"] == "PROGRAM") {
-            dui.socket.emit("programExecute", [id]);
+        if (localData.metaObjects[id] &&
+            localData.metaObjects[id]["TypeName"] !== undefined &&
+            localData.metaObjects[id]["TypeName"] == "PROGRAM") {
+            dui.conn.execProgramm(id);
         }  else {
             this.setState.attr("_" + id, {Value: val});
             var d = new Date();
@@ -1004,37 +1023,31 @@ var homematic = {
             o["_" + id + ".Certain"] = false;
             if (this.uiState["_" + id]) {
                 this.uiState.attr(o);
+
+                // Inform other widgets, that does not support canJS
+                for (var i = 0, len = dui.onChangeCallbacks.length; i < len; i++) {
+                    dui.onChangeCallbacks[i].callback(dui.onChangeCallbacks[i].arg, id, val);
+                }
             }
         }
     },
     stateDelayed: function (id, val) {
-        var attr = "_" + id;
+        var attr = '_' + id;
         if (!this.setStateTimers[id]) {
             //console.log("setState id="+id+" val="+val);
-            if (typeof io != "undefined") {
-                dui.socket.emit("setState", [id, val]);
-            }
+            dui.conn.setPointValue(this.uiState[attr].Name, val);
 
             this.setState.removeAttr(attr);
             this.setStateTimers[id] = setTimeout(function () {
-                if (homematic.setState[attr]) {
-                    homematic.setStateTimers[id] = undefined;
-                    homematic.stateDelayed(id, homematic.setState.attr(attr + ".Value"));
+                if (localData.setState[attr]) {
+                    localData.setStateTimers[id] = undefined;
+                    localData.stateDelayed(id, localData.setState.attr(attr + ".Value"));
                 }
-                homematic.setStateTimers[id] = undefined;
+                localData.setStateTimers[id] = undefined;
             }, 1000);
         }
     }
-}
-
-homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
-    //console.log("homematic setState change "+how+" "+attr+" "+newVal);
-    if (how == "set" || how == "add") {
-        var id = parseInt(attr.slice(1), 10);
-        homematic.stateDelayed(id, newVal.Value);
-    }
-});
-
+};
 
 // Parse Querystring
 (window.onpopstate = function () {
@@ -1042,7 +1055,7 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         pl     = /\+/g,
         search = /([^&=]+)=?([^&]*)/g,
         decode = function (s) {
-            return decodeURIComponent(s.replace(pl, " "));
+            return decodeURIComponent(s.replace(pl, ' '));
         },
         query  = window.location.search.substring(1);
     dui.urlParams = {};
@@ -1050,16 +1063,26 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
         dui.urlParams[decode(match[1])] = decode(match[2]);
     }
     // if old edit type
-    if (dui.urlParams['edit'] === "") {
-        window.location.href = "./edit.html" + window.location.hash;
+    if (dui.urlParams['edit'] === '') {
+        window.location.href = './edit.html' + window.location.hash;
     }
-    if (window.location.href.indexOf("edit.html") != -1) {
+    if (window.location.href.indexOf('edit.html') != -1) {
         dui.urlParams['edit'] = "";
     }
 })();
 
+// Start of initialisation: main ()
 (function ($) {
     $(document).ready(function () {
+        // Bind on change of some state
+        localData.setState.bind("change", function (e, attr, how, newVal, oldVal) {
+            //console.log("localData setState change "+how+" "+attr+" "+JSON.stringify(newVal));
+            if (how == "set" || how == "add") {
+                var id = attr.slice(1);//parseInt(attr.slice(1), 10);
+                localData.stateDelayed(id, newVal.Value);
+            }
+        });
+
         // für iOS Safari - wirklich notwendig?
         $('body').on('touchmove', function (e) {
             if ($(e.target).closest("body").length == 0) {
@@ -1086,174 +1109,639 @@ homematic.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             dui.editInit();
         }
 
-        if (typeof io != "undefined") {
-            dui.showWaitScreen(true, null, "Connecting to CCU.IO ...<br/>", 0);
+        dui.showWaitScreen(true, null, "Connecting to Server ...<br/>", 0);
 
-            dui.socket = io.connect($(location).attr('protocol') + '//' + $(location).attr('host')+"?key="+socketSession);
+        function compareVersion (instVersion, availVersion) {
+            var instVersionArr = instVersion.replace(/beta/, '.').split('.');
+            var availVersionArr = availVersion.replace(/beta/,'.').split('.');
 
-            dui.touchUserCss();
+            var updateAvailable = false;
 
-            function compareVersion(instVersion, availVersion) {
-                var instVersionArr = instVersion.replace(/beta/,".").split(".");
-                var availVersionArr = availVersion.replace(/beta/,".").split(".");
-
-                var updateAvailable = false;
-
-                for (var k = 0; k<3; k++) {
-                    instVersionArr[k] = parseInt(instVersionArr[k], 10);
-                    if (isNaN(instVersionArr[k])) { instVersionArr[k] = -1; }
-                    availVersionArr[k] = parseInt(availVersionArr[k], 10);
-                    if (isNaN(availVersionArr[k])) { availVersionArr[k] = -1; }
-                }
-
-                if (availVersionArr[0] > instVersionArr[0]) {
-                    updateAvailable = true;
-                } else if (availVersionArr[0] == instVersionArr[0]) {
-                    if (availVersionArr[1] > instVersionArr[1]) {
-                        updateAvailable = true;
-                    } else if (availVersionArr[1] == instVersionArr[1]) {
-                        if (availVersionArr[2] > instVersionArr[2]) {
-                            updateAvailable = true;
-                        }
-                    }
-                }
-                return updateAvailable;
+            for (var k = 0; k<3; k++) {
+                instVersionArr[k] = parseInt(instVersionArr[k], 10);
+                if (isNaN(instVersionArr[k])) { instVersionArr[k] = -1; }
+                availVersionArr[k] = parseInt(availVersionArr[k], 10);
+                if (isNaN(availVersionArr[k])) { availVersionArr[k] = -1; }
             }
 
-            dui.socket.emit('getVersion', function(version) {
-                if (compareVersion(version, dui.requiredCcuIoVersion)) {
-                    alert("Warning: requires CCU.IO version "+dui.requiredCcuIoVersion+" - found CCU.IO version "+version+" - please update CCU.IO.");
+            if (availVersionArr[0] > instVersionArr[0]) {
+                updateAvailable = true;
+            } else if (availVersionArr[0] == instVersionArr[0]) {
+                if (availVersionArr[1] > instVersionArr[1]) {
+                    updateAvailable = true;
+                } else if (availVersionArr[1] == instVersionArr[1]) {
+                    if (availVersionArr[2] > instVersionArr[2]) {
+                        updateAvailable = true;
+                    }
                 }
-            });
+            }
+            return updateAvailable;
+        }
+        dui.conn = servConn;
+        dui.conn.init({
+            onConnChange: function (isConnected) {
+                if (isConnected) {
+                    if (dui.isFirstTime) {
+                        dui.conn.touchFile("www/dashui/css/dashui-user.css");
 
-            dui.socket.on('refreshAddons', function () {
+                        dui.conn.getVersion(function (version) {
+                            if (compareVersion(version, dui.requiredServerVersion)) {
+                                alert("Warning: requires Server version "+dui.requiredServerVersion+" - found Server version "+version+" - please update Server.");
+                            }
+                        });
+                    }
+
+                    $("#ccu-io-disconnect").dialog("close");
+                    //console.log((new Date()) + " socket.io connect");
+
+                    // Read all datapoints from server
+                    dui.conn.getDataPoints(function () {
+
+                        // Get Server language
+                        var l = localData.uiState.attr("_69999.Value") || localData.uiState.attr("_System_Language");
+                        dui.language = l || dui.language;
+
+                        // If metaIndex required, load it
+                        if (dui.conn.getType() == 1) {
+                            /* socket.io */
+                            // Read all dataobjects from server
+                            dui.conn.getDataObjects(function (data) {
+                                localData.metaObjects = data;
+                            });
+                            dui.conn.getDataIndex(function (data) {
+                                localData.metaIndex = data;
+                                if (storage.get(dui.storageKeyInstance)) {
+                                    dui.initInstance();
+                                }
+                            });
+                        }
+                    });
+
+                    dui.serverDisconnected = false;
+                    //console.log((new Date()) + " socket.io reconnect");
+                    if (dui.isFirstTime) {
+                        setTimeout(dui.init, 10);
+                    }
+                    dui.isFirstTime = false;
+                } else {
+                    //console.log((new Date()) + " socket.io disconnect");
+                    $("#ccu-io-disconnect").dialog("open");
+                    dui.serverDisconnected = true;
+                }
+            },
+            onRefresh: function () {
                 window.location.reload();
-            });
-
-            dui.socket.on('event', function (obj) {
-                if (obj != null && homematic.uiState["_" + obj[0]] !== undefined) {
+            },
+            onUpdate: function (obj) {
+                var name;
+                // Check new model
+                if (obj != null && obj.name && (name = obj.name.replace(/\./g, '_')) && localData.uiState['_' + name] !== undefined) {
                     var o = {};
-                    o["_" + obj[0] + ".Value"]     = obj[1];
-                    o["_" + obj[0] + ".Timestamp"] = obj[2];
-                    o["_" + obj[0] + ".Certain"]   = obj[3];
-                    o["_" + obj[0] + ".LastChange"]   = obj[4];
-                    homematic.uiState.attr(o);
+                    o['_' + name + '.Value']      = obj.val;
+                    o['_' + name + '.Timestamp']  = obj.ts;
+                    o['_' + name + '.Certain']    = obj.ack;
+                    o["_" + name + ".LastChange"] = obj.lc;
 
-                    // Inform other widgets, that does not support canJS
+                    localData.uiState.attr(o);
+
+                    // Inform other widgets, that do not support canJS
                     for (var i = 0, len = dui.onChangeCallbacks.length; i < len; i++) {
-                        dui.onChangeCallbacks[i].callback(dui.onChangeCallbacks[i].arg, obj[0], obj[1], obj[3] || (homematic.regaObjects[obj[0]] && homematic.regaObjects[obj[0]]["TypeName"] == "VARDP"));
+                        dui.onChangeCallbacks[i].callback(dui.onChangeCallbacks[i].arg, name, obj.val, obj.ack || (localData.metaObjects[name] && localData.metaObjects[name]["TypeName"] == "VARDP"));
                     }
                 } else {
-                    //console.log("Datenpunkte sind noch nicht geladen!");
+                    //console.log('Datenpunkte sind noch nicht geladen!');
+                }
+            }
+        });
+
+        dui.showWaitScreen(true, 'Loading data objects', null, 15);
+    });
+    // Auto-Reconnect
+    setInterval(function () {
+            if (dui.serverDisconnected) {
+            //console.log("trying to force reconnect...");
+            $.ajax({
+                url: "/dashui/index.html",
+                success: function () {
+                    window.location.reload();
+                }
+            });
+        }
+    }, 30000);
+
+    dui.preloadImages(["../lib/css/themes/jquery-ui/kian/images/modalClose.png"])
+
+})(jQuery);
+
+////// ----------------------- Connection "class" ---------------------- ////////////
+
+// Todo - Why not members of the dui Object? Keep the global Namespace clean. Don't rely on $ === jQuery.
+
+var connCallbacks = {
+    onConnChange: null,
+    onUpdate:     null,
+    onRefresh:    null
+};
+
+var servConn = {
+    _socket: null,
+    _hub :   null,
+    _onConnChange: null,
+    _onUpdate: null,
+    _isConnected: false,
+    _connCallbacks: null,
+    _type:   1, // 0 - SignalR, 1 - socket.io, 2 - local demo
+
+    getType: function () {
+        return this._type;
+    },
+    init: function (connCallbacks, type) {
+        if (typeof type == "string") {
+            type = type.toLowerCase();
+        }
+
+        // If autodetect
+        if (type === undefined) {
+            if (typeof io != "undefined") {
+                type = 1; // socket.io
+            } else if (typeof $ != "undefined" && typeof $.connection != "undefined") {
+                type = 0; // SignalR
+            } else {
+                type = 2; // local demo
+            }
+        }
+
+        this._connCallbacks = connCallbacks;
+
+        if (type == 0 || type == 'signalr') {
+            this._type = 0;
+            this._hub = $.connection.serverHub;
+            if (!this._hub) {
+                // Auto-Reconnect
+                setInterval(function () {
+                    $.ajax({
+                        url: "/dashui/index.html",
+                        success: function () {
+                            window.location.reload();
+                        }
+                    })
+                }, 10000);
+                return;
+            }
+//            this._hub._myParent = this;
+
+            var that = this;
+
+            this._hub.client.updatePointValue = function (model) {
+                if (that._connCallbacks.onUpdate) {
+                    that._connCallbacks.onUpdate({name: model.name, val: model.val, ts: model.ts, ack: model.ack});
+                }
+            };
+            this._hub.client.refresh = function () {
+                if (that._connCallbacks.onRefresh) {
+                    that._connCallbacks.onRefresh();
+                }
+            };
+            $.connection.hub.start().done(function () {
+                that._isConnected = true;
+                if (that._connCallbacks.onConnChange){
+                    that._connCallbacks.onConnChange(that._isConnected);
+                }
+            });
+            $.connection.hub.reconnecting(function() {
+                that._isConnected = false;
+                if (that._connCallbacks.onConnChange){
+                    that._connCallbacks.onConnChange(that._isConnected);
+                }
+            });
+            $.connection.hub.reconnected(function() {
+                that._isConnected = true;
+                if (that._connCallbacks.onConnChange){
+                    that._connCallbacks.onConnChange(that._isConnected);
+                }
+            });
+            $.connection.hub.disconnected(function() {
+                that._isConnected = false;
+                if (that._connCallbacks.onConnChange){
+                    that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
 
-            dui.socket.on('connect', function () {
-                $("#ccu-io-disconnect").dialog("close");
-                //console.log((new Date()) + " socket.io connect");
+
+        } else if (type == 1 || type == "socket.io") {
+            this._type = 1;
+            if (typeof io != "undefined") {
+                if (typeof socketSession == 'undefined') {
+                    socketSession = 'nokey';
+                }
+                var url;
+                if (duiConfig.connLink) {
+                    url = duiConfig.connLink;
+                } else {
+                    url = $(location).attr('protocol') + '//' + $(location).attr('host');
+                }
+
+                this._socket = io.connect(url + '?key=' + socketSession);
+                this._socket._myParent = this;
+
+                this._socket.on('connect', function () {
+                    this._myParent._isConnected = true;
+                    if (this._myParent._connCallbacks.onConnChange){
+                        this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
+                    }
+                });
+
+                this._socket.on('disconnect', function () {
+                    this._myParent._isConnected = false;
+                    if (this._myParent._connCallbacks.onConnChange){
+                        this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
+                    }
+                });
+                this._socket.on('reconnect', function () {
+                    this._myParent._isConnected = true;
+                    if (this._myParent._connCallbacks.onConnChange){
+                        this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
+                    }
+                });
+                this._socket.on('refreshAddons', function () {
+                    if (this._myParent._connCallbacks.onRefresh){
+                        this._myParent._connCallbacks.onRefresh();
+                    }
+                });
+
+                this._socket.on('event', function (obj) {
+                    if (obj == null) {
+                        return;
+                    }
+
+                    var o = {};
+                    o.name = obj[0]+"";
+                    o.val  = obj[1];
+                    o.ts   = obj[2];
+                    o.ack  = obj[3];
+                    o.lc   = obj[4];
+
+                    if (this._myParent._connCallbacks.onUpdate){
+                        this._myParent._connCallbacks.onUpdate(o);
+                    }
+
+                });
+            } else {
+                //console.log("socket.io not initialized");
+            }
+        } else if (type == 2 || type == "local") {
+            this._type = 2;
+
+            this._isConnected = true;
+            if (this._connCallbacks.onConnChange){
+                this._connCallbacks.onConnChange(this._isConnected);
+            }
+       }
+    },
+    getVersion: function (callback) {
+        if (this._type == 0) {
+            //SignalR
+            this._hub.server.getVersion().done(function (version) {
+                if (callback)
+                    callback(version);
+            })
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                //console.log("socket.io not initialized");
+                return;
+            }
+            this._socket.emit('getVersion', function(version) {
+                if (callback)
+                    callback(version);
+            });
+        }
+    },
+    readFile: function (filename, callback) {
+        if (this._type == 0) {
+            //SignalR
+            this._hub.server.readFile(filename).done(function (data) {
+                if (callback) {
+                    callback(data);
+                }
+            });
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
+            this._socket.emit('readFile', filename, function(data, err) {
+                if (callback) {
+                    callback(data, err);
+                }
+            });
+        } else if (this._type == 2) {
+            //local
+            // Load from ../datastore/dashui-views.json the demo views
+            $.ajax({
+                url: '../datastore/' + filename,
+                type: 'get',
+                async: false,
+                dataType: 'text',
+                cache: dui.useCache,
+                success: function (data) {
+                    dui.views = $.parseJSON(data);
+                    if (typeof dui.views == "string") {
+                        dui.views = $.parseJSON(dui.views);
+                    }
+                    callback(dui.views);
+                    if (!dui.views) {
+                        alert("No Views found on Server");
+                    }
+                },
+                error: function (state) {
+                    window.alert('Cannot get '+ location.href+'datastore/'+filename + '\n' + state.statusText);
+                }
+            });
+        }
+    },
+    touchFile: function (filename) {
+        if (this._type == 0) {
+            //SignalR
+            this._hub.server.touchFile (filename);
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+            this._socket.emit('touchFile', filename);
+        }
+    },
+    writeFile: function (filename, data, callback) {
+
+        if (this._type == 0) {
+            //SignalR
+            this._hub.server.writeFile (filename, JSON.stringify(data)).done(function (isOk) {
+                if (callback) {
+                    callback(isOk);
+                }
+            });
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {console.log("socket.io not initialized"); return; }
+            this._socket.emit('writeFile', filename, data, function(isOk) {
+                if (callback) {
+                    callback(isOk);
+                }
+            });
+        }
+    },
+    readDir: function (dirname, callback) {
+        //SignalR
+        if (this._type == 0) {
+            this._hub.server.readDir (dirname).done(function (jsonString) {
+                var data;
+                try {
+                    data = JSON.parse(jsonString);
+                } catch (e) {
+                    console.log("readDir: Invalid JSON string - " + e);
+                    data = null;
+                }
+
+                if (callback) {
+                    callback (data);
+                }
+            });
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
+            this._socket.emit('readdir', dirname, function(data) {
+                if (callback) {
+                    callback(data);
+                }
+            });
+        }
+    },
+    setPointValue: function (pointName, value) {
+        if (this._type == 0) {
+            //SignalR
+            this._hub.server.setDataPoint({name: pointName, val: value});
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
+            this._socket.emit('setState', [pointName, value]);
+        }
+    },
+    getDataPoints: function (callback) {
+
+        // @Bluefox: befüllen des Canjs Observable direkt hier, keine Übergabe mehr an Callback - imho schöner als 2x über das Array zu laufen
+        //              im Socket.IO Teil passt das, aber für SignalR wird das Array immer noch 2x durchlaufen...
+
+        if (this._type == 0) {
+            //SignalR
+
+            this._hub.server.getDataPoints().done(function (jsonString) {
+                var data = {};
+                try {
+                    var _data = JSON.parse(jsonString);
+                    // Convert array to mapped object {name1: object1, name2: object2}
+                    for (var i = 0, len = _data.length; i < len; i++) {
+                        if (_data[i]) {
+                            data[_data[i].name.replace(/\./g, '_')] = _data[i];
+                        }
+                    }
+                } catch (e) {
+                    console.log("getDataPoints: Invalid JSON string - " + e);
+                    data = null;
+                }
+
+                for (var dp in data) {
+                    // Todo check if this works
+                    var obj = data[dp];
+                    if (!localData.uiState["_"+dp]) {
+                        localData.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3], Name:dp});
+                    } else {
+                        var o = {};
+                        o["_" + dp + ".Value"]     = obj.val;
+                        o["_" + dp + ".Timestamp"] = obj.ts;
+                        o["_" + dp + ".Certain"]   = obj.ack;
+                        o["_" + dp + ".LastChange"]   = obj.lc;
+                        // Todo - wofür ist das .Name Attribut?
+                        o["_" + dp + ".Name"] = dp;
+                    }
+                }
+                if (callback) {
+                    callback();
+                }
             });
 
-            dui.socket.on('connecting', function () {
-                //console.log((new Date()) + " socket.io connecting");
-            });
+        } else if (this._type == 1) {
+            //socket.io
 
-            dui.socket.on('disconnect', function () {
-                //console.log((new Date()) + " socket.io disconnect");
-                $("#ccu-io-disconnect").dialog("open");
-                dui.ccuIoDisconnected = true;
-            });
-
-            dui.socket.on('disconnecting', function () {
-                //console.log((new Date()) + " socket.io disconnecting");
-            });
-
-            dui.socket.on('reconnect', function () {
-                $("#ccu-io-disconnect").dialog("close");
-                // Reload uiState
-                dui.socket.emit("getDatapoints", function (data) {
-                    for (var dp in data) {
-                        var obj = data[dp];
+            if (this._socket == null) {
+                return;
+            }
+            this._socket.emit('getDatapoints', function(data) {
+                for (var dp in data) {
+                    var obj = data[dp];
+                    if (!localData.uiState["_"+dp]) {
+                        localData.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3], Name: dp});
+                    } else {
                         var o = {};
                         o["_" + dp + ".Value"]     = obj[0];
                         o["_" + dp + ".Timestamp"] = obj[1];
                         o["_" + dp + ".Certain"]   = obj[2];
                         o["_" + dp + ".LastChange"]   = obj[3];
-                        homematic.uiState.attr(o);
+                        // Todo - wofür ist das .Name Attribut?
+                        o["_" + dp + ".Name"] = dp;
+                        localData.uiState.attr(o);
                     }
-                    // Get CCU.IO language
-                    var l = homematic.uiState.attr("_69999.Value");
-                    dui.language = l || dui.language;
-                });
 
-
-                dui.ccuIoDisconnected = false;
-                //console.log((new Date()) + " socket.io reconnect");
+                }
+                if (callback) {
+                    callback();
+                }
             });
 
-            dui.socket.on('reconnecting', function () {
-                //console.log((new Date()) + " socket.io reconnecting");
-            });
-
-            dui.socket.on('reconnect_failed', function () {
-                //console.log((new Date()) + " socket.io reconnect failed");
-            });
-
-            dui.socket.on('error', function () {
-                //console.log((new Date()) + " socket.io error");
-            });
-        } else {
-            dui.showWaitScreen(true, null, "Local demo mode ...<br/>", 0);
         }
-
-        dui.showWaitScreen(true, "Loading ReGa Data", null, "+1");
-
-        if (typeof io != "undefined") {
-            dui.socket.emit("getIndex", function (index) {
-                dui.showWaitScreen(true, ".", null, "+1");
-                //console.log("index loaded");
-                homematic.regaIndex = index;
-                dui.socket.emit("getObjects", function (obj) {
-                    dui.showWaitScreen(true, ".", null, "+1");
-                    //console.log("objects loaded")
-                    homematic.regaObjects = obj;
-                    dui.socket.emit("getDatapoints", function (data) {
-                        dui.showWaitScreen(true, ".<br>", null, "+1");
-                        for (var dp in data) {
-                            try {
-                                homematic.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
-                            } catch (e) {
-                                console.log(e+" - "+dp);
-                            }
+    },
+    getDataObjects: function (callback) {
+        //console.log("getDataObjects");
+        if (this._type == 0) {
+            //SignalR
+            this._hub.server.getDataObjects ().done(function (jsonString) {
+                var data = {};
+                try {
+                    var _data = JSON.parse(jsonString);
+                    // Convert array to mapped object {name1: object1, name2: object2}
+                    for (var i = 0, len = _data.length; i < len; i++) {
+                        if (_data[i]) {
+                            data[_data[i].name.replace(/\./g, '_')] = _data[i];
                         }
-
-                        // Get CCU.IO language
-                        var l = homematic.uiState.attr("_69999.Value");
-                        dui.language = l || dui.language;
-
-                        setTimeout(dui.init, 10);
-                    });
-                });
-            });
-        } else {
-            setTimeout(dui.init, 10);
-        }
-    });
-
-    if (typeof io != "undefined") {
-        // Auto-Reconnect
-        setInterval(function () {
-            if (dui.ccuIoDisconnected) {
-                //console.log("trying to force reconnect...");
-                $.ajax({
-                    url: "/dashui/index.html",
-                    success: function () {
-                        window.location.reload();
                     }
-                })
+                } catch (e) {
+                    console.log("getDataObjects: Invalid JSON string - " + e);
+                    data = null;
+                }
+
+                if (callback) {
+                    callback(data);
+                }
+            });
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
             }
-        }, 90000);
+            this._socket.emit('getObjects', function(data) {
+                if (callback) {
+                    callback(data);
+                }
+            });
+        }
+    },
+    getDataIndex: function (callback) {
+        //console.log("getDataIndex");
+        if (this._type == 0) {
+            //SignalR
+            if (callback) {
+                callback(null);
+            }
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
+            this._socket.emit('getIndex', function(data) {
+                if (callback)
+                    callback(data);
+            });
+        }
+    },
+    addObject: function (objId, obj, callback) {
+        //SignalR
+        if (this._type == 0) {
+            this._hub.server.addObject (objId, obj).done(function (cid) {
+                if (callback) {
+                    callback(cid);
+                }
+            });
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
+            this._socket.emit('setObject', objId, obj, function(cid) {
+                if (callback) {
+                    callback(cid);
+                }
+            });
+        }
+    },
+    delObject: function (objId) {
+        if (this._type == 0) {
+            //SignalR
+            this._hub.server.deleteObject(objId);
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
+            this._socket.emit('delObject', objId);
+        }
+    }, // Deprecated
+    // TODO @Bluefox: Why deprecated? Ursprüngliches Konzept war dass der Value eines Homematic-Programms true/false ist und angibt
+    // ob ein Programm aktiv/inaktiv ist -> HM-Script Methode .Active()
+    // Eigentlich wirft der Umbau den Du da vor geraumer Zeit in CCU.IO vorgenommen hast (damit über den Value ein Programm
+    // angetriggert werden kann) dieses Konzept über den Haufen. Wirkt sich bei mir persönlich an der Stelle nicht aus
+    // da ich keine Homematic-Programme verwende, aber ...
+    // ... LessonsLearned: Wir müssen häufiger und mehr kommunizieren bevor wir solche Änderungen vornehmen :)
+    execProgramm: function (objId) {
+        //socket.io
+        if (this._type == 1) {
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
+            this._socket.emit('programExecute', [objId]);
+        }
+    },
+    getUrl: function (url, callback) {
+        if (this._type == 0) {
+            //SignalR
+            this._hub.server.getUrl (url).done(function (jsonString) {
+                if (callback) {
+                    callback(data);
+                }
+            });
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log("socket.io not initialized");
+                return;
+            }
+            this._socket.emit('getUrl', url, function(data) {
+                if (callback) {
+                    callback(data);
+                }
+            });
+        }
     }
+}
 
-    dui.preloadImages(["../lib/css/themes/jquery-ui/kian/images/modalClose.png"])
-
-})(jQuery);
+// IE8 indexOf compatibility
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function(obj, start) {
+        for (var i = (start || 0), j = this.length; i < j; i++) {
+            if (this[i] === obj) { return i; }
+        }
+        return -1;
+    }
+}
+function _setTimeout(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
+    setTimeout(function () {func(arg1, arg2, arg3, arg4, arg5, arg6);}, timeout);
+}

@@ -199,7 +199,7 @@ jQuery.extend(true, dui.binds, {
                     if (this.parent.timer) 
                         clearTimeout (this.parent.timer);
                         
-                    this.parent.timer = setTimeout (function(elem_) {
+                    this.parent.timer = _setTimeout (function(elem_) {
                         $(elem_).trigger('change');
                         elem_.parent.timer=null;
                     }, 200, this);
@@ -235,7 +235,7 @@ jQuery.extend(true, dui.binds, {
 						if (this.timer) 
 							clearTimeout (this.timer);
 							
-						this.timer = setTimeout (function(elem_) {
+						this.timer = _setTimeout (function(elem_) {
 							var div = elem_.ctrl;
 							 // If really changed
 							div._oldAttr = div.barsOptions[elem_.ctrlAttr];
@@ -623,7 +623,7 @@ jQuery.extend(true, dui.binds, {
                             if (this.parent.timer) 
                                 clearTimeout (this.parent.timer);
                                 
-                            this.parent.timer = setTimeout (function(elem_) {
+                            this.parent.timer = _setTimeout (function(elem_) {
                                  // If really changed
                                 var div = elem_.parent;
                                 div.barsOptions.buttons[elem_.ctrlId][elem_.ctrlAttr] = $(elem_).prop('value');
@@ -685,7 +685,7 @@ jQuery.extend(true, dui.binds, {
                             if (this.parent.timer) 
                                 clearTimeout (this.parent.timer);
                                 
-                            this.parent.timer = setTimeout (function(elem_) {
+                            this.parent.timer = _setTimeout (function(elem_) {
                                  // If really changed
                                 var div = elem_.parent;
                                 div.barsOptions.buttons[elem_.ctrlId][elem_.ctrlAttr] = $(elem_).prop('value');
@@ -953,7 +953,7 @@ jQuery.extend(true, dui.binds, {
                             if (this.parent.timer) 
                                 clearTimeout (this.parent.timer);
                                 
-                            this.parent.timer = setTimeout (function(elem_) {
+                            this.parent.timer = _setTimeout (function(elem_) {
                                  // If really changed
                                 var div = elem_.parent;
                                 div.barsOptions[elem_.ctrlAttr] = $(elem_).prop('value');

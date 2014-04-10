@@ -1,19 +1,23 @@
     /**
-    * o-------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free software, licensed    |
-    * | under the MIT license - so it's free to use for all purposes. Extended        |
-    * | support is available if required and donations are always welcome! You can    |
-    * | read more here:                                                               |
-    * |                         http://www.rgraph.net/support                         |
-    * o-------------------------------------------------------------------------------o
+    * o--------------------------------------------------------------------------------o
+    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
+    * | under the MIT license - so it's free to use for all purposes. If you want to   |
+    * | donate to help keep the project going then you can do so here:                 |
+    * |                                                                                |
+    * |                             http://www.rgraph.net/donate                       |
+    * o--------------------------------------------------------------------------------o
     */
     
     /**
     * Having this here means that the RGraph libraries can be included in any order, instead of you having
     * to include the common core library first.
     */
-    if (typeof(RGraph) == 'undefined') RGraph = {};
-    if (typeof(RGraph.Drawing) == 'undefined') RGraph.Drawing = {};
+
+    // Define the RGraph global variable
+    RGraph = window.RGraph || {isRGraph: true};
+    RGraph.Drawing = RGraph.Drawing || {};
+
+
 
 
 
@@ -29,11 +33,15 @@
     */
     RGraph.Drawing.Marker2 = function (id, x, y, text)
     {
-        this.id           = id;
-        this.canvas       = document.getElementById(typeof id === 'object' ? id.id : id);
+        var tmp = RGraph.getCanvasTag(id);
+
+        // Get the canvas and context objects
+        this.id                = tmp[0];
+        this.canvas            = tmp[1];
         this.context      = this.canvas.getContext ? this.canvas.getContext("2d") : null;
         this.colorsParsed = false;
         this.canvas.__object__ = this;
+        this.original_colors   = [];
 
 
         /**
@@ -73,7 +81,7 @@
         * it doesn't exist. This facilitates the graphs to be still shown in older browser (though without
         * text obviously). You'll find the function in RGraph.common.core.js
         */
-        RGraph.OldBrowserCompat(this.context);
+        //RGraph.OldBrowserCompat(this.context);
 
 
         /**
@@ -81,8 +89,8 @@
         */
         this.properties =
         {
-            'chart.strokestyle':      'black',
-            'chart.fillstyle':        'white',
+            'chart.strokestyle':        'black',
+            'chart.fillstyle':          'white',
             'chart.text.color':         'black',
             'chart.text.size':          12,
             'chart.text.font':          'Arial',
@@ -135,22 +143,25 @@
 
 
 
-        ///////////////////////////////// SHORT PROPERTIES /////////////////////////////////
-
-
-
-
-        var RG   = RGraph;
-        var ca   = this.canvas;
-        var co   = ca.getContext('2d');
-        var prop = this.properties;
-        var Path = RGraph.Path;
-        //var $jq  = jQuery;
-
-
-
-
-        //////////////////////////////////// METHODS ///////////////////////////////////////
+        // Short variable names
+        var RG    = RGraph;
+        var ca    = this.canvas;
+        var co    = ca.getContext('2d');
+        var prop  = this.properties;
+        var jq    = jQuery;
+        var pa    = RG.Path;
+        var win   = window;
+        var doc   = document;
+        var ma    = Math;
+        
+        
+        
+        /**
+        * "Decorate" the object with the generic effects if the effects library has been included
+        */
+        if (RG.Effects && typeof RG.Effects.decorate === 'function') {
+            RG.Effects.decorate(this);
+        }
 
 
 
@@ -161,6 +172,7 @@
         * @param name  string The name of the property to set
         * @param value mixed  The value of the property
         */
+        this.set =
         this.Set = function (name, value)
         {
             name = name.toLowerCase();
@@ -175,7 +187,7 @@
             prop[name] = value;
     
             return this;
-        }
+        };
 
 
 
@@ -185,6 +197,7 @@
         * 
         * @param name  string The name of the property to get
         */
+        this.get =
         this.Get = function (name)
         {
             /**
@@ -195,7 +208,7 @@
             }
     
             return prop[name.toLowerCase()];
-        }
+        };
 
 
 
@@ -203,6 +216,7 @@
         /**
         * Draws the marker
         */
+        this.draw =
         this.Draw = function ()
         {
             /**
@@ -252,6 +266,10 @@
             
             // Store these coords as the coords of the label
             this.coords[0] = [x, y, width, height];
+            
+            
+            // Set the linewidth
+            co.lineWidth = prop['chart.linewidth'];
 
             
             
@@ -320,7 +338,7 @@
             RG.FireCustomEvent(this, 'ondraw');
             
             return this;
-        }
+        };
 
 
 
@@ -335,7 +353,7 @@
             if (this.getShape(e)) {
                 return this;
             }
-        }
+        };
 
 
 
@@ -366,7 +384,7 @@
             }
             
             return null;
-        }
+        };
 
 
 
@@ -390,8 +408,8 @@
     
             // Set the top position
             tooltip.style.left = 0;
-            tooltip.style.top  = canvasXY[1] + this.coords[0][1] - height - 9 + 'px';
-    
+            tooltip.style.top  = canvasXY[1] + this.coords[0][1] - height - 9 + (this.coords[0][3] / 2) + 'px';
+
             // By default any overflow is hidden
             tooltip.style.overflow = '';
     
@@ -411,7 +429,7 @@
                 img.style.left = ((width * 0.1) - 8.5) + 'px';
     
             // RIGHT edge
-            } else if ((canvasXY[0] + this.coords[0][0] + (this.coords[0][2] / 2) + (width / 2)) > document.body.offsetWidth) {
+            } else if ((canvasXY[0] + this.coords[0][0] + (this.coords[0][2] / 2) + (width / 2)) > doc.body.offsetWidth) {
                 tooltip.style.left = (canvasXY[0] + this.coords[0][0] + (this.coords[0][2] / 2) - (width * 0.9)) + 'px';
                 img.style.left = ((width * 0.9) - 8.5) + 'px';
     
@@ -420,7 +438,7 @@
                 tooltip.style.left = (canvasXY[0] + this.coords[0][0] + (this.coords[0][2] / 2) - (width * 0.5)) + 'px';
                 img.style.left = ((width * 0.5) - 8.5) + 'px';
             }
-        }
+        };
 
 
 
@@ -430,12 +448,13 @@
         * 
         * @param object shape The shape to highlight
         */
+        this.highlight =
         this.Highlight = function (shape)
         {
             if (prop['chart.tooltips.highlight']) {
-                Path(this, ['b','r',this.coords[0][0],this.coords[0][1],this.coords[0][2],this.coords[0][3],'f',prop['chart.highlight.fill'],'s',prop['chart.highlight.stroke']]);
+                pa(this, ['b','r',this.coords[0][0],this.coords[0][1],this.coords[0][2],this.coords[0][3],'f',prop['chart.highlight.fill'],'s',prop['chart.highlight.stroke']]);
             }
-        }
+        };
 
 
 
@@ -445,6 +464,18 @@
         */
         this.parseColors = function ()
         {
+            // Save the original colors so that they can be restored when the canvas is reset
+            if (this.original_colors.length === 0) {
+                this.original_colors['chart.fillstyle']        = RG.array_clone(prop['chart.fillstyle']);
+                this.original_colors['chart.strokestyle']      = RG.array_clone(prop['chart.strokestyle']);
+                this.original_colors['chart.highlight.fill']   = RG.array_clone(prop['chart.highlight.fill']);
+                this.original_colors['chart.highlight.stroke'] = RG.array_clone(prop['chart.highlight.stroke']);
+                this.original_colors['chart.text.color']       = RG.array_clone(prop['chart.text.color']);
+            }
+
+
+
+
             /**
             * Parse various properties for colors
             */
@@ -453,7 +484,7 @@
             prop['chart.highlight.stroke'] = this.parseSingleColorForGradient(prop['chart.highlight.stroke']);
             prop['chart.highlight.fill']   = this.parseSingleColorForGradient(prop['chart.highlight.fill']);
             prop['chart.text.color']       = this.parseSingleColorForGradient(prop['chart.text.color']);
-        }
+        };
 
 
 
@@ -466,11 +497,11 @@
             var canvas  = this.canvas;
             var context = this.context;
             
-            if (!color || typeof(color) != 'string') {
+            if (!color) {
                 return color;
             }
     
-            if (color.match(/^gradient\((.*)\)$/i)) {
+            if (typeof color === 'string' && color.match(/^gradient\((.*)\)$/i)) {
     
                 var parts = RegExp.$1.split(':');
     
@@ -487,7 +518,27 @@
             }
     
             return grad ? grad : color;
-        }
+        };
+
+
+
+
+        /**
+        * Using a function to add events makes it easier to facilitate method chaining
+        * 
+        * @param string   type The type of even to add
+        * @param function func 
+        */
+        this.on = function (type, func)
+        {
+            if (type.substr(0,2) !== 'on') {
+                type = 'on' + type;
+            }
+            
+            this[type] = func;
+    
+            return this;
+        };
 
 
 
@@ -496,4 +547,6 @@
         * Objects are now always registered so that the chart is redrawn if need be.
         */
         RG.Register(this);
-    }
+    };
+// version: 2014-03-28
+

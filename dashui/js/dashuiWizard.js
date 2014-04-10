@@ -69,9 +69,9 @@ dui = $.extend(true, dui, {
 	wizardGetFunction : function (channel) {
 		var hm_id = channel;
 		var func = null;
-		while (hm_id && homematic.regaObjects[hm_id]) {
-			for (var t = 0; t < homematic.regaIndex["ENUM_FUNCTIONS"].length; t++) {
-				var list = homematic.regaObjects[homematic.regaIndex["ENUM_FUNCTIONS"][t]];
+		while (hm_id && localData.metaObjects[hm_id]) {
+			for (var t = 0; t < localData.metaIndex["ENUM_FUNCTIONS"].length; t++) {
+				var list = localData.metaObjects[localData.metaIndex["ENUM_FUNCTIONS"][t]];
 				for (var z = 0; z < list['Channels'].length; z++) {
 					if (list['Channels'][z] == hm_id) {
 						func = list.Name;
@@ -84,23 +84,23 @@ dui = $.extend(true, dui, {
 			if (func)
 				break;
 				
-			hm_id = homematic.regaObjects[hm_id]['Parent'];
+			hm_id = localData.metaObjects[hm_id]['Parent'];
 		}
 		return func;
 	},
 	// Try to find point for wirget
 	wizardGetPoint: function (widgetName, channel) {
 		if (dui.hm2Widget[widgetName].point) {
-			for (var p in homematic.regaObjects[channel]["DPs"]) {
+			for (var p in localData.metaObjects[channel]["DPs"]) {
 				if (p == dui.hm2Widget[widgetName].point) {
-					return homematic.regaObjects[channel]["DPs"][p];
+					return localData.metaObjects[channel]["DPs"][p];
 				}
 			}
-			var parent = homematic.regaObjects[channel]["Parent"];
-			if (homematic.regaObjects[parent]["Channels"]) {
-				for (var i = 0; i < homematic.regaObjects[parent]["Channels"].length; i++) {
-					var chn = homematic.regaObjects[homematic.regaObjects[parent]["Channels"][i]];
-					if (channel == homematic.regaObjects[parent]["Channels"][i]) {
+			var parent = localData.metaObjects[channel]["Parent"];
+			if (localData.metaObjects[parent]["Channels"]) {
+				for (var i = 0; i < localData.metaObjects[parent]["Channels"].length; i++) {
+					var chn = localData.metaObjects[localData.metaObjects[parent]["Channels"][i]];
+					if (channel == localData.metaObjects[parent]["Channels"][i]) {
 						continue;
 					}
 					for (var p in chn["DPs"]) {
@@ -112,8 +112,8 @@ dui = $.extend(true, dui, {
 			}
 		} else
 		if (dui.hm2Widget[widgetName].useDevice) {
-			while (homematic.regaObjects[channel]["Parent"]) {
-				channel = homematic.regaObjects[channel]["Parent"];
+			while (localData.metaObjects[channel]["Parent"]) {
+				channel = localData.metaObjects[channel]["Parent"];
 			}
 		}	
 		return channel;
@@ -121,11 +121,11 @@ dui = $.extend(true, dui, {
 	findUniqueDeviceInRoom: function (devNames, roomID) {
 		var idFound = null;
 		// Find all HM Devices belongs to this room
-		var elems = homematic.regaObjects[roomID]["Channels"];
+		var elems = localData.metaObjects[roomID]["Channels"];
 		for (var i = 0; i < elems.length; i++) {
-			var devID = homematic.regaObjects[elems[i]]["Parent"];
+			var devID = localData.metaObjects[elems[i]]["Parent"];
 			for(var j = 0;j < devNames.length; j++) {
-				if (homematic.regaObjects[devID]["HssType"] == devNames[j]) {
+				if (localData.metaObjects[devID]["HssType"] == devNames[j]) {
 					if (idFound) {
 						return null;
 					}
@@ -149,21 +149,21 @@ dui = $.extend(true, dui, {
 		func = func || dui.wizardGetFunction (channel);
 		
 		// get device description
-		var title = hmSelect._convertName(homematic.regaObjects[channel].Name);                                        
+		var title = hmSelect._convertName(localData.metaObjects[channel].Name);
 		// Remove ROOM from device name
-		if (title.length > homematic.regaObjects[roomID]["Name"].length && title.substring(0, homematic.regaObjects[roomID]["Name"].length) == homematic.regaObjects[roomID]["Name"])
-			title = title.substring(homematic.regaObjects[roomID]["Name"].length);
+		if (title.length > localData.metaObjects[roomID]["Name"].length && title.substring(0, localData.metaObjects[roomID]["Name"].length) == localData.metaObjects[roomID]["Name"])
+			title = title.substring(localData.metaObjects[roomID]["Name"].length);
 		// Remove the leading dot
 		if (title.length > 0 && title[0] == '.')
 			title = title.substring(1);
 		
 		// Get default settings
 		var hqoptions = dui.binds.hqWidgetsExt.hqEditDefault(widgetName);
-		hqoptions = $.extend(hqoptions, {"x": style.left,"y": style.top, "title": title, "hm_id": point, "room": homematic.regaObjects[roomID]["Name"]});
+		hqoptions = $.extend(hqoptions, {"x": style.left,"y": style.top, "title": title, "hm_id": point, "room": localData.metaObjects[roomID]["Name"]});
 		
 		// Set image of widget
 		if (dui.hm2Widget[widgetName].findImage) {
-			hqoptions['iconName'] = hmSelect._getImage(homematic.regaObjects[devID].HssType);
+			hqoptions['iconName'] = hmSelect._getImage(localData.metaObjects[devID].HssType);
 		}
 		if (dui.hm2Widget[widgetName].aux) {
 			for (var t = 0; t < dui.hm2Widget[widgetName].aux.length; t++) {
@@ -223,7 +223,7 @@ dui = $.extend(true, dui, {
 		for (var w in dui.views[view].widgets) {
 			var wObj = dui.views[view].widgets[w];
 			if (wObj.data.hqoptions && 
-			    wObj.data.hqoptions.indexOf ('"room":"'+homematic.regaObjects[roomID]["Name"]+'"') != -1) {
+			    wObj.data.hqoptions.indexOf ('"room":"'+localData.metaObjects[roomID]["Name"]+'"') != -1) {
 				if (pos == null) {
 					pos = {left: wObj.style.left, top: wObj.style.top};
 				} else {
@@ -239,10 +239,10 @@ dui = $.extend(true, dui, {
 		}
 
 		// Find all HM Devices belongs to this room
-		var elems = homematic.regaObjects[roomID]["Channels"];
+		var elems = localData.metaObjects[roomID]["Channels"];
 		for (var i = 0; i < elems.length; i++) {
-			var devID = homematic.regaObjects[elems[i]]["Parent"];
-			var widgetName = dui.hmDeviceToWidget (homematic.regaObjects[devID]["HssType"]);
+			var devID = localData.metaObjects[elems[i]]["Parent"];
+			var widgetName = dui.hmDeviceToWidget (localData.metaObjects[devID]["HssType"]);
 			if (widgetName) {
 				// filter out not selected widgets
 				if (widgets) {
@@ -300,7 +300,7 @@ dui = $.extend(true, dui, {
 		var room = $('#wizard_rooms').val();
 		var widgetIds = [];
 		if (!room) {
-			var elems = homematic.regaIndex['ENUM_ROOMS'];// IDs of all ROOMS
+			var elems = localData.metaIndex['ENUM_ROOMS'];// IDs of all ROOMS
 			for (var r in elems) {
 				if (room != '_general') {
 					var wid = dui.wizardRunOneRoom (view, elems[r], $('#wizard_funcs').val(), $('#wizard_widgets').val());
@@ -333,19 +333,19 @@ dui = $.extend(true, dui, {
 		dui.binds.hqWidgetsExt.hqEditSave ();
 	},
 	fillWizard: function () {
-		var elems = homematic.regaIndex['ENUM_ROOMS'];// IDs of all ROOMS
+		var elems = localData.metaIndex['ENUM_ROOMS'];// IDs of all ROOMS
 		var jSelect = $('#wizard_rooms').html("").addClass('dashui-wizard-select');
 		for (var r in elems) {
-			jSelect.append("<option value='"+elems[r]+"'>"+homematic.regaObjects[elems[r]]["Name"]+"</option>\n");
+			jSelect.append("<option value='"+elems[r]+"'>"+localData.metaObjects[elems[r]]["Name"]+"</option>\n");
 		}
 		jSelect.append('<option value="_general">'+dui.translate("General")+'</option>');
 		jSelect.append('<option value="">'+dui.translate("All")+'</option>');
 		
-		elems = homematic.regaIndex['ENUM_FUNCTIONS'];// IDs of all ROOMS
+		elems = localData.metaIndex['ENUM_FUNCTIONS'];// IDs of all ROOMS
 		jSelect = $('#wizard_funcs').html("").addClass('dashui-wizard-select');
 		jSelect.append('<option value="">'+dui.translate("All")+'</option>');
 		for (var r in elems) {
-			jSelect.append("<option value='"+elems[r]+"'>"+homematic.regaObjects[elems[r]]["Name"]+"</option>\n");
+			jSelect.append("<option value='"+elems[r]+"'>"+localData.metaObjects[elems[r]]["Name"]+"</option>\n");
 		}
 		jSelect = $('#wizard_widgets').html("").addClass('dashui-wizard-select');
 		jSelect.append('<option value="_nobat">'+dui.translate("All except Low battery")+'</option>');

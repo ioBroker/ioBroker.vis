@@ -1,14 +1,13 @@
     /**
-    * o-------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free software, licensed    |
-    * | under the MIT license - so it's free to use for all purposes. Extended        |
-    * | support is available if required and donations are always welcome! You can    |
-    * | read more here:                                                               |
-    * |                         http://www.rgraph.net/support                         |
-    * o-------------------------------------------------------------------------------o
+    * o--------------------------------------------------------------------------------o
+    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
+    * | under the MIT license - so it's free to use for all purposes. If you want to   |
+    * | donate to help keep the project going then you can do so here:                 |
+    * |                                                                                |
+    * |                             http://www.rgraph.net/donate                       |
+    * o--------------------------------------------------------------------------------o
     */
-    
-    if (typeof(RGraph) == 'undefined') RGraph = {};
+    RGraph = window.RGraph || {isRGraph: true};
 
     /**
     * The horizontal bar chart constructor. The horizontal bar is a minor variant
@@ -20,9 +19,11 @@
     */
     RGraph.HBar = function (id, data)
     {
+        var tmp = RGraph.getCanvasTag(id);
+
         // Get the canvas and context objects
-        this.id                = id;
-        this.canvas            = document.getElementById(typeof id === 'object' ? id.id : id);
+        this.id                = tmp[0];
+        this.canvas            = tmp[1];
         this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
         this.canvas.__object__ = this;
         this.data              = data;
@@ -34,19 +35,21 @@
         this.coords            = [];
         this.coords2           = [];
         this.coordsText        = [];
+        this.original_colors   = [];
 
 
         /**
         * Compatibility with older browsers
         */
-        RGraph.OldBrowserCompat(this.context);
+        //RGraph.OldBrowserCompat(this.context);
 
         
         this.max = 0;
         this.stackedOrGrouped  = false;
 
         // Default properties
-        this.properties = {
+        this.properties =
+        {
             'chart.gutter.left':            75,
             'chart.gutter.right':           25,
             'chart.gutter.top':             25,
@@ -66,6 +69,7 @@
             'chart.background.grid.autofit.numvlines': 20,
             'chart.background.grid.dashed': false,
             'chart.background.grid.dotted': false,
+            'chart.background.color':       null,
             'chart.linewidth':              1,
             'chart.title':                  '',
             'chart.title.background':       null,
@@ -175,7 +179,8 @@
             'chart.noxtickmarks':           false,
             'chart.noytickmarks':           false,
             'chart.numyticks':              data.length,
-            'chart.numxticks':              10
+            'chart.numxticks':              10,
+            'chart.drawingcache':           false
         }
 
         // Check for support
@@ -220,21 +225,25 @@
 
 
 
-        ///////////////////////////////// SHORT PROPERTIES /////////////////////////////////
-
-
-
-
-        var RG   = RGraph;
-        var ca   = this.canvas;
-        var co   = ca.getContext('2d');
-        var prop = this.properties;
-        //var $jq  = jQuery;
-
-
-
-
-        //////////////////////////////////// METHODS ///////////////////////////////////////
+        // Short variable names
+        var RG    = RGraph;
+        var ca    = this.canvas;
+        var co    = ca.getContext('2d');
+        var prop  = this.properties;
+        var jq    = jQuery;
+        var pa    = RG.Path;
+        var win   = window;
+        var doc   = document;
+        var ma    = Math;
+        
+        
+        
+        /**
+        * "Decorate" the object with the generic effects if the effects library has been included
+        */
+        if (RG.Effects && typeof RG.Effects.decorate === 'function') {
+            RG.Effects.decorate(this);
+        }
 
 
 
@@ -245,6 +254,7 @@
         * @param name  string The name of the property to set
         * @param value mixed  The value of the property
         */
+        this.set =
         this.Set = function (name, value)
         {
             name = name.toLowerCase();
@@ -263,7 +273,7 @@
             prop[name] = value;
     
             return this;
-        }
+        };
 
 
 
@@ -273,6 +283,7 @@
         * 
         * @param name  string The name of the property to get
         */
+        this.get =
         this.Get = function (name)
         {
             /**
@@ -287,7 +298,7 @@
             }
     
             return prop[name];
-        }
+        };
 
 
 
@@ -295,6 +306,7 @@
         /**
         * The function you call to draw the bar chart
         */
+        this.draw =
         this.Draw = function ()
         {
             /**
@@ -353,7 +365,11 @@
     
     
             // Progressively Draw the chart
-            RG.background.Draw(this);
+            // Progressively Draw the chart
+            RG.cachedDraw(this, 'background', function (obj)
+            {
+                RG.background.Draw(obj);
+            });
     
             this.Drawbars();
             this.DrawAxes();
@@ -402,7 +418,7 @@
             RG.FireCustomEvent(this, 'ondraw');
 
             return this;
-        }
+        };
 
 
 
@@ -410,6 +426,7 @@
         /**
         * This draws the axes
         */
+        this.drawAxes =
         this.DrawAxes = function ()
         {
             var halfway = Math.round((this.graphwidth / 2) + this.gutterLeft);
@@ -500,7 +517,7 @@
             * Reset the linewidth
             */
             co.lineWidth = 1;
-        }
+        };
 
 
 
@@ -508,6 +525,7 @@
         /**
         * This draws the labels for the graph
         */
+        this.drawLabels =
         this.DrawLabels = function ()
         {
             var units_pre  = prop['chart.units.pre'];
@@ -690,7 +708,7 @@
                                       });
                 }
             }
-        }
+        };
 
 
 
@@ -698,6 +716,7 @@
         /**
         * This function draws the bars
         */
+        this.drawbars =
         this.Drawbars = function ()
         {
             co.lineWidth   = prop['chart.linewidth'];
@@ -986,7 +1005,7 @@
             RG.NoShadow(this);
             
             this.RedrawBars();
-        }
+        };
 
 
 
@@ -994,6 +1013,7 @@
         /**
         * This function goes over the bars after they been drawn, so that upwards shadows are underneath the bars
         */
+        this.redrawBars =
         this.RedrawBars = function ()
         {
             if (prop['chart.noredraw']) {
@@ -1052,7 +1072,7 @@
                                        });
                 }
             }
-        }
+        };
 
 
 
@@ -1096,7 +1116,7 @@
                            };
                 }
             }
-        }
+        };
 
 
 
@@ -1145,7 +1165,7 @@
             }
     
             return value;
-        }
+        };
 
 
 
@@ -1155,11 +1175,12 @@
         * 
         * @param object shape The shape to highlight
         */
+        this.highlight =
         this.Highlight = function (shape)
         {
             // Add the new highlight
             RG.Highlight.Rect(this, shape);
-        }
+        };
 
 
 
@@ -1184,7 +1205,7 @@
     
                 return this;
             }
-        }
+        };
 
 
 
@@ -1232,7 +1253,7 @@
                 img.style.left = ((width * 0.1) - 8.5) + 'px';
     
             // RIGHT edge
-            } else if ((canvasXY[0] + (coordW / 2) + coordX + (width / 2)) > document.body.offsetWidth) {
+            } else if ((canvasXY[0] + (coordW / 2) + coordX + (width / 2)) > doc.body.offsetWidth) {
                 tooltip.style.left = canvasXY[0] + coordX - (width * 0.9) + (coordW / 2) + 'px';
                 img.style.left = ((width * 0.9) - 8.5) + 'px';
     
@@ -1241,7 +1262,7 @@
                 tooltip.style.left = (canvasXY[0] + coordX + (coordW / 2) - (width * 0.5)) + 'px';
                 img.style.left = ((width * 0.5) - 8.5) + 'px';
             }
-        }
+        };
 
 
 
@@ -1279,7 +1300,7 @@
             }
     
             return coord;
-        }
+        };
 
 
 
@@ -1289,6 +1310,23 @@
         */
         this.parseColors = function ()
         {
+            // Save the original colors so that they can be restored when the canvas is reset
+            if (this.original_colors.length === 0) {
+                //this.original_colors['chart.'] = RG.array_clone(prop['chart.']);
+                this.original_colors['chart.colors']                = RG.array_clone(prop['chart.colors']);
+                this.original_colors['chart.background.grid.color'] = RG.array_clone(prop['chart.background.grid.color']);
+                this.original_colors['chart.background.color']      = RG.array_clone(prop['chart.background.color']);
+                this.original_colors['chart.background.barcolor1']  = RG.array_clone(prop['chart.background.barcolor1']);
+                this.original_colors['chart.background.barcolor2']  = RG.array_clone(prop['chart.background.barcolor2']);
+                this.original_colors['chart.text.color']            = RG.array_clone(prop['chart.text.color']);
+                this.original_colors['chart.labels.colors']         = RG.array_clone(prop['chart.labels.colors']);
+                this.original_colors['chart.strokestyle']           = RG.array_clone(prop['chart.strokestyle']);
+                this.original_colors['chart.axis.color']            = RG.array_clone(prop['chart.axis.color']);
+                this.original_colors['chart.highlight.fill']        = RG.array_clone(prop['chart.highlight.fill']);
+                this.original_colors['chart.highlight.stroke']      = RG.array_clone(prop['chart.highlight.stroke']);
+                
+            }
+
             var colors = prop['chart.colors'];
     
             for (var i=0; i<colors.length; ++i) {
@@ -1296,6 +1334,7 @@
             }
             
             prop['chart.background.grid.color'] = this.parseSingleColorForGradient(prop['chart.background.grid.color']);
+            prop['chart.background.color']      = this.parseSingleColorForGradient(prop['chart.background.color']);
             prop['chart.background.barcolor1']  = this.parseSingleColorForGradient(prop['chart.background.barcolor1']);
             prop['chart.background.barcolor2']  = this.parseSingleColorForGradient(prop['chart.background.barcolor2']);
             prop['chart.text.color']            = this.parseSingleColorForGradient(prop['chart.text.color']);
@@ -1304,7 +1343,7 @@
             prop['chart.axis.color']            = this.parseSingleColorForGradient(prop['chart.axis.color']);
             prop['chart.highlight.fill']        = this.parseSingleColorForGradient(prop['chart.highlight.fill']);
             prop['chart.highlight.stroke']      = this.parseSingleColorForGradient(prop['chart.highlight.stroke']);
-        }
+        };
 
 
 
@@ -1334,7 +1373,7 @@
             }
                 
             return grad ? grad : color;
-        }
+        };
 
 
 
@@ -1362,7 +1401,104 @@
                 // Reset the lineWidth
                 co.lineWidth = pre_linewidth;
             });
-        }
+        };
+
+
+
+
+        /**
+        * Using a function to add events makes it easier to facilitate method chaining
+        * 
+        * @param string   type The type of even to add
+        * @param function func 
+        */
+        this.on = function (type, func)
+        {
+            if (type.substr(0,2) !== 'on') {
+                type = 'on' + type;
+            }
+            
+            this[type] = func;
+    
+            return this;
+        };
+
+
+
+
+        /**
+        * Grow
+        * 
+        * The HBar chart Grow effect gradually increases the values of the bars
+        * 
+        * @param object   OPTIONAL Options for the effect. You can pass frames here
+        * @param function OPTIONAL A callback function
+        */
+        this.grow = function ()
+        {
+            var obj      = this;
+            var opt      = arguments[0] || {};
+            var frames   = opt.frames || 30;
+            var frame    = 0;
+            var callback = arguments[1] || function () {};
+
+
+            // Save the data
+            obj.original_data = RG.array_clone(obj.data);
+
+
+            // Stop the scale from changing by setting chart.ymax (if it's not already set)
+            if (obj.Get('chart.xmax') == 0) {
+
+                var xmax = 0;
+    
+                for (var i=0; i<obj.data.length; ++i) {
+                    if (RG.is_array(obj.data[i]) && obj.Get('chart.grouping') == 'stacked') {
+                        xmax = Math.max(xmax, RG.array_sum(obj.data[i]));
+                    } else if (RG.is_array(obj.data[i]) && obj.Get('chart.grouping') == 'grouped') {
+                        xmax = ma.max(xmax, RG.array_max(obj.data[i]));
+                    } else {
+                        xmax = ma.max(xmax, RG.array_max(obj.data[i]));
+                    }
+                }
+    
+                var scale2 = RG.getScale2(obj, {'max':xmax});
+                obj.Set('chart.xmax', scale2.max);
+            }
+    
+            function iterator ()
+            {
+                // Alter the Bar chart data depending on the frame
+                for (var j=0,len=obj.original_data.length; j<len; ++j) {
+                    
+                    // This stops the animation from being completely linear
+                    var easingFactor = RG.Effects.getEasingMultiplier(frames, frame);
+    
+                    if (typeof obj.data[j] === 'object') {
+                        for (var k=0,len2=obj.data[j].length; k<len2; ++k) {
+                            obj.data[j][k] = obj.original_data[j][k] * easingFactor;
+                        }
+                    } else {
+                        obj.data[j] = obj.original_data[j] * easingFactor;
+                    }
+                }
+    
+    
+
+                RG.redrawCanvas(obj.canvas);
+    
+                if (frame < frames) {
+                    frame += 1;
+                    RG.Effects.updateCanvas(iterator);
+                } else {
+                    callback(obj);
+                }
+            }
+            
+            iterator();
+            
+            return this;
+        };
 
 
 
@@ -1371,4 +1507,6 @@
         * Charts are now always registered
         */
         RG.Register(this);
-    }
+    };
+// version: 2014-03-28
+

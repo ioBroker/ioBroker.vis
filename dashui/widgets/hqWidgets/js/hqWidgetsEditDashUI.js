@@ -351,7 +351,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     }
                 }
                 
-                hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
+                hmSelect.show (localData, this.jControl, function (obj, value, valueObj) {
                     if (valueObj) {
                         var btn = hqWidgets.Get (dui.activeWidget);
                         if (btn) {
@@ -375,9 +375,9 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 								if (jInspect_filter.val() == "") {
 									var hm_id = value;
 									var func = null;
-									while (hm_id && homematic.regaObjects[hm_id]) {
-										for (var t = 0; t < homematic.regaIndex["ENUM_FUNCTIONS"].length; t++) {
-											var list = homematic.regaObjects[homematic.regaIndex["ENUM_FUNCTIONS"][t]];
+									while (hm_id && localData.metaObjects[hm_id]) {
+										for (var t = 0; t < localData.metaIndex["ENUM_FUNCTIONS"].length; t++) {
+											var list = localData.metaObjects[localData.metaIndex["ENUM_FUNCTIONS"][t]];
 											for (var z = 0; z < list['Channels'].length; z++) {
 												if (list['Channels'][z] == hm_id) {
 													func = list.Name;
@@ -390,10 +390,10 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
 										if (func)
 											break;
 											
-										hm_id = homematic.regaObjects[hm_id]['Parent'];
+										hm_id = localData.metaObjects[hm_id]['Parent'];
 									}
 									// Fill up automatically filter for ping
-									if (func == null && homematic.regaObjects[value]["HssType"] == "PING") {
+									if (func == null && localData.metaObjects[value]["HssType"] == "PING") {
 										func = "Network";
 									}
 									if (func) {
@@ -430,10 +430,10 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
         // Check if the point is motion and if we can find brightness. Disable hm_idB if found
         _hqCheckBrightness: function (val, btn) {
             var isBright = false;
-            if (homematic.regaObjects[val] && homematic.regaObjects[val]["Name"] && homematic.regaObjects[val]["Name"].indexOf(".MOTION") != -1) {
-                if (homematic.regaObjects[val]["Parent"]) {
-                    var parent = homematic.regaObjects[val]["Parent"];
-                    if (homematic.regaObjects[parent] && homematic.regaObjects[parent]["DPs"] && homematic.regaObjects[parent]["DPs"]["BRIGHTNESS"]) {
+            if (localData.metaObjects[val] && localData.metaObjects[val]["Name"] && localData.metaObjects[val]["Name"].indexOf(".MOTION") != -1) {
+                if (localData.metaObjects[val]["Parent"]) {
+                    var parent = localData.metaObjects[val]["Parent"];
+                    if (localData.metaObjects[parent] && localData.metaObjects[parent]["DPs"] && localData.metaObjects[parent]["DPs"]["BRIGHTNESS"]) {
                         isBright = true;
                     }
                 }
@@ -604,10 +604,10 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                         var e = $('#inspect_iconName');
                         if (1 || e.val() == "") {
                             var p = val;
-                            while (homematic.regaObjects[p]["Parent"] !== undefined) {
-                                p = homematic.regaObjects[p]["Parent"];
+                            while (localData.metaObjects[p]["Parent"] !== undefined) {
+                                p = localData.metaObjects[p]["Parent"];
                             }
-                            p = hmSelect._getImage(homematic.regaObjects[p]["HssType"]);
+                            p = hmSelect._getImage(localData.metaObjects[p]["HssType"]);
                             if (p !== null && p != "") {
                                 e.val (p).trigger("change");
                             }
@@ -629,18 +629,18 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 /*
                 var attr = 'hm_id';
                 var sText = '<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+'</td><td><select id="inspect_'+attr+'" multiple="multiple"  value="'+opt[attr]+'" "inspect_'+attr+'">\n';
-                for (var i = 0; i < homematic.regaIndex.HSSDP.length; i++) {
-                    var id = homematic.regaIndex.HSSDP[i];
-                    var chId = homematic.regaObjects[id].Parent;
+                for (var i = 0; i < homematic.metaIndex.HSSDP.length; i++) {
+                    var id = homematic.metaIndex.HSSDP[i];
+                    var chId = homematic.metaObjects[id].Parent;
 
                     var unit = "";
-                    if (homematic.regaObjects[id].ValueUnit) {
-                        unit = " ["+homematic.regaObjects[id].ValueUnit+"]";
+                    if (homematic.metaObjects[id].ValueUnit) {
+                        unit = " ["+homematic.metaObjects[id].ValueUnit+"]";
                     }
-                    var tmp = homematic.regaObjects[id].Name.split(".");
+                    var tmp = homematic.metaObjects[id].Name.split(".");
                     var dpName = tmp[2];
 
-                    sText +="<option value='"+id+"'>HSSDP "+homematic.regaObjects[chId].Name+" "+dpName+unit+"</option>\n";
+                    sText +="<option value='"+id+"'>HSSDP "+homematic.metaObjects[chId].Name+" "+dpName+unit+"</option>\n";
                 }                
                 sText += '</select></td></tr>\n';
                 parent.append(sText);
@@ -680,7 +680,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     // Select Homematic ID Dialog
                     $("#inspect_"+attr+"_"+i+"_btn").click ( function () {
                         hmSelect.value = $("#inspect_"+this.jControl).val();
-                        hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
+                        hmSelect.show (localData, this.jControl, function (obj, value, valueObj) {
                             $("#inspect_"+obj).val(value).trigger("change");
                             if (valueObj) {
                                 var btn = hqWidgets.Get (dui.activeWidget);
@@ -745,7 +745,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     // Select Homematic ID Dialog
                     $("#inspect_"+attr+"_btn").click ( function () {
                         hmSelect.value = $("#inspect_"+this.jControl).val();
-                        hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
+                        hmSelect.show (localData, this.jControl, function (obj, value, valueObj) {
                             $("#inspect_"+obj).val(value).trigger("change");
                         }, null, this.devFilter);
                     });
@@ -785,7 +785,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                     // Select Homematic ID Dialog
                     $("#inspect_"+attr+"_btn").click ( function () {
                         hmSelect.value = $("#inspect_"+this.jControl).val();
-                        hmSelect.show (homematic, this.jControl, function (obj, value, valueObj) {
+                        hmSelect.show (localData, this.jControl, function (obj, value, valueObj) {
                             $("#inspect_"+obj).val(value).trigger("change");
                         }, null, this.devFilter);
                     });

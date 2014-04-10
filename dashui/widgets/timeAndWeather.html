@@ -71,7 +71,7 @@
 			} else {
 				hl.innerHTML = h+":"+m+":"+s;
 			}
-            hl.dashTimer = setTimeout(startTime, 1000, view, elem, hideSeconds, blink, noClass, hl.dashId);
+            hl.dashTimer = _setTimeout(startTime, 1000, view, elem, hideSeconds, blink, noClass, hl.dashId);
         }
     }
     var wochentage = {
@@ -104,7 +104,7 @@
 		}
         if (hl && (timerId === undefined || hl.dashId == timerId)) {
             hl.innerHTML = ((showWeekDay) ? wochentage[dow][dui.language]+", " : "") + d+"."+m+"."+y;
-            hl.dashTimer = setTimeout(startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId);
+            hl.dashTimer = _setTimeout(startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId);
         }
     }
 </script>

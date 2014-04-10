@@ -29,7 +29,7 @@
                 var $this = jQuery(el).parent().find(".fancy-switch");
                 var id = $this.attr("data-hm-id");
                 var hm_id = "_" + id;
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
 
                     var num = parseFloat(newVal, 10);
                     if (num > 0 || newVal === "true" || newVal === true) {
@@ -56,7 +56,7 @@
                 $this.find('.fancy-on_off').css('display','none');
                 $this.find('.fancy-on, .fancy-off').css('text-indent','-10000px');
 
-                var newVal = homematic.uiState.attr(hm_id+".Value");
+                var newVal = localData.uiState.attr(hm_id+".Value");
                 var num = parseFloat(newVal, 10);
                 if (num > 0 || newVal === "true" || newVal === true) {
                     if (reverse) {
@@ -79,7 +79,7 @@
                         if (reverse) { val = 1 - val; }
                         if (val == '0'){ $this.css('background-position', 'right'); }
                         if (val == '1'){ $this.css('background-position', 'left'); }
-                        homematic.setValue( id, val);
+                        localData.setValue( id, val);
                     });
                 }
 
@@ -103,7 +103,7 @@
                     $this.iButton(options);
                 }, 20);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
                     var num = parseFloat(newVal, 10);
                     if (num > 0 || newVal == "true" || newVal == true) {
                         //console.log("iButton true");
