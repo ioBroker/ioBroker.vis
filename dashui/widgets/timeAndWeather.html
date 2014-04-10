@@ -13,6 +13,8 @@
 <script src="widgets/timeAndWeather/js/moreskins.js"></script-->
 
 <script language="javascript">
+    "use strict";
+
 	// Init words
 	dui.translate("");
 	// Add words for bars
@@ -24,187 +26,189 @@
         "weoid"            : {"en" : "City",          "de": "Stadt",                "ru": "Город"},
         "City:"            : {"en" : "City:",         "de": "Stadt:",               "ru": "Город:"}
 	});
+    jQuery.extend(true, dui.binds, {
+        timeAndWeather: {
+            startTime: function (view, elem, hideSeconds, blink, noClass, timerId) {
+                var today = new Date();
+                var h =     today.getHours();
+                var m =     today.getMinutes();
+                var s =     today.getSeconds();
+                // add a zero in front of numbers<10
+                m = (m<10) ? ("0"+m) : m;
+                if (!hideSeconds) {
+                    s = (s<10) ? ("0"+s) : s;
+                }
+                h = (h<10) ? ("0"+h) : h;
+                var hl = document.getElementById(elem);
+                if (hideSeconds === "false") {
+                    hideSeconds = false;
+                }
+                if (!hl) {
+                    $('#duiview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' clock') + '" id="'+elem+'" ></div>');
+                    hl = document.getElementById(elem);
+                    hl.dashId = today.getTime();
+                }
+                if (hl && (timerId === undefined || hl.dashId == timerId)) {
+                    if (hideSeconds) {
+                        hl.innerHTML = h+'<span style="display:inline-block" id="'+elem+'_space">:</span>'+m;
+                        if (blink && (s%2)) {
+                            var r = $('#'+elem+'_space');
+                            var w = r.width();
+                            r.css({width: w});
+                            r.html("");
+                        }
+                    } else {
+                        hl.innerHTML = h+":"+m+":"+s;
+                    }
+                    hl.dashTimer = _setTimeout(dui.binds.timeAndWeather.startTime, 1000, view, elem, hideSeconds, blink, noClass, hl.dashId);
+                }
+            },
+            weekdays:{
+                0: {"en": "Sunday",   "de": "Sonntag",    "ru": "Воскресенье"},
+                1: {"en": "Minday",   "de": "Montag",     "ru": "Понедельник"},
+                2: {"en": "Tuesday",  "de": "Dienstag",   "ru": "Вторник"},
+                3: {"en": "Wensday",  "de": "Mittwoch",   "ru": "Среда"},
+                4: {"en": "Thursday", "de": "Donnerstag", "ru": "Четверг"},
+                5: {"en": "Friday",   "de": "Freitag",    "ru": "Пятница"},
+                6: {"en": "Saturday", "de": "Samstag",    "ru": "Суббота"}
+            },
+            startDate: function (view, elem, showWeekDay, noClass, timerId) {
+                var today = new Date();
+                var d =     today.getDate();
+                var dow =   today.getDay();
+                var m =     today.getMonth()+1;
+                var y =     today.getFullYear();
 
+                // add a zero in front of numbers<10
+                d = (d<10) ? ("0"+d) : d;
+                m = (m<10) ? ("0"+m) : m;
+                if (showWeekDay === "false") {
+                    showWeekDay = false;
+                }
+                var hl = document.getElementById(elem);
+                if (!hl) {
+                    $('#duiview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' date') + '" id="'+elem+'" ></div>');
+                    hl = document.getElementById(elem);
+                    hl.dashId = (new Date()).getTime();
+                }
+                if (hl && (timerId === undefined || hl.dashId == timerId)) {
+                    hl.innerHTML = ((showWeekDay) ? dui.binds.timeAndWeather.weekdays[dow][dui.language]+", " : "") + d+"."+m+"."+y;
+                    hl.dashTimer = _setTimeout(dui.binds.timeAndWeather.startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId);
+                }
+            },
+            tplTwCoolClock: function (view, data) {
+                var style = null;
+                if ( dui.views[view] && dui.views[view].widgets[this.data.attr('wid')] && dui.views[view].widgets[data.attr('wid')].style) {
+                    style = dui.views[view].widgets[data.attr('wid')].style;
+                }
+                var radius = 85;
+                if (style) {
+                    radius = style.width || 85;
+                    if ((style.height || 85) < radius)
+                        radius = (style.height || 85);
+                    radius = Math.round(radius / 2);
+                }
 
-	function fontWidth (text, font) {
-		var f = font || '10px "Tahoma", sans-serif',
-				o = $('<div>' + this + '</div>')
-						.css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hidden', 'font': f})
-						.appendTo($('body')),
-				w = o.width();
+                var myClass = 'CoolClock:'+(this.data.attr('theme') || 'classic')+':'+radius+':'+(this.data.attr('noSeconds') ? 'noSeconds' : '')+'::'+(this.data.attr('showDigital') ? 'showDigital' : '') + '::'+(this.data.attr('showAmPm') ? 'showAmPm' : '');
+                var text = '<div id="'+this.data.attr('wid')+'" data-myclass="'+myClass+'" class="dashui-widget"><canvas style="width:100%; height:100%" class="'+myClass+'"></canvas></div>';
+                jQuery('#duiview_'+this.view).append(text);
+                jQuery('#'+this.data.attr('wid')).bind("resize", function () {
+                    var t = jQuery(this);
+                    var myClass = t.attr('data-myclass');
+                    var myClasses = myClass.split(':');
+                    myClasses[2] = t.width();
+                    if (t.height() < myClasses[2])
+                        myClasses[2] = t.height();
+                    myClasses[2] = Math.round(myClasses[2] / 2);
+                    myClass = myClasses.join(':');
+                    t.html('<canvas class="'+myClass+'"></canvas>');
+                    CoolClock.findAndCreateClocks();
+                    console.log("done");
+                });
+                CoolClock.findAndCreateClocks();
+            },
+            tplTwFlipClock: function (view, data) {
+                var text = '<div class="dashui-widget" style="width:500px; height: 110px" id="'+data.attr('wid')+'" data-dashui-resizable=';
+                text += "'" + '{"disabled":true}' + "'></div>";
+                jQuery('#duiview_'+view).append(text);
+                var clock = jQuery('#'+data.attr('wid')).FlipClock({clockFace: 'TwentyFourHourClock'});
+            },
+            tplTwHtcWeather: function (view, data) {
+                var text = '<div class="dashui-widget" style="width:500px; height: 420px" id="'+data.attr('wid')+'" data-dashui-resizable=';
+                text += "'" + '{"disabled":true}' + "'></div>";
+                jQuery('#duiview_'+view).append(text);
+                var weoid = data.attr('weoid');
+                if (weoid !== undefined && weoid !== null) {
+                    var i = weoid.indexOf('[');
+                    if (i != -1) {
+                        weoid = weoid.substring(i+1);
+                        i = weoid.indexOf(']');
+                        weoid = weoid.substring(0, i);
+                    }
+                }
+                else
+                    weoid = '664942';
 
-		o.remove();
+                var clock = jQuery('#'+data.attr('wid')).jdigiclock({
+                    weatherLocationCode: weoid,
+                    weatherUpdate: 5,
+                    lang: 'de',
+                    clockImagesPath: 'widgets/timeAndWeather/img/clock/'
+                });
+            },
+            tplTwYahooWeather: function (view, data) {
+                var text = '<div class="dashui-widget ui-widget-content" id="'+data.attr('wid')+'"></div>';
+                jQuery('#duiview_'+view).append(text);
+                var weoid = this.data.attr('weoid');
+                if (weoid !== undefined && weoid !== null) {
+                    var i = weoid.indexOf('[');
+                    if (i != -1) {
+                        weoid = weoid.substring(i+1);
+                        i = weoid.indexOf(']');
+                        weoid = weoid.substring(0, i);
+                    }
+                }
+                else
+                    weoid = '664942';
+                jQuery('#'+data.attr('wid')).weatherfeed([weoid], {lang:'de', woeid: true, humidity: true, forecast: true, link: false, resizable: (dui.urlParams['edit'] === "")});
 
-		return w;
-	};
-
-	
-	function startTime(view, elem, hideSeconds, blink, noClass, timerId) {
-        var today = new Date();
-        var h =     today.getHours();
-        var m =     today.getMinutes();
-        var s =     today.getSeconds();
-        // add a zero in front of numbers<10
-        m = (m<10) ? ("0"+m) : m;
-		if (!hideSeconds) {
-			s = (s<10) ? ("0"+s) : s;
-		}
-        h = (h<10) ? ("0"+h) : h;
-        var hl = document.getElementById(elem);
-		if (hideSeconds === "false") {
-			hideSeconds = false;
-		}
-		if (!hl) {
-			$('#duiview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' clock') + '" id="'+elem+'" ></div>');				
-			hl = document.getElementById(elem);
-			hl.dashId = today.getTime();
-		}
-        if (hl && (timerId === undefined || hl.dashId == timerId)) {
-			if (hideSeconds) {
-				hl.innerHTML = h+'<span style="display:inline-block" id="'+elem+'_space">:</span>'+m;
-				if (blink && (s%2)) {
-					var r = $('#'+elem+'_space');
-					var w = r.width();
-					r.css({width: w});
-					r.html("");
-				}
-			} else {
-				hl.innerHTML = h+":"+m+":"+s;
-			}
-            hl.dashTimer = _setTimeout(startTime, 1000, view, elem, hideSeconds, blink, noClass, hl.dashId);
+            }
         }
-    }
-    var wochentage = {
-        0: {"en": "Sunday",   "de": "Sonntag",    "ru": "Воскресенье"},
-        1: {"en": "Minday",   "de": "Montag",     "ru": "Понедельник"},
-        2: {"en": "Tuesday",  "de": "Dienstag",   "ru": "Вторник"},
-        3: {"en": "Wensday",  "de": "Mittwoch",   "ru": "Среда"},
-        4: {"en": "Thursday", "de": "Donnerstag", "ru": "Четверг"},
-        5: {"en": "Friday",   "de": "Freitag",    "ru": "Пятница"},
-        6: {"en": "Saturday", "de": "Samstag",    "ru": "Суббота"}
-    }
-    function startDate(view, elem, showWeekDay, noClass, timerId) {
-        var today = new Date();
-        var d =     today.getDate();
-        var dow =   today.getDay();
-        var m =     today.getMonth()+1;
-        var y =     today.getFullYear();
-        
-        // add a zero in front of numbers<10
-        d = (d<10) ? ("0"+d) : d;
-        m = (m<10) ? ("0"+m) : m;
-		if (showWeekDay === "false") {
-			showWeekDay = false;
-		}
-        var hl = document.getElementById(elem);
-		if (!hl) {
-			$('#duiview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' date') + '" id="'+elem+'" ></div>');
-			hl = document.getElementById(elem);
-			hl.dashId = (new Date()).getTime();
-		}
-        if (hl && (timerId === undefined || hl.dashId == timerId)) {
-            hl.innerHTML = ((showWeekDay) ? wochentage[dow][dui.language]+", " : "") + d+"."+m+"."+y;
-            hl.dashTimer = _setTimeout(startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId);
-        }
-    }
+    });
+
 </script>
 
 <script type="text/ejs" id="tplTwSimpleDate" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleDate" data-dashui-attrs="showWeekDay/checkbox;noClass/checkbox">
     <%
-		startDate(this.view, this.data.attr('wid'), this.data.attr('showWeekDay'), this.data.attr('noClass'));
+		dui.binds.timeAndWeather.startDate(this.view, this.data.attr('wid'), this.data.attr('showWeekDay'), this.data.attr('noClass'));
     %>
 </script>
 
 <script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="hideSeconds/checkbox;blink/checkbox;noClass/checkbox">
     <%
-        startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'),this.data.attr('blink'), this.data.attr('noClass'));
+        dui.binds.timeAndWeather.startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'),this.data.attr('blink'), this.data.attr('noClass'));
     %>
 </script>
 <script type="text/ejs" id="tplTwCoolClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="CoolClock" data-dashui-attrs="theme/fancy,swissRail,chunkySwiss,machine,simonbaird_com,classic,classicWhite,modern,simple,securephp,Tes2,Lev,Sand,Sun,Tor,Cold,Babosa,Tumb,Stone,Disc,watermelon;noSeconds/checkbox;showDigital/checkbox;showAmPm/checkbox" >
     <%
-	var style = null;
-	if ( dui.views[this.view] && dui.views[this.view].widgets[this.data.attr('wid')] && dui.views[this.view].widgets[this.data.attr('wid')].style) {
-		style = dui.views[this.view].widgets[this.data.attr('wid')].style;
-	}
-	var radius = 85;
-	if (style) {
-		radius = style.width || 85;
-		if ((style.height || 85) < radius)
-			radius = (style.height || 85);
-		radius = Math.round(radius / 2);	
-	}
-	
-	var myClass = 'CoolClock:'+(this.data.attr('theme') || 'classic')+':'+radius+':'+(this.data.attr('noSeconds') ? 'noSeconds' : '')+'::'+(this.data.attr('showDigital') ? 'showDigital' : '') + '::'+(this.data.attr('showAmPm') ? 'showAmPm' : '');
-    var text = '<div id="'+this.data.attr('wid')+'" data-myclass="'+myClass+'" class="dashui-widget"><canvas style="width:100%; height:100%" class="'+myClass+'"></canvas></div>';
-    jQuery('#duiview_'+this.view).append(text);
-	jQuery('#'+this.data.attr('wid')).bind("resize", function () {
-		var t = jQuery(this);
-		var myClass = t.attr('data-myclass');
-		var myClasses = myClass.split(':');
-		myClasses[2] = t.width();
-		if (t.height() < myClasses[2])
-			myClasses[2] = t.height();
-		myClasses[2] = Math.round(myClasses[2] / 2);
-		myClass = myClasses.join(':');
-		t.html('<canvas class="'+myClass+'"></canvas>');
-		CoolClock.findAndCreateClocks();
-		console.log("done");
-	});
-    CoolClock.findAndCreateClocks();
+        dui.binds.timeAndWeather.tplTwCoolClock(this.view, this.data);
     %>
 </script>
 
 <script type="text/ejs" id="tplTwFlipClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="FlipClock" data-dashui-attrs="">
-    
-    <% 
-        var text = '<div class="dashui-widget" style="width:500px; height: 110px" id="'+this.data.attr('wid')+'" data-dashui-resizable=';
-        text += "'" + '{"disabled":true}' + "'></div>";
-        jQuery('#duiview_'+this.view).append(text);
-        var clock = jQuery('#'+this.data.attr('wid')).FlipClock({clockFace: 'TwentyFourHourClock'});
+    <%
+        dui.binds.timeAndWeather.tplTwFlipClock(this.view, this.data);
     %>
 </script>
 
 <script type="text/ejs" id="tplTwHtcWeather" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="HtcWeather" data-dashui-attrs="weoid">
     <% 
-        var text = '<div class="dashui-widget" style="width:500px; height: 420px" id="'+this.data.attr('wid')+'" data-dashui-resizable=';
-        text += "'" + '{"disabled":true}' + "'></div>";
-        jQuery('#duiview_'+this.view).append(text);
-        var weoid = this.data.attr('weoid');
-        if (weoid !== undefined && weoid !== null) {
-            var i = weoid.indexOf('[');
-            if (i != -1) {
-                weoid = weoid.substring(i+1);
-                i = weoid.indexOf(']');
-                weoid = weoid.substring(0, i);
-            }
-        }
-        else
-            weoid = '664942';
-
-        var clock = jQuery('#'+this.data.attr('wid')).jdigiclock({
-            weatherLocationCode: weoid, 
-            weatherUpdate: 5, 
-            lang: 'de', 
-            clockImagesPath: 'widgets/timeAndWeather/img/clock/',
-            });
+        dui.binds.timeAndWeather.tplTwHtcWeather(this.view, this.data);
     %>
 </script>
 <script type="text/ejs" id="tplTwYahooWeather" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="YahooWeather" data-dashui-attrs="weoid">
     <% 
-        var text = '<div class="dashui-widget ui-widget-content" id="'+this.data.attr('wid')+'"></div>';
-        jQuery('#duiview_'+this.view).append(text);
-        var weoid = this.data.attr('weoid');
-        if (weoid !== undefined && weoid !== null) {
-            var i = weoid.indexOf('[');
-            if (i != -1) {
-                weoid = weoid.substring(i+1);
-                i = weoid.indexOf(']');
-                weoid = weoid.substring(0, i);
-            }
-        }
-        else
-            weoid = '664942';
-        jQuery('#'+this.data.attr('wid')).weatherfeed([weoid], {lang:'de', woeid: true, humidity: true, forecast: true, link: false, resizable: (dui.urlParams['edit'] === "")});
-%>
+        dui.binds.timeAndWeather.tplTwYahooWeather(this.view, this.data);
+    %>
 </script>
 

@@ -20,6 +20,9 @@
  *  SOFTWARE.
  */
  // duiEdit - the DashUI Editor Wizard
+
+"use strict";
+
 // Init words
 dui.translate("");
 // Add words for bars

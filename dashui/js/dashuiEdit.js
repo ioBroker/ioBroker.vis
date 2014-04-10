@@ -22,6 +22,8 @@
 
 // duiEdit - the DashUI Editor
 
+"use strict";
+
 dui = $.extend(true, dui, {
     editVersion:        '0.9beta71',
     toolbox:            $("#dui_editor"),
@@ -689,7 +691,7 @@ dui = $.extend(true, dui, {
             }
         });
 
-        // Inspector leeren
+        // Clear Inspector
         $("#widget_attrs").html("");
         $(".dashui-inspect-css").each(function () {
             $(this).val("");
@@ -707,6 +709,7 @@ dui = $.extend(true, dui, {
 
         if (!widget) {
             console.log("inspectWidget Widget undefined");
+            return false;
         }
 
         // Inspector aufbauen
@@ -862,6 +865,9 @@ dui = $.extend(true, dui, {
                     } else
                     if (wid_attr_.indexOf ("nav_view") != -1|| type == "views") {
                         dui.editViewName (widget, wid_attr_);
+                        isCustomEdit = true;
+                    } else 
+                    if (type == "hidden") {
                         isCustomEdit = true;
                     } else
                     if (wid_attr_.indexOf ("_effect") != -1 || type == "effect") {
@@ -1056,8 +1062,8 @@ dui = $.extend(true, dui, {
 			},
 			multiple: true,
 			checkAllText:     dui.translate("Check all"),
-			uncheckAllText:   dui.translate("Uncheck all"),
-			noneSelectedText: dui.translate("Select options")
+			uncheckAllText:   dui.translate("Uncheck all")
+			//noneSelectedText: dui.translate("Select options")
 		}).change (function () {
 			dui.syncWidget (dui.activeWidget, $(this).val());
 			dui.saveRemote ();
@@ -1100,9 +1106,13 @@ dui = $.extend(true, dui, {
 		var h = $this.height ();
         $("#widget_helper").css({left: pos.left - 2, top:  pos.top - 2,  height: $this.outerHeight() + 2, width: $this.outerWidth()  + 2}).show();
 
-        // Interaktionen
-        dui.draggable($this);
-        dui.resizable($this);
+        // User interaction
+        if (!dui.widgets[id].data._no_move) {
+            dui.draggable($this);
+        }
+        if (!dui.widgets[id].data._no_resize) {
+            dui.resizable($this);
+        }
 
         // Inspector aufrufen
         $("#inspect_wid").html(id);
@@ -1215,7 +1225,6 @@ dui = $.extend(true, dui, {
             $(this).multiselect({
                 multiple: false,
                 header: false,
-                noneSelectedText: false,
                 selectedList: 1,
                 minWidth: $(this).attr("data-multiselect-width"),
                 height: $(this).attr("data-multiselect-height"),
@@ -1229,7 +1238,7 @@ dui = $.extend(true, dui, {
             $(this).multiselect({
                 multiple: false,
                 header: false,
-                noneSelectedText: false,
+                //noneSelectedText: false,
                 selectedList: 1,
                 minWidth: 250,
                 height: 410,
@@ -1243,7 +1252,7 @@ dui = $.extend(true, dui, {
             $(this).multiselect({
                 multiple: false,
                 header: false,
-                noneSelectedText: false,
+               // noneSelectedText: false,
                 selectedList: 1,
                 minWidth: 420,
                 height: 340,
@@ -1486,6 +1495,7 @@ dui = $.extend(true, dui, {
 
 		//console.log("TOOLBOX OPEN");
 		$("#dui_editor").dialog("open");
+        $('.ui-dialog').css({'z-index':1000});
         if (dui.binds.jqueryui) {
 		dui.binds.jqueryui._disable();
         }
