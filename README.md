@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta71
+* (Hobbyquaker) Fix Name Attribute on init uiState - Bedienung war nicht mehr möglich
+
 ### 0.9beta70
 * (Hobbyquaker) Fix changeView() - Views wurden überlagert dargestellt, Navigation hat nicht immer funktioniert
 * (Hobbyquaker) Fix changeFilter() - Filter haben nicht funktioniert wenn keine hqWidgets vorhanden waren
