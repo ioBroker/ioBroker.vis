@@ -1076,7 +1076,7 @@ var localData = {
     $(document).ready(function () {
         // Bind on change of some state
         localData.setState.bind("change", function (e, attr, how, newVal, oldVal) {
-            //console.log("localData setState change "+how+" "+attr+" "+newVal);
+            //console.log("localData setState change "+how+" "+attr+" "+JSON.stringify(newVal));
             if (how == "set" || how == "add") {
                 var id = attr.slice(1);//parseInt(attr.slice(1), 10);
                 localData.stateDelayed(id, newVal.Value);
@@ -1387,7 +1387,7 @@ var servConn = {
 
                 });
             } else {
-                console.log("socket.io not initialized");
+                //console.log("socket.io not initialized");
             }
         } else if (type == 2 || type == "local") {
             this._type = 2;
@@ -1408,7 +1408,7 @@ var servConn = {
         } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
-                console.log("socket.io not initialized");
+                //console.log("socket.io not initialized");
                 return;
             }
             this._socket.emit('getVersion', function(version) {
@@ -1559,7 +1559,7 @@ var servConn = {
                     // Todo check if this works
                     var obj = data[dp];
                     if (!localData.uiState["_"+dp]) {
-                        localData.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
+                        localData.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3], Name:dp});
                     } else {
                         var o = {};
                         o["_" + dp + ".Value"]     = obj.val;
@@ -1585,7 +1585,7 @@ var servConn = {
                 for (var dp in data) {
                     var obj = data[dp];
                     if (!localData.uiState["_"+dp]) {
-                        localData.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
+                        localData.uiState.attr("_" + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3], Name: dp});
                     } else {
                         var o = {};
                         o["_" + dp + ".Value"]     = obj[0];
