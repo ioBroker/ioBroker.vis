@@ -455,7 +455,7 @@
             <%
             var styles = "";
             if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-            styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+                styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
             switch (localData.uiState.attr("_" + this.data.hm_id + ".Value")) {
             case false: %>
@@ -471,11 +471,11 @@
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
     if (!localData.metaObjects[this.data.hm_id] || (localData.metaObjects[this.data.hm_id].HssType != "HUE_DIMMABLE_PLUG-IN_UNIT" && localData.metaObjects[this.data.hm_id].HssType != "HUE_DIMMABLE_LIGHT")) {
-        console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_COLOR_LIGHT/HUE_DIMMABLE_PLUG-IN_UNIT Channel!");
+        console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_DIMMABLE_LIGHT/HUE_DIMMABLE_PLUG-IN_UNIT Channel!");
         var hueIDs = {
             STATE: 65535,
             LEVEL: 65535,
@@ -548,7 +548,7 @@
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
     if (!localData.metaObjects[this.data.hm_id] || localData.metaObjects[this.data.hm_id].HssType != "HUE_COLOR_LIGHT") {
@@ -635,28 +635,28 @@
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
     if (!localData.metaObjects[this.data.hm_id] || localData.metaObjects[this.data.hm_id].HssType != "HUE_EXTENDED_COLOR_LIGHT") {
-    console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_EXTENDED_COLOR_LIGHT Channel!");
-    var hueIDs = {
-    STATE: 65535,
-    LEVEL: 65535,
-    COLORMODE: 65535,
-    CT: 65535,
-    SAT: 65535,
-    HUE: 65535,
-    };
+        console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_EXTENDED_COLOR_LIGHT Channel!");
+        var hueIDs = {
+            STATE: 65535,
+            LEVEL: 65535,
+            COLORMODE: 65535,
+            CT: 65535,
+            SAT: 65535,
+            HUE: 65535,
+        };
     } else {
-    var hueIDs = {
-    STATE: localData.metaObjects[this.data.hm_id].DPs.STATE,
-    LEVEL: localData.metaObjects[this.data.hm_id].DPs.LEVEL,
-    COLORMODE: localData.metaObjects[this.data.hm_id].DPs.COLORMODE,
-    CT: localData.metaObjects[this.data.hm_id].DPs.CT,
-    SAT: localData.metaObjects[this.data.hm_id].DPs.SAT,
-    HUE: localData.metaObjects[this.data.hm_id].DPs.HUE,
-    };
+        var hueIDs = {
+            STATE: localData.metaObjects[this.data.hm_id].DPs.STATE,
+            LEVEL: localData.metaObjects[this.data.hm_id].DPs.LEVEL,
+            COLORMODE: localData.metaObjects[this.data.hm_id].DPs.COLORMODE,
+            CT: localData.metaObjects[this.data.hm_id].DPs.CT,
+            SAT: localData.metaObjects[this.data.hm_id].DPs.SAT,
+            HUE: localData.metaObjects[this.data.hm_id].DPs.HUE,
+        };
     }
     %>
     <div data-hm-id="<%= hueIDs.STATE %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
