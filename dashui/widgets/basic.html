@@ -126,6 +126,35 @@
             pressedNext: null,
             increment: function (el, minmax, delay, interval) {
 
+                function fInterval($that) {
+                    dui.binds.basic.pressedNext = true;
+                    var hm_id = "_" + $that.attr("data-hm-id");
+                    if (dui.urlParams["edit"] !== "") {
+                        var step = parseFloat($that.attr("data-dashui-step")),
+                                tmp = parseFloat(localData.uiState[hm_id].Value) + step;
+                        if (step < 0) {
+                            if (tmp >= minmax) {
+                                localData.setValue($that.attr("data-hm-id"), tmp);
+                                dui.binds.basic.pressed = setTimeout(fInterval, interval, $that);
+                            }
+                        } else {
+                            if (tmp <= minmax) {
+                                localData.setValue($that.attr("data-hm-id"), tmp);
+                                dui.binds.basic.pressed = setTimeout(function ($_that) {
+                                    fInterval($_that);
+                                }, interval, $that);
+                            }
+                        }
+                    }
+                }
+
+                function intervalStart(e) {
+                    dui.binds.basic.pressedNext = false;
+                    var $this = $(this);
+                    var hm_id = "_" + $this.attr("data-hm-id");
+                    dui.binds.basic.pressed = setTimeout(fInterval, delay, $this);
+                }
+
                 jQuery(el).click(function (e) {
                     clearTimeout(dui.binds.basic.pressed);
                     if (dui.binds.basic.pressedNext) {
@@ -136,7 +165,7 @@
                     var hm_id = "_" + $this.attr("data-hm-id");
                     if (dui.urlParams["edit"] !== "") {
                         var step = parseFloat($this.attr("data-dashui-step")),
-                            tmp = parseFloat(localData.uiState[hm_id].Value) + step;
+                                tmp = parseFloat(localData.uiState[hm_id].Value) + step;
                         if (step < 0) {
                             if (tmp >= minmax) {
                                 localData.setValue($this.attr("data-hm-id"), tmp);
@@ -148,17 +177,16 @@
                         }
                     }
                 });
+
                 if (interval) {
-                    jQuery(el).on('mousedown',  dui.binds.basic.intervalStart);
-                    jQuery(el).on('touchstart', dui.binds.basic.intervalStart);
+                    jQuery(el).on('mousedown', intervalStart);
+                    jQuery(el).on('touchstart', intervalStart);
                     jQuery(el).on('touchend', function () {
                         clearTimeout(dui.binds.basic.pressed);
                     });
                     jQuery(el).on('mouseup', function () {
                         clearTimeout(dui.binds.basic.pressed);
                     });
-
-
                 }
             },
             program: function (el) {
@@ -465,38 +493,6 @@
 					buttons: buttons
 				});
 			},
-            fInterval: function ($that) {
-                dui.binds.basic.pressedNext = true;
-                var hm_id = "_" + $that.attr("data-hm-id");
-                if (dui.urlParams["edit"] !== "") {
-                    var step = parseFloat($that.attr("data-dashui-step")),
-                            tmp = parseFloat(localData.uiState[hm_id].Value) + step;
-                    if (step < 0) {
-                        if (tmp >= minmax) {
-                            localData.setValue($that.attr("data-hm-id"), tmp);
-                            dui.binds.basic.pressed = _setTimeout(function ($_that) {
-                                dui.binds.basic.fInterval($_that);
-                            }, interval, $that);
-                        }
-                    } else {
-                        if (tmp <= minmax) {
-                            localData.setValue($that.attr("data-hm-id"), tmp);
-                            dui.binds.basic.pressed = _setTimeout(function ($_that) {
-                                dui.binds.basic.fInterval($_that);
-                            }, interval, $that);
-                        }
-                    }
-                }
-            },
-            intervalStart : function (e) {
-
-                dui.binds.basic.pressedNext = false;
-                var $this = $(this);
-                var hm_id = "_" + $this.attr("data-hm-id");
-                dui.binds.basic.pressed = _setTimeout(function ($that) {
-                    dui.binds.basic.fInterval($that);
-                }, delay, $this);
-            },
 			_disable: function () {
                 $(".editmode-helper").show();
             }
