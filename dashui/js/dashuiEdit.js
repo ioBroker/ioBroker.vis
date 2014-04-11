@@ -740,7 +740,7 @@ dui = $.extend(true, dui, {
                 //              views
                 //              effect
                 //              fontName
-                //              slide,min,max,step - Default step is ((max - min) / 100)
+                //              slider,min,max,step - Default step is ((max - min) / 100)
                 //              select_value1,select_value2,...
 
 				var isValueSet = false;
