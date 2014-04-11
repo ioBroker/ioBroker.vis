@@ -1519,7 +1519,8 @@ var servConn = {
                 //console.log("socket.io not initialized");
             }
         } else if (type == 2 || type == "local") {
-            this._type = 2;
+            this._type       = 2;
+            this._isAuthDone = true;
 
             this._isConnected = true;
             if (this._connCallbacks.onConnChange){
@@ -1723,6 +1724,9 @@ var servConn = {
                 return;
             }
             this._socket.emit('setState', [pointName, value]);
+        } else if (this._type == 2) {
+            //local
+            console.log('This is only demo. No one point will be controlled.');
         }
     },
     getDataPoints: function (callback) {
@@ -1807,17 +1811,35 @@ var servConn = {
                     callback();
                 }
             });
-        } else if (this._type == 1) {
-            // Local
-            if(callback) {
-                var _data = {};
-                _data.val  = 0;
-                _data.ts   = null;
-                _data.ack  = true;
-                _data.lc   = null;
-                _data.name = "No local datapoints";
-                callback(_data);
-            }
+        } else if (this._type == 2) {
+            // local
+            // Load from ../datastore/local-data.json the demo views
+            $.ajax({
+                url: '../datastore/local-data.json',
+                type: 'get',
+                async: false,
+                dataType: 'text',
+                cache: dui.useCache,
+                success: function (data) {
+                    var _localData = $.parseJSON(data);
+                    localData.dataIndex   = _localData.dataIndex;
+                    localData.dataObjects = _localData.dataObjects;
+                    for (var dp in _localData.uiState) {
+                        localData.uiState.attr(dp, _localData.uiState[dp]);
+                    }
+                    callback(null);
+                },
+                error: function (state) {
+                    console.log (state.statusText);
+                    localData.uiState = {'_no': { Value: false, Timestamp: null, Certain: true, LastChange: null}};
+                    // Local
+                    if(callback) {
+
+                        callback(_data);
+                    }
+                }
+            });
+
         }
     },
     getDataObjects: function (callback) {
@@ -1863,6 +1885,10 @@ var servConn = {
                     callback(data);
                 }
             });
+        } else if (this._type == 2) {
+            if (callback) {
+                callback(localData.metaObjects);
+            }
         }
     },
     getDataIndex: function (callback) {
@@ -1885,6 +1911,10 @@ var servConn = {
                 if (callback)
                     callback(data);
             });
+        } else if (this._type == 2) {
+            if (callback) {
+                callback(localData.metaIndex);
+            }
         }
     },
     addObject: function (objId, obj, callback) {
