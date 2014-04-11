@@ -1788,34 +1788,35 @@ var servConn = {
                         callback('Authentication required');
                     }
                 } else if (data !== undefined) {
-                for (var dp in data) {
-                    var obj = data[dp];
-                    if (!localData.uiState['_' + dp]) {
-                        localData.uiState.attr('_' + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
-                    } else {
-                        var o = {};
-                            o['_' + dp + '.Value']      = obj[0];
-                            o['_' + dp + '.Timestamp']  = obj[1];
-                            o['_' + dp + '.Certain']    = obj[2];
-                            o['_' + dp + '.LastChange'] = obj[3];
-                        localData.uiState.attr(o);
-                    }
+                    for (var dp in data) {
+                        var obj = data[dp];
+                        if (!localData.uiState['_' + dp]) {
+                            localData.uiState.attr('_' + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
+                        } else {
+                            var o = {};
+                                o['_' + dp + '.Value']      = obj[0];
+                                o['_' + dp + '.Timestamp']  = obj[1];
+                                o['_' + dp + '.Certain']    = obj[2];
+                                o['_' + dp + '.LastChange'] = obj[3];
+                            localData.uiState.attr(o);
+                        }
                     }
                 }
                 if (callback) {
                     callback();
                 }
             });
-        } else if (this._type == 1) {
+        } else if (this._type == 2) {
             // Local
-            if(callback) {
+            if (callback) {
+                // TODO
                 var _data = {};
                 _data.val  = 0;
                 _data.ts   = null;
                 _data.ack  = true;
                 _data.lc   = null;
                 _data.name = "No local datapoints";
-                callback(_data);
+                callback();
             }
         }
     },
