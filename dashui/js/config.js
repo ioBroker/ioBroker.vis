@@ -1,7 +1,5 @@
 var duiConfig = {
 
-    // TODO why not {name: "jqui", depends: ["basic"]} instead of extra dependencies object?
-
     widgetSets: [
         "basic",
         "bars",
@@ -12,9 +10,9 @@ var duiConfig = {
         "knob",
         {name: "hqWidgets", edit: "hqWidgetsEdit"},
         "jqplot",
-        "jqui",
-        "jqui-mfd",
-        "lcars",
+        {name: "jqui",     depends: ["basic"]},
+        {name: "jqui-mfd", depends: ["basic", "jqui"]},
+        {name: "lcars",    depends: ["basic"]},
         "RGraph",
         "special",
         "swipe",
@@ -22,12 +20,10 @@ var duiConfig = {
         "weather-adapter",
         "dev"
     ],
-    dependencies:       {
-        "jqui":     ["basic"],
-        "jqui-mfd": ["basic", "jqui"],
-        "lcars":    ["basic"]
-    },
     currentLang:        "de",
-	connLink: ""
+    auth: {
+        users: ["User", "Admin"]
+    },
+    connLink: "" // default "..". E.g for signalR "http://localhost:8081", for socket.io "http://raspberrypi:2100"
 
 };

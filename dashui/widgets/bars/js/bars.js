@@ -1,4 +1,7 @@
 // Init words
+
+"use strict";
+
 dui.translate("");
 // Add words for bars
 jQuery.extend(true, dui.words, {

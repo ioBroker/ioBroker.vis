@@ -1,4 +1,5 @@
 <script type="text/javascript">
+    "use strict";
     jQuery.extend(true, dui.binds, {
         jqueryui: {
             navigationActive: function (el, nav_view) {
@@ -395,7 +396,7 @@
 
             },
             iconHttpGet: function (el, url) {
-                $this = jQuery(el).parent().find("a.widget-link");
+                var $this = jQuery(el).parent().find("a.widget-link");
                 //console.log($this);
                 $this.click(function (e) {
                     //console.log("click http get");
@@ -404,8 +405,8 @@
                 });
             },
             hueColormode: function (el, idColormode) {
-                $hue = jQuery(el).parent().find(".hue-mode-hue");
-                $ct = jQuery(el).parent().find(".hue-mode-ct");
+                var $hue = jQuery(el).parent().find(".hue-mode-hue");
+                var $ct  = jQuery(el).parent().find(".hue-mode-ct");
                 if (localData.uiState.attr("_"+idColormode+".Value") == "ct") {
                     $hue.hide();
                     $ct.show();

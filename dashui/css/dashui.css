@@ -271,7 +271,14 @@ div#dui_editor {
 .tclass {
     border: 1px solid black;
     width: 100%;
+    table-layout: fixed;
+}
+.tclass-inner {
+    border: 0px solid black;
+    width: 100%;
     overflow-y: scroll;
+    table-layout: fixed;
+    height: 100%;
 }
 .tclass-th {
     background-color: black;
@@ -279,13 +286,16 @@ div#dui_editor {
     font-weight: bold;
 }
 .tclass-th1 {
-    /*width: 100px;*/
+    width: 150px;
 }
 .tclass-th2 {
-    /*width: 50px;*/
+    width: 65px;
 }
 .tclass-th3 {
-    /*width: 40px;*/
+    width: 90px;
+}
+.tclass-th4 {
+    width: 50px;
 }
 .tclass-tr {
     color: black;
@@ -325,4 +335,127 @@ div#dui_editor {
     position: absolute;
     bottom: 5%;
     right: 5%;
+}
+.tclass-tr-error {
+    color:red;
+}
+.tclass-tr-warning {
+    color:yellow;
+}
+
+/*--------------------------------------------- Authentication dialog ------------------------------- */
+/* Mask for background, by default is not display */
+#login-mask {
+    display: none;
+    background: #000;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+    z-index: 999;
+}
+
+/* You can customize to your needs  */
+.login-popup {
+    display: none;
+    background: #333;
+    padding: 10px;
+    border: 2px solid #ddd;
+    float: left;
+    font-size: 1.2em;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 99999;
+    box-shadow: 0px 0px 20px #999;
+    /* CSS3 */
+    -moz-box-shadow: 0px 0px 20px #999;
+    /* Firefox */
+    -webkit-box-shadow: 0px 0px 20px #999;
+    /* Safari, Chrome */
+    border-radius: 3px 3px 3px 3px;
+    -moz-border-radius: 3px;
+    /* Firefox */
+    -webkit-border-radius: 3px;
+    /* Safari, Chrome */;
+}
+
+.login-input-field label {
+    display: block;
+    padding-bottom: 7px;
+}
+
+.login-input-field span {
+    display: block;
+}
+
+.login-input-field span {
+    color: #999;
+    font-size: 11px;
+    line-height: 18px;
+}
+
+.login-input-field {
+    text-align: center;
+    background: #666666;
+    border-bottom: 1px solid #333;
+    border-left: 1px solid #000;
+    border-right: 1px solid #333;
+    border-top: 1px solid #000;
+    color: #fff;
+    border-radius: 3px 3px 3px 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    font: 13px Arial, Helvetica, sans-serif;
+    padding: 6px 6px 4px;
+}
+#login-password {
+    width: 205px;
+    text-align: left;
+}
+#login-username {
+    width: 220px;
+}
+.login-message {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 10px;
+    color: white;
+    font-weight: bold;
+}
+
+#login-box input:-moz-placeholder {
+    color: #bbb;
+    text-shadow: 0 0 2px #000;
+}
+
+#login-box input::-webkit-input-placeholder {
+    color: #bbb;
+    text-shadow: 0 0 2px #000;
+}
+
+.login-button {
+    background: -moz-linear-gradient(center top, #f3f3f3, #dddddd);
+    background: -webkit-gradient(linear, left top, left bottom, from(#f3f3f3), to(#dddddd));
+    background: -o-linear-gradient(top, #f3f3f3, #dddddd);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#f3f3f3', EndColorStr='#dddddd');
+    border-color: #000;
+    border-width: 1px;
+    border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    color: #333;
+    cursor: pointer;
+    display: inline-block;
+    padding: 6px 6px 4px;
+    margin-top: 10px;
+    font: 12px;
+    width: 220px;
+}
+
+.login-button:hover {
+    background: #ddd;
 }

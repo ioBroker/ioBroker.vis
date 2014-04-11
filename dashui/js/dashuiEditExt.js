@@ -2,7 +2,7 @@
  *  DashUI
  *  https://github.com/hobbyquaker/dashui/
  *
- *  Copyright (c) 2013-2014 Bluefox https://github.com/GermanBluefox
+ *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
  *  MIT License (MIT)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -21,6 +21,9 @@
  */
 
 // duiEdit - the DashUI Editor extensions
+
+"use strict";
+
 // Init words
 dui.translate("");
 // Add words for bars
@@ -855,7 +858,7 @@ var hmSelect = {
 				'HM-Sys-sRP-Pl':     'OM55_DimmerSwitch_thumb.png',
 				'HM-LC-Dim1T-Pl-2':  'OM55_DimmerSwitch_thumb.png',
 				'HM-LC-Sw1-Pl-2':    'OM55_DimmerSwitch_thumb.png',
-				'HM-LC-Sw1-Ba-PCB':  '88_hm-lc-sw4-ba-pcb_thumb.png',
+				'HM-LC-Sw4-Ba-PCB':  '88_hm-lc-sw4-ba-pcb_thumb.png',
 				'HM-Sen-RD-O':       '87_hm-sen-rd-o_thumb.png',
 				'HM-RC-Sec4-2':      '86_hm-rc-sec4-2_thumb.png',
 				'HM-PB-6-WM55':      '86_hm-pb-6-wm55_thumb.png',
@@ -1007,10 +1010,16 @@ var hmSelect = {
         var variables  = localData.metaIndex["VARDP"]; // IDs of all VARDP
         // Add Alarm-Variables
         var alarms = localData.metaIndex["ALARMDP"];
-        for (var i=0; i<alarms.length; i++) {
-            variables.push(alarms[i]);
+        if (alarms && variables) {
+            for (var i = 0; i < alarms.length; i++) {
+                variables.push(alarms[i]);
+            }
         }
-        variables.sort();
+        if (variables) {
+            variables.sort();
+        } else {
+            variables = [];
+        }
 
 		var selectedId = null;
                 
@@ -1069,9 +1078,9 @@ var hmSelect = {
 				{name:'_ID',        index:'_ID',         width:0,   hidden:true}
 			],
 			onSelectRow: function(id) {
-				value    = $("#hmVarsContent").jqGrid ('getCell', id, '_ID');
-                valueObj = null;
-				if (value != null && value != "") {
+                               hmSelect.value    = $("#hmVarsContent").jqGrid ('getCell', id, '_ID');
+                               hmSelect.valueObj = null;
+				if (hmSelect.value != null && hmSelect.value != "") {
 					$(":button:contains('"+hmSelect._selectText+"')").prop("disabled", false).removeClass("ui-state-disabled");
 				}
 			},
@@ -1173,9 +1182,9 @@ var hmSelect = {
 				{name:'_ID',         index:'_ID',         width:0,   hidden:true}
 			],
 			onSelectRow: function(id) {
-				value    = $("#hmProgsContent").jqGrid ('getCell', id, "_ID");
-                valueObj = null;
-				if (value != null && value != "") {
+                                hmSelect.value    = $("#hmProgsContent").jqGrid ('getCell', id, "_ID");
+                                hmSelect.valueObj = null;
+				if (hmSelect.value != null && hmSelect.value != "") {
 					$(":button:contains('"+hmSelect._selectText+"')").prop("disabled", false).removeClass("ui-state-disabled");
 				}
 			},
@@ -1297,6 +1306,7 @@ var hmSelect = {
         var devicesCCU  = localData.metaIndex["DEVICE"]; // IDs of all devices
         var rooms       = localData.metaIndex["ENUM_ROOMS"]; // IDs of all ROOMS
         var functions   = localData.metaIndex["ENUM_FUNCTIONS"]; // IDS of all functions
+        filter = (filter == 'devices') ? 'all' : filter;
 
         if (this.myFilter != filter || this.myDevFilter != devFilter) {
             this._devices    = null;
@@ -1647,9 +1657,12 @@ var hmSelect = {
 					this._devices[dev].func = hmSelect._getFunction (localData, dev, false);
 				}
 			
+                var img    = this._getImage(this._devices[dev].HssType);
+                var isLeaf = this._devices[dev].cnt !== undefined && this._devices[dev].cnt > 0;
+
 				this.mydata[i] = {
 					id:          ""+(i+1), 
-					"Image":     "<img src='"+this._getImage(this._devices[dev].HssType)+"' width=25 height=25 />",
+					"Image":     img ? "<img src='"+img+"' width=25 height=25 />" : '',
 					"Location":  this._devices[dev].room,
 					"Interface": this._devices[dev].Interface,
 					"Type":      this._devices[dev].HssType,
@@ -1657,7 +1670,7 @@ var hmSelect = {
 					"Address":   this._devices[dev].Address,
 					"Name":      this._convertName(this._devices[dev].Name),
                     "_ID":       dev,
-					isLeaf:      (this._devices[dev].cnt !== undefined && this._devices[dev].cnt > 0) ? false : true,
+					isLeaf:      isLeaf,
 					level:       "0",
 					parent:      "null",
 					expanded:   false, 
@@ -1670,6 +1683,7 @@ var hmSelect = {
 				i++;
 				for (var chn in this._devices[dev].Channels) {
 					var channel = this._devices[dev].Channels[chn];
+                    isLeaf = channel.cnt !== undefined && channel.cnt > 0;
 					this.mydata[i] = {
 						id:          ""+(i+1), 
 						"Image":     "",//"<img src='"+this._getImage(channel.HssType)+"' width=25 height=25 />",
@@ -1680,7 +1694,7 @@ var hmSelect = {
 						"Address":   channel.Address,
 						"Name":      this._convertName(channel.Name),
 					    "_ID":       chn,
-						isLeaf:      (channel.cnt !== undefined && channel.cnt > 0) ? false : true,
+						isLeaf:      isLeaf,
 						level:       "1",
 						parent:      _parent,
 						expanded:    false, 
@@ -1726,15 +1740,20 @@ var hmSelect = {
             }
         }
         
-        // Create the grid
-		$("#hmDevsContent").jqGrid({
-			datatype:    "jsonstring",
-			datastr:     this.mydata,
-			height:      $('#tabs-devs').height() - 35 - $('#hmSelectFilter').height (),
-			autowidth:   true,
-			shrinkToFit: false,
-			colNames:['Id', dui.translate('Name'), '', dui.translate('Location'), dui.translate('Interface'), dui.translate('Type'), dui.translate('Function'), dui.translate('Address'), ''],
-			colModel:[
+        // Check if any location is set
+        var isLocations = false;
+        for (var i = 0; i < this.mydata.length; i++) {
+            if (this.mydata[i]["Location"]) {
+                isLocations = true;
+                break;
+            }
+        }
+
+        var colModel;
+        var colNames;
+
+        if (isLocations) {
+            colModel = [
                 {name:'id',       index:'id',        width:1,   hidden:true, key:true},
 				{name:'Name',     index:'Name',      width:250, sortable:"text"},
 				{name:'Image',    index:'Image',     width:22,  sortable:false, align:"right", search: false},
@@ -1743,13 +1762,49 @@ var hmSelect = {
 				{name:'Type',     index:'Type',      width:120, sorttype:"text"},		
 				{name:'Function', index:'Function',  width:120, hidden:true, search: false, sorttype:"text"},		
 				{name:'Address',  index:'Address',   width:220, sorttype:"text"},
-				{name:'_ID',      index:'_ID',       width:0,   hidden:true}
-			],
-			onSelectRow: function(id) {
-				value    = $("#hmDevsContent").jqGrid ('getCell', id, '_ID');
-                valueObj = (value != "" && value != null) ? hmSelect._devices[value] :null;
+                {name:'_ID',      index:'_ID',       width:0,   hidden:true}
+            ];
+            colNames = ['Id', dui.translate('Name'), '', dui.translate('Location'), dui.translate('Interface'), dui.translate('Type'), dui.translate('Function'), dui.translate('Address'), ''];
+        } else {
+            colModel = [
+                {name:'id',       index:'id',        width:1,   hidden:true, key:true},
+                {name:'Name',     index:'Name',      width:250, sortable:"text"},
+                {name:'Image',    index:'Image',     width:22,  sortable:false, align:"right", search: false},
+                {name:'Value',    index:'Value',     width:110, sorttype:"text", search: false},
+                {name:'Interface',index:'Interface', width:80,  sorttype:"text"},
+                {name:'Type',     index:'Type',      width:120, sorttype:"text"},
+                {name:'Function', index:'Function',  width:120, hidden:true, search: false, sorttype:"text"},
+                {name:'Address',  index:'Address',   width:220, sorttype:"text"},
+                {name:'_ID',      index:'_ID',       width:0,   hidden:true}
+            ];
+            colNames = ['Id', dui.translate('Name'), '', dui.translate('Value'), dui.translate('Interface'), dui.translate('Type'), dui.translate('Function'), dui.translate('Address'), ''];
 
-				if (value != null && value != "") {
+            // Update all values
+            for (var i = 0; i < this.mydata.length; i++) {
+                var val = localData.uiState['_' + this.mydata[i]['_ID']];
+                if (val !== undefined) {
+                    this.mydata[i]['Value'] = val.Value;
+                } else {
+                    this.mydata[i]['Value'] = '';
+                }
+            }
+        }
+
+
+        // Create the grid
+		$("#hmDevsContent").jqGrid({
+			datatype:    "jsonstring",
+			datastr:     this.mydata,
+			height:      $('#tabs-devs').height() - 35 - $('#hmSelectFilter').height (),
+			autowidth:   true,
+			shrinkToFit: false,
+			colNames:    colNames,
+			colModel:    colModel,
+			onSelectRow: function(id) {
+                hmSelect.value    = $("#hmDevsContent").jqGrid ('getCell', id, '_ID');
+                hmSelect.valueObj = (hmSelect.value != "" && hmSelect.value != null) ? hmSelect._devices[hmSelect.value] :null;
+
+				if (hmSelect.value != null && hmSelect.value != "") {
 					$(":button:contains('"+hmSelect._selectText+"')").prop("disabled", false).removeClass("ui-state-disabled");
 				}
 			},
@@ -1825,15 +1880,20 @@ var hmSelect = {
             filter = 'all';
         }
             
-		_userArg = userArg || null;
-		_onsuccess = onSuccess || null;
+        hmSelect._userArg = userArg || null;
+        hmSelect._onsuccess = onSuccess || null;
 		if (!document.getElementById ("hmSelect")) {
 			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate("Select HM parameter") + "'></div>");
             var text = "<div id='hmSelect_tabs'>";
             text += "  <ul>";
             var i = 0;
+            // If no programms and no variables, do not show the tabs
+            if (!localData.metaIndex["VARDP"] && !localData.metaIndex["VARDP"]) {
+                filter = 'devices';
+            }
+
             if (devFilter === undefined || devFilter == "" || this._ignoreFilter) {
-                if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
+                if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs' && filter != 'devices')) {
                     text += "    <li><a href='#tabs-devs'  id='dev_select'>"+dui.translate("Devices")+"</a></li>";
                 }
                 if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'variables'))) {           
@@ -1844,7 +1904,7 @@ var hmSelect = {
                 }
                 text += "  </ul>";
             }
-            if (this._ignoreFilter || filter == 'all' || (filter != 'variables' && filter != 'programs')) {           
+            if (this._ignoreFilter || filter == 'all' || filter == 'devices' || (filter != 'variables' && filter != 'programs')) {
                 text += "  <div id='tabs-devs' style='padding: 3px'></div>";
             }
             if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'variables'))) {           
@@ -1855,7 +1915,7 @@ var hmSelect = {
             }            
             text += "</div>";
             $("#hmSelect").append(text);
-            if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
+            if (this._ignoreFilter || filter == 'all' || filter == 'devices' || (filter != 'variables' && filter != 'programs')) {
                 $("#tabs-devs").append  ("<table id='hmDevsContent'></table>");     
             }                
             if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'variables'))) {           
@@ -1865,7 +1925,7 @@ var hmSelect = {
                  $("#tabs-progs").append ("<table id='hmProgsContent'></table>");      
             }            
             
-            if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
+            if (this._ignoreFilter || filter == 'all' || filter == 'devices'|| (filter != 'variables' && filter != 'programs')) {
                 $('#tabs-devs').prepend ("<div id='hmSelectFilter' class='ui-state-highlight'></div>");
                 $('#tabs-devs').prepend ("<p id='dashui-waitico'>Please wait...</p>");
             } else if (filter == 'variables') {
@@ -1874,7 +1934,7 @@ var hmSelect = {
                 $('#tabs-progs').prepend ("<p id='dashui-waitico'>Please wait...</p>");
             }
 
-            if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs')) {           
+            if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs' && filter != 'devices')) {
                 $('#dev_select').click (function (e) {
                     var w = $('#hmSelect').dialog ("option", "width");
                     $('#hmSelect').dialog("option", "width", w-50);
@@ -1902,8 +1962,8 @@ var hmSelect = {
 		var dialog_buttons = {}; 
 		dialog_buttons[this._selectText] = function() { 
 			$( this ).dialog( "close" ); 
-			if (_onsuccess)
-				_onsuccess(_userArg, value, valueObj);
+			if (hmSelect._onsuccess)
+                hmSelect._onsuccess(_userArg, value, valueObj);
 		}
 		dialog_buttons[this._cancelText] = function() {
 			$( this ).dialog( "close" ); 
