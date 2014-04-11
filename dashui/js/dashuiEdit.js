@@ -857,24 +857,20 @@ dui = $.extend(true, dui, {
                         var values = wid_attrs[1].split(',');
                         dui.editSlider (widget, wid_attr_, values[1], values[2], values[3]);
                         isCustomEdit = true;
-                    } else
-                    if (type === "select") {
+                    } else if (type === "select") {
                         isValueSet = true;
                         var values = wid_attrs[1].split(',');
                         dui.editSelect (widget, wid_attr_, values);
-                    } else
-                    if (wid_attr_.indexOf ("nav_view") != -1|| type == "views") {
+                    } else if (wid_attr_.indexOf ("nav_view") != -1|| type == "views") {
                         dui.editViewName (widget, wid_attr_);
                         isCustomEdit = true;
-                    } else 
-                    if (type == "hidden") {
+                    } else if (type == "hidden") {
                         isCustomEdit = true;
                     } else
                     if (wid_attr_.indexOf ("_effect") != -1 || type == "effect") {
                         dui.editEffects (widget, wid_attr_);
                         isCustomEdit = true;
-                    } else
-                    if (wid_attr_.slice(0,4) !== "html") {
+                    } else if (wid_attr_.slice(0,4) !== "html") {
                         if (type !== null) {
                             // If description is JSON object
 						if (type.indexOf('{') != -1) {
