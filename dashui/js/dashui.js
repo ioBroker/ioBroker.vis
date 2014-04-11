@@ -24,7 +24,7 @@
 
 var dui = {
 
-    version:                '0.9beta71',
+    version:                '0.9beta72',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -1418,10 +1418,8 @@ var servConn = {
                 // If we have auth information, send it automatically
                 if (that._authInfo) {
                     that.authenticate();
-                }
-                else
-                // Else request from GUI input of user, pass and data (salt)
-                if (that._connCallbacks.onAuth) {
+                } else if (that._connCallbacks.onAuth) {
+                    // Else request from GUI input of user, pass and data (salt)
                     that._connCallbacks.onAuth(message, salt);
                 } else {
                     window.alert('server requires authentication, but no onAuth callback is installed!');
@@ -1540,19 +1538,20 @@ var servConn = {
         //SignalR
         if (this._type == 0) {
             this._hub.server.getVersion ().done(function (version) {
-                if (callback)
+                if (callback) {
                     callback(version);
-            })
-        }
-        else //socket.io
-        if (this._type == 1) {
+                }
+            });
+        } else if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {
                 console.log('socket.io not initialized');
                 return;
             }
             this._socket.emit('getVersion', function(version) {
-                if (callback)
+                if (callback) {
                     callback(version);
+                }
             });
         }
     },
@@ -1561,15 +1560,14 @@ var servConn = {
             console.log ("No connection!");
             return;
         }
-        //SignalR
         if (this._type == 0) {
+            //SignalR
             this._hub.server.getVersion ().done(function (version) {
                 if (callback)
                     callback(version);
             })
-        }
-        else //socket.io
-        if (this._type == 1) {
+        } else if (this._type == 1) {
+            //socket.io
             if (this._socket == null) {
                 console.log('socket.io not initialized');
                 return;
@@ -1590,22 +1588,23 @@ var servConn = {
             return;
         }
 
-        //SignalR
         if (this._type == 0) {
+            //SignalR
             this._hub.server.readFile (filename).done(function (data) {
-                if (callback)
+                if (callback) {
                     callback(data);
-            })
-        }
-        else if (this._type == 1) {
+                }
+            });
+        } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
                 console.log('socket.io not initialized');
                 return;
             }
             this._socket.emit('readFile', filename, function(data) {
-                if (callback)
+                if (callback) {
                     callback(data);
+                }
             });
         } else if (this._type == 2) {
             //local
@@ -1744,8 +1743,8 @@ var servConn = {
                         callback('Authentication required');
                     }                    
                 } else  if (jsonString !== undefined) {
-                try {
-                    var _data = JSON.parse(jsonString);
+                    try {
+                        var _data = JSON.parse(jsonString);
                     } catch (e) {
                         console.log('getDataPoints: Invalid JSON string - ' + e);
                         data = null;
@@ -1754,9 +1753,9 @@ var servConn = {
                         }
                     }
                 }
-                    // Convert array to mapped object {name1: object1, name2: object2}
-                    for (var i = 0, len = _data.length; i < len; i++) {
-                        if (_data[i]) {
+                // Convert array to mapped object {name1: object1, name2: object2}
+                for (var i = 0, len = _data.length; i < len; i++) {
+                    if (_data[i]) {
                         var obj  = _data[i];
                         var dp   = obj.id;
 
@@ -1788,7 +1787,7 @@ var servConn = {
                     if (callback) {
                         callback('Authentication required');
                     }
-                } else  if (data !== undefined) {
+                } else if (data !== undefined) {
                 for (var dp in data) {
                     var obj = data[dp];
                     if (!localData.uiState['_' + dp]) {

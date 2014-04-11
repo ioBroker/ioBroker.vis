@@ -7,6 +7,13 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta72
+* (Bluefox) Change widget dependencies
+* (Bluefox) "use strict" by some files
+* (Bluefox) basic widgets: add "test_html" to see widget itself, if its data point has no value
+* (Bluefox) Fix small error in hqWidgets/Lock
+* (Bluefox) table widget support object as input and can work without event_id (If only table_id set, the whole table will be updated)
+
 ### 0.9beta71
 * (Hobbyquaker) Fix Name Attribute on init uiState - Bedienung war nicht mehr möglich
 
