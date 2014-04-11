@@ -275,7 +275,7 @@ var dui = {
                 dui.bindInstance();
 
             } else {
-                console.log("instance var not found");
+               console.log("instance var not found");
             }
         } else {
             dui.createInstance();
@@ -1170,7 +1170,7 @@ var localData = {
 
                     // Read all datapoints from server
                     if (dui.isFirstTime) {
-                        dui.showWaitScreen(true, 'Loading data values...', null, '+1');
+                        dui.showWaitScreen(true, 'Loading data values...', null, 20);
                     }
                     dui.conn.getDataPoints(function (error) {
                         if (error) {
@@ -1184,7 +1184,7 @@ var localData = {
                             if (dui.conn.getType() == 1) {
                                 /* socket.io */
                                 if (dui.isFirstTime) {
-                                    dui.showWaitScreen(true, 'Loading data objects...', null, '+1');
+                                    dui.showWaitScreen(true, 'Loading data objects...', null, 20);
                                 }
                                 // Read all dataobjects from server
                                 dui.conn.getDataObjects(function (data) {
