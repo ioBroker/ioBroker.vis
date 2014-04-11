@@ -7,6 +7,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta73
+* (Hobbyquaker) Fix Hue Widgets
+* (Hobbyquaker) Fix getDataPoints()
+
 ### 0.9beta72
 * (Bluefox) Change widget dependencies
 * (Bluefox) "use strict" by some files
