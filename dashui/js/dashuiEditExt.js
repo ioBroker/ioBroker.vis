@@ -793,7 +793,9 @@ var colorSelect = {
         } else {
             $('#colortext').val ('#FFFFFF');
         }
-        $('#colorpicker').farbtastic('#colortext');
+        if ($().farbtastic) {
+            $('#colorpicker').farbtastic('#colortext');
+        }
     },
     GetColor: function () {
         return $('#colortext').val();

@@ -194,7 +194,9 @@ var dui = {
 
     },
     removeInstance: function () {
-        storage.set(dui.storageKeyInstance, null);
+        if (typeof storage !== 'undefined') {
+            storage.set(dui.storageKeyInstance, null);
+        }
         dui.conn.delObject(dui.instanceCmd);
         dui.conn.delObject(dui.instanceData);
         dui.conn.delObject(dui.instanceView);
@@ -206,7 +208,9 @@ var dui = {
         dui.instance = (Math.random() * 4294967296).toString(16);
         dui.instance = "0000000" + dui.instance;
         dui.instance = dui.instance.substr(-8);
-        storage.set(dui.storageKeyInstance, dui.instance);
+        if (typeof storage !== 'undefined') {
+            storage.set(dui.storageKeyInstance, dui.instance);
+        }
         $("#dashui_instance").val(dui.instance);
         $("#create_instance").hide();
         $("#instance").show();
@@ -243,7 +247,9 @@ var dui = {
         });
     },
     initInstance: function () {
-        dui.instance = storage.get(dui.storageKeyInstance);
+        if (typeof storage !== 'undefined') {
+            dui.instance = storage.get(dui.storageKeyInstance);
+        }
         //console.log("initInstance "+dui.instance);
         if (dui.instance) {
 
@@ -286,9 +292,11 @@ var dui = {
             return;
         }
 
-        var settings = storage.get(dui.storageKeySettings);
-        if (settings) {
-            dui.settings = $.extend(dui.settings, settings);
+        if (typeof storage !== 'undefined') {
+            var settings = storage.get(dui.storageKeySettings);
+            if (settings) {
+                dui.settings = $.extend(dui.settings, settings);
+            }
         }
 
         // Late initialization (used only for debug)
@@ -775,7 +783,8 @@ var dui = {
             if (dui.styleSelect) {
                 dui.styleSelect.Show({ width: 180,
                     name:       "inspect_view_bkg_def",
-                    filterFile: "backgrounds.css",
+                    filterName: 'background',
+                    //filterFile: "backgrounds.css",
                     style:      dui.views[view].settings.style.background_class,
                     parent:     $('#inspect_view_bkg_parent'),
                     onchange:   function (newStyle, obj) {
@@ -799,16 +808,22 @@ var dui = {
                 $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-dashui-set") + " " + obj.attr("data-dashui-name") + ")</option>");
             }
             //console.log($("#select_active_widget").html());
-            $("#select_active_widget").multiselect("refresh");
+            if ($().multiselect) {
+                $("#select_active_widget").multiselect("refresh");
+            }
 
             if ($("#select_view option:selected").val() != view) {
                 $("#select_view option").removeAttr("selected");
                 $("#select_view option[value='" + view + "']").prop("selected", "selected");
-                $("#select_view").multiselect("refresh");
+                if ($().multiselect) {
+                    $("#select_view").multiselect("refresh");
+                }
             }
             $("#select_view_copy option").removeAttr("selected");
             $("#select_view_copy option[value='" + view + "']").prop("selected", "selected");
-            $("#select_view_copy").multiselect("refresh");
+            if ($().multiselect) {
+                $("#select_view_copy").multiselect("refresh");
+            }
             $(".dashui-inspect-view-css").each(function () {
                 var $this = $(this);
                 var attr = $this.attr("id").slice(17);
@@ -823,7 +838,9 @@ var dui = {
                 dui.views[dui.activeView].settings["theme"] = "dhive";
             }
             $("#inspect_view_theme option[value='" + dui.views[dui.activeView].settings.theme + "']").prop("selected", true);
-            $("#inspect_view_theme").multiselect("refresh");
+            if ($().multiselect) {
+                $("#inspect_view_theme").multiselect("refresh");
+            }
 
 
         }
@@ -1192,7 +1209,7 @@ var localData = {
                                 });
                                 dui.conn.getDataIndex (function (data) {
                                     localData.metaIndex = data;
-                                    if (storage.get(dui.storageKeyInstance)) {
+                                    if (typeof storage !== 'undefined' && storage.get(dui.storageKeyInstance)) {
                                         dui.initInstance();
                                     }
                                 });
@@ -1359,13 +1376,15 @@ var servConn = {
             type = type.toLowerCase();
         }
 
-        var user = session.get('user');
-        if (user) {
-            this._authInfo = {
-                user: user,
-                hash: session.get('hash'),
-                salt: session.get('salt')
-            };
+        if (typeof session !== 'undefined') {
+            var user = session.get('user');
+            if (user) {
+                this._authInfo = {
+                    user: user,
+                    hash: session.get('hash'),
+                    salt: session.get('salt')
+                };
+            }
         }
 
         // If autodetect
@@ -1618,9 +1637,13 @@ var servConn = {
                 dataType: 'text',
                 cache: dui.useCache,
                 success: function (data) {
-                    dui.views = $.parseJSON(data);
-                    if (typeof dui.views == 'string') {
-                        dui.views = $.parseJSON(dui.views);
+                    try {
+                        dui.views = $.parseJSON(data);
+                        if (typeof dui.views == 'string') {
+                            dui.views = $.parseJSON(dui.views);
+                        }
+                    } catch (e) {
+                        window.alert ('Invalid ' + filename + ' json format');
                     }
                     callback(dui.views);
                     if (!dui.views) {
@@ -2067,9 +2090,11 @@ var servConn = {
                 this._authRunning = false;
                 if (!error) {
                     that._isAuthDone  = true;
-                    session.set("user", that._authInfo.user);
-                    session.set("hash", that._authInfo.hash);
-                    session.set("salt", that._authInfo.salt);
+                    if (typeof session !== 'undefined') {
+                        session.set("user", that._authInfo.user);
+                        session.set("hash", that._authInfo.hash);
+                        session.set("salt", that._authInfo.salt);
+                    }
 
                     // Repeat all stored requests
                     var __cmdQueue = that._cmdQueue;
