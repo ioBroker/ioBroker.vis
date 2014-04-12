@@ -98,7 +98,7 @@
             },
             tplTwCoolClock: function (view, data) {
                 var style = null;
-                if ( dui.views[view] && dui.views[view].widgets[this.data.attr('wid')] && dui.views[view].widgets[data.attr('wid')].style) {
+                if ( dui.views[view] && dui.views[view].widgets[data.attr('wid')] && dui.views[view].widgets[data.attr('wid')].style) {
                     style = dui.views[view].widgets[data.attr('wid')].style;
                 }
                 var radius = 85;
@@ -109,10 +109,10 @@
                     radius = Math.round(radius / 2);
                 }
 
-                var myClass = 'CoolClock:'+(this.data.attr('theme') || 'classic')+':'+radius+':'+(this.data.attr('noSeconds') ? 'noSeconds' : '')+'::'+(this.data.attr('showDigital') ? 'showDigital' : '') + '::'+(this.data.attr('showAmPm') ? 'showAmPm' : '');
-                var text = '<div id="'+this.data.attr('wid')+'" data-myclass="'+myClass+'" class="dashui-widget"><canvas style="width:100%; height:100%" class="'+myClass+'"></canvas></div>';
-                jQuery('#duiview_'+this.view).append(text);
-                jQuery('#'+this.data.attr('wid')).bind("resize", function () {
+                var myClass = 'CoolClock:'+(data.attr('theme') || 'classic')+':'+radius+':'+(data.attr('noSeconds') ? 'noSeconds' : '')+'::'+(data.attr('showDigital') ? 'showDigital' : '') + '::'+(data.attr('showAmPm') ? 'showAmPm' : '');
+                var text = '<div id="'+data.attr('wid')+'" data-myclass="'+myClass+'" class="dashui-widget"><canvas style="width:100%; height:100%" class="'+myClass+'"></canvas></div>';
+                jQuery('#duiview_'+view).append(text);
+                jQuery('#'+data.attr('wid')).bind("resize", function () {
                     var t = jQuery(this);
                     var myClass = t.attr('data-myclass');
                     var myClasses = myClass.split(':');
@@ -157,9 +157,10 @@
                 });
             },
             tplTwYahooWeather: function (view, data) {
+                console.log ("tplTwYahooWeather");
                 var text = '<div class="dashui-widget ui-widget-content" id="'+data.attr('wid')+'"></div>';
                 jQuery('#duiview_'+view).append(text);
-                var weoid = this.data.attr('weoid');
+                var weoid = data.attr('weoid');
                 if (weoid !== undefined && weoid !== null) {
                     var i = weoid.indexOf('[');
                     if (i != -1) {
@@ -186,7 +187,7 @@
 
 <script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="hideSeconds/checkbox;blink/checkbox;noClass/checkbox">
     <%
-        dui.binds.timeAndWeather.startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'),this.data.attr('blink'), this.data.attr('noClass'));
+        dui.binds.timeAndWeather.startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'), this.data.attr('blink'), this.data.attr('noClass'));
     %>
 </script>
 <script type="text/ejs" id="tplTwCoolClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="CoolClock" data-dashui-attrs="theme/fancy,swissRail,chunkySwiss,machine,simonbaird_com,classic,classicWhite,modern,simple,securephp,Tes2,Lev,Sand,Sun,Tor,Cold,Babosa,Tumb,Stone,Disc,watermelon;noSeconds/checkbox;showDigital/checkbox;showAmPm/checkbox" >
