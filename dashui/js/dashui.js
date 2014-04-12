@@ -1174,7 +1174,8 @@ var localData = {
                     }
                     dui.conn.getDataPoints(function (error) {
                         if (error) {
-                            // Possible not authenticated, wait for request from server
+                            console.log("Possibly not authenticated, wait for request from server");
+                            // Possibly not authenticated, wait for request from server
                         } else {
                             // Get Server language
                             var l = localData.uiState.attr("_69999.Value") || localData.uiState.attr("_System_Language.Value");
