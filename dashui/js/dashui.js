@@ -22,21 +22,6 @@
 
 "use strict";
 
-if ('applicationCache' in window) {
-    window.addEventListener('load', function(e) {
-        window.applicationCache.addEventListener('updateready', function(e) {
-            if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-                try {
-                    window.applicationCache.swapCache();
-                } catch (e) {
-                    console.log(e);
-                }
-                window.location.reload();
-            }
-        }, false);
-    }, false);
-}
-
 var dui = {
 
     version:                '0.9beta74',
@@ -1010,6 +995,22 @@ var localData = {
         }
     }
 };
+
+// WebApp Cache Management
+if ('applicationCache' in window) {
+    window.addEventListener('load', function(e) {
+        window.applicationCache.addEventListener('updateready', function(e) {
+            if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+                try {
+                    window.applicationCache.swapCache();
+                } catch (e) {
+                    console.log(e);
+                }
+                window.location.reload();
+            }
+        }, false);
+    }, false);
+}
 
 // Parse Querystring
 (window.onpopstate = function () {
