@@ -9,6 +9,11 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.9beta74
 * (Hobbyquaker) added cache.manifest to prevent Safari/iOS cache problems
+* (Bluefox) Support of local snapshot for debug
+* (Bluefox) Fix yahooWidget under Firefox
+* (Bluefox) Fix select dialog
+* (Bluefox) Fix CSS background selector
+* (Bluefox) Optimize dashuiEdit.js
 
 ### 0.9beta73
 * (Hobbyquaker) Fix Hue Widgets
