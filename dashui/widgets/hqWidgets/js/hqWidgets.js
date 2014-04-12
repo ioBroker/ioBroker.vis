@@ -25,7 +25,7 @@ Used software and icons:
 * door bell by Lorc http://lorcblog.blogspot.de/
  
  
-Copyright (c) 2013 Denis Khaev deniskhaev@gmail.com
+Copyright (c) 2013 Bluefox dogafox@gmail.com
  
 It is licensed under the Creative Commons Attribution-Non Commercial-Share Alike 3.0 license.
 The full text of the license you can get at http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode

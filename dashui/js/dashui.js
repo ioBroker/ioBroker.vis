@@ -194,7 +194,9 @@ var dui = {
 
     },
     removeInstance: function () {
-        storage.set(dui.storageKeyInstance, null);
+        if (typeof storage !== 'undefined') {
+            storage.set(dui.storageKeyInstance, null);
+        }
         dui.conn.delObject(dui.instanceCmd);
         dui.conn.delObject(dui.instanceData);
         dui.conn.delObject(dui.instanceView);
@@ -206,7 +208,9 @@ var dui = {
         dui.instance = (Math.random() * 4294967296).toString(16);
         dui.instance = "0000000" + dui.instance;
         dui.instance = dui.instance.substr(-8);
-        storage.set(dui.storageKeyInstance, dui.instance);
+        if (typeof storage !== 'undefined') {
+            storage.set(dui.storageKeyInstance, dui.instance);
+        }
         $("#dashui_instance").val(dui.instance);
         $("#create_instance").hide();
         $("#instance").show();
@@ -243,7 +247,9 @@ var dui = {
         });
     },
     initInstance: function () {
-        dui.instance = storage.get(dui.storageKeyInstance);
+        if (typeof storage !== 'undefined') {
+            dui.instance = storage.get(dui.storageKeyInstance);
+        }
         //console.log("initInstance "+dui.instance);
         if (dui.instance) {
 
@@ -286,9 +292,11 @@ var dui = {
             return;
         }
 
-        var settings = storage.get(dui.storageKeySettings);
-        if (settings) {
-            dui.settings = $.extend(dui.settings, settings);
+        if (typeof storage !== 'undefined') {
+            var settings = storage.get(dui.storageKeySettings);
+            if (settings) {
+                dui.settings = $.extend(dui.settings, settings);
+            }
         }
 
         // Late initialization (used only for debug)
@@ -754,78 +762,7 @@ var dui = {
         // --------- Editor -----------------
 
         if (dui.urlParams['edit'] === "") {
-
-            // Load meta data if not yet loaded
-            var isMetaLoaded = false;
-            for (var v in localData.metaObjects) {
-                isMetaLoaded = true;
-                break;
-            }
-            if (!isMetaLoaded) {
-                // Read all dataobjects from server
-                dui.conn.getDataObjects(function (data) {
-                    localData.metaObjects = data;
-                });
-                dui.conn.getDataIndex(function (data) {
-                    localData.metaIndex = data;
-                });
-            }
-
-            // Init background selector
-            if (dui.styleSelect) {
-                dui.styleSelect.Show({ width: 180,
-                    name:       "inspect_view_bkg_def",
-                    filterFile: "backgrounds.css",
-                    style:      dui.views[view].settings.style.background_class,
-                    parent:     $('#inspect_view_bkg_parent'),
-                    onchange:   function (newStyle, obj) {
-                        if (dui.views[dui.activeView].settings.style['background_class']) {
-                            $("#duiview_" + dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
-                        }
-                        dui.views[dui.activeView].settings.style['background_class'] = newStyle;
-                        $("#duiview_" + dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
-                    }
-                });
-            }
-
-            $("#inspect_view").html(view);
-
-            $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
-            $("#screen_size_y").val(dui.views[dui.activeView].settings.sizey || "").trigger("change");
-
-            $("#select_active_widget").html("<option value='none'>none selected</option>");
-            for (var widget in dui.views[dui.activeView].widgets) {
-                var obj = $("#" + dui.views[dui.activeView].widgets[widget].tpl);
-                $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-dashui-set") + " " + obj.attr("data-dashui-name") + ")</option>");
-            }
-            //console.log($("#select_active_widget").html());
-            $("#select_active_widget").multiselect("refresh");
-
-            if ($("#select_view option:selected").val() != view) {
-                $("#select_view option").removeAttr("selected");
-                $("#select_view option[value='" + view + "']").prop("selected", "selected");
-                $("#select_view").multiselect("refresh");
-            }
-            $("#select_view_copy option").removeAttr("selected");
-            $("#select_view_copy option[value='" + view + "']").prop("selected", "selected");
-            $("#select_view_copy").multiselect("refresh");
-            $(".dashui-inspect-view-css").each(function () {
-                var $this = $(this);
-                var attr = $this.attr("id").slice(17);
-                $("#" + $this.attr("id")).val(dui.views[dui.activeView].settings.style[attr]);
-            });
-            $(".dashui-inspect-view").each(function () {
-                var $this = $(this);
-                var attr = $this.attr("id").slice(13);
-                $("#" + $this.attr("id")).val(dui.views[dui.activeView].settings[attr]);
-            });
-            if (!dui.views[dui.activeView].settings["theme"]) {
-                dui.views[dui.activeView].settings["theme"] = "dhive";
-            }
-            $("#inspect_view_theme option[value='" + dui.views[dui.activeView].settings.theme + "']").prop("selected", true);
-            $("#inspect_view_theme").multiselect("refresh");
-
-
+            dui.changeViewEdit(view);
         }
 
         return;
@@ -1193,7 +1130,7 @@ var localData = {
                                 });
                                 dui.conn.getDataIndex (function (data) {
                                     localData.metaIndex = data;
-                                    if (storage.get(dui.storageKeyInstance)) {
+                                    if (typeof storage !== 'undefined' && storage.get(dui.storageKeyInstance)) {
                                         dui.initInstance();
                                     }
                                 });
@@ -1360,13 +1297,15 @@ var servConn = {
             type = type.toLowerCase();
         }
 
-        var user = session.get('user');
-        if (user) {
-            this._authInfo = {
-                user: user,
-                hash: session.get('hash'),
-                salt: session.get('salt')
-            };
+        if (typeof session !== 'undefined') {
+            var user = session.get('user');
+            if (user) {
+                this._authInfo = {
+                    user: user,
+                    hash: session.get('hash'),
+                    salt: session.get('salt')
+                };
+            }
         }
 
         // If autodetect
@@ -1416,11 +1355,11 @@ var servConn = {
 
                 console.log('Auth request: ' + message);
 
-                // If we have auth information, send it automatically
                 if (that._authInfo) {
-                    that.authenticate();
+                	// If we have auth information, send it automatically
+                	that.authenticate();
                 } else if (that._connCallbacks.onAuth) {
-                    // Else request from GUI input of user, pass and data (salt)
+					// Else request from GUI input of user, pass and data (salt)
                     that._connCallbacks.onAuth(message, salt);
                 } else {
                     window.alert('server requires authentication, but no onAuth callback is installed!');
@@ -1518,7 +1457,8 @@ var servConn = {
                 //console.log("socket.io not initialized");
             }
         } else if (type == 2 || type == "local") {
-            this._type = 2;
+            this._type       = 2;
+            this._isAuthDone = true;
 
             this._isConnected = true;
             if (this._connCallbacks.onConnChange){
@@ -1617,9 +1557,13 @@ var servConn = {
                 dataType: 'text',
                 cache: dui.useCache,
                 success: function (data) {
-                    dui.views = $.parseJSON(data);
-                    if (typeof dui.views == 'string') {
-                        dui.views = $.parseJSON(dui.views);
+                    try {
+                        dui.views = $.parseJSON(data);
+                        if (typeof dui.views == 'string') {
+                            dui.views = $.parseJSON(dui.views);
+                        }
+                    } catch (e) {
+                        window.alert ('Invalid ' + filename + ' json format');
                     }
                     callback(dui.views);
                     if (!dui.views) {
@@ -1723,6 +1667,9 @@ var servConn = {
                 return;
             }
             this._socket.emit('setState', [pointName, value]);
+        } else if (this._type == 2) {
+            //local
+            console.log('This is only demo. No one point will be controlled.');
         }
     },
     getDataPoints: function (callback) {
@@ -1808,17 +1755,34 @@ var servConn = {
                 }
             });
         } else if (this._type == 2) {
-            // Local
-            if (callback) {
-                // TODO
-                var _data = {};
-                _data.val  = 0;
-                _data.ts   = null;
-                _data.ack  = true;
-                _data.lc   = null;
-                _data.name = "No local datapoints";
-                callback();
-            }
+            // local
+            // Load from ../datastore/local-data.json the demo views
+            $.ajax({
+                url: '../datastore/local-data.json',
+                type: 'get',
+                async: false,
+                dataType: 'text',
+                cache: dui.useCache,
+                success: function (data) {
+                    var _localData = $.parseJSON(data);
+                    localData.dataIndex   = _localData.dataIndex;
+                    localData.dataObjects = _localData.dataObjects;
+                    for (var dp in _localData.uiState) {
+                        localData.uiState.attr(dp, _localData.uiState[dp]);
+                    }
+                    callback(null);
+                },
+                error: function (state) {
+                    console.log (state.statusText);
+                    localData.uiState = {'_no': { Value: false, Timestamp: null, Certain: true, LastChange: null}};
+                    // Local
+                    if(callback) {
+
+                        callback(_data);
+                    }
+                }
+            });
+
         }
     },
     getDataObjects: function (callback) {
@@ -1864,6 +1828,10 @@ var servConn = {
                     callback(data);
                 }
             });
+        } else if (this._type == 2) {
+            if (callback) {
+                callback(localData.metaObjects);
+            }
         }
     },
     getDataIndex: function (callback) {
@@ -1886,6 +1854,10 @@ var servConn = {
                 if (callback)
                     callback(data);
             });
+        } else if (this._type == 2) {
+            if (callback) {
+                callback(localData.metaIndex);
+            }
         }
     },
     addObject: function (objId, obj, callback) {
@@ -2038,9 +2010,11 @@ var servConn = {
                 this._authRunning = false;
                 if (!error) {
                     that._isAuthDone  = true;
-                    session.set("user", that._authInfo.user);
-                    session.set("hash", that._authInfo.hash);
-                    session.set("salt", that._authInfo.salt);
+                    if (typeof session !== 'undefined') {
+                        session.set("user", that._authInfo.user);
+                        session.set("hash", that._authInfo.hash);
+                        session.set("salt", that._authInfo.salt);
+                    }
 
                     // Repeat all stored requests
                     var __cmdQueue = that._cmdQueue;

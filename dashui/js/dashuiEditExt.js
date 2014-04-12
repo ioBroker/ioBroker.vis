@@ -793,7 +793,9 @@ var colorSelect = {
         } else {
             $('#colortext').val ('#FFFFFF');
         }
-        $('#colorpicker').farbtastic('#colortext');
+        if ($().farbtastic) {
+            $('#colorpicker').farbtastic('#colortext');
+        }
     },
     GetColor: function () {
         return $('#colortext').val();
@@ -1963,7 +1965,7 @@ var hmSelect = {
 		dialog_buttons[this._selectText] = function() { 
 			$( this ).dialog( "close" ); 
 			if (hmSelect._onsuccess)
-                hmSelect._onsuccess(_userArg, value, valueObj);
+                hmSelect._onsuccess(hmSelect._userArg, hmSelect.value, hmSelect.valueObj);
 		}
 		dialog_buttons[this._cancelText] = function() {
 			$( this ).dialog( "close" ); 
