@@ -1133,6 +1133,87 @@ dui = $.extend(true, dui, {
             $("#tabs").tabs("option", "active", 1);
         }
     },
+    // Init all edit fields for one view
+    changeViewEdit: function (view) {
+        // Load meta data if not yet loaded
+        var isMetaLoaded = false;
+        for (var v in localData.metaObjects) {
+            isMetaLoaded = true;
+            break;
+        }
+        if (!isMetaLoaded) {
+            // Read all data objects from server
+            dui.conn.getDataObjects(function (data) {
+                localData.metaObjects = data;
+            });
+            dui.conn.getDataIndex(function (data) {
+                localData.metaIndex = data;
+            });
+        }
+
+        // Init background selector
+        if (dui.styleSelect) {
+            dui.styleSelect.Show({ width: 180,
+                name:       "inspect_view_bkg_def",
+                filterName: 'background',
+                //filterFile: "backgrounds.css",
+                style:      dui.views[view].settings.style.background_class,
+                parent:     $('#inspect_view_bkg_parent'),
+                onchange:   function (newStyle, obj) {
+                    if (dui.views[dui.activeView].settings.style['background_class']) {
+                        $("#duiview_" + dui.activeView).removeClass(dui.views[dui.activeView].settings.style['background_class']);
+                    }
+                    dui.views[dui.activeView].settings.style['background_class'] = newStyle;
+                    $("#duiview_" + dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
+                }
+            });
+        }
+
+        $("#inspect_view").html(view);
+
+        $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
+        $("#screen_size_y").val(dui.views[dui.activeView].settings.sizey || "").trigger("change");
+
+        $("#select_active_widget").html("<option value='none'>none selected</option>");
+        for (var widget in dui.views[dui.activeView].widgets) {
+            var obj = $("#" + dui.views[dui.activeView].widgets[widget].tpl);
+            $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-dashui-set") + " " + obj.attr("data-dashui-name") + ")</option>");
+        }
+
+        if ($().multiselect) {
+            $("#select_active_widget").multiselect("refresh");
+        }
+
+        if ($("#select_view option:selected").val() != view) {
+            $("#select_view option").removeAttr("selected");
+            $("#select_view option[value='" + view + "']").prop("selected", "selected");
+            if ($().multiselect) {
+                $("#select_view").multiselect("refresh");
+            }
+        }
+        $("#select_view_copy option").removeAttr("selected");
+        $("#select_view_copy option[value='" + view + "']").prop("selected", "selected");
+        if ($().multiselect) {
+            $("#select_view_copy").multiselect("refresh");
+        }
+        $(".dashui-inspect-view-css").each(function () {
+            var $this = $(this);
+            var attr = $this.attr("id").slice(17);
+            $("#" + $this.attr("id")).val(dui.views[dui.activeView].settings.style[attr]);
+        });
+        $(".dashui-inspect-view").each(function () {
+            var $this = $(this);
+            var attr = $this.attr("id").slice(13);
+            $("#" + $this.attr("id")).val(dui.views[dui.activeView].settings[attr]);
+        });
+        if (!dui.views[dui.activeView].settings["theme"]) {
+            dui.views[dui.activeView].settings["theme"] = "dhive";
+        }
+        $("#inspect_view_theme option[value='" + dui.views[dui.activeView].settings.theme + "']").prop("selected", true);
+        if ($().multiselect) {
+            $("#inspect_view_theme").multiselect("refresh");
+        }
+    },
     draggable: function (obj) {
         var draggableOptions = {
             cancel: false,
