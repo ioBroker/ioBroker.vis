@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta74
+* (Hobbyquaker) added cache.manifest to prevent Safari/iOS cache problems
+
 ### 0.9beta73
 * (Hobbyquaker) Fix Hue Widgets
 * (Hobbyquaker) Fix getDataPoints()
