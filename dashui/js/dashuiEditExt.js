@@ -722,10 +722,6 @@ dui = $.extend(true, dui, {
 	}
 });
 
-
-
-
-
 // Color selection Dialog
 var colorSelect = {
     // possible settings
@@ -2070,3 +2066,248 @@ var hmSelect = {
     }
 };
 
+var idSelect = {
+    _locData: null,
+    _selectText: '',
+    _cancelText: '',
+
+    _onsuccess: null,
+    _userArg: null,
+
+    _isShowAdapters: true,
+    _shift: 32,
+
+    value:    null,
+    valueObj: null,
+    _processed: [],
+    _rows:       ['name', 'address', 'location', 'role', 'ioType', 'specType'],
+    _rowsTitles: ['Name', 'Address', 'Location', 'Role', 'IOType', 'SpecType'],
+
+    _treeProcessed: false,
+
+    // Convert object tree to required
+    _preprocessTree: function () {
+        if (this._treeProcessed) {
+            return;
+        }
+        else {
+            this._treeProcessed = true;
+        }
+        var MO = this._locData.metaObjects;
+        var MI = this._locData.metaIndex;
+        for (var id in MO) {
+            var _id = parseInt(id);
+            if (MO[id].Parent) {
+                MO[id].parent = MO[id].Parent;
+            }
+            if (MO[id].HssType) {
+                MO[id].specType = MO[id].HssType;
+            }
+            if (MO[id].Address) {
+                MO[id].address = MO[id].Address;
+            }
+            if (MO[id].Channels) {
+                MO[id].children = MO[id].Channels;
+                MO[id].name     = MO[id].ChnLabel;
+            }
+            if (MO[id].DPs) {
+                MO[id].children = [];
+                for (var dp in MO[id].DPs) {
+                    MO[id].children.push(MO[id].DPs[dp]);
+                    MO[MO[id].DPs[dp]].name = dp;
+                }
+            }
+            if (MO[id].ALDPs) {
+                if (!MO[id].children) {
+                    MO[id].children = [];
+                }
+                for (var dp in MO[id].ALDPs) {
+                    MO[id].children.push(MO[id].ALDPs[dp]);
+                    MO[MO[id].ALDPs[dp]].name = dp;
+                }
+            }
+            MO[id].name = MO[id].name || MO[id].Name;
+            if (MO[id]['TypeName'] == 'VARDP') {
+                MO[id].type = 'point';
+                MO[id].pntType = 'Variable';
+                MO[id].ioType  = MO[id].pntType;
+            } else
+            if (MO[id]['TypeName'] == 'ALARMDP') {
+                MO[id].type = 'point';
+                MO[id].pntType = 'Alarms';
+                MO[id].ioType  = MO[id].pntType;
+            } else
+            if (MO[id]['TypeName'] == 'CHANNEL') {
+                MO[id].type = 'channel';
+                MO[id].chnType = MO[id]['HssType'];
+                MO[id].ioType  = MO[id].chnType;
+            } else
+            if (MO[id]['TypeName'] == 'DEVICE') {
+                MO[id].type = 'device';
+                MO[id].devType = MO[id]['HssType'];
+                MO[id].ioType  = MO[id].devType;
+            }
+            // Check if this point in some locations
+            for (var r = 0, rlen = MI['ENUM_ROOMS'].length; r < rlen; r++) {
+                if (MO[MI['ENUM_ROOMS'][r]].Channels.indexOf(_id) != -1) {
+                    if (!MO[id].location) {
+                        MO[id].location = [];
+                    }
+                    if (MO[id].location.indexOf(MO[MI['ENUM_ROOMS'][r]].Name) == -1) {
+                        MO[id].location.push(MO[MI['ENUM_ROOMS'][r]].Name);
+                    }
+                }
+            }
+            // Check if this point in some functions
+            for (var r = 0, rlen = MI['ENUM_FUNCTIONS'].length; r < rlen; r++) {
+                if (MO[MI['ENUM_FUNCTIONS'][r]].Channels.indexOf(_id) != -1) {
+                    if (!MO[id].roles) {
+                        MO[id].roles = [];
+                    }
+                    if (MO[id].roles.indexOf(MO[MI['ENUM_FUNCTIONS'][r]].Name) == -1) {
+                        MO[id].roles.push(MO[MI['ENUM_FUNCTIONS'][r]].Name);
+                    }
+                }
+            }
+            // Check if this point in some favorites
+            for (var r = 0, rlen = MI['FAVORITE'].length; r < rlen; r++) {
+                if (MO[MI['FAVORITE'][r]].Channels.indexOf(_id) != -1) {
+                    if (!MO[id].favorite) {
+                        MO[id].favorite = [];
+                    }
+                    if (MO[id].favorite.indexOf(MO[MI['FAVORITE'][r]].Name) == -1) {
+                        MO[id].favorite.push(MO[MI['FAVORITE'][r]].Name);
+                    }
+                }
+            }
+        }
+    },
+    _showArray: function (arr) {
+        var tlen = (arr) ? arr.length : 0;
+        var text = (tlen > 0) ? arr[0]: '';
+        for (var t = 1; t < tlen; t++) {
+            text += ', ' + arr[t];
+        }
+        return text;
+    },
+    _addOneRow: function (id, level, parents) {
+        var MO = this._locData.metaObjects;
+        this._processed.push(id);
+        var text = '<tr class="select_'+id+' '+(parents||'')+'">';
+
+        text += '<td style="padding-left:'+(MO[id].children ? (this._shift * (level - 1)) : (this._shift * level))+'px">'+(MO[id].children ? '<span class="ui-icon ui-icon-circle-plus select_plus no_click" data-hidden="1" data-processed="0" data-id="'+id+'" data-level="'+level+'" data-parents="'+(parents ? parents + ' ' : '')+' children_'+id+'"></span>' : '') + '&nbsp;'+MO[id].name + '</td>';
+        text += '<td>'+(MO[id].address || '')+'</td>';
+        text += '<td>'+this._showArray(MO[id].location)+'</td>';
+        text += '<td>'+this._showArray(MO[id].roles)+'</td>';
+        text += '<td>'+(MO[id].devType || MO[id].chnType || MO[id].pntType || '')+'</td>';
+        text += '<td>'+(MO[id].specType || '')+'</td>';
+        text += '</tr>\n';
+
+        /*if (MO[id].children) {
+            for (var z = 0, zlen = MO[id].children.length; z < zlen; z++) {
+                text += this._addOneRow(MO[id].children[z], level+1);
+            }
+        }*/
+
+        return text;
+    },
+    _plusClick: function () {
+        // "this" here is plus element itself
+        var id = $(this).attr('data-id');
+        if ($(this).attr('data-hidden') == '0') {
+            $('.children_' + id).hide();
+            $(this).removeClass('ui-icon-circle-minus');
+            $(this).addClass('ui-icon-circle-plus');
+            $(this).attr('data-hidden', '1');
+        } else {
+            $(this).removeClass('ui-icon-circle-plus');
+            $(this).addClass('ui-icon-circle-minus');
+            $(this).attr('data-hidden', '0');
+            if ($(this).attr('data-processed') == '0') {
+                // build children of this id
+                var text = "";
+                if (idSelect._locData.metaObjects[id].children) {
+                    for (var z = 0, zlen = idSelect._locData.metaObjects[id].children.length; z < zlen; z++) {
+                        text += idSelect._addOneRow(idSelect._locData.metaObjects[id].children[z], parseInt($(this).attr('data-level'))+1, $(this).attr('data-parents'));
+                    }
+                }
+                $(text).insertAfter('.select_'+id);
+                $(this).attr('data-processed', '1');
+                $('.no_click').each(function () {
+                    $(this).removeClass('no_click');
+                    $(this).click(idSelect._plusClick);
+                });
+            } else {
+                $('.children_' + $(this).attr('data-id')).show();
+            }
+        }
+    },
+    _buildTable: function (divName) {
+        this._preprocessTree();
+        var text = '<table><tr>';
+        var MO = this._locData.metaObjects;
+        this._processed = [];
+        // Create header
+        for (var u = 0, ulen = this._rowsTitles.length; u < ulen; u++) {
+            text += '<th>'+this._rowsTitles[u]+'</th>';
+        }
+        text += '</tr>';
+
+        for (var id in MO) {
+            if (this._processed.indexOf (id) != -1) {
+                continue;
+            }
+            if (MO[id].parent || MO[id]["EnumInfo"] !== undefined ||  MO[id]["TypeName"] == "FAVORITE") {
+                continue;
+            }
+            text += this._addOneRow(id, 1);
+        }
+
+        text += '</table>';
+        $('#'+divName).html(text);
+
+        $('.no_click').each(function () {
+            $(this).removeClass('no_click');
+            $(this).click(idSelect._plusClick);
+        });
+    },
+    Show: function (locData, options) {
+        this._locData = locData;
+        if (!document.getElementById ("idSelect")) {
+            $("body").append("<div class='dialog' id='idSelect' title='" + dui.translate("Select ID") + "'></div>");
+            this._buildTable ('idSelect');
+            // Define dialog buttons
+            this._selectText = dui.translate("Select");
+            this._cancelText = dui.translate("Cancel");
+
+            var dialog_buttons = {};
+            dialog_buttons[this._selectText] = function() {
+                $( this ).dialog( "close" );
+                if (idSelect._onsuccess)
+                    idSelect._onsuccess(idSelect._userArg, idSelect.value, idSelect.valueObj);
+            }
+            dialog_buttons[this._cancelText] = function() {
+                $( this ).dialog( "close" );
+            }
+
+            $('#idSelect')
+                .dialog({
+                    resizable: true,
+                    height: $(window).height(),
+                    modal: true,
+                    width: 870,
+                    resize: function(event, ui) {
+                        //idSelect._onResize ();
+                    },
+                    close: function(event, ui) {
+                        $('#idSelect').remove();
+                        //$('#hmDevsContent').jqGrid('GridUnload');
+                    },
+                    buttons: dialog_buttons
+                });
+            var $dashui_waitico = $('#dashui-waitico');
+            $dashui_waitico.show().css({top: ($("#idSelect").height() + $dashui_waitico.height())/2});
+            $dashui_waitico.hide();
+        }
+    }
+};

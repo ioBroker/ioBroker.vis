@@ -459,3 +459,12 @@ div#dui_editor {
 .login-button:hover {
     background: #ddd;
 }
+
+.select_plus {
+    display: inline-block !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin-right: 5px;
+    vertical-align: middle !important;
+    cursor: pointer;
+}

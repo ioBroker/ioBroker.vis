@@ -26,8 +26,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                     window.alert ("The versions of hqWidgets.js and hqWidgets.html are different. Expected version of hqWidgets.js is " +dui.binds.hqWidgetsExt.version);
                 }
                 
-                                // Why this does not work?
-                /*homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                // Why this does not work?
+                /*localData.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
                     if (how != "set") 
                         return;
                     
@@ -36,8 +36,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                     var i = attr.indexOf (".");
                     if (i != -1)
                         attr = attr.substring (0, i);
-                    if (homematic.uiState["_" + attr]["Certain"])
-                        dui.binds.hqWidgetsExt.hqMonitor (this, attr, homematic.uiState["_" + attr]["Value"], true, homematic.uiState["_" + attr]["Timestamp"]);
+                    if (localData.uiState["_" + attr]["Certain"])
+                        dui.binds.hqWidgetsExt.hqMonitor (this, attr, localData.uiState["_" + attr]["Value"], true, localData.uiState["_" + attr]["Timestamp"]);
                 });*/
                 dui.registerOnChange (dui.binds.hqWidgetsExt.hqMonitor, this);
                 

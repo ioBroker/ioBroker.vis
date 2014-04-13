@@ -38,6 +38,7 @@ Licensees may copy, distribute, display, and perform the work and make derivativ
 */
 
 // Main object and container
+if ((typeof hqWidgets !== 'undefined')) {
 hqWidgets = $.extend (true, hqWidgets, {
     // Creates in the parent table lines with settings
     hqEditButton: function (options, obj, additionalSettingsFunction) {
@@ -1222,3 +1223,4 @@ hqWidgets = $.extend (true, hqWidgets, {
         this.SetPosition ((this.settings.position !== null) ? this.settings.position : this.settings.min);
     }
 });
+}
