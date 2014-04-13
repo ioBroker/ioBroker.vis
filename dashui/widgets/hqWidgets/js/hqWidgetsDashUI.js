@@ -342,24 +342,30 @@ if ((typeof hqWidgets !== 'undefined')) {
                             var hm_id = obj.GetSettings ('hm_id');
                             if (hm_id != null && hm_id != "") {
                                 if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["Channels"]) {
-									if (localData.metaObjects[opt['hm_id']]["HssType"] == "HM-CC-TC") {
-										hm_id = localData.metaObjects[localData.metaObjects[opt['hm_id']]["Channels"][2]]["DPs"]["SETPOINT"];
-									}
-									else // HM-CC-RT-DN
-									if (localData.metaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
-										hm_id = localData.metaObjects[localData.metaObjects[opt['hm_id']]["Channels"][4]]["DPs"]["SET_TEMPERATURE"];
-									}
+                                    if (localData.metaObjects[opt['hm_id']]["HssType"] == "HM-CC-TC") {
+                                        hm_id = localData.metaObjects[localData.metaObjects[opt['hm_id']]["Channels"][2]]["DPs"]["SETPOINT"];
+                                    }
+                                    else // HM-CC-RT-DN
+                                    if (localData.metaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
+                                        hm_id = localData.metaObjects[localData.metaObjects[opt['hm_id']]["Channels"][4]]["DPs"]["SET_TEMPERATURE"];
+                                    }
+                                    else // HM-TC-IT-WM
+                                    if (localData.metaObjects[opt['hm_id']]["HssType"] == "HM-TC-IT-WM-W-EU") {
+                                        hm_id = localData.metaObjects[localData.metaObjects[opt['hm_id']]["Channels"][2]]["DPs"]["SET_TEMPERATURE"];
+                                    }
+
                                 }
 
                                 console.log ("SetTemp: "+ hm_id + " = " + state);
                                 // Send command to HM
                                 localData.setValue (hm_id, state);
-                            }                                
+                            }
                         }});
                         // Fill up the required IDs
                         var t = 0;
+
                         if (opt['hm_id'] != null && opt['hm_id'] != "") {
-							var isHM_CC_RT_DN = false;
+                            var isHM_CC_RT_DN = false;
                             if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["HssType"] == "HM-CC-TC") {
                                 var weatherId = localData.metaObjects[opt['hm_id']]["Channels"][1];
                                 var controlId = localData.metaObjects[opt['hm_id']]["Channels"][2];
@@ -367,41 +373,52 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 hm_ids[t++] = {'hm_id': localData.metaObjects[weatherId]["DPs"]["TEMPERATURE"], option: 'temperature'};
                                 hm_ids[t++] = {'hm_id': localData.metaObjects[weatherId]["DPs"]["HUMIDITY"],    option: 'humidity'};
                             }
-                            else 
-							if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
+                            else
+                            if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["HssType"] == "HM-CC-RT-DN") {
                                 isHM_CC_RT_DN = true;
-								var controlId = localData.metaObjects[opt['hm_id']]["Channels"][4];
+                                var controlId = localData.metaObjects[opt['hm_id']]["Channels"][4];
                                 hm_ids[t++] = {'hm_id': localData.metaObjects[controlId]["DPs"]["SET_TEMPERATURE"],    option: 'valueSet'}; // First is always control element
                                 hm_ids[t++] = {'hm_id': localData.metaObjects[controlId]["DPs"]["ACTUAL_TEMPERATURE"], option: 'temperature'};
                                 hm_ids[t++] = {'hm_id': localData.metaObjects[controlId]["DPs"]["VALVE_STATE"],        option: 'valve'};
-								adv = $.extend (adv, {'hideHumidity': true});
-							}
-                            else 
-							if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["DPs"] && localData.metaObjects[opt['hm_id']]["DPs"]["ACTUAL_TEMPERATURE"]) {
+                                adv = $.extend (adv, {'hideHumidity': true});
+                            } else
+                            if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["HssType"] == "HM-TC-IT-WM-W-EU") {
+                                var weatherId = localData.metaObjects[opt['hm_id']]["Channels"][1];
+                                var controlId = localData.metaObjects[opt['hm_id']]["Channels"][2];
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[controlId]["DPs"]["SET_TEMPERATURE"],    option: 'valueSet'}; // First is always control element
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[weatherId]["DPs"]["TEMPERATURE"], option: 'temperature'};
+                                hm_ids[t++] = {'hm_id': localData.metaObjects[weatherId]["DPs"]["HUMIDITY"],    option: 'humidity'};
+                                //Testweise - Button dafür nicht ausgelegt
+                                if (localData.metaObjects[controlId]["DPs"]["LOWBAT_REPORTING"] !== undefined) {
+                                    hm_ids[t++] = {'hm_id': localData.metaObjects[controlId]["DPs"]["LOWBAT_REPORTING"], option: 'lowBattery'};
+                                }
+                            }
+
+                            if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["DPs"] && localData.metaObjects[opt['hm_id']]["DPs"]["ACTUAL_TEMPERATURE"]) {
                                 isHM_CC_RT_DN = true;
                                 hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["SET_TEMPERATURE"],    option: 'valueSet'}; // First is always control element
                                 hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["ACTUAL_TEMPERATURE"], option: 'temperature'};
                                 hm_ids[t++] = {'hm_id': localData.metaObjects[opt['hm_id']]["DPs"]["VALVE_STATE"],        option: 'valve'};
-								adv = $.extend (adv, {'hideHumidity': true});
-							}
+                                adv = $.extend (adv, {'hideHumidity': true});
+                            }
                             else if (localData.metaObjects[opt["hm_id"]]){
                                 hm_ids[t++] = {'hm_id': opt['hm_id'], option: 'temperature'};
                             }
-							if (!isHM_CC_RT_DN) {
-								if (opt["hm_idV"]) {
-									if (localData.metaObjects[opt["hm_idV"]] && localData.metaObjects[opt["hm_idV"]]["DPs"])
-										hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_idV"]]["DPs"]["VALVE_STATE"], option: 'valve'};
-									else if (localData.metaObjects[opt["hm_idV"]])
-										hm_ids[t++] = {'hm_id': opt["hm_idV"], option: 'valve'};
-									adv = $.extend (adv, {'hideValve': false});
-								}
-								else {
-									adv = $.extend (adv, {'hideValve': true});
-								}
-							}
-                        }  
-                    }
-                    else
+
+                            if (!isHM_CC_RT_DN) {
+                                if (opt["hm_idV"]) {
+                                    if (localData.metaObjects[opt["hm_idV"]] && localData.metaObjects[opt["hm_idV"]]["DPs"])
+                                        hm_ids[t++] = {'hm_id': localData.metaObjects[opt["hm_idV"]]["DPs"]["VALVE_STATE"], option: 'valve'};
+                                    else if (localData.metaObjects[opt["hm_idV"]])
+                                        hm_ids[t++] = {'hm_id': opt["hm_idV"], option: 'valve'};
+                                    adv = $.extend (adv, {'hideValve': false});
+                                }
+                                else {
+                                    adv = $.extend (adv, {'hideValve': true});
+                                }
+                            }
+                        }
+                    } else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
                         // Fill up the required IDs
                         var t = 0;
