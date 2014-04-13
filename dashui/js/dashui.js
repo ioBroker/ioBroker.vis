@@ -1790,12 +1790,11 @@ var servConn = {
                     callback(null);
                 },
                 error: function (state) {
-                    console.log (state.statusText);
-                    localData.uiState = {'_no': { Value: false, Timestamp: null, Certain: true, LastChange: null}};
+                    console.log(state.statusText);
+                    localData.uiState.attr('_no', { Value: false, Timestamp: null, Certain: true, LastChange: null});
                     // Local
                     if(callback) {
-
-                        callback(_data);
+                        callback(null);
                     }
                 }
             });
