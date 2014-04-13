@@ -323,6 +323,7 @@ var dui = {
 
         // View selected?
         if (hash == "") {
+            // Take first view in the list
             for (var view in dui.views) {
                 dui.activeView = view;
                 break;
@@ -1781,8 +1782,8 @@ var servConn = {
                 cache: dui.useCache,
                 success: function (data) {
                     var _localData = $.parseJSON(data);
-                    localData.dataIndex   = _localData.dataIndex;
-                    localData.dataObjects = _localData.dataObjects;
+                    localData.metaIndex   = _localData.metaIndex;
+                    localData.metaObjects = _localData.metaObjects;
                     for (var dp in _localData.uiState) {
                         localData.uiState.attr(dp, _localData.uiState[dp]);
                     }
