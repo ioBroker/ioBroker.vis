@@ -2066,6 +2066,8 @@ var hmSelect = {
     }
 };
 
+dui.useNewSelectDialog =  (!$().jqGrid);// || true),
+
 var idSelect = {
     _locData: null,
     _selectText: '',
@@ -2080,13 +2082,40 @@ var idSelect = {
     value:    null,
     valueObj: null,
     _processed: [],
-    _rows:       ['name', 'address', 'location', 'role', 'ioType', 'specType'],
-    _rowsTitles: ['Name', 'Address', 'Location', 'Role', 'IOType', 'SpecType'],
+    _rowsInfo: {
+        "name"     : {title: "Name",     width: 300, search: 'text'},
+        "address"  : {title: "Address",  width: 150, search: 'text'},
+        "location" : {title: "Location", width: 150, search: 'select'},
+        "role"     : {title: "Role",     width: 150, search: 'select'},
+        "ioType"   : {title: "IOType",   width: 150, search: 'select'},
+        "specType" : {title: "SpecType", width: 150, search: 'select'},
+        "value"    : {title: "Value",    width: 100,  search: 'text'}
+    },
+    _rows:       ['name', 'specType', 'location', 'role', 'ioType', 'value'],
+    _storedValues : {},
+    _visibility : {},
+    _noFilter: true,
 
     _treeProcessed: false,
+    _options: {
+        selectedID: null,
+        onSuccess:  null,
+        userArg:    null
+    },
 
     // Convert object tree to required
-    _preprocessTree: function () {
+    _insertHelper: function (isTypeExist, type, value) {
+        isTypeExist[type] = true;
+        if (value !== undefined && this._rowsInfo[type]) {
+            if (!this._rowsInfo[type].selectValues) {
+                this._rowsInfo[type].selectValues = [];
+            }
+            if (this._rowsInfo[type].selectValues.indexOf (value) == -1) {
+                this._rowsInfo[type].selectValues.push(value);
+            }
+        }
+    },
+    _preProcessTree: function () {
         if (this._treeProcessed) {
             return;
         }
@@ -2095,6 +2124,8 @@ var idSelect = {
         }
         var MO = this._locData.metaObjects;
         var MI = this._locData.metaIndex;
+        var isTypeExist = {"value": true, "name": true};
+
         for (var id in MO) {
             var _id = parseInt(id);
             if (MO[id].Parent) {
@@ -2102,13 +2133,16 @@ var idSelect = {
             }
             if (MO[id].HssType) {
                 MO[id].specType = MO[id].HssType;
+                this._insertHelper(isTypeExist, 'specType', MO[id].specType);
             }
             if (MO[id].Address) {
                 MO[id].address = MO[id].Address;
+                isTypeExist['address'] = true;
             }
             if (MO[id].Channels) {
                 MO[id].children = MO[id].Channels;
                 MO[id].name     = MO[id].ChnLabel;
+                isTypeExist['children'] = true;
             }
             if (MO[id].DPs) {
                 MO[id].children = [];
@@ -2128,79 +2162,153 @@ var idSelect = {
             }
             MO[id].name = MO[id].name || MO[id].Name;
             if (MO[id]['TypeName'] == 'VARDP') {
-                MO[id].type = 'point';
+                MO[id].type    = 'point';
                 MO[id].pntType = 'Variable';
                 MO[id].ioType  = MO[id].pntType;
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'pntType');
+                this._insertHelper(isTypeExist, 'type');
             } else
             if (MO[id]['TypeName'] == 'ALARMDP') {
                 MO[id].type = 'point';
                 MO[id].pntType = 'Alarms';
                 MO[id].ioType  = MO[id].pntType;
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'pntType');
+                this._insertHelper(isTypeExist, 'type');
             } else
             if (MO[id]['TypeName'] == 'CHANNEL') {
                 MO[id].type = 'channel';
                 MO[id].chnType = MO[id]['HssType'];
-                MO[id].ioType  = MO[id].chnType;
+                MO[id].ioType  = 'Channel';
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'chnType');
+                this._insertHelper(isTypeExist, 'type');
             } else
             if (MO[id]['TypeName'] == 'DEVICE') {
                 MO[id].type = 'device';
                 MO[id].devType = MO[id]['HssType'];
-                MO[id].ioType  = MO[id].devType;
+                MO[id].ioType  = 'Device';
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'devType');
+                this._insertHelper(isTypeExist, 'type');
+            } else
+            if (MO[id]['TypeName'] == 'HSSDP') {
+                MO[id].type    = 'point';
+                MO[id].pntType = MO[id]['HssType'];
+                MO[id].ioType  = 'Datapoint';
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'pntType');
+                this._insertHelper(isTypeExist, 'type');
+            }else
+            if (MO[id]['TypeName'] == 'PROGRAM') {
+                MO[id].type    = 'point';
+                MO[id].pntType = 'Program';
+                MO[id].ioType  = 'Program';
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'pntType');
+                this._insertHelper(isTypeExist, 'type');
             }
             // Check if this point in some locations
-            for (var r = 0, rlen = MI['ENUM_ROOMS'].length; r < rlen; r++) {
-                if (MO[MI['ENUM_ROOMS'][r]].Channels.indexOf(_id) != -1) {
-                    if (!MO[id].location) {
-                        MO[id].location = [];
+            if (MI['ENUM_ROOMS']) {
+                for (var r = 0, rlen = MI['ENUM_ROOMS'].length; r < rlen; r++) {
+                    if (MO[MI['ENUM_ROOMS'][r]].Channels.indexOf(_id) != -1) {
+                        var val = MO[MI['ENUM_ROOMS'][r]].Name;
+                        if (!MO[id].location) {
+                            MO[id].location = [];
+                        }
+                        if (MO[id].location.indexOf(val) == -1) {
+                            MO[id].location.push(val);
+                        }
+                        this._insertHelper(isTypeExist, 'location', val);
                     }
-                    if (MO[id].location.indexOf(MO[MI['ENUM_ROOMS'][r]].Name) == -1) {
-                        MO[id].location.push(MO[MI['ENUM_ROOMS'][r]].Name);
+                }
+                // Check if this point in some functions
+                for (var r = 0, rlen = MI['ENUM_FUNCTIONS'].length; r < rlen; r++) {
+                    if (MO[MI['ENUM_FUNCTIONS'][r]].Channels.indexOf(_id) != -1) {
+                        var val = MO[MI['ENUM_FUNCTIONS'][r]].Name;
+                        if (!MO[id].role) {
+                            MO[id].role = [];
+                        }
+                        if (MO[id].role.indexOf(val) == -1) {
+                            MO[id].role.push(val);
+                        }
+                        this._insertHelper(isTypeExist, 'role', val);
+                    }
+                }
+                // Check if this point in some favorites
+                for (var r = 0, rlen = MI['FAVORITE'].length; r < rlen; r++) {
+                    if (MO[MI['FAVORITE'][r]].Channels.indexOf(_id) != -1) {
+                        var val = MO[MI['FAVORITE'][r]].Name;
+                        if (!MO[id].favorite) {
+                            MO[id].favorite = [];
+                        }
+                        if (MO[id].favorite.indexOf(val) == -1) {
+                            MO[id].favorite.push(val);
+                        }
+                        this._insertHelper(isTypeExist, 'favorite', val);
                     }
                 }
             }
-            // Check if this point in some functions
-            for (var r = 0, rlen = MI['ENUM_FUNCTIONS'].length; r < rlen; r++) {
-                if (MO[MI['ENUM_FUNCTIONS'][r]].Channels.indexOf(_id) != -1) {
-                    if (!MO[id].roles) {
-                        MO[id].roles = [];
-                    }
-                    if (MO[id].roles.indexOf(MO[MI['ENUM_FUNCTIONS'][r]].Name) == -1) {
-                        MO[id].roles.push(MO[MI['ENUM_FUNCTIONS'][r]].Name);
-                    }
-                }
-            }
-            // Check if this point in some favorites
-            for (var r = 0, rlen = MI['FAVORITE'].length; r < rlen; r++) {
-                if (MO[MI['FAVORITE'][r]].Channels.indexOf(_id) != -1) {
-                    if (!MO[id].favorite) {
-                        MO[id].favorite = [];
-                    }
-                    if (MO[id].favorite.indexOf(MO[MI['FAVORITE'][r]].Name) == -1) {
-                        MO[id].favorite.push(MO[MI['FAVORITE'][r]].Name);
-                    }
-                }
+        }
+
+        // Remove unused fields
+        for (var i = this._rows.length - 1; i >= 0; i--) {
+            if (!isTypeExist[this._rows[i]]) {
+                this._rows.splice(i, 1);
             }
         }
     },
     _showArray: function (arr) {
-        var tlen = (arr) ? arr.length : 0;
-        var text = (tlen > 0) ? arr[0]: '';
-        for (var t = 1; t < tlen; t++) {
-            text += ', ' + arr[t];
+        if (typeof val == "object") {
+            var tlen = (arr) ? arr.length : 0;
+            var text = (tlen > 0) ? arr[0]: '';
+            for (var t = 1; t < tlen; t++) {
+                text += ', ' + arr[t];
+            }
+
+            return text;
+        } else {
+            return arr;
         }
-        return text;
     },
     _addOneRow: function (id, level, parents) {
         var MO = this._locData.metaObjects;
         this._processed.push(id);
-        var text = '<tr class="select_'+id+' '+(parents||'')+'">';
+        var text = '<tr class="select_'+id+' '+(parents||'')+' no-select-tr select-tr" data-id="'+id+'" data-hidden="1">';
 
-        text += '<td style="padding-left:'+(MO[id].children ? (this._shift * (level - 1)) : (this._shift * level))+'px">'+(MO[id].children ? '<span class="ui-icon ui-icon-circle-plus select_plus no_click" data-hidden="1" data-processed="0" data-id="'+id+'" data-level="'+level+'" data-parents="'+(parents ? parents + ' ' : '')+' children_'+id+'"></span>' : '') + '&nbsp;'+MO[id].name + '</td>';
-        text += '<td>'+(MO[id].address || '')+'</td>';
-        text += '<td>'+this._showArray(MO[id].location)+'</td>';
-        text += '<td>'+this._showArray(MO[id].roles)+'</td>';
-        text += '<td>'+(MO[id].devType || MO[id].chnType || MO[id].pntType || '')+'</td>';
-        text += '<td>'+(MO[id].specType || '')+'</td>';
+        text += '<td ' +
+            'title="'+MO[id][this._rows[0]]+'" ' +
+            'class="select-td" ' +
+            'style="width:'+this._rowsInfo[this._rows[0]].width+'px; padding-left:'+(MO[id].children ? (this._shift * (level - 1)) : (this._shift * level))+'px">'+
+            (MO[id].children ? '<span class="ui-icon ui-icon-circle-plus select-plus no-click" data-processed="0" data-id="'+id+'" data-level="'+level+'" data-parents="'+(parents ? parents + ' ' : '')+' children_'+id+'"></span>' : '');
+        text += MO[id][this._rows[0]] + '</td>';
+
+        for (var i = 1, len = this._rows.length; i < len; i++) {
+            var val;
+            var title
+            if (this._rows[i] == 'value') {
+                // Save values for search
+                val = this._locData.uiState['_' + id] ? this._locData.uiState['_' + id].Value : '';
+                if (val === null || val === undefined) {
+                    val   = '';
+                    title = '';
+                }
+                else {
+                    val = val.toString().replace(/\"/g, "'").replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+                    title = val;
+                }
+                this._storedValues[id] = val;
+            } else {
+                val = this._showArray(MO[id][this._rows[i]]) || '';
+                if (val === null || val === undefined) {
+                    val   = '';
+                }
+                title = val;
+            }
+
+            text += '<td style="width:'+this._rowsInfo[this._rows[i]].width+'px" class="select-td" title="'+ title +'">'+ val +'</td>';
+        }
         text += '</tr>\n';
 
         /*if (MO[id].children) {
@@ -2211,47 +2319,222 @@ var idSelect = {
 
         return text;
     },
-    _plusClick: function () {
-        // "this" here is plus element itself
-        var id = $(this).attr('data-id');
-        if ($(this).attr('data-hidden') == '0') {
+    _isVisible: function (id) {
+        if (this._noFilter) {
+            return true;
+        }
+
+        var isVisible = true;
+        var field;
+        var value;
+        for (var f = 0, flen = this._rows.length; f < flen; f++) {
+            field = this._rows[f];
+            value = this._rowsInfo[this._rows[f]].filterValue;
+            if (value !== '' && value !== null && value !== undefined) {
+                if (this._rowsInfo[field].search == 'text') {
+                    if (this._rows[f] == 'value') {
+                        if (!value || this._storedValues[id].toLowerCase().indexOf(value.toLowerCase()) != -1) {
+                            isVisible = true;
+                        } else {
+                            isVisible = false;
+                        }
+                    } else {
+                        if (!value || this._locData.metaObjects[id][field].toLowerCase().indexOf(value.toLowerCase()) != -1) {
+                            isVisible = true;
+                        } else {
+                            isVisible = false;
+                        }
+                    }
+                } else if (this._rowsInfo[field].search == 'select') {
+                    if (!value || this._locData.metaObjects[id][field] == value) {
+                        isVisible = true;
+                    } else {
+                        isVisible = false;
+                    }
+                }
+            } else {
+                continue;
+            }
+            if (!isVisible) {
+                break;
+            }
+        }
+
+        return isVisible;
+    },
+    _isTreeVisible: function (id) {
+        if (this._noFilter || !this._visibility || this._visibility[id] === undefined || this._visibility[id]) {
+            return true;
+        }
+        if (!this._locData.metaObjects[id]) {
+            return false;
+        }
+        // If one of the direct parents is visible
+        var _id = this._locData.metaObjects[id].parent;
+        while (_id) {
+            if (this._visibility[_id]) {
+                return true;
+            }
+
+            _id = this._locData.metaObjects[_id].parent;
+        };
+
+        // If any of the children is visible
+        if (this._locData.metaObjects[id].children) {
+            for (var z = 0, zlen = this._locData.metaObjects[id].children.length; z < zlen; z++) {
+                if (this._isTreeVisible(this._locData.metaObjects[id].children[z])) {
+                    // The branch is visible
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    },
+    // Filter all values
+    applyFilter: function(field, value) {
+        if (this._rowsInfo[field].filterValue != value) {
+            this._rowsInfo[field].filterValue = value;
+            if (!value) {
+                this._noFilter = false;
+                for (var f = 0, flen = this._rows.length; f < flen; f++) {
+                    if (this._rowsInfo[this._rows[f]].filterValue) {
+                        this._noFilter = true;
+                        break;
+                    }
+                }
+            } else {
+                this._noFilter = false;
+            }
+
+            var that = this;
+            for (var id in this._locData.metaObjects) {
+                this._visibility[id] = this._isVisible(id);
+            };
+
+            // Go through the tree
+            $('.select-tr').each(function () {
+                var id = $(this).attr('data-id');
+                // Check if all parents are opened
+                var ids = that._getParents(id);
+
+                var isOpened = false;
+                for (var z = 0, zlen = ids.length; z < zlen; z++) {
+                    // If parent is hidden
+                    if ($('.select_'+ids[z]).attr('data-hidden') == 1) {
+                        $(this).hide();
+                        return;
+                    }
+                }
+
+                if (that._isTreeVisible(id)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+    },
+    _getParents: function (id) {
+        var ids = [];
+        var _id = idSelect._locData.metaObjects[id].parent;
+        while (_id) {
+            ids.push(_id);
+            _id = idSelect._locData.metaObjects[_id].parent;
+        }
+        return ids;
+    },
+    _plusClick: function (elem) {
+        // "elem" here is plus element itself
+        var id = $(elem).attr('data-id');
+        var tr = $('.select_'+id);
+        if (tr.attr('data-hidden') == '0') {
             $('.children_' + id).hide();
-            $(this).removeClass('ui-icon-circle-minus');
-            $(this).addClass('ui-icon-circle-plus');
-            $(this).attr('data-hidden', '1');
+            $(elem).removeClass('ui-icon-circle-minus');
+            $(elem).addClass('ui-icon-circle-plus');
+            tr.attr('data-hidden', '1');
         } else {
-            $(this).removeClass('ui-icon-circle-plus');
-            $(this).addClass('ui-icon-circle-minus');
-            $(this).attr('data-hidden', '0');
-            if ($(this).attr('data-processed') == '0') {
-                // build children of this id
+            $(elem).removeClass('ui-icon-circle-plus');
+            $(elem).addClass('ui-icon-circle-minus');
+            tr.attr('data-hidden', '0');
+            if ($(elem).attr('data-processed') == '0') {
+                // build children of elem id
                 var text = "";
                 if (idSelect._locData.metaObjects[id].children) {
                     for (var z = 0, zlen = idSelect._locData.metaObjects[id].children.length; z < zlen; z++) {
-                        text += idSelect._addOneRow(idSelect._locData.metaObjects[id].children[z], parseInt($(this).attr('data-level'))+1, $(this).attr('data-parents'));
+                        text += idSelect._addOneRow(idSelect._locData.metaObjects[id].children[z], parseInt($(elem).attr('data-level'))+1, $(elem).attr('data-parents'));
                     }
                 }
                 $(text).insertAfter('.select_'+id);
-                $(this).attr('data-processed', '1');
-                $('.no_click').each(function () {
-                    $(this).removeClass('no_click');
-                    $(this).click(idSelect._plusClick);
+                $(elem).attr('data-processed', '1');
+                $('.no-click').each(function () {
+                    var id = $(this).attr('data-id');
+                    $(this).removeClass('no-click');
+                    $(this).click(function () {idSelect._plusClick(this)});
+                    if (!idSelect._isTreeVisible(id)) {
+                        $('.select_'+id).hide();
+                    }
                 });
             } else {
-                $('.children_' + $(this).attr('data-id')).show();
+                $('.children_' + $(elem).attr('data-id')).each(function (){
+                    var id  = $(this).attr('data-id');
+
+                    // Check if all parents are opened
+                    var ids = idSelect._getParents(id);
+
+                    var isOpened = false;
+                    for (var z = 0, zlen = ids.length; z < zlen; z++) {
+                        // If parent is hidden
+                        if ($('.select_'+ids[z]).attr('data-hidden') == 1) {
+                            return;
+                        }
+                    }
+
+                    if (!idSelect._isTreeVisible(id)) {
+                        $('.select_'+id).hide();
+                    } else {
+                        $('.select_'+id).show();
+                    }
+                });
             }
         }
     },
     _buildTable: function (divName) {
-        this._preprocessTree();
-        var text = '<table><tr>';
-        var MO = this._locData.metaObjects;
+        var text   = '';
+        var header = '<tr>';
+        var that   = this;
+        var MO     = this._locData.metaObjects;
         this._processed = [];
         // Create header
-        for (var u = 0, ulen = this._rowsTitles.length; u < ulen; u++) {
-            text += '<th>'+this._rowsTitles[u]+'</th>';
+        for (var u = 0, ulen = this._rows.length; u < ulen; u++) {
+            header += '<td class="select-header-title" width="'+this._rowsInfo[this._rows[u]].width+'px">'+this._rowsInfo[this._rows[u]].title+'</td>';
         }
-        text += '</tr>';
+        header += '</tr>';
+        // Create search fields
+        for (var u = 0, ulen = this._rows.length; u < ulen; u++) {
+            header += '<td class="select-header-title">';
+            if (this._rowsInfo[this._rows[u]].search) {
+                // If text field
+                if (this._rowsInfo[this._rows[u]].search == 'text') {
+                    header += '<input style="width:'+(this._rowsInfo[this._rows[u]].width-30)+'px" class="select-search" id="search_'+this._rows[u]+'" data-search="'+this._rows[u]+'" value="'+(this._rowsInfo[this._rows[u]].filter || '')+'"/>';
+                    header += '<snap class="ui-icon ui-icon-close select-filter-clear" data-search="'+this._rows[u]+'"></snap>';
+                } // if select field
+                else if (this._rowsInfo[this._rows[u]].search == 'select' && this._rowsInfo[this._rows[u]].selectValues) {
+                    header += '<select class="select-search" id="search_'+this._rows[u]+'" data-search="'+this._rows[u]+'">'+
+                        '<option value="">-</option>';
+                    for (var p = 0, plen = this._rowsInfo[this._rows[u]].selectValues.length; p < plen; p++) {
+                        header += '<option value="'+this._rowsInfo[this._rows[u]].selectValues[p]+'" '+
+                            // If actual selected
+                            ((this._rowsInfo[this._rows[u]].filter == this._rowsInfo[this._rows[u]].selectValues[p]) ? 'selected' : '')+'>'+
+                            this._rowsInfo[this._rows[u]].selectValues[p]+'</option>';
+                    }
+                    header += '</select>';
+                }
+            }
+            header += '</td>';
+        }
+        header += '';
+        $('#'+divName + '_header').html(header);
 
         for (var id in MO) {
             if (this._processed.indexOf (id) != -1) {
@@ -2263,23 +2546,102 @@ var idSelect = {
             text += this._addOneRow(id, 1);
         }
 
-        text += '</table>';
-        $('#'+divName).html(text);
+        $('#'+divName + '_table').html(text);
 
-        $('.no_click').each(function () {
-            $(this).removeClass('no_click');
-            $(this).click(idSelect._plusClick);
+        $('.no-click').each(function () {
+            $(this).removeClass('no-click');
+            $(this).click(function () {that._plusClick(this)});
+        });
+        $('.no-select-tr').click (function () {
+            that._options.selectedID = $(this).attr('data-id');
+            $('#idSelect').dialog('option', 'title', dui.translate("Select ID") + ': ' + that._locData.metaObjects[idSelect._options.selectedID].name);
+            $('#selectId_selectButton').prop("disabled", false).removeClass("ui-state-disabled");
+            $('#selectId_table .ui-state-highlight').removeClass('ui-state-highlight');
+            $(this).addClass('ui-state-highlight');
+        });
+
+        $('.no-select-tr').hover (function () {
+            $(this).addClass('ui-state-focus');
+        }, function () {
+            $(this).removeClass('ui-state-focus');
+        }).removeClass('no-select-tr');
+
+        $('.select-search').change(function(e) {
+            if (this._timeout) {
+                clearTimeout(this._timeout);
+                this._timeout = null;
+            }
+            if ($(this).prop("tagName") == 'SELECT') {
+                that.applyFilter($(this).attr('data-search'), $(this).val());
+            } else {
+                this._timeout = _setTimeout(function(elem){
+                    that.applyFilter($(elem).attr('data-search'), $(elem).val());
+                }, 1000, this);
+            }
+        });
+
+        $('.select-search').bind('keyup', function(e) {
+            if(e.which == 13) {
+                that.applyFilter($(this).attr('data-search'), $(this).val());
+            } else {
+               $(this).trigger('change');
+            }
+        });
+        $('.select-filter-clear').click(function() {
+            var filter = $(this).attr('data-search');
+            $('#search_'+filter).val('');
+            that.applyFilter($(this).attr('data-search'), '');
         });
     },
+    _openPath: function (id) {
+        var ids = this._getParents (id);
+
+        for (var t = ids.length - 1; t >= 0; t--) {
+            var el = $('.select_' + ids[t] + ' span');
+            if (el.length){
+                this._plusClick(el[0]);
+            };
+        }
+    },
     Show: function (locData, options) {
+        var that = this;
         this._locData = locData;
-        if (!document.getElementById ("idSelect")) {
-            $("body").append("<div class='dialog' id='idSelect' title='" + dui.translate("Select ID") + "'></div>");
-            this._buildTable ('idSelect');
-            // Define dialog buttons
+        this._options = $.extend (true, this._options, options);
+        this._preProcessTree();
+
+        if (!this._selectText) {
             this._selectText = dui.translate("Select");
             this._cancelText = dui.translate("Cancel");
+        }
 
+        if (!document.getElementById ("idSelect")) {
+            var selName = (this._options.selectedID && this._locData.metaObjects[this._options.selectedID]) ? ': '+this._locData.metaObjects[this._options.selectedID].name: '';
+
+            $('body').append(
+                    '<div class="dialog" id="idSelect" title="' + dui.translate('Select ID') + selName +'">' +
+                        '<table id="selectId_header" class="select-header"></table>'+
+                        '<div class="select-body"><table id="selectId_table" class="select-table"></table></div>'+
+                        '<div id="selectId_buttons">' +
+                            '<div style="position:absolute; right: 0; padding: 10px">' +
+                                '<button id="selectId_selectButton">'+this._selectText+'</button>'+
+                                '<button id="selectId_cancelButton">'+this._cancelText+'</button>'+
+                            '</div>' +
+                        '</div>'+
+                    '</div>');
+            this._buildTable ('selectId');
+            // Define dialog buttons
+            $('#selectId_selectButton').button ().click (function() {
+                $(window).resize(null);
+                if (that._options.onSuccess) {
+                    that._options.onSuccess(that._options.userArg, that._options.selectedID);
+                }
+                $( '#idSelect' ).dialog( "close" );
+            });
+
+            $('#selectId_cancelButton').button ().click (function() {
+                $( '#idSelect' ).dialog( "close" );
+                $(window).resize(null);
+            });
             var dialog_buttons = {};
             dialog_buttons[this._selectText] = function() {
                 $( this ).dialog( "close" );
@@ -2290,21 +2652,42 @@ var idSelect = {
                 $( this ).dialog( "close" );
             }
 
+            var width = 0;
+            for (var u = 0, ulen = this._rows.length; u < ulen; u++) {
+               width += this._rowsInfo[this._rows[u]].width;
+            }
+
             $('#idSelect')
                 .dialog({
-                    resizable: true,
-                    height: $(window).height(),
+                    resizable: false,
+                    height: $(window).height() - 80,
                     modal: true,
-                    width: 870,
+                    width: width + 50,
+                    open: function (event, ui) {
+                        $(this).css('overflow', 'hidden');
+
+                        // Select selectedID
+                        if (!that._options.selectedID) {
+                            $('#selectId_selectButton').prop("disabled", true).addClass("ui-state-disabled");
+                        } else {
+                            that._openPath(that._options.selectedID);
+                            $('.select_'+that._options.selectedID).addClass('ui-state-highlight')[0].scrollIntoView(true);
+                        }
+
+                    },
                     resize: function(event, ui) {
                         //idSelect._onResize ();
                     },
                     close: function(event, ui) {
                         $('#idSelect').remove();
                         //$('#hmDevsContent').jqGrid('GridUnload');
-                    },
-                    buttons: dialog_buttons
+                    }
+                    //buttons: dialog_buttons
                 });
+            $(window).resize(function () {
+                $('#idSelect').dialog('option', 'height', $(window).height() - 80);
+            });
+
             var $dashui_waitico = $('#dashui-waitico');
             $dashui_waitico.show().css({top: ($("#idSelect").height() + $dashui_waitico.height())/2});
             $dashui_waitico.hide();

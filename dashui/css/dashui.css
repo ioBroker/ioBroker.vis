@@ -460,11 +460,65 @@ div#dui_editor {
     background: #ddd;
 }
 
-.select_plus {
+/*--------------------------------------------- SelectID dialog ------------------------------- */
+.select-plus {
     display: inline-block !important;
     width: 16px !important;
     height: 16px !important;
     margin-right: 5px;
     vertical-align: middle !important;
+    cursor: crosshair;
+}
+.select-header {
+    font-size: 14px;
+    top:0;
+    height:60px;
+    table-layout: fixed;
+    font-family: Verdana,Arial,sans-serif;
+}
+.select-header-title {
+    font-weight: bold;
+    text-align: left;
+    padding-left: 5px;
+}
+.select-body {
+    table-layout: fixed;
+    white-space: nowrap;
+    height: calc(100% - 110px) !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+    font-size: 14px;
+    font-family: Verdana,Arial,sans-serif;
+    width: 100%;
+}
+.select-table {
+    border-collapse: collapse;
+    border-style:solid;
+    border-width: 1px;
+    table-layout: fixed;
+    width: 100%;
+}
+.select-tr {
+    background: rgb(50,50,50);
+    border-bottom: 1px solid rgb(128,128,128);
+    /*border-top: 1px dashed black;*/
+}
+.select-td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    white-space:nowrap;
+}
+.select-search {
+    width: 95%;
+    height: 22px;
+    border-radius: 2px 2px 2px 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+.select-filter-clear {
+    display: inline-block;
+    vertical-align: middle;
     cursor: pointer;
 }
