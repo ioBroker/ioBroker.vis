@@ -528,6 +528,11 @@ jQuery.extend(true, dui.binds, {
 				}
 			}
 			else {
+                if (!$().sidebar) {
+                    window.alert("Float types are not supported, while sidebars are not included");
+                    return;
+                }
+
 				jDiv.css ({left: 'auto', top: 'auto'});
 				var position = "bottom";
 				if (div.barsOptions.position == dui.binds.bars.position.dockTop) position = "top";
@@ -1012,7 +1017,12 @@ jQuery.extend(true, dui.binds, {
 				$('#inspect_barShow').button().click (function () {
 					if (this.parent.barsOptions.position != dui.binds.bars.position.floatHorizontal &&
 						this.parent.barsOptions.position != dui.binds.bars.position.floatVertical) {
-						$(this.parent).sidebar("open");
+                        if ($().sidebar) {
+                            $(this.parent).sidebar("open");
+                        } else {
+                            console.log("Sidebar is not included.");
+                        }
+
 					}
 				}).button((div.barsOptions.position == dui.binds.bars.position.floatHorizontal || 
 						   div.barsOptions.position == dui.binds.bars.position.floatVertical) ? "disable" : "enable");

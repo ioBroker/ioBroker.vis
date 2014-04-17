@@ -710,7 +710,9 @@ dui = $.extend(true, dui, {
 			if (path != null && path != "") {
 				if (root == undefined || root === null) {
 					root = dui.imageSelect._pictDir;
-				} else if (path.length >= root.length) {
+				}
+
+                if (path.length >= root.length) {
 					if (path.substring(0, root.length) == root) {
 						path = path.substring (root.length);
 					}
@@ -2694,3 +2696,84 @@ var idSelect = {
         }
     }
 };
+
+// Create multiselect if no default widget loaded
+if (!$().multiselect) {
+    (function($, undefined) {
+        $.widget("dash.multiselect", {
+            // default options
+            options: {
+                multiple: true
+            },
+            // the constructor
+            _create: function() {
+                if (!this.options.multiple) {
+                    return;
+                }
+                var elem = this.element.hide();
+                var div = '<table class="ui-widget-content">';
+                div += '</table>'
+                this.table = $(div);
+                this.table.insertAfter(elem);
+                this._build();
+            },
+
+            _build: function () {
+                this.table.empty();
+                var div = "";
+                this.element.find("option").each(function () {
+                    div += '<tr class="ui-widget-content"><td><input type="checkbox" '+($(this).is(':selected') ? 'checked' : '')+' data-value="'+$(this).attr('value')+'">'+$(this).html()+'</td>';
+                    console.log ($(this).attr('value'));
+                });
+                this.table.html(div);
+                var that = this;
+                this.table.find('input').each(function() {
+                    this._parent = that;
+                    $(this).click(function(){
+                        var val = $(this).attr('data-value');
+                        var checked =  $(this).is(':checked');
+                        // change state on the original option tags
+                        this._parent.element.find("option").each(function () {
+                            if(this.value === val) {
+                                $(this).prop('selected', checked);
+                            }
+                        });
+
+                        this._parent.element.trigger("change");
+                    });
+                });
+            },
+            _init: function () {
+                if (!this.options.multiple) {
+                    return;
+                }
+                this._build();
+            },
+            refresh: function () {
+                if (!this.options.multiple) {
+                    return;
+                }
+                this._build();
+            },
+
+            // events bound via _on are removed automatically
+            // revert other modifications here
+            _destroy: function() {
+                if (!this.options.multiple) {
+                    return;
+                }
+                this.table.remove();
+                this.element.show();
+
+                $.Widget.prototype.destroy.call(this);
+            },
+
+            _update: function() {
+                if (!this.options.multiple) {
+                    return;
+                }
+                this.refresh(false);
+            }
+        });
+    })(jQuery);
+}
