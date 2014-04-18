@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta78
+* (Hobbyquaker) Fehler abgefangen beim Anlegen von uiState Objekten
+
 ### 0.9beta77
 * (Hobbyquaker) Fix "Aufklappdreieck" im Select-ID Dialog
 
