@@ -55,7 +55,7 @@ var dui = {
     loadWidgetSet: function (name, callback) {
         //console.log("loadWidgetSet("+name+")");
         $.ajax({
-            url: "widgets/" + name + ".html",
+            url: "widgets/" + name + ".html?duiVersion="+dui.version,
             type: "get",
             async: false,
             dataType: "text",
