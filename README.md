@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta76
+* (Hobbyquaker) Fix Dialog Container Widgets
+
 ### 0.9beta75
 * (Kivas) hqWidgets: Support of HM-TC-IT-WM-W-EU
 * (Hobbyquaker) loadWidgetSet() gibt DashUI-Version im Querystring mit um Cache-Probleme zu vermeiden
