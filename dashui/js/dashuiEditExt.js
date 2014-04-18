@@ -1660,9 +1660,9 @@ var hmSelect = {
 				}
 			
                 var img    = this._getImage(this._devices[dev].HssType);
-                var isLeaf = this._devices[dev].cnt !== undefined && this._devices[dev].cnt > 0;
+                var isLeaf = !(this._devices[dev].cnt !== undefined && this._devices[dev].cnt > 0);
 
-				this.mydata[i] = {
+                this.mydata[i] = {
 					id:          ""+(i+1), 
 					"Image":     img ? "<img src='"+img+"' width=25 height=25 />" : '',
 					"Location":  this._devices[dev].room,
@@ -1685,7 +1685,7 @@ var hmSelect = {
 				i++;
 				for (var chn in this._devices[dev].Channels) {
 					var channel = this._devices[dev].Channels[chn];
-                    isLeaf = channel.cnt !== undefined && channel.cnt > 0;
+                    isLeaf = !(channel.cnt !== undefined && channel.cnt > 0);
 					this.mydata[i] = {
 						id:          ""+(i+1), 
 						"Image":     "",//"<img src='"+this._getImage(channel.HssType)+"' width=25 height=25 />",
