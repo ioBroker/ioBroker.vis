@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta77
+* (Hobbyquaker) Fix "Aufklappdreieck" im Select-ID Dialog
+
 ### 0.9beta76
 * (Hobbyquaker) Fix Dialog Container Widgets
 
