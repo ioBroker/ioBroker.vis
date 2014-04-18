@@ -374,7 +374,7 @@ var dui = {
         window.location.href = './?edit';
     },
     renderView: function (view, noThemeChange, hidden) {
-        console.log("renderView("+view+","+noThemeChange+","+hidden+")");
+        //console.log("renderView("+view+","+noThemeChange+","+hidden+")");
 
         if (!dui.views[view]) {
             return false;
@@ -624,7 +624,7 @@ var dui = {
 
     },
     changeView: function (view, hideOptions, showOptions, sync) {
-        console.log("changeView "+view);
+        //console.log("changeView "+view);
         var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
         if (!effect) {
             effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && (showOptions.effect != "")
