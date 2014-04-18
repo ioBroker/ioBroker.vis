@@ -24,7 +24,7 @@
 
 var dui = {
 
-    version:                '0.9beta77',
+    version:                '0.9beta78',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -1760,7 +1760,12 @@ var servConn = {
                     for (var dp in data) {
                         var obj = data[dp];
                         if (!localData.uiState['_' + dp]) {
-                            localData.uiState.attr('_' + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
+                            try {
+                                localData.uiState.attr('_' + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
+                            } catch (e) {
+                                console.log("Error: can't create uiState object for "+dp);
+                                console.log(e);
+                            }
                         } else {
                             var o = {};
                                 o['_' + dp + '.Value']      = obj[0];
