@@ -7,6 +7,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta75
+* (Kivas) hqWidgets: Support of HM-TC-IT-WM-W-EU
+* (Hobbyquaker) loadWidgetSet() gibt DashUI-Version im Querystring mit um Cache-Probleme zu vermeiden
+
 ### 0.9beta74
 * (Hobbyquaker) added cache.manifest to prevent Safari/iOS cache problems
 * (Bluefox) Support of local snapshot for debug
