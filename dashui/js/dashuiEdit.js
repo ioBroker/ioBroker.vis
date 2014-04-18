@@ -757,7 +757,7 @@ dui = $.extend(true, dui, {
 				var wid_attrs = widget_attrs[attr].split('/');
 				var wid_attr  = wid_attrs[0];
                 // Try to extract default value
-                var uu = wid_attr.indexOf ("[");
+                var uu = wid_attr.indexOf("[");
                 var defaultValue = null;
                 if (uu != -1) {
                     var defaultValue = wid_attr.substring (uu + 1);
@@ -765,7 +765,7 @@ dui = $.extend(true, dui, {
                     wid_attr = wid_attr.substring(0,uu);
                 }
                 var type = (wid_attrs.length > 1) ? wid_attrs[1] : null;
-                if (type && type.indexOf (",") != -1) {
+                if (type && type.indexOf(",") != -1) {
                     if (type.substring (0, "slider".length) == "slider") {
                         type = "slider";
                     } else {
@@ -773,7 +773,7 @@ dui = $.extend(true, dui, {
                     }
                 }
                 // Try to extract repeat value
-                var uu = wid_attr.indexOf ("(");
+                var uu = wid_attr.indexOf("(");
                 var instancesStart = null;
                 var instancesStop  = null;
                 if (uu != -1) {
@@ -794,8 +794,7 @@ dui = $.extend(true, dui, {
                     }
                 }
                 
-                do 
-                {
+                do  {
                     var wid_attr_ = wid_attr + ((instancesStart !== null) ? instancesStart : "");
                     var isCustomEdit = false;
 
@@ -806,12 +805,10 @@ dui = $.extend(true, dui, {
 
                     if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit[wid_attr_]) {
                         widget_div.dashuiCustomEdit[wid_attr_](dui.activeWidget, editParent);
-                    } else
-                    if (wid_attr_ === "hm_id" || type == "id") {
-                        dui.editObjectID (widget, wid_attr_, widget_filter);
-                    } else
-                    if (wid_attr_ === "hm_wid") {
-                        dui.editObjectID (widget, wid_attr_, 'WORKING');
+                    } else if (wid_attr_ === "hm_id" || type == "id") {
+                        dui.editObjectID(widget, wid_attr_, widget_filter);
+                    } else if (wid_attr_ === "hm_wid") {
+                        dui.editObjectID(widget, wid_attr_, 'WORKING');
                         /*// Eidt for localData Working ID
                          $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td>'+this.translate(wid_attr_)+':</td><td><input type="text" id="inspect_'+wid_attr_+'" size="5"><input type="button" id="inspect_'+wid_attr_+'_btn" value="..."  style="width:30px"><div id="inspect_'+wid_attr_+'_desc"></div></td></tr>');
                          document.getElementById ("inspect_"+wid_attr_+"_btn").jControl = wid_attr_;
@@ -824,11 +821,9 @@ dui = $.extend(true, dui, {
                          $("#inspect_"+obj).trigger('change');
                          }, 'WORKING');
                          });*/
-                    } else
-                    if (wid_attr_.indexOf ("src") == wid_attr_.length - 3 || type == "image") {
+                    } else if (wid_attr_.indexOf("src") == wid_attr_.length - 3 || type == "image") {
                         dui.editImage (widget, wid_attr_);
-                    } else
-                    if (wid_attr_ === "hqoptions") {
+                    } else if (wid_attr_ === "hqoptions") {
                         // hqWidgets options
                         $('#inspect_comment_tr').hide ();
                         $('#inspect_class_tr').hide ();
@@ -868,13 +863,12 @@ dui = $.extend(true, dui, {
                         isValueSet = true;
                         var values = wid_attrs[1].split(',');
                         dui.editSelect (widget, wid_attr_, values);
-                    } else if (wid_attr_.indexOf ("nav_view") != -1|| type == "views") {
+                    } else if (wid_attr_.indexOf("nav_view") != -1|| type == "views") {
                         dui.editViewName (widget, wid_attr_);
                         isCustomEdit = true;
                     } else if (type == "hidden") {
                         isCustomEdit = true;
-                    } else
-                    if (wid_attr_.indexOf ("_effect") != -1 || type == "effect") {
+                    } else if (wid_attr_.indexOf("_effect") != -1 || type == "effect") {
                         dui.editEffects (widget, wid_attr_);
                         isCustomEdit = true;
                     } else if (wid_attr_.slice(0,4) !== "html") {
@@ -982,8 +976,7 @@ dui = $.extend(true, dui, {
                     if (instancesStart !== null) {
                         instancesStart++;
                     }
-                }
-                while (instancesStart != instancesStop);
+                } while (instancesStart != instancesStop);
             }
         }
 
