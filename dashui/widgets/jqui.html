@@ -109,6 +109,39 @@
                     }, options));
                 }
             },
+            dialogContainer: function (el, options, persistent, preload) {
+                var dlg = jQuery(el).parent().find("div.dashui-widget-dialog");
+
+
+
+
+                dlg.dialog($.extend({
+                    autoOpen: false
+                }, options));
+                if (dui.urlParams["edit"] !== "") {
+                    jQuery(el).parent().find("div.dashui-widget-body").click(function () {
+
+                        dlg.find("div[id$='container']").each(function () {
+                            console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
+                            var cview = $(this).attr("data-dashui-contains");
+                            if (!dui.views[cview]) {
+                                $(this).append("error: view not found.");
+                                return false;
+                            } else if (cview == dui.activeView) {
+                                $(this).append("error: view container recursion.");
+                                return false;
+                            }
+                            dui.renderView(cview, true);
+                            $("#duiview_" + cview).appendTo(this);
+                            $("#duiview_" + cview).show();
+
+                        });
+
+                        var id = jQuery(this).parent().attr("id") + "_dialog";
+                        jQuery("#"+id).dialog("open");
+                    });
+                }
+            },
             dialogAutoClose: function (el) {
                 var dialog = jQuery("#"+jQuery(el).parent().attr("id")+"_dialog");
                 // TODO auf bestimme Elemente einschr�nken (Button, Radio, ...)
@@ -567,7 +600,7 @@
 
 
 
-<script type="text/ejs" id="tplContainerDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - HTML - view in jqui Dialog" data-dashui-attrs="html;contains_view;title;modal/checkbox;width;height;persistent/checkbox">
+<script type="text/ejs" id="tplContainerDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - HTML - view in jqui Dialog" data-dashui-attrs="html;contains_view;title;modal/checkbox;width;height">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
             <%== this.data.attr("html") %>
@@ -576,11 +609,11 @@
             <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
             </div>
         </div>
-        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent')) %> />
+        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
     </div>
 </script>
 
-<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src;alt;text;contains_view;title;modal/checkbox;width;height;persistent/checkbox;invert_icon/checkbox">
+<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src;alt;text;contains_view;title;modal/checkbox;width;height;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -596,11 +629,11 @@
         <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
         </div>
     </div>
-    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent')) %> />
+    <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
     </div>
 </script>
 
-<script type="text/ejs" id="tplContainerButtonDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Button - view in jqui Dialog" data-dashui-attrs="html_prepend;html_append;buttontext;contains_view;title;modal/checkbox;width;height;persistent">
+<script type="text/ejs" id="tplContainerButtonDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Button - view in jqui Dialog" data-dashui-attrs="html_prepend;html_append;buttontext;contains_view;title;modal/checkbox;width;height">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
             <%== this.data.attr("html_prepend") %>
@@ -611,7 +644,7 @@
             <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
             </div>
         </div>
-        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent')) %> />
+        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
     </div>
 </script>
 

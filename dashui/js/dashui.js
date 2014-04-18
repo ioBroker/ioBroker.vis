@@ -24,7 +24,7 @@
 
 var dui = {
 
-    version:                '0.9beta75',
+    version:                '0.9beta76',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -374,7 +374,7 @@ var dui = {
         window.location.href = './?edit';
     },
     renderView: function (view, noThemeChange, hidden) {
-        //console.log("renderView("+view+","+noThemeChange+","+hidden+")");
+        console.log("renderView("+view+","+noThemeChange+","+hidden+")");
 
         if (!dui.views[view]) {
             return false;
@@ -398,7 +398,8 @@ var dui = {
             $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
         }
 
-        if ($("#dui_container").find("#duiview_" + view).html() === undefined) {
+        if ($("#duiview_" + view).html() === undefined) {
+
             $("#dui_container").append("<div style='display:none;' id='duiview_" + view + "' class='dashui-view'></div>");
             $("#duiview_" + view).css(dui.views[view].settings.style);
             if (dui.views[view].settings.style.background_class) {
@@ -623,6 +624,7 @@ var dui = {
 
     },
     changeView: function (view, hideOptions, showOptions, sync) {
+        console.log("changeView "+view);
         var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
         if (!effect) {
             effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && (showOptions.effect != "")
@@ -723,6 +725,8 @@ var dui = {
 
         } else {
             dui.renderView(view);
+
+
 
             // View ggf aus Container heraus holen
             if ($("#duiview_" + view).parent().attr("id") !== "dui_container") {
