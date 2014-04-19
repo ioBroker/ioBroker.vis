@@ -357,7 +357,9 @@
                 if (dui.urlParams["edit"] !== "" && refreshInterval > 0) {
                     var $this = jQuery(el).parent().find("img");
                     setInterval(function () {
-                            $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
+                        if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
+                            $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
+                        }
                     }, refreshInterval);
                 }
             },
