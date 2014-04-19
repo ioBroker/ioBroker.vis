@@ -25,7 +25,7 @@ Used software and icons:
 * door bell by Lorc http://lorcblog.blogspot.de/
  
  
-Copyright (c) 2013 Denis Khaev deniskhaev@gmail.com
+Copyright (c) 2013 Bluefox dogafox@gmail.com
  
 It is licensed under the Creative Commons Attribution-Non Commercial-Share Alike 3.0 license.
 The full text of the license you can get at http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
@@ -894,7 +894,7 @@ var hqWidgets = {
                     pin.parentQuery = this;
                     $("#"+this.advSettings.elemName+"_pin").addClass('hq-ipcam-pin-btn').button({icons: {primary: (this.dynStates.bigPinned ? "ui-icon-pin-s" : "ui-icon-pin-w")}, text: false}).click(function( event ) {
                         if (this.parentQuery.intern._clickTimer) return;
-                        this.parentQuery.intern._clickTimer = setTimeout (function (elem) { 
+                        this.parentQuery.intern._clickTimer = _setTimeout(function (elem) {
                             clearTimeout (elem.intern._clickTimer);
                             elem.intern._clickTimer = null;
                         }, 500, this.parentQuery);
@@ -910,7 +910,7 @@ var hqWidgets = {
                         }
                         else {
                             // Start timer
-                            this.parentQuery.intern._timerID = setTimeout (function () {
+                            this.parentQuery.intern._timerID = _setTimeout(function () {
                                 if (hqWidgets.gDynamics.gShownBig) {
                                     hqWidgets.gDynamics.gShownBig.ShowBigWindow(false); 
                                     hqWidgets.gDynamics.gShownBig.intern._timerID = null;
@@ -1688,7 +1688,7 @@ var hqWidgets = {
                                         var d = new Date();
                                         // update images as fast as possible
                                         if (this.parentQuery.settings.ipCamVideoDelay) {
-                                            this.parentQuery.intern._ipCamBigTimer = setTimeout (function (elem) {
+                                            this.parentQuery.intern._ipCamBigTimer = _setTimeout(function (elem) {
                                                 elem._UpdateBigCam ();                                    
                                             }, this.parentQuery.settings.ipCamVideoDelay, this.parentQuery);
                                         }
@@ -1795,7 +1795,7 @@ var hqWidgets = {
                             event.target.parentQuery.SetStates ({'isWorking': false/*, state: hqWidgets.gState.gStateOff*/});
                         });
                         // Start slow update process
-                        this.intern._iuCamUpdateTimer = setTimeout (function (elem) { elem._UpdateSmallCam (); }, 2000, this);
+                        this.intern._iuCamUpdateTimer = _setTimeout(function (elem) { elem._UpdateSmallCam (); }, 2000, this);
                     }
                     
                     this._CreateBigCam ();
@@ -2263,7 +2263,7 @@ var hqWidgets = {
                 if (this.intern._jbigWindow && this.intern._isBigVisible)
                     this.intern._jbigWindow.jbigImage.attr('src', this.intern._ipCamLastImage);
                     
-                this.intern._iuCamUpdateTimer = setTimeout (function (obj) { 
+                this.intern._iuCamUpdateTimer = _setTimeout(function (obj) {
                     obj._UpdateSmallCam();
                 }, this.settings.ipCamUpdateSec * 1000, this);
             }
@@ -2919,7 +2919,7 @@ var hqWidgets = {
                                 
                                 jdlg.parentQuery = this;
                                 
-                                this.intern.timerID = setTimeout (function (elem) {
+                                this.intern.timerID = _setTimeout(function (elem) {
                                     elem.intern._isBigVisible = false;
                                     $('#gongDialog').dialog('close').remove ();
                                     elem.intern.timerID = null;
@@ -3165,7 +3165,7 @@ var hqWidgets = {
                 hqWidgets.gDynamics.gShownBig = this;
                 // Close window after X seconds
                 if (customTimeout > 0 && !this.dynStates.bigPinned) {
-                    this.intern._timerID = setTimeout (function () {
+                    this.intern._timerID = _setTimeout(function () {
                         if (hqWidgets.gDynamics.gShownBig) {
                             hqWidgets.gDynamics.gShownBig.intern._timerID = null;
                             hqWidgets.gDynamics.gShownBig.ShowBigWindow(false); 
@@ -3227,7 +3227,7 @@ var hqWidgets = {
                                                       width:  this.intern._jbigWindow.bwidth,
                                                       height: this.intern._jbigWindow.bheight}, 500);
                     if (this.intern._jbigWindow.buttons) {
-                        setTimeout (function () {
+                        setTimeout(function () {
                             var i;
                             for (i=0;i<3;i++) hqWidgets.gDynamics.gShownBig.intern._jbigWindow.buttons[i].show();
                         }, 500);
@@ -3239,16 +3239,16 @@ var hqWidgets = {
                             this.intern._jbigWindow.jtext.html(this.dynStates.percentState+"%");
                         }
                         if (this.intern._jbigWindow.OnShow){
-                            setTimeout (function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
+                            _setTimeout(function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
                         }
                     }
                     else
                     if (this.intern._jbigWindow.jbigImage) {
-                        setTimeout (function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
+                        _setTimeout(function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
                     }
                     else
                     if (this.intern._jbigWindow.OnShow){
-                        setTimeout (function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
+                        _setTimeout(function (el) { el.OnShow(); }, 510, this.intern._jbigWindow);
                     }
                 }
             }
@@ -3281,22 +3281,24 @@ var hqWidgets = {
                         this.intern._jbigWindow.OnHide ();
 
                     if (delay) {
-                        setTimeout (function (){
+                        _setTimeout(function (el){
                             if (hqWidgets.gDynamics.gShownBig != null) {
-                                if (this.settings.doNotAnimate || !this.settings.showChanging) {
+                                if (el.settings.doNotAnimate || !el.settings.showChanging) {
                                     hqWidgets.gDynamics.gShownBig.intern._jbigWindow.hide();
                                 }
                                 else {
                                     hqWidgets.gDynamics.gShownBig.intern._jbigWindow.animate ({
-                                                                             top:    hqWidgets.gDynamics.gShownBig.settings.y,
-                                                                             left:   hqWidgets.gDynamics.gShownBig.settings.x,
-                                                                             width:  hqWidgets.gDynamics.gShownBig.intern._jelement.width(),
-                                                                             height: hqWidgets.gDynamics.gShownBig.intern._jelement.height()}, 500);
+                                             top:    hqWidgets.gDynamics.gShownBig.settings.y,
+                                             left:   hqWidgets.gDynamics.gShownBig.settings.x,
+                                             width:  hqWidgets.gDynamics.gShownBig.intern._jelement.width(),
+                                             height: hqWidgets.gDynamics.gShownBig.intern._jelement.height()}, 500);
 
-                                    setTimeout(function(elem) {elem.intern._jbigWindow.hide();}, 500, hqWidgets.gDynamics.gShownBig);
+                                    _setTimeout(function(elem){
+                                        elem.intern._jbigWindow.hide();
+                                    }, 500, hqWidgets.gDynamics.gShownBig);
                                 }
 
-                                if (hqWidgets.gDynamics.gShownBig.intern._jbigWindow.buttons)	{
+                                if (hqWidgets.gDynamics.gShownBig.intern._jbigWindow.buttons) {
                                     var i;
                                     for (i=0; i<3; i++)
                                         hqWidgets.gDynamics.gShownBig.intern._jbigWindow.buttons[i].hide();
@@ -3304,7 +3306,7 @@ var hqWidgets = {
 
                                 hqWidgets.gDynamics.gShownBig = null;
                             }
-                        }, delay);
+                        }, delay, this);
                     }
                     else {
                         if (this.settings.doNotAnimate || !this.settings.showChanging) {
@@ -3317,7 +3319,7 @@ var hqWidgets = {
                                 width:  this.intern._jelement.width(),
                                 height: this.intern._jelement.height()}, 500);
 
-                            setTimeout(function(elem) {elem.intern._jbigWindow.hide();}, 500, this);
+                            _setTimeout(function(elem) {elem.intern._jbigWindow.hide();}, 500, this);
                         }
                         if (this.intern._jbigWindow.buttons) {
                             var i;
@@ -3638,7 +3640,7 @@ var hqWidgets = {
                         this.intern._angle   = -1; // unknown state
                         
                         // Wokaround for tablets
-                        this.intern._hideDimmer = setTimeout (function (elem) {
+                        this.intern._hideDimmer = _setTimeout(function (elem) {
                             //$('#status').append("try clear");
                             if (elem.intern._isMoved)
                                 return;
@@ -3692,12 +3694,12 @@ var hqWidgets = {
                 if (isTouch){
                     this.intern._isNonClick = false; // on tablet if I click the button in edit mode, it is moved immediately
                                                        // to detect the click, if mouse Up faster than 500 ms => click
-                    hqWidgets.gDynamics.gRightClickDetection = setTimeout (function () {
+                    hqWidgets.gDynamics.gRightClickDetection = _setTimeout(function () {
                         hqWidgets.gDynamics.gActiveElement.OnContextMenu ((hqWidgets.gDynamics.gActiveElement.intern._cursorX - 70 >= 0) ? (hqWidgets.gDynamics.gActiveElement.intern._cursorX - 70) : 0, 
                                                                           (hqWidgets.gDynamics.gActiveElement.intern._cursorY - 70 >= 0) ? (hqWidgets.gDynamics.gActiveElement.intern._cursorY - 70) : 0);
                     }, 1000);
                     
-                    this.intern._clickDetection = setTimeout (function () {
+                    this.intern._clickDetection = _setTimeout(function () {
                         hqWidgets.gDynamics.gActiveElement.intern._isNonClick = true;
                     }, 500);
                     
@@ -3706,7 +3708,7 @@ var hqWidgets = {
                 else {
                     this.intern._isNonClick = true;
                     if (hqWidgets.gDynamics.gRightClickDetection) clearTimeout (hqWidgets.gDynamics.gRightClickDetection);
-                    hqWidgets.gDynamics.gRightClickDetection = setTimeout (function () {
+                    hqWidgets.gDynamics.gRightClickDetection = _setTimeout(function () {
                         if (hqWidgets.gDynamics.gActiveElement)	
                             hqWidgets.gDynamics.gActiveElement.OnContextMenu (hqWidgets.gDynamics.gActiveElement.intern._cursorX, hqWidgets.gDynamics.gActiveElement.intern._cursorY);
                     }, 1000);
@@ -3752,7 +3754,7 @@ var hqWidgets = {
                                                                  left:   (this.settings.width - this.settings.btIconWidth )/2, 
                                                                  top:    (this.settings.height- this.settings.btIconHeight)/2}, 50);
                             // Bugfix: somethimes it is in the wrong position
-                            setTimeout (function (elem){
+                            _setTimeout(function (elem){
                                 elem.intern._jcenter.stop().css({width:  elem.settings.btIconWidth,
                                                                  height: elem.settings.btIconHeight, 
                                                                  left:   (elem.settings.width - elem.settings.btIconWidth )/2, 
@@ -3768,7 +3770,7 @@ var hqWidgets = {
                 
                 // Bug fix: first click does not work
                 if (!this.intern._isMoved) {
-                    setTimeout (function (e) {
+                    _setTimeout(function (e) {
                         e.OnClick ()
                     }, 50, this);
                 }
@@ -3838,12 +3840,12 @@ var hqWidgets = {
             //$('#status').append('click start ' + this.intern._isEditMode+" " + this.clickTimer +'<br>');
             // Filter the double click 
             if (this.intern._clickTimer) return;
-            this.intern._clickTimer = setTimeout (function (elem) { 
+            this.intern._clickTimer = _setTimeout(function (elem) {
                 clearTimeout (elem.intern._clickTimer);
                 elem.intern._clickTimer = null;
             }, 500, this);
             
-            hqWidgets.gDynamics.gClickTimer = setTimeout (function () {
+            hqWidgets.gDynamics.gClickTimer = _setTimeout(function () {
                 clearTimeout (hqWidgets.gDynamics.gClickTimer);
                 hqWidgets.gDynamics.gClickTimer = null;
             }, 500);
@@ -3897,7 +3899,7 @@ var hqWidgets = {
                         
                         jdlg.parentQuery = this;
                         
-                        this.intern.timerID = setTimeout (function (elem) {
+                        this.intern.timerID = _setTimeout(function (elem) {
                             elem.intern._isBigVisible = false;
                             $('#infoDialog').dialog('close').remove ();
                             elem.intern.timerID = null;

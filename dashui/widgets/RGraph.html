@@ -9,6 +9,7 @@
 <script src="widgets/RGraph/libraries/RGraph.line.js" ></script>
 
 <script language="javascript">
+    "use strict";
     // Init words
     dui.translate("");
     // Add words for bars
@@ -73,1010 +74,1021 @@
         "green_end"          : {"en": "End of first sector",   "de": "Ende von ersten Sektor", "ru": "Конец первого сектора"}
     });
 
-    var rgraphElements = [];
-    // Register callback in dashUI
-    function initRgraph () {
-        if (!dui.binds.RGraph) {
-            dui.binds.RGraph = true;
-            dui.registerOnChange (onchangeRGraph, null);
-            //console.log("A");
-        }
-    }
+    jQuery.extend(true, dui.binds, {
+        RGraph: {
+            // Register callback in dashUI
+            init: function  () {
+                if (!dui.binds.RGraph.rgraphElements) {
+                    dui.binds.RGraph.rgraphElements = [];
+                    dui.registerOnChange (dui.binds.RGraph.onchange, null);
+                    console.log("A");
+                }
+            },
 
-    // Callback from DashUI if some object changed
-    function onchangeRGraph (arg, objId, newState, isFromDevice, lastchange) {
-        if (rgraphElements[objId]) {
-            for (var i = 0, len = rgraphElements[objId].length; i < len; i++) {
-                var elem = document.getElementById (rgraphElements[objId][i]);
-                if (elem) {
-                    if (elem.rgraphValueChange) {
-                        elem.rgraphValueChange (objId, newState, isFromDevice);
+            // Callback from DashUI if some object changed
+            onchange: function (arg, objId, newState, isFromDevice, lastchange) {
+                if (dui.binds.RGraph.rgraphElements[objId]) {
+                    for (var i = 0, len = dui.binds.RGraph.rgraphElements[objId].length; i < len; i++) {
+                        var elem = document.getElementById (dui.binds.RGraph.rgraphElements[objId][i]);
+                        if (elem) {
+                            if (elem.rgraphValueChange) {
+                                elem.rgraphValueChange (objId, newState, isFromDevice);
+                            }
+                        }
                     }
                 }
-            }
-        }
-    }
+            },
 
-    function registerRObjIds (wid, objId) {
-        if (typeof objId == "object" || typeof objId == "array") {
-            for (var i = 0, len = objId.length; i < len; i++)
-                if (objId[i] && (!rgraphElements[objId[i]] || rgraphElements[objId[i]].indexOf (wid) == -1)) {
-                    if (!rgraphElements[objId[i]]) {
-                        rgraphElements[objId[i]] = [wid];
+            registerIds: function (wid, objId) {
+                if (typeof objId == "object" || typeof objId == "array") {
+                    for (var i = 0, len = objId.length; i < len; i++)
+                        if (objId[i] && (!dui.binds.RGraph.rgraphElements[objId[i]] || dui.binds.RGraph.rgraphElements[objId[i]].indexOf (wid) == -1)) {
+                            if (!dui.binds.RGraph.rgraphElements[objId[i]]) {
+                                dui.binds.RGraph.rgraphElements[objId[i]] = [wid];
+                            }
+                            else {
+                                dui.binds.RGraph.rgraphElements[objId[i]].push (wid);
+                            }
+                        }
+                }
+                else
+                if (!dui.binds.RGraph.rgraphElements[objId] || dui.binds.RGraph.rgraphElements[objId].indexOf (wid) == -1) {
+                    if (!dui.binds.RGraph.rgraphElements[objId]) {
+                        dui.binds.RGraph.rgraphElements[objId] = [wid];
                     }
                     else {
-                        rgraphElements[objId[i]].push (wid);
+                        dui.binds.RGraph.rgraphElements[objId].push (wid);
                     }
                 }
-        }
-        else
-        if (!rgraphElements[objId] || rgraphElements[objId].indexOf (wid) == -1) {
-            if (!rgraphElements[objId]) {
-                rgraphElements[objId] = [wid];
-            }
-            else {
-                rgraphElements[objId].push (wid);
-            }
-        }
-    }
+            },
 
-    // Create or replace div with canvas inside it
-    function createCanvas (view, wid, _class, hm_id, width, height, canvas_width, canvas_height) {
-        initRgraph ();
-        registerRObjIds (wid, hm_id);
-        var style    = dui.views[view].widgets[wid] ? dui.views[view].widgets[wid].style : {};
-        style.width  = style.width  || width;
-        style.height = style.height || height;
-        
-        $('#'+wid).remove ();
-        $('#duiview_' + view).append ('<div class="dashui-widget '+(_class || "")+'" id="'+wid+'" data-hm-id="'+hm_id+'" >'+
-                                      '<canvas class="dashui-widget" id="c'+wid+'" ></canvas></div>');
-        $('#'+wid).css(style);
-        // Canvas understand no Style, so set width and height extra
-        var can = document.getElementById ('c' + wid);
-        canvas_width  = canvas_width || style.width;
-        canvas_height = canvas_height || style.height;
-        can.width  = canvas_width;
-        can.height = canvas_height;
-    }
+            // Create or replace div with canvas inside it
+            createCanvas: function (view, wid, _class, hm_id, width, height, canvas_width, canvas_height) {
+                dui.binds.RGraph.init ();
+                dui.binds.RGraph.registerIds (wid, hm_id);
+                var style    = dui.views[view].widgets[wid] ? dui.views[view].widgets[wid].style : {};
+                style.width  = style.width  || width;
+                style.height = style.height || height;
 
-    function updateChart (wid) {
-        var div = document.getElementById (wid);
-        var can = document.getElementById ('c' + wid);
+                $('#'+wid).remove ();
+                $('#duiview_' + view).append ('<div class="dashui-widget '+(_class || "")+'" id="'+wid+'" data-hm-id="'+hm_id+'" >'+
+                        '<canvas class="dashui-widget" id="c'+wid+'" ></canvas></div>');
+                $('#'+wid).css(style);
+                // Canvas understand no Style, so set width and height extra
+                var can = document.getElementById ('c' + wid);
+                canvas_width  = canvas_width || style.width;
+                canvas_height = canvas_height || style.height;
+                can.width  = canvas_width;
+                can.height = canvas_height;
+            },
 
-        if (div && can) {
-            if (div._timeout) {
-                clearTimeout (div._timeout);
-            }
+            updateChart: function (wid) {
+                var div = document.getElementById (wid);
+                var can = document.getElementById ('c' + wid);
 
-            var updateInterval = div.rgraph.Get("update_interval");
-            var values = div.rgraph.Get("my_values");
-            var len = div.rgraph.original_data.length;
-            if (!values) {
-                len = 0;
-            }
-            else
-            if (len > values.length) {
-                len = values.length;
-            }
-            for (var j = 0; j < len; j++) {
-                var d1 = div.rgraph.original_data[j];
-
-                d1.push(values[j]);
-                div.rgraph.original_data[j] = RGraph.array_shift(d1);
-            }
-
-            RGraph.Clear (can);
-            div.rgraph.Draw();
-            div._timeout = _setTimeout (updateChart, updateInterval, wid);
-        }
-    }
-
-    function updateBar (wid) {
-        var div = document.getElementById (wid);
-        var can = document.getElementById ('c' + wid);
-
-        if (div && can) {
-            if (div._timeout) {
-                clearTimeout (div._timeout);
-            }
-
-            var options = div.rgraph.Get("my_options");
-            var values  = div.rgraph.Get("my_values");
-
-            div.rgraph.data = values;
-            div.rgraph.data_arr = RGraph.array_linearize(values);
-
-            RGraph.Clear (can);
-            div.rgraph.Draw();
-
-            if (options.update_interval) {
-                div._timeout = _setTimeout(updateBar, options.update_interval, wid);
-            }
-        }
-    }
-
-</script>
-
-<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];width/slider,1,500,1;control/checkbox;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontName;labels_size/slider,1,100;title;title_side;title_side_font/fontName;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
-    <%
-        createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), this.data.attr('hm_id'), 100, 400);
-
-        var str = localData.uiState.attr("_" + this.data.attr('hm_id') + ".Value");
-        if (str === null || str === undefined) str = this.data.attr("min_value");
-        var t = new RGraph.Thermometer("c"+this.data.attr('wid'), parseFloat(this.data.attr("min_value")), parseFloat(this.data.attr("max_value")), parseFloat(str));
-        if (this.data.attr('color')) {
-            var color = this.data.attr('color');
-            t.colorsParsed = false;
-            t.properties['chart.colors'] = ["Gradient("+color+")"];
-        }
-        //console.log("B");
-        if (this.data.attr("show_scale")) {
-            t.Set('scale.visible', true);
-        }
-        if (this.data.attr("shadow") !== "" && this.data.attr("shadow") !== null && this.data.attr("shadow") !== undefined) {
-            t.Set('shadow', (this.data.attr("shadow") == "true" || this.data.attr("shadow") == true));
-        }
-        if (this.data.attr("control") !== "" && this.data.attr("control") !== null && this.data.attr("control") !== undefined) {
-            t.Set('adjustable', (this.data.attr("control") == "true" || this.data.attr("control") == true));
-            t.Set ("hm_id", this.data.attr('hm_id'));
-            if (dui.urlParams["edit"] !== "") {
-                RGraph.AddCustomEventListener (t, "onadjust", function (obj) {
-                    if (obj.setTimer) {
-                        clearTimeout (obj.setTimer);
+                if (div && can) {
+                    if (div._timeout) {
+                        clearTimeout (div._timeout);
                     }
-                    obj.setTimer = _setTimeout (function (o) {
-                        localData.setValue(o.properties["chart.hm_id"], o.value);
-                        }, 300, obj);
+
+                    var updateInterval = div.rgraph.Get("update_interval");
+                    var values = div.rgraph.Get("my_values");
+                    var len = div.rgraph.original_data.length;
+                    if (!values) {
+                        len = 0;
+                    }
+                    else
+                    if (len > values.length) {
+                        len = values.length;
+                    }
+                    for (var j = 0; j < len; j++) {
+                        var d1 = div.rgraph.original_data[j];
+
+                        d1.push(values[j]);
+                        div.rgraph.original_data[j] = RGraph.array_shift(d1);
+                    }
+
+                    RGraph.Clear (can);
+                    div.rgraph.Draw();
+                    div._timeout = _setTimeout (dui.binds.RGraph.updateChart, updateInterval, wid);
+                }
+            },
+
+            updateBar: function (wid) {
+                var div = document.getElementById (wid);
+                var can = document.getElementById ('c' + wid);
+
+                if (div && can) {
+                    if (div._timeout) {
+                        clearTimeout (div._timeout);
+                    }
+
+                    var options = div.rgraph.Get("my_options");
+                    var values  = div.rgraph.Get("my_values");
+
+                    div.rgraph.data = values;
+                    div.rgraph.data_arr = RGraph.array_linearize(values);
+
+                    RGraph.Clear (can);
+                    div.rgraph.Draw();
+
+                    if (options.update_interval) {
+                        div._timeout = _setTimeout(dui.binds.RGraph.updateBar, options.update_interval, wid);
+                    }
+                }
+            },
+
+            tplRGtermometer: function (view, data) {
+                dui.binds.RGraph.createCanvas (view, data.attr('wid'), data.attr('class'), data.attr('hm_id'), 100, 400);
+
+                var str = localData.uiState.attr("_" + data.attr('hm_id') + ".Value");
+                if (str === null || str === undefined) str = data.attr("min_value");
+                var t = new RGraph.Thermometer("c"+data.attr('wid'), parseFloat(data.attr("min_value")), parseFloat(data.attr("max_value")), parseFloat(str));
+                if (data.attr('color')) {
+                    var color = data.attr('color');
+                    t.colorsParsed = false;
+                    t.properties['chart.colors'] = ["Gradient("+color+")"];
+                }
+                console.log("B");
+                if (data.attr("show_scale")) {
+                    t.Set('scale.visible', true);
+                }
+                if (data.attr("shadow") !== "" && data.attr("shadow") !== null && data.attr("shadow") !== undefined) {
+                    t.Set('shadow', (data.attr("shadow") == "true" || data.attr("shadow") == true));
+                }
+                if (data.attr("control") !== "" && data.attr("control") !== null && data.attr("control") !== undefined) {
+                    t.Set('adjustable', (data.attr("control") == "true" || data.attr("control") == true));
+                    t.Set ("hm_id", data.attr('hm_id'));
+                    if (dui.urlParams['edit'] !== "") {
+                        RGraph.AddCustomEventListener (t, "onadjust", function (obj) {
+                            if (obj.setTimer) {
+                                clearTimeout (obj.setTimer);
+                            }
+                            obj.setTimer = _setTimeout (function (o) {
+                                localData.setValue(o.properties["chart.hm_id"], o.value);
+                            }, 300, obj);
+                        });
+                    }
+                }
+                if (data.attr("labels_color") !== "") {
+                    t.Set('text.color', data.attr("labels_color"));
+                }
+                if (data.attr("labels_font") !== "") {
+                    t.Set('text.font', data.attr("labels_font"));
+                }
+                if (data.attr("labels_size") !== "") {
+                    var f = parseFloat (data.attr("labels_size"));
+                    t.Set('text.size', f);
+                }
+                if (data.attr('width') !== "") {
+                    var f = parseFloat (data.attr("width"));
+                    t.Set('width', f);
+                }
+                if (data.attr("title") !== "") {
+                    t.Set('title', data.attr("title"));
+                }
+                if (data.attr("title_side") !== "") {
+                    t.Set('title.side', data.attr("title_side"));
+                }
+                if (data.attr("title_side_font") !== "") {
+                    t.Set('title.side.font', data.attr("title_side_font"));
+                }
+                if (data.attr("title_side_size") !== "") {
+                    var f = parseFloat (data.attr("title_side_size"));
+                    t.Set('title.side.size', f);
+                }
+                if (data.attr("ticksize") !== "") {
+                    var f = parseFloat (data.attr("ticksize"));
+                    t.Set('ticksize', f);
+                }
+                if (data.attr("units_pre") !== "") {
+                    t.Set('units.pre', data.attr("units_pre"));
+                }
+                if (data.attr("units_post") !== "") {
+                    t.Set('units.post', data.attr("units_post"));
+                }
+                if (data.attr("scale_decimals") !== "") {
+                    var f = parseFloat (data.attr("scale_decimals"));
+                    t.Set('scale.decimals', f);
+                }
+
+                if (data.attr("show_value") !== "" && data.attr("show_value") !== null && data.attr("show_value") !== undefined) {
+                    t.Set('value.label', (data.attr("show_value") == "true" || data.attr("show_value") == true));
+                }
+                if (data.attr("value_decimals") !== "") {
+                    var f = parseFloat (data.attr("value_decimals"));
+                    t.Set('value.label.decimals', f);
+                }
+                if (data.attr("labels_count") !== "" && data.attr("labels_count") !== null && data.attr("labels_count") !== undefined) {
+                    var f = parseFloat (data.attr("labels_count"));
+                    t.Set('labels.count', f);
+                }
+                if (dui.language == 'de' || dui.language == 'ru' ) {
+                    t.Set('scale.point', ',');
+                    t.Set('scale.thousand', '.');
+                    t.Set('value.label.point', ',');
+                    t.Set('value.label.thousand', '.');
+                }
+
+                // Clear the background
+                RGraph.Clear (t.canvas);
+                //t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
+
+                t.Draw();
+                var elem = document.getElementById (data.attr('wid'));
+                elem.rgraph = t;
+                t.Set('animate', data.attr("animate") == "true" || data.attr("animate") == true)
+                jQuery('#'+data.attr('wid')).bind("resize", function () {
+                    var div = jQuery(this);
+                    var can = document.getElementById ('c' + div.attr('id'));
+
+                    can.width  = div.width();
+                    can.height = div.height ();
+                    RGraph.Clear (can);
+                    //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+
+                    this.rgraph.Draw();
                 });
-            }
-        }
-        if (this.data.attr("labels_color") !== "") {
-            t.Set('text.color', this.data.attr("labels_color"));
-        }
-        if (this.data.attr("labels_font") !== "") {
-            t.Set('text.font', this.data.attr("labels_font"));
-        }
-        if (this.data.attr("labels_size") !== "") {
-            var f = parseFloat (this.data.attr("labels_size"));
-            t.Set('text.size', f);
-        }
-        if (this.data.attr('width') !== "") {
-            var f = parseFloat (this.data.attr("width"));
-            t.Set('width', f);
-        }
-        if (this.data.attr("title") !== "") {
-            t.Set('title', this.data.attr("title"));
-        }
-        if (this.data.attr("title_side") !== "") {
-            t.Set('title.side', this.data.attr("title_side"));
-        }
-        if (this.data.attr("title_side_font") !== "") {
-            t.Set('title.side.font', this.data.attr("title_side_font"));
-        }
-        if (this.data.attr("title_side_size") !== "") {
-            var f = parseFloat (this.data.attr("title_side_size"));
-            t.Set('title.side.size', f);
-        }
-        if (this.data.attr("ticksize") !== "") {
-            var f = parseFloat (this.data.attr("ticksize"));
-            t.Set('ticksize', f);
-        }
-        if (this.data.attr("units_pre") !== "") {
-            t.Set('units.pre', this.data.attr("units_pre"));
-        }
-        if (this.data.attr("units_post") !== "") {
-            t.Set('units.post', this.data.attr("units_post"));
-        }
-        if (this.data.attr("scale_decimals") !== "") {
-            var f = parseFloat (this.data.attr("scale_decimals"));
-            t.Set('scale.decimals', f);
-        }
 
-        if (this.data.attr("show_value") !== "" && this.data.attr("show_value") !== null && this.data.attr("show_value") !== undefined) {
-            t.Set('value.label', (this.data.attr("show_value") == "true" || this.data.attr("show_value") == true));
-        }
-        if (this.data.attr("value_decimals") !== "") {
-            var f = parseFloat (this.data.attr("value_decimals"));
-            t.Set('value.label.decimals', f);
-        }
-        if (this.data.attr("labels_count") !== "" && this.data.attr("labels_count") !== null && this.data.attr("labels_count") !== undefined) {
-            var f = parseFloat (this.data.attr("labels_count"));
-            t.Set('labels.count', f);
-        }
-        if (dui.language == 'de' || dui.language == 'ru' ) {
-            t.Set('scale.point', ',');
-            t.Set('scale.thousand', '.');
-            t.Set('value.label.point', ',');
-            t.Set('value.label.thousand', '.');
-        }
+                elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
+                    this.rgraph.value = parseFloat(newValue);
+                    // Clear the background
+                    RGraph.Clear(this.rgraph.canvas);
+                    //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+                    if (this.rgraph.Get("animate")) {
+                        RGraph.Effects.Thermometer.Grow(this.rgraph);
+                    }
+                    else {
+                        this.rgraph.Draw();
+                    }
+                }
+            },
+            tplRLiveChart: function (view, data) {
+                var wid = data.attr('wid');
+                var elem_ = document.getElementById (wid);
+                var oldIDs = null;
+                var oldValues = null;
+                if (elem_) {
+                    if (elem_._timeout) {
+                        clearTimeout (elem_._timeout);
+                        elem_._timeout = null;
+                    }
+                    // save data
+                    if (elem.rgraph) {
+                        oldIDs    = elem.rgraph.Get("hm_ids");
+                        oldValues = RGraph.array_clone(elem.rgraph.original_data);
+                    }
+                }
+        
+                var pointsCount = parseInt(data.attr('points_count')) || 250;
+                var len = 1;
+                var IDs = [];
+                var IDs_show = [];
+                var colors = [];
+                var thickness = [];
+                var id;
+                var validColor = 'black';
+                var validThickness = 1;
+                // Read IDs, colors and line thickness
+                while (id = data.attr('hm_id'+ len)) {
+                    IDs.push(id);
+                    // If ID changed
+                    if (oldIDs && IDs[IDs.length - 1] != oldIDs[IDs.length - 1]){
+                        oldValues = null;
+                        oldIDs    = null;
+                    }
+                    IDs_show[IDs.length - 1] = data.attr('hm_id_show'+ len);
+                    id = data.attr('line_color' + len);
+                    if (id) {
+                        validColor = id;
+                    }
+                    colors.push (validColor);
+        
+                    id = data.attr('line_thick' + len);
+                    if (id) {
+                        validThickness = id;
+                    }
+                    thickness.push (validThickness);
+        
+                    len++;
+                }
 
-        // Clear the background
-        RGraph.Clear (t.canvas);
-        //t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
+                dui.binds.RGraph.createCanvas (view, wid, data.attr('class'), IDs, 200, 200);
+                dui.binds.RGraph.registerIds (wid, IDs_show);
+        
+                var factor = data.attr('factor') || 1;
+                factor = parseFloat(factor);
+        
+                var offset = data.attr('value_offset') || 0;
+                offset = parseFloat(offset);
+        
+                var min_value = data.attr('min_value') || 0;
+                min_value = parseFloat(min_value);
+        
+                var max_value = data.attr('max_value') || 0;
+                max_value = parseFloat(max_value);
+        
+                var values = [];
+                for (var i = 0, len = IDs.length; i < len; i++) {
+                    values[i] = localData.uiState.attr('_' + IDs[i] + '.Value');
+                    if (values[i] === null || values[i] === undefined) {
+                        values[i] = min_value;
+                    }
+                    values[i] = parseFloat (values[i]);
+                    values[i] = values[i] * factor + offset;
+                }
+        
+                var elem = document.getElementById (wid);
+                var can  = document.getElementById ('c'+wid);
+        
+                var arr = [];
+                console.log("test");
+                if (!oldValues) {
+                    // Pre-pad the arrays with "pointsCount" null values
+                    for (var i = 0, len = IDs.length; i < len; i++) {
+                        arr[i] = [];
+                        for (var j = 0, jlen = pointsCount - 1; j < jlen; j++) {
+                            arr[i].push(null);
+                        }
+                        arr[i].push(values[i]);
+                    }
+                }
+                else {
+                    for (var i = 0, len = IDs.length; i < len; i++) {
+                        arr[i] = RGraph.array_shift(oldValues[i]);
+                        arr[i].push(values[i]);
+                    }
+                }
+        
+                var update_interval = data.attr('update_interval') || 1000;
+                update_interval = parseInt(update_interval);
+        
+                var t = new RGraph.Line ("c"+wid, arr);
+        
+                t.Set ("hm_ids",      IDs);
+                t.Set ("hm_show_ids", IDs_show);
+                t.Set ("my_values", values);
+                t.Set ("update_interval", update_interval);
+                t.Set ("factor", factor);
+                t.Set ("value_offset", offset);
+        
+                t.Set('background.grid.vlines', false);
+                t.Set('background.barcolor1', 'white');
+                t.Set('background.barcolor2', 'white');
+        
+                var text = data.attr('title');
+                if (text) {
+                    t.Set('title', text);
+                    t.Set('title.vpos', 0.5);
+                }
+                text = data.attr('title_x');
+                if (text) {
+                    t.Set('title.xaxis', text);
+                    t.Set('title.xaxis.pos', 0.5);
+                }
+                text = data.attr('title_y');
+                if (text) {
+                    t.Set('title.yaxis', text);
+                    t.Set('title.yaxis.pos', 0.5);
+                }
+        
+                var my_colors = RGraph.array_clone(colors);
+                t.Set('my_colors', my_colors);
+                // Set visibility of charts
+                for (var i = 0, len = IDs_show.length; i < len; i++){
+                    if (IDs_show[i]) {
+                        var isVisible = localData.uiState.attr("_" + IDs_show[i] + ".Value");
+                        if (isVisible == "false" || isVisible === false) {
+                            colors[i] = 'rgba(0,0,0,0)';
+                        }
+                    }
+                }
+                t.Set('colors', colors);
+                t.Set('linewidth', thickness);
+                //obj.Set('ylabels.inside', true);
+                t.Set('xticks', 0);
+                t.Set('yaxispos', 'right');
+                t.Set('ymin', min_value);
+                t.Set('ymax', max_value);
+        
+                text = data.attr('filled');
+                if (text) {
+                    t.Set('filled', (text == 'true' || text === true));
+                }
+                else {
+                    t.Set('filled', false);
+                }
+        
+                text = data.attr('spline');
+                if (text) {
+                    t.Set('spline', (text == 'true' || text === true));
+                }
+                else {
+                    t.Set('spline', false);
+                }
+        
+                text = data.attr('num_hlines');
+                if (text) {
+                    t.Set('background.grid.autofit.numhlines', parseInt(text));
+                }
+        
+                var grad = t.context.createLinearGradient(0,0,0,250);
+                grad.addColorStop(0, '#efefef');
+                grad.addColorStop(0.9, 'rgba(0,0,0,0)');
+        
+                t.Set('fillstyle', [grad]);
+        
+                RGraph.Clear(t.canvas);
+                t.Draw();
+        
+                elem.rgraph = t;
+                jQuery(elem).bind("resize", function () {
+                    if (this._resizeTimer){
+                        clearTimeout (this._resizeTimer);
+                    }
+                    this._resizeTimer = _setTimeout (function (_wid) {
+                        var _div = document.getElementById (_wid);
+                        var div  = jQuery(_div);
+                        var can  = document.getElementById ('c' + _wid);
+        
+                        can.width  = div.width();
+                        can.height = div.height ();
+        
+                        RGraph.Clear (can);
+                        _div.rgraph.Draw();
+                    }, 500, this.id);
+                });
+        
+                elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
+                    var IDs      = this.rgraph.Get("hm_ids");
+                    var IDs_show = this.rgraph.Get("hm_show_ids");
+        
+                    for (var i = 0, len = IDs.length; i < len; i++){
+                        if (IDs[i] == objId) {
+                            var values = this.rgraph.Get("my_values");
+                            var factor = this.rgraph.Get("factor");
+                            var offset = this.rgraph.Get("value_offset");
+        
+                            values[i] = localData.uiState.attr("_" + IDs[i] + ".Value");
+                            if (values[i] === null || values[i] === undefined) {
+                                values[i] = this.rgraph.min;
+                            }
+                            values[i] = parseFloat(values[i]);
+                            values[i] = values[i] * factor + offset
+        
+                            return;
+                        }
+                    }
+                    for (var i = 0, len = IDs_show.length; i < len; i++){
+                        if (IDs_show[i] && IDs_show[i] == objId) {
+                            var colors    = this.rgraph.Get("colors");
+                            var my_colors = this.rgraph.Get("my_colors");
+                            var isVisible = localData.uiState.attr("_" + IDs_show[i] + ".Value");
+                            if (isVisible == "false" || isVisible === false) {
+                                colors[i] = 'rgba(0,0,0,0)';
+                            }
+                            else {
+                                colors[i] = my_colors[i];
+                            }
+                            this.rgraph.Set("colors", colors);
+                            var updateInterval = this.rgraph.Get("update_interval");
+                            this._timeout = _setTimeout (dui.binds.RGraph.updateChart, 100, this.id);
+                            return;
+                        }
+                    }
+                }
+        
+                if (update_interval) {
+                    elem._timeout = _setTimeout (dui.binds.RGraph.updateChart, update_interval, wid);
+                }
+            },
+            tplRGgauge: function (view, data) {
+                dui.binds.RGraph.createCanvas (view, data.attr('wid'), data.attr('class'), [data.attr('hm_id'), data.attr('hm_id_2'), data.attr('hm_id_3')], 200, 200);
 
-        t.Draw();
-        var elem = document.getElementById (this.data.attr('wid'));
-        elem.rgraph = t;
-        t.Set('animate', this.data.attr("animate") == "true" || this.data.attr("animate") == true)
-        jQuery('#'+this.data.attr('wid')).bind("resize", function () {
-            var div = jQuery(this);
-            var can = document.getElementById ('c' + div.attr('id'));
-            
-            can.width  = div.width();
-            can.height = div.height ();
-            RGraph.Clear (can);
-            //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+                var str = localData.uiState.attr("_" + data.attr('hm_id') + ".Value");
+                if (str === null || str === undefined) str = data.attr("min_value");
 
-            this.rgraph.Draw();
-        });
+                var str2 = data.attr('hm_id_2') ? localData.uiState.attr("_" + data.attr('hm_id_2') + ".Value") : null;
+                if (str2 === undefined) str2 = data.attr("min_value");
 
-        elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
-            this.rgraph.value = parseFloat(newValue);
-            // Clear the background
-            RGraph.Clear(this.rgraph.canvas);
-            //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
-            if (this.rgraph.Get("animate")) {
-                RGraph.Effects.Thermometer.Grow(this.rgraph);
-            }
-            else {
-                this.rgraph.Draw();
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplRGgauge" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Gauge-Basic" data-dashui-attrs="hm_id/id;hm_id_2/id;hm_id_3/id;min_value[0];max_value[100];factor[1];value_offset[0];control/checkbox;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;title;title_color/color;title_font/fontName;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontName;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;labels_color[#000000]/color;labels_font/fontName;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1;animate/checkbox">
-    <%
-        createCanvas (this.view, this.data.attr('wid'), this.data.attr('class'), [this.data.attr('hm_id'), this.data.attr('hm_id_2'), this.data.attr('hm_id_3')], 200, 200);
+                var str3 = data.attr('hm_id_3') ? localData.uiState.attr("_" + data.attr('hm_id_3') + ".Value") : null;
+                if (str3 === undefined) str3 = data.attr("min_value");
 
-        var str = localData.uiState.attr("_" + this.data.attr('hm_id') + ".Value");
-        if (str === null || str === undefined) str = this.data.attr("min_value");
+                var values = [parseFloat(str) || 0];
+                if (str2 !== null) {
+                    values[1] = str2 || 0;
 
-        var str2 = this.data.attr('hm_id_2') ? localData.uiState.attr("_" + this.data.attr('hm_id_2') + ".Value") : null;
-        if (str2 === undefined) str2 = this.data.attr("min_value");
+                    if (str3 !== null) {
+                        values[2] = str3 || 0;
+                    }
+                }
+                var factor = data.attr("factor") || 1;
+                factor = parseFloat(factor);
 
-        var str3 = this.data.attr('hm_id_3') ? localData.uiState.attr("_" + this.data.attr('hm_id_3') + ".Value") : null;
-        if (str3 === undefined) str3 = this.data.attr("min_value");
+                var offset = data.attr("value_offset") || 0;
+                offset = parseFloat(offset);
 
-        var values = [parseFloat(str) || 0];
-        if (str2 !== null) {
-            values[1] = str2 || 0;
+                values[0] = values[0] * factor + offset;
 
-            if (str3 !== null) {
-                values[2] = str3 || 0;
-            }
-        }
-        var factor = this.data.attr("factor") || 1;
-        factor = parseFloat(factor);
+                var t = new RGraph.Gauge("c"+data.attr('wid'), parseFloat(data.attr("min_value")), parseFloat(data.attr("max_value")), values);
 
-        var offset = this.data.attr("value_offset") || 0;
-        offset = parseFloat(offset);
+                t.Set ("hm_id",   data.attr('hm_id'));
+                t.Set ("hm_id_2", data.attr('hm_id_2'));
+                t.Set ("hm_id_3", data.attr('hm_id_3'));
+                t.Set ("factor", factor);
+                t.Set ("value_offset", offset);
 
-        values[0] = values[0] * factor + offset;
+                if (data.attr("control") !== "" && data.attr("control") !== null && data.attr("control") !== undefined) {
+                    if ((data.attr("control") == "true" || data.attr("control") == true)) {
+                        t.Set('adjustable', true);
 
-        var t = new RGraph.Gauge("c"+this.data.attr('wid'), parseFloat(this.data.attr("min_value")), parseFloat(this.data.attr("max_value")), values);
+                        RGraph.AddCustomEventListener (t, "onadjust", function (obj) {
+                            var hm_id_2 = obj.Get("hm_id_2");
+                            var hm_id_3 = obj.Get("hm_id_3");
 
-        t.Set ("hm_id",   this.data.attr('hm_id'));
-        t.Set ("hm_id_2", this.data.attr('hm_id_2'));
-        t.Set ("hm_id_3", this.data.attr('hm_id_3'));
-        t.Set ("factor", factor);
-        t.Set ("value_offset", offset);
+                            var values = [obj.value];
+                            var str2 = hm_id_2 ? localData.uiState.attr("_" + hm_id_2 + ".Value") : null;
+                            if (str2 === undefined) str2 = obj.min;
 
-        if (this.data.attr("control") !== "" && this.data.attr("control") !== null && this.data.attr("control") !== undefined) {
-            if ((this.data.attr("control") == "true" || this.data.attr("control") == true)) {
-                t.Set('adjustable', true);
+                            var str3 = hm_id_3 ? localData.uiState.attr("_" + hm_id_3 + ".Value") : null;
+                            if (str3 === undefined) str3 = obj.min;
 
-                RGraph.AddCustomEventListener (t, "onadjust", function (obj) {
-                    var hm_id_2 = obj.Get("hm_id_2");
-                    var hm_id_3 = obj.Get("hm_id_3");
+                            if (str2 !== null) {
+                                values[1] = str2 || 0;
+                                if (values[1] > obj.max) values[1] = obj.max;
 
-                    var values = [obj.value];
+                                if (str3 !== null) {
+                                    values[2] = str3 || 0;
+                                    if (values[2] > obj.max) values[2] = obj.max;
+                                }
+                            }
+                            values[0] = values[0] * factor + offset;
+                            obj.value = values;
+                            obj.Draw ();
+
+                            if (dui.urlParams["edit"] !== "") {
+                                if (obj.setTimer) {
+                                    clearTimeout (obj.setTimer);
+                                }
+                                obj.setTimer = _setTimeout (function (o) {
+                                    var factor  = o.Get("factor");
+                                    var offset  = o.Get("value_offset");
+                                    localData.setValue(o.Get("hm_id"), (o.value[0] - offset) / factor);
+                                }, 300, obj);
+                            }
+                        });
+                    }
+                }
+
+                if (data.attr("a_start") !== "" && data.attr("a_start") !== null && data.attr("a_start") !== undefined) {
+                    var f = parseFloat(data.attr("a_start"));
+                    f = f * PI / 180;
+                    t.Set('angles.start', f);
+                }
+                if (data.attr("a_end") !== "" && data.attr("a_end") !== null && data.attr("a_end") !== undefined) {
+                    var f = parseFloat(data.attr("a_end"));
+                    f = f * PI / 180;
+                    t.Set('angles.end', f);
+                }
+                if (data.attr("shadow")) {
+                    t.Set('shadow', true);
+                }
+                if (data.attr("value_text")) {
+                    t.Set('value.text', true);
+                }
+                if (data.attr("value_text_pos") !== null && data.attr("value_text_pos") !== undefined && data.attr("value_text_pos") !== "") {
+                    var f = parseFloat (data.attr("value_text_pos"));
+                    t.Set('value.text.y.pos', f);
+                }
+                if (data.attr("value_units_pre")) {
+                    t.Set('value.text.units.pre', data.attr("value_units_pre"));
+                }
+                if (data.attr("value_units_post")) {
+                    t.Set('value.text.units.post', data.attr("value_units_post"));
+                }
+                if (data.attr("ticks_big_color")) {
+                    t.Set('tickmarks.big.color', data.attr("ticks_big_color"));
+                }
+                if (data.attr("ticks_mid_color")) {
+                    t.Set('tickmarks.medium.color', data.attr("ticks_mid_color"));
+                }
+                if (data.attr("ticks_small_color")) {
+                    t.Set('tickmarks.small.color', data.attr("ticks_small_color"));
+                }
+                if (data.attr("border_outer_color")) {
+                    t.Set('border.outer', data.attr("border_outer_color"));
+                }
+                if (data.attr("border_inner_color")) {
+                    t.Set('border.inner', data.attr("border_inner_color"));
+                }
+                if (data.attr("color_ranges")) {
+                    var colors = data.attr("color_ranges").split(":");
+                    t.Set('colors.ranges', colors);
+                }
+                if (data.attr("back_color")) {
+                    t.Set('background.color', data.attr("back_color"));
+                }
+                if (data.attr("needle_colors")) {
+                    var colors = data.attr("needle_colors").split(":");
+                    t.Set('needle.colors', colors);
+                }
+                if (data.attr("border_outline_color")) {
+                    t.Set('border.outline', data.attr("border_outline_color"));
+                }
+                if (data.attr("needle_type")) {
+                    t.Set('needle.type', data.attr("needle_type"));
+                }
+                if (data.attr("needle_tail")) {
+                    t.Set('needle.tail', data.attr("needle_tail"));
+                }
+                if (data.attr("needle_size")) {
+                    var f = parseFloat (data.attr("needle_size"));
+                    t.Set('needle.size', f);
+                }
+                if (data.attr("centerpin_radius")) {
+                    var f = parseFloat (data.attr("centerpin_radius"));
+                    t.Set('centerpin.radius', f);
+                }
+                if (data.attr("centerpin_color")) {
+                    t.Set('centerpin.color', data.attr("centerpin_color"));
+                }
+                if (data.attr("title")) {
+                    t.Set('title.top', data.attr("title"));
+                }
+                if (data.attr("title_color")) {
+                    t.Set('title.top.color', data.attr("title_color"));
+                }
+                if (data.attr("title_size")) {
+                    var f = parseFloat (data.attr("title_size"));
+                    t.Set('title.top.size', f);
+                }
+                if (data.attr("title_font")) {
+                    t.Set('title.top.font', data.attr("title_font"));
+                }
+                if (data.attr("title_pos") !== null && data.attr("title_pos") !== undefined && data.attr("title_pos") !== "") {
+                    var f = parseFloat (data.attr("title_pos"));
+                    t.Set('title.top.pos', f);
+                }
+                if (data.attr("title_bottom")) {
+                    t.Set('title.bottom', data.attr("title_bottom"));
+                }
+                if (data.attr("title_bottom_color")) {
+                    t.Set('title.bottom.color', data.attr("title_bottom_color"));
+                }
+                if (data.attr("title_bottom_size")) {
+                    var f = parseFloat (data.attr("title_bottom_size"));
+                    t.Set('title.bottom.size', f);
+                }
+                if (data.attr("title_bottom_font")) {
+                    t.Set('title.bottom.font', data.attr("title_bottom_font"));
+                }
+                if (data.attr("title_bottom_pos") !== null && data.attr("title_bottom_pos") !== undefined && data.attr("title_bottom_pos") !== "") {
+                    var f = parseFloat (data.attr("title_bottom_pos"));
+                    t.Set('title.bottom.pos', f);
+                }
+                if (data.attr("labels_centered")) {
+                    t.Set('labels.centered', data.attr("labels_centered"));
+                }
+                if (data.attr("labels_offset") !== "" && data.attr("labels_offset") !== null && data.attr("labels_offset") !== undefined) {
+                    var f = parseFloat (data.attr("labels_offset"));
+                    t.Set('labels.offset', f);
+                }
+                if (data.attr("labels_color") !== "") {
+                    t.Set('text.color', data.attr("labels_color"));
+                }
+                if (data.attr("labels_font") !== "") {
+                    t.Set('text.font', data.attr("labels_font"));
+                }
+                if (data.attr("labels_size") !== "") {
+                    var f = parseFloat (data.attr("labels_size"));
+                    t.Set('text.size', f);
+                }
+                if (data.attr("background_gradient")) {
+                    t.Set('background.gradient', true);
+                }
+                if (data.attr("red_color") !== "") {
+                    t.Set('red.color', data.attr("red_color"));
+                }
+                if (data.attr("red_start") !== "") {
+                    var f = parseFloat (data.attr("red_start"));
+                    f = f * parseFloat(data.attr("max_value"));
+                    t.Set('red.start', f);
+                }
+                if (data.attr("yellow_color") !== "") {
+                    t.Set('yellow.color', data.attr("yellow_color"));
+                }
+                if (data.attr("green_color") !== "") {
+                    t.Set('green.color', data.attr("green_color"));
+                }
+                if (data.attr("green_end") !== "") {
+                    var f = parseFloat (data.attr("green_end"));
+                    f = f * parseFloat(data.attr("max_value"));
+                    t.Set('green.end', f);
+                }
+
+                // Clear the background
+                RGraph.Clear(t.canvas);
+                //t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
+
+                t.Draw();
+                t.Set('animate', data.attr("animate") == "true" || data.attr("animate") == true)
+                var elem = document.getElementById (data.attr('wid'));
+                elem.rgraph = t;
+                jQuery('#'+data.attr('wid')).bind("resize", function () {
+                    var div = jQuery(this);
+                    var can = document.getElementById ('c' + div.attr('id'));
+
+                    can.width  = div.width();
+                    can.height = div.height ();
+
+                    RGraph.Clear (can);
+                    //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
+
+                    this.rgraph.Draw();
+                });
+
+                elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
+                    var hm_id_2 = this.rgraph.Get("hm_id_2");
+                    var hm_id_3 = this.rgraph.Get("hm_id_3");
+                    var factor  = this.rgraph.Get("factor");
+                    var offset  = this.rgraph.Get("value_offset");
+
+                    var str = localData.uiState.attr("_" + this.rgraph.Get('hm_id') + ".Value");
+                    if (str === null || str === undefined) str = this.rgraph.min;
+
                     var str2 = hm_id_2 ? localData.uiState.attr("_" + hm_id_2 + ".Value") : null;
-                    if (str2 === undefined) str2 = obj.min;
+                    if (str2 === undefined) str2 = this.rgraph.min;
 
                     var str3 = hm_id_3 ? localData.uiState.attr("_" + hm_id_3 + ".Value") : null;
-                    if (str3 === undefined) str3 = obj.min;
+                    if (str3 === undefined) str3 = this.rgraph.min;
 
+                    var values = [parseFloat(str) || 0];
                     if (str2 !== null) {
                         values[1] = str2 || 0;
-                        if (values[1] > obj.max) values[1] = obj.max;
 
                         if (str3 !== null) {
                             values[2] = str3 || 0;
-                            if (values[2] > obj.max) values[2] = obj.max;
                         }
                     }
                     values[0] = values[0] * factor + offset;
-                    obj.value = values;
-                    obj.Draw ();
 
-                    if (dui.urlParams["edit"] !== "") {
-                        if (obj.setTimer) {
-                            clearTimeout (obj.setTimer);
-                        }
-                        obj.setTimer = _setTimeout (function (o) {
-                            var factor  = o.Get("factor");
-                            var offset  = o.Get("value_offset");
-                            localData.setValue(o.Get("hm_id"), (o.value[0] - offset) / factor);
-                        }, 300, obj);
-                    }
-                });
-            }
-        }
+                    this.rgraph.value = values;
+                    // Clear the background
+                    RGraph.Clear(this.rgraph.canvas);
+                    //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
-        if (this.data.attr("a_start") !== "" && this.data.attr("a_start") !== null && this.data.attr("a_start") !== undefined) {
-            var f = parseFloat(this.data.attr("a_start"));
-            f = f * PI / 180;
-            t.Set('angles.start', f);
-        }
-        if (this.data.attr("a_end") !== "" && this.data.attr("a_end") !== null && this.data.attr("a_end") !== undefined) {
-            var f = parseFloat(this.data.attr("a_end"));
-            f = f * PI / 180;
-            t.Set('angles.end', f);
-        }
-        if (this.data.attr("shadow")) {
-            t.Set('shadow', true);
-        }
-        if (this.data.attr("value_text")) {
-            t.Set('value.text', true);
-        }
-        if (this.data.attr("value_text_pos") !== null && this.data.attr("value_text_pos") !== undefined && this.data.attr("value_text_pos") !== "") {
-            var f = parseFloat (this.data.attr("value_text_pos"));
-            t.Set('value.text.y.pos', f);
-        }
-        if (this.data.attr("value_units_pre")) {
-            t.Set('value.text.units.pre', this.data.attr("value_units_pre"));
-        }
-        if (this.data.attr("value_units_post")) {
-            t.Set('value.text.units.post', this.data.attr("value_units_post"));
-        }
-        if (this.data.attr("ticks_big_color")) {
-            t.Set('tickmarks.big.color', this.data.attr("ticks_big_color"));
-        }
-        if (this.data.attr("ticks_mid_color")) {
-            t.Set('tickmarks.medium.color', this.data.attr("ticks_mid_color"));
-        }
-        if (this.data.attr("ticks_small_color")) {
-            t.Set('tickmarks.small.color', this.data.attr("ticks_small_color"));
-        }
-        if (this.data.attr("border_outer_color")) {
-            t.Set('border.outer', this.data.attr("border_outer_color"));
-        }
-        if (this.data.attr("border_inner_color")) {
-            t.Set('border.inner', this.data.attr("border_inner_color"));
-        }
-        if (this.data.attr("color_ranges")) {
-            var colors = this.data.attr("color_ranges").split(":");
-            t.Set('colors.ranges', colors);
-        }
-        if (this.data.attr("back_color")) {
-            t.Set('background.color', this.data.attr("back_color"));
-        }
-        if (this.data.attr("needle_colors")) {
-            var colors = this.data.attr("needle_colors").split(":");
-            t.Set('needle.colors', colors);
-        }
-        if (this.data.attr("border_outline_color")) {
-            t.Set('border.outline', this.data.attr("border_outline_color"));
-        }
-        if (this.data.attr("needle_type")) {
-            t.Set('needle.type', this.data.attr("needle_type"));
-        }
-        if (this.data.attr("needle_tail")) {
-            t.Set('needle.tail', this.data.attr("needle_tail"));
-        }
-        if (this.data.attr("needle_size")) {
-            var f = parseFloat (this.data.attr("needle_size"));
-            t.Set('needle.size', f);
-        }
-        if (this.data.attr("centerpin_radius")) {
-            var f = parseFloat (this.data.attr("centerpin_radius"));
-            t.Set('centerpin.radius', f);
-        }
-        if (this.data.attr("centerpin_color")) {
-            t.Set('centerpin.color', this.data.attr("centerpin_color"));
-        }
-        if (this.data.attr("title")) {
-            t.Set('title.top', this.data.attr("title"));
-        }
-        if (this.data.attr("title_color")) {
-            t.Set('title.top.color', this.data.attr("title_color"));
-        }
-        if (this.data.attr("title_size")) {
-            var f = parseFloat (this.data.attr("title_size"));
-            t.Set('title.top.size', f);
-        }
-        if (this.data.attr("title_font")) {
-            t.Set('title.top.font', this.data.attr("title_font"));
-        }
-        if (this.data.attr("title_pos") !== null && this.data.attr("title_pos") !== undefined && this.data.attr("title_pos") !== "") {
-            var f = parseFloat (this.data.attr("title_pos"));
-            t.Set('title.top.pos', f);
-        }
-        if (this.data.attr("title_bottom")) {
-            t.Set('title.bottom', this.data.attr("title_bottom"));
-        }
-        if (this.data.attr("title_bottom_color")) {
-            t.Set('title.bottom.color', this.data.attr("title_bottom_color"));
-        }
-        if (this.data.attr("title_bottom_size")) {
-            var f = parseFloat (this.data.attr("title_bottom_size"));
-            t.Set('title.bottom.size', f);
-        }
-        if (this.data.attr("title_bottom_font")) {
-            t.Set('title.bottom.font', this.data.attr("title_bottom_font"));
-        }
-        if (this.data.attr("title_bottom_pos") !== null && this.data.attr("title_bottom_pos") !== undefined && this.data.attr("title_bottom_pos") !== "") {
-            var f = parseFloat (this.data.attr("title_bottom_pos"));
-            t.Set('title.bottom.pos', f);
-        }
-        if (this.data.attr("labels_centered")) {
-            t.Set('labels.centered', this.data.attr("labels_centered"));
-        }
-        if (this.data.attr("labels_offset") !== "" && this.data.attr("labels_offset") !== null && this.data.attr("labels_offset") !== undefined) {
-            var f = parseFloat (this.data.attr("labels_offset"));
-            t.Set('labels.offset', f);
-        }
-        if (this.data.attr("labels_color") !== "") {
-            t.Set('text.color', this.data.attr("labels_color"));
-        }
-        if (this.data.attr("labels_font") !== "") {
-            t.Set('text.font', this.data.attr("labels_font"));
-        }
-        if (this.data.attr("labels_size") !== "") {
-            var f = parseFloat (this.data.attr("labels_size"));
-            t.Set('text.size', f);
-        }
-        if (this.data.attr("background_gradient")) {
-            t.Set('background.gradient', true);
-        }
-        if (this.data.attr("red_color") !== "") {
-            t.Set('red.color', this.data.attr("red_color"));
-        }
-        if (this.data.attr("red_start") !== "") {
-            var f = parseFloat (this.data.attr("red_start"));
-            f = f * parseFloat(this.data.attr("max_value"));
-            t.Set('red.start', f);
-        }
-        if (this.data.attr("yellow_color") !== "") {
-            t.Set('yellow.color', this.data.attr("yellow_color"));
-        }
-        if (this.data.attr("green_color") !== "") {
-            t.Set('green.color', this.data.attr("green_color"));
-        }
-        if (this.data.attr("green_end") !== "") {
-            var f = parseFloat (this.data.attr("green_end"));
-            f = f * parseFloat(this.data.attr("max_value"));
-            t.Set('green.end', f);
-        }
-
-        // Clear the background
-        RGraph.Clear(t.canvas);
-        //t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
-
-        t.Draw();
-        t.Set('animate', this.data.attr("animate") == "true" || this.data.attr("animate") == true)
-        var elem = document.getElementById (this.data.attr('wid'));
-        elem.rgraph = t;
-        jQuery('#'+this.data.attr('wid')).bind("resize", function () {
-            var div = jQuery(this);
-            var can = document.getElementById ('c' + div.attr('id'));
-
-            can.width  = div.width();
-            can.height = div.height ();
-
-            RGraph.Clear (can);
-            //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
-
-            this.rgraph.Draw();
-        });
-
-        elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
-            var hm_id_2 = this.rgraph.Get("hm_id_2");
-            var hm_id_3 = this.rgraph.Get("hm_id_3");
-            var factor  = this.rgraph.Get("factor");
-            var offset  = this.rgraph.Get("value_offset");
-
-            var str = localData.uiState.attr("_" + this.rgraph.Get('hm_id') + ".Value");
-            if (str === null || str === undefined) str = this.rgraph.min;
-
-            var str2 = hm_id_2 ? localData.uiState.attr("_" + hm_id_2 + ".Value") : null;
-            if (str2 === undefined) str2 = this.rgraph.min;
-
-            var str3 = hm_id_3 ? localData.uiState.attr("_" + hm_id_3 + ".Value") : null;
-            if (str3 === undefined) str3 = this.rgraph.min;
-
-            var values = [parseFloat(str) || 0];
-            if (str2 !== null) {
-                values[1] = str2 || 0;
-
-                if (str3 !== null) {
-                    values[2] = str3 || 0;
-                }
-            }
-            values[0] = values[0] * factor + offset;
-
-            this.rgraph.value = values;
-            // Clear the background
-            RGraph.Clear(this.rgraph.canvas);
-            //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
-
-            if (this.rgraph.Get("animate")) {
-                RGraph.Effects.Gauge.Grow(this.rgraph);
-            }
-            else {
-                this.rgraph.Draw();
-            }
-        }
-    %>
-</script>
-<script type="text/ejs" id="tplRLiveChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="LiveChart" data-dashui-attrs="hm_id(1-8)/id;line_color(1-8)[black]/color;line_thick(1-8)[1]/slider,0.5,5,0.5;min_value[0];max_value[0];factor[1];value_offset[0];update_interval[5000]/slider,100,20000,100;points_count[250]/slider,10,2000,10;title;title_x;title_y;num_hlines[3]/slider,0,20,1;spline/checkbox;filled/checkbox;hm_id_show(1-8)/id;">
-    <%
-        var wid = this.data.attr('wid');
-        var elem_ = document.getElementById (wid);
-        var oldIDs = null;
-        var oldValues = null;
-        if (elem_) {
-            if (elem_._timeout) {
-                clearTimeout (elem_._timeout);
-                elem_._timeout = null;
-            }
-            // save data
-            if (elem.rgraph) {
-                oldIDs    = elem.rgraph.Get("hm_ids");
-                oldValues = RGraph.array_clone(elem.rgraph.original_data);
-            }
-        }
-
-        var pointsCount = parseInt(this.data.attr('points_count')) || 250;
-        var len = 1;
-        var IDs = [];
-        var IDs_show = [];
-        var colors = [];
-        var thickness = [];
-        var id;
-        var validColor = 'black';
-        var validThickness = 1;
-        // Read IDs, colors and line thickness
-        while (id = this.data.attr('hm_id'+ len)) {
-            IDs.push(id);
-            // If ID changed
-            if (oldIDs && IDs[IDs.length - 1] != oldIDs[IDs.length - 1]){
-                oldValues = null;
-                oldIDs    = null;
-            }
-            IDs_show[IDs.length - 1] = this.data.attr('hm_id_show'+ len);
-            id = this.data.attr('line_color' + len);
-            if (id) {
-                validColor = id;
-            }
-            colors.push (validColor);
-
-            id = this.data.attr('line_thick' + len);
-            if (id) {
-                validThickness = id;
-            }
-            thickness.push (validThickness);
-
-            len++;
-        }
-
-        createCanvas (this.view, wid, this.data.attr('class'), IDs, 200, 200);
-        registerRObjIds (wid, IDs_show);
-
-        var factor = this.data.attr('factor') || 1;
-        factor = parseFloat(factor);
-
-        var offset = this.data.attr('value_offset') || 0;
-        offset = parseFloat(offset);
-
-        var min_value = this.data.attr('min_value') || 0;
-        min_value = parseFloat(min_value);
-
-        var max_value = this.data.attr('max_value') || 0;
-        max_value = parseFloat(max_value);
-
-        var values = [];
-        for (var i = 0, len = IDs.length; i < len; i++) {
-            values[i] = localData.uiState.attr('_' + IDs[i] + '.Value');
-            if (values[i] === null || values[i] === undefined) {
-                values[i] = min_value;
-            }
-            values[i] = parseFloat (values[i]);
-            values[i] = values[i] * factor + offset;
-        }
-
-        var elem = document.getElementById (wid);
-        var can  = document.getElementById ('c'+wid);
-
-        var arr = [];
-        //console.log("test");
-        if (!oldValues) {
-            // Pre-pad the arrays with "pointsCount" null values
-            for (var i = 0, len = IDs.length; i < len; i++) {
-                arr[i] = [];
-                for (var j = 0, jlen = pointsCount - 1; j < jlen; j++) {
-                    arr[i].push(null);
-                }
-                arr[i].push(values[i]);
-            }
-        }
-        else {
-            for (var i = 0, len = IDs.length; i < len; i++) {
-                arr[i] = RGraph.array_shift(oldValues[i]);
-                arr[i].push(values[i]);
-            }
-        }
-
-        var update_interval = this.data.attr('update_interval') || 1000;
-        update_interval = parseInt(update_interval);
-
-        var t = new RGraph.Line ("c"+wid, arr);
-
-        t.Set ("hm_ids",      IDs);
-        t.Set ("hm_show_ids", IDs_show);
-        t.Set ("my_values", values);
-        t.Set ("update_interval", update_interval);
-        t.Set ("factor", factor);
-        t.Set ("value_offset", offset);
-       
-        t.Set('background.grid.vlines', false);
-        t.Set('background.barcolor1', 'white');
-        t.Set('background.barcolor2', 'white');
-
-        var text = this.data.attr('title');
-        if (text) {
-            t.Set('title', text);
-            t.Set('title.vpos', 0.5);
-        }
-        text = this.data.attr('title_x');
-        if (text) {
-            t.Set('title.xaxis', text);
-            t.Set('title.xaxis.pos', 0.5);
-        }
-        text = this.data.attr('title_y');
-        if (text) {
-            t.Set('title.yaxis', text);
-            t.Set('title.yaxis.pos', 0.5);
-        }
-
-        var my_colors = RGraph.array_clone(colors);
-        t.Set('my_colors', my_colors);
-        // Set visibility of charts
-        for (var i = 0, len = IDs_show.length; i < len; i++){
-            if (IDs_show[i]) {
-                var isVisible = localData.uiState.attr("_" + IDs_show[i] + ".Value");
-                if (isVisible == "false" || isVisible === false) {
-                    colors[i] = 'rgba(0,0,0,0)';
-                }
-            }
-        }
-        t.Set('colors', colors);
-        t.Set('linewidth', thickness);
-        //obj.Set('ylabels.inside', true);
-        t.Set('xticks', 0);
-        t.Set('yaxispos', 'right');
-        t.Set('ymin', min_value);
-        t.Set('ymax', max_value);
-
-        text = this.data.attr('filled');
-        if (text) {
-            t.Set('filled', (text == 'true' || text === true));
-        }
-        else {
-            t.Set('filled', false);
-        }
-
-        text = this.data.attr('spline');
-        if (text) {
-            t.Set('spline', (text == 'true' || text === true));
-        }
-        else {
-            t.Set('spline', false);
-        }
-
-        text = this.data.attr('num_hlines');
-        if (text) {
-            t.Set('background.grid.autofit.numhlines', parseInt(text));
-        }
-
-        var grad = t.context.createLinearGradient(0,0,0,250);
-        grad.addColorStop(0, '#efefef');
-        grad.addColorStop(0.9, 'rgba(0,0,0,0)');
-
-        t.Set('fillstyle', [grad]);
-
-        RGraph.Clear(t.canvas);
-        t.Draw();
-
-        elem.rgraph = t;
-        jQuery(elem).bind("resize", function () {
-            if (this._resizeTimer){
-                clearTimeout (this._resizeTimer);
-            }
-            this._resizeTimer = _setTimeout (function (_wid) {
-                var _div = document.getElementById (_wid);
-                var div  = jQuery(_div);
-                var can  = document.getElementById ('c' + _wid);
-
-                can.width  = div.width();
-                can.height = div.height ();
-
-                RGraph.Clear (can);
-                _div.rgraph.Draw();
-            }, 500, this.id);
-        });
-
-        elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
-            var IDs      = this.rgraph.Get("hm_ids");
-            var IDs_show = this.rgraph.Get("hm_show_ids");
-
-            for (var i = 0, len = IDs.length; i < len; i++){
-                if (IDs[i] == objId) {
-                    var values = this.rgraph.Get("my_values");
-                    var factor = this.rgraph.Get("factor");
-                    var offset = this.rgraph.Get("value_offset");
-
-                    values[i] = localData.uiState.attr("_" + IDs[i] + ".Value");
-                    if (values[i] === null || values[i] === undefined) {
-                        values[i] = this.rgraph.min;
-                    }
-                    values[i] = parseFloat(values[i]);
-                    values[i] = values[i] * factor + offset
-
-                    return;
-                }
-            }
-            for (var i = 0, len = IDs_show.length; i < len; i++){
-                if (IDs_show[i] && IDs_show[i] == objId) {
-                    var colors    = this.rgraph.Get("colors");
-                    var my_colors = this.rgraph.Get("my_colors");
-                    var isVisible = localData.uiState.attr("_" + IDs_show[i] + ".Value");
-                    if (isVisible == "false" || isVisible === false) {
-                        colors[i] = 'rgba(0,0,0,0)';
+                    if (this.rgraph.Get("animate")) {
+                        RGraph.Effects.Gauge.Grow(this.rgraph);
                     }
                     else {
-                        colors[i] = my_colors[i];
+                        this.rgraph.Draw();
                     }
-                    this.rgraph.Set("colors", colors);
-                    var updateInterval = this.rgraph.Get("update_interval");
-                    this._timeout = _setTimeout (updateChart, 100, this.id);
-                    //RGraph.Clear (this.rgraph.canvas);
-                    //this.rgraph.rgraph.Draw();
-                    return;
+                }        
+            },
+            tplRBarChart: function (view, data) {
+                console.log ("tplRBarChart");
+                var wid = data.attr('wid')
+
+                var factor = data.attr('factor') || 1;
+                factor = parseFloat(factor);
+
+                var offset = data.attr('value_offset') || 0;
+                offset = parseFloat(offset);
+
+                var len = 1;
+                var IDs = [];
+                var id;
+                var values = [];
+                var names  = [];
+                var max_values = [];
+                var valid_max = null;
+
+                // Read IDs and max values
+                while (id = data.attr('hm_id'+ len)) {
+                    IDs.push(id);
+
+                    id = data.attr('name' + len);
+                    names.push (id || "");
+
+                    id = data.attr('max_value' + len);
+                    if (id || valid_max) {
+                        max_values.push (id);
+                        valid_max = id;
+                    }
+
+                    len++;
                 }
-            }
-        }
 
-        if (update_interval) {
-            elem._timeout = _setTimeout (updateChart, update_interval, wid);
-        }
-
-    %>
-</script>
-<script type="text/ejs" id="tplRBarChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="BarChart" data-dashui-attrs="hm_id(1-8)/id;name(1-8);filled_color[black]/color;empty_color[white]/color;label_color[black]/color;max_value(1-8);factor[1];value_offset[0];update_interval[0]/slider,0,20000,100;title;legend/checkbox;filled_text[Level];empty_text[Empty];labels_above[true]/checkbox;label_size[12]/slider,1,40,1;labels_above_angle/checkbox;decimals[2]/slider,0,10,1;shadow/checkbox;gutter_left[45]/slider,0,200,1;horz_margin[15]/slider,0,200,1;bar_labels_color[black]/color;bar_labels_bold/checkbox;bar_labels_center/checkbox;num_hlines/slider,0,20,1">
-    <%
-        //console.log ("tplRBarChart");
-        var wid = this.data.attr('wid')
-
-        var factor = this.data.attr('factor') || 1;
-        factor = parseFloat(factor);
-
-        var offset = this.data.attr('value_offset') || 0;
-        offset = parseFloat(offset);
-
-        var len = 1;
-        var IDs = [];
-        var id;
-        var values = [];
-        var names  = [];
-        var max_values = [];
-        var valid_max = null;
-
-        // Read IDs and max values
-        while (id = this.data.attr('hm_id'+ len)) {
-            IDs.push(id);
-
-            id = this.data.attr('name' + len);
-            names.push (id || "");
-
-            id = this.data.attr('max_value' + len);
-            if (id || valid_max) {
-                max_values.push (id);
-                valid_max = id;
-            }
-
-            len++;
-        }
-
-        if (!valid_max) {
-            max_values = null;
-        } else {
-            for (var i = max_values.length, len = IDs.length; i < len; i++) {
-                max_values.push(valid_max);
-            }
-        }
-
-        var values  = [];
-        for (var i = 0, len = IDs.length; i < len; i++) {
-            values[i] = [];
-            var val = localData.uiState.attr('_' + IDs[i] + '.Value');
-            if (val === null || val === undefined) {
-                val = min_value;
-            }
-            val = parseFloat (val);
-            val = val * factor + offset;
-            if (val < 0) {
-                val = 0;
-            }
-
-            if (max_values) {
-                values[i][0] = max_values[i] - val;
-                if (values[i][0] < 0) {
-                    values[i][0] = 0;
+                if (!valid_max) {
+                    max_values = null;
+                } else {
+                    for (var i = max_values.length, len = IDs.length; i < len; i++) {
+                        max_values.push(valid_max);
+                    }
                 }
-                values[i][1] = val;
-            } else {
-                values[i][0] = val;
-            }
 
-        }
-
-        var options = {
-            IDs:          IDs,
-            names:        names,
-            labels_above_angle:  this.data.attr('labels_above_angle'),
-            filled_color: this.data.attr('filled_color'),
-            empty_color:  this.data.attr('empty_color'),
-            factor:       factor,
-            offset:       offset,
-            title:        this.data.attr('title')   || "",
-            update_interval: parseInt (this.data.attr('update_interval')) || 0,
-            max_values:   max_values,
-            filled_text:  this.data.attr('filled_text') || false,
-            empty_text:   this.data.attr('empty_text') || false,
-            legend:       this.data.attr('legend')  || false,
-            label_size:   parseInt(this.data.attr('label_size')),
-            label_color:  this.data.attr('label_color'),
-            labels_above: this.data.attr('labels_above'),
-            decimals:     parseInt(this.data.attr('decimals')),
-            shadow:       this.data.attr('shadow'),
-            bar_labels_color: this.data.attr('bar_labels_color'),
-            bar_labels_bold: this.data.attr('bar_labels_bold'),
-            bar_labels_center: this.data.attr('bar_labels_center'),
-            gutter_left:  parseInt(this.data.attr('gutter_left')) || 45,
-            horz_margin:  parseInt(this.data.attr('horz_margin')) || 15,
-            defaultWidth: 200,
-            defaultHeight:400
-        };
-        options.bar_labels_bold = !(options.bar_labels_bold != "true" && options.bar_labels_bold !== true);
-
-
-        createCanvas (this.view, wid, this.data.attr('class'), IDs, 200, 200);
-
-        var elem = document.getElementById (wid);
-        var can  = document.getElementById ('c'+wid);
-
-        var t = new RGraph.Bar ("c"+wid, values);
-
-        t.Set ("my_options", options);
-        t.Set ("my_values",  values);
-
-        t.set('grouping', 'stacked');
-        t.set('labels', options.names);
-        t.set('labels.above.angle', options.labels_above_angle);
-        t.set('labels.above', options.labels_above);
-        t.set('labels.above.size', parseInt(options.label_size) || 12);
-        //t.set('labels.above.color', options.label_color);
-        t.set('labels.above.decimals', options.decimals);
-        t.set('linewidth', 1);
-        t.set('strokestyle', 'black');
-        t.set('colors', max_values ? [options.empty_color, options.filled_color] : [options.filled_color]);
-        t.set('shadow', options.shadow);
-        t.set('shadow.offsetx', 1);
-        t.set('shadow.offsety', 1);
-        t.set('shadow.blue', 5);
-        t.set('hmargin', parseInt(options.horz_margin));
-        t.set('gutter.left', parseInt(options.gutter_left));
-        t.set('background.grid.vlines', false);
-        t.set('background.grid.border', false);
-        t.set('axis.color', '#ccc');
-        t.set('noyaxis', true);
-        t.set('labels.above.color', options.label_color);
-        t.set('title', options.title);
-
-        if (options.legend) {
-            t.set('key', max_values ? [options.empty_text || ' ', options.filled_text || ' '] : options.filled_text || ' ');
-            t.set('key.position.gutter.boxed', true);
-            t.set('key.position', 'gutter');
-            t.set('key.position.x', t.canvas.width - 300)
-            t.set('key.position.y', 20)
-            t.set('key.colors', max_values ? [options.empty_color, options.filled_color] : [options.filled_color]);
-        }
-
-        text = this.data.attr('num_hlines');
-        if (text) {
-            t.Set('background.grid.autofit.numhlines', parseInt(text));
-        }
-
-        RGraph.Clear(t.canvas);
-        t.on('draw', function (obj) {
-            var values  = obj.Get("my_values");
-            var options = obj.Get("my_options");
-            if (values.length > 0 && values[0].length > 1)  {
-                obj.context.fillStyle = options.bar_labels_color;
-                for (var i = 0, len = obj.coords.length; i < len; ++i) {
-                    if (i%2 == 0) continue;
-                    RGraph.Text2(obj.context, {
-                                               font:   'Verdana',
-                                               'bold':  options.bar_labels_bold,
-                                               'size':  options.label_size,
-                                               'x':     obj.coords[i][0] + (obj.coords[i][2] / 2),
-                                               'y':     options.bar_labels_center ? (obj.coords[i][1] + (obj.coords[i][3] / 2)) : (obj.coords[i][1] + obj.coords[i][3] - options.label_size),
-                                               'text':  obj.data_arr[i].toFixed(options.decimals),
-                                               'valign':'center',
-                                               'halign':'center'
-                                              });
-                }
-            }
-        })
-        .draw();
-
-        elem.rgraph = t;
-        jQuery(elem).bind("resize", function () {
-            if (this._resizeTimer){
-                clearTimeout (this._resizeTimer);
-            }
-            this._resizeTimer = _setTimeout (function (_wid) {
-                var _div = document.getElementById (_wid);
-                var div  = jQuery(_div);
-                var can  = document.getElementById ('c' + _wid);
-
-                can.width  = div.width();
-                can.height = div.height ();
-
-                RGraph.Clear (can);
-                _div.rgraph.Draw();
-            }, 500, this.id);
-        });
-
-        elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
-            var options = this.rgraph.Get("my_options");
-            var isFound = false;
-
-            for (var i = 0, len = options.IDs.length; i < len; i++){
-                if (options.IDs[i] == objId) {
-                    var values  = this.rgraph.Get("my_values");
-                    var val = localData.uiState.attr("_" + options.IDs[i] + ".Value");
+                var values  = [];
+                for (var i = 0, len = IDs.length; i < len; i++) {
+                    values[i] = [];
+                    var val = localData.uiState.attr('_' + IDs[i] + '.Value');
                     if (val === null || val === undefined) {
-                        val = this.rgraph.min;
+                        val = min_value;
                     }
-                    val = parseFloat(val);
+                    val = parseFloat (val);
                     val = val * factor + offset;
                     if (val < 0) {
                         val = 0;
                     }
-                    if (values[i].length > 1) {
-                        values[i][0] = options.max_values[i] - val;
+
+                    if (max_values) {
+                        values[i][0] = max_values[i] - val;
                         if (values[i][0] < 0) {
                             values[i][0] = 0;
                         }
                         values[i][1] = val;
-                    }
-                    else {
+                    } else {
                         values[i][0] = val;
                     }
-                    isFound = true;
-                    //return;
+
+                }
+
+                var options = {
+                    IDs:          IDs,
+                    names:        names,
+                    labels_above_angle:  data.attr('labels_above_angle'),
+                    filled_color: data.attr('filled_color'),
+                    empty_color:  data.attr('empty_color'),
+                    factor:       factor,
+                    offset:       offset,
+                    title:        data.attr('title')   || "",
+                    update_interval: parseInt (data.attr('update_interval')) || 0,
+                    max_values:   max_values,
+                    filled_text:  data.attr('filled_text') || false,
+                    empty_text:   data.attr('empty_text') || false,
+                    legend:       data.attr('legend')  || false,
+                    label_size:   parseInt(data.attr('label_size')),
+                    label_color:  data.attr('label_color'),
+                    labels_above: data.attr('labels_above'),
+                    decimals:     parseInt(data.attr('decimals')),
+                    shadow:       data.attr('shadow'),
+                    bar_labels_color: data.attr('bar_labels_color'),
+                    bar_labels_bold: data.attr('bar_labels_bold'),
+                    bar_labels_center: data.attr('bar_labels_center'),
+                    gutter_left:  parseInt(data.attr('gutter_left')) || 45,
+                    horz_margin:  parseInt(data.attr('horz_margin')) || 15,
+                    defaultWidth: 200,
+                    defaultHeight:400
+                };
+                options.bar_labels_bold = !(options.bar_labels_bold != "true" && options.bar_labels_bold !== true);
+
+
+                dui.binds.RGraph.createCanvas (view, wid, data.attr('class'), IDs, 200, 200);
+
+                var elem = document.getElementById (wid);
+                var can  = document.getElementById ('c'+wid);
+
+                var t = new RGraph.Bar ("c"+wid, values);
+
+                t.Set ("my_options", options);
+                t.Set ("my_values",  values);
+
+                t.set('grouping', 'stacked');
+                t.set('labels', options.names);
+                t.set('labels.above.angle', options.labels_above_angle);
+                t.set('labels.above', options.labels_above);
+                t.set('labels.above.size', parseInt(options.label_size) || 12);
+                //t.set('labels.above.color', options.label_color);
+                t.set('labels.above.decimals', options.decimals);
+                t.set('linewidth', 1);
+                t.set('strokestyle', 'black');
+                t.set('colors', max_values ? [options.empty_color, options.filled_color] : [options.filled_color]);
+                t.set('shadow', options.shadow);
+                t.set('shadow.offsetx', 1);
+                t.set('shadow.offsety', 1);
+                t.set('shadow.blue', 5);
+                t.set('hmargin', parseInt(options.horz_margin));
+                t.set('gutter.left', parseInt(options.gutter_left));
+                t.set('background.grid.vlines', false);
+                t.set('background.grid.border', false);
+                t.set('axis.color', '#ccc');
+                t.set('noyaxis', true);
+                t.set('labels.above.color', options.label_color);
+                t.set('title', options.title);
+
+                if (options.legend) {
+                    t.set('key', max_values ? [options.empty_text || ' ', options.filled_text || ' '] : options.filled_text || ' ');
+                    t.set('key.position.gutter.boxed', true);
+                    t.set('key.position', 'gutter');
+                    t.set('key.position.x', t.canvas.width - 300)
+                    t.set('key.position.y', 20)
+                    t.set('key.colors', max_values ? [options.empty_color, options.filled_color] : [options.filled_color]);
+                }
+
+                var text = data.attr('num_hlines');
+                if (text) {
+                    t.Set('background.grid.autofit.numhlines', parseInt(text));
+                }
+
+                RGraph.Clear(t.canvas);
+                t.on('draw', function (obj) {
+                    var values  = obj.Get("my_values");
+                    var options = obj.Get("my_options");
+                    if (values.length > 0 && values[0].length > 1)  {
+                        obj.context.fillStyle = options.bar_labels_color;
+                        for (var i = 0, len = obj.coords.length; i < len; ++i) {
+                            if (i%2 == 0) continue;
+                            RGraph.Text2(obj.context, {
+                                font:   'Verdana',
+                                'bold':  options.bar_labels_bold,
+                                'size':  options.label_size,
+                                'x':     obj.coords[i][0] + (obj.coords[i][2] / 2),
+                                'y':     options.bar_labels_center ? (obj.coords[i][1] + (obj.coords[i][3] / 2)) : (obj.coords[i][1] + obj.coords[i][3] - options.label_size),
+                                'text':  obj.data_arr[i].toFixed(options.decimals),
+                                'valign':'center',
+                                'halign':'center'
+                            });
+                        }
+                    }
+                })
+                        .draw();
+
+                elem.rgraph = t;
+                jQuery(elem).bind("resize", function () {
+                    if (this._resizeTimer){
+                        clearTimeout (this._resizeTimer);
+                    }
+                    this._resizeTimer = _setTimeout (function (_wid) {
+                        var _div = document.getElementById (_wid);
+                        var div  = jQuery(_div);
+                        var can  = document.getElementById ('c' + _wid);
+
+                        can.width  = div.width();
+                        can.height = div.height ();
+
+                        RGraph.Clear (can);
+                        _div.rgraph.Draw();
+                    }, 500, this.id);
+                });
+
+                elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
+                    var options = this.rgraph.Get("my_options");
+                    var isFound = false;
+
+                    for (var i = 0, len = options.IDs.length; i < len; i++){
+                        if (options.IDs[i] == objId) {
+                            var values  = this.rgraph.Get("my_values");
+                            var val = localData.uiState.attr("_" + options.IDs[i] + ".Value");
+                            if (val === null || val === undefined) {
+                                val = this.rgraph.min;
+                            }
+                            val = parseFloat(val);
+                            val = val * factor + offset;
+                            if (val < 0) {
+                                val = 0;
+                            }
+                            if (values[i].length > 1) {
+                                values[i][0] = options.max_values[i] - val;
+                                if (values[i][0] < 0) {
+                                    values[i][0] = 0;
+                                }
+                                values[i][1] = val;
+                            }
+                            else {
+                                values[i][0] = val;
+                            }
+                            isFound = true;
+                            //return;
+                        }
+                    }
+                    if (isFound && !options.update_interval) {
+                        dui.binds.RGraph.updateBar (this.id);
+                    }
+                }
+                if (options.update_interval) {
+                    elem._timeout = _setTimeout(dui.binds.RGraph.updateBar, options.update_interval, wid);
                 }
             }
-            if (isFound && !options.update_interval) {
-                updateBar (this.id);
-            }
         }
-        if (options.update_interval) {
-            elem._timeout = _setTimeout(updateBar, options.update_interval, wid);
-        }
+    });
+</script>
 
+<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];width/slider,1,500,1;control/checkbox;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontName;labels_size/slider,1,100;title;title_side;title_side_font/fontName;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
+    <%
+        dui.binds.RGraph.tplRGtermometer(this.view, this.data);
+    %>
+</script>
+<script type="text/ejs" id="tplRGgauge" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Gauge-Basic" data-dashui-attrs="hm_id/id;hm_id_2/id;hm_id_3/id;min_value[0];max_value[100];factor[1];value_offset[0];control/checkbox;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;title;title_color/color;title_font/fontName;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontName;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;labels_color[#000000]/color;labels_font/fontName;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1;animate/checkbox">
+    <%
+        dui.binds.RGraph.tplRGgauge(this.view, this.data);
+    %>
+</script>
+<script type="text/ejs" id="tplRLiveChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="LiveChart" data-dashui-attrs="hm_id(1-8)/id;line_color(1-8)[black]/color;line_thick(1-8)[1]/slider,0.5,5,0.5;min_value[0];max_value[0];factor[1];value_offset[0];update_interval[5000]/slider,100,20000,100;points_count[250]/slider,10,2000,10;title;title_x;title_y;num_hlines[3]/slider,0,20,1;spline/checkbox;filled/checkbox;hm_id_show(1-8)/id;">
+    <%
+        dui.binds.RGraph.tplRLiveChart(this.view, this.data);
+    %>
+</script>
+<script type="text/ejs" id="tplRBarChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="BarChart" data-dashui-attrs="hm_id(1-8)/id;name(1-8);filled_color[black]/color;empty_color[white]/color;label_color[black]/color;max_value(1-8);factor[1];value_offset[0];update_interval[0]/slider,0,20000,100;title;legend/checkbox;filled_text[Level];empty_text[Empty];labels_above[true]/checkbox;label_size[12]/slider,1,40,1;labels_above_angle/checkbox;decimals[2]/slider,0,10,1;shadow/checkbox;gutter_left[45]/slider,0,200,1;horz_margin[15]/slider,0,200,1;bar_labels_color[black]/color;bar_labels_bold/checkbox;bar_labels_center/checkbox;num_hlines/slider,0,20,1">
+    <%
+        dui.binds.RGraph.tplRBarChart(this.view, this.data);
     %>
 </script>

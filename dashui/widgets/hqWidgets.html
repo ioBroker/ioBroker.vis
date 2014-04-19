@@ -1,8 +1,6 @@
 <link rel="stylesheet" href="widgets/hqWidgets/css/hqWidgets.css" type="text/css" />
 <link rel="stylesheet" href="widgets/hqWidgets/css/hqWidgetsButtons.css" type="text/css" />
-<link rel="stylesheet" href="widgets/colorpicker/css/farbtastic.css" type="text/css" />
 
-<script type="text/javascript" src="widgets/colorpicker/js/farbtastic.js"></script>
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgets.js"></script>
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgetsDashUI.js"></script>
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgetsLang.js"></script>
@@ -42,7 +40,7 @@
 	}
     %>
 </script>
-<script type="text/ejs" id="tplHqInTemp" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Inside temperature" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-CC-TC,HM-CC-RT-DN;HM-CC-VD">
+<script type="text/ejs" id="tplHqInTemp" class="dashui-tpl" data-dashui-set="hqWidgets" data-dashui-name="Inside temperature" data-dashui-attrs="hqoptions" data-hqwidgets-filter="HM-CC-TC,HM-CC-RT-DN,HM-TC-IT-WM-W-EU;HM-CC-VD">
     <%
     if (this && this.data && this.data.attr) {
     if (this.data.attr('hqoptions')){

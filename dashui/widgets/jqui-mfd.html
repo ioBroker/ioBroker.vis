@@ -455,7 +455,7 @@
             <%
             var styles = "";
             if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-            styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+                styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
             switch (localData.uiState.attr("_" + this.data.hm_id + ".Value")) {
             case false: %>
@@ -471,23 +471,25 @@
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
     if (!localData.metaObjects[this.data.hm_id] || (localData.metaObjects[this.data.hm_id].HssType != "HUE_DIMMABLE_PLUG-IN_UNIT" && localData.metaObjects[this.data.hm_id].HssType != "HUE_DIMMABLE_LIGHT")) {
-        console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_COLOR_LIGHT/HUE_DIMMABLE_PLUG-IN_UNIT Channel!");
+        console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_DIMMABLE_LIGHT/HUE_DIMMABLE_PLUG-IN_UNIT Channel!");
+    }
+
+    if (localData.metaObjects[this.data.hm_id] && localData.metaObjects[this.data.hm_id].DPs) {
         var hueIDs = {
-            STATE: 65535,
-            LEVEL: 65535,
-            SAT: 65535,
-            HUE: 65535,
+            STATE: localData.metaObjects[this.data.hm_id].DPs.STATE || 65535,
+            LEVEL: localData.metaObjects[this.data.hm_id].DPs.LEVEL || 65535,
         };
     } else {
         var hueIDs = {
-            STATE: localData.metaObjects[this.data.hm_id].DPs.STATE,
-            LEVEL: localData.metaObjects[this.data.hm_id].DPs.LEVEL,
+            STATE: 65535,
+            LEVEL: 65535,
         };
     }
+
     %>
     <div data-hm-id="<%= hueIDs.STATE %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body" style="width:100%; height:100%" <%= (el) -> dui.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
@@ -548,23 +550,26 @@
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
     if (!localData.metaObjects[this.data.hm_id] || localData.metaObjects[this.data.hm_id].HssType != "HUE_COLOR_LIGHT") {
         console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_COLOR_LIGHT Channel!");
+    }
+
+    if (localData.metaObjects[this.data.hm_id] && localData.metaObjects[this.data.hm_id].DPs) {
+        var hueIDs = {
+            STATE: localData.metaObjects[this.data.hm_id].DPs.STATE || 65535,
+            LEVEL: localData.metaObjects[this.data.hm_id].DPs.LEVEL || 65535,
+            SAT: localData.metaObjects[this.data.hm_id].DPs.SAT || 65535,
+            HUE: localData.metaObjects[this.data.hm_id].DPs.HUE || 65535,
+        };
+    } else {
         var hueIDs = {
             STATE: 65535,
             LEVEL: 65535,
             SAT: 65535,
             HUE: 65535,
-        };
-    } else {
-        var hueIDs = {
-            STATE: localData.metaObjects[this.data.hm_id].DPs.STATE,
-            LEVEL: localData.metaObjects[this.data.hm_id].DPs.LEVEL,
-            SAT: localData.metaObjects[this.data.hm_id].DPs.SAT,
-            HUE: localData.metaObjects[this.data.hm_id].DPs.HUE,
         };
     }
     %>
@@ -635,28 +640,31 @@
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
     if (!localData.metaObjects[this.data.hm_id] || localData.metaObjects[this.data.hm_id].HssType != "HUE_EXTENDED_COLOR_LIGHT") {
-    console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_EXTENDED_COLOR_LIGHT Channel!");
-    var hueIDs = {
-    STATE: 65535,
-    LEVEL: 65535,
-    COLORMODE: 65535,
-    CT: 65535,
-    SAT: 65535,
-    HUE: 65535,
-    };
+        console.log("Widget "+this.data.attr('wid')+" error! ID has to be HUE_EXTENDED_COLOR_LIGHT Channel!");
+    }
+
+    if (localData.metaObjects[this.data.hm_id] && localData.metaObjects[this.data.hm_id].DPs) {
+        var hueIDs = {
+            STATE: localData.metaObjects[this.data.hm_id].DPs.STATE || 65535,
+            LEVEL: localData.metaObjects[this.data.hm_id].DPs.LEVEL || 65535,
+            COLORMODE: localData.metaObjects[this.data.hm_id].DPs.COLORMODE || 65535,
+            CT: localData.metaObjects[this.data.hm_id].DPs.CT || 65535,
+            SAT: localData.metaObjects[this.data.hm_id].DPs.SAT || 65535,
+            HUE: localData.metaObjects[this.data.hm_id].DPs.HUE || 65535,
+        };
     } else {
-    var hueIDs = {
-    STATE: localData.metaObjects[this.data.hm_id].DPs.STATE,
-    LEVEL: localData.metaObjects[this.data.hm_id].DPs.LEVEL,
-    COLORMODE: localData.metaObjects[this.data.hm_id].DPs.COLORMODE,
-    CT: localData.metaObjects[this.data.hm_id].DPs.CT,
-    SAT: localData.metaObjects[this.data.hm_id].DPs.SAT,
-    HUE: localData.metaObjects[this.data.hm_id].DPs.HUE,
-    };
+        var hueIDs = {
+            STATE: 65535,
+            LEVEL: 65535,
+            COLORMODE: 65535,
+            CT: 65535,
+            SAT: 65535,
+            HUE: 65535
+        };
     }
     %>
     <div data-hm-id="<%= hueIDs.STATE %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
@@ -696,13 +704,13 @@
 
         <br/>
         <span id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= hueIDs.STATE %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio_off" name="<%= this.data.attr('wid') %>_radio" value="false" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_off">aus</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio_on" name="<%= this.data.attr('wid') %>_radio" value="true"/><label for="<%= this.data.attr('wid') %>_radio_on">an</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio_off" name="<%= this.data.attr('wid') %>_radio" value="false" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_off">aus</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio_on" name="<%= this.data.attr('wid') %>_radio" value="true"/><label for="<%= this.data.attr('wid') %>_radio_on">an</label>
         </span>
 
         <span style="padding-left: 25px" id="<%= this.data.attr('wid') %>_radio_cm"  data-hm-id="<%= hueIDs.COLORMODE %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio_cm_ct" name="<%= this.data.attr('wid') %>_radio_ct" value="ct" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_cm_ct">weiß</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio_cm_hue" name="<%= this.data.attr('wid') %>_radio_cm" value="hue"/><label for="<%= this.data.attr('wid') %>_radio_cm_hue">farbe</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio_cm_ct" name="<%= this.data.attr('wid') %>_radio_cm" value="ct" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_cm_ct">weiß</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio_cm_hs" name="<%= this.data.attr('wid') %>_radio_cm" value="hs"/><label for="<%= this.data.attr('wid') %>_radio_cm_hs">farbe</label>
         </span>
 
         <br/><br/>

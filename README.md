@@ -7,6 +7,39 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta78
+* (Hobbyquaker) Fehler abgefangen beim Anlegen von uiState Objekten
+
+### 0.9beta77
+* (Hobbyquaker) Fix "Aufklappdreieck" im Select-ID Dialog
+
+### 0.9beta76
+* (Hobbyquaker) Fix Dialog Container Widgets
+
+### 0.9beta75
+* (Kivas) hqWidgets: Support of HM-TC-IT-WM-W-EU
+* (Hobbyquaker) loadWidgetSet() gibt DashUI-Version im Querystring mit um Cache-Probleme zu vermeiden
+* (Bluefox) Fix offline mode
+
+### 0.9beta74
+* (Hobbyquaker) added cache.manifest to prevent Safari/iOS cache problems
+* (Bluefox) Support of local snapshot for debug
+* (Bluefox) Fix yahooWidget under Firefox
+* (Bluefox) Fix select dialog
+* (Bluefox) Fix CSS background selector
+* (Bluefox) Optimize dashuiEdit.js
+
+### 0.9beta73
+* (Hobbyquaker) Fix Hue Widgets
+* (Hobbyquaker) Fix getDataPoints()
+
+### 0.9beta72
+* (Bluefox) Change widget dependencies
+* (Bluefox) "use strict" by some files
+* (Bluefox) basic widgets: add "test_html" to see widget itself, if its data point has no value
+* (Bluefox) Fix small error in hqWidgets/Lock
+* (Bluefox) table widget support object as input and can work without event_id (If only table_id set, the whole table will be updated)
+
 ### 0.9beta71
 * (Hobbyquaker) Fix Name Attribute on init uiState - Bedienung war nicht mehr möglich
 
