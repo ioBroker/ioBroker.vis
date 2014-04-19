@@ -421,7 +421,7 @@
                             width:  el.width(),
                             left:   el.position().left,
                             height: el.height()
-                        }
+                        };
                         _setTimeout(function(obj){
                             dui.binds.basic.showSvg (obj.myClass, obj.view, obj.wid, obj.hm_id, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
                         }, 200, this._obj);
@@ -431,41 +431,40 @@
             editNote: function (wid, max_width, min_width, min_height, hm_id) {
                 if (dui.urlParams["edit"] === "") return;
                 if (max_width != '') {
-                    max_width = parseInt (max_width);
-                }
-                else {
+                    max_width = parseInt(max_width, 10);
+                } else {
                     max_width = 400;
                 }
+
                 if (min_width != '') {
-                    min_width = parseInt (min_width);
-                }
-                else {
+                    min_width = parseInt(min_width, 10);
+                } else {
                     min_width = 40;
                 }
 
                 if (min_height != '') {
-                    min_height = parseInt (min_height);
-                }
-                else {
+                    min_height = parseInt(min_height, 10);
+                } else {
                     min_height = 15;
                 }
+
                 if (hm_id != '') {
-                    hm_id = parseInt (hm_id);
-                }
-                else {
+                    hm_id = parseInt(hm_id, 10);
+                } else {
                     hm_id = null;
                 }
+
 				var $this = jQuery('#div_'+wid);
 				jQuery('body').append("<div id='dlg_"+wid+"' title='Edit note'>"+
 								  "<textarea style='width:95%;height:92%' id='text_"+wid+"'>"+$this.text()+"</textarea></div>");
 
                 console.log("Test");
 				var buttons = {};
-				buttons["Clear"] = function() {
+				buttons["Clear"] = function () {
 					jQuery('#text_'+$(this).attr("data-id")).val("");
 				};
 				
-				buttons["Ok"] = function() {
+				buttons["Ok"] = function () {
 					var dlg = $(this);
 					var text = $('#text_'+dlg.attr("data-id")).val();
 					console.log(text + " " + dlg.attr("data-id"));
@@ -485,8 +484,8 @@
 					dlg.remove();
 				};
 						
-				buttons["Cancel"] = function() {
-					jQuery(this).dialog( "close" );
+				buttons["Cancel"] = function () {
+					jQuery(this).dialog("close");
 					jQuery(this).remove();
 				};
 								  
