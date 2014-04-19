@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta79
+* (Hobbyquaker) Fix Widgets "basic static Image" und "basic static iFrame": Refresh von unsichtbaren Bildern/iFrames unterbunden
+
 ### 0.9beta78
 * (Hobbyquaker) Fehler abgefangen beim Anlegen von uiState Objekten
 
