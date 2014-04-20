@@ -7,6 +7,7 @@ var duiConfig = {
         "colorpicker",
         "fancyswitch",
         "highcharts",
+        {name: "homematic", depends: ["basic", "jqui"]},
         "knob",
         {name: "hqWidgets", edit: "hqWidgetsEdit"},
         "jqplot",
