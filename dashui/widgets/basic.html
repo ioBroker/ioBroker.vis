@@ -7,7 +7,7 @@
             view: function (el, viewArr, persistent) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function ( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     var view = viewArr[newVal];
                     if (!persistent) {
                         $this.parent().find("div.dashui-view").remove();
@@ -28,7 +28,7 @@
                 var id = $this.attr("data-hm-id");
                 var hm_id = "_" + id;
 
-                localData.uiState.bind(hm_id+".Value", function ( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     $this.attr("src", srcArr[newVal]);
                 });
 
@@ -52,7 +52,7 @@
                 var id = $this.attr("data-hm-id");
                 var hm_id = "_" + id;
 
-                localData.uiState.bind(hm_id+".Value", function ( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     $this.attr("src", srcArr[newVal]);
                 });
 
@@ -215,7 +215,7 @@
             hideOnFalse: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function ( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -234,7 +234,7 @@
             hideOnTrue: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function ( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     if (newVal === true || parseFloat(newVal) > 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -252,7 +252,7 @@
             showOnValue: function (el, val) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function ( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     if (newVal != val) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -270,7 +270,7 @@
             checkbox: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function ( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     if (newVal === false || parseFloat(newVal) === 0.0) {
                         $this.removeAttr("checked");
                     } else {
@@ -302,7 +302,7 @@
                     localData.setValue( $this.attr("data-hm-id"),  $this.find("option:selected").val());
                 });
                 var hm_id = "_" + id;
-                localData.uiState.bind(hm_id+".Value", function ( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     console.log("newVal="+newVal+" oldVal="+oldVal);
                     if (newVal == "false" || parseFloat(newVal) == 0) {
                         if ($this.find("option[value='1']").prop("selected")) {
