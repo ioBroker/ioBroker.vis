@@ -1499,7 +1499,7 @@ var servConn = {
 
         //SignalR
         if (this._type == 0) {
-            this._hub.server.getVersion ().done(function (version) {
+            this._hub.server.getVersion().done(function (version) {
                 if (callback) {
                     callback(version);
                 }
@@ -1524,7 +1524,7 @@ var servConn = {
         }
         if (this._type == 0) {
             //SignalR
-            this._hub.server.getVersion ().done(function (version) {
+            this._hub.server.getVersion().done(function (version) {
                 if (callback)
                     callback(version);
             })
@@ -1552,7 +1552,7 @@ var servConn = {
 
         if (this._type == 0) {
             //SignalR
-            this._hub.server.readFile (filename).done(function (data) {
+            this._hub.server.readFile(filename).done(function (data) {
                 if (callback) {
                     callback(data);
                 }
@@ -1584,7 +1584,7 @@ var servConn = {
                             dui.views = $.parseJSON(dui.views);
                         }
                     } catch (e) {
-                        window.alert ('Invalid ' + filename + ' json format');
+                        window.alert('Invalid ' + filename + ' json format');
                     }
                     callback(dui.views);
                     if (!dui.views) {
@@ -1600,7 +1600,7 @@ var servConn = {
     },
     touchFile: function (filename) {
         if (!this._isConnected) {
-            console.log ("No connection!");
+            console.log("No connection!");
             return;
         }
 
