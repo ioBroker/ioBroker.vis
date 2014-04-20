@@ -432,11 +432,10 @@
 
             },
             iconHttpGet: function (el, url) {
-                var $this = jQuery(el).parent().find("a.widget-link");
-                //console.log($this);
+                var $this = jQuery(el).parent();
                 $this.click(function (e) {
-                    //console.log("click http get");
-                    dui.socket.emit("getUrl", url, function () {});
+                    // TODO ...
+                    servConn._socket.emit("getUrl", url, function () {});
                     e.preventDefault();
                 });
             },
