@@ -835,9 +835,9 @@ var dui = {
 
             if (localData.metaObjects[id]["Address"] !== undefined) {
                 return parent + localData.metaObjects[id]["Name"] + "/" + localData.metaObjects[id]["Address"];
-            } else if (localData.metaObjects[id]["Name"]){
+            } else if (localData.metaObjects[id]["Name"]) {
                 return parent + localData.metaObjects[id]["Name"];
-            } else if (localData.metaObjects[id]["name"]){
+            } else if (localData.metaObjects[id]["name"]) {
                 return parent + localData.metaObjects[id]["name"];
             }
         } else if (id == 41) {
@@ -1260,7 +1260,7 @@ if ('applicationCache' in window) {
                     });
                     setTimeout (function () {
                         dui.authRunning = false;
-                        console.log ("user "+  user + ", " + pass + " " + salt);
+                        console.log("user "+  user + ", " + pass + " " + salt);
                         dui.conn.authenticate(user, pass, salt);
                     }, 500);
                     return true;
@@ -1394,25 +1394,25 @@ var servConn = {
             };
             $.connection.hub.start().done(function () {
                 that._isConnected = true;
-                if (that._connCallbacks.onConnChange){
+                if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
             $.connection.hub.reconnecting(function() {
                 that._isConnected = false;
-                if (that._connCallbacks.onConnChange){
+                if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
             $.connection.hub.reconnected(function() {
                 that._isConnected = true;
-                if (that._connCallbacks.onConnChange){
+                if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
             $.connection.hub.disconnected(function() {
                 that._isConnected = false;
-                if (that._connCallbacks.onConnChange){
+                if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
@@ -1434,25 +1434,25 @@ var servConn = {
 
                 this._socket.on('connect', function () {
                     this._myParent._isConnected = true;
-                    if (this._myParent._connCallbacks.onConnChange){
+                    if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
                 });
 
                 this._socket.on('disconnect', function () {
                     this._myParent._isConnected = false;
-                    if (this._myParent._connCallbacks.onConnChange){
+                    if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
                 });
                 this._socket.on('reconnect', function () {
                     this._myParent._isConnected = true;
-                    if (this._myParent._connCallbacks.onConnChange){
+                    if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
                 });
                 this._socket.on('refreshAddons', function () {
-                    if (this._myParent._connCallbacks.onRefresh){
+                    if (this._myParent._connCallbacks.onRefresh) {
                         this._myParent._connCallbacks.onRefresh();
                     }
                 });
@@ -1469,7 +1469,7 @@ var servConn = {
                     o.ack  = obj[3];
                     o.lc   = obj[4];
 
-                    if (this._myParent._connCallbacks.onUpdate){
+                    if (this._myParent._connCallbacks.onUpdate) {
                         this._myParent._connCallbacks.onUpdate(o);
                     }
 
@@ -1482,14 +1482,14 @@ var servConn = {
             this._isAuthDone = true;
 
             this._isConnected = true;
-            if (this._connCallbacks.onConnChange){
+            if (this._connCallbacks.onConnChange) {
                 this._connCallbacks.onConnChange(this._isConnected);
             }
        }
     },
     getVersion: function (callback) {
         if (!this._isConnected) {
-            console.log ("No connection!");
+            console.log("No connection!");
             return;
         }
 
@@ -1510,7 +1510,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getVersion', function(version) {
+            this._socket.emit('getVersion', function (version) {
                 if (callback) {
                     callback(version);
                 }
@@ -1519,7 +1519,7 @@ var servConn = {
     },
     _checkAuth: function (callback) {
         if (!this._isConnected) {
-            console.log ("No connection!");
+            console.log("No connection!");
             return;
         }
         if (this._type == 0) {
@@ -1534,7 +1534,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getVersion', function(version) {
+            this._socket.emit('getVersion', function (version) {
                 if (callback)
                     callback(version);
             });
@@ -1542,7 +1542,7 @@ var servConn = {
     },
     readFile: function (filename, callback) {
         if (!this._isConnected) {
-            console.log ('No connection!');
+            console.log('No connection!');
             return;
         }
 
@@ -1563,7 +1563,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('readFile', filename, function(data) {
+            this._socket.emit('readFile', filename, function (data) {
                 if (callback) {
                     callback(data);
                 }
@@ -1632,7 +1632,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('writeFile', filename, data, function(isOk) {
+            this._socket.emit('writeFile', filename, data, function (isOk) {
                 if (callback) {
                     callback(isOk);
                 }
@@ -1661,7 +1661,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('readdir', dirname, function(data) {
+            this._socket.emit('readdir', dirname, function (data) {
                 if (callback) {
                     callback(data);
                 }
@@ -1695,7 +1695,7 @@ var servConn = {
     },
     getDataPoints: function (callback) {
         if (!this._isConnected) {
-            console.log ("No connection!");
+            console.log("No connection!");
             return;
         }
         if (this._queueCmdIfRequired("getDataPoints", callback)) {
@@ -1751,7 +1751,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getDatapoints', function(data) {
+            this._socket.emit('getDatapoints', function (data) {
                 if (data === null) {
                     if (callback) {
                         callback('Authentication required');
@@ -1848,7 +1848,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getObjects', function(data) {
+            this._socket.emit('getObjects', function (data) {
                 if (callback) {
                     callback(data);
                 }
@@ -1875,7 +1875,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getIndex', function(data) {
+            this._socket.emit('getIndex', function (data) {
                 if (callback)
                     callback(data);
             });
@@ -1903,7 +1903,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('setObject', objId, obj, function(cid) {
+            this._socket.emit('setObject', objId, obj, function (cid) {
                 if (callback) {
                     callback(cid);
                 }
@@ -1965,7 +1965,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getUrl', url, function(data) {
+            this._socket.emit('getUrl', url, function (data) {
                 if (callback) {
                     callback(data);
                 }
@@ -2020,12 +2020,12 @@ var servConn = {
         }
 
         if (!this._isConnected) {
-            console.log ("No connection!");
+            console.log("No connection!");
             return;
         }
 
         if (!this._authInfo) {
-            console.log ("No credentials!");
+            console.log("No credentials!");
         }
 
         //SignalR
@@ -2051,7 +2051,7 @@ var servConn = {
                     }
                 } else {
                     // Another authRequest should come, wait for this
-                    console.log ("Cannot authenticate: " + error);
+                    console.log("Cannot authenticate: " + error);
                     this._authInfo = null;
                 }
             });
@@ -2061,7 +2061,7 @@ var servConn = {
 
 // IE8 indexOf compatibility
 if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function(obj, start) {
+    Array.prototype.indexOf = function (obj, start) {
         for (var i = (start || 0), j = this.length; i < j; i++) {
             if (this[i] === obj) { return i; }
         }
