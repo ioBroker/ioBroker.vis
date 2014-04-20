@@ -1995,7 +1995,7 @@ var hmSelect = {
         $('#tabs-progs').width ($('#hmSelect_tabs').width()  - 6);
         $('#tabs-progs').height($('#hmSelect_tabs').height() - 60);
         
-        this._buildDevicesGrid (localData, filter, devFilter);
+        this._buildDevicesGrid(localData, filter, devFilter);
         if (this.value != null && localData.metaObjects[this.value] != null) {
             if (localData.metaObjects[this.value]["TypeName"] != undefined && localData.metaObjects[this.value]["TypeName"] == "VARDP") {
                 $('#var_select').trigger("click");

@@ -959,7 +959,7 @@ var localData = {
             localData.metaObjects[id]["TypeName"] !== undefined &&
             localData.metaObjects[id]["TypeName"] == "PROGRAM") {
             dui.conn.execProgramm(id);
-        }  else {
+        } else {
             this.setState.attr("_" + id, {Value: val});
             var d = new Date();
             var t = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
@@ -1607,8 +1607,7 @@ var servConn = {
         if (this._type == 0) {
             //SignalR
             this._hub.server.touchFile (filename);
-        }
-        else if (this._type == 1) {
+        } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
                 console.log('socket.io not initialized');
@@ -2003,8 +2002,7 @@ var servConn = {
             }
 
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     },

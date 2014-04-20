@@ -896,8 +896,7 @@ dui = $.extend(true, dui, {
                                             if (type["name"]['en']) {
                                                 title = type["name"]['en'];
                                             }
-                                        }
-                                        else {
+                                        } else {
                                             title = type["name"];
                                         }
                                     }
@@ -907,22 +906,14 @@ dui = $.extend(true, dui, {
                                         isValueSet = true;
                                         // All other attributes
                                         $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption" title="'+hint+'">'+title+':</td><td><input title="'+hint+'" id="inspect_'+wid_attr_+'" type="checkbox"' +(widget.data[wid_attr_] ? "checked": "")+'></td></tr>');
-                                    } else
-                                    if (type['type'] == "view") {
-                                    } else
-                                    if (type['type'] == "color") {
-                                    } else
-                                    if (type['type'] == "font") {
-                                    } else
-                                    if (type['type'] == "rooms") {
-                                    } else
-                                    if (type['type'] == "favorites") {
-                                    } else
-                                    if (type['type'] == "functions") {
-                                    } else
-                                    if (type['type'] == "rooms") {
-                                    } else
-                                    if (type['type'] == "select") {
+                                    } else if (type['type'] == "view") {
+                                    } else if (type['type'] == "color") {
+                                    } else if (type['type'] == "font") {
+                                    } else if (type['type'] == "rooms") {
+                                    } else if (type['type'] == "favorites") {
+                                    } else if (type['type'] == "functions") {
+                                    } else if (type['type'] == "rooms") {
+                                    } else if (type['type'] == "select") {
                                         // Select
                                         var values = type['values'];
                                         var text = '<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><select id="inspect_'+wid_attr_+'">';
@@ -934,8 +925,8 @@ dui = $.extend(true, dui, {
                                         isValueSet = true;
                                     }
 
-                                }
-                                else { // Simple type
+                                } else {
+                                    // Simple type
                                     console.log("Error: " + wid_attr_ +" Type: " + type );
                                 }
                             }
