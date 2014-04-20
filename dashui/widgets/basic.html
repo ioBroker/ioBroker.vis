@@ -80,7 +80,6 @@
                 jQuery("#duiview_"+view).appendTo($this);
                 jQuery("#duiview_"+view).show();
             }
-
         },
         basic: {
             filterDropdown: function (el, filters, hideEffect, hideDuration, showEffect, showDuration) {
@@ -93,7 +92,6 @@
                 }
 
                 if (dui.viewsActiveFilter[dui.activeView]) {
-
                     $this.find("select option[value='"+dui.viewsActiveFilter[dui.activeView]+"']").attr("selected", true);
                 }
 
@@ -130,8 +128,8 @@
                     dui.binds.basic.pressedNext = true;
                     var hm_id = "_" + $that.attr("data-hm-id");
                     if (dui.urlParams["edit"] !== "") {
-                        var step = parseFloat($that.attr("data-dashui-step")),
-                                tmp = parseFloat(localData.uiState[hm_id].Value) + step;
+                        var step =  parseFloat($that.attr("data-dashui-step")),
+                            tmp =   parseFloat(localData.uiState[hm_id].Value) + step;
                         if (step < 0) {
                             if (tmp >= minmax) {
                                 localData.setValue($that.attr("data-hm-id"), tmp);
@@ -393,8 +391,9 @@
                 $("#"+wid).children().attr("data-wid", wid);
                 $("#"+wid).children().attr("data-hm-id", hm_id);
                 $("#"+wid).children().attr("opacity", opacity);
-                if ($("#"+wid).children()[0])
+                if ($("#"+wid).children()[0]) {
                     $("#"+wid).children()[0]._obj = obj;
+                }
 
                 if (style) {
                     $("#"+wid).css(style);
@@ -412,7 +411,7 @@
                         } else {
                             val = parseFloat(val);
                             if (val >= 0.5) { val = 1; } else { val = 0; }
-                            localData.setValue( id,  1-val);
+                            localData.setValue(id, 1-val);
                         }
                         var el = $('#'+obj.wid);
                         this._obj.style = {
@@ -423,7 +422,7 @@
                             height: el.height()
                         };
                         _setTimeout(function (obj) {
-                            dui.binds.basic.showSvg (obj.myClass, obj.view, obj.wid, obj.hm_id, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
+                            dui.binds.basic.showSvg(obj.myClass, obj.view, obj.wid, obj.hm_id, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
                         }, 200, this._obj);
                     });
                 }
