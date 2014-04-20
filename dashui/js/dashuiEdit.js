@@ -71,7 +71,7 @@ dui = $.extend(true, dui, {
 
         }
     },
-    checkNewView: function() {
+    checkNewView: function () {
         if ($("#new_view_name").val() == "") {
             alert("Bitte einen Namen für die neue View eingeben!");
             return false;
@@ -299,7 +299,7 @@ dui = $.extend(true, dui, {
 
             $("#select_active_widget").append("<option value='"+dui.activeWidget+"'>"+dui.activeWidget+" ("+$("#"+dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
 
-            setTimeout(function() {
+            setTimeout(function () {
                 dui.inspectWidget(dui.activeWidget);
                 dui.saveRemote();
             }, 50);
@@ -497,7 +497,7 @@ dui = $.extend(true, dui, {
                 if (this.timer)
                     clearTimeout(this.timer);
 
-                this.timer = _setTimeout(function(elem_) {
+                this.timer = _setTimeout(function (elem_) {
                     // If really changed
                     var $this = $(elem_);
                     var attr = $this.attr("id").slice(8);
@@ -514,13 +514,13 @@ dui = $.extend(true, dui, {
 
             $(elem).autocomplete({
                 minLength: 0,
-                source: function(request, response) {
+                source: function (request, response) {
                     var views = [];
                     for (var v in dui.views) {
                         views[views.length] = v;
                     }
 
-                    var data = $.grep(views, function(value) {
+                    var data = $.grep(views, function (value) {
                         return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
                     });
 
@@ -550,7 +550,7 @@ dui = $.extend(true, dui, {
                 if(this.timer)
                     clearTimeout(this.timer);
 
-                this.timer = _setTimeout(function(elem_) {
+                this.timer = _setTimeout(function (elem_) {
                     // If really changed
                     var $this = $(elem_);
                     var attr = $this.attr("id").slice(8);
@@ -562,7 +562,7 @@ dui = $.extend(true, dui, {
 
             $(elem).autocomplete({
                 minLength: 0,
-                source: function(request, response) {
+                source: function (request, response) {
                     var effects = ['',
                         'show',
                         'blind',
@@ -580,7 +580,7 @@ dui = $.extend(true, dui, {
                         'size',
                         'slide'];
 
-                    var data = $.grep(effects, function(value) {
+                    var data = $.grep(effects, function (value) {
                         return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
                     });
 
@@ -629,11 +629,11 @@ dui = $.extend(true, dui, {
             min: min,
             max: max,
             step: step,
-            slide: function( event, ui ) {
+            slide: function ( event, ui ) {
                 /*if (this.timer)
                     clearTimeout (this.timer);
 
-                this.timer = _setTimeout (function(elem_, value) {
+                this.timer = _setTimeout (function (elem_, value) {
                     // If really changed
                     var $this = $(elem_);
                     var attr = $this.attr("id").slice(8);
@@ -681,7 +681,7 @@ dui = $.extend(true, dui, {
         }
 
         // Alle Widgets de-selektieren und Interaktionen entfernen
-        $(".dashui-widget").each(function() { $(this).removeClass("dashui-widget-edit");
+        $(".dashui-widget").each(function () { $(this).removeClass("dashui-widget-edit");
             if ($(this).hasClass("ui-draggable")) {
                 try {
                     $(this).draggable("destroy");
@@ -936,7 +936,7 @@ dui = $.extend(true, dui, {
 
                                 }
                                 else { // Simple type
-                                    console.log ("Error: " + wid_attr_ +" Type: " + type );
+                                    console.log("Error: " + wid_attr_ +" Type: " + type );
                                 }
                             }
                         } else {
@@ -998,7 +998,7 @@ dui = $.extend(true, dui, {
                 if (this.timer) 
                     clearTimeout (this.timer);
                     
-                this.timer = _setTimeout (function(elem_) {
+                this.timer = _setTimeout (function (elem_) {
                      // If really changed
                     var $this = $(elem_);
                     var attr = $this.attr("id").slice(8);
@@ -1009,8 +1009,8 @@ dui = $.extend(true, dui, {
             
             $(elem).autocomplete({
                 minLength: 0,
-                source: function(request, response) {            
-                    var data = $.grep(dui.views[dui.activeView].filterList, function(value) {
+                source: function (request, response) {
+                    var data = $.grep(dui.views[dui.activeView].filterList, function (value) {
                         return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
                     });            
 
@@ -1050,7 +1050,7 @@ dui = $.extend(true, dui, {
                 minWidth: 300,
                 height: 260,
                 noneSelectedText: dui.translate("Single view"),
-                selectedText: function(numChecked, numTotal, checkedItems){
+                selectedText: function (numChecked, numTotal, checkedItems){
                     var text = "";
                     for (var i = 0; i < checkedItems.length; i++) {
                         text += ((text == "") ? "" : ",") + checkedItems[i].title;
@@ -1206,7 +1206,7 @@ dui = $.extend(true, dui, {
     draggable: function (obj) {
         var draggableOptions = {
             cancel: false,
-            stop: function(event, ui) {
+            stop: function (event, ui) {
                 var widget = ui.helper.attr("id")
                 $("#inspect_css_top").val(ui.position.top + "px");
                 $("#inspect_css_left").val(ui.position.left + "px");
@@ -1218,7 +1218,7 @@ dui = $.extend(true, dui, {
                 dui.saveRemote();
 
             },
-            drag: function(event, ui) {
+            drag: function (event, ui) {
                 $("#widget_helper").css({left: ui.position.left - 2, top: ui.position.top - 2});
             }
         };
@@ -1241,7 +1241,7 @@ dui = $.extend(true, dui, {
         if (resizableOptions.disabled !== true) {
             resizableOptions.disabled = false;
             obj.resizable($.extend({
-                stop: function(event, ui) {
+                stop: function (event, ui) {
                     var widget = ui.helper.attr("id")
                     $("#inspect_css_width").val(ui.size.width + "px");
                     $("#inspect_css_height").val(ui.size.height + "px");
@@ -1282,7 +1282,7 @@ dui = $.extend(true, dui, {
             $("#dui_editor").dialogExtend({
                 "minimizable" : true,
                 "icons" : { "maximize" : "ui-icon-arrow-4-diag" },
-                "minimize" : function(evt) {
+                "minimize" : function (evt) {
                     $("#dui_editor").dialog( "option", "position", { my: "right top", at: "right top", of: window });
                 }
             });
@@ -1504,7 +1504,7 @@ dui = $.extend(true, dui, {
             }
             dui.views[dui.activeView].settings.sizex = x;
             dui.saveRemote();
-        }).keyup(function() { $(this).trigger("change"); });
+        }).keyup(function () { $(this).trigger("change"); });
 
         $("#screen_size_y").change(function () {
             var x = $("#screen_size_x").val();
@@ -1521,7 +1521,7 @@ dui = $.extend(true, dui, {
             }
             dui.views[dui.activeView].settings.sizey = y;
             dui.saveRemote();
-        }).keyup(function() { $(this).trigger("change"); });
+        }).keyup(function () { $(this).trigger("change"); });
 
         // Instances
         if (typeof storage !== 'undefined') {
