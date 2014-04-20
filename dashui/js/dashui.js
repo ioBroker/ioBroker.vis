@@ -264,10 +264,6 @@ var dui = {
             var cmdId = localData.metaIndex.Name[cmdVarName];
             if (cmdId) {
 
-                $("body").append('<div class="dashui-dummy" data-hm-id="' + dui.instanceView + '"></div>')
-                    .append('<div class="dashui-dummy" data-hm-id="' + dui.instanceCmd + '"></div>')
-                    .append('<div class="dashui-dummy" data-hm-id="' + dui.instanceData + '"></div>');
-
                 dui.instanceCmd = cmdId[0];
                 if (localData.metaIndex.Name[viewVarName]) {
                     dui.instanceView = localData.metaIndex.Name[viewVarName][0];
@@ -275,8 +271,6 @@ var dui = {
                 if (localData.metaIndex.Name[dataVarName]) {
                     dui.instanceData = localData.metaIndex.Name[dataVarName][0];
                 }
-
-                //console.log("instance ids: "+dui.instanceCmd+" "+dui.instanceView+" "+dui.instanceData);
 
                 dui.bindInstance();
 
