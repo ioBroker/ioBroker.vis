@@ -1050,7 +1050,7 @@ dui = $.extend(true, dui, {
                 minWidth: 300,
                 height: 260,
                 noneSelectedText: dui.translate("Single view"),
-                selectedText: function (numChecked, numTotal, checkedItems){
+                selectedText: function (numChecked, numTotal, checkedItems) {
                     var text = "";
                     for (var i = 0; i < checkedItems.length; i++) {
                         text += ((text == "") ? "" : ",") + checkedItems[i].title;
@@ -1695,13 +1695,13 @@ dui = $.extend(true, dui, {
 			if (((s.left <= x                && (s.left + s.width)  >= x) ||
 				 (s.left <= x + widgetWidth  && (s.left + s.width)  >= x + widgetWidth)) &&
 				((s.top  <= y                && (s.top  + s.height) >= y) ||
-				 (s.top  <= y + widgetHeight && (s.top  + s.height) >= y + widgetHeight))){
+				 (s.top  <= y + widgetHeight && (s.top  + s.height) >= y + widgetHeight))) {
 				return false;
 			}
 			if (((x <= s.left                &&  s.left             <= x + widgetWidth) ||
 				 (x <= (s.left + s.width)    && (s.left + s.width)  <= x + widgetWidth)) &&
 				((y <= s.top                 && s.top               <= y + widgetHeight) ||
-				 (y <= (s.top  + s.height)   && (s.top  + s.height) <= y + widgetHeight))){
+				 (y <= (s.top  + s.height)   && (s.top  + s.height) <= y + widgetHeight))) {
 				return false;
 			}			
 		}
@@ -1736,7 +1736,7 @@ dui = $.extend(true, dui, {
 		$('#'+id+'__action1').
 			addClass('dashui-show-new').
 			css(_css2).
-			animate(_css1, 1500, 'swing', function (){
+			animate(_css1, 1500, 'swing', function () {
 				$(this).remove();
 			}).click (function () {
 				$(this).stop ().remove ();
@@ -1747,7 +1747,7 @@ dui = $.extend(true, dui, {
 		$('#'+id+'__action2').
 			addClass('dashui-show-new').
 			css(_css2).
-			animate(_css1, 3000, 'swing', function (){$(this).remove();});
+			animate(_css1, 3000, 'swing', function () {$(this).remove();});
 	},
 	translate: function (text, lang) {
         return text;

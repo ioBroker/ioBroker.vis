@@ -188,11 +188,11 @@ dui = $.extend(true, dui, {
                 
                     for(var name in this._internalList) {
                         if (htmlElem.settings.filterFile == null || 
-                           (this._internalList[name].file != null && this._internalList[name].file.indexOf (htmlElem.settings.filterFile) != -1)) {
+                           (this._internalList[name].file != null && this._internalList[name].file.indexOf(htmlElem.settings.filterFile) != -1)) {
                             var isFound = (filters == null);
                             if (!isFound) {
                                 for (var k = 0; k < filters.length; k++) {
-                                    if (this._internalList[name].style.indexOf (filters[k]) != -1) {
+                                    if (this._internalList[name].style.indexOf(filters[k]) != -1) {
                                         isFound = true;
                                         break;
                                     }
@@ -254,7 +254,7 @@ dui = $.extend(true, dui, {
             
             var box = $('#styleSelectBox'+options.name);
             box.buttonset();
-            $('#styleSelectBox'+options.name+" :radio").click(htmlElem, function(e) {
+            $('#styleSelectBox'+options.name+" :radio").click(htmlElem, function (e) {
                 var rawElement = this;
                 dui.styleSelect._select (e.data, rawElement.iStyle);
                 dui.styleSelect._toggleDrop(e.data);
@@ -378,17 +378,17 @@ dui = $.extend(true, dui, {
 			
 			 // Define dialog buttons
 			var dialog_buttons = {};
-			dialog_buttons[this._uploadText] = function() {
+			dialog_buttons[this._uploadText] = function () {
 				$( this ).trigger('click');
 			}
-			dialog_buttons[this._selectText] = function() {
+			dialog_buttons[this._selectText] = function () {
 				$( this ).dialog( "close" );
 
 				if (this.settings.onselect)
 					this.settings.onselect (dui.imageSelect._pictDir+this.settings.result, this.settings.onselectArg);
 				$( this ).remove ();
 			}
-			dialog_buttons[this._cancelText] = function() {
+			dialog_buttons[this._cancelText] = function () {
 				$( this ).dialog( "close" );
 				$( this ).remove ();
 			}
@@ -430,7 +430,7 @@ dui = $.extend(true, dui, {
 					$(this.element).remove ();
 				},
 				init: function () {
-					this.on("processing", function() {
+					this.on("processing", function () {
 						this.options.url = "/upload?path=./www/dashui/img/"+dui.imageSelect._curDir;
 					});
 				}
@@ -451,7 +451,7 @@ dui = $.extend(true, dui, {
 				if (str.substring (0, this._pictDir.length) == this._pictDir) {
 					str = str.substring (this._pictDir.length);
 				}
-				if (str.indexOf ('/') != -1) {
+				if (str.indexOf('/') != -1) {
 					var disr = str.split ("/");
 					for (var z=0; z < disr.length -1; z++)
 						this._curDir += disr[z]+"/";
@@ -471,14 +471,14 @@ dui = $.extend(true, dui, {
 				}
 				if  (str.substring (0, dui.imageSelect._curDir.length) == dui.imageSelect._curDir) {
 					str = str.substring (dui.imageSelect._curDir.length);
-					if (str.indexOf ('/') == -1) {
+					if (str.indexOf('/') == -1) {
 						dui.imageSelect._curImage = str;
 					}
 				}
 			}
 			
 			// Load directory
-			dui.conn.readDir (this._rootDir + this._curDir, function(dirArr) {
+			dui.conn.readDir (this._rootDir + this._curDir, function (dirArr) {
 				dui.imageSelect.showImages(dirArr, htmlElem);
 			});
 		},
@@ -503,13 +503,13 @@ dui = $.extend(true, dui, {
 			}
 
 			for (var i = 0; i < aImages.length; i++) {
-				if (aImages[i].indexOf ('.') == -1) {
+				if (aImages[i].indexOf('.') == -1) {
 					bImages[j++] = aImages[i];
 				}
 			}
 
 			for (var i = 0; i < aImages.length; i++) {
-				if (aImages[i].indexOf ('.') != -1 && aImages[i] != dui.imageSelect._dirImage) {
+				if (aImages[i].indexOf('.') != -1 && aImages[i] != dui.imageSelect._dirImage) {
 					bImages[j++] = aImages[i];
 				}
 			}
@@ -527,10 +527,10 @@ dui = $.extend(true, dui, {
 			
 			for (row = 0; row < obj.settings.rows; row++) {
 				sText += "<tr>";
-				var isDirs = (aImages[id].indexOf ('.') == -1);
+				var isDirs = (aImages[id].indexOf('.') == -1);
 				for (col = 0; col < obj.settings.columns; col++) {
 					if (aImages.length > id) {
-						var isDir = (aImages[id].indexOf ('.') == -1) || (aImages[id] == "..");
+						var isDir = (aImages[id].indexOf('.') == -1) || (aImages[id] == "..");
 						
 						// Start from new line if directories shown
 						if (isDirs && !isDir) {
@@ -670,7 +670,7 @@ dui = $.extend(true, dui, {
 						for (var t = 0; t < dirs.length - 2; t++)
 							dui.imageSelect._curDir += dirs[t]+"/";
 						dui.imageSelect.getFileList (obj);
-					} else if (obj_.result.indexOf ('.') == -1) {
+					} else if (obj_.result.indexOf('.') == -1) {
 						dui.imageSelect._curDir += obj_.result+"/";
 						dui.imageSelect.getFileList (obj);
 					} else {
@@ -694,7 +694,7 @@ dui = $.extend(true, dui, {
 					$( obj ).remove ();
 				});				
 				// If File
-				if (aImages[i] != ".." && aImages[i].indexOf ('.') != -1 && aImages[i].indexOf(".wav") == -1 && aImages[i].indexOf(".mp3") == -1) {
+				if (aImages[i] != ".." && aImages[i].indexOf('.') != -1 && aImages[i].indexOf(".wav") == -1 && aImages[i].indexOf(".mp3") == -1) {
 					image.attr('src', dui.imageSelect._pictDir+dui.imageSelect._curDir+aImages[i]);
 				}
 			}
@@ -770,13 +770,13 @@ var colorSelect = {
         
          // Define dialog buttons
         var dialog_buttons = {}; 
-        dialog_buttons[this._selectText] = function() { 
+        dialog_buttons[this._selectText] = function () { 
             $( this ).dialog( "close" ); 
             if (this.settings.onselect)
                 this.settings.onselect ($('#colortext').val(), this.settings.onselectArg);
             $( this ).remove ();
         }
-        dialog_buttons[this._cancelText] = function() {
+        dialog_buttons[this._cancelText] = function () {
             $( this ).dialog( "close" ); 
             $( this ).remove ();
         }   
@@ -1079,7 +1079,7 @@ var hmSelect = {
 				{name:'Description',index:'Description', width:400, sorttype:"text"},
 				{name:'_ID',        index:'_ID',         width:0,   hidden:true}
 			],
-			onSelectRow: function(id) {
+			onSelectRow: function (id) {
                                hmSelect.value    = $("#hmVarsContent").jqGrid ('getCell', id, '_ID');
                                hmSelect.valueObj = null;
 				if (hmSelect.value != null && hmSelect.value != "") {
@@ -1183,7 +1183,7 @@ var hmSelect = {
 				{name:'Description', index:'Description', width:570, sorttype:"text"},
 				{name:'_ID',         index:'_ID',         width:0,   hidden:true}
 			],
-			onSelectRow: function(id) {
+			onSelectRow: function (id) {
                                 hmSelect.value    = $("#hmProgsContent").jqGrid ('getCell', id, "_ID");
                                 hmSelect.valueObj = null;
 				if (hmSelect.value != null && hmSelect.value != "") {
@@ -1245,7 +1245,7 @@ var hmSelect = {
             for (var room in rooms) {
                 for (var k = 0; k < localData.metaObjects[rooms[room]]["Channels"].length; k++) {
                     if (localData.metaObjects[rooms[room]]["Channels"][k] == _id) {
-                        if (result_room.indexOf (localData.metaObjects[rooms[room]]["Name"]) == -1) {
+                        if (result_room.indexOf(localData.metaObjects[rooms[room]]["Name"]) == -1) {
                             result_room = ((result_room == "") ? "" : ", ") + localData.metaObjects[rooms[room]]["Name"];
                         }
                         break;
@@ -1260,7 +1260,7 @@ var hmSelect = {
             for (var k = 0; k < localData.metaObjects[dev]["Channels"].length; k++) {
                 var t = hmSelect._getRoom (localData, localData.metaObjects[dev]["Channels"][k], true);
                 if (t != "") {
-                    if (result_room.indexOf (t) == -1) {
+                    if (result_room.indexOf(t) == -1) {
                         result_room += ((result_room == "") ? "" : ", ") + t;
                     }
                 }
@@ -1280,7 +1280,7 @@ var hmSelect = {
                 for (var k = 0; k < localData.metaObjects[functions[func]]["Channels"].length; k++) {
                     if (localData.metaObjects[functions[func]]["Channels"][k] == _id) {
                         if (localData.metaObjects[functions[func]]["Name"] != "" &&
-                            result_func.indexOf (localData.metaObjects[functions[func]]["Name"]) == -1) {
+                            result_func.indexOf(localData.metaObjects[functions[func]]["Name"]) == -1) {
                             result_func = ((result_func == "") ? "" : ", ") + localData.metaObjects[functions[func]]["Name"];
                         }
                         break;
@@ -1295,7 +1295,7 @@ var hmSelect = {
             for (var k = 0; k < localData.metaObjects[dev]["Channels"].length; k++) {
                 var t = hmSelect._getFunction (localData, localData.metaObjects[dev]["Channels"][k], true);
                 if (t != "") {
-                    if (result_func.indexOf (t) == -1) {
+                    if (result_func.indexOf(t) == -1) {
                         result_func += ((result_func == "") ? "" : ", ") + t;
                     }
                 }
@@ -1359,7 +1359,7 @@ var hmSelect = {
                             var point = localData.metaObjects[idPnt];
                             var name = this._convertName(point.Name);
                             for (var t = 0; t < f.length; t++) {
-                                if (name.indexOf (f[t]) != -1) {
+                                if (name.indexOf(f[t]) != -1) {
                                     newPoints [idPnt] = point;
                                     newPoints [idPnt]["Type"] = dp;
                                     iPnts++;
@@ -1450,7 +1450,7 @@ var hmSelect = {
                         isFound = true;
                     } else {
                         for (var t = 0; t < f.length; t++) {
-                            if (device.HssType.indexOf (f[t]) != -1) {
+                            if (device.HssType.indexOf(f[t]) != -1) {
                                 isFound = true;
                                 break;
                             }
@@ -1492,7 +1492,7 @@ var hmSelect = {
                                         iPnts++;
                                     } else {
                                         for (var t = 0; t < f.length; t++) {
-                                            if (name.indexOf (f[t]) != -1) {
+                                            if (name.indexOf(f[t]) != -1) {
                                                 newPoints [idPnt] = point;
                                                 newPoints [idPnt]["Type"] = dp;
                                                 iPnts++;
@@ -1802,7 +1802,7 @@ var hmSelect = {
 			shrinkToFit: false,
 			colNames:    colNames,
 			colModel:    colModel,
-			onSelectRow: function(id) {
+			onSelectRow: function (id) {
                 hmSelect.value    = $("#hmDevsContent").jqGrid ('getCell', id, '_ID');
                 hmSelect.valueObj = (hmSelect.value != "" && hmSelect.value != null) ? hmSelect._devices[hmSelect.value] :null;
 
@@ -1962,12 +1962,12 @@ var hmSelect = {
 		this._cancelText = dui.translate("Cancel");
         
 		var dialog_buttons = {}; 
-		dialog_buttons[this._selectText] = function() { 
+		dialog_buttons[this._selectText] = function () { 
 			$( this ).dialog( "close" ); 
 			if (hmSelect._onsuccess)
                 hmSelect._onsuccess(hmSelect._userArg, hmSelect.value, hmSelect.valueObj);
 		}
-		dialog_buttons[this._cancelText] = function() {
+		dialog_buttons[this._cancelText] = function () {
 			$( this ).dialog( "close" ); 
 		}   
 		
@@ -1977,10 +1977,10 @@ var hmSelect = {
 			height: $(window).height(),
 			modal: true,
 			width: 870,
-			resize: function(event, ui) { 
+			resize: function (event, ui) { 
                 hmSelect._onResize ();
 			},
-            close: function(event, ui) { $('#hmSelect').remove(); $('#hmDevsContent').jqGrid('GridUnload'); },
+            close: function (event, ui) { $('#hmSelect').remove(); $('#hmDevsContent').jqGrid('GridUnload'); },
 			buttons: dialog_buttons
 		});
         $('#dashui-waitico').show().css({top: ($("#hmSelect").height() + $('#dashui-waitico').height())/2});
