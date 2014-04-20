@@ -257,7 +257,8 @@ if ((typeof hqWidgets !== 'undefined')) {
 										localData.metaObjects [opt['hm_id']]["TypeName"] !== undefined &&
 										localData.metaObjects [opt['hm_id']]["TypeName"] == "PROGRAM") {
 										console.log ("Activate programm " + localData.metaObjects [opt['hm_id']]["Name"]);
-										dui.socket.emit("programExecute", [opt['hm_id']]);
+										// TODO ...
+                                        servConn._socket.emit("programExecute", [opt['hm_id']]);
 									}
 									else {    
 										if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["DPs"] && localData.metaObjects[opt['hm_id']]["DPs"]["STATE"])
@@ -544,12 +545,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 var states = obj.GetStates ();
 								
                                 if (states.state == hqWidgets.gState.gStateOn) {
-                                    dui.socket.emit("getUrl", htmlOff, function () {});
+                                    // TODO ...
+                                    servConn._socket.emit("getUrl", htmlOff, function () {});
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOff});
 									}
 								} else {
-                                    dui.socket.emit("getUrl", htmlOn, function () {});
+                                    // TODO ...
+                                    servConn._socket.emit("getUrl", htmlOn, function () {});
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOn});
 									}
