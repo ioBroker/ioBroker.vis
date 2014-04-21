@@ -7,6 +7,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta82
+* (Bluefox) prepare for new select dialog
+* (Bluefox) make dashui grunt-able
+
 ### 0.9beta81
 * (Hobbyquaker) neues Widget-Set homematic mit Widget zum Anzeigen/Bestätigen der Servicemeldungen
 
