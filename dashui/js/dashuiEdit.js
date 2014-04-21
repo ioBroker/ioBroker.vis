@@ -182,10 +182,10 @@ dui = $.extend(true, dui, {
     addWidget: function (tpl, data, style, wid, view, hidden) {
 		var isSelectWidget = (wid === undefined);
 		var isViewExist    = (document.getElementById("duiview_"+view) != null);
-                var renderVisible  = data.renderVisible;
-                if (renderVisible) {
-                     delete data.renderVisible;
-                }
+        var renderVisible  = data.renderVisible;
+        if (renderVisible) {
+             delete data.renderVisible;
+        }
 
 		if (view === undefined) {
 			view = dui.activeView;
@@ -236,9 +236,9 @@ dui = $.extend(true, dui, {
             dui.views[view].widgets[widgetId] = {};
         }
 		
-        var $jWidgetId = $('#'+widgetId);
+        var $jWidget = $('#'+widgetId);
 		if (!style) {
-			style = dui.findFreePosition(view, widgetId, null, $jWidgetId.width(), $jWidgetId.height());
+			style = dui.findFreePosition(view, widgetId, null, $jWidget.width(), $jWidget.height());
 		}
 		
 		if(dui.views[view].widgets[widgetId].data !== undefined) {
@@ -256,19 +256,19 @@ dui = $.extend(true, dui, {
         }
 
         if (style) {
-            $jWidgetId.css(style);
+            $jWidget.css(style);
         }
 		
-	if (isSelectWidget) {
+	    if (isSelectWidget) {
             if (dui.binds.basic) {
                 dui.binds.basic._disable();
             }
             if (dui.binds.jqueryui) {
                 dui.binds.jqueryui._disable();
             }
-	}
+	    }
 
-        $jWidgetId.click(function (e) {
+        $jWidget.click(function (e) {
             //console.log("click "+widgetId+" isStealCss="+dui.isStealCss);
             if (!dui.isStealCss) {
 
@@ -804,7 +804,7 @@ dui = $.extend(true, dui, {
                     }
                 }
                 
-                do  {
+                do {
                     var wid_attr_ = wid_attr + ((instancesStart !== null) ? instancesStart : "");
                     var isCustomEdit = false;
 
