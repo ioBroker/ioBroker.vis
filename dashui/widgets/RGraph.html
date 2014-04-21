@@ -1,12 +1,12 @@
-<script src="widgets/RGraph/libraries/RGraph.common.core.js" ></script>
-<script src="widgets/RGraph/libraries/RGraph.common.effects.js" ></script>
-<script src="widgets/RGraph/libraries/RGraph.common.dynamic.js" ></script>
-<script src="widgets/RGraph/libraries/RGraph.common.tooltips.js" ></script>
-<script src="widgets/RGraph/libraries/RGraph.common.key.js" ></script>
-<script src="widgets/RGraph/libraries/RGraph.thermometer.js" ></script>
-<script src="widgets/RGraph/libraries/RGraph.gauge.js" ></script>
-<script src="widgets/RGraph/libraries/RGraph.bar.js" ></script>
-<script src="widgets/RGraph/libraries/RGraph.line.js" ></script>
+<script type="text/javascript" src="widgets/RGraph/js/RGraph.common.core.js"></script>
+<script type="text/javascript" src="widgets/RGraph/js/RGraph.common.effects.js"></script>
+<script type="text/javascript" src="widgets/RGraph/js/RGraph.common.dynamic.js"></script>
+<script type="text/javascript" src="widgets/RGraph/js/RGraph.common.tooltips.js"></script>
+<script type="text/javascript" src="widgets/RGraph/js/RGraph.common.key.js"></script>
+<script type="text/javascript" src="widgets/RGraph/js/RGraph.thermometer.js"></script>
+<script type="text/javascript" src="widgets/RGraph/js/RGraph.gauge.js"></script>
+<script type="text/javascript" src="widgets/RGraph/js/RGraph.bar.js"></script>
+<script type="text/javascript" src="widgets/RGraph/js/RGraph.line.js"></script>
 
 <script language="javascript">
     "use strict";
@@ -78,8 +78,8 @@
         RGraph: {
             // Register callback in dashUI
             init: function  () {
-                if (!dui.binds.RGraph.rgraphElements) {
-                    dui.binds.RGraph.rgraphElements = [];
+                if (!dui.binds.RGraph.regElements) {
+                    dui.binds.RGraph.regElements = [];
                     dui.registerOnChange (dui.binds.RGraph.onchange, null);
                     console.log("A");
                 }
@@ -87,9 +87,9 @@
 
             // Callback from DashUI if some object changed
             onchange: function (arg, objId, newState, isFromDevice, lastchange) {
-                if (dui.binds.RGraph.rgraphElements[objId]) {
-                    for (var i = 0, len = dui.binds.RGraph.rgraphElements[objId].length; i < len; i++) {
-                        var elem = document.getElementById (dui.binds.RGraph.rgraphElements[objId][i]);
+                if (dui.binds.RGraph.regElements[objId]) {
+                    for (var i = 0, len = dui.binds.RGraph.regElements[objId].length; i < len; i++) {
+                        var elem = document.getElementById (dui.binds.RGraph.regElements[objId][i]);
                         if (elem) {
                             if (elem.rgraphValueChange) {
                                 elem.rgraphValueChange (objId, newState, isFromDevice);
@@ -102,22 +102,22 @@
             registerIds: function (wid, objId) {
                 if (typeof objId == "object" || typeof objId == "array") {
                     for (var i = 0, len = objId.length; i < len; i++)
-                        if (objId[i] && (!dui.binds.RGraph.rgraphElements[objId[i]] || dui.binds.RGraph.rgraphElements[objId[i]].indexOf (wid) == -1)) {
-                            if (!dui.binds.RGraph.rgraphElements[objId[i]]) {
-                                dui.binds.RGraph.rgraphElements[objId[i]] = [wid];
+                        if (objId[i] && (!dui.binds.RGraph.regElements[objId[i]] || dui.binds.RGraph.regElements[objId[i]].indexOf (wid) == -1)) {
+                            if (!dui.binds.RGraph.regElements[objId[i]]) {
+                                dui.binds.RGraph.regElements[objId[i]] = [wid];
                             }
                             else {
-                                dui.binds.RGraph.rgraphElements[objId[i]].push (wid);
+                                dui.binds.RGraph.regElements[objId[i]].push (wid);
                             }
                         }
                 }
                 else
-                if (!dui.binds.RGraph.rgraphElements[objId] || dui.binds.RGraph.rgraphElements[objId].indexOf (wid) == -1) {
-                    if (!dui.binds.RGraph.rgraphElements[objId]) {
-                        dui.binds.RGraph.rgraphElements[objId] = [wid];
+                if (!dui.binds.RGraph.regElements[objId] || dui.binds.RGraph.regElements[objId].indexOf (wid) == -1) {
+                    if (!dui.binds.RGraph.regElements[objId]) {
+                        dui.binds.RGraph.regElements[objId] = [wid];
                     }
                     else {
-                        dui.binds.RGraph.rgraphElements[objId].push (wid);
+                        dui.binds.RGraph.regElements[objId].push (wid);
                     }
                 }
             },
