@@ -16,10 +16,11 @@
                     if (dui.urlParams["edit"] !== "") {
                         $($view).swipe({
                             swipeLeft: function () {
-                                dui.changeView(data["Left-nav_view"], {effect: "slide", options: {direction: "left", queue: false}, duration: $this.attr('duration')}, {effect: "slide", options: {direction: "right", queue: false}, duration: $this.attr('duration')}, true)
+
+                                dui.changeView(data['Left_nav_view'], {effect: data['Left-out_effect'], options: {direction: data['Left-out_eff_opt'], queue: false}, duration: $this.attr('duration')}, {effect:  data['Left-in_effect'], options: {direction:  data['Left-in_eff_opt'], queue: false}, duration: $this.attr('duration')}, true)
                             },
                             swipeRight: function () {
-                                dui.changeView(data["Right-nav_view"], {effect: "slide", options: {direction: "right", queue: false}, duration: $this.attr('duration')}, {effect: "slide", options: {direction: "left", queue: false}, duration: $this.attr('duration')}, true)
+                                dui.changeView(data['Right_nav_view'], {effect: data['Right-out_effect'], options: {direction: data['Right-out_eff_opt'], queue: false}, duration: $this.attr('duration')}, {effect: data['Right-in_effect'], options: {direction: data['Right-in_eff_opt'], queue: false}, duration: $this.attr('duration')}, true)
                             }
                         });
 
@@ -113,33 +114,22 @@
     });
 </script>
 
-<script type="text/ejs" id="tplswipe" class="dashui-tpl" data-dashui-set="swipe" data-dashui-name="swipe Navigation" data-dashui-attrs="Left-nav_view;Right-nav_view;duration">
+<script type="text/ejs" id="tplswipe" class="dashui-tpl" data-dashui-set="swipe" data-dashui-name="swipe Navigation" data-dashui-attrs="_hr;Left_nav_view;Left-in_effect[slide];Left-in_eff_opt[right];Left-out_effect[slide];Left-out_eff_opt[left];_hr;Right_nav_view;Right-in_effect[slide];Right-in_eff_opt[left];Right-out_effect[slide];Right-out_eff_opt[right];duration">
 
-  <div class = "dashui-widget <%== this.data.attr('class') %>" style="width: 90px; height: 60px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.swipe.swipe_nav(el,data) %>>
-    <div id="<%= this.data.attr('wid') %>_swipe"  class="dashui-widget-body"
-      Left-nav_view="<%= this.data.attr('Left-nav_view') %>" 
-      Right-nav_view="<%= this.data.attr('Right-nav_view') %>" 
-      duration="<%= this.data.attr('duration') %>" >
+  <div class = "dashui-widget <%== this.data.attr('class') %>" style="width: 100px; height: 60px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.swipe.swipe_nav(el,data) %>>
+    <div id="<%= this.data.attr('wid') %>_swipe"  class="dashui-widget-body">
 
       <%if (dui.urlParams["edit"] == "") {%>
-        <div class="dashui-widget-body" style="width: 70px; height: 40px; border: 1px solid #000; margin:10px 0px 0px 10px; ; background: #FF0000">
+        <div class="dashui-widget-body" style="width: 80px; height: 40px; border: 1px solid #000; margin:10px 0px 0px 10px; ; background: #FF0000">
             <label style="width:70px" >Swipe Navigation</label>
         </div>
       <% } %>          
     </div>
   </div>
 
-
-
-
-
-
-
-
-
-
-
 </script>
+
+
 <script type="text/ejs" id="tplkaru" class="dashui-tpl" data-dashui-set="swipe" data-dashui-name="Karusell" data-dashui-attrs="contains_view">
 
   <div class = "dashui-widget <%== this.data.attr('class') %>" style="width: 300px; height: 100px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.swipe.karu(el,data.attr('contains_view')) %>>
@@ -147,15 +137,5 @@
         <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
         </div>
   </div>
-
-
-
-
-
-
-
-
-
-
 
 </script>
