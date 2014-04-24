@@ -363,9 +363,13 @@ var dui = {
         dui.changeView(dui.activeView);
     },
     initViewObject: function () {
-        dui.views = {view1: {settings: {style: {}}, widgets: {}}};
-        dui.saveRemote();
-        window.location.href = './?edit';
+        if (confirm("no views found on server. create empty view?")) {
+            dui.views = {view1: {settings: {style: {}}, widgets: {}}};
+            dui.saveRemote();
+            window.location.href = './?edit';
+        } else {
+            window.location.reload();
+        }
     },
     renderView: function (view, noThemeChange, hidden) {
         //console.log("renderView("+view+","+noThemeChange+","+hidden+")");
