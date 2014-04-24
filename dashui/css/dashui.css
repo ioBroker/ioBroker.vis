@@ -114,6 +114,12 @@ button.ui-dialog-titlebar-close {
     margin-top: -14px !important;
 }
 
+div.dui-editor-dialog {
+    min-width: 450px !important;
+    max-width: 450px !important;
+}
+
+
 div.dui-editor-dialog div div button.ui-dialog-titlebar-close {
     margin-left: 1px !important;
     margin-top: -4px !important;
@@ -229,6 +235,8 @@ div#tabs {
 }
 
 div#dui_editor {
+    min-width: 450px !important;
+    max-width: 450px !important;
     overflow-y:hidden;
     oberflow-x:scroll;
 }
