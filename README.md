@@ -7,6 +7,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta83
+* (Hobbyquaker) reorganized CSS inspector, removed shorthand attributes
+* (smiling-Jack) editor position
+
 ### 0.9beta82
 * (Bluefox) prepare for new select dialog
 * (Bluefox) make dashui grunt-able
