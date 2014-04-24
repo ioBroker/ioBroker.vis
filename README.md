@@ -10,6 +10,8 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ### 0.9beta83
 * (Hobbyquaker) reorganized CSS inspector, removed shorthand attributes
 * (smiling-Jack) editor position
+* (smiling-Jack) swipe widget fixes and improvements
+
 
 ### 0.9beta82
 * (Bluefox) prepare for new select dialog
