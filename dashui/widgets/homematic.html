@@ -39,7 +39,7 @@ dui.binds.homematic = {
                 },
                 text: false
             }).click(function () {
-                alert("receipt "+jQuery(this).attr('data-hm-alarm'));
+                //alert("receipt "+jQuery(this).attr('data-hm-alarm'));
                 servConn._socket.emit("alarmReceipt", parseInt(jQuery(this).attr('data-hm-alarm'), 10));
                 jQuery(this).parent().parent().remove();
             }).show();
