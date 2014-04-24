@@ -1849,7 +1849,7 @@ dui = $.extend(true, dui, {
 
         $("#dui-editor-dialog-wrap")
             .css({
-                height: "calc(100% - 9px)",
+                height: "100%",
                 width: "auto",
                 left: 0,
                 position: "absolute",
@@ -1882,7 +1882,7 @@ dui = $.extend(true, dui, {
         $(".dui-editor-dialog")
             .wrapAll('<div id="dui-editor-dialog-wrap"></div>')
             .css({
-                height: "calc(100% - 9px)",
+                height: "100%",
                 width: "450px",
                 left: "auto",
                 position: "relative",
