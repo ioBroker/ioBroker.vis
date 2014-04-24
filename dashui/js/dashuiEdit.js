@@ -1794,7 +1794,8 @@ dui = $.extend(true, dui, {
         }
         $("#dui_editor")
             .dialog("option", "resizable", false)
-            .dialog("option", "draggable", false);
+            .dialog("option", "draggable", false)
+            .css("height", "calc(100% - 58px)");
 
         $(".dui-editor-dialog").css({
             height: "calc(100% - 9px)",
@@ -1812,7 +1813,8 @@ dui = $.extend(true, dui, {
         }
         $("#dui_editor")
             .dialog("option", "resizable", false)
-            .dialog("option", "draggable", false);
+            .dialog("option", "draggable", false)
+            .css("height", "calc(100% - 58px)");
         $(".dui-editor-dialog").css({
             height: "calc(100% - 9px)",
             width: "450px",
@@ -1830,7 +1832,8 @@ dui = $.extend(true, dui, {
         }
         $("#dui_editor")
             .dialog("option", "resizable", false)
-            .dialog("option", "draggable", false);
+            .dialog("option", "draggable", false)
+            .css("height", "calc(100% - 58px)");
 
         $(".dui-editor-dialog")
             .wrapAll('<div id="dui-editor-dialog-wrap"></div>')
@@ -1873,7 +1876,8 @@ dui = $.extend(true, dui, {
         }
         $("#dui_editor")
             .dialog("option", "resizable", false)
-            .dialog("option", "draggable", false);
+            .dialog("option", "draggable", false)
+            .css("height", "calc(100% - 58px)");
 
         $(".dui-editor-dialog")
             .wrapAll('<div id="dui-editor-dialog-wrap"></div>')
@@ -1916,7 +1920,8 @@ dui = $.extend(true, dui, {
         }
         $("#dui_editor")
             .dialog("option", "resizable", true)
-            .dialog("option", "draggable", true);
+            .dialog("option", "draggable", true)
+            .css("height", "calc(100% - 58px)");
 
         $(".dui-editor-dialog").css({
             position: "absolute",
