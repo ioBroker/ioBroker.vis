@@ -44,6 +44,10 @@ dui = $.extend(true, dui, {
             dui.renderView(val);
             dui.changeView(val);
             window.location.reload();
+        } else if (val == "") {
+            alert("please enter a name for the view");
+        } else if (dui.views[val] !== undefined) {
+            alert("a view with name "+val+" already exists");
         }
     },
     delView: function () {
@@ -69,8 +73,14 @@ dui = $.extend(true, dui, {
                 dui.changeView(val);
                 window.location.reload();
             });
-
+        } else if (val == "") {
+            alert("please enter a name for the new view");
+        } else if (dui.views[val] !== undefined) {
+            alert("a view with name "+val+" already exists");
         }
+    },
+    exportView: function () {
+
     },
     checkNewView: function () {
         if ($("#new_view_name").val() == "") {
@@ -1514,6 +1524,8 @@ dui = $.extend(true, dui, {
             var $this = $(this);
             var attr = $this.attr("id").slice(8);
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
+
+            // TODO saveRemote really necessary here?
             dui.saveRemote();
             dui.reRenderWidget(dui.activeWidget);
         });
