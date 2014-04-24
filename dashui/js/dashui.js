@@ -804,13 +804,19 @@ var dui = {
             }            
         });       
     },
+    saveRemoteActive: false,
     saveRemote: function (cb) {
+        if (dui.saveRemoteActive) {
+            return;
+        }
+        dui.saveRemoteActive = true;
         // Sync widget before it will be saved
         if (dui.activeWidget && dui.activeWidget.indexOf('_') != -1 && dui.syncWidget) {
             dui.syncWidget(dui.activeWidget);
         }
         
         dui.conn.writeFile("dashui-views.json", dui.views, function () {
+            dui.saveRemoteActive = false;
             if (cb) {
                 cb();
             }
