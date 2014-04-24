@@ -807,6 +807,9 @@ var dui = {
     saveRemoteActive: false,
     saveRemote: function (cb) {
         if (dui.saveRemoteActive) {
+            setTimeout(function (_cb) {
+                dui.saveRemote(_cb);
+            }, 1000, cb);
             return;
         }
         dui.saveRemoteActive = true;
