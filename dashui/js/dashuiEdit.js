@@ -1243,6 +1243,7 @@ dui = $.extend(true, dui, {
                     }
                     dui.views[dui.activeView].settings.style['background_class'] = newStyle;
                     $("#duiview_" + dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
+                    dui.saveRemote();
                 }
             });
         }
