@@ -8,8 +8,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ## Changelog
 
 ### 0.9beta84
-* (Hobbyquaker) mehrfaches gleichzeitiges Speichern unterbunden. Sollte Bug beheben der die dashui-views.json zerstört
+* (Hobbyquaker) Fix mehrfaches gleichzeitiges Speichern unterbunden. Sollte Bug beheben der die dashui-views.json zerstört
 * (Hobbyquaker) export und import von Views
+* (Hobbyquaker) Fix Hintergrundklasse wurde nicht gespeichert
+* (Hobbyquaker) Fix CSS steal
 
 ### 0.9beta83
 * (Hobbyquaker) reorganized CSS inspector, removed shorthand attributes
