@@ -31,6 +31,7 @@ dui = $.extend(true, dui, {
     activeWidget:       "",
     isStealCss:         false,
     gridWidth:          undefined,
+    editorPos:          "free",
 
     renameView: function () {
         var val = $("#new_name").val();
@@ -717,6 +718,8 @@ dui = $.extend(true, dui, {
         if (id === "none") {
             dui.clearWidgetHelper();
             $(".dashui-widget-tools").hide();
+            $("#view_inspector").show();
+            dui.activeWidget = null;
             return false;
         }
 
@@ -731,6 +734,8 @@ dui = $.extend(true, dui, {
 
         // Inspector aufbauen
         $(".dashui-widget-tools").show();
+        $("#view_inspector").hide();
+
 
         $(".dashui-inspect-widget").each(function () {
             var $this = $(this);
@@ -972,9 +977,10 @@ dui = $.extend(true, dui, {
         $(".dashui-inspect-css").each(function () {
             var attr = $(this).attr("id").slice(12)
             var css = $this.css(attr);
-            //console.log(attr + " " + css);
-            if (attr == "background") {
-                // TODO - überflüssige Attribute löschen für Android-Browser
+
+            // combine shorthand top/right/bottom/left
+            if (attr.match(/border-/) || attr.match(/padding/)) {
+                css = dui.combineCssShorthand($this, attr);
             }
             $(this).val(css);
         });
@@ -1132,7 +1138,7 @@ dui = $.extend(true, dui, {
 
         // Init background selector
         if (dui.styleSelect) {
-            dui.styleSelect.Show({ width: 180,
+            dui.styleSelect.Show({ width: 152,
                 name:       "inspect_view_bkg_def",
                 filterName: 'background',
                 //filterFile: "backgrounds.css",
@@ -1266,6 +1272,9 @@ dui = $.extend(true, dui, {
             close: function () {
                 dui.saveRemote();
                 location.href = "./#"+dui.activeView;
+            },
+            open: function () {
+                dui.editPosition()
             }
         });
         if ($().dialogExtend) {
@@ -1273,7 +1282,20 @@ dui = $.extend(true, dui, {
                 "minimizable" : true,
                 "icons" : { "maximize" : "ui-icon-arrow-4-diag" },
                 "minimize" : function (evt) {
-                    $("#dui_editor").dialog( "option", "position", { my: "right top", at: "right top", of: window });
+                    $("#dui_editor_mode").hide();
+                    if (dui.editorPos == "right" || dui.editorPos == "free") {
+                        $("#dui_editor").dialog("option", "position", { my: "right top", at: "right top", of: window });
+                    }
+                    if (dui.editorPos == "left") {
+                        $("#dui_editor").dialog("option", "position", { my: "left top", at: "left top", of: window });
+                    }
+                },
+                restore: function () {
+                    $("#dui_editor_mode").show();
+                    $(".dui-editor-dialog").css({
+                        width: "450px",
+                        height: "610px"
+                    })
                 }
             });
         }
@@ -1291,9 +1313,9 @@ dui = $.extend(true, dui, {
             dui.translateAll (dui.language);
         });
 
-        $("input.dashui-editor").each(function () {
-            $(this).button();
-        });
+        $("input.dashui-editor").button();
+        $("button.dashui-editor").button();
+
         if ($().multiselect) {
             $("select.dashui-editor").each(function () {
                 $(this).multiselect({
@@ -1475,9 +1497,13 @@ dui = $.extend(true, dui, {
         });
         $("#select_active_widget").change(function () {
             var widgetId = $(this).val();
-            console.log("select_active_widget change "+widgetId);
+            //console.log("select_active_widget change "+widgetId);
             dui.inspectWidget(widgetId);
             dui.actionNewWidget(widgetId);
+        });
+
+        $("#css_view_inspector").click(function () {
+            dui.inspectWidget("none");
         });
 
         $("#screen_size_x").change(function () {
@@ -1606,6 +1632,211 @@ dui = $.extend(true, dui, {
 			dui.fillWizard ();
 		}		
  	},
+    editPosition: function () {
+
+    var save_posi = storage.get("Dashui_Editor_Position") || ["free","Free"];
+    dui.editorPos = save_posi[0];
+
+    $(".dui-editor-dialog .ui-dialog-titlebar-buttonpane")
+        .append('<div id="dui_editor_mode"></div>')
+        .css({"z-index": 100});
+
+    $("#dui_editor_mode").xs_combo({
+//          addcssButton: "xs_button_editor_mode",
+//          addcssMenu: "xs_menu_editor_mode",
+//          addcssFocus: "xs_focus_editor_mode",
+        cssText: "xs_text_editor_mode",
+        time: 750,
+        val: dui.translate(save_posi[1]),
+        data: [
+            dui.translate("Links"),
+            dui.translate("Rechts"),
+            dui.translate("Links auto"),
+            dui.translate("Rechts auto"),
+            dui.translate("Free")
+        ]
+    });
+    $("#dui_editor_mode").change(function () {
+        var val = $("#dui_editor_mode").xs_combo();
+
+        if (val == dui.translate("Links")) {
+            left();
+            dui.editorPos = "left";
+            $(".ui-dialog-titlebar-minimize").show();
+            storage.set("Dashui_Editor_Position", ["left", val]);
+        }
+        if (val == dui.translate("Rechts")) {
+            right();
+            dui.editorPos = "right";
+            $(".ui-dialog-titlebar-minimize").show();
+            storage.set("Dashui_Editor_Position", ["right", val]);
+        }
+        if (val == dui.translate("Links auto")) {
+            left_ah();
+            dui.editorPos = "left_ah";
+            $(".ui-dialog-titlebar-minimize").hide();
+            storage.set("Dashui_Editor_Position", ["left_ah", val]);
+        }
+        if (val == dui.translate("Rechts auto")) {
+            right_ah();
+            dui.editorPos = "right_ah";
+            $(".ui-dialog-titlebar-minimize").hide();
+            storage.set("Dashui_Editor_Position", ["right_ah", val]);
+        }
+        if (val == dui.translate("Free")) {
+            free();
+            dui.editorPos = "free";
+            $(".ui-dialog-titlebar-minimize").show();
+            storage.set("Dashui_Editor_Position", ["free", val]);
+        }
+    });
+
+
+    var _save_posi = save_posi[0] + "()";
+    eval(_save_posi);
+
+    function left() {
+        if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
+            $(".dui-editor-dialog").unwrap();
+        }
+        $("#dui_editor")
+            .dialog("option", "resizable", false)
+            .dialog("option", "draggable", false);
+
+        $(".dui-editor-dialog").css({
+            height: "calc(100% - 9px)",
+            width: "450px",
+            left: 0,
+            position: "absolute",
+            right: "auto",
+            top: 0
+        })
+    }
+
+    function right() {
+        if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
+            $(".dui-editor-dialog").unwrap();
+        }
+        $("#dui_editor")
+            .dialog("option", "resizable", false)
+            .dialog("option", "draggable", false);
+        $(".dui-editor-dialog").css({
+            height: "calc(100% - 9px)",
+            width: "450px",
+            position: "absolute",
+            right: 0,
+            left: "auto",
+            top: 0
+        })
+    }
+
+    function left_ah() {
+        var delay;
+        if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
+            $(".dui-editor-dialog").unwrap();
+        }
+        $("#dui_editor")
+            .dialog("option", "resizable", false)
+            .dialog("option", "draggable", false);
+
+        $(".dui-editor-dialog")
+            .wrapAll('<div id="dui-editor-dialog-wrap"></div>')
+            .css({
+                height: "calc(100% - 9px)",
+                width: "450px",
+                left: 0,
+                position: "relative",
+                right: "auto",
+                top: 0
+            })
+            .hide("slide", {direction: "left"});
+
+        $("#dui-editor-dialog-wrap")
+            .css({
+                height: "calc(100% - 9px)",
+                width: "auto",
+                left: 0,
+                position: "absolute",
+                right: "auto",
+                top: 0,
+                minWidth: "20px"
+            })
+            .mouseenter(function () {
+                clearTimeout(delay);
+                $(".dui-editor-dialog").show("slide", {direction: "left"})
+            })
+            .mouseleave(function () {
+                delay = setTimeout(function () {
+                    $(".dui-editor-dialog").hide("slide", {direction: "left"})
+                }, 750);
+            })
+
+    }
+
+    function right_ah() {
+        var delay;
+        if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
+            $(".dui-editor-dialog").unwrap();
+        }
+        $("#dui_editor")
+            .dialog("option", "resizable", false)
+            .dialog("option", "draggable", false);
+
+        $(".dui-editor-dialog")
+            .wrapAll('<div id="dui-editor-dialog-wrap"></div>')
+            .css({
+                height: "calc(100% - 9px)",
+                width: "450px",
+                left: "auto",
+                position: "relative",
+                right: 0,
+                top: 0
+
+            })
+            .hide("slide", {direction: "right"});
+
+        $("#dui-editor-dialog-wrap")
+            .css({
+                height: "calc(100% - 9px)",
+                width: "auto",
+                left: "auto",
+                position: "absolute",
+                right: 0,
+                top: 0,
+                minWidth: "20px"
+            })
+            .mouseenter(function () {
+                clearTimeout(delay);
+                $(".dui-editor-dialog").show("slide", {direction: "right"})
+            })
+            .mouseleave(function () {
+                delay = setTimeout(function () {
+                    $(".dui-editor-dialog").hide("slide", {direction: "right"})
+                }, 750);
+            })
+    }
+
+    function free() {
+
+        if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
+            $(".dui-editor-dialog").unwrap();
+        }
+        $("#dui_editor")
+            .dialog("option", "resizable", true)
+            .dialog("option", "draggable", true);
+
+        $(".dui-editor-dialog").css({
+            position: "absolute",
+            right: 0,
+            left: "auto",
+            top: 0,
+            width: "450px",
+            height: "610px"
+        })
+
+    }
+
+},
     refreshWidgetSelect: function () {
         var $select_tpl = $("#select_tpl");
         $select_tpl.html("");
@@ -1687,11 +1918,14 @@ dui = $.extend(true, dui, {
 		return true;
 	},
 	actionNewWidget: function (id) {
-		var jID = $('#'+id);
-		var s = jID.position ();
-		s['width']  = jID.width();
-		s['height'] = jID.height();
-		s['radius'] = parseInt(jID.css('border-radius'));
+        if (id == "none") {
+            return;
+        }
+		var $jWidget = $('#'+id);
+		var s = $jWidget.position ();
+		s['width']  = $jWidget.width();
+		s['height'] = $jWidget.height();
+		s['radius'] = parseInt($jWidget.css('border-radius'));
 		var _css1 = {
 			left:        s.left - 3.5,
 			top:         s.top  - 3.5,
@@ -1894,6 +2128,33 @@ dui = $.extend(true, dui, {
 
 
         }
+    },
+    combineCssShorthand: function (that, attr) {
+        var css;
+        var parts = attr.split("-");
+        var baseAttr = parts[0];
+        if (attr == "border-radius") {
+            // TODO second attribute
+            var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-left"));
+            var cssRight = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-right"));
+            var cssBottom = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-right"));
+            var cssLeft = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-left"));
+        } else {
+            var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top"));
+            var cssRight = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-right"));
+            var cssBottom = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom"));
+            var cssLeft = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-left"));
+        }
+        if (cssLeft == cssRight && cssLeft == cssTop && cssLeft == cssBottom) {
+            css = cssLeft;
+        } else if (cssTop == cssBottom && cssRight == cssLeft) {
+            css = cssTop + " " + cssLeft;
+        } else if (cssRight == cssLeft) {
+            css = cssTop + " " + cssLeft + " " + cssBottom;
+        } else {
+            css = cssTop + " " + cssRight + " " + cssBottom + " " + cssLeft;
+        }
+        return css;
     }
 });
 

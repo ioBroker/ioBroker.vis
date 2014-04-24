@@ -522,3 +522,33 @@ div#dui_editor {
     vertical-align: middle;
     cursor: pointer;
 }
+
+.css-inspector-heading {
+    text-align: center;
+    font-weight: bold;
+    padding-top: 6px;
+}
+
+#dui_editor_mode {
+    height: 27px;
+    width: 130px !important;
+    float: right;
+    left: -1px;
+    top: -4px;
+    position: relative;
+
+}
+input.xs_text_editor_mode {
+    color: #fff;
+    text-align: center;
+}
+
+p.xs_text_editor_mode {
+    border: 1px solid rgba(0,0,0,0);
+    padding-top: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 0px;
+    margin: 0;
+    margin-bottom: 2px;
+}

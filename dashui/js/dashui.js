@@ -363,7 +363,7 @@ var dui = {
         dui.changeView(dui.activeView);
     },
     initViewObject: function () {
-        if (confirm("no views found on server. create empty view?")) {
+        if (confirm("no views found on server. create new dashui-views.json?")) {
             dui.views = {view1: {settings: {style: {}}, widgets: {}}};
             dui.saveRemote();
             window.location.href = './?edit';
