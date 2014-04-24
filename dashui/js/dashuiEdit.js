@@ -80,6 +80,57 @@ dui = $.extend(true, dui, {
         }
     },
     exportView: function () {
+        var exportView = $.extend(true, {}, dui.views[dui.activeView]);
+        // Allen Widgets eine neue ID verpassen...
+        var num = 1;
+        var wid;
+        for (var widget in exportView.widgets) {
+            wid = "e" + (("0000" + num).slice(-5));
+            num += 1;
+            exportView.widgets[wid] = exportView.widgets[widget];
+            delete exportView.widgets[widget];
+        }
+        $("#textarea_export_view").html(JSON.stringify(exportView, null, "  "));
+        $("#dialog_export_view").dialog({
+            autoOpen: true,
+            width: 800,
+            height: 600,
+            modal: true,
+            open: function (event, ui) {
+                $('[aria-describedby="dialog_export_view"]').css('z-index',1002);
+                $(".ui-widget-overlay").css('z-index', 1001);
+            }
+        });
+    },
+    importView: function () {
+        var name = $("#name_import_view").val();
+        if (name == "") {
+            alert("please enter a name for the view");
+            return;
+        }
+        if (dui.views[name] !== undefined) {
+            alert("a view with this name already exists");
+            return;
+        }
+        try {
+            var text = $("#textarea_import_view").val();
+            var importView = JSON.parse(text);
+        } catch (e) {
+            alert("invalid JSON\n\n"+e);
+            return;
+        }
+        dui.views[name] = importView;
+        // Allen Widgets eine neue ID verpassen...
+        for (var widget in dui.views[name].widgets) {
+            dui.views[name].widgets[dui.nextWidget()] = dui.views[name].widgets[widget];
+            delete dui.views[name].widgets[widget];
+        }
+        dui.saveRemote(function () {
+            dui.renderView(name);
+            dui.changeView(name);
+            window.location.reload();
+        });
+
 
     },
     checkNewView: function () {
@@ -1466,6 +1517,24 @@ dui = $.extend(true, dui, {
 
 
         // Button Click Handler
+
+        $("#export_view").click(dui.exportView);
+
+        $("#import_view").click(function () {
+            $("#textarea_import_view").html("");
+            $("#dialog_import_view").dialog({
+                autoOpen: true,
+                width: 800,
+                height: 600,
+                modal: true,
+                open: function (event, ui) {
+                    $('[aria-describedby="dialog_import_view"]').css('z-index',1002);
+                    $('.ui-widget-overlay').css('z-index',1001);
+                }
+            });
+        });
+
+        $("#start_import_view").click(dui.importView);
 
 		$("#widget_doc").button({icons: {primary: "ui-icon ui-icon-script"}}).click(function () {
             var tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;

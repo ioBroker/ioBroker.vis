@@ -213,6 +213,10 @@
                     </select></td></tr>
                 </table>
 
+                <h4 class="translate">Import / Export View</h4>
+                <button class="dashui-editor translateB" id="export_view">export view</button>
+                <button class="dashui-editor translateB" id="import_view">import view</button>
+
             </div>
             <div class="dashui-edit-tab" id="tabs-3">
                 <div id="view_inspector">
@@ -687,7 +691,7 @@
                 <p class="translate">license1</p>
                 </p>
 
-                <h4>Copyright &copy; 2013 <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a></h4>
+                <h4>Copyright &copy; 2013, 2014 <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a></h4>
                 <p class="translate">MIT Lizenz (MIT)</p>
                 <p class="translate">license2</p>
                 <p class="translate">license3</p>
@@ -696,6 +700,15 @@
             </div>
         </div>
         <div style="display: none" id="uploadPreview"></div>
+        <div style="display: none;" id="dialog_export_view" title="export view">
+            <textarea rows="60" cols="160" style="width: 100%; height: 100%; font-size: 11px;" id="textarea_export_view"></textarea>
+        </div>
+        <div style="display: none;" id="dialog_import_view" title="import view">
+            <textarea rows="50" cols="160" style="width: 100%; height: calc(100% - 40px); font-size: 11px;"  id="textarea_import_view"></textarea>
+            <br/>
+            <input type="text" id="name_import_view">
+            <button id="start_import_view">import</button>
+        </div>
     </div>
 
 </body>
