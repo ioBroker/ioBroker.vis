@@ -2386,7 +2386,11 @@ dui = $.extend(true, dui, {
             $(".dashui-steal-css").each(function () {
                 if ($(this).attr("checked")) {
                     var cssAttribute = $(this).attr("data-dashui-steal");
-                    var val = $(src).css(cssAttribute);
+                    if (cssAttribute.match(/border-/) || cssAttribute.match(/padding/)) {
+                        var val = dui.combineCssShorthand($(src), cssAttribute);
+                    } else {
+                        var val = $(src).css(cssAttribute);
+                    }
                     $(target).css(cssAttribute, val);
                     dui.views[dui.activeView].widgets[dui.activeWidget].style[cssAttribute] = val;
                 }
@@ -2407,6 +2411,7 @@ dui = $.extend(true, dui, {
         var css;
         var parts = attr.split("-");
         var baseAttr = parts[0];
+
         if (attr == "border-radius") {
             // TODO second attribute
             var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-left"));
