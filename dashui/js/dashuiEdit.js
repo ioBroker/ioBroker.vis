@@ -1279,6 +1279,7 @@ dui = $.extend(true, dui, {
     changeViewEdit: function (view) {
 
         dui.undoHistory = [$.extend(true, {}, dui.views[dui.activeView])];
+        $("#button_undo").addClass("ui-state-disabled").removeClass("ui-state-hover");
 
         // Load meta data if not yet loaded
         var isMetaLoaded = false;
