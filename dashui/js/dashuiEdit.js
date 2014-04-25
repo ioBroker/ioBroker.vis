@@ -2125,7 +2125,7 @@ dui = $.extend(true, dui, {
 	// Find free place for new widget
 	findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
 		var editPos = $('.ui-dialog:first').position();
-		field = $.extend ({x: 0, y: 0, width: editPos.left}, field);
+		field = $.extend({x: 0, y: 0, width: editPos.left}, field);
 		widgetWidth  = (widgetWidth  || 60);
 		widgetHeight = (widgetHeight || 60);
 		if (widgetWidth > field.width) {
@@ -2359,11 +2359,11 @@ dui = $.extend(true, dui, {
 
                 if (isSelected && !dui.isStealCss) {
                     dui.stealCssMode();
-                } else {
-
                 }
-                e.stopPropagation();
 
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             });
         })
     },
