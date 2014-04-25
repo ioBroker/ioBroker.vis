@@ -356,14 +356,14 @@ var dui = {
 
         // EDIT mode
         if (dui.urlParams["edit"] === "") {
-            dui.editInitNext ();
+            dui.editInitNext();
         }
         this.initialized = true;
         // If this function called earlier, it makes problems under FireFox.
         dui.changeView(dui.activeView);
     },
     initViewObject: function () {
-        if (confirm("no views found on server. create new dashui-views.json?")) {
+        if (confirm("no views found on server.\nCreate new dashui-views.json?")) {
             dui.views = {view1: {settings: {style: {}}, widgets: {}}};
             dui.saveRemote();
             window.location.href = './?edit';
