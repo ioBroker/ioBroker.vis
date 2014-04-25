@@ -599,11 +599,29 @@ var dui = {
             // If edit mode, bind on click event to open this widget in edit dialog
             if (dui.urlParams["edit"] === "") {
                 $("#" + id).click(function (e) {
-                    if (dui.activeWidget != id) {
-                        dui.inspectWidget(id);
+
+                    if (e.shiftKey) {
+                        if (dui.activeWidget && dui.activeWidget != "none" && dui.activeWidget != id) {
+                            if ($("#widget_multi_helper_"+id).html()) {
+                                $("#widget_multi_helper_"+id).remove();
+                                dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(id), 1);
+                            } else {
+                                dui.inspectWidgetMulti(id);
+                            }
+
+                        } else {
+                            if (dui.activeWidget != id) {
+                                dui.inspectWidget(id);
+                            }
+                        }
+                    } else {
+                        if (dui.activeWidget != id) {
+                            dui.inspectWidget(id);
+                        }
                     }
 
                     e.preventDefault();
+                    e.stopPropagation();
                     return false;
                 });
 

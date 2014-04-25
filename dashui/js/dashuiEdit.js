@@ -25,14 +25,15 @@
 "use strict";
 
 dui = $.extend(true, dui, {
-    editVersion:        '0.9beta85',
-    toolbox:            $("#dui_editor"),
-    selectView:         $("#select_view"),
-    activeWidget:       "",
-    isStealCss:         false,
-    gridWidth:          undefined,
-    editorPos:          "free",
-    undoHistoryMaxLength: 50,
+    editVersion:            '0.9beta85',
+    toolbox:                $("#dui_editor"),
+    selectView:             $("#select_view"),
+    activeWidget:           "",
+    isStealCss:             false,
+    gridWidth:              undefined,
+    editorPos:              "free",
+    undoHistoryMaxLength:   50,
+    multiSelectedWidgets:   [],
 
     renameView: function () {
         var val = $("#new_name").val();
@@ -243,6 +244,7 @@ dui = $.extend(true, dui, {
 		dui.inspectWidget("none");
     },
     addWidget: function (tpl, data, style, wid, view, hidden) {
+        //console.log("addWidget "+wid);
 		var isSelectWidget = (wid === undefined);
 		var isViewExist    = (document.getElementById("duiview_"+view) != null);
         var renderVisible  = data.renderVisible;
@@ -337,10 +339,26 @@ dui = $.extend(true, dui, {
         $jWidget.click(function (e) {
             //console.log("click "+widgetId+" isStealCss="+dui.isStealCss);
             if (!dui.isStealCss) {
+                if (e.shiftKey) {
+                    if (dui.activeWidget && dui.activeWidget != "none" && dui.activeWidget != widgetId) {
+                        if ($("#widget_multi_helper_"+widgetId).html()) {
+                            $("#widget_multi_helper_"+widgetId).remove();
+                            dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(widgetId), 1);
+                        } else {
+                            dui.inspectWidgetMulti(id);
+                        }} else {
+                        if (dui.activeWidget != widgetId) {
+                            dui.inspectWidget(widgetId);
+                        }
+                    }
+                } else {
+                    if (dui.activeWidget != widgetId) {
+                        dui.inspectWidget(widgetId);
+                    }
+                }
 
                 e.preventDefault();
                 e.stopPropagation();
-                dui.inspectWidget(widgetId);
                 return false;
             }
         });
@@ -827,9 +845,34 @@ dui = $.extend(true, dui, {
             $(this).trigger('change');
         })*/;
     },
+    inspectWidgetMulti: function (id) {
+        var $this = $("#"+id);
+        var pos = $this.position();
+        // May be bug?
+        if (pos.left == 0 && pos.top == 0) {
+            pos.left = $this[0].style.left;
+            pos.top  = $this[0].style.top;
+            if (typeof pos.left == 'string') {
+                pos.left = parseInt(pos.left.replace('px', ''), 10);
+            }
+            if (typeof pos.top == 'string') {
+                pos.top = parseInt(pos.top.replace('px', ''), 10);
+            }
+        }
+
+        dui.multiSelectedWidgets.push(id);
+
+        $("#dui_container").append('<div id="widget_multi_helper_'+id+'" class="widget_multi_helper"><div class="widget_multi_inner_helper"></div></div>');
+
+        $("#widget_multi_helper_"+id).css({left: pos.left - 2, top: pos.top - 2, height: $this.outerHeight() + 2, width: $this.outerWidth()  + 2}).show();
+
+    },
     inspectWidget: function (id) {
 
         if (dui.isStealCss) { return false; }
+
+        $(".widget_multi_helper").remove();
+        dui.multiSelectedWidgets = [];
 
         $("#select_active_widget").find("option[value='"+id+"']").prop("selected", true);
         if ($().multiselect) {
@@ -837,7 +880,10 @@ dui = $.extend(true, dui, {
         }
 
         // Alle Widgets de-selektieren und Interaktionen entfernen
-        $(".dashui-widget").each(function () { $(this).removeClass("dashui-widget-edit");
+        $(".dashui-widget").each(function () {
+
+            $(this).removeClass("dashui-widget-edit");
+
             if ($(this).hasClass("ui-draggable")) {
                 try {
                     $(this).draggable("destroy");
@@ -845,6 +891,7 @@ dui = $.extend(true, dui, {
                     console.log("inspectWidget "+id+" "+e)
                 }
             }
+
             if ($(this).hasClass("ui-resizable")) {
                 try {
                     $(this).resizable("destroy");
@@ -1240,21 +1287,20 @@ dui = $.extend(true, dui, {
 
             $this.css({"left": x, "top": y});
         }
-		var pos = $this.position ();
+		var pos = $this.position();
         // May be bug?
         if (pos.left == 0 && pos.top == 0) {
             pos.left = $this[0].style.left;
             pos.top  = $this[0].style.top;
             if (typeof pos.left == 'string') {
-                pos.left = parseInt (pos.left.replace('px', ''));
+                pos.left = parseInt(pos.left.replace('px', ''), 10);
             }
             if (typeof pos.top == 'string') {
-                pos.top = parseInt (pos.top.replace('px', ''));
+                pos.top = parseInt(pos.top.replace('px', ''), 10);
             }
-
         }
-		var w = $this.width ();
-		var h = $this.height ();
+		var w = $this.width();
+		var h = $this.height();
         $("#widget_helper").css({left: pos.left - 2, top:  pos.top - 2,  height: $this.outerHeight() + 2, width: $this.outerWidth()  + 2}).show();
 
         // User interaction
@@ -1362,7 +1408,6 @@ dui = $.extend(true, dui, {
             var $this = $(this);
             var attr = $this.attr("id").slice(17);
             var css = $("#duiview_"+dui.activeView).css(attr);
-            console.log(attr + " " + css);
             $this.val(css);
         });
 
@@ -1380,6 +1425,7 @@ dui = $.extend(true, dui, {
         }
     },
     draggable: function (obj) {
+        var origX, origY;
         var draggableOptions = {
             cancel: false,
             stop: function (event, ui) {
@@ -1391,10 +1437,42 @@ dui = $.extend(true, dui, {
                 }
                 dui.views[dui.activeView].widgets[widget].style.left = ui.position.left;
                 dui.views[dui.activeView].widgets[widget].style.top = ui.position.top;
+
+                for (var i = 0; i < dui.multiSelectedWidgets.length; i++) {
+                    var mid = dui.multiSelectedWidgets[i]
+                    var pos = $("#"+mid).position();
+                    if (!dui.views[dui.activeView].widgets[mid].style) {
+                        dui.views[dui.activeView].widgets[mid].style = {};
+                    }
+                    dui.views[dui.activeView].widgets[mid].style.left = pos.left;
+                    dui.views[dui.activeView].widgets[mid].style.top = pos.top;
+                }
+
                 dui.save();
 
             },
+            start: function (event, ui) {
+                origX = ui.position.left;
+                origY = ui.position.top;
+            },
             drag: function (event, ui) {
+
+                var moveX = ui.position.left - origX;
+                var moveY = ui.position.top - origY;
+
+                origX = ui.position.left;
+                origY = ui.position.top;
+
+                for (var i = 0; i < dui.multiSelectedWidgets.length; i++) {
+                    var $mWidget = $("#"+dui.multiSelectedWidgets[i]);
+                    var pos = $mWidget.position();
+                    var x = pos.left + moveX;
+                    var y = pos.top + moveY;
+                    $mWidget.css("left", x + "px");
+                    $mWidget.css("top", y + "px");
+                    $("#widget_multi_helper_"+dui.multiSelectedWidgets[i]).css({left: x - 2, top: y - 2});
+                }
+
                 $("#widget_helper").css({left: ui.position.left - 2, top: ui.position.top - 2});
             }
         };
@@ -1437,6 +1515,8 @@ dui = $.extend(true, dui, {
     },
     clearWidgetHelper: function () {
         $("#widget_helper").hide();
+        $(".widget_multi_helper").remove();
+        dui.multiSelectedWidgets = [];
     },
     editInit: function () {
         $(".dashui-version").html(dui.version);
@@ -2165,7 +2245,7 @@ dui = $.extend(true, dui, {
 			css(_css2).
 			animate(_css1, 1500, 'swing', function () {
 				$(this).remove();
-			}).click (function () {
+			}).click(function () {
 				$(this).stop ().remove ();
 			});
 
