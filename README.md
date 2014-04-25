@@ -7,6 +7,11 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta86
+* (Hobbyquaker) Mehrere Widgets auf einmal selektieren (Shift-Click) und gemeinsames Verschieben
+* (Hobbyquaker) Fix Undo
+* (Hobbyquaker) Fix View CSS Inspector
+
 ### 0.9beta85
 * (Hobbyquaker) Undo-Funktion über Button und ctrl-z bzw cmd-z
 
