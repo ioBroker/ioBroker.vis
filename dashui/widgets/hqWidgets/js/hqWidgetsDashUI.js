@@ -26,8 +26,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                     window.alert ("The versions of hqWidgets.js and hqWidgets.html are different. Expected version of hqWidgets.js is " +dui.binds.hqWidgetsExt.version);
                 }
                 
-                                // Why this does not work?
-                /*homematic.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
+                // Why this does not work?
+                /*localData.uiState.bind("change", function( e, attr, how, newVal, oldVal ) {
                     if (how != "set") 
                         return;
                     
@@ -36,8 +36,8 @@ if ((typeof hqWidgets !== 'undefined')) {
                     var i = attr.indexOf (".");
                     if (i != -1)
                         attr = attr.substring (0, i);
-                    if (homematic.uiState["_" + attr]["Certain"])
-                        dui.binds.hqWidgetsExt.hqMonitor (this, attr, homematic.uiState["_" + attr]["Value"], true, homematic.uiState["_" + attr]["Timestamp"]);
+                    if (localData.uiState["_" + attr]["Certain"])
+                        dui.binds.hqWidgetsExt.hqMonitor (this, attr, localData.uiState["_" + attr]["Value"], true, localData.uiState["_" + attr]["Timestamp"]);
                 });*/
                 dui.registerOnChange (dui.binds.hqWidgetsExt.hqMonitor, this);
                 
@@ -257,7 +257,8 @@ if ((typeof hqWidgets !== 'undefined')) {
 										localData.metaObjects [opt['hm_id']]["TypeName"] !== undefined &&
 										localData.metaObjects [opt['hm_id']]["TypeName"] == "PROGRAM") {
 										console.log ("Activate programm " + localData.metaObjects [opt['hm_id']]["Name"]);
-										dui.socket.emit("programExecute", [opt['hm_id']]);
+										// TODO ...
+                                        servConn._socket.emit("programExecute", [opt['hm_id']]);
 									}
 									else {    
 										if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["DPs"] && localData.metaObjects[opt['hm_id']]["DPs"]["STATE"])
@@ -544,12 +545,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 var states = obj.GetStates ();
 								
                                 if (states.state == hqWidgets.gState.gStateOn) {
-                                    dui.socket.emit("getUrl", htmlOff, function () {});
+                                    // TODO ...
+                                    servConn._socket.emit("getUrl", htmlOff, function () {});
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOff});
 									}
 								} else {
-                                    dui.socket.emit("getUrl", htmlOn, function () {});
+                                    // TODO ...
+                                    servConn._socket.emit("getUrl", htmlOn, function () {});
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOn});
 									}

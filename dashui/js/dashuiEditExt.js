@@ -188,11 +188,11 @@ dui = $.extend(true, dui, {
                 
                     for(var name in this._internalList) {
                         if (htmlElem.settings.filterFile == null || 
-                           (this._internalList[name].file != null && this._internalList[name].file.indexOf (htmlElem.settings.filterFile) != -1)) {
+                           (this._internalList[name].file != null && this._internalList[name].file.indexOf(htmlElem.settings.filterFile) != -1)) {
                             var isFound = (filters == null);
                             if (!isFound) {
                                 for (var k = 0; k < filters.length; k++) {
-                                    if (this._internalList[name].style.indexOf (filters[k]) != -1) {
+                                    if (this._internalList[name].style.indexOf(filters[k]) != -1) {
                                         isFound = true;
                                         break;
                                     }
@@ -254,7 +254,7 @@ dui = $.extend(true, dui, {
             
             var box = $('#styleSelectBox'+options.name);
             box.buttonset();
-            $('#styleSelectBox'+options.name+" :radio").click(htmlElem, function(e) {
+            $('#styleSelectBox'+options.name+" :radio").click(htmlElem, function (e) {
                 var rawElement = this;
                 dui.styleSelect._select (e.data, rawElement.iStyle);
                 dui.styleSelect._toggleDrop(e.data);
@@ -378,17 +378,17 @@ dui = $.extend(true, dui, {
 			
 			 // Define dialog buttons
 			var dialog_buttons = {};
-			dialog_buttons[this._uploadText] = function() {
+			dialog_buttons[this._uploadText] = function () {
 				$( this ).trigger('click');
 			}
-			dialog_buttons[this._selectText] = function() {
+			dialog_buttons[this._selectText] = function () {
 				$( this ).dialog( "close" );
 
 				if (this.settings.onselect)
 					this.settings.onselect (dui.imageSelect._pictDir+this.settings.result, this.settings.onselectArg);
 				$( this ).remove ();
 			}
-			dialog_buttons[this._cancelText] = function() {
+			dialog_buttons[this._cancelText] = function () {
 				$( this ).dialog( "close" );
 				$( this ).remove ();
 			}
@@ -430,7 +430,7 @@ dui = $.extend(true, dui, {
 					$(this.element).remove ();
 				},
 				init: function () {
-					this.on("processing", function() {
+					this.on("processing", function () {
 						this.options.url = "/upload?path=./www/dashui/img/"+dui.imageSelect._curDir;
 					});
 				}
@@ -451,7 +451,7 @@ dui = $.extend(true, dui, {
 				if (str.substring (0, this._pictDir.length) == this._pictDir) {
 					str = str.substring (this._pictDir.length);
 				}
-				if (str.indexOf ('/') != -1) {
+				if (str.indexOf('/') != -1) {
 					var disr = str.split ("/");
 					for (var z=0; z < disr.length -1; z++)
 						this._curDir += disr[z]+"/";
@@ -471,14 +471,14 @@ dui = $.extend(true, dui, {
 				}
 				if  (str.substring (0, dui.imageSelect._curDir.length) == dui.imageSelect._curDir) {
 					str = str.substring (dui.imageSelect._curDir.length);
-					if (str.indexOf ('/') == -1) {
+					if (str.indexOf('/') == -1) {
 						dui.imageSelect._curImage = str;
 					}
 				}
 			}
 			
 			// Load directory
-			dui.conn.readDir (this._rootDir + this._curDir, function(dirArr) {
+			dui.conn.readDir (this._rootDir + this._curDir, function (dirArr) {
 				dui.imageSelect.showImages(dirArr, htmlElem);
 			});
 		},
@@ -503,13 +503,13 @@ dui = $.extend(true, dui, {
 			}
 
 			for (var i = 0; i < aImages.length; i++) {
-				if (aImages[i].indexOf ('.') == -1) {
+				if (aImages[i].indexOf('.') == -1) {
 					bImages[j++] = aImages[i];
 				}
 			}
 
 			for (var i = 0; i < aImages.length; i++) {
-				if (aImages[i].indexOf ('.') != -1 && aImages[i] != dui.imageSelect._dirImage) {
+				if (aImages[i].indexOf('.') != -1 && aImages[i] != dui.imageSelect._dirImage) {
 					bImages[j++] = aImages[i];
 				}
 			}
@@ -527,10 +527,10 @@ dui = $.extend(true, dui, {
 			
 			for (row = 0; row < obj.settings.rows; row++) {
 				sText += "<tr>";
-				var isDirs = (aImages[id].indexOf ('.') == -1);
+				var isDirs = (aImages[id].indexOf('.') == -1);
 				for (col = 0; col < obj.settings.columns; col++) {
 					if (aImages.length > id) {
-						var isDir = (aImages[id].indexOf ('.') == -1) || (aImages[id] == "..");
+						var isDir = (aImages[id].indexOf('.') == -1) || (aImages[id] == "..");
 						
 						// Start from new line if directories shown
 						if (isDirs && !isDir) {
@@ -670,7 +670,7 @@ dui = $.extend(true, dui, {
 						for (var t = 0; t < dirs.length - 2; t++)
 							dui.imageSelect._curDir += dirs[t]+"/";
 						dui.imageSelect.getFileList (obj);
-					} else if (obj_.result.indexOf ('.') == -1) {
+					} else if (obj_.result.indexOf('.') == -1) {
 						dui.imageSelect._curDir += obj_.result+"/";
 						dui.imageSelect.getFileList (obj);
 					} else {
@@ -694,7 +694,7 @@ dui = $.extend(true, dui, {
 					$( obj ).remove ();
 				});				
 				// If File
-				if (aImages[i] != ".." && aImages[i].indexOf ('.') != -1 && aImages[i].indexOf(".wav") == -1 && aImages[i].indexOf(".mp3") == -1) {
+				if (aImages[i] != ".." && aImages[i].indexOf('.') != -1 && aImages[i].indexOf(".wav") == -1 && aImages[i].indexOf(".mp3") == -1) {
 					image.attr('src', dui.imageSelect._pictDir+dui.imageSelect._curDir+aImages[i]);
 				}
 			}
@@ -710,7 +710,9 @@ dui = $.extend(true, dui, {
 			if (path != null && path != "") {
 				if (root == undefined || root === null) {
 					root = dui.imageSelect._pictDir;
-				} else if (path.length >= root.length) {
+				}
+
+                if (path.length >= root.length) {
 					if (path.substring(0, root.length) == root) {
 						path = path.substring (root.length);
 					}
@@ -721,10 +723,6 @@ dui = $.extend(true, dui, {
 
 	}
 });
-
-
-
-
 
 // Color selection Dialog
 var colorSelect = {
@@ -770,13 +768,13 @@ var colorSelect = {
         
          // Define dialog buttons
         var dialog_buttons = {}; 
-        dialog_buttons[this._selectText] = function() { 
+        dialog_buttons[this._selectText] = function () { 
             $( this ).dialog( "close" ); 
             if (this.settings.onselect)
                 this.settings.onselect ($('#colortext').val(), this.settings.onselectArg);
             $( this ).remove ();
         }
-        dialog_buttons[this._cancelText] = function() {
+        dialog_buttons[this._cancelText] = function () {
             $( this ).dialog( "close" ); 
             $( this ).remove ();
         }   
@@ -1079,7 +1077,7 @@ var hmSelect = {
 				{name:'Description',index:'Description', width:400, sorttype:"text"},
 				{name:'_ID',        index:'_ID',         width:0,   hidden:true}
 			],
-			onSelectRow: function(id) {
+			onSelectRow: function (id) {
                                hmSelect.value    = $("#hmVarsContent").jqGrid ('getCell', id, '_ID');
                                hmSelect.valueObj = null;
 				if (hmSelect.value != null && hmSelect.value != "") {
@@ -1183,7 +1181,7 @@ var hmSelect = {
 				{name:'Description', index:'Description', width:570, sorttype:"text"},
 				{name:'_ID',         index:'_ID',         width:0,   hidden:true}
 			],
-			onSelectRow: function(id) {
+			onSelectRow: function (id) {
                                 hmSelect.value    = $("#hmProgsContent").jqGrid ('getCell', id, "_ID");
                                 hmSelect.valueObj = null;
 				if (hmSelect.value != null && hmSelect.value != "") {
@@ -1245,7 +1243,7 @@ var hmSelect = {
             for (var room in rooms) {
                 for (var k = 0; k < localData.metaObjects[rooms[room]]["Channels"].length; k++) {
                     if (localData.metaObjects[rooms[room]]["Channels"][k] == _id) {
-                        if (result_room.indexOf (localData.metaObjects[rooms[room]]["Name"]) == -1) {
+                        if (result_room.indexOf(localData.metaObjects[rooms[room]]["Name"]) == -1) {
                             result_room = ((result_room == "") ? "" : ", ") + localData.metaObjects[rooms[room]]["Name"];
                         }
                         break;
@@ -1260,7 +1258,7 @@ var hmSelect = {
             for (var k = 0; k < localData.metaObjects[dev]["Channels"].length; k++) {
                 var t = hmSelect._getRoom (localData, localData.metaObjects[dev]["Channels"][k], true);
                 if (t != "") {
-                    if (result_room.indexOf (t) == -1) {
+                    if (result_room.indexOf(t) == -1) {
                         result_room += ((result_room == "") ? "" : ", ") + t;
                     }
                 }
@@ -1280,7 +1278,7 @@ var hmSelect = {
                 for (var k = 0; k < localData.metaObjects[functions[func]]["Channels"].length; k++) {
                     if (localData.metaObjects[functions[func]]["Channels"][k] == _id) {
                         if (localData.metaObjects[functions[func]]["Name"] != "" &&
-                            result_func.indexOf (localData.metaObjects[functions[func]]["Name"]) == -1) {
+                            result_func.indexOf(localData.metaObjects[functions[func]]["Name"]) == -1) {
                             result_func = ((result_func == "") ? "" : ", ") + localData.metaObjects[functions[func]]["Name"];
                         }
                         break;
@@ -1295,7 +1293,7 @@ var hmSelect = {
             for (var k = 0; k < localData.metaObjects[dev]["Channels"].length; k++) {
                 var t = hmSelect._getFunction (localData, localData.metaObjects[dev]["Channels"][k], true);
                 if (t != "") {
-                    if (result_func.indexOf (t) == -1) {
+                    if (result_func.indexOf(t) == -1) {
                         result_func += ((result_func == "") ? "" : ", ") + t;
                     }
                 }
@@ -1359,7 +1357,7 @@ var hmSelect = {
                             var point = localData.metaObjects[idPnt];
                             var name = this._convertName(point.Name);
                             for (var t = 0; t < f.length; t++) {
-                                if (name.indexOf (f[t]) != -1) {
+                                if (name.indexOf(f[t]) != -1) {
                                     newPoints [idPnt] = point;
                                     newPoints [idPnt]["Type"] = dp;
                                     iPnts++;
@@ -1450,7 +1448,7 @@ var hmSelect = {
                         isFound = true;
                     } else {
                         for (var t = 0; t < f.length; t++) {
-                            if (device.HssType.indexOf (f[t]) != -1) {
+                            if (device.HssType.indexOf(f[t]) != -1) {
                                 isFound = true;
                                 break;
                             }
@@ -1492,7 +1490,7 @@ var hmSelect = {
                                         iPnts++;
                                     } else {
                                         for (var t = 0; t < f.length; t++) {
-                                            if (name.indexOf (f[t]) != -1) {
+                                            if (name.indexOf(f[t]) != -1) {
                                                 newPoints [idPnt] = point;
                                                 newPoints [idPnt]["Type"] = dp;
                                                 iPnts++;
@@ -1802,7 +1800,7 @@ var hmSelect = {
 			shrinkToFit: false,
 			colNames:    colNames,
 			colModel:    colModel,
-			onSelectRow: function(id) {
+			onSelectRow: function (id) {
                 hmSelect.value    = $("#hmDevsContent").jqGrid ('getCell', id, '_ID');
                 hmSelect.valueObj = (hmSelect.value != "" && hmSelect.value != null) ? hmSelect._devices[hmSelect.value] :null;
 
@@ -1962,12 +1960,12 @@ var hmSelect = {
 		this._cancelText = dui.translate("Cancel");
         
 		var dialog_buttons = {}; 
-		dialog_buttons[this._selectText] = function() { 
+		dialog_buttons[this._selectText] = function () { 
 			$( this ).dialog( "close" ); 
 			if (hmSelect._onsuccess)
                 hmSelect._onsuccess(hmSelect._userArg, hmSelect.value, hmSelect.valueObj);
 		}
-		dialog_buttons[this._cancelText] = function() {
+		dialog_buttons[this._cancelText] = function () {
 			$( this ).dialog( "close" ); 
 		}   
 		
@@ -1977,10 +1975,10 @@ var hmSelect = {
 			height: $(window).height(),
 			modal: true,
 			width: 870,
-			resize: function(event, ui) { 
+			resize: function (event, ui) { 
                 hmSelect._onResize ();
 			},
-            close: function(event, ui) { $('#hmSelect').remove(); $('#hmDevsContent').jqGrid('GridUnload'); },
+            close: function (event, ui) { $('#hmSelect').remove(); $('#hmDevsContent').jqGrid('GridUnload'); },
 			buttons: dialog_buttons
 		});
         $('#dashui-waitico').show().css({top: ($("#hmSelect").height() + $('#dashui-waitico').height())/2});
@@ -1995,7 +1993,7 @@ var hmSelect = {
         $('#tabs-progs').width ($('#hmSelect_tabs').width()  - 6);
         $('#tabs-progs').height($('#hmSelect_tabs').height() - 60);
         
-        this._buildDevicesGrid (localData, filter, devFilter);
+        this._buildDevicesGrid(localData, filter, devFilter);
         if (this.value != null && localData.metaObjects[this.value] != null) {
             if (localData.metaObjects[this.value]["TypeName"] != undefined && localData.metaObjects[this.value]["TypeName"] == "VARDP") {
                 $('#var_select').trigger("click");
@@ -2070,3 +2068,712 @@ var hmSelect = {
     }
 };
 
+dui.useNewSelectDialog =  (!$().jqGrid);// || true),
+
+var idSelect = {
+    _locData: null,
+    _selectText: '',
+    _cancelText: '',
+
+    _onsuccess: null,
+    _userArg: null,
+
+    _isShowAdapters: true,
+    _shift: 32,
+
+    value:    null,
+    valueObj: null,
+    _processed: [],
+    _rowsInfo: {
+        "name"     : {title: "Name",     width: 300, search: 'text'},
+        "address"  : {title: "Address",  width: 150, search: 'text'},
+        "location" : {title: "Location", width: 150, search: 'select'},
+        "role"     : {title: "Role",     width: 150, search: 'select'},
+        "ioType"   : {title: "IOType",   width: 150, search: 'select'},
+        "specType" : {title: "SpecType", width: 150, search: 'select'},
+        "value"    : {title: "Value",    width: 100,  search: 'text'}
+    },
+    _rows:       ['name', 'specType', 'location', 'role', 'ioType', 'value'],
+    _storedValues : {},
+    _visibility : {},
+    _noFilter: true,
+
+    _treeProcessed: false,
+    _options: {
+        selectedID: null,
+        onSuccess:  null,
+        userArg:    null
+    },
+
+    // Convert object tree to required
+    _insertHelper: function (isTypeExist, type, value) {
+        isTypeExist[type] = true;
+        if (value !== undefined && this._rowsInfo[type]) {
+            if (!this._rowsInfo[type].selectValues) {
+                this._rowsInfo[type].selectValues = [];
+            }
+            if (this._rowsInfo[type].selectValues.indexOf (value) == -1) {
+                this._rowsInfo[type].selectValues.push(value);
+            }
+        }
+    },
+    _preProcessTree: function () {
+        if (this._treeProcessed) {
+            return;
+        }
+        else {
+            this._treeProcessed = true;
+        }
+        var MO = this._locData.metaObjects;
+        var MI = this._locData.metaIndex;
+        var isTypeExist = {"value": true, "name": true};
+
+        for (var id in MO) {
+            var _id = parseInt(id);
+            if (MO[id].Parent) {
+                MO[id].parent = MO[id].Parent;
+            }
+            if (MO[id].HssType) {
+                MO[id].specType = MO[id].HssType;
+                this._insertHelper(isTypeExist, 'specType', MO[id].specType);
+            }
+            if (MO[id].Address) {
+                MO[id].address = MO[id].Address;
+                isTypeExist['address'] = true;
+            }
+            if (MO[id].Channels) {
+                MO[id].children = MO[id].Channels;
+                MO[id].name     = MO[id].ChnLabel;
+                isTypeExist['children'] = true;
+            }
+            if (MO[id].DPs) {
+                MO[id].children = [];
+                for (var dp in MO[id].DPs) {
+                    MO[id].children.push(MO[id].DPs[dp]);
+                    MO[MO[id].DPs[dp]].name = dp;
+                }
+            }
+            if (MO[id].ALDPs) {
+                if (!MO[id].children) {
+                    MO[id].children = [];
+                }
+                for (var dp in MO[id].ALDPs) {
+                    MO[id].children.push(MO[id].ALDPs[dp]);
+                    MO[MO[id].ALDPs[dp]].name = dp;
+                }
+            }
+            MO[id].name = MO[id].name || MO[id].Name;
+            if (MO[id]['TypeName'] == 'VARDP') {
+                MO[id].type    = 'point';
+                MO[id].pntType = 'Variable';
+                MO[id].ioType  = MO[id].pntType;
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'pntType');
+                this._insertHelper(isTypeExist, 'type');
+            } else
+            if (MO[id]['TypeName'] == 'ALARMDP') {
+                MO[id].type = 'point';
+                MO[id].pntType = 'Alarms';
+                MO[id].ioType  = MO[id].pntType;
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'pntType');
+                this._insertHelper(isTypeExist, 'type');
+            } else
+            if (MO[id]['TypeName'] == 'CHANNEL') {
+                MO[id].type = 'channel';
+                MO[id].chnType = MO[id]['HssType'];
+                MO[id].ioType  = 'Channel';
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'chnType');
+                this._insertHelper(isTypeExist, 'type');
+            } else
+            if (MO[id]['TypeName'] == 'DEVICE') {
+                MO[id].type = 'device';
+                MO[id].devType = MO[id]['HssType'];
+                MO[id].ioType  = 'Device';
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'devType');
+                this._insertHelper(isTypeExist, 'type');
+            } else
+            if (MO[id]['TypeName'] == 'HSSDP') {
+                MO[id].type    = 'point';
+                MO[id].pntType = MO[id]['HssType'];
+                MO[id].ioType  = 'Datapoint';
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'pntType');
+                this._insertHelper(isTypeExist, 'type');
+            }else
+            if (MO[id]['TypeName'] == 'PROGRAM') {
+                MO[id].type    = 'point';
+                MO[id].pntType = 'Program';
+                MO[id].ioType  = 'Program';
+                this._insertHelper(isTypeExist, 'ioType', MO[id].ioType);
+                this._insertHelper(isTypeExist, 'pntType');
+                this._insertHelper(isTypeExist, 'type');
+            }
+            // Check if this point in some locations
+            if (MI['ENUM_ROOMS']) {
+                for (var r = 0, rlen = MI['ENUM_ROOMS'].length; r < rlen; r++) {
+                    if (MO[MI['ENUM_ROOMS'][r]].Channels.indexOf(_id) != -1) {
+                        var val = MO[MI['ENUM_ROOMS'][r]].Name;
+                        if (!MO[id].location) {
+                            MO[id].location = [];
+                        }
+                        if (MO[id].location.indexOf(val) == -1) {
+                            MO[id].location.push(val);
+                        }
+                        this._insertHelper(isTypeExist, 'location', val);
+                    }
+                }
+                // Check if this point in some functions
+                for (var r = 0, rlen = MI['ENUM_FUNCTIONS'].length; r < rlen; r++) {
+                    if (MO[MI['ENUM_FUNCTIONS'][r]].Channels.indexOf(_id) != -1) {
+                        var val = MO[MI['ENUM_FUNCTIONS'][r]].Name;
+                        if (!MO[id].role) {
+                            MO[id].role = [];
+                        }
+                        if (MO[id].role.indexOf(val) == -1) {
+                            MO[id].role.push(val);
+                        }
+                        this._insertHelper(isTypeExist, 'role', val);
+                    }
+                }
+                // Check if this point in some favorites
+                for (var r = 0, rlen = MI['FAVORITE'].length; r < rlen; r++) {
+                    if (MO[MI['FAVORITE'][r]].Channels.indexOf(_id) != -1) {
+                        var val = MO[MI['FAVORITE'][r]].Name;
+                        if (!MO[id].favorite) {
+                            MO[id].favorite = [];
+                        }
+                        if (MO[id].favorite.indexOf(val) == -1) {
+                            MO[id].favorite.push(val);
+                        }
+                        this._insertHelper(isTypeExist, 'favorite', val);
+                    }
+                }
+            }
+        }
+
+        // Remove unused fields
+        for (var i = this._rows.length - 1; i >= 0; i--) {
+            if (!isTypeExist[this._rows[i]]) {
+                this._rows.splice(i, 1);
+            }
+        }
+    },
+    _showArray: function (arr) {
+        if (typeof val == "object") {
+            var tlen = (arr) ? arr.length : 0;
+            var text = (tlen > 0) ? arr[0]: '';
+            for (var t = 1; t < tlen; t++) {
+                text += ', ' + arr[t];
+            }
+
+            return text;
+        } else {
+            return arr;
+        }
+    },
+    _addOneRow: function (id, level, parents) {
+        var MO = this._locData.metaObjects;
+        this._processed.push(id);
+        var text = '<tr class="select_'+id+' '+(parents||'')+' no-select-tr select-tr" data-id="'+id+'" data-hidden="1">';
+
+        text += '<td ' +
+            'title="'+MO[id][this._rows[0]]+'" ' +
+            'class="select-td" ' +
+            'style="width:'+this._rowsInfo[this._rows[0]].width+'px; padding-left:'+(MO[id].children ? (this._shift * (level - 1)) : (this._shift * level))+'px">'+
+            (MO[id].children ? '<span class="ui-icon ui-icon-circle-plus select-plus no-click" data-processed="0" data-id="'+id+'" data-level="'+level+'" data-parents="'+(parents ? parents + ' ' : '')+' children_'+id+'"></span>' : '');
+        text += MO[id][this._rows[0]] + '</td>';
+
+        for (var i = 1, len = this._rows.length; i < len; i++) {
+            var val;
+            var title
+            if (this._rows[i] == 'value') {
+                // Save values for search
+                val = this._locData.uiState['_' + id] ? this._locData.uiState['_' + id].Value : '';
+                if (val === null || val === undefined) {
+                    val   = '';
+                    title = '';
+                }
+                else {
+                    val = val.toString().replace(/\"/g, "'").replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+                    title = val;
+                }
+                this._storedValues[id] = val;
+            } else {
+                val = this._showArray(MO[id][this._rows[i]]) || '';
+                if (val === null || val === undefined) {
+                    val   = '';
+                }
+                title = val;
+            }
+
+            text += '<td style="width:'+this._rowsInfo[this._rows[i]].width+'px" class="select-td" title="'+ title +'">'+ val +'</td>';
+        }
+        text += '</tr>\n';
+
+        /*if (MO[id].children) {
+            for (var z = 0, zlen = MO[id].children.length; z < zlen; z++) {
+                text += this._addOneRow(MO[id].children[z], level+1);
+            }
+        }*/
+
+        return text;
+    },
+    _isVisible: function (id) {
+        if (this._noFilter) {
+            return true;
+        }
+
+        var isVisible = true;
+        var field;
+        var value;
+        for (var f = 0, flen = this._rows.length; f < flen; f++) {
+            field = this._rows[f];
+            value = this._rowsInfo[this._rows[f]].filterValue;
+            if (value !== '' && value !== null && value !== undefined) {
+                if (this._rowsInfo[field].search == 'text') {
+                    if (this._rows[f] == 'value') {
+                        if (!value || this._storedValues[id].toLowerCase().indexOf(value.toLowerCase()) != -1) {
+                            isVisible = true;
+                        } else {
+                            isVisible = false;
+                        }
+                    } else {
+                        if (!value || this._locData.metaObjects[id][field].toLowerCase().indexOf(value.toLowerCase()) != -1) {
+                            isVisible = true;
+                        } else {
+                            isVisible = false;
+                        }
+                    }
+                } else if (this._rowsInfo[field].search == 'select') {
+                    if (!value || this._locData.metaObjects[id][field] == value) {
+                        isVisible = true;
+                    } else {
+                        isVisible = false;
+                    }
+                }
+            } else {
+                continue;
+            }
+            if (!isVisible) {
+                break;
+            }
+        }
+
+        return isVisible;
+    },
+    _isTreeVisible: function (id) {
+        if (this._noFilter || !this._visibility || this._visibility[id] === undefined || this._visibility[id]) {
+            return true;
+        }
+        if (!this._locData.metaObjects[id]) {
+            return false;
+        }
+        // If one of the direct parents is visible
+        var _id = this._locData.metaObjects[id].parent;
+        while (_id) {
+            if (this._visibility[_id]) {
+                return true;
+            }
+
+            _id = this._locData.metaObjects[_id].parent;
+        };
+
+        // If any of the children is visible
+        if (this._locData.metaObjects[id].children) {
+            for (var z = 0, zlen = this._locData.metaObjects[id].children.length; z < zlen; z++) {
+                if (this._isTreeVisible(this._locData.metaObjects[id].children[z])) {
+                    // The branch is visible
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    },
+    // Filter all values
+    applyFilter: function(field, value) {
+        if (this._rowsInfo[field].filterValue != value) {
+            this._rowsInfo[field].filterValue = value;
+            if (!value) {
+                this._noFilter = false;
+                for (var f = 0, flen = this._rows.length; f < flen; f++) {
+                    if (this._rowsInfo[this._rows[f]].filterValue) {
+                        this._noFilter = true;
+                        break;
+                    }
+                }
+            } else {
+                this._noFilter = false;
+            }
+
+            var that = this;
+            for (var id in this._locData.metaObjects) {
+                this._visibility[id] = this._isVisible(id);
+            };
+
+            // Go through the tree
+            $('.select-tr').each(function () {
+                var id = $(this).attr('data-id');
+                // Check if all parents are opened
+                var ids = that._getParents(id);
+
+                var isOpened = false;
+                for (var z = 0, zlen = ids.length; z < zlen; z++) {
+                    // If parent is hidden
+                    if ($('.select_'+ids[z]).attr('data-hidden') == 1) {
+                        $(this).hide();
+                        return;
+                    }
+                }
+
+                if (that._isTreeVisible(id)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+    },
+    _getParents: function (id) {
+        var ids = [];
+        var _id = idSelect._locData.metaObjects[id].parent;
+        while (_id) {
+            ids.push(_id);
+            _id = idSelect._locData.metaObjects[_id].parent;
+        }
+        return ids;
+    },
+    _plusClick: function (elem) {
+        // "elem" here is plus element itself
+        var id = $(elem).attr('data-id');
+        var tr = $('.select_'+id);
+        if (tr.attr('data-hidden') == '0') {
+            $('.children_' + id).hide();
+            $(elem).removeClass('ui-icon-circle-minus');
+            $(elem).addClass('ui-icon-circle-plus');
+            tr.attr('data-hidden', '1');
+        } else {
+            $(elem).removeClass('ui-icon-circle-plus');
+            $(elem).addClass('ui-icon-circle-minus');
+            tr.attr('data-hidden', '0');
+            if ($(elem).attr('data-processed') == '0') {
+                // build children of elem id
+                var text = "";
+                if (idSelect._locData.metaObjects[id].children) {
+                    for (var z = 0, zlen = idSelect._locData.metaObjects[id].children.length; z < zlen; z++) {
+                        text += idSelect._addOneRow(idSelect._locData.metaObjects[id].children[z], parseInt($(elem).attr('data-level'))+1, $(elem).attr('data-parents'));
+                    }
+                }
+                $(text).insertAfter('.select_'+id);
+                $(elem).attr('data-processed', '1');
+                $('.no-click').each(function () {
+                    var id = $(this).attr('data-id');
+                    $(this).removeClass('no-click');
+                    $(this).click(function () {idSelect._plusClick(this)});
+                    if (!idSelect._isTreeVisible(id)) {
+                        $('.select_'+id).hide();
+                    }
+                });
+            } else {
+                $('.children_' + $(elem).attr('data-id')).each(function (){
+                    var id  = $(this).attr('data-id');
+
+                    // Check if all parents are opened
+                    var ids = idSelect._getParents(id);
+
+                    var isOpened = false;
+                    for (var z = 0, zlen = ids.length; z < zlen; z++) {
+                        // If parent is hidden
+                        if ($('.select_'+ids[z]).attr('data-hidden') == 1) {
+                            return;
+                        }
+                    }
+
+                    if (!idSelect._isTreeVisible(id)) {
+                        $('.select_'+id).hide();
+                    } else {
+                        $('.select_'+id).show();
+                    }
+                });
+            }
+        }
+    },
+    _buildTable: function (divName) {
+        var text   = '';
+        var header = '<tr>';
+        var that   = this;
+        var MO     = this._locData.metaObjects;
+        this._processed = [];
+        // Create header
+        for (var u = 0, ulen = this._rows.length; u < ulen; u++) {
+            header += '<td class="select-header-title" width="'+this._rowsInfo[this._rows[u]].width+'px">'+this._rowsInfo[this._rows[u]].title+'</td>';
+        }
+        header += '</tr>';
+        // Create search fields
+        for (var u = 0, ulen = this._rows.length; u < ulen; u++) {
+            header += '<td class="select-header-title">';
+            if (this._rowsInfo[this._rows[u]].search) {
+                // If text field
+                if (this._rowsInfo[this._rows[u]].search == 'text') {
+                    header += '<input style="width:'+(this._rowsInfo[this._rows[u]].width-30)+'px" class="select-search" id="search_'+this._rows[u]+'" data-search="'+this._rows[u]+'" value="'+(this._rowsInfo[this._rows[u]].filter || '')+'"/>';
+                    header += '<snap class="ui-icon ui-icon-close select-filter-clear" data-search="'+this._rows[u]+'"></snap>';
+                } // if select field
+                else if (this._rowsInfo[this._rows[u]].search == 'select' && this._rowsInfo[this._rows[u]].selectValues) {
+                    header += '<select class="select-search" id="search_'+this._rows[u]+'" data-search="'+this._rows[u]+'">'+
+                        '<option value="">-</option>';
+                    for (var p = 0, plen = this._rowsInfo[this._rows[u]].selectValues.length; p < plen; p++) {
+                        header += '<option value="'+this._rowsInfo[this._rows[u]].selectValues[p]+'" '+
+                            // If actual selected
+                            ((this._rowsInfo[this._rows[u]].filter == this._rowsInfo[this._rows[u]].selectValues[p]) ? 'selected' : '')+'>'+
+                            this._rowsInfo[this._rows[u]].selectValues[p]+'</option>';
+                    }
+                    header += '</select>';
+                }
+            }
+            header += '</td>';
+        }
+        header += '';
+        $('#'+divName + '_header').html(header);
+
+        for (var id in MO) {
+            if (this._processed.indexOf (id) != -1) {
+                continue;
+            }
+            if (MO[id].parent || MO[id]["EnumInfo"] !== undefined ||  MO[id]["TypeName"] == "FAVORITE") {
+                continue;
+            }
+            text += this._addOneRow(id, 1);
+        }
+
+        $('#'+divName + '_table').html(text);
+
+        $('.no-click').each(function () {
+            $(this).removeClass('no-click');
+            $(this).click(function () {that._plusClick(this)});
+        });
+        $('.no-select-tr').click (function () {
+            that._options.selectedID = $(this).attr('data-id');
+            $('#idSelect').dialog('option', 'title', dui.translate("Select ID") + ': ' + that._locData.metaObjects[idSelect._options.selectedID].name);
+            $('#selectId_selectButton').prop("disabled", false).removeClass("ui-state-disabled");
+            $('#selectId_table .ui-state-highlight').removeClass('ui-state-highlight');
+            $(this).addClass('ui-state-highlight');
+        });
+
+        $('.no-select-tr').hover (function () {
+            $(this).addClass('ui-state-focus');
+        }, function () {
+            $(this).removeClass('ui-state-focus');
+        }).removeClass('no-select-tr');
+
+        $('.select-search').change(function(e) {
+            if (this._timeout) {
+                clearTimeout(this._timeout);
+                this._timeout = null;
+            }
+            if ($(this).prop("tagName") == 'SELECT') {
+                that.applyFilter($(this).attr('data-search'), $(this).val());
+            } else {
+                this._timeout = _setTimeout(function(elem){
+                    that.applyFilter($(elem).attr('data-search'), $(elem).val());
+                }, 1000, this);
+            }
+        });
+
+        $('.select-search').bind('keyup', function(e) {
+            if(e.which == 13) {
+                that.applyFilter($(this).attr('data-search'), $(this).val());
+            } else {
+               $(this).trigger('change');
+            }
+        });
+        $('.select-filter-clear').click(function() {
+            var filter = $(this).attr('data-search');
+            $('#search_'+filter).val('');
+            that.applyFilter($(this).attr('data-search'), '');
+        });
+    },
+    _openPath: function (id) {
+        var ids = this._getParents (id);
+
+        for (var t = ids.length - 1; t >= 0; t--) {
+            var el = $('.select_' + ids[t] + ' span');
+            if (el.length){
+                this._plusClick(el[0]);
+            };
+        }
+    },
+    Show: function (locData, options) {
+        var that = this;
+        this._locData = locData;
+        this._options = $.extend (true, this._options, options);
+        this._preProcessTree();
+
+        if (!this._selectText) {
+            this._selectText = dui.translate("Select");
+            this._cancelText = dui.translate("Cancel");
+        }
+
+        if (!document.getElementById ("idSelect")) {
+            var selName = (this._options.selectedID && this._locData.metaObjects[this._options.selectedID]) ? ': '+this._locData.metaObjects[this._options.selectedID].name: '';
+
+            $('body').append(
+                    '<div class="dialog" id="idSelect" title="' + dui.translate('Select ID') + selName +'">' +
+                        '<table id="selectId_header" class="select-header"></table>'+
+                        '<div class="select-body"><table id="selectId_table" class="select-table"></table></div>'+
+                        '<div id="selectId_buttons">' +
+                            '<div style="position:absolute; right: 0; padding: 10px">' +
+                                '<button id="selectId_selectButton">'+this._selectText+'</button>'+
+                                '<button id="selectId_cancelButton">'+this._cancelText+'</button>'+
+                            '</div>' +
+                        '</div>'+
+                    '</div>');
+            this._buildTable ('selectId');
+            // Define dialog buttons
+            $('#selectId_selectButton').button ().click (function() {
+                $(window).resize(null);
+                if (that._options.onSuccess) {
+                    that._options.onSuccess(that._options.userArg, that._options.selectedID);
+                }
+                $( '#idSelect' ).dialog( "close" );
+            });
+
+            $('#selectId_cancelButton').button ().click (function() {
+                $( '#idSelect' ).dialog( "close" );
+                $(window).resize(null);
+            });
+            var dialog_buttons = {};
+            dialog_buttons[this._selectText] = function() {
+                $( this ).dialog( "close" );
+                if (idSelect._onsuccess)
+                    idSelect._onsuccess(idSelect._userArg, idSelect.value, idSelect.valueObj);
+            }
+            dialog_buttons[this._cancelText] = function() {
+                $( this ).dialog( "close" );
+            }
+
+            var width = 0;
+            for (var u = 0, ulen = this._rows.length; u < ulen; u++) {
+               width += this._rowsInfo[this._rows[u]].width;
+            }
+
+            $('#idSelect')
+                .dialog({
+                    resizable: false,
+                    height: $(window).height() - 80,
+                    modal: true,
+                    width: width + 50,
+                    open: function (event, ui) {
+                        $(this).css('overflow', 'hidden');
+
+                        // Select selectedID
+                        if (!that._options.selectedID) {
+                            $('#selectId_selectButton').prop("disabled", true).addClass("ui-state-disabled");
+                        } else {
+                            that._openPath(that._options.selectedID);
+                            $('.select_'+that._options.selectedID).addClass('ui-state-highlight')[0].scrollIntoView(true);
+                        }
+
+                    },
+                    resize: function(event, ui) {
+                        //idSelect._onResize ();
+                    },
+                    close: function(event, ui) {
+                        $('#idSelect').remove();
+                        //$('#hmDevsContent').jqGrid('GridUnload');
+                    }
+                    //buttons: dialog_buttons
+                });
+            $(window).resize(function () {
+                $('#idSelect').dialog('option', 'height', $(window).height() - 80);
+            });
+
+            var $dashui_waitico = $('#dashui-waitico');
+            $dashui_waitico.show().css({top: ($("#idSelect").height() + $dashui_waitico.height())/2});
+            $dashui_waitico.hide();
+        }
+    }
+};
+
+// Create multiselect if no default widget loaded
+if (!$().multiselect) {
+    (function($, undefined) {
+        $.widget("dash.multiselect", {
+            // default options
+            options: {
+                multiple: true
+            },
+            // the constructor
+            _create: function() {
+                if (!this.options.multiple) {
+                    return;
+                }
+                var elem = this.element.hide();
+                var div = '<table class="ui-widget-content">';
+                div += '</table>'
+                this.table = $(div);
+                this.table.insertAfter(elem);
+                this._build();
+            },
+
+            _build: function () {
+                this.table.empty();
+                var div = "";
+                this.element.find("option").each(function () {
+                    div += '<tr class="ui-widget-content"><td><input type="checkbox" '+($(this).is(':selected') ? 'checked' : '')+' data-value="'+$(this).attr('value')+'">'+$(this).html()+'</td>';
+                    console.log ($(this).attr('value'));
+                });
+                this.table.html(div);
+                var that = this;
+                this.table.find('input').each(function() {
+                    this._parent = that;
+                    $(this).click(function(){
+                        var val = $(this).attr('data-value');
+                        var checked =  $(this).is(':checked');
+                        // change state on the original option tags
+                        this._parent.element.find("option").each(function () {
+                            if(this.value === val) {
+                                $(this).prop('selected', checked);
+                            }
+                        });
+
+                        this._parent.element.trigger("change");
+                    });
+                });
+            },
+            _init: function () {
+                if (!this.options.multiple) {
+                    return;
+                }
+                this._build();
+            },
+            refresh: function () {
+                if (!this.options.multiple) {
+                    return;
+                }
+                this._build();
+            },
+
+            // events bound via _on are removed automatically
+            // revert other modifications here
+            _destroy: function() {
+                if (!this.options.multiple) {
+                    return;
+                }
+                this.table.remove();
+                this.element.show();
+
+                $.Widget.prototype.destroy.call(this);
+            },
+
+            _update: function() {
+                if (!this.options.multiple) {
+                    return;
+                }
+                this.refresh(false);
+            }
+        });
+    })(jQuery);
+}

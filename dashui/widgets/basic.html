@@ -7,7 +7,7 @@
             view: function (el, viewArr, persistent) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     var view = viewArr[newVal];
                     if (!persistent) {
                         $this.parent().find("div.dashui-view").remove();
@@ -28,7 +28,7 @@
                 var id = $this.attr("data-hm-id");
                 var hm_id = "_" + id;
 
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     $this.attr("src", srcArr[newVal]);
                 });
 
@@ -52,7 +52,7 @@
                 var id = $this.attr("data-hm-id");
                 var hm_id = "_" + id;
 
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     $this.attr("src", srcArr[newVal]);
                 });
 
@@ -80,7 +80,6 @@
                 jQuery("#duiview_"+view).appendTo($this);
                 jQuery("#duiview_"+view).show();
             }
-
         },
         basic: {
             filterDropdown: function (el, filters, hideEffect, hideDuration, showEffect, showDuration) {
@@ -93,7 +92,6 @@
                 }
 
                 if (dui.viewsActiveFilter[dui.activeView]) {
-
                     $this.find("select option[value='"+dui.viewsActiveFilter[dui.activeView]+"']").attr("selected", true);
                 }
 
@@ -130,8 +128,8 @@
                     dui.binds.basic.pressedNext = true;
                     var hm_id = "_" + $that.attr("data-hm-id");
                     if (dui.urlParams["edit"] !== "") {
-                        var step = parseFloat($that.attr("data-dashui-step")),
-                                tmp = parseFloat(localData.uiState[hm_id].Value) + step;
+                        var step =  parseFloat($that.attr("data-dashui-step")),
+                            tmp =   parseFloat(localData.uiState[hm_id].Value) + step;
                         if (step < 0) {
                             if (tmp >= minmax) {
                                 localData.setValue($that.attr("data-hm-id"), tmp);
@@ -215,7 +213,7 @@
             hideOnFalse: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -234,7 +232,7 @@
             hideOnTrue: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     if (newVal === true || parseFloat(newVal) > 0) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -252,7 +250,7 @@
             showOnValue: function (el, val) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     if (newVal != val) {
                         if (dui.urlParams["edit"] !== "") {
                             $this.hide();
@@ -270,7 +268,7 @@
             checkbox: function (el) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     if (newVal === false || parseFloat(newVal) === 0.0) {
                         $this.removeAttr("checked");
                     } else {
@@ -302,7 +300,7 @@
                     localData.setValue( $this.attr("data-hm-id"),  $this.find("option:selected").val());
                 });
                 var hm_id = "_" + id;
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                     console.log("newVal="+newVal+" oldVal="+oldVal);
                     if (newVal == "false" || parseFloat(newVal) == 0) {
                         if ($this.find("option[value='1']").prop("selected")) {
@@ -347,7 +345,9 @@
                 if (dui.urlParams["edit"] !== "" && refreshInterval > 0) {
                     var $this = jQuery(el).parent().find("iframe");
                     setInterval(function () {
-                        $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
+                        if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
+                            $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
+                        }
                     }, refreshInterval);
                 }
             },
@@ -355,7 +355,9 @@
                 if (dui.urlParams["edit"] !== "" && refreshInterval > 0) {
                     var $this = jQuery(el).parent().find("img");
                     setInterval(function () {
-                            $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
+                        if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
+                            $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
+                        }
                     }, refreshInterval);
                 }
             },
@@ -389,8 +391,9 @@
                 $("#"+wid).children().attr("data-wid", wid);
                 $("#"+wid).children().attr("data-hm-id", hm_id);
                 $("#"+wid).children().attr("opacity", opacity);
-                if ($("#"+wid).children()[0])
+                if ($("#"+wid).children()[0]) {
                     $("#"+wid).children()[0]._obj = obj;
+                }
 
                 if (style) {
                     $("#"+wid).css(style);
@@ -408,7 +411,7 @@
                         } else {
                             val = parseFloat(val);
                             if (val >= 0.5) { val = 1; } else { val = 0; }
-                            localData.setValue( id,  1-val);
+                            localData.setValue(id, 1-val);
                         }
                         var el = $('#'+obj.wid);
                         this._obj.style = {
@@ -417,9 +420,9 @@
                             width:  el.width(),
                             left:   el.position().left,
                             height: el.height()
-                        }
-                        _setTimeout(function(obj){
-                            dui.binds.basic.showSvg (obj.myClass, obj.view, obj.wid, obj.hm_id, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
+                        };
+                        _setTimeout(function (obj) {
+                            dui.binds.basic.showSvg(obj.myClass, obj.view, obj.wid, obj.hm_id, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
                         }, 200, this._obj);
                     });
                 }
@@ -427,41 +430,40 @@
             editNote: function (wid, max_width, min_width, min_height, hm_id) {
                 if (dui.urlParams["edit"] === "") return;
                 if (max_width != '') {
-                    max_width = parseInt (max_width);
-                }
-                else {
+                    max_width = parseInt(max_width, 10);
+                } else {
                     max_width = 400;
                 }
+
                 if (min_width != '') {
-                    min_width = parseInt (min_width);
-                }
-                else {
+                    min_width = parseInt(min_width, 10);
+                } else {
                     min_width = 40;
                 }
 
                 if (min_height != '') {
-                    min_height = parseInt (min_height);
-                }
-                else {
+                    min_height = parseInt(min_height, 10);
+                } else {
                     min_height = 15;
                 }
+
                 if (hm_id != '') {
-                    hm_id = parseInt (hm_id);
-                }
-                else {
+                    hm_id = parseInt(hm_id, 10);
+                } else {
                     hm_id = null;
                 }
+
 				var $this = jQuery('#div_'+wid);
 				jQuery('body').append("<div id='dlg_"+wid+"' title='Edit note'>"+
 								  "<textarea style='width:95%;height:92%' id='text_"+wid+"'>"+$this.text()+"</textarea></div>");
 
                 console.log("Test");
 				var buttons = {};
-				buttons["Clear"] = function() {
+				buttons["Clear"] = function () {
 					jQuery('#text_'+$(this).attr("data-id")).val("");
 				};
 				
-				buttons["Ok"] = function() {
+				buttons["Ok"] = function () {
 					var dlg = $(this);
 					var text = $('#text_'+dlg.attr("data-id")).val();
 					console.log(text + " " + dlg.attr("data-id"));
@@ -481,8 +483,8 @@
 					dlg.remove();
 				};
 						
-				buttons["Cancel"] = function() {
-					jQuery(this).dialog( "close" );
+				buttons["Cancel"] = function () {
+					jQuery(this).dialog("close");
 					jQuery(this).remove();
 				};
 								  

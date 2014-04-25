@@ -7,6 +7,40 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta86
+* (Hobbyquaker) Mehrere Widgets auf einmal selektieren (Shift-Click) und gemeinsames Verschieben
+* (Hobbyquaker) Fix Undo
+* (Hobbyquaker) Fix View CSS Inspector
+
+### 0.9beta85
+* (Hobbyquaker) Undo-Funktion über Button und ctrl-z bzw cmd-z
+* (Hobbyquaker) Editor-Position: Symbole statt Text
+
+### 0.9beta84
+* (Hobbyquaker) Fix mehrfaches gleichzeitiges Speichern unterbunden. Sollte Bug beheben der die dashui-views.json zerstört
+* (Hobbyquaker) export und import von Views
+* (Hobbyquaker) Fix Hintergrundklasse wurde nicht gespeichert
+* (Hobbyquaker) Fix CSS steal
+
+### 0.9beta83
+* (Hobbyquaker) reorganized CSS inspector, removed shorthand attributes
+* (smiling-Jack) editor position
+* (smiling-Jack) swipe widget fixes and improvements
+
+
+### 0.9beta82
+* (Bluefox) prepare for new select dialog
+* (Bluefox) make dashui grunt-able
+
+### 0.9beta81
+* (Hobbyquaker) neues Widget-Set homematic mit Widget zum Anzeigen/Bestätigen der Servicemeldungen
+
+### 0.9beta80
+* (Hobbyquaker) Fix Widget "jqui Icon HTTP Get"
+
+### 0.9beta79
+* (Hobbyquaker) Fix Widgets "basic static Image" und "basic static iFrame": Refresh von unsichtbaren Bildern/iFrames unterbunden
+
 ### 0.9beta78
 * (Hobbyquaker) Fehler abgefangen beim Anlegen von uiState Objekten
 

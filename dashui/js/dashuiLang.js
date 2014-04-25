@@ -70,6 +70,7 @@ dui = $.extend(true, dui, {
                 'filter_key'       : {'en' : 'Filter key:',  'de': 'Filterwort:',          'ru': 'Фильтр:'},
                 'Show in views:'   : {'en' : 'Show in views:','de': 'Zeige in Views:',     'ru': 'Показать на страницах:'},
                 'Background class' : {'en' : 'Background class:','de': 'Hintergrundklasse:','ru': 'CSS класс фона:'},
+                'Background' : {'en' : 'Background:','de': 'Hintergrund:','ru': 'CSS класс фона:'},
                 'Webseite'         : {'en' : 'Web link',     'de': 'Webseite',            'ru': 'Веб сайт'},
                 'none selected'    : {'en' : 'none selected','de': 'nichst selektiert',    'ru': 'ничего не выбрано'},
                 'Unterstützung'    : {'en' : 'Hilfe',        'de': 'Unterstützung',        'ru': 'Помощь'},

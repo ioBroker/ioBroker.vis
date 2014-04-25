@@ -24,7 +24,7 @@
 
 var dui = {
 
-    version:                '0.9beta78',
+    version:                '0.9beta86',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -264,10 +264,6 @@ var dui = {
             var cmdId = localData.metaIndex.Name[cmdVarName];
             if (cmdId) {
 
-                $("body").append('<div class="dashui-dummy" data-hm-id="' + dui.instanceView + '"></div>')
-                    .append('<div class="dashui-dummy" data-hm-id="' + dui.instanceCmd + '"></div>')
-                    .append('<div class="dashui-dummy" data-hm-id="' + dui.instanceData + '"></div>');
-
                 dui.instanceCmd = cmdId[0];
                 if (localData.metaIndex.Name[viewVarName]) {
                     dui.instanceView = localData.metaIndex.Name[viewVarName][0];
@@ -275,8 +271,6 @@ var dui = {
                 if (localData.metaIndex.Name[dataVarName]) {
                     dui.instanceData = localData.metaIndex.Name[dataVarName][0];
                 }
-
-                //console.log("instance ids: "+dui.instanceCmd+" "+dui.instanceView+" "+dui.instanceData);
 
                 dui.bindInstance();
 
@@ -362,16 +356,20 @@ var dui = {
 
         // EDIT mode
         if (dui.urlParams["edit"] === "") {
-            dui.editInitNext ();
+            dui.editInitNext();
         }
         this.initialized = true;
         // If this function called earlier, it makes problems under FireFox.
         dui.changeView(dui.activeView);
     },
     initViewObject: function () {
-        dui.views = {view1: {settings: {style: {}}, widgets: {}}};
-        dui.saveRemote();
-        window.location.href = './?edit';
+        if (confirm("no views found on server.\nCreate new dashui-views.json?")) {
+            dui.views = {view1: {settings: {style: {}}, widgets: {}}};
+            dui.saveRemote();
+            window.location.href = './?edit';
+        } else {
+            window.location.reload();
+        }
     },
     renderView: function (view, noThemeChange, hidden) {
         //console.log("renderView("+view+","+noThemeChange+","+hidden+")");
@@ -601,11 +599,29 @@ var dui = {
             // If edit mode, bind on click event to open this widget in edit dialog
             if (dui.urlParams["edit"] === "") {
                 $("#" + id).click(function (e) {
-                    if (dui.activeWidget != id) {
-                        dui.inspectWidget(id);
+
+                    if (e.shiftKey) {
+                        if (dui.activeWidget && dui.activeWidget != "none" && dui.activeWidget != id) {
+                            if ($("#widget_multi_helper_"+id).html()) {
+                                $("#widget_multi_helper_"+id).remove();
+                                dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(id), 1);
+                            } else {
+                                dui.inspectWidgetMulti(id);
+                            }
+
+                        } else {
+                            if (dui.activeWidget != id) {
+                                dui.inspectWidget(id);
+                            }
+                        }
+                    } else {
+                        if (dui.activeWidget != id) {
+                            dui.inspectWidget(id);
+                        }
                     }
 
                     e.preventDefault();
+                    e.stopPropagation();
                     return false;
                 });
 
@@ -806,13 +822,22 @@ var dui = {
             }            
         });       
     },
+    saveRemoteActive: false,
     saveRemote: function (cb) {
+        if (dui.saveRemoteActive) {
+            setTimeout(function (_cb) {
+                dui.saveRemote(_cb);
+            }, 1000, cb);
+            return;
+        }
+        dui.saveRemoteActive = true;
         // Sync widget before it will be saved
         if (dui.activeWidget && dui.activeWidget.indexOf('_') != -1 && dui.syncWidget) {
             dui.syncWidget(dui.activeWidget);
         }
         
         dui.conn.writeFile("dashui-views.json", dui.views, function () {
+            dui.saveRemoteActive = false;
             if (cb) {
                 cb();
             }
@@ -835,9 +860,9 @@ var dui = {
 
             if (localData.metaObjects[id]["Address"] !== undefined) {
                 return parent + localData.metaObjects[id]["Name"] + "/" + localData.metaObjects[id]["Address"];
-            } else if (localData.metaObjects[id]["Name"]){
+            } else if (localData.metaObjects[id]["Name"]) {
                 return parent + localData.metaObjects[id]["Name"];
-            } else if (localData.metaObjects[id]["name"]){
+            } else if (localData.metaObjects[id]["name"]) {
                 return parent + localData.metaObjects[id]["name"];
             }
         } else if (id == 41) {
@@ -959,7 +984,7 @@ var localData = {
             localData.metaObjects[id]["TypeName"] !== undefined &&
             localData.metaObjects[id]["TypeName"] == "PROGRAM") {
             dui.conn.execProgramm(id);
-        }  else {
+        } else {
             this.setState.attr("_" + id, {Value: val});
             var d = new Date();
             var t = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
@@ -1260,7 +1285,7 @@ if ('applicationCache' in window) {
                     });
                     setTimeout (function () {
                         dui.authRunning = false;
-                        console.log ("user "+  user + ", " + pass + " " + salt);
+                        console.log("user "+  user + ", " + pass + " " + salt);
                         dui.conn.authenticate(user, pass, salt);
                     }, 500);
                     return true;
@@ -1394,25 +1419,25 @@ var servConn = {
             };
             $.connection.hub.start().done(function () {
                 that._isConnected = true;
-                if (that._connCallbacks.onConnChange){
+                if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
             $.connection.hub.reconnecting(function() {
                 that._isConnected = false;
-                if (that._connCallbacks.onConnChange){
+                if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
             $.connection.hub.reconnected(function() {
                 that._isConnected = true;
-                if (that._connCallbacks.onConnChange){
+                if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
             $.connection.hub.disconnected(function() {
                 that._isConnected = false;
-                if (that._connCallbacks.onConnChange){
+                if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
             });
@@ -1434,25 +1459,25 @@ var servConn = {
 
                 this._socket.on('connect', function () {
                     this._myParent._isConnected = true;
-                    if (this._myParent._connCallbacks.onConnChange){
+                    if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
                 });
 
                 this._socket.on('disconnect', function () {
                     this._myParent._isConnected = false;
-                    if (this._myParent._connCallbacks.onConnChange){
+                    if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
                 });
                 this._socket.on('reconnect', function () {
                     this._myParent._isConnected = true;
-                    if (this._myParent._connCallbacks.onConnChange){
+                    if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
                 });
                 this._socket.on('refreshAddons', function () {
-                    if (this._myParent._connCallbacks.onRefresh){
+                    if (this._myParent._connCallbacks.onRefresh) {
                         this._myParent._connCallbacks.onRefresh();
                     }
                 });
@@ -1469,7 +1494,7 @@ var servConn = {
                     o.ack  = obj[3];
                     o.lc   = obj[4];
 
-                    if (this._myParent._connCallbacks.onUpdate){
+                    if (this._myParent._connCallbacks.onUpdate) {
                         this._myParent._connCallbacks.onUpdate(o);
                     }
 
@@ -1482,14 +1507,14 @@ var servConn = {
             this._isAuthDone = true;
 
             this._isConnected = true;
-            if (this._connCallbacks.onConnChange){
+            if (this._connCallbacks.onConnChange) {
                 this._connCallbacks.onConnChange(this._isConnected);
             }
        }
     },
     getVersion: function (callback) {
         if (!this._isConnected) {
-            console.log ("No connection!");
+            console.log("No connection!");
             return;
         }
 
@@ -1499,7 +1524,7 @@ var servConn = {
 
         //SignalR
         if (this._type == 0) {
-            this._hub.server.getVersion ().done(function (version) {
+            this._hub.server.getVersion().done(function (version) {
                 if (callback) {
                     callback(version);
                 }
@@ -1510,7 +1535,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getVersion', function(version) {
+            this._socket.emit('getVersion', function (version) {
                 if (callback) {
                     callback(version);
                 }
@@ -1519,12 +1544,12 @@ var servConn = {
     },
     _checkAuth: function (callback) {
         if (!this._isConnected) {
-            console.log ("No connection!");
+            console.log("No connection!");
             return;
         }
         if (this._type == 0) {
             //SignalR
-            this._hub.server.getVersion ().done(function (version) {
+            this._hub.server.getVersion().done(function (version) {
                 if (callback)
                     callback(version);
             })
@@ -1534,7 +1559,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getVersion', function(version) {
+            this._socket.emit('getVersion', function (version) {
                 if (callback)
                     callback(version);
             });
@@ -1542,7 +1567,7 @@ var servConn = {
     },
     readFile: function (filename, callback) {
         if (!this._isConnected) {
-            console.log ('No connection!');
+            console.log('No connection!');
             return;
         }
 
@@ -1552,7 +1577,7 @@ var servConn = {
 
         if (this._type == 0) {
             //SignalR
-            this._hub.server.readFile (filename).done(function (data) {
+            this._hub.server.readFile(filename).done(function (data) {
                 if (callback) {
                     callback(data);
                 }
@@ -1563,7 +1588,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('readFile', filename, function(data) {
+            this._socket.emit('readFile', filename, function (data) {
                 if (callback) {
                     callback(data);
                 }
@@ -1584,7 +1609,7 @@ var servConn = {
                             dui.views = $.parseJSON(dui.views);
                         }
                     } catch (e) {
-                        window.alert ('Invalid ' + filename + ' json format');
+                        window.alert('Invalid ' + filename + ' json format');
                     }
                     callback(dui.views);
                     if (!dui.views) {
@@ -1600,15 +1625,14 @@ var servConn = {
     },
     touchFile: function (filename) {
         if (!this._isConnected) {
-            console.log ("No connection!");
+            console.log("No connection!");
             return;
         }
 
         if (this._type == 0) {
             //SignalR
             this._hub.server.touchFile (filename);
-        }
-        else if (this._type == 1) {
+        } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
                 console.log('socket.io not initialized');
@@ -1632,7 +1656,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('writeFile', filename, data, function(isOk) {
+            this._socket.emit('writeFile', filename, data, function (isOk) {
                 if (callback) {
                     callback(isOk);
                 }
@@ -1661,7 +1685,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('readdir', dirname, function(data) {
+            this._socket.emit('readdir', dirname, function (data) {
                 if (callback) {
                     callback(data);
                 }
@@ -1695,7 +1719,7 @@ var servConn = {
     },
     getDataPoints: function (callback) {
         if (!this._isConnected) {
-            console.log ("No connection!");
+            console.log("No connection!");
             return;
         }
         if (this._queueCmdIfRequired("getDataPoints", callback)) {
@@ -1751,7 +1775,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getDatapoints', function(data) {
+            this._socket.emit('getDatapoints', function (data) {
                 if (data === null) {
                     if (callback) {
                         callback('Authentication required');
@@ -1830,7 +1854,7 @@ var servConn = {
                     for (var i = 0, len = _data.length; i < len; i++) {
                         if (_data[i]) {
                             data[_data[i].id] = _data[i];
-                            data[_data[i].id].id = undefined;
+                            delete data[_data[i].id].id;
                         }
                     }
                 } catch (e) {
@@ -1848,7 +1872,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getObjects', function(data) {
+            this._socket.emit('getObjects', function (data) {
                 if (callback) {
                     callback(data);
                 }
@@ -1875,7 +1899,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getIndex', function(data) {
+            this._socket.emit('getIndex', function (data) {
                 if (callback)
                     callback(data);
             });
@@ -1903,7 +1927,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('setObject', objId, obj, function(cid) {
+            this._socket.emit('setObject', objId, obj, function (cid) {
                 if (callback) {
                     callback(cid);
                 }
@@ -1965,7 +1989,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getUrl', url, function(data) {
+            this._socket.emit('getUrl', url, function (data) {
                 if (callback) {
                     callback(data);
                 }
@@ -2003,8 +2027,7 @@ var servConn = {
             }
 
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     },
@@ -2020,12 +2043,12 @@ var servConn = {
         }
 
         if (!this._isConnected) {
-            console.log ("No connection!");
+            console.log("No connection!");
             return;
         }
 
         if (!this._authInfo) {
-            console.log ("No credentials!");
+            console.log("No credentials!");
         }
 
         //SignalR
@@ -2051,7 +2074,7 @@ var servConn = {
                     }
                 } else {
                     // Another authRequest should come, wait for this
-                    console.log ("Cannot authenticate: " + error);
+                    console.log("Cannot authenticate: " + error);
                     this._authInfo = null;
                 }
             });
@@ -2061,7 +2084,7 @@ var servConn = {
 
 // IE8 indexOf compatibility
 if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function(obj, start) {
+    Array.prototype.indexOf = function (obj, start) {
         for (var i = (start || 0), j = this.length; i < j; i++) {
             if (this[i] === obj) { return i; }
         }

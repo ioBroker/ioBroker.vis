@@ -46,7 +46,7 @@
     // Register callback in dashUI
     function initTable () {
         if (!dui.binds.table) {
-            dui.binds.table = {}
+            dui.binds.table = {};
             dui.registerOnChange (onchangeTable, null);
             console.log("table");
             dui.binds.table.scrollSize = getBrowserScrollSize();
@@ -104,7 +104,7 @@
         }
     }
 
-    function onchangeTable (arg, objId, newEvent, isFromDevice, lastchange) {
+    function onchangeTable (arg, objId, newEvent) {
         if (tableElements[objId]) {
             for (var i = 0, len = tableElements[objId].length; i < len; i++) {
                 var elem = document.getElementById (tableElements[objId][i]);
@@ -159,20 +159,20 @@
             if (!text) {
                 text = '<table class="'+options.tclass+'-detail">';
                 // Go through all attributes
-                var r = 0;
-                for (var obj in that._data) {
+                var row = 0;
+                for (var data_obj in that._data) {
                     // Show that object
-                    if (obj.length > 1 && obj[0] == '_' && obj != '_class' && obj.substring(0,4) != '_btn' && obj != '_id') {
+                    if (data_obj.length > 1 && data_obj[0] == '_' && data_obj != '_class' && data_obj.substring(0,4) != '_btn' && data_obj != '_id') {
                         continue;
                     }
 
-                    text += '<tr class="'+options.tclass+'-detail-tr '+options.tclass+'-detail-tr-'+((r%2) ? 'odd' : 'even')+'"><td class="'+options.tclass+'-detail-td-name">'+obj+'</td>' +
-                            '<td class="'+options.tclass+'-detail-td-value">'+that._data[obj]+'</td></tr>';
+                    text += '<tr class="'+options.tclass+'-detail-tr '+options.tclass+'-detail-tr-'+((row%2) ? 'odd' : 'even')+'"><td class="'+options.tclass+'-detail-td-name">'+data_obj+'</td>' +
+                            '<td class="'+options.tclass+'-detail-td-value">'+that._data[data_obj]+'</td></tr>';
 
                     if (val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
                         text += '<tr class="'+options.tclass+'-detail-tr"><td colspan="2">&nbsp;</td></tr>';
                     }
-                    r++;
+                    row++;
                 }
                 text += '</table>';
             }
@@ -297,15 +297,15 @@
         var j = 0;
         var selectedId = null;
         // Go through all lines
-        for (var i = 0, len = table.length; i < len; i++) {
-            if (!table[i]) continue;
-            var _classes = table[i]['_class'] ? table[i]['_class'].split(' ') : null;
+        for (var ii = 0, ilen = table.length; ii < ilen; ii++) {
+            if (!table[ii]) continue;
+            var _classes = table[ii]['_class'] ? table[ii]['_class'].split(' ') : null;
 
             //  Create table header
             if (!headerDone) {
                 header += '<tr class="' + options.tclass + '-th">';
                 var k = 1;
-                for (var obj in table[i]) {
+                for (var obj in table[ii]) {
                     if (obj.length > 0 && obj[0] == '_') {
                         if (obj.length > 4 && obj.substring(0,4) == '_btn') {
                             header += '<th class="' + options.tclass + '-th' + k + '"></th>';
@@ -323,10 +323,10 @@
             }
 
             if (_classes &&_classes.indexOf('selected') != -1) {
-                selectedId = i;
+                selectedId = ii;
             }
 
-            text += createRow(table[i], wid, options, i, j);
+            text += createRow(table[ii], wid, options, ii, j);
             j++;
         }
         text += '</table>\n';
@@ -342,11 +342,11 @@
         // Set additional data for every row
         for (var i = 0, len = table.length; i < len; i++) {
             if (!table[i]) continue;
-            var el = document.getElementById('ack_button_' + wid + '_' + i);
-            if (el) {
-                el._data   = table[i];
-                el._parent = elem;
-                el._ack_id = table[i]._ack_id || JSON.stringify(table[i]);
+            var _el = document.getElementById('ack_button_' + wid + '_' + i);
+            if (_el) {
+                _el._data   = table[i];
+                _el._parent = elem;
+                _el._ack_id = table[i]._ack_id || JSON.stringify(table[i]);
             }
         }
         // If detailed information desired
@@ -355,7 +355,7 @@
             $('.' + wid + '-id').bind("click", onRowClick);
 
             // Set additional data for every row
-            for (var i = 0, len = table.length; i < len; i++) {
+            for (i = 0, len = table.length; i < len; i++) {
                 if (!table[i]) continue;
                 var id = (typeof table[i]._id !== 'undefined') ? table[i]._id :  i;
                 var el = document.getElementById('tr_' + wid + '_' + id);
@@ -396,13 +396,20 @@
             else
                 return;
 
+            // If new event came
             if (objId == options.event_id) {
                 var id = (newEvent._id  !== 'undefined') ? newEvent._id  :  this._rowNum;
+                // Try to find, if this event yet exists
                 var row = document.getElementById ('tr_' + this._wid + '_' + id);
+                var rowNum;
+                //
                 if (row) {
-                    this.rowNum = $(row).hasClass (options.tclass+'-tr-odd') ? 1 : 0;
+                    // If exists, get row number of this line to calculate odd or even
+                    rowNum = $(row).hasClass (options.tclass+'-tr-odd') ? 1 : 0;
                 } else {
+                    // Else get next row number
                     this.rowNum =  this._rowNum++;
+                    rowNum = this.rowNum;
                 }
 
                 var text = createRow(newEvent, this._wid, this._options, id, rowNum);
@@ -410,14 +417,16 @@
                 if (row) {
                     $(row).replaceWith(text);
                 } else {
+                    // If add to the top of table
                     if (this._options.new_on_top) {
                         $('#t' + this.id).prepend(text);
-                    }
-                    else {
+                    } else {
+                        // Add to the bottom of table
                         $('#t' + this.id).append(text);
                     }
                 }
 
+                // If detailed widget desired
                 if (this._options.detailed_wid) {
                     var el = document.getElementById('tr_' + this._wid + '_' + id);
                     if (el) {
