@@ -32,6 +32,7 @@ dui = $.extend(true, dui, {
     isStealCss:         false,
     gridWidth:          undefined,
     editorPos:          "free",
+    undoHistoryMaxLength: 50,
 
     renameView: function () {
         var val = $("#new_name").val();
@@ -39,7 +40,7 @@ dui = $.extend(true, dui, {
             dui.views[val] = $.extend(true, {}, dui.views[dui.activeView]);
             $("#dui_container").hide();
             delete dui.views[dui.activeView];
-            dui.saveRemote();
+            dui.save();
             dui.activeView = val;
             dui.renderView(val);
             dui.changeView(val);
@@ -55,7 +56,7 @@ dui = $.extend(true, dui, {
                 //console.log("delView "+dui.activeView);
                 delete dui.views[dui.activeView];
                 //console.log(dui.views);
-                dui.saveRemote();
+                dui.save();
                 window.location.href = "edit.html";
            }
     },
@@ -68,7 +69,7 @@ dui = $.extend(true, dui, {
                 dui.views[val].widgets[dui.nextWidget()] = dui.views[val].widgets[widget];
                 delete dui.views[val].widgets[widget];
             }
-            dui.saveRemote(function () {
+            dui.save(function () {
                 dui.renderView(val);
                 dui.changeView(val);
                 window.location.reload();
@@ -125,7 +126,7 @@ dui = $.extend(true, dui, {
             dui.views[name].widgets[dui.nextWidget()] = dui.views[name].widgets[widget];
             delete dui.views[name].widgets[widget];
         }
-        dui.saveRemote(function () {
+        dui.save(function () {
             dui.renderView(name);
             dui.changeView(name);
             window.location.reload();
@@ -238,7 +239,7 @@ dui = $.extend(true, dui, {
 	delWidget: function () {
 		dui.clearWidgetHelper();
 		dui.delWidgetHelper(dui.activeWidget, true);
-		dui.saveRemote();
+		dui.save();
 		dui.inspectWidget("none");
     },
     addWidget: function (tpl, data, style, wid, view, hidden) {
@@ -284,16 +285,19 @@ dui = $.extend(true, dui, {
 				buttontext: undefined
 			}, data))
 		};
-                if (renderVisible) {
-                    dui.widgets[widgetId].renderVisible = true;
-                }
-		if (isViewExist) {
+
+        if (renderVisible) {
+            dui.widgets[widgetId].renderVisible = true;
+        }
+
+        if (isViewExist) {
 			$("#duiview_"+view).append(can.view(tpl, {hm: localData.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"], "view": view}));
 		}
 
         if (!dui.views[view].widgets) {
             dui.views[view].widgets = {};
         }
+
         if (!dui.views[view].widgets[widgetId]) {
             dui.views[view].widgets[widgetId] = {};
         }
@@ -345,7 +349,8 @@ dui = $.extend(true, dui, {
 			dui.activeWidget = widgetId;
 			dui.actionNewWidget(widgetId);
 		}
-		
+
+        dui.save();
 		
         return widgetId;
     },
@@ -365,14 +370,14 @@ dui = $.extend(true, dui, {
 
             setTimeout(function () {
                 dui.inspectWidget(dui.activeWidget);
-                dui.saveRemote();
+                dui.save();
             }, 50);
         } else {
             if ($("#dui_container").find("#duiview_"+targetView).html() == undefined) {
                 dui.renderView(targetView, true, true);
             }
             dui.addWidget(tpl, data, style, dui.nextWidget(), targetView, true);
-            dui.saveRemote();
+            dui.save();
 
             alert("Widget copied to view " + targetView + ".");
         }
@@ -391,7 +396,7 @@ dui = $.extend(true, dui, {
 			dui.delWidgetHelper(oldId, false);
 		}
 		dui.inspectWidget(newId);
-		dui.saveRemote();
+		dui.save();
 	},
 	// find this wid in all views, 
 	// delete where it is no more exist, 
@@ -583,7 +588,7 @@ dui = $.extend(true, dui, {
                         bt.val($this.val().charAt(0).toUpperCase() + $this.val().slice(1).toLowerCase()).trigger('change');
                     }
                     dui.reRenderWidget(dui.activeWidget);
-                    dui.saveRemote();
+                    dui.save();
                 }, 200, this);
             };
 
@@ -631,7 +636,7 @@ dui = $.extend(true, dui, {
                     var attr = $this.attr("id").slice(8);
                     dui.widgets[dui.activeWidget].data.attr(attr, $this.val());
                     dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
-                    dui.saveRemote();
+                    dui.save();
                 }, 200, this);
             };
 
@@ -694,7 +699,7 @@ dui = $.extend(true, dui, {
                     var attr = $this.attr("id").slice(8);
                     dui.widgets[dui.activeWidget].data.attr(attr, $this.val());
                     dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
-                    dui.saveRemote();
+                    dui.save();
                 }, 200, this);
             };
 
@@ -816,7 +821,7 @@ dui = $.extend(true, dui, {
             }
             dui.widgets[dui.activeWidget].data.attr(attribute, val);
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
-            dui.saveRemote();
+            dui.save();
             dui.reRenderWidget(dui.activeWidget);
         }).keyup(function () {
             $(this).trigger('change');
@@ -990,7 +995,7 @@ dui = $.extend(true, dui, {
                     $('#option_'+wid_attr_).jweatherCity({lang: dui.language, currentValue: widget.data[wid_attr_], onselect: function (wid, text, obj) {
                             dui.widgets[dui.activeWidget].data.attr('weoid', text);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
-                            dui.saveRemote();
+                            dui.save();
                             dui.reRenderWidget(dui.activeWidget);
                         }
                         });
@@ -1114,7 +1119,7 @@ dui = $.extend(true, dui, {
                             }
                             dui.widgets[dui.activeWidget].data.attr(attribute, val);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
-                            dui.saveRemote();
+                            dui.save();
                             dui.reRenderWidget(dui.activeWidget);
                         }).keyup(function () {
                                 $(this).trigger('change');
@@ -1152,7 +1157,7 @@ dui = $.extend(true, dui, {
                     var $this = $(elem_);
                     var attr = $this.attr("id").slice(8);
                     dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
-                    dui.saveRemote();                  
+                    dui.save();                  
                 }, 200, this);            
             };
             
@@ -1212,7 +1217,7 @@ dui = $.extend(true, dui, {
                 //noneSelectedText: dui.translate("Select options")
             }).change (function () {
                 dui.syncWidget (dui.activeWidget, $(this).val());
-                dui.saveRemote ();
+                dui.save ();
             });
         }
         // Select Widget
@@ -1274,6 +1279,9 @@ dui = $.extend(true, dui, {
     },
     // Init all edit fields for one view
     changeViewEdit: function (view) {
+
+        dui.undoHistory = [$.extend(true, {}, dui.views[dui.activeView])];
+
         // Load meta data if not yet loaded
         var isMetaLoaded = false;
         for (var v in localData.metaObjects) {
@@ -1304,7 +1312,7 @@ dui = $.extend(true, dui, {
                     }
                     dui.views[dui.activeView].settings.style['background_class'] = newStyle;
                     $("#duiview_" + dui.activeView).addClass(dui.views[dui.activeView].settings.style['background_class']);
-                    dui.saveRemote();
+                    dui.save();
                 }
             });
         }
@@ -1366,7 +1374,7 @@ dui = $.extend(true, dui, {
                 }
                 dui.views[dui.activeView].widgets[widget].style.left = ui.position.left;
                 dui.views[dui.activeView].widgets[widget].style.top = ui.position.top;
-                dui.saveRemote();
+                dui.save();
 
             },
             drag: function (event, ui) {
@@ -1401,7 +1409,7 @@ dui = $.extend(true, dui, {
                     }
                     dui.views[dui.activeView].widgets[widget].style.width = ui.size.width;
                     dui.views[dui.activeView].widgets[widget].style.height = ui.size.height;
-                    dui.saveRemote();
+                    dui.save();
 
                 },
                 resize: function (event,ui) {
@@ -1425,7 +1433,7 @@ dui = $.extend(true, dui, {
             position: { my: "right top", at: "right top", of: window },
             dialogClass: "dui-editor-dialog",
             close: function () {
-                dui.saveRemote();
+                dui.save();
                 location.href = "./#"+dui.activeView;
             },
             open: function () {
@@ -1465,7 +1473,7 @@ dui = $.extend(true, dui, {
         $("#language").change(function () {
             dui.language = $(this).val();
             ccuIoLang = dui.language;
-            dui.translateAll (dui.language);
+            dui.translateAll(dui.language);
         });
 
         $("input.dashui-editor").button();
@@ -1482,7 +1490,6 @@ dui = $.extend(true, dui, {
                     checkAllText:dui.translate("Check all"),
                     uncheckAllText:dui.translate("Uncheck all"),
                     noneSelectedText:dui.translate("Select options")
-
                 });
             });
             $("select.dashui-editor-large").each(function () {
@@ -1496,7 +1503,6 @@ dui = $.extend(true, dui, {
                     checkAllText:dui.translate("Check all"),
                     uncheckAllText:dui.translate("Uncheck all"),
                     noneSelectedText:dui.translate("Select options")
-
                 });
             });
             $("select.dashui-editor-xlarge").each(function () {
@@ -1595,7 +1601,7 @@ dui = $.extend(true, dui, {
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
 
             // TODO saveRemote really necessary here?
-            dui.saveRemote();
+            dui.save();
             dui.reRenderWidget(dui.activeWidget);
         });
 		
@@ -1606,7 +1612,7 @@ dui = $.extend(true, dui, {
 				dui.views[dui.activeView].widgets[dui.activeWidget].style = {};
 			}
             dui.views[dui.activeView].widgets[dui.activeWidget].style[style] = $this.val();
-            dui.saveRemote();
+            dui.save();
             var $activeWidget = $("#"+dui.activeWidget);
             $activeWidget.css(style, $this.val());
             $("#widget_helper").css( {left:   parseInt($activeWidget.css("left")) - 2,
@@ -1642,7 +1648,7 @@ dui = $.extend(true, dui, {
 				dui.views[dui.activeView].settings.style = {};
 			}
             dui.views[dui.activeView].settings.style[attr] = val;
-            dui.saveRemote();
+            dui.save();
         }).keyup(function () { 
             $(this).trigger('change');
         });
@@ -1653,7 +1659,7 @@ dui = $.extend(true, dui, {
             var val = $this.val();
             //console.log("change "+attr+" "+val);
             dui.views[dui.activeView].settings[attr] = val;
-            dui.saveRemote();
+            dui.save();
         }).keyup(function () { 
             $(this).trigger('change');
         });
@@ -1666,7 +1672,7 @@ dui = $.extend(true, dui, {
             $("style[data-href$='jquery-ui.min.css']").remove();
             $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/'+theme+'/jquery-ui.min.css" id="jqui_theme"/>');
             //attr("data-href", "css/"+theme+"/jquery-ui.min.css");
-            dui.saveRemote();
+            dui.save();
         }).keyup(function () { 
             $(this).trigger('change');
         });
@@ -1693,8 +1699,11 @@ dui = $.extend(true, dui, {
             } else {
                 $("#size_x").hide();
             }
-            dui.views[dui.activeView].settings.sizex = x;
-            dui.saveRemote();
+            if (dui.views[dui.activeView].settings.sizex != x) {
+                dui.views[dui.activeView].settings.sizex = x;
+                dui.save();
+            }
+
         }).keyup(function () { $(this).trigger("change"); });
 
         $("#screen_size_y").change(function () {
@@ -1710,8 +1719,11 @@ dui = $.extend(true, dui, {
                 $("#size_y").hide();
 
             }
-            dui.views[dui.activeView].settings.sizey = y;
-            dui.saveRemote();
+            if (dui.views[dui.activeView].settings.sizey != y) {
+                dui.views[dui.activeView].settings.sizey = y;
+                dui.save();
+            }
+
         }).keyup(function () { $(this).trigger("change"); });
 
         // Instances
@@ -1784,7 +1796,7 @@ dui = $.extend(true, dui, {
 		$("#dui_editor").dialog("open");
         $('.ui-dialog').css({'z-index':1000});
         if (dui.binds.jqueryui) {
-		dui.binds.jqueryui._disable();
+		    dui.binds.jqueryui._disable();
         }
 
 		// Create background_class property if does not exist
@@ -1800,9 +1812,6 @@ dui = $.extend(true, dui, {
 			}
 		}
 
-
-
-	
 		if (dui.fillWizard) {
 			dui.fillWizard ();
 		}		
@@ -1947,8 +1956,7 @@ dui = $.extend(true, dui, {
                 delay = setTimeout(function () {
                     $(".dui-editor-dialog").hide("slide", {direction: "left"})
                 }, 750);
-            })
-
+            });
     }
 
     function right_ah() {
@@ -1992,7 +2000,7 @@ dui = $.extend(true, dui, {
                 delay = setTimeout(function () {
                     $(".dui-editor-dialog").hide("slide", {direction: "right"})
                 }, 750);
-            })
+            });
     }
 
     function free() {
@@ -2012,7 +2020,7 @@ dui = $.extend(true, dui, {
             top: 0,
             width: "450px",
             height: "610px"
-        })
+        });
 
     }
 
@@ -2297,7 +2305,7 @@ dui = $.extend(true, dui, {
                 }
             });
 
-            dui.saveRemote();
+            dui.save();
 
             setTimeout(function () {
                 dui.isStealCss = false;
@@ -2305,7 +2313,6 @@ dui = $.extend(true, dui, {
                 $(".dashui-steal-css").removeAttr("checked").button("refresh");
                 $("#dui_container").removeClass("dashui-steal-cursor");
             }, 200);
-
 
         }
     },
@@ -2335,10 +2342,43 @@ dui = $.extend(true, dui, {
             css = cssTop + " " + cssRight + " " + cssBottom + " " + cssLeft;
         }
         return css;
+    },
+    undoHistory: [],
+    save: function (cb) {
+        if (dui.undoHistory.length == 0 || (JSON.stringify(dui.views[dui.activeView]) != JSON.stringify(dui.undoHistory[dui.undoHistory.length - 1]))) {
+            if (dui.undoHistory.push($.extend(true, {}, dui.views[dui.activeView])) > dui.undoHistoryMaxLength) {
+                dui.undoHistory.splice(0, 1);
+            }
+        }
+        dui.saveRemote(cb);
+    },
+    undo: function () {
+        if (dui.undoHistory.length <= 1) {
+            return;
+        }
+
+        var activeWidget = dui.activeWidget;
+
+        dui.inspectWidget("none");
+        $("#duiview_" + dui.activeView).remove();
+
+        dui.undoHistory.pop();
+        dui.views[dui.activeView] = $.extend(true, {}, dui.undoHistory[dui.undoHistory.length - 1]);
+
+        dui.renderView(dui.activeView);
+        dui.inspectWidget(activeWidget);
+    }
+});
+
+$(document).keydown(function (e) {
+    // Capture ctrl-z (Windows/Linux) and cmd-z (MacOSX)
+    if (e.which === 90 && (e.ctrlKey || e.metaKey)) {
+        dui.undo();
+        e.preventDefault();
     }
 });
 
 $(document).ready(function () {
-    dui.translateAll ((typeof ccuIoLang === 'undefined') ? 'en' : (ccuIoLang || 'en'));
+    dui.translateAll((typeof ccuIoLang === 'undefined') ? 'en' : (ccuIoLang || 'en'));
 });
 
