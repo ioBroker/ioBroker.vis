@@ -613,8 +613,8 @@ dui = $.extend(true, dui, {
                     this._save();
                 }
             }).focus(function () {
-                    $(this).autocomplete("search", "");
-                }).keyup(function () {
+                $(this).autocomplete("search", "");
+            }).keyup(function () {
                 this._save();
             }).val(widget.data[wid_attr]);
         }
@@ -676,8 +676,8 @@ dui = $.extend(true, dui, {
                     $(elem).trigger('change', ui.item.value);
                 }
             }).focus(function () {
-                    $(this).autocomplete("search", "");
-                }).keyup(function () {
+                $(this).autocomplete("search", "");
+            }).keyup(function () {
                 this._save();
             }).val(widget.data[wid_attr]);
         }
@@ -823,9 +823,9 @@ dui = $.extend(true, dui, {
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
             dui.save();
             dui.reRenderWidget(dui.activeWidget);
-        }).keyup(function () {
+        })/*.keyup(function () {
             $(this).trigger('change');
-        });
+        })*/;
     },
     inspectWidget: function (id) {
 
@@ -1119,9 +1119,9 @@ dui = $.extend(true, dui, {
                             dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
                             dui.save();
                             dui.reRenderWidget(dui.activeWidget);
-                        }).keyup(function () {
+                        })/*.keyup(function () {
                                 $(this).trigger('change');
-                        });
+                        })*/;
                     }
 
                     if (instancesStart !== null) {
@@ -1176,7 +1176,7 @@ dui = $.extend(true, dui, {
                 }
             }).focus(function () {
                 $(this).autocomplete("search", "");
-            }).keyup (function () {
+            }).keyup(function () {
                 this._save();               
             }); 
         }
@@ -1276,10 +1276,12 @@ dui = $.extend(true, dui, {
         }
     },
     // Init all edit fields for one view
-    changeViewEdit: function (view) {
+    changeViewEdit: function (view, noChange) {
 
-        dui.undoHistory = [$.extend(true, {}, dui.views[dui.activeView])];
-        $("#button_undo").addClass("ui-state-disabled").removeClass("ui-state-hover");
+        if (!noChange) {
+            dui.undoHistory = [$.extend(true, {}, dui.views[dui.activeView])];
+            $("#button_undo").addClass("ui-state-disabled").removeClass("ui-state-hover");
+        }
 
         // Load meta data if not yet loaded
         var isMetaLoaded = false;
@@ -1316,6 +1318,8 @@ dui = $.extend(true, dui, {
             });
         }
 
+
+
         $("#inspect_view").html(view);
 
         $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
@@ -1343,11 +1347,25 @@ dui = $.extend(true, dui, {
         if ($().multiselect) {
             $("#select_view_copy").multiselect("refresh");
         }
+
+
+        // View CSS Inspector
+        /*
         $(".dashui-inspect-view-css").each(function () {
             var $this = $(this);
             var attr = $this.attr("id").slice(17);
             $("#" + $this.attr("id")).val(dui.views[dui.activeView].settings.style[attr]);
         });
+        */
+
+        $(".dashui-inspect-view-css").each(function () {
+            var $this = $(this);
+            var attr = $this.attr("id").slice(17);
+            var css = $("#duiview_"+dui.activeView).css(attr);
+            console.log(attr + " " + css);
+            $this.val(css);
+        });
+
         $(".dashui-inspect-view").each(function () {
             var $this = $(this);
             var attr = $this.attr("id").slice(13);
@@ -1633,9 +1651,9 @@ dui = $.extend(true, dui, {
                 }
             }
 
-        }).keyup (function () {
+        })/*.keyup(function () {
             $(this).trigger("change");
-        });
+        })*/;
 
         dui.initStealHandlers();
 
@@ -1650,9 +1668,9 @@ dui = $.extend(true, dui, {
 			}
             dui.views[dui.activeView].settings.style[attr] = val;
             dui.save();
-        }).keyup(function () { 
+        })/*.keyup(function () {
             $(this).trigger('change');
-        });
+        })*/;
 		
         $(".dashui-inspect-view").change(function () {
             var $this = $(this);
@@ -1661,9 +1679,9 @@ dui = $.extend(true, dui, {
             //console.log("change "+attr+" "+val);
             dui.views[dui.activeView].settings[attr] = val;
             dui.save();
-        }).keyup(function () { 
+        })/*.keyup(function () {
             $(this).trigger('change');
-        });
+        })*/;
 		
         $("#inspect_view_theme").change(function () {
             var theme = $("#inspect_view_theme option:selected").val();
@@ -1674,8 +1692,6 @@ dui = $.extend(true, dui, {
             $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/'+theme+'/jquery-ui.min.css" id="jqui_theme"/>');
             //attr("data-href", "css/"+theme+"/jquery-ui.min.css");
             dui.save();
-        }).keyup(function () { 
-            $(this).trigger('change');
         });
         $("#select_active_widget").change(function () {
             var widgetId = $(this).val();
@@ -1705,7 +1721,7 @@ dui = $.extend(true, dui, {
                 dui.save();
             }
 
-        }).keyup(function () { $(this).trigger("change"); });
+        })/*.keyup(function () { $(this).trigger("change"); })*/;
 
         $("#screen_size_y").change(function () {
             var x = $("#screen_size_x").val();
@@ -1725,7 +1741,7 @@ dui = $.extend(true, dui, {
                 dui.save();
             }
 
-        }).keyup(function () { $(this).trigger("change"); });
+        })/*.keyup(function () { $(this).trigger("change"); })*/;
 
         // Instances
         if (typeof storage !== 'undefined') {
@@ -2381,7 +2397,9 @@ dui = $.extend(true, dui, {
         }
 
         dui.renderView(dui.activeView);
+        dui.changeViewEdit(dui.activeView, true);
         dui.inspectWidget(activeWidget);
+
     }
 });
 
