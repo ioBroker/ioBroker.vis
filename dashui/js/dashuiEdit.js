@@ -830,9 +830,7 @@ dui = $.extend(true, dui, {
     inspectWidget: function (id) {
 
         if (dui.isStealCss) { return false; }
-        if (dui.widgets[id]) {
-            //console.log(dui.widgets[id].data);
-        }
+
         $("#select_active_widget").find("option[value='"+id+"']").prop("selected", true);
         if ($().multiselect) {
             $("#select_active_widget").multiselect("refresh");
@@ -862,7 +860,7 @@ dui = $.extend(true, dui, {
             $(this).val("");
         });
 
-        if (id === "none") {
+        if (!id || id === "none") {
             dui.clearWidgetHelper();
             $(".dashui-widget-tools").hide();
             $("#view_inspector").show();
@@ -875,7 +873,7 @@ dui = $.extend(true, dui, {
         var widget = dui.views[dui.activeView].widgets[id];
 
         if (!widget) {
-            console.log("inspectWidget Widget undefined");
+            console.log("inspectWidget "+id+" undefined");
             return false;
         }
 
