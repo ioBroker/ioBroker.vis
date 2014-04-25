@@ -1816,7 +1816,7 @@ dui = $.extend(true, dui, {
  	},
     editPosition: function () {
 
-    var save_posi = storage.get("Dashui_Editor_Position") || ["free","Free"];
+    var save_posi = storage.get("Dashui_Editor_Position") || ["free","*"];
     dui.editorPos = save_posi[0];
 
     $(".dui-editor-dialog .ui-dialog-titlebar-buttonpane")
@@ -1829,43 +1829,45 @@ dui = $.extend(true, dui, {
 //          addcssFocus: "xs_focus_editor_mode",
         cssText: "xs_text_editor_mode",
         time: 750,
-        val: dui.translate(save_posi[1]),
-        data: [
+        val: save_posi[1],
+        data: ["|<", ">|", "<", ">", "*"
+            /*
             dui.translate("Links"),
             dui.translate("Rechts"),
             dui.translate("Links auto"),
             dui.translate("Rechts auto"),
             dui.translate("Free")
+            */
         ]
     });
     $("#dui_editor_mode").change(function () {
         var val = $("#dui_editor_mode").xs_combo();
 
-        if (val == dui.translate("Links")) {
+        if (val == "|<" /*dui.translate("Links")*/) {
             left();
             dui.editorPos = "left";
             $(".ui-dialog-titlebar-minimize").show();
             storage.set("Dashui_Editor_Position", ["left", val]);
         }
-        if (val == dui.translate("Rechts")) {
+        if (val == ">|" /*dui.translate("Rechts")*/) {
             right();
             dui.editorPos = "right";
             $(".ui-dialog-titlebar-minimize").show();
             storage.set("Dashui_Editor_Position", ["right", val]);
         }
-        if (val == dui.translate("Links auto")) {
+        if (val == "<" /*dui.translate("Links auto")*/) {
             left_ah();
             dui.editorPos = "left_ah";
             $(".ui-dialog-titlebar-minimize").hide();
             storage.set("Dashui_Editor_Position", ["left_ah", val]);
         }
-        if (val == dui.translate("Rechts auto")) {
+        if (val == ">" /*dui.translate("Rechts auto")*/) {
             right_ah();
             dui.editorPos = "right_ah";
             $(".ui-dialog-titlebar-minimize").hide();
             storage.set("Dashui_Editor_Position", ["right_ah", val]);
         }
-        if (val == dui.translate("Free")) {
+        if (val == "*" /*dui.translate("Free")*/) {
             free();
             dui.editorPos = "free";
             $(".ui-dialog-titlebar-minimize").show();

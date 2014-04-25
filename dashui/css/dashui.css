@@ -538,8 +538,8 @@ div#dui_editor {
 }
 
 #dui_editor_mode {
-    height: 27px;
-    width: 130px !important;
+    height: 28px;
+    width: 36px !important;
     float: right;
     left: -1px;
     top: -4px;
