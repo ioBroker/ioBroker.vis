@@ -7,6 +7,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta87
+* (Hobbyquaker) Fix CSS steal border-* and padding on Firefox
+* (Hobbyquaker) Fix CSS steal text-align
+
 ### 0.9beta86
 * (Hobbyquaker) Mehrere Widgets auf einmal selektieren (Shift-Click) und gemeinsames Verschieben
 * (Hobbyquaker) Fix Undo
