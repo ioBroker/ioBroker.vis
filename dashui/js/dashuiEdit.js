@@ -1441,7 +1441,9 @@ dui = $.extend(true, dui, {
         if ($().dialogExtend) {
             $("#dui_editor").dialogExtend({
                 "minimizable" : true,
-                "icons" : { "maximize" : "ui-icon-arrow-4-diag" },
+                "icons" : {
+                    "maximize": "ui-icon-arrow-4-diag"
+                },
                 "minimize" : function (evt) {
                     $("#dui_editor_mode").hide();
                     if (dui.editorPos == "right" || dui.editorPos == "free") {
@@ -1840,6 +1842,13 @@ dui = $.extend(true, dui, {
             */
         ]
     });
+
+    $(".dui-editor-dialog .ui-dialog-titlebar-buttonpane").append('<span id="button_undo" href="#" role="button">undo (ctrl-z)</span>');
+    $("#button_undo").button({
+        text: false,
+        icons: { primary: "ui-icon-arrowreturnthick-1-w"}
+    }).click(dui.undo).addClass("ui-state-disabled");
+
     $("#dui_editor_mode").change(function () {
         var val = $("#dui_editor_mode").xs_combo();
 
@@ -2346,6 +2355,7 @@ dui = $.extend(true, dui, {
     undoHistory: [],
     save: function (cb) {
         if (dui.undoHistory.length == 0 || (JSON.stringify(dui.views[dui.activeView]) != JSON.stringify(dui.undoHistory[dui.undoHistory.length - 1]))) {
+            $("#button_undo").removeClass("ui-state-disabled");
             if (dui.undoHistory.push($.extend(true, {}, dui.views[dui.activeView])) > dui.undoHistoryMaxLength) {
                 dui.undoHistory.splice(0, 1);
             }
@@ -2364,6 +2374,10 @@ dui = $.extend(true, dui, {
 
         dui.undoHistory.pop();
         dui.views[dui.activeView] = $.extend(true, {}, dui.undoHistory[dui.undoHistory.length - 1]);
+
+        if (dui.undoHistory.length <= 1) {
+            $("#button_undo").addClass("ui-state-disabled").removeClass("ui-state-hover");
+        }
 
         dui.renderView(dui.activeView);
         dui.inspectWidget(activeWidget);

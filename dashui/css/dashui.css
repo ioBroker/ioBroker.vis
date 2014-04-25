@@ -560,3 +560,9 @@ p.xs_text_editor_mode {
     margin: 0;
     margin-bottom: 2px;
 }
+
+#button_undo {
+    height: 28px;
+    width: 28px;
+    top: -4px;
+}
