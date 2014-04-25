@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta85
+* (Hobbyquaker) Undo-Funktion über Button und ctrl-z bzw cmd-z
+
 ### 0.9beta84
 * (Hobbyquaker) Fix mehrfaches gleichzeitiges Speichern unterbunden. Sollte Bug beheben der die dashui-views.json zerstört
 * (Hobbyquaker) export und import von Views
