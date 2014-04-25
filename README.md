@@ -14,6 +14,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.9beta85
 * (Hobbyquaker) Undo-Funktion über Button und ctrl-z bzw cmd-z
+* (Hobbyquaker) Editor-Position: Symbole statt Text
 
 ### 0.9beta84
 * (Hobbyquaker) Fix mehrfaches gleichzeitiges Speichern unterbunden. Sollte Bug beheben der die dashui-views.json zerstört
