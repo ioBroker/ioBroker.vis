@@ -99,7 +99,7 @@ dui = $.extend(true, dui, {
                                     break;
                                     
                                 var name = styles[i];
-                                name = name.replace (",", "");
+                                name = name.replace(",", "");
                                 if (name.length > 0 && (name[0] == '.' || name[0] == '#'))
                                     name = name.substring(1);                       
                                 var val  = name;
@@ -112,7 +112,7 @@ dui = $.extend(true, dui, {
                                 if (name.substring(0, "ui-".length) == "ui-")
                                     name = name.substring(3);
                                     
-                                name = name.replace (/-/g, " ");
+                                name = name.replace(/-/g, " ");
                                 if (name.length > 0) {
                                     name = name[0].toUpperCase() + name.substring(1);
                                     var fff = document.styleSheets[sSheet].href;
@@ -152,9 +152,9 @@ dui = $.extend(true, dui, {
             var nameText = "styleSelectText"+options.name;
             var nameBtn  = "styleSelectB"   +options.name;
             var nameElem = "styleSelect"    +options.name;
-            if (document.getElementById (nameElem) != undefined) {
-                $('#'+nameElem).remove ();
-                $('#styleSelectBox'+options.name).remove ();
+            if (document.getElementById(nameElem) != undefined) {
+                $('#'+nameElem).remove();
+                $('#styleSelectBox'+options.name).remove();
             }
             var text = "<table id='"+nameElem+"'><tr><td>";
                 text += "<table><tr><td><div id='"+nameImg+"'></div></td><td width=10></td><td style='text-align: left; vertical-align: middle;'><div  style='text-align: left; vertical-align: middle;' id='"+nameText+"'></div>";
@@ -164,17 +164,17 @@ dui = $.extend(true, dui, {
                 
             var parent = (options.parent == null) ? $("body") : options.parent;
             parent.append (text);
-            var htmlElem = document.getElementById (nameElem);
+            var htmlElem = document.getElementById(nameElem);
             htmlElem.settings = {};
-            htmlElem.settings = $.extend (htmlElem.settings, this.settings);
-            htmlElem.settings = $.extend (htmlElem.settings, options);
+            htmlElem.settings = $.extend(htmlElem.settings, this.settings);
+            htmlElem.settings = $.extend(htmlElem.settings, options);
             htmlElem.settings.parent = parent;
             htmlElem.settings.id = options.name;
             htmlElem.settings.styles = {};
             htmlElem.settings.styles[dui.translate("Default")] = {style: null, file: null};
             
             if (options.styles) {
-                htmlElem.settings.styles = $.extend (htmlElem.settings.styles, options.styles);
+                htmlElem.settings.styles = $.extend(htmlElem.settings.styles, options.styles);
             } else {
                 // IF filter defined
                 if (htmlElem.settings.filterFile != null || htmlElem.settings.filterName != null) {
@@ -216,28 +216,28 @@ dui = $.extend(true, dui, {
                         }
                     }
                 } else {
-                    htmlElem.settings.styles = $.extend (htmlElem.settings.styles, this._internalList);
+                    htmlElem.settings.styles = $.extend(htmlElem.settings.styles, this._internalList);
                 }
             }
             
-            $('#'+nameImg).css  ({width: htmlElem.settings.height*2, height: htmlElem.settings.height - 4}).addClass ('ui-corner-all');
-            $('#'+nameText).css ({width: htmlElem.settings.width});
+            $('#'+nameImg).css({width: htmlElem.settings.height * 2, height: htmlElem.settings.height - 4}).addClass('ui-corner-all');
+            $('#'+nameText).css({width: htmlElem.settings.width});
             $('#'+nameBtn).button ({icons: {primary: "ui-icon-circle-triangle-s"}, text: false});
-            $('#'+nameBtn).click (htmlElem, function (e) {
+            $('#'+nameBtn).click(htmlElem, function (e) {
                 dui.styleSelect._toggleDrop(e.data);
             });
             $('#'+nameBtn).height(htmlElem.settings.height).width(htmlElem.settings.height);
             var elem = $('#styleSelect'+options.name);
-            elem.addClass ('ui-corner-all ui-widget-content');
+            elem.addClass('ui-corner-all ui-widget-content');
             if (htmlElem.settings.style != "") {
-                $('#'+nameImg).addClass (htmlElem.settings.style);
-                $('#'+nameText).html (this._findTitle(htmlElem.settings.styles, htmlElem.settings.style));
+                $('#'+nameImg).addClass(htmlElem.settings.style);
+                $('#'+nameText).html(this._findTitle(htmlElem.settings.styles, htmlElem.settings.style));
             } else {
-                $('#'+nameText).html ("None");
+                $('#'+nameText).html("None");
             }
             
             // Build dropdown box
-            if (document.getElementById ("styleSelectBox"+options.name) == undefined) {
+            if (document.getElementById("styleSelectBox"+options.name) == undefined) {
                 var text = "<form id='styleSelectBox"+options.name+"' style='z-index:4'>";
                 var i = 0;
                 for (var st in htmlElem.settings.styles) {
@@ -262,7 +262,7 @@ dui = $.extend(true, dui, {
             i = 0;
             // Set context
             for (var st in htmlElem.settings.styles) {
-                document.getElementById ("styleSelectBox"+options.name+""+i).iStyle = htmlElem.settings.styles[st].style;
+                document.getElementById("styleSelectBox"+options.name+""+i).iStyle = htmlElem.settings.styles[st].style;
                 // Select current button
                 if (htmlElem.settings.style == htmlElem.settings.styles[st].style) {
                     $("#styleSelectBox"+options.name+""+i).attr("checked","checked");
@@ -271,15 +271,15 @@ dui = $.extend(true, dui, {
                 i++;
             }
             htmlElem.settings.count = i;
-            box.css ({width: $('#styleSelect'+options.name).width(), overflow: "auto"}).addClass('ui-corner-all ui-widget-content');
-            box.css ({position: 'absolute', top: elem.position().top + elem.height(), left: elem.position().left});
+            box.css({width: $('#styleSelect'+options.name).width(), overflow: "auto"}).addClass('ui-corner-all ui-widget-content');
+            box.css({position: 'absolute', top: elem.position().top + elem.height(), left: elem.position().left});
             box.hide ();
             this._currentElement++;
             return htmlElem;
         },
         _toggleDrop: function (obj) {
             if (obj.settings.dropOpened) {
-                $("#styleSelectBox"+obj.settings.id).css ({display: "none"});
+                $("#styleSelectBox"+obj.settings.id).css({display: "none"});
                 $("#styleSelectB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
                 obj.settings.dropOpened = false;
             } else {
@@ -302,7 +302,7 @@ dui = $.extend(true, dui, {
                     
                 var iWidth = $("#styleSelect"+obj.settings.id).width();
                 elemBox.buttonset().find('table').width(iWidth - 37 - this._scrollWidth);
-                $("#styleSelectBox"+obj.settings.id).css ({display: "", width: elem.width(), top: elem.position().top + elem.height(), left: elem.position().left});			
+                $("#styleSelectBox"+obj.settings.id).css({display: "", width: elem.width(), top: elem.position().top + elem.height(), left: elem.position().left});			
                 $("#styleSelectB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-n" }});
                 obj.settings.dropOpened = true;
             }
@@ -313,14 +313,14 @@ dui = $.extend(true, dui, {
             var nameText = "styleSelectText"+obj.settings.id;
             $('#'+nameImg).removeClass (obj.settings.style);
             obj.settings.style = iStyle;
-            $('#'+nameImg).addClass (obj.settings.style);
-            $('#'+nameText).html (this._findTitle(obj.settings.styles, obj.settings.style));
+            $('#'+nameImg).addClass(obj.settings.style);
+            $('#'+nameText).html(this._findTitle(obj.settings.styles, obj.settings.style));
             if (obj.settings.onchange)
                 obj.settings.onchange (obj.settings.style, obj.settings.onchangeParam);     
         },
         destroy: function (htmlElem) {
-            $("#styleSelectBox"+htmlElem.settings.id).remove ();			
-            $('#styleSelect'+htmlElem.settings.id).remove ();			
+            $("#styleSelectBox"+htmlElem.settings.id).remove();			
+            $('#styleSelect'+htmlElem.settings.id).remove();			
         }
     },   
 	// Image selection Dialog
@@ -353,10 +353,10 @@ dui = $.extend(true, dui, {
 			var i = 0;
 			
 			if (this._selectText == "") {
-				this._selectText = dui.translate ("Select");
-				this._cancelText = dui.translate ("Cancel");
-				this._uploadText = dui.translate ("Upload");
-				this._titleText  = dui.translate ("Selected image: ");
+				this._selectText = dui.translate("Select");
+				this._cancelText = dui.translate("Cancel");
+				this._uploadText = dui.translate("Upload");
+				this._titleText  = dui.translate("Selected image: ");
 			}
 			   
 			if (!options.elemName || options.elemName == "") {
@@ -366,31 +366,31 @@ dui = $.extend(true, dui, {
 				options.parent = $('body');
 			}
 			
-			if (document.getElementById (options.elemName) != undefined) {
-				$('#'+options.elemName).remove ();
+			if (document.getElementById(options.elemName) != undefined) {
+				$('#'+options.elemName).remove();
 			}
 			options.parent.append("<div class='dialog' id='imageSelect' title='" + this._titleText + "'></div>");
-			var htmlElem = document.getElementById ("imageSelect");
+			var htmlElem = document.getElementById("imageSelect");
 			htmlElem.settings = {};
-			htmlElem.settings = $.extend (htmlElem.settings, this.settings);
-			htmlElem.settings = $.extend (htmlElem.settings, options);
+			htmlElem.settings = $.extend(htmlElem.settings, this.settings);
+			htmlElem.settings = $.extend(htmlElem.settings, options);
 			$(htmlElem).css({'z-index': htmlElem.settings.zindex});
 			
 			 // Define dialog buttons
 			var dialog_buttons = {};
 			dialog_buttons[this._uploadText] = function () {
-				$( this ).trigger('click');
-			}
+				$(this).trigger('click');
+			};
 			dialog_buttons[this._selectText] = function () {
-				$( this ).dialog( "close" );
+				$(this).dialog( "close" );
 
 				if (this.settings.onselect)
 					this.settings.onselect (dui.imageSelect._pictDir+this.settings.result, this.settings.onselectArg);
-				$( this ).remove ();
-			}
+				$(this).remove();
+			};
 			dialog_buttons[this._cancelText] = function () {
-				$( this ).dialog( "close" );
-				$( this ).remove ();
+				$(this).dialog( "close" );
+				$(this).remove();
 			}
 			$(htmlElem).dialog({
 				resizable: true,
@@ -427,7 +427,7 @@ dui = $.extend(true, dui, {
 						this.element.settings.onselect ("img/"+dui.imageSelect._curDir+ e.name, this.element.settings.onselectArg);
 					}
 					$(this.element).dialog( "close" );
-					$(this.element).remove ();
+					$(this.element).remove();
 				},
 				init: function () {
 					this.on("processing", function () {
@@ -438,7 +438,7 @@ dui = $.extend(true, dui, {
 			});
 
 			// Show wait icon
-			if (!document.getElementById ('dashui-waitico'))
+			if (!document.getElementById('dashui-waitico'))
 				$(htmlElem).append("<p id='dashui-waitico'>Please wait...</p>");
 				
 			$('#dashui-waitico').show();
@@ -488,15 +488,15 @@ dui = $.extend(true, dui, {
 			obj.settings.columns = Math.floor (($(obj).width()-30) / (obj.settings.iwidth+5));
 			obj.settings.rows    = Math.floor (aImages.length / obj.settings.columns) + 2;
 			
-			if (document.getElementById (obj.settings.elemName+"_tbl0")) {
-				$('#'+obj.settings.elemName+"_tbl0").remove ();
+			if (document.getElementById(obj.settings.elemName+"_tbl0")) {
+				$('#'+obj.settings.elemName+"_tbl0").remove();
 			}
-			if (document.getElementById (obj.settings.elemName+"_tbl1")) {
-				$('#'+obj.settings.elemName+"_tbl1").remove ();
+			if (document.getElementById(obj.settings.elemName+"_tbl1")) {
+				$('#'+obj.settings.elemName+"_tbl1").remove();
 			}
 
 			// Remove directory image and place directories first
-			var bImages = new Array ();
+			var bImages = [];
 			var j = 0;
 			if (dui.imageSelect._curDir != null && dui.imageSelect._curDir != "") {
 				bImages[j++] = "..";
@@ -563,12 +563,10 @@ dui = $.extend(true, dui, {
 						sText += "<img id='"+obj.settings.elemName+"_img"+id+"'";
 						// File or directory
 						if (aImages[id] == "..") {
-							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._dirImage+"\" title='"+dui.translate ("Back")+"'";
-						} else 
-						if (isDir) {
+							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._dirImage+"\" title='"+dui.translate("Back")+"'";
+						} else if (isDir) {
 							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._dirImage+"\" title='"+aImages[id]+"' ";
-						} else 
-						if (aImages[id].indexOf(".wav") != -1 || aImages[id].indexOf(".mp3") != -1) {
+						} else if (aImages[id].indexOf(".wav") != -1 || aImages[id].indexOf(".mp3") != -1) {
 							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._soundImage+"\" title='"+aImages[id]+"' ";                    
 						} else {
 							sText += "title='"+aImages[id]+"' ";
@@ -600,7 +598,7 @@ dui = $.extend(true, dui, {
 			sText += "</table>";//</div>";
 			
 			$(obj).append (sText);
-			$(obj).css ({overflow: 'auto'});
+			$(obj).css({overflow: 'auto'});
 			var table = $('#'+obj.settings.elemName+'_tbl0').addClass("hq-no-select");
 			table.css({padding: 0, 'mapping': 0});
 			table = $('#'+obj.settings.elemName+'_tbl1');
@@ -614,7 +612,7 @@ dui = $.extend(true, dui, {
 			for (i = 0; i < aImages.length; i++) {
 				var img   = $('#'+obj.settings.elemName+"_"+i);
 				var image = $('#'+obj.settings.elemName+'_img'+i);
-				img.addClass ("ui-state-default ui-widget-content").css({width: obj.settings.iwidth+4, height: obj.settings.iheight+4});           
+				img.addClass("ui-state-default ui-widget-content").css({width: obj.settings.iwidth+4, height: obj.settings.iheight+4});           
 				img.parent = obj;
 				img.result = aImages[i];
 				image.parent = img;
@@ -625,20 +623,20 @@ dui = $.extend(true, dui, {
 				img.image = image;
 				if (dui.imageSelect._curImage == aImages[i]) {	
 					obj.settings.curElement = img;
-					img.removeClass ("ui-state-default").addClass ("ui-state-active");
+					img.removeClass ("ui-state-default").addClass("ui-state-active");
 				}
 				
 				if (image.isLast && obj.settings.curElement) {
 					image.current = obj.settings.curElement;
 				}
 				
-				image.bind ("load", {msg: image}, function (event) {
+				image.bind("load", {msg: image}, function (event) {
 					var obj_ = event.data.msg;
 					if (obj_.width() > obj_.iwidth || obj_.height() > obj_.iheight) {
 						if (obj_.width() > obj_.height()) {
-							obj_.css ({height: (obj_.height() / obj_.width())  *obj._iwidth,  width:  obj_.iwidth});
+							obj_.css({height: (obj_.height() / obj_.width())  *obj._iwidth,  width:  obj_.iwidth});
 						} else {
-							obj_.css ({width:  (obj_.width()  / obj_.height()) *obj_.iheight, height: obj_.iheight});
+							obj_.css({width:  (obj_.width()  / obj_.height()) *obj_.iheight, height: obj_.iheight});
 						}
 					}
 					if (obj_.isLast && obj_.current) {
@@ -648,11 +646,11 @@ dui = $.extend(true, dui, {
 				image.error (function () {
 					$(this).hide();
 				});
-				img.bind ("mouseenter", {msg: img}, function (event) {
+				img.bind("mouseenter", {msg: img}, function (event) {
 					var obj = event.data.msg;
 					obj.removeClass("ui-state-default").removeClass("ui-state-active").addClass("ui-state-hover");
 				});
-				img.bind ("mouseleave", {msg: img}, function (event) {			
+				img.bind("mouseleave", {msg: img}, function (event) {			
 					var obj = event.data.msg;
 					obj.removeClass("ui-state-hover");
 					if (obj == obj.parent.settings.curElement) {
@@ -661,7 +659,7 @@ dui = $.extend(true, dui, {
 						obj.addClass  ("ui-state-default");
 					}
 				});
-				img.bind ("click", {msg: img}, function (event) {			
+				img.bind("click", {msg: img}, function (event) {			
 					var obj_ = event.data.msg;
 					// back directory
 					if (obj_.result == "..") {
@@ -679,11 +677,11 @@ dui = $.extend(true, dui, {
 							obj.settings.curElement.removeClass("ui-state-active").addClass("ui-state-default");
 						}
 						obj.settings.curElement = obj_;
-						obj_.removeClass("ui-state-hover").addClass ("ui-state-active");
+						obj_.removeClass("ui-state-hover").addClass("ui-state-active");
 						$(obj).dialog('option', 'title', dui.imageSelect._titleText + obj.settings.result);
 					}
 				});				
-				img.bind ("dblclick", {msg: img}, function (event) {
+				img.bind("dblclick", {msg: img}, function (event) {
 					var obj_ = event.data.msg;
 					obj.settings.result = dui.imageSelect._pictDir + dui.imageSelect._curDir + obj_.result;
 					if (obj.settings.onselect) {
@@ -691,7 +689,7 @@ dui = $.extend(true, dui, {
 						obj.settings.onselect (obj.settings.result, obj.settings.onselectArg);
 					}
 					$( obj ).dialog( "close" );
-					$( obj ).remove ();
+					$( obj ).remove();
 				});				
 				// If File
 				if (aImages[i] != ".." && aImages[i].indexOf('.') != -1 && aImages[i].indexOf(".wav") == -1 && aImages[i].indexOf(".mp3") == -1) {
@@ -744,9 +742,9 @@ var colorSelect = {
         var i = 0;
         
         if (this._selectText == "") {
-            this._selectText = dui.translate ("Select");
-            this._cancelText = dui.translate ("Cancel");
-            this._titleText  = dui.translate ("Select color");
+            this._selectText = dui.translate("Select");
+            this._cancelText = dui.translate("Cancel");
+            this._titleText  = dui.translate("Select color");
         }
            
         if (!options.elemName || options.elemName == "") {
@@ -756,30 +754,29 @@ var colorSelect = {
             options.parent = $('body');
         }
         
-        if (document.getElementById (options.elemName) != undefined) {
-            $('#'+options.elemName).remove ();
+        if (document.getElementById(options.elemName) != undefined) {
+            $('#'+options.elemName).remove();
         }
         options.parent.append("<div class='dialog' id='colorSelect' title='" + this._titleText + "' style='text-align: center;' ><div style='display: inline-block;' id='colorpicker'></div><input type='text' id='colortext'/></div>");
-        var htmlElem = document.getElementById ("colorSelect");
+        var htmlElem = document.getElementById("colorSelect");
         htmlElem.settings = {};
-        htmlElem.settings = $.extend (htmlElem.settings, this.settings);
-        htmlElem.settings = $.extend (htmlElem.settings, options);
+        htmlElem.settings = $.extend(htmlElem.settings, this.settings);
+        htmlElem.settings = $.extend(htmlElem.settings, options);
         $(htmlElem).css({'z-index': htmlElem.settings.zindex});
         
          // Define dialog buttons
         var dialog_buttons = {}; 
         dialog_buttons[this._selectText] = function () { 
-            $( this ).dialog( "close" ); 
+            $(this).dialog( "close" ); 
             if (this.settings.onselect)
                 this.settings.onselect ($('#colortext').val(), this.settings.onselectArg);
-            $( this ).remove ();
-        }
+            $(this).remove();
+        };
         dialog_buttons[this._cancelText] = function () {
-            $( this ).dialog( "close" ); 
-            $( this ).remove ();
-        }   
-        $('#colorSelect')
-        .dialog({
+            $(this).dialog( "close" ); 
+            $(this).remove();
+        };
+        $('#colorSelect').dialog({
             resizable: false,
             height:    380,
             width:     320,
@@ -787,9 +784,9 @@ var colorSelect = {
             buttons:   dialog_buttons
         });     
         if (htmlElem.settings.current != null && htmlElem.settings.current != "") {
-            $('#colortext').val (htmlElem.settings.current);
+            $('#colortext').val(htmlElem.settings.current);
         } else {
-            $('#colortext').val ('#FFFFFF');
+            $('#colortext').val('#FFFFFF');
         }
         if ($().farbtastic) {
             $('#colorpicker').farbtastic('#colortext');
@@ -825,15 +822,15 @@ var hmSelect = {
 		do
 		{
 			oldText = text;
-			text = text.replace ("%C4", "&Auml;");
-			text = text.replace ("%E4", "&auml;");
-			text = text.replace ("%D6", "&Ouml;");
-			text = text.replace ("%F6", "&ouml;");
-			text = text.replace ("%DC", "&Uuml;");
-			text = text.replace ("%FC", "&uuml;");
-			text = text.replace ("%DF", "&szlig;");
-			text = text.replace ("%20", " ");
-			text = text.replace ("%3A", ".");
+			text = text.replace("%C4", "&Auml;");
+			text = text.replace("%E4", "&auml;");
+			text = text.replace("%D6", "&Ouml;");
+			text = text.replace("%F6", "&ouml;");
+			text = text.replace("%DC", "&Uuml;");
+			text = text.replace("%FC", "&uuml;");
+			text = text.replace("%DF", "&szlig;");
+			text = text.replace("%20", " ");
+			text = text.replace("%3A", ".");
 		}while (text != oldText);
 		
 		return text;
@@ -971,8 +968,8 @@ var hmSelect = {
         }
 	}, // Get image for type
     _type2Str: function (type, subtype) {
-        type    = parseInt (type);
-        subtype = parseInt (subtype);
+        type    = parseInt(type, 10);
+        subtype = parseInt(subtype, 10);
         switch (type) {
             case 2:
                 if (subtype == 6) {
@@ -980,27 +977,27 @@ var hmSelect = {
                 } else if (subtype == 2) {
                     return dui.translate('Logical');
                 } else {
-                    return dui.translate('Boolean')+","+subtype;
+                    return dui.translate('Boolean') + "," + subtype;
                 }
 
             case 20:
                 if (subtype == 11) {
                     return dui.translate('String');
                 } else {
-                    return dui.translate('String')+","+subtype;
+                    return dui.translate('String') + "," + subtype;
                 }
             case 4:
                 if (subtype == 0) {
                     return dui.translate('Number');
                 } else {
-                    return dui.translate('Number')+","+subtype;
+                    return dui.translate('Number') + "," + subtype;
                 }
 
             case 16:
                 if (subtype == 29) {
                     return dui.translate('Enum');
                 } else {
-                    return dui.translate('Enum')+","+subtype;
+                    return dui.translate('Enum') + "," + subtype;
                 }
             default:
                 return ''+type+","+subtype;
@@ -1023,11 +1020,11 @@ var hmSelect = {
 
 		var selectedId = null;
                 
-        var w = $('#hmSelect').dialog ("option", "width");
+        var w = $('#hmSelect').dialog("option", "width");
 		$('#hmSelect').dialog("option", "width", w-50);
          // Build the data tree together
 		if (this.myVarsData == null) {
-            this.myVarsData = new Array ();
+            this.myVarsData = [];
 		    var i = 0;
 
             // Add all elements
@@ -1120,23 +1117,23 @@ var hmSelect = {
         
 		// Disable "Select" button if nothing selected
 		if (selectedId == null)	{
-			$(":button:contains('"+this._selectText+"')").prop("disabled", true).addClass("ui-state-disabled");
+			$(":button:contains('" + this._selectText + "')").prop("disabled", true).addClass("ui-state-disabled");
 		}        
         // Increase dialog because of bug in jqGrid
 		$('#hmSelect').dialog("option", "width", w);
-        this._onResize ();
+        this._onResize();
         // Filter items with last filter
-        this._filterVarsApply ();
+        this._filterVarsApply();
     },
     _buildProgsGrid: function (localData) {
         var programs   = localData.metaIndex["PROGRAM"]; // IDs of all devices
 		var selectedId = null;
                 
-        var w = $('#hmSelect').dialog ("option", "width");
+        var w = $('#hmSelect').dialog("option", "width");
 		$('#hmSelect').dialog("option", "width", w-50);
         // Build the data tree together
 		if (this.myProgsData == null) {
-            this.myProgsData = new Array ();
+            this.myProgsData = [];
 		    var i = 0;
 			// Add all elements
 			for(var prog in programs) {
@@ -1209,11 +1206,12 @@ var hmSelect = {
 			}
 		});
         // Add the filter column
-		$("#hmProgsContent").jqGrid('filterToolbar',{searchOperators : false,
+		$("#hmProgsContent").jqGrid('filterToolbar', {
+            searchOperators : false,
 			beforeSearch: function () {
 				var searchData = jQuery.parseJSON(this.p.postData.filters);
                 hmSelect._progsFilter = searchData;
-                hmSelect._filterProgsApply ();
+                hmSelect._filterProgsApply();
 			}
 		});
         // Select current element
@@ -1228,10 +1226,10 @@ var hmSelect = {
 		}  
         // Increase dialog because of bug in jqGrid
 		$('#hmSelect').dialog("option", "width", w);         
-        this._onResize ();
+        this._onResize();
         
         // Filter items with last filter
-        this._filterProgsApply ();
+        this._filterProgsApply();
     },    
     _getRoom: function (localData, id, isNotRecursive) {
         var result_room = "";
@@ -1557,7 +1555,7 @@ var hmSelect = {
         
         // Fill the locations and functions toolbar
         if (1) {
-            $("#hmSelectFilter").html ("");
+            $("#hmSelectFilter").html("");
             
             // Fill the locations toolbar
             var text = dui.translate('Rooms')+":&nbsp;<select id='hmSelectLocations'>";
@@ -1622,7 +1620,7 @@ var hmSelect = {
                 
         // Build the data tree together
 		if (this.mydata == null) {
-            this.mydata = new Array ();
+            this.mydata = [];
 		    var i = 0;
             
             // Calculate leafs
@@ -1882,7 +1880,7 @@ var hmSelect = {
             
         hmSelect._userArg = userArg || null;
         hmSelect._onsuccess = onSuccess || null;
-		if (!document.getElementById ("hmSelect")) {
+		if (!document.getElementById("hmSelect")) {
 			$("body").append("<div class='dialog' id='hmSelect' title='" + dui.translate("Select HM parameter") + "'></div>");
             var text = "<div id='hmSelect_tabs'>";
             text += "  <ul>";
@@ -1935,21 +1933,21 @@ var hmSelect = {
             }
 
             if (filter == 'all' || this._ignoreFilter || (filter != 'variables' && filter != 'programs' && filter != 'devices')) {
-                $('#dev_select').click (function (e) {
-                    var w = $('#hmSelect').dialog ("option", "width");
+                $('#dev_select').click(function (e) {
+                    var w = $('#hmSelect').dialog("option", "width");
                     $('#hmSelect').dialog("option", "width", w-50);
                     $('#hmSelect').dialog("option", "width", w);
-                    //hmSelect._onResize ();
+                    //hmSelect._onResize();
                 });
             }
             if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'variables'))) {           
-                $('#var_select').click (function (e) {
-                    hmSelect._buildVarsGrid (localData);
+                $('#var_select').click(function (e) {
+                    hmSelect._buildVarsGrid(localData);
                 });
             }
             if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'programs'))) {       
-                $('#prog_select').click (function (e) {
-                    hmSelect._buildProgsGrid (localData);
+                $('#prog_select').click(function (e) {
+                    hmSelect._buildProgsGrid(localData);
                 });
             }
 		}
@@ -1961,24 +1959,30 @@ var hmSelect = {
         
 		var dialog_buttons = {}; 
 		dialog_buttons[this._selectText] = function () { 
-			$( this ).dialog( "close" ); 
+			$(this).dialog("close");
 			if (hmSelect._onsuccess)
                 hmSelect._onsuccess(hmSelect._userArg, hmSelect.value, hmSelect.valueObj);
 		}
 		dialog_buttons[this._cancelText] = function () {
-			$( this ).dialog( "close" ); 
+			$(this).dialog("close");
 		}   
 		
-		$('#hmSelect')
-		.dialog({
+		$('#hmSelect').dialog({
 			resizable: true,
 			height: $(window).height(),
 			modal: true,
 			width: 870,
 			resize: function (event, ui) { 
-                hmSelect._onResize ();
+                hmSelect._onResize();
 			},
-            close: function (event, ui) { $('#hmSelect').remove(); $('#hmDevsContent').jqGrid('GridUnload'); },
+            close: function (event, ui) {
+                $('#hmSelect').remove();
+                $('#hmDevsContent').jqGrid('GridUnload');
+            },
+            open: function (event, ui) {
+                $('[aria-describedby="hmSelect"]').css('z-index',1002);
+                $('.ui-widget-overlay').css('z-index',1001);
+            },
 			buttons: dialog_buttons
 		});
         $('#dashui-waitico').show().css({top: ($("#hmSelect").height() + $('#dashui-waitico').height())/2});
@@ -1986,11 +1990,11 @@ var hmSelect = {
         $('#hmSelect_tabs').width($('#hmSelect').width());
         $('#hmSelect_tabs').height($('#hmSelect').height()  - 12);
         
-        $('#tabs-devs').width  ($('#hmSelect_tabs').width()  - 6);
-        $('#tabs-devs').height ($('#hmSelect_tabs').height() - 60);
-        $('#tabs-vars').width  ($('#hmSelect_tabs').width()  - 6);
-        $('#tabs-vars').height ($('#hmSelect_tabs').height() - 60);
-        $('#tabs-progs').width ($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-devs').width($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-devs').height($('#hmSelect_tabs').height() - 60);
+        $('#tabs-vars').width($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-vars').height($('#hmSelect_tabs').height() - 60);
+        $('#tabs-progs').width($('#hmSelect_tabs').width()  - 6);
         $('#tabs-progs').height($('#hmSelect_tabs').height() - 60);
         
         this._buildDevicesGrid(localData, filter, devFilter);
@@ -2008,8 +2012,7 @@ var hmSelect = {
         if (rows) {
             for (var i = 0; i < rows.length; i++) {
                 var isShow = true;
-                if (rows[i].level!="0")
-                    continue;
+                if (rows[i].level!="0") continue;
                 if (hmSelect._filter != null) {
                     for (var j = 0; j < hmSelect._filter.rules.length; j++) {
                         if (rows[i][hmSelect._filter.rules[j].field].indexOf(hmSelect._filter.rules[j].data) == -1) {
@@ -2112,7 +2115,7 @@ var idSelect = {
             if (!this._rowsInfo[type].selectValues) {
                 this._rowsInfo[type].selectValues = [];
             }
-            if (this._rowsInfo[type].selectValues.indexOf (value) == -1) {
+            if (this._rowsInfo[type].selectValues.indexOf(value) == -1) {
                 this._rowsInfo[type].selectValues.push(value);
             }
         }
@@ -2129,7 +2132,7 @@ var idSelect = {
         var isTypeExist = {"value": true, "name": true};
 
         for (var id in MO) {
-            var _id = parseInt(id);
+            var _id = parseInt(id, 10);
             if (MO[id].Parent) {
                 MO[id].parent = MO[id].Parent;
             }
@@ -2394,7 +2397,7 @@ var idSelect = {
         return false;
     },
     // Filter all values
-    applyFilter: function(field, value) {
+    applyFilter: function (field, value) {
         if (this._rowsInfo[field].filterValue != value) {
             this._rowsInfo[field].filterValue = value;
             if (!value) {
@@ -2464,21 +2467,23 @@ var idSelect = {
                 var text = "";
                 if (idSelect._locData.metaObjects[id].children) {
                     for (var z = 0, zlen = idSelect._locData.metaObjects[id].children.length; z < zlen; z++) {
-                        text += idSelect._addOneRow(idSelect._locData.metaObjects[id].children[z], parseInt($(elem).attr('data-level'))+1, $(elem).attr('data-parents'));
+                        text += idSelect._addOneRow(idSelect._locData.metaObjects[id].children[z], parseInt($(elem).attr('data-level'), 10) + 1, $(elem).attr('data-parents'));
                     }
                 }
-                $(text).insertAfter('.select_'+id);
+                $(text).insertAfter('.select_' + id);
                 $(elem).attr('data-processed', '1');
                 $('.no-click').each(function () {
                     var id = $(this).attr('data-id');
                     $(this).removeClass('no-click');
-                    $(this).click(function () {idSelect._plusClick(this)});
+                    $(this).click(function () {
+                        idSelect._plusClick(this)
+                    });
                     if (!idSelect._isTreeVisible(id)) {
                         $('.select_'+id).hide();
                     }
                 });
             } else {
-                $('.children_' + $(elem).attr('data-id')).each(function (){
+                $('.children_' + $(elem).attr('data-id')).each(function () {
                     var id  = $(this).attr('data-id');
 
                     // Check if all parents are opened
@@ -2539,7 +2544,7 @@ var idSelect = {
         $('#'+divName + '_header').html(header);
 
         for (var id in MO) {
-            if (this._processed.indexOf (id) != -1) {
+            if (this._processed.indexOf(id) != -1) {
                 continue;
             }
             if (MO[id].parent || MO[id]["EnumInfo"] !== undefined ||  MO[id]["TypeName"] == "FAVORITE") {
@@ -2554,7 +2559,7 @@ var idSelect = {
             $(this).removeClass('no-click');
             $(this).click(function () {that._plusClick(this)});
         });
-        $('.no-select-tr').click (function () {
+        $('.no-select-tr').click(function () {
             that._options.selectedID = $(this).attr('data-id');
             $('#idSelect').dialog('option', 'title', dui.translate("Select ID") + ': ' + that._locData.metaObjects[idSelect._options.selectedID].name);
             $('#selectId_selectButton').prop("disabled", false).removeClass("ui-state-disabled");
@@ -2568,7 +2573,7 @@ var idSelect = {
             $(this).removeClass('ui-state-focus');
         }).removeClass('no-select-tr');
 
-        $('.select-search').change(function(e) {
+        $('.select-search').change(function (e) {
             if (this._timeout) {
                 clearTimeout(this._timeout);
                 this._timeout = null;
@@ -2576,20 +2581,20 @@ var idSelect = {
             if ($(this).prop("tagName") == 'SELECT') {
                 that.applyFilter($(this).attr('data-search'), $(this).val());
             } else {
-                this._timeout = _setTimeout(function(elem){
+                this._timeout = _setTimeout(function (elem) {
                     that.applyFilter($(elem).attr('data-search'), $(elem).val());
                 }, 1000, this);
             }
         });
 
-        $('.select-search').bind('keyup', function(e) {
+        $('.select-search').bind('keyup', function (e) {
             if(e.which == 13) {
                 that.applyFilter($(this).attr('data-search'), $(this).val());
             } else {
                $(this).trigger('change');
             }
         });
-        $('.select-filter-clear').click(function() {
+        $('.select-filter-clear').click(function () {
             var filter = $(this).attr('data-search');
             $('#search_'+filter).val('');
             that.applyFilter($(this).attr('data-search'), '');
@@ -2600,7 +2605,7 @@ var idSelect = {
 
         for (var t = ids.length - 1; t >= 0; t--) {
             var el = $('.select_' + ids[t] + ' span');
-            if (el.length){
+            if (el.length) {
                 this._plusClick(el[0]);
             };
         }
@@ -2608,7 +2613,7 @@ var idSelect = {
     Show: function (locData, options) {
         var that = this;
         this._locData = locData;
-        this._options = $.extend (true, this._options, options);
+        this._options = $.extend(true, this._options, options);
         this._preProcessTree();
 
         if (!this._selectText) {
@@ -2616,7 +2621,7 @@ var idSelect = {
             this._cancelText = dui.translate("Cancel");
         }
 
-        if (!document.getElementById ("idSelect")) {
+        if (!document.getElementById("idSelect")) {
             var selName = (this._options.selectedID && this._locData.metaObjects[this._options.selectedID]) ? ': '+this._locData.metaObjects[this._options.selectedID].name: '';
 
             $('body').append(
@@ -2632,7 +2637,7 @@ var idSelect = {
                     '</div>');
             this._buildTable ('selectId');
             // Define dialog buttons
-            $('#selectId_selectButton').button ().click (function() {
+            $('#selectId_selectButton').button ().click(function () {
                 $(window).resize(null);
                 if (that._options.onSuccess) {
                     that._options.onSuccess(that._options.userArg, that._options.selectedID);
@@ -2640,18 +2645,18 @@ var idSelect = {
                 $( '#idSelect' ).dialog( "close" );
             });
 
-            $('#selectId_cancelButton').button ().click (function() {
+            $('#selectId_cancelButton').button ().click(function () {
                 $( '#idSelect' ).dialog( "close" );
                 $(window).resize(null);
             });
             var dialog_buttons = {};
-            dialog_buttons[this._selectText] = function() {
-                $( this ).dialog( "close" );
+            dialog_buttons[this._selectText] = function () {
+                $(this).dialog( "close" );
                 if (idSelect._onsuccess)
                     idSelect._onsuccess(idSelect._userArg, idSelect.value, idSelect.valueObj);
             }
-            dialog_buttons[this._cancelText] = function() {
-                $( this ).dialog( "close" );
+            dialog_buttons[this._cancelText] = function () {
+                $(this).dialog( "close" );
             }
 
             var width = 0;
@@ -2677,10 +2682,10 @@ var idSelect = {
                         }
 
                     },
-                    resize: function(event, ui) {
-                        //idSelect._onResize ();
+                    resize: function (event, ui) {
+                        //idSelect._onResize();
                     },
-                    close: function(event, ui) {
+                    close: function (event, ui) {
                         $('#idSelect').remove();
                         //$('#hmDevsContent').jqGrid('GridUnload');
                     }
@@ -2699,14 +2704,14 @@ var idSelect = {
 
 // Create multiselect if no default widget loaded
 if (!$().multiselect) {
-    (function($, undefined) {
+    (function ($, undefined) {
         $.widget("dash.multiselect", {
             // default options
             options: {
                 multiple: true
             },
             // the constructor
-            _create: function() {
+            _create: function () {
                 if (!this.options.multiple) {
                     return;
                 }
@@ -2723,13 +2728,13 @@ if (!$().multiselect) {
                 var div = "";
                 this.element.find("option").each(function () {
                     div += '<tr class="ui-widget-content"><td><input type="checkbox" '+($(this).is(':selected') ? 'checked' : '')+' data-value="'+$(this).attr('value')+'">'+$(this).html()+'</td>';
-                    console.log ($(this).attr('value'));
+                    console.log($(this).attr('value'));
                 });
                 this.table.html(div);
                 var that = this;
-                this.table.find('input').each(function() {
+                this.table.find('input').each(function () {
                     this._parent = that;
-                    $(this).click(function(){
+                    $(this).click(function () {
                         var val = $(this).attr('data-value');
                         var checked =  $(this).is(':checked');
                         // change state on the original option tags
@@ -2758,7 +2763,7 @@ if (!$().multiselect) {
 
             // events bound via _on are removed automatically
             // revert other modifications here
-            _destroy: function() {
+            _destroy: function () {
                 if (!this.options.multiple) {
                     return;
                 }
@@ -2768,7 +2773,7 @@ if (!$().multiselect) {
                 $.Widget.prototype.destroy.call(this);
             },
 
-            _update: function() {
+            _update: function () {
                 if (!this.options.multiple) {
                     return;
                 }
