@@ -1329,21 +1329,21 @@ var hmSelect = {
                         f[t] = "." + f[t];
                     }
                 }
-                var newDevices = new Object ();
+                var newDevices = {};
                 var iDevs = 0;
                 var iPnts = 0;
                 var iChns = 0;
                 for(var dev in devicesCCU) {
                     var idDev  = devicesCCU[dev];
                     var device = localData.metaObjects[idDev];
-                    var newChannels = new Object ();
+                    var newChannels = {};
                     iPnts = 0;
                     iChns = 0;
                     
                     for (var chn in device.Channels) {
                         var idChn     = device["Channels"][chn];
                         var channel   = localData.metaObjects[idChn];
-                        var newPoints = new Object ();
+                        var newPoints = {};
                         iPnts = 0;
                         
                         if (channel["HssType"] !== undefined && channel["HssType"] == "MAINTENANCE" &&
@@ -1433,7 +1433,7 @@ var hmSelect = {
                     f = devFilter.split(',');
                     isWithDPs  = (f.length > 0 && f[0].length > 0 && f[0][0] == '.');
                 }
-                var newDevices = new Object ();
+                var newDevices = {};
                 var iChns = 0;
                 if (devicesCCU) {
                     for(var dev in devicesCCU) {
@@ -1473,7 +1473,7 @@ var hmSelect = {
                                 
                             if (isWithDPs) {
                                 var iPnts = 0;
-                                var newPoints = new Object ();
+                                var newPoints = {};
                             
                                 for (var dp in channel["DPs"]) {
                                     var idPnt = channel["DPs"][dp];
@@ -1645,13 +1645,13 @@ var hmSelect = {
 			for(var dev in this._devices) {
 				// Try to find room
 				if (this._devices[dev].room === undefined || this._devices[dev].room === null) {
-					var arr = new Object ();
+					var arr = {};
 					this._devices[dev].room = hmSelect._getRoom (localData, dev, false);
 				}
                 
                 // Try to find function
 				if (this._devices[dev].func === undefined || this._devices[dev].func === null) {
-					var arr = new Object ();
+					var arr = {};
 					this._devices[dev].func = hmSelect._getFunction (localData, dev, false);
 				}
 			
