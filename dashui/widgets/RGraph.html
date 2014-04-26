@@ -642,12 +642,12 @@
 
                 if (data.attr("a_start") !== "" && data.attr("a_start") !== null && data.attr("a_start") !== undefined) {
                     var f = parseFloat(data.attr("a_start"));
-                    f = f * PI / 180;
+                    f = f * Math.PI / 180;
                     t.Set('angles.start', f);
                 }
                 if (data.attr("a_end") !== "" && data.attr("a_end") !== null && data.attr("a_end") !== undefined) {
                     var f = parseFloat(data.attr("a_end"));
-                    f = f * PI / 180;
+                    f = f * Math.PI / 180;
                     t.Set('angles.end', f);
                 }
                 if (data.attr("shadow")) {
