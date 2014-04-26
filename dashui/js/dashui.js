@@ -22,6 +22,8 @@
 
 "use strict";
 
+
+
 var dui = {
 
     version:                '0.9beta87',
@@ -51,6 +53,7 @@ var dui = {
     toLoadSetsCount:        0, // Count of widget sets that should be loaded
     isFirstTime:            true,
     authRunning:            false,
+    viewFile:               window.location.search ? "dashui-views-" + window.location.search.slice(1) + ".json" : "dashui-views.json",
 
     loadWidgetSet: function (name, callback) {
         //console.log("loadWidgetSet("+name+")");
@@ -363,7 +366,7 @@ var dui = {
         dui.changeView(dui.activeView);
     },
     initViewObject: function () {
-        if (confirm("no views found on server.\nCreate new dashui-views.json?")) {
+        if (confirm("no views found on server.\nCreate new " + dui.viewFile + "?")) {
             dui.views = {view1: {settings: {style: {}}, widgets: {}}};
             dui.saveRemote();
             window.location.href = './?edit';
@@ -800,9 +803,9 @@ var dui = {
     },
     loadRemote: function (callback, callbackArg) {
         dui.showWaitScreen(true, "<br/>Loading Views...<br/>", null, 12.5);
-        dui.conn.readFile("dashui-views.json", function (data, err) {
+        dui.conn.readFile(dui.viewFile, function (data, err) {
             if (err) {
-                alert("dashui-views.json "+err);
+                alert(dui.viewFile + " " + err);
             }
             if (data) {
                 if (typeof data == "string") {
@@ -836,7 +839,7 @@ var dui = {
             dui.syncWidget(dui.activeWidget);
         }
         
-        dui.conn.writeFile("dashui-views.json", dui.views, function () {
+        dui.conn.writeFile(dui.viewFile, dui.views, function () {
             dui.saveRemoteActive = false;
             if (cb) {
                 cb();
