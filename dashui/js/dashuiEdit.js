@@ -1522,7 +1522,7 @@ dui = $.extend(true, dui, {
                 location.href = "./#"+dui.activeView;
             },
             open: function () {
-                dui.editPosition()
+                dui.editPosition();
             }
         });
         if ($().dialogExtend) {
