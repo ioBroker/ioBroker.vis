@@ -163,7 +163,7 @@ dui = $.extend(true, dui, {
                 text += "</td></tr></table>";
                 
             var parent = (options.parent == null) ? $("body") : options.parent;
-            parent.append (text);
+            parent.append(text);
             var htmlElem = document.getElementById(nameElem);
             htmlElem.settings = {};
             htmlElem.settings = $.extend(htmlElem.settings, this.settings);
@@ -222,7 +222,7 @@ dui = $.extend(true, dui, {
             
             $('#'+nameImg).css({width: htmlElem.settings.height * 2, height: htmlElem.settings.height - 4}).addClass('ui-corner-all');
             $('#'+nameText).css({width: htmlElem.settings.width});
-            $('#'+nameBtn).button ({icons: {primary: "ui-icon-circle-triangle-s"}, text: false});
+            $('#'+nameBtn).button({icons: {primary: "ui-icon-circle-triangle-s"}, text: false});
             $('#'+nameBtn).click(htmlElem, function (e) {
                 dui.styleSelect._toggleDrop(e.data);
             });
@@ -249,7 +249,7 @@ dui = $.extend(true, dui, {
                     i++;
                 }
                 text += "</form>";            
-                htmlElem.settings.parent.append (text);
+                htmlElem.settings.parent.append(text);
             }
             
             var box = $('#styleSelectBox'+options.name);
@@ -597,7 +597,7 @@ dui = $.extend(true, dui, {
 			
 			sText += "</table>";//</div>";
 			
-			$(obj).append (sText);
+			$(obj).append(sText);
 			$(obj).css({overflow: 'auto'});
 			var table = $('#'+obj.settings.elemName+'_tbl0').addClass("hq-no-select");
 			table.css({padding: 0, 'mapping': 0});
@@ -1075,7 +1075,7 @@ var hmSelect = {
 				{name:'_ID',        index:'_ID',         width:0,   hidden:true}
 			],
 			onSelectRow: function (id) {
-                               hmSelect.value    = $("#hmVarsContent").jqGrid ('getCell', id, '_ID');
+                               hmSelect.value    = $("#hmVarsContent").jqGrid('getCell', id, '_ID');
                                hmSelect.valueObj = null;
 				if (hmSelect.value != null && hmSelect.value != "") {
 					$(":button:contains('"+hmSelect._selectText+"')").prop("disabled", false).removeClass("ui-state-disabled");
@@ -1179,7 +1179,7 @@ var hmSelect = {
 				{name:'_ID',         index:'_ID',         width:0,   hidden:true}
 			],
 			onSelectRow: function (id) {
-                                hmSelect.value    = $("#hmProgsContent").jqGrid ('getCell', id, "_ID");
+                                hmSelect.value    = $("#hmProgsContent").jqGrid('getCell', id, "_ID");
                                 hmSelect.valueObj = null;
 				if (hmSelect.value != null && hmSelect.value != "") {
 					$(":button:contains('"+hmSelect._selectText+"')").prop("disabled", false).removeClass("ui-state-disabled");
@@ -1529,7 +1529,7 @@ var hmSelect = {
                                 newDevices[idChn] = {
                                         "Interface": device["Interface"],
                                         "HssType":   device["HssType"],
-                                        "Address":   device["Interface"]+"."+channel["Address"],
+                                        "Address":   device["Interface"] + "." + channel["Address"],
                                         "Name":      channel["Name"]
                                 };
                             }
@@ -1565,32 +1565,32 @@ var hmSelect = {
                 if (hmSelect._filterLoc == localData.metaObjects[rooms[room]]["Name"]) {
                     selected = " selected ";
                 }                
-                text += "<option value='"+localData.metaObjects[rooms[room]]["Name"]+"' "+selected+">"+localData.metaObjects[rooms[room]]["Name"]+"</option>";
+                text += "<option value='"+localData.metaObjects[rooms[room]]["Name"] + "' " + selected + ">" + localData.metaObjects[rooms[room]]["Name"] + "</option>";
             }
             text += "</select>&nbsp;&nbsp;";
             
             // Fill the functions toolbar
             text += dui.translate('Functions')+":&nbsp;<select id='hmSelectFunctions'>";
-            text += "<option value=''>"+dui.translate('All')+"</option>";
+            text += "<option value=''>"+dui.translate('All') + "</option>";
             for (var func in functions) {
                 var selected = "";
                 if (hmSelect._filterFunc == localData.metaObjects[functions[func]]["Name"]) {
                     selected = " selected ";
                 }                
-                text += "<option value='"+localData.metaObjects[functions[func]]["Name"]+"' "+selected+">"+localData.metaObjects[functions[func]]["Name"]+"</option>";
+                text += "<option value='"+localData.metaObjects[functions[func]]["Name"] + "' "+selected + ">" + localData.metaObjects[functions[func]]["Name"] + "</option>";
             }
             text += "</select>\n";
             if (filter != "all" || devFilter != null || devFilter != "") {
-                text += dui.translate("Disable device filter:") + "<input type='checkbox' id='hmSelectIgnoreFilter' "+ (this._ignoreFilter ? "checked" : "") +">";
+                text += dui.translate("Disable device filter:") + "<input type='checkbox' id='hmSelectIgnoreFilter' "+ (this._ignoreFilter ? "checked" : "") + ">";
             }
-            $("#hmSelectFilter").append (text);
+            $("#hmSelectFilter").append(text);
             
             // Ignore filter switch
             $("#hmSelectIgnoreFilter").change (function () {
                 hmSelect._ignoreFilter = !hmSelect._ignoreFilter;
                 hmSelect._devices    = null;
                 $('#hmSelect').remove();
-                hmSelect.show (hmSelect._homematic,  hmSelect._userArg, hmSelect._onsuccess, hmSelect.myFilter, hmSelect.myDevFilter);
+                hmSelect.show (hmSelect._homematic, hmSelect._userArg, hmSelect._onsuccess, hmSelect.myFilter, hmSelect.myDevFilter);
             });
             
             
@@ -1706,7 +1706,7 @@ var hmSelect = {
 					for (var dp in channel.DPs)	{	
 						var point = channel.DPs[dp];
 						this.mydata[i] = {
-							id:          ""+(i+1), 
+							id:          "" + (i + 1),
 							"Image":     "",
 							"Location":  channel.room,
 							"Interface": this._devices[dev].Interface,
@@ -1793,13 +1793,13 @@ var hmSelect = {
 		$("#hmDevsContent").jqGrid({
 			datatype:    "jsonstring",
 			datastr:     this.mydata,
-			height:      $('#tabs-devs').height() - 35 - $('#hmSelectFilter').height (),
+			height:      $('#tabs-devs').height() - 35 - $('#hmSelectFilter').height(),
 			autowidth:   true,
 			shrinkToFit: false,
 			colNames:    colNames,
 			colModel:    colModel,
 			onSelectRow: function (id) {
-                hmSelect.value    = $("#hmDevsContent").jqGrid ('getCell', id, '_ID');
+                hmSelect.value    = $("#hmDevsContent").jqGrid('getCell', id, '_ID');
                 hmSelect.valueObj = (hmSelect.value != "" && hmSelect.value != null) ? hmSelect._devices[hmSelect.value] :null;
 
 				if (hmSelect.value != null && hmSelect.value != "") {
@@ -1827,7 +1827,8 @@ var hmSelect = {
 			}
 		});
         // Add the filter column
-		$("#hmDevsContent").jqGrid('filterToolbar',{searchOperators : false,
+		$("#hmDevsContent").jqGrid('filterToolbar', {
+            searchOperators : false,
 			beforeSearch: function () {
 				var searchData = jQuery.parseJSON(this.p.postData.filters);
                 hmSelect._filter = searchData;
@@ -1851,22 +1852,22 @@ var hmSelect = {
         this._filterDevsApply ();
    },
     _onResize: function () {
-        $('#hmSelect_tabs').width ($('#hmSelect').width()    - 30);
-        $('#hmSelect_tabs').height ($('#hmSelect').height()  - 12);
-        $('#hmSelectFilter').width ($('#tabs-devs').width()  - 6);
+        $('#hmSelect_tabs').width($('#hmSelect').width()    - 30);
+        $('#hmSelect_tabs').height($('#hmSelect').height()  - 12);
+        $('#hmSelectFilter').width($('#tabs-devs').width()  - 6);
         
-        $('#tabs-devs').width  ($('#hmSelect_tabs').width()  - 6);
-        $('#tabs-devs').height ($('#hmSelect_tabs').height() - 60);
-        $('#tabs-vars').width  ($('#hmSelect_tabs').width()  - 6);
-        $('#tabs-vars').height ($('#hmSelect_tabs').height() - 60);
-        $('#tabs-progs').width ($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-devs').width($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-devs').height($('#hmSelect_tabs').height() - 60);
+        $('#tabs-vars').width($('#hmSelect_tabs').width()  - 6);
+        $('#tabs-vars').height($('#hmSelect_tabs').height() - 60);
+        $('#tabs-progs').width($('#hmSelect_tabs').width()  - 6);
         $('#tabs-progs').height($('#hmSelect_tabs').height() - 60);
         
-        $("#hmDevsContent").setGridWidth  ($('#tabs-devs').width()   - 6);
-        $("#hmDevsContent").setGridHeight ($('#tabs-devs').height()  - 35 - $('#hmSelectFilter').height ());
-        $("#hmVarsContent").setGridWidth  ($('#tabs-vars').width()   - 6);
-        $("#hmVarsContent").setGridHeight  ($('#tabs-vars').height() - 35);
-        $("#hmProgsContent").setGridWidth ($('#tabs-progs').width()  - 6);
+        $("#hmDevsContent").setGridWidth($('#tabs-devs').width() - 6);
+        $("#hmDevsContent").setGridHeight($('#tabs-devs').height() - 35 - $('#hmSelectFilter').height());
+        $("#hmVarsContent").setGridWidth($('#tabs-vars').width() - 6);
+        $("#hmVarsContent").setGridHeight($('#tabs-vars').height() - 35);
+        $("#hmProgsContent").setGridWidth($('#tabs-progs').width()  - 6);
         $("#hmProgsContent").setGridHeight($('#tabs-progs').height() - 35);
     },
     show: function (localData, userArg, onSuccess, filter, devFilter) { // onsuccess (userArg, value, valueObj)  
@@ -1920,7 +1921,7 @@ var hmSelect = {
                 $("#tabs-vars").append  ("<table id='hmVarsContent'></table>");        
             }
             if (this._ignoreFilter || ((devFilter === undefined || devFilter == "") && (filter == 'all' || filter == 'programs'))) {       
-                 $("#tabs-progs").append ("<table id='hmProgsContent'></table>");      
+                 $("#tabs-progs").append("<table id='hmProgsContent'></table>");      
             }            
             
             if (this._ignoreFilter || filter == 'all' || filter == 'devices'|| (filter != 'variables' && filter != 'programs')) {
@@ -1985,7 +1986,9 @@ var hmSelect = {
             },
 			buttons: dialog_buttons
 		});
-        $('#dashui-waitico').show().css({top: ($("#hmSelect").height() + $('#dashui-waitico').height())/2});
+        $('#dashui-waitico').show().css({
+            top: ($("#hmSelect").height() + $('#dashui-waitico').height()) / 2
+        });
         $('#dashui-waitico').hide();
         $('#hmSelect_tabs').width($('#hmSelect').width());
         $('#hmSelect_tabs').height($('#hmSelect').height()  - 12);
@@ -2280,13 +2283,13 @@ var idSelect = {
     _addOneRow: function (id, level, parents) {
         var MO = this._locData.metaObjects;
         this._processed.push(id);
-        var text = '<tr class="select_'+id+' '+(parents||'')+' no-select-tr select-tr" data-id="'+id+'" data-hidden="1">';
+        var text = '<tr class="select_' + id + ' ' + (parents || '') + ' no-select-tr select-tr" data-id="' + id + '" data-hidden="1">';
 
         text += '<td ' +
             'title="'+MO[id][this._rows[0]]+'" ' +
             'class="select-td" ' +
-            'style="width:'+this._rowsInfo[this._rows[0]].width+'px; padding-left:'+(MO[id].children ? (this._shift * (level - 1)) : (this._shift * level))+'px">'+
-            (MO[id].children ? '<span class="ui-icon ui-icon-circle-plus select-plus no-click" data-processed="0" data-id="'+id+'" data-level="'+level+'" data-parents="'+(parents ? parents + ' ' : '')+' children_'+id+'"></span>' : '');
+            'style="width:'+this._rowsInfo[this._rows[0]].width+'px; padding-left:'+(MO[id].children ? (this._shift * (level - 1)) : (this._shift * level)) + 'px">' +
+            (MO[id].children ? '<span class="ui-icon ui-icon-circle-plus select-plus no-click" data-processed="0" data-id="' + id + '" data-level="' + level + '" data-parents="' + (parents ? parents + ' ' : '') + ' children_' + id + '"></span>' : '');
         text += MO[id][this._rows[0]] + '</td>';
 
         for (var i = 1, len = this._rows.length; i < len; i++) {
@@ -2312,7 +2315,7 @@ var idSelect = {
                 title = val;
             }
 
-            text += '<td style="width:'+this._rowsInfo[this._rows[i]].width+'px" class="select-td" title="'+ title +'">'+ val +'</td>';
+            text += '<td style="width:' + this._rowsInfo[this._rows[i]].width + 'px" class="select-td" title="' + title + '">' + val + '</td>';
         }
         text += '</tr>\n';
 
@@ -2338,24 +2341,12 @@ var idSelect = {
             if (value !== '' && value !== null && value !== undefined) {
                 if (this._rowsInfo[field].search == 'text') {
                     if (this._rows[f] == 'value') {
-                        if (!value || this._storedValues[id].toLowerCase().indexOf(value.toLowerCase()) != -1) {
-                            isVisible = true;
-                        } else {
-                            isVisible = false;
-                        }
+                        isVisible = (!value || this._storedValues[id].toLowerCase().indexOf(value.toLowerCase()) != -1);
                     } else {
-                        if (!value || this._locData.metaObjects[id][field].toLowerCase().indexOf(value.toLowerCase()) != -1) {
-                            isVisible = true;
-                        } else {
-                            isVisible = false;
-                        }
+                        isVisible = (!value || this._locData.metaObjects[id][field].toLowerCase().indexOf(value.toLowerCase()) != -1);
                     }
                 } else if (this._rowsInfo[field].search == 'select') {
-                    if (!value || this._locData.metaObjects[id][field] == value) {
-                        isVisible = true;
-                    } else {
-                        isVisible = false;
-                    }
+                    isVisible = (!value || this._locData.metaObjects[id][field] == value);
                 }
             } else {
                 continue;
@@ -2382,7 +2373,7 @@ var idSelect = {
             }
 
             _id = this._locData.metaObjects[_id].parent;
-        };
+        }
 
         // If any of the children is visible
         if (this._locData.metaObjects[id].children) {
@@ -2415,7 +2406,7 @@ var idSelect = {
             var that = this;
             for (var id in this._locData.metaObjects) {
                 this._visibility[id] = this._isVisible(id);
-            };
+            }
 
             // Go through the tree
             $('.select-tr').each(function () {
@@ -2541,7 +2532,7 @@ var idSelect = {
             header += '</td>';
         }
         header += '';
-        $('#'+divName + '_header').html(header);
+        $('#' + divName + '_header').html(header);
 
         for (var id in MO) {
             if (this._processed.indexOf(id) != -1) {
@@ -2557,7 +2548,9 @@ var idSelect = {
 
         $('.no-click').each(function () {
             $(this).removeClass('no-click');
-            $(this).click(function () {that._plusClick(this)});
+            $(this).click(function () {
+                that._plusClick(this)
+            });
         });
         $('.no-select-tr').click(function () {
             that._options.selectedID = $(this).attr('data-id');
@@ -2567,7 +2560,7 @@ var idSelect = {
             $(this).addClass('ui-state-highlight');
         });
 
-        $('.no-select-tr').hover (function () {
+        $('.no-select-tr').hover(function () {
             $(this).addClass('ui-state-focus');
         }, function () {
             $(this).removeClass('ui-state-focus');
@@ -2601,7 +2594,7 @@ var idSelect = {
         });
     },
     _openPath: function (id) {
-        var ids = this._getParents (id);
+        var ids = this._getParents(id);
 
         for (var t = ids.length - 1; t >= 0; t--) {
             var el = $('.select_' + ids[t] + ' span');
@@ -2635,17 +2628,17 @@ var idSelect = {
                             '</div>' +
                         '</div>'+
                     '</div>');
-            this._buildTable ('selectId');
+            this._buildTable('selectId');
             // Define dialog buttons
-            $('#selectId_selectButton').button ().click(function () {
+            $('#selectId_selectButton').button().click(function () {
                 $(window).resize(null);
                 if (that._options.onSuccess) {
                     that._options.onSuccess(that._options.userArg, that._options.selectedID);
                 }
-                $( '#idSelect' ).dialog( "close" );
+                $('#idSelect').dialog("close");
             });
 
-            $('#selectId_cancelButton').button ().click(function () {
+            $('#selectId_cancelButton').button().click(function () {
                 $( '#idSelect' ).dialog( "close" );
                 $(window).resize(null);
             });
