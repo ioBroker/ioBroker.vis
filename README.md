@@ -7,6 +7,11 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta88
+* (Hobbyquaker) multiple View-Files via Querystring (f.e. /dashui/?viewfile1#view1)
+* (Hobbyquaker) decreased editor width
+* (Hobbyquaker) hmSelect changed z-index, modal
+
 ### 0.9beta87
 * (Hobbyquaker) Fix CSS steal border-* and padding on Firefox
 * (Hobbyquaker) Fix CSS steal text-align
