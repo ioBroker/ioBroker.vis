@@ -369,7 +369,7 @@ var dui = {
         if (confirm("no views found on server.\nCreate new " + dui.viewFile + "?")) {
             dui.views = {view1: {settings: {style: {}}, widgets: {}}};
             dui.saveRemote();
-            window.location.href = './?edit';
+            window.location.href = './edit.html' + window.location.search;
         } else {
             window.location.reload();
         }
@@ -821,7 +821,7 @@ var dui = {
                 callback(callbackArg);
             }
             if (!dui.views) {
-                alert("No Views found on Server");
+                //alert("No Views found on Server");
             }            
         });       
     },
