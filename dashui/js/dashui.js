@@ -81,8 +81,8 @@ var dui = {
 
         if (!dui.views) return null;
 
-        // Convert duiConfig.widgetSets to Object for easier dependency search
-        var widgetSetsObj = {}
+        // Convert duiConfig.widgetSets to object for easier dependency search
+        var widgetSetsObj = {};
         for (var i = 0; i < duiConfig.widgetSets.length; i++) {
             if (typeof duiConfig.widgetSets[i] == "object") {
                 widgetSetsObj[duiConfig.widgetSets[i].name] = duiConfig.widgetSets[i];
