@@ -168,7 +168,7 @@ a.ui-dialog-titlebar-restore {
 	padding-bottom: 0px;
 	padding-left: 6px;
     width: 100%;
-    border-top: 1px dotted white;  
+    border-top: 1px dotted white;
     border-left: 1px dotted white;
 }
 .dashui-no-spaces {
@@ -181,12 +181,12 @@ a.ui-dialog-titlebar-restore {
 	width: 100%;
 	height: 100%;
 	z-index: 5000;
-/*	background: -moz-linear-gradient(top,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%); 
+/*	background: -moz-linear-gradient(top,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0)));
-	background: -webkit-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); 
-	background: -o-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); 
+	background: -webkit-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+	background: -o-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
 	background: -ms-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
-	background: linear-gradient(to bottom,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); 
+	background: linear-gradient(to bottom,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); */
 }
 .dashui-progressbar {
@@ -579,4 +579,45 @@ p.xs_text_editor_mode {
     height: 28px;
     width: 28px;
     top: -4px;
+}
+
+#new_view_name {
+    width: 278px;
+
+}
+
+#add_view {
+    margin-left: 107px;
+    margin-top: 5px;
+    width: 125px;
+
+}
+
+#dup_view {
+    margin-top: 5px;
+    width: 125px;
+
+}
+
+#tabs-1 .ui-multiselect {
+    width: 284px !important;
+    height: 28px;
+}
+
+#del_view {
+    margin-left: 108px;
+    margin-top: 5px;
+    width: 125px;
+
+}
+
+#new_name {
+    width: 278px;
+
+}
+
+#rename_view {
+    margin-left: 107px;
+    margin-top: 5px;
+
 }
