@@ -852,7 +852,9 @@ dui = $.extend(true, dui, {
             }
         }
 
-        dui.multiSelectedWidgets.push(id);
+        if (dui.multiSelectedWidgets.indexOf(id) == -1) {
+            dui.multiSelectedWidgets.push(id);
+        }
 
         $("#dui_container").append('<div id="widget_multi_helper_'+id+'" class="widget_multi_helper"><div class="widget_multi_inner_helper"></div></div>');
 
@@ -2451,6 +2453,7 @@ dui = $.extend(true, dui, {
         }
 
         var activeWidget = dui.activeWidget;
+        var multiSelectedWidgets = dui.multiSelectedWidgets;
 
         dui.inspectWidget("none");
         $("#duiview_" + dui.activeView).remove();
@@ -2465,6 +2468,9 @@ dui = $.extend(true, dui, {
         dui.renderView(dui.activeView);
         dui.changeViewEdit(dui.activeView, true);
         dui.inspectWidget(activeWidget);
+        for (var i = 0; i < multiSelectedWidgets.length; i++) {
+            dui.inspectWidgetMulti(multiSelectedWidgets[i]);
+        }
 
     }
 });
