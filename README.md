@@ -7,13 +7,18 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta91
+* (Hobbyquaker) Fix keep multi-selected-widgets on undo
+* (Hobbyquaker) Fix saveRemote on undo
+* (Hobbyquaker) Show message on loadscreen after update
+
 ### 0.9beta90
 * (Hobbyquaker) new Widget: special - Sound onClick
 * (Hobbyquaker) new Widget: jqui - ContainerDialogExternal
 * (Hobbyquaker) new external command: dialog
 * (Hobbyquaker) new external command: playSound
 * (Hobbyquaker) Swipe Wigdet: same style as special widgets
-* (Hobbyquaker) fix external command data
+* (Hobbyquaker) Fix external command data
 
 ### 0.9beta89
 * (Hobbyquaker) Fix getUsedWidgetSets - find dependencies not working
