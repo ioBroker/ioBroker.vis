@@ -85,7 +85,11 @@ var dui = {
         var widgetSetsObj = {};
         for (var i = 0; i < duiConfig.widgetSets.length; i++) {
             if (typeof duiConfig.widgetSets[i] == "object") {
+                if (!duiConfig.widgetSets[i].depends) {
+                    duiConfig.widgetSets[i].depends = [];
+                }
                 widgetSetsObj[duiConfig.widgetSets[i].name] = duiConfig.widgetSets[i];
+
             } else {
                 widgetSetsObj[duiConfig.widgetSets[i]] = {depends: []};
             }
