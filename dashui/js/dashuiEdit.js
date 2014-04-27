@@ -1519,7 +1519,7 @@ dui = $.extend(true, dui, {
             dialogClass: "dui-editor-dialog",
             close: function () {
                 dui.save();
-                location.href = "./#"+dui.activeView;
+                location.href = "./" + window.location.search + "#" + dui.activeView;
             },
             open: function () {
                 dui.editPosition();
