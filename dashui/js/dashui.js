@@ -81,22 +81,35 @@ var dui = {
 
         if (!dui.views) return null;
 
+        // Convert duiConfig.widgetSets to Object for easier dependency search
+        var widgetSetsObj = {}
+        for (var i = 0; i < duiConfig.widgetSets.length; i++) {
+            if (typeof duiConfig.widgetSets[i] == "object") {
+                widgetSetsObj[duiConfig.widgetSets[i].name] = duiConfig.widgetSets[i];
+            } else {
+                widgetSetsObj[duiConfig.widgetSets[i]] = {depends: []};
+            }
+        }
+
         for (var view in dui.views) {
             for (var id in dui.views[view].widgets) {
-                // Views are not yet converted and have no widgetSet information)
                 if (!dui.views[view].widgets[id].widgetSet) {
+
+                    // Views are not yet converted and have no widgetSet information)
                     return null;
+
                 } else if (widgetSets.indexOf(dui.views[view].widgets[id].widgetSet) == -1) {
+
                     var wset = dui.views[view].widgets[id].widgetSet;
                     widgetSets.push(wset);
 
-                    if (duiConfig.widgetSets && duiConfig.widgetSets[wset] && (typeof duiConfig.widgetSets[wset] == 'object') && duiConfig.widgetSets[wset].depends) {
-                        for (var u = 0, ulen = duiConfig.widgetSets[wset].depends.length; u < ulen; u++) {
-                            if (widgetSets.indexOf(duiConfig.widgetSets[wset].depends[u]) == -1) {
-                                widgetSets.push(duiConfig.widgetSets[wset].depends[u]);
-                            }
+                    // Add dependecies
+                    for (var u = 0, ulen = widgetSetsObj[wset].depends.length; u < ulen; u++) {
+                        if (widgetSets.indexOf(widgetSetsObj[wset].depends[u]) == -1) {
+                            widgetSets.push(widgetSetsObj[wset].depends[u]);
                         }
                     }
+
                 }
             }
         }
