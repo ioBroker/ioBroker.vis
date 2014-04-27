@@ -1057,12 +1057,17 @@ if ('applicationCache' in window) {
     window.addEventListener('load', function(e) {
         window.applicationCache.addEventListener('updateready', function(e) {
             if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+                dui.showWaitScreen(true, null, 'Update found, loading new Files...', 100);
+                jQuery("#waitText").attr("id", "waitTextDisabled");
+                jQuery(".dashui-progressbar").hide();
                 try {
                     window.applicationCache.swapCache();
                 } catch (e) {
                     console.log(e);
                 }
-                window.location.reload();
+                setTimeout(function () {
+                    window.location.reload();
+                }, 1000);
             }
         }, false);
     }, false);
@@ -1081,10 +1086,7 @@ if ('applicationCache' in window) {
     while (match = search.exec(query)) {
         dui.urlParams[decode(match[1])] = decode(match[2]);
     }
-    // if old edit type
-    if (dui.urlParams['edit'] === '') {
-        window.location.href = './edit.html' + window.location.hash;
-    }
+
     if (window.location.href.indexOf('edit.html') != -1) {
         dui.urlParams['edit'] = "";
     }
