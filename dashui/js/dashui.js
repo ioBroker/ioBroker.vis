@@ -168,8 +168,8 @@ var dui = {
         }
         //console.log("bind instance id="+dui.instanceCmd);
 
-        localData.uiState.attr("_"+ dui.instanceCmd, {Value:''});
-        localData.uiState.attr("_"+ dui.instanceData, {Value:''});
+        //localData.uiState.attr("_"+ dui.instanceCmd, {Value:''});
+        //localData.uiState.attr("_"+ dui.instanceData, {Value:''});
         localData.uiState.attr("_"+ dui.instanceView, {Value:dui.activeView});
 
         localData.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
@@ -189,25 +189,25 @@ var dui = {
                         dui.changeView(data);
                         break;
                     case "refresh":
-                        // Todo break;
                     case "reload":
                         setTimeout(function () {
                             window.location.reload();
                         }, 1);
                         break;
                     case "dialog":
-                        // Todo Open Dialogs - special jqui dialog widgets attribute
+                        $("#" + data + "_dialog").dialog("open");
                         break;
                     case "popup":
                         window.open(data);
                         break;
                     case "playSound":
-                        $("#external_sound").attr(src, data);
+                        $("#external_sound").attr("src", data);
                         setTimeout(function () {
                             document.getElementById("external_sound").play();
-                        });
+                        }, 1);
                         break;
                     default:
+                        console.log("unknown external command "+cmd);
                 }
 
                 // remove command
