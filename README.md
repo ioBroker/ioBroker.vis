@@ -7,6 +7,14 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta90
+* (Hobbyquaker) new Widget: special - Sound onClick
+* (Hobbyquaker) new Widget: jqui - ContainerDialogExternal
+* (Hobbyquaker) new external command: dialog
+* (Hobbyquaker) new external command: playSound
+* (Hobbyquaker) Swipe Wigdet: same style as special widgets
+* (Hobbyquaker) fix external command data
+
 ### 0.9beta89
 * (Hobbyquaker) Fix getUsedWidgetSets - find dependencies not working
 * (Hobbyquaker) Fix dui_editor close - forward to viewfile
