@@ -22,9 +22,11 @@
 
 "use strict";
 
+
+
 var dui = {
 
-    version:                '0.9beta86',
+    version:                '0.9beta91',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -51,6 +53,7 @@ var dui = {
     toLoadSetsCount:        0, // Count of widget sets that should be loaded
     isFirstTime:            true,
     authRunning:            false,
+    viewFile:               window.location.search ? "dashui-views-" + window.location.search.slice(1) + ".json" : "dashui-views.json",
 
     loadWidgetSet: function (name, callback) {
         //console.log("loadWidgetSet("+name+")");
@@ -78,22 +81,39 @@ var dui = {
 
         if (!dui.views) return null;
 
+        // Convert duiConfig.widgetSets to object for easier dependency search
+        var widgetSetsObj = {};
+        for (var i = 0; i < duiConfig.widgetSets.length; i++) {
+            if (typeof duiConfig.widgetSets[i] == "object") {
+                if (!duiConfig.widgetSets[i].depends) {
+                    duiConfig.widgetSets[i].depends = [];
+                }
+                widgetSetsObj[duiConfig.widgetSets[i].name] = duiConfig.widgetSets[i];
+
+            } else {
+                widgetSetsObj[duiConfig.widgetSets[i]] = {depends: []};
+            }
+        }
+
         for (var view in dui.views) {
             for (var id in dui.views[view].widgets) {
-                // Views are not yet converted and have no widgetSet information)
                 if (!dui.views[view].widgets[id].widgetSet) {
+
+                    // Views are not yet converted and have no widgetSet information)
                     return null;
+
                 } else if (widgetSets.indexOf(dui.views[view].widgets[id].widgetSet) == -1) {
+
                     var wset = dui.views[view].widgets[id].widgetSet;
                     widgetSets.push(wset);
 
-                    if (duiConfig.widgetSets && duiConfig.widgetSets[wset] && (typeof duiConfig.widgetSets[wset] == 'object') && duiConfig.widgetSets[wset].depends) {
-                        for (var u = 0, ulen = duiConfig.widgetSets[wset].depends.length; u < ulen; u++) {
-                            if (widgetSets.indexOf(duiConfig.widgetSets[wset].depends[u]) == -1) {
-                                widgetSets.push(duiConfig.widgetSets[wset].depends[u]);
-                            }
+                    // Add dependecies
+                    for (var u = 0, ulen = widgetSetsObj[wset].depends.length; u < ulen; u++) {
+                        if (widgetSets.indexOf(widgetSetsObj[wset].depends[u]) == -1) {
+                            widgetSets.push(widgetSetsObj[wset].depends[u]);
                         }
                     }
+
                 }
             }
         }
@@ -122,7 +142,7 @@ var dui = {
             }
         }
         dui.toLoadSetsCount = arrSets.length;
-        $("#widgetset_counter").html("<span style='font-size:10px'>("+(dui.toLoadSetsCount-1)+")</span>");
+        $("#widgetset_counter").html("<span style='font-size:10px'>("+(dui.toLoadSetsCount)+")</span>");
 
         if (dui.toLoadSetsCount) {
             for(var i = 0, len = dui.toLoadSetsCount; i < len; i++) {
@@ -148,8 +168,8 @@ var dui = {
         }
         //console.log("bind instance id="+dui.instanceCmd);
 
-        localData.uiState.attr("_"+ dui.instanceCmd, {Value:''});
-        localData.uiState.attr("_"+ dui.instanceData, {Value:''});
+        //localData.uiState.attr("_"+ dui.instanceCmd, {Value:''});
+        //localData.uiState.attr("_"+ dui.instanceData, {Value:''});
         localData.uiState.attr("_"+ dui.instanceView, {Value:dui.activeView});
 
         localData.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
@@ -169,19 +189,25 @@ var dui = {
                         dui.changeView(data);
                         break;
                     case "refresh":
-                        // Todo break;
                     case "reload":
                         setTimeout(function () {
                             window.location.reload();
                         }, 1);
                         break;
                     case "dialog":
-                        // Todo Open Dialogs - special jqui dialog widgets attribute
+                        $("#" + data + "_dialog").dialog("open");
                         break;
                     case "popup":
                         window.open(data);
                         break;
+                    case "playSound":
+                        $("#external_sound").attr("src", data);
+                        setTimeout(function () {
+                            document.getElementById("external_sound").play();
+                        }, 1);
+                        break;
                     default:
+                        console.log("unknown external command "+cmd);
                 }
 
                 // remove command
@@ -363,10 +389,10 @@ var dui = {
         dui.changeView(dui.activeView);
     },
     initViewObject: function () {
-        if (confirm("no views found on server.\nCreate new dashui-views.json?")) {
+        if (confirm("no views found on server.\nCreate new " + dui.viewFile + "?")) {
             dui.views = {view1: {settings: {style: {}}, widgets: {}}};
             dui.saveRemote();
-            window.location.href = './?edit';
+            window.location.href = './edit.html' + window.location.search;
         } else {
             window.location.reload();
         }
@@ -800,9 +826,9 @@ var dui = {
     },
     loadRemote: function (callback, callbackArg) {
         dui.showWaitScreen(true, "<br/>Loading Views...<br/>", null, 12.5);
-        dui.conn.readFile("dashui-views.json", function (data, err) {
+        dui.conn.readFile(dui.viewFile, function (data, err) {
             if (err) {
-                alert("dashui-views.json "+err);
+                alert(dui.viewFile + " " + err);
             }
             if (data) {
                 if (typeof data == "string") {
@@ -818,7 +844,7 @@ var dui = {
                 callback(callbackArg);
             }
             if (!dui.views) {
-                alert("No Views found on Server");
+                //alert("No Views found on Server");
             }            
         });       
     },
@@ -836,7 +862,7 @@ var dui = {
             dui.syncWidget(dui.activeWidget);
         }
         
-        dui.conn.writeFile("dashui-views.json", dui.views, function () {
+        dui.conn.writeFile(dui.viewFile, dui.views, function () {
             dui.saveRemoteActive = false;
             if (cb) {
                 cb();
@@ -1031,12 +1057,17 @@ if ('applicationCache' in window) {
     window.addEventListener('load', function(e) {
         window.applicationCache.addEventListener('updateready', function(e) {
             if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+                dui.showWaitScreen(true, null, 'Update found, loading new Files...', 100);
+                jQuery("#waitText").attr("id", "waitTextDisabled");
+                jQuery(".dashui-progressbar").hide();
                 try {
                     window.applicationCache.swapCache();
                 } catch (e) {
                     console.log(e);
                 }
-                window.location.reload();
+                setTimeout(function () {
+                    window.location.reload();
+                }, 1000);
             }
         }, false);
     }, false);
@@ -1055,10 +1086,7 @@ if ('applicationCache' in window) {
     while (match = search.exec(query)) {
         dui.urlParams[decode(match[1])] = decode(match[2]);
     }
-    // if old edit type
-    if (dui.urlParams['edit'] === '') {
-        window.location.href = './edit.html' + window.location.hash;
-    }
+
     if (window.location.href.indexOf('edit.html') != -1) {
         dui.urlParams['edit'] = "";
     }

@@ -25,7 +25,7 @@
 "use strict";
 
 dui = $.extend(true, dui, {
-    editVersion:            '0.9beta86',
+    editVersion:            '0.9beta91',
     toolbox:                $("#dui_editor"),
     selectView:             $("#select_view"),
     activeWidget:           "",
@@ -169,7 +169,6 @@ dui = $.extend(true, dui, {
 				break;
 			}
 		}
-		
 		return view;
 	},
 	getViewsOfWidget: function (id) {
@@ -207,12 +206,12 @@ dui = $.extend(true, dui, {
 			return;
 		}
 
-                var $select_active_widget = $("#select_active_widget");
-                $select_active_widget.find('option[value="' + id + '"]').remove();
-        
-                if ($().multiselect) {
-                    $select_active_widget.multiselect("refresh");
-                }
+        var $select_active_widget = $("#select_active_widget");
+        $select_active_widget.find('option[value="' + id + '"]').remove();
+
+        if ($().multiselect) {
+            $select_active_widget.multiselect("refresh");
+        }
 
 		var view = dui.getViewOfWidget(id);
 		
@@ -293,7 +292,7 @@ dui = $.extend(true, dui, {
         }
 
         if (isViewExist) {
-			$("#duiview_"+view).append(can.view(tpl, {hm: localData.uiState["_"+dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"], "view": view}));
+			$("#duiview_"+view).append(can.view(tpl, {hm: localData.uiState["_" + dui.widgets[widgetId].data.hm_id], "data": dui.widgets[widgetId]["data"], "view": view}));
 		}
 
         if (!dui.views[view].widgets) {
@@ -477,13 +476,13 @@ dui = $.extend(true, dui, {
 				var wids = id.split('_', 2);
 				dui.renameWidget(id, wids[0]);
 			} else if (views.length > 1 && (id.indexOf('_') == -1)) {
-				dui.renameWidget(id, id+'_'+view);
+				dui.renameWidget(id, id + '_' + view);
 			}
 		}
 	},
     editObjectID: function (widget, wid_attr, widget_filter) {
         // Edit for Homematic ID
-        $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="5"><input type="button" id="inspect_'+wid_attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+wid_attr+'_desc"></div></td></tr>');
+        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="dashui-add-option"><td>' + this.translate(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="5"><input type="button" id="inspect_' + wid_attr + '_btn" value="..."  style="width:30px"><div id="inspect_' + wid_attr + '_desc"></div></td></tr>');
         document.getElementById("inspect_"+wid_attr+"_btn").jControl = wid_attr;
         $("#inspect_"+wid_attr+"_desc").html(dui.getObjDesc(widget.data[wid_attr]));
         // Select Homematic ID Dialog
@@ -519,11 +518,9 @@ dui = $.extend(true, dui, {
                                             break;
                                         }
                                     }
-                                    if (func)
-                                        break;
+                                    if (func) break;
                                 }
-                                if (func)
-                                    break;
+                                if (func) break;
 
                                 hm_id = localData.metaObjects[hm_id]['Parent'];
                             }
@@ -549,9 +546,9 @@ dui = $.extend(true, dui, {
     },
     editSelect: function (widget, wid_attr, values) {
         // Select
-        var text = '<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><select id="inspect_'+wid_attr+'">';
+        var text = '<tr id="option_' + wid_attr + '" class="dashui-add-option"><td class="dashui-edit-td-caption">' + this.translate(wid_attr) + ':</td><td><select id="inspect_' + wid_attr + '">';
         for (var t = 0; t < values.length; t++) {
-            text += "<option value='"+values[t]+"' "+((values[t] == widget.data[wid_attr]) ? "selected" : "")+">"+this.translate(values[t])+"</option>";
+            text += "<option value='" + values[t] + "' " + ((values[t] == widget.data[wid_attr]) ? "selected" : "") + ">"+this.translate(values[t]) + "</option>";
         }
         text += "</select></td></tr>";
         $("#widget_attrs").append(text);
@@ -563,18 +560,18 @@ dui = $.extend(true, dui, {
     },
     editCheckbox: function (widget, wid_attr) {
         // All other attributes
-        $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr)+':</td><td><input id="inspect_'+wid_attr+'" type="checkbox"' +(widget.data[wid_attr] ? "checked": "")+'></td></tr>');
+        $("#widget_attrs").append('<tr id="option_' + wid_attr+'" class="dashui-add-option"><td class="dashui-edit-td-caption">' + this.translate(wid_attr) + ':</td><td><input id="inspect_'+wid_attr+'" type="checkbox"' + (widget.data[wid_attr] ? "checked": "") + '></td></tr>');
     },
     editColor: function (widget, wid_attr) {
         // Color selector
-        $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44" style="width:90%" />'+((typeof colorSelect != 'undefined' && $().farbtastic) ? '<input id="inspect_'+wid_attr+'Btn"  style="width:8%" type="button" value="...">' : '')+'</td></tr>');
+        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="dashui-add-option"><td>' + this.translate(wid_attr) + ':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44" style="width:90%" />' + ((typeof colorSelect != 'undefined' && $().farbtastic) ? '<input id="inspect_' + wid_attr + 'Btn"  style="width:8%" type="button" value="...">' : '') + '</td></tr>');
         if (typeof colorSelect != 'undefined' && $().farbtastic) {
-            var btn = document.getElementById("inspect_"+wid_attr+"Btn");
+            var btn = document.getElementById("inspect_" + wid_attr + "Btn");
             if (btn) {
                 btn.ctrlAttr = wid_attr;
                 $(btn).bind("click", {msg: this}, function (event) {
                     var _settings = {
-                        current:     $('#inspect_'+this.ctrlAttr).val(),
+                        current:     $('#inspect_' + this.ctrlAttr).val(),
                         onselectArg: this.ctrlAttr,
                         onselect:    function (img, ctrlAttr) {
                             $('#inspect_'+ctrlAttr).val(colorSelect.GetColor()).trigger("change");
@@ -592,8 +589,9 @@ dui = $.extend(true, dui, {
         var elem = document.getElementById('inspect_'+wid_attr);
         if (elem) {
             elem._save = function () {
-                if (this.timer)
+                if (this.timer) {
                     clearTimeout(this.timer);
+                }
 
                 this.timer = _setTimeout(function (elem_) {
                     // If really changed
@@ -642,11 +640,12 @@ dui = $.extend(true, dui, {
         $("#widget_attrs").append('<tr nowrap id="option_' + wid_attr + '" class="dashui-add-option"><td class="dashui-edit-td-wid_attr">' + this.translate(wid_attr.split("_")[0] + " effect") + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="30"/></td></tr>');
 
         // autocomplete for filter key
-        var elem = document.getElementById('inspect_'+wid_attr);
+        var elem = document.getElementById('inspect_' + wid_attr);
         if (elem) {
             elem._save = function () {
-                if(this.timer)
+                if(this.timer) {
                     clearTimeout(this.timer);
+                }
 
                 this.timer = _setTimeout(function (elem_) {
                     // If really changed
@@ -745,9 +744,7 @@ dui = $.extend(true, dui, {
             if ($('#inspect_' + wid_attr.split('_eff_opt')[0] + ('_effect'))) {
 
                 $('#inspect_' + wid_attr.split('_eff_opt')[0] + ('_effect')).change(function (event, data) {
-
                     choice_opt(data)
-
                 });
             }
         }
@@ -773,17 +770,12 @@ dui = $.extend(true, dui, {
         $("#widget_attrs").append('<tr class="dashui-add-option"><td colspan="2" class="dashui-edit-td-wid_attr">&nbsp</td></tr>');
     },
 
-
-
-
-
-
     editImage: function (widget, wid_attr) {
         // Image src
-        $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44"/><input type="button" id="inspect_'+wid_attr+'_btn" value="..."></td></tr>');
-        document.getElementById("inspect_"+wid_attr+"_btn").jControl = wid_attr;
+        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="dashui-add-option"><td>' + this.translate(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="44"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
+        document.getElementById("inspect_" + wid_attr + "_btn").jControl = wid_attr;
         // Select image Dialog
-        $("#inspect_"+wid_attr+"_btn").click( function () {
+        $("#inspect_"+wid_attr+"_btn").click(function () {
             var settings = {
                 current: $("#inspect_"+this.jControl).val(),
                 onselectArg: this.jControl,
@@ -800,7 +792,7 @@ dui = $.extend(true, dui, {
         // Image src
         $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><table style="width:100%" class="dashui-no-spaces"><tr class="dashui-no-spaces"><td  class="dashui-no-spaces" style="width:50px"><input type="text" id="inspect_'+wid_attr+'" size="5"/></td><td  class="dashui-no-spaces" style="width:20px">'+min+'</td><td><div id="inspect_'+wid_attr+'_slider"></div></td><td  class="dashui-no-spaces" style="width:20px;text-align:right">'+max+'</td></tr></table></td></tr>');
 
-        var slider = $( "#inspect_"+wid_attr+"_slider");
+        var slider = $("#inspect_"+wid_attr+"_slider");
         slider.slider({
             value: widget.data[wid_attr],
             min: min,
@@ -860,7 +852,9 @@ dui = $.extend(true, dui, {
             }
         }
 
-        dui.multiSelectedWidgets.push(id);
+        if (dui.multiSelectedWidgets.indexOf(id) == -1) {
+            dui.multiSelectedWidgets.push(id);
+        }
 
         $("#dui_container").append('<div id="widget_multi_helper_'+id+'" class="widget_multi_helper"><div class="widget_multi_inner_helper"></div></div>');
 
@@ -869,7 +863,9 @@ dui = $.extend(true, dui, {
     },
     inspectWidget: function (id) {
 
-        if (dui.isStealCss) { return false; }
+        if (dui.isStealCss) {
+            return false;
+        }
 
         $(".widget_multi_helper").remove();
         dui.multiSelectedWidgets = [];
@@ -970,9 +966,9 @@ dui = $.extend(true, dui, {
                 var uu = wid_attr.indexOf("[");
                 var defaultValue = null;
                 if (uu != -1) {
-                    var defaultValue = wid_attr.substring (uu + 1);
-                    defaultValue = defaultValue.substring (0, defaultValue.length -1);
-                    wid_attr = wid_attr.substring(0,uu);
+                    var defaultValue = wid_attr.substring(uu + 1);
+                    defaultValue = defaultValue.substring(0, defaultValue.length -1);
+                    wid_attr = wid_attr.substring(0, uu);
                 }
                 var type = (wid_attrs.length > 1) ? wid_attrs[1] : null;
                 if (type && type.indexOf(",") != -1) {
@@ -987,14 +983,14 @@ dui = $.extend(true, dui, {
                 var instancesStart = null;
                 var instancesStop  = null;
                 if (uu != -1) {
-                    var instances = wid_attr.substring (uu + 1);
-                    instances = instances.substring (0, instances.length - 1);
-                    wid_attr = wid_attr.substring(0,uu);
+                    var instances = wid_attr.substring(uu + 1);
+                    instances = instances.substring(0, instances.length - 1);
+                    wid_attr = wid_attr.substring(0, uu);
                     // Now instances has 1-8
                     instances = instances.split('-');
                     if (instances.length > 1) {
-                        instancesStart = parseInt (instances[0]);
-                        instancesStop  = parseInt (instances[1]);
+                        instancesStart = parseInt(instances[0], 10);
+                        instancesStop  = parseInt(instances[1], 10);
                         if (instancesStart > instancesStop) {
                             var tmp = instancesStop;
                             instancesStop = instancesStart;
@@ -1023,27 +1019,34 @@ dui = $.extend(true, dui, {
                         dui.editImage (widget, wid_attr_);
                     } else if (wid_attr_ === "hqoptions") {
                         // hqWidgets options
-                        $('#inspect_comment_tr').hide ();
-                        $('#inspect_class_tr').hide ();
+                        $('#inspect_comment_tr').hide();
+                        $('#inspect_class_tr').hide();
                         // Common settings
                         if (dui.binds.hqWidgetsExt) {
-                        hqWidgets.hqEditButton({parent: editParent, imgSelect: dui.imageSelect, clrSelect: colorSelect, styleSelect: dui.styleSelect}, hqWidgets.Get (dui.activeWidget), function (editEl) {
+                            hqWidgets.hqEditButton({
+                                parent: editParent,
+                                imgSelect: dui.imageSelect,
+                                clrSelect: colorSelect,
+                                styleSelect: dui.styleSelect
+                            }, hqWidgets.Get(dui.activeWidget), function (editEl) {
                                 // Special HM settings
                                 dui.binds.hqWidgetsExt.hqEditButton (hqWidgets.Get (dui.activeWidget), editParent, $("#" + dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-hqwidgets-filter"), editEl);
                             });
                         }
                 } else if (wid_attr_ === "weoid") {
-                        // Weather ID
-                    $("#widget_attrs").append('<tr class="dashui-add-option"><td id="option_'+wid_attr_+'" ></td></tr>');
+                    // Weather ID
+                    $("#widget_attrs").append('<tr class="dashui-add-option"><td id="option_' + wid_attr_ + '" ></td></tr>');
                     $('#inspect_comment_tr').hide();
                     $('#inspect_class_tr').hide();
-                    $('#option_'+wid_attr_).jweatherCity({lang: dui.language, currentValue: widget.data[wid_attr_], onselect: function (wid, text, obj) {
+                    $('#option_'+wid_attr_).jweatherCity({
+                        lang: dui.language, currentValue: widget.data[wid_attr_],
+                        onselect: function (wid, text, obj) {
                             dui.widgets[dui.activeWidget].data.attr('weoid', text);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
                             dui.save();
                             dui.reRenderWidget(dui.activeWidget);
                         }
-                        });
+                    });
                 } else if (wid_attr_ === "color" || type == "color") {
                     dui.editColor(widget, wid_attr_);
                 } else if (type === "checkbox") {
@@ -1123,9 +1126,9 @@ dui = $.extend(true, dui, {
                                     } else if (type['type'] == "select") {
                                         // Select
                                         var values = type['values'];
-                                        var text = '<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><select id="inspect_'+wid_attr_+'">';
+                                        var text = '<tr id="option_' + wid_attr_ + '" class="dashui-add-option"><td class="dashui-edit-td-caption">' + this.translate(wid_attr_) + ':</td><td><select id="inspect_' + wid_attr_ + '">';
                                         for (var t = 0; t < values.length; t++) {
-                                            text += "<option value='"+values[t]+"' "+((values[t] == widget.data[wid_attr_]) ? "selected" : "")+">"+this.translate(values[t])+"</option>";
+                                            text += "<option value='" + values[t] + "' " + ((values[t] == widget.data[wid_attr_]) ? "selected" : "") + ">" + this.translate(values[t])+"</option>";
                                         }
                                         text += "</select></td></tr>";
                                         $("#widget_attrs").append(text);
@@ -1158,7 +1161,6 @@ dui = $.extend(true, dui, {
                             if (this.type == "checkbox") {
                                 val = $(this).prop("checked");
                             }
-
                             if (attribute == "hm_id" || attribute == "hm_wid") {
                                 $("#inspect_"+attribute+"_desc").html(dui.getObjDesc (val));
                             }
@@ -1194,9 +1196,10 @@ dui = $.extend(true, dui, {
         if (elem) {
             dui.updateFilter();
             elem._save = function () {
-                if (this.timer) 
+                if (this.timer)  {
                     clearTimeout (this.timer);
-                    
+                }
+
                 this.timer = _setTimeout (function (elem_) {
                      // If really changed
                     var $this = $(elem_);
@@ -1211,8 +1214,7 @@ dui = $.extend(true, dui, {
                 source: function (request, response) {
                     var data = $.grep(dui.views[dui.activeView].filterList, function (value) {
                         return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
-                    });            
-
+                    });
                     response(data);
                 },
                 select: function (event, ui) {
@@ -1239,7 +1241,6 @@ dui = $.extend(true, dui, {
 						break;
 					}
 				}
-			
 				$("#inspect_views").append("<option value='"+v+"' "+ selected +">"+v+"</option>");
 			}
 		}
@@ -1364,8 +1365,6 @@ dui = $.extend(true, dui, {
             });
         }
 
-
-
         $("#inspect_view").html(view);
 
         $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
@@ -1394,16 +1393,7 @@ dui = $.extend(true, dui, {
             $("#select_view_copy").multiselect("refresh");
         }
 
-
         // View CSS Inspector
-        /*
-        $(".dashui-inspect-view-css").each(function () {
-            var $this = $(this);
-            var attr = $this.attr("id").slice(17);
-            $("#" + $this.attr("id")).val(dui.views[dui.activeView].settings.style[attr]);
-        });
-        */
-
         $(".dashui-inspect-view-css").each(function () {
             var $this = $(this);
             var attr = $this.attr("id").slice(17);
@@ -1439,7 +1429,7 @@ dui = $.extend(true, dui, {
                 dui.views[dui.activeView].widgets[widget].style.top = ui.position.top;
 
                 for (var i = 0; i < dui.multiSelectedWidgets.length; i++) {
-                    var mid = dui.multiSelectedWidgets[i]
+                    var mid = dui.multiSelectedWidgets[i];
                     var pos = $("#"+mid).position();
                     if (!dui.views[dui.activeView].widgets[mid].style) {
                         dui.views[dui.activeView].widgets[mid].style = {};
@@ -1531,10 +1521,10 @@ dui = $.extend(true, dui, {
             dialogClass: "dui-editor-dialog",
             close: function () {
                 dui.save();
-                location.href = "./#"+dui.activeView;
+                location.href = "./" + window.location.search + "#" + dui.activeView;
             },
             open: function () {
-                dui.editPosition()
+                dui.editPosition();
             }
         });
         if ($().dialogExtend) {
@@ -1561,9 +1551,7 @@ dui = $.extend(true, dui, {
                 }
             });
         }
-		/*$(".ui-dialog-titlebar-buttonpane").append("<button id='dialog_dock'></button>");
-		$("#dialog_dock").button({icons: {primary: "ui-icon ui-icon-pin-w"}, text: false}).css({"height": 30});
-		*/
+
         $("#tabs").tabs();
         $("#widget_helper").hide();
 
@@ -1615,7 +1603,6 @@ dui = $.extend(true, dui, {
                     checkAllText:dui.translate("Check all"),
                     uncheckAllText:dui.translate("Uncheck all"),
                     noneSelectedText:dui.translate("Select options")
-
                 });
             });
         }
@@ -1643,8 +1630,8 @@ dui = $.extend(true, dui, {
 
 		$("#widget_doc").button({icons: {primary: "ui-icon ui-icon-script"}}).click(function () {
             var tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;
-            var widgetSet = $("#"+tpl).attr("data-dashui-set");
-            var docUrl = "widgets/"+widgetSet+"/doc.html#"+tpl;
+            var widgetSet = $("#" + tpl).attr("data-dashui-set");
+            var docUrl = "widgets/" + widgetSet + "/doc.html#" + tpl;
             window.open(docUrl,"WidgetDoc", "height=640,width=500,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no,location=no");
         });
 
@@ -1674,7 +1661,9 @@ dui = $.extend(true, dui, {
             if ($().multiselect) {
                 $("#select_active_widget").multiselect("refresh");
             }
-            setTimeout(function () { dui.inspectWidget(dui.activeWidget) }, 50);
+            setTimeout(function () {
+                dui.inspectWidget(dui.activeWidget)
+            }, 50);
 
         });
 		$("#add_view").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
@@ -1714,20 +1703,24 @@ dui = $.extend(true, dui, {
             dui.save();
             var $activeWidget = $("#"+dui.activeWidget);
             $activeWidget.css(style, $this.val());
-            $("#widget_helper").css( {left:   parseInt($activeWidget.css("left")) - 2,
-                                      top:    parseInt($activeWidget.css("top"))  - 2,
-                                      height: $activeWidget.outerHeight() + 2,
-                                      width:  $activeWidget.outerWidth()  + 2});
+            $("#widget_helper").css({
+                left:   parseInt($activeWidget.css("left")) - 2,
+                top:    parseInt($activeWidget.css("top"))  - 2,
+                height: $activeWidget.outerHeight() + 2,
+                width:  $activeWidget.outerWidth() + 2
+            });
 
             // Update hqWidgets if width or height changed
             if (dui.views[dui.activeView].widgets[dui.activeWidget] && typeof hqWidgets != "undefined") {
                 var hq = hqWidgets.Get (dui.activeWidget);
                 if (hq != null) {
-                    hq.SetSettings ({width:  $activeWidget.width(),
-                                     height: $activeWidget.height(),
-                                     top:    $activeWidget.position().top,
-                                     left:   $activeWidget.position().left,
-                                     zindex: $activeWidget.zIndex()});
+                    hq.SetSettings({
+                        width:  $activeWidget.width(),
+                        height: $activeWidget.height(),
+                        top:    $activeWidget.position().top,
+                        left:   $activeWidget.position().left,
+                        zindex: $activeWidget.zIndex()
+                    });
                 }
             }
 
@@ -1807,10 +1800,10 @@ dui = $.extend(true, dui, {
             var x = $("#screen_size_x").val();
             var y = $("#screen_size_y").val();
             if (y > 0) {
-                $("#size_y").css("top", (parseInt(y,10)+1)+"px").show();
-                $("#size_x").css("height", (parseInt(y,10)+3)+"px");
+                $("#size_y").css("top", (parseInt(y, 10) + 1) + "px").show();
+                $("#size_x").css("height", (parseInt(y, 10) + 3) + "px");
                 if (x > 0) {
-                    $("#size_y").css("width", (parseInt(x,10)+3)+"px");
+                    $("#size_y").css("width", (parseInt(x, 10) + 3) + "px");
                 }
             } else {
                 $("#size_y").hide();
@@ -1855,8 +1848,8 @@ dui = $.extend(true, dui, {
 			} else {
 				sel = "";
 			}
-            $select_view.append("<option value='" + k + "'" + sel + ">" + k + "</option>")
-            $select_view_copy.append("<option value='" + k + "'" + sel + ">" + k + "</option>")
+            $select_view.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
+            $select_view_copy.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
 		}
         if ($().multiselect) {
             $select_view.multiselect("refresh");
@@ -1910,7 +1903,7 @@ dui = $.extend(true, dui, {
 		}
 
 		if (dui.fillWizard) {
-			dui.fillWizard ();
+			dui.fillWizard();
 		}		
  	},
     editPosition: function () {
@@ -1923,21 +1916,10 @@ dui = $.extend(true, dui, {
         .css({"z-index": 100});
 
     $("#dui_editor_mode").xs_combo({
-//          addcssButton: "xs_button_editor_mode",
-//          addcssMenu: "xs_menu_editor_mode",
-//          addcssFocus: "xs_focus_editor_mode",
         cssText: "xs_text_editor_mode",
         time: 750,
         val: save_posi[1],
-        data: ["|<", ">|", "<", ">", "*"
-            /*
-            dui.translate("Links"),
-            dui.translate("Rechts"),
-            dui.translate("Links auto"),
-            dui.translate("Rechts auto"),
-            dui.translate("Free")
-            */
-        ]
+        data: ["|<", ">|", "<", ">", "*"]
     });
 
     $(".dui-editor-dialog .ui-dialog-titlebar-buttonpane").append('<span id="button_undo" href="#" role="button">undo (ctrl-z)</span>');
@@ -1949,31 +1931,31 @@ dui = $.extend(true, dui, {
     $("#dui_editor_mode").change(function () {
         var val = $("#dui_editor_mode").xs_combo();
 
-        if (val == "|<" /*dui.translate("Links")*/) {
+        if (val == "|<") {
             left();
             dui.editorPos = "left";
             $(".ui-dialog-titlebar-minimize").show();
             storage.set("Dashui_Editor_Position", ["left", val]);
         }
-        if (val == ">|" /*dui.translate("Rechts")*/) {
+        if (val == ">|") {
             right();
             dui.editorPos = "right";
             $(".ui-dialog-titlebar-minimize").show();
             storage.set("Dashui_Editor_Position", ["right", val]);
         }
-        if (val == "<" /*dui.translate("Links auto")*/) {
+        if (val == "<") {
             left_ah();
             dui.editorPos = "left_ah";
             $(".ui-dialog-titlebar-minimize").hide();
             storage.set("Dashui_Editor_Position", ["left_ah", val]);
         }
-        if (val == ">" /*dui.translate("Rechts auto")*/) {
+        if (val == ">") {
             right_ah();
             dui.editorPos = "right_ah";
             $(".ui-dialog-titlebar-minimize").hide();
             storage.set("Dashui_Editor_Position", ["right_ah", val]);
         }
-        if (val == "*" /*dui.translate("Free")*/) {
+        if (val == "*") {
             free();
             dui.editorPos = "free";
             $(".ui-dialog-titlebar-minimize").show();
@@ -2144,8 +2126,8 @@ dui = $.extend(true, dui, {
     },
 	// Find free place for new widget
 	findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
-		var editPos = $('.ui-dialog:first').position ();
-		field = $.extend ({x: 0, y:0, width: editPos.left}, field);
+		var editPos = $('.ui-dialog:first').position();
+		field = $.extend({x: 0, y: 0, width: editPos.left}, field);
 		widgetWidth  = (widgetWidth  || 60);
 		widgetHeight = (widgetHeight || 60);
 		if (widgetWidth > field.width) {
@@ -2175,7 +2157,7 @@ dui = $.extend(true, dui, {
 			}
 		}
 		
-		while (!dui.checkPosition (positions, x, y, widgetWidth, widgetHeight)) {
+		while (!dui.checkPosition(positions, x, y, widgetWidth, widgetHeight)) {
 			x += step;
 			if (x + widgetWidth > field.x + field.width) {
 				x = field.x;
@@ -2184,7 +2166,7 @@ dui = $.extend(true, dui, {
 		};
 		
 		// No free place on the screen
-		if (y >= $(window).height ()) {
+		if (y >= $(window).height()) {
 			x = 50;
 			y = 50;
 		}
@@ -2246,7 +2228,7 @@ dui = $.extend(true, dui, {
 			animate(_css1, 1500, 'swing', function () {
 				$(this).remove();
 			}).click(function () {
-				$(this).stop ().remove ();
+				$(this).stop().remove();
 			});
 
 		text = text.replace('action1', 'action2');
@@ -2254,7 +2236,9 @@ dui = $.extend(true, dui, {
 		$('#'+id+'__action2').
 			addClass('dashui-show-new').
 			css(_css2).
-			animate(_css1, 3000, 'swing', function () {$(this).remove();});
+			animate(_css1, 3000, 'swing', function () {
+                $(this).remove();
+            });
 	},
 	translate: function (text, lang) {
         return text;
@@ -2266,8 +2250,8 @@ dui = $.extend(true, dui, {
 	   	lang  = lang || dui.language || 'en';
 
 	    $(".translate").each(function (idx) {
-	        var curlang = $(this).attr ('data-lang');
-	        var text    = $(this).html ();
+	        var curlang = $(this).attr('data-lang');
+	        var text    = $(this).html();
 	        if (curlang != lang) {
 	            if (curlang) {
 	                text = dui.translateBack(text, curlang);
@@ -2275,15 +2259,15 @@ dui = $.extend(true, dui, {
 	
 	            var transText = dui.translate(text, lang);
 	            if (transText) {
-	                $(this).html (transText);
-	                $(this).attr ('data-lang', lang);
+	                $(this).html(transText);
+	                $(this).attr('data-lang', lang);
 	            }
 	        }
 	    });
 	    // translate <input type="button>
 	    $(".translateV").each(function (idx) {
-	        var text    = $( this ).attr ('value');
-	        var curlang = $(this).attr ('data-lang');
+	        var text    = $(this).attr('value');
+	        var curlang = $(this).attr('data-lang');
 	        if (curlang != lang) {
 	            if (curlang) {
 	                text = dui.translateBack(text, curlang);
@@ -2291,20 +2275,20 @@ dui = $.extend(true, dui, {
 	
 	            var transText = dui.translate(text, lang);
 	            if (transText) {
-	                $(this).attr ('value', transText);
-	                $(this).attr ('data-lang', lang);
+	                $(this).attr('value', transText);
+	                $(this).attr('data-lang', lang);
 	            }
 	        }
 	    });
 	    $(".translateB").each(function (idx) {
 	        //<span class="ui-button-text">Save</span>
-	        var text = $( this ).html ();
+	        var text = $(this).html();
 	        if (text.indexOf("<span") != -1) {
                 var i = text.indexOf('<span class="ui-button-text">');
-                var t = text.substring (i + '<span class="ui-button-text">'.length);
+                var t = text.substring(i + '<span class="ui-button-text">'.length);
                 var q = t.indexOf("</span>");
-                t = t.substring(0,q);
-		        var curlang = $(this).attr ('data-lang');
+                t = t.substring(0, q);
+		        var curlang = $(this).attr('data-lang');
 		        if (curlang != lang) {
 		            if (curlang) {
 		                text = dui.translateBack(t, curlang);
@@ -2312,12 +2296,12 @@ dui = $.extend(true, dui, {
 		
 		            var transText = dui.translate(t, lang);
 		            if (transText) {
-		                $(this).html (text.substring (0,i+'<span class="ui-button-text">'.length) + transText + '</span>');
-		                $(this).attr ('data-lang', lang);
+		                $(this).html(text.substring (0,i+'<span class="ui-button-text">'.length) + transText + '</span>');
+		                $(this).attr('data-lang', lang);
 		            }
 		        }
 	        } else {
-		        var curlang = $(this).attr ('data-lang');
+		        var curlang = $(this).attr('data-lang');
 		        if (curlang != lang) {
 		            if (curlang) {
 		                text = dui.translateBack(text, curlang);
@@ -2325,8 +2309,8 @@ dui = $.extend(true, dui, {
 		
 		            var transText = dui.translate(text, lang);
 		            if (transText) {
-		                $(this).html (transText);
-		                $(this).attr ('data-lang', lang);
+		                $(this).html(transText);
+		                $(this).attr('data-lang', lang);
 		            }
 		        }
 	        }
@@ -2377,11 +2361,11 @@ dui = $.extend(true, dui, {
 
                 if (isSelected && !dui.isStealCss) {
                     dui.stealCssMode();
-                } else {
-
                 }
-                e.stopPropagation();
 
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             });
         })
     },
@@ -2404,10 +2388,13 @@ dui = $.extend(true, dui, {
             $(".dashui-steal-css").each(function () {
                 if ($(this).attr("checked")) {
                     var cssAttribute = $(this).attr("data-dashui-steal");
-                    var val = $(src).css(cssAttribute)
+                    if (cssAttribute.match(/border-/) || cssAttribute.match(/padding/)) {
+                        var val = dui.combineCssShorthand($(src), cssAttribute);
+                    } else {
+                        var val = $(src).css(cssAttribute);
+                    }
                     $(target).css(cssAttribute, val);
                     dui.views[dui.activeView].widgets[dui.activeWidget].style[cssAttribute] = val;
-
                 }
             });
 
@@ -2426,6 +2413,7 @@ dui = $.extend(true, dui, {
         var css;
         var parts = attr.split("-");
         var baseAttr = parts[0];
+
         if (attr == "border-radius") {
             // TODO second attribute
             var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-left"));
@@ -2465,12 +2453,14 @@ dui = $.extend(true, dui, {
         }
 
         var activeWidget = dui.activeWidget;
+        var multiSelectedWidgets = dui.multiSelectedWidgets;
 
         dui.inspectWidget("none");
         $("#duiview_" + dui.activeView).remove();
 
         dui.undoHistory.pop();
         dui.views[dui.activeView] = $.extend(true, {}, dui.undoHistory[dui.undoHistory.length - 1]);
+        dui.saveRemote();
 
         if (dui.undoHistory.length <= 1) {
             $("#button_undo").addClass("ui-state-disabled").removeClass("ui-state-hover");
@@ -2479,6 +2469,9 @@ dui = $.extend(true, dui, {
         dui.renderView(dui.activeView);
         dui.changeViewEdit(dui.activeView, true);
         dui.inspectWidget(activeWidget);
+        for (var i = 0; i < multiSelectedWidgets.length; i++) {
+            dui.inspectWidgetMulti(multiSelectedWidgets[i]);
+        }
 
     }
 });

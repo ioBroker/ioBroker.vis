@@ -11,10 +11,10 @@
                     $this.removeClass("ui-state-default").addClass("ui-state-active");
                 }
             },
-            active: function(el, reverse, _value) {
+            active: function (el, reverse, _value) {
                 var $this = jQuery(el);
                 var id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(id+".Value", function (e, newVal, oldVal) {
                     var val;
                     var value = _value;
                     if (newVal === false || newVal === "false") {
@@ -113,8 +113,6 @@
                 var dlg = jQuery(el).parent().find("div.dashui-widget-dialog");
 
 
-
-
                 dlg.dialog($.extend({
                     autoOpen: false
                 }, options));
@@ -140,12 +138,14 @@
                         var id = jQuery(this).parent().attr("id") + "_dialog";
                         jQuery("#"+id).dialog("open");
                     });
+                } else {
+                    jQuery(el).parent().find("div.dashui-widget-body").show();
                 }
             },
             dialogAutoClose: function (el) {
-                var dialog = jQuery("#"+jQuery(el).parent().attr("id")+"_dialog");
-                // TODO auf bestimme Elemente einschr�nken (Button, Radio, ...)
-                dialog.on( "dialogopen", function() {
+                var dialog = jQuery("#"+jQuery(el).parent().attr("id") + "_dialog");
+                // TODO auf bestimme Elemente einschränken (Button, Radio, ...)
+                dialog.on( "dialogopen", function () {
                     dialog.one("click", function () {
                         dialog.dialog("close");
                     });
@@ -169,7 +169,7 @@
 
 
                 var hm_id = "_" + id;
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
                     if (digits && digits != "") {
                         newVal = parseFloat(newVal).toFixed(digits);
                     }
@@ -211,10 +211,10 @@
                     localData.setValue(id,  jQuery(this).val());
                 });
                 var hm_id = "_" + id;
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
                     $this.val(newVal);
                 });
-                $this.val(localData.uiState.attr(hm_id+".Value"));
+                $this.val(localData.uiState.attr(hm_id + ".Value"));
             },
             inputDatetime: function (el, options) {
                 var $this = jQuery(el);
@@ -252,10 +252,10 @@
                    localData.setValue(id,  jQuery(this).val());
                 });
                 var hm_id = "_" + id;
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
                     $this.val(newVal);
                 });
-                $this.val(localData.uiState.attr(hm_id+".Value"));
+                $this.val(localData.uiState.attr(hm_id + ".Value"));
             },
             inputset: function (el, options) {
                 var digits = options;
@@ -278,7 +278,7 @@
                             'cursor' : 'text'
                         });
                 var hm_id = "_" + id;
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
                     if (digits && digits != "") {
                         newVal = parseFloat(newVal).toFixed(digits);
                     }
@@ -313,7 +313,7 @@
                 $this.find("option[value='"+localData.uiState[hm_id].Value+"']").attr("selected", true);
                 $this.multiselect("refresh");
 
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
                     $this.find("option:selected").removeAttr("selected");
                     $this.find("option[value='"+newVal+"']").attr("selected", true);
                     $this.multiselect("refresh");
@@ -330,7 +330,7 @@
                     min: parseFloat(options.min) || 0.00,
                     max: parseFloat(options.max) || 1.00,
                     step: parseFloat(options.step) || 0.01,
-                    value: parseFloat(localData.uiState.attr(hm_id+".Value")),
+                    value: parseFloat(localData.uiState.attr(hm_id + ".Value")),
                     slide: function (e, ui) {
                         // Slider -> Observable
                         localData.setValue(id, ui.value); //.toFixed(6));
@@ -343,7 +343,7 @@
 
                 $this.slider(settings);
 
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
                    // console.log("slider newVal="+JSON.stringify(newVal));
                     if (localData.uiState.attr("_"+wid+".Value") != true) {
                         $this.slider("value", parseFloat(newVal));
@@ -395,7 +395,7 @@
 
                 // Observable -> Buttonset
                 var hm_id = "_" + id
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
                     $this.find("input").removeAttr("checked");
                     if (newVal === true) {
                         newVal = 1;
@@ -406,12 +406,12 @@
                     }
 
                     $this.find("input[value='"+newVal+"']").prop("checked", true);
-                    $this.find("input").each(function() {
+                    $this.find("input").each(function () {
                         jQuery(this).button("refresh");
                     });
                 });
 
-                var val = localData.uiState.attr(hm_id+".Value");
+                var val = localData.uiState.attr(hm_id + ".Value");
 
                 if (val === true) { val = 1; }
                 if (val === false) { val = 0; }
@@ -419,7 +419,7 @@
                 $this.find("input[value='"+val+"']").prop("checked", true);
                 $this.buttonset(settings);
 
-                $this.find("input").each(function() {
+                $this.find("input").each(function () {
                     jQuery(this).button("refresh");
                 });
 
@@ -449,7 +449,7 @@
                     $ct.hide();
                     $hue.show();
                 }
-                localData.uiState.bind("_"+idColormode+".Value", function( e, newVal, oldVal ) {
+                localData.uiState.bind("_"+idColormode+".Value", function (e, newVal, oldVal) {
                     if (newVal == "ct") {
                         $hue.hide();
                         $ct.show();
@@ -480,7 +480,7 @@
                 }, 200);
                 setTimeout(function () {
                     jQuery("div#dui_container").find("a[href]").each(function () {
-                        $(this).click(function(e) {
+                        $(this).click(function (e) {
                          //e.preventDefault();
 
                            // return false;
@@ -495,7 +495,7 @@
                 //});
             },
 
-            itoggle: function(el){
+            itoggle: function (el){
                 var $this = jQuery(el).parent();
                 var id = "_" + $this.parent().attr("data-hm-id") + ".Value";
                 var val = localData.uiState.attr(id);
@@ -503,7 +503,7 @@
                     $this.find(".imgToggleFalse").hide();
                     $this.find(".imgToggleTrue").show();
                 }
-                localData.uiState.bind(id, function(e, val) {
+                localData.uiState.bind(id, function (e, val) {
                     if (val === true || val === "true" || parseFloat(val) > 0) {
                         $this.find(".imgToggleFalse").hide();
                         $this.find(".imgToggleTrue").show();
@@ -603,6 +603,21 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
             <%== this.data.attr("html") %>
+        </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+            <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+            </div>
+        </div>
+        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
+    </div>
+</script>
+
+<script type="text/ejs" id="tplContainerDialogExternal" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - ext cmd - view in jqui Dialog" data-dashui-attrs="html;contains_view;title;modal/checkbox;width;height">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 194px; height: 68px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="display:none; width: 190px; height: 64px; background-color: #333; color: #eee; border: 2px dashed red; opacity:0.8;">
+            <b>External Container Dialog</b><br/>
+            view: <%= this.data.attr('contains_view') %><br/>
+            id: <%= this.data.attr('wid') %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
             <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
@@ -783,7 +798,7 @@
 <script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons ValueList" data-dashui-attrs="hm_id;values;texts">
     <div style="top:0px; left:0px; width:250px; height:38px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="dashui-widget-body" >
-            <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.radio(el)},100) %> >
+            <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function () {dui.binds.jqueryui.radio(el)},100) %> >
             <%
             var values = (data.attr('values') ? data.attr('values').split(';') : []);
             var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
@@ -804,7 +819,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="editmode-helper"></div>
         <div class="dashui-widget-body" >
-            <select id="<%= this.data.attr('wid') %>_multiselect" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function() {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300),height: (data.height ? data.height : 220)})},250) %> >
+            <select id="<%= this.data.attr('wid') %>_multiselect" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function () {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300),height: (data.height ? data.height : 220)})},250) %> >
             <%
             var values = (data.attr('values') ? data.attr('values').split(';') : []);
             var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);

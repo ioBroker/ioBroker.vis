@@ -1,6 +1,38 @@
 <script type="text/javascript">
     jQuery.extend(true, dui.binds, {
         special: {
+            soundOnClickInitialized: false,
+            soundOnClick: function (el, url) {
+                if (dui.urlParams["edit"] === "") {
+                    jQuery(el).parent().parent().show();
+                    return;
+                }
+                if (dui.binds.special.soundOnClickInitialized) {
+                    return;
+                }
+                dui.binds.special.soundOnClickInitialized = true;
+                $("body").append('<audio id="sound_on_click" src="' + url + '"></audio>');
+                $("body").click(function (e) {
+                    var node = e.target;
+
+                    for (var i = 0; i < 4 && node.parentNode; node = node.parentNode, i++) {
+                        //console.log(node);
+                        if (node.nodeName == "BODY") return;
+                        var $node = $(node);
+                        if ($node.attr("id") == "dui_container") return;
+                        if ($node.hasClass("dashui-view")) return;
+                        if ($node.hasClass("ui-dialog")) return;
+
+                        var events = $._data(node, "events");
+
+                        if (events && events.click) {
+                            //console.log("has click event!");
+                            document.getElementById('sound_on_click').play();
+                            return;
+                        }
+                    }
+                });
+            },
             preRenderView: function(el, view, delay) {
                 if (dui.urlParams["edit"] === "") {
                     jQuery(el).parent().parent().show();
@@ -90,6 +122,16 @@
         <div class="dashui-widget-body">
             <b>Remove Focus</b>
             <div <%= (el) -> dui.binds.special.unfocus(el) %>></div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplSoundOnClick" class="dashui-tpl" data-dashui-set="special" data-dashui-name="special - Sound onClick" data-dashui-attrs="url">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="display:none; width: 320px; height: 20px; background-color: #333; color: #eee; border: 2px dashed red; opacity:0.8;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <b>Sound onClick: <%= this.data.attr('url') %></b>
+            <div <%= (el) -> dui.binds.special.soundOnClick(el, data.attr('url')) %>></div>
         </div>
     </div>
 </script>

@@ -1,1 +1,1 @@
-node_modules\.bin\grunt.cmd --verbose
+node_modules\.bin\grunt.cmd %1

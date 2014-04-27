@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# DashUI Version 0.9beta86
+# DashUI Version 0.9beta91
 
 NETWORK:
 *
@@ -10,3 +10,4 @@ CACHE:
 
 FALLBACK:
 ./index.html ./offline.html
+./edit.html ./offline.html

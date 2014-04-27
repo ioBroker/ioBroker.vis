@@ -1,9 +1,14 @@
 {
-    "version": "0.9beta86",
+    "version": "0.9beta91",
     "name": "DashUI",
-    "ident": "DASHUI",
+    "ident": "DashUI",
     "dirname": "dashui",
+	"description": {
+		"en": "DashUI is comprehensive web-based visualisation for ioBroker.",
+		"de": "DashUI ist eine flexible webbasierte Visualisierung fur die ioBroker.",
+		"ru": "DashUI DashUI это гибкий и мощный модуль визуализации для ioBroker, основанный на Web-Технологиях."
+	},
     "urlHomepage": "http://hobbyquaker.github.io/DashUI",
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
-    "urlMeta": "https://raw.github.com/hobbyquaker/DashUI/master/dashui/io-addon.json"
+    "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json"
 }

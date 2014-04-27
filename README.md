@@ -7,6 +7,35 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta91
+* (Hobbyquaker) Fix keep multi-selected-widgets on undo
+* (Hobbyquaker) Fix saveRemote on undo
+* (Hobbyquaker) Show message on loadscreen after update
+
+### 0.9beta90
+* (Hobbyquaker) new Widget: special - Sound onClick
+* (Hobbyquaker) new Widget: jqui - ContainerDialogExternal
+* (Hobbyquaker) new external command: dialog
+* (Hobbyquaker) new external command: playSound
+* (Hobbyquaker) Swipe Wigdet: same style as special widgets
+* (Hobbyquaker) Fix external command data
+
+### 0.9beta89
+* (Hobbyquaker) Fix getUsedWidgetSets - find dependencies not working
+* (Hobbyquaker) Fix dui_editor close - forward to viewfile
+* (Hobbyquaker) Fix widgetset_counter on loadscreen
+* (Bluefox) Fix widget-set basic
+* (Bluefox) Fix RGraph/Gauge widget if start/end of scale changed.
+
+### 0.9beta88
+* (Hobbyquaker) multiple View-Files via Querystring (f.e. /dashui/?viewfile1#view1)
+* (Hobbyquaker) decreased editor width
+* (Hobbyquaker) hmSelect changed z-index, modal
+
+### 0.9beta87
+* (Hobbyquaker) Fix CSS steal border-* and padding on Firefox
+* (Hobbyquaker) Fix CSS steal text-align
+
 ### 0.9beta86
 * (Hobbyquaker) Mehrere Widgets auf einmal selektieren (Shift-Click) und gemeinsames Verschieben
 * (Hobbyquaker) Fix Undo
