@@ -7,6 +7,12 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta89
+* (Hobbyquaker) Fix getUsedWidgetSets - find dependencies not working
+* (Hobbyquaker) Fix dui_editor close - forward to viewfile
+* (Bluefox) Fix widget-set basic
+* (Bluefox) Fix RGraph/Gauge widget if start/end of scale changed.
+
 ### 0.9beta88
 * (Hobbyquaker) multiple View-Files via Querystring (f.e. /dashui/?viewfile1#view1)
 * (Hobbyquaker) decreased editor width
