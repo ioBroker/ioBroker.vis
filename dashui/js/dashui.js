@@ -201,6 +201,12 @@ var dui = {
                     case "popup":
                         window.open(data);
                         break;
+                    case "playSound":
+                        $("#external_sound").attr(src, data);
+                        setTimeout(function () {
+                            document.getElementById("external_sound").play();
+                        });
+                        break;
                     default:
                 }
 
