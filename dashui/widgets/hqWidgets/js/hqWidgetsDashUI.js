@@ -124,9 +124,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             }
                             if (points[0]) {
                                 var src = document.location.href;
-                                var i = src.indexOf("dashui");
+                                var i = src.lastIndexOf("/dashui");
                                 if (i > 0) {
-                                    src = src.substring (0, i) + "charts/";
+                                    src = src.substring (0, i) + "/charts/";
                                     var url = src+'?dp=';
                                     for (var t = 0; t < points.length; t++) {
                                         url += ((t > 0) ? ',' : '') + points[t];
@@ -151,9 +151,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                         adv = $.extend (adv, {action: function (obj, what, state) {
                             // Show grafik in a new window
                             var src = document.location.href;
-                            var i = src.indexOf("dashui");
+                            var i = src.lastIndexOf("/dashui");
                             if (i > 0) {
-                                src = src.substring (0, i) + "eventlist/";
+                                src = src.substring (0, i) + "/eventlist/";
                                  var url = "";
                                 if (opt['hm_ids'] !== undefined && opt['hm_ids'] != "") {
                                     url += ((url !="") ? "&" : "?") + "hmid=" + opt['hm_ids'];
@@ -257,8 +257,8 @@ if ((typeof hqWidgets !== 'undefined')) {
 										localData.metaObjects [opt['hm_id']]["TypeName"] !== undefined &&
 										localData.metaObjects [opt['hm_id']]["TypeName"] == "PROGRAM") {
 										console.log ("Activate programm " + localData.metaObjects [opt['hm_id']]["Name"]);
-										// TODO ...
-                                        servConn._socket.emit("programExecute", [opt['hm_id']]);
+										// Execute program
+                                        servConn.execProgramm(opt['hm_id']);
 									}
 									else {    
 										if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["DPs"] && localData.metaObjects[opt['hm_id']]["DPs"]["STATE"])
@@ -545,14 +545,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 var states = obj.GetStates ();
 								
                                 if (states.state == hqWidgets.gState.gStateOn) {
-                                    // TODO ...
-                                    servConn._socket.emit("getUrl", htmlOff, function () {});
+                                    servConn.getUrl(htmlOff);
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOff});
 									}
 								} else {
-                                    // TODO ...
-                                    servConn._socket.emit("getUrl", htmlOn, function () {});
+                                    servConn.getUrl(htmlOn);
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOn});
 									}
@@ -799,9 +797,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             }
                             if (points[0]) {
                                 var src = document.location.href;
-                                var i = src.indexOf("dashui");
+                                var i = src.lastIndexOf("/dashui");
                                 if (i > 0) {
-                                    src = src.substring (0, i) + "charts/";
+                                    src = src.substring (0, i) + "/charts/";
                                     btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0px" scrolling="no" '+
                                                          'src="'+src+'?dp=';
                                     for (var t = 0; t < points.length; t++) {
@@ -859,9 +857,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             };
                             // Show history in popup window
                             var src = document.location.href;
-                            var i = src.indexOf("dashui");
+                            var i = src.lastIndexOf("/dashui");
                             if (i > 0) {
-                                src = src.substring (0, i) + "eventlist/";
+                                src = src.substring (0, i) + "/eventlist/";
                                 btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
                                                          'src="'+src;
                                 var url = "";
@@ -1015,9 +1013,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                         }
                         if (points[0]) {
                             var src = document.location.href;
-                            var i = src.indexOf("dashui");
+                            var i = src.lastIndexOf("/dashui");
                             if (i > 0) {
-                                src = src.substring (0, i) + "charts/";
+                                src = src.substring (0, i) + "/charts/";
                                 btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
                                                      'src="'+src+'?dp=';
                                 for (var t = 0; t < points.length; t++) {
@@ -1171,9 +1169,9 @@ if ((typeof hqWidgets !== 'undefined')) {
 							var points = [hm_id];
 							if (points[0]) {
 								var src = document.location.href;
-								var i = src.indexOf("dashui");
+								var i = src.lastIndexOf("/dashui");
 								if (i > 0) {
-									src = src.substring (0, i) + "charts/";
+									src = src.substring (0, i) + "/charts/";
 									btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" src="'+src+'?dp=';
 									for (var t = 0; t < points.length; t++) {
 										btn.graficIframe += ((t > 0) ? ',' : '') + points[t];
@@ -1196,9 +1194,9 @@ if ((typeof hqWidgets !== 'undefined')) {
 						if (opt["exShowGrafik"] === 'history') {
 							// Show history in popup window
 							var src = document.location.href;
-							var i = src.indexOf("dashui");
+							var i = src.lastIndexOf("/dashui");
 							if (i > 0) {
-								src = src.substring (0, i) + "eventlist/";
+								src = src.substring (0, i) + "/eventlist/";
 								btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
 														 'src="'+src;
 								var url = "";

@@ -9,8 +9,7 @@
 <script type="text/javascript">
 "use strict";
 
-// TODO - SignalR?
-servConn._socket.emit("getStringtable", function (res) {
+servConn.getStringtable(function (res) {
     // TODO - bind relies on this is already done. Reliable?
     localData.homematicStringtable = res;
 });
@@ -40,7 +39,7 @@ dui.binds.homematic = {
                 text: false
             }).click(function () {
                 //alert("receipt "+jQuery(this).attr('data-hm-alarm'));
-                servConn._socket.emit("alarmReceipt", parseInt(jQuery(this).attr('data-hm-alarm'), 10));
+                servConn.alarmReceipt(parseInt(jQuery(this).attr('data-hm-alarm'), 10));
                 jQuery(this).parent().parent().remove();
             }).show();
 

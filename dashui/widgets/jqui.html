@@ -434,8 +434,7 @@
             iconHttpGet: function (el, url) {
                 var $this = jQuery(el).parent();
                 $this.click(function (e) {
-                    // TODO ...
-                    servConn._socket.emit("getUrl", url, function () {});
+                    servConn.getUrl(url);
                     e.preventDefault();
                 });
             },
