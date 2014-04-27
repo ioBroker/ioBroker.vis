@@ -138,7 +138,7 @@ var dui = {
             }
         }
         dui.toLoadSetsCount = arrSets.length;
-        $("#widgetset_counter").html("<span style='font-size:10px'>("+(dui.toLoadSetsCount-1)+")</span>");
+        $("#widgetset_counter").html("<span style='font-size:10px'>("+(dui.toLoadSetsCount)+")</span>");
 
         if (dui.toLoadSetsCount) {
             for(var i = 0, len = dui.toLoadSetsCount; i < len; i++) {
