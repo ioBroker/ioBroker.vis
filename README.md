@@ -10,6 +10,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ### 0.9beta89
 * (Hobbyquaker) Fix getUsedWidgetSets - find dependencies not working
 * (Hobbyquaker) Fix dui_editor close - forward to viewfile
+* (Hobbyquaker) Fix widgetset_counter on loadscreen
 * (Bluefox) Fix widget-set basic
 * (Bluefox) Fix RGraph/Gauge widget if start/end of scale changed.
 
