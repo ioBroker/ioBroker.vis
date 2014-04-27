@@ -5,6 +5,7 @@
             soundOnClick: function (el, url) {
                 if (dui.urlParams["edit"] === "") {
                     jQuery(el).parent().parent().show();
+                    return;
                 }
                 if (dui.binds.special.soundOnClickInitialized) {
                     return;
@@ -15,12 +16,17 @@
                     var node = e.target;
 
                     for (var i = 0; i < 4 && node.parentNode; node = node.parentNode, i++) {
-
+                        //console.log(node);
                         if (node.nodeName == "BODY") return;
-                        if ($(node).hasClass("ui-dialog")) return;
+                        var $node = $(node);
+                        if ($node.attr("id") == "dui_container") return;
+                        if ($node.hasClass("dashui-view")) return;
+                        if ($node.hasClass("ui-dialog")) return;
 
                         var events = $._data(node, "events");
+
                         if (events && events.click) {
+                            //console.log("has click event!");
                             document.getElementById('sound_on_click').play();
                             return;
                         }
