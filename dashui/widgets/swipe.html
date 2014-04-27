@@ -116,7 +116,7 @@
 </script>
 
 <script type="text/ejs" id="tplswipe" class="dashui-tpl" data-dashui-set="swipe" data-dashui-name="swipe Navigation" data-dashui-attrs="_hr;Left_nav_view;Left-in_effect[slide];Left-in_eff_opt[right];Left-out_effect[slide];Left-out_eff_opt[left];_hr;Right_nav_view;Right-in_effect[slide];Right-in_eff_opt[left];Right-out_effect[slide];Right-out_eff_opt[right];duration">
-    <div class = "dashui-widget <%== this.data.attr('class') %>" style="display: none; width: 200px; height: 64px; background-color: #333; color: #eee; border: 2px dashed red; opacity:0.8;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.swipe.swipe_nav(el,data) %>>
+    <div class = "dashui-widget <%== this.data.attr('class') %>" style="display: none; width: 160px; height: 64px; background-color: #333; color: #eee; border: 2px dashed red; opacity:0.8;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.swipe.swipe_nav(el,data) %>>
         <div id="<%= this.data.attr('wid') %>_swipe" class="dashui-widget-body">
             <div class="dashui-widget-body" style="">
                 <b>Swipe Navigation</b><br/>
