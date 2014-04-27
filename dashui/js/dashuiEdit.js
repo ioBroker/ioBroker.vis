@@ -2460,6 +2460,7 @@ dui = $.extend(true, dui, {
 
         dui.undoHistory.pop();
         dui.views[dui.activeView] = $.extend(true, {}, dui.undoHistory[dui.undoHistory.length - 1]);
+        dui.saveRemote();
 
         if (dui.undoHistory.length <= 1) {
             $("#button_undo").addClass("ui-state-disabled").removeClass("ui-state-hover");
