@@ -25,7 +25,7 @@
 "use strict";
 
 dui = $.extend(true, dui, {
-    editVersion:            '0.9beta93',
+    editVersion:            '0.9beta94',
     toolbox:                $("#dui_editor"),
     selectView:             $("#select_view"),
     activeWidget:           "",

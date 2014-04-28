@@ -7,6 +7,12 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta94
+* (Hobbyquaker) hqWidgets added HM-LC-Sw4-PCB
+* (Hobbyquaker) additional css files for specific themes
+* (Hobbyquaker) Fix Editor Tabs
+* (Hobbyquaker) Fix CSS for theme Kiandra
+
 ### 0.9beta93
 * (Hobbyquaker) Fix checkNewView, dupView, delView, addView, importView
 
