@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta93
+* (Hobbyquaker) Fix checkNewView, dupView, delView, addView, importView
+
 ### 0.9beta92
 * (Hobbyquaker) Fix addView: check if view already exists
 * (smiling-Jack) Editor Style
