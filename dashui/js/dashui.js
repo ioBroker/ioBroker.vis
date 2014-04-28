@@ -1598,13 +1598,27 @@ var servConn = {
             });
         } else if (this._type == 2) {
             //local
+
+            // Try load views from local storage
+            if (filename == 'dashui-views.json') {
+                if (typeof storage !== 'undefined') {
+                    dui.views = storage.get('dashui-views');
+                    if (dui.views) {
+                        callback(dui.views);
+                        return;
+                    } else {
+                        dui.views = {};
+                    }
+                }
+            }
+
             // Load from ../datastore/dashui-views.json the demo views
             $.ajax({
                 url: '../datastore/' + filename,
                 type: 'get',
                 async: false,
                 dataType: 'text',
-                cache: dui.useCache,
+                cache: true,
                 success: function (data) {
                     try {
                         dui.views = $.parseJSON(data);
@@ -1645,7 +1659,6 @@ var servConn = {
         }
     },
     writeFile: function (filename, data, callback) {
-
         if (this._type == 0) {
             //SignalR
             this._hub.server.writeFile (filename, JSON.stringify(data)).done(function (isOk) {
@@ -1664,6 +1677,19 @@ var servConn = {
                     callback(isOk);
                 }
             });
+        } else if (this._type == 2) {
+            if (filename == 'dashui-views.json') {
+                if (typeof storage !== 'undefined') {
+                    storage.set('dashui-views', dui.views);
+                    if (!storage.get('localWarnShown')) {
+                        window.alert(dui.translate('All changes are saved locally. To reset changes clear the cache.'));
+                        storage.set('localWarnShown', true);
+                    }
+                    if (callback) {
+                        callback(true);
+                    }
+                }
+            }
         }
     },
     readDir: function (dirname, callback) {

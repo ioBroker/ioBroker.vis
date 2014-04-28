@@ -114,7 +114,11 @@ dui = $.extend(true, dui, {
                 'license5'      : {
                     'en': 'HomeMatic and the HomeMatic Logo are the registered trademarks of eQ-3 AG',
                     'de': 'HomeMatic und das HomeMatic Logo sind eingetragene Warenzeichen der eQ-3 AG',
-                    'ru': 'HomeMatic и HomeMatic логотип являются зарегистрированными тоговыми марками фирмы eQ-3 Inc.'}
+                    'ru': 'HomeMatic и HomeMatic логотип являются зарегистрированными тоговыми марками фирмы eQ-3 Inc.'},
+                'All changes are saved locally. To reset changes clear the cache.'      : {
+                    'en': 'All changes are saved locally. To reset changes clear the browser cache.',
+                    'de': 'Alle Änderungen sind lokal gespeichert. Um Änderungen zu löschen, lösche Browsercache.',
+                    'ru': 'Все изменения сохранены локально. Для отмены локальных изменений очистите кеш броузера.'}
             };
         }
 		if (this.words[text]) {
