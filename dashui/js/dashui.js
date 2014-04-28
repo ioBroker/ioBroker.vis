@@ -22,8 +22,6 @@
 
 "use strict";
 
-
-
 var dui = {
 
     version:                '0.9beta93',
@@ -2184,4 +2182,10 @@ if (!Array.prototype.indexOf) {
 }
 function _setTimeout(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
     return setTimeout(function () {func(arg1, arg2, arg3, arg4, arg5, arg6);}, timeout);
+}
+
+
+if (window.location.search == "?edit") {
+    alert("please use /dashui/edit.html instead of /dashui/?edit");
+    location.href="./edit.html";
 }
