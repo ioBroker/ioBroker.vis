@@ -358,6 +358,7 @@ var dui = {
             }
 
             if (dui.activeView == "") {
+                // TODO Translate
                 alert("unexpected error - this should not happen :(")
                 $.error("this should not happen :(");
             }
@@ -365,6 +366,7 @@ var dui = {
             if (dui.views[hash]) {
                 dui.activeView = hash;
             } else {
+                // TODO Translate
                 alert("error - View doesn't exist :-(");
                 window.location.href = "./edit.html";
                 $.error("dui Error can't find view");
@@ -389,6 +391,7 @@ var dui = {
         dui.changeView(dui.activeView);
     },
     initViewObject: function () {
+        // TODO Translate
         if (confirm("no views found on server.\nCreate new " + dui.viewFile + "?")) {
             dui.views = {view1: {settings: {style: {}}, widgets: {}}};
             dui.saveRemote();
@@ -1170,6 +1173,7 @@ if ('applicationCache' in window) {
                                 dui.conn.touchFile("www/dashui/css/dashui-user.css");
 
                                 if (compareVersion(version, dui.requiredServerVersion)) {
+                                    // TODO Translate
                                     alert("Warning: requires Server version "+dui.requiredServerVersion+" - found Server version "+version+" - please update Server.");
                                 }
                             }
@@ -1436,7 +1440,8 @@ var servConn = {
 					// Else request from GUI input of user, pass and data (salt)
                     that._connCallbacks.onAuth(message, salt);
                 } else {
-                    window.alert('server requires authentication, but no onAuth callback is installed!');
+                    // TODO Translate
+                    alert('server requires authentication, but no onAuth callback is installed!');
                 }
 
             };
@@ -1637,15 +1642,18 @@ var servConn = {
                             dui.views = $.parseJSON(dui.views);
                         }
                     } catch (e) {
-                        window.alert('Invalid ' + filename + ' json format');
+                        // TODO Translate
+                        alert('Invalid ' + filename + ' json format');
                     }
                     callback(dui.views);
                     if (!dui.views) {
+                        // TODO Translate
                         alert('No Views found on Server');
                     }
                 },
                 error: function (state) {
-                    window.alert('Cannot get '+ location.href+'datastore/'+filename + '\n' + state.statusText);
+                    // TODO Translate
+                    alert('Cannot get '+ location.href+'datastore/'+filename + '\n' + state.statusText);
                     callback([]);
                 }
             });
@@ -2006,7 +2014,7 @@ var servConn = {
         }        
         if (this._type == 0) {
             //SignalR
-            this._hub.server.getUrl (url).done(function (jsonString) {
+            this._hub.server.getUrl(url).done(function (jsonString) {
                 if (callback) {
                     callback(jsonString);
                 }
@@ -2035,7 +2043,7 @@ var servConn = {
         }
         if (this._type == 0) {
             //SignalR
-            //this._hub.server.getUrl (url).done(function (jsonString) {
+            //this._hub.server.getUrl(url).done(function (jsonString) {
                 if (callback) {
                     callback(null);
                 }
@@ -2064,7 +2072,7 @@ var servConn = {
         }
         if (this._type == 0) {
             //SignalR
-            //this._hub.server.getUrl (url).done(function (jsonString) {
+            //this._hub.server.getUrl(url).done(function (jsonString) {
             //});
         } else if (this._type == 1) {
             //socket.io
