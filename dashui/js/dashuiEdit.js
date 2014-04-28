@@ -1765,7 +1765,7 @@ dui = $.extend(true, dui, {
             $("#jqui_theme").remove();
             $("style[data-href$='jquery-ui.min.css']").remove();
             $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/'+theme+'/jquery-ui.min.css" id="jqui_theme"/>');
-            //attr("data-href", "css/"+theme+"/jquery-ui.min.css");
+            dui.additionalThemeCss(theme);
             dui.save();
         });
         $("#select_active_widget").change(function () {
