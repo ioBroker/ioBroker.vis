@@ -564,7 +564,7 @@ dui = $.extend(true, dui, {
     },
     editColor: function (widget, wid_attr) {
         // Color selector
-        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="dashui-add-option"><td>' + this.translate(wid_attr) + ':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44" style="width:90%" />' + ((typeof colorSelect != 'undefined' && $().farbtastic) ? '<input id="inspect_' + wid_attr + 'Btn"  style="width:8%" type="button" value="...">' : '') + '</td></tr>');
+        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="dashui-add-option"><td>' + this.translate(wid_attr) + ':</td><td><input type="text" id="inspect_'+wid_attr+'" size="34" style="width:90%" />' + ((typeof colorSelect != 'undefined' && $().farbtastic) ? '<input id="inspect_' + wid_attr + 'Btn"  style="width:8%" type="button" value="...">' : '') + '</td></tr>');
         if (typeof colorSelect != 'undefined' && $().farbtastic) {
             var btn = document.getElementById("inspect_" + wid_attr + "Btn");
             if (btn) {
@@ -583,7 +583,7 @@ dui = $.extend(true, dui, {
     },
     editViewName: function (widget, wid_attr) {
         // View selector
-        $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="44"/></td></tr>');
+        $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="dashui-add-option"><td>'+this.translate(wid_attr)+':</td><td><input type="text" id="inspect_'+wid_attr+'" size="34"/></td></tr>');
 
         // autocomplete for filter key
         var elem = document.getElementById('inspect_'+wid_attr);
@@ -637,7 +637,7 @@ dui = $.extend(true, dui, {
     },
     editEffects: function (widget, wid_attr) {
         // Effect selector
-        $("#widget_attrs").append('<tr nowrap id="option_' + wid_attr + '" class="dashui-add-option"><td class="dashui-edit-td-wid_attr">' + this.translate(wid_attr.split("_")[0] + " effect") + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="30"/></td></tr>');
+        $("#widget_attrs").append('<tr nowrap id="option_' + wid_attr + '" class="dashui-add-option"><td class="dashui-edit-td-wid_attr">' + this.translate(wid_attr.split("_")[0] + " effect") + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/></td></tr>');
 
         // autocomplete for filter key
         var elem = document.getElementById('inspect_' + wid_attr);
@@ -701,7 +701,7 @@ dui = $.extend(true, dui, {
     },
     editEffects_opt: function (widget, wid_attr) {
         // Effect selector
-        $("#widget_attrs").append('<tr nowrap id="option_' + wid_attr + '" class="dashui-add-option"><td class="dashui-edit-td-wid_attr">' + this.translate(wid_attr.split("_")[0] + " opt.") + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="30"/></td></tr>');
+        $("#widget_attrs").append('<tr nowrap id="option_' + wid_attr + '" class="dashui-add-option"><td class="dashui-edit-td-wid_attr">' + this.translate(wid_attr.split("_")[0] + " opt.") + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/></td></tr>');
 
         // autocomplete for filter key
         var elem = document.getElementById('inspect_' + wid_attr);
@@ -772,7 +772,7 @@ dui = $.extend(true, dui, {
 
     editImage: function (widget, wid_attr) {
         // Image src
-        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="dashui-add-option"><td>' + this.translate(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="44"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
+        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="dashui-add-option"><td>' + this.translate(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
         document.getElementById("inspect_" + wid_attr + "_btn").jControl = wid_attr;
         // Select image Dialog
         $("#inspect_"+wid_attr+"_btn").click(function () {
@@ -899,6 +899,7 @@ dui = $.extend(true, dui, {
 
         // Clear Inspector
         $("#widget_attrs").html("");
+        $("#widget_attrs").html('<tr><th class="widget_attrs_header"></th><th></th></tr>');
         $(".dashui-inspect-css").each(function () {
             $(this).val("");
         });
@@ -1090,7 +1091,7 @@ dui = $.extend(true, dui, {
                                 }
                                 catch (e) {
                                     type = null;
-                                    $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><input type="text" id="inspect_'+wid_attr_+'" size="44"/></td></tr>');
+                                    $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><input type="text" id="inspect_'+wid_attr_+'" size="34"/></td></tr>');
                                 }
                             }
 
@@ -1142,11 +1143,11 @@ dui = $.extend(true, dui, {
                             }
                         } else {
                             // html
-                            $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><input type="text" id="inspect_'+wid_attr_+'" size="44"/></td></tr>');
+                            $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><input type="text" id="inspect_'+wid_attr_+'" size="34"/></td></tr>');
                         }
                     } else {
                         // Text area
-                        $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><textarea id="inspect_'+wid_attr_+'" rows="2" cols="44"></textarea></td></tr>');
+                        $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="dashui-add-option"><td class="dashui-edit-td-caption">'+this.translate(wid_attr_)+':</td><td><textarea id="inspect_'+wid_attr_+'" rows="2" cols="34"></textarea></td></tr>');
                     }
 
                     if (!isCustomEdit) {

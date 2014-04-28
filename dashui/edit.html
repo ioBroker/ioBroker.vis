@@ -43,6 +43,8 @@
     <script type="text/javascript" src="widgets/colorpicker/js/farbtastic.js"></script>
 
     <script type="text/javascript" src="../lib/js/jqGrid/jquery.jqGrid-4.5.4.min.js"></script>
+    <script type="text/javascript" src="../lib/js/jqGrid/jquery.jqGrid-4.5.4.min.js"></script>
+
     <script type="text/javascript">
         if (typeof ccuIoLang !== 'undefined') {
             if (ccuIoLang == 'de') {
@@ -103,12 +105,16 @@
             </ul>
             <div class="dashui-edit-tab" id="tabs-1">
                 <h4 class="translate">New View</h4>
+                <div style="width:90px; display:inline-block" class="translate">Name:</div>
                 <input id="new_view_name" type="text" /><button class="dashui-editor translateB" id="add_view" type="button">add_view</button>
                 <button class="dashui-editor translateB" id="dup_view" type="button" >dup_view</button>
 
-
-                <h4 class="translate">Current View</h4><select id="select_view" class="dashui-editor-large"></select><button class="dashui-editor translateB" id="del_view" type="button" >del_view</button>
+                <h4 class="translate">Current View</h4>
+                <div style="width:90px; display:inline-block" class="translate">View:</div>
+                <select id="select_view" class="dashui-editor-large"></select>
+                <button class="dashui-editor translateB" id="del_view" type="button" >del_view</button>
                 <br><br>
+                <div style="width:90px; display:inline-block" class="translate">Neuer Name:</div>
                 <input id="new_name" type="text" /><button class="dashui-editor translateB" id="rename_view" type="button">rename_view</button>
 
                 <h4 class="translate">View Attributes</h4>
@@ -611,30 +617,27 @@
             </div>
             <div class="dashui-edit-tab" id="tabs-4" class="ui-widget-content">
                 <h4 class="translate">Add Widget:</h4>
+                <div style="width:103px; display:inline-block" class="translate">Widget Set:</div>
                 <select id="select_set" class="dashui-editor" data-multiselect-width="370" data-multiselect-height="400"></select></br>
+                <div style="width:103px; display:inline-block" class="translate">Widget:</div>
                 <select id="select_tpl" class="dashui-editor" data-multiselect-width="370" data-multiselect-height="360"></select><button class="dashui-editor translateB" type="button" id="add_widget">add_widget</button>
-                <h4 class="translate">Inspecting Widget:</h4> <select id="select_active_widget" class="dashui-editor" data-multiselect-width="370" data-multiselect-height="265"></select><br/><br/>
+                <h4 class="translate">Inspecting Widget:</h4>
+                <select id="select_active_widget" class="dashui-editor" data-multiselect-width="370" data-multiselect-height="265"></select><br/>
                 <div class="dashui-widget-tools">
-                    <table><tr>
-                        <td>
+
                             <button type="button" class="dashui-editor translateB" id="del_widget" >del_widget</button>
-                        </td>
-                        <td>
-                            <button type="button" class="dashui-editor translateB" id="widget_doc">widget_doc</button>
-                        </td>
-                    </tr></table>
-                    <table><tr>
-                        <td>
+
+                            <button type="button" class="dashui-editor translateB" id="widget_doc">widget_doc</button><br>
+
                             <button type="button" class="dashui-editor translateB" id="dup_widget" >dup_widget</button>
-                        </td>
-                        <td>
+
                             <select class="dashui-editor" id="select_view_copy"></select>
-                        </td>
-                    </tr></table>
+
                     <h4 class="translate">Widget Attributes:</h4>
                     <table id="widget_attrs_fix">
+                        <tr><th class="widget_attrs_header"></th><th></th></tr>
                         <tr id="inspect_comment_tr">
-                            <td class="dashui-edit-td-caption translate">comment</td><td class="dashui-edit-td-field"><input type="text" id="inspect_comment" class="dashui-inspect-widget dashui-edit-textbox"/></td>
+                            <td  class="dashui-edit-td-caption translate">comment</td><td class="dashui-edit-td-field"><input type="text" id="inspect_comment" class="dashui-inspect-widget dashui-edit-textbox"/></td>
                         </tr>
                         <tr id="inspect_class_tr">
                             <td class="dashui-edit-td-caption translate">class</td><td class="dashui-edit-td-field"><input type="text" id="inspect_class" class="dashui-inspect-widget dashui-edit-textbox"/></td>
@@ -643,11 +646,14 @@
                             <td class="dashui-edit-td-caption translate">filter_key</td><td class="dashui-edit-td-field"><input id="inspect_filterkey" class="dashui-inspect-widget dashui-edit-textbox"/></td>
                         </tr>
                         <tr>
-                            <td class="dashui-edit-td-caption translate">Show in views:</td><td class="dashui-edit-td-field"><select id="inspect_views" multiple="multiple" class="dashui-edit-select"></select></td>
+                            <td sclass="dashui-edit-td-caption translate">Show in views:</td><td class="dashui-edit-td-field"><select id="inspect_views" multiple="multiple" class="dashui-edit-select"></select></td>
                         </tr>
 
                     </table>
-                    <table id="widget_attrs"></table>
+                    <hr>
+                    <table id="widget_attrs" style="width: 440px">
+
+
                 </div>
             </div>
 

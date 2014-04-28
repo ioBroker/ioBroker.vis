@@ -129,8 +129,8 @@ button.ui-dialog-titlebar-close {
 }
 
 div.dui-editor-dialog {
-    min-width: 415px !important;
-    max-width: 415px !important;
+    min-width: 440px !important;
+    max-width: 440px !important;
 }
 
 
@@ -168,7 +168,7 @@ a.ui-dialog-titlebar-restore {
 	padding-bottom: 0px;
 	padding-left: 6px;
     width: 100%;
-    border-top: 1px dotted white;  
+    border-top: 1px dotted white;
     border-left: 1px dotted white;
 }
 .dashui-no-spaces {
@@ -181,12 +181,12 @@ a.ui-dialog-titlebar-restore {
 	width: 100%;
 	height: 100%;
 	z-index: 5000;
-/*	background: -moz-linear-gradient(top,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%); 
+/*	background: -moz-linear-gradient(top,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0)));
-	background: -webkit-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); 
-	background: -o-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); 
+	background: -webkit-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+	background: -o-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
 	background: -ms-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
-	background: linear-gradient(to bottom,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); 
+	background: linear-gradient(to bottom,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); */
 }
 .dashui-progressbar {
@@ -212,13 +212,13 @@ a.ui-dialog-titlebar-restore {
     pointer-events:none;
 }
 .dashui-edit-td-caption {
-	width: 26%;
+	width: 90px;
 }
 .dashui-edit-td-field {
-	width: 74%;
+	width: auto;
 }
 .dashui-edit-textbox {
-	width: 100%;
+	width: 285px;
 }
 .dashui-edit-select {
 	width: auto;
@@ -249,8 +249,8 @@ div#tabs {
 }
 
 div#dui_editor {
-    min-width: 415px !important;
-    max-width: 415px !important;
+    min-width: 440px !important;
+    max-width: 440px !important;
     overflow-y:hidden;
     oberflow-x:scroll;
 }
@@ -579,4 +579,91 @@ p.xs_text_editor_mode {
     height: 28px;
     width: 28px;
     top: -4px;
+}
+
+#new_view_name {
+    width: 285px;
+
+}
+
+#add_view {
+    margin-left: 94px;
+    margin-top: 5px;
+    width: 125px;
+
+}
+
+#dup_view {
+    margin-top: 5px;
+    width: 125px;
+
+}
+
+#tabs-1 .ui-multiselect {
+    width: 292px !important;
+    height: 28px;
+}
+
+#del_view {
+    margin-left: 94px;
+    margin-top: 5px;
+    width: 125px;
+
+}
+
+#new_name {
+    width: 285px;
+
+}
+
+#rename_view {
+    margin-left: 94px;
+    margin-top: 5px;
+
+}
+
+#tabs-4 > .ui-multiselect{
+    height: 28px;
+    margin-bottom: 5px;
+    width: 393px !important;
+    margin-top: 1px;
+
+}
+#add_widget{
+
+}
+#del_widget{
+    width: 142px;
+
+}
+#widget_doc{
+    width: 142px;
+
+}
+#dup_widget{
+    width: 142px;
+    margin-top: 15px;
+
+}
+
+.dashui-widget-tools > .ui-multiselect{
+    height: 29px;
+    margin-top: 15px;
+    width: 244px !important;
+    position: relative;
+    left: 1px;
+    top: 9px;
+
+}
+.widget_attrs_header{
+    width: 115px !important;
+}
+
+#widget_attrs_fix  .ui-multiselect{
+    width: 265px !important;
+}
+
+#widget_attrs_fix .dashui-edit-textbox{
+    width: 260px !important;
+
 }
