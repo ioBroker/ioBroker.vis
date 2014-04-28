@@ -129,8 +129,8 @@ button.ui-dialog-titlebar-close {
 }
 
 div.dui-editor-dialog {
-    min-width: 415px !important;
-    max-width: 415px !important;
+    min-width: 440px !important;
+    max-width: 440px !important;
 }
 
 
@@ -249,8 +249,8 @@ div#tabs {
 }
 
 div#dui_editor {
-    min-width: 415px !important;
-    max-width: 415px !important;
+    min-width: 440px !important;
+    max-width: 440px !important;
     overflow-y:hidden;
     oberflow-x:scroll;
 }
