@@ -1,0 +1,15 @@
+.ui-slider-vertical {
+    width: 6px;
+}
+
+.ui-slider-horizontal {
+    width: 93%;
+}
+
+.ui-tabs-panel {
+    margin-left: -1px;
+}
+
+.ui-dialog-titlebar {
+    margin: 5px !important;
+}
