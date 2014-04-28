@@ -8,7 +8,7 @@
 		Before you start Chrome anew all other instances should be closed.
 		For local start lib directory from ccu.io is required and datastore in ../ directory.
 	-->
-	
+
     <meta charset="utf-8">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -73,10 +73,10 @@
 
 
     <script type="text/javascript" src="js/dashui.js"></script>
-    <script type="text/javascript" src="js/dashuiEdit.js"></script>    
+    <script type="text/javascript" src="js/dashuiEdit.js"></script>
     <script type="text/javascript" src="js/dashuiLang.js"></script>
-    <script type="text/javascript" src="js/dashuiEditExt.js"></script>    
-    <script type="text/javascript" src="js/dashuiWizard.js"></script>    
+    <script type="text/javascript" src="js/dashuiEditExt.js"></script>
+    <script type="text/javascript" src="js/dashuiWizard.js"></script>
 
 </head>
 <body>
@@ -169,6 +169,7 @@
                 <h4 class="translate">Snapping</h4>
                 <table>
                     <tr>
+                        <td style="width: 80px" class="translate">Mode:</td>
                         <td>
                             <select id="snap_type">
                                 <option value="0" selected="selected" class="translate">disabled</option>
@@ -176,16 +177,18 @@
                                 <option value="2" class="translate">grid</option>
                             </select>
                         </td>
-                        <td><span class="translate">grid size</span><input id="grid_size" type="number" value=""/><br/>
+                        </tr>
+                    <tr>
+                        <td class="translate">grid size</td>
+                        <td><input id="grid_size" type="number" value=""/></td>
                         </td>
                     </tr>
                 </table>
 
-
                 <h4 class="translate">Screensize</h4>
                 <table>
                     <tr>
-                        <td class="translate">Width</td>
+                        <td style="width: 80px" class="translate">Width</td>
                         <td><input id="screen_size_x" type="number" value=""/></td>
                     </tr>
                     <tr>
@@ -196,9 +199,9 @@
 
                 <h4 class="translate">Wizard</h4>
                 <table>
-                    <tr><td class='translate'>Room:</td>    <td><select id="wizard_rooms"></select></td></tr>
-                    <tr><td class='translate'>Function:</td><td><select id="wizard_funcs"></select></td></tr>
-                    <tr><td class='translate'>Widget:</td>  <td><select id="wizard_widgets"></select></td></tr>
+                    <tr><td style="width: 80px" class='translate'>Room:</td>    <td><select id="wizard_rooms"></select></td></tr>
+                    <tr><td style="width: 80px" class='translate'>Function:</td><td><select id="wizard_funcs"></select></td></tr>
+                    <tr><td style="width: 80px" class='translate'>Widget:</td>  <td><select id="wizard_widgets"></select></td></tr>
                 </table>
                 <button class="dashui-editor translate" type="button" id="wizard_run">wizard_run</button>
 
@@ -206,18 +209,24 @@
 
                 <h4 class="translate">External Commands</h4>
                 <button type="button" class="dashui-editor translateB" id="create_instance">create_instance</button>
-                <span id="instance"><span class="translate">Instance ID</span> <input type="input" id="dashui_instance" disabled="disabled"/>
+                <span id="instance"><span style=" display: inline-block;width: 80px" class="translate">Instance ID</span> <input type="input" id="dashui_instance" disabled="disabled"/>
                 <button type="button" class="dashui-editor translateB" id="remove_instance">remove_instance</button>
 
                 </span>
 
                 <h4 class="translate">Language</h4>
                 <table>
-                    <tr><td class='translate'>Language:</td> <td><select id="language">
-                        <option value='en'>English</option>
-                        <option value='de'>Deutsch</option>
-                        <option value='ru'>Русский</option>
-                    </select></td></tr>
+                    <tr>
+                        <td style="width: 80px"class='translate'>Language:
+                        </td>
+                        <td>
+                            <select id="language">
+                                <option value='en'>English</option>
+                                <option value='de'>Deutsch</option>
+                                <option value='ru'>Русский</option>
+                             </select>
+                        </td>
+                    </tr>
                 </table>
 
                 <h4 class="translate">Import / Export View</h4>
@@ -685,9 +694,9 @@
 					<tr><td class='translate'>Function:</td><td><select id="wizard_funcs"></select></td></tr>
 					<tr><td class='translate'>Widget:</td>  <td><select id="wizard_widgets"></select></td></tr>
 				</table>
-				<button class="dashui-editor translate" type="button" id="wizard_run">wizard_run</button> 
+				<button class="dashui-editor translate" type="button" id="wizard_run">wizard_run</button>
             </div>-->
-			
+
             <div class="dashui-edit-tab" id="tabs-5" class="ui-widget-content">
 
                     <ul style="font-size: 1.1em; line-height: 2em;">
