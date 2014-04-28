@@ -669,7 +669,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 if (points.constructor != Array) {
                     points = points.split(',');
                 }
-                var cnt = 2;
+                var cnt = 8;
                 for (var i = 0; i < cnt; i++) {
                     if (points[i] === undefined) points[i] = "";
                     
@@ -852,7 +852,7 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             }
             
 			
-            // Hichcharts settings
+            // Highcharts settings
             if (opt.buttonType  == hqWidgets.gButtonType.gTypeInTemp  || 
                 opt.buttonType  == hqWidgets.gButtonType.gTypeOutTemp ||
                 (opt.buttonTypeEx !== undefined &&

@@ -2008,7 +2008,7 @@ var servConn = {
             //SignalR
             this._hub.server.getUrl (url).done(function (jsonString) {
                 if (callback) {
-                    callback(data);
+                    callback(jsonString);
                 }
             });
         } else if (this._type == 1) {
@@ -2022,6 +2022,61 @@ var servConn = {
                     callback(data);
                 }
             });
+        } else if (this._type == 2) {
+            if (callback) {
+                callback('');
+            }
+        }
+    },
+    getStringtable: function (callback) {
+        if (!this._isConnected) {
+            console.log("No connection!");
+            return;
+        }
+        if (this._type == 0) {
+            //SignalR
+            //this._hub.server.getUrl (url).done(function (jsonString) {
+                if (callback) {
+                    callback(null);
+                }
+            //});
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log('socket.io not initialized');
+                return;
+            }
+            this._socket.emit('getStringtable', function (data) {
+                if (callback) {
+                    callback(data);
+                }
+            });
+        } else if (this._type == 2) {
+            if (callback) {
+                callback(null);
+            }
+        }
+    },
+    alarmReceipt: function (alarm) {
+        if (!this._isConnected) {
+            console.log("No connection!");
+            return;
+        }
+        if (this._type == 0) {
+            //SignalR
+            //this._hub.server.getUrl (url).done(function (jsonString) {
+            //});
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log('socket.io not initialized');
+                return;
+            }
+            this._socket.emit('alarmReceipt', alarm);
+        } else if (this._type == 2) {
+            if (callback) {
+                callback(null);
+            }
         }
     },
     _queueCmdIfRequired: function (func, arg1, arg2, arg3, arg4) {
