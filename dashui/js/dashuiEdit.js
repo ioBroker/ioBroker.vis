@@ -35,56 +35,39 @@ dui = $.extend(true, dui, {
     undoHistoryMaxLength:   50,
     multiSelectedWidgets:   [],
 
-    renameView: function () {
-        var val = $("#new_name").val();
-        if (val != "" && dui.views[val] === undefined) {
-            dui.views[val] = $.extend(true, {}, dui.views[dui.activeView]);
+    renameView: function (newName) {
+            dui.views[newName] = $.extend(true, {}, dui.views[dui.activeView]);
             $("#dui_container").hide();
             delete dui.views[dui.activeView];
-            dui.save();
-            dui.activeView = val;
-            dui.renderView(val);
-            dui.changeView(val);
-            window.location.reload();
-        } else if (val == "") {
-            // TODO Translate
-            alert("please enter a name for the view");
-        } else if (dui.views[val] !== undefined) {
-            // TODO Translate
-            alert("a view with name "+val+" already exists");
-        }
+            dui.activeView = newName;
+            dui.renderView(newName);
+            dui.changeView(newName);
+            dui.saveRemote(function () {
+                window.location.reload();
+            });
     },
-    delView: function () {
+    delView: function (view) {
         // TODO Translate
-        if (confirm("Really delete view "+dui.activeView+"?")) {
-                //console.log("delView "+dui.activeView);
-                delete dui.views[dui.activeView];
-                //console.log(dui.views);
-                dui.save();
-                window.location.href = "edit.html";
+        if (confirm("Really delete view " + view + "?")) {
+                delete dui.views[view];
+                dui.saveRemote(function () {
+                    window.location.href = "edit.html" + window.location.search;
+                });
            }
     },
     dupView: function (val) {
-        //console.log("dupView("+val+")");
-        if (val != "" && dui.views[val] === undefined) {
-            dui.views[val] = $.extend(true, {}, dui.views[dui.activeView]);
-            // Allen Widgets eine neue ID verpassen...
-            for (var widget in dui.views[val].widgets) {
-                dui.views[val].widgets[dui.nextWidget()] = dui.views[val].widgets[widget];
-                delete dui.views[val].widgets[widget];
-            }
-            dui.save(function () {
-                dui.renderView(val);
-                dui.changeView(val);
-                window.location.reload();
-            });
-        } else if (val == "") {
-            // TODO Translate
-            alert("please enter a name for the new view");
-        } else if (dui.views[val] !== undefined) {
-            // TODO Translate
-            alert("a view with name "+val+" already exists");
+        dui.views[val] = $.extend(true, {}, dui.views[dui.activeView]);
+
+        // Allen Widgets eine neue ID verpassen...
+        for (var widget in dui.views[val].widgets) {
+            dui.views[val].widgets[dui.nextWidget()] = dui.views[val].widgets[widget];
+            delete dui.views[val].widgets[widget];
         }
+        dui.saveRemote(function () {
+            dui.renderView(val);
+            dui.changeView(val);
+            window.location.reload();
+        });
     },
     exportView: function () {
         var exportView = $.extend(true, {}, dui.views[dui.activeView]);
@@ -110,16 +93,8 @@ dui = $.extend(true, dui, {
         });
     },
     importView: function () {
-        var name = $("#name_import_view").val();
-        // TODO use checkNewView
-        if (name == "") {
-            alert("please enter a name for the view");
-            return;
-        }
-        if (dui.views[name] !== undefined) {
-            alert("a view with this name already exists");
-            return;
-        }
+        var name = dui.checkNewView($("#name_import_view").val());
+        if (name === false) return;
         try {
             var text = $("#textarea_import_view").val();
             var importView = JSON.parse(text);
@@ -128,12 +103,13 @@ dui = $.extend(true, dui, {
             return;
         }
         dui.views[name] = importView;
+
         // Allen Widgets eine neue ID verpassen...
         for (var widget in dui.views[name].widgets) {
             dui.views[name].widgets[dui.nextWidget()] = dui.views[name].widgets[widget];
             delete dui.views[name].widgets[widget];
         }
-        dui.save(function () {
+        dui.saveRemote(function () {
             dui.renderView(name);
             dui.changeView(name);
             window.location.reload();
@@ -141,8 +117,8 @@ dui = $.extend(true, dui, {
 
 
     },
-    checkNewView: function () {
-        var name = $("#new_view_name").val().trim();
+    checkNewView: function (name) {
+        name = name || $("#new_view_name").val().trim();
         if (name == "") {
             // TODO Translate
             alert("Bitte einen Namen für die neue View eingeben!");
@@ -1533,8 +1509,9 @@ dui = $.extend(true, dui, {
             position: { my: "right top", at: "right top", of: window },
             dialogClass: "dui-editor-dialog",
             close: function () {
-                dui.save();
-                location.href = "./" + window.location.search + "#" + dui.activeView;
+                dui.saveRemote(function () {
+                    location.href = "./" + window.location.search + "#" + dui.activeView;
+                });
             },
             open: function () {
                 dui.editPosition();
@@ -1680,16 +1657,28 @@ dui = $.extend(true, dui, {
 
         });
 		$("#add_view").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
-            dui.addView(dui.checkNewView());
+            var name = dui.checkNewView();
+            if (name === false) {
+                return;
+            }
+            dui.addView(name);
         });
 		$("#dup_view").button({icons: {primary: "ui-icon-copy"}}).click(function () {
-            dui.dupView(dui.checkNewView());
+            var name = dui.checkNewView();
+            if (name === false) {
+                return;
+            }
+            dui.dupView(name);
         });
 		$("#del_view").button({icons: {primary: "ui-icon-trash"}}).click(function () {
             dui.delView(dui.activeView);
         });
 		$("#rename_view").button({icons: {primary: "ui-icon-pencil"}}).click(function () {
-            dui.renameView(dui.activeView, $("#new_name").val());
+            var name = dui.checkNewView($("#new_name").val());
+            if (name === false) {
+                return;
+            }
+            dui.renameView(name);
         });
 
 		$("#create_instance").button({icons: {primary: "ui-icon-plus"}}).click(dui.createInstance);
@@ -2254,9 +2243,11 @@ dui = $.extend(true, dui, {
             });
 	},
 	translate: function (text, lang) {
+        // TODO ??
         return text;
     },
 	translateBack: function (text, lang) {
+        // TODO ??
         return text;
     },
     translateAll: function (lang) {
