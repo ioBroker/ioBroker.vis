@@ -98,11 +98,9 @@
                 <li><a href="#tabs-4" class="translate">Widgets</a></li>
                 <li><a href="#tabs-3" class="translate">CSS Inspector</a></li>
                 <li><a href="#tabs-2" class="translate">Misc</a></li>
-                <!--<li><a href="#tabs-6" class="translate">Editor</a></li>
-                <li><a href="#tabs-7" class="translate">Wizard</a></li>-->
                 <li><a href="#tabs-5" class="translate">Info</a></li>
-
             </ul>
+
             <div class="dashui-edit-tab" id="tabs-1">
                 <h4 class="translate">New View</h4>
                 <div style="width:90px; display:inline-block" class="translate">Name:</div>
@@ -165,6 +163,7 @@
 
                 </table>
             </div>
+
             <div class="dashui-edit-tab" id="tabs-2">
                 <h4 class="translate">Snapping</h4>
                 <table>
@@ -225,6 +224,7 @@
                 <button class="dashui-editor translateB" id="import_view">import view</button>
 
             </div>
+
             <div class="dashui-edit-tab" id="tabs-3">
                 <div id="view_inspector">
                     <h4><span class="translate">View:</span> <span id="inspect_view"></span></h4>
@@ -615,7 +615,8 @@
                     </table>
                 </div>
             </div>
-            <div class="dashui-edit-tab" id="tabs-4" class="ui-widget-content">
+
+            <div class="dashui-edit-tab" id="tabs-4">
                 <h4 class="translate">Add Widget:</h4>
                 <div style="width:103px; display:inline-block" class="translate">Widget Set:</div>
                 <select id="select_set" class="dashui-editor" data-multiselect-width="370" data-multiselect-height="400"></select></br>
@@ -651,52 +652,20 @@
 
                     </table>
                     <hr>
-                    <table id="widget_attrs" style="width: 440px">
+                    <table id="widget_attrs" style="width: 440px"></table>
 
 
                 </div>
             </div>
 
-            <!-- <div class="dashui-edit-tab" id="tabs-6" class="ui-widget-content">
-               <h4 class="translate">Snapping</h4>
-                <select id="snap_type">
-                    <option value="0" selected="selected" class="translate">disabled</option>
-                    <option value="1" class="translate">elements</option>
-                    <option value="2" class="translate">grid</option>
-                </select><br/><br/>
-                grid size <input id="grid_size" type="text" value=""/><br/>
+            <div class="dashui-edit-tab" id="tabs-5">
 
-                <h4 class="translate">Screensize</h4>
-                <table>
-                    <tr>
-                        <td class="translate">Width</td>
-                        <td><input id="screen_size_x" type="number" value=""/></td>
-                    </tr>
-                    <tr>
-                        <td class="translate">Height</td>
-                        <td><input id="screen_size_y" type="number" value=""/></td>
-                    </tr>
-                </table>
-            </div>-->
-
-           <!-- <div class="dashui-edit-tab" id="tabs-7" class="ui-widget-content">
-				<table>
-					<tr><td class='translate'>Room:</td>    <td><select id="wizard_rooms"></select></td></tr>
-					<tr><td class='translate'>Function:</td><td><select id="wizard_funcs"></select></td></tr>
-					<tr><td class='translate'>Widget:</td>  <td><select id="wizard_widgets"></select></td></tr>
-				</table>
-				<button class="dashui-editor translate" type="button" id="wizard_run">wizard_run</button> 
-            </div>-->
-			
-            <div class="dashui-edit-tab" id="tabs-5" class="ui-widget-content">
-
-                    <ul style="font-size: 1.1em; line-height: 2em;">
-                        <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank" class="translate">Webseite</a></li>
-                        <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank" class="translate">Unterstützung</a></li>
-                        <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank" class="translate">Änderungs-Historie</a></li>
-                    </ul>
+                <ul style="font-size: 1.1em; line-height: 2em;">
+                    <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank" class="translate">Webseite</a></li>
+                    <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank" class="translate">Unterstützung</a></li>
+                    <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank" class="translate">Änderungs-Historie</a></li>
+                </ul>
                 <p class="translate">license1</p>
-                </p>
 
                 <h4>Copyright &copy; 2013, 2014 <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a></h4>
                 <p class="translate">MIT Lizenz (MIT)</p>
@@ -705,7 +674,10 @@
                 <p class="translate">license4</p>
                 <p class="translate">license5</p>
             </div>
+
+
         </div>
+
         <div style="display: none" id="uploadPreview"></div>
         <div style="display: none;" id="dialog_export_view" title="export view">
             <textarea rows="60" cols="160" style="width: 100%; height: 100%; font-size: 11px;" id="textarea_export_view"></textarea>
