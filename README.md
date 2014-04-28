@@ -7,6 +7,12 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta92
+* (Hobbyquaker) Fix addView: check if view already exists
+* (smiling-Jack) Editor Style
+* (Bluefox) Implement all communication functions in servConn (Offline mode is possible)
+* (Bluefox) hqWidget / Charts: make 8 lines possible.
+
 ### 0.9beta91
 * (Hobbyquaker) Fix keep multi-selected-widgets on undo
 * (Hobbyquaker) Fix saveRemote on undo
