@@ -47,12 +47,15 @@ dui = $.extend(true, dui, {
             dui.changeView(val);
             window.location.reload();
         } else if (val == "") {
+            // TODO Translate
             alert("please enter a name for the view");
         } else if (dui.views[val] !== undefined) {
+            // TODO Translate
             alert("a view with name "+val+" already exists");
         }
     },
     delView: function () {
+        // TODO Translate
         if (confirm("Really delete view "+dui.activeView+"?")) {
                 //console.log("delView "+dui.activeView);
                 delete dui.views[dui.activeView];
@@ -76,8 +79,10 @@ dui = $.extend(true, dui, {
                 window.location.reload();
             });
         } else if (val == "") {
+            // TODO Translate
             alert("please enter a name for the new view");
         } else if (dui.views[val] !== undefined) {
+            // TODO Translate
             alert("a view with name "+val+" already exists");
         }
     },
@@ -106,6 +111,7 @@ dui = $.extend(true, dui, {
     },
     importView: function () {
         var name = $("#name_import_view").val();
+        // TODO use checkNewView
         if (name == "") {
             alert("please enter a name for the view");
             return;
@@ -136,11 +142,16 @@ dui = $.extend(true, dui, {
 
     },
     checkNewView: function () {
-        if ($("#new_view_name").val() == "") {
+        var name = $("#new_view_name").val().trim();
+        if (name == "") {
+            // TODO Translate
             alert("Bitte einen Namen für die neue View eingeben!");
             return false;
+        } else if (dui.views[name]) {
+            // TODO Translate
+            alert("Eine View mit diesem Namen existiert bereits!");
         } else {
-            return $("#new_view_name").val();
+            return name;
         }
     },
     nextWidget: function () {
@@ -395,7 +406,7 @@ dui = $.extend(true, dui, {
             }
             dui.addWidget(tpl, data, style, dui.nextWidget(), targetView, true);
             dui.save();
-
+            // TODO Translate
             alert("Widget copied to view " + targetView + ".");
         }
     },
