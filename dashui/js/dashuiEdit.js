@@ -150,6 +150,7 @@ dui = $.extend(true, dui, {
         } else if (dui.views[name]) {
             // TODO Translate
             alert("Eine View mit diesem Namen existiert bereits!");
+            return false;
         } else {
             return name;
         }
