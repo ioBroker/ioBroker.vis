@@ -1910,7 +1910,11 @@ dui = $.extend(true, dui, {
  	},
     editPosition: function () {
 
-    var save_posi = storage.get("Dashui_Editor_Position") || ["free","*"];
+    var save_posi;
+    if (typeof storage !== 'undefined') {
+        save_posi = storage.get("Dashui_Editor_Position");
+    }
+    save_posi = save_posi || ["free","*"];
     dui.editorPos = save_posi[0];
 
     $(".dui-editor-dialog .ui-dialog-titlebar-buttonpane")
