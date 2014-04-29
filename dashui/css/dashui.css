@@ -647,7 +647,7 @@ p.xs_text_editor_mode {
 }
 
 .dashui-widget-tools > .ui-multiselect{
-    height: 29px;
+    height: 28px;
     margin-top: 15px;
     width: 244px !important;
     position: relative;
@@ -665,5 +665,62 @@ p.xs_text_editor_mode {
 
 #widget_attrs_fix .dashui-edit-textbox{
     width: 260px !important;
+
+}
+
+#snap_type{
+    width: 255px;
+
+}
+#grid_size{
+    width: 250px;
+
+}
+#screen_size_x{
+    width: 250px;
+}
+#screen_size_y{
+    width: 250px;
+
+}
+
+#wizard_rooms{
+    width: 250px;
+}
+#wizard_funcs{
+    width: 250px;
+}
+#wizard_widgets{
+    width: 250px;
+}
+#wizard_run{
+    margin-left: 87px;
+    margin-top: 5px;
+}
+#create_instance{
+    margin-left: 87px;
+    margin-top: 27px;
+    width: 160px;
+
+}
+#remove_instance{
+    margin-left: 87px;
+    margin-top: 5px;
+    width: 160px;
+}
+
+#export_view{
+    margin-left: 87px;
+}
+#import_view{
+    float: right;
+    margin-right: 87px;
+}
+#language{
+    width: 250px;
+
+}
+#dashui_instance{
+    width: 250px;
 
 }

@@ -13,7 +13,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 * (Bluefox) Fix widget table - empty tables
 * (Bluefox) Fix widget RGraph BarChart
 * (Bluefox) moved LCARS files to subfolders
-
+* (smiling-Jack) Editor CSS Style Tab Misc
 
 ### 0.9beta94
 * (Hobbyquaker) hqWidgets added HM-LC-Sw4-PCB
