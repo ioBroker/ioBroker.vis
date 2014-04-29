@@ -1917,53 +1917,52 @@ dui = $.extend(true, dui, {
         .append('<div id="dui_editor_mode"></div>')
         .css({"z-index": 100});
 
-    $("#dui_editor_mode").xs_combo({
-        cssText: "xs_text_editor_mode",
-        time: 750,
-        val: save_posi[1],
-        data: ["|<", ">|", "<", ">", "*"]
-    });
+	if ($().xs_combo) {
+	    $("#dui_editor_mode").xs_combo({
+	        cssText: "xs_text_editor_mode",
+	        time: 750,
+	        val: save_posi[1],
+	        data: ["|<", ">|", "<", ">", "*"]
+	    })
+	    .change(function () {
+	        var val = $(this).xs_combo();
+			var settings = null;
+	        if (val == "|<") {
+	            left();
+	            dui.editorPos = "left";
+	            $(".ui-dialog-titlebar-minimize").show();
+	        } else if (val == ">|") {
+	            right();
+	            dui.editorPos = "right";
+	            $(".ui-dialog-titlebar-minimize").show();
+	            settings = ["right", val];
+	        } else if (val == "<") {
+	            left_ah();
+	            dui.editorPos = "left_ah";
+	            $(".ui-dialog-titlebar-minimize").hide();
+	            settings = ["left_ah", val];
+	        } else if (val == ">") {
+	            right_ah();
+	            dui.editorPos = "right_ah";
+	            $(".ui-dialog-titlebar-minimize").hide();
+	            settings = ["right_ah", val];
+	        } else if (val == "*") {
+	            free();
+	            dui.editorPos = "free";
+	            $(".ui-dialog-titlebar-minimize").show();
+	            settings = ["free", val];
+	        }
+	        if (typeof storage != 'undefined' && settings) {
+	        	storage.set("Dashui_Editor_Position", settings);
+	        }
+	    });
+	}
 
     $(".dui-editor-dialog .ui-dialog-titlebar-buttonpane").append('<span id="button_undo" href="#" role="button">undo (ctrl-z)</span>');
     $("#button_undo").button({
         text: false,
         icons: { primary: "ui-icon-arrowreturnthick-1-w"}
     }).click(dui.undo).addClass("ui-state-disabled");
-
-    $("#dui_editor_mode").change(function () {
-        var val = $("#dui_editor_mode").xs_combo();
-
-        if (val == "|<") {
-            left();
-            dui.editorPos = "left";
-            $(".ui-dialog-titlebar-minimize").show();
-            storage.set("Dashui_Editor_Position", ["left", val]);
-        }
-        if (val == ">|") {
-            right();
-            dui.editorPos = "right";
-            $(".ui-dialog-titlebar-minimize").show();
-            storage.set("Dashui_Editor_Position", ["right", val]);
-        }
-        if (val == "<") {
-            left_ah();
-            dui.editorPos = "left_ah";
-            $(".ui-dialog-titlebar-minimize").hide();
-            storage.set("Dashui_Editor_Position", ["left_ah", val]);
-        }
-        if (val == ">") {
-            right_ah();
-            dui.editorPos = "right_ah";
-            $(".ui-dialog-titlebar-minimize").hide();
-            storage.set("Dashui_Editor_Position", ["right_ah", val]);
-        }
-        if (val == "*") {
-            free();
-            dui.editorPos = "free";
-            $(".ui-dialog-titlebar-minimize").show();
-            storage.set("Dashui_Editor_Position", ["free", val]);
-        }
-    });
 
 
     var _save_posi = save_posi[0] + "()";
