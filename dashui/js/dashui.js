@@ -1360,12 +1360,13 @@ if ('applicationCache' in window) {
 
 ////// ----------------------- Connection "class" ---------------------- ////////////
 
-// Todo - Why not members of the dui Object? Keep the global Namespace clean. Don't rely on $ === jQuery.
 
 // The idea of servConn is to use this class later in every addon (Yahui, Control and so on).
 // The addon just must say, what must be loaded (values, objects, indexes) and
 // the class loads it for addon. Authentication will be done automatically, so addon does not care about it.
-// It will be .js file with localData and servConn and now there is no $ (as jQuery) there.
+// It will be .js file with localData and servConn
+
+// @Bluefox: ah ok - I understand, that makes sense.
 
 var servConn = {
     _socket        : null,
