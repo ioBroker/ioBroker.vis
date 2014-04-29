@@ -7,6 +7,14 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta95
+* (Hobbyquaker) new Widgets: jqui-mfd Cam/Snapshot, Cam/Video (img), Cam/Video (html5)
+* (Hobbyquaker) implemented dui.onWakeUp(callback) to register callbacks that are executed when client awakes from sleep
+* (Bluefox) Fix widget table - empty tables
+* (Bluefox) Fix widget RGraph BarChart
+* (Bluefox) moved LCARS files to subfolders
+
+
 ### 0.9beta94
 * (Hobbyquaker) hqWidgets added HM-LC-Sw4-PCB
 * (Hobbyquaker) additional css files for specific themes
