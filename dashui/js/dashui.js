@@ -363,8 +363,7 @@ var dui = {
             if (dui.views[hash]) {
                 dui.activeView = hash;
             } else {
-                // TODO Translate
-                alert("error - View doesn't exist :-(");
+                alert(dui.translate("error - View doesn't exist"));
                 window.location.href = "./edit.html";
                 $.error("dui Error can't find view");
             }
@@ -388,8 +387,7 @@ var dui = {
         dui.changeView(dui.activeView);
     },
     initViewObject: function () {
-        // TODO Translate
-        if (confirm("no views found on server.\nCreate new " + dui.viewFile + "?")) {
+        if (confirm(dui.translate("no views found on server.\nCreate new %s ?", dui.viewFile))) {
             dui.views = {view1: {settings: {style: {}}, widgets: {}}};
             dui.saveRemote();
             window.location.href = './edit.html' + window.location.search;
@@ -933,22 +931,19 @@ var dui = {
         lang  = lang || dui.language || 'en';
 
         $(".translate").each(function (idx) {
-            var curlang = $(this).attr('data-lang');
-            var text    = $(this).html();
-            if (curlang != lang) {
-                if (curlang) {
-                    text = dui.translateBack(text, curlang);
-                }
+            var text = $(this).attr('data-lang');
+            if (!text) {
+                text = $(this).html();
+                $(this).attr('data-lang', text);
+            }
 
-                var transText = dui.translate(text, lang);
-                if (transText) {
-                    $(this).html(transText);
-                    $(this).attr('data-lang', lang);
-                }
+            var transText = dui.translate(text);
+            if (transText) {
+                $(this).html(transText);
             }
         });
     },
-    translate: function (text) {
+    translate: function (text, arg) {
         if (!this.words) {
             this.words = {
                 'No connection to Server'      : {'en' : 'No connection to Server',      'de': 'Keine Verbindung zu Server',  'ru': 'Нет соединения с сервером'},
@@ -964,13 +959,20 @@ var dui = {
             };
         }
         if (this.words[text]) {
-            if (this.words[text][this.language]) {
-                return this.words[text][this.language];
-            } else if (this.words[text]["en"]) {
-                return this.words[text]["en"];
+            var newText = this.words[text][lang];
+            if (newText) {
+                text = newText;
+            } else {
+                newText = this.words[text]["en"];
+                if (newText) {
+                    text = newText;
+                }
             }
         }
 
+        if (arg !== undefined) {
+            text = text.replace('%s', arg);
+        }
         return text;
     },
     waitScreenVal: 0,
@@ -1387,6 +1389,8 @@ var servConn = {
     _cmdQueue      : [],
     _connTimer     : null,
     _type          : 1, // 0 - SignalR, 1 - socket.io, 2 - local demo
+    _timeout       : 0, // 0 - use transport default timeout to detect disconnect
+    _reconnectInterval : 10000, // reconnect interval
 
     getIsConnected: function () {
         return this._isConnected;
@@ -1622,7 +1626,7 @@ var servConn = {
                         clearInterval(conn._connTimer);
                         conn._connTimer = null;
                     }
-                }, 30000, this);
+                }, this._reconnectInterval, this);
             }
         }
     },
@@ -1835,26 +1839,26 @@ var servConn = {
             });
         }
     },
-    setPointValue: function (pointName, value) {
+    setPointValue: function (pointId, value) {
         if (!this._isConnected) {
             console.log("No connection!");
             return;
         }
 
-        if (this._queueCmdIfRequired("setPointValue", pointName, value)) {
+        if (this._queueCmdIfRequired("setPointValue", pointId, value)) {
             return;
         }
 
         if (this._type == 0) {
             //SignalR
-            this._hub.server.setDataPoint({name: pointName, val: value});
+            this._hub.server.setDataPoint({ id: pointId, val: value });
         } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('setState', [pointName, value]);
+            this._socket.emit('setState', [pointId, value]);
         } else if (this._type == 2) {
             //local
             console.log('This is only demo. No one point will be controlled.');
