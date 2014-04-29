@@ -1927,8 +1927,8 @@ dui = $.extend(true, dui, {
 	        time: 750,
 	        val: save_posi[1],
 	        data: ["|<", ">|", "<", ">", "*"]
-	    })
-	    .change(function () {
+	    });
+        $("#dui_editor_mode").change(function () {
 	        var val = $(this).xs_combo();
 			var settings = null;
 	        if (val == "|<") {
