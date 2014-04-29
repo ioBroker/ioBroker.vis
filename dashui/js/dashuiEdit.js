@@ -1359,6 +1359,13 @@ dui = $.extend(true, dui, {
         $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
         $("#screen_size_y").val(dui.views[dui.activeView].settings.sizey || "").trigger("change");
 
+        $("#grid_size").val(dui.views[dui.activeView].settings.gridSize || "").trigger("change");
+
+        var snapType = dui.views[dui.activeView].settings.snapType || 0;
+
+        $("#snap_type option").removeAttr("selected");
+        $("#snap_type option[value='"+snapType+"']").attr("selected", true);
+
         $("#select_active_widget").html("<option value='none'>none selected</option>");
         for (var widget in dui.views[dui.activeView].widgets) {
             var obj = $("#" + dui.views[dui.activeView].widgets[widget].tpl);
@@ -1817,6 +1824,22 @@ dui = $.extend(true, dui, {
             }
 
         })/*.keyup(function () { $(this).trigger("change"); })*/;
+
+        $("#snap_type").change(function () {
+            var snapType = $("#snap_type option:selected").val();
+            if (dui.views[dui.activeView].settings.snapType != snapType) {
+                dui.views[dui.activeView].settings.snapType = snapType;
+                dui.save();
+            }
+        });
+
+        $("#grid_size").change(function () {
+            var gridSize = $(this).val();
+            if (dui.views[dui.activeView].settings.gridSize != gridSize) {
+                dui.views[dui.activeView].settings.gridSize = gridSize;
+                dui.save();
+            }
+        });
 
         // Instances
         if (typeof storage !== 'undefined') {
