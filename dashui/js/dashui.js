@@ -887,9 +887,11 @@ var dui = {
         var oldTime = (new Date()).getTime();
         setInterval(function() {
             var currentTime = (new Date()).getTime();
+            //console.log("checkWakeUp "+ (currentTime - oldTime));
             if (currentTime > (oldTime + 10000)) {
                 oldTime = currentTime;
                 for (var i = 0; i < dui.wakeUpCallbacks.length; i++) {
+                    //console.log("calling wakeUpCallback!");
                     dui.wakeUpCallbacks[i]();
                 }
             } else {
@@ -1188,6 +1190,7 @@ if ('applicationCache' in window) {
             }
             return updateAvailable;
         }
+
         dui.conn = servConn;
         dui.conn.init({
             onConnChange: function (isConnected) {
@@ -1352,8 +1355,6 @@ if ('applicationCache' in window) {
             }
         });
 
-        dui.initWakeUp();
-
     });
     // Auto-Reconnect
     setInterval(function () {
@@ -1368,7 +1369,9 @@ if ('applicationCache' in window) {
         }
     }, 30000);
 
-    dui.preloadImages(["../lib/css/themes/jquery-ui/kian/images/modalClose.png"])
+    dui.preloadImages(["../lib/css/themes/jquery-ui/kian/images/modalClose.png"]);
+
+    dui.initWakeUp();
 
 })(jQuery);
 
