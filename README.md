@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta96
+* (Hobbyquaker) dui.binds without jQuery.extend - huge performance improvement on loading widget-sets
+
 ### 0.9beta95
 * (Hobbyquaker) new Widgets: jqui-mfd Cam/Snapshot, Cam/Video (img), Cam/Video (html5)
 * (Hobbyquaker) implemented dui.onWakeUp(callback) to register callbacks that are executed when client awakes from sleep

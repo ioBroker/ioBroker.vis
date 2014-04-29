@@ -26,8 +26,8 @@
         "weoid"            : {"en" : "City",          "de": "Stadt",                "ru": "Город"},
         "City:"            : {"en" : "City:",         "de": "Stadt:",               "ru": "Город:"}
 	});
-    jQuery.extend(true, dui.binds, {
-        timeAndWeather: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.timeAndWeather = {
             startTime: function (view, elem, hideSeconds, blink, noClass, timerId) {
                 var today = new Date();
                 var h =     today.getHours();
@@ -173,8 +173,8 @@
                 jQuery('#'+data.attr('wid')).weatherfeed([weoid], {lang:'de', woeid: true, humidity: true, forecast: true, link: false, resizable: (dui.urlParams['edit'] === "")});
 
             }
-        }
-    });
+        };
+    //});
 
 </script>
 

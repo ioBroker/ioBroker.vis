@@ -1,6 +1,6 @@
 <script type="text/javascript">
-    jQuery.extend(true, dui.binds, {
-        special: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.special = {
             soundOnClickInitialized: false,
             soundOnClick: function (el, url) {
                 if (dui.urlParams["edit"] === "") {
@@ -93,8 +93,8 @@
                 });
 
             }
-        }
-    });
+        };
+    //});
 
 </script>
 <script type="text/ejs" id="tplPreRenderView" class="dashui-tpl" data-dashui-set="special" data-dashui-name="special - pre-render view" data-dashui-attrs="prerender">

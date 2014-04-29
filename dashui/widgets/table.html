@@ -40,8 +40,8 @@
     // "show" option is active only in edit mode and has no effect
     //
 
-    jQuery.extend(true, dui.binds, {
-        table: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.table = {
             // Register callback in dashUI
             initTable: function () {
                 if (!dui.binds.table.regElements) {
@@ -514,8 +514,8 @@
                     }
                 }
             }
-        }
-    });
+        };
+    //});
 
 </script>
 

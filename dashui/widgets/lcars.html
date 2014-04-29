@@ -9,8 +9,8 @@
 <link rel="stylesheet" type="text/css" href="widgets/lcars/css/lcars.css" />
 <script type="text/javascript" src="widgets/lcars/js/jquery.lcars.js"></script>
 <script type="text/javascript">
-    jQuery.extend(true, dui.binds, {
-        lcars: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.lcars = {
             color: function (name) {
                 switch (name) {
                     case "orange":
@@ -176,8 +176,8 @@
                 });
 
             }
-        }
-    });
+        };
+    //});
 </script>
 
 <!--<script type="text/ejs" id="tplLcarsSidePanel" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="navigation - Side-Panel" data-dashui-attrs="html">

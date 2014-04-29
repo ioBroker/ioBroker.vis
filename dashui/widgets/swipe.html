@@ -3,8 +3,8 @@
 <script type="text/javascript" src="widgets/swipe/js/jquery.roundabout-shapes.js"></script>
 <link rel="stylesheet" type="text/css" href="widgets/swipe/css/swipe.css"/>
 <script type="text/javascript">
-    jQuery.extend(true, dui.binds, {
-        swipe: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.swipe = {
 
             swipe_nav: function (el, data) {
 
@@ -111,8 +111,8 @@
 //                    }
                 }, 0);
             }
-        }
-    });
+        };
+    //});
 </script>
 
 <script type="text/ejs" id="tplswipe" class="dashui-tpl" data-dashui-set="swipe" data-dashui-name="swipe Navigation" data-dashui-attrs="Left_nav_view;Left-in_effect[slide];Left-in_eff_opt[right];Left-out_effect[slide];Left-out_eff_opt[left];_hr;Right_nav_view;Right-in_effect[slide];Right-in_eff_opt[left];Right-out_effect[slide];Right-out_eff_opt[right];duration">

@@ -39,8 +39,8 @@ jQuery.extend(true, dui.words, {
 	"Left"             : {"en" : "Left",          "de": "Links",               "ru": "Слева"},
 	"Right"            : {"en" : "Right",         "de": "Rechts",              "ru": "Справа"}
 });
-jQuery.extend(true, dui.binds, {
-	bars: {
+//jQuery.extend(true, dui.binds, {
+	dui.binds.bars = {
 		position : {
 			floatHorizontal: 0,
 			floatVertical:   1,
@@ -1320,5 +1320,5 @@ jQuery.extend(true, dui.binds, {
                 div.dashuiCustomEdit = {'baroptions': dui.binds.bars.edit, 'delete': dui.binds.bars.editDelete};
             }
 		}
-	}
-});
+	};
+//});

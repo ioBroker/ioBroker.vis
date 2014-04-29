@@ -1,9 +1,12 @@
 <script type="text/javascript">
     "use strict";
 
-    jQuery.extend(true, dui.binds, {
-        pressed: undefined,
-        stateful: {
+    //jQuery.extend(true, dui.binds, {
+
+        // Todo - unused?
+        dui.binds.pressed = undefined;
+
+        dui.binds.stateful = {
             view: function (el, viewArr, persistent) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
@@ -71,8 +74,8 @@
                     }, refreshInterval);
                 }
             }
-        },
-        container: function (el, view) {
+        };
+        dui.binds.container = function (el, view) {
             var $this = jQuery(el);
             if (dui.views[view]) {
                 //console.log("dui.binds.container: "+view+" in "+$this.attr("id"));
@@ -80,8 +83,8 @@
                 jQuery("#duiview_"+view).appendTo($this);
                 jQuery("#duiview_"+view).show();
             }
-        },
-        basic: {
+        };
+        dui.binds.basic = {
             filterDropdown: function (el, filters, hideEffect, hideDuration, showEffect, showDuration) {
                 var $this = jQuery(el);
                 if (filters) {
@@ -509,8 +512,8 @@
 			_disable: function () {
                 $(".editmode-helper").show();
             }
-        }
-    });
+        };
+     //});
 
     jQuery(document).mouseup(function () {
         if (dui.binds.basic.pressed) {

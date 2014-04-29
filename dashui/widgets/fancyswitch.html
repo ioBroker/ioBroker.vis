@@ -23,8 +23,8 @@
 <script type="text/javascript" src="widgets/fancyswitch/js/jquery.ibutton.min.js"></script>
 
 <script type="text/javascript">
-    jQuery.extend(true, dui.binds, {
-        fancyswitch: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.fancyswitch = {
             fancyswitch: function (el, src, reverse) {
                 var $this = jQuery(el).parent().find(".fancy-switch");
                 var id = $this.attr("data-hm-id");
@@ -114,8 +114,8 @@
                     }
                 });
             }
-        }
-    });
+        };
+    //});
 </script>
 
 

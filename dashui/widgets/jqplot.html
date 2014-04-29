@@ -3,8 +3,8 @@
 <script type="text/javascript" src="widgets/jqplot/js/jquery.jqplot.min.js"></script>
 
 <script type="text/javascript">
-    jQuery.extend(true, dui.binds, {
-        jqplot: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.jqplot = {
             gauge: function (el, options) {
                 var $this = jQuery(el).find("div[id$='_gauge']");
                 setTimeout(function () {
@@ -34,8 +34,8 @@
                     });
                 }, 20);
             }
-        }
-    });
+        };
+    //});
 </script>
 
 <script type="text/ejs" id="tplJqplotGauge" class="dashui-tpl" data-dashui-set="jqplot" data-dashui-name="hm_val - MeterGauge" data-dashui-attrs="hm_id;title;min;max;label;ticks;intervals;intervalColors;showTickLabels;intervalInnerRadius;intervalOuterRadius;diameter;padding;shadowOffset;shadowAlpha;shadowDepth;background;ringColor;ringWidth;hubRadius;tickPadding;needleThickness;needlePad">

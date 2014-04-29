@@ -74,8 +74,8 @@
         "green_end"          : {"en": "End of first sector",   "de": "Ende von ersten Sektor", "ru": "Конец первого сектора"}
     });
 
-    jQuery.extend(true, dui.binds, {
-        RGraph: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.RGraph = {
             // Register callback in dashUI
             init: function  () {
                 if (!dui.binds.RGraph.regElements) {
@@ -1075,8 +1075,8 @@
                     elem._timeout = _setTimeout(dui.binds.RGraph.updateBar, options.update_interval, wid);
                 }
             }
-        }
-    });
+        };
+    //});
 </script>
 
 <script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];width/slider,1,500,1;control/checkbox;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontName;labels_size/slider,1,100;title;title_side;title_side_font/fontName;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">

@@ -6,8 +6,8 @@
 <script type="text/javascript" src="widgets/colorpicker/js/spectrum.js"></script>
 
 <script type="text/javascript">
-    jQuery.extend(true, dui.binds, {
-        colorpicker: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.colorpicker = {
             /*jscolor: function (el) {
                 var myPicker = new jscolor.color(document.getElementById(jQuery(el).parent().attr('id')+"_jscolor"), {})
 
@@ -131,8 +131,8 @@
 
                 });
             }
-        }
-    });
+        };
+    //});
 </script>
 
 <script type="text/ejs" id="tplRGBSpectrum" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="ctrl - rgb spectrum" data-dashui-attrs="red_id[65535];green_id[65535];blue_id[65535];divisor[255]">
