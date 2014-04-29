@@ -757,3 +757,26 @@
         <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el, {width: data.attr('width'), height: (parseInt(data.attr('height'), 10) + 60), modal:data.attr('modal')}, true, true) %> />
     </div>
 </script>
+
+<script type="text/ejs" id="tplMfdCamMjpg" class="dashui-tpl" data-dashui-set="jqui-mfd" data-dashui-name="static - Cam/Video (img) - Dialog" data-dashui-attrs="alt;text;url;title;modal/checkbox;width[640];height[480];invert_icon/checkbox">
+    <%
+        var styles = "";
+        if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+            styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        }
+        var html = '<img id="' + this.data.wid + '_img" alt="' + this.data.text + '" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + this.data.url + '"/>';
+    %>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el) %>>
+        <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
+            <img src="img/mfd/it_camera.png" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <%= this.data.attr('text') %>
+        </div>
+        <div>
+            <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+            </div>
+            <div <%= (el) -> dui.binds.basic.imgRefresh(el, data.attr('url'), null, true) %>>
+            </div>
+        </div>
+        <div class="popup-helper" <%= (el) -> dui.binds.jqueryui.dialog(el, {width: data.attr('width'), height: (parseInt(data.attr('height'), 10) + 60), modal:data.attr('modal')}, false, false, html) %> />
+    </div>
+</script>
