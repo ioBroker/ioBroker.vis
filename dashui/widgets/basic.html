@@ -67,7 +67,7 @@
                             val = localData.uiState[hm_id].Value;
                         }
                         var src = srcArr[val];
-                        $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
+                        $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
                     }, refreshInterval);
                 }
             }
@@ -351,14 +351,25 @@
                     }, refreshInterval);
                 }
             },
-            imgRefresh: function (el, src, refreshInterval) {
-                if (dui.urlParams["edit"] !== "" && refreshInterval > 0) {
-                    var $this = jQuery(el).parent().find("img");
+            imgRefresh: function (el, src, refreshInterval, refreshOnWakeUp) {
+                if (dui.urlParams["edit"] !== "" && parseInt(refreshInterval, 10) > 0) {
                     setInterval(function () {
+                        var $this = jQuery(el).parent().find("img");
                         if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
                             $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
+                            //console.log("imgRefresh "+$this.attr("src"));
                         }
                     }, refreshInterval);
+                }
+                if (refreshOnWakeUp) {
+                    //console.log("refreshOnWakeUp!");
+                    dui.onWakeUp(function () {
+                        // TODO this does not work. :(
+                        var $this = jQuery(el).parent().find("img");
+                        //console.log("wakeup refresh!");
+                        $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
+                        //console.log($this.attr("src"));
+                    });
                 }
             },
             showSvg: function (myClass, view, wid, hm_id, opacity, svg_false, svg_true, style) {
