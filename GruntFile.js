@@ -336,8 +336,30 @@ module.exports = function (grunt) {
                         dest: '.build/widgets/<%= grunt.task.current.args[0] %>/'
                     }
                 ]
-            }
-        },
+            },
+			setVersion:{
+                options: {
+                    force: true,
+                    patterns: [
+                        {
+                            match: /# DashUI Version [\.0-9A-Za-z]*/g,
+                            replacement: '# DashUI Version ' + ioaddon.version
+                        },
+                        {
+                            match: /\<\!\-\- DashUI Version [\.0-9A-Za-z]* \-\-\>/g,
+                            replacement: '<!-- DashUI Version ' + ioaddon.version + ' -->'
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        flatten: true,
+                        src: [srcDir + '/*.html', srcDir + '/*.manifest'],
+                        dest: './'
+                    }
+                ]
+			}
+		},
 
         uglify: {
             dist: {
@@ -443,24 +465,6 @@ module.exports = function (grunt) {
 				globalstrict: true
             },
             all: [ 'dashui/js/*.js','dashui/*.html','dashui/widgets/hqWidgets/js/*.js']
-        },
-		
-		// Used for build repository
-        'unzip': {
-            // Skip/exclude files via `router`
-            unzipIo: {
-                // If router returns a falsy varaible, the file will be skipped
-                router: function (filepath) {
-                    if (filepath.indexOf('io-addon.json') != -1 || filepath.indexOf('io-core.json') != -1 || filepath.indexOf('io-adapter.json') != -1) {
-                        return filepath;
-                    } else {
-                        // Otherwise, skip it
-                        return null;
-                    }
-                },
-                src: [deliveryDir+'/<%= grunt.task.current.args[0] %>'],
-                dest: deliveryDir + '/<%= grunt.task.current.args[1] %>/'
-            }
         }
     });
 
@@ -613,200 +617,9 @@ module.exports = function (grunt) {
         }
     });
 
-    // --------------------- REPOSITORY START ------------------------------//
-    // Objects for repository
-    /*var downloadRoot = "http://iobroker.com/download"
-     var repository = deliveryDir+"/repository.html";
-     var repositoryJson  = deliveryDir+"/repository.json";
-     */
-    var repObject  = {
-        cores: {},
-        addons: {},
-        adapters: {}
-    };
-    var repMain;
-    var repositoryDir = deliveryDir;
-
-    function translate (text, lang) {
-        lang = lang || 'en';
-        if (!this.words) {
-            this.words = {
-                'Adapters'            : {'en': 'Adapters',           'de': 'Adapters',             'ru': '��������'},
-                'Add-ons'             : {'en': 'Add-ons',            'de': 'Add-ons',              'ru': '������'},
-                'Core'                : {'en': 'Core',               'de': 'Core',                 'ru': '����'},
-                'ioBroker Repository' : {'en': 'ioBroker Downloads', 'de': 'ioBroker Downloads.',  'ru': '������ ��� ioBroker'}
-            };
-        }
-        if (this.words[text]) {
-            var newText = this.words[text][lang];
-            if (newText){
-                return newText;
-            }
-            else
-            if (lang != 'en') {
-                newText = this.words[text]['en'];
-                if (newText){
-                    return newText;
-                }
-            }
-
-        }
-        //console.log ("trans: " + text);
-        return text;
-    }
-
-    grunt.registerTask('createRepository', function () {
-        if (grunt.file.exists(repositoryDir + '/io-repository.json')) {
-            repMain = grunt.file.readJSON (repositoryDir + '/io-repository.json');
-        } else {
-            console.log('no ' +  repositoryDir + '/io-repository.json found. Cannot create repository');
-            return;
-        }
-
-        grunt.file.recurse (repositoryDir, function (abspath, rootdir, subdir, filename) {
-            // Unpack
-            if (filename.indexOf('.zip') != -1) {
-                var parts = filename.split('.');
-                parts.splice(parts.length - 1, 1);
-                var tmpDir = parts.join('.');
-                grunt.task.run(['unzip:unzipIo:'+filename+':'+tmpDir]);
-                grunt.task.run(['assembleInfo:'+tmpDir]);
-            }
-        });
-        for (var i = 0; i < repMain.languages.length; i++) {
-            grunt.task.run(['writeRepository:' + repMain.languages[i]]);
-        }
-    });
-
-    grunt.registerTask('assembleInfo', function () {
-        var ioInfo;
-        if (grunt.file.exists(repositoryDir + '/'+grunt.task.current.args[0] + '/io-addon.json')) {
-            ioInfo = grunt.file.readJSON(repositoryDir + '/'+grunt.task.current.args[0] + '/io-addon.json');
-            if (!repObject.addons[ioInfo.name]) {
-                repObject.addons[ioInfo.name] = {};
-            }
-            repObject.addons[ioInfo.name][ioInfo.version] = ioInfo;
-            repObject.addons[ioInfo.name][ioInfo.version].urlDownload = repMain.link + '/' + grunt.task.current.args[0]+".zip";
-        } else
-        if (grunt.file.exists(repositoryDir + '/'+grunt.task.current.args[0] + '/io-adapter.json')) {
-            ioInfo = grunt.file.readJSON(repositoryDir + '/'+grunt.task.current.args[0] + '/io-adapter.json');
-            if (!repObject.adapters[ioInfo.name]) {
-                repObject.adapters[ioInfo.name] = {};
-            }
-            repObject.adapters[ioInfo.name][ioInfo.version] = ioInfo;
-            repObject.adapters[ioInfo.name][ioInfo.version].urlDownload = repMain.link + '/' + grunt.task.current.args[0]+".zip";
-        }else
-        if (grunt.file.exists(repositoryDir + '/'+grunt.task.current.args[0] + '/io-core.json')) {
-            ioInfo = grunt.file.readJSON(repositoryDir + '/'+grunt.task.current.args[0] + '/io-core.json');
-            repObject.cores[ioInfo.version] = ioInfo;
-            repObject.cores[ioInfo.version].urlDownload = repMain.link + '/' + grunt.task.current.args[0]+".zip";
-        }
-        grunt.file.delete(repositoryDir + '/'+grunt.task.current.args[0] + '/');
-    });
-
-    function createDescription (infoObj, lang) {
-        lang = lang || 'en';
-        var desc;
-        if (infoObj.description) {
-            if (infoObj.description[lang]) {
-                desc = infoObj.description[lang];
-            } else if (infoObj.description['en']) {
-                desc = infoObj.description['en'];
-            } else {
-                desc = infoObj.description;
-            }
-        } else {
-            desc = infoObj.name;
-        }
-
-        return '<p>' +desc+ '</p>';
-    }
-
-    grunt.registerTask('writeRepository', function () {
-        var lang = grunt.task.current.args[0] || 'en';
-        var text = '<html><header><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>' +
-            '<link rel="stylesheet" href="repository.css" type="text/css"/></header>' +
-            '<body><h1>'+(repMain.name[lang] || repMain.name)+'</h1>\n';
-
-        if (repMain.description) {
-            text += createDescription(repMain, lang);
-        }
-
-        var headerAdded = false;
-        for (var ver in repObject.cores) {
-            if (!headerAdded) {
-                text += '<h2>'+translate('Core', lang)+'</h2>\n';
-                text += createDescription(repObject.cores[ver], lang);
-                text += "<table>\n";
-                headerAdded = true;
-            }
-            text += '<tr><td><a href="'+repObject.addons[addon][ver].urlDownload +'">'+ver+'</a></td></td>\n';
-        }
-        if (headerAdded) {
-            text += "</table>\n";
-        }
-
-        // Addons
-        headerAdded = false;
-        for (var addon in repObject.addons) {
-            if (!headerAdded) {
-                text += '<h2>'+translate('Add-ons', lang)+'</h2>\n';
-                headerAdded = true;
-            }
-
-            text += '<h3>'+addon+'</h3>\n';
-            var headerAdded2 = false;
-            for (var ver in repObject.addons[addon]) {
-                if (!headerAdded2) {
-                    text += createDescription(repObject.addons[addon][ver], lang);
-                    headerAdded2 = true;
-                    text += "<table>\n";
-                }
-
-                text += '<tr><td><a href="'+repObject.addons[addon][ver].urlDownload +'">'+ver+'</a></td></td>\n';
-            }
-            if (headerAdded2) {
-                text += "</table>\n";
-            }
-        }
-
-        // Adapters
-        headerAdded = false;
-        for (var adapter in repObject.adapters) {
-            if (!headerAdded) {
-                text += '<h2>'+translate('Adapters', lang)+'</h2>';
-                headerAdded = true;
-            }
-
-            text += '<h3>'+adapter+'</h3>';
-            var headerAdded2 = false;
-            for (var ver in repObject.adapters[adapter]) {
-                if (!headerAdded2) {
-                    text += createDescription(repObject.adapters[adapter][ver], lang);
-                    headerAdded2 = true;
-                    text += "<table>";
-                }
-
-                text += '<tr><td><a href="'+repObject.addons[addon][ver].urlDownload +'">'+ver+'</a></td></td>\n';
-            }
-            if (headerAdded2) {
-                text += "</table>";
-            }
-        }
-        text += '</body></html>';
-        grunt.file.write (repositoryDir + '/' + repMain.htmlFile + '-' + lang + '.html', text);
-        if (!repMain.jsonCreated) {
-            repMain.repository = repObject;
-            grunt.file.write (repositoryDir + '/' + repMain.jsonFile + '.json', JSON.stringify(repMain));
-            repMain.jsonCreated= true;
-        }
-    });
-//    grunt.registerTask('default', ['createRepository']);
-
-    // ----------------------------- REPOSITORY END --------------------------- //
-
     grunt.registerTask('makeWorkingCopy', function () {
         grunt.task.run([
+			'replace:setVersion',
 //			'jshint',
             'clean',
             'copy:static',
