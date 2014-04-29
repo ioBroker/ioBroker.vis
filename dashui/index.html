@@ -41,7 +41,7 @@
     <!-- remove comments if socket.io used for communication -->
     <script type="text/javascript">document.write ('<script src="'+(duiConfig.connLink||'')+'/socket.io/socket.io.js">'+'</scr'+'ipt>\n')</script>
     <!-- remove comments if signalR used for communication -->
-    <!--script src="../lib/js/jquery.signalR-2.0.2.js"></script><script type="text/javascript">document.write ('<script type="text/javascript" src="'+duiConfig.connLink+'/signalr/hubs">'+'</scr'+'ipt>\n');</script-->
+    <!--script src="../lib/js/jquery.signalR-2.0.2.min.js"></script><script type="text/javascript">document.write ('<script type="text/javascript" src="'+duiConfig.connLink+'/signalr/hubs">'+'</scr'+'ipt>\n');</script-->
 
     <script type="text/javascript" src="js/dashui.js"></script>
 
@@ -49,7 +49,11 @@
 <body>
 	<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>
     <div id="dui_container" style="position: absolute; top: 0; left: 0; height:100%; width:100%"></div>
-    <div id="ccu-io-disconnect"><span style="padding: 10px"><img src="img/disconnect.png" style="padding-right: 20px" width="50" height="50" align="middle"/><span class="translate">No connection to Server</span></span></div>
-    <audio id="external_sound"></audio>
+    <div id="ccu-io-disconnect">
+        <span style="padding: 10px">
+            <img src="img/disconnect.png" style="padding-right: 20px" width="50" height="50" align="middle"/>
+            <span class="translate">No connection to Server</span>
+        </span>
+    </div>
 </body>
 </html>

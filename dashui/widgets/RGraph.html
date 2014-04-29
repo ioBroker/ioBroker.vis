@@ -201,7 +201,9 @@
                 dui.binds.RGraph.createCanvas (view, data.attr('wid'), data.attr('class'), data.attr('hm_id'), 100, 400);
 
                 var str = localData.uiState.attr("_" + data.attr('hm_id') + ".Value");
-                if (str === null || str === undefined) str = data.attr("min_value");
+                if (str === null || str === undefined) {
+                    str = data.attr("min_value");
+                }
                 var t = new RGraph.Thermometer("c"+data.attr('wid'), parseFloat(data.attr("min_value")), parseFloat(data.attr("max_value")), parseFloat(str));
                 if (data.attr('color')) {
                     var color = data.attr('color');
@@ -565,13 +567,19 @@
                 dui.binds.RGraph.createCanvas (view, data.attr('wid'), data.attr('class'), [data.attr('hm_id'), data.attr('hm_id_2'), data.attr('hm_id_3')], 200, 200);
 
                 var str = localData.uiState.attr("_" + data.attr('hm_id') + ".Value");
-                if (str === null || str === undefined) str = data.attr("min_value");
+                if (str === null || str === undefined) {
+                    str = data.attr("min_value");
+                }
 
                 var str2 = data.attr('hm_id_2') ? localData.uiState.attr("_" + data.attr('hm_id_2') + ".Value") : null;
-                if (str2 === undefined) str2 = data.attr("min_value");
+                if (str2 === undefined) {
+                    str2 = data.attr("min_value");
+                }
 
                 var str3 = data.attr('hm_id_3') ? localData.uiState.attr("_" + data.attr('hm_id_3') + ".Value") : null;
-                if (str3 === undefined) str3 = data.attr("min_value");
+                if (str3 === undefined) {
+                    str3 = data.attr("min_value");
+                }
 
                 var values = [parseFloat(str) || 0];
                 if (str2 !== null) {
@@ -891,7 +899,7 @@
                     values[i] = [];
                     var val = localData.uiState.attr('_' + IDs[i] + '.Value');
                     if (val === null || val === undefined) {
-                        val = min_value;
+                        val = data.attr("min_value");
                     }
                     val = parseFloat (val);
                     val = val * factor + offset;

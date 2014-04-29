@@ -280,6 +280,10 @@
                 } else {
                     table = tableJson;
                 }
+                
+                if (!table) {
+                    table = [];
+                }
 
                 // Create widget container
                 $('#' + wid).remove();

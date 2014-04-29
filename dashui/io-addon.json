@@ -5,8 +5,8 @@
     "dirname": "dashui",
 	"description": {
 		"en": "DashUI is comprehensive web-based visualisation for ioBroker.",
-		"de": "DashUI ist eine flexible webbasierte Visualisierung fur die ioBroker.",
-		"ru": "DashUI DashUI это гибкий и мощный модуль визуализации для ioBroker, основанный на Web-Технологиях."
+		"de": "DashUI ist eine flexible webbasierte Visualisierung für die ioBroker.",
+		"ru": "DashUI это гибкий и мощный модуль визуализации для ioBroker, основанный на Web-Технологиях."
 	},
     "urlHomepage": "http://hobbyquaker.github.io/DashUI",
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",

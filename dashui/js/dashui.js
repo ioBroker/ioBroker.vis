@@ -41,7 +41,6 @@ var dui = {
     initialized:            false,
     useCache:               true,
     binds:                  {},
-    serverDisconnected:     false,
     instanceView:           undefined,
     instanceData:           undefined,
     instanceCmd:            undefined,
@@ -1251,12 +1250,9 @@ if ('applicationCache' in window) {
                             dui.isFirstTime = false;
                         }
                     });
-
-                    dui.serverDisconnected = false;
                 } else{
                     //console.log((new Date()) + " socket.io disconnect");
                     $("#ccu-io-disconnect").dialog("open");
-                    dui.serverDisconnected = true;
                 }
             },
             onRefresh: function () {
@@ -1354,20 +1350,7 @@ if ('applicationCache' in window) {
                 });
             }
         });
-
     });
-    // Auto-Reconnect
-    setInterval(function () {
-        if (dui.serverDisconnected) {
-            //console.log("trying to force reconnect...");
-            $.ajax({
-                url: "/dashui/index.html",
-                success: function () {
-                    window.location.reload();
-                }
-            });
-        }
-    }, 30000);
 
     dui.preloadImages(["../lib/css/themes/jquery-ui/kian/images/modalClose.png"]);
 
@@ -1379,27 +1362,34 @@ if ('applicationCache' in window) {
 
 // Todo - Why not members of the dui Object? Keep the global Namespace clean. Don't rely on $ === jQuery.
 
-var connCallbacks = {
-    onConnChange: null,
-    onUpdate:     null,
-    onRefresh:    null,
-    onAuth:  null
-};
+// The idea of servConn is to use this class later in every addon (Yahui, Control and so on).
+// The addon just must say, what must be loaded (values, objects, indexes) and
+// the class loads it for addon. Authentication will be done automatically, so addon does not care about it.
+// It will be .js file with localData and servConn and now there is no $ (as jQuery) there.
 
 var servConn = {
-    _socket: null,
-    _hub :   null,
-    _onConnChange: null,
-    _onUpdate: null,
-    _isConnected: false,
-    _connCallbacks: null,
-    _authInfo: null,
-    _isAuthDone: false,
+    _socket        : null,
+    _hub           : null,
+    _onConnChange  : null,
+    _onUpdate      : null,
+    _isConnected   : false,
+    _connCallbacks : {
+                          onConnChange: null,
+                          onUpdate:     null,
+                          onRefresh:    null,
+                          onAuth:       null
+                     },
+    _authInfo      : null,
+    _isAuthDone    : false,
     _isAuthRequired: false,
-    _authRunning: false,
-    _cmdQueue: [],
-    _type:   1, // 0 - SignalR, 1 - socket.io, 2 - local demo
+    _authRunning   : false,
+    _cmdQueue      : [],
+    _connTimer     : null,
+    _type          : 1, // 0 - SignalR, 1 - socket.io, 2 - local demo
 
+    getIsConnected: function () {
+        return this._isConnected;
+    },
     getType: function () {
         return this._type;
     },
@@ -1439,18 +1429,9 @@ var servConn = {
             }
             this._hub = $.connection.serverHub;
             if (!this._hub) {
-                // Auto-Reconnect
-                setInterval(function () {
-                    $.ajax({
-                        url: "/dashui/index.html",
-                        success: function () {
-                            window.location.reload();
-                        }
-                    })
-                }, 10000);
+                this._autoReconnect();
                 return;
             }
-//            this._hub._myParent = this;
 
             var that = this;
 
@@ -1488,24 +1469,28 @@ var servConn = {
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
+                that._autoReconnect();
             });
             $.connection.hub.reconnecting(function() {
                 that._isConnected = false;
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
+                that._autoReconnect();
             });
             $.connection.hub.reconnected(function() {
                 that._isConnected = true;
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
+                that._autoReconnect();
             });
             $.connection.hub.disconnected(function() {
                 that._isConnected = false;
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
+                that._autoReconnect();
             });
         } else if (type == 1 || type == "socket.io") {
             this._type = 1;
@@ -1517,7 +1502,7 @@ var servConn = {
                 if (duiConfig.connLink) {
                     url = duiConfig.connLink;
                 } else {
-                    url = $(location).attr('protocol') + '//' + $(location).attr('host');
+                    url = jQuery(location).attr('protocol') + '//' + jQuery(location).attr('host');
                 }
 
                 this._socket = io.connect(url + '?key=' + socketSession);
@@ -1528,6 +1513,7 @@ var servConn = {
                     if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
+                    this._myParent._autoReconnect();
                 });
 
                 this._socket.on('disconnect', function () {
@@ -1535,12 +1521,15 @@ var servConn = {
                     if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
+                    // Auto-Reconnect
+                    this._myParent._autoReconnect();
                 });
                 this._socket.on('reconnect', function () {
                     this._myParent._isConnected = true;
                     if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
+                    this._myParent._autoReconnect();
                 });
                 this._socket.on('refreshAddons', function () {
                     if (this._myParent._connCallbacks.onRefresh) {
@@ -1576,7 +1565,65 @@ var servConn = {
             if (this._connCallbacks.onConnChange) {
                 this._connCallbacks.onConnChange(this._isConnected);
             }
-       }
+        }
+
+        // start connection timer
+        this._autoReconnect();
+    },
+    // After 3 hours debugging...
+    // It is questionable if ths function really required.
+    // Socket.io automatically reconnects to the server and sets _isConnected to true, so
+    // it will never happened...
+    // And in the future we will have two servers - one for static pages and one for socket.io.
+    _autoReconnect: function () {
+        // If connected
+        if (this._isConnected) {
+            // Stop connection timer
+            if (this._connTimer) {
+                clearInterval(this._connTimer);
+                this._connTimer = null;
+            }
+        } else {
+            // If not connected and the timer not yet started
+            if (!this._connTimer) {
+                // Start connection timer
+                this._connTimer = _setInterval(function (conn) {
+                    if (!conn._isConnected) {
+                        // Auto-Reconnect. DashUI can be located in any path.
+                        var url = document.location.href;
+                        var k = url.indexOf('#');
+                        if (k != -1) {
+                            url = url.substring(0, k);
+                        }
+                        if (url.indexOf('.html') == -1) {
+                            url += 'index.html';
+                        }
+                        k = url.indexOf('?');
+                        if (k != -1) {
+                            url = url.substring(0, k);
+                        }
+                        url += '?random='+Date.now().toString();
+                        var parts = url.split('/');
+                        parts = parts.slice(3);
+                        url = '/' + parts.join('/');
+
+                        $.ajax({
+                            url: url,
+                            cache: false,
+                            success: function (data) {
+                                // Check if it really index.html and not offline.html as fallback
+                                if (data && data.length > 1000) {
+                                    window.location.reload();
+                                }
+                            }
+                        });
+                    } else {
+                        clearInterval(conn._connTimer);
+                        conn._connTimer = null;
+                    }
+                }, 30000, this);
+            }
+        }
     },
     getVersion: function (callback) {
         if (!this._isConnected) {
@@ -1661,18 +1708,32 @@ var servConn = {
             });
         } else if (this._type == 2) {
             //local
+
+            // Try load views from local storage
+            if (filename == 'dashui-views.json') {
+                if (typeof storage !== 'undefined') {
+                    dui.views = storage.get('dashui-views');
+                    if (dui.views) {
+                        callback(dui.views);
+                        return;
+                    } else {
+                        dui.views = {};
+                    }
+                }
+            }
+
             // Load from ../datastore/dashui-views.json the demo views
-            $.ajax({
+            jQuery.ajax({
                 url: '../datastore/' + filename,
                 type: 'get',
                 async: false,
                 dataType: 'text',
-                cache: dui.useCache,
+                cache: true,
                 success: function (data) {
                     try {
-                        dui.views = $.parseJSON(data);
+                        dui.views = jQuery.parseJSON(data);
                         if (typeof dui.views == 'string') {
-                            dui.views = $.parseJSON(dui.views);
+                            dui.views = (JSON && JSON.parse(dui.views)) || jQuery.parseJSON(dui.views);
                         }
                     } catch (e) {
                         // TODO Translate
@@ -1711,7 +1772,6 @@ var servConn = {
         }
     },
     writeFile: function (filename, data, callback) {
-
         if (this._type == 0) {
             //SignalR
             this._hub.server.writeFile (filename, JSON.stringify(data)).done(function (isOk) {
@@ -1730,6 +1790,19 @@ var servConn = {
                     callback(isOk);
                 }
             });
+        } else if (this._type == 2) {
+            if (filename == 'dashui-views.json') {
+                if (typeof storage !== 'undefined') {
+                    storage.set('dashui-views', dui.views);
+                    if (!storage.get('localWarnShown')) {
+                        window.alert(dui.translate('All changes are saved locally. To reset changes clear the cache.'));
+                        storage.set('localWarnShown', true);
+                    }
+                    if (callback) {
+                        callback(true);
+                    }
+                }
+            }
         }
     },
     readDir: function (dirname, callback) {
@@ -1806,7 +1879,7 @@ var servConn = {
                     }                    
                 } else  if (jsonString !== undefined) {
                     try {
-                        var _data = JSON.parse(jsonString);
+                        var _data = (JSON && JSON.parse(jsonString)) || jQuery.parseJSON(jsonString);
                     } catch (e) {
                         console.log('getDataPoints: Invalid JSON string - ' + e);
                         data = null;
@@ -1876,14 +1949,14 @@ var servConn = {
         } else if (this._type == 2) {
             // local
             // Load from ../datastore/local-data.json the demo views
-            $.ajax({
+            jQuery.ajax({
                 url: '../datastore/local-data.json',
                 type: 'get',
                 async: false,
                 dataType: 'text',
                 cache: dui.useCache,
                 success: function (data) {
-                    var _localData = $.parseJSON(data);
+                    var _localData = (JSON && JSON.parse(data)) || jQuery.parseJSON(data);
                     localData.metaIndex   = _localData.metaIndex;
                     localData.metaObjects = _localData.metaObjects;
                     for (var dp in _localData.uiState) {
@@ -2218,9 +2291,11 @@ if (!Array.prototype.indexOf) {
 function _setTimeout(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
     return setTimeout(function () {func(arg1, arg2, arg3, arg4, arg5, arg6);}, timeout);
 }
-
+function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
+    return setInterval(function () {func(arg1, arg2, arg3, arg4, arg5, arg6);}, timeout);
+}
 
 if (window.location.search == "?edit") {
     alert("please use /dashui/edit.html instead of /dashui/?edit");
-    location.href="./edit.html";
+    location.href="./edit.html" + window.location.hash;
 }

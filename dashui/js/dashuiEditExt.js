@@ -2433,6 +2433,9 @@ var idSelect = {
     },
     _getParents: function (id) {
         var ids = [];
+        if (!idSelect._locData.metaObjects[id]) {
+            return ids;
+        }
         var _id = idSelect._locData.metaObjects[id].parent;
         while (_id) {
             ids.push(_id);
