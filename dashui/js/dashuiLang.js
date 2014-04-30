@@ -23,8 +23,8 @@
 
 // Languages
 dui = $.extend(true, dui, {
-    translate: function (text, lang) {
-    	lang = lang || dui.language || 'en';
+    translate: function (text, arg) {
+    	var lang = dui.language || 'en';
         if (!this.words) {
             this.words = {
                 'Views'            : {'en': 'Views',         'de': 'Views',                'ru': 'Страницы'},
@@ -63,6 +63,13 @@ dui = $.extend(true, dui, {
                 'add_widget'       : {'en' : 'Add widget',   'de': 'Einfügen',             'ru': 'Добавить'},
                 'del_widget'       : {'en' : 'Delete widget','de': 'Löschen',              'ru': 'Удалить'},
                 'dup_widget'       : {'en' : 'Copy to:',     'de': 'Kopieren nach:',       'ru': 'Скопировать в:'},
+                'Clipboard: '      : {'en' : 'Clipboard:',   'de': 'Zwischenablage:',      'ru': 'Буфер:'},
+                'error - View doesn\'t exist' : {'en' : 'View doesn\'t exist!', 'de': 'View existiert nicht!', 'ru': 'Страница не существует!'},
+                'no views found on server.\nCreate new %s ?' : {'en' : 'no views found on server.\nCreate new %s?', 'de': 'Keine Views gefunden am Server.\nErzeugen %s?', 'ru': 'На сервеое не найдено никаких страниц. Создать %s?'},
+                'Widget copied to view %s' : {'en' : 'Widget copied to view %s', 'de': 'Widget ist nach View "%s" kopiert', 'ru': 'Элемент скопирован на страницу %s'},
+                'Really delete view %s?' : {'en' : 'Really delete view %s?', 'de': 'Wirklich löschen view %s?', 'ru': 'Вы действительно хотите удалить страницу %s?'},
+                'Do you want delete %s widgets?' : {'en' : 'Do you want delete %s widgets?', 'de': 'Wirklich löschen %s Widgets?', 'ru': 'Вы действительно хотите удалить %s элемента(ов)?'},
+                'Update found, loading new Files...'  : {'en' : 'Update found, loading new Files...',  'de': 'Neue Dateien gefunden. Lade neue Version...', 'ru': 'Обнаружено Обновление. Загружаю новые файлы...'},
                 'widget_doc'       : {'en' : 'Widget help',  'de': 'Widgethilfe',          'ru': 'Помощь'},
                 'Add Widget:'      : {'en' : 'Add Widget:',  'de': 'Widget einf&uuml;gen:','ru': 'Добавить элемент:'},
                 'Inspecting Widget:':{'en' : 'Inspecting Widget:', 'de': 'Widget inspizieren:','ru': 'Редактировать элемет:'},
@@ -121,36 +128,22 @@ dui = $.extend(true, dui, {
                     'ru': 'Все изменения сохранены локально. Для отмены локальных изменений очистите кеш броузера.'}
             };
         }
-		if (this.words[text]) {
-	        var newText = this.words[text][lang];
-	        if (newText){
-	            return newText;
-	        }
-	        else 
-	        if (lang != 'en') {
-	            newText = this.words[text]['en'];
-	            if (newText){
-	                return newText;
-	            }
-	        }
-	
-	    }
-	    //console.log ("trans: " + text);
-	    return text;
-    },
-    translateBack: function (text, lang) {
-		if (!this.words) {
-			// Load words
-	        translate ("", lang);
-	    }
-	    for (var word in this.words) {
-	        if (this.words[word] === null)
-	            continue;
-	        if (this.words[word][lang] == text)
-	            return word;
-	    }
-	
-	    //console.log ("back: " + text);
-	    return text;
-	}
+
+        if (this.words[text]) {
+            var newText = this.words[text][lang];
+            if (newText) {
+                text = newText;
+            } else {
+                newText = this.words[text]["en"];
+                if (newText) {
+                    text = newText;
+                }
+            }
+        }
+
+        if (arg !== undefined) {
+            text = text.replace('%s', arg);
+        }
+        return text;
+    }
 });

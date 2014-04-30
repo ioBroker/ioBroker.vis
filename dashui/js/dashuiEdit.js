@@ -34,6 +34,7 @@ dui = $.extend(true, dui, {
     editorPos:              "free",
     undoHistoryMaxLength:   50,
     multiSelectedWidgets:   [],
+    clipboard:              null,
 
     renameView: function (newName) {
             dui.views[newName] = $.extend(true, {}, dui.views[dui.activeView]);
@@ -48,7 +49,7 @@ dui = $.extend(true, dui, {
     },
     delView: function (view) {
         // TODO Translate
-        if (confirm("Really delete view " + view + "?")) {
+        if (confirm(dui.translate("Really delete view %s?", view))) {
                 delete dui.views[view];
                 dui.saveRemote(function () {
                     window.location.href = "edit.html" + window.location.search;
@@ -222,13 +223,18 @@ dui = $.extend(true, dui, {
 				}
 			}
 			dui.widgets = widgets;
-		}		
+		}
 	},
-	delWidget: function () {
+	delWidget: function (widget) {
+        if (typeof widget != "string") {
+            widget = null;
+        }
 		dui.clearWidgetHelper();
-		dui.delWidgetHelper(dui.activeWidget, true);
+		dui.delWidgetHelper(widget || dui.activeWidget, true);
 		dui.save();
-		dui.inspectWidget("none");
+        if (!widget) {
+            dui.inspectWidget("none");
+        }
     },
     addWidget: function (tpl, data, style, wid, view, hidden) {
         //console.log("addWidget "+wid);
@@ -333,7 +339,7 @@ dui = $.extend(true, dui, {
                             $("#widget_multi_helper_"+widgetId).remove();
                             dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(widgetId), 1);
                         } else {
-                            dui.inspectWidgetMulti(id);
+                            dui.inspectWidgetMulti(widgetId);
                         }} else {
                         if (dui.activeWidget != widgetId) {
                             dui.inspectWidget(widgetId);
@@ -360,32 +366,61 @@ dui = $.extend(true, dui, {
 		
         return widgetId;
     },
-    dupWidget: function () {
-        var activeView = dui.activeView;
-        var targetView = $("#select_view_copy option:selected").val();
+    dupWidget: function (widget) {
+        var activeView;
+        var targetView;
+        var tpl;
+        var data;
+        var style;
+
+        if (widget && widget.view) {
+            var objWidget = JSON.parse(widget.widget);
+            targetView = dui.activeView;
+            activeView = widget.view;
+            tpl = objWidget.tpl;
+            data = objWidget.data;
+            style = objWidget.style;
+            widget.view = dui.activeView;
+        } else {
+            activeView = dui.activeView;
+            targetView = $("#select_view_copy option:selected").val();
         //console.log(activeView + "." + dui.activeWidget + " -> " + targetView);
-        var tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;
-        var data = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].data);
-        var style = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].style);
+            tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;
+            data = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].data);
+            style = $.extend({}, dui.views[dui.activeView].widgets[dui.activeWidget].style);
+        }
+
         if (activeView == targetView) {
+            style.top = parseInt(style.top, 10);
+            style.left = parseInt(style.left, 10);
+
             style.top  += 10;
             style.left += 10;
+            // Store new settings
+            if (widget) {
+                widget.widget = JSON.stringify(objWidget);
+            }
+
             dui.activeWidget = dui.addWidget(tpl, data, style);
 
             $("#select_active_widget").append("<option value='"+dui.activeWidget+"'>"+dui.activeWidget+" ("+$("#"+dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
 
-            setTimeout(function () {
-                dui.inspectWidget(dui.activeWidget);
-                dui.save();
-            }, 50);
+            if (!widget) {
+                setTimeout(function () {
+                    dui.inspectWidget(dui.activeWidget);
+                    dui.save();
+                }, 50);
+            }
         } else {
             if ($("#dui_container").find("#duiview_"+targetView).html() == undefined) {
                 dui.renderView(targetView, true, true);
             }
             dui.addWidget(tpl, data, style, dui.nextWidget(), targetView, true);
             dui.save();
-            // TODO Translate
-            alert("Widget copied to view " + targetView + ".");
+            if (!widget) {
+                // TODO Translate
+                alert(dui.translate("Widget copied to view %s", targetView) + ".");
+            }
         }
     },
 	renameWidget: function (oldId, newId) {
@@ -2325,82 +2360,49 @@ dui = $.extend(true, dui, {
                 $(this).remove();
             });
 	},
-	translate: function (text, lang) {
-        // TODO ??
-        return text;
-    },
-	translateBack: function (text, lang) {
-        // TODO ??
-        return text;
-    },
-    translateAll: function (lang) {
-	   	lang  = lang || dui.language || 'en';
-
+    translateAll: function () {
 	    $(".translate").each(function (idx) {
-	        var curlang = $(this).attr('data-lang');
-	        var text    = $(this).html();
-	        if (curlang != lang) {
-	            if (curlang) {
-	                text = dui.translateBack(text, curlang);
-	            }
-	
-	            var transText = dui.translate(text, lang);
-	            if (transText) {
-	                $(this).html(transText);
-	                $(this).attr('data-lang', lang);
-	            }
-	        }
+            var text = $(this).attr('data-lang');
+            if (!text) {
+                text = $(this).html();
+                $(this).attr('data-lang', text);
+            }
+
+            var transText = dui.translate(text);
+            if (transText) {
+                $(this).html(transText);
+            }
 	    });
 	    // translate <input type="button>
 	    $(".translateV").each(function (idx) {
-	        var text    = $(this).attr('value');
-	        var curlang = $(this).attr('data-lang');
-	        if (curlang != lang) {
-	            if (curlang) {
-	                text = dui.translateBack(text, curlang);
-	            }
-	
-	            var transText = dui.translate(text, lang);
-	            if (transText) {
-	                $(this).attr('value', transText);
-	                $(this).attr('data-lang', lang);
-	            }
-	        }
+            var text = $(this).attr('data-lang');
+            if (!text) {
+                text = $(this).attr('value');
+                $(this).attr('data-lang', text);
+            }
+
+            var transText = dui.translate(text);
+            if (transText) {
+                $(this).attr('value', transText);
+            }
 	    });
 	    $(".translateB").each(function (idx) {
-	        //<span class="ui-button-text">Save</span>
-	        var text = $(this).html();
-	        if (text.indexOf("<span") != -1) {
-                var i = text.indexOf('<span class="ui-button-text">');
-                var t = text.substring(i + '<span class="ui-button-text">'.length);
-                var q = t.indexOf("</span>");
-                t = t.substring(0, q);
-		        var curlang = $(this).attr('data-lang');
-		        if (curlang != lang) {
-		            if (curlang) {
-		                text = dui.translateBack(t, curlang);
-		            }
-		
-		            var transText = dui.translate(t, lang);
-		            if (transText) {
-		                $(this).html(text.substring (0,i+'<span class="ui-button-text">'.length) + transText + '</span>');
-		                $(this).attr('data-lang', lang);
-		            }
-		        }
-	        } else {
-		        var curlang = $(this).attr('data-lang');
-		        if (curlang != lang) {
-		            if (curlang) {
-		                text = dui.translateBack(text, curlang);
-		            }
-		
-		            var transText = dui.translate(text, lang);
-		            if (transText) {
-		                $(this).html(transText);
-		                $(this).attr('data-lang', lang);
-		            }
-		        }
-	        }
+            //<span class="ui-button-text">Save</span>
+            var text = $(this).attr('data-lang');
+            if (!text) {
+                text = $(this).html();
+                text = text.replace('<span class="ui-button-text">', '').replace('</span>', '');
+                $(this).attr('data-lang', text);
+            }
+            var transText = dui.translate(text);
+            if (transText) {
+                text = $(this).html();
+                if (text.indexOf('<span') != -1) {
+                    $(this).html('<span class="ui-button-text">' + transText + '</span>');
+                } else {
+                    $(this).html(transText);
+                }
+            }
 	    });
 	},
     // collect all filter keys for given view
@@ -2568,8 +2570,111 @@ $(document).keydown(function (e) {
     if (e.which === 90 && (e.ctrlKey || e.metaKey)) {
         dui.undo();
         e.preventDefault();
+    } else
+    // Capture Delete button
+    if (e.which === 46) {
+        var $focused = $(':focus');
+        if (!$focused.length && dui.activeWidget) {
+            if (!document.getElementById('dialog_delete')) {
+                $('body').append(
+                '<div style="display: none;text-align: center" id="dialog_delete">'+
+                    '<span class="ui-icon ui-icon-alert" style="display:inline-block"></span><span id="dialog_delete_content" style="display:inline-block;padding-left:10px"></span>'+
+                '</div>');
+            }
+
+
+            if (dui.multiSelectedWidgets.length) {
+                $("#dialog_delete_content").html(dui.translate("Do you want delete %s widgets?", dui.multiSelectedWidgets.length + 1));
+            } else {
+                $("#dialog_delete_content").html(dui.translate("Do you want delete widget ") + dui.activeWidget + " ?");
+            }
+
+            var dialog_buttons = {};
+            var delText = dui.translate("Delete").replace("&ouml;", "ö");
+            dialog_buttons[delText] = function () {
+                $(this).dialog( "close" );
+                for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
+                    dui.delWidget(dui.multiSelectedWidgets[i]);
+                }
+                dui.delWidget(dui.activeWidget);
+                dui.inspectWidget("none");
+            }
+            dialog_buttons[dui.translate("Cancel")] = function () {
+                $(this).dialog( "close" );
+            }
+
+            $("#dialog_delete").dialog({
+                autoOpen: true,
+                width: 500,
+                height: 180,
+                modal: true,
+                title: dui.translate("Confirm widget deletion"),
+                open: function (event, ui) {
+                    $('[aria-describedby="dialog_delete"]').css('z-index',1002);
+                    $(".ui-widget-overlay").css('z-index', 1001);
+                },
+                buttons: dialog_buttons
+            });
+	        e.preventDefault();
+        }
     }
 });
+
+// Copy paste mechanism
+$(window).on("paste", function(e) {
+    var $focused = $(':focus');
+    if (!$focused.length) {
+        if (dui.clipboard && dui.clipboard.length) {
+            var widgets = [];
+            for (var i = 0, len = dui.clipboard.length; i < len; i++) {
+                dui.dupWidget(dui.clipboard[i]);
+                widgets.push(dui.activeWidget);
+            }
+            // Select main widget and add to selection the secondary ones
+            dui.inspectWidget(widgets[0]);
+            for (var j = 1, jlen = widgets.length; j < jlen; j++) {
+                dui.inspectWidgetMulti(widgets[j]);
+            }
+        }
+    }
+}).on("copy cut", function(e) {
+    var $focused = $(':focus');
+    if (!$focused.length && dui.activeWidget) {
+        var $clipboard_content = $('#clipboard_content');
+        if (!$clipboard_content.length) {
+            $('body').append('<div id="clipboard_content" style="display:none" class="dashui-clipboard"></div>');
+            $clipboard_content = $('#clipboard_content');
+        }
+
+        $clipboard_content.css({left: ($(document).width() - $clipboard_content.width()) / 2})
+        .click(function(){
+            $(this).fadeOut("slow");
+        });
+        dui.clipboard = [];
+        dui.clipboard[0] = {widget: JSON.stringify(dui.views[dui.activeView].widgets[dui.activeWidget]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
+        var widgetNames = dui.activeWidget;
+        if (dui.multiSelectedWidgets.length) {
+            for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
+                widgetNames += ', ' + dui.multiSelectedWidgets[i];
+                dui.clipboard[i + 1] = {widget: JSON.stringify(dui.views[dui.activeView].widgets[dui.multiSelectedWidgets[i]]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
+            }
+        }
+
+        if (e.type == 'cut') {
+            for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
+                dui.delWidget(dui.multiSelectedWidgets[i]);
+            }
+            dui.delWidget(dui.activeWidget);
+            dui.inspectWidget("none");
+        }
+
+        $clipboard_content.html(dui.translate('Clipboard: ') + '<b>' + widgetNames + '</b>');
+        $clipboard_content.fadeIn('fast');
+    } else {
+        $('#clipboard_content').remove();
+    }
+});
+
 
 $(document).ready(function () {
     dui.translateAll((typeof ccuIoLang === 'undefined') ? 'en' : (ccuIoLang || 'en'));

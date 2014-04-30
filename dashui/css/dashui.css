@@ -284,9 +284,29 @@ div#dui_editor {
 }
 
 .dashui-wait-screen {
-    position: absolute; top: 0; left: 0; height:100%; width:100%;
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    height:100%; 
+    width:100%;
 }
-/* Sample for table widget */
+.dashui-clipboard {
+    position: absolute; 
+    top: 0px; 
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 14px;
+    padding-right: 14px;
+    background-color: rgb(55, 169, 232);
+    opacity: 0.8;
+    z-index:1003;
+    -webkit-border-bottom-right-radius: 7px;
+    -webkit-border-bottom-left-radius: 7px;
+    -moz-border-radius-bottomright: 7px;
+    -moz-border-radius-bottomleft: 7px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;}
+/* ---------------------- Sample for table widget ------------------------- */
 .tclass-overflow {
     overflow-y: auto;
 }
