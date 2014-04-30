@@ -2558,8 +2558,8 @@ $(document).keydown(function (e) {
                 },
                 buttons: dialog_buttons
             });
+	        e.preventDefault();
         }
-        e.preventDefault();
     }
 });
 
