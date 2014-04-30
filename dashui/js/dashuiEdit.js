@@ -323,6 +323,7 @@ dui = $.extend(true, dui, {
             }
 	    }
 
+        // TODO replace by jqui selectable
         $jWidget.click(function (e) {
             //console.log("click "+widgetId+" isStealCss="+dui.isStealCss);
             if (!dui.isStealCss) {
@@ -1181,7 +1182,7 @@ dui = $.extend(true, dui, {
         });
 
         // autocomplete for filter key
-        var elem = document.getElementById ('inspect_filterkey');
+        var elem = document.getElementById('inspect_filterkey');
         if (elem) {
             dui.updateFilter();
             elem._save = function () {
@@ -1220,7 +1221,7 @@ dui = $.extend(true, dui, {
         }
 		
 		$('#inspect_views').html("");
-		var views = dui.getViewsOfWidget (dui.activeWidget);
+		var views = dui.getViewsOfWidget(dui.activeWidget);
 		for (var v in dui.views) {
 			if (v != dui.activeView) {
 				var selected = "";
@@ -1230,7 +1231,7 @@ dui = $.extend(true, dui, {
 						break;
 					}
 				}
-				$("#inspect_views").append("<option value='"+v+"' "+ selected +">"+v+"</option>");
+				$("#inspect_views").append("<option value='" + v + "' " + selected + ">" + v + "</option>");
 			}
 		}
 
@@ -1313,6 +1314,62 @@ dui = $.extend(true, dui, {
     },
     // Init all edit fields for one view
     changeViewEdit: function (view, noChange) {
+
+        console.log("changeViewEdit "+view+" "+noChange);
+        $(".dashui-view.ui-selectable").selectable("destroy");
+
+        $("#duiview_"+view).selectable({
+            filter: "div.dashui-widget",
+            tolerance: "fit",
+            start: function (e, ui) {
+                console.log("selectable start");
+                //$(".widget-multi-helper").remove();
+                //dui.multiSelectedWidgets = [];
+                //dui.inspectWidget("none");
+            },
+            stop: function (e, ui) {
+                console.log("selectable stop");
+                console.log(e);
+                switch ($(".ui-selected").length) {
+                    case 0:
+                        $(".widget-multi-helper").remove();
+                        dui.multiSelectedWidgets = [];
+                        dui.inspectWidget("none");
+                        break;
+                    case 1:
+                        $(".widget-multi-helper").remove();
+                        dui.multiSelectedWidgets = [];
+                        dui.inspectWidget($(".ui-selected").attr("id"));
+                        break;
+                    default:
+                }
+            },
+            selecting: function (e, ui) {
+                console.log("selectable selecting");
+                console.log(ui.selecting.id);
+                if (!dui.activeWidget || dui.activeWidget == "none") {
+                    dui.inspectWidget(ui.selecting.id);
+                } else {
+                    dui.inspectWidgetMulti(ui.selecting.id);
+
+                }
+
+            },
+            selected: function (e, ui) {
+                console.log("selectable selected");
+                console.log(ui.selected.id);
+            },
+            unselecting: function (e, ui) {
+                console.log("selectable unselecting");
+                if ($("#widget_multi_helper_" + ui.unselecting.id).html()) {
+                    $("#widget_multi_helper_" + ui.unselecting.id).remove();
+                    dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(ui.unselecting.id), 1);
+                }
+            },
+            unselected: function (e, ui) {
+                console.log("selectable unselected");
+            }
+        });
 
         if (!noChange) {
             dui.undoHistory = [$.extend(true, {}, dui.views[dui.activeView])];
