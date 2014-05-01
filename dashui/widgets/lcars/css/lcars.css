@@ -61,7 +61,7 @@ div.dashui-lcars .line-top{
     width:100%;
     height:25px;
     margin:0;
-    background-image: url(Line.png);
+    background-image: url(../img/Line.png);
     background-repeat: no-repeat;
     background-position:0 -31px;
 }
@@ -69,7 +69,7 @@ div.dashui-lcars .line-bottom{
     width:100%;
     height:25px;
     margin:0;
-    background-image: url(Line.png);
+    background-image: url(../img/Line.png);
     background-repeat: no-repeat;
     background-position:0 0;
 }
