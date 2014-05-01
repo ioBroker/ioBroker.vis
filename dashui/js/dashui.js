@@ -930,7 +930,7 @@ var dui = {
         return id;
     },
     translateAll: function (lang) {
-        lang  = lang || dui.language || 'en';
+        var lang  = dui.language || 'en';
 
         $(".translate").each(function (idx) {
             var text = $(this).attr('data-lang');
@@ -946,7 +946,8 @@ var dui = {
         });
     },
     translate: function (text, arg) {
-        /*if (!this.words) {
+        var lang = dui.language || 'en';
+        if (!this.words) {
             this.words = {
                 'No connection to Server'      : {'en' : 'No connection to Server',      'de': 'Keine Verbindung zu Server',  'ru': 'Нет соединения с сервером'},
                 ' done.<br/>'                  : {'en' : ' done.<br/>',                  'de': ' - erledigt.<br/>',           'ru': '. Закончено.<br/>'},
@@ -974,7 +975,7 @@ var dui = {
 
         if (arg !== undefined) {
             text = text.replace('%s', arg);
-        }*/
+        }
         return text;
     },
     waitScreenVal: 0,
