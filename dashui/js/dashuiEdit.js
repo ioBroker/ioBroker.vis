@@ -2573,6 +2573,71 @@ dui = $.extend(true, dui, {
             dui.inspectWidgetMulti(multiSelectedWidgets[i]);
         }
 
+    },
+    paste: function () {
+        var $focused = $(':focus');
+        if (!$focused.length) {
+            if (dui.clipboard && dui.clipboard.length) {
+                var widgets = [];
+                for (var i = 0, len = dui.clipboard.length; i < len; i++) {
+                    dui.dupWidget(dui.clipboard[i], true);
+                    widgets.push(dui.activeWidget);
+                }
+                dui.save();
+                console.log("inspectWidget "+widgets[0]);
+                // Select main widget and add to selection the secondary ones
+                dui.inspectWidget(widgets[0]);
+                for (var j = 1, jlen = widgets.length; j < jlen; j++) {
+                    console.log("inspectWidgetMulti "+widgets[j]);
+                    dui.inspectWidgetMulti(widgets[j]);
+                }
+            }
+        }
+    },
+    copy: function (isCut) {
+        console.log("copy cut");
+        var $focused = $(':focus');
+        console.log($focused);
+        console.log($focused.length, dui.activeWidget);
+
+        var activeWidget = dui.activeWidget;
+        var multiSelectedWidgets = dui.multiSelectedWidgets;
+
+
+        if (!$focused.length && dui.activeWidget) {
+            var $clipboard_content = $('#clipboard_content');
+            if (!$clipboard_content.length) {
+                $('body').append('<div id="clipboard_content" style="display:none" class="dashui-clipboard"></div>');
+                $clipboard_content = $('#clipboard_content');
+            }
+
+            $clipboard_content.css({left: ($(document).width() - $clipboard_content.width()) / 2})
+                .click(function() {
+                    $(this).fadeOut("slow");
+                });
+            dui.clipboard = [];
+            dui.clipboard[0] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.activeWidget]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
+            var widgetNames = dui.activeWidget;
+            if (dui.multiSelectedWidgets.length) {
+                for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
+                    widgetNames += ', ' + dui.multiSelectedWidgets[i];
+                    dui.clipboard[i + 1] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.multiSelectedWidgets[i]]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
+                }
+            }
+
+            if (isCut) {
+                for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
+                    dui.delWidget(multiSelectedWidgets[i], true);
+                }
+                dui.delWidget(activeWidget);
+                dui.inspectWidget("none");
+            }
+
+            $clipboard_content.html(dui.translate('Clipboard: ') + '<b>' + widgetNames + '</b>');
+            $clipboard_content.fadeIn('fast');
+        } else {
+            $('#clipboard_content').remove();
+        }
     }
 });
 
@@ -2639,69 +2704,10 @@ $(document).keydown(function (e) {
 
 // Copy paste mechanism
 $(window).on("paste", function(e) {
-    console.log("paste");
-    var $focused = $(':focus');
-    if (!$focused.length) {
-        if (dui.clipboard && dui.clipboard.length) {
-            var widgets = [];
-            for (var i = 0, len = dui.clipboard.length; i < len; i++) {
-                dui.dupWidget(dui.clipboard[i], true);
-                widgets.push(dui.activeWidget);
-            }
-            dui.save();
-            console.log("inspectWidget "+widgets[0]);
-            // Select main widget and add to selection the secondary ones
-            dui.inspectWidget(widgets[0]);
-            for (var j = 1, jlen = widgets.length; j < jlen; j++) {
-                console.log("inspectWidgetMulti "+widgets[j]);
-                dui.inspectWidgetMulti(widgets[j]);
-            }
-        }
-    }
+    dui.paste();
 }).on("copy cut", function(e) {
-    console.log("copy cut");
-    var $focused = $(':focus');
-    console.log($focused);
-    console.log($focused.length, dui.activeWidget);
+    dui.copy(e.type == "cut");
 
-    var activeWidget = dui.activeWidget;
-    var multiSelectedWidgets = dui.multiSelectedWidgets;
-
-
-    if (!$focused.length && dui.activeWidget) {
-        var $clipboard_content = $('#clipboard_content');
-        if (!$clipboard_content.length) {
-            $('body').append('<div id="clipboard_content" style="display:none" class="dashui-clipboard"></div>');
-            $clipboard_content = $('#clipboard_content');
-        }
-
-        $clipboard_content.css({left: ($(document).width() - $clipboard_content.width()) / 2})
-        .click(function() {
-            $(this).fadeOut("slow");
-        });
-        dui.clipboard = [];
-        dui.clipboard[0] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.activeWidget]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
-        var widgetNames = dui.activeWidget;
-        if (dui.multiSelectedWidgets.length) {
-            for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
-                widgetNames += ', ' + dui.multiSelectedWidgets[i];
-                dui.clipboard[i + 1] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.multiSelectedWidgets[i]]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
-            }
-        }
-
-        if (e.type == 'cut') {
-            for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
-                dui.delWidget(multiSelectedWidgets[i], true);
-            }
-            dui.delWidget(activeWidget);
-            dui.inspectWidget("none");
-        }
-
-        $clipboard_content.html(dui.translate('Clipboard: ') + '<b>' + widgetNames + '</b>');
-        $clipboard_content.fadeIn('fast');
-    } else {
-        $('#clipboard_content').remove();
-    }
 });
 
 
