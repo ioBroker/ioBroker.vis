@@ -10,7 +10,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ### 0.9beta97
 * (Hobbyquaker) Fix LCARS Widgets
 * (Hobbyquaker) mehrere Widgets selektieren mit der Maus
-* (Hobbyquaker) Rahmen um alle Widgets
+* (Hobbyquaker) Rahmen um alle selektierten Widgets
 * (Hobbyquaker) Fixes und Refactoring rund um cut/copy/paste/del und Multi-Selektion
 * (Hobbyquaker) steal CSS Mode Indikator
 * (Bluefox) Cut/Copy/Paste und Delete mit Tastatur, Zwischenablage
