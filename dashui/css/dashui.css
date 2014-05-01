@@ -54,16 +54,30 @@ div#dui_container {
 
 
 #widget_helper {
-    border: 1px dashed white;
+    border: 1px dashed #ffcccc;
     position: absolute;
     z-index: 90;
     pointer-events:none;
 }
 #widget_inner_helper {
-    border: 1px dashed black;
+    border: 1px dashed #ccccff;
     pointer-events:none;
 	width:100%;
 	height:100%;
+}
+
+
+#allwidgets_helper {
+    border: 1px dotted #aaa;
+    position: absolute;
+    z-index: 90;
+    pointer-events:none;
+}
+#allwidgets_inner_helper {
+    border: 1px dotted #555;
+    pointer-events:none;
+    width:100%;
+    height:100%;
 }
 
 .widget_multi_helper {

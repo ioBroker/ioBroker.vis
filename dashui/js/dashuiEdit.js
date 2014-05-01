@@ -239,6 +239,77 @@ dui = $.extend(true, dui, {
             dui.inspectWidget("none");
         }
     },
+    bindWidgetClick: function (id) {
+        $("#" + id).click(function (e) {
+            var widgetData = dui.widgets[id]["data"];
+            //console.log("click id="+id+" active="+dui.activeWidget);
+            //console.log(dui.multiSelectedWidgets);
+            if (e.shiftKey || e.ctrlKey || e.metaKey) {
+
+                // FIXME remove dirty workaround - find bug that causes activeWidget to be twice or even more often in Array...
+                var unique = [];
+                $.each(dui.multiSelectedWidgets, function (i, el) {
+                    if($.inArray(el, unique) === -1) unique.push(el);
+                });
+                dui.multiSelectedWidgets = unique;
+
+                if (dui.activeWidget && dui.activeWidget != "none" && dui.activeWidget != id) {
+                    if (dui.multiSelectedWidgets.indexOf(id) != -1) {
+                        //console.log("splice "+id)
+                        dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(id), 1);
+                        $("#"+id).removeClass("ui-selected");
+
+                        //console.log("-> "+dui.multiSelectedWidgets);
+                        dui.allWidgetsHelper();
+                        $("#widget_multi_helper_"+id).remove();
+                        var $widget = $("#" + id);
+                        if ($widget.hasClass("ui-draggable")) {
+                            try {
+                                $widget.draggable("destroy");
+                            } catch (e) {
+                                console.log("inspectWidget "+id+" "+e)
+                            }
+                        }
+                    } else {
+                        dui.inspectWidgetMulti(id);
+                    }
+                } else if (dui.activeWidget && dui.activeWidget == id && dui.multiSelectedWidgets.length) {
+                    //console.log("click inspected Widget");
+
+                    if (dui.multiSelectedWidgets.indexOf(id) != -1) {
+                        //console.log("splice "+id)
+                        dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(id), 1);
+                        $("#" + id).removeClass("ui-selected");
+                    }
+
+                    //console.log(dui.multiSelectedWidgets);
+
+                    if (dui.multiSelectedWidgets.length) {
+                        var newActive = dui.multiSelectedWidgets.pop();
+                        var multiSelectedWidgets = dui.multiSelectedWidgets;
+                        $("#widget_multi_helper_"+newActive).remove();
+                        dui.inspectWidget(newActive);
+                        for (var i = 0; i < multiSelectedWidgets.length; i++) {
+                            dui.inspectWidgetMulti(multiSelectedWidgets[i]);
+                        }
+                        dui.allWidgetsHelper();
+                    }
+                }
+            }
+
+            // FIXME remove dirty workaround - find bug that causes activeWidget to be twice or even more often in Array...
+            var unique = [];
+            $.each(dui.multiSelectedWidgets, function (i, el) {
+                if($.inArray(el, unique) === -1) unique.push(el);
+            });
+            dui.multiSelectedWidgets = unique;
+
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        });
+
+    },
     addWidget: function (tpl, data, style, wid, view, hidden, noSave) {
         //console.log("addWidget "+wid);
 		var isSelectWidget = (wid === undefined);
@@ -340,6 +411,8 @@ dui = $.extend(true, dui, {
         if (!noSave) {
             dui.save();
         }
+
+        dui.bindWidgetClick(widgetId);
 
         return widgetId;
     },
@@ -857,9 +930,12 @@ dui = $.extend(true, dui, {
                 pos.top = parseInt(pos.top.replace('px', ''), 10);
             }
         }
-
-        if (dui.multiSelectedWidgets.indexOf(id) == -1) {
+        //console.log("inspectWidgetMulti")
+        //console.log("id="+id+" active="+dui.activeWidget)
+        if (dui.multiSelectedWidgets.indexOf(id) == -1 && id != dui.activeWidget) {
+            //console.log("pushing "+id);
             dui.multiSelectedWidgets.push(id);
+            //console.log(dui.multiSelectedWidgets);
         }
 
         $("#dui_container").append('<div id="widget_multi_helper_'+id+'" class="widget_multi_helper"><div class="widget_multi_inner_helper"></div></div>');
@@ -1331,6 +1407,43 @@ dui = $.extend(true, dui, {
             tabs.tabs("option", "active", 1);
         }
     },
+
+    // Draw a border around all selected widgets
+    allWidgetsHelper: function () {
+        var $allwidgets_helper = $("#allwidgets_helper");
+
+        if (!dui.multiSelectedWidgets.length) {
+            $allwidgets_helper.hide();
+            return;
+        } else if (dui.multiSelectedWidgets.length == 1 && dui.multiSelectedWidgets == dui.activeWidget) {
+            // FIXME ... stupid workaround - activeWidget should not be in multiSelectedWidgets!
+            $allwidgets_helper.hide();
+            return;
+        }
+        var selectedWidgets = dui.multiSelectedWidgets;
+        var l, r, t, b;
+        selectedWidgets.push(dui.activeWidget);
+
+        // Find outer edges of all selected widgets
+        for (var i = 0; i < selectedWidgets.length; i++) {
+            var $widget = $("#" + selectedWidgets[i])
+            var pos = $widget.position();
+            pos.right = pos.left + $widget.width();
+            pos.bottom = pos.top + $widget.height();
+            if (!l || pos.left < l) l = pos.left;
+            if (!r || pos.right > r) r = pos.right;
+            if (!t || pos.top < t) t = pos.top;
+            if (!b || pos.bottom > b) b = pos.bottom;
+        }
+
+        $allwidgets_helper
+            .css("left", (l - 3))
+            .css("width", (r + 4 - l))
+            .css("top", (t - 3))
+            .css("height", (b + 4 - t))
+            .show();
+    },
+
     // Init all edit fields for one view
     changeViewEdit: function (view, noChange) {
 
@@ -1342,25 +1455,29 @@ dui = $.extend(true, dui, {
             start: function (e, ui) {
             },
             stop: function (e, ui) {
+                var $allwidgets_helper = $("#allwidgets_helper");
                 switch ($(".ui-selected").length) {
                     case 0:
                         $(".widget-multi-helper").remove();
                         dui.multiSelectedWidgets = [];
                         dui.inspectWidget("none");
+                        $allwidgets_helper.hide();
                         break;
                     case 1:
                         $(".widget-multi-helper").remove();
                         dui.multiSelectedWidgets = [];
                         dui.inspectWidget($(".ui-selected").attr("id"));
+                        $allwidgets_helper.hide();
                         break;
                     default:
+                        dui.allWidgetsHelper();
                 }
             },
             selecting: function (e, ui) {
-                console.log("selecting", e, ui);
                 if (!dui.activeWidget || dui.activeWidget == "none") {
                     dui.inspectWidget(ui.selecting.id);
                 } else if (ui.selecting.id != dui.activeWidget) {
+                    //console.log("selecting id="+ui.selecting.id+" active="+dui.activeWidget);
                     dui.inspectWidgetMulti(ui.selecting.id);
                 }
             },
@@ -1476,10 +1593,37 @@ dui = $.extend(true, dui, {
         var origX, origY;
         var draggableOptions = {
             cancel: false,
+            start: function (event, ui) {
+                origX = ui.position.left;
+                origY = ui.position.top;
+                var widget = ui.helper.attr("id");
+
+                //console.log("drag start widget="+widget+" activeWidget="+dui.activeWidget);
+
+                if (widget != dui.activeWidget) {
+                    if (dui.multiSelectedWidgets.indexOf(dui.activeWidget) == -1) {
+
+                        // temporary put activeWidget in multiSelectedWidgets for easier dragging handling - should be removed again in drag stop event
+                        // probably cause for annoying bug i worked around for now...
+                        dui.multiSelectedWidgets.push(dui.activeWidget);
+                    }
+                }
+
+                // FIXME remove dirty workaround - find bug that causes activeWidget to be twice or even more often in Array...
+                var unique = [];
+                $.each(dui.multiSelectedWidgets, function (i, el) {
+                    if($.inArray(el, unique) === -1) unique.push(el);
+                });
+                dui.multiSelectedWidgets = unique;
+
+
+                //console.log(dui.multiSelectedWidgets);
+            },
             stop: function (event, ui) {
                 var widget = ui.helper.attr("id");
 
-                if (widget != dui.activeWidget) {
+                if (dui.multiSelectedWidgets.indexOf(dui.activeWidget) != -1) {
+                    // remove activeWidget from multiSelectedWidgets
                     dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(dui.activeWidget), 1);
                 }
 
@@ -1503,17 +1647,6 @@ dui = $.extend(true, dui, {
                 dui.save();
 
             },
-            start: function (event, ui) {
-                origX = ui.position.left;
-                origY = ui.position.top;
-                var widget = ui.helper.id;
-
-                if (widget != dui.activeWidget) {
-                    if (dui.multiSelectedWidgets.indexOf(dui.activeWidget) == -1) {
-                        dui.multiSelectedWidgets.push(dui.activeWidget);
-                    }
-                }
-            },
             drag: function (event, ui) {
 
                 var moveX = ui.position.left - origX;
@@ -1523,21 +1656,34 @@ dui = $.extend(true, dui, {
                 origY = ui.position.top;
 
                 for (var i = 0; i < dui.multiSelectedWidgets.length; i++) {
+
                     var $mWidget = $("#"+dui.multiSelectedWidgets[i]);
                     var pos = $mWidget.position();
                     var x = pos.left + moveX;
                     var y = pos.top + moveY;
-                    $mWidget.css("left", x + "px").css("top", y + "px");
+
                     $("#widget_multi_helper_"+dui.multiSelectedWidgets[i]).css({left: x - 2, top: y - 2});
+
+                    if (ui.helper.attr("id") != dui.multiSelectedWidgets[i]) {
+                        $mWidget.css("left", x + "px").css("top", y + "px");
+                    }
+
                 }
 
-                if (ui.helper.id == dui.activeWidget) {
+                if (ui.helper.attr("id") == dui.activeWidget) {
                     $("#widget_helper").css({left: ui.position.left - 2, top: ui.position.top - 2});
                 } else {
                     var pos = $("#widget_helper").position();
                     var x = pos.left + moveX;
                     var y = pos.top + moveY;
                     $("#widget_helper").css("left", x + "px").css("top", y + "px");
+                }
+
+                if ($("#allwidgets_helper").is(":visible")) {
+                    var pos = $("#allwidgets_helper").position();
+                    var x = pos.left + moveX;
+                    var y = pos.top + moveY;
+                    $("#allwidgets_helper").css("left", x + "px").css("top", y + "px");
                 }
             }
         };
@@ -2584,21 +2730,33 @@ dui = $.extend(true, dui, {
                     widgets.push(dui.activeWidget);
                 }
                 dui.save();
-                console.log("inspectWidget "+widgets[0]);
+                //console.log("inspectWidget "+widgets[0]);
                 // Select main widget and add to selection the secondary ones
                 dui.inspectWidget(widgets[0]);
                 for (var j = 1, jlen = widgets.length; j < jlen; j++) {
-                    console.log("inspectWidgetMulti "+widgets[j]);
+                    //console.log("inspectWidgetMulti "+widgets[j]);
                     dui.inspectWidgetMulti(widgets[j]);
                 }
             }
         }
     },
     copy: function (isCut) {
-        console.log("copy cut");
+        //console.log("copy cut");
         var $focused = $(':focus');
-        console.log($focused);
-        console.log($focused.length, dui.activeWidget);
+        //console.log($focused);
+        //console.log($focused.length, dui.activeWidget);
+
+        // FIXME remove dirty workaround - find bug that causes activeWidget to be twice or even more often in Array...
+        var unique = [];
+        $.each(dui.multiSelectedWidgets, function (i, el) {
+            if($.inArray(el, unique) === -1) unique.push(el);
+        });
+        dui.multiSelectedWidgets = unique;
+
+        // FIXME activeWidget should not be in multiSelectedWidgets!
+        if (dui.multiSelectedWidgets.indexOf(dui.activeWidget) != -1) {
+            dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(dui.activeWidget), 1);
+        }
 
         var activeWidget = dui.activeWidget;
         var multiSelectedWidgets = dui.multiSelectedWidgets;
@@ -2616,12 +2774,12 @@ dui = $.extend(true, dui, {
                     $(this).fadeOut("slow");
                 });
             dui.clipboard = [];
-            dui.clipboard[0] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.activeWidget]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
+            dui.clipboard[0] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.activeWidget]), view: isCut ? '---copied---' : dui.activeView};
             var widgetNames = dui.activeWidget;
             if (dui.multiSelectedWidgets.length) {
                 for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
                     widgetNames += ', ' + dui.multiSelectedWidgets[i];
-                    dui.clipboard[i + 1] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.multiSelectedWidgets[i]]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
+                    dui.clipboard[i + 1] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.multiSelectedWidgets[i]]), view: isCut ? '---copied---' : dui.activeView};
                 }
             }
 
@@ -2659,9 +2817,9 @@ $(document).keydown(function (e) {
 
 
             // TODO @Bluefox - in my opinion we don't need a confirm dialog here - we have Undo and the Delete Widget Button
-            // in the Editor also doesn't want a confirmation, i think without it's more consistent. What do you think?
+            // TODO            in the Editor also doesn't request a confirmation, i think without it's more consistent. What do you say?
 
-            /*
+
             if (dui.multiSelectedWidgets.length) {
                 $("#dialog_delete_content").html(dui.translate("Do you want delete %s widgets?", dui.multiSelectedWidgets.length + 1));
             } else {
@@ -2674,7 +2832,16 @@ $(document).keydown(function (e) {
             dialog_buttons[delText] = function () {
                 $(this).dialog("close");
 
-            */
+
+
+                // FIXME remove dirty workaround - find bug that causes activeWidget to be twice or even more often in Array...
+                var unique = [];
+                $.each(dui.multiSelectedWidgets, function (i, el) {
+                    if($.inArray(el, unique) === -1) unique.push(el);
+                });
+                dui.multiSelectedWidgets = unique;
+
+
                 var activeWidget = dui.activeWidget;
                 var multiSelectedWidgets = dui.multiSelectedWidgets;
 
@@ -2685,7 +2852,7 @@ $(document).keydown(function (e) {
                 dui.delWidget(activeWidget, true);
                 dui.save();
                 dui.inspectWidget("none");
-            /*
+
             };
             dialog_buttons[dui.translate("Cancel")] = function () {
                 $(this).dialog("close");
@@ -2703,16 +2870,16 @@ $(document).keydown(function (e) {
                 },
                 buttons: dialog_buttons
             });
-            */
+
 	        e.preventDefault();
         }
     }
 });
 
 // Copy paste mechanism
-$(window).on("paste", function(e) {
+$(window).on("paste", function (e) {
     dui.paste();
-}).on("copy cut", function(e) {
+}).on("copy cut", function (e) {
     dui.copy(e.type == "cut");
 
 });
