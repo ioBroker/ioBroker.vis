@@ -181,6 +181,11 @@ dui = $.extend(true, dui, {
 		}
 	},
 	delWidgetHelper: function (id, isAll) {
+
+        if (!id) {
+            return;
+        }
+
 		if (isAll && id.indexOf('_') != -1) {
 			var views = dui.getViewsOfWidget(id);
 			var wids = id.split('_', 2);
@@ -188,10 +193,6 @@ dui = $.extend(true, dui, {
 				dui.delWidgetHelper(wids[0] + '_' + views[i], false);
 			}
 			dui.inspectWidget("none");
-			return;
-		}
-	
-		if (id === undefined || id == null || id == "") {
 			return;
 		}
 
@@ -225,18 +226,20 @@ dui = $.extend(true, dui, {
 			dui.widgets = widgets;
 		}
 	},
-	delWidget: function (widget) {
+	delWidget: function (widget, noSave) {
         if (typeof widget != "string") {
             widget = null;
         }
 		dui.clearWidgetHelper();
 		dui.delWidgetHelper(widget || dui.activeWidget, true);
-		dui.save();
+		if (!noSave) {
+            dui.save();
+        }
         if (!widget) {
             dui.inspectWidget("none");
         }
     },
-    addWidget: function (tpl, data, style, wid, view, hidden) {
+    addWidget: function (tpl, data, style, wid, view, hidden, noSave) {
         //console.log("addWidget "+wid);
 		var isSelectWidget = (wid === undefined);
 		var isViewExist    = (document.getElementById("duiview_"+view) != null);
@@ -329,44 +332,18 @@ dui = $.extend(true, dui, {
             }
 	    }
 
-        // TODO replace by jqui selectable
-        $jWidget.click(function (e) {
-            //console.log("click "+widgetId+" isStealCss="+dui.isStealCss);
-            if (!dui.isStealCss) {
-                if (e.shiftKey) {
-                    if (dui.activeWidget && dui.activeWidget != "none" && dui.activeWidget != widgetId) {
-                        if ($("#widget_multi_helper_"+widgetId).html()) {
-                            $("#widget_multi_helper_"+widgetId).remove();
-                            dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(widgetId), 1);
-                        } else {
-                            dui.inspectWidgetMulti(widgetId);
-                        }} else {
-                        if (dui.activeWidget != widgetId) {
-                            dui.inspectWidget(widgetId);
-                        }
-                    }
-                } else {
-                    if (dui.activeWidget != widgetId) {
-                        dui.inspectWidget(widgetId);
-                    }
-                }
-
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-            }
-        });
-		
 		if (isSelectWidget) {
 			dui.activeWidget = widgetId;
 			dui.actionNewWidget(widgetId);
 		}
 
-        dui.save();
-		
+        if (!noSave) {
+            dui.save();
+        }
+
         return widgetId;
     },
-    dupWidget: function (widget) {
+    dupWidget: function (widget, noSave) {
         var activeView;
         var targetView;
         var tpl;
@@ -374,7 +351,7 @@ dui = $.extend(true, dui, {
         var style;
 
         if (widget && widget.view) {
-            var objWidget = JSON.parse(widget.widget);
+            var objWidget = widget.widget;
             targetView = dui.activeView;
             activeView = widget.view;
             tpl = objWidget.tpl;
@@ -398,17 +375,20 @@ dui = $.extend(true, dui, {
             style.left += 10;
             // Store new settings
             if (widget) {
-                widget.widget = JSON.stringify(objWidget);
+                widget.widget = $.extend(true, {}, objWidget);
             }
 
-            dui.activeWidget = dui.addWidget(tpl, data, style);
+            // addWidget Params: tpl, data, style, wid, view, hidden, noSave
+            dui.activeWidget = dui.addWidget(tpl, data, style, undefined, undefined, undefined, noSave);
 
             $("#select_active_widget").append("<option value='"+dui.activeWidget+"'>"+dui.activeWidget+" ("+$("#"+dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
 
             if (!widget) {
                 setTimeout(function () {
                     dui.inspectWidget(dui.activeWidget);
-                    dui.save();
+                    if (!noSave) {
+                        dui.save();
+                    }
                 }, 50);
             }
         } else {
@@ -416,7 +396,9 @@ dui = $.extend(true, dui, {
                 dui.renderView(targetView, true, true);
             }
             dui.addWidget(tpl, data, style, dui.nextWidget(), targetView, true);
-            dui.save();
+            if (!noSave) {
+                dui.save();
+            }
             if (!widget) {
                 // TODO Translate
                 alert(dui.translate("Widget copied to view %s", targetView) + ".");
@@ -884,6 +866,8 @@ dui = $.extend(true, dui, {
 
         $("#widget_multi_helper_"+id).css({left: pos.left - 2, top: pos.top - 2, height: $this.outerHeight() + 2, width: $this.outerWidth()  + 2}).show();
 
+        dui.draggable($this);
+
     },
     inspectWidget: function (id) {
 
@@ -1350,21 +1334,14 @@ dui = $.extend(true, dui, {
     // Init all edit fields for one view
     changeViewEdit: function (view, noChange) {
 
-        console.log("changeViewEdit "+view+" "+noChange);
         $(".dashui-view.ui-selectable").selectable("destroy");
 
         $("#duiview_"+view).selectable({
             filter: "div.dashui-widget",
             tolerance: "fit",
             start: function (e, ui) {
-                console.log("selectable start");
-                //$(".widget-multi-helper").remove();
-                //dui.multiSelectedWidgets = [];
-                //dui.inspectWidget("none");
             },
             stop: function (e, ui) {
-                console.log("selectable stop");
-                console.log(e);
                 switch ($(".ui-selected").length) {
                     case 0:
                         $(".widget-multi-helper").remove();
@@ -1380,29 +1357,22 @@ dui = $.extend(true, dui, {
                 }
             },
             selecting: function (e, ui) {
-                console.log("selectable selecting");
-                console.log(ui.selecting.id);
+                console.log("selecting", e, ui);
                 if (!dui.activeWidget || dui.activeWidget == "none") {
                     dui.inspectWidget(ui.selecting.id);
-                } else {
+                } else if (ui.selecting.id != dui.activeWidget) {
                     dui.inspectWidgetMulti(ui.selecting.id);
-
                 }
-
             },
             selected: function (e, ui) {
-                console.log("selectable selected");
-                console.log(ui.selected.id);
             },
             unselecting: function (e, ui) {
-                console.log("selectable unselecting");
                 if ($("#widget_multi_helper_" + ui.unselecting.id).html()) {
                     $("#widget_multi_helper_" + ui.unselecting.id).remove();
                     dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(ui.unselecting.id), 1);
                 }
             },
             unselected: function (e, ui) {
-                console.log("selectable unselected");
             }
         });
 
@@ -1508,6 +1478,11 @@ dui = $.extend(true, dui, {
             cancel: false,
             stop: function (event, ui) {
                 var widget = ui.helper.attr("id");
+
+                if (widget != dui.activeWidget) {
+                    dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(dui.activeWidget), 1);
+                }
+
                 $("#inspect_css_top").val(ui.position.top + "px");
                 $("#inspect_css_left").val(ui.position.left + "px");
                 if (!dui.views[dui.activeView].widgets[widget].style) {
@@ -1525,13 +1500,19 @@ dui = $.extend(true, dui, {
                     dui.views[dui.activeView].widgets[mid].style.left = pos.left;
                     dui.views[dui.activeView].widgets[mid].style.top = pos.top;
                 }
-
                 dui.save();
 
             },
             start: function (event, ui) {
                 origX = ui.position.left;
                 origY = ui.position.top;
+                var widget = ui.helper.id;
+
+                if (widget != dui.activeWidget) {
+                    if (dui.multiSelectedWidgets.indexOf(dui.activeWidget) == -1) {
+                        dui.multiSelectedWidgets.push(dui.activeWidget);
+                    }
+                }
             },
             drag: function (event, ui) {
 
@@ -1546,12 +1527,18 @@ dui = $.extend(true, dui, {
                     var pos = $mWidget.position();
                     var x = pos.left + moveX;
                     var y = pos.top + moveY;
-                    $mWidget.css("left", x + "px");
-                    $mWidget.css("top", y + "px");
+                    $mWidget.css("left", x + "px").css("top", y + "px");
                     $("#widget_multi_helper_"+dui.multiSelectedWidgets[i]).css({left: x - 2, top: y - 2});
                 }
 
-                $("#widget_helper").css({left: ui.position.left - 2, top: ui.position.top - 2});
+                if (ui.helper.id == dui.activeWidget) {
+                    $("#widget_helper").css({left: ui.position.left - 2, top: ui.position.top - 2});
+                } else {
+                    var pos = $("#widget_helper").position();
+                    var x = pos.left + moveX;
+                    var y = pos.top + moveY;
+                    $("#widget_helper").css("left", x + "px").css("top", y + "px");
+                }
             }
         };
         if ($("#snap_type option:selected").val() == 1) {
@@ -2025,214 +2012,215 @@ dui = $.extend(true, dui, {
  	},
     editPosition: function () {
 
-    var save_posi;
-    if (typeof storage !== 'undefined') {
-        save_posi = storage.get("Dashui_Editor_Position");
-    }
-    save_posi = save_posi || ["free","*"];
-    dui.editorPos = save_posi[0];
+        function left() {
+            $(".ui-dialog-titlebar-minimize").show();
+            if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
+                $(".dui-editor-dialog").unwrap();
+            }
+            $("#dui_editor")
+                .dialog("option", "resizable", false)
+                .dialog("option", "draggable", false)
+                .css("height", "calc(100% - 58px)");
 
-    $(".dui-editor-dialog .ui-dialog-titlebar-buttonpane")
-        .append('<div id="dui_editor_mode"></div>')
-        .css({"z-index": 100});
-
-	if ($().xs_combo) {
-	    $("#dui_editor_mode").xs_combo({
-	        cssText: "xs_text_editor_mode",
-	        time: 750,
-	        val: save_posi[1],
-	        data: ["|<", ">|", "<", ">", "*"]
-	    });
-        $("#dui_editor_mode").change(function () {
-	        var val = $(this).xs_combo();
-			var settings = null;
-	        if (val == "|<") {
-	            left();
-	            dui.editorPos = "left";
-	            $(".ui-dialog-titlebar-minimize").show();
-	        } else if (val == ">|") {
-	            right();
-	            dui.editorPos = "right";
-	            $(".ui-dialog-titlebar-minimize").show();
-	            settings = ["right", val];
-	        } else if (val == "<") {
-	            left_ah();
-	            dui.editorPos = "left_ah";
-	            $(".ui-dialog-titlebar-minimize").hide();
-	            settings = ["left_ah", val];
-	        } else if (val == ">") {
-	            right_ah();
-	            dui.editorPos = "right_ah";
-	            $(".ui-dialog-titlebar-minimize").hide();
-	            settings = ["right_ah", val];
-	        } else if (val == "*") {
-	            free();
-	            dui.editorPos = "free";
-	            $(".ui-dialog-titlebar-minimize").show();
-	            settings = ["free", val];
-	        }
-	        if (typeof storage != 'undefined' && settings) {
-	        	storage.set("Dashui_Editor_Position", settings);
-	        }
-	    });
-	}
-
-    $(".dui-editor-dialog .ui-dialog-titlebar-buttonpane").append('<span id="button_undo" href="#" role="button">undo (ctrl-z)</span>');
-    $("#button_undo").button({
-        text: false,
-        icons: { primary: "ui-icon-arrowreturnthick-1-w"}
-    }).click(dui.undo).addClass("ui-state-disabled");
-
-
-    var _save_posi = save_posi[0] + "()";
-    eval(_save_posi);
-
-    function left() {
-        if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
-            $(".dui-editor-dialog").unwrap();
-        }
-        $("#dui_editor")
-            .dialog("option", "resizable", false)
-            .dialog("option", "draggable", false)
-            .css("height", "calc(100% - 58px)");
-
-        $(".dui-editor-dialog").css({
-            height: "calc(100% - 9px)",
-            width: "450px",
-            left: 0,
-            position: "absolute",
-            right: "auto",
-            top: 0
-        })
-    }
-
-    function right() {
-        if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
-            $(".dui-editor-dialog").unwrap();
-        }
-        $("#dui_editor")
-            .dialog("option", "resizable", false)
-            .dialog("option", "draggable", false)
-            .css("height", "calc(100% - 58px)");
-        $(".dui-editor-dialog").css({
-            height: "calc(100% - 9px)",
-            width: "450px",
-            position: "absolute",
-            right: 0,
-            left: "auto",
-            top: 0
-        })
-    }
-
-    function left_ah() {
-        var delay;
-        if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
-            $(".dui-editor-dialog").unwrap();
-        }
-        $("#dui_editor")
-            .dialog("option", "resizable", false)
-            .dialog("option", "draggable", false)
-            .css("height", "calc(100% - 58px)");
-
-        $(".dui-editor-dialog")
-            .wrapAll('<div id="dui-editor-dialog-wrap"></div>')
-            .css({
+            $(".dui-editor-dialog").css({
                 height: "calc(100% - 9px)",
                 width: "450px",
                 left: 0,
-                position: "relative",
-                right: "auto",
-                top: 0
-            })
-            .hide("slide", {direction: "left"});
-
-        $("#dui-editor-dialog-wrap")
-            .css({
-                height: "100%",
-                width: "auto",
-                left: 0,
                 position: "absolute",
                 right: "auto",
-                top: 0,
-                minWidth: "20px"
-            })
-            .mouseenter(function () {
-                clearTimeout(delay);
-                $(".dui-editor-dialog").show("slide", {direction: "left"})
-            })
-            .mouseleave(function () {
-                delay = setTimeout(function () {
-                    $(".dui-editor-dialog").hide("slide", {direction: "left"})
-                }, 750);
-            });
-    }
-
-    function right_ah() {
-        var delay;
-        if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
-            $(".dui-editor-dialog").unwrap();
-        }
-        $("#dui_editor")
-            .dialog("option", "resizable", false)
-            .dialog("option", "draggable", false)
-            .css("height", "calc(100% - 58px)");
-
-        $(".dui-editor-dialog")
-            .wrapAll('<div id="dui-editor-dialog-wrap"></div>')
-            .css({
-                height: "100%",
-                width: "450px",
-                left: "auto",
-                position: "relative",
-                right: 0,
                 top: 0
-
             })
-            .hide("slide", {direction: "right"});
+        }
 
-        $("#dui-editor-dialog-wrap")
-            .css({
+        function right() {
+            $(".ui-dialog-titlebar-minimize").show();
+            if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
+                $(".dui-editor-dialog").unwrap();
+            }
+            $("#dui_editor")
+                .dialog("option", "resizable", false)
+                .dialog("option", "draggable", false)
+                .css("height", "calc(100% - 58px)");
+            $(".dui-editor-dialog").css({
                 height: "calc(100% - 9px)",
-                width: "auto",
-                left: "auto",
+                width: "450px",
                 position: "absolute",
                 right: 0,
-                top: 0,
-                minWidth: "20px"
+                left: "auto",
+                top: 0
             })
-            .mouseenter(function () {
-                clearTimeout(delay);
-                $(".dui-editor-dialog").show("slide", {direction: "right"})
-            })
-            .mouseleave(function () {
-                delay = setTimeout(function () {
-                    $(".dui-editor-dialog").hide("slide", {direction: "right"})
-                }, 750);
-            });
-    }
-
-    function free() {
-
-        if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
-            $(".dui-editor-dialog").unwrap();
         }
-        $("#dui_editor")
-            .dialog("option", "resizable", true)
-            .dialog("option", "draggable", true)
-            .css("height", "calc(100% - 58px)");
 
-        $(".dui-editor-dialog").css({
-            position: "absolute",
-            right: 0,
-            left: "auto",
-            top: 0,
-            width: "450px",
-            height: "610px"
-        });
+        function left_ah() {
+            var delay;
+            $(".ui-dialog-titlebar-minimize").hide();
+            if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
+                $(".dui-editor-dialog").unwrap();
+            }
+            $("#dui_editor")
+                .dialog("option", "resizable", false)
+                .dialog("option", "draggable", false)
+                .css("height", "calc(100% - 58px)");
 
-    }
+            $(".dui-editor-dialog")
+                .wrapAll('<div id="dui-editor-dialog-wrap"></div>')
+                .css({
+                    height: "calc(100% - 9px)",
+                    width: "450px",
+                    left: 0,
+                    position: "relative",
+                    right: "auto",
+                    top: 0
+                })
+                .hide("slide", {direction: "left"});
 
-},
+            $("#dui-editor-dialog-wrap")
+                .css({
+                    height: "100%",
+                    width: "auto",
+                    left: 0,
+                    position: "absolute",
+                    right: "auto",
+                    top: 0,
+                    minWidth: "20px"
+                })
+                .mouseenter(function () {
+                    clearTimeout(delay);
+                    $(".dui-editor-dialog").show("slide", {direction: "left"})
+                })
+                .mouseleave(function () {
+                    delay = setTimeout(function () {
+                        $(".dui-editor-dialog").hide("slide", {direction: "left"})
+                    }, 750);
+                });
+        }
+
+        function right_ah() {
+            var delay;
+            $(".ui-dialog-titlebar-minimize").hide();
+            if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
+                $(".dui-editor-dialog").unwrap();
+            }
+            $("#dui_editor")
+                .dialog("option", "resizable", false)
+                .dialog("option", "draggable", false)
+                .css("height", "calc(100% - 58px)");
+
+            $(".dui-editor-dialog")
+                .wrapAll('<div id="dui-editor-dialog-wrap"></div>')
+                .css({
+                    height: "100%",
+                    width: "450px",
+                    left: "auto",
+                    position: "relative",
+                    right: 0,
+                    top: 0
+
+                })
+                .hide("slide", {direction: "right"});
+
+            $("#dui-editor-dialog-wrap")
+                .css({
+                    height: "calc(100% - 9px)",
+                    width: "auto",
+                    left: "auto",
+                    position: "absolute",
+                    right: 0,
+                    top: 0,
+                    minWidth: "20px"
+                })
+                .mouseenter(function () {
+                    clearTimeout(delay);
+                    $(".dui-editor-dialog").show("slide", {direction: "right"})
+                })
+                .mouseleave(function () {
+                    delay = setTimeout(function () {
+                        $(".dui-editor-dialog").hide("slide", {direction: "right"})
+                    }, 750);
+                });
+        }
+
+        function free() {
+
+            $(".ui-dialog-titlebar-minimize").show();
+            if ($(".dui-editor-dialog").parent().attr("id") == "dui-editor-dialog-wrap") {
+                $(".dui-editor-dialog").unwrap();
+            }
+            $("#dui_editor")
+                .dialog("option", "resizable", true)
+                .dialog("option", "draggable", true)
+                .css("height", "calc(100% - 58px)");
+
+            $(".dui-editor-dialog").css({
+                position: "absolute",
+                right: 0,
+                left: "auto",
+                top: 0,
+                width: "450px",
+                height: "610px"
+            });
+
+        }
+
+        var save_posi;
+        if (typeof storage !== 'undefined') {
+            save_posi = storage.get("Dashui_Editor_Position");
+        }
+        save_posi = save_posi || ["free","*"];
+        dui.editorPos = save_posi[0];
+
+        $(".dui-editor-dialog .ui-dialog-titlebar-buttonpane")
+            .append('<div id="dui_editor_mode"></div>')
+            .css({"z-index": 100});
+
+        if ($().xs_combo) {
+            $("#dui_editor_mode").xs_combo({
+                cssText: "xs_text_editor_mode",
+                time: 750,
+                val: save_posi[1],
+                data: ["|<", ">|", "<", ">", "*"]
+            });
+            $("#dui_editor_mode").change(function () {
+                var val = $(this).xs_combo();
+                var settings = null;
+                if (val == "|<") {
+                    left();
+                    dui.editorPos = "left";
+                } else if (val == ">|") {
+                    right();
+                    dui.editorPos = "right";
+                    settings = ["right", val];
+                } else if (val == "<") {
+                    left_ah();
+                    dui.editorPos = "left_ah";
+                    settings = ["left_ah", val];
+                } else if (val == ">") {
+                    right_ah();
+                    dui.editorPos = "right_ah";
+                    settings = ["right_ah", val];
+                } else if (val == "*") {
+                    free();
+                    dui.editorPos = "free";
+                    settings = ["free", val];
+                }
+                if (typeof storage != 'undefined' && settings) {
+                    storage.set("Dashui_Editor_Position", settings);
+                }
+            });
+        }
+
+        $(".dui-editor-dialog .ui-dialog-titlebar-buttonpane").append('<span id="button_undo" href="#" role="button">undo (ctrl-z)</span>');
+        $("#button_undo").button({
+            text: false,
+            icons: { primary: "ui-icon-arrowreturnthick-1-w"}
+        }).click(dui.undo).addClass("ui-state-disabled");
+
+
+        var _save_posi = save_posi[0] + "()";
+        eval(_save_posi);
+
+
+    },
     refreshWidgetSelect: function () {
         var $select_tpl = $("#select_tpl");
         $select_tpl.html("");
@@ -2439,7 +2427,9 @@ dui = $.extend(true, dui, {
                 text: false
             }).click(function (e) {
                 if (!$(this).attr("checked")) {
-                    $(this).attr("checked", true);
+                    $(this).attr("checked", true).button("refresh");
+                } else {
+                    $(this).removeAttr("checked").button("refresh");
                 }
                 var isSelected = false;
                 $(".dashui-steal-css").each(function () {
@@ -2450,6 +2440,8 @@ dui = $.extend(true, dui, {
 
                 if (isSelected && !dui.isStealCss) {
                     dui.stealCssMode();
+                } else if (!isSelected && dui.isStealCss) {
+                    dui.stealCssModeStop();
                 }
 
                 e.stopPropagation();
@@ -2458,8 +2450,28 @@ dui = $.extend(true, dui, {
             });
         })
     },
+    stealCssModeStop: function () {
+        dui.isStealCss = false;
+        $("#stealmode_content").remove();
+        $("#duiview_" + dui.activeView).selectable("enable");
+        $(".dashui-steal-css").removeAttr("checked").button("refresh");
+        $("#dui_container").removeClass("dashui-steal-cursor");
+
+    },
     stealCssMode: function () {
+        $("#duiview_" + dui.activeView).selectable("disable");
         dui.isStealCss = true;
+        $(".widget_multi_helper").remove();
+        dui.multiSelectedWidgets = [];
+
+        if (!$('#stealmode_content').length) {
+            $('body').append('<div id="stealmode_content" style="display:none" class="dashui-stealmode">CSS steal mode</div>')
+            $("#stealmode_content").fadeIn('fast')
+                .click(function() {
+                    $(this).fadeOut("slow");
+                });
+        }
+
         $(".dashui-widget").one("click", function (e) {
             e.stopImmediatePropagation();
             e.stopPropagation();
@@ -2476,6 +2488,7 @@ dui = $.extend(true, dui, {
 
             $(".dashui-steal-css").each(function () {
                 if ($(this).attr("checked")) {
+                    $(this).removeAttr("checked").button("refresh");
                     var cssAttribute = $(this).attr("data-dashui-steal");
                     if (cssAttribute.match(/border-/) || cssAttribute.match(/padding/)) {
                         var val = dui.combineCssShorthand($(src), cssAttribute);
@@ -2487,14 +2500,12 @@ dui = $.extend(true, dui, {
                 }
             });
 
-            dui.save();
+            dui.save(function () {
 
-            setTimeout(function () {
-                dui.isStealCss = false;
-                dui.inspectWidget(target.slice(1));
-                $(".dashui-steal-css").removeAttr("checked").button("refresh");
-                $("#dui_container").removeClass("dashui-steal-cursor");
-            }, 200);
+                dui.stealCssModeStop();
+                dui.inspectWidget(dui.activeWidget);
+
+            });
 
         }
     },
@@ -2570,9 +2581,8 @@ $(document).keydown(function (e) {
     if (e.which === 90 && (e.ctrlKey || e.metaKey)) {
         dui.undo();
         e.preventDefault();
-    } else
-    // Capture Delete button
-    if (e.which === 46) {
+    } else if (e.which === 46) {
+        // Capture Delete button
         var $focused = $(':focus');
         if (!$focused.length && dui.activeWidget) {
             if (!document.getElementById('dialog_delete')) {
@@ -2581,6 +2591,7 @@ $(document).keydown(function (e) {
                     '<span class="ui-icon ui-icon-alert" style="display:inline-block"></span><span id="dialog_delete_content" style="display:inline-block;padding-left:10px"></span>'+
                 '</div>');
             }
+
 
 
             if (dui.multiSelectedWidgets.length) {
@@ -2592,16 +2603,22 @@ $(document).keydown(function (e) {
             var dialog_buttons = {};
             var delText = dui.translate("Delete").replace("&ouml;", "ö");
             dialog_buttons[delText] = function () {
-                $(this).dialog( "close" );
-                for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
-                    dui.delWidget(dui.multiSelectedWidgets[i]);
+                $(this).dialog("close");
+
+                var activeWidget = dui.activeWidget;
+                var multiSelectedWidgets = dui.multiSelectedWidgets;
+
+                for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
+                    dui.delWidget(multiSelectedWidgets[i], true);
                 }
-                dui.delWidget(dui.activeWidget);
+
+                dui.delWidget(activeWidget, true);
+                dui.save();
                 dui.inspectWidget("none");
-            }
+            };
             dialog_buttons[dui.translate("Cancel")] = function () {
-                $(this).dialog( "close" );
-            }
+                $(this).dialog("close");
+            };
 
             $("#dialog_delete").dialog({
                 autoOpen: true,
@@ -2622,23 +2639,35 @@ $(document).keydown(function (e) {
 
 // Copy paste mechanism
 $(window).on("paste", function(e) {
+    console.log("paste");
     var $focused = $(':focus');
     if (!$focused.length) {
         if (dui.clipboard && dui.clipboard.length) {
             var widgets = [];
             for (var i = 0, len = dui.clipboard.length; i < len; i++) {
-                dui.dupWidget(dui.clipboard[i]);
+                dui.dupWidget(dui.clipboard[i], true);
                 widgets.push(dui.activeWidget);
             }
+            dui.save();
+            console.log("inspectWidget "+widgets[0]);
             // Select main widget and add to selection the secondary ones
             dui.inspectWidget(widgets[0]);
             for (var j = 1, jlen = widgets.length; j < jlen; j++) {
+                console.log("inspectWidgetMulti "+widgets[j]);
                 dui.inspectWidgetMulti(widgets[j]);
             }
         }
     }
 }).on("copy cut", function(e) {
+    console.log("copy cut");
     var $focused = $(':focus');
+    console.log($focused);
+    console.log($focused.length, dui.activeWidget);
+
+    var activeWidget = dui.activeWidget;
+    var multiSelectedWidgets = dui.multiSelectedWidgets;
+
+
     if (!$focused.length && dui.activeWidget) {
         var $clipboard_content = $('#clipboard_content');
         if (!$clipboard_content.length) {
@@ -2647,24 +2676,24 @@ $(window).on("paste", function(e) {
         }
 
         $clipboard_content.css({left: ($(document).width() - $clipboard_content.width()) / 2})
-        .click(function(){
+        .click(function() {
             $(this).fadeOut("slow");
         });
         dui.clipboard = [];
-        dui.clipboard[0] = {widget: JSON.stringify(dui.views[dui.activeView].widgets[dui.activeWidget]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
+        dui.clipboard[0] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.activeWidget]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
         var widgetNames = dui.activeWidget;
         if (dui.multiSelectedWidgets.length) {
             for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
                 widgetNames += ', ' + dui.multiSelectedWidgets[i];
-                dui.clipboard[i + 1] = {widget: JSON.stringify(dui.views[dui.activeView].widgets[dui.multiSelectedWidgets[i]]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
+                dui.clipboard[i + 1] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.multiSelectedWidgets[i]]), view: (e.type == 'copy') ? dui.activeView : '---copied---'};
             }
         }
 
         if (e.type == 'cut') {
-            for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
-                dui.delWidget(dui.multiSelectedWidgets[i]);
+            for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
+                dui.delWidget(multiSelectedWidgets[i], true);
             }
-            dui.delWidget(dui.activeWidget);
+            dui.delWidget(activeWidget);
             dui.inspectWidget("none");
         }
 

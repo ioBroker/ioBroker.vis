@@ -600,7 +600,6 @@ var dui = {
         //   $.homematic("addUiState", widget.data.hm_id, widget.data.hm_wid);
 
         var widgetData = dui.widgets[id]["data"];
-        widgetData.hm_id = widgetData.hm_id; //$.homematic("escape", widgetData.hm_id);
 
         try {
             // Append html element to view
@@ -623,6 +622,9 @@ var dui = {
 
             // If edit mode, bind on click event to open this widget in edit dialog
             if (dui.urlParams["edit"] === "") {
+
+                // TODO replace by jqui selectable
+                /*
                 $("#" + id).click(function (e) {
 
                     if (e.shiftKey) {
@@ -648,7 +650,7 @@ var dui = {
                     e.preventDefault();
                     e.stopPropagation();
                     return false;
-                });
+                });*/
 
                 if (dui.activeWidget == id) {
                     if (!widgetData || !widgetData._no_move) {
@@ -944,7 +946,7 @@ var dui = {
         });
     },
     translate: function (text, arg) {
-        if (!this.words) {
+        /*if (!this.words) {
             this.words = {
                 'No connection to Server'      : {'en' : 'No connection to Server',      'de': 'Keine Verbindung zu Server',  'ru': 'Нет соединения с сервером'},
                 ' done.<br/>'                  : {'en' : ' done.<br/>',                  'de': ' - erledigt.<br/>',           'ru': '. Закончено.<br/>'},
@@ -972,7 +974,7 @@ var dui = {
 
         if (arg !== undefined) {
             text = text.replace('%s', arg);
-        }
+        }*/
         return text;
     },
     waitScreenVal: 0,

@@ -291,8 +291,8 @@ div#dui_editor {
     width:100%;
 }
 .dashui-clipboard {
-    position: absolute; 
-    top: 0px; 
+    position: absolute;
+    top: 0px;
     padding-top: 4px;
     padding-bottom: 4px;
     padding-left: 14px;
@@ -305,7 +305,28 @@ div#dui_editor {
     -moz-border-radius-bottomright: 7px;
     -moz-border-radius-bottomleft: 7px;
     border-bottom-right-radius: 7px;
-    border-bottom-left-radius: 7px;}
+    border-bottom-left-radius: 7px;
+}
+
+.dashui-stealmode {
+    position: absolute;
+    top: 0px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 14px;
+    padding-right: 14px;
+    background-color: orange;
+    opacity: 0.8;
+    z-index:1003;
+    -webkit-border-bottom-right-radius: 7px;
+    -webkit-border-bottom-left-radius: 7px;
+    -moz-border-radius-bottomright: 7px;
+    -moz-border-radius-bottomleft: 7px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
+}
+
+
 /* ---------------------- Sample for table widget ------------------------- */
 .tclass-overflow {
     overflow-y: auto;
