@@ -2658,7 +2658,10 @@ $(document).keydown(function (e) {
             }
 
 
+            // TODO @Bluefox - in my opinion we don't need a confirm dialog here - we have Undo and the Delete Widget Button
+            // in the Editor also doesn't want a confirmation, i think without it's more consistent. What do you think?
 
+            /*
             if (dui.multiSelectedWidgets.length) {
                 $("#dialog_delete_content").html(dui.translate("Do you want delete %s widgets?", dui.multiSelectedWidgets.length + 1));
             } else {
@@ -2666,10 +2669,12 @@ $(document).keydown(function (e) {
             }
 
             var dialog_buttons = {};
+
             var delText = dui.translate("Delete").replace("&ouml;", "ö");
             dialog_buttons[delText] = function () {
                 $(this).dialog("close");
 
+            */
                 var activeWidget = dui.activeWidget;
                 var multiSelectedWidgets = dui.multiSelectedWidgets;
 
@@ -2680,6 +2685,7 @@ $(document).keydown(function (e) {
                 dui.delWidget(activeWidget, true);
                 dui.save();
                 dui.inspectWidget("none");
+            /*
             };
             dialog_buttons[dui.translate("Cancel")] = function () {
                 $(this).dialog("close");
@@ -2697,6 +2703,7 @@ $(document).keydown(function (e) {
                 },
                 buttons: dialog_buttons
             });
+            */
 	        e.preventDefault();
         }
     }
