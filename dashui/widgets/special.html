@@ -25,7 +25,7 @@
 
                         var events = $._data(node, "events");
 
-                        if (events && events.click) {
+                        if (events && events.click || node.nodeName == "INPUT" || node.nodeName == "SELECT" || node.nodeName == "BUTTON") {
                             //console.log("has click event!");
                             document.getElementById('sound_on_click').play();
                             return;
