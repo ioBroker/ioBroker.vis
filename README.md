@@ -7,6 +7,14 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta97
+* (Hobbyquaker) Fix LCARS Widgets
+* (Hobbyquaker) mehrere Widgets selektieren mit der Maus
+* (Hobbyquaker) Rahmen um alle Widgets
+* (Hobbyquaker) Fixes und Refactoring rund um cut/copy/paste/del und Multi-Selektion
+* (Hobbyquaker) steal CSS Mode Indikator
+* (Bluefox) Cut/Copy/Paste und Delete mit Tastatur, Zwischenablage
+
 ### 0.9beta96
 * (Hobbyquaker) dui.binds without jQuery.extend - huge performance improvement on loading widget-sets
 

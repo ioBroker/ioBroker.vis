@@ -25,7 +25,7 @@
 "use strict";
 
 dui = $.extend(true, dui, {
-    editVersion:            '0.9beta96',
+    editVersion:            '0.9beta97',
     toolbox:                $("#dui_editor"),
     selectView:             $("#select_view"),
     activeWidget:           "",
@@ -1590,6 +1590,9 @@ dui = $.extend(true, dui, {
         }
     },
     draggable: function (obj) {
+
+        // FIXME snapping with multi-selection when user changes snap-mode inbetween a multi-selection
+
         var origX, origY;
         var draggableOptions = {
             cancel: false,
