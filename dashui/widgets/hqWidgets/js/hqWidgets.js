@@ -892,14 +892,18 @@ var hqWidgets = {
                 var pin = document.getElementById(this.advSettings.elemName+"_pin");
                 if (pin) {
                     pin.parentQuery = this;
-                    $("#"+this.advSettings.elemName+"_pin").addClass('hq-ipcam-pin-btn').button({icons: {primary: (this.dynStates.bigPinned ? "ui-icon-pin-s" : "ui-icon-pin-w")}, text: false}).click(function( event ) {
-                        if (this.parentQuery.intern._clickTimer) return;
+                    pin._onClick = function( event ) {
+                        if (this.parentQuery.intern._clickTimer) {
+                            return;
+                        }
                         this.parentQuery.intern._clickTimer = _setTimeout(function (elem) {
-                            clearTimeout (elem.intern._clickTimer);
+                            clearTimeout(elem.intern._clickTimer);
                             elem.intern._clickTimer = null;
                         }, 500, this.parentQuery);
-                        
-                        event.preventDefault();
+
+                        if (event) {
+                            event.preventDefault();
+                        }
                         this.parentQuery.dynStates.bigPinned = !this.parentQuery.dynStates.bigPinned;
                         $(this).button({icons: {primary: (this.parentQuery.dynStates.bigPinned ? "ui-icon-pin-s" : "ui-icon-pin-w")}});
                         // Start or stop pin timer
@@ -912,16 +916,20 @@ var hqWidgets = {
                             // Start timer
                             this.parentQuery.intern._timerID = _setTimeout(function () {
                                 if (hqWidgets.gDynamics.gShownBig) {
-                                    hqWidgets.gDynamics.gShownBig.ShowBigWindow(false); 
+                                    hqWidgets.gDynamics.gShownBig.ShowBigWindow(false);
                                     hqWidgets.gDynamics.gShownBig.intern._timerID = null;
-                                } 
+                                }
                                 hqWidgets.gDynamics.gShownBig=null;
                             }, this.parentQuery.settings.popUpDelay);
                         }
-                    });
+                    };
+                    $("#"+this.advSettings.elemName+"_pin")
+                    .addClass('hq-ipcam-pin-btn')
+                    .button({icons: {primary: (this.dynStates.bigPinned ? "ui-icon-pin-s" : "ui-icon-pin-w")}, text: false})
+                    .click(pin._onClick);
                     
                     if (this.dynStates.infoWindow.showPinned) {
-                        $("#"+this.advSettings.elemName+"_pin").trigger("click");
+                        pin._onClick();
                     }
                 }
                 
