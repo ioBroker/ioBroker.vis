@@ -405,7 +405,7 @@ dui = $.extend(true, dui, {
         var style;
 
         if (widget && widget.widget) {
-            var objWidget = JSON.parse(widget.widget);
+            var objWidget = widget.widget;
             targetView = dui.activeView;
             activeView = widget.view;
             tpl = objWidget.tpl;
@@ -431,7 +431,7 @@ dui = $.extend(true, dui, {
             if (widget && widget.widget) {
                 // If after copy to clipboard, the copied widget was changed, so the new modified version will be pasted and not the original one.
                 // So use JSON.
-                widget.widget = JSON.stringify(objWidget);
+                widget.widget = $.extend(true, {}, objWidget);
             }
 
             // addWidget Params: tpl, data, style, wid, view, hidden, noSave
@@ -2773,12 +2773,12 @@ dui = $.extend(true, dui, {
             }
 
             dui.clipboard = [];
-            dui.clipboard[0] = {widget: JSON.stringify(dui.views[dui.activeView].widgets[dui.activeWidget]), view: (!isCut) ? dui.activeView : '---copied---'};
+            dui.clipboard[0] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.activeWidget]), view: (!isCut) ? dui.activeView : '---copied---'};
             var widgetNames = dui.activeWidget;
             if (dui.multiSelectedWidgets.length) {
                 for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
                     widgetNames += ', ' + dui.multiSelectedWidgets[i];
-                    dui.clipboard[i + 1] = {widget: JSON.stringify(dui.views[dui.activeView].widgets[dui.multiSelectedWidgets[i]]), view: (!isCut) ? dui.activeView : '---copied---'};
+                    dui.clipboard[i + 1] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.multiSelectedWidgets[i]]), view: (!isCut) ? dui.activeView : '---copied---'};
                 }
             }
 
@@ -2793,7 +2793,7 @@ dui = $.extend(true, dui, {
             */
             $clipboard_content.html('<table><tr><td>' + dui.translate('Clipboard:') + '&nbsp;<b>' + widgetNames + '</b></td><td id="thumbnail"></td></tr></table>');
 
-            if (html2canvas) {
+            if (typeof html2canvas != "undefined") {
                 dui.getWidgetThumbnail(dui.activeWidget, 0, 0, function (canvas) {
                     $('#thumbnail').html(canvas);
                     if (isCut) {
