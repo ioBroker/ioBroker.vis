@@ -2931,7 +2931,8 @@ dui = $.extend(true, dui, {
             return false;
         }
     },
-    onButtonArrows: function (key, isSize) {
+    onButtonArrows: function (key, isSize, factor) {
+        factor = factor || 1;
         var $focused = $(':focus');
         if (!$focused.length && dui.activeWidget) {
             var what = null;
@@ -2974,6 +2975,8 @@ dui = $.extend(true, dui, {
                 }
 
             }
+
+            shift = shift * factor;
 
             for (var i = -1, len = dui.multiSelectedWidgets.length; i < len; i++) {
                 var widgetId;
@@ -3042,7 +3045,7 @@ $(document).keydown(function (e) {
     } else
     // Capture down, up, left, right for shift
     if (e.which === 37 || e.which === 38 || e.which === 40 || e.which === 39) {
-        if (dui.onButtonArrows(e.which, e.shiftKey)) {
+        if (dui.onButtonArrows(e.which, e.shiftKey, (e.ctrlKey || e.metaKey ? 10 : 1))) {
             e.preventDefault();
         }
     }
