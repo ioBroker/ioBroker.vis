@@ -424,7 +424,6 @@ dui = $.extend(true, dui, {
         var style;
 
         if (widget && widget.view) {
-            var objWidget = widget.widget;
             targetView = dui.activeView;
             activeView = widget.view;
             tpl = objWidget.tpl;
@@ -1452,6 +1451,7 @@ dui = $.extend(true, dui, {
         $("#duiview_"+view).selectable({
             filter: "div.dashui-widget",
             tolerance: "fit",
+            cancel: "div.dashui.widget",
             start: function (e, ui) {
             },
             stop: function (e, ui) {
@@ -1595,6 +1595,7 @@ dui = $.extend(true, dui, {
 
         var origX, origY;
         var draggableOptions = {
+
             cancel: false,
             start: function (event, ui) {
                 origX = ui.position.left;
@@ -1863,7 +1864,9 @@ dui = $.extend(true, dui, {
 
 		$("#del_widget").button({icons: {primary: "ui-icon-trash"}}).click(dui.delWidget);
 
-		$("#dup_widget").button({icons: {primary: "ui-icon-copy"}}).click(dui.dupWidget);
+		$("#dup_widget").button({icons: {primary: "ui-icon-copy"}}).click(function () {
+            dui.dupWidget();
+        });
 
 		$("#add_widget").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
             var tpl = $("#select_tpl option:selected").val();
