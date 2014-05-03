@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="../lib/css/jquery.multiselect.filter.css" type="text/css" />
     <link rel="stylesheet" href="widgets/colorpicker/css/farbtastic.css" type="text/css" />
     <link rel="stylesheet" href="../lib/css/jqGrid/ui.jqgrid-4.5.4.css" type="text/css" media="screen" />
+    <!-- FIXME File Missing <link rel="stylesheet" href="css/jquery.jgrowl.min.css" type="text/css" /> -->
 
     <link rel="stylesheet" href="css/backgrounds.css" />
     <link rel="stylesheet" href="css/dashui.css" />
@@ -61,6 +62,8 @@
             document.write ("<script type='text/javascript' src='../lib/js/jqGrid/i18n/grid.locale-en.js'>"+"</scr"+"ipt>\n");
         }
     </script>
+    <!-- FIXME Missing Files <script type="text/javascript" src="js/html2canvas.min.js"></script>
+    <script type="text/javascript" src="js/jquery.jgrowl.min.js"></script> -->
 
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before dashui.js -->
     <!-- Communication part -->
@@ -79,7 +82,20 @@
 
 </head>
 <body>
-	<div id='waitScreen' class='dashui-wait-screen'><div id='waitDialog' class='waitDialog'><div class='dashui-progressbar '></div><div class='dashui-wait-text' id='waitText'></div></div></div>
+	<div id='waitScreen' class='dashui-wait-screen'>
+        <div id='waitDialog' class='waitDialog'>
+            <div class='dashui-progressbar '></div>
+            <div class='dashui-wait-text' id='waitText'></div>
+        </div>
+    </div>
+
+    <div style="display: none;text-align: center" id="dialog_delete">
+        <table style="height: 100%;width: 100%">
+            <tr><td><span class="ui-icon ui-icon-alert" style="display:inline-block"></span><span id="dialog_delete_content" style="display:inline-block;padding-left:10px"></span></td></tr>
+            <tr><td style="text-align: left; vertical-align: bottom"><input type="checkbox" id="dialog_delete_is_show" style="display:inline-block;padding-left:10px">
+                <span class="translate">Do not ask again</span></td></tr>
+        </table>
+    </div>
 
     <div id="dui_container" style="position: absolute; top: 0; left: 0; height:100%; width:100%">
         <div id="widget_helper">
@@ -699,10 +715,10 @@
             <input type="text" id="name_import_view">
             <button id="start_import_view">import</button>
         </div>
-        <div style="display: none;text-align: center" id="dialog_delete">
-            <span class="ui-icon ui-icon-alert" style="display:inline-block"></span><span id="dialog_delete_content" style="display:inline-block;padding-left:10px"></span>
-        </div>
     </div>
+
+    <div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>
+
 
 </body>
 </html>

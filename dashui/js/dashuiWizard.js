@@ -181,9 +181,7 @@ dui = $.extend(true, dui, {
 		var data = {"filterkey":func, "hqoptions": JSON.stringify (hqoptions)};
 		var wid = dui.addWidget (widgetName, data, style, null, view);
         $("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
-        if ($().multiselect) {
-            $("#select_active_widget").multiselect("refresh");
-        }
+        $("#select_active_widget").multiselect("refresh");
 		return wid;
 	},
 	wizardIsWidgetExists: function (view, widgetName) {
@@ -208,30 +206,22 @@ dui = $.extend(true, dui, {
 		if (!dui.wizardIsWidgetExists (view, "tplTwSimpleClock")) {
 			var wid = dui.addWidget ("tplTwSimpleClock", {"hideSeconds": "true"});
 			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
-            if ($().multiselect) {
-                $("#select_active_widget").multiselect("refresh");
-            }
+            $("#select_active_widget").multiselect("refresh");
 		}
 		if (!dui.wizardIsWidgetExists (view, "tplTwSimpleDate")) {
 			var wid = dui.addWidget ("tplTwSimpleDate", {"showWeekDay": "true"});
 			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
-            if ($().multiselect) {
-                $("#select_active_widget").multiselect("refresh");
-            }
+            $("#select_active_widget").multiselect("refresh");
 		}
 		if (!dui.wizardIsWidgetExists (view, "tplTwYahooWeather")) {
 			var wid = dui.addWidget ("tplTwYahooWeather", data, {"width": 205, "height": 229});
 			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
-            if ($().multiselect) {
-                $("#select_active_widget").multiselect("refresh");
-            }
+            $("#select_active_widget").multiselect("refresh");
 		}
 		if (!dui.wizardIsWidgetExists (view, "tplHqEventlist")) {
 			var wid = dui.addWidget ("tplHqEventlist", data);
 			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
-            if ($().multiselect) {
-                $("#select_active_widget").multiselect("refresh");
-            }
+            $("#select_active_widget").multiselect("refresh");
 		}
 	},
 	wizardRunOneRoom: function (view, roomID, funcs, widgets) {

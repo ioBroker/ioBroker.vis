@@ -2674,7 +2674,12 @@ var idSelect = {
                             $('#selectId_selectButton').prop("disabled", true).addClass("ui-state-disabled");
                         } else {
                             that._openPath(that._options.selectedID);
-                            $('.select_'+that._options.selectedID).addClass('ui-state-highlight')[0].scrollIntoView(true);
+                            var $sel = $('.select_'+that._options.selectedID).addClass('ui-state-highlight');
+                            if ($sel.length) {
+                                $sel[0].scrollIntoView(true);
+                            } else {
+                                console.log("Error: cannot find elemnt " + that._options.selectedID);
+                            }
                         }
 
                     },

@@ -24,7 +24,7 @@
 
 var dui = {
 
-    version:                '0.9beta97',
+    version:                '0.9beta98',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -37,6 +37,7 @@ var dui = {
     activeView:             "",
     widgetSets:             duiConfig.widgetSets,
     words:                  null,
+    // TODO Rename ccuIoLang to server lang in the next version. (Server must support this new name)
     language:               (typeof ccuIoLang === 'undefined') ? 'en': (ccuIoLang || 'en'),
     initialized:            false,
     useCache:               true,
@@ -50,7 +51,7 @@ var dui = {
     toLoadSetsCount:        0, // Count of widget sets that should be loaded
     isFirstTime:            true,
     authRunning:            false,
-    viewFile:               window.location.search ? "dashui-views-" + window.location.search.slice(1) + ".json" : "dashui-views.json",
+    viewFileSuffix:         window.location.search ? "-" + window.location.search.slice(1) : "",
 
     loadWidgetSet: function (name, callback) {
         //console.log("loadWidgetSet("+name+")");
@@ -387,7 +388,7 @@ var dui = {
         dui.changeView(dui.activeView);
     },
     initViewObject: function () {
-        if (confirm(dui.translate("no views found on server.\nCreate new %s ?", dui.viewFile))) {
+        if (confirm(dui.translate("no views found on server.\nCreate new %s ?", "dashui.views" + dui.viewFileSuffix + ".json"))) {
             dui.views = {view1: {settings: {style: {}}, widgets: {}}};
             dui.saveRemote();
             window.location.href = './edit.html' + window.location.search;
@@ -792,9 +793,9 @@ var dui = {
     },
     loadRemote: function (callback, callbackArg) {
         dui.showWaitScreen(true, "<br/>Loading Views...<br/>", null, 12.5);
-        dui.conn.readFile(dui.viewFile, function (data, err) {
+        dui.conn.readFile("dashui-views" + dui.viewFileSuffix + ".json", function (data, err) {
             if (err) {
-                alert(dui.viewFile + " " + err);
+                alert("dashui-views" + dui.viewFileSuffix + ".json" + " " + err);
             }
             if (data) {
                 if (typeof data == "string") {
@@ -828,7 +829,7 @@ var dui = {
             dui.syncWidget(dui.activeWidget);
         }
         
-        dui.conn.writeFile(dui.viewFile, dui.views, function () {
+        dui.conn.writeFile("dashui-views" + dui.viewFileSuffix + ".json", dui.views, function () {
             dui.saveRemoteActive = false;
             if (cb) {
                 cb();
@@ -892,7 +893,7 @@ var dui = {
         }
         return id;
     },
-    translateAll: function (lang) {
+    translateAll: function () {
         var lang  = dui.language || 'en';
 
         $(".translate").each(function (idx) {
@@ -918,6 +919,32 @@ var dui = {
                 'Connecting to Server...<br/>' : {'en' : 'Connecting to Server...<br/>', 'de': 'Verbinde mit Server...<br/>', 'ru': 'Соединение с сервером...<br/>'},
                 'Loading data objects...'      : {'en' : 'Loading data...',              'de': 'Lade Daten...',               'ru': 'Загрузка данных...'},
                 'Loading data values...'       : {'en' : 'Loading values...<br/>',       'de': 'Lade Werte...<br/>',          'ru': 'Загрузка значений...<br/>'},
+                'error - View doesn\'t exist'  : {'en' : 'View doesn\'t exist!',         'de': 'View existiert nicht!',       'ru': 'Страница не существует!'},
+                'No Views found on Server' : {
+                    'en': 'No Views found on Server',
+                    'de': 'Keine Views gefunden am Server.',
+                    'ru': 'На сервеое не найдено никаких страниц.'
+                },
+                'All changes are saved locally. To reset changes clear the cache.'      : {
+                    'en': 'All changes are saved locally. To reset changes clear the browser cache.',
+                    'de': 'Alle Änderungen sind lokal gespeichert. Um Änderungen zu löschen, lösche Browsercache.',
+                    'ru': 'Все изменения сохранены локально. Для отмены локальных изменений очистите кеш броузера.'
+                },
+                'please use /dashui/edit.html instead of /dashui/?edit': {
+                    'en': 'Please use /dashui/edit.html instead of /dashui/?edit',
+                    'de': 'Bitte geben Sie /dashui/edit.html statt /dashui/?edit',
+                    'ru': 'Используйте /dashui/edit.html вместо /dashui/?edit'
+                },
+                'no views found on server.\nCreate new %s ?' : {
+                    'en' : 'no views found on server.\nCreate new %s?',
+                    'de': 'Keine Views gefunden am Server.\nErzeugen %s?',
+                    'ru': 'На сервеое не найдено никаких страниц. Создать %s?'
+                },
+                'Update found, loading new Files...'  : {
+                    'en' : 'Update found, loading new Files...',
+                    'de': 'Neue Dateien gefunden. Lade neue Version...',
+                    'ru': 'Обнаружено Обновление. Загружаю новые файлы...'
+                },
                 'Loading Widget-Sets... <span id="widgetset_counter"></span>' : {
                     'en': 'Loading Widget-Sets... <span id="widgetset_counter"></span>',
                     'de': 'Lade Widget-Sätze... <span id="widgetset_counter"></span>',
@@ -1681,9 +1708,9 @@ var servConn = {
             //local
 
             // Try load views from local storage
-            if (filename == 'dashui-views.json') {
+            if (filename.indexOf('dashui-views') != -1) {
                 if (typeof storage !== 'undefined') {
-                    dui.views = storage.get('dashui-views');
+                    dui.views = storage.get(filename);
                     if (dui.views) {
                         callback(dui.views);
                         return;
@@ -1712,13 +1739,12 @@ var servConn = {
                     }
                     callback(dui.views);
                     if (!dui.views) {
-                        // TODO Translate
-                        alert('No Views found on Server');
+                        alert(dui.translate('No Views found on Server'));
                     }
                 },
                 error: function (state) {
                     // TODO Translate
-                    alert('Cannot get '+ location.href+'datastore/'+filename + '\n' + state.statusText);
+                    alert('Cannot get ' + location.href + '/../datastore/'+filename + '\n' + state.statusText);
                     callback([]);
                 }
             });
@@ -1762,11 +1788,11 @@ var servConn = {
                 }
             });
         } else if (this._type == 2) {
-            if (filename == 'dashui-views.json') {
+            if (filename.indexOf('dashui-views') != -1) {
                 if (typeof storage !== 'undefined') {
-                    storage.set('dashui-views', dui.views);
+                    storage.set(filename, dui.views);
                     if (!storage.get('localWarnShown')) {
-                        window.alert(dui.translate('All changes are saved locally. To reset changes clear the cache.'));
+                        alert(dui.translate('All changes are saved locally. To reset changes clear the cache.'));
                         storage.set('localWarnShown', true);
                     }
                     if (callback) {
@@ -1921,7 +1947,7 @@ var servConn = {
             // local
             // Load from ../datastore/local-data.json the demo views
             jQuery.ajax({
-                url: '../datastore/local-data.json',
+                url: '../datastore/local-data' + dui.viewFileSuffix + '.json',
                 type: 'get',
                 async: false,
                 dataType: 'text',
@@ -1931,7 +1957,11 @@ var servConn = {
                     localData.metaIndex   = _localData.metaIndex;
                     localData.metaObjects = _localData.metaObjects;
                     for (var dp in _localData.uiState) {
-                        localData.uiState.attr(dp, _localData.uiState[dp]);
+                        try {
+                            localData.uiState.attr(dp, _localData.uiState[dp]);
+                        } catch(e) {
+                            console.log("Cannot export " + dp);
+                        }
                     }
                     callback(null);
                 },
@@ -2267,6 +2297,6 @@ function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
 }
 
 if (window.location.search == "?edit") {
-    alert("please use /dashui/edit.html instead of /dashui/?edit");
+    alert(dui.translate("please use /dashui/edit.html instead of /dashui/?edit"));
     location.href="./edit.html" + window.location.hash;
 }

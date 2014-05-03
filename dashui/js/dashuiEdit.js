@@ -35,6 +35,8 @@ dui = $.extend(true, dui, {
     undoHistoryMaxLength:   50,
     multiSelectedWidgets:   [],
     clipboard:              null,
+    undoHistory:            [],
+    selectable:             false,
 
     renameView: function (newName) {
             dui.views[newName] = $.extend(true, {}, dui.views[dui.activeView]);
@@ -100,7 +102,7 @@ dui = $.extend(true, dui, {
             var text = $("#textarea_import_view").val();
             var importView = JSON.parse(text);
         } catch (e) {
-            alert("invalid JSON\n\n"+e);
+            alert(dui.translate("invalid JSON") + "\n\n"+e);
             return;
         }
         dui.views[name] = importView;
@@ -115,18 +117,14 @@ dui = $.extend(true, dui, {
             dui.changeView(name);
             window.location.reload();
         });
-
-
     },
     checkNewView: function (name) {
         name = name || $("#new_view_name").val().trim();
         if (name == "") {
-            // TODO Translate
-            alert("Bitte einen Namen für die neue View eingeben!");
+            alert(dui.translate("Please enter the name for the new view!"));
             return false;
         } else if (dui.views[name]) {
-            // TODO Translate
-            alert("Eine View mit diesem Namen existiert bereits!");
+            alert(dui.translate("The view with the same name yet exists!"));
             return false;
         } else {
             return name;
@@ -198,10 +196,7 @@ dui = $.extend(true, dui, {
 
         var $select_active_widget = $("#select_active_widget");
         $select_active_widget.find('option[value="' + id + '"]').remove();
-
-        if ($().multiselect) {
-            $select_active_widget.multiselect("refresh");
-        }
+        $select_active_widget.multiselect("refresh");
 
 		var view = dui.getViewOfWidget(id);
 		
@@ -230,7 +225,9 @@ dui = $.extend(true, dui, {
         if (typeof widget != "string") {
             widget = null;
         }
-		dui.clearWidgetHelper();
+        if (!widget) {
+            dui.clearWidgetHelper();
+        }
 		dui.delWidgetHelper(widget || dui.activeWidget, true);
 		if (!noSave) {
             dui.save();
@@ -240,46 +237,43 @@ dui = $.extend(true, dui, {
         }
     },
     bindWidgetClick: function (id) {
+        if (dui.selectable) {
+            return;
+        }
+
         $("#" + id).click(function (e) {
-            var widgetData = dui.widgets[id]["data"];
-            //console.log("click id="+id+" active="+dui.activeWidget);
+            var widgetId = $(this).attr('id');
+            var widgetData = dui.widgets[widgetId]["data"];
+            console.log("click id="+widgetId+" active="+dui.activeWidget);
             //console.log(dui.multiSelectedWidgets);
             if (e.shiftKey || e.ctrlKey || e.metaKey) {
-
-                // FIXME remove dirty workaround - find bug that causes activeWidget to be twice or even more often in Array...
-                var unique = [];
-                $.each(dui.multiSelectedWidgets, function (i, el) {
-                    if($.inArray(el, unique) === -1) unique.push(el);
-                });
-                dui.multiSelectedWidgets = unique;
-
-                if (dui.activeWidget && dui.activeWidget != "none" && dui.activeWidget != id) {
-                    if (dui.multiSelectedWidgets.indexOf(id) != -1) {
+                if (dui.activeWidget && dui.activeWidget != "none" && dui.activeWidget != widgetId) {
+                    if (dui.multiSelectedWidgets.indexOf(widgetId) != -1) {
                         //console.log("splice "+id)
-                        dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(id), 1);
-                        $("#"+id).removeClass("ui-selected");
+                        dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(widgetId), 1);
+                        $("#"+widgetId).removeClass("ui-selected");
 
                         //console.log("-> "+dui.multiSelectedWidgets);
                         dui.allWidgetsHelper();
-                        $("#widget_multi_helper_"+id).remove();
-                        var $widget = $("#" + id);
+                        $("#widget_multi_helper_"+widgetId).remove();
+                        var $widget = $("#" + widgetId);
                         if ($widget.hasClass("ui-draggable")) {
                             try {
                                 $widget.draggable("destroy");
                             } catch (e) {
-                                console.log("inspectWidget "+id+" "+e)
+                                console.log("inspectWidget "+widgetId+" "+e)
                             }
                         }
                     } else {
-                        dui.inspectWidgetMulti(id);
+                        dui.inspectWidgetMulti(widgetId);
                     }
-                } else if (dui.activeWidget && dui.activeWidget == id && dui.multiSelectedWidgets.length) {
+                } /*else if (0 && dui.activeWidget == widgetId && dui.multiSelectedWidgets.length) {
                     //console.log("click inspected Widget");
 
-                    if (dui.multiSelectedWidgets.indexOf(id) != -1) {
-                        //console.log("splice "+id)
-                        dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(id), 1);
-                        $("#" + id).removeClass("ui-selected");
+                    if (dui.multiSelectedWidgets.indexOf(widgetId) != -1) {
+                        //console.log("splice "+widgetId)
+                        dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(widgetId), 1);
+                        $("#" + widgetId).removeClass("ui-selected");
                     }
 
                     //console.log(dui.multiSelectedWidgets);
@@ -294,21 +288,17 @@ dui = $.extend(true, dui, {
                         }
                         dui.allWidgetsHelper();
                     }
+                }*/
+            } else {
+                if (dui.activeWidget != widgetId) {
+                    dui.inspectWidget(widgetId);
                 }
             }
-
-            // FIXME remove dirty workaround - find bug that causes activeWidget to be twice or even more often in Array...
-            var unique = [];
-            $.each(dui.multiSelectedWidgets, function (i, el) {
-                if($.inArray(el, unique) === -1) unique.push(el);
-            });
-            dui.multiSelectedWidgets = unique;
 
             e.preventDefault();
             e.stopPropagation();
             return false;
         });
-
     },
     addWidget: function (tpl, data, style, wid, view, hidden, noSave) {
         //console.log("addWidget "+wid);
@@ -423,7 +413,8 @@ dui = $.extend(true, dui, {
         var data;
         var style;
 
-        if (widget && widget.view) {
+        if (widget && widget.widget) {
+            var objWidget = JSON.parse(widget.widget);
             targetView = dui.activeView;
             activeView = widget.view;
             tpl = objWidget.tpl;
@@ -446,16 +437,19 @@ dui = $.extend(true, dui, {
             style.top  += 10;
             style.left += 10;
             // Store new settings
-            if (widget) {
-                widget.widget = $.extend(true, {}, objWidget);
+            if (widget && widget.widget) {
+                // If after copy to clipboard, the copied widget was changed, so the new modified version will be pasted and not the original one.
+                // So use JSON.
+                widget.widget = JSON.stringify(objWidget);
             }
 
             // addWidget Params: tpl, data, style, wid, view, hidden, noSave
             dui.activeWidget = dui.addWidget(tpl, data, style, undefined, undefined, undefined, noSave);
 
-            $("#select_active_widget").append("<option value='"+dui.activeWidget+"'>"+dui.activeWidget+" ("+$("#"+dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-dashui-name")+")</option>").multiselect("refresh");
+            $("#select_active_widget").append("<option value='"+dui.activeWidget+"'>"+dui.activeWidget+" ("+$("#"+dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-dashui-name")+")</option>")
+            .multiselect("refresh");
 
-            if (!widget) {
+            if (!widget || !widget.widget) {
                 setTimeout(function () {
                     dui.inspectWidget(dui.activeWidget);
                     if (!noSave) {
@@ -471,9 +465,8 @@ dui = $.extend(true, dui, {
             if (!noSave) {
                 dui.save();
             }
-            if (!widget) {
-                // TODO Translate
-                alert(dui.translate("Widget copied to view %s", targetView) + ".");
+            if (!widget || !widget.widget) {
+                dui.showHint(dui.translate("Widget copied to view %s", targetView) + ".", 30000);
             }
         }
     },
@@ -484,10 +477,8 @@ dui = $.extend(true, dui, {
 		// create new widget with the same properties
 		if (view) {
 			dui.addWidget(dui.views[view].widgets[oldId].tpl, dui.views[view].widgets[oldId].data, dui.views[view].widgets[oldId].style, newId, view);
-            $("#select_active_widget").append("<option value='"+newId+"'>"+newId+" ("+$("#"+dui.views[view].widgets[newId].tpl).attr("data-dashui-name")+")</option>");
-            if ($().multiselect) {
-                $("#select_active_widget").multiselect("refresh");
-            }
+            $("#select_active_widget").append("<option value='"+newId+"'>"+newId+" ("+$("#"+dui.views[view].widgets[newId].tpl).attr("data-dashui-name")+")</option>")
+            .multiselect("refresh");
 			dui.delWidgetHelper(oldId, false);
 		}
 		dui.inspectWidget(newId);
@@ -939,46 +930,53 @@ dui = $.extend(true, dui, {
 
         $("#dui_container").append('<div id="widget_multi_helper_'+id+'" class="widget_multi_helper"><div class="widget_multi_inner_helper"></div></div>');
 
-        $("#widget_multi_helper_"+id).css({left: pos.left - 2, top: pos.top - 2, height: $this.outerHeight() + 2, width: $this.outerWidth()  + 2}).show();
+        $("#widget_multi_helper_"+id).css({
+            left   : pos.left - 2,
+            top    : pos.top - 2,
+            height : $this.outerHeight() + 2,
+            width  : $this.outerWidth() + 2}
+        ).show();
 
         dui.draggable($this);
 
     },
-    inspectWidget: function (id) {
+    inspectWidget: function (id, onlyUpdate) {
+        if (id == 'none')
+            console.log(id);
 
         if (dui.isStealCss) {
             return false;
         }
 
-        $(".widget_multi_helper").remove();
-        dui.multiSelectedWidgets = [];
+        if (!onlyUpdate) {
+            $(".widget_multi_helper").remove();
+            dui.multiSelectedWidgets = [];
 
-        $("#select_active_widget").find("option[value='"+id+"']").prop("selected", true);
-        if ($().multiselect) {
+            $("#select_active_widget").find("option[value='"+id+"']").prop("selected", true);
             $("#select_active_widget").multiselect("refresh");
+
+            // Alle Widgets de-selektieren und Interaktionen entfernen
+            $(".dashui-widget").each(function () {
+
+                $(this).removeClass("dashui-widget-edit");
+
+                if ($(this).hasClass("ui-draggable")) {
+                    try {
+                        $(this).draggable("destroy");
+                    } catch (e) {
+                        console.log("inspectWidget "+id+" "+e)
+                    }
+                }
+
+                if ($(this).hasClass("ui-resizable")) {
+                    try {
+                        $(this).resizable("destroy");
+                    } catch (e) {
+                        console.log("inspectWidget "+id+" "+e)
+                    }
+                }
+            });
         }
-
-        // Alle Widgets de-selektieren und Interaktionen entfernen
-        $(".dashui-widget").each(function () {
-
-            $(this).removeClass("dashui-widget-edit");
-
-            if ($(this).hasClass("ui-draggable")) {
-                try {
-                    $(this).draggable("destroy");
-                } catch (e) {
-                    console.log("inspectWidget "+id+" "+e)
-                }
-            }
-
-            if ($(this).hasClass("ui-resizable")) {
-                try {
-                    $(this).resizable("destroy");
-                } catch (e) {
-                    console.log("inspectWidget "+id+" "+e)
-                }
-            }
-        });
 
         // Clear Inspector
         $("#widget_attrs").html("");
@@ -1314,6 +1312,7 @@ dui = $.extend(true, dui, {
             }); 
         }
 		
+        // Put all view names in the select element
 		$('#inspect_views').html("");
 		var views = dui.getViewsOfWidget(dui.activeWidget);
 		for (var v in dui.views) {
@@ -1329,33 +1328,30 @@ dui = $.extend(true, dui, {
 			}
 		}
 
-        if ($().multiselect) {
-            $('#inspect_views').multiselect({
-                minWidth: 300,
-                height: 260,
-                noneSelectedText: dui.translate("Single view"),
-                selectedText: function (numChecked, numTotal, checkedItems) {
-                    var text = "";
-                    for (var i = 0; i < checkedItems.length; i++) {
-                        text += ((text == "") ? "" : ",") + checkedItems[i].title;
-                    }
-                    return text;
-                },
-                multiple: true,
-                checkAllText:     dui.translate("Check all"),
-                uncheckAllText:   dui.translate("Uncheck all")
-                //noneSelectedText: dui.translate("Select options")
-            }).change (function () {
-                dui.syncWidget (dui.activeWidget, $(this).val());
-                dui.save ();
-            });
-        }
+        $('#inspect_views').multiselect({
+            minWidth: 300,
+            height: 260,
+            noneSelectedText: dui.translate("Single view"),
+            selectedText: function (numChecked, numTotal, checkedItems) {
+                var text = "";
+                for (var i = 0; i < checkedItems.length; i++) {
+                    text += ((text == "") ? "" : ",") + checkedItems[i].title;
+                }
+                return text;
+            },
+            multiple: true,
+            checkAllText:     dui.translate("Check all"),
+            uncheckAllText:   dui.translate("Uncheck all")
+            //noneSelectedText: dui.translate("Select options")
+        }).change (function () {
+            dui.syncWidget (dui.activeWidget, $(this).val());
+            dui.save ();
+        });
+
         // Select Widget
         $("#select_active_widget option").removeAttr("selected");
         $("#select_active_widget option[value='"+id+"']").prop("selected", true);
-        if ($().multiselect) {
-            $("#select_active_widget").multiselect("refresh");
-        }
+        $("#select_active_widget").multiselect("refresh");
 
         if ($("#snap_type option:selected").val() == 2) {
             dui.gridWidth = parseInt($("#grid_size").val());
@@ -1411,14 +1407,11 @@ dui = $.extend(true, dui, {
     allWidgetsHelper: function () {
         var $allwidgets_helper = $("#allwidgets_helper");
 
-        if (!dui.multiSelectedWidgets.length) {
-            $allwidgets_helper.hide();
-            return;
-        } else if (dui.multiSelectedWidgets.length == 1 && dui.multiSelectedWidgets == dui.activeWidget) {
-            // FIXME ... stupid workaround - activeWidget should not be in multiSelectedWidgets!
+        if (!dui.multiSelectedWidgets.length < 2) {
             $allwidgets_helper.hide();
             return;
         }
+
         var selectedWidgets = dui.multiSelectedWidgets;
         var l, r, t, b;
         selectedWidgets.push(dui.activeWidget);
@@ -1446,52 +1439,58 @@ dui = $.extend(true, dui, {
     // Init all edit fields for one view
     changeViewEdit: function (view, noChange) {
 
-        $(".dashui-view.ui-selectable").selectable("destroy");
+        if (dui.selectable) {
+            $(".dashui-view.ui-selectable").selectable("destroy");
 
-        $("#duiview_"+view).selectable({
-            filter: "div.dashui-widget",
-            tolerance: "fit",
-            cancel: "div.dashui.widget",
-            start: function (e, ui) {
-            },
-            stop: function (e, ui) {
-                var $allwidgets_helper = $("#allwidgets_helper");
-                switch ($(".ui-selected").length) {
-                    case 0:
-                        $(".widget-multi-helper").remove();
-                        dui.multiSelectedWidgets = [];
-                        dui.inspectWidget("none");
-                        $allwidgets_helper.hide();
-                        break;
-                    case 1:
-                        $(".widget-multi-helper").remove();
-                        dui.multiSelectedWidgets = [];
-                        dui.inspectWidget($(".ui-selected").attr("id"));
-                        $allwidgets_helper.hide();
-                        break;
-                    default:
-                        dui.allWidgetsHelper();
+            $("#duiview_"+view).selectable({
+                filter: "div.dashui-widget",
+                tolerance: "fit",
+				cancel: "div.dashui-widget",
+                start: function (e, ui) {
+
+                },
+                stop: function (e, ui) {
+                    console.log('stop ' + $(".ui-selected").length)
+                    var $allwidgets_helper = $("#allwidgets_helper");
+                    switch ($(".ui-selected").length) {
+                        case 0:
+                            $(".widget-multi-helper").remove();
+                            dui.multiSelectedWidgets = [];
+                            dui.inspectWidget("none");
+                            $allwidgets_helper.hide();
+                            break;
+                        case 1:
+                            $(".widget-multi-helper").remove();
+                            dui.multiSelectedWidgets = [];
+                            dui.inspectWidget($(".ui-selected").attr("id"));
+                            $allwidgets_helper.hide();
+                            break;
+                        default:
+                            dui.allWidgetsHelper();
+                    }
+                },
+                selecting: function (e, ui) {
+                    console.log('selecting ' + ui.selecting.id)
+                    if (!dui.activeWidget || dui.activeWidget == "none") {
+                        dui.inspectWidget(ui.selecting.id);
+                    } else if (ui.selecting.id != dui.activeWidget) {
+                        //console.log("selecting id="+ui.selecting.id+" active="+dui.activeWidget);
+                        dui.inspectWidgetMulti(ui.selecting.id);
+                    }
+                },
+                selected: function (e, ui) {
+                },
+                unselecting: function (e, ui) {
+                    console.log('unselecting ' + ui.unselecting.id)
+                    if ($("#widget_multi_helper_" + ui.unselecting.id).html()) {
+                        $("#widget_multi_helper_" + ui.unselecting.id).remove();
+                        dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(ui.unselecting.id), 1);
+                    }
+                },
+                unselected: function (e, ui) {
                 }
-            },
-            selecting: function (e, ui) {
-                if (!dui.activeWidget || dui.activeWidget == "none") {
-                    dui.inspectWidget(ui.selecting.id);
-                } else if (ui.selecting.id != dui.activeWidget) {
-                    //console.log("selecting id="+ui.selecting.id+" active="+dui.activeWidget);
-                    dui.inspectWidgetMulti(ui.selecting.id);
-                }
-            },
-            selected: function (e, ui) {
-            },
-            unselecting: function (e, ui) {
-                if ($("#widget_multi_helper_" + ui.unselecting.id).html()) {
-                    $("#widget_multi_helper_" + ui.unselecting.id).remove();
-                    dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(ui.unselecting.id), 1);
-                }
-            },
-            unselected: function (e, ui) {
-            }
-        });
+            });
+        }
 
         if (!noChange) {
             dui.undoHistory = [$.extend(true, {}, dui.views[dui.activeView])];
@@ -1551,22 +1550,16 @@ dui = $.extend(true, dui, {
             $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-dashui-set") + " " + obj.attr("data-dashui-name") + ")</option>");
         }
 
-        if ($().multiselect) {
-            $("#select_active_widget").multiselect("refresh");
-        }
+        $("#select_active_widget").multiselect("refresh");
 
         if ($("#select_view option:selected").val() != view) {
             $("#select_view option").removeAttr("selected");
             $("#select_view option[value='" + view + "']").prop("selected", "selected");
-            if ($().multiselect) {
-                $("#select_view").multiselect("refresh");
-            }
+            $("#select_view").multiselect("refresh");
         }
         $("#select_view_copy option").removeAttr("selected");
         $("#select_view_copy option[value='" + view + "']").prop("selected", "selected");
-        if ($().multiselect) {
-            $("#select_view_copy").multiselect("refresh");
-        }
+        $("#select_view_copy").multiselect("refresh");
 
         // View CSS Inspector
         $(".dashui-inspect-view-css").each(function () {
@@ -1585,14 +1578,9 @@ dui = $.extend(true, dui, {
             dui.views[dui.activeView].settings["theme"] = "dhive";
         }
         $("#inspect_view_theme option[value='" + dui.views[dui.activeView].settings.theme + "']").prop("selected", true);
-        if ($().multiselect) {
-            $("#inspect_view_theme").multiselect("refresh");
-        }
+        $("#inspect_view_theme").multiselect("refresh");
     },
     draggable: function (obj) {
-
-        // FIXME snapping with multi-selection when user changes snap-mode inbetween a multi-selection
-
         var origX, origY;
         var draggableOptions = {
 
@@ -1600,36 +1588,12 @@ dui = $.extend(true, dui, {
             start: function (event, ui) {
                 origX = ui.position.left;
                 origY = ui.position.top;
-                var widget = ui.helper.attr("id");
-
-                //console.log("drag start widget="+widget+" activeWidget="+dui.activeWidget);
-
-                if (widget != dui.activeWidget) {
-                    if (dui.multiSelectedWidgets.indexOf(dui.activeWidget) == -1) {
-
-                        // temporary put activeWidget in multiSelectedWidgets for easier dragging handling - should be removed again in drag stop event
-                        // probably cause for annoying bug i worked around for now...
-                        dui.multiSelectedWidgets.push(dui.activeWidget);
-                    }
-                }
-
-                // FIXME remove dirty workaround - find bug that causes activeWidget to be twice or even more often in Array...
-                var unique = [];
-                $.each(dui.multiSelectedWidgets, function (i, el) {
-                    if($.inArray(el, unique) === -1) unique.push(el);
-                });
-                dui.multiSelectedWidgets = unique;
-
+                //var widget = ui.helper.attr("id");
 
                 //console.log(dui.multiSelectedWidgets);
             },
             stop: function (event, ui) {
                 var widget = ui.helper.attr("id");
-
-                if (dui.multiSelectedWidgets.indexOf(dui.activeWidget) != -1) {
-                    // remove activeWidget from multiSelectedWidgets
-                    dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(dui.activeWidget), 1);
-                }
 
                 $("#inspect_css_top").val(ui.position.top + "px");
                 $("#inspect_css_left").val(ui.position.left + "px");
@@ -1660,7 +1624,6 @@ dui = $.extend(true, dui, {
                 origY = ui.position.top;
 
                 for (var i = 0; i < dui.multiSelectedWidgets.length; i++) {
-
                     var $mWidget = $("#"+dui.multiSelectedWidgets[i]);
                     var pos = $mWidget.position();
                     var x = pos.left + moveX;
@@ -1669,25 +1632,24 @@ dui = $.extend(true, dui, {
                     $("#widget_multi_helper_"+dui.multiSelectedWidgets[i]).css({left: x - 2, top: y - 2});
 
                     if (ui.helper.attr("id") != dui.multiSelectedWidgets[i]) {
-                        $mWidget.css("left", x + "px").css("top", y + "px");
+                        $mWidget.css({left: x, top: y });
                     }
-
                 }
 
                 if (ui.helper.attr("id") == dui.activeWidget) {
-                    $("#widget_helper").css({left: ui.position.left - 2, top: ui.position.top - 2});
+                    $("#widget_helper").css({left: origX - 2, top: origY - 2});
                 } else {
-                    var pos = $("#widget_helper").position();
+                    var $mWidget = $("#"+dui.activeWidget);
+                    var pos = $mWidget.position();
                     var x = pos.left + moveX;
                     var y = pos.top + moveY;
-                    $("#widget_helper").css("left", x + "px").css("top", y + "px");
+                    $mWidget.css({left: x, top: y});
+                    $("#widget_helper").css({left: x - 2, top: y - 2});
                 }
 
                 if ($("#allwidgets_helper").is(":visible")) {
                     var pos = $("#allwidgets_helper").position();
-                    var x = pos.left + moveX;
-                    var y = pos.top + moveY;
-                    $("#allwidgets_helper").css("left", x + "px").css("top", y + "px");
+                    $("#allwidgets_helper").css({left: pos.left + moveX, top: pos.top + moveY});
                 }
             }
         };
@@ -1695,7 +1657,7 @@ dui = $.extend(true, dui, {
             draggableOptions.snap = "#dui_container div.dashui-widget";
         }
         if ($("#snap_type option:selected").val() == 2) {
-            draggableOptions.grid = [dui.gridWidth,dui.gridWidth];
+            draggableOptions.grid = [dui.gridWidth, dui.gridWidth];
         }
         obj.draggable(draggableOptions);
     },
@@ -1753,6 +1715,7 @@ dui = $.extend(true, dui, {
                 dui.editPosition();
             }
         });
+
         if ($().dialogExtend) {
             $("#dui_editor").dialogExtend({
                 "minimizable" : true,
@@ -1785,54 +1748,50 @@ dui = $.extend(true, dui, {
 
         $("#language").change(function () {
             dui.language = $(this).val();
-            ccuIoLang = dui.language;
-            dui.translateAll(dui.language);
+            dui.translateAll();
         });
 
         $("input.dashui-editor").button();
         $("button.dashui-editor").button();
 
-        if ($().multiselect) {
-            $("select.dashui-editor").each(function () {
-                $(this).multiselect({
-                    multiple: false,
-                    header: false,
-                    selectedList: 1,
-                    minWidth: $(this).attr("data-multiselect-width"),
-                    height: $(this).attr("data-multiselect-height"),
-                    checkAllText:dui.translate("Check all"),
-                    uncheckAllText:dui.translate("Uncheck all"),
-                    noneSelectedText:dui.translate("Select options")
-                });
+        $("select.dashui-editor").each(function () {
+            $(this).multiselect({
+                multiple: false,
+                header: false,
+                selectedList: 1,
+                minWidth: $(this).attr("data-multiselect-width"),
+                height: $(this).attr("data-multiselect-height"),
+                checkAllText:dui.translate("Check all"),
+                uncheckAllText:dui.translate("Uncheck all"),
+                noneSelectedText:dui.translate("Select options")
             });
-            $("select.dashui-editor-large").each(function () {
-                $(this).multiselect({
-                    multiple: false,
-                    header: false,
-                    //noneSelectedText: false,
-                    selectedList: 1,
-                    minWidth: 250,
-                    height: 410,
-                    checkAllText:dui.translate("Check all"),
-                    uncheckAllText:dui.translate("Uncheck all"),
-                    noneSelectedText:dui.translate("Select options")
-                });
+        });
+        $("select.dashui-editor-large").each(function () {
+            $(this).multiselect({
+                multiple: false,
+                header: false,
+                //noneSelectedText: false,
+                selectedList: 1,
+                minWidth: 250,
+                height: 410,
+                checkAllText:dui.translate("Check all"),
+                uncheckAllText:dui.translate("Uncheck all"),
+                noneSelectedText:dui.translate("Select options")
             });
-            $("select.dashui-editor-xlarge").each(function () {
-                $(this).multiselect({
-                    multiple: false,
-                    header: false,
-                    // noneSelectedText: false,
-                    selectedList: 1,
-                    minWidth: 420,
-                    height: 340,
-                    checkAllText:dui.translate("Check all"),
-                    uncheckAllText:dui.translate("Uncheck all"),
-                    noneSelectedText:dui.translate("Select options")
-                });
+        });
+        $("select.dashui-editor-xlarge").each(function () {
+            $(this).multiselect({
+                multiple: false,
+                header: false,
+                // noneSelectedText: false,
+                selectedList: 1,
+                minWidth: 420,
+                height: 340,
+                checkAllText:dui.translate("Check all"),
+                uncheckAllText:dui.translate("Uncheck all"),
+                noneSelectedText:dui.translate("Select options")
             });
-        }
-
+        });
 
         // Button Click Handler
 
@@ -2107,16 +2066,15 @@ dui = $.extend(true, dui, {
             $select_view.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
             $select_view_copy.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
 		}
-        if ($().multiselect) {
-            $select_view.multiselect("refresh");
 
-            $select_view_copy.multiselect({
-				minWidth: 200, 
-		    	checkAllText:dui.translate("Check all"),
-		    	uncheckAllText:dui.translate("Uncheck all"),
-		    	noneSelectedText:dui.translate("Select options")
-		   	}).multiselect("refresh");
-        }
+        $select_view.multiselect("refresh");
+
+        $select_view_copy.multiselect({
+            minWidth: 200,
+            checkAllText:dui.translate("Check all"),
+            uncheckAllText:dui.translate("Uncheck all"),
+            noneSelectedText:dui.translate("Select options")
+        }).multiselect("refresh");
 
         $select_view.change(function () {
 			dui.changeView($(this).val());
@@ -2132,11 +2090,9 @@ dui = $.extend(true, dui, {
                 $select_set.append("<option value='" + dui.widgetSets[i] + "'>" + dui.widgetSets[i] + "</option>");
 			}
 		}
-        if ($().multiselect) {
-    		$select_set.multiselect("refresh");
-        }
-		dui.refreshWidgetSelect();
+        $select_set.multiselect("refresh");
 
+		dui.refreshWidgetSelect();
 
 		//console.log("TOOLBOX OPEN");
 		$("#dui_editor").dialog("open");
@@ -2160,7 +2116,14 @@ dui = $.extend(true, dui, {
 
 		if (dui.fillWizard) {
 			dui.fillWizard();
-		}		
+		}
+
+        // Deselect active widget if click nowhere. Not required if selectable is active
+        if (!dui.selectable) {
+            $('#dui_container').click (function () {
+                dui.inspectWidget("none");
+            });
+        }
  	},
     editPosition: function () {
 
@@ -2380,9 +2343,7 @@ dui = $.extend(true, dui, {
         $(".dashui-tpl[data-dashui-set='" + current_set + "']").each(function () {
             $("#select_tpl").append("<option value='" + $(this).attr("id") + "'>" + $(this).attr("data-dashui-name") + "</option>")
         });
-        if ($().multiselect) {
-            $select_tpl.multiselect("refresh");
-        }
+        $select_tpl.multiselect("refresh");
     },
 	// Find free place for new widget
 	findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
@@ -2605,13 +2566,17 @@ dui = $.extend(true, dui, {
     stealCssModeStop: function () {
         dui.isStealCss = false;
         $("#stealmode_content").remove();
-        $("#duiview_" + dui.activeView).selectable("enable");
+        if (dui.selectable) {
+            $("#duiview_" + dui.activeView).selectable("enable");
+        }
         $(".dashui-steal-css").removeAttr("checked").button("refresh");
         $("#dui_container").removeClass("dashui-steal-cursor");
 
     },
     stealCssMode: function () {
-        $("#duiview_" + dui.activeView).selectable("disable");
+        if (dui.selectable) {
+            $("#duiview_" + dui.activeView).selectable("disable");
+        }
         dui.isStealCss = true;
         $(".widget_multi_helper").remove();
         dui.multiSelectedWidgets = [];
@@ -2689,7 +2654,6 @@ dui = $.extend(true, dui, {
         }
         return css;
     },
-    undoHistory: [],
     save: function (cb) {
         if (dui.undoHistory.length == 0 || (JSON.stringify(dui.views[dui.activeView]) != JSON.stringify(dui.undoHistory[dui.undoHistory.length - 1]))) {
             $("#button_undo").removeClass("ui-state-disabled");
@@ -2726,6 +2690,63 @@ dui = $.extend(true, dui, {
         }
 
     },
+    getWidgetThumbnail: function (widget, maxWidth, maxHeight, callback) {
+        var widObj = document.getElementById(widget);
+        if (!widObj || !callback) {
+            return;
+        }
+        maxWidth  = maxWidth  || 200;
+        maxHeight = maxHeight || 40;
+
+        if (!widObj.innerHTML || widObj.innerHTML.length > 20000) {
+            var $elem = $(widObj);
+            var newCanvas = document.createElement('canvas');
+            newCanvas.height = maxHeight;
+            newCanvas.width  = Math.ceil($elem.width() / $elem.height() * newCanvas.height);
+            if (newCanvas.width > maxWidth) {
+                newCanvas.width  = maxWidth;
+                newCanvas.height = Math.ceil($elem.height / $elem.width * newCanvas.width);
+            }
+
+            var ctx = newCanvas.getContext("2d");
+            ctx.clearRect (0, 0, newCanvas.width, newCanvas.height);
+            ctx.fillStyle="#FF0000";
+            ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            ctx.font="5px Arial";
+            ctx.fillText("Cannot render", 0, 0);
+            callback(newCanvas);
+        } else {
+            html2canvas(widObj, {
+                onrendered: function(canvas) {
+                    var newCanvas = document.createElement('canvas');
+                    newCanvas.height = maxHeight;
+                    newCanvas.width  = Math.ceil(canvas.width / canvas.height * newCanvas.height);
+                    if (newCanvas.width > maxWidth) {
+                        newCanvas.width  = maxWidth;
+                        newCanvas.height = Math.ceil(canvas.height / canvas.width * newCanvas.width);
+                    }
+                    var ctx = newCanvas.getContext("2d");
+                    ctx.clearRect (0, 0, newCanvas.width, newCanvas.height);
+                    ctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
+                    callback(newCanvas);
+                }
+            });
+        }
+    },
+    showHint: function (content, life, type, onShow) {
+        $('#growl_informator').jGrowl(content, {
+            life: (life === undefined) ? 10000 : life,
+            sticky: (life === undefined) ? false : !life,
+            afterOpen: function (e,m,o) {
+                e.click(function () {
+                    $(this).find('.jGrowl-close').trigger('jGrowl.close');
+                });
+                if (onShow) {
+                    onShow(content);
+                }
+            }
+        });
+    },
     paste: function () {
         var $focused = $(':focus');
         if (!$focused.length) {
@@ -2735,34 +2756,78 @@ dui = $.extend(true, dui, {
                     dui.dupWidget(dui.clipboard[i], true);
                     widgets.push(dui.activeWidget);
                 }
-                dui.save();
-                //console.log("inspectWidget "+widgets[0]);
-                // Select main widget and add to selection the secondary ones
+                dui.save();                // Select main widget and add to selection the secondary ones
                 dui.inspectWidget(widgets[0]);
                 for (var j = 1, jlen = widgets.length; j < jlen; j++) {
-                    //console.log("inspectWidgetMulti "+widgets[j]);
                     dui.inspectWidgetMulti(widgets[j]);
                 }
             }
         }
     },
     copy: function (isCut) {
+        var $focused = $(':focus');
+        if (!$focused.length && dui.activeWidget) {
+            var $clipboard_content = $('#clipboard_content');
+            if (!$clipboard_content.length) {
+                $('body').append('<div id="clipboard_content" style="display:none" class="dashui-clipboard" title="'+dui.translate('Click to hide')+'"></div>');
+                $clipboard_content = $('#clipboard_content');
+            }
+
+            dui.clipboard = [];
+            dui.clipboard[0] = {widget: JSON.stringify(dui.views[dui.activeView].widgets[dui.activeWidget]), view: (!isCut) ? dui.activeView : '---copied---'};
+            var widgetNames = dui.activeWidget;
+            if (dui.multiSelectedWidgets.length) {
+                for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
+                    widgetNames += ', ' + dui.multiSelectedWidgets[i];
+                    dui.clipboard[i + 1] = {widget: JSON.stringify(dui.views[dui.activeView].widgets[dui.multiSelectedWidgets[i]]), view: (!isCut) ? dui.activeView : '---copied---'};
+                }
+            }
+
+           /* dui.showHint('<table><tr><td>' + dui.translate('Clipboard:') + '&nbsp;<b>' + widgetNames + '</b></td><td id="thumbnail" width="200px"></td></tr></table>', 0, null, function () {
+            if (html2canvas) {
+                dui.getWidgetThumbnail(dui.activeWidget, 0, 0, function (canvas) {
+                    $('#thumbnail').html(canvas);
+                });
+            }
+
+            });
+            */
+            $clipboard_content.html('<table><tr><td>' + dui.translate('Clipboard:') + '&nbsp;<b>' + widgetNames + '</b></td><td id="thumbnail"></td></tr></table>');
+
+            if (html2canvas) {
+                dui.getWidgetThumbnail(dui.activeWidget, 0, 0, function (canvas) {
+                    $('#thumbnail').html(canvas);
+                    if (isCut) {
+                        for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
+                            dui.delWidget(dui.multiSelectedWidgets[i]);
+                        }
+                        dui.delWidget(dui.activeWidget);
+                        dui.inspectWidget("none");
+                    }
+                });
+            } else {
+                if (isCut) {
+                    for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
+                        dui.delWidget(dui.multiSelectedWidgets[i]);
+                    }
+                    dui.delWidget(dui.activeWidget);
+                    dui.inspectWidget("none");
+                }
+            }
+
+            $clipboard_content.css({left: ($(document).width() - $clipboard_content.width()) / 2})
+            .click(function(){
+                $(this).slideUp("slow");
+            })
+            .fadeIn('fast');
+        } else {
+            $('#clipboard_content').remove();
+        }
+/*
         //console.log("copy cut");
         var $focused = $(':focus');
         //console.log($focused);
         //console.log($focused.length, dui.activeWidget);
-
-        // FIXME remove dirty workaround - find bug that causes activeWidget to be twice or even more often in Array...
-        var unique = [];
-        $.each(dui.multiSelectedWidgets, function (i, el) {
-            if($.inArray(el, unique) === -1) unique.push(el);
-        });
-        dui.multiSelectedWidgets = unique;
-
-        // FIXME activeWidget should not be in multiSelectedWidgets!
-        if (dui.multiSelectedWidgets.indexOf(dui.activeWidget) != -1) {
-            dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(dui.activeWidget), 1);
-        }
 
         var activeWidget = dui.activeWidget;
         var multiSelectedWidgets = dui.multiSelectedWidgets;
@@ -2801,6 +2866,166 @@ dui = $.extend(true, dui, {
             $clipboard_content.fadeIn('fast');
         } else {
             $('#clipboard_content').remove();
+        }*/
+    },
+    onButtonDelete: function () {
+        var $focused = $(':focus');
+        if (!$focused.length && dui.activeWidget) {
+            var isHideDialog = false;
+            if (typeof storage != "undefined") {
+                isHideDialog = storage.get("dialog_delete_is_show");
+            }
+    
+            // TODO @Bluefox - in my opinion we don't need a confirm dialog here - we have Undo and the Delete Widget Button
+            // TODO            in the Editor also doesn't request a confirmation, i think without it's more consistent. What do you say?
+            if (!isHideDialog) {
+                if (dui.multiSelectedWidgets.length) {
+                    $("#dialog_delete_content").html(dui.translate("Do you want delete %s widgets?", dui.multiSelectedWidgets.length + 1));
+                } else {
+                    $("#dialog_delete_content").html(dui.translate("Do you want delete widget ") + dui.activeWidget + " ?");
+                }
+    
+                var dialog_buttons = {};
+    
+                var delText = dui.translate("Delete").replace("&ouml;", "ö");
+                dialog_buttons[delText] = function () {
+                    if ($('#dialog_delete_is_show').prop('checked')) {
+                        if (typeof storage != "undefined") {
+                            storage.set("dialog_delete_is_show", true);
+                        }
+                    }
+                    $(this).dialog( "close" );
+    
+                    for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
+                        dui.delWidget(dui.multiSelectedWidgets[i]);
+                    }
+                    dui.delWidget(dui.activeWidget);
+                    // dui.clearWidgetHelper(); - will be done in inspectWidget("none")
+                    dui.inspectWidget("none");
+                }
+                dialog_buttons[dui.translate("Cancel")] = function () {
+                    $(this).dialog("close");
+                };
+    
+                $("#dialog_delete").dialog({
+                    autoOpen: true,
+                    width: 500,
+                    height: 220,
+                    modal: true,
+                    title: dui.translate("Confirm widget deletion"),
+                    open: function (event, ui) {
+                        $('[aria-describedby="dialog_delete"]').css('z-index',1002);
+                        $(".ui-widget-overlay").css('z-index', 1001);
+                    },
+                    buttons: dialog_buttons
+                });
+            } else {
+                for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
+                    dui.delWidget(dui.multiSelectedWidgets[i]);
+                }
+                dui.delWidget(dui.activeWidget);
+                // dui.clearWidgetHelper(); - will be done in inspectWidget("none")
+                dui.inspectWidget("none");
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+    onButtonArrows: function (key, isSize) {
+        var $focused = $(':focus');
+        if (!$focused.length && dui.activeWidget) {
+            var what = null;
+            var shift = 0;
+            if (isSize) {
+                if (key == 39) {
+                    //Right
+                    what = "width";
+                    shift = 1;
+                } else if (key == 37) {
+                    // Left
+                    what = "width";
+                    shift = -1;
+                } else if (key == 40) {
+                    // Down
+                    what = "height";
+                    shift = 1;
+                } else if (key == 38) {
+                    // Up
+                    what = "height";
+                    shift = -1;
+                }
+            } else {
+                if (key == 39) {
+                    //Right
+                    what = "left";
+                    shift = 1;
+                } else if (key == 37) {
+                    // Left
+                    what = "left";
+                    shift = -1;
+                } else if (key == 40) {
+                    // Down
+                    what = "top";
+                    shift = 1;
+                } else if (key == 38) {
+                    // Up
+                    what = "top";
+                    shift = -1;
+                }
+
+            }
+
+            for (var i = -1, len = dui.multiSelectedWidgets.length; i < len; i++) {
+                var widgetId;
+                if (i == -1) {
+                    widgetId = dui.activeWidget;
+                } else {
+                    widgetId = dui.multiSelectedWidgets[i];
+                }
+                var $actualWidget = $('#' + widgetId);
+                if (dui.views[dui.activeView].widgets[widgetId].style[what] === undefined && $actualWidget.length) {
+                    dui.views[dui.activeView].widgets[widgetId].style[what] = $actualWidget.css(what);
+                }
+                dui.views[dui.activeView].widgets[widgetId].style[what] = parseInt(dui.views[dui.activeView].widgets[widgetId].style[what], 10) + shift;
+                if ($actualWidget.length) {
+                    var setCss = {};
+                    setCss[what] = dui.views[dui.activeView].widgets[widgetId].style[what];
+                    $actualWidget.css(setCss);
+                    if (i == -1) {
+                        $("#widget_helper").css({
+                            left:   parseInt($actualWidget.css("left")) - 2,
+                            top:    parseInt($actualWidget.css("top"))  - 2,
+                            height: $actualWidget.outerHeight() + 2,
+                            width:  $actualWidget.outerWidth() + 2
+                        });
+                    } else {
+                        $("#widget_multi_helper_" + widgetId).css({
+                            left:   parseInt($actualWidget.css("left")) - 2,
+                            top:    parseInt($actualWidget.css("top"))  - 2,
+                            height: $actualWidget.outerHeight() + 2,
+                            width:  $actualWidget.outerWidth() + 2
+                        });
+                    }
+                }
+            }
+
+            if (dui.delayedSettings) {
+                clearTimeout(dui.delayedSettings);
+            }
+            dui.delayedSettings = _setTimeout(function(widgetId) {
+                // Save new settings
+                dui.inspectWidget(widgetId, true);
+                dui.reRenderWidget(widgetId);
+                for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
+                    dui.reRenderWidget(dui.multiSelectedWidgets[i]);
+                }
+                dui.delayedSettings = null;
+                dui.save();
+            }, 1000, dui.activeWidget);
+            return true;
+        } else {
+            return false;
         }
     }
 });
@@ -2812,72 +3037,14 @@ $(document).keydown(function (e) {
         e.preventDefault();
     } else if (e.which === 46) {
         // Capture Delete button
-        var $focused = $(':focus');
-        if (!$focused.length && dui.activeWidget) {
-            if (!document.getElementById('dialog_delete')) {
-                $('body').append(
-                '<div style="display: none;text-align: center" id="dialog_delete">'+
-                    '<span class="ui-icon ui-icon-alert" style="display:inline-block"></span><span id="dialog_delete_content" style="display:inline-block;padding-left:10px"></span>'+
-                '</div>');
-            }
-
-
-            // TODO @Bluefox - in my opinion we don't need a confirm dialog here - we have Undo and the Delete Widget Button
-            // TODO            in the Editor also doesn't request a confirmation, i think without it's more consistent. What do you say?
-
-
-            if (dui.multiSelectedWidgets.length) {
-                $("#dialog_delete_content").html(dui.translate("Do you want delete %s widgets?", dui.multiSelectedWidgets.length + 1));
-            } else {
-                $("#dialog_delete_content").html(dui.translate("Do you want delete widget ") + dui.activeWidget + " ?");
-            }
-
-            var dialog_buttons = {};
-
-            var delText = dui.translate("Delete").replace("&ouml;", "ö");
-            dialog_buttons[delText] = function () {
-                $(this).dialog("close");
-
-
-
-                // FIXME remove dirty workaround - find bug that causes activeWidget to be twice or even more often in Array...
-                var unique = [];
-                $.each(dui.multiSelectedWidgets, function (i, el) {
-                    if($.inArray(el, unique) === -1) unique.push(el);
-                });
-                dui.multiSelectedWidgets = unique;
-
-
-                var activeWidget = dui.activeWidget;
-                var multiSelectedWidgets = dui.multiSelectedWidgets;
-
-                for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
-                    dui.delWidget(multiSelectedWidgets[i], true);
-                }
-
-                dui.delWidget(activeWidget, true);
-                dui.save();
-                dui.inspectWidget("none");
-
-            };
-            dialog_buttons[dui.translate("Cancel")] = function () {
-                $(this).dialog("close");
-            };
-
-            $("#dialog_delete").dialog({
-                autoOpen: true,
-                width: 500,
-                height: 180,
-                modal: true,
-                title: dui.translate("Confirm widget deletion"),
-                open: function (event, ui) {
-                    $('[aria-describedby="dialog_delete"]').css('z-index',1002);
-                    $(".ui-widget-overlay").css('z-index', 1001);
-                },
-                buttons: dialog_buttons
-            });
-
-	        e.preventDefault();
+        if (dui.onButtonDelete()) {
+            e.preventDefault();
+        }
+    } else
+    // Capture down, up, left, right for shift
+    if (e.which === 37 || e.which === 38 || e.which === 40 || e.which === 39) {
+        if (dui.onButtonArrows(e.which, e.shiftKey)) {
+            e.preventDefault();
         }
     }
 });
@@ -2887,11 +3054,28 @@ $(window).on("paste", function (e) {
     dui.paste();
 }).on("copy cut", function (e) {
     dui.copy(e.type == "cut");
-
 });
-
 
 $(document).ready(function () {
-    dui.translateAll((typeof ccuIoLang === 'undefined') ? 'en' : (ccuIoLang || 'en'));
-});
+    dui.translateAll();
 
+    // Init jGrowl
+    $.jGrowl.defaults.closer = true;
+    $.jGrowl.defaults.check = 1000;
+ 
+    if (typeof storage == 'undefined' || !storage.get('copy-hint-shown')) {
+        $('#growl_informator').jGrowl(dui.translate("You can copy, cut and paste widgets now!"), {
+            life: 30000,
+            afterOpen: function (e,m,o) {
+                e.click(function () {
+                    $(this).find('.jGrowl-close').trigger('jGrowl.close');
+                });
+            },
+            beforeClose: function () {
+                if (typeof storage !== 'undefined') {
+                    storage.set('copy-hint-shown', true);
+                }
+            }
+        });
+    }
+});

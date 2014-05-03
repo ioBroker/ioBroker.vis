@@ -4,7 +4,7 @@
 
 
 <script language="javascript">
-    //"use strict";
+    "use strict";
     // Init words
     dui.translate("");
     // Add words for bars
@@ -13,524 +13,791 @@
         "max_value"          : {"en": "Max value",      "de": "Max Wert",             "ru": "Макс. значение"}
     });
 
-    function initHighcharts () {
-        if (!dui.binds.highcharts) {
-            dui.binds.highcharts = true;
-            dui.registerOnChange (onchangeHighchart, null);
-            console.log("A");
-
-            Highcharts.setOptions({
-                global: {
-                    useUTC: false
-                }
-            });
-        }
-    }
-
-    var highchartsElements = [];
-
-    // Callback from DashUI if some object changed
-    function onchangeHighchart (arg, objId, newState, isFromDevice, lastchange) {
-        if (highchartsElements[objId]) {
-            for (var i = 0, len = highchartsElements[objId].length; i < len; i++) {
-                var elem = document.getElementById (highchartsElements[objId][i]);
-                if (elem) {
-                    if (elem.highchartValueChange) {
-                        elem.highchartValueChange (objId, newState, isFromDevice);
+    dui.binds.highcharts = {
+        regElements: null,
+        
+        initHighcharts: function () {
+            if (!dui.binds.highcharts.regElements) {
+                dui.binds.highcharts.regElements = [];
+                dui.registerOnChange (this.onchange, null);
+                console.log("A");
+    
+                Highcharts.setOptions({
+                    global: {
+                        useUTC: false
                     }
-                }
+                });
             }
-        }
-    }
-
-    function registerHighObjIds (wid, objId) {
-        if (typeof objId == "object" || typeof objId == "array") {
-            for (var i = 0, len = objId.length; i < len; i++)
-                if (objId[i] && (!highchartsElements[objId[i]] || highchartsElements[objId[i]].indexOf (wid) == -1)) {
-                    if (!highchartsElements[objId[i]]) {
-                        highchartsElements[objId[i]] = [wid];
-                    }
-                    else {
-                        highchartsElements[objId[i]].push (wid);
-                    }
-                }
-        }
-        else
-        if (!highchartsElements[objId] || highchartsElements[objId].indexOf (wid) == -1) {
-            if (!highchartsElements[objId]) {
-                highchartsElements[objId] = [wid];
-            }
-            else {
-                highchartsElements[objId].push (wid);
-            }
-        }
-    }
-
-    function createHighcharts (view, wid, _class, options) {
-        initHighcharts ();
-
-        var style    = dui.views[view].widgets[wid] ? dui.views[view].widgets[wid].style : {};
-        style.width  = style.width  || options.defaultWidth;
-        style.height = style.height || options.defaultHeight;
-
-        var just_size = {zindex: 0};
-        just_size.width  = style.width;
-        just_size.height = style.height;
-
-        var update_interval = options.update_interval;
-
-        $('#'+wid).remove ();
-        $('#duiview_' + view).append ('<div class="dashui-widget '+(_class || "")+'" id="'+wid+'">' +
-                '<div id="h'+wid+'"></div>'+
-                ((dui.urlParams['edit'] === "") ? '<div id="d_'+wid+'" style="top:0px;left:0px;width:100%;height:100%;z-index:1;position:absolute"></div>' : '')+
-                '</div>');
-        $('#'+wid).css(style);
-        $('#h'+wid).css(just_size);
-
-        return document.getElementById (wid);
-    }
-
-    function updateHighcharts (wid, chart, key) {
-        var el = document.getElementById (wid);
-        if (el && chart && chart.series && chart.series[0] && el._key == key) {
-            // set up the updating of the chart each second
-            var x = (new Date()).getTime(); // current time
-
-            for (var i = 0, len = chart.series.length; i < len; i++) {
-                var series = chart.series[i];
-                if (i == len - 1) {
-                    series.addPoint([x, el._values[i]], true, true);
-                } else {
-                    series.addPoint([x, el._values[i]], false, true);
-                }
-            }
-            if (el._options.update_interval) {
-                _setTimeout(updateHighcharts, el._options.update_interval, wid, chart, el._key);
-            }
-        }
-    }
-
-    function drawHighcharts (wid, _options) {
-        var elem = document.getElementById (wid);
-        if (_options) {
-            elem._options = _options;
-        }
-        var options = elem._options;
-
-        // set plotLines options
-        var plotLines = [];
-        var series    = [];
-        for (var i = 0, len = options.IDs.length; i < len; i++) {
-            plotLines[i] = {
-                value: 0,
-                width: 1,
-                color: '#808080'
-            };
-            series[i] = {
-                name: options.names[i],
-                width: options.thickness[i],
-                color: options.colors[i],
-                dashStyle: options.dash_style[i],
-                marker: {
-                    radius: options.radius[i],
-                    states: {
-                        hover: {
-                            radius: options.radius[i] + 2
-                        },
-                        select: {
-                            radius: options.radius[i] + 2
-                        }
-                    }
-                },
-                data: (function() {
-                    // generate an array of random data
-                    var data = [],
-                            time = (new Date()).getTime(),
-                            i;
-
-                    for (i = options.num_points * (-1); i <= 0; i++) {
-                        data.push({
-                            x: time + i * 1000,
-                            y: null//Math.random()
-                        });
-                    }
-                    return data;
-                })()
-            };
-        }
-
-        // set yAxis options
-        var yAxis = {
-            title: {
-                text: options.title_y
-            },
-            plotLines: plotLines
-        };
-        if (options.min_value != options.max_value) {
-            yAxis['min'] = options.min_value;
-            yAxis['max'] = options.max_value;
-        }
-        var $elem = $('#h'+wid);
-        $elem.width($(elem).width());
-        $elem.height($(elem).height());
-
-
-        $elem.highcharts({
-            chart: {
-                type: options.spline ? 'spline' : 'line',
-                animation: Highcharts.svg, // don't animate in old IE
-                marginRight: 0,
-                events: {
-                    load: function() {
-                        elem._key   = Math.round(Math.random()*10000);
-                        elem._chart = this;
-                        updateHighcharts (wid, this, elem._key);
-                    }
-                }
-            },
-            title: {
-                text: options.title
-            },
-            xAxis: {
-                type: 'datetime',
-                tickPixelInterval: 150,
-                title: {
-                    text: options.title_x
-                }
-            },
-            yAxis: yAxis,
-            tooltip: {
-                formatter: function() {
-                    return '<b>'+ this.series.name +'</b><br/>'+
-                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
-                            Highcharts.numberFormat(this.y, 2);
-                }
-            },
-            legend: {
-                enabled: options.legend
-            },
-            exporting: {
-                enabled: false
-            },
-            series: series
-        });
-    }
-
-    function updateHighbars (wid, chart, key) {
-        var el = document.getElementById (wid);
-        if (el && chart && chart.series && chart.series[0] && el._key == key) {
-            // set up the updating of the chart each second
-            var x = (new Date()).getTime(); // current time
-
-            var series = chart.series[1];
-            for (var i = 0, len = el._values.length; i < len; i++) {
-                if (el._options.max_values) {
-                    chart.series[0].data[i].update(el._options.max_values[i] - el._values[i]);
-                    chart.series[1].data[i].update(el._values[i]);
-                } else {
-                    chart.series[0].data[i].update(el._values[i]);
-                }
-            }
-            if (el._options.update_interval) {
-                _setTimeout(updateHighbars, el._options.update_interval, wid, chart, el._key);
-            }
-        }
-    }
-
-    function drawHighbars (wid, _options) {
-        var elem = document.getElementById (wid);
-        if (_options) {
-            elem._options = _options;
-        }
-        var options = elem._options;
-        var values  = elem._values;
-
-        // set plotLines options
-        var plotLines = [];
-        var categories = [];
-        var series;
-        if (options.max_values) {
-            series = [{
-                name: options.empty_text,
-                data: [],
-                color: options.empty_color
-            },{
-                name: options.filled_text,
-                data: [],
-                color: options.filled_color
-            }];
-        } else {
-            series = [{
-                name: options.filled_text,
-                data: [],
-                color: options.filled_color
-            }];
-        }
-
-        for (var i = 0, len = options.IDs.length; i < len; i++) {
-            plotLines[i] = {
-                value: 0,
-                width: 1,
-                color: '#808080'
-            };
-            categories[i]     = options.names[i];
-            if (options.max_values) {
-                series[0].data[i] = {y: options.max_values[i] - values[i], dataLabels: { enabled: false} };
-                series[1].data[i] = values[i];
-            } else {
-                series[0].data[i] = values[i];
-            }
-        }
-
-        var $elem = $('#h'+wid);
-        $elem.width($(elem).width());
-        $elem.height($(elem).height());
-
-        $elem.highcharts({
-            chart: {
-                type: 'column',
-                animation: Highcharts.svg, // don't animate in old IE
-                marginRight: 0,
-                events: {
-                    load: function() {
-                        elem._key   = Math.round(Math.random()*10000);
-                        elem._chart = this;
-                        if (options.update_interval) {
-                            updateHighbars(wid, this, elem._key);
+        },
+        // Callback from DashUI if some object changed
+        onchange: function (arg, objId, newState, isFromDevice) {
+            if (dui.binds.highcharts.regElements[objId]) {
+                for (var i = 0, len = dui.binds.highcharts.regElements[objId].length; i < len; i++) {
+                    var elem = document.getElementById (dui.binds.highcharts.regElements[objId][i]);
+                    if (elem) {
+                        if (elem.highchartValueChange) {
+                            elem.highchartValueChange (objId, newState, isFromDevice);
                         }
                     }
                 }
-            },
-            exporting: {
-                enabled: false
-            },
-            title: {
-                text: options.title
-            },
-            xAxis: {
-                categories: categories
-            },
-            yAxis: {
-                min: 0,
+            }
+        },
+
+        registerIds: function (wid, objId) {
+            if (typeof objId == "object" || typeof objId == "array") {
+                for (var i = 0, len = objId.length; i < len; i++)
+                    if (objId[i] && (!this.regElements[objId[i]] || this.regElements[objId[i]].indexOf (wid) == -1)) {
+                        if (!this.regElements[objId[i]]) {
+                            this.regElements[objId[i]] = [wid];
+                        }
+                        else {
+                            this.regElements[objId[i]].push (wid);
+                        }
+                    }
+            }
+            else
+            if (!this.regElements[objId] || this.regElements[objId].indexOf (wid) == -1) {
+                if (!this.regElements[objId]) {
+                    this.regElements[objId] = [wid];
+                }
+                else {
+                    this.regElements[objId].push (wid);
+                }
+            }
+        },
+
+        createHighcharts: function (view, wid, _class, options) {
+            this.initHighcharts ();
+    
+            var style    = dui.views[view].widgets[wid] ? dui.views[view].widgets[wid].style : {};
+            style.width  = style.width  || options.defaultWidth;
+            style.height = style.height || options.defaultHeight;
+    
+            var just_size = {zindex: 0};
+            just_size.width  = style.width;
+            just_size.height = style.height;
+    
+            $('#'+wid).remove ();
+            $('#duiview_' + view).append ('<div class="dashui-widget '+(_class || "")+'" id="'+wid+'">' +
+                    '<div id="h'+wid+'"></div>'+
+                    ((dui.urlParams['edit'] === "") ? '<div id="d_'+wid+'" style="top:0px;left:0px;width:100%;height:100%;z-index:1;position:absolute"></div>' : '')+
+                    '</div>');
+            $('#'+wid).css(style);
+            $('#h'+wid).css(just_size);
+    
+            return document.getElementById (wid);
+        },
+
+        updateHighcharts: function (wid, chart, key) {
+            var el = document.getElementById (wid);
+            if (el && chart && chart.series && chart.series[0] && el._key == key) {
+                // set up the updating of the chart each second
+                var x = (new Date()).getTime(); // current time
+    
+                for (var i = 0, len = chart.series.length; i < len; i++) {
+                    var series = chart.series[i];
+                    if (i == len - 1) {
+                        series.addPoint([x, el._values[i]], true, true);
+                    } else {
+                        series.addPoint([x, el._values[i]], false, true);
+                    }
+                }
+                if (el._options.update_interval) {
+                    _setTimeout(dui.binds.highcharts.updateHighcharts, el._options.update_interval, wid, chart, el._key);
+                }
+            }
+        },
+
+        drawHighcharts: function (wid, _options) {
+            var elem = document.getElementById (wid);
+            if (_options) {
+                elem._options = _options;
+            }
+            var options = elem._options;
+    
+            // set plotLines options
+            var plotLines = [];
+            var series    = [];
+            for (var i = 0, len = options.IDs.length; i < len; i++) {
+                plotLines[i] = {
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                };
+                series[i] = {
+                    name: options.names[i],
+                    width: options.thickness[i],
+                    color: options.colors[i],
+                    dashStyle: options.dash_style[i],
+                    marker: {
+                        radius: options.radius[i],
+                        states: {
+                            hover: {
+                                radius: options.radius[i] + 2
+                            },
+                            select: {
+                                radius: options.radius[i] + 2
+                            }
+                        }
+                    },
+                    data: (function() {
+                        // generate an array of random data
+                        var data = [],
+                                time = (new Date()).getTime(),
+                                i;
+    
+                        for (i = options.num_points * (-1); i <= 0; i++) {
+                            data.push({
+                                x: time + i * 1000,
+                                y: null//Math.random()
+                            });
+                        }
+                        return data;
+                    })()
+                };
+            }
+    
+            // set yAxis options
+            var yAxis = {
                 title: {
                     text: options.title_y
                 },
-                stackLabels: {
-                    enabled: true,
-                    style: {
-                        fontSize:   '20px',
-                        fontWeight: 'bold',
-                        color:      options.total_color || (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-                    }
-                }
-            },
-            legend: (options.legend === "true" || options.legend === true) ? {
-                align: 'right',
-                x: -70,
-                verticalAlign: 'top',
-                y: 20,
-                floating: true,
-                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
-                borderColor: '#CCC',
-                borderWidth: 1,
-                shadow: false
-            } : {enabled: false},
-            tooltip: options.tooltip ? {
-                formatter: function() {
-                    return (this.series.name && this.series.name !== ' ') ? ('<b>'+ this.x +'</b> - '+
-                            this.series.name +': '+ this.y) : "";
-                }
-            } : {enabled: false},
-            plotOptions: {
-                column: {
-                    stacking:    'normal',
-                    borderColor: 'black',
-                    dataLabels: {
-                        enabled: true,
-                        color: options.label_color || (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-                        style: {
-                            fontSize: '20px'//,
-                            //fontWeight: 'bold'
-                            /*textShadow: '0 0 3px black, 0 0 3px black'*/
+                plotLines: plotLines
+            };
+            if (options.min_value != options.max_value) {
+                yAxis['min'] = options.min_value;
+                yAxis['max'] = options.max_value;
+            }
+            var $elem = $('#h'+wid);
+            $elem.width($(elem).width());
+            $elem.height($(elem).height());
+    
+    
+            $elem.highcharts({
+                chart: {
+                    type: options.spline ? 'spline' : 'line',
+                    animation: Highcharts.svg, // don't animate in old IE
+                    marginRight: 0,
+                    events: {
+                        load: function() {
+                            elem._key   = Math.round(Math.random()*10000);
+                            elem._chart = this;
+                            dui.binds.highcharts.updateHighcharts (wid, this, elem._key);
                         }
                     }
+                },
+                title: {
+                    text: options.title
+                },
+                xAxis: {
+                    type: 'datetime',
+                    tickPixelInterval: 150,
+                    title: {
+                        text: options.title_x
+                    }
+                },
+                yAxis: yAxis,
+                tooltip: {
+                    formatter: function() {
+                        return '<b>'+ this.series.name +'</b><br/>'+
+                                Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+                                Highcharts.numberFormat(this.y, 2);
+                    }
+                },
+                legend: {
+                    enabled: options.legend
+                },
+                exporting: {
+                    enabled: false
+                },
+                series: series
+            });
+        },
+
+        updateHighbars: function (wid, chart, key) {
+            var el = document.getElementById (wid);
+            if (el && chart && chart.series && chart.series[0] && el._key == key) {
+                // set up the updating of the chart each second
+                var x = (new Date()).getTime(); // current time
+    
+                var series = chart.series[1];
+                for (var i = 0, len = el._values.length; i < len; i++) {
+                    if (el._options.max_values) {
+                        chart.series[0].data[i].update(el._options.max_values[i] - el._values[i]);
+                        chart.series[1].data[i].update(el._values[i]);
+                    } else {
+                        chart.series[0].data[i].update(el._values[i]);
+                    }
                 }
-            },
-            series: series
-        });
-    }
+                if (el._options.update_interval) {
+                    _setTimeout(dui.binds.highcharts.updateHighbars, el._options.update_interval, wid, chart, el._key);
+                }
+            }
+        },
 
-    /**
-     * Get the current time
-     */
-    function getNow () {
-        var now = new Date();
+        drawHighbars: function (wid, _options) {
+            var elem = document.getElementById (wid);
+            if (_options) {
+                elem._options = _options;
+            }
+            var options = elem._options;
+            var values  = elem._values;
+    
+            // set plotLines options
+            var plotLines = [];
+            var categories = [];
+            var series;
+            if (options.max_values) {
+                series = [{
+                    name: options.empty_text,
+                    data: [],
+                    color: options.empty_color
+                },{
+                    name: options.filled_text,
+                    data: [],
+                    color: options.filled_color
+                }];
+            } else {
+                series = [{
+                    name: options.filled_text,
+                    data: [],
+                    color: options.filled_color
+                }];
+            }
+    
+            for (var i = 0, len = options.IDs.length; i < len; i++) {
+                plotLines[i] = {
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                };
+                categories[i]     = options.names[i];
+                if (options.max_values) {
+                    series[0].data[i] = {y: options.max_values[i] - values[i], dataLabels: { enabled: false} };
+                    series[1].data[i] = values[i];
+                } else {
+                    series[0].data[i] = values[i];
+                }
+            }
+    
+            var $elem = $('#h'+wid);
+            $elem.width($(elem).width());
+            $elem.height($(elem).height());
+    
+            $elem.highcharts({
+                chart: {
+                    type: 'column',
+                    animation: Highcharts.svg, // don't animate in old IE
+                    marginRight: 0,
+                    events: {
+                        load: function() {
+                            elem._key   = Math.round(Math.random()*10000);
+                            elem._chart = this;
+                            if (options.update_interval) {
+                                dui.binds.highcharts.updateHighbars(wid, this, elem._key);
+                            }
+                        }
+                    }
+                },
+                exporting: {
+                    enabled: false
+                },
+                title: {
+                    text: options.title
+                },
+                xAxis: {
+                    categories: categories
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: options.title_y
+                    },
+                    stackLabels: {
+                        enabled: true,
+                        style: {
+                            fontSize:   '20px',
+                            fontWeight: 'bold',
+                            color:      options.total_color || (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                        }
+                    }
+                },
+                legend: (options.legend === "true" || options.legend === true) ? {
+                    align: 'right',
+                    x: -70,
+                    verticalAlign: 'top',
+                    y: 20,
+                    floating: true,
+                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
+                    borderColor: '#CCC',
+                    borderWidth: 1,
+                    shadow: false
+                } : {enabled: false},
+                tooltip: options.tooltip ? {
+                    formatter: function() {
+                        return (this.series.name && this.series.name !== ' ') ? ('<b>'+ this.x +'</b> - '+
+                                this.series.name +': '+ this.y) : "";
+                    }
+                } : {enabled: false},
+                plotOptions: {
+                    column: {
+                        stacking:    'normal',
+                        borderColor: 'black',
+                        dataLabels: {
+                            enabled: true,
+                            color: options.label_color || (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                            style: {
+                                fontSize: '20px'//,
+                                //fontWeight: 'bold'
+                                //textShadow: '0 0 3px black, 0 0 3px black'
+                            }
+                        }
+                    }
+                },
+                series: series
+            });
+        },
+    
+        //  Get the current time
+        getNow: function () {
+            var now = new Date();
+    
+            return {
+                hours: now.getHours() + now.getMinutes() / 60,
+                minutes: now.getMinutes() * 12 / 60 + now.getSeconds() * 12 / 3600,
+                seconds: now.getSeconds() * 12 / 60
+            };
+        },
+        //  Pad numbers
+        pad: function (number, length) {
+            // Create an array of the remaining length +1 and join it with 0's
+            return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+        },
 
-        return {
-            hours: now.getHours() + now.getMinutes() / 60,
-            minutes: now.getMinutes() * 12 / 60 + now.getSeconds() * 12 / 3600,
-            seconds: now.getSeconds() * 12 / 60
-        };
-    };
-    /**
-     * Pad numbers
-     */
-    function pad(number, length) {
-        // Create an array of the remaining length +1 and join it with 0's
-        return new Array((length || 2) + 1 - String(number).length).join(0) + number;
-    }
+        drawHighclock: function (wid, _options) {
+            var elem = document.getElementById (wid);
+            if (_options) {
+                elem._options = _options;
+            }
+            var options = elem._options;
+            var $helem = $('#h'+wid);
+            var now = this.getNow();
+            var $elem = $('#h'+wid);
+            $elem.width($(elem).width());
+            $elem.height($(elem).height());
+    
+            // Create the chart
+            $elem.highcharts({
+                chart: {
+                    type: 'gauge',
+                    plotBackgroundColor: null,
+                    plotBackgroundImage: null,
+                    plotBorderWidth: 0,
+                    plotShadow: false,
+                    marginRight: 0,
+                    height: $helem.height() + 20
+                },
+                title: {
+                    text: ""
+                },
+                credits: {
+                    enabled: false
+                },
 
-    function drawHighclock (wid, _options) {
-        var elem = document.getElementById (wid);
-        if (_options) {
-            elem._options = _options;
-        }
-        var options = elem._options;
-        var $helem = $('#h'+wid);
-        var now = getNow();
-        var $elem = $('#h'+wid);
-        $elem.width($(elem).width());
-        $elem.height($(elem).height());
+                pane: {
+                    background: [{
+                        // default background
+                    }, {
+                        // reflex for supported browsers
+                        backgroundColor: Highcharts.svg ? {
+                            radialGradient: {
+                                cx: 0.5,
+                                cy: -0.4,
+                                r: 1.9
+                            },
+                            stops: [
+                                [0.5, options.back_color_start],
+                                [0.5, options.back_color_stop]
+                            ]
+                        } : null
+                    }]
+                },
+                exporting: {
+                    enabled: false
+                },
+                yAxis: {
+                    labels: {
+                        distance: -20
+                    },
+                    min: 0,
+                    max: 12,
+                    lineWidth: 0,
+                    showFirstLabel: false,
 
-        // Create the chart
-        $elem.highcharts({
+                    minorTickInterval: 'auto',
+                    minorTickWidth: 1,
+                    minorTickLength: 5,
+                    minorTickPosition: 'inside',
+                    minorGridLineWidth: 0,
+                    minorTickColor: options.tick_color,
 
-            chart: {
-                type: 'gauge',
-                plotBackgroundColor: null,
-                plotBackgroundImage: null,
-                plotBorderWidth: 0,
-                plotShadow: false,
-                marginRight: 0,
-                height: $helem.height() + 20
-            },
-            title: {
-                text: ""
-            },
-            credits: {
-                enabled: false
-            },
-
-            pane: {
-                background: [{
-                    // default background
-                }, {
-                    // reflex for supported browsers
-                    backgroundColor: Highcharts.svg ? {
-                        radialGradient: {
-                            cx: 0.5,
-                            cy: -0.4,
-                            r: 1.9
+                    tickInterval: 1,
+                    tickWidth: 2,
+                    tickPosition: 'inside',
+                    tickLength: 10,
+                    tickColor: options.tick_color,
+                    title: {
+                        text: options.title,
+                        style: {
+                            color: '#BBB',
+                            fontWeight: 'normal',
+                            fontSize: '8px',
+                            lineHeight: '10px'
                         },
-                        stops: [
-                            [0.5, options.back_color_start],
-                            [0.5, options.back_color_stop]
-                        ]
-                    } : null
+                        y: 10
+                    }
+                },
+
+                tooltip: {
+                    formatter: function () {
+                        return this.series.chart.tooltipText;
+                    }
+                },
+
+                series: [{
+                    data: [{
+                        id: 'hour',
+                        y: now.hours,
+                        dial: {
+                            radius: '60%',
+                            baseWidth: 4,
+                            baseLength: '95%',
+                            rearLength: 0
+                        }
+                    }, {
+                        id: 'minute',
+                        y: now.minutes,
+                        dial: {
+                            baseLength: '95%',
+                            rearLength: 0
+                        }
+                    }, {
+                        id: 'second',
+                        y: now.seconds,
+                        dial: {
+                            radius: '100%',
+                            baseWidth: 1,
+                            rearLength: '20%'
+                        }
+                    }],
+                    animation: false,
+                    dataLabels: {
+                        enabled: false
+                    }
                 }]
             },
-            exporting: {
-                enabled: false
-            },
-            yAxis: {
-                labels: {
-                    distance: -20
-                },
-                min: 0,
-                max: 12,
-                lineWidth: 0,
-                showFirstLabel: false,
-
-                minorTickInterval: 'auto',
-                minorTickWidth: 1,
-                minorTickLength: 5,
-                minorTickPosition: 'inside',
-                minorGridLineWidth: 0,
-                minorTickColor: options.tick_color,
-
-                tickInterval: 1,
-                tickWidth: 2,
-                tickPosition: 'inside',
-                tickLength: 10,
-                tickColor: options.tick_color,
-                title: {
-                    text: options.title,
-                    style: {
-                        color: '#BBB',
-                        fontWeight: 'normal',
-                        fontSize: '8px',
-                        lineHeight: '10px'
-                    },
-                    y: 10
-                }
-            },
-
-            tooltip: {
-                formatter: function () {
-                    return this.series.chart.tooltipText;
-                }
-            },
-
-            series: [{
-                data: [{
-                    id: 'hour',
-                    y: now.hours,
-                    dial: {
-                        radius: '60%',
-                        baseWidth: 4,
-                        baseLength: '95%',
-                        rearLength: 0
+            // Move
+            function (chart) {
+                chart._timer = setInterval(function (_chart) {
+                    if (!chart || !_chart._timer) {
+                        return;
                     }
-                }, {
-                    id: 'minute',
-                    y: now.minutes,
-                    dial: {
-                        baseLength: '95%',
-                        rearLength: 0
-                    }
-                }, {
-                    id: 'second',
-                    y: now.seconds,
-                    dial: {
-                        radius: '100%',
-                        baseWidth: 1,
-                        rearLength: '20%'
-                    }
-                }],
-                animation: false,
-                dataLabels: {
-                    enabled: false
-                }
-            }]
-        },
-        // Move
-        function (chart) {
-            setInterval(function () {
-                var hour = chart.get('hour'),
-                        minute = chart.get('minute'),
-                        second = chart.get('second'),
-                        now = getNow(),
-                // run animation unless we're wrapping around from 59 to 0
+                    var hour      = _chart.get('hour'),
+                        minute    = _chart.get('minute'),
+                        second    = _chart.get('second'),
+                        now       = dui.binds.highcharts.getNow(),
+                        // run animation unless we're wrapping around from 59 to 0
                         animation = now.seconds == 0 ?
-                                false :
-                        {
-                            easing: 'easeOutElastic'
-                        };
+                            false :
+                            {
+                                easing: 'easeOutElastic'
+                            };
 
-                // Cache the tooltip text
-                chart.tooltipText =
-                        pad(Math.floor(now.hours), 2) + ':' +
-                        pad(Math.floor(now.minutes * 5), 2) + ':' +
-                        pad(now.seconds * 5, 2);
+                    // Cache the tooltip text
+                    _chart.tooltipText =
+                            dui.binds.highcharts.pad(Math.floor(now.hours), 2) + ':' +
+                            dui.binds.highcharts.pad(Math.floor(now.minutes * 5), 2) + ':' +
+                            dui.binds.highcharts.pad(now.seconds * 5, 2);
 
-                hour.update(now.hours, true, animation);
-                minute.update(now.minutes, true, animation);
-                second.update(now.seconds, true, animation);
+                    hour.update(now.hours, true, animation);
+                    minute.update(now.minutes, true, animation);
+                    second.update(now.seconds, true, animation);
 
-            }, 1000);
+                }, 1000, chart);
+            });
+        },
 
-        });
-    }
+        tplHcLive: function (view, wid, data) {
+            var factor = data.attr('factor') || 1;
+            factor = parseFloat(factor);
+    
+            var offset = data.attr('value_offset') || 0;
+            offset = parseFloat(offset);
+    
+            var min_value = data.attr('min_value') || 0;
+            min_value = parseFloat(min_value);
+    
+            var max_value = data.attr('max_value') || 0;
+            max_value = parseFloat(max_value);
+    
+            var len = 1;
+            var IDs = [];
+            var colors = [];
+            var thickness = [];
+            var id;
+            var validColor = 'black';
+            var validThickness = 1;
+            var validDash = 'Solid';
+            var validRadius = parseInt(data.attr('dot_radius'));
+            var values = [];
+            var names = [];
+            var dash = [];
+            var radius = [];
+    
+            // Read IDs, colors and line thickness
+            while (id = data.attr('hm_id'+ len)) {
+                IDs.push(id);
+                id = data.attr('line_color' + len);
+                if (id) {
+                    validColor = id;
+                }
+                colors.push (validColor);
+    
+                id = data.attr('line_thick' + len);
+                if (id) {
+                    validThickness = parseFloat(id);
+                }
+                thickness.push (validThickness);
+    
+                id = data.attr('name' + len);
+                names.push (id || "");
+    
+                id = data.attr('dash_style' + len);
+                if (id) {
+                    validDash = id;
+                }
+                dash.push (validDash);
+    
+                id = data.attr('dot_radius' + len);
+                if (id) {
+                    validRadius = parseInt (id);
+                }
+                radius.push (validRadius);
+    
+                len++;
+            }
+    
+            var values = [];
+            for (var i = 0, len = IDs.length; i < len; i++) {
+                values[i] = localData.uiState.attr('_' + IDs[i] + '.Value');
+                if (values[i] === null || values[i] === undefined) {
+                    values[i] = min_value;
+                }
+                values[i] = parseFloat (values[i]);
+                values[i] = values[i] * factor + offset;
+            }
+    
+            var options = {
+                IDs:        IDs,
+                colors:     colors,
+                factor:     factor,
+                offset:     offset,
+                title:      data.attr('title')   || "",
+                title_x:    data.attr('title_x') || "",
+                title_y:    data.attr('title_y') || "",
+                update_interval: data.attr('update_interval') || 5000,
+                min_value:  min_value,
+                max_value:  max_value,
+                spline:     data.attr('spline')  || false,
+                legend:     data.attr('legend')  || false,
+                tooltip:    data.attr('tooltip') || false,
+                num_points: data.attr('num_points') || 60,
+                thickness:  thickness,
+                defaultWidth:  200,
+                defaultHeight: 400,
+                dash_style: dash,
+                radius:     radius,
+                names:      names
+            };
+    
+            var elem = this.createHighcharts (view, wid, data.attr('class'), options);
+            this.registerIds (wid, options.IDs);
+            elem._options = options;
+            elem._values  = values;
+    
+            jQuery(elem).bind("resize", function () {
+                if (this._resizeTimer){
+                    clearTimeout (this._resizeTimer);
+                }
+                this._resizeTimer = _setTimeout (function (_wid) {
+                    dui.binds.highcharts.drawHighcharts(_wid);
+                }, 500, this.id);
+            });
+    
+            this.drawHighcharts (wid, options);
+    
+            elem.highchartValueChange = function (objId, newValue, isFromDevice) {
+                var options = this._options;
+    
+                for (var i = 0, len = IDs.length; i < len; i++){
+                    if (options.IDs[i] == objId) {
+                        var values = this._values;
+                        var factor = options.factor;
+                        var offset = options.offset;
+    
+                        values[i] = localData.uiState.attr("_" + options.IDs[i] + ".Value");
+                        if (values[i] === null || values[i] === undefined) {
+                            values[i] = this.options.min_value;
+                        }
+                        values[i] = parseFloat(values[i]);
+                        values[i] = values[i] * factor + offset;
+                        if (!options.update_interval && this._chart) {
+                            dui.bind.highcharts.updateHighcharts (this.id, this._chart, this._key);
+                        }
+                        return;
+                    }
+                }
+            }
+        },
+
+        tplHcBars: function (view, wid, data) {
+            var factor = data.attr('factor') || 1;
+            factor = parseFloat(factor);
+    
+            var offset = data.attr('value_offset') || 0;
+            offset = parseFloat(offset);
+    
+            var len = 1;
+            var IDs = [];
+            var id;
+            var values = [];
+            var names  = [];
+            var max_values = [];
+            var valid_max = null;
+    
+            // Read IDs and max values
+            while (id = data.attr('hm_id'+ len)) {
+                IDs.push(id);
+    
+                id = data.attr('name' + len);
+                names.push (id || "");
+    
+                id = data.attr('max_value' + len);
+                if (id || valid_max) {
+                    max_values.push (id);
+                    valid_max = id;
+                }
+    
+                len++;
+            }
+    
+            if (!valid_max) {
+                max_values = null;
+            } else {
+                for (var i = max_values.length, len = IDs.length; i < len; i++) {
+                    max_values.push(valid_max);
+                }
+            }
+            var values = [];
+            for (var i = 0, len = IDs.length; i < len; i++) {
+                values[i] = localData.uiState.attr('_' + IDs[i] + '.Value');
+                if (values[i] === null || values[i] === undefined) {
+                    values[i] = data.attr('min_value');
+                }
+                values[i] = parseFloat (values[i]);
+                values[i] = values[i] * factor + offset;
+            }
+    
+            var options = {
+                IDs:         IDs,
+                names:       names,
+                filled_color: data.attr('filled_color'),
+                empty_color:  data.attr('empty_color'),
+                factor:      factor,
+                offset:      offset,
+                title:       data.attr('title')   || "",
+                title_y:     data.attr('title_y') || "",
+                update_interval: parseInt(data.attr('update_interval')) || 0,
+                max_values:  max_values,
+                filled_text: data.attr('filled_text') || false,
+                empty_text:  data.attr('empty_text') || false,
+                tooltip:     data.attr('tooltip') || false,
+                legend:      data.attr('legend')  || false,
+                label_color: data.attr('label_color'),
+                defaultWidth:  200,
+                defaultHeight: 400
+            };
+    
+            var elem = this.createHighcharts(view, wid, data.attr('class'), options);
+            this.registerIds(wid, options.IDs);
+            elem._options = options;
+            elem._values  = values;
+    
+            jQuery(elem).bind("resize", function () {
+                if (this._resizeTimer){
+                    clearTimeout (this._resizeTimer);
+                }
+                this._resizeTimer = _setTimeout(function (_wid) {
+                    dui.binds.highcharts.drawHighbars(_wid);
+                }, 500, this.id);
+            });
+    
+            this.drawHighbars (wid, options);
+    
+            elem.highchartValueChange = function (objId, newValue, isFromDevice) {
+                var options = this._options;
+    
+                for (var i = 0, len = IDs.length; i < len; i++){
+                    if (options.IDs[i] == objId) {
+                        var values = this._values;
+                        var factor = options.factor;
+                        var offset = options.offset;
+    
+                        values[i] = localData.uiState.attr("_" + options.IDs[i] + ".Value");
+                        if (values[i] === null || values[i] === undefined) {
+                            values[i] = this.options.min_value;
+                        }
+                        values[i] = parseFloat(values[i]);
+                        values[i] = values[i] * factor + offset;
+                        if (!options.update_interval && this._chart) {
+                            dui.binds.highcharts.updateHighbars (this.id, this._chart, this._key);
+                        }
+                        return;
+                    }
+                }
+            }
+        },
+
+        tplHcClock: function (view, wid, data) {
+    
+            var options = {
+                tooltip:          data.attr('tooltip') || false,
+                label_color:      data.attr('label_color'),
+                tick_color:       data.attr('tick_color'),
+                label_size:       data.attr('label_size'),
+                back_color_start: data.attr('back_color_start'),
+                back_color_stop:  data.attr('back_color_stop'),
+                title:            data.attr('title'),
+                defaultWidth:     150,
+                defaultHeight:    150
+            };
+    
+            var elem = this.createHighcharts(view, wid, data.attr('class'), options);
+            elem._options = options;
+    
+            jQuery(elem).bind("resize", function () {
+                if (this._resizeTimer){
+                    clearTimeout (this._resizeTimer);
+                }
+                this._resizeTimer = _setTimeout (function (_wid) {
+                    dui.binds.highcharts.drawHighclock(_wid);
+                }, 500, this.id);
+            });
+    
+            this.drawHighclock (wid, options);
+        }        
+    };
+    
 
 </script>
 
@@ -538,139 +805,7 @@
 <%
     console.log("tplHcLive");
     if (this && this.data && this.data.attr) {
-
-        var wid = this.data.attr('wid')
-
-        var factor = this.data.attr('factor') || 1;
-        factor = parseFloat(factor);
-
-        var offset = this.data.attr('value_offset') || 0;
-        offset = parseFloat(offset);
-
-        var min_value = this.data.attr('min_value') || 0;
-        min_value = parseFloat(min_value);
-
-        var max_value = this.data.attr('max_value') || 0;
-        max_value = parseFloat(max_value);
-
-        var len = 1;
-        var IDs = [];
-        var colors = [];
-        var thickness = [];
-        var id;
-        var validColor = 'black';
-        var validThickness = 1;
-        var validDash = 'Solid';
-        var validRadius = parseInt (this.data.attr('dot_radius'));
-        var values = [];
-        var names = [];
-        var dash = [];
-        var radius = [];
-
-        // Read IDs, colors and line thickness
-        while (id = this.data.attr('hm_id'+ len)) {
-            IDs.push(id);
-            id = this.data.attr('line_color' + len);
-            if (id) {
-                validColor = id;
-            }
-            colors.push (validColor);
-
-            id = this.data.attr('line_thick' + len);
-            if (id) {
-                validThickness = parseFloat(id);
-            }
-            thickness.push (validThickness);
-
-            id = this.data.attr('name' + len);
-            names.push (id || "");
-
-            id = this.data.attr('dash_style' + len);
-            if (id) {
-                validDash = id;
-            }
-            dash.push (validDash);
-
-            id = this.data.attr('dot_radius' + len);
-            if (id) {
-                validRadius = parseInt (id);
-            }
-            radius.push (validRadius);
-
-            len++;
-        }
-
-        var values = [];
-        for (var i = 0, len = IDs.length; i < len; i++) {
-            values[i] = localData.uiState.attr('_' + IDs[i] + '.Value');
-            if (values[i] === null || values[i] === undefined) {
-                values[i] = min_value;
-            }
-            values[i] = parseFloat (values[i]);
-            values[i] = values[i] * factor + offset;
-        }
-
-        var options = {
-            IDs:        IDs,
-            colors:     colors,
-            factor:     factor,
-            offset:     offset,
-            title:      this.data.attr('title')   || "",
-            title_x:    this.data.attr('title_x') || "",
-            title_y:    this.data.attr('title_y') || "",
-            update_interval: this.data.attr('update_interval') || 5000,
-            min_value:  min_value,
-            max_value:  max_value,
-            spline:     this.data.attr('spline')  || false,
-            legend:     this.data.attr('legend')  || false,
-            tooltip:    this.data.attr('tooltip') || false,
-            num_points: this.data.attr('num_points') || 60,
-            thickness:  thickness,
-            defaultWidth:  200,
-            defaultHeight: 400,
-            dash_style: dash,
-            radius:     radius,
-            names:      names
-        };
-
-        var elem = createHighcharts (this.view, wid, this.data.attr('class'), options);
-        registerHighObjIds (wid, options.IDs);
-        elem._options = options;
-        elem._values  = values;
-
-        jQuery(elem).bind("resize", function () {
-            if (this._resizeTimer){
-                clearTimeout (this._resizeTimer);
-            }
-            this._resizeTimer = _setTimeout (function (_wid) {
-                drawHighcharts(_wid);
-            }, 500, this.id);
-        });
-
-        drawHighcharts (wid, options);
-
-        elem.highchartValueChange = function (objId, newValue, isFromDevice) {
-            var options = this._options;
-
-            for (var i = 0, len = IDs.length; i < len; i++){
-                if (options.IDs[i] == objId) {
-                    var values = this._values;
-                    var factor = options.factor;
-                    var offset = options.offset;
-
-                    values[i] = localData.uiState.attr("_" + options.IDs[i] + ".Value");
-                    if (values[i] === null || values[i] === undefined) {
-                        values[i] = this.options.min_value;
-                    }
-                    values[i] = parseFloat(values[i]);
-                    values[i] = values[i] * factor + offset;
-                    if (!options.update_interval && this._chart) {
-                        updateHighcharts (this.id, this._chart, this._key);
-                    }
-                    return;
-                }
-            }
-        }
+        dui.binds.highcharts.tplHcLive(this.view, this.data.attr('wid'), this.data);
     }
 %>
 </script>
@@ -678,148 +813,15 @@
 <%
     console.log("tplHcBars");
     if (this && this.data && this.data.attr) {
-
-        var wid = this.data.attr('wid')
-
-        var factor = this.data.attr('factor') || 1;
-        factor = parseFloat(factor);
-
-        var offset = this.data.attr('value_offset') || 0;
-        offset = parseFloat(offset);
-
-        var len = 1;
-        var IDs = [];
-        var id;
-        var values = [];
-        var names  = [];
-        var max_values = [];
-        var valid_max = null;
-
-        // Read IDs and max values
-        while (id = this.data.attr('hm_id'+ len)) {
-            IDs.push(id);
-
-            id = this.data.attr('name' + len);
-            names.push (id || "");
-
-            id = this.data.attr('max_value' + len);
-            if (id || valid_max) {
-                max_values.push (id);
-                valid_max = id;
-            }
-
-            len++;
-        }
-
-        if (!valid_max) {
-            max_values = null;
-        } else {
-            for (var i = max_values.length, len = IDs.length; i < len; i++) {
-                max_values.push(valid_max);
-            }
-        }
-        var values = [];
-        for (var i = 0, len = IDs.length; i < len; i++) {
-            values[i] = localData.uiState.attr('_' + IDs[i] + '.Value');
-            if (values[i] === null || values[i] === undefined) {
-                values[i] = min_value;
-            }
-            values[i] = parseFloat (values[i]);
-            values[i] = values[i] * factor + offset;
-        }
-
-        var options = {
-            IDs:         IDs,
-            names:       names,
-            filled_color: this.data.attr('filled_color'),
-            empty_color:  this.data.attr('empty_color'),
-            factor:      factor,
-            offset:      offset,
-            title:       this.data.attr('title')   || "",
-            title_y:     this.data.attr('title_y') || "",
-            update_interval: parseInt (this.data.attr('update_interval')) || 0,
-            max_values:  max_values,
-            filled_text: this.data.attr('filled_text') || false,
-            empty_text:  this.data.attr('empty_text') || false,
-            tooltip:     this.data.attr('tooltip') || false,
-            legend:      this.data.attr('legend')  || false,
-            label_color: this.data.attr('label_color'),
-            defaultWidth:  200,
-            defaultHeight: 400
-        };
-
-        var elem = createHighcharts (this.view, wid, this.data.attr('class'), options);
-        registerHighObjIds (wid, options.IDs);
-        elem._options = options;
-        elem._values  = values;
-
-        jQuery(elem).bind("resize", function () {
-            if (this._resizeTimer){
-                clearTimeout (this._resizeTimer);
-            }
-            this._resizeTimer = _setTimeout (function (_wid) {
-                drawHighbars(_wid);
-            }, 500, this.id);
-        });
-
-        drawHighbars (wid, options);
-
-        elem.highchartValueChange = function (objId, newValue, isFromDevice) {
-            var options = this._options;
-
-            for (var i = 0, len = IDs.length; i < len; i++){
-                if (options.IDs[i] == objId) {
-                    var values = this._values;
-                    var factor = options.factor;
-                    var offset = options.offset;
-
-                    values[i] = localData.uiState.attr("_" + options.IDs[i] + ".Value");
-                    if (values[i] === null || values[i] === undefined) {
-                        values[i] = this.options.min_value;
-                    }
-                    values[i] = parseFloat(values[i]);
-                    values[i] = values[i] * factor + offset;
-                    if (!options.update_interval && this._chart) {
-                        updateHighbars (this.id, this._chart, this._key);
-                    }
-                    return;
-                }
-            }
-        }
+        dui.binds.highcharts.tplHcBars(this.view, this.data.attr('wid'), this.data);
     }
 %>
 </script>
 <script type="text/ejs" id="tplHcClock" class="dashui-tpl" data-dashui-set="highcharts" data-dashui-render-visible="true" data-dashui-name="Clock"     data-dashui-attrs="title;tick_color[#666]/color;label_color[#FFF]/color;back_color_start[rgba(255, 255, 255, 0.2)]/color;back_color_stop[rgba(200, 200, 200, 0.2)]/color;label_size[10]/slider,5,40,1">
 <%
-    console.log("tplHcBars");
+    console.log("tplHcClock");
     if (this && this.data && this.data.attr) {
-        var wid = this.data.attr('wid')
-
-        var options = {
-            tooltip:     this.data.attr('tooltip') || false,
-            label_color: this.data.attr('label_color'),
-            tick_color:  this.data.attr('tick_color'),
-            label_size:  this.data.attr('label_size'),
-            back_color_start: this.data.attr('back_color_start'),
-            back_color_stop:  this.data.attr('back_color_stop'),
-            title:       this.data.attr('title'),
-            defaultWidth:  150,
-            defaultHeight: 150
-        };
-
-        var elem = createHighcharts (this.view, wid, this.data.attr('class'), options);
-        elem._options = options;
-
-        jQuery(elem).bind("resize", function () {
-            if (this._resizeTimer){
-                clearTimeout (this._resizeTimer);
-            }
-            this._resizeTimer = _setTimeout (function (_wid) {
-                drawHighclock(_wid);
-            }, 500, this.id);
-        });
-
-        drawHighclock (wid, options);
+        dui.binds.highcharts.tplHcClock(this.view, this.data.attr('wid'), this.data);
     }
 %>
 </script>

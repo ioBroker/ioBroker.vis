@@ -94,11 +94,11 @@
 					context: $e,
 					success: function(data) {
 
-						if (data.query) {
+						if (data.query && data.query.results) {
 						
 							this[0].feed = data.query.results.channel;
 							
-							if (data.query.results.channel.length > 0 ) {
+							if (data.query.results.channel && data.query.results.channel.length > 0 ) {
 								
 								// Multiple locations
 								var result = data.query.results.channel.length;

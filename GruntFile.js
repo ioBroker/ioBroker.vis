@@ -69,13 +69,13 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd: srcDir+'/js/',
-                        src: ['config.js'],
+                        src: ['*.js', '!dashui*.js'],
                         dest: '.build/output/js/'
                     },
                     {
                         expand: true,
                         cwd: srcDir+'/css/',
-                        src: [/*'doc.css',*/ 'dashui-user.css'],
+                        src: [/*'doc.css',*/ '*.css', '!dashui.css', '!doc.css', '!backgrounds.css'],
                         dest: '.build/output/css/'
                     }
                 ]
