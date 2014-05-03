@@ -25,7 +25,7 @@
 "use strict";
 
 dui = $.extend(true, dui, {
-    editVersion:            '0.9beta97',
+    editVersion:            '0.9beta98',
     toolbox:                $("#dui_editor"),
     selectView:             $("#select_view"),
     activeWidget:           "",
@@ -36,7 +36,7 @@ dui = $.extend(true, dui, {
     multiSelectedWidgets:   [],
     clipboard:              null,
     undoHistory:            [],
-    selectable:             false,
+    selectable:             true,
 
     renameView: function (newName) {
             dui.views[newName] = $.extend(true, {}, dui.views[dui.activeView]);
@@ -237,14 +237,11 @@ dui = $.extend(true, dui, {
         }
     },
     bindWidgetClick: function (id) {
-        if (dui.selectable) {
-            return;
-        }
 
         $("#" + id).click(function (e) {
             var widgetId = $(this).attr('id');
             var widgetData = dui.widgets[widgetId]["data"];
-            console.log("click id="+widgetId+" active="+dui.activeWidget);
+            //console.log("click id="+widgetId+" active="+dui.activeWidget);
             //console.log(dui.multiSelectedWidgets);
             if (e.shiftKey || e.ctrlKey || e.metaKey) {
                 if (dui.activeWidget && dui.activeWidget != "none" && dui.activeWidget != widgetId) {
@@ -267,28 +264,20 @@ dui = $.extend(true, dui, {
                     } else {
                         dui.inspectWidgetMulti(widgetId);
                     }
-                } /*else if (0 && dui.activeWidget == widgetId && dui.multiSelectedWidgets.length) {
-                    //console.log("click inspected Widget");
+                } else if (dui.activeWidget == widgetId && dui.multiSelectedWidgets.length) {
+                    //console.log("click inspected Widget",widgetId, dui.multiSelectedWidgets);
 
-                    if (dui.multiSelectedWidgets.indexOf(widgetId) != -1) {
-                        //console.log("splice "+widgetId)
-                        dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(widgetId), 1);
-                        $("#" + widgetId).removeClass("ui-selected");
+                    var newActive = dui.multiSelectedWidgets.pop();
+                    var multiSelectedWidgets = dui.multiSelectedWidgets;
+                    $("#widget_multi_helper_"+newActive).remove();
+                    $("#" + newActive).removeClass("ui-selected");
+                    dui.inspectWidget(newActive);
+                    for (var i = 0; i < multiSelectedWidgets.length; i++) {
+                        dui.inspectWidgetMulti(multiSelectedWidgets[i]);
                     }
+                    dui.allWidgetsHelper();
 
-                    //console.log(dui.multiSelectedWidgets);
-
-                    if (dui.multiSelectedWidgets.length) {
-                        var newActive = dui.multiSelectedWidgets.pop();
-                        var multiSelectedWidgets = dui.multiSelectedWidgets;
-                        $("#widget_multi_helper_"+newActive).remove();
-                        dui.inspectWidget(newActive);
-                        for (var i = 0; i < multiSelectedWidgets.length; i++) {
-                            dui.inspectWidgetMulti(multiSelectedWidgets[i]);
-                        }
-                        dui.allWidgetsHelper();
-                    }
-                }*/
+                }
             } else {
                 if (dui.activeWidget != widgetId) {
                     dui.inspectWidget(widgetId);
@@ -920,12 +909,8 @@ dui = $.extend(true, dui, {
                 pos.top = parseInt(pos.top.replace('px', ''), 10);
             }
         }
-        //console.log("inspectWidgetMulti")
-        //console.log("id="+id+" active="+dui.activeWidget)
         if (dui.multiSelectedWidgets.indexOf(id) == -1 && id != dui.activeWidget) {
-            //console.log("pushing "+id);
             dui.multiSelectedWidgets.push(id);
-            //console.log(dui.multiSelectedWidgets);
         }
 
         $("#dui_container").append('<div id="widget_multi_helper_'+id+'" class="widget_multi_helper"><div class="widget_multi_inner_helper"></div></div>');
@@ -936,14 +921,11 @@ dui = $.extend(true, dui, {
             height : $this.outerHeight() + 2,
             width  : $this.outerWidth() + 2}
         ).show();
-
+        dui.allWidgetsHelper();
         dui.draggable($this);
 
     },
     inspectWidget: function (id, onlyUpdate) {
-        if (id == 'none')
-            console.log(id);
-
         if (dui.isStealCss) {
             return false;
         }
@@ -951,6 +933,7 @@ dui = $.extend(true, dui, {
         if (!onlyUpdate) {
             $(".widget_multi_helper").remove();
             dui.multiSelectedWidgets = [];
+            $("#allwidgets_helper").hide();
 
             $("#select_active_widget").find("option[value='"+id+"']").prop("selected", true);
             $("#select_active_widget").multiselect("refresh");
@@ -1405,20 +1388,28 @@ dui = $.extend(true, dui, {
 
     // Draw a border around all selected widgets
     allWidgetsHelper: function () {
+        //console.log("allWidgetsHelper "+dui.multiSelectedWidgets.length);
         var $allwidgets_helper = $("#allwidgets_helper");
 
-        if (!dui.multiSelectedWidgets.length < 2) {
+        if (dui.multiSelectedWidgets.length < 1) {
             $allwidgets_helper.hide();
             return;
         }
 
-        var selectedWidgets = dui.multiSelectedWidgets;
+        // This caused this annoying Bug with multiple occurance of widgets in dui.multiSelectedWidgets array:
+        // var selectedWidgets = dui.multiSelectedWidgets;
+        // this fixes it:
+        var selectedWidgets = [];
+        for (var i = 0; i < dui.multiSelectedWidgets.length; i++) {
+            selectedWidgets.push(dui.multiSelectedWidgets[i]);
+        }
+
         var l, r, t, b;
         selectedWidgets.push(dui.activeWidget);
 
         // Find outer edges of all selected widgets
         for (var i = 0; i < selectedWidgets.length; i++) {
-            var $widget = $("#" + selectedWidgets[i])
+            var $widget = $("#" + selectedWidgets[i]);
             var pos = $widget.position();
             pos.right = pos.left + $widget.width();
             pos.bottom = pos.top + $widget.height();
@@ -1430,9 +1421,9 @@ dui = $.extend(true, dui, {
 
         $allwidgets_helper
             .css("left", (l - 3))
-            .css("width", (r + 4 - l))
+            .css("width", (r + 6 - l))
             .css("top", (t - 3))
-            .css("height", (b + 4 - t))
+            .css("height", (b + 6 - t))
             .show();
     },
 
@@ -1450,7 +1441,7 @@ dui = $.extend(true, dui, {
 
                 },
                 stop: function (e, ui) {
-                    console.log('stop ' + $(".ui-selected").length)
+                    //console.log('stop ' + $(".ui-selected").length)
                     var $allwidgets_helper = $("#allwidgets_helper");
                     switch ($(".ui-selected").length) {
                         case 0:
@@ -1470,7 +1461,7 @@ dui = $.extend(true, dui, {
                     }
                 },
                 selecting: function (e, ui) {
-                    console.log('selecting ' + ui.selecting.id)
+                    //console.log('selecting ' + ui.selecting.id)
                     if (!dui.activeWidget || dui.activeWidget == "none") {
                         dui.inspectWidget(ui.selecting.id);
                     } else if (ui.selecting.id != dui.activeWidget) {
@@ -1481,7 +1472,7 @@ dui = $.extend(true, dui, {
                 selected: function (e, ui) {
                 },
                 unselecting: function (e, ui) {
-                    console.log('unselecting ' + ui.unselecting.id)
+                    //console.log('unselecting ' + ui.unselecting.id)
                     if ($("#widget_multi_helper_" + ui.unselecting.id).html()) {
                         $("#widget_multi_helper_" + ui.unselecting.id).remove();
                         dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(ui.unselecting.id), 1);
@@ -2734,6 +2725,7 @@ dui = $.extend(true, dui, {
         }
     },
     showHint: function (content, life, type, onShow) {
+        if (!$.jGrowl) return;
         $('#growl_informator').jGrowl(content, {
             life: (life === undefined) ? 10000 : life,
             sticky: (life === undefined) ? false : !life,
@@ -3058,6 +3050,8 @@ $(window).on("paste", function (e) {
 
 $(document).ready(function () {
     dui.translateAll();
+
+    if (!$.jGrowl) return;
 
     // Init jGrowl
     $.jGrowl.defaults.closer = true;
