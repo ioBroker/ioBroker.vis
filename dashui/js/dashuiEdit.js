@@ -3012,6 +3012,8 @@ dui = $.extend(true, dui, {
                 }
             }
 
+            dui.allWidgetsHelper();
+
             if (dui.delayedSettings) {
                 clearTimeout(dui.delayedSettings);
             }
