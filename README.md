@@ -7,6 +7,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta98
+* (Hobbyquaker) Fixes Multiselection
+* (Bluefox) Move and resize widgets with arrow keys
+
 ### 0.9beta97
 * (Hobbyquaker) Fix LCARS Widgets
 * (Hobbyquaker) mehrere Widgets selektieren mit der Maus
