@@ -9,6 +9,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.9beta98
 * (Hobbyquaker) Fixes Multiselection
+* (Hobbyquaker) Fix Sound onClick for basic widgets
 * (Bluefox) Move and resize widgets with arrow keys
 
 ### 0.9beta97
