@@ -239,6 +239,8 @@ dui = $.extend(true, dui, {
     bindWidgetClick: function (id) {
 
         $("#" + id).click(function (e) {
+            if (dui.dragging) return;
+
             var widgetId = $(this).attr('id');
             var widgetData = dui.widgets[widgetId]["data"];
             //console.log("click id="+widgetId+" active="+dui.activeWidget);
@@ -1571,12 +1573,14 @@ dui = $.extend(true, dui, {
         $("#inspect_view_theme option[value='" + dui.views[dui.activeView].settings.theme + "']").prop("selected", true);
         $("#inspect_view_theme").multiselect("refresh");
     },
+    dragging: false,
     draggable: function (obj) {
         var origX, origY;
         var draggableOptions = {
 
             cancel: false,
             start: function (event, ui) {
+                dui.dragging = true;
                 origX = ui.position.left;
                 origY = ui.position.top;
                 //var widget = ui.helper.attr("id");
@@ -1604,6 +1608,9 @@ dui = $.extend(true, dui, {
                     dui.views[dui.activeView].widgets[mid].style.top = pos.top;
                 }
                 dui.save();
+                setTimeout(function () {
+                    dui.dragging = false;
+                }, 20);
 
             },
             drag: function (event, ui) {
