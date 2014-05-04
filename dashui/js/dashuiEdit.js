@@ -3027,10 +3027,14 @@ dui = $.extend(true, dui, {
                 // Save new settings
 
                 // TODO @Bluefox Why do we need this? Necessary for hqWidgets?
+                // TODO if yes - can we limit this to hqWidgets only?
                 dui.reRenderWidget(widgetId);
                 dui.inspectWidget(widgetId, true);
-                for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
-                    dui.reRenderWidget(dui.multiSelectedWidgets[i]);
+                var multiSelectedWidgets = dui.multiSelectedWidgets;
+                dui.multiSelectedWidgets = [];
+                for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
+                    dui.reRenderWidget(multiSelectedWidgets[i]);
+                    dui.inspectWidgetMulti(multiSelectedWidgets[i]);
                 }
                 dui.delayedSettings = null;
 
