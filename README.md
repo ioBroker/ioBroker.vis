@@ -9,6 +9,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ### 0.9beta100
 * (Hobbyquaker) Fix loss of interaction (draggable/resizable) after keyboard movement
+* (Bluefox) jGrowl Hints/Popups
 
 ### 0.9beta99
 * (Hobbyquaker) Image selection dialog improvements (z-index, fix thumbnail size)
