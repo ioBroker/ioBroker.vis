@@ -391,15 +391,20 @@ dui = $.extend(true, dui, {
 			dialog_buttons[this._cancelText] = function () {
 				$(this).dialog( "close" );
 				$(this).remove();
-			}
+			};
 			$(htmlElem).dialog({
 				resizable: true,
 				height: $(window).height(),
 				modal: true,
 				width: 600,
 				buttons: dialog_buttons,
-				close: dialog_buttons[this._cancelText]
-			});
+				close: dialog_buttons[this._cancelText],
+                open: function (event, ui) {
+                    $('[aria-describedby="imageSelect"]').css('z-index',1002);
+                    $('.ui-widget-overlay').css('z-index',1001);
+                },
+
+            });
 
 			$(htmlElem).dropzone({
 				url: "/upload?path=./www/dashui/img/",
