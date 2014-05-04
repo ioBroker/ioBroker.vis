@@ -80,9 +80,9 @@ dui = $.extend(true, dui, {
                     'ru': 'Вы действительно хотите удалить %s элемента(ов)?'
                 },
                 'Update found, loading new Files...'  : {
-                    'en' : 'Update found, loading new Files...',
-                    'de': 'Neue Version gefunden. Lade neue Dateien...',
-                    'ru': 'Обнаружено Обновление. Загружаю новые файлы...'
+                    'en' : 'Update found.<br/>Loading new Files...',
+                    'de': 'Neue Version gefunden.<br/>Lade neue Dateien...',
+                    'ru': 'Обнаружено Обновление.<br/>Загружаю новые файлы...'
                 },
                 'error - View doesn\'t exist'  : {
                     'en': 'View doesn\'t exist!',
