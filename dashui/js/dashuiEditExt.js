@@ -397,6 +397,20 @@ dui = $.extend(true, dui, {
 				width: 600,
 				buttons: dialog_buttons,
 				close: function () {
+                    /* TODO - tried to cache images that were loaded once, doesn't work, don't know why...
+                    if (!dui.imgSelectCache) {
+                        dui.imgSelectCache = [];
+                    }
+                    var preloadArr = [];
+                    $(this).find("img").each(function () {
+                        var src = $(this).attr("src");
+                        if (dui.imgSelectCache.indexOf(src) == -1) {
+                            dui.imgSelectCache.push(src);
+                            preloadArr.push(src);
+                        }
+                    });
+                    dui.preloadImages(preloadArr);
+                    */
                     $(this).remove();
                 },
                 open: function (event, ui) {
@@ -568,13 +582,13 @@ dui = $.extend(true, dui, {
 						sText += "<img id='"+obj.settings.elemName+"_img"+id+"'";
 						// File or directory
 						if (aImages[id] == "..") {
-							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._dirImage+"\" title='"+dui.translate("Back")+"'";
+							sText += " src=\""+dui.imageSelect._pictDir + dui.imageSelect._dirImage + "\" title='" + dui.translate("Back") + "'";
 						} else if (isDir) {
-							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._dirImage+"\" title='"+aImages[id]+"' ";
+							sText += " src=\"" + dui.imageSelect._pictDir+dui.imageSelect._dirImage + "\" title='" + aImages[id] + "' ";
 						} else if (aImages[id].indexOf(".wav") != -1 || aImages[id].indexOf(".mp3") != -1) {
-							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._soundImage+"\" title='"+aImages[id]+"' ";                    
+							sText += " src=\"" + dui.imageSelect._pictDir+dui.imageSelect._soundImage + "\" title='"+aImages[id] + "' ";
 						} else {
-							sText += "title='"+aImages[id]+"' ";
+							sText += "title='" + aImages[id] + "' ";
 						}
 						sText += " style='width:32px; height:32px;' />";
 						
