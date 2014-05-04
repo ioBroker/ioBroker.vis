@@ -2202,6 +2202,7 @@ dui = $.extend(true, dui, {
                     $(".dui-editor-dialog").show("slide", {direction: "left"})
                 })
                 .mouseleave(function () {
+                    if ($(".ui-multiselect-menu:visible").length) return;
                     delay = setTimeout(function () {
                         $(".dui-editor-dialog").hide("slide", {direction: "left"})
                     }, 750);
@@ -2247,6 +2248,7 @@ dui = $.extend(true, dui, {
                     $(".dui-editor-dialog").show("slide", {direction: "right"})
                 })
                 .mouseleave(function () {
+                    if ($(".ui-multiselect-menu:visible").length) return;
                     delay = setTimeout(function () {
                         $(".dui-editor-dialog").hide("slide", {direction: "right"})
                     }, 750);
