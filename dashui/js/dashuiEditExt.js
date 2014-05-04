@@ -576,7 +576,7 @@ dui = $.extend(true, dui, {
 						} else {
 							sText += "title='"+aImages[id]+"' ";
 						}
-						sText += " />";
+						sText += " style='width:32px; height:32px;' />";
 						
 						if (obj.settings.withName || isDir) {
 							sText += "</td></tr><tr><td style='font-size:0.6em;font-weight:normal'>";
