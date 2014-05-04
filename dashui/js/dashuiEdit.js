@@ -2738,6 +2738,8 @@ dui = $.extend(true, dui, {
     showHint: function (content, life, type, onShow) {
         if (!$.jGrowl) {
              return;
+        } else {
+            alert(content);
         }
         $('#growl_informator').jGrowl(content, {
             life: (life === undefined) ? 10000 : life,
