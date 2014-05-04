@@ -66,12 +66,12 @@ dui = $.extend(true, dui, {
                 'Clipboard: '      : {'en': 'Clipboard:',    'de': 'Zwischenablage:',      'ru': 'Буфер:'},
                 'Widget copied to view %s': {
                     'en': 'Widget copied to view %s',
-                    'de': 'Widget ist nach View "%s" kopiert',
+                    'de': 'Widget wurde in die View "%s" kopiert',
                     'ru': 'Элемент скопирован на страницу %s'
                 },
                 'Really delete view %s?' : {
                     'en': 'Really delete view %s?',
-                    'de': 'Wirklich löschen view %s?',
+                    'de': 'Wirklich View "%s" löschen?',
                     'ru': 'Вы действительно хотите удалить страницу %s?'
                 },
                 'Do you want delete %s widgets?' : {
@@ -91,7 +91,7 @@ dui = $.extend(true, dui, {
                 },
                 'no views found on server.\nCreate new %s ?' : {
                     'en': 'no views found on server.\nCreate new %s?',
-                    'de': 'Keine Views gefunden am Server.\nErzeugen %s?',
+                    'de': 'Keine Views gefunden auf dem Server.\n%s neu erstellen?',
                     'ru': 'На сервеое не найдено никаких страниц. Создать %s?'
                 },
                 'No Views found on Server' : {

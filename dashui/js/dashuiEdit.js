@@ -2736,7 +2736,7 @@ dui = $.extend(true, dui, {
         }
     },
     showHint: function (content, life, type, onShow) {
-        if (!$.jGrowl) { 
+        if (!$.jGrowl) {
              return;
         }
         $('#growl_informator').jGrowl(content, {
