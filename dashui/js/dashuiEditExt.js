@@ -279,8 +279,8 @@ dui = $.extend(true, dui, {
         },
         _toggleDrop: function (obj) {
             if (obj.settings.dropOpened) {
-                $("#styleSelectBox"+obj.settings.id).css({display: "none"});
-                $("#styleSelectB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
+                $("#styleSelectBox" + obj.settings.id).css({display: "none"});
+                $("#styleSelectB" + obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
                 obj.settings.dropOpened = false;
             } else {
                 var elem = $('#styleSelect'+obj.settings.id);		
@@ -311,12 +311,13 @@ dui = $.extend(true, dui, {
         _select: function (obj, iStyle) {
             var nameImg  = "styleSelectImg" +obj.settings.id;
             var nameText = "styleSelectText"+obj.settings.id;
-            $('#'+nameImg).removeClass (obj.settings.style);
+            $('#'+nameImg).removeClass(obj.settings.style);
             obj.settings.style = iStyle;
             $('#'+nameImg).addClass(obj.settings.style);
             $('#'+nameText).html(this._findTitle(obj.settings.styles, obj.settings.style));
-            if (obj.settings.onchange)
-                obj.settings.onchange (obj.settings.style, obj.settings.onchangeParam);     
+            if (obj.settings.onchange) {
+                obj.settings.onchange (obj.settings.style, obj.settings.onchangeParam);
+            }
         },
         destroy: function (htmlElem) {
             $("#styleSelectBox"+htmlElem.settings.id).remove();			
@@ -354,6 +355,7 @@ dui = $.extend(true, dui, {
 			
 			if (this._selectText == "") {
 				this._selectText = dui.translate("Select");
+				this._mkdirText = dui.translate("new Folder");
 				this._cancelText = dui.translate("Cancel");
 				this._uploadText = dui.translate("Upload");
 				this._titleText  = dui.translate("Selected image: ");
@@ -378,7 +380,11 @@ dui = $.extend(true, dui, {
 			
 			 // Define dialog buttons
 			var dialog_buttons = {};
-			dialog_buttons[this._uploadText] = function () {
+            /* TODO create new dir
+            dialog_buttons[this._mkdirText] = function () {
+
+            };*/
+            dialog_buttons[this._uploadText] = function () {
 				$(this).trigger('click');
 			};
 			dialog_buttons[this._selectText] = function () {
@@ -390,7 +396,7 @@ dui = $.extend(true, dui, {
 			dialog_buttons[this._cancelText] = function () {
 				$(this).dialog("close");
 			};
-			$(htmlElem).dialog({
+            $(htmlElem).dialog({
 				resizable: true,
 				height: $(window).height(),
 				modal: true,
@@ -642,7 +648,7 @@ dui = $.extend(true, dui, {
 				img.image = image;
 				if (dui.imageSelect._curImage == aImages[i]) {	
 					obj.settings.curElement = img;
-					img.removeClass ("ui-state-default").addClass("ui-state-active");
+					img.removeClass("ui-state-default").addClass("ui-state-active");
 				}
 				
 				if (image.isLast && obj.settings.curElement) {
