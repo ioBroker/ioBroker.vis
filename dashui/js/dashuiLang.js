@@ -114,7 +114,7 @@ dui = $.extend(true, dui, {
                 'Password'         : {'en': 'Password',     'de': 'Kennwort',             'ru': 'Parol'},
                 'Sign in'          : {'en': 'Sign in',      'de': 'Anmelden',             'ru': 'Voiti'},
                 'Check all'        : {'en': 'Check all',    'de': 'Alle selektieren',     'ru': 'Выбрать все'},
-                'Uncheck all'      : {'en': 'Uncheck all',  'de': 'Alle unselektieren',   'ru': 'Убрать все'},
+                'Uncheck all'      : {'en': 'Uncheck all',  'de': 'Alle deselektieren',   'ru': 'Убрать все'},
                 'Select options'   : {'en': 'Select options','de': 'Selekteingensch.',    'ru': 'Свойства выбора'},
                 'Änderungs-Historie': {'en': 'Change log',  'de': 'Änderungs-Historie:',  'ru': 'Список изменений'},
                 'invalid JSON'     : {'en': 'Invalid JSON', 'de': 'Invalid JSON',         'ru': 'Неправильный формат'},
