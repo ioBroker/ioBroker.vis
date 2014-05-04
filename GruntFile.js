@@ -5,10 +5,10 @@
 
 module.exports = function (grunt) {
 
-    var destDir = "dashui.min";
-    var srcDir  = "dashui";
-    var deliveryDir = 'delivery';
-    var ioaddon = grunt.file.readJSON(srcDir + '/io-addon.json');
+    var destDir = "dashui.min/";
+    var srcDir  = "dashui/";
+    var deliveryDir = 'delivery/';
+    var ioaddon = grunt.file.readJSON(srcDir + 'io-addon.json');
 
     // Copyright header
     var htmlBanner =
@@ -56,7 +56,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: srcDir + '/img/',
+                        cwd: srcDir + 'img/',
                         src: ['**/*'],
                         dest: '.build/output/img'
                     },
@@ -68,13 +68,13 @@ module.exports = function (grunt) {
                     },
                     {
                         expand: true,
-                        cwd: srcDir+'/js/',
+                        cwd: srcDir+'js/',
                         src: ['*.js', '!dashui*.js'],
                         dest: '.build/output/js/'
                     },
                     {
                         expand: true,
-                        cwd: srcDir+'/css/',
+                        cwd: srcDir+'css/',
                         src: [/*'doc.css',*/ '*.css', '!dashui.css', '!doc.css', '!backgrounds.css'],
                         dest: '.build/output/css/'
                     }
@@ -84,7 +84,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: srcDir + '/widgets/<%= grunt.task.current.args[0] %>/<%= grunt.task.current.args[1] %>',
+                        cwd: srcDir + 'widgets/<%= grunt.task.current.args[0] %>/<%= grunt.task.current.args[1] %>',
                         src: ['**/*', '*'],
                         dest: '.build/output/widgets/<%= grunt.task.current.args[0] %>/<%= grunt.task.current.args[1] %>'
                     }
@@ -94,7 +94,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: srcDir + '/widgets/',
+                        cwd: srcDir + 'widgets/',
                         src: ['<%= grunt.task.current.args[0] %>.html'],
                         dest: '.build/widgets/'
                     }
@@ -104,7 +104,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: srcDir + '/widgets/<%= grunt.task.current.args[0] %>',
+                        cwd: srcDir + 'widgets/<%= grunt.task.current.args[0] %>',
                         src: ['<%= grunt.task.current.args[1] %>'],
                         dest: '.build/output/widgets/<%= grunt.task.current.args[0] %>'
                     }
@@ -124,23 +124,23 @@ module.exports = function (grunt) {
 
         concat: {
             js: {
-                src: [srcDir+'/js/dashuiEdit.js', srcDir+'/js/dashuiEditExt.js', srcDir+'/js/dashuiLang.js', srcDir+'/js/dashuiWizard.js'],
+                src: [srcDir+'js/dashuiEdit.js', srcDir+'js/dashuiEditExt.js', srcDir+'js/dashuiLang.js', srcDir+'js/dashuiWizard.js'],
                 dest: '.build/js/dashuiEdit.js'
             },
             css: {
-                src: [srcDir+'/css/dashui.css', srcDir+'/css/backgrounds.css'],
+                src: [srcDir+'css/dashui.css', srcDir+'css/backgrounds.css'],
                 dest: '.build/css/dashui.css'
             },
             widgetJs: {
-                src: [srcDir+'/widgets/<%= grunt.task.current.args[0] %>/js/*', '!'+srcDir+'/widgets/hqWidgets/js/hqWidgetsEditDashUI.js', '!'+srcDir+'/widgets/hqWidgets/js/hqWidgetsEdit.js'],
+                src: [srcDir+'widgets/<%= grunt.task.current.args[0] %>/js/*', '!'+srcDir+'widgets/hqWidgets/js/hqWidgetsEditDashUI.js', '!'+srcDir+'widgets/hqWidgets/js/hqWidgetsEdit.js'],
                 dest: '.build/widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>.concat.js'
             },
             widgetEditJs: {
-                src: [srcDir+'/widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>EditDashUI.js', srcDir+'/widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>Edit.js'],
+                src: [srcDir+'widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>EditDashUI.js', srcDir+'widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>Edit.js'],
                 dest: '.build/widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>Edit.concat.js'
             },            
             widgetCss: {
-                src: [srcDir+'/widgets/<%= grunt.task.current.args[0] %>/css/*'],
+                src: [srcDir+'widgets/<%= grunt.task.current.args[0] %>/css/*'],
                 dest: '.build/widgets/<%= grunt.task.current.args[0] %>/css/<%= grunt.task.current.args[0] %>.concat.css'
             },
             widgetAddJs: {
@@ -232,7 +232,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir + "/*.html"],
+                        src: [srcDir + "*.html"],
                         dest: '.build/'
                     }
                 ]
@@ -251,7 +251,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir +'/widgets/<%= grunt.task.current.args[0] %>.html'],
+                        src: [srcDir +'widgets/<%= grunt.task.current.args[0] %>.html'],
                         dest: '.build/widgets/replaced/'
                     }
                 ]
@@ -270,7 +270,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir +'/widgets/<%= grunt.task.current.args[0] %>Edit.html'],
+                        src: [srcDir +'widgets/<%= grunt.task.current.args[0] %>Edit.html'],
                         dest: '.build/widgets/replaced/'
                     }
                 ]
@@ -289,7 +289,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir +'/widgets/<%= grunt.task.current.args[0] %>.html'],
+                        src: [srcDir +'widgets/<%= grunt.task.current.args[0] %>.html'],
                         dest: '.build/widgets/replaced/'
                     }
                 ]
@@ -313,7 +313,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir +'/widgets/<%= grunt.task.current.args[0] %>.html'],
+                        src: [srcDir +'widgets/<%= grunt.task.current.args[0] %>.html'],
                         dest: '.build/widgets/replaced/'
                     }
                 ]
@@ -332,7 +332,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir +'/widgets/<%= grunt.task.current.args[0] %>/<%= grunt.task.current.args[1] %>'],
+                        src: [srcDir +'widgets/<%= grunt.task.current.args[0] %>/<%= grunt.task.current.args[1] %>'],
                         dest: '.build/widgets/<%= grunt.task.current.args[0] %>/'
                     }
                 ]
@@ -348,13 +348,17 @@ module.exports = function (grunt) {
                         {
                             match: /\<\!\-\- DashUI Version [\.0-9A-Za-z]* \-\-\>/g,
                             replacement: '<!-- DashUI Version ' + ioaddon.version + ' -->'
+                        },
+                        {
+                            match: /    version:                '[\.0-9A-Za-z]*',/g,
+                            replacement: '    version:                \'' + ioaddon.version + '\','
                         }
                     ]
                 },
                 files: [
                     {
                         flatten: true,
-                        src: [srcDir + '/*.html', srcDir + '/*.manifest'],
+                        src: [srcDir + '*.html', srcDir + '*.manifest', srcDir + 'js/dashui.js'],
                         dest: './'
                     }
                 ]
@@ -368,9 +372,9 @@ module.exports = function (grunt) {
                 },
 
                 files: {
-                    //'.build/output/js/dashui.min.js': [srcDir+'/js/dashui.js'],
+                    //'.build/output/js/dashui.min.js': [srcDir+'js/dashui.js'],
                     //'.build/output/js/dashuiEdit.min.js': ['.build/js/dashuiEdit.js']
-                    '.build/compressed/dashui.min.js': [srcDir+'/js/dashui.js'],
+                    '.build/compressed/dashui.min.js': [srcDir+'js/dashui.js'],
                     '.build/compressed/dashuiEdit.min.js': ['.build/js/dashuiEdit.js']
                 }
             },
@@ -438,7 +442,7 @@ module.exports = function (grunt) {
             build: {
                 files: {
                     '.build/output/css/dashui.min.css': ['.build/css/dashui.css'],
-                    '.build/output/css/doc.min.css': [srcDir+'/css/doc.css']
+                    '.build/output/css/doc.min.css': [srcDir+'css/doc.css']
                 }
             },
             widget: {
@@ -450,7 +454,7 @@ module.exports = function (grunt) {
         compress: {
             main: {
                 options: {
-                    archive: deliveryDir+'/ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.zip'
+                    archive: deliveryDir+'ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.zip'
                 },
                 files: [
                     {expand: true, src: ['**'],  dest: '/', cwd: destDir}
@@ -489,7 +493,9 @@ module.exports = function (grunt) {
 
     grunt.registerTask('buildAllWidgets', function () {
         var dirs = {};
-        grunt.file.recurse (srcDir + "/widgets/", function (abspath, rootdir, subdir, filename) {
+        // Exclude these widgets from minmizing and combining
+        var exclude = ["swipe", "highcharts"];
+        grunt.file.recurse(srcDir + "widgets/", function (abspath, rootdir, subdir, filename) {
             if (!subdir && filename.indexOf('.html') != -1) {
                 // remove extension
                 var parts = filename.split('.');
@@ -561,7 +567,7 @@ module.exports = function (grunt) {
                 var isCss = false;
                 for (var dir in dirs[t].subdirs) {
                     console.log("Process:" + t + "/" + dir);
-                    if (dirs[t].subdirs[dir].justCopy) {
+                    if (dirs[t].subdirs[dir].justCopy || exclude.indexOf(t) != -1) {
                         grunt.task.run(['copy:widget:'+ t+':'+dir]);
                     } else if (dir == 'js') {
                         // Combine all javascript files
@@ -577,8 +583,8 @@ module.exports = function (grunt) {
                     } else {
                         console.log('Nothing to do for '+t+':'+dir);
                     }
-                }		
-				
+                }
+
                 if (isJs && !isCss) {
                     console.log ("Remove js in "+t);
                     // Remove from widget.html all javascripts
@@ -601,7 +607,7 @@ module.exports = function (grunt) {
                     console.log ("Just copy "+t);
                     grunt.task.run(['copy:widgetHtml:'+t]);
                 }
-				
+
                 if (dirs[t].files) {
                     for (var f in dirs[t].files) {
                         if (dirs[t].files[f].replace) {
@@ -647,9 +653,42 @@ module.exports = function (grunt) {
         grunt.task.run([
             'compress'
         ]);
-        console.log(srcDir + '/io-addon.json ==> ' + deliveryDir + '/ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.json');
-        grunt.file.copy(srcDir + '/io-addon.json', deliveryDir + '/ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.json');
+        console.log(srcDir + 'io-addon.json ==> ' + deliveryDir + 'ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.json');
+        grunt.file.copy(srcDir + 'io-addon.json', deliveryDir + 'ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.json');
     });
 
-    grunt.registerTask('default', ['env:production', 'makeWorkingCopy', 'optimizeWorkingCopy', 'deployWorkingCopy', 'createPackage']);
+    grunt.registerTask('updateReadme', function () {
+        var readme = grunt.file.read(__dirname + '/README.md');
+        if (readme.indexOf(ioaddon.version) == -1) {
+            // Find first ### and insert for this the new information
+            var i = readme.indexOf('## Changelog');
+            if (i != -1) {
+                var start = readme.substring(0, i + '## Changelog'.length + 4);
+                var end   = readme.substring(i +  + '## Changelog'.length + 4);
+                var date = new Date();
+                var month = (date.getMonth() + 1);
+                if (month < 10) {
+                    month = "0" + month;
+                }
+                var day = date.getDate();
+                if (day < 10) {
+                    day = "0" + day;
+                }
+                start += '### ' + ioaddon.version + ' [' + date.getFullYear() + '.' + month + '.' + day + ']\r\n';
+                if (ioaddon.whatsNew) {
+                    for (var i = 0; i < ioaddon.whatsNew.length; i++) {
+                        if (typeof ioaddon.whatsNew[i] == 'string') {
+                            start += '* ' + ioaddon.whatsNew[i] + '\r\n';
+                        } else {
+                            start += '* ' + ioaddon.whatsNew[i]['en'] + '\r\n';
+                        }
+                    }
+                }
+                start += '\r\n';
+            }
+            grunt.file.write(__dirname + '/README.md', start + end);
+        }
+    });
+
+    grunt.registerTask('default', ['updateReadme', 'env:production', 'makeWorkingCopy', 'optimizeWorkingCopy', 'deployWorkingCopy', 'createPackage']);
 }

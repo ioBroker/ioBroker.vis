@@ -705,3 +705,32 @@ p.xs_text_editor_mode {
 .ui-selecting {
 
 }
+
+/* ---------------- Notifications themes (info, warn)--------------------------- */
+
+div.jGrowl div.info {
+    background-color: 		#FFF1C2;
+    color: 					navy;
+}
+
+div.jGrowl div.info {
+    -moz-border-radius: 	5px;
+    -webkit-border-radius:	5px;
+    width: 					280px;
+    height: 				55px;
+    overflow: 				hidden;
+    opacity:                0.95;
+}
+div.jGrowl div.warn {
+    background-color: 		#FFF1C2;
+    color: 					red;
+}
+
+div.jGrowl div.warn {
+    -moz-border-radius: 	5px;
+    -webkit-border-radius:	5px;
+    width: 					280px;
+    height: 				55px;
+    overflow: 				hidden;
+    opacity:                1;
+}

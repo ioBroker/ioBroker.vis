@@ -7,7 +7,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
-### 0.9beta100
+### 0.9beta100 [2014.05.05]
 * (Hobbyquaker) Fix loss of interaction (draggable/resizable) after keyboard movement
 * (Bluefox) jGrowl Hints/Popups
 

@@ -205,7 +205,7 @@ var dui = {
                         }, 1);
                         break;
                     default:
-                        console.log("unknown external command "+cmd);
+                        servConn.logError("unknown external command "+cmd);
                 }
 
                 // remove command
@@ -299,7 +299,7 @@ var dui = {
                 dui.bindInstance();
 
             } else {
-               console.log("instance var not found");
+                servConn.logError('instance var not found');
             }
         } else {
             dui.createInstance();
@@ -626,9 +626,8 @@ var dui = {
                 dui.bindWidgetClick(id);
             }
         } catch (e) {
-            console.log("Error: can't render "+widget.tpl+" "+id+"\n\n"+e);
+            servConn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
         }
-
     },
     changeView: function (view, hideOptions, showOptions, sync) {
         //console.log("changeView "+view);
@@ -1089,7 +1088,7 @@ if ('applicationCache' in window) {
                 try {
                     window.applicationCache.swapCache();
                 } catch (e) {
-                    console.log(e);
+                    servConn.logError('Cannot execute window.applicationCache.swapCache - ' + e);
                 }
                 setTimeout(function () {
                     window.location.reload();
@@ -1708,7 +1707,7 @@ var servConn = {
             //local
 
             // Try load views from local storage
-            if (filename.indexOf('dashui-views') != -1) {
+            /*if (filename.indexOf('dashui-views') != -1) {
                 if (typeof storage !== 'undefined') {
                     dui.views = storage.get(filename);
                     if (dui.views) {
@@ -1718,7 +1717,7 @@ var servConn = {
                         dui.views = {};
                     }
                 }
-            }
+            }*/
 
             // Load from ../datastore/dashui-views.json the demo views
             jQuery.ajax({
@@ -1810,7 +1809,7 @@ var servConn = {
                 try {
                     data = JSON.parse(jsonString);
                 } catch (e) {
-                    console.log("readDir: Invalid JSON string - " + e);
+                    servConn.logError('readDir: Invalid JSON string - ' + e);
                     data = null;
                 }
 
@@ -1878,7 +1877,7 @@ var servConn = {
                     try {
                         var _data = (JSON && JSON.parse(jsonString)) || jQuery.parseJSON(jsonString);
                     } catch (e) {
-                        console.log('getDataPoints: Invalid JSON string - ' + e);
+                        servConn.logError('getDataPoints: Invalid JSON string - ' + e);
                         data = null;
                         if (callback) {
                             callback('getDataPoints: Invalid JSON string - ' + e);
@@ -1926,8 +1925,7 @@ var servConn = {
                             try {
                                 localData.uiState.attr('_' + dp, { Value: data[dp][0], Timestamp: data[dp][1], Certain: data[dp][2], LastChange: data[dp][3]});
                             } catch (e) {
-                                console.log("Error: can't create uiState object for "+dp);
-                                console.log(e);
+                                servConn.logError('Error: can\'t create uiState object for ' + dp + '(' + e + ')');
                             }
                         } else {
                             var o = {};
@@ -1960,7 +1958,7 @@ var servConn = {
                         try {
                             localData.uiState.attr(dp, _localData.uiState[dp]);
                         } catch(e) {
-                            console.log("Cannot export " + dp);
+                            servConn.logError('Cannot export ' + dp);
                         }
                     }
                     callback(null);
@@ -2001,7 +1999,7 @@ var servConn = {
                         }
                     }
                 } catch (e) {
-                    console.log("getDataObjects: Invalid JSON string - " + e);
+                    servConn.logError('getDataObjects: Invalid JSON string - ' + e);
                     data = null;
                 }
 
@@ -2192,6 +2190,26 @@ var servConn = {
             if (callback) {
                 callback(null);
             }
+        }
+    },
+    logError: function (errorText) {
+        console.log("Error: " + errorText);
+        if (!this._isConnected) {
+            console.log("No connection!");
+            return;
+        }
+        if (this._type == 0) {
+            //SignalR
+            //this._hub.server.log(errorText);
+        } else if (this._type == 1) {
+            //socket.io
+            if (this._socket == null) {
+                console.log('socket.io not initialized');
+                return;
+            }
+            this._socket.emit('log', 'error', 'DASHUI Error: ' + errorText);
+        } else if (this._type == 2) {
+            // Do nothing
         }
     },
     _queueCmdIfRequired: function (func, arg1, arg2, arg3, arg4) {

@@ -259,7 +259,7 @@ dui = $.extend(true, dui, {
                             try {
                                 $widget.draggable("destroy");
                             } catch (e) {
-                                console.log("inspectWidget "+widgetId+" "+e)
+                                servConn.logError('inspectWidget - Cannot destroy draggable ' + widgetId + ' ' + e);
                             }
                         }
                     } else {
@@ -948,7 +948,7 @@ dui = $.extend(true, dui, {
                     try {
                         $(this).draggable("destroy");
                     } catch (e) {
-                        console.log("inspectWidget "+id+" "+e)
+                        servConn.logError('inspectWidget - Cannot destroy draggable ' + widgetId + ' ' + e);
                     }
                 }
 
@@ -956,7 +956,7 @@ dui = $.extend(true, dui, {
                     try {
                         $(this).resizable("destroy");
                     } catch (e) {
-                        console.log("inspectWidget "+id+" "+e)
+                        servConn.logError('inspectWidget - Cannot destroy resizable ' + widgetId + ' ' + e);
                     }
                 }
             });
@@ -1150,9 +1150,9 @@ dui = $.extend(true, dui, {
                     } else if (wid_attr_.slice(0,4) !== "html") {
                         if (type !== null) {
                             // If description is JSON object
-						if (type.indexOf('{') != -1) {
+						    if (type.indexOf('{') != -1) {
                                 try {
-								type = jQuery.parseJSON(type);
+								    type = jQuery.parseJSON(type);
                                 }
                                 catch (e) {
                                     type = null;
@@ -1203,7 +1203,7 @@ dui = $.extend(true, dui, {
 
                                 } else {
                                     // Simple type
-                                    console.log("Error: " + wid_attr_ +" Type: " + type );
+                                    servConn.logError('Unknown attribute type ' + wid_attr_ +" Type: " + type);
                                 }
                             }
                         } else {
@@ -2035,6 +2035,40 @@ dui = $.extend(true, dui, {
             } else {
 
             }
+
+            // Show what's new
+            if (storage.get('lastVersion') != dui.version) {
+                // Read
+                //storage.set('lastVersion', dui.version);
+                // Read io-addon.json
+                $.ajax({
+                    url: "io-addon.json",
+                    cache: false,
+                    success: function (data) {
+                        try {
+                            var ioaddon = JSON.parse(data);
+                            if (ioaddon.whatsNew) {
+                                for (var i = 0; i < ioaddon.whatsNew.length; i++) {
+                                    var text = ioaddon.whatsNew[i];
+                                    if (typeof text != 'string') {
+                                        text = ioaddon.whatsNew[i][dui.language] || ioaddon.whatsNew[i]['en'];
+                                    }
+                                    // Remove modifier information like (Bluefox) or (Hobbyquaker)
+                                    if (text[0] == '(') {
+                                        var j = text.indexOf(')');
+                                        if (j != -1) {
+                                            text = text.substring(j + 1);
+                                        }
+                                    }
+                                    dui.showHint('<b>' + dui.translate('New:') + '</b>' + text, 30000, 'info');
+                                }
+                            }
+                        } catch(e) {
+                            servConn.logError('Cannot parse io-addon.json');
+                        }
+                    }
+                });
+            }
         }
     },
     editInitNext: function () {
@@ -2740,7 +2774,15 @@ dui = $.extend(true, dui, {
             alert(content);
             return;
         }
+        if (!dui.growlInited) {
+            dui.growlInited = true;
+            // Init jGrowl
+            $.jGrowl.defaults.closer = true;
+            $.jGrowl.defaults.check = 1000;
+        }
+
         $('#growl_informator').jGrowl(content, {
+            theme: type,
             life: (life === undefined) ? 10000 : life,
             sticky: (life === undefined) ? false : !life,
             afterOpen: function (e,m,o) {
@@ -2829,50 +2871,6 @@ dui = $.extend(true, dui, {
         } else {
             $('#clipboard_content').remove();
         }
-/*
-        //console.log("copy cut");
-        var $focused = $(':focus');
-        //console.log($focused);
-        //console.log($focused.length, dui.activeWidget);
-
-        var activeWidget = dui.activeWidget;
-        var multiSelectedWidgets = dui.multiSelectedWidgets;
-
-
-        if (!$focused.length && dui.activeWidget) {
-            var $clipboard_content = $('#clipboard_content');
-            if (!$clipboard_content.length) {
-                $('body').append('<div id="clipboard_content" style="display:none" class="dashui-clipboard"></div>');
-                $clipboard_content = $('#clipboard_content');
-            }
-
-            $clipboard_content.css({left: ($(document).width() - $clipboard_content.width()) / 2})
-                .click(function() {
-                    $(this).fadeOut("slow");
-                });
-            dui.clipboard = [];
-            dui.clipboard[0] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.activeWidget]), view: isCut ? '---copied---' : dui.activeView};
-            var widgetNames = dui.activeWidget;
-            if (dui.multiSelectedWidgets.length) {
-                for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
-                    widgetNames += ', ' + dui.multiSelectedWidgets[i];
-                    dui.clipboard[i + 1] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.multiSelectedWidgets[i]]), view: isCut ? '---copied---' : dui.activeView};
-                }
-            }
-
-            if (isCut) {
-                for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
-                    dui.delWidget(multiSelectedWidgets[i], true);
-                }
-                dui.delWidget(activeWidget);
-                dui.inspectWidget("none");
-            }
-
-            $clipboard_content.html(dui.translate('Clipboard: ') + '<b>' + widgetNames + '</b>');
-            $clipboard_content.fadeIn('fast');
-        } else {
-            $('#clipboard_content').remove();
-        }*/
     },
     onButtonDelete: function () {
         var $focused = $(':focus');
@@ -3076,28 +3074,4 @@ $(window).on("paste", function (e) {
 
 $(document).ready(function () {
     dui.translateAll();
-
-    if (!$.jGrowl) {
-        return;
-    }
-
-    // Init jGrowl
-    $.jGrowl.defaults.closer = true;
-    $.jGrowl.defaults.check = 1000;
- 
-    if (typeof storage == 'undefined' || !storage.get('copy-hint-shown')) {
-        $('#growl_informator').jGrowl(dui.translate("You can copy, cut and paste widgets now!"), {
-            life: 30000,
-            afterOpen: function (e,m,o) {
-                e.click(function () {
-                    $(this).find('.jGrowl-close').trigger('jGrowl.close');
-                });
-            },
-            beforeClose: function () {
-                if (typeof storage !== 'undefined') {
-                    storage.set('copy-hint-shown', true);
-                }
-            }
-        });
-    }
 });

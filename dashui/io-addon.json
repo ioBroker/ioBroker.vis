@@ -10,5 +10,12 @@
 	},
     "urlHomepage": "http://hobbyquaker.github.io/DashUI",
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
-    "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json"
+    "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
+	"whatsNew" : [
+        {"en": "(Hobbyquaker) Fix loss of interaction (draggable/resizable) after keyboard movement",
+         "de": "(Hobbyquaker) Fixe die Interaction (draggable/resizable) nach dem Tastaturaktion",
+         "ru": "(Hobbyquaker) Исправлена потеря возможности изменения размера и перемещения после движения элементов с клавиатуры"
+        },
+        "(Bluefox) jGrowl Hints/Popups"
+	]
 }

@@ -64,6 +64,7 @@ dui = $.extend(true, dui, {
                 'del_widget'       : {'en': 'Delete widget', 'de': 'Löschen',              'ru': 'Удалить'},
                 'dup_widget'       : {'en': 'Copy to:',      'de': 'Kopieren nach:',       'ru': 'Скопировать в:'},
                 'Clipboard: '      : {'en': 'Clipboard:',    'de': 'Zwischenablage:',      'ru': 'Буфер:'},
+                'New:'             : {'en': 'New:',          'de': 'Neues:',               'ru': 'Новое:'},
                 'Widget copied to view %s': {
                     'en': 'Widget copied to view %s',
                     'de': 'Widget wurde in die View "%s" kopiert',
