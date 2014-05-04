@@ -2102,10 +2102,10 @@ dui = $.extend(true, dui, {
 		// Create background_class property if does not exist
 		if (dui.views[dui.activeView] != undefined) {
 			if (dui.views[dui.activeView].settings == undefined) {
-				dui.views[dui.activeView].settings = new Object();
+				dui.views[dui.activeView].settings = {};
 			}
 			if (dui.views[dui.activeView].settings.style == undefined) {
-				dui.views[dui.activeView].settings.style = new Object();
+				dui.views[dui.activeView].settings.style = {};
 			}
 			if (dui.views[dui.activeView].settings.style['background_class'] == undefined) {
 				dui.views[dui.activeView].settings.style['background_class'] = "";
