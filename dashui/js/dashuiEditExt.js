@@ -382,15 +382,13 @@ dui = $.extend(true, dui, {
 				$(this).trigger('click');
 			};
 			dialog_buttons[this._selectText] = function () {
-				$(this).dialog( "close" );
-
-				if (this.settings.onselect)
-					this.settings.onselect (dui.imageSelect._pictDir+this.settings.result, this.settings.onselectArg);
-				$(this).remove();
+				$(this).dialog("close");
+				if (this.settings.onselect) {
+                    this.settings.onselect(dui.imageSelect._pictDir + this.settings.result, this.settings.onselectArg);
+                }
 			};
 			dialog_buttons[this._cancelText] = function () {
-				$(this).dialog( "close" );
-				$(this).remove();
+				$(this).dialog("close");
 			};
 			$(htmlElem).dialog({
 				resizable: true,
@@ -398,12 +396,13 @@ dui = $.extend(true, dui, {
 				modal: true,
 				width: 600,
 				buttons: dialog_buttons,
-				close: dialog_buttons[this._cancelText],
+				close: function () {
+                    $(this).remove();
+                },
                 open: function (event, ui) {
                     $('[aria-describedby="imageSelect"]').css('z-index',1002);
                     $('.ui-widget-overlay').css('z-index',1001);
-                },
-
+                }
             });
 
 			$(htmlElem).dropzone({
@@ -429,9 +428,9 @@ dui = $.extend(true, dui, {
 				},
 				complete: function (e) {
 					if (this.element.settings.onselect) {
-						this.element.settings.onselect ("img/"+dui.imageSelect._curDir+ e.name, this.element.settings.onselectArg);
+						this.element.settings.onselect("img/"+dui.imageSelect._curDir+ e.name, this.element.settings.onselectArg);
 					}
-					$(this.element).dialog( "close" );
+					$(this.element).dialog("close");
 					$(this.element).remove();
 				},
 				init: function () {
@@ -443,9 +442,10 @@ dui = $.extend(true, dui, {
 			});
 
 			// Show wait icon
-			if (!document.getElementById('dashui-waitico'))
-				$(htmlElem).append("<p id='dashui-waitico'>Please wait...</p>");
-				
+			if (!document.getElementById('dashui-waitico')) {
+                $(htmlElem).append("<p id='dashui-waitico'>Please wait...</p>");
+            }
+
 			$('#dashui-waitico').show();
 			this._rootDir = "www/dashui/img/";
 			this._curDir = "";
@@ -454,16 +454,16 @@ dui = $.extend(true, dui, {
 			if (htmlElem.settings.result && htmlElem.settings.result != "") { 
 				var str = htmlElem.settings.result;
 				if (str.substring (0, this._pictDir.length) == this._pictDir) {
-					str = str.substring (this._pictDir.length);
+					str = str.substring(this._pictDir.length);
 				}
 				if (str.indexOf('/') != -1) {
 					var disr = str.split ("/");
-					for (var z=0; z < disr.length -1; z++)
-						this._curDir += disr[z]+"/";
+					for (var z=0; z < disr.length - 1; z++)
+						this._curDir += disr[z] + "/";
 				}
 			}
 			
-			this.getFileList (htmlElem);
+			this.getFileList(htmlElem);
 		},
 		getFileList: function (htmlElem) {
 			// find selected image
@@ -472,10 +472,10 @@ dui = $.extend(true, dui, {
 			if (htmlElem.settings.result && htmlElem.settings.result != "") { 
 				var str = htmlElem.settings.result;
 				if (str.substring (0, dui.imageSelect._pictDir.length) == dui.imageSelect._pictDir) {
-					str = str.substring (dui.imageSelect._pictDir.length);
+					str = str.substring(dui.imageSelect._pictDir.length);
 				}
 				if  (str.substring (0, dui.imageSelect._curDir.length) == dui.imageSelect._curDir) {
-					str = str.substring (dui.imageSelect._curDir.length);
+					str = str.substring(dui.imageSelect._curDir.length);
 					if (str.indexOf('/') == -1) {
 						dui.imageSelect._curImage = str;
 					}
@@ -483,21 +483,21 @@ dui = $.extend(true, dui, {
 			}
 			
 			// Load directory
-			dui.conn.readDir (this._rootDir + this._curDir, function (dirArr) {
+			dui.conn.readDir(this._rootDir + this._curDir, function (dirArr) {
 				dui.imageSelect.showImages(dirArr, htmlElem);
 			});
 		},
 		showImages: function (aImages, obj) {	
 			// Remove wait icon
 			$('#dashui-waitico').hide ();
-			obj.settings.columns = Math.floor (($(obj).width()-30) / (obj.settings.iwidth+5));
-			obj.settings.rows    = Math.floor (aImages.length / obj.settings.columns) + 2;
+			obj.settings.columns = Math.floor(($(obj).width() - 30) / (obj.settings.iwidth + 5));
+			obj.settings.rows    = Math.floor(aImages.length / obj.settings.columns) + 2;
 			
-			if (document.getElementById(obj.settings.elemName+"_tbl0")) {
-				$('#'+obj.settings.elemName+"_tbl0").remove();
+			if (document.getElementById(obj.settings.elemName + "_tbl0")) {
+				$('#'+obj.settings.elemName + "_tbl0").remove();
 			}
-			if (document.getElementById(obj.settings.elemName+"_tbl1")) {
-				$('#'+obj.settings.elemName+"_tbl1").remove();
+			if (document.getElementById(obj.settings.elemName + "_tbl1")) {
+				$('#'+obj.settings.elemName + "_tbl1").remove();
 			}
 
 			// Remove directory image and place directories first
