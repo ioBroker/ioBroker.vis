@@ -7,6 +7,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta99
+* (Hobbyquaker) Image selection dialog improvements (z-index, fix thumbnail size)
+* (Hobbyquaker) prevent auto-hide of editor dialog if a multiselect is opened
+
 ### 0.9beta98
 * (Hobbyquaker) Fixes Multiselection
 * (Hobbyquaker) Fix Sound onClick for basic widgets

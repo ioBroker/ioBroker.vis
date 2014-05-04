@@ -25,7 +25,7 @@
 "use strict";
 
 dui = $.extend(true, dui, {
-    editVersion:            '0.9beta98',
+    editVersion:            '0.9beta99', // todo - do we use this or may i remove it?
     toolbox:                $("#dui_editor"),
     selectView:             $("#select_view"),
     activeWidget:           "",
