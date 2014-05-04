@@ -3025,12 +3025,15 @@ dui = $.extend(true, dui, {
             }
             dui.delayedSettings = _setTimeout(function(widgetId) {
                 // Save new settings
+
+                // TODO @Bluefox Why do we need this? Necessary for hqWidgets?
                 dui.reRenderWidget(widgetId);
                 dui.inspectWidget(widgetId, true);
                 for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
                     dui.reRenderWidget(dui.multiSelectedWidgets[i]);
                 }
                 dui.delayedSettings = null;
+
                 dui.save();
             }, 1000, dui.activeWidget);
             return true;
