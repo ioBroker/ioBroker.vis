@@ -25,7 +25,6 @@
 "use strict";
 
 dui = $.extend(true, dui, {
-    editVersion:            '0.9beta99', // todo - do we use this or may i remove it?
     toolbox:                $("#dui_editor"),
     selectView:             $("#select_view"),
     activeWidget:           "",
@@ -269,15 +268,15 @@ dui = $.extend(true, dui, {
                 } else if (dui.activeWidget == widgetId && dui.multiSelectedWidgets.length) {
                     //console.log("click inspected Widget",widgetId, dui.multiSelectedWidgets);
 
-                    var newActive = dui.multiSelectedWidgets.pop();
-                    var multiSelectedWidgets = dui.multiSelectedWidgets;
-                    $("#widget_multi_helper_"+newActive).remove();
+                        var newActive = dui.multiSelectedWidgets.pop();
+                        var multiSelectedWidgets = dui.multiSelectedWidgets;
+                        $("#widget_multi_helper_"+newActive).remove();
                     $("#" + newActive).removeClass("ui-selected");
-                    dui.inspectWidget(newActive);
-                    for (var i = 0; i < multiSelectedWidgets.length; i++) {
-                        dui.inspectWidgetMulti(multiSelectedWidgets[i]);
-                    }
-                    dui.allWidgetsHelper();
+                        dui.inspectWidget(newActive);
+                        for (var i = 0; i < multiSelectedWidgets.length; i++) {
+                            dui.inspectWidgetMulti(multiSelectedWidgets[i]);
+                        }
+                        dui.allWidgetsHelper();
 
                 }
             } else {
@@ -1706,7 +1705,8 @@ dui = $.extend(true, dui, {
             dialogClass: "dui-editor-dialog",
             close: function () {
                 dui.saveRemote(function () {
-                    location.href = "./" + window.location.search + "#" + dui.activeView;
+                    // Some systems (e.g. offline mode) show here the content of directory if called without index.html
+                    location.href = "./index.html" + window.location.search + "#" + dui.activeView;
                 });
             },
             open: function () {
@@ -1843,9 +1843,7 @@ dui = $.extend(true, dui, {
             dui.addWidget(tpl, data);
 
             $("#select_active_widget").append("<option value='"+dui.activeWidget+"'>"+dui.activeWidget+" ("+$("#"+dui.views[dui.activeView].widgets[dui.activeWidget].tpl).attr("data-dashui-name")+")</option>");
-            if ($().multiselect) {
-                $("#select_active_widget").multiselect("refresh");
-            }
+            $("#select_active_widget").multiselect("refresh");
             setTimeout(function () {
                 dui.inspectWidget(dui.activeWidget)
             }, 50);
@@ -2202,7 +2200,9 @@ dui = $.extend(true, dui, {
                     $(".dui-editor-dialog").show("slide", {direction: "left"})
                 })
                 .mouseleave(function () {
-                    if ($(".ui-multiselect-menu:visible").length) return;
+                    if ($(".ui-multiselect-menu:visible").length) {
+                        return;
+                    }
                     delay = setTimeout(function () {
                         $(".dui-editor-dialog").hide("slide", {direction: "left"})
                     }, 750);
@@ -2248,7 +2248,9 @@ dui = $.extend(true, dui, {
                     $(".dui-editor-dialog").show("slide", {direction: "right"})
                 })
                 .mouseleave(function () {
-                    if ($(".ui-multiselect-menu:visible").length) return;
+                    if ($(".ui-multiselect-menu:visible").length) {
+                         return;
+                    }
                     delay = setTimeout(function () {
                         $(".dui-editor-dialog").hide("slide", {direction: "right"})
                     }, 750);
@@ -2734,7 +2736,9 @@ dui = $.extend(true, dui, {
         }
     },
     showHint: function (content, life, type, onShow) {
-        if (!$.jGrowl) return;
+        if (!$.jGrowl) { 
+             return;
+        }
         $('#growl_informator').jGrowl(content, {
             life: (life === undefined) ? 10000 : life,
             sticky: (life === undefined) ? false : !life,
@@ -3065,7 +3069,9 @@ $(window).on("paste", function (e) {
 $(document).ready(function () {
     dui.translateAll();
 
-    if (!$.jGrowl) return;
+    if (!$.jGrowl) {
+        return;
+    }
 
     // Init jGrowl
     $.jGrowl.defaults.closer = true;
