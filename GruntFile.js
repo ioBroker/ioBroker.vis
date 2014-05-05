@@ -666,7 +666,18 @@ module.exports = function (grunt) {
                 ("0" + (timestamp.getMonth() + 1).toString(10)).slice(-2) + '-' +
                 ("0" + (timestamp.getDate()).toString(10)).slice(-2);
 
-            grunt.file.write(__dirname + '/README.md', readme.replace(/##\s+Changelog/, '## Changelog\r\n\r\n### ' + ioaddon.version + ' [' + date + ']\r\n\r\n'));
+            var news = "";
+            if (ioaddon.whatsNew) {
+                for (var i = 0; i < ioaddon.whatsNew.length; i++) {
+                    if (typeof ioaddon.whatsNew[i] == 'string') {
+                        news += '* ' + ioaddon.whatsNew[i] + '\r\n';
+                    } else {
+                        news += '* ' + ioaddon.whatsNew[i]['en'] + '\r\n';
+                    }
+                }
+            }
+
+            grunt.file.write(__dirname + '/README.md', readme.replace(/##\s+Changelog/, '## Changelog\r\n\r\n### ' + ioaddon.version + ' [' + date + ']\r\n' + news + '\r\n'));
         }
     });
 
