@@ -342,16 +342,16 @@ module.exports = function (grunt) {
                     force: true,
                     patterns: [
                         {
-                            match: /# DashUI Version [\.0-9A-Za-z]*/g,
+                            match: /(#+\s+DashUI\s+Version\s+)[\.0-9A-Za-z]+/g,
                             replacement: '# DashUI Version ' + ioaddon.version
                         },
                         {
-                            match: /\<\!\-\- DashUI Version [\.0-9A-Za-z]* \-\-\>/g,
+                            match: /<!--\s+DashUI\s+Version\s+[\.0-9A-Za-z]+\s+-->/g,
                             replacement: '<!-- DashUI Version ' + ioaddon.version + ' -->'
                         },
                         {
-                            match: /    version:                '[\.0-9A-Za-z]*',/g,
-                            replacement: '    version:                \'' + ioaddon.version + '\','
+                            match: /(\s+version:\s+)'[\.0-9A-Za-z]+',/g,
+                            replacement: '$1\'' + ioaddon.version + '\','
                         }
                     ]
                 },
@@ -496,10 +496,11 @@ module.exports = function (grunt) {
         // Exclude these widgets from minmizing and combining
         var exclude = ["swipe", "highcharts"];
         grunt.file.recurse(srcDir + "widgets/", function (abspath, rootdir, subdir, filename) {
-            if (!subdir && filename.indexOf('.html') != -1) {
+            if (filename == ".DS_Store") return;
+            if (!subdir && filename.indexOf('.html') != -1 ) {
                 // remove extension
                 var parts = filename.split('.');
-                var widgetName = parts.splice(parts.length - 2, 1).join ('.');
+                var widgetName = parts.splice(parts.length - 2, 1).join('.');
                 if (!dirs[widgetName]) {
                     dirs[widgetName] = {subdirs:{}};
                 }
