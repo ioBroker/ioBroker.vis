@@ -683,7 +683,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('updateCache', function () {
         var manifest = grunt.file.read(__dirname + '/dashui/cache.manifest');
-        if (manifest.indexOf("# dev build")) {
+        if (manifest.indexOf("# dev build") != -1) {
             var matchArr = manifest.match(/# dev build ([0-9]+)\s/);
             var number = parseInt(matchArr[1], 10);
             grunt.file.write(__dirname + '/dashui/cache.manifest', manifest.replace(/# dev build ([0-9]+)\s/, '# dev build ' + (number + 1) + '\n'));
