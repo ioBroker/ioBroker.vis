@@ -661,33 +661,12 @@ module.exports = function (grunt) {
     grunt.registerTask('updateReadme', function () {
         var readme = grunt.file.read(__dirname + '/README.md');
         if (readme.indexOf(ioaddon.version) == -1) {
-            // Find first ### and insert for this the new information
-            var i = readme.indexOf('## Changelog');
-            if (i != -1) {
-                var start = readme.substring(0, i + '## Changelog'.length + 4);
-                var end   = readme.substring(i +  + '## Changelog'.length + 4);
-                var date = new Date();
-                var month = (date.getMonth() + 1);
-                if (month < 10) {
-                    month = "0" + month;
-                }
-                var day = date.getDate();
-                if (day < 10) {
-                    day = "0" + day;
-                }
-                start += '### ' + ioaddon.version + ' [' + date.getFullYear() + '.' + month + '.' + day + ']\r\n';
-                if (ioaddon.whatsNew) {
-                    for (var i = 0; i < ioaddon.whatsNew.length; i++) {
-                        if (typeof ioaddon.whatsNew[i] == 'string') {
-                            start += '* ' + ioaddon.whatsNew[i] + '\r\n';
-                        } else {
-                            start += '* ' + ioaddon.whatsNew[i]['en'] + '\r\n';
-                        }
-                    }
-                }
-                start += '\r\n';
-            }
-            grunt.file.write(__dirname + '/README.md', start + end);
+            var timestamp = new Date();
+            var date = timestamp.getFullYear() + '-' +
+                ("0" + (timestamp.getMonth() + 1).toString(10)).slice(-2) + '-' +
+                ("0" + (timestamp.getDate()).toString(10)).slice(-2);
+
+            grunt.file.write(__dirname + '/README.md', readme.replace(/##\s+Changelog/, '## Changelog\r\n\r\n### ' + ioaddon.version + ' [' + date + ']\r\n\r\n'));
         }
     });
 
