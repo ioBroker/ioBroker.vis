@@ -681,5 +681,14 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['updateReadme', 'env:production', 'makeWorkingCopy', 'optimizeWorkingCopy', 'deployWorkingCopy', 'createPackage']);
-}
+    grunt.registerTask('updateCache', function () {
+        var manifest = grunt.file.read(__dirname + '/dashui/cache.manifest');
+        if (manifest.indexOf("# dev build")) {
+            var matchArr = manifest.match(/# dev build ([0-9]+)\s/);
+            var number = parseInt(matchArr[1], 10);
+            grunt.file.write(__dirname + '/dashui/cache.manifest', manifest.replace(/# dev build ([0-9]+)\s/, '# dev build ' + (number + 1) + '\n'));
+        }
+    });
+
+    grunt.registerTask('default', ['updateCache', 'updateReadme', 'env:production', 'makeWorkingCopy', 'optimizeWorkingCopy', 'deployWorkingCopy', 'createPackage']);
+};
