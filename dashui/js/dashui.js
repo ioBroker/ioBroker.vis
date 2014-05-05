@@ -2195,7 +2195,7 @@ var servConn = {
     logError: function (errorText) {
         console.log("Error: " + errorText);
         if (!this._isConnected) {
-            console.log("No connection!");
+            //console.log("No connection!");
             return;
         }
         if (this._type == 0) {
@@ -2207,7 +2207,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('log', 'error', 'DASHUI Error: ' + errorText);
+            this._socket.emit('log', 'error', 'Addon DashUI  ' + errorText);
         } else if (this._type == 2) {
             // Do nothing
         }
