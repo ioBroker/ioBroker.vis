@@ -1,5 +1,5 @@
 {
-    "version": "0.9beta101",
+    "version": "0.9beta102",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
@@ -12,10 +12,9 @@
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        {"en": "(Hobbyquaker) Fix loss of interaction (draggable/resizable) after keyboard movement",
-         "de": "(Hobbyquaker) Fixe die Interaction (draggable/resizable) nach dem Tastaturaktion",
-         "ru": "(Hobbyquaker) Исправлена потеря возможности изменения размера и перемещения после движения элементов с клавиатуры"
-        },
-        "(Bluefox) jGrowl Hints/Popups"
+        {"en": "(Bluefox) Fix hqWidgets: Size is smaller after click on the widget\n(Bluefox) Do not show whats new more than one time",
+         "de": "(Bluefox) Fix hqWidgets: Size is smaller after click on the widget\n(Bluefox) Do not show whats new more than one time",
+         "ru": "(Bluefox) Fix hqWidgets: Size is smaller after click on the widget\n(Bluefox) Do not show whats new more than one time"
+        }
 	]
 }
