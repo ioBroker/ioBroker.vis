@@ -2039,7 +2039,7 @@ dui = $.extend(true, dui, {
             // Show what's new
             if (storage.get('lastVersion') != dui.version) {
                 // Read
-                //storage.set('lastVersion', dui.version);
+                storage.set('lastVersion', dui.version);
                 // Read io-addon.json
                 $.ajax({
                     url: "io-addon.json",

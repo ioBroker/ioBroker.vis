@@ -181,7 +181,7 @@ var hqWidgets = {
         if (this.gDynamics.gActiveBig!=null) {               
             this.gDynamics.gActiveBig.ShowBigWindow(false);
             this.gDynamics.gActiveBig.SendPercent ();
-            this.gDynamics.gActiveBig=null;		
+            this.gDynamics.gActiveBig = null;
         }
         if (this.gDynamics.gActiveSlider!=null) {
             //this.gDynamics.gActiveSlider.SendPosition ();
@@ -191,14 +191,17 @@ var hqWidgets = {
     },
     // On mouse move handler
     onMouseMove: function (x_, y_) {
-        if (this.gDynamics.gActiveElement != null)
+        if (this.gDynamics.gActiveElement != null) {
             this.gDynamics.gActiveElement.OnMouseMove (x_,y_);
+        }
         else
-        if (this.gDynamics.gActiveBig != null)
+        if (this.gDynamics.gActiveBig != null) {
             this.gDynamics.gActiveBig.intern._jbigWindow.OnMouseMove (x_,y_);//.SetPositionOffset(y_ - this.gDynamics.gActiveBig.cursorY);
+        }
         else
-        if (this.gDynamics.gActiveSlider != null) 
+        if (this.gDynamics.gActiveSlider != null) {
             this.gDynamics.gActiveSlider.OnMouseMove(x_, y_);
+        }
     },
     // Convert button type to string
     Type2Name: function  (t) {
@@ -249,7 +252,6 @@ var hqWidgets = {
     },
     // Delete button from the list
     Delete: function (buttonToDelete) {
-        console.log ("Delete " + buttonToDelete);
         if (buttonToDelete.settings == undefined) {
             // May be this is te name of the div element
             buttonToDelete = this.Get (buttonToDelete);
@@ -488,8 +490,10 @@ var hqWidgets = {
             hqWidgets.onMouseUp (true);
         }, false);
         $(document).mousemove(function(event){
-            if (hqWidgets.gDynamics.gIsTouch) return;
-            hqWidgets.onMouseMove (event.pageX, event.pageY);
+            if (hqWidgets.gDynamics.gIsTouch) {
+                return;
+            }
+            hqWidgets.onMouseMove(event.pageX, event.pageY);
         }); 
         document.addEventListener('touchmove', function(e) {
             if ((hqWidgets.gDynamics.gActiveElement != null) || 
@@ -498,7 +502,7 @@ var hqWidgets = {
             {
                 //$('#statusM').html(" x"+e.touches[0].pageX+" y"+e.touches[0].pageY);	
                 e.preventDefault();
-                hqWidgets.onMouseMove (e.touches[0].pageX, e.touches[0].pageY);
+                hqWidgets.onMouseMove(e.touches[0].pageX, e.touches[0].pageY);
             }
         }, false);
         // Install prototype function for strings to 
@@ -3726,11 +3730,11 @@ var hqWidgets = {
             return false;
         }
         this.OnMouseUp = function (isTouch) {
-            if (hqWidgets.gDynamics.gRightClickDetection) { 
+            if (hqWidgets.gDynamics.gRightClickDetection) {
                 clearTimeout (hqWidgets.gDynamics.gRightClickDetection); 
                 hqWidgets.gDynamics.gRightClickDetection = null;
             }
-            
+
             this.intern._isHoover = false;
             
             if (!this.intern._isEditMode) {
@@ -4712,8 +4716,10 @@ var hqWidgets = {
             var obj = event.data.msg;
             if (obj.settings.buttonType == hqWidgets.gButtonType.gTypeImage)
                 return;
-            var _width  = obj.intern._jelement.width();
-            var _height = obj.intern._jelement.height();
+            //var _width  = obj.intern._jelement.width();
+            //var _height = obj.intern._jelement.height();
+            var _width  = obj.settings.width;
+            var _height = obj.settings.height;
 
             obj.intern._isHoover = false;
             
@@ -4722,7 +4728,7 @@ var hqWidgets = {
                 obj.intern._isPressed = false;
 
             if (!obj.intern._isEditMode || !obj.intern._isPressed)
-            {	
+            {
                 if ((obj.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer ||
                      obj.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp) && !obj.intern._isEditMode) {
                     if (!obj.intern._isPressed)
