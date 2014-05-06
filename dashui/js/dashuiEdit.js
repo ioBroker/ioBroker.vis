@@ -662,8 +662,19 @@ dui = $.extend(true, dui, {
                     if (bt && bt.val() == "") {
                         bt.val($this.val().charAt(0).toUpperCase() + $this.val().slice(1).toLowerCase()).trigger('change');
                     }
-                    dui.reRenderWidget(dui.activeWidget);
+
                     dui.save();
+
+                    // TODO Limit this to widgets that really need rerendering?
+                    dui.reRenderWidget(dui.activeWidget);
+                    dui.inspectWidget(dui.activeWidget);
+                    var multiSelectedWidgets = dui.multiSelectedWidgets;
+                    dui.multiSelectedWidgets = [];
+                    for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
+                        dui.reRenderWidget(multiSelectedWidgets[i]);
+                        dui.inspectWidgetMulti(multiSelectedWidgets[i]);
+                    }
+
                 }, 200, this);
             };
 
@@ -891,7 +902,17 @@ dui = $.extend(true, dui, {
             dui.widgets[dui.activeWidget].data.attr(attribute, val);
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
             dui.save();
+
+            // TODO Limit this to Widgets that really need rerendering?
             dui.reRenderWidget(dui.activeWidget);
+            dui.inspectWidget(dui.activeWidget);
+            var multiSelectedWidgets = dui.multiSelectedWidgets;
+            dui.multiSelectedWidgets = [];
+            for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
+                dui.reRenderWidget(multiSelectedWidgets[i]);
+                dui.inspectWidgetMulti(multiSelectedWidgets[i]);
+            }
+
         })/*.keyup(function () {
             $(this).trigger('change');
         })*/;
@@ -1233,7 +1254,16 @@ dui = $.extend(true, dui, {
                             dui.widgets[dui.activeWidget].data.attr(attribute, val);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
                             dui.save();
+
+                            // TODO Limit this to widgets that really need rerendering?
                             dui.reRenderWidget(dui.activeWidget);
+                            dui.inspectWidget(dui.activeWidget);
+                            var multiSelectedWidgets = dui.multiSelectedWidgets;
+                            dui.multiSelectedWidgets = [];
+                            for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
+                                dui.reRenderWidget(multiSelectedWidgets[i]);
+                                dui.inspectWidgetMulti(multiSelectedWidgets[i]);
+                            }
                         })/*.keyup(function () {
                                 $(this).trigger('change');
                         })*/;
@@ -1885,7 +1915,16 @@ dui = $.extend(true, dui, {
 
             // TODO saveRemote really necessary here?
             dui.save();
+
+            // TODO Limit this to widgets that really need rerendering?
             dui.reRenderWidget(dui.activeWidget);
+            dui.inspectWidget(dui.activeWidget);
+            var multiSelectedWidgets = dui.multiSelectedWidgets;
+            dui.multiSelectedWidgets = [];
+            for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
+                dui.reRenderWidget(multiSelectedWidgets[i]);
+                dui.inspectWidgetMulti(multiSelectedWidgets[i]);
+            }
         });
 		
         $(".dashui-inspect-css").change(function () {
