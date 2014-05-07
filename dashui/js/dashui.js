@@ -1511,7 +1511,8 @@ var servConn = {
                 this._socket.on('connect', function () {
                     //console.log("socket.io connect");
                     if (this._myParent._isConnected == true) {
-                        // This seems to be a reconnect because we're already connected
+                        // This seems to be a reconnect because we're already connected!
+                        // -> prevent firing onConnChange twice
                         return;
                     }
                     this._myParent._isConnected = true;
@@ -1535,8 +1536,10 @@ var servConn = {
                     //console.log("socket.io reconnect");
                     var offlineTime = (new Date()).getTime() - this._myParent._disconnectedSince;
                     //console.log("was offline for " + (offlineTime / 1000) + "s");
+
+                    // TODO does this make sense?
                     if (offlineTime > 12000) {
-                        window.location.reload();
+                        //window.location.reload();
                     }
                     this._myParent._isConnected = true;
                     if (this._myParent._connCallbacks.onConnChange) {
@@ -1590,7 +1593,7 @@ var servConn = {
     // And in the future we will have two servers - one for static pages and one for socket.io.
 
     // @Bluefox: i introduced this function because socket.io didn't reconnect sometimes after a long
-    // offline period (several minutes/hours). Since 0.9beta97 it's buggy and causes a reload-load with android
+    // offline period (several minutes/hours). Since 0.9beta97 it's buggy and causes a reload-loop with android
     // stock browser:
     // http://homematic-forum.de/forum/viewtopic.php?f=48&t=18271
     // so i deactivated it for now
