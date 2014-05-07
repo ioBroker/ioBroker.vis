@@ -304,7 +304,14 @@
                     var can = document.getElementById ('c' + div.attr('id'));
 
                     can.width  = div.width();
-                    can.height = div.height ();
+                    can.height = div.height();
+                    
+                    if (can.width == 0 || can.height == 0) {
+                        // My be jQuery bug
+                        can.width = parseInt(div[0].style.width);
+                        can.height = parseInt(div[0].style.height);
+                    }
+
                     RGraph.Clear (can);
                     //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
@@ -514,6 +521,13 @@
         
                         can.width  = div.width();
                         can.height = div.height ();
+        
+                        if (can.width == 0 || can.height == 0) {
+                            // My be jQuery bug
+                            can.width = parseInt(_div.style.width);
+                            can.height = parseInt(_div.style.height);
+                        }
+
         
                         RGraph.Clear (can);
                         _div.rgraph.Draw();
@@ -807,7 +821,13 @@
 
                     can.width  = div.width();
                     can.height = div.height ();
-
+                    
+                    if (can.width == 0 || can.height == 0) {
+                        // My be jQuery bug
+                        can.width = parseInt(div[0].style.width);
+                        can.height = parseInt(div[0].style.height);
+                    }
+                        
                     RGraph.Clear (can);
                     //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
@@ -1032,6 +1052,12 @@
                         can.width  = div.width();
                         can.height = div.height ();
 
+                        if (can.width == 0 || can.height == 0) {
+                            // My be jQuery bug
+                            can.width = parseInt(_div.style.width);
+                            can.height = parseInt(_div.style.height);
+                        }
+                        
                         RGraph.Clear (can);
                         _div.rgraph.Draw();
                     }, 500, this.id);
