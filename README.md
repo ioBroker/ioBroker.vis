@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta104 [2014-05-07]
+* (Hobbyquaker) trying to solve socket.io reconnection issues
+
 ### 0.9beta103 [2014-05-07]
 * (Hobbyquaker) Fix Bug causing reload Loop with Android stock browser
 * (Hobbyquaker) Fix loss of interaction (draggable/resizable) after changing widget attributes

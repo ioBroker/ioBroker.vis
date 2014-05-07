@@ -1,20 +1,17 @@
 {
-    "version": "0.9beta103",
+    "version": "0.9beta104",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
 	"description": {
-		"en": "DashUI is comprehensive web-based visualisation for ioBroker.",
-		"de": "DashUI ist eine flexible webbasierte Visualisierung für ioBroker.",
+		"en": "DashUI is comprehensive web-based visualisation with unlimited freedom of scope for ioBroker.",
+		"de": "DashUI ist eine umfangreiche webbasierte Visualisierung mit uneingeschränkter Gestaltungsfreiheit für ioBroker.",
 		"ru": "DashUI это гибкий и мощный модуль визуализации для ioBroker, основанный на Web-Технологиях."
 	},
     "urlHomepage": "http://hobbyquaker.github.io/DashUI",
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        {"en": "(Hobbyquaker) Fixed Bug causing reload Loop with Android stock browser",
-         "de": "(Bluefox) Fix hqWidgets: Size is smaller after click on the widget\n(Bluefox) Do not show whats new more than one time",
-         "ru": "(Bluefox) Fix hqWidgets: Size is smaller after click on the widget\n(Bluefox) Do not show whats new more than one time"
-        }
+        "(Hobbyquaker) trying to solve socket.io reconnection issues"
 	]
 }
