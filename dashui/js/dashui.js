@@ -1565,13 +1565,20 @@ var servConn = {
         }
 
         // start connection timer
-        this._autoReconnect();
+        //this._autoReconnect();
     },
     // After 3 hours debugging...
     // It is questionable if ths function really required.
     // Socket.io automatically reconnects to the server and sets _isConnected to true, so
     // it will never happened...
     // And in the future we will have two servers - one for static pages and one for socket.io.
+
+    // @Bluefox: i introduced this function because socket.io didn't reconnect sometimes after a long
+    // offline period (several minutes/hours). Since 0.9beta97 it's buggy and causes a reload-load with android
+    // stock browser:
+    // http://homematic-forum.de/forum/viewtopic.php?f=48&t=18271
+    // so i deactivated it for now
+
     _autoReconnect: function () {
         // If connected
         if (this._isConnected) {
@@ -2296,7 +2303,7 @@ var servConn = {
             });
         }
     }
-}
+};
 
 // IE8 indexOf compatibility
 if (!Array.prototype.indexOf) {
