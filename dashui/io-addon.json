@@ -4,7 +4,7 @@
     "ident": "DashUI",
     "dirname": "dashui",
 	"description": {
-		"en": "DashUI is comprehensive web-based visualisation with unlimited freedom of scope for ioBroker.",
+		"en": "DashUI is comprehensive web-based visualisation with unlimited freedom of design for ioBroker.",
 		"de": "DashUI ist eine umfangreiche webbasierte Visualisierung mit uneingeschränkter Gestaltungsfreiheit für ioBroker.",
 		"ru": "DashUI это гибкий и мощный модуль визуализации для ioBroker, основанный на Web-Технологиях."
 	},
