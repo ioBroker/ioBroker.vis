@@ -1187,7 +1187,7 @@ if ('applicationCache' in window) {
         dui.conn = servConn;
         dui.conn.init({
             onConnChange: function (isConnected) {
-                console.log("onConnChange isConnected="+isConnected);
+                //console.log("onConnChange isConnected="+isConnected);
                 if (isConnected) {
                     $("#ccu-io-disconnect").dialog("close");
                     if (dui.isFirstTime) {
