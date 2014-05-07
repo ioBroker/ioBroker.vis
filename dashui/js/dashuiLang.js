@@ -136,7 +136,7 @@ dui = $.extend(true, dui, {
                 },
                 'No connection to Server': {
                     'en' : 'No connection to Server',
-                    'de': 'Keine Verbindung zu Server',
+                    'de': 'Keine Verbindung zum Server',
                     'ru': 'Нет соединения с сервером'
                 },
                 'Loading Widget-Sets... <span id="widgetset_counter"></span>' : {

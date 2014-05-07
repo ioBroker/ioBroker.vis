@@ -1187,7 +1187,9 @@ if ('applicationCache' in window) {
         dui.conn = servConn;
         dui.conn.init({
             onConnChange: function (isConnected) {
+                console.log("onConnChange isConnected="+isConnected);
                 if (isConnected) {
+                    $("#ccu-io-disconnect").dialog("close");
                     if (dui.isFirstTime) {
                         dui.conn.getVersion(function (version) {
                             if (!version) {
@@ -1201,15 +1203,11 @@ if ('applicationCache' in window) {
                                 }
                             }
                         });
-                    }
 
-                    $("#ccu-io-disconnect").dialog("close");
-                    //console.log((new Date()) + " socket.io connect");
-
-                    // Read all datapoints from server
-                    if (dui.isFirstTime) {
                         dui.showWaitScreen(true, 'Loading data values...', null, 20);
                     }
+
+                    // Read all datapoints from server
                     dui.conn.getDataPoints(function (error) {
                         if (error) {
                             console.log("Possibly not authenticated, wait for request from server");
@@ -1244,7 +1242,7 @@ if ('applicationCache' in window) {
                             dui.isFirstTime = false;
                         }
                     });
-                } else{
+                } else {
                     //console.log((new Date()) + " socket.io disconnect");
                     $("#ccu-io-disconnect").dialog("open");
                 }
@@ -1363,26 +1361,27 @@ if ('applicationCache' in window) {
 // @Bluefox: ah ok - I understand, that makes sense.
 
 var servConn = {
-    _socket        : null,
-    _hub           : null,
-    _onConnChange  : null,
-    _onUpdate      : null,
-    _isConnected   : false,
-    _connCallbacks : {
-                          onConnChange: null,
-                          onUpdate:     null,
-                          onRefresh:    null,
-                          onAuth:       null
-                     },
-    _authInfo      : null,
-    _isAuthDone    : false,
-    _isAuthRequired: false,
-    _authRunning   : false,
-    _cmdQueue      : [],
-    _connTimer     : null,
-    _type          : 1, // 0 - SignalR, 1 - socket.io, 2 - local demo
-    _timeout       : 0, // 0 - use transport default timeout to detect disconnect
-    _reconnectInterval : 10000, // reconnect interval
+    _socket:            null,
+    _hub:               null,
+    _onConnChange:      null,
+    _onUpdate:          null,
+    _isConnected:       false,
+    _disconnectedSince: null,
+    _connCallbacks: {
+                        onConnChange: null,
+                        onUpdate:     null,
+                        onRefresh:    null,
+                        onAuth:       null
+                    },
+    _authInfo:          null,
+    _isAuthDone:        false,
+    _isAuthRequired:    false,
+    _authRunning:       false,
+    _cmdQueue:          [],
+    _connTimer:         null,
+    _type:              1, // 0 - SignalR, 1 - socket.io, 2 - local demo
+    _timeout:           0, // 0 - use transport default timeout to detect disconnect
+    _reconnectInterval: 10000, // reconnect interval
 
     getIsConnected: function () {
         return this._isConnected;
@@ -1502,31 +1501,48 @@ var servConn = {
                     url = jQuery(location).attr('protocol') + '//' + jQuery(location).attr('host');
                 }
 
-                this._socket = io.connect(url + '?key=' + socketSession);
+                this._socket = io.connect(url + '?key=' + socketSession, {
+                    'reconnection limit': 10000,
+                    'max reconnection attempts': Infinity
+                });
+
                 this._socket._myParent = this;
 
                 this._socket.on('connect', function () {
+                    //console.log("socket.io connect");
+                    if (this._myParent._isConnected == true) {
+                        // This seems to be a reconnect because we're already connected
+                        return;
+                    }
                     this._myParent._isConnected = true;
                     if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
-                    this._myParent._autoReconnect();
+                    //this._myParent._autoReconnect();
                 });
 
                 this._socket.on('disconnect', function () {
+                    //console.log("socket.io disconnect");
+                    this._myParent._disconnectedSince = (new Date()).getTime();
                     this._myParent._isConnected = false;
                     if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
                     // Auto-Reconnect
-                    this._myParent._autoReconnect();
+                    //this._myParent._autoReconnect();
                 });
                 this._socket.on('reconnect', function () {
+                    //console.log("socket.io reconnect");
+                    var offlineTime = (new Date()).getTime() - this._myParent._disconnectedSince;
+                    //console.log("was offline for " + (offlineTime / 1000) + "s");
+                    if (offlineTime > 12000) {
+                        window.location.reload();
+                    }
                     this._myParent._isConnected = true;
                     if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
                     }
-                    this._myParent._autoReconnect();
+                    //this._myParent._autoReconnect();
                 });
                 this._socket.on('refreshAddons', function () {
                     if (this._myParent._connCallbacks.onRefresh) {
@@ -1859,7 +1875,7 @@ var servConn = {
             this._socket.emit('setState', [pointId, value]);
         } else if (this._type == 2) {
             //local
-            console.log('This is only demo. No one point will be controlled.');
+            console.log('This is only demo. No point will be controlled.');
         }
     },
     getDataPoints: function (callback) {
