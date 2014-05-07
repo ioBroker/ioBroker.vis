@@ -1,5 +1,5 @@
 {
-    "version": "0.9beta102",
+    "version": "0.9beta103",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
@@ -12,7 +12,7 @@
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        {"en": "(Bluefox) Fix hqWidgets: Size is smaller after click on the widget\n(Bluefox) Do not show whats new more than one time",
+        {"en": "(Hobbyquaker) Fixed Bug causing reload Loop with Android stock browser",
          "de": "(Bluefox) Fix hqWidgets: Size is smaller after click on the widget\n(Bluefox) Do not show whats new more than one time",
          "ru": "(Bluefox) Fix hqWidgets: Size is smaller after click on the widget\n(Bluefox) Do not show whats new more than one time"
         }
