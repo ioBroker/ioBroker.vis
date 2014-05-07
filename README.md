@@ -8,7 +8,8 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ## Changelog
 
 ### 0.9beta103 [2014-05-07]
-* (Hobbyquaker) Fixed Bug causing reload Loop with Android stock browser
+* (Hobbyquaker) Fix Bug causing reload Loop with Android stock browser
+* (Hobbyquaker) Fix loss of interaction (draggable/resizable) after changing widget attributes
 
 ### 0.9beta102 [2014-05-06]
 * (Bluefox) Fix hqWidgets: Size is smaller after click on the widget
