@@ -126,8 +126,8 @@
                 dui.binds.RGraph.init ();
                 dui.binds.RGraph.registerIds (wid, hm_id);
                 var style    = dui.views[view].widgets[wid] ? dui.views[view].widgets[wid].style : {};
-                style.width  = style.width  || width;
-                style.height = style.height || height;
+                style.width  = parseInt(style.width)  || parseInt(width);
+                style.height = parseInt(style.height) || parseInt(height);
 
                 $('#'+wid).remove ();
                 $('#duiview_' + view).append ('<div class="dashui-widget '+(_class || "")+'" id="'+wid+'" data-hm-id="'+hm_id+'" >'+
@@ -135,8 +135,8 @@
                 $('#'+wid).css(style);
                 // Canvas understand no Style, so set width and height extra
                 var can = document.getElementById ('c' + wid);
-                canvas_width  = canvas_width || style.width;
-                canvas_height = canvas_height || style.height;
+                canvas_width  = parseInt(canvas_width)  || style.width;
+                canvas_height = parseInt(canvas_height) || style.height;
                 can.width  = canvas_width;
                 can.height = canvas_height;
             },
