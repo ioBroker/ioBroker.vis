@@ -474,6 +474,19 @@ dui = $.extend(true, dui, {
 		dui.inspectWidget(newId);
 		dui.save();
 	},
+    reRenderWidgetEdit: function (wid) {
+        this.reRenderWidget(wid);
+        if (wid == this.activeWidget) {
+            var $wid = $('#'+wid);
+            // User interaction
+            if (!dui.widgets[wid].data._no_move) {
+                dui.draggable($wid);
+            }
+            if (!dui.widgets[wid].data._no_resize) {
+                dui.resizable($wid);
+            }            
+        }
+    },
 	// find this wid in all views, 
 	// delete where it is no more exist, 
 	// create where it should exist and
@@ -662,7 +675,7 @@ dui = $.extend(true, dui, {
                     if (bt && bt.val() == "") {
                         bt.val($this.val().charAt(0).toUpperCase() + $this.val().slice(1).toLowerCase()).trigger('change');
                     }
-                    dui.reRenderWidget(dui.activeWidget);
+                    dui.reRenderWidgetEdit(dui.activeWidget);
                     dui.save();
                 }, 200, this);
             };
@@ -891,7 +904,7 @@ dui = $.extend(true, dui, {
             dui.widgets[dui.activeWidget].data.attr(attribute, val);
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
             dui.save();
-            dui.reRenderWidget(dui.activeWidget);
+            dui.reRenderWidgetEdit(dui.activeWidget);
         })/*.keyup(function () {
             $(this).trigger('change');
         })*/;
@@ -977,7 +990,6 @@ dui = $.extend(true, dui, {
             return false;
         }
 
-        var $this = $("#"+id);
         dui.activeWidget = id;
         var widget = dui.views[dui.activeView].widgets[id];
 
@@ -990,12 +1002,11 @@ dui = $.extend(true, dui, {
         $(".dashui-widget-tools").show();
         $("#view_inspector").hide();
 
-
         $(".dashui-inspect-widget").each(function () {
-            var $this = $(this);
-            var attr = $this.attr("id").slice(8);
+            var $this_ = $(this);
+            var attr = $this_.attr("id").slice(8);
             if (dui.views[dui.activeView].widgets[dui.activeWidget]) {
-                $this.val(dui.views[dui.activeView].widgets[dui.activeWidget].data[attr]);
+                $this_.val(dui.views[dui.activeView].widgets[dui.activeWidget].data[attr]);
             }
         });
         var $widgetTpl    = $("#" + widget.tpl);
@@ -1072,7 +1083,7 @@ dui = $.extend(true, dui, {
 
                     if (defaultValue !== null && (widget.data[wid_attr_] == null || widget.data[wid_attr_] === undefined)) {
                         widget.data[wid_attr_] = defaultValue;
-                        dui.reRenderWidget(dui.activeWidget);
+                        dui.reRenderWidgetEdit(dui.activeWidget);
                     }
 
                     if (widget_div && widget_div.dashuiCustomEdit && widget_div.dashuiCustomEdit[wid_attr_]) {
@@ -1110,7 +1121,7 @@ dui = $.extend(true, dui, {
                             dui.widgets[dui.activeWidget].data.attr('weoid', text);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
                             dui.save();
-                            dui.reRenderWidget(dui.activeWidget);
+                            dui.reRenderWidgetEdit(dui.activeWidget);
                         }
                     });
                 } else if (wid_attr_ === "color" || type == "color") {
@@ -1233,7 +1244,7 @@ dui = $.extend(true, dui, {
                             dui.widgets[dui.activeWidget].data.attr(attribute, val);
                             dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
                             dui.save();
-                            dui.reRenderWidget(dui.activeWidget);
+                            dui.reRenderWidgetEdit(dui.activeWidget);
                         })/*.keyup(function () {
                                 $(this).trigger('change');
                         })*/;
@@ -1245,7 +1256,10 @@ dui = $.extend(true, dui, {
                 } while (instancesStart != instancesStop);
             }
         }
-
+        
+        // If widget was rerendered, it can have new div
+        var $this = $("#"+id);  
+        
         $(".dashui-inspect-css").each(function () {
             var attr = $(this).attr("id").slice(12)
             var css = $this.css(attr);
@@ -1885,7 +1899,7 @@ dui = $.extend(true, dui, {
 
             // TODO saveRemote really necessary here?
             dui.save();
-            dui.reRenderWidget(dui.activeWidget);
+            dui.reRenderWidgetEdit(dui.activeWidget);
         });
 		
         $(".dashui-inspect-css").change(function () {
@@ -3027,12 +3041,12 @@ dui = $.extend(true, dui, {
 
                 // TODO @Bluefox Why do we need this? Necessary for hqWidgets?
                 // TODO if yes - can we limit this to hqWidgets only?
-                dui.reRenderWidget(widgetId);
+                dui.reRenderWidgetEdit(widgetId);
                 dui.inspectWidget(widgetId, true);
                 var multiSelectedWidgets = dui.multiSelectedWidgets;
                 dui.multiSelectedWidgets = [];
                 for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
-                    dui.reRenderWidget(multiSelectedWidgets[i]);
+                    dui.reRenderWidgetEdit(multiSelectedWidgets[i]);
                     dui.inspectWidgetMulti(multiSelectedWidgets[i]);
                 }
                 dui.delayedSettings = null;
