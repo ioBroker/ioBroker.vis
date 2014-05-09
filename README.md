@@ -7,6 +7,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta105 [2014-05-09]
+* (Bluefox) Fix problem with RGraph and CSS edit
+
 ### 0.9beta104 [2014-05-07]
 * (Hobbyquaker) trying to solve socket.io reconnection issues (occuring on android stock browser)
 

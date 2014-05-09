@@ -92,7 +92,7 @@ dui = $.extend(true, dui, {
                 },
                 'no views found on server.\nCreate new %s ?' : {
                     'en': 'no views found on server.\nCreate new %s?',
-                    'de': 'Keine Views gefunden auf dem Server.\n%s neu erstellen?',
+                    'de': 'Keine Views gefunden.\n%s neu erstellen?',
                     'ru': 'На сервеое не найдено никаких страниц. Создать %s?'
                 },
                 'No Views found on Server' : {
@@ -121,7 +121,7 @@ dui = $.extend(true, dui, {
                 'invalid JSON'     : {'en': 'Invalid JSON', 'de': 'Invalid JSON',         'ru': 'Неправильный формат'},
                 'please use /dashui/edit.html instead of /dashui/?edit': {
                     'en': 'Please use /dashui/edit.html instead of /dashui/?edit',
-                    'de': 'Bitte geben Sie /dashui/edit.html statt /dashui/?edit',
+                    'de': 'Bitte /dashui/edit.html statt /dashui/?edit nutzen',
                     'ru': 'Используйте /dashui/edit.html вместо /dashui/?edit'
                 },
                 'The view with the same name yet exists!': {

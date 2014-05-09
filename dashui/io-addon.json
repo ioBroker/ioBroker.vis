@@ -1,5 +1,5 @@
 {
-    "version": "0.9beta104",
+    "version": "0.9beta105",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
@@ -12,6 +12,6 @@
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        "(Hobbyquaker) trying to solve socket.io reconnection issues"
+        "(Bluefox) Fix problem with RGraph and CSS edit"
 	]
 }
