@@ -71,7 +71,7 @@ dui = $.extend(true, dui, {
             filterAttrs:   null
         },
         _findTitle: function (styles, style) {
-            for(var st in styles) {
+            for (var st in styles) {
                 if (styles[st] == style) {
                     return ((st == "") ? style : st);
                 }
@@ -186,7 +186,7 @@ dui = $.extend(true, dui, {
                     if (htmlElem.settings.filterAttrs != null && htmlElem.settings.filterAttrs != "")
                         attrs = htmlElem.settings.filterAttrs.split(' ');
                 
-                    for(var name in this._internalList) {
+                    for (var name in this._internalList) {
                         if (htmlElem.settings.filterFile == null || 
                            (this._internalList[name].file != null && this._internalList[name].file.indexOf(htmlElem.settings.filterFile) != -1)) {
                             var isFound = (filters == null);
@@ -567,7 +567,7 @@ dui = $.extend(true, dui, {
 						} 
 						if (!isDir && filters) {
 							var isFound = false;
-							for(var i = 0; i < filters.length; i++) {
+							for (var i = 0; i < filters.length; i++) {
 								if (aImages[id].indexOf(filters[i]) != -1) {
 									isFound = true;
 									break;
@@ -1029,14 +1029,14 @@ var hmSelect = {
         }
     },
     _buildVarsGrid: function (localData) {
-        var variables  = localData.metaIndex["VARDP"]; // IDs of all VARDP
+        var variables = localData.metaIndex["VARDP"] || []; // IDs of all VARDP
+
         // Add Alarm-Variables
-        var alarms = localData.metaIndex["ALARMDP"];
-        if (alarms && variables) {
-            for (var i = 0; i < alarms.length; i++) {
-                variables.push(alarms[i]);
-            }
+        var alarms = localData.metaIndex["ALARMDP"] || [];
+        for (var i = 0; i < alarms.length; i++) {
+            variables.push(alarms[i]);
         }
+
         if (variables) {
             variables.sort();
         } else {
@@ -1047,17 +1047,18 @@ var hmSelect = {
                 
         var w = $('#hmSelect').dialog("option", "width");
 		$('#hmSelect').dialog("option", "width", w-50);
-         // Build the data tree together
+
+        // Build the data tree together
 		if (this.myVarsData == null) {
             this.myVarsData = [];
 		    var i = 0;
 
             // Add all elements
-            for(var vari in variables) {
+            for (var vari in variables) {
                 var variObj = localData.metaObjects[variables[vari]];
 				this.myVarsData[i] = {
 					id:           ""+(i+1), 
-					"Type":       this._type2Str(variObj["ValueType"], variObj["ValueSubType"]),
+					"Type":       variObj["ValueType"] ? this._type2Str(variObj["ValueType"], variObj["ValueSubType"]) : "undefined",
 					"Description":this._convertName(variObj["DPInfo"] || ""),
 					"Unit":       this._convertName(variObj["ValueUnit"] || ""),
 					"Name":       this._convertName(variObj["Name"]),
@@ -1075,7 +1076,7 @@ var hmSelect = {
                 i++;
 			}
 		} else if (hmSelect.value != null && hmSelect.value != "") {
-			for(var i = 0; i < this.myVarsData.length; i++) {
+			for (var i = 0; i < this.myVarsData.length; i++) {
 				if (hmSelect.value && this.myVarsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myVarsData[i].id;
 				}
@@ -1161,7 +1162,7 @@ var hmSelect = {
             this.myProgsData = [];
 		    var i = 0;
 			// Add all elements
-			for(var prog in programs) {
+			for (var prog in programs) {
 				this.myProgsData[i] = {
 					id:           ""+(i+1), 
 					"Description":this._convertName(localData.metaObjects[programs[prog]]["PrgInfo"]),
@@ -1181,7 +1182,7 @@ var hmSelect = {
                 i++;
 			}
 		} else if (hmSelect.value != null && hmSelect.value != "") {
-			for(var i = 0; i < this.myProgsData.length; i++) {
+			for (var i = 0; i < this.myProgsData.length; i++) {
 				if (hmSelect.value && this.myProgsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myProgsData[i].id;
 				}
@@ -1358,7 +1359,7 @@ var hmSelect = {
                 var iDevs = 0;
                 var iPnts = 0;
                 var iChns = 0;
-                for(var dev in devicesCCU) {
+                for (var dev in devicesCCU) {
                     var idDev  = devicesCCU[dev];
                     var device = localData.metaObjects[idDev];
                     var newChannels = {};
@@ -1461,7 +1462,7 @@ var hmSelect = {
                 var newDevices = {};
                 var iChns = 0;
                 if (devicesCCU) {
-                    for(var dev in devicesCCU) {
+                    for (var dev in devicesCCU) {
                     var idDev  = devicesCCU[dev];
                     var device = localData.metaObjects[idDev];
                     var isFound = false;
@@ -1667,7 +1668,7 @@ var hmSelect = {
             }            
                        
 			// Add all elements
-			for(var dev in this._devices) {
+			for (var dev in this._devices) {
 				// Try to find room
 				if (this._devices[dev].room === undefined || this._devices[dev].room === null) {
 					var arr = {};
