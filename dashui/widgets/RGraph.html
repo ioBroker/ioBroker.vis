@@ -126,17 +126,22 @@
                 dui.binds.RGraph.init ();
                 dui.binds.RGraph.registerIds (wid, hm_id);
                 var style    = dui.views[view].widgets[wid] ? dui.views[view].widgets[wid].style : {};
-                style.width  = style.width  || width;
-                style.height = style.height || height;
+                style.width  = parseInt(style.width)  || parseInt(width);
+                style.height = parseInt(style.height) || parseInt(height);
 
-                $('#'+wid).remove ();
-                $('#duiview_' + view).append ('<div class="dashui-widget '+(_class || "")+'" id="'+wid+'" data-hm-id="'+hm_id+'" >'+
-                        '<canvas class="dashui-widget" id="c'+wid+'" ></canvas></div>');
+                //$('#'+wid).remove ();
+                if (!document.getElementById(wid)) {
+                    $('#duiview_' + view).append('<div class="dashui-widget ' + (_class || "") + '" id="' + wid + '" data-hm-id="' + hm_id + '" >' +
+                            '<canvas class="dashui-widget" id="c' + wid + '" ></canvas></div>');
+                } else {
+                    $('#'+wid).addClass(_class || '');
+                }
                 $('#'+wid).css(style);
+
                 // Canvas understand no Style, so set width and height extra
                 var can = document.getElementById ('c' + wid);
-                canvas_width  = canvas_width || style.width;
-                canvas_height = canvas_height || style.height;
+                canvas_width  = parseInt(canvas_width)  || style.width;
+                canvas_height = parseInt(canvas_height) || style.height;
                 can.width  = canvas_width;
                 can.height = canvas_height;
             },
@@ -241,10 +246,6 @@
                     var f = parseFloat (data.attr("labels_size"));
                     t.Set('text.size', f);
                 }
-                if (data.attr('width') !== "") {
-                    var f = parseFloat (data.attr("width"));
-                    t.Set('width', f);
-                }
                 if (data.attr("title") !== "") {
                     t.Set('title', data.attr("title"));
                 }
@@ -304,7 +305,14 @@
                     var can = document.getElementById ('c' + div.attr('id'));
 
                     can.width  = div.width();
-                    can.height = div.height ();
+                    can.height = div.height();
+                    
+                    if (can.width == 0 || can.height == 0) {
+                        // My be jQuery bug
+                        can.width  = parseInt(div[0].style.width);
+                        can.height = parseInt(div[0].style.height);
+                    }
+
                     RGraph.Clear (can);
                     //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
@@ -514,6 +522,13 @@
         
                         can.width  = div.width();
                         can.height = div.height ();
+        
+                        if (can.width == 0 || can.height == 0) {
+                            // My be jQuery bug
+                            can.width = parseInt(_div.style.width);
+                            can.height = parseInt(_div.style.height);
+                        }
+
         
                         RGraph.Clear (can);
                         _div.rgraph.Draw();
@@ -807,7 +822,13 @@
 
                     can.width  = div.width();
                     can.height = div.height ();
-
+                    
+                    if (can.width == 0 || can.height == 0) {
+                        // My be jQuery bug
+                        can.width = parseInt(div[0].style.width);
+                        can.height = parseInt(div[0].style.height);
+                    }
+                        
                     RGraph.Clear (can);
                     //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
@@ -1032,6 +1053,12 @@
                         can.width  = div.width();
                         can.height = div.height ();
 
+                        if (can.width == 0 || can.height == 0) {
+                            // My be jQuery bug
+                            can.width = parseInt(_div.style.width);
+                            can.height = parseInt(_div.style.height);
+                        }
+                        
                         RGraph.Clear (can);
                         _div.rgraph.Draw();
                     }, 500, this.id);
@@ -1079,7 +1106,7 @@
     //});
 </script>
 
-<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];width/slider,1,500,1;control/checkbox;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontName;labels_size/slider,1,100;title;title_side;title_side_font/fontName;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
+<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];control/checkbox;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontName;labels_size/slider,1,100;title;title_side;title_side_font/fontName;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
     <%
         dui.binds.RGraph.tplRGtermometer(this.view, this.data);
     %>
