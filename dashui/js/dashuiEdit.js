@@ -1540,8 +1540,24 @@ dui = $.extend(true, dui, {
 
         $("#inspect_view").html(view);
 
+        // Try to find this resolution in the list
+        var res = dui.views[dui.activeView].settings.sizex + 'x' + dui.views[dui.activeView].settings.sizey;
+        $('#screen_size option').each(function(){
+            if (this.value == res) {
+                this.selected = true;
+                res = null;
+            }
+        });
+        if (!res) {
+            $("#screen_size_x").prop('disabled', true);
+            $("#screen_size_y").prop('disabled', true);
+        }
+
         $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
         $("#screen_size_y").val(dui.views[dui.activeView].settings.sizey || "").trigger("change");
+
+        $("#screen_hide_description").prop('checked', dui.views[dui.activeView].settings.hideDescription).trigger("change");
+        hqWidgets.SetHideDescription(dui.views[dui.activeView].settings.hideDescription);
 
         $("#grid_size").val(dui.views[dui.activeView].settings.gridSize || "").trigger("change");
 
@@ -1986,6 +2002,17 @@ dui = $.extend(true, dui, {
             dui.inspectWidget("none");
         });
 
+        $('#screen_size').change(function() {
+            var size = this.value.split('x');
+            if (this.value[0] >= '0' && this.value[0] <= '9') {
+                $("#screen_size_x").val(size[0]).trigger('change').prop('disabled', true);
+                $("#screen_size_y").val(size[1]).trigger('change').prop('disabled', true);
+            } else {
+                $("#screen_size_x").prop('disabled', false);
+                $("#screen_size_y").prop('disabled', false);
+            }
+        });
+
         $("#screen_size_x").change(function () {
             var x = $("#screen_size_x").val();
             var y = $("#screen_size_y").val();
@@ -2004,6 +2031,19 @@ dui = $.extend(true, dui, {
             }
 
         })/*.keyup(function () { $(this).trigger("change"); })*/;
+
+        $("#screen_hide_description").change(function () {
+            var val = $("#screen_hide_description")[0].checked
+            if (dui.views[dui.activeView].settings.hideDescription != val) {
+                dui.views[dui.activeView].settings.hideDescription = val;
+                if (typeof hqWidgets != 'undefined') {
+                    hqWidgets.SetHideDescription(val);
+                }
+                dui.save();
+            }
+
+        })/*.keyup(function () { $(this).trigger("change"); })*/;
+
 
         $("#screen_size_y").change(function () {
             var x = $("#screen_size_x").val();

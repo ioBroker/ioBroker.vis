@@ -71,7 +71,9 @@
         "red_color"          : {"en": "Color of third sector", "de": "Farbe von dritten Sektor","ru": "Цвет третьего сектора"},
         "yellow_color"       : {"en": "Color of second sector","de": "Farbe von zweten Sektor","ru": "Цвет второго сектора"},
         "green_color"        : {"en": "Color of first sector", "de": "Farbe von ersten Sektor","ru": "Цвет первого сектора"},
-        "green_end"          : {"en": "End of first sector",   "de": "Ende von ersten Sektor", "ru": "Конец первого сектора"}
+        "green_end"          : {"en": "End of first sector",   "de": "Ende von ersten Sektor", "ru": "Конец первого сектора"},
+        "padding_left"       : {"en": "Padding left",        "de": "Abstand links",            "ru": "Отступ слева"},
+        "padding_right"      : {"en": "Padding right",        "de": "Abstand rechts",            "ru": "Отступ справа"}
     });
 
     //jQuery.extend(true, dui.binds, {
@@ -213,7 +215,17 @@
                 if (data.attr('color')) {
                     var color = data.attr('color');
                     t.colorsParsed = false;
-                    t.properties['chart.colors'] = ["Gradient("+color+")"];
+                    var isValid = false;
+                    try {
+                        t.parseSingleColorForGradient(color);
+                        isValid = true;
+                    } catch(e)
+                    {
+
+                    }
+                    if (isValid) {
+                        t.properties['chart.colors'] = ["Gradient("+color+")"];
+                    }
                 }
                 console.log("B");
                 if (data.attr("show_scale")) {
@@ -237,7 +249,17 @@
                     }
                 }
                 if (data.attr("labels_color") !== "") {
-                    t.Set('text.color', data.attr("labels_color"));
+                    var isValid = false;
+                    try {
+                        t.parseSingleColorForGradient(data.attr("labels_color"));
+                        isValid = true;
+                    } catch(e)
+                    {
+
+                    }
+                    if (isValid) {
+                        t.Set('text.color', data.attr("labels_color"));
+                    }
                 }
                 if (data.attr("labels_font") !== "") {
                     t.Set('text.font', data.attr("labels_font"));
@@ -291,12 +313,28 @@
                     t.Set('value.label.point', ',');
                     t.Set('value.label.thousand', '.');
                 }
+                if (data.attr("padding_left") !== "" && data.attr("padding_left") !== null && data.attr("padding_left") !== undefined) {
+                    t.Set('gutter.left', parseFloat (data.attr("padding_left")));
+                }
+                if (data.attr("padding_right") !== "" && data.attr("padding_right") !== null && data.attr("padding_right") !== undefined) {
+                    t.Set('gutter.right', parseFloat (data.attr("padding_right")));
+                }
+                if (data.attr("padding_top") !== "" && data.attr("padding_top") !== null && data.attr("padding_top") !== undefined) {
+                    t.Set('gutter.top', parseFloat (data.attr("padding_top")));
+                }
+                if (data.attr("padding_bottom") !== "" && data.attr("padding_bottom") !== null && data.attr("padding_bottom") !== undefined) {
+                    t.Set('gutter.bottom', parseFloat (data.attr("padding_bottom")));
+                }
 
                 // Clear the background
                 RGraph.Clear (t.canvas);
                 //t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
 
-                t.Draw();
+                try {
+                    t.Draw();
+                } catch (e) {
+                    servConn.logError("Cannot render tplRGtermometer: " + e);
+                }
                 var elem = document.getElementById (data.attr('wid'));
                 elem.rgraph = t;
                 t.Set('animate', data.attr("animate") == "true" || data.attr("animate") == true)
@@ -316,7 +354,11 @@
                     RGraph.Clear (can);
                     //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
-                    this.rgraph.Draw();
+                    try {
+                        this.rgraph.Draw();
+                    } catch (e) {
+                        servConn.logError("Cannot render tplRGtermometer: " + e);
+                    }
                 });
 
                 elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
@@ -328,7 +370,11 @@
                         RGraph.Effects.Thermometer.Grow(this.rgraph);
                     }
                     else {
-                        this.rgraph.Draw();
+                        try {
+                            this.rgraph.Draw();
+                        } catch (e) {
+                            servConn.logError("Cannot render tplRGtermometer: " + e);
+                        }
                     }
                 }
             },
@@ -371,19 +417,31 @@
                     if (id) {
                         validColor = id;
                     }
-                    colors.push (validColor);
-        
+                    var isValid = false;
+                    try {
+                        t.parseSingleColorForGradient(id);
+                        isValid = true;
+                    } catch(e)
+                    {
+
+                    }
+                    if (isValid) {
+                        colors.push (validColor);
+                    } else {
+                        colors.push ('black');
+                    }
+
                     id = data.attr('line_thick' + len);
                     if (id) {
                         validThickness = id;
                     }
-                    thickness.push (validThickness);
+                    thickness.push(validThickness);
         
                     len++;
                 }
 
-                dui.binds.RGraph.createCanvas (view, wid, data.attr('class'), IDs, 200, 200);
-                dui.binds.RGraph.registerIds (wid, IDs_show);
+                dui.binds.RGraph.createCanvas(view, wid, data.attr('class'), IDs, 200, 200);
+                dui.binds.RGraph.registerIds(wid, IDs_show);
         
                 var factor = data.attr('factor') || 1;
                 factor = parseFloat(factor);
@@ -411,7 +469,7 @@
                 var can  = document.getElementById ('c'+wid);
         
                 var arr = [];
-                console.log("test");
+
                 if (!oldValues) {
                     // Pre-pad the arrays with "pointsCount" null values
                     for (var i = 0, len = IDs.length; i < len; i++) {
@@ -508,8 +566,13 @@
                 t.Set('fillstyle', [grad]);
         
                 RGraph.Clear(t.canvas);
-                t.Draw();
-        
+
+                try {
+                    t.Draw();
+                } catch (e) {
+                    servConn.logError("Cannot render tplRLiveChart: " + e);
+                }
+
                 elem.rgraph = t;
                 jQuery(elem).bind("resize", function () {
                     if (this._resizeTimer){
@@ -531,7 +594,11 @@
 
         
                         RGraph.Clear (can);
-                        _div.rgraph.Draw();
+                        try {
+                            _div.rgraph.Draw();
+                        } catch (e) {
+                            servConn.logError("Cannot render tplRLiveChart: " + e);
+                        }
                     }, 500, this.id);
                 });
         
@@ -812,7 +879,11 @@
                 RGraph.Clear(t.canvas);
                 //t.canvas.getContext('2d').clearRect (0, 0, t.canvas.width, t.canvas.height);
 
-                t.Draw();
+                try {
+                    t.Draw();
+                } catch (e) {
+                    servConn.logError("Cannot render tplRGgauge: " + e);
+                }
                 t.Set('animate', data.attr("animate") == "true" || data.attr("animate") == true)
                 var elem = document.getElementById (data.attr('wid'));
                 elem.rgraph = t;
@@ -832,7 +903,11 @@
                     RGraph.Clear (can);
                     //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
 
-                    this.rgraph.Draw();
+                    try {
+                        this.rgraph.Draw();
+                    } catch (e) {
+                        servConn.logError("Cannot render tplRGgauge: " + e);
+                    }
                 });
 
                 elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
@@ -869,7 +944,11 @@
                         RGraph.Effects.Gauge.Grow(this.rgraph);
                     }
                     else {
-                        this.rgraph.Draw();
+                        try {
+                            this.rgraph.Draw();
+                        } catch (e) {
+                            servConn.logError("Cannot render tplRGgauge: " + e);
+                        }
                     }
                 }        
             },
@@ -1018,27 +1097,31 @@
                 }
 
                 RGraph.Clear(t.canvas);
-                t.on('draw', function (obj) {
-                    var values  = obj.Get("my_values");
-                    var options = obj.Get("my_options");
-                    if (values.length > 0 && values[0].length > 1)  {
-                        obj.context.fillStyle = options.bar_labels_color;
-                        for (var i = 0, len = obj.coords.length; i < len; ++i) {
-                            if (i%2 == 0) continue;
-                            RGraph.Text2(obj.context, {
-                                font:   'Verdana',
-                                'bold':  options.bar_labels_bold,
-                                'size':  options.label_size,
-                                'x':     obj.coords[i][0] + (obj.coords[i][2] / 2),
-                                'y':     options.bar_labels_center ? (obj.coords[i][1] + (obj.coords[i][3] / 2)) : (obj.coords[i][1] + obj.coords[i][3] - options.label_size),
-                                'text':  obj.data_arr[i].toFixed(options.decimals),
-                                'valign':'center',
-                                'halign':'center'
-                            });
+                try {
+                    t.on('draw', function (obj) {
+                        var values  = obj.Get("my_values");
+                        var options = obj.Get("my_options");
+                        if (values.length > 0 && values[0].length > 1)  {
+                            obj.context.fillStyle = options.bar_labels_color;
+                            for (var i = 0, len = obj.coords.length; i < len; ++i) {
+                                if (i%2 == 0) continue;
+                                RGraph.Text2(obj.context, {
+                                    font:   'Verdana',
+                                    'bold':  options.bar_labels_bold,
+                                    'size':  options.label_size,
+                                    'x':     obj.coords[i][0] + (obj.coords[i][2] / 2),
+                                    'y':     options.bar_labels_center ? (obj.coords[i][1] + (obj.coords[i][3] / 2)) : (obj.coords[i][1] + obj.coords[i][3] - options.label_size),
+                                    'text':  obj.data_arr[i].toFixed(options.decimals),
+                                    'valign':'center',
+                                    'halign':'center'
+                                });
+                            }
                         }
-                    }
-                })
-                        .draw();
+                    })
+                            .draw();
+                } catch (e) {
+                    servConn.logError("Cannot render tplRBarChart: " + e);
+                }
 
                 elem.rgraph = t;
                 jQuery(elem).bind("resize", function () {
@@ -1060,7 +1143,11 @@
                         }
                         
                         RGraph.Clear (can);
-                        _div.rgraph.Draw();
+                        try {
+                            _div.rgraph.Draw();
+                        } catch (e) {
+                            servConn.logError("Cannot render tplRBarChart: " + e);
+                        }
                     }, 500, this.id);
                 });
 
@@ -1106,7 +1193,7 @@
     //});
 </script>
 
-<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];control/checkbox;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontName;labels_size/slider,1,100;title;title_side;title_side_font/fontName;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
+<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];control/checkbox;padding_left/slider,0,100,1;padding_right/slider,0,100,1;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontName;labels_size/slider,1,100;title;title_side;title_side_font/fontName;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
     <%
         dui.binds.RGraph.tplRGtermometer(this.view, this.data);
     %>

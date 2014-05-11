@@ -6,7 +6,7 @@
 module.exports = function (grunt) {
 
     var destDir = "dashui.min/";
-    var srcDir  = "dashui/";
+    var srcDir  = "../dashui/";
     var deliveryDir = 'delivery/';
     var ioaddon = grunt.file.readJSON(srcDir + 'io-addon.json');
 
@@ -117,6 +117,25 @@ module.exports = function (grunt) {
                         cwd: '.build/output/',
                         src: ['**/*'],
                         dest: destDir
+                    }
+                ]
+            },
+            gap: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: '.build/output/',
+                        src: ['**/*'],
+                        dest: '.phoneGap/dashui/'
+                    },
+                    {
+                        src: ['index.html', 'config.xml', 'logo.png'],
+                        dest: '.phoneGap/'
+                    },
+                    {
+                        expand: true,
+                        src: ['auth/**', 'css/**', 'js/**', 'lang/**', 'lib/**'],
+                        dest: '.phoneGap/'
                     }
                 ]
             }
@@ -234,6 +253,42 @@ module.exports = function (grunt) {
                         flatten: true,
                         src: [srcDir + "*.html"],
                         dest: '.build/'
+                    }
+                ]
+            },
+            gap: {
+                options: {
+                    force: true,
+                    patterns: [
+                        {
+                            match: /\<\!\-\-script type="text\/javascript" src="\.\.\/[a-z]*\.js"\>\<\/script\-\-\>/g,
+                            replacement: '<script type="text/javascript" src="../cordova.js"></script>'
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        flatten: true,
+                        src: ['.build/index.html', '.build/edit.html'],
+                        dest: './'
+                    }
+                ]
+            },
+            xmlGap: {
+                options: {
+                    force: true,
+                    patterns: [
+                        {
+                            match: /version   = "[-0-9a-zA-Z\.]+"\>/g,
+                            replacement: 'version   = "' + ioaddon.version + '">'
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        flatten: true,
+                        src: ['config.xml'],
+                        dest: './'
                     }
                 ]
             },
@@ -451,13 +506,32 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         compress: {
             main: {
                 options: {
                     archive: deliveryDir+'ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.zip'
                 },
                 files: [
-                    {expand: true, src: ['**'],  dest: '/', cwd: destDir}
+                    {
+                        expand: true,
+                        src: ['**'],
+                        dest: '/',
+                        cwd: destDir
+                    }
+                ]
+            },
+            gap: {
+                options: {
+                    archive: deliveryDir + 'gapDashui.zip'
+                },
+                files: [
+                    {
+                        expand: true,
+                        src: ['**'],
+                        dest: '/',
+                        cwd: '.phoneGap/'
+                    }
                 ]
             }
         },
@@ -636,7 +710,19 @@ module.exports = function (grunt) {
             'buildAllWidgets'
         ]);
     });
-    grunt.registerTask('optimizeWorkingCopy', function () {
+    grunt.registerTask('makeWorkingCopyGap', function () {
+        grunt.task.run([
+            'replace:setVersion',
+//			'jshint',
+            'clean',
+            'copy:static',
+            'replace:dist',
+            'replace:gap',
+            'concat:js',
+            'concat:css',
+            'buildAllWidgets'
+        ]);
+    });    grunt.registerTask('optimizeWorkingCopy', function () {
         grunt.task.run([
             'cssmin:build',
             'htmlmin:dist',
@@ -652,14 +738,14 @@ module.exports = function (grunt) {
     });
 	grunt.registerTask('createPackage', function () {
         grunt.task.run([
-            'compress'
+            'compress:main'
         ]);
         console.log(srcDir + 'io-addon.json ==> ' + deliveryDir + 'ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.json');
         grunt.file.copy(srcDir + 'io-addon.json', deliveryDir + 'ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.json');
     });
 
     grunt.registerTask('updateReadme', function () {
-        var readme = grunt.file.read(__dirname + '/README.md');
+        var readme = grunt.file.read(__dirname + '/../README.md');
         if (readme.indexOf(ioaddon.version) == -1) {
             var timestamp = new Date();
             var date = timestamp.getFullYear() + '-' +
@@ -677,18 +763,32 @@ module.exports = function (grunt) {
                 }
             }
 
-            grunt.file.write(__dirname + '/README.md', readme.replace(/##\s+Changelog\s+/, '## Changelog\r\n\r\n### ' + ioaddon.version + ' [' + date + ']\r\n' + news + '\r\n'));
+            grunt.file.write(__dirname + '/../README.md', readme.replace(/##\s+Changelog\s+/, '## Changelog\r\n\r\n### ' + ioaddon.version + ' [' + date + ']\r\n' + news + '\r\n'));
         }
     });
 
     grunt.registerTask('updateCache', function () {
-        var manifest = grunt.file.read(__dirname + '/dashui/cache.manifest');
+        var manifest = grunt.file.read(srcDir + 'cache.manifest');
         if (manifest.indexOf("# dev build") != -1) {
             var matchArr = manifest.match(/# dev build ([0-9]+)\s/);
             var number = parseInt(matchArr[1], 10);
-            grunt.file.write(__dirname + '/dashui/cache.manifest', manifest.replace(/# dev build ([0-9]+)\s/, '# dev build ' + (number + 1) + '\n'));
+            grunt.file.write(srcDir + 'cache.manifest', manifest.replace(/# dev build ([0-9]+)\s/, '# dev build ' + (number + 1) + '\n'));
         }
     });
 
+    grunt.registerTask('phoneGap', function () {
+        grunt.task.run([
+            'replace:xmlGap',
+            'updateCache',
+            'updateReadme',
+            'env:production',
+            'makeWorkingCopyGap',
+            'optimizeWorkingCopy',
+            'copy:gap',
+            'compress:gap'
+        ]);
+    });
+
     grunt.registerTask('default', ['updateCache', 'updateReadme', 'env:production', 'makeWorkingCopy', 'optimizeWorkingCopy', 'deployWorkingCopy', 'createPackage']);
+    grunt.registerTask('gap',     ['phoneGap']);
 };

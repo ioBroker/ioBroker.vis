@@ -229,6 +229,8 @@
                 }
                 var k = 1;
                 for (var obj in rowData) {
+                    if(obj.substring(0,6) == 'jQuery') continue;
+
                     if (obj.length > 0 && obj[0] == '_') {
                         if (obj.length > 4 && obj.substring(0,4) == '_btn') {
                             var btnText = "";
@@ -301,7 +303,7 @@
                 }
 
                 // Start creation of table
-                var text   = '<div class="' + (options.tclass || "") + '-inner"><table id="t' + wid + '" class="' + options.tclass + '">';
+                var text   = '<div class="' + (options.tclass || "") + '-inner' + ((options.show_scroll) ? ' tclass-inner-overflow' : '') + '"><table id="t' + wid + '" class="' + options.tclass + '">';
                 var header = '<table id="h' + wid + '" class="' + options.tclass + '">';
                 var headerDone = false;
                 var j = 0;
@@ -319,6 +321,7 @@
                         header += '<tr class="' + options.tclass + '-th">';
                         var k = 1;
                         for (var obj in table[ii]) {
+                            if(obj.substring(0,6) == 'jQuery') continue;
                             if (obj.length > 0 && obj[0] == '_') {
                                 if (obj.length > 4 && obj.substring(0,4) == '_btn') {
                                     header += '<th class="' + options.tclass + '-th' + k + '"></th>';
@@ -345,7 +348,7 @@
                 text += '</table>\n';
                 header += '</table>\n';
                 // Insert table into container
-                $(elem).append(header+text);
+                $(elem).append((options.hide_header ? '' : header) + text);
                 elem._options = options;
                 elem._wid     = wid;
                 elem._view    = view;
@@ -526,14 +529,16 @@
 
 </script>
 
-<script type="text/ejs" id="tplTableBody" class="dashui-tpl" data-dashui-set="table" data-dashui-name="Table" data-dashui-attrs="table_id/id;event_id/id;table_class;detailed_wid;new_on_top/checkbox;btn_print;view_for_print/views;ack_id/id">
+<script type="text/ejs" id="tplTableBody" class="dashui-tpl" data-dashui-set="table" data-dashui-name="Table" data-dashui-attrs="table_id/id;event_id/id;table_class;hide_header[true]/checkbox;show_scroll/checkbox;detailed_wid;new_on_top/checkbox;btn_print;view_for_print/views;ack_id/id">
     <%
         var options =  {
             _class: this.data.attr('class'),
+            hide_header: this.data.attr('hide_header'),
             style: this.data.attr('style'),
             table_id: this.data.attr('table_id'),
             event_id: this.data.attr('event_id'),
             new_on_top: this.data.attr('new_on_top'),
+            show_scroll: this.data.attr('show_scroll'),
             tclass: this.data.attr('table_class'),
             detailed_wid: this.data.attr('detailed_wid'),
             btn_print: this.data.attr('btn_print'),

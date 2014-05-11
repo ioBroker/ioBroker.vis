@@ -57,7 +57,8 @@ var hqWidgets = {
                                     // like callback (imageList, userParam);
                                     // e.g. "function GetFiles (callback, param) { if (callback) callback (aImages, param); }"
         gTempSymbol:   '&#176;C',   // Farenheit or celcius
-        gIsTouchDevice: false       // if desctop or touch device
+        gIsTouchDevice: false,      // if desktop or touch device
+        gHideDescription: false     // Hide description left in edit mode
     },
     // Button states
     gState: {
@@ -375,6 +376,18 @@ var hqWidgets = {
         }
         
         return this.gDynamics.gIsEditMode;
+    },
+    SetHideDescription: function  (isHide) {
+        this.gOptions.gHideDescription = isHide;
+        var i = 0;
+        while (this.gDynamics.gElements[i])
+        {
+            this.gDynamics.gElements[i].hide();
+            this.gDynamics.gElements[i].show();
+            i++;
+        }
+
+        return this.gOptions.gHideDescription;
     },
     GetMaxZindex: function  () {
         var i=0;
@@ -1300,7 +1313,7 @@ var hqWidgets = {
             }
 
             this.settings.buttonType = (buttonType==undefined) ? hqWidgets.gButtonType.gTypeButton : buttonType;
-            this.SetTitle (this.settings.room, this.settings.title);
+            this.SetTitle(this.settings.room, this.settings.title);
 
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp  ||
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp ||
@@ -3118,7 +3131,7 @@ var hqWidgets = {
             this.settings.staticTextFont  = textFont;
             this.settings.staticTextColor = textColor;
         }
-        // Set title (Tooltip)
+        // Set title (Tooltip) or SetLeftInfo
         this.SetTitle = function (room, title)	{
             if (!this.intern._jleft) {
                 if (!document.getElementById(this.advSettings.elemName+'_left')) {
@@ -3845,7 +3858,7 @@ var hqWidgets = {
             this.intern._jelement.show(); 
             if (this.intern._jright && (this.intern._jvalve || (this.intern._jrightText && this.intern._jrightText.html() != ""))) 
                 this.intern._jright.show (); 
-            if (this.intern._jleft && (this.intern._isEditMode || this.settings.showDescription)) 
+            if (this.intern._jleft && ((this.intern._isEditMode && !hqWidgets.gOptions.gHideDescription) || this.settings.showDescription))
                 this.intern._jleft.show ();
         }
         this.OnClick = function (isForce) {

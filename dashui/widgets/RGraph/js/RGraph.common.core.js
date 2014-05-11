@@ -1008,7 +1008,12 @@
         for (var i=0,len=objectRegistry.length; i<len; ++i) {
             if (objectRegistry[i]) {
                 var id = objectRegistry[i][0];
-                objectRegistry[i][1].Draw();
+                try {
+
+                    objectRegistry[i][1].Draw();
+                } catch (e) {
+                    console.log(e);
+                }
             }
         }
     };

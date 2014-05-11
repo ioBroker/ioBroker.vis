@@ -74,8 +74,8 @@
             style.height = style.height || options.defaultHeight;
     
             var just_size = {zindex: 0};
-            just_size.width  = style.width;
-            just_size.height = style.height;
+            just_size.width  = parseInt(style.width);
+            just_size.height = parseInt(style.height);
     
             $('#'+wid).remove ();
             $('#duiview_' + view).append ('<div class="dashui-widget '+(_class || "")+'" id="'+wid+'">' +
