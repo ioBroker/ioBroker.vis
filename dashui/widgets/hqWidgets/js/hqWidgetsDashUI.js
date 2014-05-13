@@ -6,7 +6,7 @@ if ((typeof hqWidgets !== 'undefined')) {
             hqIgnoreNextUpdate: null, // id of controlled element
             hqMapping: {},
             hqInit: function () {
-                if (localData === undefined || localData.uiState === undefined || localData.uiState.bind === undefined )
+                if (!localData || !localData.uiState || !localData.uiState.bind)
                     return;
                     
                 if (dui.binds.hqWidgetsExt.inited)
@@ -1003,12 +1003,26 @@ if ((typeof hqWidgets !== 'undefined')) {
                             if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["TEMPERATURE"]) {
                                 points[cnt++] = localData.metaObjects[hm_id]["DPs"]["TEMPERATURE"];
                                 points[cnt++] = localData.metaObjects[hm_id]["DPs"]["HUMIDITY"];
-                            }
-                            else
-                            if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["Channels"] && localData.metaObjects[opt['hm_id']]["Channels"][1]) {
+                            } else
+                            if (localData.metaObjects[opt['hm_id']] &&
+                                localData.metaObjects[opt['hm_id']]["Channels"] &&
+                                localData.metaObjects[opt['hm_id']]["Channels"][1] &&
+                                localData.metaObjects[localData.metaObjects[opt['hm_id']]["Channels"][1]]["DPs"]["TEMPERATURE"]) {
                                 var weatherId = localData.metaObjects[opt['hm_id']]["Channels"][1];
                                 points[cnt++] = localData.metaObjects[weatherId]["DPs"]["TEMPERATURE"];
                                 points[cnt++] = localData.metaObjects[weatherId]["DPs"]["HUMIDITY"];
+                            } else
+                            if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["ACTUAL_TEMPERATURE"]) {
+                                points[cnt++] = localData.metaObjects[hm_id]["DPs"]["ACTUAL_TEMPERATURE"];
+                                points[cnt++] = localData.metaObjects[hm_id]["DPs"]["SET_TEMPERATURE"];
+                            } else
+                            if (localData.metaObjects[opt['hm_id']] &&
+                                localData.metaObjects[opt['hm_id']]["Channels"] &&
+                                localData.metaObjects[opt['hm_id']]["Channels"][5] &&
+                                localData.metaObjects[localData.metaObjects[opt['hm_id']]["Channels"][5]]["DPs"]["ACTUAL_TEMPERATURE"]) {
+                                var weatherId = localData.metaObjects[opt['hm_id']]["Channels"][5];
+                                points[cnt++] = localData.metaObjects[weatherId]["DPs"]["ACTUAL_TEMPERATURE"];
+                                points[cnt++] = localData.metaObjects[weatherId]["DPs"]["SET_TEMPERATURE"];
                             }
                         }
                         if (points[0]) {
