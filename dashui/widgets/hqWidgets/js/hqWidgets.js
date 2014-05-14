@@ -4827,8 +4827,9 @@ var hqWidgets = {
         this.intern._jelement.bind  ("resize",  {msg: this}, function (e)	{
             if (e.data.msg.settings.isContextMenu)
                 return;
-                    
-            e.data.msg.SetSize (e.data.msg.intern._jelement.width(), e.data.msg.intern._jelement.height());
+            if (e.data.msg.intern._isEditMode) {
+                e.data.msg.SetSize (e.data.msg.intern._jelement.width(), e.data.msg.intern._jelement.height());
+            }
         });
     }
 };

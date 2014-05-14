@@ -693,6 +693,16 @@ p.xs_text_editor_mode {
     float: right;
     margin-right: 87px;
 }
+#import_local_view {
+    margin-left: 87px;
+}
+#export_local_view {
+    float: right;
+    margin-right: 87px;
+}
+#clear_local_view {
+    margin-left: 87px;
+}
 #language {
     width: 250px;
 
