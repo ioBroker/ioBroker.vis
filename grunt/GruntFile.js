@@ -12,27 +12,20 @@ module.exports = function (grunt) {
 
     // Copyright header
     var htmlBanner =
-          '/**\n'
-        + ' *  DashUI\n'
-        + ' *  https://github.com/hobbyquaker/dashui/\n'
-        + ' *\n'
-        + ' *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox\n'
-        + ' *  MIT License (MIT)\n'
-        + ' *\n'
-        + ' *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated\n'
-        + ' *  documentation files (the "Software"), to deal in the Software without restriction, including without limitation the\n'
-        + ' *  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to\n'
-        + ' *  permit persons to whom the Software is furnished to do so, subject to the following conditions:\n'
-        + ' *v'
-        + ' *  The above copyright notice and this permission notice shall be included in all copies or substantial portions of\n'
-        + ' *  the Software.\n'
-        + ' *\n'
-        + ' *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO\n'
-        + ' *  THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n'
-        + ' *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\n'
-        + ' *  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n'
-        + ' *  SOFTWARE.\n'
-        + ' */\n';
+      '/**\n'
+    + ' *  DashUI\n'
+    + ' *  https://github.com/hobbyquaker/dashui/\n'
+    + ' *\n'
+    + ' *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox\n'
+    + ' *  Creative Common Attribution-NonCommercial (CC BY-NC)\n'
+    + ' *\n'
+    + ' *  http://creativecommons.org/licenses/by-nc/4.0/\n'
+    + ' *\n'
+    + ' * Short content:\n'
+    + ' * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.\n'
+    + ' * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.\n'
+    + ' * (Free for non-commercial use).\n'
+    + ' */\n';
 
     grunt.initConfig({
 
