@@ -814,7 +814,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
  http://creativecommons.org/licenses/by-nc/4.0/
 
- http://i.creativecommons.org/l/by-nc/3.0/88x31.png
+![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/dashui/img/cc-nc-by.png)
 
 Short content:
 Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
