@@ -27,5 +27,5 @@ var duiConfig = {
         users: ["User", "Admin"]
     },
     connLink: "", // default "..". E.g for signalR "http://localhost:8081", for socket.io "http://raspberrypi:2100", android emulation "http://10.0.2.2:8083"
-    connType: 'local' // signalr, socket.io, local
+    connType: 'socket.io' // signalr, socket.io, local
 };
