@@ -740,7 +740,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('updateReadme', function () {
-        var readme = grunt.file.read(__dirname + '/../README.md');
+        var readme = grunt.file.read('README.md');
         if (readme.indexOf(ioaddon.version) == -1) {
             var timestamp = new Date();
             var date = timestamp.getFullYear() + '-' +
@@ -758,7 +758,7 @@ module.exports = function (grunt) {
                 }
             }
 
-            grunt.file.write(__dirname + '/../README.md', readme.replace(/##\s+Changelog\s+/, '## Changelog\r\n\r\n### ' + ioaddon.version + ' [' + date + ']\r\n' + news + '\r\n'));
+            grunt.file.write('README.md', readme.replace(/##\s+Changelog\s+/, '## Changelog\r\n\r\n### ' + ioaddon.version + ' [' + date + ']\r\n' + news + '\r\n'));
         }
     });
 
