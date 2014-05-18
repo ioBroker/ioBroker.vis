@@ -71,7 +71,7 @@
     <!-- remove comments if socket.io used for communication -->
     <script type="text/javascript">document.write ('<script src="'+(duiConfig.connLink||'')+'/socket.io/socket.io.js">'+'</scr'+'ipt>\n')</script>
     <!-- remove comments if signalR used for communication -->
-    <!--script src="../lib/js/jquery.signalR-2.0.2.min.js"></script><script type="text/javascript">document.write ('<script type="text/javascript" src="'+duiConfig.connLink+'/signalr/hubs">'+'</scr'+'ipt>\n');</script-->
+    <!--script src="../lib/js/jquery.signalR-2.0.2.min.js"></script-->
 
 
     <script type="text/javascript" src="js/dashui.js"></script>
@@ -205,12 +205,42 @@
                 <h4 class="translate">Screensize</h4>
                 <table>
                     <tr>
+                        <td style="width: 80px" class="translate">Resolution</td>
+                        <td>
+                            <select id="screen_size">
+                                <option value=" " class="translate">User defined</option>
+                                <option value="640×960">iPhone 4</option>
+                                <option value="640×1136">iPhone 5</option>
+                                <option value="1024x768">iPad</option>
+                                <option value="2048x1536">iPad Air</option>
+                                <option value="480x800">Samsung S2</option>
+                                <option value="720x1280">Samsung S3, Note 2</option>
+                                <option value="1080x1920">Samsung S4, S5, Note 3</option>
+                                <option value="768x1280">Nexus 4</option>
+                                <option value="1080x1920">Nexus 5</option>
+                                <option value="1280×800">Nexus 7(2102)</option>
+                                <option value="1920×1200">Nexus 7(2013)</option>
+                                <option value="2560×1600">Nexus 10</option>
+                                <option value="1280x720">HD</option>
+                                <option value="1920×1080">Full HD</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
                         <td style="width: 80px" class="translate">Width</td>
                         <td><input id="screen_size_x" type="number" value=""/></td>
                     </tr>
                     <tr>
                         <td class="translate">Height</td>
                         <td><input id="screen_size_y" type="number" value=""/></td>
+                    </tr>
+                </table>
+
+                <h4 class="translate">Hide widget description</h4>
+                <table>
+                    <tr>
+                        <td style="width: 80px" class="translate">Is hide</td>
+                        <td><input id="screen_hide_description" type="checkbox" /></td>
                     </tr>
                 </table>
 
@@ -249,6 +279,11 @@
                 <h4 class="translate">Import / Export View</h4>
                 <button class="dashui-editor translateB" id="export_view">export view</button>
                 <button class="dashui-editor translateB" id="import_view">import view</button>
+
+                <h4 class="translate" id="local_view" style="display:none">Local Views</h4>
+                <button class="dashui-editor translateB" id="import_local_view" style="display:none">import views</button>
+                <button class="dashui-editor translateB" id="export_local_view" style="display:none">export views</button><br>
+                <button class="dashui-editor translateB" id="clear_local_view" style="display:none">clear cached views</button>
 
             </div>
 
@@ -692,13 +727,13 @@
                     <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank" class="translate">Unterstützung</a></li>
                     <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank" class="translate">Änderungs-Historie</a></li>
                 </ul>
-                <p class="translate">license1</p>
 
-                <h4>Copyright &copy; 2013, 2014 <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a></h4>
-                <p class="translate">MIT Lizenz (MIT)</p>
+                <h4>Copyright &copy; 2013, 2014 <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a>, Bluefox</h4>
+                <p class="translate">CC BY-NC License</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img src="img/cc-nc-by.png"/></a>
+                <!--p class="translate">license1</p>
                 <p class="translate">license2</p>
                 <p class="translate">license3</p>
-                <p class="translate">license4</p>
+                <p class="translate">license4</p-->
                 <p class="translate">license5</p>
             </div>
 
@@ -706,14 +741,14 @@
         </div>
 
         <div style="display: none" id="uploadPreview"></div>
-        <div style="display: none;" id="dialog_export_view" title="export view">
-            <textarea rows="60" cols="160" style="width: 100%; height: 100%; font-size: 11px;" id="textarea_export_view"></textarea>
+        <div style="display: none;" id="dialog_export_view" title="export view" class="translateT">
+            <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;" id="textarea_export_view"></textarea>
         </div>
-        <div style="display: none;" id="dialog_import_view" title="import view">
-            <textarea rows="50" cols="160" style="width: 100%; height: calc(100% - 40px); font-size: 11px;"  id="textarea_import_view"></textarea>
+        <div style="display: none;" id="dialog_import_view" title="import view" class="translateT">
+            <textarea rows="50" cols="160" style="width: 99%; height: calc(98% - 40px); font-size: 11px;"  id="textarea_import_view"></textarea>
             <br/>
             <input type="text" id="name_import_view">
-            <button id="start_import_view">import</button>
+            <button id="start_import_view" class="translateB">import</button>
         </div>
     </div>
 

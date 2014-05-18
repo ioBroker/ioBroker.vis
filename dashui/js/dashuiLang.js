@@ -2,22 +2,15 @@
  *  DashUI
  *  https://github.com/hobbyquaker/dashui/
  *
- *  Copyright (c) 2013-2014 Bluefox https://github.com/GermanBluefox
- *  MIT License (MIT)
+ *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
+ *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- *  documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- *  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- *  permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *  http://creativecommons.org/licenses/by-nc/4.0/
  *
- *  The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- *  the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- *  THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- *  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * Short content:
+ * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+ * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+ * (Free for non-commercial use).
  */
 "use strict";
 
@@ -65,6 +58,11 @@ dui = $.extend(true, dui, {
                 'dup_widget'       : {'en': 'Copy to:',      'de': 'Kopieren nach:',       'ru': 'Скопировать в:'},
                 'Clipboard: '      : {'en': 'Clipboard:',    'de': 'Zwischenablage:',      'ru': 'Буфер:'},
                 'New:'             : {'en': 'New:',          'de': 'Neues:',               'ru': 'Новое:'},
+                'Confirm widget deletion': {
+                    'en': 'Confirm widget deletion',
+                    'de': 'Bestätigung',
+                    'ru': 'Подтвердите'
+                },
                 'Widget copied to view %s': {
                     'en': 'Widget copied to view %s',
                     'de': 'Widget wurde in die View "%s" kopiert',
@@ -79,6 +77,11 @@ dui = $.extend(true, dui, {
                     'en' : 'Do you want delete %s widgets?',
                     'de': 'Wirklich %s Widgets löschen?',
                     'ru': 'Вы действительно хотите удалить %s элемента(ов)?'
+                },
+                'Do you want delete widget %s?' : {
+                    'en' : 'Do you want delete widget %s?',
+                    'de': 'Wirklich %s Widget löschen?',
+                    'ru': 'Вы действительно хотите удалить элемент %s?'
                 },
                 'Update found, loading new Files...'  : {
                     'en' : 'Update found.<br/>Loading new Files...',
@@ -119,6 +122,23 @@ dui = $.extend(true, dui, {
                 'Select options'   : {'en': 'Select options','de': 'Selekteingensch.',    'ru': 'Свойства выбора'},
                 'Änderungs-Historie': {'en': 'Change log',  'de': 'Änderungs-Historie:',  'ru': 'Список изменений'},
                 'invalid JSON'     : {'en': 'Invalid JSON', 'de': 'Invalid JSON',         'ru': 'Неправильный формат'},
+                'Do not ask again' : {'en': 'Don\'t ask again', 'de': 'Nicht mehr fragen','ru': 'Больше не спрашивать'},
+                'import'           : {'en': 'Import',       'de': 'Importieren',          'ru': 'Импорт'},
+                'export view'      : {'en': 'Export view',  'de': 'Exportieren',          'ru': 'Экспортировать'},
+                'import view'      : {'en': 'Import view',  'de': 'Importieren',          'ru': 'Импортировать'},
+                'export views'     : {'en': 'Export views', 'de': 'Exportieren',          'ru': 'Экспортировать'},
+                'import views'     : {'en': 'Import views', 'de': 'Importieren',          'ru': 'Импортировать'},
+                'clear cached views': {'en': 'Clear views from cache',  'de': 'Views aus Browser-Cache löschen', 'ru': 'Очистить страницы из броузера'},
+                'Import / Export View' : {
+                    'en': 'Import / Export View',
+                    'de': 'Importieren / Exportieren View',
+                    'ru': 'Импортировать / Экспортировать страницу'
+                },
+                'Local Views' : {
+                    'en': 'Local Views (cached)',
+                    'de': 'Lokal gespeicherte Views',
+                    'ru': 'Страницы в кеше броузера'
+                },
                 'please use /dashui/edit.html instead of /dashui/?edit': {
                     'en': 'Please use /dashui/edit.html instead of /dashui/?edit',
                     'de': 'Bitte /dashui/edit.html statt /dashui/?edit nutzen',
@@ -151,24 +171,24 @@ dui = $.extend(true, dui, {
                 'Instance ID'      : {'en' : 'Instance ID ',      'de': 'Instanz ID ',            'ru': 'Instance ID '},
                 'Single view'      : {'en' : 'Single view',  'de': 'Nur in aktueller View','ru': 'Только на текущей странице'},
 //                'Single mode'      : {'en' : 'Only in actual view',  'de': 'Nur in aktueller View', 'ru': 'Только на текущей странице'},
-                'MIT Lizenz (MIT)' : {'en' : 'MIT License (MIT)','de': 'MIT Lizenz (MIT)', 'ru': 'Лицензия MIT (MIT)'},
-                'license1'         : {
-                    'en': 'Users of this software do so at their own risk. The authors of this software cannot be held liable for possible complications that may arise.',
+                'CC BY-NC License' : {'en' : 'CC BY-NC License','de': 'CC BY-NC Lizenz', 'ru': 'Лицензия CC BY-NC'},
+                /*'license1'         : {
+                    'en': 'Short content:',
                     'de': 'Die Nutzung dieser Software erfolgt auf eigenes Risiko. Der Author dieser Software kann für eventuell auftretende Folgeschäden nicht haftbar gemacht werden!',
                     'ru': 'Пользователь использует это программное обеспечение на свой страх и риск. Обязательным условием использования Вами этого программного обеспечения является согласие Вами с отказом авторов программного обеспечения от какой-либо ответственности за любые потери, упущенную выгоду, затраты или убытки в какой-либо форме в связи с использованием Вами или третьими лицами этого программного обеспечения. Используя это программное обеспечене, Вы соглашаетесь с такой дискламацией (отказом от ответственности). В любом другом случае Вы должны немедленно удалить это программное обеспечение.'},
                 'license2'      : {
-                    'en': 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:',
+                    'en': 'Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.',
                     'de': 'Hiermit wird unentgeltlich jeder Person, die eine Kopie der Software und der zugehörigen Dokumentationen (die "Software") erhält, die Erlaubnis erteilt, sie uneingeschränkt zu benutzen, inklusive und ohne Ausnahme dem Recht, sie zu verwenden, kopieren, ändern, fusionieren, verlegen, verbreiten, unterlizenzieren und/oder zu verkaufen, und Personen, die diese Software erhalten, diese Rechte zu geben, unter den folgenden Bedingungen:',
                     'ru': 'Данная лицензия разрешает лицам, получившим копию данного программного обеспечения и сопутствующей документации (в дальнейшем именуемыми «Программное Обеспечение»), безвозмездно использовать Программное Обеспечение без ограничений, включая неограниченное право на использование, копирование, изменение, добавление, публикацию, распространение, сублицензирование и/или продажу копий Программного Обеспечения, также как и лицам, которым предоставляется данное Программное Обеспечение, при соблюдении следующих условий:'},
                 'license3'      : {
-                    'en': 'The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.',
+                    'en': 'Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.',
                     'de': 'Der obige Urheberrechtsvermerk und dieser Erlaubnisvermerk sind in allen Kopien oder Teilkopien der Software beizulegen.',
                     'ru': 'Указанное выше уведомление об авторском праве и данные условия должны быть включены во все копии или значимые части данного Программного Обеспечения.'},
                 'license4'      : {
-                    'en': 'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.',
+                    'en': '(Free for non-commercial use)',
                     'de': 'DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIESSLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.',
                     'ru': 'ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ ГАРАНТИЯМИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И ОТСУТСТВИЯ НАРУШЕНИЙ ПРАВ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО ИСКАМ О ВОЗМЕЩЕНИИ УЩЕРБА, УБЫТКОВ ИЛИ ДРУГИХ ТРЕБОВАНИЙ ПО ДЕЙСТВУЮЩИМ КОНТРАКТАМ, ДЕЛИКТАМ ИЛИ ИНОМУ, ВОЗНИКШИМ ИЗ, ИМЕЮЩИМ ПРИЧИНОЙ ИЛИ СВЯЗАННЫМ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ ИСПОЛЬЗОВАНИЕМ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫМИ ДЕЙСТВИЯМИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.'},
-                'license5'      : {
+                */'license5'      : {
                     'en': 'HomeMatic and the HomeMatic Logo are the registered trademarks of eQ-3 AG',
                     'de': 'HomeMatic und das HomeMatic Logo sind eingetragene Warenzeichen der eQ-3 AG',
                     'ru': 'HomeMatic и HomeMatic логотип являются зарегистрированными тоговыми марками фирмы eQ-3 Inc.'},

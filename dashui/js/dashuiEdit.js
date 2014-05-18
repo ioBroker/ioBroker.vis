@@ -3,21 +3,14 @@
  *  https://github.com/hobbyquaker/dashui/
  *
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
- *  MIT License (MIT)
+ *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- *  documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- *  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- *  permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *  http://creativecommons.org/licenses/by-nc/4.0/
  *
- *  The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- *  the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- *  THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- *  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * Short content:
+ * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+ * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+ * (Free for non-commercial use).
  */
 
 // duiEdit - the DashUI Editor
@@ -71,16 +64,18 @@ dui = $.extend(true, dui, {
             window.location.reload();
         });
     },
-    exportView: function () {
-        var exportView = $.extend(true, {}, dui.views[dui.activeView]);
+    exportView: function (isAll) {
+        var exportView = $.extend(true, {}, isAll ? dui.views : dui.views[dui.activeView]);
         // Allen Widgets eine neue ID verpassen...
         var num = 1;
         var wid;
-        for (var widget in exportView.widgets) {
-            wid = "e" + (("0000" + num).slice(-5));
-            num += 1;
-            exportView.widgets[wid] = exportView.widgets[widget];
-            delete exportView.widgets[widget];
+        if (!isAll) {
+            for (var widget in exportView.widgets) {
+                wid = "e" + (("0000" + num).slice(-5));
+                num += 1;
+                exportView.widgets[wid] = exportView.widgets[widget];
+                delete exportView.widgets[widget];
+            }
         }
         $("#textarea_export_view").html(JSON.stringify(exportView, null, "  "));
         $("#dialog_export_view").dialog({
@@ -94,28 +89,36 @@ dui = $.extend(true, dui, {
             }
         });
     },
-    importView: function () {
+    importView: function (isAll) {
         var name = dui.checkNewView($("#name_import_view").val());
+        var importObject;
         if (name === false) return;
         try {
             var text = $("#textarea_import_view").val();
-            var importView = JSON.parse(text);
+            importObject = JSON.parse(text);
         } catch (e) {
             alert(dui.translate("invalid JSON") + "\n\n"+e);
             return;
         }
-        dui.views[name] = importView;
+        if (isAll) {
+            dui.views = importObject;
+            dui.saveRemote(function () {
+                window.location.reload();
+            });
+        } else {
+            dui.views[name] = importObject;
 
-        // Allen Widgets eine neue ID verpassen...
-        for (var widget in dui.views[name].widgets) {
-            dui.views[name].widgets[dui.nextWidget()] = dui.views[name].widgets[widget];
-            delete dui.views[name].widgets[widget];
+            // Allen Widgets eine neue ID verpassen...
+            for (var widget in dui.views[name].widgets) {
+                dui.views[name].widgets[dui.nextWidget()] = dui.views[name].widgets[widget];
+                delete dui.views[name].widgets[widget];
+            }
+            dui.saveRemote(function () {
+                dui.renderView(name);
+                dui.changeView(name);
+                window.location.reload();
+            });
         }
-        dui.saveRemote(function () {
-            dui.renderView(name);
-            dui.changeView(name);
-            window.location.reload();
-        });
     },
     checkNewView: function (name) {
         name = name || $("#new_view_name").val().trim();
@@ -1540,8 +1543,24 @@ dui = $.extend(true, dui, {
 
         $("#inspect_view").html(view);
 
+        // Try to find this resolution in the list
+        var res = dui.views[dui.activeView].settings.sizex + 'x' + dui.views[dui.activeView].settings.sizey;
+        $('#screen_size option').each(function(){
+            if (this.value == res) {
+                this.selected = true;
+                res = null;
+            }
+        });
+        if (!res) {
+            $("#screen_size_x").prop('disabled', true);
+            $("#screen_size_y").prop('disabled', true);
+        }
+
         $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
         $("#screen_size_y").val(dui.views[dui.activeView].settings.sizey || "").trigger("change");
+
+        $("#screen_hide_description").prop('checked', dui.views[dui.activeView].settings.hideDescription).trigger("change");
+        hqWidgets.SetHideDescription(dui.views[dui.activeView].settings.hideDescription);
 
         $("#grid_size").val(dui.views[dui.activeView].settings.gridSize || "").trigger("change");
 
@@ -1819,11 +1838,11 @@ dui = $.extend(true, dui, {
                 open: function (event, ui) {
                     $('[aria-describedby="dialog_import_view"]').css('z-index',1002);
                     $('.ui-widget-overlay').css('z-index',1001);
+                    $("#start_import_view").click(dui.importView);
+                    $("#name_import_view").show();
                 }
             });
         });
-
-        $("#start_import_view").click(dui.importView);
 
 		$("#widget_doc").button({icons: {primary: "ui-icon ui-icon-script"}}).click(function () {
             var tpl = dui.views[dui.activeView].widgets[dui.activeWidget].tpl;
@@ -1986,6 +2005,17 @@ dui = $.extend(true, dui, {
             dui.inspectWidget("none");
         });
 
+        $('#screen_size').change(function() {
+            var size = this.value.split('x');
+            if (this.value[0] >= '0' && this.value[0] <= '9') {
+                $("#screen_size_x").val(size[0]).trigger('change').prop('disabled', true);
+                $("#screen_size_y").val(size[1]).trigger('change').prop('disabled', true);
+            } else {
+                $("#screen_size_x").prop('disabled', false);
+                $("#screen_size_y").prop('disabled', false);
+            }
+        });
+
         $("#screen_size_x").change(function () {
             var x = $("#screen_size_x").val();
             var y = $("#screen_size_y").val();
@@ -2004,6 +2034,19 @@ dui = $.extend(true, dui, {
             }
 
         })/*.keyup(function () { $(this).trigger("change"); })*/;
+
+        $("#screen_hide_description").change(function () {
+            var val = $("#screen_hide_description")[0].checked
+            if (dui.views[dui.activeView].settings.hideDescription != val) {
+                dui.views[dui.activeView].settings.hideDescription = val;
+                if (typeof hqWidgets != 'undefined') {
+                    hqWidgets.SetHideDescription(val);
+                }
+                dui.save();
+            }
+
+        })/*.keyup(function () { $(this).trigger("change"); })*/;
+
 
         $("#screen_size_y").change(function () {
             var x = $("#screen_size_x").val();
@@ -2168,7 +2211,41 @@ dui = $.extend(true, dui, {
                 dui.inspectWidget("none");
             });
         }
- 	},
+
+        if (servConn.getType() == 2 /* local */) {
+            $("#export_local_view").click(function () {
+                dui.exportView(true);
+            }).show();
+
+            $("#import_local_view").click(function () {
+                $("#textarea_import_view").html("");
+                $("#dialog_import_view").dialog({
+                    autoOpen: true,
+                    width: 800,
+                    height: 600,
+                    modal: true,
+                    open: function (event, ui) {
+                        $('[aria-describedby="dialog_import_view"]').css('z-index',1002);
+                        $('.ui-widget-overlay').css('z-index',1001);
+                        $("#start_import_view").click(function () {
+                            dui.importView(true);
+                        });
+                        $("#name_import_view").hide();
+                    }
+                });
+            }).show();
+
+            $("#clear_local_view").click(function () {
+                if (typeof storage !== 'undefined') {
+                    localStorage.clear();
+                    window.location.reload();
+                }
+            }).show();
+            $('#local_view').show();
+        }
+
+
+    },
     editPosition: function () {
 
         function left() {
@@ -2537,7 +2614,7 @@ dui = $.extend(true, dui, {
                 $(this).attr('value', transText);
             }
 	    });
-	    $(".translateB").each(function (idx) {
+        $(".translateB").each(function (idx) {
             //<span class="ui-button-text">Save</span>
             var text = $(this).attr('data-lang');
             if (!text) {
@@ -2554,7 +2631,20 @@ dui = $.extend(true, dui, {
                     $(this).html(transText);
                 }
             }
-	    });
+        });
+        // translate <div title="text">
+        $(".translateT").each(function (idx) {
+            var text = $(this).attr('data-lang');
+            if (!text) {
+                text = $(this).attr('title');
+                $(this).attr('data-lang', text);
+            }
+
+            var transText = dui.translate(text);
+            if (transText) {
+                $(this).attr('title', transText);
+            }
+        });
 	},
     // collect all filter keys for given view
     updateFilter: function () {
@@ -2900,7 +2990,7 @@ dui = $.extend(true, dui, {
                 if (dui.multiSelectedWidgets.length) {
                     $("#dialog_delete_content").html(dui.translate("Do you want delete %s widgets?", dui.multiSelectedWidgets.length + 1));
                 } else {
-                    $("#dialog_delete_content").html(dui.translate("Do you want delete widget ") + dui.activeWidget + " ?");
+                    $("#dialog_delete_content").html(dui.translate("Do you want delete widget %s?", dui.activeWidget));
                 }
     
                 var dialog_buttons = {};

@@ -397,9 +397,9 @@ jQuery.extend(true, dui.words, {
                 w = div.barsOptions.bWidth;
             }
 				
-			text += "<table style='width:"+w+"px; height:"+h+"px' class='dashui-no-spaces'>";
+			text += '<table style="width:' + w + 'px; height:' + h + 'px" class="dashui-no-spaces">';
 			if (isHorizontal) {
-				text += "<tr class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px'>";
+				text += "<tr class='dashui-no-spaces' style='height:" + div.barsOptions.bHeight + "px'>";
 				for (var d = 0; d < div.barsOptions.buttons.length; d++) {
 					text += "<td class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, d, div.barsOptions) + "</td>";
                                        if (d != div.barsOptions.buttons.length - 1)
@@ -503,7 +503,10 @@ jQuery.extend(true, dui.words, {
 							}
 						}
 					});
-                    btn_.click (function () { if (this.ctrl._onClick) this.ctrl._onClick (this, this.ctrl, this.ctrlId) });
+                    btn_.click (function () {
+                        if (this.ctrl._onClick)
+                            this.ctrl._onClick (this, this.ctrl, this.ctrlId)
+                    });
                 }
             }
 			
@@ -1107,7 +1110,7 @@ jQuery.extend(true, dui.words, {
 			};			
 							
 			if (document.getElementById (wid) == null) {
-				$('#duiview_' + view).append ("<div id='"+wid+"'></div>");
+				$('#duiview_' + view).append ('<div id="' + wid + '" class="dashui-widget"></div>');
 			}
 			var div = document.getElementById (wid);
 			var barsIntern = null;
@@ -1183,7 +1186,7 @@ jQuery.extend(true, dui.words, {
             }
 			
 			this.draw(div, jDiv);
-		
+
 			// non edit mode
 			if (dui.urlParams["edit"] !== "") {
                 // Select by default buttons
@@ -1235,7 +1238,7 @@ jQuery.extend(true, dui.words, {
 						}
 					}
 				}
-            
+
                 // Install on click function 
                 if (div._onClick === undefined) {
                     div._onClick = function (htmlBtn, div, r) {
@@ -1318,6 +1321,13 @@ jQuery.extend(true, dui.words, {
             else {
 				jDiv.attr('data-dashui-resizable', '{"disabled":true}');
                 div.dashuiCustomEdit = {'baroptions': dui.binds.bars.edit, 'delete': dui.binds.bars.editDelete};
+                // Install on click function
+                if (div._onClick === undefined) {
+                    console.log('bar');
+                    div._onClick = function (htmlBtn, div, r) {
+                        dui.inspectWidget(div.barsIntern.wid);
+                    };
+                }
             }
 		}
 	};

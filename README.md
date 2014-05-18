@@ -5,6 +5,10 @@
 
 siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
+![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/user0.png)
+![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/user7.png)
+
+
 ## Changelog
 
 ### 0.9beta105 [2014-05-09]
@@ -805,25 +809,20 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Copyright, Lizenz, Bedingungen
 
-DashUI
 
-Copyright (c) 2013 hobbyquaker https://github.com/hobbyquaker
+ DashUI
+ https://github.com/hobbyquaker/dashui/
 
-MIT Lizenz (MIT)
+ Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
+ Creative Common Attribution-NonCommercial (CC BY-NC)
 
-Hiermit wird unentgeltlich, jeder Person, die eine Kopie der Software und der zugehörigen Dokumentationen (die
-"Software") erhält, die Erlaubnis erteilt, sie uneingeschränkt zu benutzen, inklusive und ohne Ausnahme, dem Recht,
-sie zu verwenden, kopieren, ändern, fusionieren, verlegen, verbreiten, unterlizenzieren und/oder zu verkaufen, und
+ http://creativecommons.org/licenses/by-nc/4.0/
 
-Personen, die diese Software erhalten, diese Rechte zu geben, unter den folgenden Bedingungen:
+![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/cc-nc-by.png)
 
-Der obige Urheberrechtsvermerk und dieser Erlaubnisvermerk sind in allen Kopien oder Teilkopien der Software beizulegen.
-
-DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIESSLICH DER GARANTIE ZUR
-BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF
-BESCHRÜNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE
-HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER
-SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
-
+Short content:
+Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+(Free for non-commercial use).
 
 HomeMatic und das HomeMatic Logo sind eingetragene Warenzeichen der eQ-3 AG

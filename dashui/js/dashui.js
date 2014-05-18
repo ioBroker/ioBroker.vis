@@ -3,21 +3,10 @@
  *  https://github.com/hobbyquaker/dashui/
  *
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
- *  MIT License (MIT)
+ *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- *  documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- *  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- *  permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *  http://creativecommons.org/licenses/by-nc/4.0/
  *
- *  The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- *  the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- *  THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- *  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
  */
 
 "use strict";
@@ -349,7 +338,7 @@ var dui = {
             // Create default view in demo mode
             if (typeof io == "undefined") {
                 if (dui.activeView == "") {
-                    dui.views["DemoView"] = {};
+                    dui.views["DemoView"] = {settings: {style: {}}, widgets: {}};
                     dui.activeView = "DemoView";
                 }
                 dui.showWaitScreen(false);
@@ -1019,9 +1008,9 @@ var dui = {
 
 var localData = {
     // All values of objects
-    uiState:        new can.Observe({"_65535": {"Value": null}}),
+    uiState:        null,
     // Set values of objects
-    setState:       new can.Observe({"_65535": {"Value": null}}),
+    setState:       null,
     // Index arrays, like "functions", "rooms", "devices", and so on
     metaIndex:      {},
     // Array with all objects (Descriptions of objects)
@@ -1120,6 +1109,10 @@ if ('applicationCache' in window) {
 // Start of initialisation: main ()
 (function ($) {
     $(document).ready(function () {
+        // On some platforms, the can.js is not immediately ready
+        localData.uiState  = new can.Observe({"_65535": {"Value": null}});
+        localData.setState = new can.Observe({"_65535": {"Value": null}});
+
         // Bind on change of some state
         localData.setState.bind("change", function (e, attr, how, newVal, oldVal) {
             //console.log("localData setState change "+how+" "+attr+" "+JSON.stringify(newVal));
@@ -1407,39 +1400,43 @@ var servConn = {
 
         // If autodetect
         if (type === undefined) {
-            if (typeof io != "undefined") {
-                type = 1; // socket.io
-            } else if (typeof $ != "undefined" && typeof $.connection != "undefined") {
-                type = 0; // SignalR
-            } else {
-                type = 2; // local demo
-            }
+            type = duiConfig.connType;
+
+            if (type === undefined || type === null) {
+				if (typeof io != "undefined") {
+					type = 1; // socket.io
+				} else if (typeof $ != "undefined" && typeof $.connection != "undefined") {
+					type = 0; // SignalR
+				} else {
+					type = 2; // local demo
+				}
+			}
         }
 
         this._connCallbacks = connCallbacks;
 
+        var connLink = duiConfig.connLink || window.localStorage.getItem("connLink");
         if (type == 0 || type == 'signalr') {
             this._type = 0;
-            if (duiConfig.connLink) {
-                $.connection.hub.url = duiConfig.connLink+"/signalr";
-            }
-            this._hub = $.connection.serverHub;
+			
+            this.connection = $.hubConnection(connLink);
+            this._hub = this.connection.createHubProxy("serverHub");
+            //this._hub = $.connection.serverHub;
             if (!this._hub) {
                 this._autoReconnect();
                 return;
             }
 
             var that = this;
-
-            this._hub.client.updatePointValue = function (model) {
+            this._hub.on("updatePointValue", function (model) {
                 if (that._connCallbacks.onUpdate) {
                     that._connCallbacks.onUpdate({name: model.name, val: model.val, ts: model.ts, ack: model.ack});
                 }
-            };
+            });
 
-            this._hub.client.authRequest = function (message, salt) {
-                this._isAuthRequired = true;
-                this._isAuthDone     = false;
+            this._hub.on("authRequest", function (message, salt) {
+                that._isAuthRequired = true;
+                that._isAuthDone     = false;
 
                 console.log('Auth request: ' + message);
 
@@ -1454,34 +1451,34 @@ var servConn = {
                     alert('server requires authentication, but no onAuth callback is installed!');
                 }
 
-            };
-            this._hub.client.refresh = function () {
+            });
+            this._hub.on("refresh", function () {
                 if (that._connCallbacks.onRefresh) {
                     that._connCallbacks.onRefresh();
                 }
-            };
-            $.connection.hub.start().done(function () {
+             });
+            this.connection.start().done(function () {
                 that._isConnected = true;
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
                 that._autoReconnect();
             });
-            $.connection.hub.reconnecting(function() {
+            this.connection.reconnecting(function() {
                 that._isConnected = false;
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
                 that._autoReconnect();
             });
-            $.connection.hub.reconnected(function() {
+            this.connection.reconnected(function() {
                 that._isConnected = true;
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
                 that._autoReconnect();
             });
-            $.connection.hub.disconnected(function() {
+            this.connection.disconnected(function() {
                 that._isConnected = false;
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
@@ -1495,13 +1492,14 @@ var servConn = {
                     socketSession = 'nokey';
                 }
                 var url;
-                if (duiConfig.connLink) {
-                    url = duiConfig.connLink;
+                if (connLink) {
+                    url = connLink;
                 } else {
                     url = jQuery(location).attr('protocol') + '//' + jQuery(location).attr('host');
                 }
 
-                this._socket = io.connect(url + '?key=' + socketSession, {
+                this._socket = io.connect(url, {
+                    'query': 'key=' + socketSession,
                     'reconnection limit': 10000,
                     'max reconnection attempts': Infinity
                 });
@@ -1585,6 +1583,32 @@ var servConn = {
 
         // start connection timer
         //this._autoReconnect();
+		// Detect if running under cordova
+		var app = document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1;
+		if (app) {
+			$('body').append('<div id="system_menu" style="z-index:3000;width: 30%; height:30px; background-color: white; position:absolute; bottom: 0; left: 35%; display: none; border:1px solid black; text-align:center">' + dui.translate('Settings') + '</a></div>');
+			$("#system_menu").click(function () {
+				console.log("Goto settings");
+				if (window.localStorage) {
+					window.localStorage.setItem("connSettings", true);
+				}	
+				// Call settings window
+				window.location.href = '../index.html';
+			});
+			// Install menu on menu button
+			document.addEventListener("menubutton", function () {
+				var menuDiv = $("#system_menu");
+				if (servConn.menuOpen) {
+					console.log("close the menu");
+					menuDiv.hide();
+					servConn.menuOpen = false;
+				} else {
+					console.log("open the menu");
+					menuDiv.show();
+					servConn.menuOpen = true;
+				}
+			}, false);
+		}				
     },
     // After 3 hours debugging...
     // It is questionable if ths function really required.
@@ -1601,6 +1625,9 @@ var servConn = {
     _autoReconnect: function () {
         // If connected
         if (this._isConnected) {
+			if (window.localStorage) {
+				window.localStorage.setItem("connCounter", 0);
+			}		
             // Stop connection timer
             if (this._connTimer) {
                 clearInterval(this._connTimer);
@@ -1612,6 +1639,11 @@ var servConn = {
                 // Start connection timer
                 this._connTimer = _setInterval(function (conn) {
                     if (!conn._isConnected) {
+						var counter = 0;
+						if (window.localStorage) {
+							counter = parseInt(window.localStorage.getItem("connCounter") || 0);
+							window.localStorage.setItem("connCounter", counter++);
+						}					
                         // Auto-Reconnect. DashUI can be located in any path.
                         var url = document.location.href;
                         var k = url.indexOf('#');
@@ -1630,12 +1662,21 @@ var servConn = {
                         parts = parts.slice(3);
                         url = '/' + parts.join('/');
 
+						// Detect if running under cordova
+						var app = document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1;
+						if (app && counter > 3) {
+							url = url.replace('dashui/index.html', 'index.html');
+						}
+						
                         $.ajax({
                             url: url,
                             cache: false,
                             success: function (data) {
                                 // Check if it really index.html and not offline.html as fallback
                                 if (data && data.length > 1000) {
+									if (window.localStorage) {
+										window.localStorage.setItem("connSettings", true);
+									}	
                                     window.location.reload();
                                 }
                             }
@@ -1660,7 +1701,7 @@ var servConn = {
 
         //SignalR
         if (this._type == 0) {
-            this._hub.server.getVersion().done(function (version) {
+            this._hub.invoke('getVersion').done(function (version) {
                 if (callback) {
                     callback(version);
                 }
@@ -1685,7 +1726,7 @@ var servConn = {
         }
         if (this._type == 0) {
             //SignalR
-            this._hub.server.getVersion().done(function (version) {
+            this._hub.invoke('getVersion').done(function (version) {
                 if (callback)
                     callback(version);
             })
@@ -1713,7 +1754,7 @@ var servConn = {
 
         if (this._type == 0) {
             //SignalR
-            this._hub.server.readFile(filename).done(function (data) {
+            this._hub.invoke('readFile', filename).done(function (data) {
                 if (callback) {
                     callback(data);
                 }
@@ -1733,7 +1774,7 @@ var servConn = {
             //local
 
             // Try load views from local storage
-            /*if (filename.indexOf('dashui-views') != -1) {
+            if (filename.indexOf('dashui-views') != -1) {
                 if (typeof storage !== 'undefined') {
                     dui.views = storage.get(filename);
                     if (dui.views) {
@@ -1743,7 +1784,7 @@ var servConn = {
                         dui.views = {};
                     }
                 }
-            }*/
+            }
 
             // Load from ../datastore/dashui-views.json the demo views
             jQuery.ajax({
@@ -1783,7 +1824,7 @@ var servConn = {
 
         if (this._type == 0) {
             //SignalR
-            this._hub.server.touchFile (filename);
+            this._hub.invoke('touchFile',filename);
         } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
@@ -1796,7 +1837,7 @@ var servConn = {
     writeFile: function (filename, data, callback) {
         if (this._type == 0) {
             //SignalR
-            this._hub.server.writeFile (filename, JSON.stringify(data)).done(function (isOk) {
+            this._hub.invoke('writeFile', filename, JSON.stringify(data)).done(function (isOk) {
                 if (callback) {
                     callback(isOk);
                 }
@@ -1830,7 +1871,7 @@ var servConn = {
     readDir: function (dirname, callback) {
         if (this._type == 0) {
             //SignalR
-            this._hub.server.readDir (dirname).done(function (jsonString) {
+            this._hub.invoke('readDir',dirname).done(function (jsonString) {
                 var data;
                 try {
                     data = JSON.parse(jsonString);
@@ -1854,6 +1895,28 @@ var servConn = {
                     callback(data);
                 }
             });
+        } else if (this._type == 2) {
+            if (dirname.indexOf('www/dashui/img') != -1) {
+                // Load from img the list of files. To make it possible, call "dir /B /O > list.txt" in every img directory.
+                jQuery.ajax({
+                    url: dirname.replace('www/dashui/', '') + '/list.txt',
+                    type: 'get',
+                    async: false,
+                    dataType: 'text',
+                    cache: true,
+                    success: function (data) {
+                        var files = (data) ? data.split('\n') : [];
+                        if (callback) {
+                            callback(files);
+                        }
+                    },
+                    error: function (state) {
+                        // TODO Translate
+                        alert('Cannot get ' + location.href + dirname.replace('www/dashui/', '') + '/list.txt' + '\n' + state.statusText);
+                        callback([]);
+                    }
+                });
+            }
         }
     },
     setPointValue: function (pointId, value) {
@@ -1868,7 +1931,7 @@ var servConn = {
 
         if (this._type == 0) {
             //SignalR
-            this._hub.server.setDataPoint({ id: pointId, val: value });
+            this._hub.invoke('setDataPoint', {id: pointId, val: value});
         } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
@@ -1893,7 +1956,7 @@ var servConn = {
         if (this._type == 0) {
             //SignalR
 
-            this._hub.server.getDataPoints().done(function (jsonString) {
+            this._hub.invoke('getDataPoints').done(function (jsonString) {
                 var data = {};
                 if (jsonString === null) {
                     if (callback) {
@@ -2013,7 +2076,7 @@ var servConn = {
 
         if (this._type == 0) {
             //SignalR
-            this._hub.server.getDataObjects().done(function (jsonString) {
+            this._hub.invoke('getDataObjects').done(function (jsonString) {
                 var data = {};
                 try {
                     var _data = JSON.parse(jsonString);
@@ -2083,7 +2146,7 @@ var servConn = {
         }
         if (this._type == 0) {
             //SignalR
-            this._hub.server.addObject (objId, obj).done(function (cid) {
+            this._hub.invoke('addObject', objId, obj).done(function (cid) {
                 if (callback) {
                     callback(cid);
                 }
@@ -2108,7 +2171,7 @@ var servConn = {
         }
         if (this._type == 0) {
             //SignalR
-            this._hub.server.deleteObject(objId);
+            this._hub.invoke('deleteObject', objId);
         } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
@@ -2145,7 +2208,7 @@ var servConn = {
         }        
         if (this._type == 0) {
             //SignalR
-            this._hub.server.getUrl(url).done(function (jsonString) {
+            this._hub.invoke('getUrl', url).done(function (jsonString) {
                 if (callback) {
                     callback(jsonString);
                 }
@@ -2174,7 +2237,7 @@ var servConn = {
         }
         if (this._type == 0) {
             //SignalR
-            //this._hub.server.getUrl(url).done(function (jsonString) {
+            //this._hub.invoke('getUrl(url).done(function (jsonString) {
                 if (callback) {
                     callback(null);
                 }
@@ -2203,7 +2266,7 @@ var servConn = {
         }
         if (this._type == 0) {
             //SignalR
-            //this._hub.server.getUrl(url).done(function (jsonString) {
+            //this._hub.invoke('getUrl(url).done(function (jsonString) {
             //});
         } else if (this._type == 1) {
             //socket.io
@@ -2296,7 +2359,7 @@ var servConn = {
         //SignalR
         if (this._type == 0) {
             var that = this;
-            this._hub.server.authenticate(that._authInfo.user, that._authInfo.hash, that._authInfo.salt).done(function (error) {
+            this._hub.invoke('authenticate', that._authInfo.user, that._authInfo.hash, that._authInfo.salt).done(function (error) {
                 this._authRunning = false;
                 if (!error) {
                     that._isAuthDone  = true;
