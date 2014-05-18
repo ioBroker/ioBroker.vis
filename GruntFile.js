@@ -6,7 +6,9 @@
 module.exports = function (grunt) {
 
     var destDir = "dashui.min/";
-    var srcDir  = "../dashui/";
+    var srcDir  = "dashui/";
+    var libDir  = "../ccu.io/www/lib/";
+    var pgDir   = "phonegap/";
     var deliveryDir = 'delivery/';
     var ioaddon = grunt.file.readJSON(srcDir + 'io-addon.json');
 
@@ -122,12 +124,12 @@ module.exports = function (grunt) {
                         dest: '.phoneGap/dashui/'
                     },
                     {
-                        src: ['index.html', 'config.xml', 'logo.png'],
+                        src: [pgDir + 'index.html', pgDir + 'config.xml', pgDir +'logo.png'],
                         dest: '.phoneGap/'
                     },
                     {
                         expand: true,
-                        src: ['auth/**', 'css/**', 'js/**', 'lang/**', 'lib/**'],
+                        src: [pgDir + 'auth/**', pgDir + 'css/**', pgDir + 'js/**', pgDir + 'lang/**', libDir+'**'],
                         dest: '.phoneGap/'
                     }
                 ]
@@ -762,6 +764,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('updateCache', function () {
         var manifest = grunt.file.read(srcDir + 'cache.manifest');
+        console.log(manifest);
         if (manifest.indexOf("# dev build") != -1) {
             var matchArr = manifest.match(/# dev build ([0-9]+)\s/);
             var number = parseInt(matchArr[1], 10);
