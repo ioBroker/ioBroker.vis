@@ -1545,9 +1545,9 @@ dui = $.extend(true, dui, {
 
         // Try to find this resolution in the list
         var res = dui.views[dui.activeView].settings.sizex + 'x' + dui.views[dui.activeView].settings.sizey;
-        $('#screen_size option').each(function(){
-            if (this.value == res) {
-                this.selected = true;
+        $('#screen_size option').each(function () {
+            if ($(this).val() == res) {
+                $(this).attr('selected', true);
                 res = null;
             }
         });
@@ -2006,14 +2006,17 @@ dui = $.extend(true, dui, {
         });
 
         $('#screen_size').change(function() {
-            var size = this.value.split('x');
-            if (this.value[0] >= '0' && this.value[0] <= '9') {
+            var val = $(this).find('option:selected').val();
+            if (val != 'user') {
+                var size = val.split('x');
+                console.log(size);
                 $("#screen_size_x").val(size[0]).trigger('change').prop('disabled', true);
                 $("#screen_size_y").val(size[1]).trigger('change').prop('disabled', true);
             } else {
-                $("#screen_size_x").prop('disabled', false);
-                $("#screen_size_y").prop('disabled', false);
+                $("#screen_size_x").removeAttr('disabled');
+                $("#screen_size_y").removeAttr('disabled');
             }
+
         });
 
         $("#screen_size_x").change(function () {
@@ -2102,8 +2105,9 @@ dui = $.extend(true, dui, {
                     url: "io-addon.json",
                     cache: false,
                     success: function (data) {
+
                         try {
-                            var ioaddon = JSON.parse(data);
+                            var ioaddon = data; // @bluefox: this is already parsed by jQuery.ajax! JSON.parse(data);
                             if (ioaddon.whatsNew) {
                                 for (var i = 0; i < ioaddon.whatsNew.length; i++) {
                                     var text = ioaddon.whatsNew[i];
@@ -2120,8 +2124,8 @@ dui = $.extend(true, dui, {
                                     dui.showHint('<b>' + dui.translate('New:') + '</b>' + text, 30000, 'info');
                                 }
                             }
-                        } catch(e) {
-                            servConn.logError('Cannot parse io-addon.json');
+                        } catch (e) {
+                            servConn.logError('Cannot parse io-addon.json ' + e);
                         }
                     }
                 });
