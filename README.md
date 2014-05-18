@@ -11,6 +11,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta106 [2014-05-18]
+* (Bluefox) Fix hqWidget/Inside Temperature: Show graphics for HM-CC-RT-DN
+* (Bluefox) Possible to switch off the animation for hqWidget/info
+
 ### 0.9beta105 [2014-05-09]
 * (Bluefox) Fix problem with RGraph and CSS edit
 

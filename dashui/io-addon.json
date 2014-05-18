@@ -1,5 +1,5 @@
 {
-    "version": "0.9beta105",
+    "version": "0.9beta106",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
@@ -12,6 +12,9 @@
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        "(Bluefox) Fix problem with RGraph and CSS edit"
+        "(Bluefox) Fix hqWidget/Inside Temperature: Show graphics for HM-CC-RT-DN",
+        "(Bluefox) Possible to switch off the animation for hqWidget/info",
+        "(Bluefox) RGraph stability + Padding support",
+        "(Bluefox) Fix problem with z-index and Bar Widget"
 	]
 }
