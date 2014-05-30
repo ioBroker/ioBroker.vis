@@ -3657,8 +3657,7 @@ var hqWidgets = {
                     this.settings.buttonType != hqWidgets.gButtonType.gTypeImage && 
                     this.settings.buttonType != hqWidgets.gButtonType.gTypeCam) {
                     if (this.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer ||
-                        this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
-                    {
+                        this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp) {
                         hqWidgets.gDynamics.gActiveElement = this;
                         this.intern._cursorX = this.settings.x + this.settings.width  / 2;
                         this.intern._cursorY = this.settings.y + this.settings.height / 2;
@@ -3687,7 +3686,7 @@ var hqWidgets = {
                         this.intern._jelement.stop().animate({
                             width:        _width  - iShrink, 
                             height:       _height - iShrink, 
-                            borderRadius: (this.settings.radius ? this.settings.radius : (_height - iShrink)/2), 
+                            borderRadius: (((this.settings.radius !== null) && (this.settings.radius !== undefined)) ? this.settings.radius : (_height - iShrink)/2),
                             left:         this.settings.x + iShrink/2, 
                             top:          this.settings.y + iShrink/2}, 
                             50);

@@ -1358,7 +1358,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                     }
 					
 					if (option == 'infoText') {
-                    	change[option] = change[option] || "";
+                    	change[option] = (change[option] !== undefined || change[option] !== null) ? change[option] : "";
                     }
                     else
                     if (option == 'lowBatteryS') {
