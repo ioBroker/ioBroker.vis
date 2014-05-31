@@ -74,49 +74,59 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             if (hqWidgets.version != dui.binds.hqWidgetsExt.version || dui.binds.hqWidgetsExt.version != dui.binds.hqWidgetsExt.hqEditVersion)
                 window.alert ("The versions of hqWidgets.html and hqWidgetsEdit.html are different. Expected version of hqWidgets.html is " +dui.binds.hqWidgetsExt.hqEditVersion);
         },
-        hqEditDetectMoving: function () {
-            if (dui.activeWidget != "" && dui.activeWidget != null) {
-                if (dui.views[dui.activeView].widgets[dui.activeWidget] !== undefined) {     
-                    var btn_ = hqWidgets.Get (dui.activeWidget);
+        hqEditDetectMoving: function (widgetId) {
+
+            /*if (!widgetId) {
+                dui.binds.hqWidgetsExt.hqEditTimerDetectMoving = setTimeout (function () {
+                    dui.binds.hqWidgetsExt.hqEditDetectMoving ();
+                }, 1000);
+            }*/
+
+            widgetId = widgetId || dui.activeWidget;
+
+            if (widgetId) {
+                if (dui.views[dui.activeView].widgets[widgetId] !== undefined) {
+                    var btn_ = hqWidgets.Get(widgetId);
                     if (btn_) {
                         if (document.getElementById (btn_.advSettings.elemName)) {
                             var pos = btn_.intern._jelement.position();
-                            pos.top  = Math.round (pos.top);
-                            pos.left = Math.round (pos.left);
+                            pos.top  = Math.round(pos.top);
+                            pos.left = Math.round(pos.left);
 							if (pos.left == 0 && pos.top == 0) {
 								// suspicious
 								btn_.intern._jelement = $('#' + btn_.advSettings.elemName);
 								pos = btn_.intern._jelement.position();
-								pos.top  = Math.round (pos.top);
-								pos.left = Math.round (pos.left);
+								pos.top  = Math.round(pos.top);
+								pos.left = Math.round(pos.left);
 							}
 							
                             // If position changed
                             if (pos.top != btn_.settings.y || pos.left != btn_.settings.x) {
-                                btn_.SetPosition (pos.left, pos.top);
+                                btn_.SetPosition(pos.left, pos.top);
+                                console.log("Set position for " + widgetId + " " + pos.left + "x"+pos.top);
                             }
                         }
                         else {
-                            hqWidgets.Delete (btn_);
-                            dui.activeWidget = null;
+                            hqWidgets.Delete(btn_);
+                            if (widgetId == dui.activeWidget) {
+                                dui.activeWidget = null;
+                            }
                         }
                     }
                 }
                 else {
-                    var btn = hqWidgets.Get (dui.activeWidget);
+                    var btn = hqWidgets.Get(widgetId);
                     if (btn) {
                         if (!document.getElementById (btn.advSettings.elemName)) {
-                            hqWidgets.Delete (btn);
-                            dui.activeWidget = null;
+                            hqWidgets.Delete(btn);
+                            if (widgetId == dui.activeWidget) {
+                                dui.activeWidget = null;
+                            }
                         }
                     }
                 }
             }
-        
-            dui.binds.hqWidgetsExt.hqEditTimerDetectMoving = setTimeout (function () { 
-                dui.binds.hqWidgetsExt.hqEditDetectMoving (); 
-             }, 1000);
-        },            
+        },
         hqEditDefault: function (wtype) {
             var opt = {x:50, y: 50};
             // If first creation
@@ -448,8 +458,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
         },
         hqEditButton: function (obj, parent, devFilter, hqEditElem) {
             // install timer to detect moving
-            clearTimeout (dui.binds.hqWidgetsExt.hqEditTimerDetectMoving);
-            dui.binds.hqWidgetsExt.hqEditDetectMoving ();
+            //clearTimeout (dui.binds.hqWidgetsExt.hqEditTimerDetectMoving);
+            //dui.binds.hqWidgetsExt.hqEditDetectMoving ();
 
             var opt = obj.GetSettings (false, false);
             var devFilters = (devFilter) ? devFilter.split (';') : [null, null];

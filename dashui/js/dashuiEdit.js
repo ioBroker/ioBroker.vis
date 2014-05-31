@@ -222,6 +222,9 @@ dui = $.extend(true, dui, {
 			}
 			dui.widgets = widgets;
 		}
+        if (typeof hqWidgets != "undefined") {
+            dui.binds.hqWidgetsExt.hqEditDetectMoving(id);
+        }
 	},
 	delWidget: function (widget, noSave) {
         if (typeof widget != "string") {
@@ -908,9 +911,9 @@ dui = $.extend(true, dui, {
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
             dui.save();
             dui.reRenderWidgetEdit(dui.activeWidget);
-        })/*.keyup(function () {
+        }).keyup(function () {
             $(this).trigger('change');
-        })*/;
+        });
     },
     inspectWidgetMulti: function (id) {
         var $this = $("#"+id);
@@ -1248,9 +1251,9 @@ dui = $.extend(true, dui, {
                             dui.views[dui.activeView].widgets[dui.activeWidget].data[attribute] = val;
                             dui.save();
                             dui.reRenderWidgetEdit(dui.activeWidget);
-                        })/*.keyup(function () {
+                        }).keyup(function () {
                                 $(this).trigger('change');
-                        })*/;
+                        });
                     }
 
                     if (instancesStart !== null) {
@@ -1620,24 +1623,33 @@ dui = $.extend(true, dui, {
                 //console.log(dui.multiSelectedWidgets);
             },
             stop: function (event, ui) {
-                var widget = ui.helper.attr("id");
+                var widget = dui.activeWidget;
+                var pos = $("#" + widget).position();
 
-                $("#inspect_css_top").val(ui.position.top + "px");
-                $("#inspect_css_left").val(ui.position.left + "px");
+                $("#inspect_css_top").val(pos.top + "px");
+                $("#inspect_css_left").val(pos.left + "px");
                 if (!dui.views[dui.activeView].widgets[widget].style) {
                     dui.views[dui.activeView].widgets[widget].style = {};
                 }
-                dui.views[dui.activeView].widgets[widget].style.left = ui.position.left;
-                dui.views[dui.activeView].widgets[widget].style.top = ui.position.top;
+                dui.views[dui.activeView].widgets[widget].style.left = pos.left;
+                dui.views[dui.activeView].widgets[widget].style.top  = pos.top;
+
+                if (typeof hqWidgets !== "undefined") {
+                    dui.binds.hqWidgetsExt.hqEditDetectMoving(widget);
+                }
 
                 for (var i = 0; i < dui.multiSelectedWidgets.length; i++) {
                     var mid = dui.multiSelectedWidgets[i];
-                    var pos = $("#"+mid).position();
+                    pos = $("#" + mid).position();
                     if (!dui.views[dui.activeView].widgets[mid].style) {
                         dui.views[dui.activeView].widgets[mid].style = {};
                     }
                     dui.views[dui.activeView].widgets[mid].style.left = pos.left;
-                    dui.views[dui.activeView].widgets[mid].style.top = pos.top;
+                    dui.views[dui.activeView].widgets[mid].style.top  = pos.top;
+
+                    if (typeof hqWidgets !== "undefined") {
+                        dui.binds.hqWidgetsExt.hqEditDetectMoving(mid);
+                    }
                 }
                 dui.save();
                 setTimeout(function () {
@@ -1648,7 +1660,7 @@ dui = $.extend(true, dui, {
             drag: function (event, ui) {
 
                 var moveX = ui.position.left - origX;
-                var moveY = ui.position.top - origY;
+                var moveY = ui.position.top  - origY;
 
                 origX = ui.position.left;
                 origY = ui.position.top;
@@ -1664,6 +1676,10 @@ dui = $.extend(true, dui, {
                     if (ui.helper.attr("id") != dui.multiSelectedWidgets[i]) {
                         $mWidget.css({left: x, top: y });
                     }
+
+                    if (typeof hqWidgets !== "undefined") {
+                        dui.binds.hqWidgetsExt.hqEditDetectMoving(dui.multiSelectedWidgets[i]);
+                    }
                 }
 
                 if (ui.helper.attr("id") == dui.activeWidget) {
@@ -1672,11 +1688,14 @@ dui = $.extend(true, dui, {
                     var $mWidget = $("#"+dui.activeWidget);
                     var pos = $mWidget.position();
                     var x = pos.left + moveX;
-                    var y = pos.top + moveY;
+                    var y = pos.top  + moveY;
                     $mWidget.css({left: x, top: y});
                     $("#widget_helper").css({left: x - 2, top: y - 2});
                 }
 
+                if (typeof hqWidgets !== "undefined") {
+                    dui.binds.hqWidgetsExt.hqEditDetectMoving(dui.activeWidget);
+                }
                 if ($("#allwidgets_helper").is(":visible")) {
                     var pos = $("#allwidgets_helper").position();
                     $("#allwidgets_helper").css({left: pos.left + moveX, top: pos.top + moveY});
@@ -1940,7 +1959,7 @@ dui = $.extend(true, dui, {
 
             // Update hqWidgets if width or height changed
             if (dui.views[dui.activeView].widgets[dui.activeWidget] && typeof hqWidgets != "undefined") {
-                var hq = hqWidgets.Get (dui.activeWidget);
+                var hq = hqWidgets.Get(dui.activeWidget);
                 if (hq != null) {
                     hq.SetSettings({
                         width:  $activeWidget.width(),
@@ -1952,9 +1971,9 @@ dui = $.extend(true, dui, {
                 }
             }
 
-        })/*.keyup(function () {
+        }).keyup(function () {
             $(this).trigger("change");
-        })*/;
+        });
 
         dui.initStealHandlers();
 
@@ -1969,9 +1988,9 @@ dui = $.extend(true, dui, {
 			}
             dui.views[dui.activeView].settings.style[attr] = val;
             dui.save();
-        })/*.keyup(function () {
+        }).keyup(function () {
             $(this).trigger('change');
-        })*/;
+        });
 		
         $(".dashui-inspect-view").change(function () {
             var $this = $(this);
@@ -1980,9 +1999,9 @@ dui = $.extend(true, dui, {
             //console.log("change "+attr+" "+val);
             dui.views[dui.activeView].settings[attr] = val;
             dui.save();
-        })/*.keyup(function () {
+        }).keyup(function () {
             $(this).trigger('change');
-        })*/;
+        });
 		
         $("#inspect_view_theme").change(function () {
             var theme = $("#inspect_view_theme option:selected").val();
@@ -2036,7 +2055,9 @@ dui = $.extend(true, dui, {
                 dui.save();
             }
 
-        })/*.keyup(function () { $(this).trigger("change"); })*/;
+        }).keyup(function () {
+            $(this).trigger("change");
+        });
 
         $("#screen_hide_description").change(function () {
             var val = $("#screen_hide_description")[0].checked
@@ -2048,7 +2069,9 @@ dui = $.extend(true, dui, {
                 dui.save();
             }
 
-        })/*.keyup(function () { $(this).trigger("change"); })*/;
+        }).keyup(function () {
+            $(this).trigger("change");
+        });
 
 
         $("#screen_size_y").change(function () {
@@ -2069,7 +2092,9 @@ dui = $.extend(true, dui, {
                 dui.save();
             }
 
-        })/*.keyup(function () { $(this).trigger("change"); })*/;
+        }).keyup(function () {
+            $(this).trigger("change");
+        });
 
         $("#snap_type").change(function () {
             var snapType = $("#snap_type option:selected").val();
@@ -2461,6 +2486,12 @@ dui = $.extend(true, dui, {
             icons: { primary: "ui-icon-arrowreturnthick-1-w"}
         }).click(dui.undo).addClass("ui-state-disabled");
 
+        $(".dui-editor-dialog .ui-dialog-titlebar-buttonpane").prepend('<span id="savingProgress" role="button">Saving in progress</span>');
+        $("#savingProgress").button({
+            text: false,
+            icons: { primary: "ui-icon-disk"}
+        }).click(dui._saveToServer).hide().addClass("ui-state-active");
+
 
         var _save_posi = save_posi[0] + "()";
         eval(_save_posi);
@@ -2798,14 +2829,34 @@ dui = $.extend(true, dui, {
         }
         return css;
     },
-    save: function (cb) {
-        if (dui.undoHistory.length == 0 || (JSON.stringify(dui.views[dui.activeView]) != JSON.stringify(dui.undoHistory[dui.undoHistory.length - 1]))) {
+    _saveTimer: null, // Timeout to save the configuration
+    _saveToServer: function () {
+        if (dui.undoHistory.length == 0 ||
+            (JSON.stringify(dui.views[dui.activeView]) != JSON.stringify(dui.undoHistory[dui.undoHistory.length - 1]))) {
             $("#button_undo").removeClass("ui-state-disabled");
             if (dui.undoHistory.push($.extend(true, {}, dui.views[dui.activeView])) > dui.undoHistoryMaxLength) {
                 dui.undoHistory.splice(0, 1);
             }
         }
-        dui.saveRemote(cb);
+        dui.saveRemote(function() {
+            dui._saveTimer = null;
+            $('#savingProgress').hide();
+        });
+    },
+    save: function (cb) {
+        if (this._saveTimer) {
+            clearTimeout(this._saveTimer);
+            this._saveTimer = null;
+        }
+        // Store the changes if nothing changed for 2 seconds
+        this._saveTimer = _setTimeout(function (dash) {
+            dash._saveToServer();
+        }, 2000, this);
+
+        $('#savingProgress').show();
+        if (cb) {
+            cb();
+        }
     },
     undo: function () {
         if (dui.undoHistory.length <= 1) {
@@ -3135,22 +3186,40 @@ dui = $.extend(true, dui, {
 
                 // TODO @Bluefox Why do we need this? Necessary for hqWidgets?
                 // TODO if yes - can we limit this to hqWidgets only?
-                dui.reRenderWidgetEdit(widgetId);
+                // May be RGraph and highcharts are affected too
+                if (typeof hqWidgets != 'undefined' && hqWidgets.Get(widgetId)) {
+                    dui.reRenderWidgetEdit(widgetId);
+                }
                 dui.inspectWidget(widgetId, true);
                 var multiSelectedWidgets = dui.multiSelectedWidgets;
                 dui.multiSelectedWidgets = [];
                 for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
-                    dui.reRenderWidgetEdit(multiSelectedWidgets[i]);
+                    if (typeof hqWidgets != 'undefined' && hqWidgets.Get(multiSelectedWidgets[i])) {
+                        dui.reRenderWidgetEdit(multiSelectedWidgets[i]);
+                    }
                     dui.inspectWidgetMulti(multiSelectedWidgets[i]);
                 }
                 dui.delayedSettings = null;
 
-                dui.save();
             }, 1000, dui.activeWidget);
+
+            dui.save();
+
             return true;
         } else {
             return false;
         }
+    },
+    onPageClosing: function () {
+        // If not saved
+        if (this._saveTimer) {
+            if (confirm(this.translate("Changes are not saved. Are you sure?"))) {
+                return null;
+            } else {
+                return "Configuration not saved.";
+            }
+        }
+        return null;
     }
 });
 
@@ -3179,6 +3248,10 @@ $(window).on("paste", function (e) {
 }).on("copy cut", function (e) {
     dui.copy(e.type == "cut");
 });
+
+window.onbeforeunload = function() {
+    return dui.onPageClosing();
+};
 
 $(document).ready(function () {
     dui.translateAll();

@@ -103,6 +103,14 @@ dui = $.extend(true, dui, {
                     'de': 'Keine Views gefunden am Server.',
                     'ru': 'На сервеое не найдено никаких страниц.'
                 },
+                'Hide widget description' : {
+                    'en': 'Hide widget description',
+                    'de': 'Zeige Widget-Beschreibung nicht',
+                    'ru': 'Скрыть описание элементов'
+                },
+                'Is hide'          : {'en': 'Is hide',      'de': 'Verbergen',            'ru': 'Скрыть'},
+                'User defined'     : {'en': 'User defined', 'de': 'Vom Anwender definiert','ru': 'Пользовательское'},
+                'Resolution'       : {'en': 'Resolution:',  'de': 'Auflösung:',           'ru': 'Разрешение:'},
                 'widget_doc'       : {'en': 'Widget help',  'de': 'Widgethilfe',          'ru': 'Помощь'},
                 'Add Widget:'      : {'en': 'Add Widget:',  'de': 'Widget einf&uuml;gen:','ru': 'Добавить элемент:'},
                 'Inspecting Widget:':{'en': 'Inspecting Widget:', 'de': 'Widget inspizieren:','ru': 'Редактировать элемет:'},

@@ -528,7 +528,7 @@ var dui = {
             var btn;
             // hide all
             for (var widget in widgets) {
-                if (hqWidgets && (btn = hqWidgets.Get(widget))) {
+                if (typeof hqWidgets != 'undefined' && (btn = hqWidgets.Get(widget))) {
                     btn.hide(true);
                 }
                 $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
@@ -599,7 +599,7 @@ var dui = {
                 if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
                     $("#" + id).hide();
                     var btn;
-                    if (hqWidgets && (btn = hqWidgets.Get(id))) {
+                    if (typeof hqWidgets != 'undefined' && (btn = hqWidgets.Get(id))) {
                         btn.hide(true);
                     }
                 }
