@@ -59,6 +59,9 @@ var dui = {
                 } else {
                     dui.showWaitScreen(true, null /*" <span style='font-size: 10px;'>" + dui.toLoadSetsCount+ "</span>"*/, null, parseInt((100-dui.waitScreenVal) / dui.toLoadSetsCount, 10));
                 }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                servConn.logError("Cannot load widget set: " + errorThrown);
             }
         });
     },
@@ -385,6 +388,20 @@ var dui = {
             window.location.reload();
         }
     },
+    setViewSize: function (view) {
+        var $view = $("#duiview_" + view);
+        // Because of background, set the width and height of the view
+        var width  = parseInt(dui.views[view].settings.sizex, 10);
+        var height = parseInt(dui.views[view].settings.sizey, 10);
+        if (!width || width < $( window ).width()) {
+            width = '100%';
+        }
+        if (!height || height < $( window ).height()) {
+            height = '100%';
+        }
+        $view.css({width:  width});
+        $view.css({height: height});
+    },
     renderView: function (view, noThemeChange, hidden) {
         //console.log("renderView("+view+","+noThemeChange+","+hidden+")");
 
@@ -414,32 +431,27 @@ var dui = {
         if ($("#duiview_" + view).html() === undefined) {
 
             $("#dui_container").append("<div style='display:none;' id='duiview_" + view + "' class='dashui-view'></div>");
-            $("#duiview_" + view).css(dui.views[view].settings.style);
+            var $view = $("#duiview_" + view);
+            $view.css(dui.views[view].settings.style);
             if (dui.views[view].settings.style.background_class) {
-                $("#duiview_" + view).addClass(dui.views[view].settings.style.background_class);
+                $view.addClass(dui.views[view].settings.style.background_class);
             }
-
+            dui.setViewSize(view);
             dui.views[view].rerender = true;
 
-            // Render all non-hqWidgets widgets
+            // Render all simple widgets
             for (var id in dui.views[view].widgets) {
-                if (dui.views[view].widgets[id].tpl.substring(0,5) != "tplHq" && !dui.views[view].widgets[id].renderVisible) {
-                    dui.renderWidget(view, id);
-
-                    // Try to complete the widgetSet information to optimize the loading of widgetSets
-                    if (!dui.views[view].widgets[id].widgetSet) {
-                        var obj = $("#" + dui.views[view].widgets[id].tpl);
-                        if (obj) {
-                            dui.views[view].widgets[id].widgetSet = obj.attr("data-dashui-set");
-                            isViewsConverted = true;
-                        }
-                    }
-                } else {
-                    // It is hqWidgets
-                    if (!dui.views[view].widgets[id].widgetSet) {
-                        dui.views[view].widgets[id].widgetSet = "hqWidgets";
+                // Try to complete the widgetSet information to optimize the loading of widgetSets
+                if (!dui.views[view].widgets[id].widgetSet) {
+                    var obj = $("#" + dui.views[view].widgets[id].tpl);
+                    if (obj) {
+                        dui.views[view].widgets[id].widgetSet = obj.attr("data-dashui-set");
                         isViewsConverted = true;
                     }
+                }
+
+                if (!dui.views[view].widgets[id].renderVisible) {
+                    dui.renderWidget(view, id);
                 }
             }
 
@@ -474,9 +486,9 @@ var dui = {
 
             if (dui.views[view].rerender) {
                 dui.views[view].rerender = false;
-                // render all hqWidgets
+                // render all copmlex widgets, like hqWidgets or bars
                 for (var id in dui.views[view].widgets) {
-                    if (dui.views[view].widgets[id].tpl.substring(0,5) == "tplHq" || dui.views[view].widgets[id].renderVisible) {
+                    if (dui.views[view].widgets[id].renderVisible) {
                         dui.renderWidget(view, id);
                     }
                 }
@@ -513,37 +525,45 @@ var dui = {
                     $("#" + widget).show(showEffect, null, parseInt(showDuration));
                 }
             }
-            // Show hqWidgets
-            if (typeof hqWidgets != "undefined") {
-                setTimeout(function () {
-                    var btn;
-                    for (var widget in widgets) {
-                        if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "" && (btn = hqWidgets.Get(widget))) {
-                            btn.show();
-                        }
+            // Show complex widgets
+            setTimeout(function () {
+                var mWidget;
+                for (var widget in widgets) {
+                    mWidget = document.getElementById(widget);
+                    if (widgets[widget].data.filterkey &&
+                        widgets[widget].data.filterkey != "" &&
+                        mWidget &&
+                        mWidget._customHandlers &&
+                        mWidget._customHandlers.onShow) {
+                        mWidget._customHandlers.onShow(mWidget, widget);
                     }
-                }, parseInt(showDuration) + 10);
-            }
+                }
+            }, parseInt(showDuration) + 10);
+
         } else if (filter == "$") {
-            var btn;
+            var mWidget;
             // hide all
             for (var widget in widgets) {
-                if (typeof hqWidgets != 'undefined' && (btn = hqWidgets.Get(widget))) {
-                    btn.hide(true);
+                mWidget = document.getElementById(widget);
+                if (mWidget &&
+                    mWidget._customHandlers &&
+                    mWidget._customHandlers.onHide) {
+                    mWidget._customHandlers.onHide(mWidget, widget);
                 }
                 $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
             }
         } else {
             dui.viewsActiveFilter[dui.activeView] = filter.split(",");
+            var mWidget;
             for (var widget in widgets) {
                 //console.log(widgets[widget]);
                 if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
                     if (dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
-                        var btn;
-                        if (typeof hqWidgets != "undefined") {
-                            if (btn = hqWidgets.Get(widget)) {
-                                btn.hide(true);
-                            }
+                        mWidget = document.getElementById(widget);
+                        if (mWidget &&
+                            mWidget._customHandlers &&
+                            mWidget._customHandlers.onHide) {
+                            mWidget._customHandlers.onHide(mWidget, widget);
                         }
                         $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
                     } else {
@@ -551,22 +571,22 @@ var dui = {
                     }
                 }
             }
-            if (typeof hqWidgets != "undefined") {
-                setTimeout(function () {
-                    var btn;
-                    // Show hqWidgets
-                    for (var widget in widgets) {
-                        if (btn = hqWidgets.Get(widget)) {
-                            if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
-                                if (!(dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
-                                    btn.show();
-                                }
+            setTimeout(function () {
+                var mWidget;
+                // Show copmlex widgets like hqWidgets or bars
+                for (var widget in widgets) {
+                    mWidget = document.getElementById(widget);
+                    if (mWidget &&
+                        mWidget._customHandlers &&
+                        mWidget._customHandlers.onShow) {
+                        if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
+                            if (!(dui.viewsActiveFilter[dui.activeView].length > 0 && dui.viewsActiveFilter[dui.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
+                                mWidget._customHandlers.onShow(mWidget, widget);
                             }
                         }
                     }
-                }, parseInt(showDuration) + 10);
-            }
-
+                }
+            }, parseInt(showDuration) + 10);
         }
 
         if (dui.binds.bars && dui.binds.bars.filterChanged) {
@@ -597,13 +617,14 @@ var dui = {
 
             if (dui.urlParams["edit"] !== "") {
                 if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
+                    var mWidget = document.getElementById(id);
                     $("#" + id).hide();
-                    var btn;
-                    if (typeof hqWidgets != 'undefined' && (btn = hqWidgets.Get(id))) {
-                        btn.hide(true);
+                    if (mWidget &&
+                        mWidget._customHandlers &&
+                        mWidget._customHandlers.onHide) {
+                        mWidget._customHandlers.onHide(mWidget, id);
                     }
                 }
-
             }
 
             if (widget.style && !widgetData._no_style) {

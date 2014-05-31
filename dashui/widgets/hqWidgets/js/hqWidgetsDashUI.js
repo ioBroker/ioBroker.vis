@@ -79,7 +79,6 @@ if ((typeof hqWidgets !== 'undefined')) {
                 if (duiWidget) {
                     duiWidget.data.hqoptions = newOpt;
                     obj.intern._jelement.attr ('hqoptions', newOpt);
-                    console.log ("Stored: " + newOpt);
                     dui.binds.hqWidgetsExt.hqEditSave ();
                 }
                 else
@@ -99,6 +98,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                 }
                 else
                     console.log ("Cannot find " + duiWidget.advSettings.elemName + " in any view");
+            },
+            hqOnShow: function (widgetDiv, widgetId) {
+                var btn = hqWidgets.Get(widgetId);
+                btn.show();
+            },
+            hqOnHide: function (widgetDiv, widgetId) {
+                var btn = hqWidgets.Get(widgetId);
+                btn.hide();
             },
             hqButtonExt: function (el, options, wtype, view) {
                 var opt = (options != undefined && options != null) ? $.parseJSON(options) : dui.binds.hqWidgetsExt.hqEditDefault (wtype);
@@ -752,7 +759,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                     }
                 }
                 
-                var btn = hqWidgets.Create (opt, {elemName: el, parent: $("#duiview_"+view)});//dui.activeView)});
+                var btn = hqWidgets.Create(opt, {elemName: el, parent: $("#duiview_"+view)});//dui.activeView)});
  
                 // Create signal translators
                 if (wtype === undefined) {                  
@@ -1275,15 +1282,33 @@ if ((typeof hqWidgets !== 'undefined')) {
                 }
  
                 // Enable edit mode
+                var mWidget = document.getElementById(el);
                 if (dui.urlParams["edit"] === "") {
                     btn.SetEditMode (true);
-                    if (dui.binds.hqWidgetsExt.hqEditDetectMoving) {
-                        // install timer to detect moving
-                        clearTimeout (dui.binds.hqWidgetsExt.hqEditTimerDetectMoving);
-                        dui.binds.hqWidgetsExt.hqEditDetectMoving ();
+                    // Install special handlers
+                    if (mWidget) {
+                        mWidget._customHandlers = {
+                            onMoveEnd:      dui.binds.hqWidgetsExt.hqEditOnMove,
+                            onDelete:       dui.binds.hqWidgetsExt.hqEditOnDelete,
+                            onMove:         dui.binds.hqWidgetsExt.hqEditOnMove,
+                            onCssEdit:      dui.binds.hqWidgetsExt.hqEditOnCssEdit,
+                            onOptionEdited: dui.binds.hqWidgetsExt.hqEditOnOptionEdited,
+                            isOptionEdited: dui.binds.hqWidgetsExt.hqEditIsOptionEdited,
+                            onShow:         dui.binds.hqWidgetsExt.hqOnShow,
+                            onHide:         dui.binds.hqWidgetsExt.hqOnHide,
+                            isRerender:     true
+                        };
                     }
                 } 
                 else {
+                    if (mWidget) {
+                        mWidget._customHandlers = {
+                            onShow:         dui.binds.hqWidgetsExt.hqOnShow,
+                            onHide:         dui.binds.hqWidgetsExt.hqOnHide,
+                            isRerender:     true
+                        };
+                    }
+
                     for (var i = 0; i < hm_ids.length; i++) {
                          // Register hm_id to detect changes
                         //$.homematic("addUiState", hm_ids[i].hm_id);

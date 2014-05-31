@@ -83,7 +83,6 @@ jQuery.extend(true, dui.words, {
                 if (duiWidget) {
                     duiWidget.data['baroptions'] = newOpt;
                     $(div).attr ('baroptions', newOpt);
-                    console.log ("Stored: " + newOpt);
                 } else {
 					if (!dui.views[dui.activeView].widgets) {
 						dui.views[dui.activeView].widgets = {};
@@ -96,8 +95,7 @@ jQuery.extend(true, dui.words, {
 					}
                     dui.views[dui.activeView].widgets[div.barsIntern.wid].data['baroptions'] = newOpt;
                     $(div).attr ('baroptions', newOpt);
-                    console.log ("Stored: " + newOpt);
-				}					
+				}
             }
             
             if (dui.binds.bars.editSaveTimer != null) {
