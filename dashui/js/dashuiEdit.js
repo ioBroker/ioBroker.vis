@@ -1864,7 +1864,9 @@ dui = $.extend(true, dui, {
                 open: function (event, ui) {
                     $('[aria-describedby="dialog_import_view"]').css('z-index',1002);
                     $('.ui-widget-overlay').css('z-index',1001);
-                    $("#start_import_view").click(dui.importView);
+                    $("#start_import_view").click(function () {
+                        dui.importView();
+                    });
                     $("#name_import_view").show();
                 }
             });
