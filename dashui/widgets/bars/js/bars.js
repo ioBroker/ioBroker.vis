@@ -77,7 +77,8 @@ jQuery.extend(true, dui.words, {
         editSave: function (div) {
             if (div !== undefined) {
                 // Save settings of one widget
-                var newOpt = div.barsOptions;
+                var newOpt = JSON.stringify(div.barsOptions);
+                //var newOpt = div.barsOptions; TODO
                 var duiWidget = dui.binds.bars.getWidgetByObj (div);
                 
                 if (duiWidget) {

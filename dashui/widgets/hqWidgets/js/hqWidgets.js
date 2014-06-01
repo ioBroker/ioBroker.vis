@@ -2690,7 +2690,8 @@ var hqWidgets = {
                     if (this.intern._jinfoText)this.intern._jinfoText.stop().hide();
                 }
                 
-                if (this.intern._jleft)    this.intern._jleft.stop().show();
+                if (this.intern._jleft && ((this.intern._isEditMode && !hqWidgets.gOptions.gHideDescription) || this.settings.showDescription))
+                    this.intern._jleft.stop().show();
                 if (this.intern._jbattery) this.intern._jbattery.stop().hide();
                 if (this.intern._jsignal)  this.intern._jsignal.stop().hide();
                 if (this.intern._jicon)	   this.intern._jicon.removeClass("ui-icon-cancel").hide();
@@ -4594,10 +4595,10 @@ var hqWidgets = {
             
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage && options.zindex !== undefined){
                 //this.settings.zindex = (options.zindex < 998) ? options.zindex: 997; 
-                this.intern._jelement.css({'z-index':this.settings.zindex});
+                //this.intern._jelement.css({'z-index':this.settings.zindex});
             }
             if (options.zindex !== undefined){
-                this.intern._jelement.css({'z-index':this.settings.zindex});
+               // this.intern._jelement.css({'z-index':this.settings.zindex});
             }
             if (isSave) {
                 this.settings = $.extend (this.settings, options);

@@ -43,9 +43,7 @@ var dui = {
     viewFileSuffix:         window.location.search ? "-" + window.location.search.slice(1) : "",
 
     loadWidgetSet: function (name, callback) {
-        //console.log("loadWidgetSet("+name+")");
         var url = "./widgets/" + name + ".html?duiVersion="+dui.version;
-        console.log('ajax ' + url);
         $.ajax({
 
             url: url,
@@ -54,7 +52,6 @@ var dui = {
             dataType: "html",
             cache: dui.useCache,
             success: function (data) {
-                console.log('ajax success ' + name);
 
                 jQuery("head").append(data);
                 dui.toLoadSetsCount -= 1;
@@ -66,7 +63,6 @@ var dui = {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log('ajax error ' + name);
                 servConn.logError("Cannot load widget set " + name + " " + errorThrown);
             }
         });
