@@ -13,7 +13,7 @@
 
 var dui = {
 
-    version:                '0.9beta108',
+    version:                '0.9beta109',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -44,23 +44,29 @@ var dui = {
 
     loadWidgetSet: function (name, callback) {
         //console.log("loadWidgetSet("+name+")");
+        var url = "./widgets/" + name + ".html?duiVersion="+dui.version;
+        console.log('ajax ' + url);
         $.ajax({
-            url: "widgets/" + name + ".html?duiVersion="+dui.version,
-            type: "get",
+
+            url: url,
+            type: "GET",
             async: false,
-            dataType: "text",
+            dataType: "html",
             cache: dui.useCache,
             success: function (data) {
+                console.log('ajax success ' + name);
+
                 jQuery("head").append(data);
                 dui.toLoadSetsCount -= 1;
                 if (dui.toLoadSetsCount <= 0) {
                     dui.showWaitScreen(true, null, null, 100);
                     setTimeout(callback, 100);
                 } else {
-                    dui.showWaitScreen(true, null /*" <span style='font-size: 10px;'>" + dui.toLoadSetsCount+ "</span>"*/, null, parseInt((100-dui.waitScreenVal) / dui.toLoadSetsCount, 10));
+                    dui.showWaitScreen(true, null , null, parseInt((100-dui.waitScreenVal) / dui.toLoadSetsCount, 10));
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                console.log('ajax error ' + name);
                 servConn.logError("Cannot load widget set " + name + " " + errorThrown);
             }
         });
@@ -135,8 +141,8 @@ var dui = {
         $("#widgetset_counter").html("<span style='font-size:10px'>("+(dui.toLoadSetsCount)+")</span>");
 
         if (dui.toLoadSetsCount) {
-            for(var i = 0, len = dui.toLoadSetsCount; i < len; i++) {
-                _setTimeout (dui.loadWidgetSet, 100, arrSets[i], callback);
+            for (var i = 0, len = dui.toLoadSetsCount; i < len; i++) {
+                _setTimeout(dui.loadWidgetSet, 100, arrSets[i], callback);
             }
         } else {
             if (callback) {

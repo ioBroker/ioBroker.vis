@@ -12,6 +12,9 @@ More demo see [here](http://dashui.ccu.io)
 
 ## Changelog
 
+### 0.9beta109 [2014-06-01]
+* (Hobbyquaker) Fix Firefox problem when loading widget sets
+
 ### 0.9beta108 [2014-06-01]
 * (Hobbyquaker) Fix import view
 

@@ -1,11 +1,10 @@
 CACHE MANIFEST
 
-# DashUI Version 0.9beta108
+# DashUI Version 0.9beta109
 # dev build 0
 
 NETWORK:
 *
-./edit.html
 
 
 CACHE:

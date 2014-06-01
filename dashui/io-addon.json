@@ -1,5 +1,5 @@
 {
-    "version": "0.9beta108",
+    "version": "0.9beta109",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
@@ -12,6 +12,6 @@
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        "(Hobbyquaker) Fix import view"
+        "(Hobbyquaker) Fix Firefox problem when loading widget sets"
 	]
 }
