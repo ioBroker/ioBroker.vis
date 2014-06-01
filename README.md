@@ -12,6 +12,17 @@ More demo see [here](http://dashui.ccu.io)
 
 ## Changelog
 
+### 0.9beta107 [2014-06-01]
+* (Bluefox) Do not stringify and parse hqWidgets and bars options.
+* (Bluefox) Remove processing of hqWidgets from dashui.js and dashuiEdit.js
+* (Bluefox) Show full size background if size of view is set
+* (Bluefox) Configuration saving indicator
+* (Bluefox) Better hqWidgets moving and deletion
+* (Bluefox) Translate some new words for edit mode
+* (Bluefox) Extend screen size settings to portrait and landscape
+* (Bluefox) Fix bug with hqWidgets and radius 0px
+* (Bluefox) Fix bug with hqWidgets/info and value 0
+
 ### 0.9beta106 [2014-05-18]
 * (Bluefox) Fix hqWidget/Inside Temperature: Show graphics for HM-CC-RT-DN
 * (Bluefox) Possible to switch off the animation for hqWidget/info
