@@ -73,7 +73,8 @@ if ((typeof hqWidgets !== 'undefined')) {
             },
             // Save settings of one widget
             hqEditStore: function (obj, opt) {
-                var newOpt = opt;
+                var newOpt = JSON.stringify (opt);
+                //var newOpt = opt; TODO hqoptions stringify
                 var duiWidget = dui.binds.hqWidgetsExt.hqGetWidgetByObj (obj);
                 
                 if (duiWidget) {
@@ -831,7 +832,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     else
                                         btn.graficIframe += '&theme=&percentaxis=true&loader=false&legend=inline&period=72&range=24';
                                     btn.graficIframe += '"></iframe>';
-                                    console.log("Highchart: " + btn.graficIframe);
+                                    //console.log("Highchart: " + btn.graficIframe);
                                     btn.SetInfoWindowSettings (infoWindow);
                                 }
                             }
@@ -1216,7 +1217,7 @@ if ((typeof hqWidgets !== 'undefined')) {
 									else
 										btn.graficIframe += '&theme=&percentaxis=true&loader=false&legend=inline&period=72&range=24';
 									btn.graficIframe += '"></iframe>';
-									console.log("Highchart: " + btn.graficIframe);
+									//console.log("Highchart: " + btn.graficIframe);
 									btn.SetInfoWindowSettings (infoWindow);
 								}
 							}
@@ -1351,11 +1352,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                 btn.intern._jelement.addClass("dashui-widget");
                 
                 // Store options
-                var newOpt = btn.GetSettings (false, true);
-                var duiWidget = dui.binds.hqWidgetsExt.hqGetWidgetByObj(btn);
-                if (duiWidget) {
-                    duiWidget.data.hqoptions = newOpt;
-                }
+                //var newOpt = JSON.stringify (btn.GetSettings (false, true));
+                //var newOpt = btn.GetSettings (false, true);
+                //var duiWidget = dui.binds.hqWidgetsExt.hqGetWidgetByObj(btn);
+                //if (duiWidget) {
+                //    duiWidget.data.hqoptions = newOpt;
+                //}
             },
             hqMonitor: function (arg, wid, newState, isFromDevice, lastchange) {
                 if (!isFromDevice) {
