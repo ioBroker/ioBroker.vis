@@ -77,12 +77,12 @@ jQuery.extend(true, dui.words, {
         editSave: function (div) {
             if (div !== undefined) {
                 // Save settings of one widget
-                var newOpt = JSON.stringify (div.barsOptions);
+                var newOpt = div.barsOptions;
                 var duiWidget = dui.binds.bars.getWidgetByObj (div);
                 
                 if (duiWidget) {
                     duiWidget.data['baroptions'] = newOpt;
-                    $(div).attr ('baroptions', newOpt);
+                    //$(div).attr ('baroptions', newOpt);
                 } else {
 					if (!dui.views[dui.activeView].widgets) {
 						dui.views[dui.activeView].widgets = {};
@@ -94,7 +94,7 @@ jQuery.extend(true, dui.words, {
 						dui.views[dui.activeView].widgets[div.barsIntern.wid].data = {};
 					}
                     dui.views[dui.activeView].widgets[div.barsIntern.wid].data['baroptions'] = newOpt;
-                    $(div).attr ('baroptions', newOpt);
+                    //$(div).attr ('baroptions', newOpt);
 				}
             }
             
@@ -1149,7 +1149,11 @@ jQuery.extend(true, dui.words, {
 				
             if (wType !== undefined) {
                 if (options !== undefined) {
-                    div.barsOptions = $.parseJSON(options);
+                    if (typeof options == "string") {
+                        div.barsOptions = $.parseJSON(options);
+                    } else {
+                        div.barsOptions = options;
+                    }
                 }
                 div.barsOptions = $.extend(settings, div.barsOptions, true);
                 div.barsIntern = {

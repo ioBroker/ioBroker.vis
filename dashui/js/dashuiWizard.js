@@ -171,7 +171,7 @@ dui = $.extend(true, dui, {
 			}
 		}
 		
-		var data = {"filterkey":func, "hqoptions": JSON.stringify (hqoptions)};
+		var data = {"filterkey":func, "hqoptions": hqoptions};
 		var wid = dui.addWidget (widgetName, data, style, null, view);
         $("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
         $("#select_active_widget").multiselect("refresh");
@@ -223,8 +223,8 @@ dui = $.extend(true, dui, {
 		var idCreated = null;
 		for (var w in dui.views[view].widgets) {
 			var wObj = dui.views[view].widgets[w];
-			if (wObj.data.hqoptions && 
-			    wObj.data.hqoptions.indexOf ('"room":"'+localData.metaObjects[roomID]["Name"]+'"') != -1) {
+			if (wObj.data.hqoptions &&
+                wObj.data.hqoptions.room == localData.metaObjects[roomID]["Name"]) {
 				if (pos == null) {
 					pos = {left: wObj.style.left, top: wObj.style.top};
 				} else {

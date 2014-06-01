@@ -73,12 +73,12 @@ if ((typeof hqWidgets !== 'undefined')) {
             },
             // Save settings of one widget
             hqEditStore: function (obj, opt) {
-                var newOpt = JSON.stringify (opt);
+                var newOpt = opt;
                 var duiWidget = dui.binds.hqWidgetsExt.hqGetWidgetByObj (obj);
                 
                 if (duiWidget) {
                     duiWidget.data.hqoptions = newOpt;
-                    obj.intern._jelement.attr ('hqoptions', newOpt);
+                    //obj.intern._jelement.attr ('hqoptions', newOpt);
                     dui.binds.hqWidgetsExt.hqEditSave ();
                 }
                 else
@@ -108,7 +108,16 @@ if ((typeof hqWidgets !== 'undefined')) {
                 btn.hide();
             },
             hqButtonExt: function (el, options, wtype, view) {
-                var opt = (options != undefined && options != null) ? $.parseJSON(options) : dui.binds.hqWidgetsExt.hqEditDefault (wtype);
+                if (options && typeof options == "string"){
+                    try {
+                        options = $.parseJSON(options);
+                    } catch (e) {
+                        options = {};
+                        servConn.logError("Cannot parse hqoptions: " + e);
+                    }
+                }
+
+                var opt = options || dui.binds.hqWidgetsExt.hqEditDefault (wtype);
                 var hm_ids = [];
                 // Define store settings function
                 var adv = {store: dui.binds.hqWidgetsExt.hqEditStore};
@@ -1342,8 +1351,11 @@ if ((typeof hqWidgets !== 'undefined')) {
                 btn.intern._jelement.addClass("dashui-widget");
                 
                 // Store options
-                var newOpt = JSON.stringify (btn.GetSettings (false, true));
-                $('#'+el).attr ('hqoptions', newOpt);  
+                var newOpt = btn.GetSettings (false, true);
+                var duiWidget = dui.binds.hqWidgetsExt.hqGetWidgetByObj(btn);
+                if (duiWidget) {
+                    duiWidget.data.hqoptions = newOpt;
+                }
             },
             hqMonitor: function (arg, wid, newState, isFromDevice, lastchange) {
                 if (!isFromDevice) {
