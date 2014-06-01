@@ -12,6 +12,9 @@ More demo see [here](http://dashui.ccu.io)
 
 ## Changelog
 
+### 0.9beta108 [2014-06-01]
+* (Hobbyquaker) Fix import view
+
 ### 0.9beta107 [2014-06-01]
 * (Bluefox) Do not stringify and parse hqWidgets and bars options.
 * (Bluefox) Remove processing of hqWidgets from dashui.js and dashuiEdit.js

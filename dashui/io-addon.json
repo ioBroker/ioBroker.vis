@@ -1,5 +1,5 @@
 {
-    "version": "0.9beta107",
+    "version": "0.9beta108",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
@@ -12,14 +12,6 @@
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        "(Bluefox) Do not stringify and parse hqWidgets and bars options.",
-        "(Bluefox) Remove processing of hqWidgets from dashui.js and dashuiEdit.js",
-        "(Bluefox) Show full size background if size of view is set",
-        "(Bluefox) Configuration saving indicator",
-        "(Bluefox) Better hqWidgets moving and deletion",
-        "(Bluefox) Translate some new words for edit mode",
-        "(Bluefox) Extend screen size settings to portrait and landscape",
-        "(Bluefox) Fix bug with hqWidgets and radius 0px",
-        "(Bluefox) Fix bug with hqWidgets/info and value 0"
+        "(Hobbyquaker) Fix import view"
 	]
 }
