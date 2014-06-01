@@ -61,7 +61,7 @@ var dui = {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                servConn.logError("Cannot load widget set: " + errorThrown);
+                servConn.logError("Cannot load widget set " + name + " " + errorThrown);
             }
         });
     },
