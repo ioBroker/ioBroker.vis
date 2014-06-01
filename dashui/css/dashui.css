@@ -742,3 +742,9 @@ div.jGrowl div.warn {
     overflow: 				hidden;
     opacity:                1;
 }
+
+#savingProgress {
+    margin-top: -8px;
+    width: 28px;
+    height: 28px;
+}
