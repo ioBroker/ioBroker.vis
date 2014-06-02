@@ -614,9 +614,12 @@ var dui = {
         var widgetData = dui.widgets[id]["data"];
 
         try {
-            // Append html element to view
-            $("#duiview_" + view).append(can.view(widget.tpl, {hm: localData.uiState['_' + widget.data.hm_id], data: widgetData, view: view}));
-
+        // Append html element to view
+            if (widget.data && widget.data.hm_id) {
+                $("#duiview_" + view).append(can.view(widget.tpl, {hm: localData.uiState['_' + widget.data.hm_id], data: widgetData, view: view}));
+            }else {
+                $("#duiview_" + view).append(can.view(widget.tpl, {data: widgetData, view: view}));
+            }
             if (dui.urlParams["edit"] !== "") {
                 if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
                     var mWidget = document.getElementById(id);

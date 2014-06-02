@@ -51,7 +51,7 @@
             button: function (el, options, id, val, color_active) {
                 var $this = jQuery(el);
                 $this.lcarsButton(options);
-                var newVal = localData.uiState["_"+id].Value;
+                var newVal = (localData.uiState["_"+id]) ? localData.uiState["_"+id].Value : 0;
                 if (newVal === "true" || newVal === true) { newVal = 1; }
                 if (val == newVal) {
                     $this.css("background-color", dui.binds.lcars.color(color_active));
