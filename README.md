@@ -8,7 +8,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/user0.png)
 ![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/user7.png)
 
-[Demo Webpage](http://dashui.ccu.io)
+[Online Demos](http://dashui.ccu.io)
 
 ## Changelog
 
