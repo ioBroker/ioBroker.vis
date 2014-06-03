@@ -4592,6 +4592,12 @@ var hqWidgets = {
                 if (isSet)
                     this._ShowGauge ();
             }
+
+            if  (options.showDescription !== undefined && this.intern._isEditMode) {
+                this.settings.showDescription = options.showDescription;
+                this.hide();
+                _setTimeout(function (_this) { _this.show() }, 100, this);
+            }
             
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage && options.zindex !== undefined){
                 //this.settings.zindex = (options.zindex < 998) ? options.zindex: 997; 

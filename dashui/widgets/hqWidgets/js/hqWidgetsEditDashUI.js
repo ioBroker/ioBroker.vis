@@ -87,8 +87,8 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
             hq.SetSettings({
                 width:  $widgetDiv.width(),
                 height: $widgetDiv.height(),
-                top:    $widgetDiv.position().top,
-                left:   $widgetDiv.position().left,
+                y:      $widgetDiv.position().top,
+                x:      $widgetDiv.position().left,
                 zindex: $widgetDiv.zIndex(),
                 radius: parseInt($widgetDiv.css('borderRadius'))
             });

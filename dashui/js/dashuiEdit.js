@@ -207,7 +207,7 @@ dui = $.extend(true, dui, {
 			widget_div.dashuiCustomEdit['delete'](id);
 		}
 
-        if (widget_div._customHandlers && widget_div._customHandlers.onDelete) {
+        if (widget_div && widget_div._customHandlers && widget_div._customHandlers.onDelete) {
             widget_div._customHandlers.onDelete(widget_div, id);
         }
 
@@ -1012,10 +1012,13 @@ dui = $.extend(true, dui, {
         $(".dashui-inspect-widget").each(function () {
             var $this_ = $(this);
             var attr = $this_.attr("id").slice(8);
-            if (dui.views[dui.activeView].widgets[dui.activeWidget]) {
+            if (dui.views[dui.activeView].widgets[dui.activeWidget] && dui.views[dui.activeView].widgets[dui.activeWidget].data) {
                 $this_.val(dui.views[dui.activeView].widgets[dui.activeWidget].data[attr]);
             }
         });
+        if (!widget.tpl) {
+            return false;
+        }
         var $widgetTpl    = $("#" + widget.tpl);
         var widget_attrs  = $widgetTpl.attr("data-dashui-attrs").split(";");
         var widget_filter = $widgetTpl.attr("data-dashui-filter");
@@ -2583,6 +2586,10 @@ dui = $.extend(true, dui, {
             return;
         }
 		var $jWidget = $('#'+id);
+        if (!$jWidget.length) {
+            return;
+        }
+
 		var s = $jWidget.position ();
 		s['width']  = $jWidget.width();
 		s['height'] = $jWidget.height();
@@ -2690,7 +2697,9 @@ dui = $.extend(true, dui, {
             dui.views[dui.activeView].filterList = [];
             
             for (var widget in widgets) {
-                if (widgets[widget] && widgets[widget].data.filterkey != "" && widgets[widget].data.filterkey !== undefined) {
+                if (widgets[widget] && widgets[widget].data &&
+                    widgets[widget].data.filterkey != "" &&
+                    widgets[widget].data.filterkey !== undefined) {
 					var isFound = false;
 					for (var z = 0; z < dui.views[dui.activeView].filterList.length; z++) {
 						if (dui.views[dui.activeView].filterList[z] == widgets[widget].data.filterkey) {
