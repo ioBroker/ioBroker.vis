@@ -1,5 +1,5 @@
 {
-    "version": "0.9beta111",
+    "version": "0.9beta112",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
@@ -12,8 +12,6 @@
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        "(Bluefox) Fix hqWidgets shifted by clicking",
-        "(Bluefox) Make edit available even if some widget is wrong",
-        "(Bluefox) Fix 'Show description' by hqWidgets"
+        "(Hobbyquaker) Fix Homematic ServiceMessage Widget"
 	]
 }

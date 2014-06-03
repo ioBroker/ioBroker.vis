@@ -47,16 +47,15 @@ dui.binds.homematic = {
 
         function buildServiceMessageTable() {
             var $this = jQuery(el).prev().find("table.homematic-servicemessages");
+            $this.html("<tbody></tbody>");
 
             var ALDPs = localData.metaIndex.ALDP;
             for (var i = 0; i < ALDPs.length; i++) {
+
                 if (localData.uiState["_"+ALDPs[i]] && localData.uiState["_"+ALDPs[i]].Value == 1) {
                     var metaAlarm = localData.metaObjects[ALDPs[i]];
                     var metaTrigger = localData.metaObjects[metaAlarm.AlTriggerDP];
                     var metaDevice = localData.metaObjects[localData.metaObjects[metaTrigger.Parent].Parent];
-                    console.log(metaAlarm);
-                    console.log(metaTrigger);
-                    console.log(metaDevice);
                     var msg = metaAlarm.Name.split(".");
                     msg = msg[1];
 
@@ -71,10 +70,8 @@ dui.binds.homematic = {
 
         buildServiceMessageTable();
 
-        localData.uiState.bind("_41.LastChange", function () {
-            var $this = jQuery(el).prev().find("table.homematic-servicemessages");
-            $this.html("<tbody></tbody>");
-            buildServiceMessageTable();
+        localData.uiState.bind("_41.Value", function (e, newVal, oldVal) {
+            if (newVal != oldVal) setTimeout(buildServiceMessageTable, 5000);
         });
 
     }
