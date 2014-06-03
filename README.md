@@ -8,9 +8,14 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 ![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/user0.png)
 ![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/user7.png)
 
-More demo see [here](http://dashui.ccu.io)
+[Demo Webpage](http://dashui.ccu.io)
 
 ## Changelog
+
+### 0.9beta111 [2014-06-03]
+* (Bluefox) Fix hqWidgets shifted by clicking
+* (Bluefox) Make edit available even if some widget is wrong
+* (Bluefox) Fix 'Show description' by hqWidgets
 
 ### 0.9beta110 [2014-06-01]
 * (Bluefox) Bring back changes with stringify and hqoptions
