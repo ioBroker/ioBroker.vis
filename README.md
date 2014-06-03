@@ -12,6 +12,9 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta112 [2014-06-03]
+* (Hobbyquaker) Fix Homematic ServiceMessage Widget
+
 ### 0.9beta111 [2014-06-03]
 * (Bluefox) Fix hqWidgets shifted by clicking
 * (Bluefox) Make edit available even if some widget is wrong
