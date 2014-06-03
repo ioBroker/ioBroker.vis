@@ -952,9 +952,9 @@ var dui = {
                     'ru': 'На сервеое не найдено никаких страниц. Создать %s?'
                 },
                 'Update found, loading new Files...'  : {
-                    'en' : 'Update found, loading new Files...',
-                    'de': 'Neue Dateien gefunden. Lade neue Version...',
-                    'ru': 'Обнаружено Обновление. Загружаю новые файлы...'
+                    'en' : 'Update found.<br/>Loading new Files...',
+                    'de': 'Neue Version gefunden.<br/>Lade neue Dateien...',
+                    'ru': 'Обнаружено Обновление.<br/>Загружаю новые файлы...'
                 },
                 'Loading Widget-Sets... <span id="widgetset_counter"></span>' : {
                     'en': 'Loading Widget-Sets... <span id="widgetset_counter"></span>',
