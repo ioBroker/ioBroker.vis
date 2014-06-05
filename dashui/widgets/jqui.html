@@ -3,7 +3,20 @@
 
 <script type="text/javascript">
     "use strict";
-    //jQuery.extend(true, dui.binds, {
+
+        dui.navChangeCallbacks.push(function (view) {
+            $(".jqui-nav-state").each(function () {
+                var $this = $(this);
+                if ($this.attr("data-dashui-nav") == view) {
+                    $this.removeClass("ui-state-default");
+                    $this.addClass("ui-state-active");
+                } else {
+                    $this.addClass("ui-state-default");
+                    $this.removeClass("ui-state-active");
+                }
+            });
+        });
+
         dui.binds.jqueryui = {
             navigationActive: function (el, nav_view) {
                 var $this = jQuery(el);

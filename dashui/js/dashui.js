@@ -41,6 +41,7 @@ var dui = {
     isFirstTime:            true,
     authRunning:            false,
     viewFileSuffix:         window.location.search ? "-" + window.location.search.slice(1) : "",
+    navChangeCallbacks:     [],
 
     loadWidgetSet: function (name, callback) {
         var url = "./widgets/" + name + ".html?duiVersion="+dui.version;
@@ -775,20 +776,11 @@ var dui = {
         }
 
         // Navigation-Widgets
-
-        $(".jqui-nav-state").each(function () {
-            var $this = $(this);
-            if ($this.attr("data-dashui-nav") == view) {
-                $this.removeClass("ui-state-default")
-                $this.addClass("ui-state-active");
-            } else {
-                $this.addClass("ui-state-default")
-                $this.removeClass("ui-state-active");
-            }
-        });
+        for (var i = 0; i < dui.navChangeCallbacks.length; i++) {
+            dui.navChangeCallbacks[i](view);
+        }
 
         // --------- Editor -----------------
-
         if (dui.urlParams['edit'] === "") {
             dui.changeViewEdit(view);
         }
