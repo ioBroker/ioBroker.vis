@@ -3070,8 +3070,6 @@ dui = $.extend(true, dui, {
                 isHideDialog = storage.get("dialog_delete_is_show");
             }
     
-            // TODO @Bluefox - in my opinion we don't need a confirm dialog here - we have Undo and the Delete Widget Button
-            // TODO            in the Editor also doesn't request a confirmation, i think without it's more consistent. What do you say?
             if (!isHideDialog) {
                 if (dui.multiSelectedWidgets.length) {
                     $("#dialog_delete_content").html(dui.translate("Do you want delete %s widgets?", dui.multiSelectedWidgets.length + 1));
@@ -3215,6 +3213,13 @@ dui = $.extend(true, dui, {
             dui.delayedSettings = _setTimeout(function(widgetId) {
                 // Save new settings
                 var mWidget = document.getElementById(widgetId);
+                if ((what == 'top' || what== 'left') && mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
+                    mWidget._customHandlers.onMoveEnd(mWidget, widgetId);
+                } else
+                if (mWidget._customHandlers && mWidget._customHandlers.onCssEdit) {
+                    mWidget._customHandlers.onCssEdit(mWidget, widgetId);
+                }
+
                 if (mWidget._customHandlers && mWidget._customHandlers.isRerender) {
                     dui.reRenderWidgetEdit(widgetId);
                 }
@@ -3224,6 +3229,12 @@ dui = $.extend(true, dui, {
                 for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
                     mWidget = document.getElementById(multiSelectedWidgets[i]);
 
+                    if ((what == 'top' || what== 'left') && mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
+                        mWidget._customHandlers.onMoveEnd(mWidget, multiSelectedWidgets[i]);
+                    } else
+                    if (mWidget._customHandlers && mWidget._customHandlers.onCssEdit) {
+                        mWidget._customHandlers.onCssEdit(mWidget, multiSelectedWidgets[i]);
+                    }
                     if (mWidget._customHandlers && mWidget._customHandlers.isRerender) {
                         dui.reRenderWidgetEdit(multiSelectedWidgets[i]);
                     }
