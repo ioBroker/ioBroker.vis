@@ -12,6 +12,13 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta113 [2014-06-06]
+* (Hobbyquaker) New widget-set metro
+* (Hobbyquaker) viewChangeCallbacks
+* (Bluefox) Fix Hide hqWidgets/Info if inactive
+* (Bluefox) Fix Update hqWidgets if they are moved with arrow keys
+* (Bluefox) Fix error if user add "ui-draggable" or "ui-resizable" to widget class
+
 ### 0.9beta112 [2014-06-03]
 * (Hobbyquaker) Fix Homematic ServiceMessage Widget
 
