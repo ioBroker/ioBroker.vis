@@ -959,24 +959,24 @@ dui = $.extend(true, dui, {
             $("#select_active_widget").find("option[value='"+id+"']").prop("selected", true);
             $("#select_active_widget").multiselect("refresh");
 
-            // Alle Widgets de-selektieren und Interaktionen entfernen
+            // Remove selection from all widgets and remove resizable and draggable properties
             $(".dashui-widget").each(function () {
+                var $this = $(this);
+                $this.removeClass("dashui-widget-edit");
 
-                $(this).removeClass("dashui-widget-edit");
-
-                if ($(this).hasClass("ui-draggable")) {
+                if ($this.hasClass("ui-draggable")) {
                     try {
-                        $(this).draggable("destroy");
+                        $this.draggable("destroy");
                     } catch (e) {
-                        servConn.logError('inspectWidget - Cannot destroy draggable ' + widgetId + ' ' + e);
+                        servConn.logError('inspectWidget - Cannot destroy draggable ' + $this.attr('id') + ' ' + e);
                     }
                 }
 
-                if ($(this).hasClass("ui-resizable")) {
+                if ($this.hasClass("ui-resizable")) {
                     try {
-                        $(this).resizable("destroy");
+                        $this.resizable("destroy");
                     } catch (e) {
-                        servConn.logError('inspectWidget - Cannot destroy resizable ' + widgetId + ' ' + e);
+                        servConn.logError('inspectWidget - Cannot destroy resizable ' + $this.attr('id') + ' ' + e);
                     }
                 }
             });
@@ -1162,10 +1162,10 @@ dui = $.extend(true, dui, {
                     } else if (wid_attr_.indexOf("_eff_opt") != -1 || type == "effect_opt") {
                         dui.editEffects_opt(widget, wid_attr_);
                         isCustomEdit = true;
-                    } else if (wid_attr_.indexOf( '_hr')!= -1) {
+                    } else if (wid_attr_.indexOf( '_hr') != -1) {
                         dui.hr(widget, wid_attr_);
                         isCustomEdit = true;
-                    } else if (wid_attr_.indexOf( '_br')!= -1) {
+                    } else if (wid_attr_.indexOf( '_br') != -1) {
                         dui.br(widget, wid_attr_);
                         isCustomEdit = true;
                     } else if (wid_attr_.slice(0,4) !== "html") {
@@ -1949,9 +1949,29 @@ dui = $.extend(true, dui, {
             var attr = $this.attr("id").slice(8);
             dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = $this.val();
 
+            // Some user adds ui-draggable and ui-resizable as class to widget.
+            // The result is DashUI tries to remove draggable and resizable properties and fails
+            if (attr == "class") {
+                var val = dui.views[dui.activeView].widgets[dui.activeWidget].data[attr];
+                if (val.indexOf("ui-draggable") != -1 || val.indexOf("ui-resizable") != -1) {
+                    var vals = val.split(" ");
+                    val = "";
+                    for (var j = 0; j < vals.length; j++) {
+                        if (vals[j] && vals[j] != "ui-draggable" && vals[j] != "ui-resizable") {
+                            val += ((val) ? " " : "") + vals[j];
+                        }
+                    }
+                    dui.views[dui.activeView].widgets[dui.activeWidget].data[attr] = val;
+                    $this.val(val);
+                }
+            }
+
             // TODO saveRemote really necessary here?
+            // Bluefox: Yes.
             dui.save();
             dui.reRenderWidgetEdit(dui.activeWidget);
+        }).keyup(function () {
+            $(this).trigger("change");
         });
 		
         $(".dashui-inspect-css").change(function () {
@@ -3050,8 +3070,6 @@ dui = $.extend(true, dui, {
                 isHideDialog = storage.get("dialog_delete_is_show");
             }
     
-            // TODO @Bluefox - in my opinion we don't need a confirm dialog here - we have Undo and the Delete Widget Button
-            // TODO            in the Editor also doesn't request a confirmation, i think without it's more consistent. What do you say?
             if (!isHideDialog) {
                 if (dui.multiSelectedWidgets.length) {
                     $("#dialog_delete_content").html(dui.translate("Do you want delete %s widgets?", dui.multiSelectedWidgets.length + 1));
@@ -3195,6 +3213,13 @@ dui = $.extend(true, dui, {
             dui.delayedSettings = _setTimeout(function(widgetId) {
                 // Save new settings
                 var mWidget = document.getElementById(widgetId);
+                if ((what == 'top' || what== 'left') && mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
+                    mWidget._customHandlers.onMoveEnd(mWidget, widgetId);
+                } else
+                if (mWidget._customHandlers && mWidget._customHandlers.onCssEdit) {
+                    mWidget._customHandlers.onCssEdit(mWidget, widgetId);
+                }
+
                 if (mWidget._customHandlers && mWidget._customHandlers.isRerender) {
                     dui.reRenderWidgetEdit(widgetId);
                 }
@@ -3204,6 +3229,12 @@ dui = $.extend(true, dui, {
                 for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
                     mWidget = document.getElementById(multiSelectedWidgets[i]);
 
+                    if ((what == 'top' || what== 'left') && mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
+                        mWidget._customHandlers.onMoveEnd(mWidget, multiSelectedWidgets[i]);
+                    } else
+                    if (mWidget._customHandlers && mWidget._customHandlers.onCssEdit) {
+                        mWidget._customHandlers.onCssEdit(mWidget, multiSelectedWidgets[i]);
+                    }
                     if (mWidget._customHandlers && mWidget._customHandlers.isRerender) {
                         dui.reRenderWidgetEdit(multiSelectedWidgets[i]);
                     }
