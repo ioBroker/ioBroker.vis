@@ -14,6 +14,7 @@ var duiConfig = {
         {name: "jqui",     depends: ["basic"]},
         {name: "jqui-mfd", depends: ["basic", "jqui"]},
         {name: "lcars",    depends: ["basic"]},
+        {name: "metro",    depends: ["basic"]},
         "RGraph",
         "special",
         "swipe",
