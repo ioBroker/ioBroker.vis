@@ -13,6 +13,8 @@
     "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
         "(Hobbyquaker) disable editor close when saving in progress",
-        "(Hobbyquaker) fix addView - prevent confirmation"
+        "(Hobbyquaker) fix addView - prevent confirmation",
+        "(Hobbyquaker) more metro widgets",
+        "(Hobbyquaker) more formatting options for simpleDate Widget"
 	]
 }
