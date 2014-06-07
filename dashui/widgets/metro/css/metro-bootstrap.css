@@ -4769,12 +4769,13 @@
   float: left;
   margin: 0 10px 10px 0;
   padding: 0;
-  cursor: pointer;
+
   background-color: #eeeeee;
   box-shadow: inset 0px 0px 1px #FFFFCC;
 }
-.metro .tile:hover {
+.metro .tile.hover:hover {
   outline: #999999 solid 3px;
+  cursor: pointer;
 }
 .metro .tile:active {
   outline: 0;
@@ -6439,8 +6440,11 @@
 .metro .window .content {
   position: relative;
   margin-top: 40px;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: calc(100% - 40px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   -ms-box-sizing: content-box;

@@ -12,6 +12,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta114 [2014-06-07]
+* (Hobbyquaker) disable editor close when saving in progress
+* (Hobbyquaker) fix addView - prevent confirmation
+
 ### 0.9beta113 [2014-06-06]
 * (Hobbyquaker) New widget-set metro
 * (Hobbyquaker) viewChangeCallbacks

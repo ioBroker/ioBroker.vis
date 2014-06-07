@@ -1,5 +1,5 @@
 {
-    "version": "0.9beta113",
+    "version": "0.9beta114",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
@@ -12,7 +12,7 @@
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        "(Hobbyquaker) new widget-set metro",
-        "(Bluefox) several Bugfixes"
+        "(Hobbyquaker) disable editor close when saving in progress",
+        "(Hobbyquaker) fix addView - prevent confirmation"
 	]
 }
