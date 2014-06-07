@@ -824,7 +824,6 @@ var dui = {
     },
     saveRemoteActive: false,
     saveRemote: function (cb) {
-        console.log('saveRemote');
         if (dui.saveRemoteActive) {
             setTimeout(function (_cb) {
                 dui.saveRemote(_cb);
@@ -840,7 +839,6 @@ var dui = {
         dui.conn.writeFile("dashui-views" + dui.viewFileSuffix + ".json", dui.views, function () {
             dui.saveRemoteActive = false;
             if (cb) {
-                console.log('saveRemote done');
                 cb();
             }
             //console.log("Saved views on Server");
