@@ -21,7 +21,7 @@
 	jQuery.extend(true, dui.words, {
 		"hideSeconds"      : {"en" : "Hide seconds",  "de": "Zeige keine Sekunden","ru": "Скрыть секунды"},
 		"blink"            : {"en" : "Blink",         "de": "Blinken",             "ru": "Мигать"},
-		"showWeekDay"      : {"en" : "Show day of week", "de": "Wochenstag",       "ru": "День недели"},
+		"showWeekDay"      : {"en" : "Show day of week", "de": "Wochentag",       "ru": "День недели"},
 		"noClass"          : {"en" : "No predefined style", "de": "Kein vordefinierter Stil","ru": "Не применять стиль по умолчанию"},
         "weoid"            : {"en" : "City",          "de": "Stadt",                "ru": "Город"},
         "City:"            : {"en" : "City:",         "de": "Stadt:",               "ru": "Город:"}
@@ -67,24 +67,45 @@
                 0: {"en": "Sunday",   "de": "Sonntag",    "ru": "Воскресенье"},
                 1: {"en": "Monday",   "de": "Montag",     "ru": "Понедельник"},
                 2: {"en": "Tuesday",  "de": "Dienstag",   "ru": "Вторник"},
-                3: {"en": "Wensday",  "de": "Mittwoch",   "ru": "Среда"},
+                3: {"en": "Wednesday","de": "Mittwoch",   "ru": "Среда"},
                 4: {"en": "Thursday", "de": "Donnerstag", "ru": "Четверг"},
                 5: {"en": "Friday",   "de": "Freitag",    "ru": "Пятница"},
                 6: {"en": "Saturday", "de": "Samstag",    "ru": "Суббота"}
             },
-            startDate: function (view, elem, showWeekDay, noClass, timerId) {
+            months:{
+                1: {"en": "January",    "de": "Januar",     "ru": "January"},
+                2: {"en": "February",   "de": "Dienstag",   "ru": "February"},
+                3: {"en": "March",      "de": "März",       "ru": "March"},
+                4: {"en": "April",      "de": "April",      "ru": "April"},
+                5: {"en": "May",        "de": "Mai",        "ru": "May"},
+                6: {"en": "June",       "de": "Juni",       "ru": "June"},
+                7: {"en": "July",       "de": "Juli",       "ru": "July"},
+                8: {"en": "August",     "de": "August",     "ru": "August"},
+                9: {"en": "September",  "de": "September",  "ru": "September"},
+                10: {"en": "October",   "de": "Oktober",    "ru": "October"},
+                11: {"en": "November",  "de": "November",   "ru": "November"},
+                12: {"en": "December",  "de": "Dezember",   "ru": "December"}
+            },
+            startDate: function (view, elem, showWeekDay, noClass, timerId, shortWeekDay, shortYear, prependZero, monthWord, shortMonth, american) {
                 var today = new Date();
                 var d =     today.getDate();
                 var dow =   today.getDay();
                 var m =     today.getMonth()+1;
                 var y =     today.getFullYear();
 
+                var monthString = dui.binds.timeAndWeather.months[m][dui.language];
+                if (shortMonth) monthString = monthString.slice(0, 3);
+
+                if (shortYear) y = y.toString().slice(2);
+
                 // add a zero in front of numbers<10
-                d = (d<10) ? ("0"+d) : d;
-                m = (m<10) ? ("0"+m) : m;
+                if (prependZero) d = (d<10) ? ("0"+d) : d;
+                if (prependZero) m = (m<10) ? ("0"+m) : m;
+
                 if (showWeekDay === "false") {
                     showWeekDay = false;
                 }
+
                 var hl = document.getElementById(elem);
                 if (!hl) {
                     $('#duiview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' date') + '" id="'+elem+'" ></div>');
@@ -92,8 +113,70 @@
                     hl.dashId = (new Date()).getTime();
                 }
                 if (hl && (timerId === undefined || hl.dashId == timerId)) {
-                    hl.innerHTML = ((showWeekDay) ? dui.binds.timeAndWeather.weekdays[dow][dui.language]+", " : "") + d+"."+m+"."+y;
-                    hl.dashTimer = _setTimeout(dui.binds.timeAndWeather.startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId);
+
+                    var dateString = '';
+                    console.log('new date');
+                    if (showWeekDay && !shortWeekDay) {
+                        dateString += dui.binds.timeAndWeather.weekdays[dow][dui.language] + ", ";
+                    } else if (showWeekDay && shortWeekDay) {
+                        switch (dui.language) {
+                            case "en":
+                                dateString += dui.binds.timeAndWeather.weekdays[dow][dui.language].slice(0, 3) + ", ";
+                                break;
+                            default:
+                                dateString += dui.binds.timeAndWeather.weekdays[dow][dui.language].slice(0, 2) + ", ";
+                        }
+                    }
+
+                    console.log('...'+dateString);
+
+                    if (monthWord) {
+
+                        switch (dui.language) {
+                            case "en":
+                                switch (d) {
+                                    case 1:
+                                        d +=  'st';
+                                        break;
+                                    case 2:
+                                        d +=  'nd';
+                                        break;
+                                    case 3:
+                                        d +=  'rd';
+                                        break;
+                                    default:
+                                        d +=  'th';
+                                }
+
+                                if (american) {
+                                    dateString += monthString+" "+d+", "+y;
+                                } else {
+                                    dateString += d+" "+monthString+", "+y;
+                                }
+
+                                break;
+                            default:
+                                dateString += d+". "+monthString+" "+y;
+                        }
+                    } else {
+                        switch (dui.language) {
+                            case "en":
+                                if (american) {
+                                    dateString += m+"/"+d+"/"+y;
+                                } else {
+                                    dateString += d+"/"+m+"/"+y;
+                                }
+
+                                break;
+                            default:
+                                dateString += d+"."+m+"."+y;
+                        }
+                    }
+
+
+                    console.log(dateString);
+                    hl.innerHTML = dateString;
+                    hl.dashTimer = _setTimeout(dui.binds.timeAndWeather.startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId, shortWeekDay, shortYear, prependZero, monthWord, shortMonth, american);
                 }
             },
             tplTwCoolClock: function (view, data) {
@@ -177,10 +260,11 @@
     //});
 
 </script>
-
-<script type="text/ejs" id="tplTwSimpleDate" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleDate" data-dashui-attrs="showWeekDay/checkbox;noClass/checkbox">
+<!-- startDate: function (view, elem, showWeekDay, noClass, timerId, shortWeekDay, shortYear, prependZero, monthWord, shortMonth, american) {
+            -->
+<script type="text/ejs" id="tplTwSimpleDate" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleDate" data-dashui-attrs="showWeekDay/checkbox;shortWeekDay/checkbox;shortYear/checkbox;prependZero[true]/checkbox;monthWord/checkbox;shortMonth/checkbox;americanOrder/checkbox;noClass/checkbox">
     <%
-		dui.binds.timeAndWeather.startDate(this.view, this.data.attr('wid'), this.data.attr('showWeekDay'), this.data.attr('noClass'));
+		dui.binds.timeAndWeather.startDate(this.view, this.data.attr('wid'), this.data.attr('showWeekDay'), this.data.attr('noClass'), undefined, this.data.attr('shortWeekDay'), this.data.attr('shortYear'), this.data.attr('prependZero'), this.data.attr('monthWord'), this.data.attr('shortMonth'), this.data.attr('americanOrder'));
     %>
 </script>
 
