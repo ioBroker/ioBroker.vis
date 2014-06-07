@@ -112,10 +112,9 @@
                     hl = document.getElementById(elem);
                     hl.dashId = (new Date()).getTime();
                 }
-                if (hl && (timerId === undefined || hl.dashId == timerId)) {
 
+                if (hl && (timerId === undefined || hl.dashId == timerId)) {
                     var dateString = '';
-                    console.log('new date');
                     if (showWeekDay && !shortWeekDay) {
                         dateString += dui.binds.timeAndWeather.weekdays[dow][dui.language] + ", ";
                     } else if (showWeekDay && shortWeekDay) {
@@ -128,10 +127,7 @@
                         }
                     }
 
-                    console.log('...'+dateString);
-
                     if (monthWord) {
-
                         switch (dui.language) {
                             case "en":
                                 switch (d) {
@@ -173,8 +169,6 @@
                         }
                     }
 
-
-                    console.log(dateString);
                     hl.innerHTML = dateString;
                     hl.dashTimer = _setTimeout(dui.binds.timeAndWeather.startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId, shortWeekDay, shortYear, prependZero, monthWord, shortMonth, american);
                 }
