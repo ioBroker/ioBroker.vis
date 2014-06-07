@@ -2871,7 +2871,7 @@ dui = $.extend(true, dui, {
         }
         dui.saveRemote(function() {
             dui._saveTimer = null;
-            $('#savingProgress').hide();
+            $('#savingProgress').hide().next().button('enable');
         });
     },
     save: function (cb) {
@@ -2884,7 +2884,7 @@ dui = $.extend(true, dui, {
             dash._saveToServer();
         }, 2000, this);
 
-        $('#savingProgress').show();
+        $('#savingProgress').show().next().button('disable');
         if (cb) {
             cb();
         }
