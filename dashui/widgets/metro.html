@@ -220,8 +220,8 @@
                         html += '<div data-hm-id="' + set_id + '" id="metroSlider_' + wid + '" class="slider" data-role="slider"></div>';
                         html += '</div>';
                         html += '<table style="margin-top: 12px; margin-left: 12px; font-size:14px;display:inline-block;">' +
-                                '<tr><td>Soll-Temperatur:</td><td><span class="metro-dialog-string" data-hm-id="' + set_id + '">' + localData.uiState.attr('_' + set_id + '.Value').toFixed(1) + '</span>°C</td></tr>' +
-                                '<tr><td>Ist-Temperatur:</td><td><span class="metro-dialog-string" data-hm-id="' + temp_id + '">' + localData.uiState.attr('_' + temp_id + '.Value').toFixed(1) + '</span>°C</td></tr>' +
+                                '<tr><td>Soll-Temperatur:</td><td><span class="metro-dialog-string" data-hm-id="' + set_id + '">' + (localData.uiState.attr('_' + set_id + '.Value') ? localData.uiState.attr('_' + set_id + '.Value').toFixed(1) : '') + '</span>°C</td></tr>' +
+                                '<tr><td>Ist-Temperatur:</td><td><span class="metro-dialog-string" data-hm-id="' + temp_id + '">' + (localData.uiState.attr('_' + temp_id + '.Value') ? localData.uiState.attr('_' + temp_id + '.Value').toFixed(1) : '') + '</span>°C</td></tr>' +
                                 '<tr><td>Ventilstellung:</td><td><span class="metro-dialog-string" data-hm-id="' + drive_id + '">' + localData.uiState.attr('_' + drive_id + '.Value') + '</span>%</td></tr>' +
                                 '</table>';
 
@@ -702,8 +702,8 @@
                 </div>
                 <div style="float: right; padding-top: 16px; padding-right: 12px;">
                     <table style="color:white;font-size:11px;display:inline-block;">
-                        <tr><td>Soll-Temperatur:</td><td><%= localData.uiState.attr('_' + this.data.attr('set_id') + '.Value').toFixed(1) %>°C</td></tr>
-                        <tr><td>Ist-Temperatur:</td><td><%= localData.uiState.attr('_' + this.data.attr('temp_id') + '.Value').toFixed(1) %>°C</td></tr>
+                        <tr><td>Soll-Temperatur:</td><td><%= localData.uiState.attr('_' + this.data.attr('set_id') + '.Value') ? localData.uiState.attr('_' + this.data.attr('set_id') + '.Value').toFixed(1) : '' %>°C</td></tr>
+                        <tr><td>Ist-Temperatur:</td><td><%= localData.uiState.attr('_' + this.data.attr('temp_id') + '.Value') ? this.data.attr('temp_id') + '.Value').toFixed(1) : '' %>°C</td></tr>
                         <tr><td>Ventilstellung:</td><td><%= localData.uiState.attr('_' + this.data.attr('drive_id') + '.Value') %>%</td></tr>
                     </table>
                 </div>
@@ -728,8 +728,8 @@
                      <img width="105px" src="img/mfd/sani_heating_temp.png"/>
                 </div>
                 <div style="color:white; font-size:11px; margin-top: 84px; padding-left: 12px;">
-                    Soll: <%= localData.uiState.attr('_' + this.data.attr('set_id') + '.Value').toFixed(1) %>°C,
-                    Ist: <%= localData.uiState.attr('_' + this.data.attr('temp_id') + '.Value').toFixed(1) %>°C
+                    Soll: <%= localData.uiState.attr('_' + this.data.attr('set_id') + '.Value') ? localData.uiState.attr('_' + this.data.attr('set_id') + '.Value').toFixed(1) : '' %>°C,
+                    Ist: <%= localData.uiState.attr('_' + this.data.attr('set_id') + '.Value') ? localData.uiState.attr('_' + this.data.attr('temp_id') + '.Value').toFixed(1) : '' %>°C
                 </div>
                 <div class="brand <%= this.data.attr("brand_bg_class") %>">
                     <span class="label fg-white"><%= this.data.attr("label") %></span>
