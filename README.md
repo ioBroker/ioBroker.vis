@@ -12,6 +12,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta115 [2014-06-08]
+* (Hobbyquaker) more Metro widgets
+* (Bluefox) Fix hqWidgets: check negative position of popUp window
+
 ### 0.9beta114 [2014-06-07]
 * (Hobbyquaker) disable editor close when saving in progress
 * (Hobbyquaker) fix addView - prevent confirmation
