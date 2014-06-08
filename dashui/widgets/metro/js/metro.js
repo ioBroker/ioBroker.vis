@@ -844,8 +844,8 @@ function touch2Mouse(e)
         _content.appendTo(_window);
         _window.appendTo(_overlay);
 
-        if (params.width != 'auto') _window.css('min-width', params.width);
-        if (params.height != 'auto') _window.css('min-height', params.height);
+        if (params.width != 'auto') _window.css('width', params.width);
+        if (params.height != 'auto') _window.css('height', params.height);
 
         _overlay.hide().appendTo('body').fadeIn('fast');
 
