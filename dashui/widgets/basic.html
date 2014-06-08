@@ -271,7 +271,9 @@
             checkbox: function (el, numeric) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
+                var hm_wid = "_" + $this.attr("data-hm-wid");
                 localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
+                    if (hm_wid && (localData.uiState.attr(hm_wid + '.Value') === true)) return;
                     if (newVal === false || parseFloat(newVal) === 0.0) {
                         $this.removeAttr("checked");
                     } else {
