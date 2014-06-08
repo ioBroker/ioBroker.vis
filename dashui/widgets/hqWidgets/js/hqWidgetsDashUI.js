@@ -87,6 +87,13 @@ if ((typeof hqWidgets !== 'undefined')) {
             },
             // Save settings of one widget
             hqEditStoreInfoWindow: function (obj, opt) {
+                // Fix position of window
+                if (opt.y < -10) {
+                    opt.y = -10;
+                }
+                if (opt.x < 0 && opt.x < 60 - opt.width) {
+                    opt.x = 60 - opt.width;
+                }
                 var newOpt = JSON.stringify (opt);
                     
                 var duiWidget = dui.binds.hqWidgetsExt.hqGetWidgetByObj (obj);
@@ -779,7 +786,16 @@ if ((typeof hqWidgets !== 'undefined')) {
                         btn.SetStates({state: hqWidgets.gState.gStateOff});
                         if (opt.exPopup == true) {
                             var storedInfo = null;
-                            if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+                            if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) {
+                                storedInfo = $.parseJSON(wObj.data.informWindow);
+                                // Fix position
+                                if (storedInfo.x && storedInfo.x < 0 && storedInfo.x < 60 - storedInfo.width) {
+                                    storedInfo.x = 60 - storedInfo.width;
+                                }
+                                if (storedInfo.y && storedInfo.y < -10) {
+                                    storedInfo.y = -10;
+                                }
+                            }
                             var infoWindow = btn.GetInfoWindowSettings ();
                             infoWindow.isEnabled     = true;
                             infoWindow.content       = "";
@@ -845,7 +861,17 @@ if ((typeof hqWidgets !== 'undefined')) {
                         btn.SetStates({state: hqWidgets.gState.gStateOff});
                         if (opt.exPopup == true) {
                             var storedInfo = null;
-                            if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+                            if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined){
+                                storedInfo = $.parseJSON(wObj.data.informWindow);
+
+                                // Fix position
+                                if (storedInfo.x && storedInfo.x < 0 && storedInfo.x < 60 - storedInfo.width) {
+                                    storedInfo.x = 60 - storedInfo.width;
+                                }
+                                if (storedInfo.y && storedInfo.y < 0 && storedInfo.y < -10) {
+                                    storedInfo.y = -10;
+                                }
+                            }
                             var infoWindow = btn.GetInfoWindowSettings ();
                             infoWindow.isEnabled     = true;
                             infoWindow.content       = "";
@@ -985,6 +1011,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                         var storedInfo = null;
                         if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) {
 							storedInfo = $.parseJSON(wObj.data.informWindow);
+
+                            // Fix position
+                            if (storedInfo.x && storedInfo.x < 0 && storedInfo.x < 60 - storedInfo.width) {
+                                storedInfo.x = 60 - storedInfo.width;
+                            }
+                            if (storedInfo.y && storedInfo.y < -10) {
+                                storedInfo.y = -10;
+                            }
 						}
                         var infoWindow = btn.GetInfoWindowSettings ();
                         infoWindow.isEnabled     = true;
@@ -1144,7 +1178,16 @@ if ((typeof hqWidgets !== 'undefined')) {
 					if (opt["exShowGrafik"] === 'history' || opt["exShowGrafik"] === 'grafic') {
 						var storedInfo = null;
                         var wObj = dui.binds.hqWidgetsExt.hqGetWidgetByObj (btn);
-						if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+						if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) {
+                            storedInfo = $.parseJSON(wObj.data.informWindow);
+                            // Fix position
+                            if (storedInfo.x && storedInfo.x < 0 && storedInfo.x < 60 - storedInfo.width) {
+                                storedInfo.x = 60 - storedInfo.width;
+                            }
+                            if (storedInfo.y && storedInfo.y < -10) {
+                                storedInfo.y = -10;
+                            }
+                        }
 						var infoWindow = btn.GetInfoWindowSettings ();
 						infoWindow.isEnabled     = true;
 						infoWindow.content       = "";
@@ -1269,7 +1312,16 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Get stored settings for info window
                         var wObj = dui.binds.hqWidgetsExt.hqGetWidgetByObj (btn);
                         var storedInfo = null;
-                        if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+                        if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) {
+                            storedInfo = $.parseJSON(wObj.data.informWindow);
+                            // Fix position
+                            if (storedInfo.x && storedInfo.x < 0 && storedInfo.x < 60 - storedInfo.width) {
+                                storedInfo.x = 60 - storedInfo.width;
+                            }
+                            if (storedInfo.y && storedInfo.y < -10) {
+                                storedInfo.y = -10;
+                            }
+                        }
                         var infoWindow = btn.GetInfoWindowSettings ();
                         
                         infoWindow.width         = (storedInfo == null) ? infoWindow.width:  storedInfo.width;
