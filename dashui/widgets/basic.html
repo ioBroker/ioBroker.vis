@@ -268,7 +268,7 @@
                     }
                 }
             },
-            checkbox: function (el) {
+            checkbox: function (el, numeric) {
                 var $this = jQuery(el);
                 var hm_id = "_" + $this.attr("data-hm-id");
                 localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
@@ -287,9 +287,9 @@
                 if (dui.urlParams["edit"] !== "") {
                     $this.change(function () {
                         if ($this.prop("checked")) {
-                            localData.setValue( $this.attr("data-hm-id"),  true);
+                            localData.setValue( $this.attr("data-hm-id"),  numeric ? 1 : true);
                         } else {
-                            localData.setValue( $this.attr("data-hm-id"),  false);
+                            localData.setValue( $this.attr("data-hm-id"),  numeric ? 0 : false);
                         }
                     });
                 }
