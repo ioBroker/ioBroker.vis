@@ -449,6 +449,8 @@ function touch2Mouse(e)
 
         version: "1.0.2",
 
+
+
         options: {
             position: 0,
             accuracy: 0,
@@ -457,6 +459,7 @@ function touch2Mouse(e)
             markerColor: 'default',
             colors: [],
             showHint: false,
+            sliderActive: false,
             change: function(value, slider){},
             changed: function(value, slider){},
             min: 0,
@@ -541,7 +544,7 @@ function touch2Mouse(e)
 
         _startMoveMarker: function(e){
             var element = this.element, o = this.options, that = this, hint = element.children('.hint');
-
+            that.sliderActive = true;
             $(document).on('mousemove.metroSlider', function (event) {
                 that._movingMarker(event);
                 if (!element.hasClass('permanent-hint')) {
@@ -549,6 +552,7 @@ function touch2Mouse(e)
                 }
             });
             $(document).on('mouseup.metroSlider', function () {
+                that.sliderActive = false;
                 $(document).off('mousemove.metroSlider');
                 $(document).off('mouseup.metroSlider');
                 element.data('value', that.options.position);
@@ -729,6 +733,7 @@ function touch2Mouse(e)
         },
 
         value: function (value) {
+            if (this.sliderActive) return false;
             value = value > this.options.max ? this.options.max : value;
             value = value < this.options.min ? this.options.min : value;
             if (typeof value !== 'undefined') {
