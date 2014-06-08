@@ -703,7 +703,7 @@
                 <div style="float: right; padding-top: 16px; padding-right: 12px;">
                     <table style="color:white;font-size:11px;display:inline-block;">
                         <tr><td>Soll-Temperatur:</td><td><%= localData.uiState.attr('_' + this.data.attr('set_id') + '.Value') ? localData.uiState.attr('_' + this.data.attr('set_id') + '.Value').toFixed(1) : '' %>°C</td></tr>
-                        <tr><td>Ist-Temperatur:</td><td><%= localData.uiState.attr('_' + this.data.attr('temp_id') + '.Value') ? this.data.attr('temp_id') + '.Value').toFixed(1) : '' %>°C</td></tr>
+                        <tr><td>Ist-Temperatur:</td><td><%= localData.uiState.attr('_' + this.data.attr('temp_id') + '.Value') ? localData.uiState.attr('_' + this.data.attr('temp_id') + '.Value').toFixed(1) : '' %>°C</td></tr>
                         <tr><td>Ventilstellung:</td><td><%= localData.uiState.attr('_' + this.data.attr('drive_id') + '.Value') %>%</td></tr>
                     </table>
                 </div>
