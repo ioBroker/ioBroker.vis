@@ -643,7 +643,7 @@ dui = $.extend(true, dui, {
     },
     editColor: function (widget, wid_attr) {
         // Color selector
-        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="dashui-add-option"><td>' + this.translate(wid_attr) + ':</td><td><input type="text" id="inspect_'+wid_attr+'" size="34" style="width:90%" />' + ((typeof colorSelect != 'undefined' && $().farbtastic) ? '<input id="inspect_' + wid_attr + 'Btn"  style="width:8%" type="button" value="...">' : '') + '</td></tr>');
+        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="dashui-add-option"><td>' + this.translate(wid_attr) + ':</td><td><input type="text" id="inspect_'+wid_attr+'" size="34" />' + ((typeof colorSelect != 'undefined' && $().farbtastic) ? '<input id="inspect_' + wid_attr + 'Btn"  style="width:8%" type="button" value="...">' : '') + '</td></tr>');
         if (typeof colorSelect != 'undefined' && $().farbtastic) {
             var btn = document.getElementById("inspect_" + wid_attr + "Btn");
             if (btn) {
