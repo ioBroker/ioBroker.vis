@@ -751,14 +751,15 @@ function touch2Mouse(e)
         _setOption: function(key, value){
             this._super('_setOption', key, value);
         }
-    })
+    });
 
-    //if (METRO_DIALOG == undefined) {
-    //var METRO_DIALOG = false;
-    //}
+    if (typeof METRO_DIALOG == "undefined") {
+        var METRO_DIALOG = false;
+    }
 
-    $.metroDialog = function(params) {
-        if(!$.metroDialog.opened) {
+    $.metroDialog = function (params) {
+
+        if (!$.metroDialog.opened) {
             $.metroDialog.opened = true;
         } else {
             return METRO_DIALOG;
@@ -777,7 +778,7 @@ function touch2Mouse(e)
             height: 'auto',
             position: 'default',
             padding: false,
-            overlayClickClose: true,
+            overlayClickClose: false,
             sysButtons: {
                 btnClose: true
             },
@@ -787,7 +788,7 @@ function touch2Mouse(e)
             sysBtnMaxClick: function(event){}
         }, params);
 
-        var _overlay, _window, _caption, _content;
+        var  _overlay, _window, _caption, _content;
 
         _overlay = $("<div/>").addClass("metro window-overlay");
 
@@ -884,19 +885,19 @@ function touch2Mouse(e)
                     }
                 });
                 e.preventDefault();
-            }).on("mouseup", function() {
+            }).on("mouseup", function () {
                     _window.removeClass('draggable');
                     $.metroDialog.drag = false;
                     _caption.css('cursor', 'default');
                 });
         }
 
-        _window.on('click', function(e){
+        _window.on('click', function (e){
             e.stopPropagation();
         });
 
         if (params.overlayClickClose) {
-            _overlay.on('click', function(e){
+            _overlay.on('click', function (e){
                 e.preventDefault();
                 $.metroDialog.close();
             });
@@ -937,9 +938,9 @@ function touch2Mouse(e)
         }
 
         return true;
-    }
+    };
 
-    $.metroDialog.autoResize = function(){
+    $.metroDialog.autoResize = function () {
         if(!$.metroDialog.opened || METRO_DIALOG == undefined) {
             return false;
         }
@@ -957,17 +958,18 @@ function touch2Mouse(e)
         });
 
         return true;
-    }
+    };
 
-    $.metroDialog.close = function() {
-        if(!$.metroDialog.opened || METRO_DIALOG == undefined) {
+    $.metroDialog.close = function () {
+        if(!$.metroDialog.opened || !METRO_DIALOG) {
             return false;
         }
 
         $.metroDialog.opened = false;
         var _overlay = METRO_DIALOG.parent(".window-overlay");
-        _overlay.fadeOut(function(){
+        _overlay.fadeOut(function () {
             $(this).remove();
+            METRO_DIALOG = false;
         });
 
         return false;
