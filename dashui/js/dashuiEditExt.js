@@ -451,7 +451,6 @@ dui = $.extend(true, dui, {
 						this.options.url = "/upload?path=./www/dashui/img/"+dui.imageSelect._curDir;
 					});
 				}
-
 			});
 
 			// Show wait icon

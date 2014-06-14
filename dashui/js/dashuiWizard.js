@@ -70,7 +70,7 @@ dui = $.extend(true, dui, {
 				var list = localData.metaObjects[localData.metaIndex["ENUM_FUNCTIONS"][t]];
 				for (var z = 0; z < list['Channels'].length; z++) {
 					if (list['Channels'][z] == hm_id) {
-						func = list.Name;
+						func = localData.metaIndex["ENUM_FUNCTIONS"][t];//list.Name;
 						break;
 					}
 				}
@@ -225,7 +225,7 @@ dui = $.extend(true, dui, {
 		for (var w in dui.views[view].widgets) {
 			var wObj = dui.views[view].widgets[w];
 			if (wObj.data.hqoptions &&
-			    wObj.data.hqoptions.indexOf ('"room":"'+localData.metaObjects[roomID]["Name"]+'"') != -1) {
+			    wObj.data.hqoptions.indexOf ('"room":"' + localData.metaObjects[roomID]["Name"] + '"') != -1) {
 //                wObj.data.hqoptions.room == localData.metaObjects[roomID]["Name"]) { TODO hqoptions stringify
 				if (pos == null) {
 					pos = {left: wObj.style.left, top: wObj.style.top};
@@ -289,7 +289,7 @@ dui = $.extend(true, dui, {
 						return idCreated;
 					}
 					// Create this widget
-					var widgetId = dui.wizardCreateWidget (view, roomID, func, widgetName, devID, elems[i], hm_id, pos);
+					var widgetId = dui.wizardCreateWidget (view, roomID, localData.metaObjects[func]["Name"], widgetName, devID, elems[i], hm_id, pos);
 
 					if (pos == null) {
 						idCreated = widgetId;

@@ -24,7 +24,6 @@
 		"showWeekDay"      : {"en" : "Show day of week", "de": "Wochentag",        "ru": "День недели"},
 		"noClass"          : {"en" : "No style",      "de": "Kein Stil",           "ru": "Без стиля"},
         "weoid"            : {"en" : "City",          "de": "Stadt",               "ru": "Город"},
-		"blink"            : {"en" : "Blink",         "de": "Blinken",             "ru": "Мигать"},
 		"shortWeekDay"     : {"en" : "Short week day","de": "Kurzer Wochentag",    "ru": "Короткий день недели"},
 		"shortYear"        : {"en" : "Short year",    "de": "Kurzes Jahr",         "ru": "Короткий год"},
 		"prependZero"      : {"en" : "Prepend zero",  "de": "Null vorne",          "ru": "Ноль в начале"},
@@ -254,7 +253,7 @@
                 }
                 else
                     weoid = '664942';
-                jQuery('#'+data.attr('wid')).weatherfeed([weoid], {lang:'de', woeid: true, humidity: true, forecast: true, link: false, resizable: (dui.urlParams['edit'] === "")});
+                jQuery('#'+data.attr('wid')).weatherfeed([weoid], {lang:dui.language, woeid: true, humidity: true, forecast: true, link: false, resizable: (dui.urlParams['edit'] === "")});
 
             }
         };
