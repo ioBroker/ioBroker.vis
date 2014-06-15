@@ -227,7 +227,7 @@
                         t.properties['chart.colors'] = ["Gradient("+color+")"];
                     }
                 }
-                console.log("B");
+
                 if (data.attr("show_scale")) {
                     t.Set('scale.visible', true);
                 }
@@ -419,7 +419,7 @@
                     }
                     var isValid = false;
                     try {
-                        t.parseSingleColorForGradient(id);
+                        //t.parseSingleColorForGradient(id);
                         isValid = true;
                     } catch(e)
                     {
