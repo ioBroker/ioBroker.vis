@@ -127,55 +127,55 @@
 			var timer = 0;
 			// Translation function
 			var _tt = []; {
-            _tt[0]    = {'en':'Tornado', 'de': 'Sitze Zuhause:)'};
-            _tt[1]    = {'en':'Tropical storm', 'de': 'Tropischer Sturm'};
-            _tt[2]    = {'en':'Hurricane', 'de': 'Hurrikan'};
-            _tt[3]    = {'en':'Severe thunderstorms', 'de': 'Heftiges Gewitter'};
-            _tt[4]    = {'en':'Thunderstorms', 'de': 'Gewitter'};
-            _tt[5]    = {'en':'Mixed rain and snow', 'de' : 'Regen mit Schnee'};
-            _tt[6]    = {'en':'Mixed rain and sleet', 'de' : 'Regen mit Graupel'};
-            _tt[7]    = {'en':'Mixed snow and sleet', 'de' : 'Schnee mit Graupel'};
-            _tt[8]    = {'en':'Freezing drizzle', 'de' : 'Eisnieselregen'};
-            _tt[9]    = {'en':'Drizzle', 'de' : 'Nieselregen'};
-            _tt[10]   = {'en':'Freezing rain', 'de': 'Eisregen'};
-            _tt[11]   = {'en':'Showers', 'de': 'Regenschauer'};
-            _tt[12]   = {'en':'Showers', 'de': 'Regenschauer'};
-            _tt[13]   = {'en':'Snow flurries', 'de': 'Schneetreiben'};
-            _tt[14]   = {'en':'Light snow showers', 'de': 'Leichter Regen mit Schnee'};
-            _tt[15]   = {'en':'Bowing snow', 'de': 'Schnee'};
-            _tt[16]   = {'en':'Snow', 'de': 'Schnee'};
-            _tt[17]   = {'en':'Hail', 'de': 'Hagel'};
-            _tt[18]   = {'en':'Sleet', 'de': 'Graupel'};
-            _tt[19]   = {'en':'Dust', 'de':'Staubig'};
-            _tt[20]   = {'en':'Foggy', 'de':'Neblig'};
-            _tt[21]   = {'en':'Haze', 'de':'Nebel'};
-            _tt[22]   = {'en':'Smoky', 'de':'Qualmig'};
-            _tt[23]   = {'en':'Blustery', 'de':'Stürmisch'};
-            _tt[24]   = {'en':'Windy', 'de':'Windig'};
-            _tt[25]   = {'en':'Cold', 'de':'Kalt'};
-            _tt[26]   = {'en':'Cloudy', 'de':'W&ouml;lkig'};
-            _tt[27]   = {'en':'Mostly cloudy (night)', 'de':'&Uuml;berwiegend w&ouml;lkig'};
-            _tt[28]   = {'en':'Mostly cloudy (day)', 'de':'&Uuml;berwiegend w&ouml;lkig'};
-            _tt[29]   = {'en':'partly cloudy (night)', 'de':'Teilweise wolkig'};
-            _tt[30]   = {'en':'partly cloudy (day)', 'de':'Meistens sonnig'};
-            _tt[31]   = {'en':'clear (night)', 'de':'Klar'};
-            _tt[32]   = {'en':'sunny', 'de':'Sonnig'};
-            _tt[33]   = {'en':'fair (night)', 'de': 'Sch&ouml;nwetter'};
-            _tt[34]   = {'en':'fair (day)', 'de': 'Sch&ouml;nwetter'};
-            _tt[35]   = {'en':'mixed rain and hail', 'de': 'Regen mit Hagel'};
-            _tt[36]   = {'en':'hot', 'de': 'Warm'};
-            _tt[37]   = {'en':'isolated thunderstorms', 'de': 'Vereinzeltes Gewitter'};
-            _tt[38]   = {'en':'scattered thunderstorms', 'de': 'Verstreutes Gewitter'};
-            _tt[39]   = {'en':'scattered thunderstorms', 'de': 'Verstreutes Gewitter'};
-            _tt[40]   = {'en':'scattered showers', 'de': 'Verstreuter Regen'};
-            _tt[41]   = {'en':'heavy snow', 'de':'Starker Schneefall'};
-            _tt[42]   = {'en':'scattered snow showers', 'de': 'Verstreuter Schneeregen'};
-            _tt[43]   = {'en':'heavy snow', 'de':'Starker Schneefall'};
-            _tt[44]   = {'en':'partly cloudy', 'de':'Teilweise wolkig'};
-            _tt[45]   = {'en':'thundershowers', 'de':'Gewitterschauer'};
-            _tt[46]   = {'en':'snow showers', 'de': 'Schneeregen'};
-            _tt[47]   = {'en':'isolated thundershowers', 'de': 'Vereinzelter Gewitterschauer'};
-            _tt[3200] = {'en':'not available',  'de': ''};	
+            _tt[0]    = {'en':'Tornado',        'de': 'Sitze Zuhause:)', 'ru': 'Торнадо - сиди дома!'};
+            _tt[1]    = {'en':'Tropical storm', 'de': 'Tropischer Sturm', 'ru': 'Тропический шторм'};
+            _tt[2]    = {'en':'Hurricane',      'de': 'Hurrikan', 'ru': 'Ураган'};
+            _tt[3]    = {'en':'Severe thunderstorms', 'de': 'Heftiges Gewitter', 'ru': 'Сильная непогода'};
+            _tt[4]    = {'en':'Thunderstorms',  'de': 'Gewitter', 'ru': 'Грозы'};
+            _tt[5]    = {'en':'Mixed rain and snow', 'de' : 'Regen mit Schnee', 'ru': 'Дождь со снегом'};
+            _tt[6]    = {'en':'Mixed rain and sleet', 'de' : 'Regen mit Graupel', 'ru': 'Дождь с градом'};
+            _tt[7]    = {'en':'Mixed snow and sleet', 'de' : 'Schnee mit Graupel', 'ru': 'Снег с градом'};
+            _tt[8]    = {'en':'Freezing drizzle', 'de' : 'Eisnieselregen', 'ru': 'Изморозь'};
+            _tt[9]    = {'en':'Drizzle',        'de' : 'Nieselregen', 'ru': 'Моросящий дождь'};
+            _tt[10]   = {'en':'Freezing rain',  'de': 'Eisregen', 'ru': 'Ледяной дождь'};
+            _tt[11]   = {'en':'Showers',        'de': 'Regenschauer', 'ru': 'Ливень'};
+            _tt[12]   = {'en':'Showers',        'de': 'Regenschauer', 'ru': 'Ливень'};
+            _tt[13]   = {'en':'Snow flurries',  'de': 'Schneetreiben', 'ru': 'Снегопад'};
+            _tt[14]   = {'en':'Light snow showers', 'de': 'Leichter Regen mit Schnee', 'ru': 'Небольшой дождь со снегом'};
+            _tt[15]   = {'en':'Bowing snow',    'de': 'Schnee', 'ru': 'Снег'};
+            _tt[16]   = {'en':'Snow',           'de': 'Schnee', 'ru': 'Снег'};
+            _tt[17]   = {'en':'Hail',           'de': 'Hagel', 'ru': 'Град'};
+            _tt[18]   = {'en':'Sleet',          'de': 'Graupel', 'ru': 'Мелкий град'};
+            _tt[19]   = {'en':'Dust',           'de':'Staubig', 'ru': 'Пыльно'};
+            _tt[20]   = {'en':'Foggy',          'de':'Neblig', 'ru': 'Туманно'};
+            _tt[21]   = {'en':'Haze',           'de':'Nebel', 'ru': 'Туман'};
+            _tt[22]   = {'en':'Smoky',          'de':'Qualmig', 'ru': 'Задымление'};
+            _tt[23]   = {'en':'Blustery',       'de':'Stürmisch', 'ru': 'Порывистый ветер'};
+            _tt[24]   = {'en':'Windy',          'de':'Windig', 'ru': 'Ветрянно'};
+            _tt[25]   = {'en':'Cold',           'de':'Kalt', 'ru': 'Холодно'};
+            _tt[26]   = {'en':'Cloudy',         'de':'W&ouml;lkig', 'ru': 'Облачно'};
+            _tt[27]   = {'en':'Mostly cloudy (night)', 'de':'&Uuml;berwiegend w&ouml;lkig', 'ru': 'В основном облачно'};
+            _tt[28]   = {'en':'Mostly cloudy (day)', 'de':'&Uuml;berwiegend w&ouml;lkig', 'ru': 'В основном облачно'};
+            _tt[29]   = {'en':'partly cloudy (night)', 'de':'Teilweise wolkig', 'ru': 'Местами облачно'};
+            _tt[30]   = {'en':'partly cloudy (day)', 'de':'Meistens sonnig', 'ru': 'Приемущественно солнечно'};
+            _tt[31]   = {'en':'clear (night)',  'de':'Klar', 'ru': 'Ясно'};
+            _tt[32]   = {'en':'sunny',          'de':'Sonnig', 'ru': 'Солнечно'};
+            _tt[33]   = {'en':'fair (night)',   'de': 'Sch&ouml;nwetter', 'ru': 'Прекрасная погода'};
+            _tt[34]   = {'en':'fair (day)',     'de': 'Sch&ouml;nwetter', 'ru': 'Прекрасная погода'};
+            _tt[35]   = {'en':'mixed rain and hail', 'de': 'Regen mit Hagel', 'ru': 'Снег с градом'};
+            _tt[36]   = {'en':'hot',            'de': 'Warm', 'ru': 'Жарко'};
+            _tt[37]   = {'en':'isolated thunderstorms', 'de': 'Vereinzeltes Gewitter', 'ru': 'Одиночные грозы'};
+            _tt[38]   = {'en':'scattered thunderstorms', 'de': 'Verstreutes Gewitter', 'ru': 'Грозы'};
+            _tt[39]   = {'en':'scattered thunderstorms', 'de': 'Verstreutes Gewitter', 'ru': 'Грозы'};
+            _tt[40]   = {'en':'scattered showers', 'de': 'Verstreuter Regen', 'ru': 'Дождь'};
+            _tt[41]   = {'en':'heavy snow',     'de':'Starker Schneefall', 'ru': 'Сильный снегопад'};
+            _tt[42]   = {'en':'scattered snow showers', 'de': 'Verstreuter Schneeregen', 'ru': 'Ливень с дождем'};
+            _tt[43]   = {'en':'heavy snow',     'de':'Starker Schneefall', 'ru': 'Сильный снегопад'};
+            _tt[44]   = {'en':'partly cloudy',  'de':'Teilweise wolkig', 'ru': 'Переменная облачность'};
+            _tt[45]   = {'en':'thundershowers', 'de':'Gewitterschauer', 'ru': 'Штормовой дождь'};
+            _tt[46]   = {'en':'snow showers',   'de': 'Schneeregen', 'ru': 'Снег с дождем'};
+            _tt[47]   = {'en':'isolated thundershowers', 'de': 'Vereinzelter Gewitterschauer', 'ru': 'Местами грозы'};
+            _tt[3200] = {'en':'not available',  'de': '', 'ru': ''};
 			}
 			
 			var _translate = function (word, lang) {
@@ -235,9 +235,64 @@
 					if (word == 'Sun')
 						return 'Sonntag';
 				}
-				return word;
-			};
-			
+                if (lang == 'ru') {
+                    // If date
+                    if (word.length > 1 && word[0] >= '0' && word[0] <= '9') {
+                        word = word.replace ('Jan', 'Январь');
+                        word = word.replace ('Feb', 'Февраль');
+                        word = word.replace ('Mar', 'Март');
+                        word = word.replace ('Apr', 'Апрель');
+                        word = word.replace ('Mai', 'Май');
+                        word = word.replace ('Jun', 'Июнь');
+                        word = word.replace ('Jul', 'Июль');
+                        word = word.replace ('Aug', 'Август');
+                        word = word.replace ('Sep', 'Сентябрь');
+                        word = word.replace ('Oct', 'Октябрь');
+                        word = word.replace ('Nov', 'Ноябрь');
+                        word = word.replace ('Dec', 'Декабрь');
+                        return word;
+                    }
+
+                    if (word == 'High')
+                        return 'Макс.';
+                    if (word == 'Temperature')
+                        return 'Температура';
+                    if (word == 'Low')
+                        return 'Мин.';
+                    if (word == 'Wind')
+                        return 'Ветер';
+                    if (word == 'Humidity')
+                        return 'Влажность';
+                    if (word == 'Visibility')
+                        return 'Видимость';
+                    if (word == 'Sunrise')
+                        return 'Восход';
+                    if (word == 'Sunset')
+                        return 'Закат';
+                    if (word == 'City not found')
+                        return 'Город не найден';
+                    if (word == 'Full forecast')
+                        return 'Полный прогноз';
+                    if (word == 'Read full forecast')
+                        return 'См. полный прогноз';
+                    if (word == 'Mon')
+                        return 'Понедельник';
+                    if (word == 'Tue')
+                        return 'Вторник';
+                    if (word == 'Wed')
+                        return 'Среда';
+                    if (word == 'Thu')
+                        return 'Четверг';
+                    if (word == 'Fri')
+                        return 'Пятница';
+                    if (word == 'Sat')
+                        return 'Суббота';
+                    if (word == 'Sun')
+                        return 'Воскресение';
+                }
+                return word;
+            };
+
 			// Function to each feed item
 			var _process = function(e, options) {
 				var $e = $(e);

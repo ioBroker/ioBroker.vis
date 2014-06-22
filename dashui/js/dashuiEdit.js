@@ -1578,7 +1578,7 @@ dui = $.extend(true, dui, {
         $("#snap_type option").removeAttr("selected");
         $("#snap_type option[value='"+snapType+"']").attr("selected", true);
 
-        $("#select_active_widget").html("<option value='none'>none selected</option>");
+        $("#select_active_widget").html('<option value="none">' + dui.translate('none selected') + '</option>');
         for (var widget in dui.views[dui.activeView].widgets) {
             var obj = $("#" + dui.views[dui.activeView].widgets[widget].tpl);
             $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-dashui-set") + " " + obj.attr("data-dashui-name") + ")</option>");

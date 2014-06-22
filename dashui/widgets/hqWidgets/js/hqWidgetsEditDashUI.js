@@ -4,10 +4,10 @@ dui.translate("");
 jQuery.extend(true, dui.words, {
     "hm_id"            : {"en": "Object ID",     "de": "Objekt ID",            "ru": "ID объекта"},
 	"hm_ids"           : {"en": "Object IDs",    "de": "Objekt IDs",           "ru": "ID объектов"},
-	"hm_id0"           : {"en": "Swing ID 1",    "de": "Fensterblatt 1",       "ru": "Первая створка"},
+	/*"hm_id0"           : {"en": "Swing ID 1",    "de": "Fensterblatt 1",       "ru": "Первая створка"},
 	"hm_id1"           : {"en": "Swing ID 2",    "de": "Fensterblatt 2",       "ru": "Вторая створка"},
 	"hm_id2"           : {"en": "Swing ID 3",    "de": "Fensterblatt 3",       "ru": "Третья створка"},
-	"hm_id3"           : {"en": "Swing ID 4",    "de": "Fensterblatt 4",       "ru": "Четвертая створка"},
+	"hm_id3"           : {"en": "Swing ID 4",    "de": "Fensterblatt 4",       "ru": "Четвертая створка"},*/
 	"hm_id_hnd0"       : {"en": "Handle ID 1",   "de": "Griffkontakt 1",       "ru": "Первая ручка"},
 	"hm_id_hnd1"       : {"en": "Handle ID 2",   "de": "Griffkontakt 2",       "ru": "Вторая ручка"},
 	"hm_id_hnd2"       : {"en": "Handle ID 3",   "de": "Griffkontakt 3",       "ru": "Третья ручка"},
@@ -70,6 +70,12 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
         hqEditVersion: "0.1.11",
         hqEditTimerDetectMoving: null,
         hqEditSaveTimer : null,
+        hqEditWords: {
+             "hm_id0"           : {"en": "Swing ID 1",    "de": "Fensterblatt 1",       "ru": "Первая створка"},
+             "hm_id1"           : {"en": "Swing ID 2",    "de": "Fensterblatt 2",       "ru": "Вторая створка"},
+             "hm_id2"           : {"en": "Swing ID 3",    "de": "Fensterblatt 3",       "ru": "Третья створка"},
+             "hm_id3"           : {"en": "Swing ID 4",    "de": "Fensterblatt 4",       "ru": "Четвертая створка"}
+        },
         hqEditInit: function () {
             if (hqWidgets.version != dui.binds.hqWidgetsExt.version || dui.binds.hqWidgetsExt.version != dui.binds.hqWidgetsExt.hqEditVersion)
                 window.alert ("The versions of hqWidgets.html and hqWidgetsEdit.html are different. Expected version of hqWidgets.html is " +dui.binds.hqWidgetsExt.hqEditVersion);
@@ -773,7 +779,9 @@ if ((typeof hqWidgets !== 'undefined') && dui.binds.hqWidgetsExt !== undefined) 
                 var a = wnd.split(',');
                 for (var i = 0; i < a.length; i++) {
                     var attr = 'hm_id'+i;
-                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>'+dui.translate(attr)+':</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
+                    parent.append('<tr id="option_'+attr+'" class="dashui-add-option"><td>' +
+                        (dui.binds.hqWidgetsExt.hqEditWords[attr] ? (dui.binds.hqWidgetsExt.hqEditWords[attr][dui.language] || dui.binds.hqWidgetsExt.hqEditWords[attr]['en']) : attr) +
+                        ':</td><td><input type="text" id="inspect_'+attr+'" size="5" value="'+((opt[attr] != undefined) ? opt[attr] : "")+'"><input type="button" id="inspect_'+attr+'_btn" value="..."  style="width:30px"><div id="inspect_'+attr+'_desc"></div></td></tr>');
                     document.getElementById ("inspect_"+attr+"_btn").jControl = attr;
                     document.getElementById ("inspect_"+attr).jControl        = attr;
                     document.getElementById ("inspect_"+attr+"_btn").devFilter = (devFilters.length > 1) ? devFilters[1] : devFilters[0];

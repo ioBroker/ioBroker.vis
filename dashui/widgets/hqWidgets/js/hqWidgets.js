@@ -934,7 +934,9 @@ var hqWidgets = {
                             this.parentQuery.intern._timerID = _setTimeout(function () {
                                 if (hqWidgets.gDynamics.gShownBig) {
                                     hqWidgets.gDynamics.gShownBig.ShowBigWindow(false);
-                                    hqWidgets.gDynamics.gShownBig.intern._timerID = null;
+                                    if (hqWidgets.gDynamics.gShownBig) {
+                                        hqWidgets.gDynamics.gShownBig.intern._timerID = null;
+                                    }
                                 }
                                 hqWidgets.gDynamics.gShownBig=null;
                             }, this.parentQuery.settings.popUpDelay);

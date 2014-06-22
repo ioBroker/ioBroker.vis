@@ -389,11 +389,11 @@ jQuery.extend(true, dui.words, {
             var w,h,text="";
             if (isHorizontal) {
                 w = div.barsOptions.bWidth * div.barsOptions.buttons.length + div.barsOptions.bSpace * (div.barsOptions.buttons.length - 1);
-                h = div.barsOptions.bHeight;
+                h = div.barsOptions.bHeight + 4;
             }
             else  {
                 h = div.barsOptions.bHeight * div.barsOptions.buttons.length + div.barsOptions.bSpace * (div.barsOptions.buttons.length - 1) + 15;
-                w = div.barsOptions.bWidth;
+                w = div.barsOptions.bWidth + 4;
             }
 				
 			text += '<table style="width:' + w + 'px; height:' + h + 'px" class="dashui-no-spaces">';
@@ -401,7 +401,7 @@ jQuery.extend(true, dui.words, {
 				text += "<tr class='dashui-no-spaces' style='height:" + div.barsOptions.bHeight + "px'>";
 				for (var d = 0; d < div.barsOptions.buttons.length; d++) {
 					text += "<td class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, d, div.barsOptions) + "</td>";
-                                       if (d != div.barsOptions.buttons.length - 1)
+                                       if (div.barsOptions.bSpace && d != div.barsOptions.buttons.length - 1)
                                            text += "<td class='dashui-no-spaces' style='width:"+div.barsOptions.bSpace+"px'></td>";
 				}
 				text += "</tr>";
@@ -409,7 +409,7 @@ jQuery.extend(true, dui.words, {
 			else { // vertical
 				for (var i = 0; i < div.barsOptions.buttons.length; i++) {
 					text += "<tr class='dashui-no-spaces'  style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'><td class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, i, div.barsOptions) + "</td></tr>";
-                    if (i != div.barsOptions.buttons.length - 1)
+                    if (div.barsOptions.bSpace && i != div.barsOptions.buttons.length - 1)
                         text += "<tr class='dashui-no-spaces'><td class='dashui-no-spaces' style='height:"+div.barsOptions.bSpace+"px'></td></tr>";
 				}
 			}

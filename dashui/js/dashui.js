@@ -666,7 +666,7 @@ var dui = {
         if (dui.inspectWidget) {
             dui.inspectWidget("none");
             dui.clearWidgetHelper();
-            $("#select_active_widget").html("<option value='none' class='translate'>none selected</option>");
+            $("#select_active_widget").html('<option value="none">' + dui.translate('none selected') + '</option>');
         }
 
         if (!dui.views[view]) {
