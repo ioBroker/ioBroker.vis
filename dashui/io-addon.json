@@ -16,6 +16,7 @@
         "(Bluefox) translate some widgets to english and russian",
         "(Bluefox) fix wizard if function selected",
         "(Bluefox) add comma option to basic - num val (Used by default)",
-        "(Bluefox) fix RGraph/Live chart if color of the line changed"
+        "(Bluefox) fix RGraph/Live chart if color of the line changed",
+        "(Hobbyquaker) Metro Widgets v0.3"
 	]
 }

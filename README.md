@@ -12,6 +12,14 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta116 [2014-06-22]
+* (Bluefox) Fix bars: make buttons full visible if no background
+* (Bluefox) translate some widgets to english and russian
+* (Bluefox) fix wizard if function selected
+* (Bluefox) add comma option to basic - num val (Used by default)
+* (Bluefox) fix RGraph/Live chart if color of the line changed
+* (Hobbyquaker) Metro Widgets v0.3
+
 ### 0.9beta115 [2014-06-08]
 * (Hobbyquaker) more Metro widgets
 * (Bluefox) Fix hqWidgets: check negative position of popUp window
