@@ -285,8 +285,23 @@
                     $this.prop("checked", true);
                 }
             });
-            var val = localData.uiState.attr(hm_id+".Value")
-            if (val !== false && val !== 'false' && (val != parseFloat(val) || parseFloat(val) > 0)) {
+            var val = localData.uiState.attr(hm_id+".Value");
+
+            if (val === 'false') {
+                val = false;
+            } else if (val === 'true') {
+                val = true;
+            } else if (typeof val == "string") {
+                var f = parseFloat(val);
+                if (f == val) {
+                    val = f;
+                } else if (val !== '') {
+                    val = true;
+                } else {
+                    val = false;
+                }
+            }
+            if (val > 0) {
                 $this.prop("checked", true);
             }
             if (dui.urlParams["edit"] !== "") {
@@ -302,15 +317,64 @@
         select: function (el) {
             var $this = jQuery(el).prev();
             var id = $this.attr("data-hm-id");
-            $this.change(function () {
-                console.log("uiState " + localData.uiState.attr("_"+$this.attr("data-hm-id")));
-                console.log("setState " + $this.find("option:selected").val());
-                localData.setValue( $this.attr("data-hm-id"),  $this.find("option:selected").val());
-            });
+            var val = localData.uiState["_"+id].Value;
+            if (val === 'false') {
+                val = false;
+            } else if (val === 'true') {
+                val = true;
+            } else if (typeof val == "string") {
+                var f = parseFloat(val);
+                if (f == val) {
+                    val = f;
+                } else if (val !== '') {
+                    val = true;
+                } else {
+                    val = false;
+                }
+            }
+            $this.val(val ? 1 : 0);
+            if (dui.urlParams["edit"] !== "") {
+                $this.change(function () {
+                    //console.log("uiState " + localData.uiState.attr("_" + $this.attr("data-hm-id")));
+                    //console.log("setState " + $this.find("option:selected").val());
+                    localData.setValue($this.attr("data-hm-id"), $this.find("option:selected").val());
+                });
+            }
             var hm_id = "_" + id;
-            localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
-                console.log("newVal="+newVal+" oldVal="+oldVal);
-                if (newVal == "false" || parseFloat(newVal) == 0) {
+            localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+                if (newVal === 'false') {
+                    newVal = false;
+                } else if (newVal === 'true') {
+                    newVal = true;
+                } else if (typeof newVal == "string") {
+                    var f = parseFloat(newVal);
+                    if (f == newVal) {
+                        newVal = f;
+                    } else if (newVal !== '') {
+                        newVal = true;
+                    } else {
+                        newVal = false;
+                    }
+                }
+                if (oldVal === 'false') {
+                    oldVal = false;
+                } else if (oldVal === 'true') {
+                    oldVal = true;
+                } else if (typeof oldVal == "string") {
+                    var f = parseFloat(oldVal);
+                    if (f == oldVal) {
+                        oldVal = f;
+                    } else if (oldVal !== '') {
+                        oldVal = true;
+                    } else {
+                        oldVal = false;
+                    }
+                }                
+                
+                if (newVal == oldVal) return;
+
+                //console.log("newVal=" + newVal + " oldVal=" + oldVal);
+                if (newVal === "false" || newVal === false || parseFloat(newVal) == 0) {
                     if ($this.find("option[value='1']").prop("selected")) {
                         //console.log("false");
                         $this.find("option[value='1']").removeAttr("selected");
@@ -382,7 +446,6 @@
         },
         showSvg: function (myClass, view, wid, hm_id, opacity, svg_false, svg_true, style) {
             var obj = {myClass:myClass, view:view, wid:wid, hm_id:hm_id, opacity:opacity, svg_false:svg_false, svg_true:svg_true};
-            console.log("test");
             if (document.getElementById (wid)) {
                 $('#'+wid).remove ();
             }
@@ -429,8 +492,12 @@
                         localData.setValue(id, false);
                     } else {
                         val = parseFloat(val);
-                        if (val >= 0.5) { val = 1; } else { val = 0; }
-                        localData.setValue(id, 1-val);
+                        if (val >= 0.5) {
+                            val = 1;
+                        } else {
+                            val = 0;
+                        }
+                        localData.setValue(id, 1 - val);
                     }
                     var el = $('#'+obj.wid);
                     this._obj.style = {
@@ -476,7 +543,6 @@
             jQuery('body').append("<div id='dlg_"+wid+"' title='Edit note'>"+
                               "<textarea style='width:95%;height:92%' id='text_"+wid+"'>"+$this.text()+"</textarea></div>");
 
-            console.log("Test");
             var buttons = {};
             buttons["Clear"] = function () {
                 jQuery('#text_'+$(this).attr("data-id")).val("");
@@ -485,7 +551,7 @@
             buttons["Ok"] = function () {
                 var dlg = $(this);
                 var text = $('#text_'+dlg.attr("data-id")).val();
-                console.log(text + " " + dlg.attr("data-id"));
+                //console.log(text + " " + dlg.attr("data-id"));
                 text = text.replace ("\n", "<br>\n");
 
                 jQuery('#div_'+dlg.attr("data-id")).html (text);

@@ -24,6 +24,61 @@
                     $this.removeClass("ui-state-default").addClass("ui-state-active");
                 }
             },
+            months: {
+                "en": ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                "de": ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+                "ru": ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+            },
+            shortMonths: {
+                "en": ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                "de": ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+                "ru": ['Янв', 'Фев', 'Март', 'Апр', 'Май', 'Июня', 'Июля', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
+            },
+            weekDays: {
+                "en": ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                "de": ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+                "ru": ['Воскресение', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
+            },
+            shortWeekDays: {
+                "en": ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                "de": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+                "ru": ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
+            },
+            currentText: {
+                "en": 'Now',
+                "de": 'Jetzt',
+                "ru": 'Сейчас'
+            },
+            closeText: {
+                "en": 'Close',
+                "de": 'Schließen',
+                "ru": 'Закрыть'
+            },
+            timeText: {
+                "en": 'Time',
+                "de": 'Zeit',
+                "ru": 'Время'
+            },
+            hourText: {
+                "en": 'Hour',
+                "de": 'Std',
+                "ru": 'Час'
+            },
+            minuteText: {
+                "en": 'Min',
+                "de": 'Min',
+                "ru": 'Мин'
+            },
+            secondText: {
+                "en": 'Sec',
+                "de": 'Sek',
+                "ru": 'Сек'
+            },
+            timeOnlyTitle: {
+                "en": 'Choose Time',
+                "de": 'Zeit auswählen',
+                "ru": 'Установите время'
+            },
             active: function (el, reverse, _value) {
                 var $this = jQuery(el);
                 var id = "_" + $this.attr("data-hm-id");
@@ -199,14 +254,14 @@
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
                 var datepickerOptions = jQuery.extend(true, {
-                    dateFormat:'yy-mm-dd',
-                    monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" ],
-                    monthNames: [ "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" ],
-                    dayNamesMin: [ "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" ],
-                    showAnim: "fadeIn",
+                    dateFormat:      'yy-mm-dd',
+                    monthNamesShort: dui.binds.jqueryui.shortMonths[dui.language],
+                    monthNames:      dui.binds.jqueryui.months[dui.language],
+                    dayNamesMin:     dui.binds.jqueryui.shortWeekDays[dui.language],
+                    showAnim:        "fadeIn",
                     firstDay: 1,
-                    currentText: "Heute",
-                    closeText: "Schließen"
+                    currentText:     dui.binds.jqueryui.currentText[dui.language],
+                    closeText:       dui.binds.jqueryui.closeText[dui.language]
 
                 }, options);
 
@@ -217,8 +272,10 @@
                         'text-align' : 'left',
                         'outline' : 'none',
                         'cursor' : 'text'
-                    })
-                    .datepicker(datepickerOptions);
+                    });
+                if (dui.urlParams["edit"] !== "") {
+                    $this.datepicker(datepickerOptions);
+                }
 
                 $this.change(function () {
                     localData.setValue(id,  jQuery(this).val());
@@ -234,17 +291,18 @@
                 var id = $this.attr("data-hm-id");
                 var timepickerOptions = jQuery.extend(true, {
                     dateFormat:'yy-mm-dd',
-                    monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" ],
-                    monthNames: [ "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" ],
-                    dayNamesMin: [ "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" ],
-                    showAnim: "fadeIn",
-                    firstDay: 1,
-                    timeText: "Zeit ",
-                    hourText: "h",
-                    minuteText: "m",
-                    secondText: "s",
-                    currentText: "Jetzt",
-                    closeText: "Schließen",
+                    monthNamesShort: dui.binds.jqueryui.shortMonths[dui.language],
+                    monthNames:      dui.binds.jqueryui.months[dui.language],
+                    dayNamesMin:     dui.binds.jqueryui.shortWeekDays[dui.language],
+                    showAnim:        "fadeIn",
+                    firstDay:        1,
+                    timeText:        dui.binds.jqueryui.timeText[dui.language],
+                    hourText:        dui.binds.jqueryui.hourText[dui.language],
+                    minuteText:      dui.binds.jqueryui.minuteText[dui.language],
+                    secondText:      dui.binds.jqueryui.secondText[dui.language],
+                    currentText:     dui.binds.jqueryui.currentText[dui.language],
+                    closeText:       dui.binds.jqueryui.closeText[dui.language],
+                    timeOnlyTitle:   dui.binds.jqueryui.timeOnlyTitle[dui.language],
                     minuteGrid: undefined,
                     hourGrid: undefined,
                     secondGrid: undefined,
@@ -260,7 +318,10 @@
                             'text-align' : 'left',
                             'outline' : 'none',
                             'cursor' : 'text'
-                        }).datetimepicker(timepickerOptions).button();
+                        });
+                if (dui.urlParams["edit"] !== "") {
+                    $this.datetimepicker(timepickerOptions).button();
+                }
                 $this.change(function () {
                    localData.setValue(id,  jQuery(this).val());
                 });
@@ -511,7 +572,22 @@
                 var $this = jQuery(el).parent();
                 var id = "_" + $this.parent().attr("data-hm-id") + ".Value";
                 var val = localData.uiState.attr(id);
-                if (val === true || val === "true" || parseFloat(val) > 0) {
+
+                if (val === 'false') {
+                    val = false;
+                } else if (val === 'true') {
+                    val = true;
+                } else if (typeof val == "string") {
+                    var f = parseFloat(val);
+                    if (f == val) {
+                        val = f;
+                    } else if (val !== '') {
+                        val = true;
+                    } else {
+                        val = false;
+                    }
+                }
+                if (val > 0) {
                     $this.find(".imgToggleFalse").hide();
                     $this.find(".imgToggleTrue").show();
                 }
@@ -639,7 +715,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src;alt;text;contains_view;title;modal/checkbox;width;height;invert_icon/checkbox">
+<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src/image;alt;text;contains_view;title;modal/checkbox;width;height;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -676,7 +752,7 @@
 
 
 
-<script type="text/ejs" id="tplJquiButtonNav" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="naviation - Button" data-dashui-attrs="html_prepend;html_append;buttontext;nav_view;hide_effect;hide_duration;show_effect;show_duration">
+<script type="text/ejs" id="tplJquiButtonNav" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="navigation - Button" data-dashui-attrs="html_prepend;html_append;buttontext;nav_view;hide_effect;hide_duration;show_effect;show_duration">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <%== this.data.attr("html_prepend") %>
@@ -686,7 +762,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiIconNav" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="navigation - Icon" data-dashui-attrs="src;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
+<script type="text/ejs" id="tplJquiIconNav" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="navigation - Icon" data-dashui-attrs="src/image;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
     <div data-dashui-nav="<%= this.data.attr('nav_view') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.jqueryui.classes(el); dui.binds.jqueryui.navigationActive(el, data.attr('nav_view')); dui.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %>>
         <div class="dashui-widget-body">
             <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
@@ -695,10 +771,10 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiInput" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input" data-dashui-attrs="label;hm_id;digits;size">
+<script type="text/ejs" id="tplJquiInput" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input" data-dashui-attrs="label[Input];hm_id;digits[0]/slider,0,10,1;size[10]/slider,10,100,1">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:275px;height:44px;" id="<%= this.data.attr("wid") %>">
         <div class="dashui-widget-body">
-            <label for="<%= this.data.attr('wid') %>_input"><%= this.data.attr('label') %></label><input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.input(el, data.digits); %> />
+            <label for="<%= this.data.attr('wid') %>_input"><%= ((this.data.attr('label') === undefined || this.data.attr('label') === null) ? '' : this.data.attr('label')) %></label><input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.input(el, data.digits); %> />
         </div>
     </div>
 </script>
@@ -729,7 +805,7 @@
 <script>
 
 </script>
-<script type="text/ejs" id="tplJquiToogle" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Toggle" data-dashui-attrs="label;hm_id;src_true;alt_true;src_false;alt_false;invert_icon/checkbox">
+<script type="text/ejs" id="tplJquiToogle" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Toggle" data-dashui-attrs="label;hm_id;src_true/image;alt_true;src_false/image;alt_false;invert_icon/checkbox">
 
     <div class="ui-widget ui-corner-all ui-state-default dashui-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.toggle(el); dui.binds.jqueryui.classes(el) %>>
         <div class="dashui-widget-body">
@@ -746,7 +822,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiInputDate" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input Date" data-dashui-attrs="hm_id;size">
+<script type="text/ejs" id="tplJquiInputDate" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input Date" data-dashui-attrs="hm_id;size[10]/slider,1,50,1">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
         <div class="editmode-helper"></div>
         <div class="dashui-widget-body">
@@ -754,7 +830,7 @@
         </div>
     </div>
 </script>
-<script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input Datetime" data-dashui-attrs="hm_id;size;timeOnly/checkbox;hideSeconds/checkbox">
+<script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input Datetime" data-dashui-attrs="hm_id;size/slider,1,50,1;timeOnly/checkbox;hideSeconds/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
         <div class="editmode-helper"></div>
         <div class="dashui-widget-body">
@@ -763,7 +839,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiInputSet" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input + Set-Button" data-dashui-attrs="title;buttontext;hm_id;unit;digits;size">
+<script type="text/ejs" id="tplJquiInputSet" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input + Set-Button" data-dashui-attrs="title;buttontext;hm_id;unit;digits/slider,0,10,1;size/slider,1,50,1">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:300px;height:44px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('title') %></label>
@@ -795,7 +871,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiRadio" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons on/off" data-dashui-attrs="off_text;on_text;hm_id">
+<script type="text/ejs" id="tplJquiRadio" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons on/off" data-dashui-attrs="off_text[OFF];on_text[ON];hm_id">
     <div style="top:0px; left:0px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="dashui-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.radio(el); %> >
@@ -807,8 +883,8 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons ValueList" data-dashui-attrs="hm_id;values;texts">
-    <div style="top:0px; left:0px; width:250px; height:38px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
+<script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons ValueList" data-dashui-attrs="hm_id;values[0,1,2];texts[OFF,ON,AUTO]">
+    <div style="top:0px; left:0px; width:250px; height:41px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="dashui-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function () {dui.binds.jqueryui.radio(el)},100) %> >
             <%
@@ -831,7 +907,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="editmode-helper"></div>
         <div class="dashui-widget-body" >
-            <select id="<%= this.data.attr('wid') %>_multiselect" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function () {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300),height: (data.height ? data.height : 220)})},250) %> >
+            <select id="<%= this.data.attr('wid') %>_multiselect" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> (dui.urlParams["edit"] !== "") {setTimeout(function () {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300),height: (data.height ? data.height : 220)})},250)} %> >
             <%
             var values = (data.attr('values') ? data.attr('values').split(';') : []);
             var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
@@ -883,7 +959,7 @@
 
 
 
-<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon State" data-dashui-attrs="hm_id;value;text;src;alt;invert_icon/checkbox">
+<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon State" data-dashui-attrs="hm_id;value;text;src/image;alt;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -897,7 +973,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplIconStateBool" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon State / val - Icon Bool" data-dashui-attrs="click_id;click_value;hm_id;false_text;true_text;false_src;true_src;false_alt;true_alt;invert_icon/checkbox">
+<script type="text/ejs" id="tplIconStateBool" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon State / val - Icon Bool" data-dashui-attrs="click_id;click_value;hm_id;false_text;true_text;false_src/image;true_src/image;false_alt;true_alt;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -913,7 +989,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplIconInc" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Increment" data-dashui-attrs="hm_id;step;minmax;text;src;alt;repeat_delay[800];repeat_interval[800];invert_icon/checkbox">
+<script type="text/ejs" id="tplIconInc" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Increment" data-dashui-attrs="hm_id;step;minmax;text;src/image;alt;repeat_delay[800];repeat_interval[800];invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -927,7 +1003,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplIconProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon ProgramExecute" data-dashui-attrs="hm_id;text;src;alt;invert_icon/checkbox">
+<script type="text/ejs" id="tplIconProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon ProgramExecute" data-dashui-attrs="hm_id;text;src/image;alt;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
