@@ -286,7 +286,7 @@
                 }
             });
             var val = localData.uiState.attr(hm_id+".Value")
-            if (val !== false && val !== 'false' && parseFloat(val) > 0) {
+            if (val !== false && val !== 'false' && (val != parseFloat(val) || parseFloat(val) > 0)) {
                 $this.prop("checked", true);
             }
             if (dui.urlParams["edit"] !== "") {
