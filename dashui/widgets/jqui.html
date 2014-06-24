@@ -290,7 +290,7 @@
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
                 var timepickerOptions = jQuery.extend(true, {
-                    dateFormat:'yy-mm-dd',
+                    dateFormat:      'yy-mm-dd',
                     monthNamesShort: dui.binds.jqueryui.shortMonths[dui.language],
                     monthNames:      dui.binds.jqueryui.months[dui.language],
                     dayNamesMin:     dui.binds.jqueryui.shortWeekDays[dui.language],
@@ -303,27 +303,41 @@
                     currentText:     dui.binds.jqueryui.currentText[dui.language],
                     closeText:       dui.binds.jqueryui.closeText[dui.language],
                     timeOnlyTitle:   dui.binds.jqueryui.timeOnlyTitle[dui.language],
-                    minuteGrid: undefined,
-                    hourGrid: undefined,
-                    secondGrid: undefined,
-                    timeOnly: false,
-                    showSecond: true,
-                    timeFormat: 'HH:mm:ss',
+                    minuteGrid:      undefined,
+                    hourGrid:        undefined,
+                    secondGrid:      undefined,
+                    timeOnly:        false,
+                    showSecond:      true,
+                    timeFormat:      'HH:mm:ss',
                     pickerTimeFormat: 'HH:mm:ss'
                 }, options);
                 $this.addClass("ui-state-default")
-                        .css({
-                            'font' : 'inherit',
-                            //'color' : 'inherit',
-                            'text-align' : 'left',
-                            'outline' : 'none',
-                            'cursor' : 'text'
-                        });
+                .css({
+                    'font':       'inherit',
+                    //'color':    'inherit',
+                    'text-align': 'left',
+                    'outline':    'none',
+                    'cursor':     'text'
+                });
+                // Store options
+                $this[0].__options = options;
+
                 if (dui.urlParams["edit"] !== "") {
                     $this.datetimepicker(timepickerOptions).button();
+                } else {
+                    $this.addClass("ui-widget ui-button ui-corner-all");
                 }
                 $this.change(function () {
-                   localData.setValue(id,  jQuery(this).val());
+                    var $this = jQuery(this);
+                    var val = $this.val();
+                    /*if ($this[0].__options && !$this[0].__options.showSecond) {
+                        var vals = val.split(':');
+                        if (vals.length == 3) {
+                            val = vals[0] + ":" + vals[1];
+                        }
+                    }*/
+                    localData.setValue(id, val);
+                    console.log(val);
                 });
                 var hm_id = "_" + id;
                 localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
@@ -883,7 +897,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons ValueList" data-dashui-attrs="hm_id;values[0,1,2];texts[OFF,ON,AUTO]">
+<script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons ValueList" data-dashui-attrs="hm_id;values[0§1§2];texts[OFF§ON§AUTO]">
     <div style="top:0px; left:0px; width:250px; height:41px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="dashui-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function () {dui.binds.jqueryui.radio(el)},100) %> >

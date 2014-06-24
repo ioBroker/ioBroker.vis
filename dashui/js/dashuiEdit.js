@@ -42,7 +42,6 @@ dui = $.extend(true, dui, {
             });
     },
     delView: function (view) {
-        // TODO Translate
         if (confirm(dui.translate("Really delete view %s?", view))) {
                 delete dui.views[view];
                 dui.saveRemote(function () {
@@ -83,7 +82,7 @@ dui = $.extend(true, dui, {
             width: 800,
             height: 600,
             modal: true,
-            open: function (event, ui) {
+            open: function (/*event, ui*/) {
                 $('[aria-describedby="dialog_export_view"]').css('z-index',1002);
                 $(".ui-widget-overlay").css('z-index', 1001);
             }
@@ -256,12 +255,12 @@ dui = $.extend(true, dui, {
                     if (dui.multiSelectedWidgets.indexOf(widgetId) != -1) {
                         //console.log("splice "+id)
                         dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(widgetId), 1);
-                        $("#"+widgetId).removeClass("ui-selected");
+                        var $widget = $("#" + widgetId);
+                        $widget.removeClass("ui-selected");
 
                         //console.log("-> "+dui.multiSelectedWidgets);
                         dui.allWidgetsHelper();
                         $("#widget_multi_helper_"+widgetId).remove();
-                        var $widget = $("#" + widgetId);
                         if ($widget.hasClass("ui-draggable")) {
                             try {
                                 $widget.draggable("destroy");
@@ -648,7 +647,7 @@ dui = $.extend(true, dui, {
             var btn = document.getElementById("inspect_" + wid_attr + "Btn");
             if (btn) {
                 btn.ctrlAttr = wid_attr;
-                $(btn).bind("click", {msg: this}, function (event) {
+                $(btn).bind("click", {msg: this}, function (/*event*/) {
                     var _settings = {
                         current:     $('#inspect_' + this.ctrlAttr).val(),
                         onselectArg: this.ctrlAttr,
@@ -701,10 +700,10 @@ dui = $.extend(true, dui, {
 
                     response(data);
                 },
-                select: function (event, ui) {
+                select: function (/*event, ui*/) {
                     this._save();
                 },
-                change: function (event, ui) {
+                change: function (/*event, ui*/) {
                     this._save();
                 }
             }).focus(function () {
@@ -818,14 +817,12 @@ dui = $.extend(true, dui, {
                 this._save();
             }).val(dui.translate(widget.data[wid_attr]));
 
-            choice_opt($('#inspect_' + wid_attr.split('_eff_opt')[0] + ('_effect')).val());
+            var $sel = $('#inspect_' + wid_attr.split('_eff_opt')[0] + ('_effect'));
+            choice_opt($sel.val());
 
-            if ($('#inspect_' + wid_attr.split('_eff_opt')[0] + ('_effect'))) {
-
-                $('#inspect_' + wid_attr.split('_eff_opt')[0] + ('_effect')).change(function (event, data) {
-                    choice_opt(data)
-                });
-            }
+            $sel.change(function (event, data) {
+                choice_opt(data)
+            });
         }
 
         function choice_opt(_data) {
@@ -874,9 +871,9 @@ dui = $.extend(true, dui, {
         var slider = $("#inspect_"+wid_attr+"_slider");
         slider.slider({
             value: widget.data[wid_attr],
-            min: min,
-            max: max,
-            step: step,
+            min:   min,
+            max:   max,
+            step:  step,
             slide: function (event, ui) {
                 /*if (this.timer)
                     clearTimeout (this.timer);
@@ -983,8 +980,8 @@ dui = $.extend(true, dui, {
         }
 
         // Clear Inspector
-        $("#widget_attrs").html("");
-        $("#widget_attrs").html('<tr><th class="widget_attrs_header"></th><th></th></tr>');
+        $("#widget_attrs").html("")
+            .html('<tr><th class="widget_attrs_header"></th><th></th></tr>');
         $(".dashui-inspect-css").each(function () {
             $(this).val("");
         });
@@ -1054,7 +1051,8 @@ dui = $.extend(true, dui, {
                 var defaultValue = null;
                 if (uu != -1) {
                     var defaultValue = wid_attr.substring(uu + 1);
-                    defaultValue = defaultValue.substring(0, defaultValue.length -1);
+                    defaultValue = defaultValue.substring(0, defaultValue.length - 1);
+                    defaultValue = defaultValue.replace(/§/g, ';');
                     wid_attr = wid_attr.substring(0, uu);
                 }
                 var type = (wid_attrs.length > 1) ? wid_attrs[1] : null;
@@ -1066,7 +1064,7 @@ dui = $.extend(true, dui, {
                     }
                 }
                 // Try to extract repeat value
-                var uu = wid_attr.indexOf("(");
+                uu = wid_attr.indexOf("(");
                 var instancesStart = null;
                 var instancesStop  = null;
                 if (uu != -1) {
@@ -1127,7 +1125,7 @@ dui = $.extend(true, dui, {
                         $('#inspect_class_tr').hide();
                         $('#option_'+wid_attr_).jweatherCity({
                             lang: dui.language, currentValue: widget.data[wid_attr_],
-                            onselect: function (wid, text, obj) {
+                            onselect: function (wid, text/*, obj*/) {
                                 dui.widgets[dui.activeWidget].data.attr('weoid', text);
                                 dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
                                 dui.save();
@@ -1966,8 +1964,6 @@ dui = $.extend(true, dui, {
                 }
             }
 
-            // TODO saveRemote really necessary here?
-            // Bluefox: Yes.
             dui.save();
             dui.reRenderWidgetEdit(dui.activeWidget);
         }).keyup(function () {
