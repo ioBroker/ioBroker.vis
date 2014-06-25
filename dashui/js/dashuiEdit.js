@@ -2139,6 +2139,20 @@ dui = $.extend(true, dui, {
                 dui.save();
             }
         });
+        // Bug in firefox or firefox is too slow or too fast
+        setTimeout(function() {
+            if (document.getElementById('select_active_widget')._isOpen === undefined) {
+                $("#select_active_widget").html('<option value="none">' + dui.translate('none selected') + '</option>');
+                if (dui.activeView && dui.views && dui.views[dui.activeView] && dui.views[dui.activeView].widgets) {
+                    for (var widget in dui.views[dui.activeView].widgets) {
+                        var obj = $("#" + dui.views[dui.activeView].widgets[widget].tpl);
+                        $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-dashui-set") + " " + obj.attr("data-dashui-name") + ")</option>");
+                    }
+                }
+                $("#select_active_widget").multiselect("refresh");
+                console.log("AAA "+ $("#select_active_widget").length);
+            }
+        }, 10000);
 
         // Instances
         if (typeof storage !== 'undefined') {
