@@ -1528,7 +1528,7 @@ dui = $.extend(true, dui, {
         }
 
         // Init background selector
-        if (dui.styleSelect) {
+        if (dui.styleSelect && dui.views[view] && dui.views[view].settings) {
             dui.styleSelect.Show({ width: 152,
                 name:       "inspect_view_bkg_def",
                 filterName: 'background',
@@ -1548,38 +1548,42 @@ dui = $.extend(true, dui, {
 
         $("#inspect_view").html(view);
 
-        // Try to find this resolution in the list
-        var res = dui.views[dui.activeView].settings.sizex + 'x' + dui.views[dui.activeView].settings.sizey;
-        $('#screen_size option').each(function () {
-            if ($(this).val() == res) {
-                $(this).attr('selected', true);
-                res = null;
+        if (dui.views[view] && dui.views[view].settings) {
+            // Try to find this resolution in the list
+            var res = dui.views[dui.activeView].settings.sizex + 'x' + dui.views[dui.activeView].settings.sizey;
+            $('#screen_size option').each(function () {
+                if ($(this).val() == res) {
+                    $(this).attr('selected', true);
+                    res = null;
+                }
+            });
+            if (!res) {
+                $("#screen_size_x").prop('disabled', true);
+                $("#screen_size_y").prop('disabled', true);
             }
-        });
-        if (!res) {
-            $("#screen_size_x").prop('disabled', true);
-            $("#screen_size_y").prop('disabled', true);
+
+            $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
+            $("#screen_size_y").val(dui.views[dui.activeView].settings.sizey || "").trigger("change");
+
+            $("#screen_hide_description").prop('checked', dui.views[dui.activeView].settings.hideDescription).trigger("change");
+            if (typeof hqWidgets != 'undefined') {
+                hqWidgets.SetHideDescription(dui.views[dui.activeView].settings.hideDescription);
+            }
+
+            $("#grid_size").val(dui.views[dui.activeView].settings.gridSize || "").trigger("change");
+
+            var snapType = dui.views[dui.activeView].settings.snapType || 0;
+
+            $("#snap_type option").removeAttr("selected");
+            $("#snap_type option[value='"+snapType+"']").attr("selected", true);
         }
-
-        $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
-        $("#screen_size_y").val(dui.views[dui.activeView].settings.sizey || "").trigger("change");
-
-        $("#screen_hide_description").prop('checked', dui.views[dui.activeView].settings.hideDescription).trigger("change");
-        if (typeof hqWidgets != 'undefined') {
-            hqWidgets.SetHideDescription(dui.views[dui.activeView].settings.hideDescription);
-        }
-
-        $("#grid_size").val(dui.views[dui.activeView].settings.gridSize || "").trigger("change");
-
-        var snapType = dui.views[dui.activeView].settings.snapType || 0;
-
-        $("#snap_type option").removeAttr("selected");
-        $("#snap_type option[value='"+snapType+"']").attr("selected", true);
 
         $("#select_active_widget").html('<option value="none">' + dui.translate('none selected') + '</option>');
-        for (var widget in dui.views[dui.activeView].widgets) {
-            var obj = $("#" + dui.views[dui.activeView].widgets[widget].tpl);
-            $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-dashui-set") + " " + obj.attr("data-dashui-name") + ")</option>");
+        if (dui.views[dui.activeView].widgets) {
+            for (var widget in dui.views[dui.activeView].widgets) {
+                var obj = $("#" + dui.views[dui.activeView].widgets[widget].tpl);
+                $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-dashui-set") + " " + obj.attr("data-dashui-name") + ")</option>");
+            }
         }
 
         $("#select_active_widget").multiselect("refresh");
@@ -1601,15 +1605,18 @@ dui = $.extend(true, dui, {
             $this.val(css);
         });
 
-        $(".dashui-inspect-view").each(function () {
-            var $this = $(this);
-            var attr = $this.attr("id").slice(13);
-            $("#" + $this.attr("id")).val(dui.views[dui.activeView].settings[attr]);
-        });
-        if (!dui.views[dui.activeView].settings["theme"]) {
-            dui.views[dui.activeView].settings["theme"] = "dhive";
+        if (dui.views[view] && dui.views[view].settings){
+            $(".dashui-inspect-view").each(function () {
+                var $this = $(this);
+                var attr = $this.attr("id").slice(13);
+                $("#" + $this.attr("id")).val(dui.views[dui.activeView].settings[attr]);
+            });
+
+            if(!dui.views[dui.activeView].settings["theme"]) {
+                dui.views[dui.activeView].settings["theme"] = "dhive";
+            }
+            $("#inspect_view_theme option[value='" + dui.views[dui.activeView].settings.theme + "']").prop("selected", true);
         }
-        $("#inspect_view_theme option[value='" + dui.views[dui.activeView].settings.theme + "']").prop("selected", true);
         $("#inspect_view_theme").multiselect("refresh");
     },
     dragging: false,

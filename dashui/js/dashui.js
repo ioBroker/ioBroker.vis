@@ -163,7 +163,7 @@ var dui = {
 
         //localData.uiState.attr("_"+ dui.instanceCmd, {Value:''});
         //localData.uiState.attr("_"+ dui.instanceData, {Value:''});
-        localData.uiState.attr("_"+ dui.instanceView, {Value:dui.activeView});
+        localData.uiState.attr("_" + dui.instanceView, {Value:dui.activeView});
 
         localData.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
             var cmd = newVal;
@@ -235,11 +235,12 @@ var dui = {
         $("#instance").show();
 
         //console.log("create instance "+dui.instance);
+        // TODO allow writing of FFFFFFFF
 
         dui.conn.addObject(69800, {
             _findNextId: true,
             _persistent: true,
-            Name: "dashui_"+dui.instance+"_cmd",
+            Name: "dashui_" + dui.instance + "_cmd",
             TypeName: "VARDP"
         }, function (cid) {
             //console.log("create var "+cid);
@@ -247,7 +248,7 @@ var dui = {
             dui.conn.addObject(69801, {
                 _findNextId: true,
                 _persistent: true,
-                Name: "dashui_"+dui.instance+"_view",
+                Name: "dashui_" + dui.instance + "_view",
                 TypeName: "VARDP"
             }, function (vid) {
                 //console.log("create var "+vid);
@@ -255,7 +256,7 @@ var dui = {
                 dui.conn.addObject(69802, {
                     _findNextId: true,
                     _persistent: true,
-                    Name: "dashui_"+dui.instance+"_data",
+                    Name: "dashui_" + dui.instance + "_data",
                     TypeName: "VARDP"
                 }, function (did) {
                     //console.log("create var "+did);
@@ -384,7 +385,11 @@ var dui = {
     },
     initViewObject: function () {
         if (confirm(dui.translate("no views found on server.\nCreate new %s ?", "dashui.views" + dui.viewFileSuffix + ".json"))) {
-            dui.views = {view1: {settings: {style: {}}, widgets: {}}};
+            dui.views = {view1: {settings: {style: {
+                // TODO set initial background
+            }}, widgets: {
+                // TODO Create welcome screen: image, one light switch one window widegt and text
+            }}};
             dui.saveRemote();
             window.location.href = './edit.html' + window.location.search;
         } else {
@@ -408,7 +413,8 @@ var dui = {
     renderView: function (view, noThemeChange, hidden) {
         //console.log("renderView("+view+","+noThemeChange+","+hidden+")");
 
-        if (!dui.views[view]) {
+        if (!dui.views[view] || !dui.views[view].settings) {
+            alert("Cannot render view " + view + ". Invalid settings");
             return false;
         }
 
@@ -733,18 +739,20 @@ var dui = {
                     $("#duiview_" + view).appendTo("#dui_container");
                 }
 
-                if (dui.views[dui.activeView].settings.theme != dui.views[view].settings.theme) {
-                    if ($("link[href$='jquery-ui.min.css']").length ==  0) {
-                        $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
-                    } else {
-                        $("link[href$='jquery-ui.min.css']").attr("href", '../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css');
+                if (dui.views[view] && dui.views[view].settings) {
+                    if (dui.views[dui.activeView] && dui.views[dui.activeView].settings &&
+                        dui.views[dui.activeView].settings.theme != dui.views[view].settings.theme) {
+                        if ($("link[href$='jquery-ui.min.css']").length ==  0) {
+                            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
+                        } else {
+                            $("link[href$='jquery-ui.min.css']").attr("href", '../lib/css/themes/jquery-ui/' + dui.views[view].settings.theme + '/jquery-ui.min.css');
+                        }
+                        $("style[data-href$='jquery-ui.min.css']").remove();
                     }
-                    $("style[data-href$='jquery-ui.min.css']").remove();
+                    dui.additionalThemeCss(dui.views[view].settings.theme);
                 }
-                dui.additionalThemeCss(dui.views[view].settings.theme);
                 $("#duiview_" + view).show();
                 $("#duiview_" + dui.activeView).hide();
-
             }
 
         } else {
