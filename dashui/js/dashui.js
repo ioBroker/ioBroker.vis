@@ -13,12 +13,15 @@
 
 var dui = {
 
-    version:                '0.9beta115',
+    version:                '0.9beta117',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
     storageKeyInstance:     'dashuiInstance',
     instance:               null,
+    instanceId:             undefined,
+    instanceData:           undefined,
+    instanceCmd:            undefined,
     urlParams:              {},
     settings:               {},
     views:                  {},
@@ -31,10 +34,6 @@ var dui = {
     initialized:            false,
     useCache:               true,
     binds:                  {},
-    instanceView:           undefined,
-    instanceData:           undefined,
-    instanceCmd:            undefined,
-    instanceReady:          false,
     onChangeCallbacks:      [],
     viewsActiveFilter:      {},
     toLoadSetsCount:        0, // Count of widget sets that should be loaded
@@ -42,6 +41,7 @@ var dui = {
     authRunning:            false,
     viewFileSuffix:         window.location.search ? "-" + window.location.search.slice(1) : "",
     navChangeCallbacks:     [],
+    editMode:               false,
 
     loadWidgetSet: function (name, callback) {
         var url = "./widgets/" + name + ".html?duiVersion="+dui.version;
@@ -117,7 +117,7 @@ var dui = {
         var arrSets = [];
 
         // Get list of used widget sets. if Edit mode list is null.
-        var widgetSets = (dui.urlParams['edit'] === "") ? null: dui.getUsedWidgetSets();
+        var widgetSets = dui.editMode ? null: dui.getUsedWidgetSets();
 
         // Firts calculate how many sets to load
         for (var i = 0; i < dui.widgetSets.length; i++) {
@@ -130,7 +130,7 @@ var dui = {
 
             arrSets[arrSets.length] = name;
 
-            if (dui.urlParams['edit'] === "" && dui.widgetSets[i].edit) {
+            if (dui.editMode && dui.widgetSets[i].edit) {
                 arrSets[arrSets.length] = dui.widgetSets[i].edit;
             }
         }
@@ -146,33 +146,46 @@ var dui = {
                 callback();
             }
         }
-
     },
     bindInstance: function () {
-
-        if (dui.instanceReady) {
-            //console.log("instance already binded");
-            return;
+        if (typeof storage !== 'undefined') {
+            dui.instance = storage.get(dui.storageKeyInstance);
+            $('#dashui_instance').val(dui.instance);
+        }
+        if (!dui.instance && dui.editMode){
+            dui.generateInstance();
         }
 
-        if (!dui.instanceCmd) {
-            //console.log("can't bind instance :-(");
-            return false;
+        dui.instanceId   = 69800;
+        dui.instanceCmd  = dui.instanceId + 1;
+        dui.instanceData = dui.instanceCmd + 1;
+        if (!localData.metaObjects[dui.instanceId]) {
+            localData.metaObjects[dui.instanceId] = {
+                _persistent: true,
+                Name: "dashui.instanceID",
+                TypeName: "VARDP"
+            };
+            dui.conn.addObject(dui.instanceId, localData.metaObjects[dui.instanceId]);
+            localData.metaObjects[dui.instanceCmd] = {
+                _persistent: true,
+                Name: "dashui.command",
+                TypeName: "VARDP"
+            };
+            dui.conn.addObject(dui.instanceCmd, localData.metaObjects[dui.instanceCmd]);
+            localData.metaObjects[dui.instanceData] = {
+                _persistent: true,
+                Name: "dashui.data",
+                TypeName: "VARDP"
+            };
+            dui.conn.addObject(dui.instanceData, localData.metaObjects[dui.instanceData]);
         }
-        //console.log("bind instance id="+dui.instanceCmd);
-
-        //localData.uiState.attr("_"+ dui.instanceCmd, {Value:''});
-        //localData.uiState.attr("_"+ dui.instanceData, {Value:''});
-        localData.uiState.attr("_" + dui.instanceView, {Value:dui.activeView});
 
         localData.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
-            var cmd = newVal;
-            //console.log("external command cmd=" + cmd);
-
-            if (cmd !== "") {
+            var cmd = newVal.Value;
+             if (cmd !== "" &&
+                 (localData.uiState["_" + dui.instanceId].Value == 'FFFFFFFF' ||
+                  (dui.instance && localData.uiState["_" + dui.instanceId].Value == dui.instance))) {
                 var data = localData.uiState.attr("_" + dui.instanceData + ".Value");
-                //console.log("external command cmd=" + cmd + " data=" + data);
-
                 // external Commands
                 switch (cmd) {
                     case "alert":
@@ -205,100 +218,23 @@ var dui = {
 
                 // remove command
                 localData.setValue(dui.instanceCmd, "");
-
             }
-
         });
-        dui.instanceReady = true;
 
+        $('#dashui_instance').change(function () {
+            dui.instance = $(this).val();
+            if (typeof storage !== 'undefined') {
+                storage.set(dui.storageKeyInstance, dui.instance);
+            }
+        });
     },
-    removeInstance: function () {
-        if (typeof storage !== 'undefined') {
-            storage.set(dui.storageKeyInstance, null);
-        }
-        dui.conn.delObject(dui.instanceCmd);
-        dui.conn.delObject(dui.instanceData);
-        dui.conn.delObject(dui.instanceView);
-        $("#instance").hide();
-        $("#create_instance").show();
-        dui.instanceReady = false;
-    },
-    createInstance: function () {
+    generateInstance: function () {
         dui.instance = (Math.random() * 4294967296).toString(16);
         dui.instance = "0000000" + dui.instance;
         dui.instance = dui.instance.substr(-8);
+        $("#dashui_instance").val(dui.instance);
         if (typeof storage !== 'undefined') {
             storage.set(dui.storageKeyInstance, dui.instance);
-        }
-        $("#dashui_instance").val(dui.instance);
-        $("#create_instance").hide();
-        $("#instance").show();
-
-        //console.log("create instance "+dui.instance);
-        // TODO allow writing of FFFFFFFF
-
-        dui.conn.addObject(69800, {
-            _findNextId: true,
-            _persistent: true,
-            Name: "dashui_" + dui.instance + "_cmd",
-            TypeName: "VARDP"
-        }, function (cid) {
-            //console.log("create var "+cid);
-            dui.instanceCmd = cid;
-            dui.conn.addObject(69801, {
-                _findNextId: true,
-                _persistent: true,
-                Name: "dashui_" + dui.instance + "_view",
-                TypeName: "VARDP"
-            }, function (vid) {
-                //console.log("create var "+vid);
-                dui.instanceView = vid;
-                dui.conn.addObject(69802, {
-                    _findNextId: true,
-                    _persistent: true,
-                    Name: "dashui_" + dui.instance + "_data",
-                    TypeName: "VARDP"
-                }, function (did) {
-                    //console.log("create var "+did);
-                    dui.instanceData = did;
-                    dui.bindInstance();
-                });
-            });
-        });
-    },
-    initInstance: function () {
-        if (typeof storage !== 'undefined') {
-            dui.instance = storage.get(dui.storageKeyInstance);
-        }
-        //console.log("initInstance "+dui.instance);
-        if (dui.instance) {
-
-            $("#dashui_instance").val(dui.instance);
-            $("#create_instance").hide();
-            $("#instance").show();
-
-            var cmdVarName =  "dashui_" + dui.instance + "_cmd";
-            var viewVarName = "dashui_" + dui.instance + "_view";
-            var dataVarName = "dashui_" + dui.instance + "_data";
-            //console.log(cmdVarName);
-            var cmdId = localData.metaIndex.Name[cmdVarName];
-            if (cmdId) {
-
-                dui.instanceCmd = cmdId[0];
-                if (localData.metaIndex.Name[viewVarName]) {
-                    dui.instanceView = localData.metaIndex.Name[viewVarName][0];
-                }
-                if (localData.metaIndex.Name[dataVarName]) {
-                    dui.instanceData = localData.metaIndex.Name[dataVarName][0];
-                }
-
-                dui.bindInstance();
-
-            } else {
-                servConn.logError('instance var not found');
-            }
-        } else {
-            dui.createInstance();
         }
     },
     init: function () {
@@ -368,15 +304,15 @@ var dui = {
 
         $("#active_view").html(dui.activeView);
 
-
         // Navigation
         $(window).bind('hashchange', function (e) {
             dui.changeView(window.location.hash.slice(1));
         });
 
+        dui.bindInstance();
 
         // EDIT mode
-        if (dui.urlParams["edit"] === "") {
+        if (dui.editMode) {
             dui.editInitNext();
         }
         this.initialized = true;
@@ -464,7 +400,7 @@ var dui = {
                 }
             }
 
-            if (dui.urlParams["edit"] === "") {
+            if (dui.editMode) {
                 jQuery(".editmode-helper").show();
                 if (dui.binds.jqueryui) {
                     dui.binds.jqueryui._disable();
@@ -627,7 +563,7 @@ var dui = {
             }else {
                 $("#duiview_" + view).append(can.view(widget.tpl, {data: widgetData, view: view}));
             }
-            if (dui.urlParams["edit"] !== "") {
+            if (!dui.editMode) {
                 if (widget.data.filterkey && widget.data.filterkey != "" && dui.viewsActiveFilter[view].length > 0 &&  dui.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
                     var mWidget = document.getElementById(id);
                     $("#" + id).hide();
@@ -644,7 +580,7 @@ var dui = {
             }
 
             // If edit mode, bind on click event to open this widget in edit dialog
-            if (dui.urlParams["edit"] === "") {
+            if (dui.editMode) {
                 dui.bindWidgetClick(id);
             }
         } catch (e) {
@@ -773,8 +709,10 @@ var dui = {
             $("#duiview_" + cview).show();
         });
 
-        if (dui.instanceView) {
-            localData.setValue(dui.instanceView, dui.activeView);
+        if (!dui.editMode) {
+            localData.setValue(dui.instanceData, dui.activeView);
+            localData.setValue(dui.instanceId, dui.instance);
+            localData.setValue(dui.instanceCmd, "changedView");
         }
 
         if (window.location.hash.slice(1) != view) {
@@ -789,7 +727,7 @@ var dui = {
         }
 
         // --------- Editor -----------------
-        if (dui.urlParams['edit'] === "") {
+        if (dui.editMode) {
             dui.changeViewEdit(view);
         }
 
@@ -1128,8 +1066,8 @@ if ('applicationCache' in window) {
         dui.urlParams[decode(match[1])] = decode(match[2]);
     }
 
-    if (window.location.href.indexOf('edit.html') != -1) {
-        dui.urlParams['edit'] = "";
+    if (window.location.href.indexOf('edit.html') != -1 || dui.urlParams['edit'] === "") {
+        dui.editMode = true;
     }
 })();
 
@@ -1169,9 +1107,8 @@ if ('applicationCache' in window) {
 
         $(".dashui-version").html(dui.version);
 
-        // Autorefresh nur wenn wir nicht im Edit-Modus sind
-        var autoRefresh = dui.urlParams["edit"] !== "";
-        if (!autoRefresh && dui.editInit) {
+        // Init edit dialog
+        if (dui.editMode && dui.editInit) {
             dui.editInit();
         }
 
@@ -1210,7 +1147,7 @@ if ('applicationCache' in window) {
                 //console.log("onConnChange isConnected="+isConnected);
                 if (isConnected) {
                     $("#ccu-io-disconnect").dialog("close");
-                    if (dui.isFirstTime) {
+                     if (dui.isFirstTime) {
                         dui.conn.getVersion(function (version) {
                             if (!version) {
                                 // Possible not authenticated, wait for request from server
@@ -1249,9 +1186,6 @@ if ('applicationCache' in window) {
                                 });
                                 dui.conn.getDataIndex(function (data) {
                                     localData.metaIndex = data;
-                                    if (typeof storage !== 'undefined' && storage.get(dui.storageKeyInstance)) {
-                                        dui.initInstance();
-                                    }
                                 });
                             }
 

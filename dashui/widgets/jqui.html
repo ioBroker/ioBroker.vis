@@ -149,7 +149,7 @@
             },
             dialog: function (el, options, persistent, preload, html) {
                 var dlg = jQuery(el).parent().find("div.dashui-widget-dialog");
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     jQuery(el).parent().find("div.dashui-widget-body").click(function () {
                         var id = jQuery(this).parent().attr("id") + "_dialog";
                         if ((!preload || preload == "false") && jQuery("#"+id).html().replace(/\s/g, '') == "") {
@@ -184,7 +184,7 @@
                 dlg.dialog($.extend({
                     autoOpen: false
                 }, options));
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     jQuery(el).parent().find("div.dashui-widget-body").click(function () {
 
                         dlg.find("div[id$='container']").each(function () {
@@ -273,7 +273,7 @@
                         'outline' : 'none',
                         'cursor' : 'text'
                     });
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     $this.datepicker(datepickerOptions);
                 }
 
@@ -322,7 +322,7 @@
                 // Store options
                 $this[0].__options = options;
 
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     $this.datetimepicker(timepickerOptions).button();
                 } else {
                     $this.addClass("ui-widget ui-button ui-corner-all");
@@ -450,7 +450,7 @@
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
                 $this.button().click(function () {
-                    if (dui.urlParams["edit"] !== "") {
+                    if (!dui.editMode) {
                         dui.conn.execProgramm(id);
                     }
                 });
@@ -458,7 +458,7 @@
             buttonLink: function (el, href) {
                 var $this = jQuery(el);
                 $this.button().click(function () {
-                    if (dui.urlParams["edit"] !== "") {
+                    if (!dui.editMode) {
                         if (href) {
                             window.location.href = href;
                         }
@@ -469,7 +469,7 @@
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
                 $this.button().click(function () {
-                    if (dui.urlParams["edit"] !== "") {
+                    if (!dui.editMode) {
                         if (href) {
                             window.open(href);
                         }
@@ -513,7 +513,7 @@
 
                 // Buttonset -> Observable
                 $this.find("input").click(function () {
-                    if (dui.urlParams["edit"] !== "") {
+                    if (!dui.editMode) {
                         localData.setValue(id,  $(this).val());
                     }
                 });
@@ -921,7 +921,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
         <div class="editmode-helper"></div>
         <div class="dashui-widget-body" >
-            <select id="<%= this.data.attr('wid') %>_multiselect" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> (dui.urlParams["edit"] !== "") {setTimeout(function () {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300),height: (data.height ? data.height : 220)})},250)} %> >
+            <select id="<%= this.data.attr('wid') %>_multiselect" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> (!dui.editMode) {setTimeout(function () {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300), height: (data.height ? data.height : 220)})},250)} %> >
             <%
             var values = (data.attr('values') ? data.attr('values').split(';') : []);
             var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);

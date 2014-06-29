@@ -115,14 +115,14 @@
             if (val === "true") { val = true; }
             if (val === "false") { val = false; }
             $this.on('click', function (e) {
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     localData.setValue($this.attr("data-hm-id"), val);
                 }
             });
             // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
             /*
             $this.on('touchend',function (e) {
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     localData.setValue($this.attr("data-hm-id"), val);
                 }
             });
@@ -135,7 +135,7 @@
             function fInterval($that) {
                 dui.binds.basic.pressedNext = true;
                 var hm_id = "_" + $that.attr("data-hm-id");
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     var step =  parseFloat($that.attr("data-dashui-step")),
                         tmp =   parseFloat(localData.uiState[hm_id].Value) + step;
                     if (step < 0) {
@@ -169,7 +169,7 @@
                 }
                 var $this = $(this);
                 var hm_id = "_" + $this.attr("data-hm-id");
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     var step = parseFloat($this.attr("data-dashui-step")),
                             tmp = parseFloat(localData.uiState[hm_id].Value) + step;
                     if (step < 0) {
@@ -199,7 +199,7 @@
             var $this = jQuery(el);
             var hm_id = $this.attr("data-hm-id");
             $this.click(function (e) {
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     dui.conn.execProgramm(hm_id);
                 }
             });
@@ -207,7 +207,7 @@
         navigation: function (el, options) {
             var $this = jQuery(el);
             $this.click(function (e) {
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     if (options.background) {
                         $('body').css({background: options.background});
                     }
@@ -223,14 +223,14 @@
             var hm_id = "_" + $this.attr("data-hm-id");
             localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                 if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
-                    if (dui.urlParams["edit"] !== "") {
+                    if (!dui.editMode) {
                         $this.hide();
                     }
                 } else {
                     $this.show();
                 }
             });
-            if (dui.urlParams["edit"] !== "") {
+            if (!dui.editMode) {
                 var newVal = localData.uiState.attr(hm_id+".Value");
                 if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                     $this.hide();
@@ -242,14 +242,14 @@
             var hm_id = "_" + $this.attr("data-hm-id");
             localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                 if (newVal === true || parseFloat(newVal) > 0) {
-                    if (dui.urlParams["edit"] !== "") {
+                    if (!dui.editMode) {
                         $this.hide();
                     }
                 } else {
                     $this.show();
                 }
             });
-            if (dui.urlParams["edit"] !== "") {
+            if (!dui.editMode) {
                 if (parseFloat(localData.uiState.attr(hm_id+".Value")) != 0 && localData.uiState.attr(hm_id+".Value") !== false) {
                  $this.hide();
                 }
@@ -260,14 +260,14 @@
             var hm_id = "_" + $this.attr("data-hm-id");
             localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                 if (newVal != val) {
-                    if (dui.urlParams["edit"] !== "") {
+                    if (!dui.editMode) {
                         $this.hide();
                     }
                 } else {
                     $this.show();
                 }
             });
-            if (dui.urlParams["edit"] !== "") {
+            if (!dui.editMode) {
                 if (localData.uiState.attr(hm_id+".Value") != val) {
                     $this.hide();
                 }
@@ -304,7 +304,7 @@
             if (val > 0) {
                 $this.prop("checked", true);
             }
-            if (dui.urlParams["edit"] !== "") {
+            if (!dui.editMode) {
                 $this.change(function () {
                     if ($this.prop("checked")) {
                         localData.setValue( $this.attr("data-hm-id"),  numeric ? 1 : true);
@@ -333,7 +333,7 @@
                 }
             }
             $this.val(val ? 1 : 0);
-            if (dui.urlParams["edit"] !== "") {
+            if (!dui.editMode) {
                 $this.change(function () {
                     //console.log("uiState " + localData.uiState.attr("_" + $this.attr("data-hm-id")));
                     //console.log("setState " + $this.find("option:selected").val());
@@ -407,14 +407,14 @@
                     localData.setValue( id,  1-val);
                 }
             }
-            if (dui.urlParams["edit"] !== "") {
+            if (!dui.editMode) {
                 // @geolin - musste das wieder entfernen - das führt zu doppelter Ausführung (Gerät geht kurz an und sofort wieder aus bzw umgekehrt)
                 //$this.on('touchend', toggle);
                 $this.on('click', toggle);
             }
         },
         iframeRefresh: function (el, src, refreshInterval) {
-            if (dui.urlParams["edit"] !== "" && refreshInterval > 0) {
+            if (!dui.editMode && refreshInterval > 0) {
                 var $this = jQuery(el).parent().find("iframe");
                 setInterval(function () {
                     if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
@@ -424,7 +424,7 @@
             }
         },
         imgRefresh: function (el, src, refreshInterval, refreshOnWakeUp) {
-            if (dui.urlParams["edit"] !== "" && parseInt(refreshInterval, 10) > 0) {
+            if (!dui.editMode && parseInt(refreshInterval, 10) > 0) {
                 setInterval(function () {
                     var $this = jQuery(el).parent().find("img");
                     if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
@@ -452,7 +452,7 @@
             var str = localData.uiState.attr("_" + hm_id + ".Value");
             var val = parseFloat(str);
             var sText = '<svg class="dashui-widget ' + (myClass || "")+ '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="'+wid+'" data-hm-id="'+hm_id+'">';
-            if (dui.urlParams["edit"] === "") {
+            if (dui.editMode) {
                 if (opacity === undefined || opacity === null || opacity === "")
                     opacity = 1;
 
@@ -481,7 +481,7 @@
                 $("#"+wid).css(style);
             }
 
-            if (dui.urlParams["edit"] !== "") {
+            if (!dui.editMode) {
                 $("#"+wid).children().click(function () {
                     var $this = $(this);
                     var id = $this.attr("data-hm-id");
@@ -514,7 +514,7 @@
             }
         },
         editNote: function (wid, max_width, min_width, min_height, hm_id) {
-            if (dui.urlParams["edit"] === "") return;
+            if (dui.editMode) return;
             if (max_width != '') {
                 max_width = parseInt(max_width, 10);
             } else {
@@ -581,7 +581,7 @@
             });
         },
         formatFloat: function (data) {
-            if (dui.urlParams['edit'] === "" && data.attr('test_html'))
+            if (dui.editMode && data.attr('test_html'))
                 return data.attr('test_html');
 
             var val = (parseFloat(localData.uiState.attr("_" + data.hm_id + ".Value")) * data.factor).toFixed(data.digits);
@@ -762,7 +762,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%= (dui.urlParams['edit'] === "" && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%= (dui.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -772,7 +772,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%== (dui.urlParams['edit'] === "" && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (dui.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -782,7 +782,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%== (dui.urlParams['edit'] === "" && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".Timestamp") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (dui.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".Timestamp") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -792,7 +792,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%== (dui.urlParams['edit'] === "" && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".LastChange") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (dui.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".LastChange") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -811,7 +811,7 @@
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%= list[(dui.urlParams['edit'] === "" && this.data.attr('test_html')) ? parseInt(this.data.attr('test_list')) : parseInt(localData.uiState.attr("_" + this.data.hm_id + ".Value"))] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%= list[(dui.editMode && this.data.attr('test_html')) ? parseInt(this.data.attr('test_list')) : parseInt(localData.uiState.attr("_" + this.data.hm_id + ".Value"))] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>

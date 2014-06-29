@@ -43,10 +43,10 @@ dui = $.extend(true, dui, {
     },
     delView: function (view) {
         if (confirm(dui.translate("Really delete view %s?", view))) {
-                delete dui.views[view];
-                dui.saveRemote(function () {
-                    window.location.href = "edit.html" + window.location.search;
-                });
+            delete dui.views[view];
+            dui.saveRemote(function () {
+                window.location.href = "edit.html" + window.location.search;
+            });
            }
     },
     dupView: function (val) {
@@ -274,15 +274,15 @@ dui = $.extend(true, dui, {
                 } else if (dui.activeWidget == widgetId && dui.multiSelectedWidgets.length) {
                     //console.log("click inspected Widget",widgetId, dui.multiSelectedWidgets);
 
-                        var newActive = dui.multiSelectedWidgets.pop();
-                        var multiSelectedWidgets = dui.multiSelectedWidgets;
-                        $("#widget_multi_helper_"+newActive).remove();
+                    var newActive = dui.multiSelectedWidgets.pop();
+                    var multiSelectedWidgets = dui.multiSelectedWidgets;
+                    $("#widget_multi_helper_"+newActive).remove();
                     $("#" + newActive).removeClass("ui-selected");
-                        dui.inspectWidget(newActive);
-                        for (var i = 0; i < multiSelectedWidgets.length; i++) {
-                            dui.inspectWidgetMulti(multiSelectedWidgets[i]);
-                        }
-                        dui.allWidgetsHelper();
+                    dui.inspectWidget(newActive);
+                    for (var i = 0; i < multiSelectedWidgets.length; i++) {
+                        dui.inspectWidgetMulti(multiSelectedWidgets[i]);
+                    }
+                    dui.allWidgetsHelper();
 
                 }
             } else {
@@ -1945,8 +1945,7 @@ dui = $.extend(true, dui, {
             dui.renameView(name);
         });
 
-		$("#create_instance").button({icons: {primary: "ui-icon-plus"}}).click(dui.createInstance);
-		$("#remove_instance").button({icons: {primary: "ui-icon-trash"}}).click(dui.removeInstance);
+		$("#create_instance").button({icons: {primary: "ui-icon-plus"}}).click(dui.generateInstance);
 
         // Inspector Change Handler
         $(".dashui-inspect-widget").change(function () {
@@ -2150,19 +2149,11 @@ dui = $.extend(true, dui, {
                     }
                 }
                 $("#select_active_widget").multiselect("refresh");
-                console.log("AAA "+ $("#select_active_widget").length);
             }
         }, 10000);
 
         // Instances
         if (typeof storage !== 'undefined') {
-            dui.instance = storage.get(dui.storageKeyInstance);
-            if (!dui.instance) {
-                $("#instance").hide();
-            } else {
-
-            }
-
             // Show what's new
             if (storage.get('lastVersion') != dui.version) {
                 // Read
@@ -3002,6 +2993,43 @@ dui = $.extend(true, dui, {
             }
         });
     },
+    selectAll: function () {
+        // Select all widgets on view
+        var $focused = $(':focus');
+        if (!$focused.length && dui.activeView) {
+            // Go through all widgets
+            if (!dui.activeWidget || dui.activeWidget == "none") {
+                // Get first one
+                for (var widget in dui.views[dui.activeView].widgets) {
+                    dui.inspectWidget(widget);
+                    break;
+                }
+            }
+            for (var widget in dui.views[dui.activeView].widgets) {
+                if (widget == dui.activeWidget) {
+                    continue;
+                }
+                dui.inspectWidgetMulti(widget);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+    deselectAll: function () {
+        // Select all widgets on view
+        var $focused = $(':focus');
+        if (!$focused.length && dui.activeView) {
+            dui.clearWidgetHelper();
+
+            if (dui.activeWidget && dui.activeWidget != "none") {
+                dui.inspectWidget('none');
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
     paste: function () {
         var $focused = $(':focus');
         if (!$focused.length) {
@@ -3029,7 +3057,10 @@ dui = $.extend(true, dui, {
             }
 
             dui.clipboard = [];
-            dui.clipboard[0] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.activeWidget]), view: (!isCut) ? dui.activeView : '---copied---'};
+            dui.clipboard[0] = {
+                widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.activeWidget]),
+                view: (!isCut) ? dui.activeView : '---copied---'
+            };
             var widgetNames = dui.activeWidget;
             if (dui.multiSelectedWidgets.length) {
                 for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
@@ -3286,7 +3317,17 @@ $(document).keydown(function (e) {
     if (e.which === 90 && (e.ctrlKey || e.metaKey)) {
         dui.undo();
         e.preventDefault();
-    } else if (e.which === 46) {
+    } else if (e.which === 65 && (e.ctrlKey || e.metaKey)) {
+        // Ctrl+A
+        if (dui.selectAll()) {
+            e.preventDefault();
+        };
+    } else if (e.which === 27) {
+        // Esc
+        if (dui.deselectAll()) {
+            e.preventDefault();
+        }
+    }else if (e.which === 46) {
         // Capture Delete button
         if (dui.onButtonDelete()) {
             e.preventDefault();

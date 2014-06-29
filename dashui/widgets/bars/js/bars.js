@@ -1163,7 +1163,7 @@ jQuery.extend(true, dui.words, {
                     view:  view,
                     editParent: null
 				};
-				if (dui.urlParams["edit"] === "") {
+				if (dui.editMode) {
 					if (div.barsOptions.buttons.length == 0) {
 						if (div.barsIntern.wType == 'tplBarFilter') {
 							var filter = dui.updateFilter();
@@ -1191,7 +1191,7 @@ jQuery.extend(true, dui.words, {
 			this.draw(div, jDiv);
 
 			// non edit mode
-			if (dui.urlParams["edit"] !== "") {
+			if (!dui.editMode) {
                 // Select by default buttons
                 if (div.barsIntern.wType == 'tplBarFilter') {
                     if (div.barsOptions.bValue != "") {

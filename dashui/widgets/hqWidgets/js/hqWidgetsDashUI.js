@@ -658,7 +658,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                     }
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeCam) {
-                        if (dui.urlParams["edit"] === undefined) {
+                        if (!dui.editMode) {
                             adv = $.extend (adv, {/*state: hqWidgets.gState.gStateOff, */isWorking: false,
                                 action: function (obj, what, state) {                                    
                                     var hm_id = obj.GetSettings ('hm_idL');
@@ -698,7 +698,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                     else
                     if (opt.buttonType == hqWidgets.gButtonType.gTypeGong) {
                         adv = $.extend (adv, {action: function (obj, what, state) {
-                            if (dui.urlParams["edit"] === undefined) {
+                            if (!dui.editMode) {
                                 // Open the door
                                 if (what == 'open') {
                                     var hm_id = obj.GetSettings ('hm_idL');
@@ -1345,7 +1345,7 @@ if ((typeof hqWidgets !== 'undefined')) {
  
                 // Enable edit mode
                 var mWidget = document.getElementById(el);
-                if (dui.urlParams["edit"] === "") {
+                if (dui.editMode) {
                     btn.SetEditMode (true);
                     // Install special handlers
                     if (mWidget) {

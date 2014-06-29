@@ -12,6 +12,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta117 [2014-06-29]
+* (Bluefox) change control with instance interface: possible control all browsers with FFFFFFFF
+* (Bluefox) Ctrl+A - select all widgets on view and 'Esc' to deselect widgets
+
 ### 0.9beta115 [2014-06-08]
 * (Hobbyquaker) more Metro widgets
 * (Bluefox) Fix hqWidgets: check negative position of popUp window

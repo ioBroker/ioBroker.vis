@@ -73,7 +73,7 @@
                 }
 
 
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     $this.find("input.fancy-on_off").change(function() {
                         var val = $(this).val();
                         if (reverse) { val = 1 - val; }
