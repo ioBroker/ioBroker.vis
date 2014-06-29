@@ -1,9 +1,11 @@
 CACHE MANIFEST
 
-# DashUI Version 0.9beta91
+# DashUI Version 0.9beta116
+# dev build 0
 
 NETWORK:
 *
+
 
 CACHE:
 ./img/disconnect.png
@@ -11,3 +13,4 @@ CACHE:
 FALLBACK:
 ./index.html ./offline.html
 ./edit.html ./offline.html
+

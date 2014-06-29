@@ -5,7 +5,138 @@
 
 siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
+![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/user0.png)
+![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/user7.png)
+
+[Online Demos](http://dashui.ccu.io)
+
 ## Changelog
+
+### 0.9beta116 [2014-06-22]
+* (Bluefox) Fix bars: make buttons full visible if no background
+* (Bluefox) translate some widgets to english and russian
+* (Bluefox) fix wizard if function selected
+* (Bluefox) add comma option to basic - num val (Used by default)
+* (Bluefox) fix RGraph/Live chart if color of the line changed
+* (Hobbyquaker) Metro Widgets v0.3
+
+### 0.9beta115 [2014-06-08]
+* (Hobbyquaker) more Metro widgets
+* (Bluefox) Fix hqWidgets: check negative position of popUp window
+
+### 0.9beta114 [2014-06-07]
+* (Hobbyquaker) disable editor close when saving in progress
+* (Hobbyquaker) fix addView - prevent confirmation
+* (Hobbyquaker) more metro widgets
+* (Hobbyquaker) more formatting options for simpleDate Widget
+
+### 0.9beta113 [2014-06-06]
+* (Hobbyquaker) New widget-set metro
+* (Hobbyquaker) viewChangeCallbacks
+* (Bluefox) Fix Hide hqWidgets/Info if inactive
+* (Bluefox) Fix Update hqWidgets if they are moved with arrow keys
+* (Bluefox) Fix error if user add "ui-draggable" or "ui-resizable" to widget class
+
+### 0.9beta112 [2014-06-03]
+* (Hobbyquaker) Fix Homematic ServiceMessage Widget
+
+### 0.9beta111 [2014-06-03]
+* (Bluefox) Fix hqWidgets shifted by clicking
+* (Bluefox) Make edit available even if some widget is wrong
+* (Bluefox) Fix 'Show description' by hqWidgets
+
+### 0.9beta110 [2014-06-01]
+* (Bluefox) Bring back changes with stringify and hqoptions
+
+### 0.9beta109 [2014-06-01]
+* (Hobbyquaker) Fix Firefox problem when loading widget sets
+
+### 0.9beta108 [2014-06-01]
+* (Hobbyquaker) Fix import view
+
+### 0.9beta107 [2014-06-01]
+* (Bluefox) Do not stringify and parse hqWidgets and bars options.
+* (Bluefox) Remove processing of hqWidgets from dashui.js and dashuiEdit.js
+* (Bluefox) Show full size background if size of view is set
+* (Bluefox) Configuration saving indicator
+* (Bluefox) Better hqWidgets moving and deletion
+* (Bluefox) Translate some new words for edit mode
+* (Bluefox) Extend screen size settings to portrait and landscape
+* (Bluefox) Fix bug with hqWidgets and radius 0px
+* (Bluefox) Fix bug with hqWidgets/info and value 0
+
+### 0.9beta106 [2014-05-18]
+* (Bluefox) Fix hqWidget/Inside Temperature: Show graphics for HM-CC-RT-DN
+* (Bluefox) Possible to switch off the animation for hqWidget/info
+* (Bluefox) RGraph stability + Padding support
+* (Bluefox) Fix problem with z-index and Bar Widget
+
+### 0.9beta105 [2014-05-09]
+* (Bluefox) Fix problem with RGraph and CSS edit
+
+### 0.9beta104 [2014-05-07]
+* (Hobbyquaker) trying to solve socket.io reconnection issues (occuring on android stock browser)
+
+### 0.9beta103 [2014-05-07]
+* (Hobbyquaker) Fix Bug causing reload Loop with Android stock browser
+* (Hobbyquaker) Fix loss of interaction (draggable/resizable) after changing widget attributes
+
+### 0.9beta102 [2014-05-06]
+* (Bluefox) Fix hqWidgets: Size is smaller after click on the widget
+* (Bluefox) Do not show whats new more than one time
+
+### 0.9beta101 [2014-05-05]
+* (Bluefox) jGrowl styles
+* (Bluefox) Logging errors to server
+
+
+### 0.9beta100 [2014-05-05]
+* (Hobbyquaker) Fix loss of interaction (draggable/resizable) after keyboard movement
+* (Bluefox) jGrowl Hints/Popups
+
+### 0.9beta99
+* (Hobbyquaker) Image selection dialog improvements (z-index, fix thumbnail size)
+* (Hobbyquaker) prevent auto-hide of editor dialog if a multiselect is opened
+
+### 0.9beta98
+* (Hobbyquaker) Fixes Multiselection
+* (Hobbyquaker) Fix Sound onClick for basic widgets
+* (Bluefox) Move and resize widgets with arrow keys
+
+### 0.9beta97
+* (Hobbyquaker) Fix LCARS Widgets
+* (Hobbyquaker) mehrere Widgets selektieren mit der Maus
+* (Hobbyquaker) Rahmen um alle selektierten Widgets
+* (Hobbyquaker) Fixes und Refactoring rund um cut/copy/paste/del und Multi-Selektion
+* (Hobbyquaker) steal CSS Mode Indikator
+* (Bluefox) Cut/Copy/Paste und Delete mit Tastatur, Zwischenablage
+
+### 0.9beta96
+* (Hobbyquaker) dui.binds without jQuery.extend - huge performance improvement on loading widget-sets
+
+### 0.9beta95
+* (Hobbyquaker) new Widgets: jqui-mfd Cam/Snapshot, Cam/Video (img), Cam/Video (html5)
+* (Hobbyquaker) implemented dui.onWakeUp(callback) to register callbacks that are executed when client awakes from sleep
+* (Hobbyquaker) save snap_type and grid_size in view settings
+* (Bluefox) Fix widget table - empty tables
+* (Bluefox) Fix widget RGraph BarChart
+* (Bluefox) moved LCARS files to subfolders
+* (smiling-Jack) Editor CSS Style Tab Misc
+
+### 0.9beta94
+* (Hobbyquaker) hqWidgets added HM-LC-Sw4-PCB
+* (Hobbyquaker) additional css files for specific themes
+* (Hobbyquaker) Fix Editor Tabs
+* (Hobbyquaker) Fix CSS for theme Kiandra
+
+### 0.9beta93
+* (Hobbyquaker) Fix checkNewView, dupView, delView, addView, importView
+
+### 0.9beta92
+* (Hobbyquaker) Fix addView: check if view already exists
+* (smiling-Jack) Editor Style
+* (Bluefox) Implement all communication functions in servConn (Offline mode is possible)
+* (Bluefox) hqWidget / Charts: make 8 lines possible.
 
 ### 0.9beta91
 * (Hobbyquaker) Fix keep multi-selected-widgets on undo
@@ -738,25 +869,20 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Copyright, Lizenz, Bedingungen
 
-DashUI
 
-Copyright (c) 2013 hobbyquaker https://github.com/hobbyquaker
+ DashUI
+ https://github.com/hobbyquaker/dashui/
 
-MIT Lizenz (MIT)
+ Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
+ Creative Common Attribution-NonCommercial (CC BY-NC)
 
-Hiermit wird unentgeltlich, jeder Person, die eine Kopie der Software und der zugehörigen Dokumentationen (die
-"Software") erhält, die Erlaubnis erteilt, sie uneingeschränkt zu benutzen, inklusive und ohne Ausnahme, dem Recht,
-sie zu verwenden, kopieren, ändern, fusionieren, verlegen, verbreiten, unterlizenzieren und/oder zu verkaufen, und
+ http://creativecommons.org/licenses/by-nc/4.0/
 
-Personen, die diese Software erhalten, diese Rechte zu geben, unter den folgenden Bedingungen:
+![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/cc-nc-by.png)
 
-Der obige Urheberrechtsvermerk und dieser Erlaubnisvermerk sind in allen Kopien oder Teilkopien der Software beizulegen.
-
-DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIESSLICH DER GARANTIE ZUR
-BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF
-BESCHRÜNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE
-HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER
-SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
-
+Short content:
+Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+(Free for non-commercial use).
 
 HomeMatic und das HomeMatic Logo sind eingetragene Warenzeichen der eQ-3 AG

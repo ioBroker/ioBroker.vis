@@ -6,7 +6,7 @@ if ((typeof hqWidgets !== 'undefined')) {
             hqIgnoreNextUpdate: null, // id of controlled element
             hqMapping: {},
             hqInit: function () {
-                if (localData === undefined || localData.uiState === undefined || localData.uiState.bind === undefined )
+                if (!localData || !localData.uiState || !localData.uiState.bind)
                     return;
                     
                 if (dui.binds.hqWidgetsExt.inited)
@@ -74,12 +74,12 @@ if ((typeof hqWidgets !== 'undefined')) {
             // Save settings of one widget
             hqEditStore: function (obj, opt) {
                 var newOpt = JSON.stringify (opt);
+                //var newOpt = opt; TODO hqoptions stringify
                 var duiWidget = dui.binds.hqWidgetsExt.hqGetWidgetByObj (obj);
                 
                 if (duiWidget) {
                     duiWidget.data.hqoptions = newOpt;
-                    obj.intern._jelement.attr ('hqoptions', newOpt);
-                    console.log ("Stored: " + newOpt);
+                    //obj.intern._jelement.attr ('hqoptions', newOpt);
                     dui.binds.hqWidgetsExt.hqEditSave ();
                 }
                 else
@@ -87,6 +87,13 @@ if ((typeof hqWidgets !== 'undefined')) {
             },
             // Save settings of one widget
             hqEditStoreInfoWindow: function (obj, opt) {
+                // Fix position of window
+                if (opt.y < -10) {
+                    opt.y = -10;
+                }
+                if (opt.x < 0 && opt.x < 60 - opt.width) {
+                    opt.x = 60 - opt.width;
+                }
                 var newOpt = JSON.stringify (opt);
                     
                 var duiWidget = dui.binds.hqWidgetsExt.hqGetWidgetByObj (obj);
@@ -100,8 +107,25 @@ if ((typeof hqWidgets !== 'undefined')) {
                 else
                     console.log ("Cannot find " + duiWidget.advSettings.elemName + " in any view");
             },
+            hqOnShow: function (widgetDiv, widgetId) {
+                var btn = hqWidgets.Get(widgetId);
+                btn.show();
+            },
+            hqOnHide: function (widgetDiv, widgetId) {
+                var btn = hqWidgets.Get(widgetId);
+                btn.hide();
+            },
             hqButtonExt: function (el, options, wtype, view) {
-                var opt = (options != undefined && options != null) ? $.parseJSON(options) : dui.binds.hqWidgetsExt.hqEditDefault (wtype);
+                if (options && typeof options == "string"){
+                    try {
+                        options = $.parseJSON(options);
+                    } catch (e) {
+                        options = {};
+                        servConn.logError("Cannot parse hqoptions: " + e);
+                    }
+                }
+
+                var opt = options || dui.binds.hqWidgetsExt.hqEditDefault (wtype);
                 var hm_ids = [];
                 // Define store settings function
                 var adv = {store: dui.binds.hqWidgetsExt.hqEditStore};
@@ -124,9 +148,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             }
                             if (points[0]) {
                                 var src = document.location.href;
-                                var i = src.indexOf("dashui");
+                                var i = src.lastIndexOf("/dashui");
                                 if (i > 0) {
-                                    src = src.substring (0, i) + "charts/";
+                                    src = src.substring (0, i) + "/charts/";
                                     var url = src+'?dp=';
                                     for (var t = 0; t < points.length; t++) {
                                         url += ((t > 0) ? ',' : '') + points[t];
@@ -151,9 +175,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                         adv = $.extend (adv, {action: function (obj, what, state) {
                             // Show grafik in a new window
                             var src = document.location.href;
-                            var i = src.indexOf("dashui");
+                            var i = src.lastIndexOf("/dashui");
                             if (i > 0) {
-                                src = src.substring (0, i) + "eventlist/";
+                                src = src.substring (0, i) + "/eventlist/";
                                  var url = "";
                                 if (opt['hm_ids'] !== undefined && opt['hm_ids'] != "") {
                                     url += ((url !="") ? "&" : "?") + "hmid=" + opt['hm_ids'];
@@ -257,8 +281,8 @@ if ((typeof hqWidgets !== 'undefined')) {
 										localData.metaObjects [opt['hm_id']]["TypeName"] !== undefined &&
 										localData.metaObjects [opt['hm_id']]["TypeName"] == "PROGRAM") {
 										console.log ("Activate programm " + localData.metaObjects [opt['hm_id']]["Name"]);
-										// TODO ...
-                                        servConn._socket.emit("programExecute", [opt['hm_id']]);
+										// Execute program
+                                        servConn.execProgramm(opt['hm_id']);
 									}
 									else {    
 										if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["DPs"] && localData.metaObjects[opt['hm_id']]["DPs"]["STATE"])
@@ -545,14 +569,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                                 var states = obj.GetStates ();
 								
                                 if (states.state == hqWidgets.gState.gStateOn) {
-                                    // TODO ...
-                                    servConn._socket.emit("getUrl", htmlOff, function () {});
+                                    servConn.getUrl(htmlOff);
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOff});
 									}
 								} else {
-                                    // TODO ...
-                                    servConn._socket.emit("getUrl", htmlOn, function () {});
+                                    servConn.getUrl(htmlOn);
 									if (isChangeState) {
 										obj.SetStates({state: hqWidgets.gState.gStateOn});
 									}
@@ -754,7 +776,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                     }
                 }
                 
-                var btn = hqWidgets.Create (opt, {elemName: el, parent: $("#duiview_"+view)});//dui.activeView)});
+                var btn = hqWidgets.Create(opt, {elemName: el, parent: $("#duiview_"+view)});//dui.activeView)});
  
                 // Create signal translators
                 if (wtype === undefined) {                  
@@ -764,7 +786,16 @@ if ((typeof hqWidgets !== 'undefined')) {
                         btn.SetStates({state: hqWidgets.gState.gStateOff});
                         if (opt.exPopup == true) {
                             var storedInfo = null;
-                            if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+                            if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) {
+                                storedInfo = $.parseJSON(wObj.data.informWindow);
+                                // Fix position
+                                if (storedInfo.x && storedInfo.x < 0 && storedInfo.x < 60 - storedInfo.width) {
+                                    storedInfo.x = 60 - storedInfo.width;
+                                }
+                                if (storedInfo.y && storedInfo.y < -10) {
+                                    storedInfo.y = -10;
+                                }
+                            }
                             var infoWindow = btn.GetInfoWindowSettings ();
                             infoWindow.isEnabled     = true;
                             infoWindow.content       = "";
@@ -799,9 +830,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             }
                             if (points[0]) {
                                 var src = document.location.href;
-                                var i = src.indexOf("dashui");
+                                var i = src.lastIndexOf("/dashui");
                                 if (i > 0) {
-                                    src = src.substring (0, i) + "charts/";
+                                    src = src.substring (0, i) + "/charts/";
                                     btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0px" scrolling="no" '+
                                                          'src="'+src+'?dp=';
                                     for (var t = 0; t < points.length; t++) {
@@ -817,7 +848,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                                     else
                                         btn.graficIframe += '&theme=&percentaxis=true&loader=false&legend=inline&period=72&range=24';
                                     btn.graficIframe += '"></iframe>';
-                                    console.log("Highchart: " + btn.graficIframe);
+                                    //console.log("Highchart: " + btn.graficIframe);
                                     btn.SetInfoWindowSettings (infoWindow);
                                 }
                             }
@@ -830,7 +861,17 @@ if ((typeof hqWidgets !== 'undefined')) {
                         btn.SetStates({state: hqWidgets.gState.gStateOff});
                         if (opt.exPopup == true) {
                             var storedInfo = null;
-                            if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+                            if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined){
+                                storedInfo = $.parseJSON(wObj.data.informWindow);
+
+                                // Fix position
+                                if (storedInfo.x && storedInfo.x < 0 && storedInfo.x < 60 - storedInfo.width) {
+                                    storedInfo.x = 60 - storedInfo.width;
+                                }
+                                if (storedInfo.y && storedInfo.y < 0 && storedInfo.y < -10) {
+                                    storedInfo.y = -10;
+                                }
+                            }
                             var infoWindow = btn.GetInfoWindowSettings ();
                             infoWindow.isEnabled     = true;
                             infoWindow.content       = "";
@@ -859,9 +900,9 @@ if ((typeof hqWidgets !== 'undefined')) {
                             };
                             // Show history in popup window
                             var src = document.location.href;
-                            var i = src.indexOf("dashui");
+                            var i = src.lastIndexOf("/dashui");
                             if (i > 0) {
-                                src = src.substring (0, i) + "eventlist/";
+                                src = src.substring (0, i) + "/eventlist/";
                                 btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
                                                          'src="'+src;
                                 var url = "";
@@ -970,6 +1011,14 @@ if ((typeof hqWidgets !== 'undefined')) {
                         var storedInfo = null;
                         if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) {
 							storedInfo = $.parseJSON(wObj.data.informWindow);
+
+                            // Fix position
+                            if (storedInfo.x && storedInfo.x < 0 && storedInfo.x < 60 - storedInfo.width) {
+                                storedInfo.x = 60 - storedInfo.width;
+                            }
+                            if (storedInfo.y && storedInfo.y < -10) {
+                                storedInfo.y = -10;
+                            }
 						}
                         var infoWindow = btn.GetInfoWindowSettings ();
                         infoWindow.isEnabled     = true;
@@ -1005,19 +1054,33 @@ if ((typeof hqWidgets !== 'undefined')) {
                             if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["TEMPERATURE"]) {
                                 points[cnt++] = localData.metaObjects[hm_id]["DPs"]["TEMPERATURE"];
                                 points[cnt++] = localData.metaObjects[hm_id]["DPs"]["HUMIDITY"];
-                            }
-                            else
-                            if (localData.metaObjects[opt['hm_id']] && localData.metaObjects[opt['hm_id']]["Channels"] && localData.metaObjects[opt['hm_id']]["Channels"][1]) {
+                            } else
+                            if (localData.metaObjects[opt['hm_id']] &&
+                                localData.metaObjects[opt['hm_id']]["Channels"] &&
+                                localData.metaObjects[opt['hm_id']]["Channels"][1] &&
+                                localData.metaObjects[localData.metaObjects[opt['hm_id']]["Channels"][1]]["DPs"]["TEMPERATURE"]) {
                                 var weatherId = localData.metaObjects[opt['hm_id']]["Channels"][1];
                                 points[cnt++] = localData.metaObjects[weatherId]["DPs"]["TEMPERATURE"];
                                 points[cnt++] = localData.metaObjects[weatherId]["DPs"]["HUMIDITY"];
+                            } else
+                            if (localData.metaObjects[hm_id] && localData.metaObjects[hm_id]["DPs"] && localData.metaObjects[hm_id]["DPs"]["ACTUAL_TEMPERATURE"]) {
+                                points[cnt++] = localData.metaObjects[hm_id]["DPs"]["ACTUAL_TEMPERATURE"];
+                                points[cnt++] = localData.metaObjects[hm_id]["DPs"]["SET_TEMPERATURE"];
+                            } else
+                            if (localData.metaObjects[opt['hm_id']] &&
+                                localData.metaObjects[opt['hm_id']]["Channels"] &&
+                                localData.metaObjects[opt['hm_id']]["Channels"][5] &&
+                                localData.metaObjects[localData.metaObjects[opt['hm_id']]["Channels"][5]]["DPs"]["ACTUAL_TEMPERATURE"]) {
+                                var weatherId = localData.metaObjects[opt['hm_id']]["Channels"][5];
+                                points[cnt++] = localData.metaObjects[weatherId]["DPs"]["ACTUAL_TEMPERATURE"];
+                                points[cnt++] = localData.metaObjects[weatherId]["DPs"]["SET_TEMPERATURE"];
                             }
                         }
                         if (points[0]) {
                             var src = document.location.href;
-                            var i = src.indexOf("dashui");
+                            var i = src.lastIndexOf("/dashui");
                             if (i > 0) {
-                                src = src.substring (0, i) + "charts/";
+                                src = src.substring (0, i) + "/charts/";
                                 btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
                                                      'src="'+src+'?dp=';
                                 for (var t = 0; t < points.length; t++) {
@@ -1115,7 +1178,16 @@ if ((typeof hqWidgets !== 'undefined')) {
 					if (opt["exShowGrafik"] === 'history' || opt["exShowGrafik"] === 'grafic') {
 						var storedInfo = null;
                         var wObj = dui.binds.hqWidgetsExt.hqGetWidgetByObj (btn);
-						if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+						if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) {
+                            storedInfo = $.parseJSON(wObj.data.informWindow);
+                            // Fix position
+                            if (storedInfo.x && storedInfo.x < 0 && storedInfo.x < 60 - storedInfo.width) {
+                                storedInfo.x = 60 - storedInfo.width;
+                            }
+                            if (storedInfo.y && storedInfo.y < -10) {
+                                storedInfo.y = -10;
+                            }
+                        }
 						var infoWindow = btn.GetInfoWindowSettings ();
 						infoWindow.isEnabled     = true;
 						infoWindow.content       = "";
@@ -1171,9 +1243,9 @@ if ((typeof hqWidgets !== 'undefined')) {
 							var points = [hm_id];
 							if (points[0]) {
 								var src = document.location.href;
-								var i = src.indexOf("dashui");
+								var i = src.lastIndexOf("/dashui");
 								if (i > 0) {
-									src = src.substring (0, i) + "charts/";
+									src = src.substring (0, i) + "/charts/";
 									btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" src="'+src+'?dp=';
 									for (var t = 0; t < points.length; t++) {
 										btn.graficIframe += ((t > 0) ? ',' : '') + points[t];
@@ -1188,7 +1260,7 @@ if ((typeof hqWidgets !== 'undefined')) {
 									else
 										btn.graficIframe += '&theme=&percentaxis=true&loader=false&legend=inline&period=72&range=24';
 									btn.graficIframe += '"></iframe>';
-									console.log("Highchart: " + btn.graficIframe);
+									//console.log("Highchart: " + btn.graficIframe);
 									btn.SetInfoWindowSettings (infoWindow);
 								}
 							}
@@ -1196,9 +1268,9 @@ if ((typeof hqWidgets !== 'undefined')) {
 						if (opt["exShowGrafik"] === 'history') {
 							// Show history in popup window
 							var src = document.location.href;
-							var i = src.indexOf("dashui");
+							var i = src.lastIndexOf("/dashui");
 							if (i > 0) {
-								src = src.substring (0, i) + "eventlist/";
+								src = src.substring (0, i) + "/eventlist/";
 								btn.graficIframe = '<iframe width="100%" height="100%" style="border: 0" scrolling="no" '+
 														 'src="'+src;
 								var url = "";
@@ -1240,7 +1312,16 @@ if ((typeof hqWidgets !== 'undefined')) {
                         // Get stored settings for info window
                         var wObj = dui.binds.hqWidgetsExt.hqGetWidgetByObj (btn);
                         var storedInfo = null;
-                        if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) storedInfo = $.parseJSON(wObj.data.informWindow);
+                        if (wObj !== undefined && wObj.data !== undefined && wObj.data !== null && wObj.data.informWindow !== undefined) {
+                            storedInfo = $.parseJSON(wObj.data.informWindow);
+                            // Fix position
+                            if (storedInfo.x && storedInfo.x < 0 && storedInfo.x < 60 - storedInfo.width) {
+                                storedInfo.x = 60 - storedInfo.width;
+                            }
+                            if (storedInfo.y && storedInfo.y < -10) {
+                                storedInfo.y = -10;
+                            }
+                        }
                         var infoWindow = btn.GetInfoWindowSettings ();
                         
                         infoWindow.width         = (storedInfo == null) ? infoWindow.width:  storedInfo.width;
@@ -1263,15 +1344,33 @@ if ((typeof hqWidgets !== 'undefined')) {
                 }
  
                 // Enable edit mode
+                var mWidget = document.getElementById(el);
                 if (dui.urlParams["edit"] === "") {
                     btn.SetEditMode (true);
-                    if (dui.binds.hqWidgetsExt.hqEditDetectMoving) {
-                        // install timer to detect moving
-                        clearTimeout (dui.binds.hqWidgetsExt.hqEditTimerDetectMoving);
-                        dui.binds.hqWidgetsExt.hqEditDetectMoving ();
+                    // Install special handlers
+                    if (mWidget) {
+                        mWidget._customHandlers = {
+                            onMoveEnd:      dui.binds.hqWidgetsExt.hqEditOnMove,
+                            onDelete:       dui.binds.hqWidgetsExt.hqEditOnDelete,
+                            onMove:         dui.binds.hqWidgetsExt.hqEditOnMove,
+                            onCssEdit:      dui.binds.hqWidgetsExt.hqEditOnCssEdit,
+                            onOptionEdited: dui.binds.hqWidgetsExt.hqEditOnOptionEdited,
+                            isOptionEdited: dui.binds.hqWidgetsExt.hqEditIsOptionEdited,
+                            onShow:         dui.binds.hqWidgetsExt.hqOnShow,
+                            onHide:         dui.binds.hqWidgetsExt.hqOnHide,
+                            isRerender:     true
+                        };
                     }
                 } 
                 else {
+                    if (mWidget) {
+                        mWidget._customHandlers = {
+                            onShow:         dui.binds.hqWidgetsExt.hqOnShow,
+                            onHide:         dui.binds.hqWidgetsExt.hqOnHide,
+                            isRerender:     true
+                        };
+                    }
+
                     for (var i = 0; i < hm_ids.length; i++) {
                          // Register hm_id to detect changes
                         //$.homematic("addUiState", hm_ids[i].hm_id);
@@ -1305,8 +1404,12 @@ if ((typeof hqWidgets !== 'undefined')) {
                 btn.intern._jelement.addClass("dashui-widget");
                 
                 // Store options
-                var newOpt = JSON.stringify (btn.GetSettings (false, true));
-                $('#'+el).attr ('hqoptions', newOpt);  
+                //var newOpt = JSON.stringify (btn.GetSettings (false, true));
+                //var newOpt = btn.GetSettings (false, true);
+                //var duiWidget = dui.binds.hqWidgetsExt.hqGetWidgetByObj(btn);
+                //if (duiWidget) {
+                //    duiWidget.data.hqoptions = newOpt;
+                //}
             },
             hqMonitor: function (arg, wid, newState, isFromDevice, lastchange) {
                 if (!isFromDevice) {
@@ -1346,7 +1449,7 @@ if ((typeof hqWidgets !== 'undefined')) {
                     }
 					
 					if (option == 'infoText') {
-                    	change[option] = change[option] || "";
+                    	change[option] = (change[option] !== undefined && change[option] !== null) ? change[option] : "";
                     }
                     else
                     if (option == 'lowBatteryS') {

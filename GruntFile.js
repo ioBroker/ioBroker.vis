@@ -5,34 +5,29 @@
 
 module.exports = function (grunt) {
 
-    var destDir = "dashui.min";
-    var srcDir  = "dashui";
-    var deliveryDir = 'delivery';
-    var ioaddon = grunt.file.readJSON(srcDir + '/io-addon.json');
+    var destDir = "dashui.min/";
+    var srcDir  = "dashui/";
+    var libDir  = "../ccu.io/www/lib/";
+    var pgDir   = "phonegap/";
+    var deliveryDir = 'delivery/';
+    var ioaddon = grunt.file.readJSON(srcDir + 'io-addon.json');
 
     // Copyright header
     var htmlBanner =
-          '/**\n'
-        + ' *  DashUI\n'
-        + ' *  https://github.com/hobbyquaker/dashui/\n'
-        + ' *\n'
-        + ' *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox\n'
-        + ' *  MIT License (MIT)\n'
-        + ' *\n'
-        + ' *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated\n'
-        + ' *  documentation files (the "Software"), to deal in the Software without restriction, including without limitation the\n'
-        + ' *  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to\n'
-        + ' *  permit persons to whom the Software is furnished to do so, subject to the following conditions:\n'
-        + ' *v'
-        + ' *  The above copyright notice and this permission notice shall be included in all copies or substantial portions of\n'
-        + ' *  the Software.\n'
-        + ' *\n'
-        + ' *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO\n'
-        + ' *  THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n'
-        + ' *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\n'
-        + ' *  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n'
-        + ' *  SOFTWARE.\n'
-        + ' */\n';
+      '/**\n'
+    + ' *  DashUI\n'
+    + ' *  https://github.com/hobbyquaker/dashui/\n'
+    + ' *\n'
+    + ' *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox\n'
+    + ' *  Creative Common Attribution-NonCommercial (CC BY-NC)\n'
+    + ' *\n'
+    + ' *  http://creativecommons.org/licenses/by-nc/4.0/\n'
+    + ' *\n'
+    + ' * Short content:\n'
+    + ' * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.\n'
+    + ' * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.\n'
+    + ' * (Free for non-commercial use).\n'
+    + ' */\n';
 
     grunt.initConfig({
 
@@ -56,7 +51,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: srcDir + '/img/',
+                        cwd: srcDir + 'img/',
                         src: ['**/*'],
                         dest: '.build/output/img'
                     },
@@ -68,14 +63,14 @@ module.exports = function (grunt) {
                     },
                     {
                         expand: true,
-                        cwd: srcDir+'/js/',
-                        src: ['config.js'],
+                        cwd: srcDir+'js/',
+                        src: ['*.js', '!dashui*.js'],
                         dest: '.build/output/js/'
                     },
                     {
                         expand: true,
-                        cwd: srcDir+'/css/',
-                        src: [/*'doc.css',*/ 'dashui-user.css'],
+                        cwd: srcDir+'css/',
+                        src: [/*'doc.css',*/ '*.css', '!dashui.css', '!doc.css', '!backgrounds.css'],
                         dest: '.build/output/css/'
                     }
                 ]
@@ -84,7 +79,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: srcDir + '/widgets/<%= grunt.task.current.args[0] %>/<%= grunt.task.current.args[1] %>',
+                        cwd: srcDir + 'widgets/<%= grunt.task.current.args[0] %>/<%= grunt.task.current.args[1] %>',
                         src: ['**/*', '*'],
                         dest: '.build/output/widgets/<%= grunt.task.current.args[0] %>/<%= grunt.task.current.args[1] %>'
                     }
@@ -94,7 +89,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: srcDir + '/widgets/',
+                        cwd: srcDir + 'widgets/',
                         src: ['<%= grunt.task.current.args[0] %>.html'],
                         dest: '.build/widgets/'
                     }
@@ -104,7 +99,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: srcDir + '/widgets/<%= grunt.task.current.args[0] %>',
+                        cwd: srcDir + 'widgets/<%= grunt.task.current.args[0] %>',
                         src: ['<%= grunt.task.current.args[1] %>'],
                         dest: '.build/output/widgets/<%= grunt.task.current.args[0] %>'
                     }
@@ -119,28 +114,47 @@ module.exports = function (grunt) {
                         dest: destDir
                     }
                 ]
+            },
+            gap: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: '.build/output/',
+                        src: ['**/*'],
+                        dest: '.phoneGap/dashui/'
+                    },
+                    {
+                        src: [pgDir + 'index.html', pgDir + 'config.xml', pgDir +'logo.png'],
+                        dest: '.phoneGap/'
+                    },
+                    {
+                        expand: true,
+                        src: [pgDir + 'auth/**', pgDir + 'css/**', pgDir + 'js/**', pgDir + 'lang/**', libDir+'**'],
+                        dest: '.phoneGap/'
+                    }
+                ]
             }
         },
 
         concat: {
             js: {
-                src: [srcDir+'/js/dashuiEdit.js', srcDir+'/js/dashuiEditExt.js', srcDir+'/js/dashuiLang.js', srcDir+'/js/dashuiWizard.js'],
+                src: [srcDir+'js/dashuiEdit.js', srcDir+'js/dashuiEditExt.js', srcDir+'js/dashuiLang.js', srcDir+'js/dashuiWizard.js'],
                 dest: '.build/js/dashuiEdit.js'
             },
             css: {
-                src: [srcDir+'/css/dashui.css', srcDir+'/css/backgrounds.css'],
+                src: [srcDir+'css/dashui.css', srcDir+'css/backgrounds.css'],
                 dest: '.build/css/dashui.css'
             },
             widgetJs: {
-                src: [srcDir+'/widgets/<%= grunt.task.current.args[0] %>/js/*', '!'+srcDir+'/widgets/hqWidgets/js/hqWidgetsEditDashUI.js', '!'+srcDir+'/widgets/hqWidgets/js/hqWidgetsEdit.js'],
+                src: [srcDir+'widgets/<%= grunt.task.current.args[0] %>/js/*', '!'+srcDir+'widgets/hqWidgets/js/hqWidgetsEditDashUI.js', '!'+srcDir+'widgets/hqWidgets/js/hqWidgetsEdit.js'],
                 dest: '.build/widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>.concat.js'
             },
             widgetEditJs: {
-                src: [srcDir+'/widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>EditDashUI.js', srcDir+'/widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>Edit.js'],
+                src: [srcDir+'widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>EditDashUI.js', srcDir+'widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>Edit.js'],
                 dest: '.build/widgets/<%= grunt.task.current.args[0] %>/js/<%= grunt.task.current.args[0] %>Edit.concat.js'
             },            
             widgetCss: {
-                src: [srcDir+'/widgets/<%= grunt.task.current.args[0] %>/css/*'],
+                src: [srcDir+'widgets/<%= grunt.task.current.args[0] %>/css/*'],
                 dest: '.build/widgets/<%= grunt.task.current.args[0] %>/css/<%= grunt.task.current.args[0] %>.concat.css'
             },
             widgetAddJs: {
@@ -232,8 +246,44 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir + "/*.html"],
+                        src: [srcDir + "*.html"],
                         dest: '.build/'
+                    }
+                ]
+            },
+            gap: {
+                options: {
+                    force: true,
+                    patterns: [
+                        {
+                            match: /\<\!\-\-script type="text\/javascript" src="\.\.\/[a-z]*\.js"\>\<\/script\-\-\>/g,
+                            replacement: '<script type="text/javascript" src="../cordova.js"></script>'
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        flatten: true,
+                        src: ['.build/index.html', '.build/edit.html'],
+                        dest: './'
+                    }
+                ]
+            },
+            xmlGap: {
+                options: {
+                    force: true,
+                    patterns: [
+                        {
+                            match: /version   = "[-0-9a-zA-Z\.]+"\>/g,
+                            replacement: 'version   = "' + ioaddon.version + '">'
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        flatten: true,
+                        src: ['config.xml'],
+                        dest: './'
                     }
                 ]
             },
@@ -251,7 +301,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir +'/widgets/<%= grunt.task.current.args[0] %>.html'],
+                        src: [srcDir +'widgets/<%= grunt.task.current.args[0] %>.html'],
                         dest: '.build/widgets/replaced/'
                     }
                 ]
@@ -270,7 +320,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir +'/widgets/<%= grunt.task.current.args[0] %>Edit.html'],
+                        src: [srcDir +'widgets/<%= grunt.task.current.args[0] %>Edit.html'],
                         dest: '.build/widgets/replaced/'
                     }
                 ]
@@ -289,7 +339,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir +'/widgets/<%= grunt.task.current.args[0] %>.html'],
+                        src: [srcDir +'widgets/<%= grunt.task.current.args[0] %>.html'],
                         dest: '.build/widgets/replaced/'
                     }
                 ]
@@ -313,7 +363,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir +'/widgets/<%= grunt.task.current.args[0] %>.html'],
+                        src: [srcDir +'widgets/<%= grunt.task.current.args[0] %>.html'],
                         dest: '.build/widgets/replaced/'
                     }
                 ]
@@ -332,12 +382,38 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: [srcDir +'/widgets/<%= grunt.task.current.args[0] %>/<%= grunt.task.current.args[1] %>'],
+                        src: [srcDir +'widgets/<%= grunt.task.current.args[0] %>/<%= grunt.task.current.args[1] %>'],
                         dest: '.build/widgets/<%= grunt.task.current.args[0] %>/'
                     }
                 ]
-            }
-        },
+            },
+			setVersion:{
+                options: {
+                    force: true,
+                    patterns: [
+                        {
+                            match: /(#+\s+DashUI\s+Version\s+)[\.0-9A-Za-z]+/g,
+                            replacement: '# DashUI Version ' + ioaddon.version
+                        },
+                        {
+                            match: /<!--\s+DashUI\s+Version\s+[\.0-9A-Za-z]+\s+-->/g,
+                            replacement: '<!-- DashUI Version ' + ioaddon.version + ' -->'
+                        },
+                        {
+                            match: /(\s+version:\s+)'[\.0-9A-Za-z]+',/g,
+                            replacement: '$1\'' + ioaddon.version + '\','
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        flatten: true,
+                        src: [srcDir + '*.html', srcDir + '*.manifest', srcDir + 'js/dashui.js'],
+                        dest: './'
+                    }
+                ]
+			}
+		},
 
         uglify: {
             dist: {
@@ -346,9 +422,9 @@ module.exports = function (grunt) {
                 },
 
                 files: {
-                    //'.build/output/js/dashui.min.js': [srcDir+'/js/dashui.js'],
+                    //'.build/output/js/dashui.min.js': [srcDir+'js/dashui.js'],
                     //'.build/output/js/dashuiEdit.min.js': ['.build/js/dashuiEdit.js']
-                    '.build/compressed/dashui.min.js': [srcDir+'/js/dashui.js'],
+                    '.build/compressed/dashui.min.js': [srcDir+'js/dashui.js'],
                     '.build/compressed/dashuiEdit.min.js': ['.build/js/dashuiEdit.js']
                 }
             },
@@ -416,7 +492,7 @@ module.exports = function (grunt) {
             build: {
                 files: {
                     '.build/output/css/dashui.min.css': ['.build/css/dashui.css'],
-                    '.build/output/css/doc.min.css': [srcDir+'/css/doc.css']
+                    '.build/output/css/doc.min.css': [srcDir+'css/doc.css']
                 }
             },
             widget: {
@@ -425,13 +501,32 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         compress: {
             main: {
                 options: {
-                    archive: deliveryDir+'/ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.zip'
+                    archive: deliveryDir+'ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.zip'
                 },
                 files: [
-                    {expand: true, src: ['**'],  dest: '/', cwd: destDir}
+                    {
+                        expand: true,
+                        src: ['**'],
+                        dest: '/',
+                        cwd: destDir
+                    }
+                ]
+            },
+            gap: {
+                options: {
+                    archive: deliveryDir + 'gapDashui.zip'
+                },
+                files: [
+                    {
+                        expand: true,
+                        src: ['**'],
+                        dest: '/',
+                        cwd: '.phoneGap/'
+                    }
                 ]
             }
         },
@@ -443,24 +538,6 @@ module.exports = function (grunt) {
 				globalstrict: true
             },
             all: [ 'dashui/js/*.js','dashui/*.html','dashui/widgets/hqWidgets/js/*.js']
-        },
-		
-		// Used for build repository
-        'unzip': {
-            // Skip/exclude files via `router`
-            unzipIo: {
-                // If router returns a falsy varaible, the file will be skipped
-                router: function (filepath) {
-                    if (filepath.indexOf('io-addon.json') != -1 || filepath.indexOf('io-core.json') != -1 || filepath.indexOf('io-adapter.json') != -1) {
-                        return filepath;
-                    } else {
-                        // Otherwise, skip it
-                        return null;
-                    }
-                },
-                src: [deliveryDir+'/<%= grunt.task.current.args[0] %>'],
-                dest: deliveryDir + '/<%= grunt.task.current.args[1] %>/'
-            }
         }
     });
 
@@ -485,11 +562,14 @@ module.exports = function (grunt) {
 
     grunt.registerTask('buildAllWidgets', function () {
         var dirs = {};
-        grunt.file.recurse (srcDir + "/widgets/", function (abspath, rootdir, subdir, filename) {
-            if (!subdir && filename.indexOf('.html') != -1) {
+        // Exclude these widgets from minmizing and combining
+        var exclude = ["swipe", "highcharts"];
+        grunt.file.recurse(srcDir + "widgets/", function (abspath, rootdir, subdir, filename) {
+            if (filename == ".DS_Store") return;
+            if (!subdir && filename.indexOf('.html') != -1 ) {
                 // remove extension
                 var parts = filename.split('.');
-                var widgetName = parts.splice(parts.length - 2, 1).join ('.');
+                var widgetName = parts.splice(parts.length - 2, 1).join('.');
                 if (!dirs[widgetName]) {
                     dirs[widgetName] = {subdirs:{}};
                 }
@@ -557,7 +637,7 @@ module.exports = function (grunt) {
                 var isCss = false;
                 for (var dir in dirs[t].subdirs) {
                     console.log("Process:" + t + "/" + dir);
-                    if (dirs[t].subdirs[dir].justCopy) {
+                    if (dirs[t].subdirs[dir].justCopy || exclude.indexOf(t) != -1) {
                         grunt.task.run(['copy:widget:'+ t+':'+dir]);
                     } else if (dir == 'js') {
                         // Combine all javascript files
@@ -573,8 +653,8 @@ module.exports = function (grunt) {
                     } else {
                         console.log('Nothing to do for '+t+':'+dir);
                     }
-                }		
-				
+                }
+
                 if (isJs && !isCss) {
                     console.log ("Remove js in "+t);
                     // Remove from widget.html all javascripts
@@ -597,7 +677,7 @@ module.exports = function (grunt) {
                     console.log ("Just copy "+t);
                     grunt.task.run(['copy:widgetHtml:'+t]);
                 }
-				
+
                 if (dirs[t].files) {
                     for (var f in dirs[t].files) {
                         if (dirs[t].files[f].replace) {
@@ -613,200 +693,9 @@ module.exports = function (grunt) {
         }
     });
 
-    // --------------------- REPOSITORY START ------------------------------//
-    // Objects for repository
-    /*var downloadRoot = "http://iobroker.com/download"
-     var repository = deliveryDir+"/repository.html";
-     var repositoryJson  = deliveryDir+"/repository.json";
-     */
-    var repObject  = {
-        cores: {},
-        addons: {},
-        adapters: {}
-    };
-    var repMain;
-    var repositoryDir = deliveryDir;
-
-    function translate (text, lang) {
-        lang = lang || 'en';
-        if (!this.words) {
-            this.words = {
-                'Adapters'            : {'en': 'Adapters',           'de': 'Adapters',             'ru': '��������'},
-                'Add-ons'             : {'en': 'Add-ons',            'de': 'Add-ons',              'ru': '������'},
-                'Core'                : {'en': 'Core',               'de': 'Core',                 'ru': '����'},
-                'ioBroker Repository' : {'en': 'ioBroker Downloads', 'de': 'ioBroker Downloads.',  'ru': '������ ��� ioBroker'}
-            };
-        }
-        if (this.words[text]) {
-            var newText = this.words[text][lang];
-            if (newText){
-                return newText;
-            }
-            else
-            if (lang != 'en') {
-                newText = this.words[text]['en'];
-                if (newText){
-                    return newText;
-                }
-            }
-
-        }
-        //console.log ("trans: " + text);
-        return text;
-    }
-
-    grunt.registerTask('createRepository', function () {
-        if (grunt.file.exists(repositoryDir + '/io-repository.json')) {
-            repMain = grunt.file.readJSON (repositoryDir + '/io-repository.json');
-        } else {
-            console.log('no ' +  repositoryDir + '/io-repository.json found. Cannot create repository');
-            return;
-        }
-
-        grunt.file.recurse (repositoryDir, function (abspath, rootdir, subdir, filename) {
-            // Unpack
-            if (filename.indexOf('.zip') != -1) {
-                var parts = filename.split('.');
-                parts.splice(parts.length - 1, 1);
-                var tmpDir = parts.join('.');
-                grunt.task.run(['unzip:unzipIo:'+filename+':'+tmpDir]);
-                grunt.task.run(['assembleInfo:'+tmpDir]);
-            }
-        });
-        for (var i = 0; i < repMain.languages.length; i++) {
-            grunt.task.run(['writeRepository:' + repMain.languages[i]]);
-        }
-    });
-
-    grunt.registerTask('assembleInfo', function () {
-        var ioInfo;
-        if (grunt.file.exists(repositoryDir + '/'+grunt.task.current.args[0] + '/io-addon.json')) {
-            ioInfo = grunt.file.readJSON(repositoryDir + '/'+grunt.task.current.args[0] + '/io-addon.json');
-            if (!repObject.addons[ioInfo.name]) {
-                repObject.addons[ioInfo.name] = {};
-            }
-            repObject.addons[ioInfo.name][ioInfo.version] = ioInfo;
-            repObject.addons[ioInfo.name][ioInfo.version].urlDownload = repMain.link + '/' + grunt.task.current.args[0]+".zip";
-        } else
-        if (grunt.file.exists(repositoryDir + '/'+grunt.task.current.args[0] + '/io-adapter.json')) {
-            ioInfo = grunt.file.readJSON(repositoryDir + '/'+grunt.task.current.args[0] + '/io-adapter.json');
-            if (!repObject.adapters[ioInfo.name]) {
-                repObject.adapters[ioInfo.name] = {};
-            }
-            repObject.adapters[ioInfo.name][ioInfo.version] = ioInfo;
-            repObject.adapters[ioInfo.name][ioInfo.version].urlDownload = repMain.link + '/' + grunt.task.current.args[0]+".zip";
-        }else
-        if (grunt.file.exists(repositoryDir + '/'+grunt.task.current.args[0] + '/io-core.json')) {
-            ioInfo = grunt.file.readJSON(repositoryDir + '/'+grunt.task.current.args[0] + '/io-core.json');
-            repObject.cores[ioInfo.version] = ioInfo;
-            repObject.cores[ioInfo.version].urlDownload = repMain.link + '/' + grunt.task.current.args[0]+".zip";
-        }
-        grunt.file.delete(repositoryDir + '/'+grunt.task.current.args[0] + '/');
-    });
-
-    function createDescription (infoObj, lang) {
-        lang = lang || 'en';
-        var desc;
-        if (infoObj.description) {
-            if (infoObj.description[lang]) {
-                desc = infoObj.description[lang];
-            } else if (infoObj.description['en']) {
-                desc = infoObj.description['en'];
-            } else {
-                desc = infoObj.description;
-            }
-        } else {
-            desc = infoObj.name;
-        }
-
-        return '<p>' +desc+ '</p>';
-    }
-
-    grunt.registerTask('writeRepository', function () {
-        var lang = grunt.task.current.args[0] || 'en';
-        var text = '<html><header><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>' +
-            '<link rel="stylesheet" href="repository.css" type="text/css"/></header>' +
-            '<body><h1>'+(repMain.name[lang] || repMain.name)+'</h1>\n';
-
-        if (repMain.description) {
-            text += createDescription(repMain, lang);
-        }
-
-        var headerAdded = false;
-        for (var ver in repObject.cores) {
-            if (!headerAdded) {
-                text += '<h2>'+translate('Core', lang)+'</h2>\n';
-                text += createDescription(repObject.cores[ver], lang);
-                text += "<table>\n";
-                headerAdded = true;
-            }
-            text += '<tr><td><a href="'+repObject.addons[addon][ver].urlDownload +'">'+ver+'</a></td></td>\n';
-        }
-        if (headerAdded) {
-            text += "</table>\n";
-        }
-
-        // Addons
-        headerAdded = false;
-        for (var addon in repObject.addons) {
-            if (!headerAdded) {
-                text += '<h2>'+translate('Add-ons', lang)+'</h2>\n';
-                headerAdded = true;
-            }
-
-            text += '<h3>'+addon+'</h3>\n';
-            var headerAdded2 = false;
-            for (var ver in repObject.addons[addon]) {
-                if (!headerAdded2) {
-                    text += createDescription(repObject.addons[addon][ver], lang);
-                    headerAdded2 = true;
-                    text += "<table>\n";
-                }
-
-                text += '<tr><td><a href="'+repObject.addons[addon][ver].urlDownload +'">'+ver+'</a></td></td>\n';
-            }
-            if (headerAdded2) {
-                text += "</table>\n";
-            }
-        }
-
-        // Adapters
-        headerAdded = false;
-        for (var adapter in repObject.adapters) {
-            if (!headerAdded) {
-                text += '<h2>'+translate('Adapters', lang)+'</h2>';
-                headerAdded = true;
-            }
-
-            text += '<h3>'+adapter+'</h3>';
-            var headerAdded2 = false;
-            for (var ver in repObject.adapters[adapter]) {
-                if (!headerAdded2) {
-                    text += createDescription(repObject.adapters[adapter][ver], lang);
-                    headerAdded2 = true;
-                    text += "<table>";
-                }
-
-                text += '<tr><td><a href="'+repObject.addons[addon][ver].urlDownload +'">'+ver+'</a></td></td>\n';
-            }
-            if (headerAdded2) {
-                text += "</table>";
-            }
-        }
-        text += '</body></html>';
-        grunt.file.write (repositoryDir + '/' + repMain.htmlFile + '-' + lang + '.html', text);
-        if (!repMain.jsonCreated) {
-            repMain.repository = repObject;
-            grunt.file.write (repositoryDir + '/' + repMain.jsonFile + '.json', JSON.stringify(repMain));
-            repMain.jsonCreated= true;
-        }
-    });
-//    grunt.registerTask('default', ['createRepository']);
-
-    // ----------------------------- REPOSITORY END --------------------------- //
-
     grunt.registerTask('makeWorkingCopy', function () {
         grunt.task.run([
+			'replace:setVersion',
 //			'jshint',
             'clean',
             'copy:static',
@@ -816,7 +705,19 @@ module.exports = function (grunt) {
             'buildAllWidgets'
         ]);
     });
-    grunt.registerTask('optimizeWorkingCopy', function () {
+    grunt.registerTask('makeWorkingCopyGap', function () {
+        grunt.task.run([
+            'replace:setVersion',
+//			'jshint',
+            'clean',
+            'copy:static',
+            'replace:dist',
+            'replace:gap',
+            'concat:js',
+            'concat:css',
+            'buildAllWidgets'
+        ]);
+    });    grunt.registerTask('optimizeWorkingCopy', function () {
         grunt.task.run([
             'cssmin:build',
             'htmlmin:dist',
@@ -832,11 +733,58 @@ module.exports = function (grunt) {
     });
 	grunt.registerTask('createPackage', function () {
         grunt.task.run([
-            'compress'
+            'compress:main'
         ]);
-        console.log(srcDir + '/io-addon.json ==> ' + deliveryDir + '/ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.json');
-        grunt.file.copy(srcDir + '/io-addon.json', deliveryDir + '/ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.json');
+        console.log(srcDir + 'io-addon.json ==> ' + deliveryDir + 'ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.json');
+        grunt.file.copy(srcDir + 'io-addon.json', deliveryDir + 'ioBroker.addon.' + ioaddon.name + '.' + ioaddon.version + '.json');
     });
 
-    grunt.registerTask('default', ['env:production', 'makeWorkingCopy', 'optimizeWorkingCopy', 'deployWorkingCopy', 'createPackage']);
-}
+    grunt.registerTask('updateReadme', function () {
+        var readme = grunt.file.read('README.md');
+        if (readme.indexOf(ioaddon.version) == -1) {
+            var timestamp = new Date();
+            var date = timestamp.getFullYear() + '-' +
+                ("0" + (timestamp.getMonth() + 1).toString(10)).slice(-2) + '-' +
+                ("0" + (timestamp.getDate()).toString(10)).slice(-2);
+
+            var news = "";
+            if (ioaddon.whatsNew) {
+                for (var i = 0; i < ioaddon.whatsNew.length; i++) {
+                    if (typeof ioaddon.whatsNew[i] == 'string') {
+                        news += '* ' + ioaddon.whatsNew[i] + '\r\n';
+                    } else {
+                        news += '* ' + ioaddon.whatsNew[i]['en'] + '\r\n';
+                    }
+                }
+            }
+
+            grunt.file.write('README.md', readme.replace(/##\s+Changelog\s+/, '## Changelog\r\n\r\n### ' + ioaddon.version + ' [' + date + ']\r\n' + news + '\r\n'));
+        }
+    });
+
+    grunt.registerTask('updateCache', function () {
+        var manifest = grunt.file.read(srcDir + 'cache.manifest');
+        console.log(manifest);
+        if (manifest.indexOf("# dev build") != -1) {
+            var matchArr = manifest.match(/# dev build ([0-9]+)\s/);
+            var number = parseInt(matchArr[1], 10);
+            grunt.file.write(srcDir + 'cache.manifest', manifest.replace(/# dev build ([0-9]+)\s/, '# dev build ' + (number + 1) + '\n'));
+        }
+    });
+
+    grunt.registerTask('phoneGap', function () {
+        grunt.task.run([
+            'replace:xmlGap',
+            'updateCache',
+            'updateReadme',
+            'env:production',
+            'makeWorkingCopyGap',
+            'optimizeWorkingCopy',
+            'copy:gap',
+            'compress:gap'
+        ]);
+    });
+
+    grunt.registerTask('default', ['updateCache', 'updateReadme', 'env:production', 'makeWorkingCopy', 'optimizeWorkingCopy', 'deployWorkingCopy', 'createPackage']);
+    grunt.registerTask('gap',     ['phoneGap']);
+};

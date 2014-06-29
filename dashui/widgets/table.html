@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="widgets/table/css/table.css" />
 <script language="javascript">
     //"use strict";
     // Following classes shoud be used if variable table_class="tclass"
@@ -40,8 +41,8 @@
     // "show" option is active only in edit mode and has no effect
     //
 
-    jQuery.extend(true, dui.binds, {
-        table: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.table = {
             // Register callback in dashUI
             initTable: function () {
                 if (!dui.binds.table.regElements) {
@@ -119,7 +120,6 @@
             // Show detailed information
             onRowClick: function  () {
                 var that = this;
-                var id = $(that).attr('data-index');
                 var options = that._parent._options;
                 // Deselect all rows
                 $('.' + that._parent._wid + '-id').removeClass (options.tclass + '-tr-selected');
@@ -210,20 +210,27 @@
                 }
             },
 
-            createRow: function  (rowData, wid, options, index, rowNumber) {
+            createRow: function  (rowData, wid, options, rowNumber, noTR, serverID) {
                 var _classes = rowData['_class'] ? rowData['_class'].split(' ') : null;
+                var text;
                 // Create row
-                var text = '<tr class="' + options.tclass + '-tr ' +
-                        options.tclass + ((index % 2) ? '-tr-even' : '-tr-odd') + ' ' +
+                if (!noTR) {
+                    text = '<tr class="' + options.tclass + '-tr ' +
+                            options.tclass + ((rowNumber % 2) ? '-tr-even' : '-tr-odd') + ' ' +
                         wid + '-id';
                 if (_classes) {
                     for (var t = 0, len = _classes.length; t < len; t++)  {
                         text += ' ' + (options.tclass + '-tr-' + _classes[t]);
                     }
                 }
-                text += '" id="tr_' + wid + '_' + index + '" data-index="' + index + '">';
+                    text += '" id="tr_' + wid + '_' + ((serverID === undefined) ? rowNumber : serverID) + '" data-index="' + serverID + '">';
+                } else {
+                    text = '';
+                }
                 var k = 1;
                 for (var obj in rowData) {
+                    if(obj.substring(0,6) == 'jQuery') continue;
+
                     if (obj.length > 0 && obj[0] == '_') {
                         if (obj.length > 4 && obj.substring(0,4) == '_btn') {
                             var btnText = "";
@@ -235,7 +242,7 @@
                                 btnClass = rowData[obj]._class;
                             }
                             if (btnText) {
-                                text += '<td class="' + options.tclass + '-th' + k + '"><button id="ack_button_' + wid + '_' + index +'" class="'+ options.tclass+'-ack-button'+(btnClass ? ('-'+btnClass) : '')+'">'+btnText+'</button></td>';
+                                text += '<td class="' + options.tclass + '-th' + k + '"><button id="ack_button_' + wid + '_' + ((serverID === undefined) ? rowNumber : serverID) +'" class="'+ options.tclass+'-ack-button'+(btnClass ? ('-'+btnClass) : '')+'">'+btnText+'</button></td>';
                             }
                             else {
                                 text += '<td class="' + options.tclass + '-th' + k + '"></td>';
@@ -247,7 +254,9 @@
                     text += '<td class="' + options.tclass + '-th' + k + '">' + rowData[obj] + '</td>';
                     k++;
                 }
+                if (!noTR) {
                 text += '</tr>';
+                }
                 return text;
             },
 
@@ -280,6 +289,10 @@
                 } else {
                     table = tableJson;
                 }
+                
+                if (!table) {
+                    table = [];
+                }
 
                 // Create widget container
                 $('#' + wid).remove();
@@ -290,14 +303,17 @@
                 }
 
                 // Start creation of table
-                var text   = '<div class="' + (options.tclass || "") + '-inner"><table id="t' + wid + '" class="' + options.tclass + '">';
+                var text   = '<div class="' + (options.tclass || "") + '-inner' + ((options.show_scroll) ? ' tclass-inner-overflow' : '') + '"><table id="t' + wid + '" class="' + options.tclass + '">';
                 var header = '<table id="h' + wid + '" class="' + options.tclass + '">';
                 var headerDone = false;
                 var j = 0;
                 var selectedId = null;
+
                 // Go through all lines
                 for (var ii = 0, ilen = table.length; ii < ilen; ii++) {
-                    if (!table[ii]) continue;
+                    if (!table[ii])  {
+                        continue;
+                    }
                     var _classes = table[ii]['_class'] ? table[ii]['_class'].split(' ') : null;
 
                     //  Create table header
@@ -305,6 +321,7 @@
                         header += '<tr class="' + options.tclass + '-th">';
                         var k = 1;
                         for (var obj in table[ii]) {
+                            if(obj.substring(0,6) == 'jQuery') continue;
                             if (obj.length > 0 && obj[0] == '_') {
                                 if (obj.length > 4 && obj.substring(0,4) == '_btn') {
                                     header += '<th class="' + options.tclass + '-th' + k + '"></th>';
@@ -325,13 +342,13 @@
                         selectedId = ii;
                     }
 
-                    text += dui.binds.table.createRow(table[ii], wid, options, ii, j);
+                    text += dui.binds.table.createRow(table[ii], wid, options, j, false, (table[ii]._id === undefined) ? ii : table[ii]._id);
                     j++;
                 }
                 text += '</table>\n';
                 header += '</table>\n';
                 // Insert table into container
-                $(elem).append(header+text);
+                $(elem).append((options.hide_header ? '' : header) + text);
                 elem._options = options;
                 elem._wid     = wid;
                 elem._view    = view;
@@ -340,8 +357,10 @@
 
                 // Set additional data for every row
                 for (var i = 0, len = table.length; i < len; i++) {
-                    if (!table[i]) continue;
-                    var _el = document.getElementById('ack_button_' + wid + '_' + i);
+                    if (!table[i]) {
+                        continue;
+                    }
+                    var _el = document.getElementById('ack_button_' + wid + '_' + ((table[i]._id === undefined) ? i : table[i]._id));
                     if (_el) {
                         _el._data   = table[i];
                         _el._parent = elem;
@@ -356,8 +375,7 @@
                     // Set additional data for every row
                     for (i = 0, len = table.length; i < len; i++) {
                         if (!table[i]) continue;
-                        var id = (typeof table[i]._id !== 'undefined') ? table[i]._id :  i;
-                        var el = document.getElementById('tr_' + wid + '_' + id);
+                        var el = document.getElementById('tr_' + wid + '_' + ((table[i]._id === undefined) ? i : table[i]._id));
                         if (el) {
                             el._data   = table[i];
                             el._parent = elem;
@@ -397,24 +415,19 @@
 
                     // If new event came
                     if (objId == options.event_id) {
-                        var id = (newEvent._id  !== 'undefined') ? newEvent._id  :  this._rowNum;
                         // Try to find, if this event yet exists
-                        var row = document.getElementById ('tr_' + this._wid + '_' + id);
-                        var rowNum;
+                        var $row = (newEvent._id !== undefined) ? $('tr[data-index="'+ newEvent._id+'"]') : [];
                         //
-                        if (row) {
-                            // If exists, get row number of this line to calculate odd or even
-                            rowNum = $(row).hasClass (options.tclass+'-tr-odd') ? 1 : 0;
-                        } else {
-                            // Else get next row number
-                            this.rowNum =  this._rowNum++;
-                            rowNum = this.rowNum;
+                        if (!$row.length) {
+                            // get next row number for new line
+                            this._rowNum++;
                         }
 
-                        var text = dui.binds.table.createRow(newEvent, this._wid, this._options, id, rowNum);
+                        var text = dui.binds.table.createRow(newEvent, this._wid, this._options, this._rowNum, ($row.length > 0), (newEvent._id === undefined) ? this._rowNum : newEvent._id);
+                        console.log('AAA');
 
-                        if (row) {
-                            $(row).replaceWith(text);
+                        if ($row.length) {
+                            $row.html(text).addClass(newEvent._class || '');
                         } else {
                             // If add to the top of table
                             if (this._options.new_on_top) {
@@ -427,20 +440,21 @@
 
                         // If detailed widget desired
                         if (this._options.detailed_wid) {
-                            var el = document.getElementById('tr_' + this._wid + '_' + id);
+                            var el = document.getElementById('tr_' + this._wid + '_' + ((newEvent._id === undefined) ? this._rowNum : newEvent._id));
                             if (el) {
                                 el._data   = newEvent;
                                 el._parent = this;
                             }
                             $(el).bind("click", dui.binds.table.onRowClick);
-                            el = document.getElementById('ack_button_' + this._wid + '_' + id);
+                        }
+                        el = document.getElementById('ack_button_' + this._wid + '_' + ((newEvent._id === undefined) ? this._rowNum : newEvent._id));
                             if (el) {
                                 el._data   = newEvent;
                                 el._parent = this;
                                 el._ack_id = newEvent._ack_id || JSON.stringify(newEvent);
                                 $(el).bind("click", dui.binds.table.onAckButton);
                             }
-                        }
+
                     } else {
                         // Update whole table
                         _setTimeout(dui.binds.table.showTable, 50, this._view, this._wid, this._options);
@@ -510,19 +524,21 @@
                     }
                 }
             }
-        }
-    });
+        };
+    //});
 
 </script>
 
-<script type="text/ejs" id="tplTableBody" class="dashui-tpl" data-dashui-set="table" data-dashui-name="Table" data-dashui-attrs="table_id/id;event_id/id;table_class;detailed_wid;new_on_top/checkbox;btn_print;view_for_print/views;ack_id/id">
+<script type="text/ejs" id="tplTableBody" class="dashui-tpl" data-dashui-set="table" data-dashui-name="Table" data-dashui-attrs="table_id/id;event_id/id;table_class;hide_header[true]/checkbox;show_scroll/checkbox;detailed_wid;new_on_top/checkbox;btn_print;view_for_print/views;ack_id/id">
     <%
         var options =  {
             _class: this.data.attr('class'),
+            hide_header: this.data.attr('hide_header'),
             style: this.data.attr('style'),
             table_id: this.data.attr('table_id'),
             event_id: this.data.attr('event_id'),
             new_on_top: this.data.attr('new_on_top'),
+            show_scroll: this.data.attr('show_scroll'),
             tclass: this.data.attr('table_class'),
             detailed_wid: this.data.attr('detailed_wid'),
             btn_print: this.data.attr('btn_print'),

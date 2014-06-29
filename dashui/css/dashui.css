@@ -25,8 +25,6 @@ div#dui_container {
 }
 
 .dashui-view {
-    width:100%;
-    height:100%;
     position: absolute;
     top: 0;
 }
@@ -64,6 +62,20 @@ div#dui_container {
     pointer-events:none;
 	width:100%;
 	height:100%;
+}
+
+
+#allwidgets_helper {
+    border: 1px dotted #aaa;
+    position: absolute;
+    z-index: 90;
+    pointer-events:none;
+}
+#allwidgets_inner_helper {
+    border: 1px dotted #555;
+    pointer-events:none;
+    width:100%;
+    height:100%;
 }
 
 .widget_multi_helper {
@@ -152,11 +164,11 @@ a.ui-dialog-titlebar-restore {
     padding: 1px !important;
     margin-top: -4px !important;
 }
-.ui-dialog-titlebar-restore span{
+.ui-dialog-titlebar-restore span {
     margin-top: 5px !important;
     margin-left:5px !important;
 }
-.ui-dialog-titlebar-minimize span{
+.ui-dialog-titlebar-minimize span {
     margin-top: 5px !important;
     margin-left:5px !important;
 }
@@ -284,86 +296,49 @@ div#dui_editor {
 }
 
 .dashui-wait-screen {
-    position: absolute; top: 0; left: 0; height:100%; width:100%;
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    height:100%; 
+    width:100%;
 }
-/* Sample for table widget */
-.tclass-overflow {
-    overflow-y: auto;
-}
-.tclass {
-    border: 1px solid black;
-    width: 100%;
-    table-layout: fixed;
-}
-.tclass-inner {
-    border: 0px solid black;
-    width: 100%;
-    overflow-y: scroll;
-    table-layout: fixed;
-    height: 100%;
-}
-.tclass-th {
-    background-color: black;
-    color: white;
-    font-weight: bold;
-}
-.tclass-th1 {
-    width: 150px;
-}
-.tclass-th2 {
-    width: 65px;
-}
-.tclass-th3 {
-    width: 90px;
-}
-.tclass-th4 {
-    width: 50px;
-}
-.tclass-tr {
-    color: black;
-}
-.tclass-tr-even {
-    background-color: darkgray;
-}
-.tclass-tr-odd {
-    background-color: lightgray;
-}
-.tclass-tr:hover {
-    color:blue;
-    cursor: pointer;
-}
-.tclass-tr-selected {
-    background-color: green;
-/*    color: white;*/
-}
-.tclass-detail {
-     width: 100%
- }
-.tclass-detail-tr {
-    width: 100%
-}
-.tclass-detail-tr-even {
-}
-.tclass-detail-tr-odd {
-}
-.tclass-detail-td-name {
-    width:200px;
-    font-weight: bold;
+.dashui-clipboard {
+    position: absolute;
+    top: 0px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 14px;
+    padding-right: 14px;
+    background-color: rgb(55, 169, 232);
+    opacity: 0.8;
+    z-index:1003;
+    -webkit-border-bottom-right-radius: 7px;
+    -webkit-border-bottom-left-radius: 7px;
+    -moz-border-radius-bottomright: 7px;
+    -moz-border-radius-bottomleft: 7px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-.tclass-detail-td-value {
-}
-.tclass-print-button {
+.dashui-stealmode {
     position: absolute;
-    bottom: 5%;
-    right: 5%;
+    top: 0px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 14px;
+    padding-right: 14px;
+    background-color: orange;
+    opacity: 0.8;
+    z-index:1003;
+    -webkit-border-bottom-right-radius: 7px;
+    -webkit-border-bottom-left-radius: 7px;
+    -moz-border-radius-bottomright: 7px;
+    -moz-border-radius-bottomleft: 7px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
 }
-.tclass-tr-error {
-    color:red;
-}
-.tclass-tr-warning {
-    color:yellow;
-}
+
 
 /*--------------------------------------------- Authentication dialog ------------------------------- */
 /* Mask for background, by default is not display */
@@ -622,31 +597,31 @@ p.xs_text_editor_mode {
 
 }
 
-#tabs-4 > .ui-multiselect{
+#tabs-4 > .ui-multiselect {
     height: 28px;
     margin-bottom: 5px;
     width: 393px !important;
     margin-top: 1px;
 
 }
-#add_widget{
+#add_widget {
 
 }
-#del_widget{
+#del_widget {
     width: 142px;
 
 }
-#widget_doc{
+#widget_doc {
     width: 142px;
 
 }
-#dup_widget{
+#dup_widget {
     width: 142px;
     margin-top: 15px;
 
 }
 
-.dashui-widget-tools > .ui-multiselect{
+.dashui-widget-tools > .ui-multiselect {
     height: 28px;
     margin-top: 15px;
     width: 244px !important;
@@ -655,72 +630,121 @@ p.xs_text_editor_mode {
     top: 9px;
 
 }
-.widget_attrs_header{
+.widget_attrs_header {
     width: 115px !important;
 }
 
-#widget_attrs_fix  .ui-multiselect{
+#widget_attrs_fix  .ui-multiselect {
     width: 265px !important;
 }
 
-#widget_attrs_fix .dashui-edit-textbox{
+#widget_attrs_fix .dashui-edit-textbox {
     width: 260px !important;
 
 }
 
-#snap_type{
+#snap_type {
     width: 255px;
 
 }
-#grid_size{
+#grid_size {
     width: 250px;
 
 }
-#screen_size_x{
+#screen_size_x {
     width: 250px;
 }
-#screen_size_y{
+#screen_size_y {
     width: 250px;
 
 }
 
-#wizard_rooms{
+#wizard_rooms {
     width: 250px;
 }
-#wizard_funcs{
+#wizard_funcs {
     width: 250px;
 }
-#wizard_widgets{
+#wizard_widgets {
     width: 250px;
 }
-#wizard_run{
+#wizard_run {
     margin-left: 87px;
     margin-top: 5px;
 }
-#create_instance{
+#create_instance {
     margin-left: 87px;
     margin-top: 27px;
     width: 160px;
 
 }
-#remove_instance{
+#remove_instance {
     margin-left: 87px;
     margin-top: 5px;
     width: 160px;
 }
 
-#export_view{
+#export_view {
     margin-left: 87px;
 }
-#import_view{
+#import_view {
     float: right;
     margin-right: 87px;
 }
-#language{
+#export_local_view {
+    margin-left: 87px;
+}
+#import_local_view {
+    float: right;
+    margin-right: 87px;
+}
+#clear_local_view {
+    margin-left: 87px;
+}
+#language {
     width: 250px;
 
 }
-#dashui_instance{
+#dashui_instance {
     width: 250px;
 
+}
+
+.ui-selecting {
+
+}
+
+/* ---------------- Notifications themes (info, warn)--------------------------- */
+
+div.jGrowl div.info {
+    background-color: 		#FFF1C2;
+    color: 					navy;
+}
+
+div.jGrowl div.info {
+    -moz-border-radius: 	5px;
+    -webkit-border-radius:	5px;
+    width: 					280px;
+    height: 				55px;
+    overflow: 				hidden;
+    opacity:                0.95;
+}
+div.jGrowl div.warn {
+    background-color: 		#FFF1C2;
+    color: 					red;
+}
+
+div.jGrowl div.warn {
+    -moz-border-radius: 	5px;
+    -webkit-border-radius:	5px;
+    width: 					280px;
+    height: 				55px;
+    overflow: 				hidden;
+    opacity:                1;
+}
+
+#savingProgress {
+    margin-top: -8px;
+    width: 28px;
+    height: 28px;
 }

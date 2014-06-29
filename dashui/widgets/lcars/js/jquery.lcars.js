@@ -22,7 +22,7 @@ if (typeof jQuery != 'undefined') {  // here we check if jquery is set (aka load
 		},
 		sidePanel: '#side-panel', // define the element for your side buttons
 		upperContent: '#upper-content', // define the upper content area (only in Split screens)
-		css: 'widgets/lcars/lcars/',
+		css: 'widgets/lcars/css/',
 		debug: false
 	};
 	var options = $.extend(defaults, options);

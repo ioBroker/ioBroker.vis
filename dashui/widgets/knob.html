@@ -32,8 +32,8 @@
 <script type="text/javascript" src="widgets/knob/js/knobRot-0.2.2.js"></script>
 
 <script type="text/javascript">
-    jQuery.extend(true, dui.binds, {
-        knob : {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.knob = {
             knobrot: function (el, options, factor){
                 factor = parseInt(factor, 10);
                 if (factor == 0) { factor = 1; }
@@ -98,9 +98,9 @@
                  });
                  });*/
             }
-        }
+        };
 
-    });
+    //});
 </script>
 
 

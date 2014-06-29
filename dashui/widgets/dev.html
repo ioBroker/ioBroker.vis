@@ -1,6 +1,6 @@
 <script type="text/javascript">
-    jQuery.extend(true, dui.binds, {
-        debug: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.debug = {
             history: function (el, id) {
                 localData.uiState.bind("_"+id+".Value", function( e, newVal, oldVal ) {
                     var timestamp = localData.uiState["_"+id].Timestamp;
@@ -11,8 +11,8 @@
                     jQuery(el).parent().find(".debugHistoryTable tr:first").after(row);
                 });
             }
-        }
-    });
+        };
+    //});
 
 </script>
 

@@ -57,7 +57,8 @@ var hqWidgets = {
                                     // like callback (imageList, userParam);
                                     // e.g. "function GetFiles (callback, param) { if (callback) callback (aImages, param); }"
         gTempSymbol:   '&#176;C',   // Farenheit or celcius
-        gIsTouchDevice: false       // if desctop or touch device
+        gIsTouchDevice: false,      // if desktop or touch device
+        gHideDescription: false     // Hide description left in edit mode
     },
     // Button states
     gState: {
@@ -181,7 +182,7 @@ var hqWidgets = {
         if (this.gDynamics.gActiveBig!=null) {               
             this.gDynamics.gActiveBig.ShowBigWindow(false);
             this.gDynamics.gActiveBig.SendPercent ();
-            this.gDynamics.gActiveBig=null;		
+            this.gDynamics.gActiveBig = null;
         }
         if (this.gDynamics.gActiveSlider!=null) {
             //this.gDynamics.gActiveSlider.SendPosition ();
@@ -191,14 +192,17 @@ var hqWidgets = {
     },
     // On mouse move handler
     onMouseMove: function (x_, y_) {
-        if (this.gDynamics.gActiveElement != null)
+        if (this.gDynamics.gActiveElement != null) {
             this.gDynamics.gActiveElement.OnMouseMove (x_,y_);
+        }
         else
-        if (this.gDynamics.gActiveBig != null)
+        if (this.gDynamics.gActiveBig != null) {
             this.gDynamics.gActiveBig.intern._jbigWindow.OnMouseMove (x_,y_);//.SetPositionOffset(y_ - this.gDynamics.gActiveBig.cursorY);
+        }
         else
-        if (this.gDynamics.gActiveSlider != null) 
+        if (this.gDynamics.gActiveSlider != null) {
             this.gDynamics.gActiveSlider.OnMouseMove(x_, y_);
+        }
     },
     // Convert button type to string
     Type2Name: function  (t) {
@@ -249,7 +253,6 @@ var hqWidgets = {
     },
     // Delete button from the list
     Delete: function (buttonToDelete) {
-        console.log ("Delete " + buttonToDelete);
         if (buttonToDelete.settings == undefined) {
             // May be this is te name of the div element
             buttonToDelete = this.Get (buttonToDelete);
@@ -374,6 +377,18 @@ var hqWidgets = {
         
         return this.gDynamics.gIsEditMode;
     },
+    SetHideDescription: function  (isHide) {
+        this.gOptions.gHideDescription = isHide;
+        var i = 0;
+        while (this.gDynamics.gElements[i])
+        {
+            this.gDynamics.gElements[i].hide();
+            this.gDynamics.gElements[i].show();
+            i++;
+        }
+
+        return this.gOptions.gHideDescription;
+    },
     GetMaxZindex: function  () {
         var i=0;
         var maxZindex = 0;
@@ -488,8 +503,10 @@ var hqWidgets = {
             hqWidgets.onMouseUp (true);
         }, false);
         $(document).mousemove(function(event){
-            if (hqWidgets.gDynamics.gIsTouch) return;
-            hqWidgets.onMouseMove (event.pageX, event.pageY);
+            if (hqWidgets.gDynamics.gIsTouch) {
+                return;
+            }
+            hqWidgets.onMouseMove(event.pageX, event.pageY);
         }); 
         document.addEventListener('touchmove', function(e) {
             if ((hqWidgets.gDynamics.gActiveElement != null) || 
@@ -498,7 +515,7 @@ var hqWidgets = {
             {
                 //$('#statusM').html(" x"+e.touches[0].pageX+" y"+e.touches[0].pageY);	
                 e.preventDefault();
-                hqWidgets.onMouseMove (e.touches[0].pageX, e.touches[0].pageY);
+                hqWidgets.onMouseMove(e.touches[0].pageX, e.touches[0].pageY);
             }
         }, false);
         // Install prototype function for strings to 
@@ -892,14 +909,18 @@ var hqWidgets = {
                 var pin = document.getElementById(this.advSettings.elemName+"_pin");
                 if (pin) {
                     pin.parentQuery = this;
-                    $("#"+this.advSettings.elemName+"_pin").addClass('hq-ipcam-pin-btn').button({icons: {primary: (this.dynStates.bigPinned ? "ui-icon-pin-s" : "ui-icon-pin-w")}, text: false}).click(function( event ) {
-                        if (this.parentQuery.intern._clickTimer) return;
+                    pin._onClick = function( event ) {
+                        if (this.parentQuery.intern._clickTimer) {
+                            return;
+                        }
                         this.parentQuery.intern._clickTimer = _setTimeout(function (elem) {
-                            clearTimeout (elem.intern._clickTimer);
+                            clearTimeout(elem.intern._clickTimer);
                             elem.intern._clickTimer = null;
                         }, 500, this.parentQuery);
-                        
-                        event.preventDefault();
+
+                        if (event) {
+                            event.preventDefault();
+                        }
                         this.parentQuery.dynStates.bigPinned = !this.parentQuery.dynStates.bigPinned;
                         $(this).button({icons: {primary: (this.parentQuery.dynStates.bigPinned ? "ui-icon-pin-s" : "ui-icon-pin-w")}});
                         // Start or stop pin timer
@@ -912,16 +933,22 @@ var hqWidgets = {
                             // Start timer
                             this.parentQuery.intern._timerID = _setTimeout(function () {
                                 if (hqWidgets.gDynamics.gShownBig) {
-                                    hqWidgets.gDynamics.gShownBig.ShowBigWindow(false); 
-                                    hqWidgets.gDynamics.gShownBig.intern._timerID = null;
-                                } 
+                                    hqWidgets.gDynamics.gShownBig.ShowBigWindow(false);
+                                    if (hqWidgets.gDynamics.gShownBig) {
+                                        hqWidgets.gDynamics.gShownBig.intern._timerID = null;
+                                    }
+                                }
                                 hqWidgets.gDynamics.gShownBig=null;
                             }, this.parentQuery.settings.popUpDelay);
                         }
-                    });
+                    };
+                    $("#"+this.advSettings.elemName+"_pin")
+                    .addClass('hq-ipcam-pin-btn')
+                    .button({icons: {primary: (this.dynStates.bigPinned ? "ui-icon-pin-s" : "ui-icon-pin-w")}, text: false})
+                    .click(pin._onClick);
                     
                     if (this.dynStates.infoWindow.showPinned) {
-                        $("#"+this.advSettings.elemName+"_pin").trigger("click");
+                        pin._onClick();
                     }
                 }
                 
@@ -1288,7 +1315,7 @@ var hqWidgets = {
             }
 
             this.settings.buttonType = (buttonType==undefined) ? hqWidgets.gButtonType.gTypeButton : buttonType;
-            this.SetTitle (this.settings.room, this.settings.title);
+            this.SetTitle(this.settings.room, this.settings.title);
 
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp  ||
                 this.settings.buttonType == hqWidgets.gButtonType.gTypeOutTemp ||
@@ -2665,7 +2692,8 @@ var hqWidgets = {
                     if (this.intern._jinfoText)this.intern._jinfoText.stop().hide();
                 }
                 
-                if (this.intern._jleft)    this.intern._jleft.stop().show();
+                if (this.intern._jleft && ((this.intern._isEditMode && !hqWidgets.gOptions.gHideDescription) || this.settings.showDescription))
+                    this.intern._jleft.stop().show();
                 if (this.intern._jbattery) this.intern._jbattery.stop().hide();
                 if (this.intern._jsignal)  this.intern._jsignal.stop().hide();
                 if (this.intern._jicon)	   this.intern._jicon.removeClass("ui-icon-cancel").hide();
@@ -3106,7 +3134,7 @@ var hqWidgets = {
             this.settings.staticTextFont  = textFont;
             this.settings.staticTextColor = textColor;
         }
-        // Set title (Tooltip)
+        // Set title (Tooltip) or SetLeftInfo
         this.SetTitle = function (room, title)	{
             if (!this.intern._jleft) {
                 if (!document.getElementById(this.advSettings.elemName+'_left')) {
@@ -3632,8 +3660,7 @@ var hqWidgets = {
                     this.settings.buttonType != hqWidgets.gButtonType.gTypeImage && 
                     this.settings.buttonType != hqWidgets.gButtonType.gTypeCam) {
                     if (this.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer ||
-                        this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp)
-                    {
+                        this.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp) {
                         hqWidgets.gDynamics.gActiveElement = this;
                         this.intern._cursorX = this.settings.x + this.settings.width  / 2;
                         this.intern._cursorY = this.settings.y + this.settings.height / 2;
@@ -3662,7 +3689,7 @@ var hqWidgets = {
                         this.intern._jelement.stop().animate({
                             width:        _width  - iShrink, 
                             height:       _height - iShrink, 
-                            borderRadius: (this.settings.radius ? this.settings.radius : (_height - iShrink)/2), 
+                            borderRadius: (((this.settings.radius !== null) && (this.settings.radius !== undefined)) ? this.settings.radius : (_height - iShrink)/2),
                             left:         this.settings.x + iShrink/2, 
                             top:          this.settings.y + iShrink/2}, 
                             50);
@@ -3718,11 +3745,11 @@ var hqWidgets = {
             return false;
         }
         this.OnMouseUp = function (isTouch) {
-            if (hqWidgets.gDynamics.gRightClickDetection) { 
+            if (hqWidgets.gDynamics.gRightClickDetection) {
                 clearTimeout (hqWidgets.gDynamics.gRightClickDetection); 
                 hqWidgets.gDynamics.gRightClickDetection = null;
             }
-            
+
             this.intern._isHoover = false;
             
             if (!this.intern._isEditMode) {
@@ -3833,7 +3860,7 @@ var hqWidgets = {
             this.intern._jelement.show(); 
             if (this.intern._jright && (this.intern._jvalve || (this.intern._jrightText && this.intern._jrightText.html() != ""))) 
                 this.intern._jright.show (); 
-            if (this.intern._jleft && (this.intern._isEditMode || this.settings.showDescription)) 
+            if (this.intern._jleft && ((this.intern._isEditMode && !hqWidgets.gOptions.gHideDescription) || this.settings.showDescription))
                 this.intern._jleft.show ();
         }
         this.OnClick = function (isForce) {
@@ -4567,13 +4594,19 @@ var hqWidgets = {
                 if (isSet)
                     this._ShowGauge ();
             }
+
+            if  (options.showDescription !== undefined && this.intern._isEditMode) {
+                this.settings.showDescription = options.showDescription;
+                this.hide();
+                _setTimeout(function (_this) { _this.show() }, 100, this);
+            }
             
             if (this.settings.buttonType == hqWidgets.gButtonType.gTypeImage && options.zindex !== undefined){
                 //this.settings.zindex = (options.zindex < 998) ? options.zindex: 997; 
-                this.intern._jelement.css({'z-index':this.settings.zindex});
+                //this.intern._jelement.css({'z-index':this.settings.zindex});
             }
             if (options.zindex !== undefined){
-                this.intern._jelement.css({'z-index':this.settings.zindex});
+               // this.intern._jelement.css({'z-index':this.settings.zindex});
             }
             if (isSave) {
                 this.settings = $.extend (this.settings, options);
@@ -4704,8 +4737,10 @@ var hqWidgets = {
             var obj = event.data.msg;
             if (obj.settings.buttonType == hqWidgets.gButtonType.gTypeImage)
                 return;
-            var _width  = obj.intern._jelement.width();
-            var _height = obj.intern._jelement.height();
+            //var _width  = obj.intern._jelement.width();
+            //var _height = obj.intern._jelement.height();
+            var _width  = obj.settings.width;
+            var _height = obj.settings.height;
 
             obj.intern._isHoover = false;
             
@@ -4714,7 +4749,7 @@ var hqWidgets = {
                 obj.intern._isPressed = false;
 
             if (!obj.intern._isEditMode || !obj.intern._isPressed)
-            {	
+            {
                 if ((obj.settings.buttonType == hqWidgets.gButtonType.gTypeDimmer ||
                      obj.settings.buttonType == hqWidgets.gButtonType.gTypeInTemp) && !obj.intern._isEditMode) {
                     if (!obj.intern._isPressed)
@@ -4800,8 +4835,9 @@ var hqWidgets = {
         this.intern._jelement.bind  ("resize",  {msg: this}, function (e)	{
             if (e.data.msg.settings.isContextMenu)
                 return;
-                    
-            e.data.msg.SetSize (e.data.msg.intern._jelement.width(), e.data.msg.intern._jelement.height());
+            if (e.data.msg.intern._isEditMode) {
+                e.data.msg.SetSize (e.data.msg.intern._jelement.width(), e.data.msg.intern._jelement.height());
+            }
         });
     }
 };

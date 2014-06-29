@@ -9,8 +9,7 @@
 <script type="text/javascript">
 "use strict";
 
-// TODO - SignalR?
-servConn._socket.emit("getStringtable", function (res) {
+servConn.getStringtable(function (res) {
     // TODO - bind relies on this is already done. Reliable?
     localData.homematicStringtable = res;
 });
@@ -40,7 +39,7 @@ dui.binds.homematic = {
                 text: false
             }).click(function () {
                 //alert("receipt "+jQuery(this).attr('data-hm-alarm'));
-                servConn._socket.emit("alarmReceipt", parseInt(jQuery(this).attr('data-hm-alarm'), 10));
+                servConn.alarmReceipt(parseInt(jQuery(this).attr('data-hm-alarm'), 10));
                 jQuery(this).parent().parent().remove();
             }).show();
 
@@ -48,16 +47,15 @@ dui.binds.homematic = {
 
         function buildServiceMessageTable() {
             var $this = jQuery(el).prev().find("table.homematic-servicemessages");
+            $this.html("<tbody></tbody>");
 
             var ALDPs = localData.metaIndex.ALDP;
             for (var i = 0; i < ALDPs.length; i++) {
+
                 if (localData.uiState["_"+ALDPs[i]] && localData.uiState["_"+ALDPs[i]].Value == 1) {
                     var metaAlarm = localData.metaObjects[ALDPs[i]];
                     var metaTrigger = localData.metaObjects[metaAlarm.AlTriggerDP];
                     var metaDevice = localData.metaObjects[localData.metaObjects[metaTrigger.Parent].Parent];
-                    console.log(metaAlarm);
-                    console.log(metaTrigger);
-                    console.log(metaDevice);
                     var msg = metaAlarm.Name.split(".");
                     msg = msg[1];
 
@@ -72,10 +70,8 @@ dui.binds.homematic = {
 
         buildServiceMessageTable();
 
-        localData.uiState.bind("_41.LastChange", function () {
-            var $this = jQuery(el).prev().find("table.homematic-servicemessages");
-            $this.html("<tbody></tbody>");
-            buildServiceMessageTable();
+        localData.uiState.bind("_41.Value", function (e, newVal, oldVal) {
+            if (newVal != oldVal) setTimeout(buildServiceMessageTable, 5000);
         });
 
     }

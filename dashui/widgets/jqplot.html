@@ -3,39 +3,47 @@
 <script type="text/javascript" src="widgets/jqplot/js/jquery.jqplot.min.js"></script>
 
 <script type="text/javascript">
-    jQuery.extend(true, dui.binds, {
-        jqplot: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.jqplot = {
             gauge: function (el, options) {
                 var $this = jQuery(el).find("div[id$='_gauge']");
                 setTimeout(function () {
-                    var jqplotOptions = jQuery.extend(true, {
-                        title: {show: false},
-                        grid: {
-                            background: "transparent"
-                        },
-                        seriesDefaults: {
-                            renderer: $.jqplot.MeterGaugeRenderer,
-                            rendererOptions: {
-                                min: 0,
-                                max: 100
+                    try {
+                        var jqplotOptions = jQuery.extend(true, {
+                            title: {show: false},
+                            grid: {
+                                background: "transparent"
+                            },
+                            seriesDefaults: {
+                                renderer: $.jqplot.MeterGaugeRenderer,
+                                rendererOptions: {
+                                    min: 0,
+                                    max: 100
+                                }
                             }
-                        }
-                    }, options);
-                    var id = "_"+$this.attr("data-hm-id");
-                    var series = [[localData.uiState[id].Value]];
-                    console.log("jqplot");
-                    console.log(series);
-                    var plot = jQuery.jqplot($this.attr("id"), series, jqplotOptions);
-                    localData.uiState.bind(id+".Value", function(e, newVal, oldVal ) {
-                        plot.series[0].data = [[1,newVal]];
+                        }, options);
+                        var id = "_" + $this.attr("data-hm-id");
+                        var series = [
+                            [localData.uiState[id].Value]
+                        ];
                         console.log("jqplot");
                         console.log(series);
-                        plot.redraw();
-                    });
+                        var plot = jQuery.jqplot($this.attr("id"), series, jqplotOptions);
+                        localData.uiState.bind(id + ".Value", function (e, newVal, oldVal) {
+                            plot.series[0].data = [
+                                [1, newVal]
+                            ];
+                            console.log("jqplot");
+                            console.log(series);
+                            plot.redraw();
+                        });
+                    } catch(e) {
+                        servConn.logError("Cannot render widget jqplot: " + e);
+                    }
                 }, 20);
             }
-        }
-    });
+        };
+    //});
 </script>
 
 <script type="text/ejs" id="tplJqplotGauge" class="dashui-tpl" data-dashui-set="jqplot" data-dashui-name="hm_val - MeterGauge" data-dashui-attrs="hm_id;title;min;max;label;ticks;intervals;intervalColors;showTickLabels;intervalInnerRadius;intervalOuterRadius;diameter;padding;shadowOffset;shadowAlpha;shadowDepth;background;ringColor;ringWidth;hubRadius;tickPadding;needleThickness;needlePad">

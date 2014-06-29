@@ -1,23 +1,16 @@
 /**
  *  DashUI
- *  https://github.com/GermanBluefox/DashUI/
+ *  https://github.com/hobbyquaker/dashui/
  *
- *  Copyright (c) 2013 Bluefox https://github.com/GermanBluefox
- *  MIT License (MIT)
+ *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
+ *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- *  documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- *  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- *  permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *  http://creativecommons.org/licenses/by-nc/4.0/
  *
- *  The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- *  the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- *  THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- *  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * Short content:
+ * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+ * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+ * (Free for non-commercial use).
  */
  // duiEdit - the DashUI Editor Wizard
 
@@ -77,7 +70,7 @@ dui = $.extend(true, dui, {
 				var list = localData.metaObjects[localData.metaIndex["ENUM_FUNCTIONS"][t]];
 				for (var z = 0; z < list['Channels'].length; z++) {
 					if (list['Channels'][z] == hm_id) {
-						func = list.Name;
+						func = localData.metaIndex["ENUM_FUNCTIONS"][t];//list.Name;
 						break;
 					}
 				}
@@ -178,12 +171,11 @@ dui = $.extend(true, dui, {
 			}
 		}
 		
-		var data = {"filterkey":func, "hqoptions": JSON.stringify (hqoptions)};
+		//var data = {"filterkey":func, "hqoptions": hqoptions}; TODO hqoptions stringify
+        var data = {"filterkey":func, "hqoptions": JSON.stringify (hqoptions)};
 		var wid = dui.addWidget (widgetName, data, style, null, view);
         $("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
-        if ($().multiselect) {
-            $("#select_active_widget").multiselect("refresh");
-        }
+        $("#select_active_widget").multiselect("refresh");
 		return wid;
 	},
 	wizardIsWidgetExists: function (view, widgetName) {
@@ -208,30 +200,22 @@ dui = $.extend(true, dui, {
 		if (!dui.wizardIsWidgetExists (view, "tplTwSimpleClock")) {
 			var wid = dui.addWidget ("tplTwSimpleClock", {"hideSeconds": "true"});
 			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
-            if ($().multiselect) {
-                $("#select_active_widget").multiselect("refresh");
-            }
+            $("#select_active_widget").multiselect("refresh");
 		}
 		if (!dui.wizardIsWidgetExists (view, "tplTwSimpleDate")) {
 			var wid = dui.addWidget ("tplTwSimpleDate", {"showWeekDay": "true"});
 			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
-            if ($().multiselect) {
-                $("#select_active_widget").multiselect("refresh");
-            }
+            $("#select_active_widget").multiselect("refresh");
 		}
 		if (!dui.wizardIsWidgetExists (view, "tplTwYahooWeather")) {
 			var wid = dui.addWidget ("tplTwYahooWeather", data, {"width": 205, "height": 229});
 			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
-            if ($().multiselect) {
-                $("#select_active_widget").multiselect("refresh");
-            }
+            $("#select_active_widget").multiselect("refresh");
 		}
 		if (!dui.wizardIsWidgetExists (view, "tplHqEventlist")) {
 			var wid = dui.addWidget ("tplHqEventlist", data);
 			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+dui.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
-            if ($().multiselect) {
-                $("#select_active_widget").multiselect("refresh");
-            }
+            $("#select_active_widget").multiselect("refresh");
 		}
 	},
 	wizardRunOneRoom: function (view, roomID, funcs, widgets) {
@@ -240,8 +224,9 @@ dui = $.extend(true, dui, {
 		var idCreated = null;
 		for (var w in dui.views[view].widgets) {
 			var wObj = dui.views[view].widgets[w];
-			if (wObj.data.hqoptions && 
-			    wObj.data.hqoptions.indexOf ('"room":"'+localData.metaObjects[roomID]["Name"]+'"') != -1) {
+			if (wObj.data.hqoptions &&
+			    wObj.data.hqoptions.indexOf ('"room":"' + localData.metaObjects[roomID]["Name"] + '"') != -1) {
+//                wObj.data.hqoptions.room == localData.metaObjects[roomID]["Name"]) { TODO hqoptions stringify
 				if (pos == null) {
 					pos = {left: wObj.style.left, top: wObj.style.top};
 				} else {
@@ -304,7 +289,7 @@ dui = $.extend(true, dui, {
 						return idCreated;
 					}
 					// Create this widget
-					var widgetId = dui.wizardCreateWidget (view, roomID, func, widgetName, devID, elems[i], hm_id, pos);
+					var widgetId = dui.wizardCreateWidget (view, roomID, localData.metaObjects[func]["Name"], widgetName, devID, elems[i], hm_id, pos);
 
 					if (pos == null) {
 						idCreated = widgetId;

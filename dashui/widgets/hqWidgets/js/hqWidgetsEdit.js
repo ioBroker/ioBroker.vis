@@ -398,6 +398,7 @@ hqWidgets = $.extend (true, hqWidgets, {
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeMotion    ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeCharts    ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeEventlist ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo      ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInTemp    ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeOutTemp) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("No animation:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_doNotAnimate' "+((this.e_internal.attr.doNotAnimate) ? "checked" : "")+">";
@@ -586,6 +587,7 @@ hqWidgets = $.extend (true, hqWidgets, {
         if (this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeInfo   ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeButton ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeGong   ||
+            this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeMotion ||
             this.e_internal.attr.buttonType == hqWidgets.gButtonType.gTypeLowbat) {
             sTextAdv += "<tr id='idAdv"+(iAdvCount++)+"'><td class='hq-edit-td-caption'>"+ hqWidgets.translate("No background:")+"</td><td><input type='checkbox' id='"+this.e_settings.elemName+"_noBackground' "+((this.e_internal.attr.noBackground) ? "checked" : "")+">";
         }

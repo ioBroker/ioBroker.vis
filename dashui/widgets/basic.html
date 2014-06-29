@@ -1,329 +1,427 @@
 <script type="text/javascript">
     "use strict";
 
-    jQuery.extend(true, dui.binds, {
-        pressed: undefined,
-        stateful: {
-            view: function (el, viewArr, persistent) {
-                var $this = jQuery(el);
-                var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
-                    var view = viewArr[newVal];
-                    if (!persistent) {
-                        $this.parent().find("div.dashui-view").remove();
-                    } else {
-                        $this.parent().find("div.dashui-view").hide().appendTo(jQuery("#dui_container"));
-                    }
-                    if (dui.views[view]) {
-                        dui.renderView(view);
-                        jQuery("#duiview_"+view).appendTo($this);
-                        jQuery("#duiview_"+view).show();
-                    }
-                });
-            },
-            iframe: function (el, srcArr, refreshInterval) {
-                var $this = jQuery(el);
-                var hm_id = "_" + $this.attr("data-hm-id");
-                var $this = jQuery(el).parent().find("iframe");
-                var id = $this.attr("data-hm-id");
-                var hm_id = "_" + id;
+    dui.translate("");
+    // Add words for basic widgets
+    jQuery.extend(true, dui.words, {
+        // Bars
+        "src"              : {"en" : "Source",              "de": "Quelle",              "ru": "Адрес"},
+        "refreshInterval"  : {"en" : "Refresh interval(ms)","de": "Updatezeit(ms)",      "ru": "Интервал обновления(ms)"},
+        "is_comma"         : {"en" : "Divider comma",       "de": "Kamme als Trennung",  "ru": "Запятая-разделитель"},
+        "digits"           : {"en" : "Digits after comma",  "de": "Zeichen nach Komma",  "ru": "Знаков после запятой"}
+    });
 
-                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
-                    $this.attr("src", srcArr[newVal]);
-                });
-
-                if (localData.uiState[hm_id]) {
-                    $this.attr("src", srcArr[localData.uiState[hm_id].Value]);
-                }
-
-                if (refreshInterval > 0) {
-                    setInterval(function () {
-                        var val;
-                        if (localData.uiState[hm_id]) {
-                            val = localData.uiState[hm_id].Value;
-                        }
-                        var src = srcArr[val];
-                        $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
-                    }, refreshInterval);
-                }
-            },
-            image: function (el, srcArr, refreshInterval) {
-                var $this = jQuery(el).parent().find("img");
-                var id = $this.attr("data-hm-id");
-                var hm_id = "_" + id;
-
-                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
-                    $this.attr("src", srcArr[newVal]);
-                });
-
-                if (localData.uiState[hm_id]) {
-                    $this.attr("src", srcArr[localData.uiState[hm_id].Value]);
-                }
-
-                if (refreshInterval > 0) {
-                    setInterval(function () {
-                        var val;
-                        if (localData.uiState[hm_id]) {
-                            val = localData.uiState[hm_id].Value;
-                        }
-                        var src = srcArr[val];
-                        $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
-                    }, refreshInterval);
-                }
-            }
-        },
-        container: function (el, view) {
+    dui.binds.stateful = {
+        view: function (el, viewArr, persistent) {
             var $this = jQuery(el);
-            if (dui.views[view]) {
-                //console.log("dui.binds.container: "+view+" in "+$this.attr("id"));
-                dui.renderView(view);
-                jQuery("#duiview_"+view).appendTo($this);
-                jQuery("#duiview_"+view).show();
+            var hm_id = "_" + $this.attr("data-hm-id");
+            localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
+                var view = viewArr[newVal];
+                if (!persistent) {
+                    $this.parent().find("div.dashui-view").remove();
+                } else {
+                    $this.parent().find("div.dashui-view").hide().appendTo(jQuery("#dui_container"));
+                }
+                if (dui.views[view]) {
+                    dui.renderView(view);
+                    jQuery("#duiview_"+view).appendTo($this);
+                    jQuery("#duiview_"+view).show();
+                }
+            });
+        },
+        iframe: function (el, srcArr, refreshInterval) {
+            var $this = jQuery(el);
+            var hm_id = "_" + $this.attr("data-hm-id");
+            var $this = jQuery(el).parent().find("iframe");
+            var id = $this.attr("data-hm-id");
+            var hm_id = "_" + id;
+
+            localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
+                $this.attr("src", srcArr[newVal]);
+            });
+
+            if (localData.uiState[hm_id]) {
+                $this.attr("src", srcArr[localData.uiState[hm_id].Value]);
+            }
+
+            if (refreshInterval > 0) {
+                setInterval(function () {
+                    var val;
+                    if (localData.uiState[hm_id]) {
+                        val = localData.uiState[hm_id].Value;
+                    }
+                    var src = srcArr[val];
+                    $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
+                }, refreshInterval);
             }
         },
-        basic: {
-            filterDropdown: function (el, filters, hideEffect, hideDuration, showEffect, showDuration) {
-                var $this = jQuery(el);
-                if (filters) {
-                    filters = filters.split(";");
-                    for (var i = 0; i < filters.length; i++) {
-                        $this.find("select").append("<option value='"+filters[i]+"'>"+filters[i]+"</option>");
+        image: function (el, srcArr, refreshInterval) {
+            var $this = jQuery(el).parent().find("img");
+            var id = $this.attr("data-hm-id");
+            var hm_id = "_" + id;
+
+            localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
+                $this.attr("src", srcArr[newVal]);
+            });
+
+            if (localData.uiState[hm_id]) {
+                $this.attr("src", srcArr[localData.uiState[hm_id].Value]);
+            }
+
+            if (refreshInterval > 0) {
+                setInterval(function () {
+                    var val;
+                    if (localData.uiState[hm_id]) {
+                        val = localData.uiState[hm_id].Value;
                     }
+                    var src = srcArr[val];
+                    $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
+                }, refreshInterval);
+            }
+        }
+    };
+    dui.binds.container = function (el, view) {
+        var $this = jQuery(el);
+        if (dui.views[view]) {
+            //console.log("dui.binds.container: "+view+" in "+$this.attr("id"));
+            dui.renderView(view);
+            jQuery("#duiview_"+view).appendTo($this);
+            jQuery("#duiview_"+view).show();
+        }
+    };
+    dui.binds.basic = {
+        filterDropdown: function (el, filters, hideEffect, hideDuration, showEffect, showDuration) {
+            var $this = jQuery(el);
+            if (filters) {
+                filters = filters.split(";");
+                for (var i = 0; i < filters.length; i++) {
+                    $this.find("select").append("<option value='"+filters[i]+"'>"+filters[i]+"</option>");
                 }
+            }
 
-                if (dui.viewsActiveFilter[dui.activeView]) {
-                    $this.find("select option[value='"+dui.viewsActiveFilter[dui.activeView]+"']").attr("selected", true);
+            if (dui.viewsActiveFilter[dui.activeView]) {
+                $this.find("select option[value='"+dui.viewsActiveFilter[dui.activeView]+"']").attr("selected", true);
+            }
+
+            $this.find("select").change(function () {
+                dui.changeFilter($this.find("select option:selected").val(), hideEffect, hideDuration, showEffect, showDuration);
+            });
+
+        },
+        state: function (el, id) {
+            var $this = jQuery(el);
+            var hm_id = (id ? "_" + id : "_" + $this.attr("data-hm-id"));
+            var val = $this.attr("data-hm-val");
+            if (val === "true") { val = true; }
+            if (val === "false") { val = false; }
+            $this.on('click', function (e) {
+                if (dui.urlParams["edit"] !== "") {
+                    localData.setValue($this.attr("data-hm-id"), val);
                 }
+            });
+            // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
+            /*
+            $this.on('touchend',function (e) {
+                if (dui.urlParams["edit"] !== "") {
+                    localData.setValue($this.attr("data-hm-id"), val);
+                }
+            });
+            */
+        },
+        pressed: null,
+        pressedNext: null,
+        increment: function (el, minmax, delay, interval) {
 
-                $this.find("select").change(function () {
-                    dui.changeFilter($this.find("select option:selected").val(), hideEffect, hideDuration, showEffect, showDuration);
-                });
-
-            },
-            state: function (el, id) {
-                var $this = jQuery(el);
-                var hm_id = (id ? "_" + id : "_" + $this.attr("data-hm-id"));
-                var val = $this.attr("data-hm-val");
-                if (val === "true") { val = true; }
-                if (val === "false") { val = false; }
-                $this.on('click', function (e) {
-                    if (dui.urlParams["edit"] !== "") {
-                        localData.setValue($this.attr("data-hm-id"), val);
-                    }
-                });
-                // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
-                /*
-                $this.on('touchend',function (e) {
-                    if (dui.urlParams["edit"] !== "") {
-                        localData.setValue($this.attr("data-hm-id"), val);
-                    }
-                });
-                */
-            },
-            pressed: null,
-            pressedNext: null,
-            increment: function (el, minmax, delay, interval) {
-
-                function fInterval($that) {
-                    dui.binds.basic.pressedNext = true;
-                    var hm_id = "_" + $that.attr("data-hm-id");
-                    if (dui.urlParams["edit"] !== "") {
-                        var step =  parseFloat($that.attr("data-dashui-step")),
-                            tmp =   parseFloat(localData.uiState[hm_id].Value) + step;
-                        if (step < 0) {
-                            if (tmp >= minmax) {
-                                localData.setValue($that.attr("data-hm-id"), tmp);
-                                dui.binds.basic.pressed = setTimeout(fInterval, interval, $that);
-                            }
-                        } else {
-                            if (tmp <= minmax) {
-                                localData.setValue($that.attr("data-hm-id"), tmp);
-                                dui.binds.basic.pressed = setTimeout(function ($_that) {
-                                    fInterval($_that);
-                                }, interval, $that);
-                            }
+            function fInterval($that) {
+                dui.binds.basic.pressedNext = true;
+                var hm_id = "_" + $that.attr("data-hm-id");
+                if (dui.urlParams["edit"] !== "") {
+                    var step =  parseFloat($that.attr("data-dashui-step")),
+                        tmp =   parseFloat(localData.uiState[hm_id].Value) + step;
+                    if (step < 0) {
+                        if (tmp >= minmax) {
+                            localData.setValue($that.attr("data-hm-id"), tmp);
+                            dui.binds.basic.pressed = setTimeout(fInterval, interval, $that);
+                        }
+                    } else {
+                        if (tmp <= minmax) {
+                            localData.setValue($that.attr("data-hm-id"), tmp);
+                            dui.binds.basic.pressed = setTimeout(function ($_that) {
+                                fInterval($_that);
+                            }, interval, $that);
                         }
                     }
                 }
+            }
 
-                function intervalStart(e) {
+            function intervalStart(e) {
+                dui.binds.basic.pressedNext = false;
+                var $this = $(this);
+                var hm_id = "_" + $this.attr("data-hm-id");
+                dui.binds.basic.pressed = setTimeout(fInterval, delay, $this);
+            }
+
+            jQuery(el).click(function (e) {
+                clearTimeout(dui.binds.basic.pressed);
+                if (dui.binds.basic.pressedNext) {
                     dui.binds.basic.pressedNext = false;
-                    var $this = $(this);
-                    var hm_id = "_" + $this.attr("data-hm-id");
-                    dui.binds.basic.pressed = setTimeout(fInterval, delay, $this);
+                    return;
                 }
+                var $this = $(this);
+                var hm_id = "_" + $this.attr("data-hm-id");
+                if (dui.urlParams["edit"] !== "") {
+                    var step = parseFloat($this.attr("data-dashui-step")),
+                            tmp = parseFloat(localData.uiState[hm_id].Value) + step;
+                    if (step < 0) {
+                        if (tmp >= minmax) {
+                            localData.setValue($this.attr("data-hm-id"), tmp);
+                        }
+                    } else {
+                        if (tmp <= minmax) {
+                            localData.setValue($this.attr("data-hm-id"), tmp);
+                        }
+                    }
+                }
+            });
 
-                jQuery(el).click(function (e) {
+            if (interval) {
+                jQuery(el).on('mousedown', intervalStart);
+                jQuery(el).on('touchstart', intervalStart);
+                jQuery(el).on('touchend', function () {
                     clearTimeout(dui.binds.basic.pressed);
-                    if (dui.binds.basic.pressedNext) {
-                        dui.binds.basic.pressedNext = false;
-                        return;
-                    }
-                    var $this = $(this);
-                    var hm_id = "_" + $this.attr("data-hm-id");
-                    if (dui.urlParams["edit"] !== "") {
-                        var step = parseFloat($this.attr("data-dashui-step")),
-                                tmp = parseFloat(localData.uiState[hm_id].Value) + step;
-                        if (step < 0) {
-                            if (tmp >= minmax) {
-                                localData.setValue($this.attr("data-hm-id"), tmp);
-                            }
-                        } else {
-                            if (tmp <= minmax) {
-                                localData.setValue($this.attr("data-hm-id"), tmp);
-                            }
-                        }
-                    }
                 });
-
-                if (interval) {
-                    jQuery(el).on('mousedown', intervalStart);
-                    jQuery(el).on('touchstart', intervalStart);
-                    jQuery(el).on('touchend', function () {
-                        clearTimeout(dui.binds.basic.pressed);
-                    });
-                    jQuery(el).on('mouseup', function () {
-                        clearTimeout(dui.binds.basic.pressed);
-                    });
-                }
-            },
-            program: function (el) {
-                var $this = jQuery(el);
-                var hm_id = $this.attr("data-hm-id");
-                $this.click(function (e) {
-                    if (dui.urlParams["edit"] !== "") {
-                        dui.conn.execProgramm(hm_id);
-                    }
+                jQuery(el).on('mouseup', function () {
+                    clearTimeout(dui.binds.basic.pressed);
                 });
-            },
-            navigation: function (el, options) {
-                var $this = jQuery(el);
-                $this.click(function (e) {
-                    if (dui.urlParams["edit"] !== "") {
-                        if (options.background) {
-                            $('body').css({background: options.background});
-                        }
-                        dui.changeView(options.nav_view, options.hideOptions, options.showOptions, options.sync);
-                        //e.preventDefault();
-                        //return false;
-                    }
-
-                });
-            },
-            hideOnFalse: function (el) {
-                var $this = jQuery(el);
-                var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
-                    if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
-                        if (dui.urlParams["edit"] !== "") {
-                            $this.hide();
-                        }
-                    } else {
-                        $this.show();
-                    }
-                });
+            }
+        },
+        program: function (el) {
+            var $this = jQuery(el);
+            var hm_id = $this.attr("data-hm-id");
+            $this.click(function (e) {
                 if (dui.urlParams["edit"] !== "") {
-                    var newVal = localData.uiState.attr(hm_id+".Value");
-                    if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
+                    dui.conn.execProgramm(hm_id);
+                }
+            });
+        },
+        navigation: function (el, options) {
+            var $this = jQuery(el);
+            $this.click(function (e) {
+                if (dui.urlParams["edit"] !== "") {
+                    if (options.background) {
+                        $('body').css({background: options.background});
+                    }
+                    dui.changeView(options.nav_view, options.hideOptions, options.showOptions, options.sync);
+                    //e.preventDefault();
+                    //return false;
+                }
+
+            });
+        },
+        hideOnFalse: function (el) {
+            var $this = jQuery(el);
+            var hm_id = "_" + $this.attr("data-hm-id");
+            localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
+                if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
+                    if (dui.urlParams["edit"] !== "") {
                         $this.hide();
                     }
+                } else {
+                    $this.show();
                 }
-            },
-            hideOnTrue: function (el) {
-                var $this = jQuery(el);
-                var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
-                    if (newVal === true || parseFloat(newVal) > 0) {
-                        if (dui.urlParams["edit"] !== "") {
-                            $this.hide();
-                        }
-                    } else {
-                        $this.show();
-                    }
-                });
-                if (dui.urlParams["edit"] !== "") {
-                    if (parseFloat(localData.uiState.attr(hm_id+".Value")) != 0 && localData.uiState.attr(hm_id+".Value") !== false) {
-                     $this.hide();
-                    }
+            });
+            if (dui.urlParams["edit"] !== "") {
+                var newVal = localData.uiState.attr(hm_id+".Value");
+                if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
+                    $this.hide();
                 }
-            },
-            showOnValue: function (el, val) {
-                var $this = jQuery(el);
-                var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
-                    if (newVal != val) {
-                        if (dui.urlParams["edit"] !== "") {
-                            $this.hide();
-                        }
-                    } else {
-                        $this.show();
-                    }
-                });
-                if (dui.urlParams["edit"] !== "") {
-                    if (localData.uiState.attr(hm_id+".Value") != val) {
+            }
+        },
+        hideOnTrue: function (el) {
+            var $this = jQuery(el);
+            var hm_id = "_" + $this.attr("data-hm-id");
+            localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
+                if (newVal === true || parseFloat(newVal) > 0) {
+                    if (dui.urlParams["edit"] !== "") {
                         $this.hide();
                     }
+                } else {
+                    $this.show();
                 }
-            },
-            checkbox: function (el) {
-                var $this = jQuery(el);
-                var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
-                    if (newVal === false || parseFloat(newVal) === 0.0) {
-                        $this.removeAttr("checked");
-                    } else {
-                        $this.prop("checked", true);
+            });
+            if (dui.urlParams["edit"] !== "") {
+                if (parseFloat(localData.uiState.attr(hm_id+".Value")) != 0 && localData.uiState.attr(hm_id+".Value") !== false) {
+                 $this.hide();
+                }
+            }
+        },
+        showOnValue: function (el, val) {
+            var $this = jQuery(el);
+            var hm_id = "_" + $this.attr("data-hm-id");
+            localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
+                if (newVal != val) {
+                    if (dui.urlParams["edit"] !== "") {
+                        $this.hide();
                     }
-                });
-                if (localData.uiState.attr(hm_id+".Value") == "True" ||
-                    localData.uiState.attr(hm_id+".Value") == "true" ||
-                    localData.uiState.attr(hm_id+".Value") == true   ||
-                    localData.uiState.attr(hm_id+".Value") == 1) {
+                } else {
+                    $this.show();
+                }
+            });
+            if (dui.urlParams["edit"] !== "") {
+                if (localData.uiState.attr(hm_id+".Value") != val) {
+                    $this.hide();
+                }
+            }
+        },
+        checkbox: function (el, numeric) {
+            var $this = jQuery(el);
+            var hm_id = "_" + $this.attr("data-hm-id");
+            var hm_wid = "_" + $this.attr("data-hm-wid");
+            localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
+                if (hm_wid && (localData.uiState.attr(hm_wid + '.Value') === true)) return;
+                if (newVal === false || parseFloat(newVal) === 0.0) {
+                    $this.removeAttr("checked");
+                } else {
                     $this.prop("checked", true);
                 }
-                if (dui.urlParams["edit"] !== "") {
-                    $this.change(function () {
-                        if ($this.prop("checked")) {
-                            localData.setValue( $this.attr("data-hm-id"),  true);
-                        } else {
-                            localData.setValue( $this.attr("data-hm-id"),  false);
-                        }
-                    });
-                }
-            },
-            select: function (el) {
-                var $this = jQuery(el).prev();
-                var id = $this.attr("data-hm-id");
+            });
+            var val = localData.uiState.attr(hm_id+".Value")
+            if (val !== false && val !== 'false' && parseFloat(val) > 0) {
+                $this.prop("checked", true);
+            }
+            if (dui.urlParams["edit"] !== "") {
                 $this.change(function () {
-                    console.log("uiState " + localData.uiState.attr("_"+$this.attr("data-hm-id")));
-                    console.log("setState " + $this.find("option:selected").val());
-                    localData.setValue( $this.attr("data-hm-id"),  $this.find("option:selected").val());
-                });
-                var hm_id = "_" + id;
-                localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
-                    console.log("newVal="+newVal+" oldVal="+oldVal);
-                    if (newVal == "false" || parseFloat(newVal) == 0) {
-                        if ($this.find("option[value='1']").prop("selected")) {
-                            //console.log("false");
-                            $this.find("option[value='1']").removeAttr("selected");
-                            $this.find("option[value='0']").prop("selected", true);
-                            $this.trigger("change");
-                        }
+                    if ($this.prop("checked")) {
+                        localData.setValue( $this.attr("data-hm-id"),  numeric ? 1 : true);
                     } else {
-                        if ($this.find("option[value='0']").prop("selected")) {
-                            //console.log("true");
-                            $this.find("option[value='0']").removeAttr("selected");
-                            $this.find("option[value='1']").prop("selected", true);
-                            $this.trigger("change");
-                        }
+                        localData.setValue( $this.attr("data-hm-id"),  numeric ? 0 : false);
                     }
-                    //
                 });
-            },
-            toggle: function (el) {
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                function toggle() {
+            }
+        },
+        select: function (el) {
+            var $this = jQuery(el).prev();
+            var id = $this.attr("data-hm-id");
+            $this.change(function () {
+                console.log("uiState " + localData.uiState.attr("_"+$this.attr("data-hm-id")));
+                console.log("setState " + $this.find("option:selected").val());
+                localData.setValue( $this.attr("data-hm-id"),  $this.find("option:selected").val());
+            });
+            var hm_id = "_" + id;
+            localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
+                console.log("newVal="+newVal+" oldVal="+oldVal);
+                if (newVal == "false" || parseFloat(newVal) == 0) {
+                    if ($this.find("option[value='1']").prop("selected")) {
+                        //console.log("false");
+                        $this.find("option[value='1']").removeAttr("selected");
+                        $this.find("option[value='0']").prop("selected", true);
+                        $this.trigger("change");
+                    }
+                } else {
+                    if ($this.find("option[value='0']").prop("selected")) {
+                        //console.log("true");
+                        $this.find("option[value='0']").removeAttr("selected");
+                        $this.find("option[value='1']").prop("selected", true);
+                        $this.trigger("change");
+                    }
+                }
+                //
+            });
+        },
+        toggle: function (el) {
+            var $this = jQuery(el);
+            var id = $this.attr("data-hm-id");
+            function toggle() {
+                var val = localData.uiState["_"+id].Value;
+                if (val === false || val === "false") {
+                    localData.setValue(id, true);
+                } else if (val === true || val === "true") {
+                    localData.setValue(id, false);
+                } else {
+                    val = parseFloat(val);
+                    if (val >= 0.5) { val = 1; } else { val = 0; }
+                    localData.setValue( id,  1-val);
+                }
+            }
+            if (dui.urlParams["edit"] !== "") {
+                // @geolin - musste das wieder entfernen - das führt zu doppelter Ausführung (Gerät geht kurz an und sofort wieder aus bzw umgekehrt)
+                //$this.on('touchend', toggle);
+                $this.on('click', toggle);
+            }
+        },
+        iframeRefresh: function (el, src, refreshInterval) {
+            if (dui.urlParams["edit"] !== "" && refreshInterval > 0) {
+                var $this = jQuery(el).parent().find("iframe");
+                setInterval(function () {
+                    if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
+                        $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
+                    }
+                }, refreshInterval);
+            }
+        },
+        imgRefresh: function (el, src, refreshInterval, refreshOnWakeUp) {
+            if (dui.urlParams["edit"] !== "" && parseInt(refreshInterval, 10) > 0) {
+                setInterval(function () {
+                    var $this = jQuery(el).parent().find("img");
+                    if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
+                        $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
+                        //console.log("imgRefresh "+$this.attr("src"));
+                    }
+                }, refreshInterval);
+            }
+            if (refreshOnWakeUp) {
+                //console.log("refreshOnWakeUp!");
+                dui.onWakeUp(function () {
+                    // TODO this does not work. :(
+                    var $this = jQuery(el).parent().find("img");
+                    //console.log("wakeup refresh!");
+                    $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
+                    //console.log($this.attr("src"));
+                });
+            }
+        },
+        showSvg: function (myClass, view, wid, hm_id, opacity, svg_false, svg_true, style) {
+            var obj = {myClass:myClass, view:view, wid:wid, hm_id:hm_id, opacity:opacity, svg_false:svg_false, svg_true:svg_true};
+            console.log("test");
+            if (document.getElementById (wid)) {
+                $('#'+wid).remove ();
+            }
+            var str = localData.uiState.attr("_" + hm_id + ".Value");
+            var val = parseFloat(str);
+            var sText = '<svg class="dashui-widget ' + (myClass || "")+ '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="'+wid+'" data-hm-id="'+hm_id+'">';
+            if (dui.urlParams["edit"] === "") {
+                if (opacity === undefined || opacity === null || opacity === "")
+                    opacity = 1;
+
+                if (parseFloat(opacity) < 0.2) {
+                    opacity = 0.2;
+                }
+            }
+            if (val === 0 || str === "false" || str === false || str === null) {
+                // try to analyse
+                sText += svg_false;
+            }
+            else {
+                sText += svg_true;
+            }
+            sText += '</svg>';
+            $('#duiview_'+view).append (sText);
+
+            $("#"+wid).children().attr("data-wid", wid);
+            $("#"+wid).children().attr("data-hm-id", hm_id);
+            $("#"+wid).children().attr("opacity", opacity);
+            if ($("#"+wid).children()[0]) {
+                $("#"+wid).children()[0]._obj = obj;
+            }
+
+            if (style) {
+                $("#"+wid).css(style);
+            }
+
+            if (dui.urlParams["edit"] !== "") {
+                $("#"+wid).children().click(function () {
+                    var $this = $(this);
+                    var id = $this.attr("data-hm-id");
                     var val = localData.uiState["_"+id].Value;
                     if (val === false || val === "false") {
                         localData.setValue(id, true);
@@ -332,174 +430,106 @@
                     } else {
                         val = parseFloat(val);
                         if (val >= 0.5) { val = 1; } else { val = 0; }
-                        localData.setValue( id,  1-val);
+                        localData.setValue(id, 1-val);
                     }
-                }
-                if (dui.urlParams["edit"] !== "") {
-                    // @geolin - musste das wieder entfernen - das führt zu doppelter Ausführung (Gerät geht kurz an und sofort wieder aus bzw umgekehrt)
-                    //$this.on('touchend', toggle);
-                    $this.on('click', toggle);
-                }
-            },
-            iframeRefresh: function (el, src, refreshInterval) {
-                if (dui.urlParams["edit"] !== "" && refreshInterval > 0) {
-                    var $this = jQuery(el).parent().find("iframe");
-                    setInterval(function () {
-                        if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
-                            $this.attr("src", src+(src.match(/\?/)?"&":"?")+"_dui_refts="+((new Date()).getTime()));
-                        }
-                    }, refreshInterval);
-                }
-            },
-            imgRefresh: function (el, src, refreshInterval) {
-                if (dui.urlParams["edit"] !== "" && refreshInterval > 0) {
-                    var $this = jQuery(el).parent().find("img");
-                    setInterval(function () {
-                        if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
-                            $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
-                        }
-                    }, refreshInterval);
-                }
-            },
-            showSvg: function (myClass, view, wid, hm_id, opacity, svg_false, svg_true, style) {
-                var obj = {myClass:myClass, view:view, wid:wid, hm_id:hm_id, opacity:opacity, svg_false:svg_false, svg_true:svg_true};
-                console.log("test");
-                if (document.getElementById (wid)) {
-                    $('#'+wid).remove ();
-                }
-                var str = localData.uiState.attr("_" + hm_id + ".Value");
-                var val = parseFloat(str);
-                var sText = '<svg class="dashui-widget ' + (myClass || "")+ '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="'+wid+'" data-hm-id="'+hm_id+'">';
-                if (dui.urlParams["edit"] === "") {
-                    if (opacity === undefined || opacity === null || opacity === "")
-                        opacity = 1;
+                    var el = $('#'+obj.wid);
+                    this._obj.style = {
+                        "position":'absolute',
+                        top:    el.position().top,
+                        width:  el.width(),
+                        left:   el.position().left,
+                        height: el.height()
+                    };
+                    _setTimeout(function (obj) {
+                        dui.binds.basic.showSvg(obj.myClass, obj.view, obj.wid, obj.hm_id, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
+                    }, 200, this._obj);
+                });
+            }
+        },
+        editNote: function (wid, max_width, min_width, min_height, hm_id) {
+            if (dui.urlParams["edit"] === "") return;
+            if (max_width != '') {
+                max_width = parseInt(max_width, 10);
+            } else {
+                max_width = 400;
+            }
 
-                    if (parseFloat(opacity) < 0.2) {
-                        opacity = 0.2;
-                    }
-                }
-                if (val === 0 || str === "false" || str === false || str === null) {
-                    // try to analyse
-                    sText += svg_false;
+            if (min_width != '') {
+                min_width = parseInt(min_width, 10);
+            } else {
+                min_width = 40;
+            }
+
+            if (min_height != '') {
+                min_height = parseInt(min_height, 10);
+            } else {
+                min_height = 15;
+            }
+
+            if (hm_id != '') {
+                hm_id = parseInt(hm_id, 10);
+            } else {
+                hm_id = null;
+            }
+
+            var $this = jQuery('#div_'+wid);
+            jQuery('body').append("<div id='dlg_"+wid+"' title='Edit note'>"+
+                              "<textarea style='width:95%;height:92%' id='text_"+wid+"'>"+$this.text()+"</textarea></div>");
+
+            console.log("Test");
+            var buttons = {};
+            buttons["Clear"] = function () {
+                jQuery('#text_'+$(this).attr("data-id")).val("");
+            };
+
+            buttons["Ok"] = function () {
+                var dlg = $(this);
+                var text = $('#text_'+dlg.attr("data-id")).val();
+                console.log(text + " " + dlg.attr("data-id"));
+                text = text.replace ("\n", "<br>\n");
+
+                jQuery('#div_'+dlg.attr("data-id")).html (text);
+                if (text == "") {
+                    jQuery('#'+dlg.attr("data-id")).css({width: min_width, height: min_height});
                 }
                 else {
-                    sText += svg_true;
+                    jQuery('#'+dlg.attr("data-id")).css({width: max_width, height: 'auto'});
                 }
-                sText += '</svg>';
-                $('#duiview_'+view).append (sText);
-
-                $("#"+wid).children().attr("data-wid", wid);
-                $("#"+wid).children().attr("data-hm-id", hm_id);
-                $("#"+wid).children().attr("opacity", opacity);
-                if ($("#"+wid).children()[0]) {
-                    $("#"+wid).children()[0]._obj = obj;
+                if (hm_id) {
+                    localData.setValue(hm_id, text);
                 }
+                dlg.dialog( "close" );
+                dlg.remove();
+            };
 
-                if (style) {
-                    $("#"+wid).css(style);
-                }
+            buttons["Cancel"] = function () {
+                jQuery(this).dialog("close");
+                jQuery(this).remove();
+            };
 
-                if (dui.urlParams["edit"] !== "") {
-                    $("#"+wid).children().click(function () {
-                        var $this = $(this);
-                        var id = $this.attr("data-hm-id");
-                        var val = localData.uiState["_"+id].Value;
-                        if (val === false || val === "false") {
-                            localData.setValue(id, true);
-                        } else if (val === true || val === "true") {
-                            localData.setValue(id, false);
-                        } else {
-                            val = parseFloat(val);
-                            if (val >= 0.5) { val = 1; } else { val = 0; }
-                            localData.setValue(id, 1-val);
-                        }
-                        var el = $('#'+obj.wid);
-                        this._obj.style = {
-                            "position":'absolute',
-                            top:    el.position().top,
-                            width:  el.width(),
-                            left:   el.position().left,
-                            height: el.height()
-                        };
-                        _setTimeout(function (obj) {
-                            dui.binds.basic.showSvg(obj.myClass, obj.view, obj.wid, obj.hm_id, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
-                        }, 200, this._obj);
-                    });
-                }
-            },
-            editNote: function (wid, max_width, min_width, min_height, hm_id) {
-                if (dui.urlParams["edit"] === "") return;
-                if (max_width != '') {
-                    max_width = parseInt(max_width, 10);
-                } else {
-                    max_width = 400;
-                }
+            jQuery('#dlg_'+wid).attr("data-id", wid).dialog({
+                width:  500,
+                height: 300,
+                modal: true,
+                buttons: buttons
+            });
+        },
+        formatFloat: function (data) {
+            if (dui.urlParams['edit'] === "" && data.attr('test_html'))
+                return data.attr('test_html');
 
-                if (min_width != '') {
-                    min_width = parseInt(min_width, 10);
-                } else {
-                    min_width = 40;
-                }
-
-                if (min_height != '') {
-                    min_height = parseInt(min_height, 10);
-                } else {
-                    min_height = 15;
-                }
-
-                if (hm_id != '') {
-                    hm_id = parseInt(hm_id, 10);
-                } else {
-                    hm_id = null;
-                }
-
-				var $this = jQuery('#div_'+wid);
-				jQuery('body').append("<div id='dlg_"+wid+"' title='Edit note'>"+
-								  "<textarea style='width:95%;height:92%' id='text_"+wid+"'>"+$this.text()+"</textarea></div>");
-
-                console.log("Test");
-				var buttons = {};
-				buttons["Clear"] = function () {
-					jQuery('#text_'+$(this).attr("data-id")).val("");
-				};
-				
-				buttons["Ok"] = function () {
-					var dlg = $(this);
-					var text = $('#text_'+dlg.attr("data-id")).val();
-					console.log(text + " " + dlg.attr("data-id"));
-					text = text.replace ("\n", "<br>\n");
-
-					jQuery('#div_'+dlg.attr("data-id")).html (text);
-					if (text == "") {
-						jQuery('#'+dlg.attr("data-id")).css({width: min_width, height: min_height});
-					}
-					else {
-						jQuery('#'+dlg.attr("data-id")).css({width: max_width, height: 'auto'}); 
-					}
-                    if (hm_id) {
-						localData.setValue(hm_id, text);
-                    }
-					dlg.dialog( "close" );
-					dlg.remove();
-				};
-						
-				buttons["Cancel"] = function () {
-					jQuery(this).dialog("close");
-					jQuery(this).remove();
-				};
-								  
-				jQuery('#dlg_'+wid).attr("data-id", wid).dialog({
-					width:  500,
-					height: 300,
-					modal: true,
-					buttons: buttons
-				});
-			},
-			_disable: function () {
-                $(".editmode-helper").show();
+            var val = (parseFloat(localData.uiState.attr("_" + data.hm_id + ".Value")) * data.factor).toFixed(data.digits);
+            if (data.attr('is_comma')) {
+                val = "" + val;
+                val = val.replace('.', ',');
             }
+
+            return val;
+        },
+        _disable: function () {
+            $(".editmode-helper").show();
         }
-    });
+    };
 
     jQuery(document).mouseup(function () {
         if (dui.binds.basic.pressed) {
@@ -652,11 +682,11 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Number" data-dashui-attrs="html_prepend;html_append_singular;html_append_plural;hm_id;digits;factor;hm_id_state/id;class_true;class_false;test_html">
+<script type="text/ejs" id="tplValueFloat" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Number" data-dashui-attrs="html_prepend;html_append_singular;html_append_plural;hm_id;digits;is_comma[true]/checkbox;factor;hm_id_state/id;class_true;class_false;test_html">
     <div class="dashui-widget <%== (localData.uiState.attr("_" + this.data.hm_id_state + ".Value") == "true" ||  localData.uiState.attr("_" + this.data.hm_id_state + ".Value") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%= (dui.urlParams['edit'] === "" && this.data.attr('test_html')) ? this.data.attr('test_html') : (parseFloat(localData.uiState.attr("_" + this.data.hm_id + ".Value")) * this.data.factor).toFixed(this.data.digits) %><%== (parseFloat(localData.uiState.attr("_" + this.data.hm_id + ".Value")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+                <%== this.data.attr("html_prepend") %><%= dui.binds.basic.formatFloat(this.data) %><%== (parseFloat(localData.uiState.attr("_" + this.data.hm_id + ".Value")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
             </div>
         </div>
     </div>

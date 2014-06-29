@@ -3,8 +3,21 @@
 
 <script type="text/javascript">
     "use strict";
-    jQuery.extend(true, dui.binds, {
-        jqueryui: {
+
+        dui.navChangeCallbacks.push(function (view) {
+            $(".jqui-nav-state").each(function () {
+                var $this = $(this);
+                if ($this.attr("data-dashui-nav") == view) {
+                    $this.removeClass("ui-state-default");
+                    $this.addClass("ui-state-active");
+                } else {
+                    $this.addClass("ui-state-default");
+                    $this.removeClass("ui-state-active");
+                }
+            });
+        });
+
+        dui.binds.jqueryui = {
             navigationActive: function (el, nav_view) {
                 var $this = jQuery(el);
                 if (window.location.hash.slice(1) == nav_view) {
@@ -434,8 +447,7 @@
             iconHttpGet: function (el, url) {
                 var $this = jQuery(el).parent();
                 $this.click(function (e) {
-                    // TODO ...
-                    servConn._socket.emit("getUrl", url, function () {});
+                    servConn.getUrl(url);
                     e.preventDefault();
                 });
             },
@@ -513,8 +525,8 @@
                     }
                 });
             }
-        }
-    });
+        };
+    //});
 </script>
 
 <script type="text/ejs" id="tplJquiButtonLink" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Button Link" data-dashui-attrs="html_prepend;html_append;buttontext;href">

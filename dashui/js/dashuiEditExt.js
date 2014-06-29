@@ -3,21 +3,14 @@
  *  https://github.com/hobbyquaker/dashui/
  *
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
- *  MIT License (MIT)
+ *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- *  documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- *  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- *  permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *  http://creativecommons.org/licenses/by-nc/4.0/
  *
- *  The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- *  the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- *  THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- *  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * Short content:
+ * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+ * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+ * (Free for non-commercial use).
  */
 
 // duiEdit - the DashUI Editor extensions
@@ -71,7 +64,7 @@ dui = $.extend(true, dui, {
             filterAttrs:   null
         },
         _findTitle: function (styles, style) {
-            for(var st in styles) {
+            for (var st in styles) {
                 if (styles[st] == style) {
                     return ((st == "") ? style : st);
                 }
@@ -186,7 +179,7 @@ dui = $.extend(true, dui, {
                     if (htmlElem.settings.filterAttrs != null && htmlElem.settings.filterAttrs != "")
                         attrs = htmlElem.settings.filterAttrs.split(' ');
                 
-                    for(var name in this._internalList) {
+                    for (var name in this._internalList) {
                         if (htmlElem.settings.filterFile == null || 
                            (this._internalList[name].file != null && this._internalList[name].file.indexOf(htmlElem.settings.filterFile) != -1)) {
                             var isFound = (filters == null);
@@ -279,8 +272,8 @@ dui = $.extend(true, dui, {
         },
         _toggleDrop: function (obj) {
             if (obj.settings.dropOpened) {
-                $("#styleSelectBox"+obj.settings.id).css({display: "none"});
-                $("#styleSelectB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
+                $("#styleSelectBox" + obj.settings.id).css({display: "none"});
+                $("#styleSelectB" + obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
                 obj.settings.dropOpened = false;
             } else {
                 var elem = $('#styleSelect'+obj.settings.id);		
@@ -311,12 +304,13 @@ dui = $.extend(true, dui, {
         _select: function (obj, iStyle) {
             var nameImg  = "styleSelectImg" +obj.settings.id;
             var nameText = "styleSelectText"+obj.settings.id;
-            $('#'+nameImg).removeClass (obj.settings.style);
+            $('#'+nameImg).removeClass(obj.settings.style);
             obj.settings.style = iStyle;
             $('#'+nameImg).addClass(obj.settings.style);
             $('#'+nameText).html(this._findTitle(obj.settings.styles, obj.settings.style));
-            if (obj.settings.onchange)
-                obj.settings.onchange (obj.settings.style, obj.settings.onchangeParam);     
+            if (obj.settings.onchange) {
+                obj.settings.onchange (obj.settings.style, obj.settings.onchangeParam);
+            }
         },
         destroy: function (htmlElem) {
             $("#styleSelectBox"+htmlElem.settings.id).remove();			
@@ -354,6 +348,7 @@ dui = $.extend(true, dui, {
 			
 			if (this._selectText == "") {
 				this._selectText = dui.translate("Select");
+				this._mkdirText = dui.translate("new Folder");
 				this._cancelText = dui.translate("Cancel");
 				this._uploadText = dui.translate("Upload");
 				this._titleText  = dui.translate("Selected image: ");
@@ -378,28 +373,50 @@ dui = $.extend(true, dui, {
 			
 			 // Define dialog buttons
 			var dialog_buttons = {};
-			dialog_buttons[this._uploadText] = function () {
+            /* TODO create new dir
+            dialog_buttons[this._mkdirText] = function () {
+
+            };*/
+            dialog_buttons[this._uploadText] = function () {
 				$(this).trigger('click');
 			};
 			dialog_buttons[this._selectText] = function () {
-				$(this).dialog( "close" );
-
-				if (this.settings.onselect)
-					this.settings.onselect (dui.imageSelect._pictDir+this.settings.result, this.settings.onselectArg);
-				$(this).remove();
+				$(this).dialog("close");
+				if (this.settings.onselect) {
+                    this.settings.onselect(dui.imageSelect._pictDir + this.settings.result, this.settings.onselectArg);
+                }
 			};
 			dialog_buttons[this._cancelText] = function () {
-				$(this).dialog( "close" );
-				$(this).remove();
-			}
-			$(htmlElem).dialog({
+				$(this).dialog("close");
+			};
+            $(htmlElem).dialog({
 				resizable: true,
 				height: $(window).height(),
 				modal: true,
 				width: 600,
 				buttons: dialog_buttons,
-				close: dialog_buttons[this._cancelText]
-			});
+				close: function () {
+                    /* TODO - tried to cache images that were loaded once, doesn't work, don't know why...
+                    if (!dui.imgSelectCache) {
+                        dui.imgSelectCache = [];
+                    }
+                    var preloadArr = [];
+                    $(this).find("img").each(function () {
+                        var src = $(this).attr("src");
+                        if (dui.imgSelectCache.indexOf(src) == -1) {
+                            dui.imgSelectCache.push(src);
+                            preloadArr.push(src);
+                        }
+                    });
+                    dui.preloadImages(preloadArr);
+                    */
+                    $(this).remove();
+                },
+                open: function (event, ui) {
+                    $('[aria-describedby="imageSelect"]').css('z-index',1002);
+                    $('.ui-widget-overlay').css('z-index',1001);
+                }
+            });
 
 			$(htmlElem).dropzone({
 				url: "/upload?path=./www/dashui/img/",
@@ -424,9 +441,9 @@ dui = $.extend(true, dui, {
 				},
 				complete: function (e) {
 					if (this.element.settings.onselect) {
-						this.element.settings.onselect ("img/"+dui.imageSelect._curDir+ e.name, this.element.settings.onselectArg);
+						this.element.settings.onselect("img/"+dui.imageSelect._curDir+ e.name, this.element.settings.onselectArg);
 					}
-					$(this.element).dialog( "close" );
+					$(this.element).dialog("close");
 					$(this.element).remove();
 				},
 				init: function () {
@@ -434,13 +451,13 @@ dui = $.extend(true, dui, {
 						this.options.url = "/upload?path=./www/dashui/img/"+dui.imageSelect._curDir;
 					});
 				}
-
 			});
 
 			// Show wait icon
-			if (!document.getElementById('dashui-waitico'))
-				$(htmlElem).append("<p id='dashui-waitico'>Please wait...</p>");
-				
+			if (!document.getElementById('dashui-waitico')) {
+                $(htmlElem).append("<p id='dashui-waitico'>Please wait...</p>");
+            }
+
 			$('#dashui-waitico').show();
 			this._rootDir = "www/dashui/img/";
 			this._curDir = "";
@@ -449,16 +466,16 @@ dui = $.extend(true, dui, {
 			if (htmlElem.settings.result && htmlElem.settings.result != "") { 
 				var str = htmlElem.settings.result;
 				if (str.substring (0, this._pictDir.length) == this._pictDir) {
-					str = str.substring (this._pictDir.length);
+					str = str.substring(this._pictDir.length);
 				}
 				if (str.indexOf('/') != -1) {
 					var disr = str.split ("/");
-					for (var z=0; z < disr.length -1; z++)
-						this._curDir += disr[z]+"/";
+					for (var z=0; z < disr.length - 1; z++)
+						this._curDir += disr[z] + "/";
 				}
 			}
 			
-			this.getFileList (htmlElem);
+			this.getFileList(htmlElem);
 		},
 		getFileList: function (htmlElem) {
 			// find selected image
@@ -467,10 +484,10 @@ dui = $.extend(true, dui, {
 			if (htmlElem.settings.result && htmlElem.settings.result != "") { 
 				var str = htmlElem.settings.result;
 				if (str.substring (0, dui.imageSelect._pictDir.length) == dui.imageSelect._pictDir) {
-					str = str.substring (dui.imageSelect._pictDir.length);
+					str = str.substring(dui.imageSelect._pictDir.length);
 				}
 				if  (str.substring (0, dui.imageSelect._curDir.length) == dui.imageSelect._curDir) {
-					str = str.substring (dui.imageSelect._curDir.length);
+					str = str.substring(dui.imageSelect._curDir.length);
 					if (str.indexOf('/') == -1) {
 						dui.imageSelect._curImage = str;
 					}
@@ -478,21 +495,21 @@ dui = $.extend(true, dui, {
 			}
 			
 			// Load directory
-			dui.conn.readDir (this._rootDir + this._curDir, function (dirArr) {
+			dui.conn.readDir(this._rootDir + this._curDir, function (dirArr) {
 				dui.imageSelect.showImages(dirArr, htmlElem);
 			});
 		},
 		showImages: function (aImages, obj) {	
 			// Remove wait icon
 			$('#dashui-waitico').hide ();
-			obj.settings.columns = Math.floor (($(obj).width()-30) / (obj.settings.iwidth+5));
-			obj.settings.rows    = Math.floor (aImages.length / obj.settings.columns) + 2;
+			obj.settings.columns = Math.floor(($(obj).width() - 30) / (obj.settings.iwidth + 5));
+			obj.settings.rows    = Math.floor(aImages.length / obj.settings.columns) + 2;
 			
-			if (document.getElementById(obj.settings.elemName+"_tbl0")) {
-				$('#'+obj.settings.elemName+"_tbl0").remove();
+			if (document.getElementById(obj.settings.elemName + "_tbl0")) {
+				$('#'+obj.settings.elemName + "_tbl0").remove();
 			}
-			if (document.getElementById(obj.settings.elemName+"_tbl1")) {
-				$('#'+obj.settings.elemName+"_tbl1").remove();
+			if (document.getElementById(obj.settings.elemName + "_tbl1")) {
+				$('#'+obj.settings.elemName + "_tbl1").remove();
 			}
 
 			// Remove directory image and place directories first
@@ -542,7 +559,7 @@ dui = $.extend(true, dui, {
 						} 
 						if (!isDir && filters) {
 							var isFound = false;
-							for(var i = 0; i < filters.length; i++) {
+							for (var i = 0; i < filters.length; i++) {
 								if (aImages[id].indexOf(filters[i]) != -1) {
 									isFound = true;
 									break;
@@ -563,15 +580,15 @@ dui = $.extend(true, dui, {
 						sText += "<img id='"+obj.settings.elemName+"_img"+id+"'";
 						// File or directory
 						if (aImages[id] == "..") {
-							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._dirImage+"\" title='"+dui.translate("Back")+"'";
+							sText += " src=\""+dui.imageSelect._pictDir + dui.imageSelect._dirImage + "\" title='" + dui.translate("Back") + "'";
 						} else if (isDir) {
-							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._dirImage+"\" title='"+aImages[id]+"' ";
+							sText += " src=\"" + dui.imageSelect._pictDir+dui.imageSelect._dirImage + "\" title='" + aImages[id] + "' ";
 						} else if (aImages[id].indexOf(".wav") != -1 || aImages[id].indexOf(".mp3") != -1) {
-							sText += " src=\""+dui.imageSelect._pictDir+dui.imageSelect._soundImage+"\" title='"+aImages[id]+"' ";                    
+							sText += " src=\"" + dui.imageSelect._pictDir+dui.imageSelect._soundImage + "\" title='"+aImages[id] + "' ";
 						} else {
-							sText += "title='"+aImages[id]+"' ";
+							sText += "title='" + aImages[id] + "' ";
 						}
-						sText += " />";
+						sText += " style='width:32px; height:32px;' />";
 						
 						if (obj.settings.withName || isDir) {
 							sText += "</td></tr><tr><td style='font-size:0.6em;font-weight:normal'>";
@@ -623,7 +640,7 @@ dui = $.extend(true, dui, {
 				img.image = image;
 				if (dui.imageSelect._curImage == aImages[i]) {	
 					obj.settings.curElement = img;
-					img.removeClass ("ui-state-default").addClass("ui-state-active");
+					img.removeClass("ui-state-default").addClass("ui-state-active");
 				}
 				
 				if (image.isLast && obj.settings.curElement) {
@@ -1004,14 +1021,14 @@ var hmSelect = {
         }
     },
     _buildVarsGrid: function (localData) {
-        var variables  = localData.metaIndex["VARDP"]; // IDs of all VARDP
+        var variables = localData.metaIndex["VARDP"] || []; // IDs of all VARDP
+
         // Add Alarm-Variables
-        var alarms = localData.metaIndex["ALARMDP"];
-        if (alarms && variables) {
-            for (var i = 0; i < alarms.length; i++) {
-                variables.push(alarms[i]);
-            }
+        var alarms = localData.metaIndex["ALARMDP"] || [];
+        for (var i = 0; i < alarms.length; i++) {
+            variables.push(alarms[i]);
         }
+
         if (variables) {
             variables.sort();
         } else {
@@ -1022,17 +1039,18 @@ var hmSelect = {
                 
         var w = $('#hmSelect').dialog("option", "width");
 		$('#hmSelect').dialog("option", "width", w-50);
-         // Build the data tree together
+
+        // Build the data tree together
 		if (this.myVarsData == null) {
             this.myVarsData = [];
 		    var i = 0;
 
             // Add all elements
-            for(var vari in variables) {
+            for (var vari in variables) {
                 var variObj = localData.metaObjects[variables[vari]];
 				this.myVarsData[i] = {
 					id:           ""+(i+1), 
-					"Type":       this._type2Str(variObj["ValueType"], variObj["ValueSubType"]),
+					"Type":       variObj["ValueType"] ? this._type2Str(variObj["ValueType"], variObj["ValueSubType"]) : "undefined",
 					"Description":this._convertName(variObj["DPInfo"] || ""),
 					"Unit":       this._convertName(variObj["ValueUnit"] || ""),
 					"Name":       this._convertName(variObj["Name"]),
@@ -1050,7 +1068,7 @@ var hmSelect = {
                 i++;
 			}
 		} else if (hmSelect.value != null && hmSelect.value != "") {
-			for(var i = 0; i < this.myVarsData.length; i++) {
+			for (var i = 0; i < this.myVarsData.length; i++) {
 				if (hmSelect.value && this.myVarsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myVarsData[i].id;
 				}
@@ -1136,7 +1154,7 @@ var hmSelect = {
             this.myProgsData = [];
 		    var i = 0;
 			// Add all elements
-			for(var prog in programs) {
+			for (var prog in programs) {
 				this.myProgsData[i] = {
 					id:           ""+(i+1), 
 					"Description":this._convertName(localData.metaObjects[programs[prog]]["PrgInfo"]),
@@ -1156,7 +1174,7 @@ var hmSelect = {
                 i++;
 			}
 		} else if (hmSelect.value != null && hmSelect.value != "") {
-			for(var i = 0; i < this.myProgsData.length; i++) {
+			for (var i = 0; i < this.myProgsData.length; i++) {
 				if (hmSelect.value && this.myProgsData[i]["_ID"] == hmSelect.value) {
 					selectedId = this.myProgsData[i].id;
 				}
@@ -1333,7 +1351,7 @@ var hmSelect = {
                 var iDevs = 0;
                 var iPnts = 0;
                 var iChns = 0;
-                for(var dev in devicesCCU) {
+                for (var dev in devicesCCU) {
                     var idDev  = devicesCCU[dev];
                     var device = localData.metaObjects[idDev];
                     var newChannels = {};
@@ -1436,7 +1454,7 @@ var hmSelect = {
                 var newDevices = {};
                 var iChns = 0;
                 if (devicesCCU) {
-                    for(var dev in devicesCCU) {
+                    for (var dev in devicesCCU) {
                     var idDev  = devicesCCU[dev];
                     var device = localData.metaObjects[idDev];
                     var isFound = false;
@@ -1642,7 +1660,7 @@ var hmSelect = {
             }            
                        
 			// Add all elements
-			for(var dev in this._devices) {
+			for (var dev in this._devices) {
 				// Try to find room
 				if (this._devices[dev].room === undefined || this._devices[dev].room === null) {
 					var arr = {};
@@ -2433,6 +2451,9 @@ var idSelect = {
     },
     _getParents: function (id) {
         var ids = [];
+        if (!idSelect._locData.metaObjects[id]) {
+            return ids;
+        }
         var _id = idSelect._locData.metaObjects[id].parent;
         while (_id) {
             ids.push(_id);
@@ -2671,7 +2692,12 @@ var idSelect = {
                             $('#selectId_selectButton').prop("disabled", true).addClass("ui-state-disabled");
                         } else {
                             that._openPath(that._options.selectedID);
-                            $('.select_'+that._options.selectedID).addClass('ui-state-highlight')[0].scrollIntoView(true);
+                            var $sel = $('.select_'+that._options.selectedID).addClass('ui-state-highlight');
+                            if ($sel.length) {
+                                $sel[0].scrollIntoView(true);
+                            } else {
+                                console.log("Error: cannot find elemnt " + that._options.selectedID);
+                            }
                         }
 
                     },

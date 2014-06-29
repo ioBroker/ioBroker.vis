@@ -1,14 +1,22 @@
 {
-    "version": "0.9beta91",
+    "version": "0.9beta116",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
 	"description": {
-		"en": "DashUI is comprehensive web-based visualisation for ioBroker.",
-		"de": "DashUI ist eine flexible webbasierte Visualisierung fur die ioBroker.",
-		"ru": "DashUI DashUI это гибкий и мощный модуль визуализации для ioBroker, основанный на Web-Технологиях."
+		"en": "DashUI is comprehensive web-based visualisation with unlimited freedom of design for ioBroker.",
+		"de": "DashUI ist eine umfangreiche webbasierte Visualisierung mit uneingeschränkter Gestaltungsfreiheit für ioBroker.",
+		"ru": "DashUI это гибкий и мощный модуль визуализации для ioBroker, основанный на Web-Технологиях."
 	},
     "urlHomepage": "http://hobbyquaker.github.io/DashUI",
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
-    "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json"
+    "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
+	"whatsNew" : [
+        "(Bluefox) Fix bars: make buttons full visible if no background",
+        "(Bluefox) translate some widgets to english and russian",
+        "(Bluefox) fix wizard if function selected",
+        "(Bluefox) add comma option to basic - num val (Used by default)",
+        "(Bluefox) fix RGraph/Live chart if color of the line changed",
+        "(Hobbyquaker) Metro Widgets v0.3"
+	]
 }

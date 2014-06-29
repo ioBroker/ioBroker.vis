@@ -39,8 +39,8 @@ jQuery.extend(true, dui.words, {
 	"Left"             : {"en" : "Left",          "de": "Links",               "ru": "Слева"},
 	"Right"            : {"en" : "Right",         "de": "Rechts",              "ru": "Справа"}
 });
-jQuery.extend(true, dui.binds, {
-	bars: {
+//jQuery.extend(true, dui.binds, {
+	dui.binds.bars = {
 		position : {
 			floatHorizontal: 0,
 			floatVertical:   1,
@@ -77,13 +77,13 @@ jQuery.extend(true, dui.binds, {
         editSave: function (div) {
             if (div !== undefined) {
                 // Save settings of one widget
-                var newOpt = JSON.stringify (div.barsOptions);
+                var newOpt = JSON.stringify(div.barsOptions);
+                //var newOpt = div.barsOptions; TODO
                 var duiWidget = dui.binds.bars.getWidgetByObj (div);
                 
                 if (duiWidget) {
                     duiWidget.data['baroptions'] = newOpt;
-                    $(div).attr ('baroptions', newOpt);
-                    console.log ("Stored: " + newOpt);
+                    //$(div).attr ('baroptions', newOpt);
                 } else {
 					if (!dui.views[dui.activeView].widgets) {
 						dui.views[dui.activeView].widgets = {};
@@ -95,9 +95,8 @@ jQuery.extend(true, dui.binds, {
 						dui.views[dui.activeView].widgets[div.barsIntern.wid].data = {};
 					}
                     dui.views[dui.activeView].widgets[div.barsIntern.wid].data['baroptions'] = newOpt;
-                    $(div).attr ('baroptions', newOpt);
-                    console.log ("Stored: " + newOpt);
-				}					
+                    //$(div).attr ('baroptions', newOpt);
+				}
             }
             
             if (dui.binds.bars.editSaveTimer != null) {
@@ -390,19 +389,19 @@ jQuery.extend(true, dui.binds, {
             var w,h,text="";
             if (isHorizontal) {
                 w = div.barsOptions.bWidth * div.barsOptions.buttons.length + div.barsOptions.bSpace * (div.barsOptions.buttons.length - 1);
-                h = div.barsOptions.bHeight;
+                h = div.barsOptions.bHeight + 4;
             }
             else  {
                 h = div.barsOptions.bHeight * div.barsOptions.buttons.length + div.barsOptions.bSpace * (div.barsOptions.buttons.length - 1) + 15;
-                w = div.barsOptions.bWidth;
+                w = div.barsOptions.bWidth + 4;
             }
 				
-			text += "<table style='width:"+w+"px; height:"+h+"px' class='dashui-no-spaces'>";
+			text += '<table style="width:' + w + 'px; height:' + h + 'px" class="dashui-no-spaces">';
 			if (isHorizontal) {
-				text += "<tr class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px'>";
+				text += "<tr class='dashui-no-spaces' style='height:" + div.barsOptions.bHeight + "px'>";
 				for (var d = 0; d < div.barsOptions.buttons.length; d++) {
 					text += "<td class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, d, div.barsOptions) + "</td>";
-                                       if (d != div.barsOptions.buttons.length - 1)
+                                       if (div.barsOptions.bSpace && d != div.barsOptions.buttons.length - 1)
                                            text += "<td class='dashui-no-spaces' style='width:"+div.barsOptions.bSpace+"px'></td>";
 				}
 				text += "</tr>";
@@ -410,7 +409,7 @@ jQuery.extend(true, dui.binds, {
 			else { // vertical
 				for (var i = 0; i < div.barsOptions.buttons.length; i++) {
 					text += "<tr class='dashui-no-spaces'  style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'><td class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, i, div.barsOptions) + "</td></tr>";
-                    if (i != div.barsOptions.buttons.length - 1)
+                    if (div.barsOptions.bSpace && i != div.barsOptions.buttons.length - 1)
                         text += "<tr class='dashui-no-spaces'><td class='dashui-no-spaces' style='height:"+div.barsOptions.bSpace+"px'></td></tr>";
 				}
 			}
@@ -503,7 +502,10 @@ jQuery.extend(true, dui.binds, {
 							}
 						}
 					});
-                    btn_.click (function () { if (this.ctrl._onClick) this.ctrl._onClick (this, this.ctrl, this.ctrlId) });
+                    btn_.click (function () {
+                        if (this.ctrl._onClick)
+                            this.ctrl._onClick (this, this.ctrl, this.ctrlId)
+                    });
                 }
             }
 			
@@ -1107,7 +1109,7 @@ jQuery.extend(true, dui.binds, {
 			};			
 							
 			if (document.getElementById (wid) == null) {
-				$('#duiview_' + view).append ("<div id='"+wid+"'></div>");
+				$('#duiview_' + view).append ('<div id="' + wid + '" class="dashui-widget"></div>');
 			}
 			var div = document.getElementById (wid);
 			var barsIntern = null;
@@ -1148,7 +1150,11 @@ jQuery.extend(true, dui.binds, {
 				
             if (wType !== undefined) {
                 if (options !== undefined) {
-                    div.barsOptions = $.parseJSON(options);
+                    if (typeof options == "string") {
+                        div.barsOptions = $.parseJSON(options);
+                    } else {
+                        div.barsOptions = options;
+                    }
                 }
                 div.barsOptions = $.extend(settings, div.barsOptions, true);
                 div.barsIntern = {
@@ -1183,7 +1189,7 @@ jQuery.extend(true, dui.binds, {
             }
 			
 			this.draw(div, jDiv);
-		
+
 			// non edit mode
 			if (dui.urlParams["edit"] !== "") {
                 // Select by default buttons
@@ -1235,7 +1241,7 @@ jQuery.extend(true, dui.binds, {
 						}
 					}
 				}
-            
+
                 // Install on click function 
                 if (div._onClick === undefined) {
                     div._onClick = function (htmlBtn, div, r) {
@@ -1318,7 +1324,14 @@ jQuery.extend(true, dui.binds, {
             else {
 				jDiv.attr('data-dashui-resizable', '{"disabled":true}');
                 div.dashuiCustomEdit = {'baroptions': dui.binds.bars.edit, 'delete': dui.binds.bars.editDelete};
+                // Install on click function
+                if (div._onClick === undefined) {
+                    console.log('bar');
+                    div._onClick = function (htmlBtn, div, r) {
+                        dui.inspectWidget(div.barsIntern.wid);
+                    };
+                }
             }
 		}
-	}
-});
+	};
+//});

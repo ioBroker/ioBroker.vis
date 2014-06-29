@@ -6,11 +6,11 @@
     TODO - Bar Widgets
     TODO - 4way Controller Widget
 -->
-<link rel="stylesheet" href="widgets/lcars/lcars.css" type="text/css"/>
-<script type="text/javascript" src="widgets/lcars/jquery.lcars.js"></script>
+<link rel="stylesheet" type="text/css" href="widgets/lcars/css/lcars.css" />
+<script type="text/javascript" src="widgets/lcars/js/jquery.lcars.js"></script>
 <script type="text/javascript">
-    jQuery.extend(true, dui.binds, {
-        lcars: {
+    //jQuery.extend(true, dui.binds, {
+        dui.binds.lcars = {
             color: function (name) {
                 switch (name) {
                     case "orange":
@@ -51,7 +51,7 @@
             button: function (el, options, id, val, color_active) {
                 var $this = jQuery(el);
                 $this.lcarsButton(options);
-                var newVal = localData.uiState["_"+id].Value;
+                var newVal = (localData.uiState["_"+id]) ? localData.uiState["_"+id].Value : 0;
                 if (newVal === "true" || newVal === true) { newVal = 1; }
                 if (val == newVal) {
                     $this.css("background-color", dui.binds.lcars.color(color_active));
@@ -176,8 +176,8 @@
                 });
 
             }
-        }
-    });
+        };
+    //});
 </script>
 
 <!--<script type="text/ejs" id="tplLcarsSidePanel" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="navigation - Side-Panel" data-dashui-attrs="html">
@@ -238,7 +238,7 @@
 <script type="text/ejs" id="tplLcarsEdge" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Edge" data-dashui-attrs="edge_type[1]/1,2;edge_direction[tl]/tl,tr,br,bl;lcars_color[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
     <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 195px; height: 83px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body" style="padding:0;margin:0;background-color: <%= dui.binds.lcars.color(this.data.attr('lcars_color')) %>">
-            <img width="100%" height="100%" style="padding:0;margin:0;border:none;" src="widgets/lcars/edge<%= this.data.attr('edge_type') %>-<%= this.data.attr('edge_direction') %>.png">
+            <img width="100%" height="100%" style="padding:0;margin:0;border:none;" src="widgets/lcars/img/edge<%= this.data.attr('edge_type') %>-<%= this.data.attr('edge_direction') %>.png">
         </div>
     </div>
 </script>
@@ -246,7 +246,7 @@
 <script type="text/ejs" id="tplLcarsFrame" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Frame" data-dashui-attrs="frame_type[1]/1,2;frame_direction[r]/r,l">
     <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 32px; height: 215px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body" style="padding:0;margin:0">
-            <img width="100%" height="100%" style="padding:0;margin:0;border:none;" <%= (this.data.attr('frame_type') && this.data.attr('frame_direction') ? 'src="widgets/lcars/frame' + this.data.attr('frame_type') +'-' + this.data.attr('frame_direction') + '.png"' : '') %>>
+            <img width="100%" height="100%" style="padding:0;margin:0;border:none;" <%= (this.data.attr('frame_type') && this.data.attr('frame_direction') ? 'src="widgets/lcars/img/frame' + this.data.attr('frame_type') +'-' + this.data.attr('frame_direction') + '.png"' : '') %>>
         </div>
     </div>
 </script>
@@ -255,7 +255,7 @@
 <script type="text/ejs" id="tplLcarsUfpLogo" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - UFP Logo" data-dashui-attrs="">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 531px; height: 409px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <img width="100%" src="widgets/lcars/ufp.png"/>
+            <img width="100%" src="widgets/lcars/img/ufp.png"/>
         </div>
     </div>
 </script>
@@ -263,7 +263,7 @@
 <script type="text/ejs" id="tplLcarsSfLogo" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Starfleet Logo" data-dashui-attrs="lcars_color[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 161px; height: 171px ;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body" style="background-color: <%= dui.binds.lcars.color(this.data.attr('lcars_color')) %>">
-            <img width="100%" src="widgets/lcars/starfleet.png"/>
+            <img width="100%" src="widgets/lcars/img/starfleet.png"/>
         </div>
     </div>
 </script>
@@ -274,7 +274,7 @@
 <script type="text/ejs" id="tplLcarsDna" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - DNA" data-dashui-attrs="speed[50]">
     <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 560px; height: 48px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body" style="padding:0;margin:0">
-            <div style="width:100%;height:100%;background-image: url('widgets/lcars/dna.png')"></div>
+            <div style="width:100%;height:100%;background-image: url('widgets/lcars/img/dna.png')"></div>
             <div <%= (el) -> dui.binds.lcars.dna(el, undefined, data.attr('speed'), data.attr('wid')) %>></div>
         </div>
     </div>
@@ -298,7 +298,7 @@
 <script type="text/ejs" id="tplLcarsWarpcoreFix" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="static - Warpcore" data-dashui-attrs="speed[500]/slider,20,800,1">
     <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 114px; height: 317px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body" style="padding:0;margin:0">
-            <div style="width:100%;height:100%;background-image: url('widgets/lcars/warpcore.png')"></div>
+            <div style="width:100%;height:100%;background-image: url('widgets/lcars/img/warpcore.png')"></div>
             <div <%= (el) -> dui.binds.lcars.warpcore(el, data.attr('speed'), data.attr('wid')) %>></div>
         </div>
     </div>
@@ -307,7 +307,7 @@
 <script type="text/ejs" id="tplLcarsWarpcore" class="dashui-tpl" data-dashui-set="lcars" data-dashui-name="val - Warpcore" data-dashui-attrs="_id;min[0];max[1]">
     <div class="dashui-widget dashui-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 114px; height: 317px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body" style="padding:0;margin:0">
-            <div style="width:100%;height:100%;background-image: url('widgets/lcars/warpcore.png')"></div>
+            <div style="width:100%;height:100%;background-image: url('widgets/lcars/img/warpcore.png')"></div>
             <div <%= (el) -> dui.binds.lcars.warpcoreVal(el, data.attr('_id'), data.attr('min'), data.attr('max'), data.attr('wid')) %>></div>
         </div>
     </div>
