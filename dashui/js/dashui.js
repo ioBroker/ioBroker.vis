@@ -288,9 +288,12 @@ var dui = {
             }
 
             if (dui.activeView == "") {
-                // TODO Translate
-                alert("unexpected error - this should not happen :(")
-                $.error("this should not happen :(");
+                // All views were deleted, but file exists. Create demo View
+                //alert("unexpected error - this should not happen :(");
+                //$.error("this should not happen :(");
+                // create demoView
+                dui.views["DemoView"] = {settings: {style: {}}, widgets: {}};
+                dui.activeView = "DemoView";
             }
         } else {
             if (dui.views[hash]) {
