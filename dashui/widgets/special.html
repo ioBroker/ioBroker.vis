@@ -3,7 +3,7 @@
         dui.binds.special = {
             soundOnClickInitialized: false,
             soundOnClick: function (el, url) {
-                if (dui.urlParams["edit"] === "") {
+                if (dui.editMode) {
                     jQuery(el).parent().parent().show();
                     return;
                 }
@@ -34,7 +34,7 @@
                 });
             },
             preRenderView: function(el, view, delay) {
-                if (dui.urlParams["edit"] === "") {
+                if (dui.editMode) {
                     jQuery(el).parent().parent().show();
                 } else {
                     if (parseInt(delay, 10) > 0) {
@@ -47,7 +47,7 @@
                 }
             },
             instance: function(el) {
-                if (dui.urlParams["edit"] === "") {
+                if (dui.editMode) {
                     jQuery(el).parent().parent().show();
                 }
                 dui.initInstance();
@@ -60,7 +60,7 @@
                 } else {
                     dui.binds.special.unfocusInitialized = true;
                 }
-                if (dui.urlParams["edit"] === "") {
+                if (dui.editMode) {
                     jQuery(el).parent().parent().show();
                 }
 

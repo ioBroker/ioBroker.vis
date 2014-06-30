@@ -8,7 +8,7 @@
 
             swipe_nav: function (el, data) {
 
-                if (dui.urlParams["edit"] === "") {
+                if (dui.editMode) {
                     jQuery(el).show();
                 }
 
@@ -17,7 +17,7 @@
                 setTimeout(function () {
                     var $view = $($this).parent();
 
-                    if (dui.urlParams["edit"] !== "") {
+                    if (!dui.editMode) {
                         $($view).swipe({
                             swipeLeft: function () {
                                 dui.changeView(data['Left_nav_view'], {effect: data['Left-out_effect'], options: {direction: data['Left-out_eff_opt'], queue: false}, duration: $this.attr('duration')}, {effect:  data['Left-in_effect'], options: {direction:  data['Left-in_eff_opt'], queue: false}, duration: $this.attr('duration')}, true)
@@ -39,7 +39,7 @@
                     var $all = $($this).find(".dashui-widget");
 
 
-//                    if (dui.urlParams["edit"] !== "") {
+//                    if (!dui.editMode) {
 
                     $.each($all, function () {
 

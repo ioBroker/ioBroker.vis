@@ -13,13 +13,13 @@ jQuery.fn.toggleSwitch = function (params) {
     });
 
     function generateToggle(selectObj) {
-
+        console.log("C");
         // create containing element
         var $contain = $("<div />").addClass("ui-toggle-switch");
 
         // generate labels
         $(selectObj).find("option").each(function (i, item) {
-            $contain.append("<label>" + $(item).text() + "</label>");
+            $contain.append("<label style='border: 0px'>" + $(item).text() + "</label>");
         }).end().addClass("ui-toggle-switch");
 
         // generate slider with established options

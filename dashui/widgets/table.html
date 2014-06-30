@@ -184,7 +184,7 @@
                         btn._parent = that._parent;
                         btn._print_id = that._data._print_id || JSON.stringify(that._data);
 
-                        if (btn && dui.urlParams['edit'] !== "") {
+                        if (btn && !dui.editMode) {
                             $(btn).bind('click', function () {
                                 if (that._parent._options.ack_id) {
                                     localData.setValue(that._parent._options.ack_id, that._print_id);
@@ -204,7 +204,7 @@
             },
 
             onAckButton: function () {
-                //if (btn && dui.urlParams['edit'] !== "")
+                //if (btn && !dui.editMode)
                 if (this._parent._options.ack_id) {
                     localData.setValue(this._parent._options.ack_id, this._ack_id);
                 }
@@ -484,7 +484,7 @@
                             text: options.buttons[t],
                             data: {data: options.buttons[t], trigger_id: options.trigger_id},
                             click: function (evt, ui) {
-                                if (1|| dui.urlParams['edit'] !== "") {
+                                if (1 || !dui.editMode) {
                                     if (dui.binds.dialog_trigger_id) {
                                         localData.setValue(dui.binds.dialog_trigger_id, evt.currentTarget.textContent);
                                     }
@@ -497,7 +497,7 @@
                 elem._options = options;
 
                 // Disable autofocus in edit mode
-                if (dui.urlParams['edit'] === "") {
+                if (dui.editMode) {
                     $.ui.dialog.prototype._focusTabbable = function () {
                     };
                 }
@@ -512,7 +512,7 @@
                     buttons: buttons
                 });
 
-                if ((dui.urlParams['edit'] === "" && options.show) || trigger_value == "open") {
+                if ((dui.editMode && options.show) || trigger_value == "open") {
                     $(elem).dialog('open');
                     dui.binds.dialog_trigger_id = options.trigger_id;
                 }
@@ -572,7 +572,7 @@
 <script type="text/ejs" id="tplExLink" class="dashui-tpl" data-dashui-set="table" data-dashui-name="static - link + session clean" data-dashui-attrs="html;href;target;alt;key">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <a href="<%== this.data.attr('href') %>" <%== (dui.urlParams['edit'] !== '' && this.data.attr('key')) ? 'onclick="session.remove(\''+this.data.attr('key')+'\')"' : '' %> target="<%== this.data.attr("target") %>" alt="<%== this.data.attr("alt") %>" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%"><%== this.data.attr("html") %></div></a>
+            <a href="<%== this.data.attr('href') %>" <%== (!dui.editMode && this.data.attr('key')) ? 'onclick="session.remove(\''+this.data.attr('key')+'\')"' : '' %> target="<%== this.data.attr("target") %>" alt="<%== this.data.attr("alt") %>" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%"><%== this.data.attr("html") %></div></a>
         </div>
     </div>
 </script>

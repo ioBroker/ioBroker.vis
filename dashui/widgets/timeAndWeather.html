@@ -235,7 +235,7 @@
                 var clock = jQuery('#'+data.attr('wid')).jdigiclock({
                     weatherLocationCode: weoid,
                     weatherUpdate: 5,
-                    lang: 'de',
+                    lang: dui.language,
                     clockImagesPath: 'widgets/timeAndWeather/img/clock/'
                 });
             },
@@ -253,7 +253,7 @@
                 }
                 else
                     weoid = '664942';
-                jQuery('#'+data.attr('wid')).weatherfeed([weoid], {lang:dui.language, woeid: true, humidity: true, forecast: true, link: false, resizable: (dui.urlParams['edit'] === "")});
+                jQuery('#'+data.attr('wid')).weatherfeed([weoid], {lang:dui.language, woeid: true, humidity: true, forecast: true, link: false, resizable: (dui.editMode)});
 
             }
         };
