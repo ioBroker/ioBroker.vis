@@ -1860,7 +1860,7 @@ dui = $.extend(true, dui, {
 
         // Button Click Handler
 
-        $("#export_view").click(dui.exportView);
+        $("#export_view").click(function(){dui.exportView(false);});
 
         $("#import_view").click(function () {
             $("#textarea_import_view").html("");
