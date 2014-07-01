@@ -78,6 +78,15 @@
                 5: {"en": "Friday",   "de": "Freitag",    "ru": "Пятница"},
                 6: {"en": "Saturday", "de": "Samstag",    "ru": "Суббота"}
             },
+            weekdaysShort:{
+                0: {"en": "Sun", "de": "So", "ru": "Вс"},
+                1: {"en": "Mon", "de": "Mo", "ru": "Пн"},
+                2: {"en": "Tue", "de": "Di", "ru": "Вт"},
+                3: {"en": "Wed", "de": "Mi", "ru": "Ср"},
+                4: {"en": "Thu", "de": "Do", "ru": "Чт"},
+                5: {"en": "Fri", "de": "Fr", "ru": "Пт"},
+                6: {"en": "Sat", "de": "Sa", "ru": "Сб"}
+            },
             months:{
                 1: {"en": "January",    "de": "Januar",     "ru": "Январь"},
                 2: {"en": "February",   "de": "Dienstag",   "ru": "Февраль"},
@@ -124,13 +133,7 @@
                     if (showWeekDay && !shortWeekDay) {
                         dateString += dui.binds.timeAndWeather.weekdays[dow][dui.language] + ", ";
                     } else if (showWeekDay && shortWeekDay) {
-                        switch (dui.language) {
-                            case "en":
-                                dateString += dui.binds.timeAndWeather.weekdays[dow][dui.language].slice(0, 3) + ", ";
-                                break;
-                            default:
-                                dateString += dui.binds.timeAndWeather.weekdays[dow][dui.language].slice(0, 2) + ", ";
-                        }
+                        dateString += dui.binds.timeAndWeather.weekdaysShort[dow][dui.language] + ", ";
                     }
 
                     if (monthWord) {

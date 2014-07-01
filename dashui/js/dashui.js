@@ -281,19 +281,29 @@ var dui = {
             // Create default view in demo mode
             if (typeof io == "undefined") {
                 if (dui.activeView == "") {
-                    dui.views["DemoView"] = {settings: {style: {}}, widgets: {}};
-                    dui.activeView = "DemoView";
+                    if (!dui.editMode){
+                        alert(dui.translate("error - View doesn't exist"));
+                        window.location.href = "./edit.html";
+                    } else {
+                        dui.views["DemoView"] = dui.createDemoView ? dui.createDemoView() : {settings: {style: {}}, widgets: {}};
+                        dui.activeView = "DemoView";
+                        //dui.showWaitScreen(false);
+                    }
                 }
-                dui.showWaitScreen(false);
             }
 
             if (dui.activeView == "") {
-                // All views were deleted, but file exists. Create demo View
-                //alert("unexpected error - this should not happen :(");
-                //$.error("this should not happen :(");
-                // create demoView
-                dui.views["DemoView"] = {settings: {style: {}}, widgets: {}};
-                dui.activeView = "DemoView";
+                if (!dui.editMode) {
+                    alert(dui.translate("error - View doesn't exist"));
+                    window.location.href = "./edit.html";
+                } else {
+                    // All views were deleted, but file exists. Create demo View
+                    //alert("unexpected error - this should not happen :(");
+                    //$.error("this should not happen :(");
+                    // create demoView
+                    dui.views["DemoView"] = dui.createDemoView ? dui.createDemoView() : {settings: {style: {}}, widgets: {}};
+                    dui.activeView = "DemoView";
+                }
             }
         } else {
             if (dui.views[hash]) {
@@ -323,16 +333,19 @@ var dui = {
         dui.changeView(dui.activeView);
     },
     initViewObject: function () {
-        if (confirm(dui.translate("no views found on server.\nCreate new %s ?", "dashui.views" + dui.viewFileSuffix + ".json"))) {
-            dui.views = {view1: {settings: {style: {
-                // TODO set initial background
-            }}, widgets: {
-                // TODO Create welcome screen: image, one light switch one window widegt and text
-            }}};
-            dui.saveRemote();
+        if (!dui.editMode) {
             window.location.href = './edit.html' + window.location.search;
-        } else {
-            window.location.reload();
+        }
+        else {
+            if (confirm(dui.translate("no views found on server.\nCreate new %s ?", "dashui-views" + dui.viewFileSuffix + ".json"))) {
+                dui.views = {};
+                dui.views["DemoView"] = dui.createDemoView ? dui.createDemoView() : {settings: {style: {}}, widgets: {}};
+                dui.saveRemote(function () {
+                    window.location.reload()
+                });
+            } else {
+                window.location.reload();
+            }
         }
     },
     setViewSize: function (view) {
@@ -879,7 +892,7 @@ var dui = {
                 'No Views found on Server' : {
                     'en': 'No Views found on Server',
                     'de': 'Keine Views gefunden am Server.',
-                    'ru': 'На сервеое не найдено никаких страниц.'
+                    'ru': 'На сервере не найдено никаких страниц.'
                 },
                 'All changes are saved locally. To reset changes clear the cache.'      : {
                     'en': 'All changes are saved locally. To reset changes clear the browser cache.',
@@ -894,7 +907,7 @@ var dui = {
                 'no views found on server.\nCreate new %s ?' : {
                     'en' : 'no views found on server.\nCreate new %s?',
                     'de': 'Keine Views gefunden am Server.\nErzeugen %s?',
-                    'ru': 'На сервеое не найдено никаких страниц. Создать %s?'
+                    'ru': 'На сервере не найдено никаких страниц. Создать %s?'
                 },
                 'Update found, loading new Files...'  : {
                     'en' : 'Update found.<br/>Loading new Files...',
