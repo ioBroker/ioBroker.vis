@@ -285,7 +285,7 @@ dui.createDemoView = function () {
                     "font-family" : "Arial",
                     "font-size" : "24px",
                     "font-weight" : "bold",
-                    "width" : 99,
+                    "width" : 200,
                     "height" : 36
                 },
                 "widgetSet" : "basic"
@@ -308,7 +308,7 @@ dui.createDemoView = function () {
                     "font-family" : "Arial",
                     "font-size" : "24px",
                     "font-weight" : "bold",
-                    "width" : 99,
+                    "width" : 200,
                     "height" : 36
                 },
                 "widgetSet" : "basic"
@@ -331,7 +331,7 @@ dui.createDemoView = function () {
                     "font-family" : "Arial",
                     "font-size" : "24px",
                     "font-weight" : "bold",
-                    "width" : 99,
+                    "width" : 200,
                     "height" : 36
                 },
                 "widgetSet" : "basic"
@@ -403,7 +403,7 @@ dui.createDemoView = function () {
                     "left" : 1044,
                     "top" : 87,
                     "font-family" : "Arial",
-                    "width" : 194,
+                    "width" : 280,
                     "height" : 65,
                     "color" : "red"
                 },
