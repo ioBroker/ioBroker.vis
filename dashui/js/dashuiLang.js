@@ -99,12 +99,12 @@ dui = $.extend(true, dui, {
                 'no views found on server.\nCreate new %s ?' : {
                     'en': 'no views found on server.\nCreate new %s?',
                     'de': 'Keine Views gefunden.\n%s neu erstellen?',
-                    'ru': 'На сервеое не найдено никаких страниц. Создать %s?'
+                    'ru': 'На сервере не найдено никаких страниц. Создать %s?'
                 },
                 'No Views found on Server' : {
                     'en': 'No Views found on Server',
                     'de': 'Keine Views gefunden am Server.',
-                    'ru': 'На сервеое не найдено никаких страниц.'
+                    'ru': 'На сервере не найдено никаких страниц.'
                 },
                 'Hide widget description' : {
                     'en': 'Hide widget description',

@@ -137,7 +137,9 @@
 
 <script type="text/ejs" id="tplRGBSpectrum" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="ctrl - rgb spectrum" data-dashui-attrs="red_id[65535];green_id[65535];blue_id[65535];divisor[255]">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="editmode-helper"></div>
+        <% if (dui.editMode) { %>
+            <div class="editmode-helper" />
+        <% } %>
         <div class="dashui-widget-body">
             <input id="<%= this.data.attr('wid') %>_spectrum" value="" <%= (el) -> dui.binds.colorpicker.spectrum(el, data.attr('red_id'), data.attr('green_id'), data.attr('blue_id'), data.attr('divisor')) %>>
         </div>
@@ -147,7 +149,9 @@
 
 <script type="text/ejs" id="tplRGBFarbtastic" class="dashui-tpl" data-dashui-set="colorpicker" data-dashui-name="ctrl - rgb farbtastic" data-dashui-attrs="red_id[65535];green_id[65535];blue_id[65535];divisor[255]">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 196px; height: 196px;" id="<%= this.data.attr('wid') %>">
-        <div class="editmode-helper"></div>
+        <% if (dui.editMode) { %>
+            <div class="editmode-helper" />
+        <% } %>
         <div class="dashui-widget-body">
             <div id="<%= this.data.attr('wid') %>_farbtastic"></div>
             <input id="<%= this.data.attr('wid') %>_farbtastic_input" value="" <%= (el) -> dui.binds.colorpicker.farbtastic(el, data.attr('red_id'), data.attr('green_id'), data.attr('blue_id'), data.attr('divisor')) %>>
