@@ -591,9 +591,6 @@
             }
 
             return val;
-        },
-        _disable: function () {
-            $(".editmode-helper").show();
         }
     };
 
@@ -620,7 +617,10 @@
 <script type="text/ejs" id="tplIFrame" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - iFrame" data-dashui-attrs="src;refreshInterval">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <div class="editmode-helper"></div><iframe src="<%= this.data.attr('src') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+        <% if (dui.editMode) { %>
+			<div class="editmode-helper" />
+		<% } %>
+            </div><iframe src="<%= this.data.attr('src') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
             <div <%= (el) -> dui.binds.basic.iframeRefresh(el, data.attr("src"), data.attr("refreshInterval")) %> />
         </div>
     </div>
@@ -629,7 +629,9 @@
 <script type="text/ejs" id="tplImage" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Image" data-dashui-attrs="src;refreshInterval">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
-            <div class="editmode-helper"></div>
+            <% if (dui.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
             <img style="position:absolute; width:100%;" <%= this.data.attr('src') ? 'src="'+this.data.attr('src')+'"' : '' %> />
             <div <%= (el) -> dui.binds.basic.imgRefresh(el, data.attr("src"), data.attr("refreshInterval")) %> />
         </div>
@@ -659,8 +661,10 @@
 
 <script type="text/ejs" id="tplContainerView" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="container - view in widget" data-dashui-attrs="contains_view">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
-        <div class="editmode-helper"></div>
-        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+            <% if (dui.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
+            <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
         </div>
     </div>
 </script>
@@ -670,7 +674,9 @@
 
 <script type="text/ejs" id="tplStatefulContainerView8" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="stateful/container - view in widget 8" data-dashui-attrs="hm_id;persistent/checkbox;contains_view_0;contains_view_1;contains_view_2;contains_view_3;contains_view_4;contains_view_5;contains_view_6;contains_view_7">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
-        <div class="editmode-helper"></div>
+        <% if (dui.editMode) { %>
+            <div class="editmode-helper" />
+        <% } %>
         <%
             var viewArr = [data.attr("contains_view_0"), data.attr("contains_view_1"), data.attr("contains_view_2"), data.attr("contains_view_3"), data.attr("contains_view_4"), data.attr("contains_view_5"), data.attr("contains_view_6"), data.attr("contains_view_7")];
         %>
@@ -682,9 +688,13 @@
 
 <script type="text/ejs" id="tplStatefulIFrame8" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="stateful - iFrame 8" data-dashui-attrs="hm_id;refreshInterval;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
-        <div class="editmode-helper"></div>
+        <% if (dui.editMode) { %>
+            <div class="editmode-helper" />
+        <% } %>
         <div class="dashui-widget-body">
-            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
+            <% if (dui.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
             <%
                 var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];
             %>
@@ -697,9 +707,13 @@
 <!-- TODO
 <script type="text/ejs" id="tplStatefulIFrame8Persistent" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="stateful - iFrame 8 (persistent)" data-dashui-attrs="hm_id;refreshInterval;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
-          <div class="editmode-helper"></div>
+            <% if (dui.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
           <div class="dashui-widget-body">
-            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
+            <% if (dui.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
             <iframe class="dashui-widget-element" src="<%= this.data.attr('src_0') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
             <iframe class="dashui-widget-element" src="<%= this.data.attr('src_1') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
             <iframe class="dashui-widget-element" src="<%= this.data.attr('src_2') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
@@ -716,9 +730,13 @@
 
 <script type="text/ejs" id="tplStatefulImage8" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="stateful - Image 8" data-dashui-attrs="hm_id;refreshInterval;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
-        <div class="editmode-helper"></div>
+        <% if (dui.editMode) { %>
+            <div class="editmode-helper" />
+        <% } %>
         <div class="dashui-widget-body">
-            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
+            <% if (dui.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
             <%
                 var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];
             %>

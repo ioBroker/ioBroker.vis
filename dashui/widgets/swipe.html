@@ -130,7 +130,9 @@
 
 <script type="text/ejs" id="tplkaru" class="dashui-tpl" data-dashui-set="swipe" data-dashui-name="Karusell" data-dashui-attrs="contains_view">
     <div class = "dashui-widget <%== this.data.attr('class') %>" style="width: 300px; height: 100px;" id="<%= this.data.attr('wid') %>" <%= (el) -> dui.binds.swipe.karu(el,data.attr('contains_view')) %>>
-        <div class="editmode-helper"></div>
+        <% if (dui.editMode) { %>
+            <div class="editmode-helper" />
+        <% } %>
         <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body"></div>
     </div>
 </script>

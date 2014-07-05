@@ -379,7 +379,7 @@
                 }
                 jQuery(input).val(newVal);
             },
-            multiselect: function (el, options) {
+            multiselect: function (el, options, isOpen) {
                 var $this = jQuery(el);
                 var id = $this.attr("data-hm-id");
 
@@ -387,25 +387,35 @@
                 $this.find("option[value='"+localData.uiState["_"+id].Value+"']").attr("selected", true);
 
                 $this.multiselect($.extend({
-                    multiple: false,
-                    header: false,
+                    multiple:         false,
+                    header:           false,
                     noneSelectedText: false,
-                    selectedList: 1
+                    selectedList:     1
                 }, options)).change(function () {
-                    localData.setValue(id,  $this.find("option:selected").val());
+					if (!dui.editMode) {
+						localData.setValue(id,  $this.find("option:selected").val());
+					}
                 });
 
                 var hm_id = "_" + id;
 
                 $this.find("option:selected").removeAttr("selected");
-                $this.find("option[value='"+localData.uiState[hm_id].Value+"']").attr("selected", true);
+                $this.find("option[value='" + localData.uiState[hm_id].Value + "']").attr("selected", true);
+				$this.prop("disabled", dui.editMode);
                 $this.multiselect("refresh");
 
                 localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
                     $this.find("option:selected").removeAttr("selected");
-                    $this.find("option[value='"+newVal+"']").attr("selected", true);
+                    $this.find("option[value='" + newVal + "']").attr("selected", true);
                     $this.multiselect("refresh");
                 });
+				
+				if (dui.editMode && isOpen) {
+					$this.multiselect("open");
+				}
+				if(dui.editMode) {
+					dui.bindWidgetClick(el.id);
+				}
             },
             slider: function (el, options) {
                 var $this = jQuery(el);
@@ -547,39 +557,25 @@
                 });
 
             },
-            _disable: function () {
+			
+			_disable: function () {
                 jQuery("div#dui_container").find(".ui-slider").each(function () {
                     jQuery(this).slider("disable").removeClass("ui-state-disabled");
                 });
 
-                jQuery("div#dui_container").find(".ui-button:data(uiButton)").each(function () {
-
-                  //  jQuery(this).button("disable").removeClass("ui-state-disabled");
-
-                });
                 setTimeout(function () {
-                    jQuery("div#dui_container").find("select[id$='_multiselect']").each(function () {
-                        if (jQuery(this).css("display") == "none") {
+                    $("div#dui_container").find("select[id$='_multiselect']").each(function () {
+                        if ($(this).css("display") == "none") {
                             //console.log("disable multiselect "+jQuery(this).attr("id"));
-                            jQuery(this).multiselect("disable").next().removeClass("ui-state-disabled").unbind("click", false);
+                            $(this).multiselect("disable").next().removeClass("ui-state-disabled").unbind("click", false);
                         }
                     });
                 }, 200);
                 setTimeout(function () {
-                    jQuery("div#dui_container").find("a[href]").each(function () {
-                        $(this).click(function (e) {
-                         //e.preventDefault();
-
-                           // return false;
-                         });
-                        //jQuery(this).removeAttr("href");
-
+                    $("div#dui_container").find("a[href]").each(function () {
+                        $(this).click(function (e) {});
                     });
                 }, 200);
-                //jQuery(".widget-link").click(function (e)�{
-                    //e.preventDefault();
-                    //return false;
-                //});
             },
 
             itoggle: function (el){
@@ -838,7 +834,9 @@
 
 <script type="text/ejs" id="tplJquiInputDate" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input Date" data-dashui-attrs="hm_id;size[10]/slider,1,50,1">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
-        <div class="editmode-helper"></div>
+        <% if (dui.editMode) { %>
+			<div class="editmode-helper" />
+		<% } %>
         <div class="dashui-widget-body">
             <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.inputDate(el); %> />
         </div>
@@ -846,7 +844,9 @@
 </script>
 <script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input Datetime" data-dashui-attrs="hm_id;size/slider,1,50,1;timeOnly/checkbox;hideSeconds/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
-        <div class="editmode-helper"></div>
+        <% if (dui.editMode) { %>
+			<div class="editmode-helper" />
+		<% } %>
         <div class="dashui-widget-body">
             <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.jqueryui.inputDatetime(el, {timeOnly:data.attr("timeOnly"),showSecond:!data.attr("hideSeconds")}); %> />
         </div>
@@ -917,21 +917,22 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplJquiSelectList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Select ValueList" data-dashui-attrs="off_text;on_text;hm_id;values;texts;width;height">
+<script type="text/ejs" id="tplJquiSelectList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Select ValueList" data-dashui-attrs="hm_id;values[0§1§2];texts[OFF§ON§AUTO];width[80]/slider,5,1000,1;height[100]/slider,15,500,1;open/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
-        <div class="editmode-helper"></div>
+        <% if (dui.editMode) { %>
+			<div class="editmode-helper" />
+		<% } %>
         <div class="dashui-widget-body" >
-            <select id="<%= this.data.attr('wid') %>_multiselect" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> (!dui.editMode) {setTimeout(function () {dui.binds.jqueryui.multiselect(el,{minWidth: (data.width ? data.width : 300), height: (data.height ? data.height : 220)})},250)} %> >
+            <select id="<%= this.data.attr('wid') %>_multiselect" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function (el_) { dui.binds.jqueryui.multiselect(el_, {minWidth: (data.width || 300), height: (data.height || 220)}, data.open)}, 250, el); %> >
             <%
-            var values = (data.attr('values') ? data.attr('values').split(';') : []);
-            var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
-            var wid = data.attr('wid');
-            for (var val in values) {
-
-            %>
-            <option value="<%= values[val] %>"><%= texts[val] %></option>
-            <%
-            }
+				var values = (data.attr('values') ? data.attr('values').split(';') : []);
+				var texts  = (data.attr('texts') ? data.attr('texts').split(';'): []);
+				var wid    = data.attr('wid');
+				for (var val in values) {
+					%>
+					<option value="<%= values[val] %>"><%= texts[val] %></option>
+					<%
+				}
             %>
             </select >
         </div>
