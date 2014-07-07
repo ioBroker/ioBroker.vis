@@ -193,7 +193,7 @@ var dui = {
                         break;
                     case "changedView":
                     	// Do nothing
-						break;                        
+					    return;                        
                     case "changeView":
                         dui.changeView(data);
                         break;
