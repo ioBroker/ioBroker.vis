@@ -181,7 +181,7 @@ var dui = {
         }
 
         localData.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
-            var cmd = newVal.Value;
+            var cmd = newVal;
              if (cmd !== "" &&
                  (localData.uiState["_" + dui.instanceId].Value == 'FFFFFFFF' ||
                   (dui.instance && localData.uiState["_" + dui.instanceId].Value == dui.instance))) {
@@ -191,6 +191,9 @@ var dui = {
                     case "alert":
                         alert(data);
                         break;
+                    case "changedView":
+                    	// Do nothing
+						break;                        
                     case "changeView":
                         dui.changeView(data);
                         break;
