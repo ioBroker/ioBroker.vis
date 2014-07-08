@@ -42,12 +42,11 @@ dui = $.extend(true, dui, {
             });
     },
     delView: function (view) {
-        // TODO Translate
         if (confirm(dui.translate("Really delete view %s?", view))) {
-                delete dui.views[view];
-                dui.saveRemote(function () {
-                    window.location.href = "edit.html" + window.location.search;
-                });
+            delete dui.views[view];
+            dui.saveRemote(function () {
+                window.location.href = "edit.html" + window.location.search;
+            });
            }
     },
     dupView: function (val) {
@@ -83,7 +82,7 @@ dui = $.extend(true, dui, {
             width: 800,
             height: 600,
             modal: true,
-            open: function (event, ui) {
+            open: function (/*event, ui*/) {
                 $('[aria-describedby="dialog_export_view"]').css('z-index',1002);
                 $(".ui-widget-overlay").css('z-index', 1001);
             }
@@ -256,12 +255,12 @@ dui = $.extend(true, dui, {
                     if (dui.multiSelectedWidgets.indexOf(widgetId) != -1) {
                         //console.log("splice "+id)
                         dui.multiSelectedWidgets.splice(dui.multiSelectedWidgets.indexOf(widgetId), 1);
-                        $("#"+widgetId).removeClass("ui-selected");
+                        var $widget = $("#" + widgetId);
+                        $widget.removeClass("ui-selected");
 
                         //console.log("-> "+dui.multiSelectedWidgets);
                         dui.allWidgetsHelper();
                         $("#widget_multi_helper_"+widgetId).remove();
-                        var $widget = $("#" + widgetId);
                         if ($widget.hasClass("ui-draggable")) {
                             try {
                                 $widget.draggable("destroy");
@@ -275,15 +274,15 @@ dui = $.extend(true, dui, {
                 } else if (dui.activeWidget == widgetId && dui.multiSelectedWidgets.length) {
                     //console.log("click inspected Widget",widgetId, dui.multiSelectedWidgets);
 
-                        var newActive = dui.multiSelectedWidgets.pop();
-                        var multiSelectedWidgets = dui.multiSelectedWidgets;
-                        $("#widget_multi_helper_"+newActive).remove();
+                    var newActive = dui.multiSelectedWidgets.pop();
+                    var multiSelectedWidgets = dui.multiSelectedWidgets;
+                    $("#widget_multi_helper_"+newActive).remove();
                     $("#" + newActive).removeClass("ui-selected");
-                        dui.inspectWidget(newActive);
-                        for (var i = 0; i < multiSelectedWidgets.length; i++) {
-                            dui.inspectWidgetMulti(multiSelectedWidgets[i]);
-                        }
-                        dui.allWidgetsHelper();
+                    dui.inspectWidget(newActive);
+                    for (var i = 0; i < multiSelectedWidgets.length; i++) {
+                        dui.inspectWidgetMulti(multiSelectedWidgets[i]);
+                    }
+                    dui.allWidgetsHelper();
 
                 }
             } else {
@@ -380,11 +379,8 @@ dui = $.extend(true, dui, {
         if (style) {
             $jWidget.css(style);
         }
-		
+
 	    if (isSelectWidget) {
-            if (dui.binds.basic) {
-                dui.binds.basic._disable();
-            }
             if (dui.binds.jqueryui) {
                 dui.binds.jqueryui._disable();
             }
@@ -648,7 +644,7 @@ dui = $.extend(true, dui, {
             var btn = document.getElementById("inspect_" + wid_attr + "Btn");
             if (btn) {
                 btn.ctrlAttr = wid_attr;
-                $(btn).bind("click", {msg: this}, function (event) {
+                $(btn).bind("click", {msg: this}, function (/*event*/) {
                     var _settings = {
                         current:     $('#inspect_' + this.ctrlAttr).val(),
                         onselectArg: this.ctrlAttr,
@@ -701,10 +697,10 @@ dui = $.extend(true, dui, {
 
                     response(data);
                 },
-                select: function (event, ui) {
+                select: function (/*event, ui*/) {
                     this._save();
                 },
-                change: function (event, ui) {
+                change: function (/*event, ui*/) {
                     this._save();
                 }
             }).focus(function () {
@@ -818,14 +814,12 @@ dui = $.extend(true, dui, {
                 this._save();
             }).val(dui.translate(widget.data[wid_attr]));
 
-            choice_opt($('#inspect_' + wid_attr.split('_eff_opt')[0] + ('_effect')).val());
+            var $sel = $('#inspect_' + wid_attr.split('_eff_opt')[0] + ('_effect'));
+            choice_opt($sel.val());
 
-            if ($('#inspect_' + wid_attr.split('_eff_opt')[0] + ('_effect'))) {
-
-                $('#inspect_' + wid_attr.split('_eff_opt')[0] + ('_effect')).change(function (event, data) {
-                    choice_opt(data)
-                });
-            }
+            $sel.change(function (event, data) {
+                choice_opt(data)
+            });
         }
 
         function choice_opt(_data) {
@@ -874,9 +868,9 @@ dui = $.extend(true, dui, {
         var slider = $("#inspect_"+wid_attr+"_slider");
         slider.slider({
             value: widget.data[wid_attr],
-            min: min,
-            max: max,
-            step: step,
+            min:   min,
+            max:   max,
+            step:  step,
             slide: function (event, ui) {
                 /*if (this.timer)
                     clearTimeout (this.timer);
@@ -983,8 +977,8 @@ dui = $.extend(true, dui, {
         }
 
         // Clear Inspector
-        $("#widget_attrs").html("");
-        $("#widget_attrs").html('<tr><th class="widget_attrs_header"></th><th></th></tr>');
+        $("#widget_attrs").html("")
+            .html('<tr><th class="widget_attrs_header"></th><th></th></tr>');
         $(".dashui-inspect-css").each(function () {
             $(this).val("");
         });
@@ -1054,7 +1048,8 @@ dui = $.extend(true, dui, {
                 var defaultValue = null;
                 if (uu != -1) {
                     var defaultValue = wid_attr.substring(uu + 1);
-                    defaultValue = defaultValue.substring(0, defaultValue.length -1);
+                    defaultValue = defaultValue.substring(0, defaultValue.length - 1);
+                    defaultValue = defaultValue.replace(/§/g, ';');
                     wid_attr = wid_attr.substring(0, uu);
                 }
                 var type = (wid_attrs.length > 1) ? wid_attrs[1] : null;
@@ -1066,7 +1061,7 @@ dui = $.extend(true, dui, {
                     }
                 }
                 // Try to extract repeat value
-                var uu = wid_attr.indexOf("(");
+                uu = wid_attr.indexOf("(");
                 var instancesStart = null;
                 var instancesStop  = null;
                 if (uu != -1) {
@@ -1127,7 +1122,7 @@ dui = $.extend(true, dui, {
                         $('#inspect_class_tr').hide();
                         $('#option_'+wid_attr_).jweatherCity({
                             lang: dui.language, currentValue: widget.data[wid_attr_],
-                            onselect: function (wid, text, obj) {
+                            onselect: function (wid, text/*, obj*/) {
                                 dui.widgets[dui.activeWidget].data.attr('weoid', text);
                                 dui.views[dui.activeView].widgets[dui.activeWidget].data['weoid'] = text;
                                 dui.save();
@@ -1530,7 +1525,7 @@ dui = $.extend(true, dui, {
         }
 
         // Init background selector
-        if (dui.styleSelect) {
+        if (dui.styleSelect && dui.views[view] && dui.views[view].settings) {
             dui.styleSelect.Show({ width: 152,
                 name:       "inspect_view_bkg_def",
                 filterName: 'background',
@@ -1550,38 +1545,42 @@ dui = $.extend(true, dui, {
 
         $("#inspect_view").html(view);
 
-        // Try to find this resolution in the list
-        var res = dui.views[dui.activeView].settings.sizex + 'x' + dui.views[dui.activeView].settings.sizey;
-        $('#screen_size option').each(function () {
-            if ($(this).val() == res) {
-                $(this).attr('selected', true);
-                res = null;
+        if (dui.views[view] && dui.views[view].settings) {
+            // Try to find this resolution in the list
+            var res = dui.views[dui.activeView].settings.sizex + 'x' + dui.views[dui.activeView].settings.sizey;
+            $('#screen_size option').each(function () {
+                if ($(this).val() == res) {
+                    $(this).attr('selected', true);
+                    res = null;
+                }
+            });
+            if (!res) {
+                $("#screen_size_x").prop('disabled', true);
+                $("#screen_size_y").prop('disabled', true);
             }
-        });
-        if (!res) {
-            $("#screen_size_x").prop('disabled', true);
-            $("#screen_size_y").prop('disabled', true);
+
+            $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
+            $("#screen_size_y").val(dui.views[dui.activeView].settings.sizey || "").trigger("change");
+
+            $("#screen_hide_description").prop('checked', dui.views[dui.activeView].settings.hideDescription).trigger("change");
+            if (typeof hqWidgets != 'undefined') {
+                hqWidgets.SetHideDescription(dui.views[dui.activeView].settings.hideDescription);
+            }
+
+            $("#grid_size").val(dui.views[dui.activeView].settings.gridSize || "").trigger("change");
+
+            var snapType = dui.views[dui.activeView].settings.snapType || 0;
+
+            $("#snap_type option").removeAttr("selected");
+            $("#snap_type option[value='"+snapType+"']").attr("selected", true);
         }
-
-        $("#screen_size_x").val(dui.views[dui.activeView].settings.sizex || "").trigger("change");
-        $("#screen_size_y").val(dui.views[dui.activeView].settings.sizey || "").trigger("change");
-
-        $("#screen_hide_description").prop('checked', dui.views[dui.activeView].settings.hideDescription).trigger("change");
-        if (typeof hqWidgets != 'undefined') {
-            hqWidgets.SetHideDescription(dui.views[dui.activeView].settings.hideDescription);
-        }
-
-        $("#grid_size").val(dui.views[dui.activeView].settings.gridSize || "").trigger("change");
-
-        var snapType = dui.views[dui.activeView].settings.snapType || 0;
-
-        $("#snap_type option").removeAttr("selected");
-        $("#snap_type option[value='"+snapType+"']").attr("selected", true);
 
         $("#select_active_widget").html('<option value="none">' + dui.translate('none selected') + '</option>');
-        for (var widget in dui.views[dui.activeView].widgets) {
-            var obj = $("#" + dui.views[dui.activeView].widgets[widget].tpl);
-            $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-dashui-set") + " " + obj.attr("data-dashui-name") + ")</option>");
+        if (dui.views[dui.activeView].widgets) {
+            for (var widget in dui.views[dui.activeView].widgets) {
+                var obj = $("#" + dui.views[dui.activeView].widgets[widget].tpl);
+                $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-dashui-set") + " " + obj.attr("data-dashui-name") + ")</option>");
+            }
         }
 
         $("#select_active_widget").multiselect("refresh");
@@ -1603,15 +1602,18 @@ dui = $.extend(true, dui, {
             $this.val(css);
         });
 
-        $(".dashui-inspect-view").each(function () {
-            var $this = $(this);
-            var attr = $this.attr("id").slice(13);
-            $("#" + $this.attr("id")).val(dui.views[dui.activeView].settings[attr]);
-        });
-        if (!dui.views[dui.activeView].settings["theme"]) {
-            dui.views[dui.activeView].settings["theme"] = "dhive";
+        if (dui.views[view] && dui.views[view].settings){
+            $(".dashui-inspect-view").each(function () {
+                var $this = $(this);
+                var attr = $this.attr("id").slice(13);
+                $("#" + $this.attr("id")).val(dui.views[dui.activeView].settings[attr]);
+            });
+
+            if(!dui.views[dui.activeView].settings["theme"]) {
+                dui.views[dui.activeView].settings["theme"] = "dhive";
+            }
+            $("#inspect_view_theme option[value='" + dui.views[dui.activeView].settings.theme + "']").prop("selected", true);
         }
-        $("#inspect_view_theme option[value='" + dui.views[dui.activeView].settings.theme + "']").prop("selected", true);
         $("#inspect_view_theme").multiselect("refresh");
     },
     dragging: false,
@@ -1855,7 +1857,7 @@ dui = $.extend(true, dui, {
 
         // Button Click Handler
 
-        $("#export_view").click(dui.exportView);
+        $("#export_view").click(function(){dui.exportView(false);});
 
         $("#import_view").click(function () {
             $("#textarea_import_view").html("");
@@ -1940,8 +1942,7 @@ dui = $.extend(true, dui, {
             dui.renameView(name);
         });
 
-		$("#create_instance").button({icons: {primary: "ui-icon-plus"}}).click(dui.createInstance);
-		$("#remove_instance").button({icons: {primary: "ui-icon-trash"}}).click(dui.removeInstance);
+		$("#create_instance").button({icons: {primary: "ui-icon-plus"}}).click(dui.generateInstance);
 
         // Inspector Change Handler
         $(".dashui-inspect-widget").change(function () {
@@ -1966,8 +1967,6 @@ dui = $.extend(true, dui, {
                 }
             }
 
-            // TODO saveRemote really necessary here?
-            // Bluefox: Yes.
             dui.save();
             dui.reRenderWidgetEdit(dui.activeWidget);
         }).keyup(function () {
@@ -2136,16 +2135,22 @@ dui = $.extend(true, dui, {
                 dui.save();
             }
         });
+        // Bug in firefox or firefox is too slow or too fast
+        setTimeout(function() {
+            if (document.getElementById('select_active_widget')._isOpen === undefined) {
+                $("#select_active_widget").html('<option value="none">' + dui.translate('none selected') + '</option>');
+                if (dui.activeView && dui.views && dui.views[dui.activeView] && dui.views[dui.activeView].widgets) {
+                    for (var widget in dui.views[dui.activeView].widgets) {
+                        var obj = $("#" + dui.views[dui.activeView].widgets[widget].tpl);
+                        $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-dashui-set") + " " + obj.attr("data-dashui-name") + ")</option>");
+                    }
+                }
+                $("#select_active_widget").multiselect("refresh");
+            }
+        }, 10000);
 
         // Instances
         if (typeof storage !== 'undefined') {
-            dui.instance = storage.get(dui.storageKeyInstance);
-            if (!dui.instance) {
-                $("#instance").hide();
-            } else {
-
-            }
-
             // Show what's new
             if (storage.get('lastVersion') != dui.version) {
                 // Read
@@ -2985,6 +2990,43 @@ dui = $.extend(true, dui, {
             }
         });
     },
+    selectAll: function () {
+        // Select all widgets on view
+        var $focused = $(':focus');
+        if (!$focused.length && dui.activeView) {
+            // Go through all widgets
+            if (!dui.activeWidget || dui.activeWidget == "none") {
+                // Get first one
+                for (var widget in dui.views[dui.activeView].widgets) {
+                    dui.inspectWidget(widget);
+                    break;
+                }
+            }
+            for (var widget in dui.views[dui.activeView].widgets) {
+                if (widget == dui.activeWidget) {
+                    continue;
+                }
+                dui.inspectWidgetMulti(widget);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+    deselectAll: function () {
+        // Select all widgets on view
+        var $focused = $(':focus');
+        if (!$focused.length && dui.activeView) {
+            dui.clearWidgetHelper();
+
+            if (dui.activeWidget && dui.activeWidget != "none") {
+                dui.inspectWidget('none');
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
     paste: function () {
         var $focused = $(':focus');
         if (!$focused.length) {
@@ -3012,7 +3054,10 @@ dui = $.extend(true, dui, {
             }
 
             dui.clipboard = [];
-            dui.clipboard[0] = {widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.activeWidget]), view: (!isCut) ? dui.activeView : '---copied---'};
+            dui.clipboard[0] = {
+                widget: $.extend(true, {}, dui.views[dui.activeView].widgets[dui.activeWidget]),
+                view: (!isCut) ? dui.activeView : '---copied---'
+            };
             var widgetNames = dui.activeWidget;
             if (dui.multiSelectedWidgets.length) {
                 for (var i = 0, len = dui.multiSelectedWidgets.length; i < len; i++) {
@@ -3269,7 +3314,17 @@ $(document).keydown(function (e) {
     if (e.which === 90 && (e.ctrlKey || e.metaKey)) {
         dui.undo();
         e.preventDefault();
-    } else if (e.which === 46) {
+    } else if (e.which === 65 && (e.ctrlKey || e.metaKey)) {
+        // Ctrl+A
+        if (dui.selectAll()) {
+            e.preventDefault();
+        };
+    } else if (e.which === 27) {
+        // Esc
+        if (dui.deselectAll()) {
+            e.preventDefault();
+        }
+    }else if (e.which === 46) {
         // Capture Delete button
         if (dui.onButtonDelete()) {
             e.preventDefault();

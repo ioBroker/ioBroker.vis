@@ -168,7 +168,7 @@
                 }
 
                 $this.click(function () {
-                    if (dui.urlParams["edit"] !== "") {
+                    if (!dui.editMode) {
                         dui.changeView(nav_view);
                         e.preventDefault();
                         return false;

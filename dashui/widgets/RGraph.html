@@ -237,7 +237,7 @@
                 if (data.attr("control") !== "" && data.attr("control") !== null && data.attr("control") !== undefined) {
                     t.Set('adjustable', (data.attr("control") == "true" || data.attr("control") == true));
                     t.Set ("hm_id", data.attr('hm_id'));
-                    if (dui.urlParams['edit'] !== "") {
+                    if (!dui.editMode) {
                         RGraph.AddCustomEventListener (t, "onadjust", function (obj) {
                             if (obj.setTimer) {
                                 clearTimeout (obj.setTimer);
@@ -715,7 +715,7 @@
                             obj.value = values;
                             obj.Draw ();
 
-                            if (dui.urlParams["edit"] !== "") {
+                            if (!dui.editMode) {
                                 if (obj.setTimer) {
                                     clearTimeout (obj.setTimer);
                                 }

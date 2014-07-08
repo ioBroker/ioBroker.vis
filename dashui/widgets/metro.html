@@ -281,7 +281,9 @@
 <script type="text/ejs" id="tplMetroSlider" data-dashui-attrs="hm_id;hm_wid;min;max;step;sliderColor/color;sliderCompleteColor/color;sliderMarkerColor/color" class="dashui-tpl" data-dashui-set="metro" data-dashui-name="ctrl - Slider horizontal">
     <div id="<%= this.data.attr("wid") %>" class="dashui-widget" style="top:0px; left:0px; width:360px; height:16px;">
         <div class="metro dashui-widget-body <%== this.data.attr('class') %>" style="padding:2px" >
-            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
+            <% if (dui.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
             <div data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" id="metroSlider_<%= this.data.attr("wid") %>" class="slider" data-role="slider"></div>
             <div <%= (el) -> dui.binds.metro.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),color:data.sliderBgColor,completeColor:data.sliderCompleteColor,markerColor:data.sliderMarkerColor}) %>></div>
         </div>
@@ -291,7 +293,9 @@
 <script type="text/ejs" id="tplMetroSliderVertical" data-dashui-attrs="hm_id;hm_wid;min;max;step;sliderColor/color;sliderCompleteColor/color;sliderMarkerColor/color" class="dashui-tpl" data-dashui-set="metro" data-dashui-name="ctrl - Slider vertical">
     <div id="<%= this.data.attr("wid") %>" class="dashui-widget" style="top:0px; left:0px; width:16px; height:360px;">
         <div class="metro dashui-widget-body <%== this.data.attr('class') %>" style="padding:2px" >
-            <div class="editmode-helper" style="display: none; position: absolute; width:100%; height: 100%; background-color: rgba(0,0,0,0.65); z-index:89"></div>
+            <% if (dui.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
             <div data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" style="height:100%;" id="metroSlider_<%= this.data.attr("wid") %>" class="slider vertical" class="slider" data-role="slider"></div>
             <div <%= (el) -> dui.binds.metro.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),color:data.sliderBgColor,completeColor:data.sliderCompleteColor,markerColor:data.sliderMarkerColor}) %>></div>
         </div>

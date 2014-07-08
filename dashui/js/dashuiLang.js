@@ -55,8 +55,7 @@ dui = $.extend(true, dui, {
                 'dup_view'         : {'en': 'Duplicate',     'de': 'Duplizieren',          'ru': 'Копировать'},
                 'del_view'         : {'en': 'Delete',        'de': 'Löschen',              'ru': 'Удалить'},
                 'rename_view'      : {'en': 'Rename',        'de': 'Umbenennen',           'ru': 'Перемменовать'},
-                'create_instance'  : {'en': 'Create instance','de': 'Instanz erzeugen',    'ru': 'Создать идентификатор броузера'},
-                'remove_instance'  : {'en': 'Remove instance','de': 'Instanz löschen',     'ru': 'Удалить идентификатор броузера'},
+                'create_instance'  : {'en': 'Create instance','de': 'Browser ID erzeugen', 'ru': 'Создать ID броузера'},
                 'add_widget'       : {'en': 'Add widget',    'de': 'Einfügen',             'ru': 'Добавить'},
                 'del_widget'       : {'en': 'Delete widget', 'de': 'Löschen',              'ru': 'Удалить'},
                 'dup_widget'       : {'en': 'Copy to:',      'de': 'Kopieren nach:',       'ru': 'Скопировать в:'},
@@ -100,12 +99,12 @@ dui = $.extend(true, dui, {
                 'no views found on server.\nCreate new %s ?' : {
                     'en': 'no views found on server.\nCreate new %s?',
                     'de': 'Keine Views gefunden.\n%s neu erstellen?',
-                    'ru': 'На сервеое не найдено никаких страниц. Создать %s?'
+                    'ru': 'На сервере не найдено никаких страниц. Создать %s?'
                 },
                 'No Views found on Server' : {
                     'en': 'No Views found on Server',
                     'de': 'Keine Views gefunden am Server.',
-                    'ru': 'На сервеое не найдено никаких страниц.'
+                    'ru': 'На сервере не найдено никаких страниц.'
                 },
                 'Hide widget description' : {
                     'en': 'Hide widget description',

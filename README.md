@@ -12,6 +12,13 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta117 [2014-06-29]
+* (Bluefox) change control with instance interface: possible control all browsers with FFFFFFFF
+* (Bluefox) Ctrl+A - select all widgets on view and 'Esc' to deselect widgets
+* (Bluefox) Fix widget multiselect under Firefox by first call in edit mode.
+* (Bluefox) Fix some jqui and fancyswitch elements
+* (Bluefox) preset some jqui widgets with default parameters.
+
 ### 0.9beta116 [2014-06-22]
 * (Bluefox) Fix bars: make buttons full visible if no background
 * (Bluefox) translate some widgets to english and russian

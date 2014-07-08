@@ -64,8 +64,8 @@
                 var id = $this.attr("data-hm-id");
                 $this.knob({
                     change: function (val) {
-                        if (dui.urlParams["edit"] !== "") {
-                            localData.setValue(id, val/100);
+                        if (!dui.editMode) {
+                            localData.setValue(id, val / 100);
                         }
                     }
                 });
@@ -80,7 +80,7 @@
                     $this.knobKnob({
                         snap: 5,
                         turn: function (val) {
-                            if (dui.urlParams["edit"] !== "") {
+                            if (!dui.editMode) {
                                 localData.setValue(id, val.toFixed(2));
                             }
                         }

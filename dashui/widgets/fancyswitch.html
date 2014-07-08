@@ -73,7 +73,7 @@
                 }
 
 
-                if (dui.urlParams["edit"] !== "") {
+                if (!dui.editMode) {
                     $this.find("input.fancy-on_off").change(function() {
                         var val = $(this).val();
                         if (reverse) { val = 1 - val; }
@@ -88,7 +88,7 @@
                 var $this = jQuery(el).prev();
                 $this.toggleSwitch({
                     highlight: options.highlight,
-                    width: options.width,
+                    width:     options.width,
                     change: function (e) {
                         //console.log(e);
                     }
@@ -119,7 +119,7 @@
 </script>
 
 
-<script type="text/ejs" id="tplFancySwitch1" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Wippe hell Off/On" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplFancySwitch1" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Switch light Off/On" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -131,7 +131,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplFancySwitch2" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Schieber dunkel Off/On" data-dashui-attrs="hm_id">
+<script type="text/ejs" id="tplFancySwitch2" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Slider dark Off/On" data-dashui-attrs="hm_id">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
@@ -184,7 +184,7 @@
 
 
 <script type="text/ejs" id="tplFancyGivaIButton" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Giva Labs iButton"
-        data-dashui-attrs="hm_id;duration;labelOn;labelOff;resizeHandle;resizeContainer;enableDrag;enableFx">
+        data-dashui-attrs="hm_id;labelOn[ON];labelOff[OFF];resizeHandle[auto]/auto,true,false;resizeContainer[auto]/auto,true,false;enableDrag/checkbox;enableFx/checkbox;duration[200]/slider,0,5000,100">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px;" id="<%= this.data.attr('wid') %>" >
         <div class="dashui-widget-body">
             <div>
@@ -198,7 +198,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplFancyToggleswitch" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Taitem jqui Toggleswitch" data-dashui-attrs="html_prepend;html_append;hm_id;text_true;text_false;highlight;width">
+<script type="text/ejs" id="tplFancyToggleswitch" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Taitem jqui Toggleswitch" data-dashui-attrs="html_prepend;html_append;hm_id;text_true[ON];text_false[OFF];highlight/checkbox;width[40]/slider,10,500,1">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="padding-left:10px;" id="<%= this.data.attr('wid') %>" >
         <div class="dashui-widget-body">
             <div>
