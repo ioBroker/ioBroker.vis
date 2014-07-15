@@ -8,10 +8,19 @@ var fm_thisScriptEl = fm_scriptEls[fm_scriptEls.length - 1];
 var fm_Folder = fm_thisScriptEl.src.substr(0, fm_thisScriptEl.src.lastIndexOf('/') + 1);
 
 //$("head").append('<script type="text/javascript" src="../lib/js/dropzone.js"></script>');
+$("head").append('<link rel="stylesheet" href="'+fm_Folder+'fm.css"/>');
 
 
 (function ($) {
+
+
     $.fm = function (options, callback) {
+        var fm_con;
+        if (typeof SGI != "undefined") {
+            fm_con = SGI.socket
+        } else if ( typeof servConn != "undefined") {
+            fm_con = servConn._socket;
+        }
         jQuery.event.props.push('dataTransfer');
         var o = {
             lang: options.lang || "de",
@@ -91,7 +100,7 @@ var fm_Folder = fm_thisScriptEl.src.substr(0, fm_thisScriptEl.src.lastIndexOf('/
 
         function load(path) {
             try {
-                SGI.socket.emit("readdirStat", path, function (data) {
+                fm_con.emit("readdirStat", path, function (data) {
                     o.data = data;
                     var p = path.replace(o.root, "");
                     $(".fm_path").text("Pfad: " + p);
@@ -447,7 +456,10 @@ var fm_Folder = fm_thisScriptEl.src.substr(0, fm_thisScriptEl.src.lastIndexOf('/
                 $(".fm_file_filter").show();
             } else {
                 $(".fm_file_filter").hide();
-                $(".fm_folder_filter").hide();
+                if (o.folder_filter == true){
+                    $(".fm_folder_filter").hide();
+                }
+
             }
 
             if (o.view == "prev" && $("#fm_bar_all").hasClass("ui-state-error")) {
@@ -502,7 +514,7 @@ var fm_Folder = fm_thisScriptEl.src.substr(0, fm_thisScriptEl.src.lastIndexOf('/
 
         $("#dialog_fm").dialog({
             height: $(window).height() - 100,
-            width: 828,
+            width: 835,
             minWidth: 672,
             minHeight: 300,
             resizable: true,
@@ -587,7 +599,9 @@ var fm_Folder = fm_thisScriptEl.src.substr(0, fm_thisScriptEl.src.lastIndexOf('/
                     }
                 } else {
                     $(".fm_file_filter").hide();
-                    $(".fm_folder_filter").hide();
+                    if (o.folder_filter == true){
+                        $(".fm_folder_filter").hide();
+                    }
                 }
 
                 $(this).removeClass("ui-state-focus")
@@ -705,7 +719,7 @@ var fm_Folder = fm_thisScriptEl.src.substr(0, fm_thisScriptEl.src.lastIndexOf('/
                         $("#btn_fm_add_ok").button().click(function () {
                             function upload() {
                                 try {
-                                    SGI.socket.emit("writeBase64", o.path + uploadArray[0].name, uploadArray[0].value.split("base64,")[1], function (data) {
+                                    fm_con.emit("writeBase64", o.path + uploadArray[0].name, uploadArray[0].value.split("base64,")[1], function (data) {
 
                                         // TODO Leerzeichem im Dateinmaen Berucksichtigen (da in classen keine leertzeichen sein dürfen)
                                         var class_name =    uploadArray[0].name.split(".")[0].replace(" ", "_");
@@ -765,7 +779,7 @@ var fm_Folder = fm_thisScriptEl.src.substr(0, fm_thisScriptEl.src.lastIndexOf('/
                             $('#dialog_fm_folder').remove();
 
                             if (new_folder != "" || new_folder != undefined) {
-                                SGI.socket.emit("mkDir", o.path + new_folder, function (ok) {
+                                fm_con.emit("mkDir", o.path + new_folder, function (ok) {
                                     if (ok != true) {
                                         console.log(ok);
                                         alert(fm_translate("Ordner erstellen nicht möglich"));
@@ -783,7 +797,7 @@ var fm_Folder = fm_thisScriptEl.src.substr(0, fm_thisScriptEl.src.lastIndexOf('/
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                 if (id == "fm_bar_down") {
                     try {
-                        SGI.socket.emit("readBase64", o.path + sel_file, function (data) {
+                        fm_con.emit("readBase64", o.path + sel_file, function (data) {
                             console.log(data)
                             $("body").append('<a id="fm_download" href=" data:' + data["mime"] + ';base64,' + data["data"] + '" download="' + sel_file + '"></a>')
                             document.getElementById('fm_download').click();
@@ -819,7 +833,7 @@ var fm_Folder = fm_thisScriptEl.src.substr(0, fm_thisScriptEl.src.lastIndexOf('/
                             $('#dialog_fm_rename').remove()
 
                             if (new_name != "" || new_name != undefined) {
-                                SGI.socket.emit("rename", o.path + sel_file, o.path + new_name, function (ok) {
+                                fm_con.emit("rename", o.path + sel_file, o.path + new_name, function (ok) {
 
                                     console.log(ok)
                                     if (ok != true) {
@@ -839,7 +853,7 @@ var fm_Folder = fm_thisScriptEl.src.substr(0, fm_thisScriptEl.src.lastIndexOf('/
                 if (id == "fm_bar_del") {
 
                     try {
-                        SGI.socket.emit("removeRecursive", o.path + sel_file, function (ok) {
+                        fm_con.emit("removeRecursive", o.path + sel_file, function (ok) {
                             if (ok != true) {
                                 console.log(ok)
                                 alert(fm_translate("Löschen nicht möglich"));
@@ -884,10 +898,18 @@ var fm_Folder = fm_thisScriptEl.src.substr(0, fm_thisScriptEl.src.lastIndexOf('/
 
         $("#fm_btn_open").button().click(function () {
             $("#dialog_fm").remove();
-            return callback({
-                path: o.path,
-                file: sel_file
-            });
+
+            if (o.root == "") {
+                return callback({
+                    path: o.path,
+                    file: sel_file
+                })
+            } else {
+                return callback({
+                    path: o.path.split(o.root)[1],
+                    file: sel_file
+                })
+            }
         });
         $("#fm_btn_save").button().click(function () {
             var file = $("#fm_inp_save").val();

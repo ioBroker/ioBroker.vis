@@ -849,13 +849,28 @@ dui = $.extend(true, dui, {
         document.getElementById("inspect_" + wid_attr + "_btn").jControl = wid_attr;
         // Select image Dialog
         $("#inspect_"+wid_attr+"_btn").click(function () {
-            var settings = {
-                current: $("#inspect_"+this.jControl).val(),
-                onselectArg: this.jControl,
-                onselect:    function (img, obj) {
-                    $("#inspect_"+obj).val(img).trigger("change");
-                }};
-            dui.imageSelect.Show(settings);
+//            var settings = {
+//                current: $("#inspect_"+this.jControl).val(),
+//                onselectArg: this.jControl,
+//                onselect:    function (img, obj) {
+//                    $("#inspect_"+obj).val(img).trigger("change");
+//                }};
+//            dui.imageSelect.Show(settings);
+
+                $.fm({
+                    root: "www",
+                    lang: dui.language ,
+                    path: "/www/dashui/img/",
+                    file_filter: ["png", "bmp", "jpg", "svg"],
+                    folder_filter: false,
+                    mode: "open",
+                    view:"prev"
+
+                },function(_data){
+                    var img = _data.path + _data.file;
+                    $("#inspect_src").val(img).trigger("change");
+                });
+
         });
     },
     editSlider: function (widget, wid_attr, min, max, step) {
