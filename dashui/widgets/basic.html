@@ -60,6 +60,7 @@
             var id = $this.attr("data-hm-id");
             var hm_id = "_" + id;
 
+            console.log("Image basic"+srcArr);
             localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
                 $this.attr("src", srcArr[newVal]);
             });
@@ -429,7 +430,7 @@
                     var $this = jQuery(el).parent().find("img");
                     if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
                         $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
-                        //console.log("imgRefresh "+$this.attr("src"));
+
                     }
                 }, refreshInterval);
             }
@@ -816,11 +817,15 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueStringImg" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - String img src" data-dashui-attrs="html_prepend;html_append;hm_id">
+
+<script type="text/ejs" id="tplValueStringImg" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - String img src" data-dashui-attrs="html_prepend;html_append;hm_id;refreshInterval">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><img <%= localData.uiState.attr("_" + this.data.hm_id + ".Value" ) ? "src='" +  localData.uiState.attr("_" + this.data.hm_id + ".Value" ) + "'" : "" %> width="100%"/><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %>
+                <img <%= localData.uiState.attr("_" + this.data.hm_id + ".Value" ) ? "src='" +  localData.uiState.attr("_" + this.data.hm_id + ".Value" ) + "'" : "" %> width="100%"/>
+                 <div <%= (el) -> dui.binds.basic.imgRefresh(el, localData.uiState.attr("_" + data.hm_id + ".Value" ), data.attr("refreshInterval")) %> />
+                <%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
