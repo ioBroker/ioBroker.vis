@@ -106,11 +106,11 @@
 }
 
 #fm_bar_all {
-    height: 28px;
-    width: 33px;
+    height: 27px;
+    width: 37px;
     position: absolute;
-    right: 2px;
-
+    right: -1px;
+    top: 1px;
 }
 
 #fm_bar_folder {
@@ -194,6 +194,7 @@
     position: relative;
     margin: 5px 5px 0px 5px;
     line-height: 15px;
+    vertical-align: top;
 
 }
 
@@ -388,5 +389,5 @@ width: calc(100% / 4 - 10px);
 .dialog_fm_rename{
     height: 170px !important;
     width: 400px !important;
-
+    text-align: center;
 }
