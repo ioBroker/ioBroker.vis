@@ -166,14 +166,21 @@ hqWidgets = $.extend (true, hqWidgets, {
                         btn.filter   = document.getElementById (this.e_settings.elemName+'_'+eee).filter;
                         $(btn).bind("click", {msg: this}, function (event) {
                             var _obj = event.data.msg;
-                            var _settings = {
-                                current:     _obj.e_internal.attr[this.ctrlAttr],
-                                onselectArg: this.ctrlAttr,
-                                filter:      (this.filter == null) ? ".png;.gif;.jpg;.bmp" : this.filter,
-                                onselect:    function (img, ctrlAttr) {
-                                    $('#'+_obj.e_settings.elemName+'_'+ctrlAttr).val(_obj.e_settings.imgSelect.GetFileName(img, hqWidgets.gOptions.gPictDir)).trigger("change");
-                                }};
-                            _obj.e_settings.imgSelect.Show (_settings);                    
+                            var ctrlAttr = this.ctrlAttr;
+                            $.fm({
+                                root: "www/",
+                                lang: dui.language ,
+                                path: "www/dashui/img/",
+                                file_filter: ["gif","png", "bmp", "jpg", "jpeg", "tif", "svg"],
+                                folder_filter: false,
+                                mode: "open",
+                                view:"prev"
+
+                            },function(_data){
+                                var src = _data.path.split("www")[1] + _data.file;
+                                $('#'+_obj.e_settings.elemName+'_'+ctrlAttr).val(src).trigger("change");
+                                $("#inspect_"+wid_attr).val(src).trigger("change");
+                            });
                         });
                     }
                 }

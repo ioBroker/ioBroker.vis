@@ -23,16 +23,16 @@ $("head").append('<link rel="stylesheet" href="'+fm_Folder+'fm.css"/>');
         }
         jQuery.event.props.push('dataTransfer');
         var o = {
-            lang: options.lang || "de",
-            root: options.root || "",
-            path: options.path || "/",
+            lang: options.lang || "de",                              // de, en , ru
+            root: options.root || "",                                // zb. "www/"
+            path: options.path || "/",                               // zb. "www/dashui/"
             file_filter: options.file_filter || [],
             folder_filter: options.folder_filter || false,
-            view: options.view || "table",
-            mode: options.mode || "show",
+            view: options.view || "table",                           // table , list
+            mode: options.mode || "show",                            // open , save ,show
             data: "1",
             audio: ["mp3", "wav", "ogg"],
-            img: ["png", "bmp", "jpg", "svg"],
+            img: ["gif","png", "bmp", "jpg", "jpeg", "tif", "svg"],
             icons: ["zip", "prg", "js", "css", "mp3", "wav"]
 //            save_data : options.save_data,
 //            save_mime : options.save_mime
@@ -898,18 +898,10 @@ $("head").append('<link rel="stylesheet" href="'+fm_Folder+'fm.css"/>');
 
         $("#fm_btn_open").button().click(function () {
             $("#dialog_fm").remove();
-
-            if (o.root == "") {
-                return callback({
-                    path: o.path,
-                    file: sel_file
-                })
-            } else {
-                return callback({
-                    path: o.path.split(o.root)[1],
-                    file: sel_file
-                })
-            }
+            return callback({
+                path: o.path,
+                file: sel_file
+            })
         });
         $("#fm_btn_save").button().click(function () {
             var file = $("#fm_inp_save").val();
