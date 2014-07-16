@@ -849,6 +849,7 @@ dui = $.extend(true, dui, {
         document.getElementById("inspect_" + wid_attr + "_btn").jControl = wid_attr;
         // Filemanager Dialog
         $("#inspect_"+wid_attr+"_btn").click(function () {
+// todo delete wenn der neue Dialog läuft
 //            var settings = {
 //                current: $("#inspect_"+this.jControl).val(),
 //                onselectArg: this.jControl,
