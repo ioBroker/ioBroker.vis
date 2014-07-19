@@ -13,7 +13,7 @@
 
 var dui = {
 
-    version:                '0.9beta117',
+    version:                '0.9beta119',
     requiredServerVersion:  '1.0.28',
     storageKeyViews:        'dashuiViews',
     storageKeySettings:     'dashuiSettings',
@@ -181,7 +181,7 @@ var dui = {
         }
 
         localData.uiState.bind("_" + dui.instanceCmd + ".Value", function (e, newVal) {
-            var cmd = newVal.Value;
+            var cmd = newVal;
              if (cmd !== "" &&
                  (localData.uiState["_" + dui.instanceId].Value == 'FFFFFFFF' ||
                   (dui.instance && localData.uiState["_" + dui.instanceId].Value == dui.instance))) {
@@ -191,6 +191,9 @@ var dui = {
                     case "alert":
                         alert(data);
                         break;
+                    case "changedView":
+                    	// Do nothing
+					    return;                        
                     case "changeView":
                         dui.changeView(data);
                         break;

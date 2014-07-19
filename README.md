@@ -12,6 +12,13 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta119 [2014-07-19]
+* (Bluefox) Show hint how to get back to edit mode
+* (Bluefox) fix jqui/ctrl - Select ValueList
+* (Bluefox) fix tplMetroTileDimmerDialog and tplMetroTileShutterDialog
+* (Bluefox) Fix change view interface
+* (Bluefox) Fix static - Icon HTTP GET.
+
 ### 0.9beta117 [2014-06-29]
 * (Bluefox) change control with instance interface: possible control all browsers with FFFFFFFF
 * (Bluefox) Ctrl+A - select all widgets on view and 'Esc' to deselect widgets

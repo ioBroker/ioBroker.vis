@@ -1769,6 +1769,14 @@ dui = $.extend(true, dui, {
             dialogClass: "dui-editor-dialog",
             close: function () {
                 dui.saveRemote(function () {
+					// Show hint how to get back to edit mode
+					if (typeof storage !== 'undefined') {						
+						if (!storage.get("isEditHintShown")) {
+							alert(dui.translate('To get back to edit mode just call "%s" in browser', location.href));
+							storage.set('isEditHintShown', true);
+						}
+					}				
+                	
                     // Some systems (e.g. offline mode) show here the content of directory if called without index.html
                     location.href = "./index.html" + window.location.search + "#" + dui.activeView;
                 });

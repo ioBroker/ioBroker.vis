@@ -352,11 +352,12 @@
 
                 var id = $this.attr("data-hm-id");
 
-                $this.button().click(function () {
-                    //console.log("inputset click " + input)
-                    localData.setValue(id,  jQuery(input).val());
-
-                });
+                if (!dui.editMode) {
+                    $this.button().click(function () {
+                        localData.setValue(id,  jQuery(input).val());
+    
+                    });
+                }
                 $this.prev().button().addClass("ui-state-default")
                         .css({
                             'font' : 'inherit',
@@ -530,6 +531,7 @@
 
             },
             iconHttpGet: function (el, url) {
+                if (dui.editMode) return;
                 var $this = jQuery(el).parent();
                 $this.click(function (e) {
                     servConn.getUrl(url);
