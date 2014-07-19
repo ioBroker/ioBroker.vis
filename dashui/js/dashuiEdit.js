@@ -1775,7 +1775,7 @@ dui = $.extend(true, dui, {
 					// Show hint how to get back to edit mode
 					if (typeof storage !== 'undefined') {						
 						if (!storage.get("isEditHintShown")) {
-							alert(dui.translate('To get back to edit mode just call "%s" in browser', location.href);
+							alert(dui.translate('To get back to edit mode just call "%s" in browser', location.href));
 							storage.set('isEditHintShown', true);
 						}
 					}				
