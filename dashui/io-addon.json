@@ -1,5 +1,5 @@
 {
-    "version": "0.9beta117",
+    "version": "0.9beta118",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
@@ -9,10 +9,11 @@
 		"ru": "DashUI это гибкий и мощный модуль визуализации для ioBroker, основанный на Web-Технологиях."
 	},
     "urlHomepage": "http://hobbyquaker.github.io/DashUI",
-    "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
-    "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
+    "urlDownload": "https://github.com/ioBroker/DashUI/archive/master.zip",
+    "urlMeta": "https://raw.githubusercontent.com/ioBroker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        "(Bluefox) change control with instance interface: possible control all browsers with FFFFFFFF",
-        "(Bluefox) Ctrl+A - select all widgets on view and 'Esc' to deselect widgets"
+        "(Bluefox) Change update path",
+        "(Bluefox) fix jqui/ctrl - Select ValueList",
+        "(Bluefox) make demo view by very first start"
 	]
 }

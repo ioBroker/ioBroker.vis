@@ -418,12 +418,8 @@ var dui = {
                     dui.renderWidget(view, id);
                 }
             }
-
-            if (dui.editMode) {
-                jQuery(".editmode-helper").show();
-                if (dui.binds.jqueryui) {
-                    dui.binds.jqueryui._disable();
-                }
+            if (dui.binds.jqueryui && dui.editMode) {
+                dui.binds.jqueryui._disable();
             }
         } else {
             //console.log("renderView("+view+") - view already rendered");

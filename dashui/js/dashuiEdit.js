@@ -379,11 +379,8 @@ dui = $.extend(true, dui, {
         if (style) {
             $jWidget.css(style);
         }
-		
+
 	    if (isSelectWidget) {
-            if (dui.binds.basic) {
-                dui.binds.basic._disable();
-            }
             if (dui.binds.jqueryui) {
                 dui.binds.jqueryui._disable();
             }
