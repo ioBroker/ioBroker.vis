@@ -1,5 +1,5 @@
 {
-    "version": "0.9beta118",
+    "version": "0.9beta119",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
@@ -12,8 +12,10 @@
     "urlDownload": "https://github.com/ioBroker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.githubusercontent.com/ioBroker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        "(Bluefox) Change update path",
+        "(Bluefox) Show hint how to get back to edit mode",
         "(Bluefox) fix jqui/ctrl - Select ValueList",
-        "(Bluefox) make demo view by very first start"
+        "(Bluefox) fix tplMetroTileDimmerDialog and tplMetroTileShutterDialog",
+        "(Bluefox) Fix change view interface",
+        "(Bluefox) Fix static - Icon HTTP GET."
 	]
 }
