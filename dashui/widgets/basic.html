@@ -423,10 +423,20 @@
                 }, refreshInterval);
             }
         },
-        imgRefresh: function (el, src, refreshInterval, refreshOnWakeUp) {
+        imgRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange) {
+            var $this = jQuery(el).parent().find("img");
+
+            if (!dui.editMode && refreshOnViewChange) {
+                var widgetView = dui.activeView;
+                dui.navChangeCallbacks.push(function (view) {
+                    if (view == widgetView) {
+                        $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
+                    }
+                });
+            }
+
             if (!dui.editMode && parseInt(refreshInterval, 10) > 0) {
                 setInterval(function () {
-                    var $this = jQuery(el).parent().find("img");
                     if ($this.is(":visible") && $this.parents(":hidden").length == 0) {
                         $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
                         //console.log("imgRefresh "+$this.attr("src"));
@@ -437,7 +447,6 @@
                 //console.log("refreshOnWakeUp!");
                 dui.onWakeUp(function () {
                     // TODO this does not work. :(
-                    var $this = jQuery(el).parent().find("img");
                     //console.log("wakeup refresh!");
                     $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_dui_refts=" + ((new Date()).getTime()));
                     //console.log($this.attr("src"));
@@ -626,14 +635,14 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplImage" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Image" data-dashui-attrs="src;refreshInterval">
+<script type="text/ejs" id="tplImage" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Image" data-dashui-attrs="src;refreshInterval;refreshOnWakeUp[true]/checkbox;refreshOnViewChange[true]/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <% if (dui.editMode) { %>
                 <div class="editmode-helper" />
             <% } %>
             <img style="position:absolute; width:100%;" <%= this.data.attr('src') ? 'src="'+this.data.attr('src')+'"' : '' %> />
-            <div <%= (el) -> dui.binds.basic.imgRefresh(el, data.attr("src"), data.attr("refreshInterval")) %> />
+            <div <%= (el) -> dui.binds.basic.imgRefresh(el, data.attr("src"), data.attr("refreshInterval"), data.attr("refreshOnWakeUp"), data.attr("refreshOnViewChange")) %> />
         </div>
     </div>
 </script>
