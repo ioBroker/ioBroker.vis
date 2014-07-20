@@ -12,6 +12,10 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 
 ## Changelog
 
+### 0.9beta120 [2014-07-20]
+* (Hobbyquaker) fix basic static iFrame
+* (Hobbyquaker) new Attribute refreshOnViewChange for basic static image
+
 ### 0.9beta119 [2014-07-19]
 * (Bluefox) Show hint how to get back to edit mode
 * (Bluefox) fix jqui/ctrl - Select ValueList
