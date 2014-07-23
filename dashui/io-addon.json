@@ -9,8 +9,8 @@
 		"ru": "DashUI это гибкий и мощный модуль визуализации для ioBroker, основанный на Web-Технологиях."
 	},
     "urlHomepage": "http://hobbyquaker.github.io/DashUI",
-    "urlDownload": "https://github.com/ioBroker/DashUI/archive/master.zip",
-    "urlMeta": "https://raw.githubusercontent.com/ioBroker/DashUI/master/dashui/io-addon.json",
+    "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
+    "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
         "(Hobbyquaker) fix basic static iFrame",
         "(Hobbyquaker) new Attribute refreshOnViewChange for basic static image"
