@@ -847,15 +847,52 @@ dui = $.extend(true, dui, {
         // Image src
         $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="dashui-add-option"><td>' + this.translate(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
         document.getElementById("inspect_" + wid_attr + "_btn").jControl = wid_attr;
-        // Select image Dialog
+        // Filemanager Dialog
         $("#inspect_"+wid_attr+"_btn").click(function () {
-            var settings = {
-                current: $("#inspect_"+this.jControl).val(),
-                onselectArg: this.jControl,
-                onselect:    function (img, obj) {
-                    $("#inspect_"+obj).val(img).trigger("change");
-                }};
-            dui.imageSelect.Show(settings);
+// todo delete wenn der neue Dialog läuft
+//            var settings = {
+//                current: $("#inspect_"+this.jControl).val(),
+//                onselectArg: this.jControl,
+//                onselect:    function (img, obj) {
+//                    $("#inspect_"+obj).val(img).trigger("change");
+//                }};
+//            dui.imageSelect.Show(settings);
+
+                $.fm({
+                    root: "www/",
+                    lang: dui.language ,
+                    path: "www/dashui/img/",
+                    file_filter: ["gif","png", "bmp", "jpg", "jpeg", "tif", "svg"],
+                    folder_filter: false,
+                    mode: "open",
+                    view:"prev"
+
+                },function(_data){
+                    var src = _data.path.split("www")[1] + _data.file;
+                    $("#inspect_"+wid_attr).val(src).trigger("change");
+                });
+        });
+    },
+    editUrl: function (widget, wid_attr) {
+        // Image src
+        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="dashui-add-option"><td>' + this.translate(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
+        document.getElementById("inspect_" + wid_attr + "_btn").jControl = wid_attr;
+        // Filemanager Dialog
+        $("#inspect_"+wid_attr+"_btn").click(function () {
+
+            $.fm({
+                root: "www/",
+                lang: dui.language ,
+                path: "www/dashui/img/",
+                file_filter: ["mp3", "wav", "ogg"],
+                folder_filter: false,
+                mode: "open",
+                view:"table"
+
+            },function(_data){
+                var url = _data.path.split("www")[1] + _data.file;
+                $("#inspect_"+wid_attr).val(url).trigger("change");
+            });
         });
     },
     editSlider: function (widget, wid_attr, min, max, step) {
@@ -1114,7 +1151,9 @@ dui = $.extend(true, dui, {
                     } else if (wid_attr_ === "hm_wid") {
                         dui.editObjectID (widget, wid_attr_, 'WORKING');
                     } else if (wid_attr_.indexOf ("src") == wid_attr_.length - 3 || type == "image") {
-                        dui.editImage (widget, wid_attr_);
+                        dui.editImage(widget, wid_attr_);
+                    }else if (wid_attr_  == "url") {
+                        dui.editUrl (widget, wid_attr_);
                     } else if (wid_attr_ === "weoid") {
                         // Weather ID
                         $("#widget_attrs").append('<tr class="dashui-add-option"><td id="option_' + wid_attr_ + '" ></td></tr>');

@@ -317,7 +317,9 @@ dui = $.extend(true, dui, {
             $('#styleSelect'+htmlElem.settings.id).remove();			
         }
     },   
-	// Image selection Dialog
+
+    // todo delete imageSelect wenn der neue Dialog läuft und nix vergessen wurde
+    // Image selection Dialog
 	imageSelect: {
 		// possible settings
 		settings: {

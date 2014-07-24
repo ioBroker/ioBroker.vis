@@ -213,15 +213,19 @@ jQuery.extend(true, dui.words, {
                     btn.ctrlAttr = attr_name;
                     btn.ctrlId   = i;
                     $(btn).bind("click", {msg: div}, function (event) {
-                        var div = event.data.msg;
-                        var _settings = {
-                            current:     div.barsOptions.buttons[this.ctrlId][this.ctrlAttr],
-                            onselectArg: this.ctrlAttr + "" + i,
-                            filter:      ".png;.gif;.jpg;.bmp",
-                            onselect:    function (img, ctrlAttr) {
-                                $('#inspect_'+ctrlAttr).val(img).trigger("change");
-                            }};
-                        dui.imageSelect.Show (_settings);                    
+                        var attr =  this.ctrlAttr+this.ctrlId;
+                        $.fm({
+                            root: "www/",
+                            lang: dui.language ,
+                            path: "www/dashui/img/",
+                            file_filter: ["gif","png", "bmp", "jpg", "jpeg", "tif", "svg"],
+                            folder_filter: false,
+                            mode: "open",
+                            view:"prev"
+                        },function(_data){
+                            var src = _data.path.split("www")[1] + _data.file;
+                            $('#inspect_'+attr).val(src).trigger("change");
+                        });
                     });
                 }
             }	
