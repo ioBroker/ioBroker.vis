@@ -1,5 +1,5 @@
 {
-    "version": "0.9beta120",
+    "version": "0.9beta121",
     "name": "DashUI",
     "ident": "DashUI",
     "dirname": "dashui",
@@ -12,7 +12,9 @@
     "urlDownload": "https://github.com/hobbyquaker/DashUI/archive/master.zip",
     "urlMeta": "https://raw.githubusercontent.com/hobbyquaker/DashUI/master/dashui/io-addon.json",
 	"whatsNew" : [
-        "(Hobbyquaker) fix basic static iFrame",
-        "(Hobbyquaker) new Attribute refreshOnViewChange for basic static image"
+        "(SmilingJack) File select dialog",
+        "(Thorque) Adding refreshInterval to widget 'val str img src'",
+        "(Thorque) Adding 3 new widgets for camera: tplValMfdCamSnapshot, tplValMfdCamMjpeg, tplValMfdCamVideo",
+        "(Bluefox) update again only from https://github.com/hobbyquaker/DashUI and not from ioBroker"
 	]
 }

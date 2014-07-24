@@ -11,7 +11,7 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 [Online Demos](http://dashui.ccu.io)
 
 ## Changelog
-### 0.9beta    [2014-07-xx]
+### 0.9beta121 [2014-07-24]
 * (SmilingJack) File select dialog
 * (Thorque) Adding refreshInterval to widget 'val str img src'
 * (Thorque) Adding 3 new widgets for camera: tplValMfdCamSnapshot, tplValMfdCamMjpeg, tplValMfdCamVideo
