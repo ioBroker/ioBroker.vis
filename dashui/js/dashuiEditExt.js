@@ -1488,7 +1488,7 @@ var hmSelect = {
                             var idChn   = device["Channels"][chn];
                             var channel = localData.metaObjects[idChn];
                             
-                            if (channel["HssType"] !== undefined && channel["HssType"] == "MAINTENANCE")
+                            if (!channel || (channel["HssType"] !== undefined && channel["HssType"] == "MAINTENANCE"))
                                 continue;
                                 
                             if (isWithDPs) {
