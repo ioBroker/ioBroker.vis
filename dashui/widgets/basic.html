@@ -636,7 +636,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplImage" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Image" data-dashui-attrs="src;refreshInterval;refreshOnWakeUp[true]/checkbox;refreshOnViewChange[true]/checkbox">
+<script type="text/ejs" id="tplImage" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="static - Image" data-dashui-attrs="src;refreshInterval[0]/slider,0,180000,100;refreshOnWakeUp[true]/checkbox;refreshOnViewChange[true]/checkbox">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <% if (dui.editMode) { %>
@@ -827,7 +827,7 @@
 </script>
 
 
-<script type="text/ejs" id="tplValueStringImg" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - String img src" data-dashui-attrs="html_prepend;html_append;hm_id;refreshInterval">
+<script type="text/ejs" id="tplValueStringImg" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - String img src" data-dashui-attrs="html_prepend;html_append;hm_id;refreshInterval[0]/slider,0,180000,100">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
         <div class="dashui-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
