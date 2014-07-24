@@ -11,6 +11,11 @@ siehe [DashUI Homepage](http://hobbyquaker.github.io/DashUI)
 [Online Demos](http://dashui.ccu.io)
 
 ## Changelog
+### 0.9beta    [2014-07-xx]
+* (SmilingJack) File select dialog
+* (Thorque) Adding refreshInterval to widget 'val str img src'
+* (Thorque) Adding 3 new widgets for camera: tplValMfdCamSnapshot, tplValMfdCamMjpeg, tplValMfdCamVideo
+* (Bluefox) update again only from https://github.com/hobbyquaker/DashUI and not from ioBroker
 
 ### 0.9beta120 [2014-07-20]
 * (Hobbyquaker) fix basic static iFrame
