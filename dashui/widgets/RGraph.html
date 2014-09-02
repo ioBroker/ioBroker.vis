@@ -16,6 +16,7 @@
     jQuery.extend(true, dui.words, {
         "min_value"          : {"en": "Min value",      "de": "Min Wert",             "ru": "Мин. значение"},
         "max_value"          : {"en": "Max value",      "de": "Max Wert",             "ru": "Макс. значение"},
+        "max_value_id"       : {"en": "Max value ID",   "de": "Max Wert Objekt",      "ru": "Макс. значение"},
         "width"              : {"en": "Widget width",   "de": "Widgetbreite",         "ru": "Ширина элемента"},
         "control"            : {"en": "Control",        "de": "Steuerung",            "ru": "Контроль"},
         "factor"             : {"en": "Multiply factor","de": "Wert multiplizieren",  "ru": "Фактор-множитель"},
@@ -679,7 +680,9 @@
 
                 values[0] = values[0] * factor + offset;
 
-                var t = new RGraph.Gauge("c"+data.attr('wid'), parseFloat(data.attr("min_value")), parseFloat(data.attr("max_value")), values);
+                var max_value = data.attr("max_value_id") ? localData.uiState.attr("_" + data.attr('max_value_id') + '.Value') : data.attr('max_value');
+
+                var t = new RGraph.Gauge("c"+data.attr('wid'), parseFloat(data.attr("min_value")), parseFloat(max_value), values);
 
                 t.Set ("hm_id",   data.attr('hm_id'));
                 t.Set ("hm_id_2", data.attr('hm_id_2'));
@@ -1198,7 +1201,7 @@
         dui.binds.RGraph.tplRGtermometer(this.view, this.data);
     %>
 </script>
-<script type="text/ejs" id="tplRGgauge" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Gauge-Basic" data-dashui-attrs="hm_id/id;hm_id_2/id;hm_id_3/id;min_value[0];max_value[100];factor[1];value_offset[0];control/checkbox;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;title;title_color/color;title_font/fontName;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontName;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;labels_color[#000000]/color;labels_font/fontName;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1;animate/checkbox">
+<script type="text/ejs" id="tplRGgauge" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Gauge-Basic" data-dashui-attrs="hm_id/id;hm_id_2/id;hm_id_3/id;min_value[0];max_value[100];max_value_id/id;factor[1];value_offset[0];control/checkbox;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;title;title_color/color;title_font/fontName;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontName;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;labels_color[#000000]/color;labels_font/fontName;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1;animate/checkbox">
     <%
         dui.binds.RGraph.tplRGgauge(this.view, this.data);
     %>
