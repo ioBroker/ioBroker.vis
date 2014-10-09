@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="widgets/basic/css/basic.css"/>
 <script type="text/javascript">
     "use strict";
 
@@ -7,7 +8,7 @@
         // Bars
         "src"              : {"en" : "Source",              "de": "Quelle",              "ru": "Адрес"},
         "refreshInterval"  : {"en" : "Refresh interval(ms)","de": "Updatezeit(ms)",      "ru": "Интервал обновления(ms)"},
-        "is_comma"         : {"en" : "Divider comma",       "de": "Kamme als Trennung",  "ru": "Запятая-разделитель"},
+        "is_comma"         : {"en" : "Divider comma",       "de": "Komma als Trennung",  "ru": "Запятая-разделитель"},
         "digits"           : {"en" : "Digits after comma",  "de": "Zeichen nach Komma",  "ru": "Знаков после запятой"}
     });
 
@@ -601,6 +602,28 @@
             }
 
             return val;
+        },
+        counter: function (el, data) {
+            var $this = jQuery(el);
+            var hm_id = "_" + $this.attr("data-hm-id") + ".Value";
+            var value = String(parseInt(localData.uiState.attr(hm_id)));
+            var digits = data.digits || 10;
+
+            // pad leading zeros
+            while (value.length < digits) {
+                value = "0" + value;
+            }
+
+            $this.empty();
+            for (i = 0; i < value.length; i++) {
+                $this.append("<span class=\"ctr ctr-" + value[i] + "\"></span>");
+            }
+
+            localData.uiState.bind(hm_id, function (e, newVal, oldVal) {
+                if (newVal !== oldVal) {
+                    dui.binds.basic.counter(el, data);
+                }
+            });
         }
     };
 
@@ -1062,6 +1085,16 @@
         </div>
     </div>
 </script>
+
+<script type="text/ejs" id="tplValueCounter" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="val - Counter" data-dashui-attrs="hm_id/id;digits[10]">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:<%= this.data.attr('digits') ? this.data.attr('digits') * 20 : 100 %>px;height:27px;border:1px solid #000" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <div data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> dui.binds.basic.counter(el, data) %>>
+            </div>
+        </div>
+    </div>
+</script>
+
 <script type="text/ejs" id="tplNote" class="dashui-tpl" data-dashui-set="basic" data-dashui-name="hm_val - Note" data-dashui-attrs="hm_id;max_width[300];html_prepend;html_append;test_text">
     <div class="dashui-widget <%== this.data.attr('class') %>" style="width:50px;height:50px;border:1px solid #888;background:yellow" id="<%= this.data.attr('wid') %>" onclick="dui.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= this.data.attr('hm_id') %>')">
 		<div data-hm-id="<%= this.data.attr('hm_id') %>" id="div_<%= this.data.attr('wid') %>">
