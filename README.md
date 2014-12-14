@@ -1,4 +1,5 @@
+![Logo](admin/vis.png)
 ioBroker.vis
 ============
 
-Visualisation for ioBroker platform.
+WEB visualisation for ioBroker platform.

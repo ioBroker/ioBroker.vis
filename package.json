@@ -1,0 +1,35 @@
+{
+  "name": "iobroker.vis",
+  "description": "Graphical user interface for ioBroker.",
+  "version": "0.0.1",
+  "author": "bluefox <bluefox@ccu.io>",
+  "contributors": [
+      "bluefox <bluefox@ccu.io>"
+  ],
+  "homepage": "https://github.com/ioBroker/ioBroker.vis",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/ioBroker/ioBroker.vis"
+  },
+  "licenses": [
+    {
+      "type": "Apache 2.0",
+      "url": "https://github.com/ioBroker/ioBroker.vis/blob/master/LICENSE"
+    }
+  ],
+  "keywords":  ["ioBroker", "GUI", "DashUI", "web interface", "home automation"],
+  "readmeFilename": "README.md",
+  "dependencies": {
+  },
+  "devDependencies": {
+      "grunt": "~0.4.4",
+      "grunt-replace": "~0.7.6",
+      "grunt-contrib-jshint": "~0.10.0",
+      "grunt-jscs": "~0.6.1",
+      "grunt-http": "~1.4.1",
+      "grunt-contrib-clean": "~0.5.0",
+      "grunt-contrib-compress": "~0.8.0",
+      "grunt-contrib-copy": "~0.5.0",
+      "grunt-exec": "~0.4.5"
+  }
+}
