@@ -1,0 +1,15 @@
+<link rel="stylesheet" type="text/css" href="widgets/bars/css/bars.css" />
+<link rel="stylesheet" type="text/css" href="widgets/bars/css/sidebar.css" />
+<script type="text/javascript" src="widgets/bars/js/bars.js"></script>
+<script type="text/javascript" src="widgets/bars/js/jquery.sidebar.js"></script>
+
+<script type="text/ejs" id="tplBarFilter" class="dashui-tpl" data-dashui-set="bars" data-dashui-name="Filter bar" data-dashui-attrs="baroptions">
+	<%
+		vis.binds.bars.init (this.data.wid, this.data.attr('baroptions'), this.view, "tplBarFilter", this.data.attr('style'));
+	%>
+</script>
+<script type="text/ejs" id="tplBarNavigator" class="dashui-tpl" data-dashui-set="bars" data-dashui-name="Views bar" data-dashui-attrs="baroptions">
+	<%
+		vis.binds.bars.init (this.data.wid, this.data.attr('baroptions'), this.view, "tplBarNavigator", this.data.attr('style'));
+	%>
+</script>

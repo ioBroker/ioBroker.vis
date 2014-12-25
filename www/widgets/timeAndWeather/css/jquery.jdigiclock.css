@@ -1,0 +1,248 @@
+.dc_plugin_container {
+    width:500px;
+    height:420px;
+    position:relative;
+    overflow:hidden;
+    font-family:Arial, Verdana, Tahoma, Helvetica, sans-serif;
+    color:#fff;
+}
+
+.dc_plugin_container p {
+    margin:0;
+    padding:0;
+}
+
+.dc_left_arrow, .dc_right_arrow {
+    position:absolute;
+    top:200px;
+    z-index:200;
+    cursor:pointer;
+}
+
+.dc_left_arrow {
+    left:5px;
+}
+
+.dc_right_arrow {
+    right:5px;
+}
+
+.dc_digital_container {
+    width:500px;
+    height:360px;
+    background:url(../img/background.png) 50% 40px no-repeat;
+    position:absolute;
+    top:40px;
+    left:0;
+    z-index:98;
+}
+
+
+.dc_clock {
+    float:left;
+    margin-left:48px;
+}
+
+.dc_hours, .dc_minutes {
+    width:200px;
+    height:200px;
+    float:left;
+    position:relative;
+}
+
+.dc_minutes {
+    margin-left:4px;
+}
+
+.dc_hours_bg, .dc_minutes_bg {
+    width:100%;
+    height:100%;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:99;
+}
+
+.dc_first_digit {
+    width:80px;
+    height:100%;
+    position:absolute;
+    top:0;
+    left:20px;
+    z-index:100;
+}
+
+.dc_second_digit {
+    width:80px;
+    height:100%;
+    position:absolute;
+    top:0;
+    left:100px;
+    z-index:100;
+}
+
+.dc_line {
+    width:175px;
+    height:2px;
+    background:#efefef;
+    position:absolute;
+    top:97px;
+    left:12px;
+    z-index:101;
+    font-size:1px;
+}
+
+.dc_am_pm {
+    position:absolute;
+    top:156px;
+    left:130px;
+    z-index:110;
+}
+
+.dc_weather {
+    width:100%;
+    height:206px;
+    position:absolute;
+    top:140px;
+    left:0;
+    z-index:105;
+    color:#fff;
+}
+
+.dc_weather .dc_local, .dc_weather .dc_loading {
+    float:left;
+    margin:65px 0 0 45px;
+}
+.dc_city_main {
+    font-weight:bold;
+    font-size:12pt;
+}
+.dc_city {
+    font-weight:bold;
+    font-size:12pt;
+	position: absolute;
+	top: 180px
+}
+.dc_actual {
+	position: absolute;
+	top: 120px;
+	left: 60px;
+	font-size: 32px;
+}
+.dc_temp {
+    font-size:30pt;
+    padding:0;
+}
+
+.dc_temp .dc_metric {
+    margin-left:-3px;
+}
+
+.dc_weather .dc_temp {
+    float:right;
+    margin:65px 45px 0 0;
+    text-align:right;
+}
+
+.dc_weather .dc_date {
+    font-size:11pt;
+    padding-right:2px;
+}
+
+.dc_forecast_container {
+    width:500px;
+    height:400px;
+    background:url(../img/background_forecast.png) 50% 100% no-repeat;
+    position:absolute;
+    top:0;
+    left:500px;
+    z-index:98;
+}
+
+.dc_forecast_container #current {
+    width:400px;
+    height:240px;
+    margin-left:50px;
+    position:relative;
+}
+
+.dc_forecast_container .dc_loading {
+    margin:130px 0 0 70px;
+}
+
+.dc_forecast_container .dc_current .dc_temp, .dc_forecast_container .dc_current .dc_high_low {
+    width:116px;
+    text-align:center;
+}
+
+.dc_forecast_container .dc_current .dc_temp {
+    font-size:32pt;
+    margin-top:110px;
+    float:left
+}
+
+.dc_forecast_container .dc_current .dc_high_low {
+    font-size:12pt;
+    clear:both;
+	top: 160px;
+	left: 40px;
+	position: absolute;
+}
+
+.dc_forecast_container .dc_current .dc_city, .dc_forecast_container .dc_current .dc_text {
+    width:100%;
+    text-align:center;
+}
+.dc_image {
+	top: 0px;
+	left: 15px;
+	height: 230px;
+	position: absolute;
+	width: 500px;
+}
+.dc_forecast_container .dc_current .dc_text {
+    margin-top:6px;
+	position: absolute;
+	top: 205px;
+}
+
+.dc_forecast_container .dc_forecast {
+    width:400px;
+    height:122px;
+    list-style:none;
+    margin:0 0 0 50px;
+    padding:0;
+}
+
+.dc_forecast_container .dc_forecast li {
+    width:25%;
+    height:100%;
+    float:left;
+    text-align:center;
+}
+
+.dc_forecast_container .dc_forecast li p {
+    width:100%;
+    height:30px;
+    margin:0;
+    padding:0;
+    font-size:11pt;
+    line-height:30px;
+}
+
+.dc_forecast_container .dc_forecast li img {
+    width:96px;
+	margin: 0 20px;
+}
+
+.dc_forecast_container .dc_update {
+    text-align:center;
+    margin-top:10px;
+    font-size:11px;
+}
+
+.dc_forecast_container .dc_update img {
+    margin:-2px 4px 0 0;
+    vertical-align:middle;
+    cursor:pointer;
+}

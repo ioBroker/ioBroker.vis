@@ -1,0 +1,1037 @@
+<link rel="stylesheet" href="../lib/css/jquery-ui-timepicker-addon-1.2.2.css" />
+<script type="text/javascript" src="../lib/js/jquery-ui-timepicker-addon-1.2.2.js"></script>
+
+<script type="text/javascript">
+    "use strict";
+
+        vis.navChangeCallbacks.push(function (view) {
+            $(".jqui-nav-state").each(function () {
+                var $this = $(this);
+                if ($this.attr("data-dashui-nav") == view) {
+                    $this.removeClass("ui-state-default");
+                    $this.addClass("ui-state-active");
+                } else {
+                    $this.addClass("ui-state-default");
+                    $this.removeClass("ui-state-active");
+                }
+            });
+        });
+
+        vis.binds.jqueryui = {
+            navigationActive: function (el, nav_view) {
+                var $this = jQuery(el);
+                if (window.location.hash.slice(1) == nav_view) {
+                    $this.removeClass("ui-state-default").addClass("ui-state-active");
+                }
+            },
+            months: {
+                "en": ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                "de": ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+                "ru": ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+            },
+            shortMonths: {
+                "en": ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                "de": ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+                "ru": ['Янв', 'Фев', 'Март', 'Апр', 'Май', 'Июня', 'Июля', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
+            },
+            weekDays: {
+                "en": ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                "de": ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+                "ru": ['Воскресение', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
+            },
+            shortWeekDays: {
+                "en": ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                "de": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+                "ru": ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
+            },
+            currentText: {
+                "en": 'Now',
+                "de": 'Jetzt',
+                "ru": 'Сейчас'
+            },
+            closeText: {
+                "en": 'Close',
+                "de": 'Schließen',
+                "ru": 'Закрыть'
+            },
+            timeText: {
+                "en": 'Time',
+                "de": 'Zeit',
+                "ru": 'Время'
+            },
+            hourText: {
+                "en": 'Hour',
+                "de": 'Std',
+                "ru": 'Час'
+            },
+            minuteText: {
+                "en": 'Min',
+                "de": 'Min',
+                "ru": 'Мин'
+            },
+            secondText: {
+                "en": 'Sec',
+                "de": 'Sek',
+                "ru": 'Сек'
+            },
+            timeOnlyTitle: {
+                "en": 'Choose Time',
+                "de": 'Zeit auswählen',
+                "ru": 'Установите время'
+            },
+            active: function (el, reverse, _value) {
+                var $this = jQuery(el);
+                var id = '_' + $this.attr("data-hm-id");
+                localData.uiState.bind(id+".Value", function (e, newVal, oldVal) {
+                    var val;
+                    var value = _value;
+                    if (newVal === false || newVal === "false") {
+                        val = 0;
+                    } else if (newVal === true || newVal === "true") {
+                        val = 1;
+                    } else {
+                        val = newVal;
+                    }
+                    if (reverse) {
+                        if ((!value && val == 1) || (value && val != value)) {
+                            $this.removeClass("ui-state-active");
+                            //$this.addClass("ui-state-default");
+                        } else {
+                            $this.addClass("ui-state-active");
+                            //$this.removeClass("ui-state-default");
+                        }
+                    } else {
+                        if ((!value && val > 0) || (value && val == value)) {
+                            $this.addClass("ui-state-active");
+                            //$this.removeClass("ui-state-default");
+                        } else {
+                            $this.removeClass("ui-state-active");
+                            //$this.addClass("ui-state-default");
+                        }
+                    }
+
+
+                });
+                var val = localData.uiState.attr(id+".Value");
+                var value = _value;
+                if (val === true || val === "true") { val = 1; }
+                if (val === false || val === "false") { val = 0; }
+                if (reverse) {
+                    if ((!value && val == 1) || (value && val != value)) {
+                        $this.removeClass("ui-state-active");
+                        //$this.addClass("ui-state-default");
+                    } else {
+                        $this.addClass("ui-state-active");
+                        //$this.removeClass("ui-state-default");
+                    }
+                } else {
+                    if ((!value && val > 0) || (value && val == value)) {
+                        $this.addClass("ui-state-active");
+                        //$this.removeClass("ui-state-default");
+                    } else {
+                        $this.removeClass("ui-state-active");
+                        //$this.addClass("ui-state-default");
+                    }
+                }
+
+            },
+            classes: function (el, reverse, _value) {
+                var $this = jQuery(el);
+                $this.hover(function () {
+                    $this.addClass("ui-state-hover");
+                }, function () {
+                    $this.removeClass("ui-state-hover");
+                });
+                var id = '_' + $this.attr("data-hm-id");
+                vis.binds.jqueryui.active(el, reverse, _value);
+
+
+            },
+            dialog: function (el, options, persistent, preload, html) {
+                var dlg = jQuery(el).parent().find("div.dashui-widget-dialog");
+                if (!vis.editMode) {
+                    jQuery(el).parent().find("div.dashui-widget-body").click(function () {
+                        var id = jQuery(this).parent().attr("id") + "_dialog";
+                        if ((!preload || preload == "false") && jQuery("#"+id).html().replace(/\s/g, '') == "") {
+                            //console.log("dialog "+id+" inserting html");
+                            jQuery("#"+id).html(html);
+                        }
+                        if (persistent) {
+                            jQuery("#"+id).dialog("open");
+                        } else {
+                            dlg.dialog($.extend({
+                                autoOpen: true,
+                                close: function () {
+                                    dlg.dialog("destroy");
+                                    if (!preload) {
+                                        jQuery("#"+id).html("");
+                                    }
+                                }
+                            }, options));
+                        }
+                    });
+                }
+                if (persistent) {
+                    dlg.dialog($.extend({
+                        autoOpen: false
+                    }, options));
+                }
+            },
+            dialogContainer: function (el, options, persistent, preload) {
+                var dlg = jQuery(el).parent().find("div.dashui-widget-dialog");
+
+
+                dlg.dialog($.extend({
+                    autoOpen: false
+                }, options));
+                if (!vis.editMode) {
+                    jQuery(el).parent().find("div.dashui-widget-body").click(function () {
+
+                        dlg.find("div[id$='container']").each(function () {
+                            console.log($(this).attr("id")+ " contains " + $(this).attr("data-dashui-contains"));
+                            var cview = $(this).attr("data-dashui-contains");
+                            if (!vis.views[cview]) {
+                                $(this).append("error: view not found.");
+                                return false;
+                            } else if (cview == vis.activeView) {
+                                $(this).append("error: view container recursion.");
+                                return false;
+                            }
+                            vis.renderView(cview, true);
+                            $("#visview_" + cview).appendTo(this);
+                            $("#visview_" + cview).show();
+
+                        });
+
+                        var id = jQuery(this).parent().attr("id") + "_dialog";
+                        jQuery("#"+id).dialog("open");
+                    });
+                } else {
+                    jQuery(el).parent().find("div.dashui-widget-body").show();
+                }
+            },
+            dialogAutoClose: function (el) {
+                var dialog = jQuery("#"+jQuery(el).parent().attr("id") + "_dialog");
+                // TODO auf bestimme Elemente einschränken (Button, Radio, ...)
+                dialog.on( "dialogopen", function () {
+                    dialog.one("click", function () {
+                        dialog.dialog("close");
+                    });
+                });
+
+            },
+            input: function (el, options) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                var digits = options;
+                $this.button().addClass("ui-state-default")
+                        .css({
+                            'font' : 'inherit',
+                            //'color' : 'inherit',
+                            'text-align' : 'left',
+                            'outline' : 'none',
+                            'cursor' : 'text'
+                        }).change(function () {
+                            localData.setValue(id, jQuery(this).val());
+                        });
+
+
+                var hm_id = '_' + id;
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+                    if (digits && digits != "") {
+                        newVal = parseFloat(newVal).toFixed(digits);
+                    }
+
+                    $this.val(newVal);
+                });
+                var val = localData.uiState[hm_id + '.Value'];
+                if (digits && digits != "") {
+                    val = parseFloat(localData.uiState[hm_id + '.Value']).toFixed(digits);
+                }
+                $this.val(val);
+            },
+            inputDate: function (el, options) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                var datepickerOptions = jQuery.extend(true, {
+                    dateFormat:      'yy-mm-dd',
+                    monthNamesShort: vis.binds.jqueryui.shortMonths[vis.language],
+                    monthNames:      vis.binds.jqueryui.months[vis.language],
+                    dayNamesMin:     vis.binds.jqueryui.shortWeekDays[vis.language],
+                    showAnim:        "fadeIn",
+                    firstDay: 1,
+                    currentText:     vis.binds.jqueryui.currentText[vis.language],
+                    closeText:       vis.binds.jqueryui.closeText[vis.language]
+
+                }, options);
+
+                $this.addClass("ui-widget ui-button ui-corner-all ui-state-default")
+                    .css({
+                        'font' : 'inherit',
+                        //'color' : 'inherit',
+                        'text-align' : 'left',
+                        'outline' : 'none',
+                        'cursor' : 'text'
+                    });
+                if (!vis.editMode) {
+                    $this.datepicker(datepickerOptions);
+                }
+
+                $this.change(function () {
+                    localData.setValue(id,  jQuery(this).val());
+                });
+                var hm_id = '_' + id;
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+                    $this.val(newVal);
+                });
+                $this.val(localData.uiState.attr(hm_id + ".Value"));
+            },
+            inputDatetime: function (el, options) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                var timepickerOptions = jQuery.extend(true, {
+                    dateFormat:      'yy-mm-dd',
+                    monthNamesShort: vis.binds.jqueryui.shortMonths[vis.language],
+                    monthNames:      vis.binds.jqueryui.months[vis.language],
+                    dayNamesMin:     vis.binds.jqueryui.shortWeekDays[vis.language],
+                    showAnim:        "fadeIn",
+                    firstDay:        1,
+                    timeText:        vis.binds.jqueryui.timeText[vis.language],
+                    hourText:        vis.binds.jqueryui.hourText[vis.language],
+                    minuteText:      vis.binds.jqueryui.minuteText[vis.language],
+                    secondText:      vis.binds.jqueryui.secondText[vis.language],
+                    currentText:     vis.binds.jqueryui.currentText[vis.language],
+                    closeText:       vis.binds.jqueryui.closeText[vis.language],
+                    timeOnlyTitle:   vis.binds.jqueryui.timeOnlyTitle[vis.language],
+                    minuteGrid:      undefined,
+                    hourGrid:        undefined,
+                    secondGrid:      undefined,
+                    timeOnly:        false,
+                    showSecond:      true,
+                    timeFormat:      'HH:mm:ss',
+                    pickerTimeFormat: 'HH:mm:ss'
+                }, options);
+                $this.addClass("ui-state-default")
+                .css({
+                    'font':       'inherit',
+                    //'color':    'inherit',
+                    'text-align': 'left',
+                    'outline':    'none',
+                    'cursor':     'text'
+                });
+                // Store options
+                $this[0].__options = options;
+
+                if (!vis.editMode) {
+                    $this.datetimepicker(timepickerOptions).button();
+                } else {
+                    $this.addClass("ui-widget ui-button ui-corner-all");
+                }
+                $this.change(function () {
+                    var $this = jQuery(this);
+                    var val = $this.val();
+                    /*if ($this[0].__options && !$this[0].__options.showSecond) {
+                        var vals = val.split(':');
+                        if (vals.length == 3) {
+                            val = vals[0] + ":" + vals[1];
+                        }
+                    }*/
+                    localData.setValue(id, val);
+                    console.log(val);
+                });
+                var hm_id = '_' + id;
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+                    $this.val(newVal);
+                });
+                $this.val(localData.uiState.attr(hm_id + ".Value"));
+            },
+            inputset: function (el, options) {
+                var digits = options;
+                var $this = jQuery(el);
+                var input = "#"+$this.attr("id").slice(0,-3) + "input";
+
+                var id = $this.attr("data-hm-id");
+
+                if (!vis.editMode) {
+                    $this.button().click(function () {
+                        localData.setValue(id,  jQuery(input).val());
+    
+                    });
+                }
+                $this.prev().button().addClass("ui-state-default")
+                        .css({
+                            'font' : 'inherit',
+                            //'color' : 'inherit',
+                            'text-align' : 'left',
+                            'outline' : 'none',
+                            'cursor' : 'text'
+                        });
+                var hm_id = '_' + id;
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+                    if (digits && digits != "") {
+                        newVal = parseFloat(newVal).toFixed(digits);
+                    }
+                    jQuery(input).val(newVal);
+
+                });
+                var newVal = localData.uiState[hm_id + '.Value'];
+                if (digits && digits != "") {
+                    newVal = parseFloat(newVal).toFixed(digits);
+                }
+                jQuery(input).val(newVal);
+            },
+            multiselect: function (el, options, isOpen) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+
+                $this.find("option:selected").removeAttr("selected");
+                $this.find("option[value='" + localData.uiState['_' + id + '.Value'] + "']").attr("selected", true);
+
+                $this.multiselect($.extend({
+                    multiple:         false,
+                    header:           false,
+                    noneSelectedText: false,
+                    selectedList:     1
+                }, options)).change(function () {
+					if (!vis.editMode) {
+						localData.setValue(id,  $this.find("option:selected").val());
+					}
+                });
+
+                var hm_id = '_' + id;
+
+                $this.find("option:selected").removeAttr("selected");
+                $this.find("option[value='" + localData.uiState[hm_id + '.Value'] + "']").attr("selected", true);
+				$this.prop("disabled", vis.editMode);
+                $this.multiselect("refresh");
+
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+                    $this.find("option:selected").removeAttr("selected");
+                    $this.find("option[value='" + newVal + "']").attr("selected", true);
+                    $this.multiselect("refresh");
+                });
+				
+				if (vis.editMode && isOpen) {
+					$this.multiselect("open");
+				}
+				if(vis.editMode) {
+					vis.bindWidgetClick(el.id);
+				}
+            },
+            slider: function (el, options) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                var wid = $this.attr("data-hm-wid");
+                var hm_id = '_' + id;
+
+
+                var settings = $.extend({
+                    min: parseFloat(options.min) || 0.00,
+                    max: parseFloat(options.max) || 1.00,
+                    step: parseFloat(options.step) || 0.01,
+                    value: parseFloat(localData.uiState.attr(hm_id + ".Value")),
+                    slide: function (e, ui) {
+                        // Slider -> Observable
+                        localData.setValue(id, ui.value); //.toFixed(6));
+                    }
+                }, options);
+
+                if (isNaN(settings.value)) {
+                    settings.value = 0;
+                }
+
+                $this.slider(settings);
+
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+                   // console.log("slider newVal="+JSON.stringify(newVal));
+                    if (localData.uiState.attr('_'+wid+".Value") != true) {
+                        $this.slider("value", parseFloat(newVal));
+                    }
+                });
+            },
+            button: function (el, value) {
+                var $this = jQuery(el);
+                $this.button();
+            },
+            buttonDialog: function (el) {
+                var $this = jQuery(el);
+                $this.button();
+            },
+            buttonProgram: function (el, value) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                $this.button().click(function () {
+                    if (!vis.editMode) {
+                        vis.conn.execProgramm(id);
+                    }
+                });
+            },
+            buttonLink: function (el, href) {
+                var $this = jQuery(el);
+                $this.button().click(function () {
+                    if (!vis.editMode) {
+                        if (href) {
+                            window.location.href = href;
+                        }
+                    }
+                });
+            },
+            buttonLinkBlank: function (el, href) {
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+                $this.button().click(function () {
+                    if (!vis.editMode) {
+                        if (href) {
+                            window.open(href);
+                        }
+                    }
+                });
+            },
+            radio: function (el, options) {
+                var settings = $.extend({}, options);
+                var $this = jQuery(el);
+                var id = $this.attr("data-hm-id");
+
+                // Observable -> Buttonset
+                var hm_id = '_' + id
+                localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+                    $this.find("input").removeAttr("checked");
+                    if (newVal === true) {
+                        newVal = 1;
+                    } else if (newVal === false) {
+                        newVal = 0;
+                    } else {
+                        newVal = newVal;
+                    }
+
+                    $this.find("input[value='"+newVal+"']").prop("checked", true);
+                    $this.find("input").each(function () {
+                        jQuery(this).button("refresh");
+                    });
+                });
+
+                var val = localData.uiState.attr(hm_id + ".Value");
+
+                if (val === true) { val = 1; }
+                if (val === false) { val = 0; }
+                $this.find("input").removeAttr("checked");
+                $this.find("input[value='"+val+"']").prop("checked", true);
+                $this.buttonset(settings);
+
+                $this.find("input").each(function () {
+                    jQuery(this).button("refresh");
+                });
+
+                // Buttonset -> Observable
+                $this.find("input").click(function () {
+                    if (!vis.editMode) {
+                        localData.setValue(id,  $(this).val());
+                    }
+                });
+
+            },
+            iconHttpGet: function (el, url) {
+                if (vis.editMode) return;
+                var $this = jQuery(el).parent();
+                $this.click(function (e) {
+                    servConn.getUrl(url);
+                    e.preventDefault();
+                });
+            },
+            hueColormode: function (el, idColormode) {
+                var $hue = jQuery(el).parent().find(".hue-mode-hue");
+                var $ct  = jQuery(el).parent().find(".hue-mode-ct");
+                if (localData.uiState.attr('_'+idColormode+".Value") == "ct") {
+                    $hue.hide();
+                    $ct.show();
+                } else {
+                    $ct.hide();
+                    $hue.show();
+                }
+                localData.uiState.bind('_'+idColormode+".Value", function (e, newVal, oldVal) {
+                    if (newVal == "ct") {
+                        $hue.hide();
+                        $ct.show();
+                    } else {
+                        $ct.hide();
+                        $hue.show();
+                    }
+                });
+
+            },
+			
+			_disable: function () {
+                jQuery("div#vis_container").find(".ui-slider").each(function () {
+                    jQuery(this).slider("disable").removeClass("ui-state-disabled");
+                });
+
+                setTimeout(function () {
+                    $("div#vis_container").find("select[id$='_multiselect']").each(function () {
+                        if ($(this).css("display") == "none") {
+                            //console.log("disable multiselect "+jQuery(this).attr("id"));
+                            $(this).multiselect("disable").next().removeClass("ui-state-disabled").unbind("click", false);
+                        }
+                    });
+                }, 200);
+                setTimeout(function () {
+                    $("div#vis_container").find("a[href]").each(function () {
+                        $(this).click(function (e) {});
+                    });
+                }, 200);
+            },
+
+            itoggle: function (el){
+                var $this = jQuery(el).parent();
+                var id = '_' + $this.parent().attr("data-hm-id") + ".Value";
+                var val = localData.uiState.attr(id);
+
+                if (val === 'false') {
+                    val = false;
+                } else if (val === 'true') {
+                    val = true;
+                } else if (typeof val == "string") {
+                    var f = parseFloat(val);
+                    if (f == val) {
+                        val = f;
+                    } else if (val !== '') {
+                        val = true;
+                    } else {
+                        val = false;
+                    }
+                }
+                if (val > 0) {
+                    $this.find(".imgToggleFalse").hide();
+                    $this.find(".imgToggleTrue").show();
+                }
+                localData.uiState.bind(id, function (e, val) {
+                    if (val === true || val === "true" || parseFloat(val) > 0) {
+                        $this.find(".imgToggleFalse").hide();
+                        $this.find(".imgToggleTrue").show();
+                    } else {
+                        $this.find(".imgToggleTrue").hide();
+                        $this.find(".imgToggleFalse").show();
+                    }
+                });
+            }
+        };
+    //});
+</script>
+
+<script type="text/ejs" id="tplJquiButtonLink" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Button Link" data-dashui-attrs="html_prepend;html_append;buttontext;href">
+    <div style="top:0px; left:0px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+        <div class="dashui-widget-body" >
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-dashui-link="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonLink(el, data.attr('href')); %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiButtonLinkBlank" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Button Link _blank" data-dashui-attrs="html_prepend;html_append;buttontext;href">
+    <div style="top:50px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+        <div class="dashui-widget-body" >
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-dashui-link="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonLinkBlank(el, data.attr('href')); %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplIconLink" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon link" data-dashui-attrs="src;href;target;alt;text;invert_icon/checkbox">
+    <%
+    var styles = "";
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+        <div class="dashui-widget-body">
+            <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplIconHttpGet" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon HTTP GET" data-dashui-attrs="url;src;alt;text">
+    <%
+    var styles = "";
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+        <div class="dashui-widget-body">
+            <a class="widget-link" href="#" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+            <div <%= (el) -> vis.binds.jqueryui.iconHttpGet(el, data.attr('url')) %> />
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - HTML - Dialog" data-dashui-attrs="html;html_dialog;title;modal/checkbox;width;height;persistent/checkbox;preload/checkbox">
+
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
+        <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
+            <%== this.data.attr("html") %>
+        </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+            <%== this.data.attr("preload") ? this.data.attr("html_dialog") : "" %>
+        </div>
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent'), data.attr('preload'), data.attr('html_dialog')) %> />
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="static - Icon - Dialog" data-dashui-attrs="src;alt;text;html_dialog;title;modal/checkbox;width;height;persistent/checkbox;preload/checkbox;invert_icon/checkbox">
+    <%
+    var styles = "";
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+        <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+        </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+            <%== this.data.attr("preload") ? this.data.attr("html_dialog") : "" %>
+        </div>
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent'), data.attr('preload'), data.attr('html_dialog')) %> />
+    </div>
+</script>
+
+
+
+<script type="text/ejs" id="tplContainerDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - HTML - view in jqui Dialog" data-dashui-attrs="html;contains_view;title;modal/checkbox;width;height">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
+        <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
+            <%== this.data.attr("html") %>
+        </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+            <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+            </div>
+        </div>
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
+    </div>
+</script>
+
+<script type="text/ejs" id="tplContainerDialogExternal" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - ext cmd - view in jqui Dialog" data-dashui-attrs="html;contains_view;title;modal/checkbox;width;height">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 194px; height: 68px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body" style="display:none; width: 190px; height: 64px; background-color: #333; color: #eee; border: 2px dashed red; opacity:0.8;">
+            <b>External Container Dialog</b><br/>
+            view: <%= this.data.attr('contains_view') %><br/>
+            id: <%= this.data.attr('wid') %>
+        </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+            <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+            </div>
+        </div>
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
+    </div>
+</script>
+
+<script type="text/ejs" id="tplContainerIconDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Icon - view in jqui Dialog" data-dashui-attrs="src/image;alt;text;contains_view;title;modal/checkbox;width;height;invert_icon/checkbox">
+    <%
+    var styles = "";
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
+        <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+    </div>
+    <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+        <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+        </div>
+    </div>
+    <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
+    </div>
+</script>
+
+<script type="text/ejs" id="tplContainerButtonDialog" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="container - Button - view in jqui Dialog" data-dashui-attrs="html_prepend;html_append;buttontext;contains_view;title;modal/checkbox;width;height">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div id="<%= this.data.attr('wid') %>_body" class="dashui-widget-body">
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonDialog(el); %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="dashui-widget-dialog" title="<%= this.data.attr('title') %>">
+            <div id="<%= this.data.attr('wid') %>_container" data-dashui-contains="<%= this.data.attr('contains_view') %>" class="dashui-widget-body">
+            </div>
+        </div>
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
+    </div>
+</script>
+
+
+
+<script type="text/ejs" id="tplJquiButtonNav" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="navigation - Button" data-dashui-attrs="html_prepend;html_append;buttontext;nav_view;hide_effect;hide_duration;show_effect;show_duration">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" <%= (el) -> jQuery(el).button(); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiIconNav" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="navigation - Icon" data-dashui-attrs="src/image;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
+    <div data-dashui-nav="<%= this.data.attr('nav_view') %>" class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %>>
+        <div class="dashui-widget-body">
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiInput" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input" data-dashui-attrs="label[Input];hm_id;digits[0]/slider,0,10,1;size[10]/slider,10,100,1">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:275px;height:44px;" id="<%= this.data.attr("wid") %>">
+        <div class="dashui-widget-body">
+            <label for="<%= this.data.attr('wid') %>_input"><%= ((this.data.attr('label') === undefined || this.data.attr('label') === null) ? '' : this.data.attr('label')) %></label><input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.jqueryui.input(el, data.digits); %> />
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiBool" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Bool" data-dashui-attrs="label;hm_id;html_true;html_false">
+
+    <div class="ui-widget ui-corner-all ui-state-default dashui-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %>>
+    <div class="dashui-widget-body">
+        <div>
+            <%
+            var str = localData.uiState.attr('_' + this.data.hm_id + ".Value");
+            var val = parseFloat(str);
+            var state;
+            if (str === false || str === "false" || val == 0) {
+            %>
+            <%== this.data.attr("html_false") %>
+            <% } else { %>
+            <%== this.data.attr("html_true") %>
+            <% } %>
+
+
+        </div>
+    </div>
+    </div>
+</script>
+
+
+<script>
+
+</script>
+<script type="text/ejs" id="tplJquiToogle" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Toggle" data-dashui-attrs="label;hm_id;src_true/image;alt_true;src_false/image;alt_false;invert_icon/checkbox">
+
+    <div class="ui-widget ui-corner-all ui-state-default dashui-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %>>
+        <div class="dashui-widget-body">
+            <%
+            var styles = "";
+            if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+                styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+            }
+            %>
+            <img class="imgToggleFalse" <%= this.data.attr('src_false') ? 'src="' +  this.data.attr('src_false') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt_false') %>" />
+            <img class="imgToggleTrue" <%= this.data.attr('src_true') ? 'src="' +  this.data.attr('src_true') + '"' : '' %> style="<%= styles %> display:none;vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt_true') %>" />
+            <div <%= (el) -> vis.binds.jqueryui.itoggle(el) %>></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiInputDate" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input Date" data-dashui-attrs="hm_id;size[10]/slider,1,50,1">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
+        <% if (vis.editMode) { %>
+			<div class="editmode-helper" />
+		<% } %>
+        <div class="dashui-widget-body">
+            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.jqueryui.inputDate(el); %> />
+        </div>
+    </div>
+</script>
+<script type="text/ejs" id="tplJquiInputDatetime" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input Datetime" data-dashui-attrs="hm_id;size/slider,1,50,1;timeOnly/checkbox;hideSeconds/checkbox">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:200px;height:40px;" id="<%= this.data.attr("wid") %>">
+        <% if (vis.editMode) { %>
+			<div class="editmode-helper" />
+		<% } %>
+        <div class="dashui-widget-body">
+            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.jqueryui.inputDatetime(el, {timeOnly:data.attr("timeOnly"),showSecond:!data.attr("hideSeconds")}); %> />
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiInputSet" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Input + Set-Button" data-dashui-attrs="title;buttontext;hm_id;unit;digits/slider,0,10,1;size/slider,1,50,1">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:300px;height:44px;" id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('title') %></label>
+            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" style="font-size: 1.1em !important; padding-bottom:8px;"/>
+            <%== this.data.attr('unit') %>
+            <input type="button" data-hm-id="<%= this.data.attr('hm_id') %>" name="<%= this.data.attr('wid') %>_set" id="<%= this.data.attr('wid') %>_set" value="<%= this.data.attr('buttontext') %>" <%= (el) -> vis.binds.jqueryui.inputset(el, data.digits); %>/>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplJquiButtonState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Button State" data-dashui-attrs="html_prepend;html_append;buttontext;value;hm_id;">
+    <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+        <div class="dashui-widget-body" >
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.button(el, data.value); vis.binds.basic.state(el); %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiButtonRunProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Button ProgramExecute" data-dashui-attrs="html_prepend;html_append;buttontext;hm_id">
+    <div style="" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+        <div class="dashui-widget-body" >
+            <%== this.data.attr("html_prepend") %>
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.jqueryui.buttonProgram(el); %> />
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiRadio" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons on/off" data-dashui-attrs="off_text[OFF];on_text[ON];hm_id">
+    <div style="top:0px; left:0px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
+        <div class="dashui-widget-body" >
+            <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= this.data.off_text %></label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio1"><%= this.data.on_text %></label>
+        </div>
+    </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiRadioList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons ValueList" data-dashui-attrs="hm_id;values[0§1§2];texts[OFF§ON§AUTO]">
+    <div style="top:0px; left:0px; width:250px; height:41px;" class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
+        <div class="dashui-widget-body" >
+            <div id="<%= this.data.attr('wid') %>_radio" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function () {vis.binds.jqueryui.radio(el)},100) %> >
+            <%
+            var values = (data.attr('values') ? data.attr('values').split(';') : []);
+            var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
+            var wid = data.attr('wid');
+            for (var val in values) {
+
+            %>
+            <input type="radio" id="<%= wid %>_radio<%= val %>" name="<%= wid %>_radio" value="<%= values[val] %>" /><label for="<%= wid %>_radio<%= val %>"><%= texts[val] %></label>
+            <%
+            }
+            %>
+        </div>
+    </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiSelectList" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Select ValueList" data-dashui-attrs="hm_id;values[0§1§2];texts[OFF§ON§AUTO];width[80]/slider,5,1000,1;height[100]/slider,15,500,1;open/checkbox">
+    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":""}' >
+        <% if (vis.editMode) { %>
+			<div class="editmode-helper" />
+		<% } %>
+        <div class="dashui-widget-body" >
+            <select id="<%= this.data.attr('wid') %>_multiselect" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> setTimeout(function (el_) { vis.binds.jqueryui.multiselect(el_, {minWidth: (data.width || 300), height: (data.height || 220)}, data.open)}, 250, el); %> >
+            <%
+				var values = (data.attr('values') ? data.attr('values').split(';') : []);
+				var texts  = (data.attr('texts') ? data.attr('texts').split(';'): []);
+				var wid    = data.attr('wid');
+				for (var val in values) {
+					%>
+					<option value="<%= values[val] %>"><%= texts[val] %></option>
+					<%
+				}
+            %>
+            </select >
+        </div>
+    </div>
+</script>
+
+
+
+<script type="text/ejs" id="tplJquiRadioSteps" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Radiobuttons 25%" data-dashui-attrs="hm_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-dashui-resizable='{"disabled":true, "handles":"e"}' >
+        <div class="dashui-widget-body" >
+            <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0">aus</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="0.25" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="0.5" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="0.75" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio3">75%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">100%</label>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiSliderVertical" data-dashui-attrs="hm_id;hm_wid;min;max;step" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Slider vertical">
+    <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minWidth":23, "maxWidth":23}' class="dashui-widget" style="width:23px; height:160px; overflow:visible !important;">
+        <div class="dashui-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
+            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step),orientation:"vertical"}) %> /></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplJquiSlider" data-dashui-attrs="hm_id;hm_wid;min;max;step" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Slider horizontal">
+    <div id="<%= this.data.attr("wid") %>" data-dashui-resizable='{"minHeight":23, "maxHeight":23}' class="dashui-widget" style="height:23; width:160px; overflow:visible !important;">
+        <div class="dashui-widget-body <%== this.data.attr('class') %>" style="padding: 4px;">
+            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step)}) %> /></div>
+        </div>
+    </div>
+</script>
+
+
+
+
+<script type="text/ejs" id="tplIconState" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon State" data-dashui-attrs="hm_id;value;text;src/image;alt;invert_icon/checkbox">
+    <%
+    var styles = "";
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el); vis.binds.jqueryui.classes(el, null, data.value) %>>
+        <div class="dashui-widget-body">
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplIconStateBool" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon State / val - Icon Bool" data-dashui-attrs="click_id;click_value;hm_id;false_text;true_text;false_src/image;true_src/image;false_alt;true_alt;invert_icon/checkbox">
+    <%
+    var styles = "";
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el); vis.binds.jqueryui.classes(el, null, data.value) %>>
+        <div class="dashui-widget-body">
+            <img class="tplImgFalse" <%= this.data.attr('false_src') ? 'src="' +  this.data.attr('false_src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('false_alt') %>" /><%= this.data.attr('false_text') %>
+            <img class="tplImgTrue" <%= this.data.attr('true_src') ? 'src="' +  this.data.attr('true_src') + '"' : '' %> style="display: hidden; <%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('true_alt') %>" /><%= this.data.attr('true_text') %>
+            <div <%= (el) -> vis.binds.jqueryui.itoggle(el) %>></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplIconInc" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon Increment" data-dashui-attrs="hm_id;step;minmax;text;src/image;alt;repeat_delay[800];repeat_interval[800];invert_icon/checkbox">
+    <%
+    var styles = "";
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" data-dashui-step="<%= this.data.attr('step') %>" data-hm-val="<%= this.data.attr('active_value') %>" <%= (el) -> vis.binds.basic.increment(el,data.minmax,data.repeat_delay,data.repeat_interval); vis.binds.jqueryui.classes(el, null, data.minmax) %>>
+        <div class="dashui-widget-body">
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplIconProgram" class="dashui-tpl" data-dashui-set="jqui" data-dashui-name="ctrl - Icon ProgramExecute" data-dashui-attrs="hm_id;text;src/image;alt;invert_icon/checkbox">
+    <%
+    var styles = "";
+    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+    <div class="dashui-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.basic.program(el); vis.binds.jqueryui.classes(el) %>>
+        <div class="dashui-widget-body">
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %>; vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+        </div>
+    </div>
+</script>
+
+
