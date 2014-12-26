@@ -55,7 +55,7 @@ vis.createDemoView = function () {
             "style" : {
                 "background_class": "hq-background-blue-marine-lines"
             },
-            "theme" : "dhive",
+            "theme" : "redmond",
             "sizex" : "1024",
             "sizey" : "748",
             "hideDescription" : false,
@@ -345,13 +345,13 @@ vis.createDemoView = function () {
                     "min" : 0,
                     "max" : 1,
                     "step" : 0.01,
-                    "src" : "http://imkbemu.physik.uni-karlsruhe.de/~ws_uni/plots/WEBCAM/chillcam4.jpg"
+                    "src" : "http://www.foto-webcam.eu/webcam/zellamsee/current/320.jpg"
                 },
                 "style" : {
                     "left" : 7,
                     "top" : 167,
                     "width" : 253,
-                    "height" : 169
+                    "height" : 139
                 },
                 "widgetSet" : "basic"
             },
@@ -377,7 +377,7 @@ vis.createDemoView = function () {
                     "left" : 3,
                     "top" : 117,
                     "width" : 259,
-                    "height" : 231,
+                    "height" : 186,
                     "z-index" : "0",
                     "font-family" : "Arial",
                     "font-size" : "24px",

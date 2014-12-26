@@ -12,9 +12,11 @@
 
     vis.binds.stateful = {
         view: function (el, viewArr, persistent) {
+            var that = vis;
             var $this = $(el);
-            var hm_id = "_" + $this.attr("data-hm-id");
-            localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+            var hm_id = $this.attr("data-hm-id");
+
+            vis.states.bind(hm_id + ".val", function (e, newVal, oldVal) {
                 var view = viewArr[newVal];
                 if (!persistent) {
                     $this.parent().find("div.vis-view").remove();
@@ -30,22 +32,22 @@
         },
         iframe: function (el, srcArr, refreshInterval) {
             var $this = $(el);
-            var hm_id = "_" + $this.attr("data-hm-id");
+            var hm_id = $this.attr("data-hm-id");
             var $this = $(el).parent().find("iframe");
             var id = $this.attr("data-hm-id");
-            var hm_id = "_" + id;
+            var hm_id = id;
 
-            localData.uiState.bind(hm_id+".Value", function (e, newVal, oldVal) {
+            vis.states.bind(hm_id + ".val", function (e, newVal, oldVal) {
                 $this.attr("src", srcArr[newVal]);
             });
 
-            if (localData.uiState[hm_id + '.Value'] !== undefined) {
-                $this.attr("src", srcArr[localData.uiState[hm_id + '.Value']]);
+            if (vis.states[hm_id + '.val'] !== undefined) {
+                $this.attr("src", srcArr[vis.states[hm_id + '.val']]);
             }
 
             if (refreshInterval > 0) {
                 setInterval(function () {
-                    var val = localData.uiState[hm_id + '.Value'] || 0;
+                    var val = vis.states[hm_id + '.val'] || 0;
                     var src = srcArr[val];
                     $this.attr("src", src + (src.match(/\?/)?"&":"?") + "_vis_refts=" + ((new Date()).getTime()));
                 }, refreshInterval);
@@ -54,20 +56,20 @@
         image: function (el, srcArr, refreshInterval) {
             var $this = jQuery(el).parent().find("img");
             var id = $this.attr("data-hm-id");
-            var hm_id = "_" + id;
+            var hm_id = id;
 
             console.log("Image basic"+srcArr);
-            localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+            vis.states.bind(hm_id + ".val", function (e, newVal, oldVal) {
                 $this.attr("src", srcArr[newVal]);
             });
 
-            if (localData.uiState[hm_id + '.Value'] !== undefined) {
-                $this.attr("src", srcArr[localData.uiState[hm_id + '.Value']]);
+            if (vis.states[hm_id + '.val'] !== undefined) {
+                $this.attr("src", srcArr[vis.states[hm_id + '.val']]);
             }
 
             if (refreshInterval > 0) {
                 setInterval(function () {
-                    var val = localData.uiState[hm_id + '.Value'] || 0;
+                    var val = vis.states[hm_id + '.val'] || 0;
                     var src = srcArr[val];
                     $this.attr("src", src + (src.match(/\?/) ? "&" : "?") + "_vis_refts=" + ((new Date()).getTime()));
                 }, refreshInterval);
@@ -104,20 +106,20 @@
         },
         state: function (el, id) {
             var $this = jQuery(el);
-            var hm_id = (id ? "_" + id : "_" + $this.attr("data-hm-id"));
+            var hm_id = (id ? id : $this.attr("data-hm-id"));
             var val = $this.attr("data-hm-val");
             if (val === "true") { val = true; }
             if (val === "false") { val = false; }
             $this.on('click', function (e) {
                 if (!vis.editMode) {
-                    localData.setValue($this.attr("data-hm-id"), val);
+                    vis.setValue($this.attr("data-hm-id"), val);
                 }
             });
             // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
             /*
             $this.on('touchend',function (e) {
                 if (!vis.editMode) {
-                    localData.setValue($this.attr("data-hm-id"), val);
+                    vis.setValue($this.attr("data-hm-id"), val);
                 }
             });
             */
@@ -128,18 +130,18 @@
 
             function fInterval($that) {
                 vis.binds.basic.pressedNext = true;
-                var hm_id = "_" + $that.attr("data-hm-id");
+                var hm_id = $that.attr("data-hm-id");
                 if (!vis.editMode) {
                     var step =  parseFloat($that.attr("data-vis-step")),
-                        tmp =   parseFloat(localData.uiState[hm_id + '.Value']) + step;
+                        tmp =   parseFloat(vis.states[hm_id + '.val']) + step;
                     if (step < 0) {
                         if (tmp >= minmax) {
-                            localData.setValue($that.attr("data-hm-id"), tmp);
+                            vis.setValue($that.attr("data-hm-id"), tmp);
                             vis.binds.basic.pressed = setTimeout(fInterval, interval, $that);
                         }
                     } else {
                         if (tmp <= minmax) {
-                            localData.setValue($that.attr("data-hm-id"), tmp);
+                            vis.setValue($that.attr("data-hm-id"), tmp);
                             vis.binds.basic.pressed = setTimeout(function ($_that) {
                                 fInterval($_that);
                             }, interval, $that);
@@ -151,7 +153,7 @@
             function intervalStart(e) {
                 vis.binds.basic.pressedNext = false;
                 var $this = $(this);
-                var hm_id = "_" + $this.attr("data-hm-id");
+                var hm_id = $this.attr("data-hm-id");
                 vis.binds.basic.pressed = setTimeout(fInterval, delay, $this);
             }
 
@@ -162,17 +164,17 @@
                     return;
                 }
                 var $this = $(this);
-                var hm_id = "_" + $this.attr("data-hm-id");
+                var hm_id = $this.attr("data-hm-id");
                 if (!vis.editMode) {
                     var step = parseFloat($this.attr("data-vis-step")),
-                            tmp = parseFloat(localData.uiState[hm_id + '.Value']) + step;
+                            tmp = parseFloat(vis.states[hm_id + '.val']) + step;
                     if (step < 0) {
                         if (tmp >= minmax) {
-                            localData.setValue($this.attr("data-hm-id"), tmp);
+                            vis.setValue($this.attr("data-hm-id"), tmp);
                         }
                     } else {
                         if (tmp <= minmax) {
-                            localData.setValue($this.attr("data-hm-id"), tmp);
+                            vis.setValue($this.attr("data-hm-id"), tmp);
                         }
                     }
                 }
@@ -214,8 +216,8 @@
         },
         hideOnFalse: function (el) {
             var $this = jQuery(el);
-            var hm_id = "_" + $this.attr("data-hm-id");
-            localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+            var hm_id = $this.attr("data-hm-id");
+            vis.states.bind(hm_id + ".val", function (e, newVal, oldVal) {
                 if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                     if (!vis.editMode) {
                         $this.hide();
@@ -225,7 +227,7 @@
                 }
             });
             if (!vis.editMode) {
-                var newVal = localData.uiState.attr(hm_id + ".Value");
+                var newVal = vis.states.attr(hm_id + ".val");
                 if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
                     $this.hide();
                 }
@@ -233,8 +235,8 @@
         },
         hideOnTrue: function (el) {
             var $this = jQuery(el);
-            var hm_id = "_" + $this.attr("data-hm-id");
-            localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+            var hm_id = $this.attr("data-hm-id");
+            vis.states.bind(hm_id + ".val", function (e, newVal, oldVal) {
                 if (newVal === true || parseFloat(newVal) > 0) {
                     if (!vis.editMode) {
                         $this.hide();
@@ -244,15 +246,15 @@
                 }
             });
             if (!vis.editMode) {
-                if (parseFloat(localData.uiState.attr(hm_id + ".Value")) != 0 && localData.uiState.attr(hm_id + ".Value") !== false) {
+                if (parseFloat(vis.states.attr(hm_id + ".val")) != 0 && vis.states.attr(hm_id + ".val") !== false) {
                  $this.hide();
                 }
             }
         },
         showOnValue: function (el, val) {
             var $this = jQuery(el);
-            var hm_id = "_" + $this.attr("data-hm-id");
-            localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+            var hm_id = $this.attr("data-hm-id");
+            vis.states.bind(hm_id + ".val", function (e, newVal, oldVal) {
                 if (newVal != val) {
                     if (!vis.editMode) {
                         $this.hide();
@@ -262,24 +264,24 @@
                 }
             });
             if (!vis.editMode) {
-                if (localData.uiState.attr(hm_id + ".Value") != val) {
+                if (vis.states.attr(hm_id + ".val") != val) {
                     $this.hide();
                 }
             }
         },
         checkbox: function (el, numeric) {
             var $this = jQuery(el);
-            var hm_id = "_" + $this.attr("data-hm-id");
-            var hm_wid = "_" + $this.attr("data-hm-wid");
-            localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
-                if (hm_wid && (localData.uiState.attr(hm_wid + '.Value') === true)) return;
+            var hm_id = $this.attr("data-hm-id");
+            var hm_wid = $this.attr("data-hm-wid");
+            vis.states.bind(hm_id + ".val", function (e, newVal, oldVal) {
+                if (hm_wid && (vis.states.attr(hm_wid + '.val') === true)) return;
                 if (newVal === false || parseFloat(newVal) === 0.0) {
                     $this.removeAttr("checked");
                 } else {
                     $this.prop("checked", true);
                 }
             });
-            var val = localData.uiState.attr(hm_id + ".Value");
+            var val = vis.states.attr(hm_id + ".val");
 
             if (val === 'false') {
                 val = false;
@@ -301,9 +303,9 @@
             if (!vis.editMode) {
                 $this.change(function () {
                     if ($this.prop("checked")) {
-                        localData.setValue( $this.attr("data-hm-id"),  numeric ? 1 : true);
+                        vis.setValue( $this.attr("data-hm-id"),  numeric ? 1 : true);
                     } else {
-                        localData.setValue( $this.attr("data-hm-id"),  numeric ? 0 : false);
+                        vis.setValue( $this.attr("data-hm-id"),  numeric ? 0 : false);
                     }
                 });
             }
@@ -311,7 +313,7 @@
         select: function (el) {
             var $this = jQuery(el).prev();
             var id = $this.attr("data-hm-id");
-            var val = localData.uiState["_" + id + '.Value'];
+            var val = vis.states[id + '.val'];
             if (val === 'false') {
                 val = false;
             } else if (val === 'true') {
@@ -329,13 +331,13 @@
             $this.val(val ? 1 : 0);
             if (!vis.editMode) {
                 $this.change(function () {
-                    //console.log("uiState " + localData.uiState.attr("_" + $this.attr("data-hm-id")));
+                    //console.log("states " + vis.states.attr($this.attr("data-hm-id")));
                     //console.log("setState " + $this.find("option:selected").val());
-                    localData.setValue($this.attr("data-hm-id"), $this.find("option:selected").val());
+                    vis.setValue($this.attr("data-hm-id"), $this.find("option:selected").val());
                 });
             }
-            var hm_id = "_" + id;
-            localData.uiState.bind(hm_id + ".Value", function (e, newVal, oldVal) {
+            var hm_id = id;
+            vis.states.bind(hm_id + ".val", function (e, newVal, oldVal) {
                 if (newVal === 'false') {
                     newVal = false;
                 } else if (newVal === 'true') {
@@ -390,15 +392,15 @@
             var $this = jQuery(el);
             var id = $this.attr("data-hm-id");
             function toggle() {
-                var val = localData.uiState["_" + id + '.Value'];
+                var val = vis.states[id + '.val'];
                 if (val === false || val === "false") {
-                    localData.setValue(id, true);
+                    vis.setValue(id, true);
                 } else if (val === true || val === "true") {
-                    localData.setValue(id, false);
+                    vis.setValue(id, false);
                 } else {
                     val = parseFloat(val);
                     if (val >= 0.5) { val = 1; } else { val = 0; }
-                    localData.setValue( id,  1-val);
+                    vis.setValue( id,  1-val);
                 }
             }
             if (!vis.editMode) {
@@ -452,7 +454,7 @@
             if (document.getElementById (wid)) {
                 $('#'+wid).remove ();
             }
-            var str = localData.uiState.attr("_" + hm_id + ".Value");
+            var str = vis.states.attr(hm_id + ".val");
             var val = parseFloat(str);
             var sText = '<svg class="vis-widget ' + (myClass || "")+ '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="'+wid+'" data-hm-id="'+hm_id+'">';
             if (vis.editMode) {
@@ -488,11 +490,11 @@
                 $("#"+wid).children().click(function () {
                     var $this = $(this);
                     var id = $this.attr("data-hm-id");
-                    var val = localData.uiState["_" + id + '.Value'];
+                    var val = vis.states[id + '.val'];
                     if (val === false || val === "false") {
-                        localData.setValue(id, true);
+                        vis.setValue(id, true);
                     } else if (val === true || val === "true") {
-                        localData.setValue(id, false);
+                        vis.setValue(id, false);
                     } else {
                         val = parseFloat(val);
                         if (val >= 0.5) {
@@ -500,7 +502,7 @@
                         } else {
                             val = 0;
                         }
-                        localData.setValue(id, 1 - val);
+                        vis.setValue(id, 1 - val);
                     }
                     var el = $('#'+obj.wid);
                     this._obj.style = {
@@ -565,7 +567,7 @@
                     jQuery('#'+dlg.attr("data-id")).css({width: max_width, height: 'auto'});
                 }
                 if (hm_id) {
-                    localData.setValue(hm_id, text);
+                    vis.setValue(hm_id, text);
                 }
                 dlg.dialog( "close" );
                 dlg.remove();
@@ -587,7 +589,7 @@
             if (vis.editMode && data.attr('test_html'))
                 return data.attr('test_html');
 
-            var val = (parseFloat(localData.uiState.attr("_" + data.hm_id + ".Value")) * data.factor).toFixed(data.digits);
+            var val = (parseFloat(vis.states.attr(data.hm_id + ".val")) * data.factor).toFixed(data.digits);
             if (data.attr('is_comma')) {
                 val = "" + val;
                 val = val.replace('.', ',');
@@ -683,7 +685,7 @@
         <%
             var viewArr = [data.attr("contains_view_0"), data.attr("contains_view_1"), data.attr("contains_view_2"), data.attr("contains_view_3"), data.attr("contains_view_4"), data.attr("contains_view_5"), data.attr("contains_view_6"), data.attr("contains_view_7")];
         %>
-        <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= viewArr[localData.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" class="vis-widget-body">
+        <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= viewArr[vis.states.attr('_'+data.attr('hm_id')+'.val')] %>" class="vis-widget-body">
             <div class="vis-view-container" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
         </div>
     </div>
@@ -701,7 +703,7 @@
             <%
                 var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];
             %>
-            <iframe class="vis-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" src="<%== srcArr[localData.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="vis-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" src="<%== srcArr[vis.states.attr('_'+data.attr('hm_id')+'.val')] %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
             <div <%= (el) -> vis.binds.stateful.iframe(el, srcArr, data.attr("refreshInterval")) %> />
         </div>
     </div>
@@ -743,7 +745,7 @@
             <%
                 var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];
             %>
-            <img class="vis-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" style="position:absolute; width:100%;" src="<%== srcArr[localData.uiState.attr('_'+data.attr('hm_id')+'.Value')] %>" />
+            <img class="vis-widget-element" data-hm-id="<%= this.data.attr('hm_id') %>" style="position:absolute; width:100%;" src="<%== srcArr[vis.states.attr('_'+data.attr('hm_id')+'.val')] %>" />
             <div <%= (el) -> vis.binds.stateful.image(el, srcArr, data.attr("refreshInterval")) %> />
         </div>
     </div>
@@ -770,10 +772,10 @@
 </script>
 
 <script type="text/ejs" id="tplValueFloat" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Number" data-vis-attrs="html_prepend;html_append_singular;html_append_plural;hm_id;digits;is_comma[true]/checkbox;factor;hm_id_state/id;class_true;class_false;test_html">
-    <div class="vis-widget <%== (localData.uiState.attr("_" + this.data.hm_id_state + ".Value") == "true" ||  localData.uiState.attr("_" + this.data.hm_id_state + ".Value") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== (vis.states.attr(this.data.hm_id_state + ".val") == "true" ||  vis.states.attr(this.data.hm_id_state + ".val") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(localData.uiState.attr("_" + this.data.hm_id + ".Value")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+                <%== this.data.attr("html_prepend") %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(vis.states.attr(this.data.hm_id + ".val")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
             </div>
         </div>
     </div>
@@ -783,7 +785,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%= (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%= (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.hm_id + ".val") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -793,7 +795,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.hm_id + ".val") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -803,7 +805,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".Timestamp") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.hm_id + ".ts") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -813,7 +815,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : localData.uiState.attr("_" + this.data.hm_id + ".LastChange") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.hm_id + ".lc") %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -825,8 +827,8 @@
         <div class="vis-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
                 <%== this.data.attr("html_prepend") %>
-                <img <%= localData.uiState.attr("_" + this.data.hm_id + ".Value" ) ? "src='" +  localData.uiState.attr("_" + this.data.hm_id + ".Value" ) + "'" : "" %> width="100%"/>
-                 <div <%= (el) -> vis.binds.basic.imgRefresh(el, localData.uiState.attr("_" + data.hm_id + ".Value" ), data.attr("refreshInterval")) %> />
+                <img <%= vis.states.attr(this.data.hm_id + ".val" ) ? "src='" +  vis.states.attr(this.data.hm_id + ".val" ) + "'" : "" %> width="100%"/>
+                 <div <%= (el) -> vis.binds.basic.imgRefresh(el, vis.states.attr(data.hm_id + ".val" ), data.attr("refreshInterval")) %> />
                 <%== this.data.attr("html_append") %>
             </div>
         </div>
@@ -836,7 +838,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%= list[(vis.editMode && this.data.attr('test_html')) ? parseInt(this.data.attr('test_list')) : parseInt(localData.uiState.attr("_" + this.data.hm_id + ".Value"))] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.vallist ? data.vallist.split(';') : []); %><%= list[(vis.editMode && this.data.attr('test_html')) ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.hm_id + ".val"))] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -846,16 +848,16 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%== list[parseInt(localData.uiState.attr("_" + this.data.hm_id + ".Value"),10)] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.vallist ? data.vallist.split(';') : []); %><%== list[parseInt(vis.states.attr(this.data.hm_id + ".val"),10)] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
 </script>
 <script type="text/ejs" id="tplValueListHtml8" class="vis-tpl" data-vis-set="basic" data-vis-name="val - ValueList HTML 8" data-vis-attrs="html_prepend;html_append;hm_id;value0;value1;value2;value3;value4;value5;value6;value7;style0;style1;style2;style3;style4;style5;style6;style7">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" style="<% var slist = [data.style0,data.style1,data.style2,data.style3,data.style4,data.style5,data.style6,data.style7]; %><%== slist[parseInt((localData.uiState.attr("_" + this.data.hm_id + ".Value") == true ? 1 : (localData.uiState.attr("_" + this.data.hm_id + ".Value") == false ? 0 : localData.uiState.attr("_" + this.data.hm_id + ".Value"))),10)] %>">
+        <div class="vis-widget-body" style="<% var slist = [data.style0,data.style1,data.style2,data.style3,data.style4,data.style5,data.style6,data.style7]; %><%== slist[parseInt((vis.states.attr(this.data.hm_id + ".val") == true ? 1 : (vis.states.attr(this.data.hm_id + ".val") == false ? 0 : vis.states.attr(this.data.hm_id + ".val"))),10)] %>">
         <div data-hm-id="<%= this.data.attr('hm_id') %>">
-            <%== this.data.attr("html_prepend") %><% var list = [data.value0,data.value1,data.value2,data.value3,data.value4,data.value5,data.value6,data.value7]; %><%== list[parseInt((localData.uiState.attr("_" + this.data.hm_id + ".Value") == true ? 1 : (localData.uiState.attr("_" + this.data.hm_id + ".Value") == false ? 0 : localData.uiState.attr("_" + this.data.hm_id + ".Value"))),10)] %><%== this.data.attr("html_append") %>
+            <%== this.data.attr("html_prepend") %><% var list = [data.val0,data.val1,data.val2,data.val3,data.val4,data.val5,data.val6,data.val7]; %><%== list[parseInt((vis.states.attr(this.data.hm_id + ".val") == true ? 1 : (vis.states.attr(this.data.hm_id + ".val") == false ? 0 : vis.states.attr(this.data.hm_id + ".val"))),10)] %><%== this.data.attr("html_append") %>
         </div>
     </div>
     </div>
@@ -866,7 +868,7 @@
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
             <%
-            var str = localData.uiState.attr("_" + this.data.hm_id + ".Value");
+            var str = vis.states.attr(this.data.hm_id + ".val");
             var val = parseFloat(str);
             var state;
             if (str === false || str === "false" || val == 0) {
@@ -886,7 +888,7 @@
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
             <%
-            var str = localData.uiState.attr("_" + this.data.hm_id + ".Certain");
+            var str = vis.states.attr(this.data.hm_id + ".ack");
             var val = parseFloat(str);
             var state;
             if (str === false || str === "false" || val == 0) {
@@ -929,7 +931,7 @@
         <div class="vis-widget-body">
 			<%== this.data.attr("html_prepend") %>
 			<%
-			var str = localData.uiState.attr("_" + this.data.hm_id + ".Value");
+			var str = vis.states.attr(this.data.hm_id + ".val");
 			var val = parseFloat(str);
 			var state;
 			if (val === 0 || str === "false" || str === false) {
@@ -983,7 +985,7 @@
 <script type="text/ejs" id="tplRedNumber" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Red Number" data-vis-attrs="hm_id;html_prepend;html_append_singular;html_append_plural">
     <div class="vis-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
         <div class="vis-widget-body" >
-            <%== this.data.attr("html_prepend") %><%= parseInt(localData.uiState.attr("_"+this.data.hm_id+".Value"), 10) %><%== (parseInt(localData.uiState.attr("_"+this.data.hm_id+".Value"), 10) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+            <%== this.data.attr("html_prepend") %><%= parseInt(vis.states.attr("_"+this.data.hm_id+".val"), 10) %><%== (parseInt(vis.states.attr("_"+this.data.hm_id+".val"), 10) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
         </div>
     </div>
 </script>
@@ -991,7 +993,7 @@
 <script type="text/ejs" id="tplBulbOnOff" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Bulb on/off" data-vis-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
-            <% switch (localData.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case false: case "false": %>
+            <% switch (vis.states.attr("_"+this.data.hm_id+".val")) { case 0: case "0": case "0.000000": case false: case "false": %>
             <img src="img/bulb_off.png" width="100%"/>
             <% break; default: %>
             <img src="img/bulb_on.png" width="100%"/>
@@ -1003,7 +1005,7 @@
 <script type="text/ejs" id="tplBulbOnOffCtrl" class="vis-tpl" data-vis-set="basic" data-vis-name="ctrl - Bulb on/off" data-vis-attrs="hm_id">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
     <div class="vis-widget-body">
-        <% switch (localData.uiState.attr("_"+this.data.hm_id+".Value")) { case 0: case "0": case "0.000000": case "false": case false: %>
+        <% switch (vis.states.attr("_"+this.data.hm_id+".val")) { case 0: case "0": case "0.000000": case "false": case false: %>
         <img src="img/bulb_off.png" width="100%"/>
         <% break; default: %>
         <img src="img/bulb_on.png" width="100%"/>
@@ -1015,7 +1017,7 @@
 <script type="text/ejs" id="tplHmWindowRotary" class="vis-tpl"  data-vis-set="basic" data-vis-name="val - Drehgriff" data-vis-attrs="hm_id;html_closed;html_tilt;html_open">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:100px;height:20px" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('hm_id') %>">
         <div class="vis-widget-body">
-            <% switch (localData.uiState.attr("_" + this.data.hm_id + ".Value")) { case 0: case "false": case false: %>
+            <% switch (vis.states.attr(this.data.hm_id + ".val")) { case 0: case "false": case false: %>
             <%== this.data.attr("html_closed") %>
             <% break; case 1: case true: %>
             <%== this.data.attr("html_tilt") %>
@@ -1029,7 +1031,7 @@
 <script type="text/ejs" id="tplHmWindow" class="vis-tpl" data-vis-set="basic" data-vis-name="val - TFK" data-vis-attrs="hm_id;html_closed;html_open">
     <div data-hm-id="<%= this.data.attr('hm_id') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:20px;width:100px">
         <div class="vis-widget-body">
-            <% switch (localData.uiState.attr("_" + this.data.hm_id + ".Value")) { case "true": case true: %>
+            <% switch (vis.states.attr(this.data.hm_id + ".val")) { case "true": case true: %>
             <%== this.data.attr("html_open") %>
             <% break; default: %>
             <%== this.data.attr("html_closed") %>
@@ -1040,7 +1042,7 @@
 
 <script type="text/ejs" id="tplValueFloatBar" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Bar Horizontal" data-vis-attrs="hm_id;factor;color;border;shadow;reverse/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:240px;height:20px;border:1px solid #888" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" style="<%= (this.data.reverse === "true" || this.data.reverse === true ? "float:right; " : "") %>background-color:<%= this.data.color %>;border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;width:<%= localData.uiState.attr('_' + this.data.hm_id + '.Value') * this.data.factor %>%;">
+        <div class="vis-widget-body" style="<%= (this.data.reverse === "true" || this.data.reverse === true ? "float:right; " : "") %>background-color:<%= this.data.color %>;border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;width:<%= vis.states.attr(this.data.hm_id + '.val') * this.data.factor %>%;">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
             </div>
         </div>
@@ -1049,7 +1051,7 @@
 
 <script type="text/ejs" id="tplValueFloatBarVertical" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Bar Vertical" data-vis-attrs="hm_id;factor;color;border;shadow;reverse/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:20px;height:240px;border:1px solid #888" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" style="<%= "height:"+parseInt(localData.uiState.attr('_' + this.data.hm_id + '.Value'))* this.data.factor+"%;" %><%= (this.data.reverse === "true" || this.data.reverse === true ? "left:0px;position:absolute;bottom:0%;" : "") %>border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;background-color:<%= this.data.color %>">
+        <div class="vis-widget-body" style="<%= "height:"+parseInt(vis.states.attr(this.data.hm_id + '.val'))* this.data.factor+"%;" %><%= (this.data.reverse === "true" || this.data.reverse === true ? "left:0px;position:absolute;bottom:0%;" : "") %>border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;background-color:<%= this.data.color %>">
             <div data-hm-id="<%= this.data.attr('hm_id') %>">
             </div>
         </div>
@@ -1058,7 +1060,7 @@
 <script type="text/ejs" id="tplNote" class="vis-tpl" data-vis-set="basic" data-vis-name="hm_val - Note" data-vis-attrs="hm_id;max_width[300];html_prepend;html_append;test_text">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:50px;height:50px;border:1px solid #888;background:yellow" id="<%= this.data.attr('wid') %>" onclick="vis.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= this.data.attr('hm_id') %>')">
 		<div data-hm-id="<%= this.data.attr('hm_id') %>" id="div_<%= this.data.attr('wid') %>">
-			<%== this.data.attr("html_prepend") %><%= localData.uiState.attr("_" + this.data.hm_id + ".Value") == null ? "" : localData.uiState.attr("_" + this.data.hm_id + ".Value") %><%== this.data.attr("html_append") %>
+			<%== this.data.attr("html_prepend") %><%= vis.states.attr(this.data.hm_id + ".val") == null ? "" : vis.states.attr(this.data.hm_id + ".val") %><%== this.data.attr("html_append") %>
 		</div>
     </div>
 </script>

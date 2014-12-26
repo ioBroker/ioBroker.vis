@@ -177,17 +177,19 @@ var servConn = {
         });
     },
     readFile: function (filename, callback) {
+        if (!callback) {
+            throw 'No callback set';
+        }
         if (!this._checkConnection('readFile', arguments)) return;
 
-        this._socket.emit('getObject', 'vis.0.' + filename, function (err, data) {
-            if (data && data._id) delete data._id;
-            if (callback) callback(err, data);
+        this._socket.emit('readFile', 'vis.0', filename, function (err, data) {
+            callback(err, data);
         });
     },
     writeFile: function (filename, data, callback) {
         if (!this._checkConnection('writeFile', arguments)) return;
 
-        this._socket.emit('setObject', 'vis.0.' + filename, data, function (err) {
+        this._socket.emit('writeFile', 'vis.0', filename, data, function (err) {
             if (callback) callback(err);
         });
     },

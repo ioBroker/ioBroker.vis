@@ -11,15 +11,18 @@
         "platform":                 "Javascript/Node.js",
         "loglevel":                 "info",
         "icon":                     "vis.png",
-        "messagebox":               true,
         "enabled":                  true,
-        "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.vis/master/admin/admin.png",
+        "mode":                     "once",
+        "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.vis/master/admin/vis.png",
         "keywords":                 ["DashUI", "GUI", "graphical", "scada"],
         "readme":                   "https://github.com/ioBroker/ioBroker.vis/blob/master/README.md",
         "authors": [
             "bluefox <bluefox@ccu.io>"
         ],
-        "license":                  "Apache 2.0"
+        "localLink":                "http://%ip%:%web_port%/vis/edit.html",
+        "license":                  "Apache 2.0",
+        "dependencies":             ["socketio", "web"],
+        "singleton":                true
     },
     "native": {
     }

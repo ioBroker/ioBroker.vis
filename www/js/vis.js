@@ -257,12 +257,12 @@ var vis = {
             vis.conn.addObject(vis.instanceData, vis.objects[vis.instanceData]);
         }
 
-        vis.states.bind(vis.instanceCmd + ".Value", function (e, newVal) {
+        vis.states.bind(vis.instanceCmd + ".val", function (e, newVal) {
             var cmd = newVal;
              if (cmd !== "" &&
-                 (vis.states[vis.instanceId + '.Value'] == 'FFFFFFFF' ||
-                  (vis.instance && vis.states[vis.instanceId + '.Value'] == vis.instance))) {
-                var data = vis.states.attr(vis.instanceData + ".Value");
+                 (vis.states[vis.instanceId + '.val'] == 'FFFFFFFF' ||
+                  (vis.instance && vis.states[vis.instanceId + '.val'] == vis.instance))) {
+                var data = vis.states.attr(vis.instanceData + ".val");
                 // external Commands
                 switch (cmd) {
                     case "alert":
@@ -646,10 +646,10 @@ var vis = {
         // Append html element to view
             if (widget.data && widget.data.hm_id) {
                 $("#visview_" + view).append(can.view(widget.tpl, {
-                    hm:   this.states[widget.data.hm_id + '.Value'],
-                    ts:   this.states[widget.data.hm_id + '.TimeStamp'],
-                    ack:  this.states[widget.data.hm_id + '.Certain'],
-                    lc:   this.states[widget.data.hm_id + '.LastChange'],
+                    hm:   this.states[widget.data.hm_id + '.val'],
+                    ts:   this.states[widget.data.hm_id + '.ts'],
+                    ack:  this.states[widget.data.hm_id + '.ack'],
+                    lc:   this.states[widget.data.hm_id + '.lc'],
                     data: widgetData,
                     view: view
                 }));
@@ -865,7 +865,7 @@ var vis = {
         var that = this;
         if (this.saveRemoteActive) {
             setTimeout(function (_cb) {
-                this.saveRemote(_cb);
+                that.saveRemote(_cb);
             }, 1000, cb);
             return;
         }
@@ -877,9 +877,7 @@ var vis = {
 
         this.conn.writeFile("vis-views" + this.viewFileSuffix + ".json", this.views, function () {
             that.saveRemoteActive = false;
-            if (cb) {
-                cb();
-            }
+            if (cb) cb();
             //console.log("Saved views on Server");
         });
     },
@@ -1115,26 +1113,19 @@ if ('applicationCache' in window) {
                     // Read all states from server
                     vis.conn.getStates(function (error, data) {
                         if (data) {
-                            for (var dp in data) {
-                                var obj = data[dp];
-                                if (vis.states[dp + '.val'] === undefined) {
-                                    var id = dp;
-                                    try {
-                                        var o = {};
-                                        o[dp + '.val'] = obj[0];
-                                        o[dp + '.ts']  = obj[1];
-                                        vis.states.attr(o);
-                                    } catch (e) {
-                                        servConn.logError('Error: can\'t create states object for ' + dp + '(' + e + ')');
-                                    }
-                                } else {
-                                    var o = {};
-                                    var id = dp;
-                                    o['_' + id + '.val'] = obj[0];
-                                    o['_' + id + '.ts']  = obj[1];
-                                    o['_' + id + '.ack'] = obj[2];
-                                    o['_' + id + '.lc']  = obj[3];
+                            for (var id in data) {
+                                var obj = data[id];
+                                var o = {};
+                                o[id + '.val'] = obj.val;
+                                o[id + '.ts']  = obj.ts;
+                                if (vis.states[id + '.val'] !== undefined) {
+                                    o[id + '.ack'] = obj.ack;
+                                    o[id + '.lc']  = obj.lc;
+                                }
+                                try {
                                     vis.states.attr(o);
+                                } catch (e) {
+                                    vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
                                 }
                             }
                         }
@@ -1178,14 +1169,22 @@ if ('applicationCache' in window) {
                 window.location.reload();
             },
             onUpdate: function (obj) {
-                var name;
+                var id;
                 // Check new model
-                if (obj != null && obj.name && (name = obj.name/*.replace(/\./g, '\\.')*/) && vis.states[name + '.Value'] !== undefined) {
+                if (obj != null && obj.name && (id = obj.name/*.replace(/\./g, '\\.')*/) && vis.states[id + '.val'] !== undefined) {
+                    var obj = data[id];
                     var o = {};
-                    o['_' + name + '.Value']      = obj.val;
-                    o['_' + name + '.Timestamp']  = obj.ts;
-                    o['_' + name + '.Certain']    = obj.ack;
-                    o["_" + name + ".LastChange"] = obj.lc;
+                    o[id + '.val'] = obj.val;
+                    o[id + '.ts']  = obj.ts;
+                    if (vis.states[id + '.val'] !== undefined) {
+                        o[id + '.ack'] = obj.ack;
+                        o[id + '.lc']  = obj.lc;
+                    }
+                    try {
+                        vis.states.attr(o);
+                    } catch (e) {
+                        vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                    }
 
                     vis.states.attr(o);
 

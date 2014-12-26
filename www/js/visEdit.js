@@ -20,7 +20,7 @@
 vis = $.extend(true, vis, {
     toolbox:                $("#vis_editor"),
     selectView:             $("#select_view"),
-    activeWidget:           "",
+    activeWidget:           '',
     isStealCss:             false,
     gridWidth:              undefined,
     editorPos:              "free",
@@ -121,7 +121,7 @@ vis = $.extend(true, vis, {
     },
     checkNewView: function (name) {
         name = name || $("#new_view_name").val().trim();
-        if (name == "") {
+        if (name == '') {
             alert(_("Please enter the name for the new view!"));
             return false;
         } else if (vis.views[name]) {
@@ -301,27 +301,24 @@ vis = $.extend(true, vis, {
 		var isSelectWidget = (wid === undefined);
 		var isViewExist    = (document.getElementById("visview_"+view) != null);
         var renderVisible  = data.renderVisible;
-        if (renderVisible) {
-            delete data.renderVisible;
-        }
 
-		if (view === undefined) {
-			view = vis.activeView;
-		}
+        if (renderVisible) delete data.renderVisible;
+
+		if (view === undefined) view = this.activeView;
 		
         if (isSelectWidget && !isViewExist) {
 
-            vis.renderView(view, true, false);
+            this.renderView(view, true, false);
 			isViewExist = true;
         }
 		
 		if (isSelectWidget) {
-			vis.clearWidgetHelper();
+            this.clearWidgetHelper();
 		}
 
-        var widgetId = wid || vis.nextWidget();
+        var widgetId = wid || this.nextWidget();
 
-		vis.widgets[widgetId] = {
+        this.widgets[widgetId] = {
 			wid: widgetId,
 			data: new can.Map($.extend({
 				"wid":      widgetId,
@@ -331,7 +328,7 @@ vis = $.extend(true, vis, {
 				"hm_id":    'nothing_selected',
 				"hm_wid":   undefined,
 				"factor":   1,
-				"digits":   "",
+				"digits":   '',
 				"min":      0,
 				"max":      1,
 				"step":     0.01,
@@ -341,36 +338,27 @@ vis = $.extend(true, vis, {
 			}, data))
 		};
 
-        if (renderVisible) {
-            vis.widgets[widgetId].renderVisible = true;
-        }
+        if (renderVisible) this.widgets[widgetId].renderVisible = true;
 
         if (isViewExist) {
 			$("#visview_"+view).append(can.view(tpl, {
-                hm:   localData.states[vis.widgets[widgetId].data.hm_id + '.Value'],
-                ts:   localData.states[vis.widgets[widgetId].data.hm_id + '.TimeStamp'],
-                ack:  localData.states[vis.widgets[widgetId].data.hm_id + '.Certain'],
-                lc:   localData.states[vis.widgets[widgetId].data.hm_id + '.LastChange'],
-                data: vis.widgets[widgetId]["data"],
+                hm:   this.states[this.widgets[widgetId].data.hm_id + '.Value'],
+                ts:   this.states[this.widgets[widgetId].data.hm_id + '.TimeStamp'],
+                ack:  this.states[this.widgets[widgetId].data.hm_id + '.Certain'],
+                lc:   this.states[this.widgets[widgetId].data.hm_id + '.LastChange'],
+                data: this.widgets[widgetId]["data"],
                 view: view
             }));
 		}
 
-        if (!vis.views[view].widgets) {
-            vis.views[view].widgets = {};
-        }
-
-        if (!vis.views[view].widgets[widgetId]) {
-            vis.views[view].widgets[widgetId] = {};
-        }
+        this.views[view].widgets           = this.views[view].widgets || {};
+        this.views[view].widgets[widgetId] = this.views[view].widgets[widgetId] || {};
 		
         var $jWidget = $('#' + widgetId);
-		if (!style) {
-			style = vis.findFreePosition(view, widgetId, null, $jWidget.width(), $jWidget.height());
-		}
-		
-		if(vis.views[view].widgets[widgetId].data !== undefined) {
-			data = $.extend(data, vis.views[view].widgets[widgetId].data, true);
+        style = style || this.findFreePosition(view, widgetId, null, $jWidget.width(), $jWidget.height());
+
+		if(this.views[view].widgets[widgetId].data !== undefined) {
+			data = $.extend(data, this.views[view].widgets[widgetId].data, true);
 		}
 
         vis.views[view].widgets[widgetId] = {
@@ -379,30 +367,23 @@ vis = $.extend(true, vis, {
             style:      style,
             widgetSet:  $("#" + tpl).attr("data-vis-set")
         };
-        if (renderVisible) {
-            vis.views[view].widgets[widgetId].renderVisible = true;
-        }
 
-        if (style) {
-            $jWidget.css(style);
-        }
+        if (renderVisible) this.views[view].widgets[widgetId].renderVisible = true;
 
-	    if (isSelectWidget) {
-            if (vis.binds.jqueryui) {
-                vis.binds.jqueryui._disable();
-            }
+        if (style) $jWidget.css(style);
+
+	    if (isSelectWidget && this.binds.jqueryui) {
+            this.binds.jqueryui._disable();
 	    }
 
 		if (isSelectWidget) {
-			vis.activeWidget = widgetId;
-			vis.actionNewWidget(widgetId);
+            this.activeWidget = widgetId;
+            this.actionNewWidget(widgetId);
 		}
 
-        if (!noSave) {
-            vis.save();
-        }
+        if (!noSave) this.save();
 
-        vis.bindWidgetClick(widgetId);
+        this.bindWidgetClick(widgetId);
 
         return widgetId;
     },
@@ -563,11 +544,36 @@ vis = $.extend(true, vis, {
 		}
 	},
     editObjectID: function (widget, wid_attr, widget_filter) {
-        // Edit for Homematic ID
-        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="vis-add-option"><td>' + _(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="5">' + /*<input type="button" id="inspect_' + wid_attr + '_btn" value="..."  style="width:30px">*/ '<div id="inspect_' + wid_attr + '_desc"></div></td></tr>');
-        document.getElementById('inspect_' + wid_attr + '_btn').jControl = wid_attr;
-        $("#inspect_" + wid_attr + "_desc").html(vis.getObjDesc(widget.data[wid_attr]));
+        // Edit for Object ID
+        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="vis-add-option"><td>' + _(wid_attr) + ':</td>'+
+            '<td><input type="text" id="inspect_' + wid_attr + '"><input type="button" id="inspect_' + wid_attr + '_btn" value="..."  style="width:30px">' +
+            '<div id="inspect_' + wid_attr + '_desc"></div>' +
+            '</div></td></tr>');
 
+        if (!$('#dialog-select-member' + wid_attr).length) {
+            $('body').append('<div id="dialog-select-member' + wid_attr + '" style="display:none;z-index:1001">');
+            $('#dialog-select-member' + wid_attr).selectId('init', {
+                texts: {
+                    select:   _('Select'),
+                    cancel:   _('Cancel'),
+                    all:      _('All'),
+                    id:       _('ID'),
+                    name:     _('Name'),
+                    role:     _('Role'),
+                    room:     _('Room'),
+                    value:    _('Value'),
+                    selectid: _('Select ID')
+                },
+                imgPath: '/lib/css/fancytree/',
+                objects: this.objects,
+                states:  this.states,
+                zindex:  1002
+            });
+        }
+
+        $("#inspect_" + wid_attr + "_desc").html(this.getObjDesc(widget.data[wid_attr]));
+
+        var that = this;
         // / Select Homematic ID Dialog
         $("#inspect_" + wid_attr + "_btn").click( function () {
             function onSuccess(obj, value) {
@@ -575,14 +581,14 @@ vis = $.extend(true, vis, {
                 $("#inspect_" + obj).trigger('change');
 
                 if (document.getElementById('inspect_hm_wid')) {
-                    if (localData.objects[value]["Type"] !== undefined && localData.objects[value]["Parent"] !== undefined &&
-                        (localData.objects[value]["Type"] == "STATE" ||
-                            localData.objects[value]["Type"] == "LEVEL")) {
+                    if (that.objects[value]["Type"] !== undefined && that.objects[value]["Parent"] !== undefined &&
+                        (that.objects[value]["Type"] == "STATE" ||
+                            that.objects[value]["Type"] == "LEVEL")) {
 
-                        var parent = localData.objects[value]["Parent"];
-                        if (localData.objects[parent]["DPs"] !== undefined &&
-                            localData.objects[parent]["DPs"]["WORKING"] !== undefined) {
-                            $("#inspect_hm_wid").val(localData.objects[parent]["DPs"]["WORKING"]);
+                        var parent = that.objects[value]["Parent"];
+                        if (that.objects[parent]["DPs"] !== undefined &&
+                            that.objects[parent]["DPs"]["WORKING"] !== undefined) {
+                            $("#inspect_hm_wid").val(that.objects[parent]["DPs"]["WORKING"]);
                             $("#inspect_hm_wid").trigger('change');
                         }
                     }
@@ -590,13 +596,13 @@ vis = $.extend(true, vis, {
 
                 // Try to find Function of the device and fill the Filter field
                 if (document.getElementById('inspect_filterkey')) {
-                    if ($('#inspect_filterkey').val() == "") {
+                    if ($('#inspect_filterkey').val() == '') {
                         var hm_id = value;
                         var func = null;
-                        if (localData.metaIndex["ENUM_FUNCTIONS"]) {
-                            while (hm_id && localData.objects[hm_id]) {
-                                for (var t = 0; t < localData.metaIndex["ENUM_FUNCTIONS"].length; t++) {
-                                    var list = localData.objects[localData.metaIndex["ENUM_FUNCTIONS"][t]];
+                        if (that.metaIndex && that.metaIndex["ENUM_FUNCTIONS"]) {
+                            while (hm_id && that.objects[hm_id]) {
+                                for (var t = 0; t < that.metaIndex["ENUM_FUNCTIONS"].length; t++) {
+                                    var list = that.objects[localData.metaIndex["ENUM_FUNCTIONS"][t]];
                                     for (var z = 0; z < list['Channels'].length; z++) {
                                         if (list['Channels'][z] == hm_id) {
                                             func = list.Name;
@@ -607,7 +613,7 @@ vis = $.extend(true, vis, {
                                 }
                                 if (func) break;
 
-                                hm_id = localData.objects[hm_id]['Parent'];
+                                hm_id = that.objects[hm_id]['Parent'];
                             }
                         }
                         if (func)
@@ -616,6 +622,12 @@ vis = $.extend(true, vis, {
                 }
             }
 
+            $('#dialog-select-member' + wid_attr).selectId('show', widget.data[wid_attr], function (newId, oldId) {
+                if (oldId != newId) {
+                    onSuccess(wid_attr, newId);
+                }
+            });
+            /*
             if (vis.useNewSelectDialog) {
                 idSelect.Show(localData, {
                     selectedID: $("#inspect_" + this.jControl).val(),
@@ -626,26 +638,26 @@ vis = $.extend(true, vis, {
             } else {
                 hmSelect.value = $("#inspect_" + this.jControl).val();
                 hmSelect.show(localData, this.jControl, onSuccess, widget_filter);
-            }
+            }*/
         });
     },
     editSelect: function (widget, wid_attr, values) {
         // Select
         var text = '<tr id="option_' + wid_attr + '" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr) + ':</td><td><select id="inspect_' + wid_attr + '">';
         for (var t = 0; t < values.length; t++) {
-            text += "<option value='" + values[t] + "' " + ((values[t] == widget.data[wid_attr]) ? "selected" : "") + ">"+_(values[t]) + "</option>";
+            text += "<option value='" + values[t] + "' " + ((values[t] == widget.data[wid_attr]) ? 'selected' : '') + ">"+_(values[t]) + "</option>";
         }
         text += "</select></td></tr>";
         $("#widget_attrs").append(text);
     },
     editFontName: function (widget, wid_attr) {
         // Select
-        var values = ["", "Arial", "Times", "Andale Mono", "Comic Sans", "Impact"];
+        var values = ['', "Arial", "Times", "Andale Mono", "Comic Sans", "Impact"];
         vis.editSelect(widget, wid_attr, values);
     },
     editCheckbox: function (widget, wid_attr) {
         // All other attributes
-        $("#widget_attrs").append('<tr id="option_' + wid_attr+'" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr) + ':</td><td><input id="inspect_'+wid_attr+'" type="checkbox"' + (widget.data[wid_attr] ? "checked": "") + '></td></tr>');
+        $("#widget_attrs").append('<tr id="option_' + wid_attr+'" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr) + ':</td><td><input id="inspect_'+wid_attr+'" type="checkbox"' + (widget.data[wid_attr] ? "checked": '') + '></td></tr>');
     },
     editColor: function (widget, wid_attr) {
         // Color selector
@@ -659,7 +671,7 @@ vis = $.extend(true, vis, {
                         current:     $('#inspect_' + this.ctrlAttr).val(),
                         onselectArg: this.ctrlAttr,
                         onselect:    function (img, ctrlAttr) {
-                            $('#inspect_'+ctrlAttr).val(colorSelect.GetColor()).trigger("change");
+                            $('#inspect_'+ctrlAttr).val(colorSelect.GetColor()).trigger('change');
                         }};
                     colorSelect.Show(_settings);
                 });
@@ -685,7 +697,7 @@ vis = $.extend(true, vis, {
                     vis.widgets[vis.activeWidget].data.attr(attr, $this.val());
                     vis.views[vis.activeView].widgets[vis.activeWidget].data[attr] = $this.val();
                     var bt = $('#inspect_buttontext');
-                    if (bt && bt.val() == "") {
+                    if (bt && bt.val() == '') {
                         bt.val($this.val().charAt(0).toUpperCase() + $this.val().slice(1).toLowerCase()).trigger('change');
                     }
                     vis.reRenderWidgetEdit(vis.activeWidget);
@@ -714,7 +726,7 @@ vis = $.extend(true, vis, {
                     this._save();
                 }
             }).focus(function () {
-                $(this).autocomplete("search", "");
+                $(this).autocomplete("search", '');
             }).keyup(function () {
                 this._save();
             }).val(widget.data[wid_attr]);
@@ -778,7 +790,7 @@ vis = $.extend(true, vis, {
                     $(elem).trigger('change', ui.item.value);
                 }
             }).focus(function () {
-                $(this).autocomplete("search", "");
+                $(this).autocomplete("search", '');
             }).keyup(function () {
                 this._save();
             }).val(widget.data[wid_attr]);
@@ -819,7 +831,7 @@ vis = $.extend(true, vis, {
                     this._save();
                 }
             }).focus(function () {
-                $(this).autocomplete("search", "");
+                $(this).autocomplete("search", '');
             }).keyup(function () {
                 this._save();
             }).val(_(widget.data[wid_attr]));
@@ -838,7 +850,7 @@ vis = $.extend(true, vis, {
                 $(elem).autocomplete('option', 'source', [{label:'links',value:'left'},{label:'rechts',value:'right'},{label:'hoch',value:'up'},{label:'runter',value:'down'}]);
             } else {
                 $(elem).autocomplete('option', 'source', ['']);
-                widget.data[wid_attr] = "";
+                widget.data[wid_attr] = '';
                 $('#option_' + wid_attr).hide();
 
             }
@@ -856,58 +868,49 @@ vis = $.extend(true, vis, {
     editImage: function (widget, wid_attr) {
         // Image src
         $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="vis-add-option"><td>' + _(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
-        document.getElementById("inspect_" + wid_attr + "_btn").jControl = wid_attr;
-        // Filemanager Dialog
-        $("#inspect_"+wid_attr+"_btn").click(function () {
-// todo delete wenn der neue Dialog läuft
-//            var settings = {
-//                current: $("#inspect_"+this.jControl).val(),
-//                onselectArg: this.jControl,
-//                onselect:    function (img, obj) {
-//                    $("#inspect_"+obj).val(img).trigger("change");
-//                }};
-//            vis.imageSelect.Show(settings);
 
+        // Filemanager Dialog
+        $("#inspect_" + wid_attr + "_btn").click(function () {
                 $.fm({
-                    root: "www/",
-                    lang: vis.language ,
-                    path: "www/vis/img/",
-                    file_filter: ["gif","png", "bmp", "jpg", "jpeg", "tif", "svg"],
+                    root:          "www/",
+                    lang:          this.language ,
+                    path:          "www/vis/img/",
+                    file_filter:   ["gif","png", "bmp", "jpg", "jpeg", "tif", "svg"],
                     folder_filter: false,
-                    mode: "open",
-                    view:"prev"
+                    mode:          "open",
+                    view:          "prev"
 
                 },function(_data){
                     var src = _data.path.split("www")[1] + _data.file;
-                    $("#inspect_"+wid_attr).val(src).trigger("change");
+                    $("#inspect_" + wid_attr).val(src).trigger('change');
                 });
         });
     },
     editUrl: function (widget, wid_attr) {
         // Image src
-        $("#widget_attrs").append('<tr id="option_' + wid_attr + '" class="vis-add-option"><td>' + _(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
-        document.getElementById("inspect_" + wid_attr + "_btn").jControl = wid_attr;
+        $('#widget_attrs').append('<tr id="option_' + wid_attr + '" class="vis-add-option"><td>' + _(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
+
         // Filemanager Dialog
-        $("#inspect_"+wid_attr+"_btn").click(function () {
+        $('#inspect_' + wid_attr + '_btn').click(function () {
 
             $.fm({
-                root: "www/",
-                lang: vis.language ,
-                path: "www/vis/img/",
-                file_filter: ["mp3", "wav", "ogg"],
+                root:          "www/",
+                lang:          this.language ,
+                path:          "www/vis/img/",
+                file_filter:   ["mp3", "wav", "ogg"],
                 folder_filter: false,
-                mode: "open",
-                view:"table"
+                mode:          "open",
+                view:          "table"
 
             },function(_data){
-                var url = _data.path.split("www")[1] + _data.file;
-                $("#inspect_"+wid_attr).val(url).trigger("change");
+                var url = _data.path.split('www')[1] + _data.file;
+                $('#inspect_' + wid_attr).val(url).trigger('change');
             });
         });
     },
     editSlider: function (widget, wid_attr, min, max, step) {
-        min = (min === undefined || min === null || min == "") ? 0 : parseFloat(min);
-        max = (max === undefined || max === null || max == "") ? 0 : parseFloat(max);
+        min = (min === undefined || min === null || min == '') ? 0 : parseFloat(min);
+        max = (max === undefined || max === null || max == '') ? 0 : parseFloat(max);
         step = (!step) ? (max - min) / 100 : parseFloat(step);
         // Image src
         $("#widget_attrs").append('<tr id="option_'+wid_attr+'" class="vis-add-option"><td>'+_(wid_attr)+':</td><td><table style="width:100%" class="vis-no-spaces"><tr class="vis-no-spaces"><td  class="vis-no-spaces" style="width:50px"><input type="text" id="inspect_'+wid_attr+'" size="5"/></td><td  class="vis-no-spaces" style="width:20px">'+min+'</td><td><div id="inspect_'+wid_attr+'_slider"></div></td><td  class="vis-no-spaces" style="width:20px;text-align:right">'+max+'</td></tr></table></td></tr>');
@@ -928,13 +931,13 @@ vis = $.extend(true, vis, {
                     var attr = $this.attr("id").slice(8);
                     var text = $("#inspect_"+wid_attr);
                     if (text.val() != value) {
-                        text.val(value).trigger("change");
+                        text.val(value).trigger('change');
                     }
                 }, 200, this, ui.value);*/
                 var $this = $(this);
                 var text = $("#inspect_"+wid_attr);
                 if (text.val() != ui.value) {
-                    text.val(ui.value).trigger("change");
+                    text.val(ui.value).trigger('change');
                 }
             }
         });
@@ -997,7 +1000,7 @@ vis = $.extend(true, vis, {
             vis.multiSelectedWidgets = [];
             $("#allwidgets_helper").hide();
 
-            $("#select_active_widget").find("option[value='"+id+"']").prop("selected", true);
+            $("#select_active_widget").find("option[value='"+id+"']").prop('selected', true);
             $("#select_active_widget").multiselect("refresh");
 
             // Remove selection from all widgets and remove resizable and draggable properties
@@ -1024,10 +1027,10 @@ vis = $.extend(true, vis, {
         }
 
         // Clear Inspector
-        $("#widget_attrs").html("")
+        $("#widget_attrs").html('')
             .html('<tr><th class="widget_attrs_header"></th><th></th></tr>');
         $(".vis-inspect-css").each(function () {
-            $(this).val("");
+            $(this).val('');
         });
 
         if (!id || id === "none") {
@@ -1075,7 +1078,7 @@ vis = $.extend(true, vis, {
        
         // Edit all attributes
         for (var attr in widget_attrs) {
-            if (widget_attrs[attr] != "") {
+            if (widget_attrs[attr] != '') {
                 // Format: attr_name(start-end)[default_value]/type
                 // attr_name can be extended with numbers (1-2) means it will be attr_name1 and attr_name2 created 
                 // Type format: id - Object ID Dialog
@@ -1134,7 +1137,7 @@ vis = $.extend(true, vis, {
                 }
                 
                 do {
-                    var wid_attr_ = wid_attr + ((instancesStart !== null) ? instancesStart : "");
+                    var wid_attr_ = wid_attr + ((instancesStart !== null) ? instancesStart : '');
                     var isCustomEdit = false;
 
                     if (defaultValue !== null && (widget.data[wid_attr_] == null || widget.data[wid_attr_] === undefined)) {
@@ -1232,7 +1235,7 @@ vis = $.extend(true, vis, {
                             if (type !== null) {
                                 if (typeof type == 'object') {
                                     var title = _(wid_attr_);
-                                    var hint  = "";
+                                    var hint  = '';
                                     if (type["name"]) {
                                         if (typeof type["name"] == 'object') {
                                             if (type["name"][this.language]) {
@@ -1250,7 +1253,7 @@ vis = $.extend(true, vis, {
                                     if (type['type'] == "checkbox") {
                                         isValueSet = true;
                                         // All other attributes
-                                        $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="vis-add-option"><td class="vis-edit-td-caption" title="'+hint+'">'+title+':</td><td><input title="'+hint+'" id="inspect_'+wid_attr_+'" type="checkbox"' +(widget.data[wid_attr_] ? "checked": "")+'></td></tr>');
+                                        $("#widget_attrs").append('<tr id="option_'+wid_attr_+'" class="vis-add-option"><td class="vis-edit-td-caption" title="'+hint+'">'+title+':</td><td><input title="'+hint+'" id="inspect_'+wid_attr_+'" type="checkbox"' +(widget.data[wid_attr_] ? "checked": '')+'></td></tr>');
                                     } else if (type['type'] == "view") {
                                     } else if (type['type'] == "color") {
                                     } else if (type['type'] == "font") {
@@ -1263,7 +1266,7 @@ vis = $.extend(true, vis, {
                                         var values = type['values'];
                                         var text = '<tr id="option_' + wid_attr_ + '" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr_) + ':</td><td><select id="inspect_' + wid_attr_ + '">';
                                         for (var t = 0; t < values.length; t++) {
-                                            text += "<option value='" + values[t] + "' " + ((values[t] == widget.data[wid_attr_]) ? "selected" : "") + ">" + _(values[t])+"</option>";
+                                            text += "<option value='" + values[t] + "' " + ((values[t] == widget.data[wid_attr_]) ? 'selected' : '') + ">" + _(values[t])+"</option>";
                                         }
                                         text += "</select></td></tr>";
                                         $("#widget_attrs").append(text);
@@ -1362,21 +1365,21 @@ vis = $.extend(true, vis, {
                     this._save();               
                 }
             }).focus(function () {
-                $(this).autocomplete("search", "");
+                $(this).autocomplete("search", '');
             }).keyup(function () {
                 this._save();               
             }); 
         }
 		
         // Put all view names in the select element
-		$('#inspect_views').html("");
+		$('#inspect_views').html('');
 		var views = vis.getViewsOfWidget(vis.activeWidget);
 		for (var v in vis.views) {
 			if (v != vis.activeView) {
-				var selected = "";
+				var selected = '';
 				for (var i = 0; i < views.length; i++) {
 					if (views[i] == v) {
-						selected = "selected";
+						selected = 'selected';
 						break;
 					}
 				}
@@ -1389,9 +1392,9 @@ vis = $.extend(true, vis, {
             height: 260,
             noneSelectedText: _("Single view"),
             selectedText: function (numChecked, numTotal, checkedItems) {
-                var text = "";
+                var text = '';
                 for (var i = 0; i < checkedItems.length; i++) {
-                    text += ((text == "") ? "" : ",") + checkedItems[i].title;
+                    text += ((text == '') ? '' : ",") + checkedItems[i].title;
                 }
                 return text;
             },
@@ -1405,8 +1408,8 @@ vis = $.extend(true, vis, {
         });
 
         // Select Widget
-        $("#select_active_widget option").removeAttr("selected");
-        $("#select_active_widget option[value='"+id+"']").prop("selected", true);
+        $("#select_active_widget option").removeAttr('selected');
+        $("#select_active_widget option[value='"+id+"']").prop('selected', true);
         $("#select_active_widget").multiselect("refresh");
 
         if ($("#snap_type option:selected").val() == 2) {
@@ -1503,13 +1506,13 @@ vis = $.extend(true, vis, {
     // Init all edit fields for one view
     changeViewEdit: function (view, noChange) {
 
-        if (vis.selectable) {
+        if (this.selectable) {
             $(".vis-view.ui-selectable").selectable("destroy");
-
+            var that = this;
             $("#visview_"+view).selectable({
-                filter: "div.vis-widget",
+                filter:    "div.vis-widget",
                 tolerance: "fit",
-				cancel: "div.vis-widget",
+				cancel:    "div.vis-widget",
                 start: function (e, ui) {
 
                 },
@@ -1519,14 +1522,14 @@ vis = $.extend(true, vis, {
                     switch ($(".ui-selected").length) {
                         case 0:
                             $(".widget-multi-helper").remove();
-                            vis.multiSelectedWidgets = [];
-                            vis.inspectWidget("none");
+                            that.multiSelectedWidgets = [];
+                            that.inspectWidget("none");
                             $allwidgets_helper.hide();
                             break;
                         case 1:
                             $(".widget-multi-helper").remove();
-                            vis.multiSelectedWidgets = [];
-                            vis.inspectWidget($(".ui-selected").attr("id"));
+                            that.multiSelectedWidgets = [];
+                            that.inspectWidget($(".ui-selected").attr("id"));
                             $allwidgets_helper.hide();
                             break;
                         default:
@@ -1535,11 +1538,11 @@ vis = $.extend(true, vis, {
                 },
                 selecting: function (e, ui) {
                     //console.log('selecting ' + ui.selecting.id)
-                    if (!vis.activeWidget || vis.activeWidget == "none") {
-                        vis.inspectWidget(ui.selecting.id);
-                    } else if (ui.selecting.id != vis.activeWidget) {
+                    if (!that.activeWidget || that.activeWidget == "none") {
+                        that.inspectWidget(ui.selecting.id);
+                    } else if (ui.selecting.id != that.activeWidget) {
                         //console.log("selecting id="+ui.selecting.id+" active="+vis.activeWidget);
-                        vis.inspectWidgetMulti(ui.selecting.id);
+                        that.inspectWidgetMulti(ui.selecting.id);
                     }
                 },
                 selected: function (e, ui) {
@@ -1548,7 +1551,7 @@ vis = $.extend(true, vis, {
                     //console.log('unselecting ' + ui.unselecting.id)
                     if ($("#widget_multi_helper_" + ui.unselecting.id).html()) {
                         $("#widget_multi_helper_" + ui.unselecting.id).remove();
-                        vis.multiSelectedWidgets.splice(vis.multiSelectedWidgets.indexOf(ui.unselecting.id), 1);
+                        that.multiSelectedWidgets.splice(that.multiSelectedWidgets.indexOf(ui.unselecting.id), 1);
                     }
                 },
                 unselected: function (e, ui) {
@@ -1557,26 +1560,21 @@ vis = $.extend(true, vis, {
         }
 
         if (!noChange) {
-            vis.undoHistory = [$.extend(true, {}, vis.views[vis.activeView])];
-            $("#button_undo").addClass("ui-state-disabled").removeClass("ui-state-hover");
+            this.undoHistory = [$.extend(true, {}, this.views[this.activeView])];
+            $('#button_undo').addClass('ui-state-disabled').removeClass('ui-state-hover');
         }
 
         // Load meta data if not yet loaded
-        var isMetaLoaded = false;
-        for (var v in localData.objects) {
-            isMetaLoaded = true;
-            break;
-        }
-        if (!isMetaLoaded) {
+        if (!this.objects) {
             // Read all data objects from server
-            vis.conn.getObjects(function (data) {
-                localData.objects = data;
+            this.conn.getObjects(function (data) {
+                that.objects = data;
             });
         }
 
         // Init background selector
-        if (vis.styleSelect && vis.views[view] && vis.views[view].settings) {
-            vis.styleSelect.Show({ width: 152,
+        if (this.styleSelect && this.views[view] && this.views[view].settings) {
+            this.styleSelect.Show({ width: 152,
                 name:       "inspect_view_bkg_def",
                 filterName: 'background',
                 //filterFile: "backgrounds.css",
@@ -1595,9 +1593,9 @@ vis = $.extend(true, vis, {
 
         $("#inspect_view").html(view);
 
-        if (vis.views[view] && vis.views[view].settings) {
+        if (this.views[view] && this.views[view].settings) {
             // Try to find this resolution in the list
-            var res = vis.views[vis.activeView].settings.sizex + 'x' + vis.views[vis.activeView].settings.sizey;
+            var res = this.views[this.activeView].settings.sizex + 'x' + this.views[this.activeView].settings.sizey;
             $('#screen_size option').each(function () {
                 if ($(this).val() == res) {
                     $(this).attr('selected', true);
@@ -1609,39 +1607,40 @@ vis = $.extend(true, vis, {
                 $("#screen_size_y").prop('disabled', true);
             }
 
-            $("#screen_size_x").val(vis.views[vis.activeView].settings.sizex || "").trigger("change");
-            $("#screen_size_y").val(vis.views[vis.activeView].settings.sizey || "").trigger("change");
+            $("#screen_size_x").val(this.views[vis.activeView].settings.sizex || '').trigger('change');
+            $("#screen_size_y").val(this.views[vis.activeView].settings.sizey || '').trigger('change');
 
-            $("#screen_hide_description").prop('checked', vis.views[vis.activeView].settings.hideDescription).trigger("change");
-            if (typeof hqWidgets != 'undefined') {
+            $("#screen_hide_description").prop('checked', this.views[this.activeView].settings.hideDescription).trigger('change');
+            
+            /*if (typeof hqWidgets != 'undefined') {
                 hqWidgets.SetHideDescription(vis.views[vis.activeView].settings.hideDescription);
-            }
+            }*/
 
-            $("#grid_size").val(vis.views[vis.activeView].settings.gridSize || "").trigger("change");
+            $("#grid_size").val(this.views[this.activeView].settings.gridSize || '').trigger('change');
 
-            var snapType = vis.views[vis.activeView].settings.snapType || 0;
+            var snapType = this.views[this.activeView].settings.snapType || 0;
 
-            $("#snap_type option").removeAttr("selected");
-            $("#snap_type option[value='"+snapType+"']").attr("selected", true);
+            $("#snap_type option").removeAttr('selected');
+            $("#snap_type option[value='" + snapType + "']").attr('selected', true);
         }
 
         $("#select_active_widget").html('<option value="none">' + _('none selected') + '</option>');
-        if (vis.views[vis.activeView].widgets) {
-            for (var widget in vis.views[vis.activeView].widgets) {
-                var obj = $("#" + vis.views[vis.activeView].widgets[widget].tpl);
-                $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-vis-set") + " " + obj.attr("data-vis-name") + ")</option>");
+        if (this.views[this.activeView].widgets) {
+            for (var widget in this.views[this.activeView].widgets) {
+                var obj = $("#" + this.views[this.activeView].widgets[widget].tpl);
+                $('#select_active_widget').append('<option value="' + widget + '">' + widget + ' (' + obj.attr('data-vis-set') + ' ' + obj.attr('data-vis-name') + ')</option>');
             }
         }
 
         $("#select_active_widget").multiselect("refresh");
 
         if ($("#select_view option:selected").val() != view) {
-            $("#select_view option").removeAttr("selected");
-            $("#select_view option[value='" + view + "']").prop("selected", "selected");
+            $("#select_view option").removeAttr('selected');
+            $("#select_view option[value='" + view + "']").prop('selected', 'selected');
             $("#select_view").multiselect("refresh");
         }
-        $("#select_view_copy option").removeAttr("selected");
-        $("#select_view_copy option[value='" + view + "']").prop("selected", "selected");
+        $("#select_view_copy option").removeAttr('selected');
+        $("#select_view_copy option[value='" + view + "']").prop('selected', 'selected');
         $("#select_view_copy").multiselect("refresh");
 
         // View CSS Inspector
@@ -1652,17 +1651,16 @@ vis = $.extend(true, vis, {
             $this.val(css);
         });
 
-        if (vis.views[view] && vis.views[view].settings){
+        if (this.views[view] && this.views[view].settings){
             $(".vis-inspect-view").each(function () {
                 var $this = $(this);
                 var attr = $this.attr("id").slice(13);
-                $("#" + $this.attr("id")).val(vis.views[vis.activeView].settings[attr]);
+                $("#" + $this.attr("id")).val(that.views[that.activeView].settings[attr]);
             });
 
-            if(!vis.views[vis.activeView].settings["theme"]) {
-                vis.views[vis.activeView].settings["theme"] = "dhive";
-            }
-            $("#inspect_view_theme option[value='" + vis.views[vis.activeView].settings.theme + "']").prop("selected", true);
+            this.views[this.activeView].settings['theme'] = this.views[this.activeView].settings['theme'] || 'redmond';
+            
+            $("#inspect_view_theme option[value='" + this.views[this.activeView].settings.theme + "']").prop('selected', true);
         }
         $("#inspect_view_theme").multiselect("refresh");
     },
@@ -1864,7 +1862,7 @@ vis = $.extend(true, vis, {
         $("#tabs").tabs();
         $("#widget_helper").hide();
 
-        $("#language [value='"+ ((typeof ccuIoLang === 'undefined') ? 'en' : (ccuIoLang || 'en'))+"']").attr("selected", "selected");
+        $("#language [value='"+ ((typeof ccuIoLang === 'undefined') ? 'en' : (ccuIoLang || 'en'))+"']").attr('selected', 'selected');
 
         $("#language").change(function () {
             vis.language = $(this).val();
@@ -1918,7 +1916,7 @@ vis = $.extend(true, vis, {
         $("#export_view").click(function(){vis.exportView(false);});
 
         $("#import_view").click(function () {
-            $("#textarea_import_view").html("");
+            $("#textarea_import_view").html('');
             $("#dialog_import_view").dialog({
                 autoOpen: true,
                 width: 800,
@@ -1957,7 +1955,7 @@ vis = $.extend(true, vis, {
             // TODO: we dont need it anymore (except hm_id), while default settings can be set in tpl itself
             var data = {
                 hm_id:  'nothing_selected',
-                digits: "",
+                digits: '',
                 factor: 1,
                 min:    0.00,
                 max:    1.00,
@@ -2013,11 +2011,11 @@ vis = $.extend(true, vis, {
             if (attr == "class") {
                 var val = vis.views[vis.activeView].widgets[vis.activeWidget].data[attr];
                 if (val.indexOf("ui-draggable") != -1 || val.indexOf("ui-resizable") != -1) {
-                    var vals = val.split(" ");
-                    val = "";
+                    var vals = val.split(' ');
+                    val = '';
                     for (var j = 0; j < vals.length; j++) {
                         if (vals[j] && vals[j] != "ui-draggable" && vals[j] != "ui-resizable") {
-                            val += ((val) ? " " : "") + vals[j];
+                            val += ((val) ? ' ' : '') + vals[j];
                         }
                     }
                     vis.views[vis.activeView].widgets[vis.activeWidget].data[attr] = val;
@@ -2028,7 +2026,7 @@ vis = $.extend(true, vis, {
             vis.save();
             vis.reRenderWidgetEdit(vis.activeWidget);
         }).keyup(function () {
-            $(this).trigger("change");
+            $(this).trigger('change');
         });
 		
         $(".vis-inspect-css").change(function () {
@@ -2053,7 +2051,7 @@ vis = $.extend(true, vis, {
                 activeWidget._customHandlers.onCssEdit(activeWidget, vis.activeWidget);
             }
         }).keyup(function () {
-            $(this).trigger("change");
+            $(this).trigger('change');
         });
 
         vis.initStealHandlers();
@@ -2062,7 +2060,7 @@ vis = $.extend(true, vis, {
             var $this = $(this);
             var attr = $this.attr("id").slice(17);
             var val = $this.val();
-            //console.log("change "+attr+" "+val);
+            //console.log("change "+attr+' '+val);
             $("#visview_"+vis.activeView).css(attr, val);
 			if (!vis.views[vis.activeView].settings.style) {
 				vis.views[vis.activeView].settings.style = {};
@@ -2077,7 +2075,7 @@ vis = $.extend(true, vis, {
             var $this = $(this);
             var attr = $this.attr("id").slice(13);
             var val = $this.val();
-            //console.log("change "+attr+" "+val);
+            //console.log("change "+attr+' '+val);
             vis.views[vis.activeView].settings[attr] = val;
             vis.save();
         }).keyup(function () {
@@ -2137,7 +2135,7 @@ vis = $.extend(true, vis, {
             }
 
         }).keyup(function () {
-            $(this).trigger("change");
+            $(this).trigger('change');
         });
 
         $("#screen_hide_description").change(function () {
@@ -2151,7 +2149,7 @@ vis = $.extend(true, vis, {
             }
 
         }).keyup(function () {
-            $(this).trigger("change");
+            $(this).trigger('change');
         });
 
 
@@ -2175,7 +2173,7 @@ vis = $.extend(true, vis, {
             }
 
         }).keyup(function () {
-            $(this).trigger("change");
+            $(this).trigger('change');
         });
 
         $("#snap_type").change(function () {
@@ -2200,7 +2198,7 @@ vis = $.extend(true, vis, {
                 if (vis.activeView && vis.views && vis.views[vis.activeView] && vis.views[vis.activeView].widgets) {
                     for (var widget in vis.views[vis.activeView].widgets) {
                         var obj = $("#" + vis.views[vis.activeView].widgets[widget].tpl);
-                        $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-vis-set") + " " + obj.attr("data-vis-name") + ")</option>");
+                        $("#select_active_widget").append("<option value='" + widget + "'>" + widget + " (" + obj.attr("data-vis-set") + ' ' + obj.attr("data-vis-name") + ")</option>");
                     }
                 }
                 $("#select_active_widget").multiselect("refresh");
@@ -2265,7 +2263,7 @@ vis = $.extend(true, vis, {
 				$("#inspect_view").html(vis.activeView);
 				sel = " selected";
 			} else {
-				sel = "";
+				sel = '';
 			}
             $select_view.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
             $select_view_copy.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
@@ -2285,7 +2283,7 @@ vis = $.extend(true, vis, {
 		});
 
         $select_set.change(vis.refreshWidgetSelect);
-        $select_set.html("");
+        $select_set.html('');
 
 		for (i = 0; i < vis.widgetSets.length; i++) {
 			if (vis.widgetSets[i].name !== undefined) {
@@ -2314,7 +2312,7 @@ vis = $.extend(true, vis, {
 				vis.views[vis.activeView].settings.style = {};
 			}
 			if (vis.views[vis.activeView].settings.style['background_class'] == undefined) {
-				vis.views[vis.activeView].settings.style['background_class'] = "";
+				vis.views[vis.activeView].settings.style['background_class'] = '';
 			}
 		}
 
@@ -2335,7 +2333,7 @@ vis = $.extend(true, vis, {
             }).show();
 
             $("#import_local_view").click(function () {
-                $("#textarea_import_view").html("");
+                $("#textarea_import_view").html('');
                 $("#dialog_import_view").dialog({
                     autoOpen: true,
                     width: 800,
@@ -2588,7 +2586,7 @@ vis = $.extend(true, vis, {
     },
     refreshWidgetSelect: function () {
         var $select_tpl = $("#select_tpl");
-        $select_tpl.html("");
+        $select_tpl.html('');
         var current_set = $("#select_set option:selected").val();
         $(".vis-tpl[data-vis-set='" + current_set + "']").each(function () {
             $("#select_tpl").append("<option value='" + $(this).attr("id") + "'>" + $(this).attr("data-vis-name") + "</option>")
@@ -2723,7 +2721,7 @@ vis = $.extend(true, vis, {
             
             for (var widget in widgets) {
                 if (widgets[widget] && widgets[widget].data &&
-                    widgets[widget].data.filterkey != "" &&
+                    widgets[widget].data.filterkey != '' &&
                     widgets[widget].data.filterkey !== undefined) {
 					var isFound = false;
 					for (var z = 0; z < vis.views[vis.activeView].filterList.length; z++) {
@@ -2857,25 +2855,26 @@ vis = $.extend(true, vis, {
         if (cssLeft == cssRight && cssLeft == cssTop && cssLeft == cssBottom) {
             css = cssLeft;
         } else if (cssTop == cssBottom && cssRight == cssLeft) {
-            css = cssTop + " " + cssLeft;
+            css = cssTop + ' ' + cssLeft;
         } else if (cssRight == cssLeft) {
-            css = cssTop + " " + cssLeft + " " + cssBottom;
+            css = cssTop + ' ' + cssLeft + ' ' + cssBottom;
         } else {
-            css = cssTop + " " + cssRight + " " + cssBottom + " " + cssLeft;
+            css = cssTop + ' ' + cssRight + ' ' + cssBottom + ' ' + cssLeft;
         }
         return css;
     },
     _saveTimer: null, // Timeout to save the configuration
     _saveToServer: function () {
-        if (vis.undoHistory.length == 0 ||
-            (JSON.stringify(vis.views[vis.activeView]) != JSON.stringify(vis.undoHistory[vis.undoHistory.length - 1]))) {
+        if (this.undoHistory.length == 0 ||
+            (JSON.stringify(this.views[this.activeView]) != JSON.stringify(this.undoHistory[this.undoHistory.length - 1]))) {
             $("#button_undo").removeClass("ui-state-disabled");
-            if (vis.undoHistory.push($.extend(true, {}, vis.views[vis.activeView])) > vis.undoHistoryMaxLength) {
-                vis.undoHistory.splice(0, 1);
+            if (this.undoHistory.push($.extend(true, {}, this.views[this.activeView])) > this.undoHistoryMaxLength) {
+                this.undoHistory.splice(0, 1);
             }
         }
-        vis.saveRemote(function() {
-            vis._saveTimer = null;
+        var that = this;
+        this.saveRemote(function() {
+            that._saveTimer = null;
             $('#savingProgress').hide().next().button('enable');
         });
     },
@@ -2885,8 +2884,8 @@ vis = $.extend(true, vis, {
             this._saveTimer = null;
         }
         // Store the changes if nothing changed for 2 seconds
-        this._saveTimer = _setTimeout(function (dash) {
-            dash._saveToServer();
+        this._saveTimer = _setTimeout(function (_vis) {
+            _vis._saveToServer();
         }, 2000, this);
 
         $('#savingProgress').show().next().button('disable');

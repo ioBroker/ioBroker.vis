@@ -17,9 +17,11 @@
       "url": "https://github.com/ioBroker/ioBroker.vis/blob/master/LICENSE"
     }
   ],
-  "keywords":  ["ioBroker", "GUI", "DashUI", "web interface", "home automation"],
+  "keywords":  ["ioBroker", "GUI", "DashUI", "web interface", "home automation", "SCADA"],
   "readmeFilename": "README.md",
   "dependencies": {
+    "iobroker.web": "*",
+    "iobroker.socketio": "*"
   },
   "devDependencies": {
       "grunt": "~0.4.4",
