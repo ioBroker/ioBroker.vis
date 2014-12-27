@@ -681,17 +681,19 @@
                 <h4 class="translate">Inspecting Widget:</h4>
                 <select id="select_active_widget" class="vis-editor" data-multiselect-width="370" data-multiselect-height="265"></select><br/>
                 <div class="vis-widget-tools">
-
+                    <table>
+                        <tr><td colspan="2">
                             <button type="button" class="vis-editor translateB" id="del_widget" >del_widget</button>
-
-                            <button type="button" class="vis-editor translateB" id="widget_doc">widget_doc</button><br>
-
+                            <button type="button" class="vis-editor translateB" id="widget_doc">widget_doc</button>
+                        </td></tr>
+                        <tr><td>
                             <button type="button" class="vis-editor translateB" id="dup_widget" >dup_widget</button>
-
+                            </td><td>
                             <select class="vis-editor" id="select_view_copy"></select>
-
+                        </td></tr>
+                    </table>
                     <h4 class="translate">Widget Attributes:</h4>
-                    <table id="widget_attrs_fix">
+                    <!--table id="widget_attrs_fix">
                         <tr><th class="widget_attrs_header"></th><th></th></tr>
                         <tr id="inspect_comment_tr">
                             <td  class="vis-edit-td-caption translate">comment</td><td class="vis-edit-td-field"><input type="text" id="inspect_comment" class="vis-inspect-widget vis-edit-textbox"/></td>
@@ -703,12 +705,19 @@
                             <td class="vis-edit-td-caption translate">filter_key</td><td class="vis-edit-td-field"><input id="inspect_filterkey" class="vis-inspect-widget vis-edit-textbox"/></td>
                         </tr>
                         <tr>
-                            <td sclass="vis-edit-td-caption translate">Show in views:</td><td class="vis-edit-td-field"><select id="inspect_views" multiple="multiple" class="vis-edit-select"></select></td>
+                            <td class="vis-edit-td-caption translate">show_on_views</td><td class="vis-edit-td-field"><select id="inspect_views" multiple="multiple" class="vis-edit-select"></select></td>
                         </tr>
 
                     </table>
-                    <hr>
-                    <table id="widget_attrs" style="width: 440px"></table>
+                    <hr-->
+                    <table style="width: 100%">
+                        <colgroup>
+                            <col width="*"/>
+                            <col width="300px"/>
+                            <col width="30px"/>
+                        </colgroup>
+                        <tbody id="widget_attrs"></tbody>
+                    </table>
 
 
                 </div>
@@ -748,6 +757,7 @@
 
     <div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>
 
+    <div
 
 </body>
 </html>

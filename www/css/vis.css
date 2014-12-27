@@ -573,7 +573,6 @@ p.xs_text_editor_mode {
 #dup_view {
     margin-top: 5px;
     width: 125px;
-
 }
 
 #tabs-1 .ui-multiselect {
@@ -619,8 +618,6 @@ p.xs_text_editor_mode {
 }
 #dup_widget {
     width: 142px;
-    margin-top: 15px;
-
 }
 
 .vis-widget-tools > .ui-multiselect {

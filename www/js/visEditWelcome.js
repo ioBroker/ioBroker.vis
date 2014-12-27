@@ -13,42 +13,21 @@
  * (Free for non-commercial use).
  */
 
+
+$.extend(systemDictionary, {
+    'Bath'             : {'en': 'Bath',          'de': 'Badezimmer',           'ru': 'Ванная'},
+    'Kitchen'          : {'en': 'Kitchen',       'de': 'Küche',                'ru': 'Кухня'},
+    'Living room'      : {'en': 'Living room',   'de': 'Wohnzimmer',           'ru': 'Студия'},
+    'Apartment'        : {'en': 'Apartment',     'de': 'Wohnung',              'ru': 'Квартира'},
+    'WebCam'           : {'en': 'WebCam',        'de': 'IP Kamera',            'ru': 'Камера'},
+    'Edit'             : {'en': 'Edit',          'de': 'Editieren',            'ru': 'Редактировать'},
+    'Instruction'      : {
+        'en': 'Click here, Press Ctrl+A and \nthen "Del" to delete all widgets',
+        'de': 'Um alle Widgets zu löschen: \nklicke hier, \ndann drücke Strg+A and dann Löschtaste',
+        'ru': 'Что бы удалить все элементы: \nКликни сюда, \nнажми Ctrl+A и нажми Del'
+    }
+});
 vis.createDemoView = function () {
-    vis.demoTranslate = function (text, arg) {
-        if (!vis.demoWords) {
-            vis.demoWords =  {
-                'Bath'             : {'en': 'Bath',          'de': 'Badezimmer',           'ru': 'Ванная'},
-                'Kitchen'          : {'en': 'Kitchen',       'de': 'Küche',                'ru': 'Кухня'},
-                'Living room'      : {'en': 'Living room',   'de': 'Wohnzimmer',           'ru': 'Студия'},
-                'Apartment'        : {'en': 'Apartment',     'de': 'Wohnung',              'ru': 'Квартира'},
-                'WebCam'           : {'en': 'WebCam',        'de': 'IP Kamera',            'ru': 'Камера'},
-                'Edit'             : {'en': 'Edit',          'de': 'Editieren',            'ru': 'Редактировать'},
-                'Instruction'      : {
-                    'en': 'Click here, Press Ctrl+A and \nthen "Del" to delete all widgets',
-                    'de': 'Um alle Widgets zu löschen: \nklicke hier, \ndann drücke Strg+A and dann Löschtaste',
-                    'ru': 'Что бы удалить все элементы: \nКликни сюда, \nнажми Ctrl+A и нажми Del'
-                }
-            };
-        }
-
-        if (vis.demoWords[text]) {
-            var newText = vis.demoWords[text][vis.language];
-            if (newText) {
-                text = newText;
-            } else {
-                newText = vis.demoWords[text]["en"];
-                if (newText) {
-                    text = newText;
-                }
-            }
-        }
-
-        if (arg !== undefined) {
-            text = text.replace('%s', arg);
-        }
-        return text;
-    };
-
     var obj =
     {
         "settings" : {
@@ -65,12 +44,6 @@ vis.createDemoView = function () {
             "w00001" : {
                 "tpl" : "tplImage",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
                     "src" : "img/eg_trans.png"
                 },
                 "style" : {
@@ -85,12 +58,6 @@ vis.createDemoView = function () {
             "w00002" : {
                 "tpl" : "tplTwYahooWeather",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
                     "weoid" : "Miami, Miami-Dade, Florida, United States [2450022]"
                 },
                 "style" : {
@@ -104,12 +71,6 @@ vis.createDemoView = function () {
             "w00003" : {
                 "tpl" : "tplTwSimpleDate",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
                     "prependZero" : "true",
                     "shortYear" : true,
                     "showWeekDay" : true,
@@ -126,12 +87,6 @@ vis.createDemoView = function () {
             "w00004" : {
                 "tpl" : "tplTwSimpleClock",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
                     "blink" : true,
                     "hideSeconds" : true
                 },
@@ -144,14 +99,7 @@ vis.createDemoView = function () {
             "w00005" : {
                 "tpl" : "tplFrame",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
-                    "title" : vis.demoTranslate("Apartment"),
-
+                    "title" : _("Apartment"),
                     "title_color" : "white",
                     "title_top" : "3",
                     "title_left" : "15",
@@ -176,12 +124,7 @@ vis.createDemoView = function () {
             "w00006" : {
                 "tpl" : "tplHqButton",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
+                    "oid" : 'nothing_selected',
                     "hqoptions": "{\"x\":704,\"y\":346,\"radius\":22,\"zindex\":2,\"iconName\":\"Lamp.png\",\"room\":\"\",\"hm_id\":\"65555\",\"invertState\":false}"
                 },
                 "style" : {
@@ -194,12 +137,7 @@ vis.createDemoView = function () {
             "w00007" : {
                 "tpl" : "tplHqShutter",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
+                    "oid" : 'nothing_selected',
                     "hqoptions": "{\"x\":692,\"y\":211,\"height\":52,\"width\":54,\"radius\":0,\"zindex\":3,\"buttonType\":3,\"windowConfig\":\"1\",\"room\":\"\",\"hm_id\":\"65555\",\"newVersion\":true,\"invertState\":false}"
                 },
                 "style" : {
@@ -214,12 +152,7 @@ vis.createDemoView = function () {
             "w00008" : {
                 "tpl" : "tplHqShutter",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
+                    "oid" : 'nothing_selected',
                     "hqoptions": "{\"x\":767,\"y\":211,\"height\":118,\"width\":55,\"radius\":0,\"zindex\":3,\"buttonType\":3,\"windowConfig\":\"1\",\"room\":\"\",\"hm_id\":\"65555\",\"newVersion\":true,\"invertState\":false}"
                 },
                 "style" : {
@@ -235,11 +168,6 @@ vis.createDemoView = function () {
                 "tpl" : "tplHqButton",
                 "data" : {
                     "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
                     "hqoptions" : "{\"x\":484,\"y\":490,\"radius\":22,\"zindex\":2,\"iconName\":\"Lamp.png\",\"room\":\"\",\"hm_id\":\"65555\",\"invertState\":false}"
                 },
                 "style" : {
@@ -253,11 +181,6 @@ vis.createDemoView = function () {
                 "tpl" : "tplHqButton",
                 "data" : {
                     "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
                     "hqoptions" : "{\"x\":608,\"y\":617,\"radius\":22,\"zindex\":2,\"iconName\":\"Lamp.png\",\"room\":\"\",\"hm_id\":\"65555\",\"invertState\":false}"
                 },
                 "style" : {
@@ -271,12 +194,7 @@ vis.createDemoView = function () {
                 "tpl" : "tplHtml",
                 "data" : {
                     "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
-                    "html" : vis.demoTranslate("Bath")
+                    "html" : _("Bath")
 
                 },
                 "style" : {
@@ -293,13 +211,7 @@ vis.createDemoView = function () {
             "w00012" : {
                 "tpl" : "tplHtml",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
-                    "html" : vis.demoTranslate("Kitchen")
+                    "html" : _("Kitchen")
 
                 },
                 "style" : {
@@ -316,14 +228,7 @@ vis.createDemoView = function () {
             "w00013" : {
                 "tpl" : "tplHtml",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
-                    "html" : vis.demoTranslate("Living room")
-
+                    "html" : _("Living room")
                 },
                 "style" : {
                     "left" : 600,
@@ -339,12 +244,6 @@ vis.createDemoView = function () {
             "w00014" : {
                 "tpl" : "tplImage",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
                     "src" : "http://www.foto-webcam.eu/webcam/zellamsee/current/320.jpg"
                 },
                 "style" : {
@@ -358,14 +257,7 @@ vis.createDemoView = function () {
             "w00015" : {
                 "tpl" : "tplFrame",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
-                    "title" : vis.demoTranslate("WebCam"),
-
+                    "title" : _("WebCam"),
                     "title_color" : "white",
                     "title_top" : "3",
                     "title_left" : "15",
@@ -390,13 +282,7 @@ vis.createDemoView = function () {
             "w00016" : {
                 "tpl" : "tplHtml",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
-                    "html" : vis.demoTranslate("Instruction")
+                    "html" : _("Instruction")
 
                 },
                 "style" : {
@@ -412,13 +298,7 @@ vis.createDemoView = function () {
             "w00017" : {
                 "tpl" : "tplHqOutTemp",
                 "data" : {
-                    "hm_id" : 'nothing_selected',
-                    "digits" : "",
-                    "factor" : 1,
-                    "min" : 0,
-                    "max" : 1,
-                    "step" : 0.01,
-                    "hqoptions" : "{\"x\":582,\"y\":375,\"radius\":22,\"zindex\":2,\"buttonType\":2,\"iconName\":\"Temperature.png\",\"room\":\"\",\"hm_id\":\"65555\",\"hm_idH\":\"\",\"charts\":{\"navigator\":\"false\",\"percentaxis\":\"true\",\"period\":\"72\",\"theme\":\"\",\"range\":\"24\",\"scrollbar\":\"true\",\"grouping\":\"true\",\"legend\":\"inline\",\"zoom\":\"true\",\"loader\":\"false\"}}"
+                   "hqoptions" : "{\"x\":582,\"y\":375,\"radius\":22,\"zindex\":2,\"buttonType\":2,\"iconName\":\"Temperature.png\",\"room\":\"\",\"hm_id\":\"65555\",\"hm_idH\":\"\",\"charts\":{\"navigator\":\"false\",\"percentaxis\":\"true\",\"period\":\"72\",\"theme\":\"\",\"range\":\"24\",\"scrollbar\":\"true\",\"grouping\":\"true\",\"legend\":\"inline\",\"zoom\":\"true\",\"loader\":\"false\"}}"
                 },
                 "style" : {
                     "left" : 582,
@@ -430,13 +310,7 @@ vis.createDemoView = function () {
             "w00018": {
                 "tpl": "tplJquiButtonLink",
                 "data": {
-                    "hm_id": 'nothing_selected',
-                    "digits": "",
-                    "factor": 1,
-                    "min": 0,
-                    "max": 1,
-                    "step": 0.01,
-                    "buttontext": vis.demoTranslate("Edit"),
+                    "buttontext": _("Edit"),
                     "href": "edit.html"
                 },
                 "style": {

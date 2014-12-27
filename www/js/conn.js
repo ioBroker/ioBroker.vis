@@ -189,6 +189,8 @@ var servConn = {
     writeFile: function (filename, data, callback) {
         if (!this._checkConnection('writeFile', arguments)) return;
 
+        if (typeof data == 'object') data = JSON.stringify(data, null, 2);
+
         this._socket.emit('writeFile', 'vis.0', filename, data, function (err) {
             if (callback) callback(err);
         });

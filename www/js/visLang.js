@@ -16,14 +16,14 @@
 
 // Languages
 $.extend(systemDictionary, {
-    'Views': {'en': 'Views', 'de': 'Views', 'ru': 'Страницы'},
-    'Widgets': {'en': 'Widgets', 'de': 'Widgets', 'ru': 'Элементы'},
-    'CSS Inspector': {'en': 'CSS Inspector', 'de': 'CSS Inspektor', 'ru': 'CSS'},
-    'Misc': {'en': 'Misc', 'de': 'Versch.', 'ru': 'Разное'},
-    'Info': {'en': 'Info', 'de': 'Info', 'ru': 'Инфо'},
+    'Views':              {'en': 'Views', 'de': 'Views', 'ru': 'Страницы'},
+    'Widgets':            {'en': 'Widgets', 'de': 'Widgets', 'ru': 'Элементы'},
+    'CSS Inspector':      {'en': 'CSS Inspector', 'de': 'CSS Inspektor', 'ru': 'CSS'},
+    'Misc':               {'en': 'Misc', 'de': 'Versch.', 'ru': 'Разное'},
+    'Info':               {'en': 'Info', 'de': 'Info', 'ru': 'Инфо'},
     'default_filter_key': {'en': 'Default filter:', 'de': 'Voreinge. Filter:', 'ru': 'Фильтр по умолчанию:'},
-    'class': {'en': 'CSS Class', 'de': 'CSS Klasse:', 'ru': 'CSS Класс'},
-    'Snapping': {'en': 'Snapping', 'de': 'Ausrichten', 'ru': 'Опорные точки'},
+    'class':              {'en': 'CSS Class', 'de': 'CSS Klasse:', 'ru': 'CSS Класс'},
+    'Snapping':           {'en': 'Snapping', 'de': 'Ausrichten', 'ru': 'Опорные точки'},
     'disabled': {'en': 'Disabled', 'de': 'Inaktiv', 'ru': 'не активно'},
     'elements': {'en': 'Elements', 'de': 'Elemente', 'ru': 'элементы'},
     'grid': {'en': 'Grid', 'de': 'Raster', 'ru': 'таблица'},
@@ -54,7 +54,7 @@ $.extend(systemDictionary, {
     'create_instance': {'en': 'Create instance', 'de': 'Browser ID erzeugen', 'ru': 'Создать ID броузера'},
     'add_widget': {'en': 'Add widget', 'de': 'Einfügen', 'ru': 'Добавить'},
     'del_widget': {'en': 'Delete widget', 'de': 'Löschen', 'ru': 'Удалить'},
-    'dup_widget': {'en': 'Copy to:', 'de': 'Kopieren nach:', 'ru': 'Скопировать в:'},
+    'dup_widget': {'en': 'Copy to:', 'de': 'Kopieren nach:', 'ru': 'Копия в:'},
     'Clipboard: ': {'en': 'Clipboard:', 'de': 'Zwischenablage:', 'ru': 'Буфер:'},
     'New:': {'en': 'New:', 'de': 'Neues:', 'ru': 'Новое:'},
     'Confirm widget deletion': {
@@ -82,26 +82,6 @@ $.extend(systemDictionary, {
         'de': 'Wirklich %s Widget löschen?',
         'ru': 'Вы действительно хотите удалить элемент %s?'
     },
-    'Update found, loading new Files...': {
-        'en': 'Update found.<br/>Loading new Files...',
-        'de': 'Neue Version gefunden.<br/>Lade neue Dateien...',
-        'ru': 'Обнаружено Обновление.<br/>Загружаю новые файлы...'
-    },
-    'error - View doesn\'t exist': {
-        'en': 'View doesn\'t exist!',
-        'de': 'View existiert nicht!',
-        'ru': 'Страница не существует!'
-    },
-    'no views found on server.\nCreate new %s ?': {
-        'en': 'no views found on server.\nCreate new %s?',
-        'de': 'Keine Views gefunden.\n%s neu erstellen?',
-        'ru': 'На сервере не найдено никаких страниц. Создать %s?'
-    },
-    'No Views found on Server': {
-        'en': 'No Views found on Server',
-        'de': 'Keine Views gefunden am Server.',
-        'ru': 'На сервере не найдено никаких страниц.'
-    },
     'Hide widget description': {
         'en': 'Hide widget description',
         'de': 'Zeige Widget-Beschreibung nicht',
@@ -112,10 +92,10 @@ $.extend(systemDictionary, {
     'Resolution': {'en': 'Resolution:', 'de': 'Auflösung:', 'ru': 'Разрешение:'},
     'widget_doc': {'en': 'Widget help', 'de': 'Widgethilfe', 'ru': 'Помощь'},
     'Add Widget:': {'en': 'Add Widget:', 'de': 'Widget einf&uuml;gen:', 'ru': 'Добавить элемент:'},
-    'Inspecting Widget:': {'en': 'Inspecting Widget:', 'de': 'Widget inspizieren:', 'ru': 'Редактировать элемет:'},
-    'Widget Attributes:': {'en': 'Widget Attributes:', 'de': 'Widget-Eigenschaften:', 'ru': 'Свойства элемета:'},
-    'filter_key': {'en': 'Filter key:', 'de': 'Filterwort:', 'ru': 'Фильтр:'},
-    'Show in views:': {'en': 'Show in views:', 'de': 'Zeige in Views:', 'ru': 'Показать на страницах:'},
+    'Inspecting Widget:': {'en': 'Inspecting Widget:', 'de': 'Widget inspizieren:', 'ru': 'Редактировать элемент:'},
+    'Widget Attributes:': {'en': 'Widget Attributes:', 'de': 'Widget-Eigenschaften:', 'ru': 'Свойства элемента:'},
+    'filterkey': {'en': 'Filter key', 'de': 'Filterwort', 'ru': 'Фильтр'},
+    'views': {'en': 'Show in views', 'de': 'Zeige in Views', 'ru': 'Показать на страницах'},
     'Background class': {'en': 'Background class:', 'de': 'Hintergrundklasse:', 'ru': 'CSS класс фона:'},
     'Background': {'en': 'Background:', 'de': 'Hintergrund:', 'ru': 'CSS класс фона:'},
     'Webseite': {'en': 'Web link', 'de': 'Webseite', 'ru': 'Веб сайт'},
@@ -161,20 +141,6 @@ $.extend(systemDictionary, {
         'de': 'Bitte einen Namen für die neue View eingeben!',
         'ru': 'Пожалуста введите имя для новой страницы!'
     },
-    'No connection to Server': {
-        'en': 'No connection to Server',
-        'de': 'Keine Verbindung zum Server',
-        'ru': 'Нет соединения с сервером'
-    },
-    'Loading Widget-Sets... <span id="widgetset_counter"></span>': {
-        'en': 'Loading Widget-Sets... <span id="widgetset_counter"></span>',
-        'de': 'Lade Widget-Sätze... <span id="widgetset_counter"></span>',
-        'ru': 'Загрузка наборов элементов... <span id="widgetset_counter"></span>'},
-    ' done.<br/>': {'en': ' done.<br/>', 'de': ' - erledigt.<br/>', 'ru': '. Закончено.<br/>'},
-    '<br/>Loading Views...<br/>': {'en': '<br/>Loading Views...<br/>', 'de': '<br/>Lade Views...<br/>', 'ru': '<br/>Загрузка пользовательских страниц...<br/>'},
-    'Connecting to Server...<br/>': {'en': 'Connecting to Server...<br/>', 'de': 'Verbinde mit Server...<br/>', 'ru': 'Соединение с сервером...<br/>'},
-    'Loading data objects...': {'en': 'Loading data...', 'de': 'Lade Daten...', 'ru': 'Загрузка данных...'},
-    'Loading data values...': {'en': 'Loading values...<br>', 'de': 'Lade Werte...<br>', 'ru': 'Загрузка значений...<br>'},
     'Instance ID': {'en': 'Instance ID ', 'de': 'Instanz ID ', 'ru': 'Instance ID '},
     'Single view': {'en': 'Single view', 'de': 'Nur in aktueller View', 'ru': 'Только на текущей странице'},
 //                'Single mode'      : {'en' : 'Only in actual view',  'de': 'Nur in aktueller View', 'ru': 'Только на текущей странице'},
@@ -198,10 +164,9 @@ $.extend(systemDictionary, {
      */'license5': {
         'en': 'HomeMatic and the HomeMatic Logo are the registered trademarks of eQ-3 AG',
         'de': 'HomeMatic und das HomeMatic Logo sind eingetragene Warenzeichen der eQ-3 AG',
-        'ru': 'HomeMatic и HomeMatic логотип являются зарегистрированными тоговыми марками фирмы eQ-3 Inc.'},
-    'All changes are saved locally. To reset changes clear the cache.': {
-        'en': 'All changes are saved locally. To reset changes clear the browser cache.',
-        'de': 'Alle Änderungen sind lokal gespeichert. Um Änderungen zu löschen, lösche Browsercache.',
-        'ru': 'Все изменения сохранены локально. Для отмены локальных изменений очистите кеш броузера.'}
+        'ru': 'HomeMatic и HomeMatic логотип являются зарегистрированными тоговыми марками фирмы eQ-3 Inc.'
+    },
+    'group_fixed':  {'en': 'Fixed',  'de': 'Fixt',      'ru': 'Фиксированные'},
+    'group_common': {'en': 'Common', 'de': 'Allgemein', 'ru': 'Общие'},
 });
 

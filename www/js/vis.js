@@ -14,11 +14,10 @@
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
         'No connection to Server': {'en': 'No connection to Server', 'de': 'Keine Verbindung zu Server', 'ru': 'Нет соединения с сервером'},
-        ' done.<br/>': {'en': ' done.<br/>', 'de': ' - erledigt.<br/>', 'ru': '. Закончено.<br/>'},
-        '<br/>Loading Views...<br/>': {'en': '<br/>Loading Views...<br/>', 'de': '<br/>Lade Views...<br/>', 'ru': '<br/>Загрузка пользовательских страниц...<br/>'},
-        'Connecting to Server...<br/>': {'en': 'Connecting to Server...<br/>', 'de': 'Verbinde mit Server...<br/>', 'ru': 'Соединение с сервером...<br/>'},
+        'Loading Views...': {'en': 'Loading Views...', 'de': 'Lade Views...', 'ru': 'Загрузка пользовательских страниц...'},
+        'Connecting to Server...': {'en': 'Connecting to Server...', 'de': 'Verbinde mit Server...', 'ru': 'Соединение с сервером...'},
         'Loading data objects...': {'en': 'Loading data...', 'de': 'Lade Daten...', 'ru': 'Загрузка данных...'},
-        'Loading data values...': {'en': 'Loading values...<br/>', 'de': 'Lade Werte...<br/>', 'ru': 'Загрузка значений...<br/>'},
+        'Loading data values...':  {'en': 'Loading values...', 'de': 'Lade Werte...', 'ru': 'Загрузка значений...'},
         'error - View doesn\'t exist': {'en': 'View doesn\'t exist!', 'de': 'View existiert nicht!', 'ru': 'Страница не существует!'},
         'No Views found on Server': {
             'en': 'No Views found on Server',
@@ -45,10 +44,10 @@ if (typeof systemDictionary !== 'undefined') {
             'de': 'Neue Version gefunden.<br/>Lade neue Dateien...',
             'ru': 'Обнаружено Обновление.<br/>Загружаю новые файлы...'
         },
-        'Loading Widget-Sets... <span id="widgetset_counter"></span>': {
-            'en': 'Loading Widget-Sets... <span id="widgetset_counter"></span>',
-            'de': 'Lade Widget-Sätze... <span id="widgetset_counter"></span>',
-            'ru': 'Загрузка наборов элементов... <span id="widgetset_counter"></span>'}
+        'Loading Widget-Sets...': {
+            'en': 'Loading Widget-Sets...',
+            'de': 'Lade Widget-Sätze...',
+            'ru': 'Загрузка наборов элементов...'}
     });
 }
 
@@ -173,20 +172,21 @@ var vis = {
                     var wset = vis.views[view].widgets[id].widgetSet;
                     widgetSets.push(wset);
 
-                    // Add dependecies
-                    for (var u = 0, ulen = widgetSetsObj[wset].depends.length; u < ulen; u++) {
-                        if (widgetSets.indexOf(widgetSetsObj[wset].depends[u]) == -1) {
-                            widgetSets.push(widgetSetsObj[wset].depends[u]);
+                    // Add dependencies
+                    if (widgetSetsObj[wset]) {
+                        for (var u = 0, ulen = widgetSetsObj[wset].depends.length; u < ulen; u++) {
+                            if (widgetSets.indexOf(widgetSetsObj[wset].depends[u]) == -1) {
+                                widgetSets.push(widgetSetsObj[wset].depends[u]);
+                            }
                         }
                     }
-
                 }
             }
         }
         return widgetSets;
     },
     loadWidgetSets: function (callback) {
-        this.showWaitScreen(true, 'Loading Widget-Sets... <span id="widgetset_counter"></span>', null, 20);
+        this.showWaitScreen(true, _('Loading Widget-Sets...') + ' <span id="widgetset_counter"></span>', null, 20);
         var arrSets = [];
 
         // Get list of used widget sets. if Edit mode list is null.
@@ -417,7 +417,7 @@ var vis = {
             window.location.href = './edit.html' + window.location.search;
         }
         else {
-            if (confirm(_("no views found on server.\nCreate new %s ?", "vis-views" + vis.viewFileSuffix + ".json"))) {
+            if (confirm(_("no views found on server.\nCreate new %s ?", 'vis-views' + vis.viewFileSuffix + ".json"))) {
                 vis.views = {};
                 vis.views["DemoView"] = vis.createDemoView ? vis.createDemoView() : {settings: {style: {}}, widgets: {}};
                 vis.saveRemote(function () {
@@ -636,30 +636,31 @@ var vis = {
             }, widget.data))
         };
         //console.log(widget);
-        // Register hm_id to detect changes
-        // if (widget.data.hm_id != 'nothing_selected')
-        //   $.homematic("advisState", widget.data.hm_id, widget.data.hm_wid);
+        // Register oid to detect changes
+        // if (widget.data.oid != 'nothing_selected')
+        //   $.homematic("advisState", widget.data.oid, widget.data.hm_wid);
 
-        var widgetData = this.widgets[id]["data"];
+        var widgetData = this.widgets[id].data;
 
         try {
         // Append html element to view
-            if (widget.data && widget.data.hm_id) {
-                $("#visview_" + view).append(can.view(widget.tpl, {
-                    hm:   this.states[widget.data.hm_id + '.val'],
-                    ts:   this.states[widget.data.hm_id + '.ts'],
-                    ack:  this.states[widget.data.hm_id + '.ack'],
-                    lc:   this.states[widget.data.hm_id + '.lc'],
+            if (widget.data && widget.data.oid) {
+                $('#visview_' + view).append(can.view(widget.tpl, {
+                    val:  this.states[widget.data.oid + '.val'],
+                    ts:   this.states[widget.data.oid + '.ts'],
+                    ack:  this.states[widget.data.oid + '.ack'],
+                    lc:   this.states[widget.data.oid + '.lc'],
                     data: widgetData,
                     view: view
                 }));
-            }else {
-                $("#visview_" + view).append(can.view(widget.tpl, {data: widgetData, view: view}));
+            } else {
+                $('#visview_' + view).append(can.view(widget.tpl, {data: widgetData, view: view}));
             }
+
             if (!this.editMode) {
                 if (widget.data.filterkey && widget.data.filterkey != "" && this.viewsActiveFilter[view].length > 0 &&  this.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
                     var mWidget = document.getElementById(id);
-                    $("#" + id).hide();
+                    $('#' + id).hide();
                     if (mWidget &&
                         mWidget._customHandlers &&
                         mWidget._customHandlers.onHide) {
@@ -837,14 +838,19 @@ var vis = {
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
-        this.showWaitScreen(true, "<br/>Loading Views...<br/>", null, 12.5);
-        this.conn.readFile("vis-views" + vis.viewFileSuffix + ".json", function (err, data) {
-            if (err) {
-                alert("vis-views" + vis.viewFileSuffix + ".json" + " " + err);
-            }
+        this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
+        this.conn.readFile('vis-views' + vis.viewFileSuffix + '.json', function (err, data) {
+            if (err) alert('vis-views' + vis.viewFileSuffix + '.json' + ' ' + err);
+
             if (data) {
-                if (typeof data == "string") {
-                    that.views = JSON.parse(data);
+                if (typeof data == 'string') {
+                    try {
+                        that.views = JSON.parse(data);
+                    } catch(e) {
+                        console.log('Cannot parse views file "' + 'vis-views' + vis.viewFileSuffix + '.json');
+                        alert('Cannot parse views file "' + 'vis-views' + vis.viewFileSuffix + '.json');
+                        that.views = null;
+                    }
                 } else {
                     that.views = data;
                 }
@@ -852,12 +858,7 @@ var vis = {
                 that.views = null;
             }
 
-            if (callback) {
-                callback.call(that, callbackArg);
-            }
-            if (!that.views) {
-                //alert("No Views found on Server");
-            }            
+            if (callback) callback.call(that, callbackArg);
         });       
     },
     saveRemoteActive: false,
@@ -875,7 +876,7 @@ var vis = {
             this.syncWidget(this.activeWidget);
         }
 
-        this.conn.writeFile("vis-views" + this.viewFileSuffix + ".json", this.views, function () {
+        this.conn.writeFile('vis-views' + this.viewFileSuffix + ".json", JSON.stringify(this.views, null, 2), function () {
             that.saveRemoteActive = false;
             if (cb) cb();
             //console.log("Saved views on Server");
@@ -953,10 +954,10 @@ var vis = {
         if (isShow) {
             $(waitScreen).show();
             if (newText !== null && newText !== undefined) {
-                $('#waitText').html(_(newText));
+                $('#waitText').html(newText);
             }
             if (appendText !== null && appendText !== undefined) {
-                $('#waitText').append(_(appendText));
+                $('#waitText').append(appendText);
             }
             if (step !== undefined) {
                 this.waitScreenVal += step;
@@ -994,7 +995,7 @@ if ('applicationCache' in window) {
     window.addEventListener('load', function (e) {
         window.applicationCache.addEventListener('updateready', function (e) {
             if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-                vis.showWaitScreen(true, null, 'Update found, loading new Files...', 100);
+                vis.showWaitScreen(true, null, _('Update found, loading new Files...'), 100);
                 jQuery("#waitText").attr("id", "waitTextDisabled");
                 jQuery(".vis-progressbar").hide();
                 try {
@@ -1058,7 +1059,7 @@ if ('applicationCache' in window) {
         // Init edit dialog
         if (vis.editMode && vis.editInit) vis.editInit();
 
-        vis.showWaitScreen(true, null, "Connecting to Server...<br/>", 0);
+        vis.showWaitScreen(true, null, _('Connecting to Server...') + '<br/>', 0);
 
         function compareVersion (instVersion, availVersion) {
             var instVersionArr  = instVersion.replace(/beta/, '.').split('.');
@@ -1107,7 +1108,7 @@ if ('applicationCache' in window) {
                             }
                         });
 
-                        vis.showWaitScreen(true, 'Loading data values...', null, 20);
+                        vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
                     }
 
                     // Read all states from server
@@ -1145,7 +1146,7 @@ if ('applicationCache' in window) {
                             if (vis.editMode) {
                                 /* socket.io */
                                 if (vis.isFirstTime) {
-                                    vis.showWaitScreen(true, 'Loading data objects...', null, 20);
+                                    vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
                                 }
                                 // Read all data objects from server
                                 vis.conn.getObjects(function (err, data) {
