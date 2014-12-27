@@ -132,21 +132,14 @@ var servConn = {
                 }
                 //that._autoReconnect();
             });
-            that._socket.on('objectChange', function () {
-                if (that._connCallbacks.onObjectChange) that._connCallbacks.onObjectChange();
+            that._socket.on('objectChange', function (id, obj) {
+                if (that._connCallbacks.onObjectChange) that._connCallbacks.onObjectChange(id, obj);
             });
 
-            that._socket.on('stateChanged', function (obj) {
-                if (obj == null) return;
+            that._socket.on('stateChanged', function (id, state) {
+                if (!id || state == null) return;
 
-                var o = {};
-                o.name = obj[0]+"";
-                o.val  = obj[1];
-                o.ts   = obj[2];
-                o.ack  = obj[3];
-                o.lc   = obj[4];
-
-                if (that._connCallbacks.onUpdate) this._connCallbacks.onUpdate(o);
+                if (that._connCallbacks.onUpdate) this._connCallbacks.onUpdate(id, state);
             });
         } else {
             //console.log("socket.io not initialized");

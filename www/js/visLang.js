@@ -57,6 +57,8 @@ $.extend(systemDictionary, {
     'dup_widget': {'en': 'Copy to:', 'de': 'Kopieren nach:', 'ru': 'Копия в:'},
     'Clipboard: ': {'en': 'Clipboard:', 'de': 'Zwischenablage:', 'ru': 'Буфер:'},
     'New:': {'en': 'New:', 'de': 'Neues:', 'ru': 'Новое:'},
+    "name": {"en": "Name", "de": "Name", "ru": "Имя"},
+    "Select color": {"en": "Select color", "de": "Farbe auswählen", "ru": "Выбрать цвет"},
     'Confirm widget deletion': {
         'en': 'Confirm widget deletion',
         'de': 'Bestätigung',

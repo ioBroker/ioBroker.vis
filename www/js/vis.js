@@ -86,8 +86,6 @@ var vis = {
     navChangeCallbacks:     [],
     editMode:               false,
 
-    // Array with all objects (Descriptions of objects)
-    objects:                null,
     setValue: function (id, val) {
         // Check if this ID is a programm
         var d = new Date();
@@ -911,35 +909,6 @@ var vis = {
     onWakeUp: function (callback) {
         this.wakeUpCallbacks.push(callback);
     },
-    getObjDesc: function (id) {
-        if (this.objects[id] !== undefined) {
-            var parent = "";
-            var p = this.objects[id]["Parent"];
-            //console.log('parent metaObject', id, p, vis.objects[p]);
-            if (p !== undefined && this.objects[p]["DPs"] !== undefined) {
-                parent = this.objects[p]["Name"] + "/";
-            } else if (this.objects[id]["TypeName"] !== undefined) {
-                if (this.objects[id]["TypeName"] == "VARDP") {
-                    parent = _("Variable") + " / ";
-                } else if (this.objects[id]["TypeName"] == "PROGRAM") {
-                    parent = _("Program") + " / ";
-                }
-            }
-
-            if (this.objects[id]["Address"] !== undefined) {
-                return parent + vis.objects[id]["Name"] + "/" + this.objects[id]["Address"];
-            } else if (this.objects[id]["Name"]) {
-                return parent + this.objects[id]["Name"];
-            } else if (this.objects[id]["name"]) {
-                return parent + this.objects[id]["name"];
-            }
-        } else if (id == 41) {
-            return _("Service messages");
-        } else if (id == 40) {
-            return _("Alarms");
-        }
-        return id;
-    },
     waitScreenVal: 0,
     showWaitScreen: function (isShow, appendText, newText, step) {
         var waitScreen = document.getElementById("waitScreen");
@@ -1169,32 +1138,24 @@ if ('applicationCache' in window) {
             onRefresh: function () {
                 window.location.reload();
             },
-            onUpdate: function (obj) {
-                var id;
+            onUpdate: function (id, state) {
+                var o = {};
                 // Check new model
-                if (obj != null && obj.name && (id = obj.name/*.replace(/\./g, '\\.')*/) && vis.states[id + '.val'] !== undefined) {
-                    var obj = data[id];
-                    var o = {};
-                    o[id + '.val'] = obj.val;
-                    o[id + '.ts']  = obj.ts;
-                    if (vis.states[id + '.val'] !== undefined) {
-                        o[id + '.ack'] = obj.ack;
-                        o[id + '.lc']  = obj.lc;
-                    }
-                    try {
-                        vis.states.attr(o);
-                    } catch (e) {
-                        vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
-                    }
-
+                o[id + '.val'] = state.val;
+                o[id + '.ts']  = state.ts;
+                if (vis.states[id + '.val'] !== undefined) {
+                    o[id + '.ack'] = state.ack;
+                    o[id + '.lc']  = state.lc;
+                }
+                try {
                     vis.states.attr(o);
+                } catch (e) {
+                    vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                }
 
-                    // Inform other widgets, that do not support canJS
-                    for (var i = 0, len = vis.onChangeCallbacks.length; i < len; i++) {
-                        vis.onChangeCallbacks[i].callback(vis.onChangeCallbacks[i].arg, name, obj.val, obj.ack || (vis.objects[name] && vis.objects[name]["TypeName"] == "VARDP"));
-                    }
-                } else {
-                    //console.log('Datenpunkte sind noch nicht geladen!');
+                // Inform other widgets, that do not support canJS
+                for (var i = 0, len = vis.onChangeCallbacks.length; i < len; i++) {
+                    vis.onChangeCallbacks[i].callback(vis.onChangeCallbacks[i].arg, id, state.val, state.ack);
                 }
             },
             onAuth: function (message, salt) {

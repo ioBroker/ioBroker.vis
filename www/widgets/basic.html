@@ -4,13 +4,13 @@
     // Add words for basic widgets
     $.extend(true, systemDictionary, {
         // Bars
-        "src"              : {"en" : "Source",              "de": "Quelle",              "ru": "Адрес"},
-        "refreshInterval"  : {"en" : "Refresh interval(ms)","de": "Updatezeit(ms)",      "ru": "Интервал обновления(ms)"},
-        "is_comma"         : {"en" : "Divider comma",       "de": "Kamme als Trennung",  "ru": "Запятая-разделитель"},
-        "digits"           : {"en" : "Digits after comma",  "de": "Zeichen nach Komma",  "ru": "Знаков после запятой"},
-        "oid"              : {"en" : "Object ID",           "de": "Object ID",           "ru": "ID Объекта"},
-        "html_prepend"     : {"en" : "Prepend value",       "de": "Voranstellen HTML",   "ru": "Префикс значения"},
-        "html_append"      : {"en" : "Append to value",     "de": "HTML anhängen",       "ru": "Суффикс значения"},
+        "src":             {"en": "Source",               "de": "Quelle",              "ru": "Адрес"},
+        "refreshInterval": {"en": "Refresh interval(ms)", "de": "Updatezeit(ms)",      "ru": "Интервал обновления(ms)"},
+        "is_comma":        {"en": "Divider comma",        "de": "Kamme als Trennung",  "ru": "Запятая-разделитель"},
+        "digits":          {"en": "Digits after comma",   "de": "Zeichen nach Komma",  "ru": "Знаков после запятой"},
+        "oid":             {"en": "Object ID",            "de": "Object ID",           "ru": "ID Объекта"},
+        "html_prepend":    {"en": "Prepend value",        "de": "Voranstellen HTML",   "ru": "Префикс значения"},
+        "html_append":     {"en": "Append to value",      "de": "HTML anhängen",       "ru": "Суффикс значения"},
         "html_append_singular": {
             "en" : "Append to value (Singular)",
             "de": "HTML anhängen (Singulär)",
@@ -21,12 +21,23 @@
             "de": "HTML anhängen(Plüral)",
             "ru": "Суффикс значения(множ.ч.)"
         },
-        "factor"           : {"en" : "Multiplex factor",     "de": "Multiplikation",     "ru": "Множитеть"},
-        "class_true"       : {"en" : "Class if quality 'true'", "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
-        "class_false"      : {"en" : "Class if quality 'false'", "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
-        "test_html"        : {"en" : "Text for test",        "de": "Testtext",           "ru": "Тестовый текст"},
-        "html"             : {"en" : "HTML",                 "de": "HTML",               "ru": "HTML"},
-        "oid.quality"      : {"en" : "Quality ID",           "de": "Qualität ID",        "ru": "ID-Качество"}
+        "factor":          {"en": "Multiplex factor",      "de": "Multiplikation",     "ru": "Множитеть"},
+        "class_true":      {"en": "Class if quality 'true'", "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
+        "class_false":     {"en": "Class if quality 'false'", "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
+        "test_html":       {"en": "Text for test",         "de": "Testtext",           "ru": "Тестовый текст"},
+        "html":            {"en": "HTML",                  "de": "HTML",               "ru": "HTML"},
+        "oid.quality":     {"en": "Quality ID",            "de": "Qualität ID",        "ru": "ID-Качество"},
+        "title":           {"en": "Title",                 "de": "Titel",              "ru": "Заголовок"},
+        "title_font":      {"en": "Title font name",       "de": "Titelschriftname",   "ru": "Шрифт заголовка"},
+        "title_color":     {"en": "Title color",           "de": "Titelfarbe",         "ru": "Цвет заголовка"},
+        "title_back":      {"en": "Title backg. color",    "de": "Titelhintergrund",   "ru": "Цвет фона текста"},
+        "title_top":       {"en": "Title top padding",     "de": "Titel-Oben-Abstand", "ru": "Отступ заголовка сверху"},
+        "title_left":      {"en": "Title left padding",    "de": "Titel-Links-Abstand", "ru": "Отступ заголовка слева"},
+        "header_height":   {"en": "Header height",         "de": "Kopfhöhe",           "ru": "Высота заголовока"},
+        "header_color":    {"en": "Header color",          "de": "Kopffarbe",          "ru": "Цвет фона заголовка"},
+        "refreshOnWakeUp": {"en": "Refresh on wake up",    "de": "Update bei Aufwachen", "ru": "Обновлять при выходе из сна"},
+        "refreshOnViewChange": {"en": "Refresh on view change", "de": "Update bei Viewwechsel", "ru": "Обновлять при смене страницы"},
+        "src_":            {"en": "Page URL, by value=",   "de": "Frame URL falls Wert=", "ru": "URL страницы, значение="}
     });
 
     vis.binds.stateful = {
@@ -690,14 +701,14 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplStatefulIFrame8" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - iFrame 8" data-vis-attrs="oid;refreshInterval;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
+<script type="text/ejs" id="tplStatefulIFrame8" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - iFrame 8" data-vis-attrs="oid;refreshInterval;src_(0-7)">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
-            <div class="editmode-helper" />
+            <div class="editmode-helper"/>
         <% } %>
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
-                <div class="editmode-helper" />
+                <div class="editmode-helper"/>
             <% } %>
             <%
                 var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];

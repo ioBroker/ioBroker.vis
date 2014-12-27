@@ -57,6 +57,7 @@
     <script type="text/javascript" src="js/vis.js"></script>
     <script type="text/javascript" src="js/visEditWelcome.js"></script>
     <script type="text/javascript" src="js/visEdit.js"></script>
+    <script type="text/javascript" src="js/visEditExt.js"></script>
     <script type="text/javascript" src="js/visLang.js"></script>
     <!--script type="text/javascript" src="js/visEditExt.js"></script-->
     <!--script type="text/javascript" src="js/visWizard.js"></script-->
@@ -672,7 +673,7 @@
                 </div>
             </div>
 
-            <div class="vis-edit-tab" id="tabs-4">
+            <div class="vis-edit-tab" id="tabs-4" style="overflow-x: hidden">
                 <h4 class="translate">Add Widget:</h4>
                 <div style="width:103px; display:inline-block" class="translate">Widget Set:</div>
                 <select id="select_set" class="vis-editor" data-multiselect-width="370" data-multiselect-height="400"></select></br>
@@ -693,24 +694,7 @@
                         </td></tr>
                     </table>
                     <h4 class="translate">Widget Attributes:</h4>
-                    <!--table id="widget_attrs_fix">
-                        <tr><th class="widget_attrs_header"></th><th></th></tr>
-                        <tr id="inspect_comment_tr">
-                            <td  class="vis-edit-td-caption translate">comment</td><td class="vis-edit-td-field"><input type="text" id="inspect_comment" class="vis-inspect-widget vis-edit-textbox"/></td>
-                        </tr>
-                        <tr id="inspect_class_tr">
-                            <td class="vis-edit-td-caption translate">class</td><td class="vis-edit-td-field"><input type="text" id="inspect_class" class="vis-inspect-widget vis-edit-textbox"/></td>
-                        </tr>
-                        <tr>
-                            <td class="vis-edit-td-caption translate">filter_key</td><td class="vis-edit-td-field"><input id="inspect_filterkey" class="vis-inspect-widget vis-edit-textbox"/></td>
-                        </tr>
-                        <tr>
-                            <td class="vis-edit-td-caption translate">show_on_views</td><td class="vis-edit-td-field"><select id="inspect_views" multiple="multiple" class="vis-edit-select"></select></td>
-                        </tr>
-
-                    </table>
-                    <hr-->
-                    <table style="width: 100%">
+                    <table style="width: 100%; border: 0px">
                         <colgroup>
                             <col width="*"/>
                             <col width="300px"/>

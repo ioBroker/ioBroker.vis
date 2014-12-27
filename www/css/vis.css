@@ -224,13 +224,12 @@ a.ui-dialog-titlebar-restore {
     pointer-events:none;
 }
 .vis-edit-td-caption {
-	width: 90px;
 }
 .vis-edit-td-field {
 	width: auto;
 }
 .vis-edit-textbox {
-	width: 285px;
+	width: 100%
 }
 .vis-edit-select {
 	width: auto;
