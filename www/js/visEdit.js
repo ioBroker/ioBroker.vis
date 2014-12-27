@@ -716,58 +716,62 @@ vis = $.extend(true, vis, {
         return line;
     },
     editViewName: function (widget, wid_attr) {
-        // View selector
-        $('#widget_attrs').append('<tr id="option_' + wid_attr + '" class="vis-add-option"><td>' + _(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/></td></tr>');
+        var that = this;
+        var line = {
+            input: '<input type="text" id="inspect_' + wid_attr + '"/>',
+            init:  function (attr, val) {
+                // autocomplete for filter key
+                var $attr = $('#inspect_' + attr);
 
-        // autocomplete for filter key
-        var elem = document.getElementById('inspect_'+wid_attr);
-        if (elem) {
-            elem._save = function () {
-                if (this.timer) {
-                    clearTimeout(this.timer);
-                }
+                if ($attr.length) {
+                    $attr.data('data_save', function () {
+                        var $this = $(this);
 
-                this.timer = _setTimeout(function (elem_) {
-                    // If really changed
-                    var $this = $(elem_);
-                    var attr = $this.attr('id').slice(8);
-                    vis.widgets[vis.activeWidget].data.attr(attr, $this.val());
-                    vis.views[vis.activeView].widgets[vis.activeWidget].data[attr] = $this.val();
-                    var bt = $('#inspect_buttontext');
-                    if (bt && bt.val() == '') {
-                        bt.val($this.val().charAt(0).toUpperCase() + $this.val().slice(1).toLowerCase()).trigger('change');
-                    }
-                    vis.reRenderWidgetEdit(vis.activeWidget);
-                    vis.save();
-                }, 200, this);
-            };
+                        if ($this.data('timer')) clearTimeout($this.data('timer'));
 
-            $(elem).autocomplete({
-                minLength: 0,
-                source: function (request, response) {
-                    var views = [];
-                    for (var v in vis.views) {
-                        views[views.length] = v;
-                    }
-
-                    var data = $.grep(views, function (value) {
-                        return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                        $this.data('timer', _setTimeout(function (elem_) {
+                            // If really changed
+                            var $this = $(elem_);
+                            var attr   = $this.data('data-attr');
+                            var view   = $this.data('data-view');
+                            var widget = $this.data('data-widget');
+                            that.widgets[widget].data.attr(attr, $this.val());
+                            that.views[view].widgets[widget].data[attr] = $this.val();
+                            that.reRenderWidgetEdit(widget);
+                            that.save();
+                        }, 200, this));
                     });
 
-                    response(data);
-                },
-                select: function (/*event, ui*/) {
-                    this._save();
-                },
-                change: function (/*event, ui*/) {
-                    this._save();
+                    $attr.autocomplete({
+                        minLength: 0,
+                        source: function (request, response) {
+                            var views = [];
+                            for (var v in that.views) {
+                                views[views.length] = v;
+                            }
+
+                            var data = $.grep(views, function (value) {
+                                return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                            });
+
+                            response(data);
+                        },
+                        select: function (/*event, ui*/) {
+                            $(this).data('data_save').call(this);
+                        },
+                        change: function (/*event, ui*/) {
+                            $(this).data('data_save').call(this);
+                        }
+                    }).focus(function () {
+                        $(this).autocomplete("search", '');
+                    }).keyup(function () {
+                        $(this).data('data_save').call(this);
+                    });
                 }
-            }).focus(function () {
-                $(this).autocomplete("search", '');
-            }).keyup(function () {
-                this._save();
-            }).val(widget.data[wid_attr]);
-        }
+            }
+        };
+
+        return line;
     },
     editEffects: function (widget, wid_attr) {
         // Effect selector
@@ -1119,8 +1123,10 @@ vis = $.extend(true, vis, {
             });
         } else
         */
-        if (wid_attr === "color") wid_type = "color";
-        if (wid_attr == "oid" || wid_attr.match(/^oid\./)) wid_type = 'id';
+        if (wid_attr == 'color') wid_type = 'color';
+        if (wid_attr == 'oid' || wid_attr.match(/^oid\./)) wid_type = 'id';
+        if (wid_attr.match(/nav_view$/)) wid_type = 'views';
+
         var widgetData = this.views[view].widgets[widget].data;
         var input;
         var line;
@@ -1147,10 +1153,14 @@ vis = $.extend(true, vis, {
                 case 'color':
                     line = this.editColor(widget, (wid_attr + index));
                     break;
+                case 'views':
+                    line = this.editViewName(widget, (wid_attr + index));
+                    break;
                 default:
                     line = '<input type="text" id="inspect_' + (wid_attr + index) + '"/>';
             }
             if (typeof line == 'string') line = {input: line};
+
             if (line[0]) {
                 line[0].attrName  = wid_attr;
                 line[0].attrIndex = index;
@@ -1260,6 +1270,9 @@ vis = $.extend(true, vis, {
                 // Call on change
                 if (typeof line.onchange == 'function') {
                     line.onchange.call($input[0], this.widgets[widget].data[wid_attr]);
+                }
+                if (typeof line.init == 'function') {
+                    line.init.call($input[0], wid_attr, this.widgets[widget].data[wid_attr]);
                 }
             }
 
