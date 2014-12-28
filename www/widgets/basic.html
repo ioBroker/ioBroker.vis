@@ -26,7 +26,7 @@
         "class_false":     {"en": "Class if quality 'false'", "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
         "test_html":       {"en": "Text for test",         "de": "Testtext",           "ru": "Тестовый текст"},
         "html":            {"en": "HTML",                  "de": "HTML",               "ru": "HTML"},
-        "oid.quality":     {"en": "Quality ID",            "de": "Qualität ID",        "ru": "ID-Качество"},
+        "oid-quality":     {"en": "Quality ID",            "de": "Qualität ID",        "ru": "ID-Качество"},
         "title":           {"en": "Title",                 "de": "Titel",              "ru": "Заголовок"},
         "title_font":      {"en": "Title font name",       "de": "Titelschriftname",   "ru": "Шрифт заголовка"},
         "title_color":     {"en": "Title color",           "de": "Titelfarbe",         "ru": "Цвет заголовка"},
@@ -38,7 +38,11 @@
         "refreshOnWakeUp": {"en": "Refresh on wake up",    "de": "Update bei Aufwachen", "ru": "Обновлять при выходе из сна"},
         "refreshOnViewChange": {"en": "Refresh on view change", "de": "Update bei Viewwechsel", "ru": "Обновлять при смене страницы"},
         "src_":            {"en": "Page URL, by value=",   "de": "Frame URL falls Wert=", "ru": "URL страницы, значение="},
-        "nav_view":        {"en": "View to navigate",      "de": "View zum Navigieren", "ru": "Перейти на страницу"}
+        "nav_view":        {"en": "View to navigate",      "de": "View zum Navigieren", "ru": "Перейти на страницу"},
+        "group_effects":   {"en": "Show/Hide Effects",     "de": "Anzeige Effekte",     "ru": "Эффекты появления/исчезнования"},
+        "group_extended":  {"en": "Extended settings",     "de": "Erweiterte Eistellungen", "ru": "Расширенные настройки"},
+        "body-background": {"en": "Background color by changing", "de": "Hintegrund by Wechsel", "ru": "Фон при смене страниц"},
+        "sync":            {"en": "Hide and show together:", "de": "Anzeigen und verbergen gleichzeitig", "ru": "Появления и исчезнование вместе"}
     });
 
     vis.binds.stateful = {
@@ -287,7 +291,7 @@
         checkbox: function (el, numeric) {
             var $this = $(el);
             var oid   = $this.attr('data-oid'); // Object ID
-            var wid   = $this.attr('data-oid.working'); // Work ID
+            var wid   = $this.attr('data-oid-working'); // Work ID
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 // If still working
                 if (wid && (vis.states.attr(wid + '.val') === true)) return;
@@ -764,8 +768,8 @@
 
 
 
-<script type="text/ejs" id="tplHtmlNav" class="vis-tpl" data-vis-set="basic" data-vis-name="navigation - HTML" data-vis-attrs="html;nav_view;sync;hide_effect;hide_duration;hide_options;show_effect;show_duration;show_options;body-background">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:(data.attr('hide_options')?data.attr('hide_options'):{}),duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:(data.attr('show_options')?data.attr('show_options'):{}),duration:data.attr('show_duration')},sync:data.attr('sync'),background:data.attr('body-background')}) %>>
+<script type="text/ejs" id="tplHtmlNav" class="vis-tpl" data-vis-set="basic" data-vis-name="navigation - HTML" data-vis-attrs="html;nav_view;sync/checkbox;body-background/color;group.effects;hide_effect;hide_duration;hide_options;show_effect;show_duration;show_options">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: (data.attr('hide_options') ? data.attr('hide_options') : {}),duration:data.attr('hide_duration')}, showOptions: {effect:data.attr('show_effect'), options: (data.attr('show_options') ? data.attr('show_options') : {}), duration: data.attr('show_duration')}, sync: data.attr('sync'), background: data.attr('body-background')}) %>>
         <div class="vis-widget-body">
             <%== this.data.attr('html') %>
         </div>
@@ -782,8 +786,8 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValueFloat" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Number" data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;digits;is_comma[true]/checkbox;factor[1];oid.quality;class_true;class_false;test_html">
-    <div class="vis-widget <%== (vis.states.attr(this.data['oid.quality'] + ".val") == "true" ||  vis.states.attr(this.data['oid.quality'] + ".val") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
+<script type="text/ejs" id="tplValueFloat" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Number" data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
+    <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + ".val") == "true" ||  vis.states.attr(this.data['oid-quality'] + ".val") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr("html_prepend") %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(vis.states.attr(this.data.oid + ".val")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>

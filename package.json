@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for ioBroker.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "bluefox <bluefox@ccu.io>",
   "contributors": [
       "bluefox <bluefox@ccu.io>"

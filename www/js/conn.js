@@ -16,7 +16,8 @@ var servConn = {
         onConnChange: null,
         onUpdate:     null,
         onRefresh:    null,
-        onAuth:       null
+        onAuth:       null,
+        onCommand:    null
     },
     _authInfo:          null,
     _isAuthDone:        false,
@@ -27,6 +28,7 @@ var servConn = {
     _type:              1, // 0 - SignalR, 1 - socket.io, 2 - local demo
     _timeout:           0, // 0 - use transport default timeout to detect disconnect
     _reconnectInterval: 10000, // reconnect interval
+    namespace:          'vis.0',
     getType: function () {
         return 'socket.io';
     },
@@ -91,6 +93,7 @@ var servConn = {
             });
 
             that._socket.on('connect', function () {
+                that._socket.emit('subscribe', '*');
                 if (that._disconnectTimeout){
                     clearTimeout(that._disconnectTimeout);
                     that._disconnectTimeout = null;
@@ -118,9 +121,10 @@ var servConn = {
                 }
             });
             that._socket.on('reconnect', function () {
+                that._socket.emit('subscribe', '*');
                 //console.log("socket.io reconnect");
                 var offlineTime = (new Date()).getTime() - that._disconnectedSince;
-                //console.log("was offline for " + (offlineTime / 1000) + "s");
+                console.log('was offline for ' + (offlineTime / 1000) + 's');
 
                 // TODO does this make sense?
                 if (offlineTime > 12000) {
@@ -136,13 +140,20 @@ var servConn = {
                 if (that._connCallbacks.onObjectChange) that._connCallbacks.onObjectChange(id, obj);
             });
 
-            that._socket.on('stateChanged', function (id, state) {
-                if (!id || state == null) return;
+            that._socket.on('stateChange', function (id, state) {
+                if (!id || state == null || typeof state != 'object') return;
 
-                if (that._connCallbacks.onUpdate) this._connCallbacks.onUpdate(id, state);
+                if (id == that.namespace + '.command'){
+                    if (that._connCallbacks.onCommand && state.val && !state.val.instance) {
+                        if (that._connCallbacks.onCommand(state.val.instance, state.val.command, state.val.data)) {
+                            // clear state
+                            that.setState(id, '');
+                        }
+                    }
+                } else if (that._connCallbacks.onUpdate) {
+                    that._connCallbacks.onUpdate(id, state);
+                }
             });
-        } else {
-            //console.log("socket.io not initialized");
         }
     },
     getVersion: function (callback) {
@@ -175,18 +186,17 @@ var servConn = {
         }
         if (!this._checkConnection('readFile', arguments)) return;
 
-        this._socket.emit('readFile', 'vis.0', filename, function (err, data) {
+        this._socket.emit('readFile', this.namespace, filename, function (err, data) {
             callback(err, data);
         });
     },
     writeFile: function (filename, data, callback) {
+        var that = this;
         if (!this._checkConnection('writeFile', arguments)) return;
 
         if (typeof data == 'object') data = JSON.stringify(data, null, 2);
 
-        this._socket.emit('writeFile', 'vis.0', filename, data, function (err) {
-            if (callback) callback(err);
-        });
+        this._socket.emit('writeFile', this.namespace, filename, data, callback);
     },
     readDir: function (dirname, callback) {
         //socket.io
@@ -206,7 +216,7 @@ var servConn = {
             console.log('socket.io not initialized');
             return;
         }
-        this._socket.emit('setState', [pointId, value]);
+        this._socket.emit('setState', pointId, value);
     },
     // callback (err, data)
     getStates: function (callback) {
@@ -340,5 +350,8 @@ var servConn = {
                 callback('Cannot read language');
             }
         });
+    },
+    sendCommand: function (instance, command, data) {
+        this.setState(this.namespace + '.command', {instance: instance, command: command, data: data});
     }
 };

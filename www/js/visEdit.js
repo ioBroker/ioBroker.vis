@@ -1,8 +1,8 @@
 /**
- *  DashUI
+ *  ioBroker.vis
  *  https://github.com/hobbyquaker/vis/
  *
- *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
+ *  Copyright (c) 2013-2014 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -910,6 +910,7 @@ vis = $.extend(true, vis, {
         $('#widget_attrs').append('<tr class="vis-add-option"><td colspan="2" class="vis-edit-td-wid_attr">&nbsp</td></tr>');
     },
     editImage: function (widget, wid_attr) {
+        var that = this;
         // Image src
         $('#widget_attrs').append('<tr id="option_' + wid_attr + '" class="vis-add-option"><td>' + _(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
 
@@ -917,7 +918,7 @@ vis = $.extend(true, vis, {
         $("#inspect_" + wid_attr + "_btn").click(function () {
                 $.fm({
                     root:          "www/",
-                    lang:          this.language ,
+                    lang:          that.language,
                     path:          "www/vis/img/",
                     file_filter:   ["gif","png", "bmp", "jpg", "jpeg", "tif", "svg"],
                     folder_filter: false,
@@ -1051,7 +1052,7 @@ vis = $.extend(true, vis, {
         //              select_value1,select_value2,... - dropdown select
         //              hr
         //              br
-        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._]+)(\([0-9-]+\))?(\[.+\])?(\/.+)?/;
+        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([0-9-]+\))?(\[.+\])?(\/.+)?/;
         var view        = this.getViewOfWidget(widget)
         var match       = this.regexAttr.exec(_wid_attr);
 
@@ -1101,7 +1102,7 @@ vis = $.extend(true, vis, {
 
         /*else if (wid_attr_ === "oid" || type == 'id') {
             vis.editObjectID (widget, wid_attr_, widgetFilter);
-        } else if (wid_attr_ === "oid.working") {
+        } else if (wid_attr_ === "oid-working") {
             vis.editObjectID (widget, wid_attr_, 'WORKING');
         } else if (wid_attr_.indexOf ("src") == wid_attr_.length - 3 || type == "image") {
             vis.editImage(widget, wid_attr_);
@@ -1124,7 +1125,7 @@ vis = $.extend(true, vis, {
         } else
         */
         if (wid_attr == 'color') wid_type = 'color';
-        if (wid_attr == 'oid' || wid_attr.match(/^oid\./)) wid_type = 'id';
+        if (wid_attr == 'oid' || wid_attr.match(/^oid-/)) wid_type = 'id';
         if (wid_attr.match(/nav_view$/)) wid_type = 'views';
 
         var widgetData = this.views[view].widgets[widget].data;
@@ -1182,7 +1183,6 @@ vis = $.extend(true, vis, {
     },
     showInspect: function (view, widget) {
         var $widgetAttrs = $('#widget_attrs');
-        this.groupsState = this.groupsState || {};
         var that = this;
         for (var group in this.groups) {
             if (this.groupsState[group] === undefined) this.groupsState[group] = false;
@@ -1324,22 +1324,28 @@ vis = $.extend(true, vis, {
             that.reRenderWidgetEdit(widget);
         });
         
-        $('.group-control').button({
-            text: false,
-            icons: {
-                primary: that.groupsState[group] ? "ui-icon-triangle-1-n" : "ui-icon-triangle-1-s"
-            }
-        }).css({width: 22, height: 22}).click(function () {
+        $('.group-control').each(function () {
             var group = $(this).attr('data-group');
-            that.groupsState[group] = !that.groupsState[group];
-            $(this).button("option", {
-                icons: { primary: that.groupsState[group] ? "ui-icon-triangle-1-n" : "ui-icon-triangle-1-s"}
+            $(this).button({
+                text: false,
+                icons: {
+                    primary: that.groupsState[group] ? "ui-icon-triangle-1-n" : "ui-icon-triangle-1-s"
+                }
+            }).css({width: 22, height: 22}).click(function () {
+                var group = $(this).attr('data-group');
+                that.groupsState[group] = !that.groupsState[group];
+                $(this).button("option", {
+                    icons: { primary: that.groupsState[group] ? "ui-icon-triangle-1-n" : "ui-icon-triangle-1-s"}
+                });
+                if (that.groupsState[group]) {
+                    $('.group-' + group).show();
+                } else {
+                    $('.group-' + group).hide();
+                }
+                if (typeof storage != 'undefined') {
+                    storage.set('groups', JSON.stringify(that.groupsState));
+                }
             });
-            if (that.groupsState[group]) {
-                $('.group-' + group).show();
-            } else {
-                $('.group-' + group).hide();
-            }
         });
     },
     inspectWidget: function (wid, onlyUpdate) {
@@ -1542,7 +1548,7 @@ vis = $.extend(true, vis, {
                     }
                     else if (wid_attr_ === "oid" || type == 'id') {
                         vis.editObjectID (widget, wid_attr_, widgetFilter);
-                    } else if (wid_attr_ === "oid.working") {
+                    } else if (wid_attr_ === "oid-working") {
                         vis.editObjectID (widget, wid_attr_, 'WORKING');
                     } else if (wid_attr_.indexOf ("src") == wid_attr_.length - 3 || type == "image") {
                         vis.editImage(widget, wid_attr_);
@@ -1553,8 +1559,8 @@ vis = $.extend(true, vis, {
                         $('#widget_attrs').append('<tr class="vis-add-option"><td id="option_' + wid_attr_ + '" ></td></tr>');
                         $('#inspect_comment_tr').hide();
                         $('#inspect_class_tr').hide();
-                        $('#option_'+wid_attr_).jweatherCity({
-                            lang: vis.language, currentValue: widget.data[wid_attr_],
+                        $('#option_' + wid_attr_).jweatherCity({
+                            lang: this.language, currentValue: widget.data[wid_attr_],
                             onselect: function (wid, text/*, obj*/) {
                                 vis.widgets[vis.activeWidget].data.attr('weoid', text);
                                 vis.views[vis.activeView].widgets[vis.activeWidget].data['weoid'] = text;
@@ -1676,7 +1682,7 @@ vis = $.extend(true, vis, {
                             if (this.type == "checkbox") {
                                 val = $(this).prop("checked");
                             }
-                            if (attribute == "oid" || attribute == "oid.working") {
+                            if (attribute == "oid" || attribute == "oid-working") {
                                 $("#inspect_" + attribute + "_desc").html(vis.getObjDesc (val));
                             }
                             vis.widgets[vis.activeWidget].data.attr(attribute, val);
@@ -2246,10 +2252,11 @@ vis = $.extend(true, vis, {
         $("#tabs").tabs();
         $("#widget_helper").hide();
 
-        $('#language [value="' + ((typeof systemLang === 'undefined') ? 'en' : (systemLang || 'en')) + '"]').attr('selected', 'selected');
+        $('#language [value="' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + '"]').attr('selected', 'selected');
 
         $("#language").change(function () {
-            if (typeof systemLang === 'undefined') systemLang = $(this).val();
+            that.language = $(this).val();
+            if (typeof systemLang != 'undefined') systemLang = that.language;
             translateAll();
         });
 
@@ -2544,9 +2551,9 @@ vis = $.extend(true, vis, {
             }
         });
         // Bug in firefox or firefox is too slow or too fast
-        setTimeout(function() {
+        /*setTimeout(function() {
 
-            /*if (document.getElementById('select_active_widget')._isOpen === undefined) {
+            if (document.getElementById('select_active_widget')._isOpen === undefined) {
                 $('#select_active_widget').html('<option value="none">' + _('none selected') + '</option>');
                 if (vis.activeView && vis.views && vis.views[vis.activeView] && vis.views[vis.activeView].widgets) {
                     for (var widget in vis.views[vis.activeView].widgets) {
@@ -2555,9 +2562,9 @@ vis = $.extend(true, vis, {
                     }
                 }
                 $('#select_active_widget').multiselect('refresh');
-            }*/
+            }
 
-        }, 10000);
+        }, 10000);*/
 
         // Instances
         if (typeof storage !== 'undefined') {
@@ -2577,7 +2584,7 @@ vis = $.extend(true, vis, {
                                 for (var i = 0; i < ioaddon.whatsNew.length; i++) {
                                     var text = ioaddon.whatsNew[i];
                                     if (typeof text != 'string') {
-                                        text = ioaddon.whatsNew[i][vis.language] || ioaddon.whatsNew[i]['en'];
+                                        text = ioaddon.whatsNew[i][that.language] || ioaddon.whatsNew[i]['en'];
                                     }
                                     // Remove modifier information like (Bluefox) or (Hobbyquaker)
                                     if (text[0] == '(') {
@@ -2595,14 +2602,28 @@ vis = $.extend(true, vis, {
                     }
                 });
             }
+            try {
+                // Load groups state and positions
+                var groups = storage.get('groups');
+                try {
+                    if (groups) this.groupsState = JSON.parse(groups);
+                } catch (e) {
+                    console.log('Cannot parse groups: ' + groups);
+                }
+            } catch (e) {
+
+            }
         }
     },
     editInitNext: function () {
-		// DashUI Editor Init
+		// ioBroker.vis Editor Init
+        var that = this;
 		var sel;
 
-		var keys = Object.keys(vis.views),
-			i, k, len = keys.length;
+		var keys = Object.keys(vis.views);
+        var len  = keys.length;
+        var i;
+        var k;
 
 		keys.sort();
 
@@ -2613,8 +2634,8 @@ vis = $.extend(true, vis, {
 		for (i = 0; i < len; i++) {
 			k = keys[i];
 
-			if (k == vis.activeView) {
-				$("#inspect_view").html(vis.activeView);
+			if (k == this.activeView) {
+				$("#inspect_view").html(this.activeView);
 				sel = " selected";
 			} else {
 				sel = '';
@@ -2633,17 +2654,17 @@ vis = $.extend(true, vis, {
         }).multiselect('refresh');
 
         $select_view.change(function () {
-			vis.changeView($(this).val());
+            that.changeView($(this).val());
 		});
 
         $select_set.change(vis.refreshWidgetSelect);
         $select_set.html('');
 
-		for (i = 0; i < vis.widgetSets.length; i++) {
-			if (vis.widgetSets[i].name !== undefined) {
-                $select_set.append("<option value='" + vis.widgetSets[i].name + "'>" + vis.widgetSets[i].name + "</option>");
+		for (i = 0; i < this.widgetSets.length; i++) {
+			if (this.widgetSets[i].name !== undefined) {
+                $select_set.append("<option value='" + this.widgetSets[i].name + "'>" + this.widgetSets[i].name + "</option>");
 			} else {
-                $select_set.append("<option value='" + vis.widgetSets[i] + "'>" + vis.widgetSets[i] + "</option>");
+                $select_set.append("<option value='" + this.widgetSets[i] + "'>" + this.widgetSets[i] + "</option>");
 			}
 		}
         $select_set.multiselect('refresh');
@@ -2658,32 +2679,30 @@ vis = $.extend(true, vis, {
         }
 
 		// Create background_class property if does not exist
-		if (vis.views[vis.activeView] != undefined) {
-			if (vis.views[vis.activeView].settings == undefined) {
-				vis.views[vis.activeView].settings = {};
+		if (this.views[vis.activeView] != undefined) {
+			if (this.views[vis.activeView].settings == undefined) {
+                this.views[vis.activeView].settings = {};
 			}
-			if (vis.views[vis.activeView].settings.style == undefined) {
-				vis.views[vis.activeView].settings.style = {};
+			if (this.views[vis.activeView].settings.style == undefined) {
+                this.views[vis.activeView].settings.style = {};
 			}
-			if (vis.views[vis.activeView].settings.style['background_class'] == undefined) {
-				vis.views[vis.activeView].settings.style['background_class'] = '';
+			if (this.views[vis.activeView].settings.style['background_class'] == undefined) {
+                this.views[vis.activeView].settings.style['background_class'] = '';
 			}
 		}
 
-		if (vis.fillWizard) {
-			vis.fillWizard();
-		}
+		if (this.fillWizard) this.fillWizard();
 
         // Deselect active widget if click nowhere. Not required if selectable is active
-        if (!vis.selectable) {
+        if (!this.selectable) {
             $('#vis_container').click (function () {
-                vis.inspectWidget("none");
+                that.inspectWidget("none");
             });
         }
 
-        if (servConn.getType() == 'local') {
+        if (this.conn.getType() == 'local') {
             $("#export_local_view").click(function () {
-                vis.exportView(true);
+                that.exportView(true);
             }).show();
 
             $("#import_local_view").click(function () {
@@ -2697,7 +2716,7 @@ vis = $.extend(true, vis, {
                         $('[aria-describedby="dialog_import_view"]').css('z-index',1002);
                         $('.ui-widget-overlay').css('z-index',1001);
                         $("#start_import_view").click(function () {
-                            vis.importView(true);
+                            that.importView(true);
                         });
                         $("#name_import_view").hide();
                     }
@@ -2712,11 +2731,9 @@ vis = $.extend(true, vis, {
             }).show();
             $('#local_view').show();
         }
-
-
     },
     editPosition: function () {
-
+        var that = this;
         function left() {
             $(".ui-dialog-titlebar-minimize").show();
             if ($(".vis-editor-dialog").parent().attr('id') == "vis-editor-dialog-wrap") {
@@ -2874,11 +2891,10 @@ vis = $.extend(true, vis, {
         }
 
         var save_posi;
-        if (typeof storage !== 'undefined') {
-            save_posi = storage.get("Dashui_Editor_Position");
-        }
+        if (typeof storage !== 'undefined') save_posi = storage.get("editor-position");
+
         save_posi = save_posi || ["free","*"];
-        vis.editorPos = save_posi[0];
+        this.editorPos = save_posi[0];
 
         $(".vis-editor-dialog .ui-dialog-titlebar-buttonpane")
             .append('<div id="vis_editor_mode"></div>')
@@ -2887,36 +2903,35 @@ vis = $.extend(true, vis, {
         if ($().xs_combo) {
             $("#vis_editor_mode").xs_combo({
                 cssText: "xs_text_editor_mode",
-                time: 750,
-                val: save_posi[1],
-                data: ["|<", ">|", "<", ">", "*"]
+                time:    750,
+                val:     save_posi[1],
+                data:    ["|<", ">|", "<", ">", "*"]
             });
             $("#vis_editor_mode").change(function () {
                 var val = $(this).xs_combo();
                 var settings = null;
                 if (val == "|<") {
                     left();
-                    vis.editorPos = 'left';
+                    that.editorPos = 'left';
                 } else if (val == ">|") {
                     right();
-                    vis.editorPos = "right";
+                    that.editorPos = "right";
                     settings = ["right", val];
                 } else if (val == "<") {
                     left_ah();
-                    vis.editorPos = "left_ah";
+                    that.editorPos = "left_ah";
                     settings = ["left_ah", val];
                 } else if (val == ">") {
                     right_ah();
-                    vis.editorPos = "right_ah";
+                    that.editorPos = "right_ah";
                     settings = ["right_ah", val];
                 } else if (val == "*") {
                     free();
-                    vis.editorPos = "free";
+                    that.editorPos = "free";
                     settings = ["free", val];
                 }
-                if (typeof storage != 'undefined' && settings) {
-                    storage.set("Dashui_Editor_Position", settings);
-                }
+
+                if (typeof storage != 'undefined' && settings) storage.set("editor-position", settings);
             });
         }
 
@@ -2930,13 +2945,11 @@ vis = $.extend(true, vis, {
         $("#savingProgress").button({
             text: false,
             icons: { primary: "ui-icon-disk"}
-        }).click(vis._saveToServer).hide().addClass("ui-state-active");
+        }).click(that._saveToServer).hide().addClass("ui-state-active");
 
 
-        var _save_posi = save_posi[0] + "()";
+        var _save_posi = save_posi[0] + '()';
         eval(_save_posi);
-
-
     },
     refreshWidgetSelect: function () {
         var $select_tpl = $("#select_tpl");
@@ -2953,22 +2966,22 @@ vis = $.extend(true, vis, {
 		field = $.extend({x: 0, y: 0, width: editPos.left}, field);
 		widgetWidth  = (widgetWidth  || 60);
 		widgetHeight = (widgetHeight || 60);
-		if (widgetWidth > field.width) {
-			field.width = widgetWidth + 1;
-		}
+
+		if (widgetWidth > field.width) field.width = widgetWidth + 1;
+
 		var step = 20;
 		var y = field.y;
 		var x = field.x || step;
 		
 		// Prepare coordinates
 		var positions = [];
-		for (var w in vis.views[view].widgets) {
-			if (w == id || !vis.views[view].widgets[w].tpl) {
+		for (var w in this.views[view].widgets) {
+			if (w == id || !this.views[view].widgets[w].tpl) {
 				continue;
 			}
 
-			if (vis.views[view].widgets[w].tpl.indexOf("Image") == -1 &&
-			    vis.views[view].widgets[w].tpl.indexOf("image") == -1) {
+			if (this.views[view].widgets[w].tpl.indexOf("Image") == -1 &&
+                this.views[view].widgets[w].tpl.indexOf("image") == -1) {
 				var $jW = $('#' + w);
                 if ($jW.length) {
                     var s = $jW.position();
@@ -2982,7 +2995,7 @@ vis = $.extend(true, vis, {
 			}
 		}
 		
-		while (!vis.checkPosition(positions, x, y, widgetWidth, widgetHeight)) {
+		while (!this.checkPosition(positions, x, y, widgetWidth, widgetHeight)) {
 			x += step;
 			if (x + widgetWidth > field.x + field.width) {
 				x = field.x;
@@ -3071,32 +3084,33 @@ vis = $.extend(true, vis, {
 	},
     // collect all filter keys for given view
     updateFilter: function () {
-        if (vis.activeView && vis.views) {
-            var widgets = vis.views[vis.activeView].widgets;
-            vis.views[vis.activeView].filterList = [];
+        if (this.activeView && this.views) {
+            var widgets = this.views[this.activeView].widgets;
+            this.views[this.activeView].filterList = [];
             
             for (var widget in widgets) {
                 if (widgets[widget] && widgets[widget].data &&
                     widgets[widget].data.filterkey != '' &&
                     widgets[widget].data.filterkey !== undefined) {
 					var isFound = false;
-					for (var z = 0; z < vis.views[vis.activeView].filterList.length; z++) {
-						if (vis.views[vis.activeView].filterList[z] == widgets[widget].data.filterkey) {
+					for (var z = 0; z < this.views[this.activeView].filterList.length; z++) {
+						if (this.views[this.activeView].filterList[z] == widgets[widget].data.filterkey) {
 							isFound = true;
 							break;
 						}
 					}					
 					if (!isFound) {
-						vis.views[vis.activeView].filterList[vis.views[vis.activeView].filterList.length] = widgets[widget].data.filterkey;
+                        this.views[vis.activeView].filterList[this.views[this.activeView].filterList.length] = widgets[widget].data.filterkey;
 					}
                 }
             }
-            return vis.views[vis.activeView].filterList;
+            return this.views[this.activeView].filterList;
         } else {
             return [];
         }
     },
     initStealHandlers: function () {
+        var that = this;
         $(".vis-steal-css").each(function () {
             $(this).button({
                 icons: {
@@ -3116,10 +3130,10 @@ vis = $.extend(true, vis, {
                     }
                 });
 
-                if (isSelected && !vis.isStealCss) {
-                    vis.stealCssMode();
-                } else if (!isSelected && vis.isStealCss) {
-                    vis.stealCssModeStop();
+                if (isSelected && !that.isStealCss) {
+                    that.stealCssMode();
+                } else if (!isSelected && that.isStealCss) {
+                    that.stealCssModeStop();
                 }
 
                 e.stopPropagation();
@@ -3129,22 +3143,22 @@ vis = $.extend(true, vis, {
         })
     },
     stealCssModeStop: function () {
-        vis.isStealCss = false;
+        this.isStealCss = false;
         $("#stealmode_content").remove();
-        if (vis.selectable) {
-            $("#visview_" + vis.activeView).selectable("enable");
+        if (this.selectable) {
+            $("#visview_" + this.activeView).selectable("enable");
         }
         $(".vis-steal-css").removeAttr("checked").button('refresh');
         $("#vis_container").removeClass("vis-steal-cursor");
 
     },
     stealCssMode: function () {
-        if (vis.selectable) {
-            $("#visview_" + vis.activeView).selectable("disable");
+        if (this.selectable) {
+            $("#visview_" + this.activeView).selectable("disable");
         }
-        vis.isStealCss = true;
+        this.isStealCss = true;
         $(".widget_multi_helper").remove();
-        vis.multiSelectedWidgets = [];
+        this.multiSelectedWidgets = [];
 
         if (!$('#stealmode_content').length) {
             $('body').append('<div id="stealmode_content" style="display:none" class="vis-stealmode">CSS steal mode</div>')
@@ -3164,28 +3178,29 @@ vis = $.extend(true, vis, {
         $("#vis_container").addClass("vis-steal-cursor");
     },
     stealCss: function (e) {
-        if (vis.isStealCss) {
-            var target= "#"+vis.activeWidget;
-            var src= "#"+e.currentTarget.id;
+        if (this.isStealCss) {
+            var that = this;
+            var target= "#" + this.activeWidget;
+            var src= "#" + e.currentTarget.id;
 
             $(".vis-steal-css").each(function () {
                 if ($(this).attr("checked")) {
                     $(this).removeAttr("checked").button('refresh');
                     var cssAttribute = $(this).attr("data-vis-steal");
                     if (cssAttribute.match(/border-/) || cssAttribute.match(/padding/)) {
-                        var val = vis.combineCssShorthand($(src), cssAttribute);
+                        var val = that.combineCssShorthand($(src), cssAttribute);
                     } else {
                         var val = $(src).css(cssAttribute);
                     }
                     $(target).css(cssAttribute, val);
-                    vis.views[vis.activeView].widgets[vis.activeWidget].style[cssAttribute] = val;
+                    that.views[that.activeView].widgets[that.activeWidget].style[cssAttribute] = val;
                 }
             });
 
-            vis.save(function () {
+            this.save(function () {
 
-                vis.stealCssModeStop();
-                vis.inspectWidget(vis.activeWidget);
+                that.stealCssModeStop();
+                that.inspectWidget(that.activeWidget);
 
             });
 
@@ -3198,15 +3213,15 @@ vis = $.extend(true, vis, {
 
         if (attr == "border-radius") {
             // TODO second attribute
-            var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-left"));
-            var cssRight = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-right"));
+            var cssTop =    that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-left"));
+            var cssRight =  that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-right"));
             var cssBottom = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-right"));
-            var cssLeft = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-left"));
+            var cssLeft =   that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-left"));
         } else {
-            var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top"));
-            var cssRight = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-right"));
+            var cssTop =    that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top"));
+            var cssRight =  that.css(attr.replace(RegExp(baseAttr), baseAttr + "-right"));
             var cssBottom = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom"));
-            var cssLeft = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-left"));
+            var cssLeft =   that.css(attr.replace(RegExp(baseAttr), baseAttr + "-left"));
         }
         if (cssLeft == cssRight && cssLeft == cssTop && cssLeft == cssBottom) {
             css = cssLeft;
@@ -3251,31 +3266,28 @@ vis = $.extend(true, vis, {
         }
     },
     undo: function () {
-        if (vis.undoHistory.length <= 1) {
-            return;
-        }
+        if (this.undoHistory.length <= 1) return;
 
-        var activeWidget = vis.activeWidget;
-        var multiSelectedWidgets = vis.multiSelectedWidgets;
+        var activeWidget = this.activeWidget;
+        var multiSelectedWidgets = this.multiSelectedWidgets;
 
-        vis.inspectWidget("none");
-        $("#visview_" + vis.activeView).remove();
+        this.inspectWidget("none");
+        $("#visview_" + this.activeView).remove();
 
-        vis.undoHistory.pop();
-        vis.views[vis.activeView] = $.extend(true, {}, vis.undoHistory[vis.undoHistory.length - 1]);
-        vis.saveRemote();
+        this.undoHistory.pop();
+        this.views[vis.activeView] = $.extend(true, {}, this.undoHistory[this.undoHistory.length - 1]);
+        this.saveRemote();
 
-        if (vis.undoHistory.length <= 1) {
+        if (this.undoHistory.length <= 1) {
             $("#button_undo").addClass("ui-state-disabled").removeClass("ui-state-hover");
         }
 
-        vis.renderView(vis.activeView);
-        vis.changeViewEdit(vis.activeView, true);
-        vis.inspectWidget(activeWidget);
+        this.renderView(this.activeView);
+        this.changeViewEdit(this.activeView, true);
+        this.inspectWidget(activeWidget);
         for (var i = 0; i < multiSelectedWidgets.length; i++) {
-            vis.inspectWidgetMulti(multiSelectedWidgets[i]);
+            this.inspectWidgetMulti(multiSelectedWidgets[i]);
         }
-
     },
     getWidgetThumbnail: function (widget, maxWidth, maxHeight, callback) {
         var widObj = document.getElementById(widget);
@@ -3325,16 +3337,16 @@ vis = $.extend(true, vis, {
             alert(content);
             return;
         }
-        if (!vis.growlInited) {
-            vis.growlInited = true;
+        if (!this.growlInited) {
+            this.growlInited = true;
             // Init jGrowl
             $.jGrowl.defaults.closer = true;
             $.jGrowl.defaults.check = 1000;
         }
 
         $('#growl_informator').jGrowl(content, {
-            theme: type,
-            life: (life === undefined) ? 10000 : life,
+            theme:  type,
+            life:   (life === undefined) ? 10000 : life,
             sticky: (life === undefined) ? false : !life,
             afterOpen: function (e,m,o) {
                 e.click(function () {
@@ -3349,20 +3361,19 @@ vis = $.extend(true, vis, {
     selectAll: function () {
         // Select all widgets on view
         var $focused = $(':focus');
-        if (!$focused.length && vis.activeView) {
+        if (!$focused.length && this.activeView) {
             // Go through all widgets
-            if (!vis.activeWidget || vis.activeWidget == "none") {
+            if (!this.activeWidget || this.activeWidget == "none") {
                 // Get first one
-                for (var widget in vis.views[vis.activeView].widgets) {
-                    vis.inspectWidget(widget);
+                for (var widget in this.views[this.activeView].widgets) {
+                    this.inspectWidget(widget);
                     break;
                 }
             }
-            for (var widget in vis.views[vis.activeView].widgets) {
-                if (widget == vis.activeWidget) {
-                    continue;
-                }
-                vis.inspectWidgetMulti(widget);
+            for (var widget in this.views[this.activeView].widgets) {
+                if (widget == this.activeWidget) continue;
+
+                this.inspectWidgetMulti(widget);
             }
             return true;
         } else {
@@ -3373,10 +3384,10 @@ vis = $.extend(true, vis, {
         // Select all widgets on view
         var $focused = $(':focus');
         if (!$focused.length && vis.activeView) {
-            vis.clearWidgetHelper();
+            this.clearWidgetHelper();
 
-            if (vis.activeWidget && vis.activeWidget != "none") {
-                vis.inspectWidget('none');
+            if (this.activeWidget && this.activeWidget != "none") {
+                this.inspectWidget('none');
             }
             return true;
         } else {
@@ -3386,45 +3397,45 @@ vis = $.extend(true, vis, {
     paste: function () {
         var $focused = $(':focus');
         if (!$focused.length) {
-            if (vis.clipboard && vis.clipboard.length) {
+            if (this.clipboard && this.clipboard.length) {
                 var widgets = [];
-                for (var i = 0, len = vis.clipboard.length; i < len; i++) {
-                    vis.dupWidget(vis.clipboard[i], true);
-                    widgets.push(vis.activeWidget);
+                for (var i = 0, len = this.clipboard.length; i < len; i++) {
+                    this.dupWidget(this.clipboard[i], true);
+                    widgets.push(this.activeWidget);
                 }
-                vis.save();                // Select main widget and add to selection the secondary ones
-                vis.inspectWidget(widgets[0]);
+                this.save();                // Select main widget and add to selection the secondary ones
+                this.inspectWidget(widgets[0]);
                 for (var j = 1, jlen = widgets.length; j < jlen; j++) {
-                    vis.inspectWidgetMulti(widgets[j]);
+                    this.inspectWidgetMulti(widgets[j]);
                 }
             }
         }
     },
     copy: function (isCut) {
         var $focused = $(':focus');
-        if (!$focused.length && vis.activeWidget) {
+        if (!$focused.length && this.activeWidget) {
             var $clipboard_content = $('#clipboard_content');
             if (!$clipboard_content.length) {
                 $('body').append('<div id="clipboard_content" style="display:none" class="vis-clipboard" title="'+_('Click to hide')+'"></div>');
                 $clipboard_content = $('#clipboard_content');
             }
 
-            vis.clipboard = [];
-            vis.clipboard[0] = {
-                widget: $.extend(true, {}, vis.views[vis.activeView].widgets[vis.activeWidget]),
-                view: (!isCut) ? vis.activeView : '---copied---'
+            this.clipboard = [];
+            this.clipboard[0] = {
+                widget: $.extend(true, {}, this.views[this.activeView].widgets[this.activeWidget]),
+                view:   (!isCut) ? this.activeView : '---copied---'
             };
-            var widgetNames = vis.activeWidget;
-            if (vis.multiSelectedWidgets.length) {
-                for (var i = 0, len = vis.multiSelectedWidgets.length; i < len; i++) {
-                    widgetNames += ', ' + vis.multiSelectedWidgets[i];
-                    vis.clipboard[i + 1] = {widget: $.extend(true, {}, vis.views[vis.activeView].widgets[vis.multiSelectedWidgets[i]]), view: (!isCut) ? vis.activeView : '---copied---'};
+            var widgetNames = this.activeWidget;
+            if (this.multiSelectedWidgets.length) {
+                for (var i = 0, len = this.multiSelectedWidgets.length; i < len; i++) {
+                    widgetNames += ', ' + this.multiSelectedWidgets[i];
+                    this.clipboard[i + 1] = {widget: $.extend(true, {}, this.views[this.activeView].widgets[this.multiSelectedWidgets[i]]), view: (!isCut) ? this.activeView : '---copied---'};
                 }
             }
 
-           /* vis.showHint('<table><tr><td>' + _('Clipboard:') + '&nbsp;<b>' + widgetNames + '</b></td><td id="thumbnail" width="200px"></td></tr></table>', 0, null, function () {
+           /* this.showHint('<table><tr><td>' + _('Clipboard:') + '&nbsp;<b>' + widgetNames + '</b></td><td id="thumbnail" width="200px"></td></tr></table>', 0, null, function () {
             if (html2canvas) {
-                vis.getWidgetThumbnail(vis.activeWidget, 0, 0, function (canvas) {
+            this.getWidgetThumbnail(this.activeWidget, 0, 0, function (canvas) {
                     $('#thumbnail').html(canvas);
                 });
             }
@@ -3433,24 +3444,25 @@ vis = $.extend(true, vis, {
             */
             $clipboard_content.html('<table><tr><td>' + _('Clipboard:') + '&nbsp;<b>' + widgetNames + '</b></td><td id="thumbnail"></td></tr></table>');
 
+            var that = this;
             if (typeof html2canvas != "undefined") {
-                vis.getWidgetThumbnail(vis.activeWidget, 0, 0, function (canvas) {
+                this.getWidgetThumbnail(this.activeWidget, 0, 0, function (canvas) {
                     $('#thumbnail').html(canvas);
                     if (isCut) {
-                        for (var i = 0, len = vis.multiSelectedWidgets.length; i < len; i++) {
-                            vis.delWidget(vis.multiSelectedWidgets[i]);
+                        for (var i = 0, len = that.multiSelectedWidgets.length; i < len; i++) {
+                            that.delWidget(that.multiSelectedWidgets[i]);
                         }
-                        vis.delWidget(vis.activeWidget);
-                        vis.inspectWidget("none");
+                        that.delWidget(that.activeWidget);
+                        that.inspectWidget("none");
                     }
                 });
             } else {
                 if (isCut) {
-                    for (var i = 0, len = vis.multiSelectedWidgets.length; i < len; i++) {
-                        vis.delWidget(vis.multiSelectedWidgets[i]);
+                    for (var i = 0, len = this.multiSelectedWidgets.length; i < len; i++) {
+                        this.delWidget(this.multiSelectedWidgets[i]);
                     }
-                    vis.delWidget(vis.activeWidget);
-                    vis.inspectWidget("none");
+                    this.delWidget(this.activeWidget);
+                    this.inspectWidget("none");
                 }
             }
 
@@ -3465,22 +3477,23 @@ vis = $.extend(true, vis, {
     },
     onButtonDelete: function () {
         var $focused = $(':focus');
-        if (!$focused.length && vis.activeWidget) {
+        if (!$focused.length && this.activeWidget) {
             var isHideDialog = false;
             if (typeof storage != "undefined") {
                 isHideDialog = storage.get("dialog_delete_is_show");
             }
     
             if (!isHideDialog) {
-                if (vis.multiSelectedWidgets.length) {
-                    $("#dialog_delete_content").html(_("Do you want delete %s widgets?", vis.multiSelectedWidgets.length + 1));
+                if (this.multiSelectedWidgets.length) {
+                    $("#dialog_delete_content").html(_("Do you want delete %s widgets?", this.multiSelectedWidgets.length + 1));
                 } else {
-                    $("#dialog_delete_content").html(_("Do you want delete widget %s?", vis.activeWidget));
+                    $("#dialog_delete_content").html(_("Do you want delete widget %s?", this.activeWidget));
                 }
     
                 var dialog_buttons = {};
     
                 var delText = _("Delete").replace("&ouml;", "ö");
+                var that = this;
                 dialog_buttons[delText] = function () {
                     if ($('#dialog_delete_is_show').prop('checked')) {
                         if (typeof storage != "undefined") {
@@ -3489,12 +3502,12 @@ vis = $.extend(true, vis, {
                     }
                     $(this).dialog( "close" );
     
-                    for (var i = 0, len = vis.multiSelectedWidgets.length; i < len; i++) {
-                        vis.delWidget(vis.multiSelectedWidgets[i]);
+                    for (var i = 0, len = that.multiSelectedWidgets.length; i < len; i++) {
+                        that.delWidget(that.multiSelectedWidgets[i]);
                     }
-                    vis.delWidget(vis.activeWidget);
+                    that.delWidget(that.activeWidget);
                     // vis.clearWidgetHelper(); - will be done in inspectWidget("none")
-                    vis.inspectWidget("none");
+                    that.inspectWidget("none");
                 }
                 dialog_buttons[_("Cancel")] = function () {
                     $(this).dialog("close");
@@ -3502,23 +3515,23 @@ vis = $.extend(true, vis, {
     
                 $("#dialog_delete").dialog({
                     autoOpen: true,
-                    width: 500,
+                    width:  500,
                     height: 220,
-                    modal: true,
-                    title: _("Confirm widget deletion"),
-                    open: function (event, ui) {
+                    modal:  true,
+                    title:  _("Confirm widget deletion"),
+                    open:   function (event, ui) {
                         $('[aria-describedby="dialog_delete"]').css('z-index',1002);
                         $(".ui-widget-overlay").css('z-index', 1001);
                     },
                     buttons: dialog_buttons
                 });
             } else {
-                for (var i = 0, len = vis.multiSelectedWidgets.length; i < len; i++) {
-                    vis.delWidget(vis.multiSelectedWidgets[i]);
+                for (var i = 0, len = this.multiSelectedWidgets.length; i < len; i++) {
+                    this.delWidget(this.multiSelectedWidgets[i]);
                 }
-                vis.delWidget(vis.activeWidget);
-                // vis.clearWidgetHelper(); - will be done in inspectWidget("none")
-                vis.inspectWidget("none");
+                this.delWidget(this.activeWidget);
+                // this.clearWidgetHelper(); - will be done in inspectWidget("none")
+                this.inspectWidget("none");
             }
             return true;
         } else {

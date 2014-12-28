@@ -51,7 +51,7 @@ if (typeof systemDictionary !== 'undefined') {
     });
 }
 
-systemLang = visConfig.language;
+if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
 
@@ -63,10 +63,6 @@ var vis = {
     storageKeyInstance:     'visInstance',
     
     instance:               null,
-    instanceId:             undefined,
-    instanceData:           undefined,
-    instanceCmd:            undefined,
-    
     urlParams:              {},
     settings:               {},
     views:                  {},
@@ -78,15 +74,21 @@ var vis = {
     isFirstTime:            true,
     useCache:               true,
     authRunning:            false,
+    cssChecked:             false,
     
     binds:                  {},
     onChangeCallbacks:      [],
     viewsActiveFilter:      {},
-    viewFileSuffix:         window.location.search ? "-" + window.location.search.slice(1) : "",
+    projectPrefix:          window.location.search ? window.location.search.slice(1) + '/': 'main/',
     navChangeCallbacks:     [],
     editMode:               false,
+    language:               (typeof systemLang != 'undefined') ? systemLang : visConfig.language,
 
     setValue: function (id, val) {
+        if (!id) {
+            console.log('ID is null for val=' + val);
+            return;
+        }
         // Check if this ID is a programm
         var d = new Date();
         var t = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) + " " + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
@@ -226,92 +228,24 @@ var vis = {
             this.instance = storage.get(this.storageKeyInstance);
             $('#vis_instance').val(this.instance);
         }
+
         if (!this.instance && this.editMode){
             this.generateInstance();
         }
-
-        /*this.instanceId   = 69800;
-         this.instanceCmd  = this.instanceId + 1;
-         this.instanceData = this.instanceCmd + 1;
-
-        if (!vis.objects[vis.instanceId]) {
-            vis.objects[vis.instanceId] = {
-                _persistent: true,
-                Name: "vis.instanceID",
-                TypeName: "VARDP"
-            };
-            vis.conn.addObject(vis.instanceId, vis.objects[vis.instanceId]);
-            vis.objects[vis.instanceCmd] = {
-                _persistent: true,
-                Name: "vis.command",
-                TypeName: "VARDP"
-            };
-            vis.conn.addObject(vis.instanceCmd, vis.objects[vis.instanceCmd]);
-            vis.objects[vis.instanceData] = {
-                _persistent: true,
-                Name: "vis.data",
-                TypeName: "VARDP"
-            };
-            vis.conn.addObject(vis.instanceData, vis.objects[vis.instanceData]);
-        }
-
-        vis.states.bind(vis.instanceCmd + ".val", function (e, newVal) {
-            var cmd = newVal;
-             if (cmd !== "" &&
-                 (vis.states[vis.instanceId + '.val'] == 'FFFFFFFF' ||
-                  (vis.instance && vis.states[vis.instanceId + '.val'] == vis.instance))) {
-                var data = vis.states.attr(vis.instanceData + ".val");
-                // external Commands
-                switch (cmd) {
-                    case "alert":
-                        alert(data);
-                        break;
-                    case "changedView":
-                    	// Do nothing
-					    return;                        
-                    case "changeView":
-                        vis.changeView(data);
-                        break;
-                    case "refresh":
-                    case "reload":
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 1);
-                        break;
-                    case "dialog":
-                        $("#" + data + "_dialog").dialog("open");
-                        break;
-                    case "popup":
-                        window.open(data);
-                        break;
-                    case "playSound":
-                        $("#external_sound").attr("src", data);
-                        setTimeout(function () {
-                            document.getElementById("external_sound").play();
-                        }, 1);
-                        break;
-                    default:
-                    vis.conn.logError("unknown external command "+cmd);
-                }
-
-                // remove command
-                localData.setValue(vis.instanceCmd, "");
-            }
-        });
 
         $('#vis_instance').change(function () {
             vis.instance = $(this).val();
             if (typeof storage !== 'undefined') {
                 storage.set(vis.storageKeyInstance, vis.instance);
             }
-        });*/
+        });
     },
     generateInstance: function () {
-        this.instance = (Math.random() * 4294967296).toString(16);
-        this.instance = "0000000" + this.instance;
-        this.instance = this.instance.substring(this.instance.length - 8);
-        $("#vis_instance").val(this.instance);
         if (typeof storage !== 'undefined') {
+            this.instance = (Math.random() * 4294967296).toString(16);
+            this.instance = '0000000' + this.instance;
+            this.instance = this.instance.substring(this.instance.length - 8);
+            $('#vis_instance').val(this.instance);
             storage.set(this.storageKeyInstance, this.instance);
         }
     },
@@ -411,14 +345,14 @@ var vis = {
         this.changeView(this.activeView);
     },
     initViewObject: function () {
-        if (!vis.editMode) {
+        if (!this.editMode) {
             window.location.href = './edit.html' + window.location.search;
         }
         else {
-            if (confirm(_("no views found on server.\nCreate new %s ?", 'vis-views' + vis.viewFileSuffix + ".json"))) {
-                vis.views = {};
-                vis.views["DemoView"] = vis.createDemoView ? vis.createDemoView() : {settings: {style: {}}, widgets: {}};
-                vis.saveRemote(function () {
+            if (confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
+                this.views = {};
+                this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                this.saveRemote(function () {
                     window.location.reload()
                 });
             } else {
@@ -681,7 +615,6 @@ var vis = {
     },
     changeView: function (view, hideOptions, showOptions, sync) {
         var that = this;
-        //console.log("changeView "+view);
         var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
         if (!effect) {
             effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && (showOptions.effect != "")
@@ -694,9 +627,7 @@ var vis = {
         }
         hideOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, hideOptions);
         showOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, showOptions);
-        if (hideOptions.effect == "show") {
-            effect = false;
-        }
+        if (hideOptions.effect == 'show') effect = false;
 
         if (this.inspectWidget) {
             this.inspectWidget("none");
@@ -723,6 +654,7 @@ var vis = {
                     $("#visview_" + view).appendTo("#vis_container");
                 }
 
+                // If hide and show at the same time
                 if (sync) {
                     $("#visview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
                         if (that.views[view].rerender) {
@@ -746,6 +678,7 @@ var vis = {
                     $("style[data-href$='jquery-ui.min.css']").remove();
                     that.additionalThemeCss(that.views[view].settings.theme);
 
+                    // If first hide, than show
                     if (!sync) {
                         $("#visview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
                             if (that.views[view].rerender) {
@@ -797,14 +730,12 @@ var vis = {
 
         this.activeView = view;
 
-        $("#visview_" + view).find("div[id$='container']").each(function () {
-            $("#visview_" + $(this).attr("data-vis-contains")).show();
+        $('#visview_' + view).find('div[id$="container"]').each(function () {
+            $('#visview_' + $(this).attr('data-vis-contains')).show();
         });
 
-        if (!this.editMode) {
-            this.setValue(this.instanceData, this.activeView);
-            this.setValue(this.instanceId,  this.instance);
-            this.setValue(this.instanceCmd, 'changedView');
+        if (!this.editMode && this.instance) {
+            this.conn.sendCommand(this.instance, 'changedView', that.viewFileSuffix ? that.viewFileSuffix + '/' + this.activeView : this.activeView);
         }
 
         if (window.location.hash.slice(1) != view) {
@@ -837,16 +768,16 @@ var vis = {
     loadRemote: function (callback, callbackArg) {
         var that = this;
         this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
-        this.conn.readFile('vis-views' + vis.viewFileSuffix + '.json', function (err, data) {
-            if (err) alert('vis-views' + vis.viewFileSuffix + '.json' + ' ' + err);
+        this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
+            if (err) alert(that.projectPrefix + 'vis-views.json ' + err);
 
             if (data) {
                 if (typeof data == 'string') {
                     try {
                         that.views = JSON.parse(data);
                     } catch(e) {
-                        console.log('Cannot parse views file "' + 'vis-views' + vis.viewFileSuffix + '.json');
-                        alert('Cannot parse views file "' + 'vis-views' + vis.viewFileSuffix + '.json');
+                        console.log('Cannot parse views file "' + that.projectPrefix + 'vis-views.json"');
+                        alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');
                         that.views = null;
                     }
                 } else {
@@ -860,7 +791,7 @@ var vis = {
         });       
     },
     saveRemoteActive: false,
-    saveRemote: function (cb) {
+    saveRemote: function (callback) {
         var that = this;
         if (this.saveRemoteActive) {
             setTimeout(function (_cb) {
@@ -874,10 +805,21 @@ var vis = {
             this.syncWidget(this.activeWidget);
         }
 
-        this.conn.writeFile('vis-views' + this.viewFileSuffix + ".json", JSON.stringify(this.views, null, 2), function () {
+        this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
             that.saveRemoteActive = false;
-            if (cb) cb();
-            //console.log("Saved views on Server");
+            if (callback) callback();
+
+            // If not yet checked => check if project css file exists
+            if (!that.cssChecked) {
+                that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
+                    that.cssChecked = true;
+                    // Create vis-user.css file if not exist
+                    if (err || data == null || data == undefined){
+                        // Create empty css file
+                        that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
+                    }
+                })
+            }
         });
     },
     additionalThemeCss: function (theme) {
@@ -1002,6 +944,9 @@ if ('applicationCache' in window) {
 // Start of initialisation: main ()
 (function ($) {
     $(document).ready(function () {
+        // First of all load project/vis-user.css
+        $('#project_css').attr('href', 'vis.0/' + vis.projectPrefix + 'vis-user.css');
+
         // On some platfors, the can.js is not immediately ready
         vis.states = new can.Map({'nothing_selected.val': null});
 
@@ -1107,7 +1052,8 @@ if ('applicationCache' in window) {
                         } else {
                             // Get Server language
                             vis.conn.getLanguage(function (err, lang) {
-                                systemLang = lang || systemLang;
+                                systemLang   = lang || systemLang;
+                                vis.language = systemLang;
                                 translateAll();
                             });
 
@@ -1228,6 +1174,45 @@ if ('applicationCache' in window) {
                     }, 500);
                     return true;
                 });
+            },
+            onCommand: function (instance, command, data) {
+                if (instance != vis.instance && instance != 'FFFFFFFF') return false;
+                if (command) {
+                     // external Commands
+                    switch (command) {
+                        case 'alert':
+                            alert(data);
+                            break;
+                        case 'changedView':
+                            // Do nothing
+                            return false;
+                        case 'changeView':
+                            vis.changeView(data);
+                            break;
+                        case 'refresh':
+                        case 'reload':
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 1);
+                            break;
+                        case 'dialog':
+                            $('#' + data + '_dialog').dialog('open');
+                            break;
+                        case 'popup':
+                            window.open(data);
+                            break;
+                        case 'playSound':
+                            $('#external_sound').attr("src", data);
+                            setTimeout(function () {
+                                document.getElementById("external_sound").play();
+                            }, 1);
+                            break;
+                        default:
+                            vis.conn.logError("unknown external command " + command);
+                    }
+                }
+
+                return true;
             }
         });
     });
