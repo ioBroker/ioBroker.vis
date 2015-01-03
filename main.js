@@ -8,7 +8,8 @@
  *
  */
 
-var adapter = require(__dirname + '/../../lib/adapter.js')('vis');
+var utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
+var adapter = utils.adapter('vis');
 
 adapter.on('ready', function () {
     main();
