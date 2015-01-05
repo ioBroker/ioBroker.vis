@@ -266,7 +266,8 @@ var vis = {
             this.binds.hqWidgetsExt.hqInit();
         }*/
 
-        this.loadRemote(this.loadWidgetSets, this.initNext);
+        //this.loadRemote(this.loadWidgetSets, this.initNext);
+        this.loadWidgetSets(this.initNext);
     },
     initNext: function () {
         if (!this.views) {
@@ -945,7 +946,7 @@ if ('applicationCache' in window) {
 (function ($) {
     $(document).ready(function () {
         // First of all load project/vis-user.css
-        $('#project_css').attr('href', 'vis.0/' + vis.projectPrefix + 'vis-user.css');
+        //$('#project_css').attr('href', 'vis.0/' + vis.projectPrefix + 'vis-user.css'); todo recomment
 
         // On some platfors, the can.js is not immediately ready
         vis.states = new can.Map({'nothing_selected.val': null});
@@ -1002,219 +1003,221 @@ if ('applicationCache' in window) {
             return updateAvailable;
         }
 
+        vis.init()
+
         vis.conn = servConn;
-        vis.conn.init(null, {
-            onConnChange: function (isConnected) {
-                //console.log("onConnChange isConnected="+isConnected);
-                if (isConnected) {
-                    $("#ccu-io-disconnect").dialog("close");
-                    if (vis.isFirstTime) {
-                        vis.conn.getVersion(function (version) {
-                            if (!version) {
-                                // Possible not authenticated, wait for request from server
-                            } else {
-                                //vis.conn.readFile("www/vis/css/vis-user.css");
-
-                                if (compareVersion(version, vis.requiredServerVersion)) {
-                                    // TODO Translate
-                                    alert("Warning: requires Server version " + vis.requiredServerVersion + " - found Server version " + version + " - please update Server.");
-                                }
-                            }
-                        });
-
-                        vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
-                    }
-
-                    // Read all states from server
-                    vis.conn.getStates(function (error, data) {
-                        if (data) {
-                            for (var id in data) {
-                                var obj = data[id];
-                                var o = {};
-                                o[id + '.val'] = obj.val;
-                                o[id + '.ts']  = obj.ts;
-                                if (vis.states[id + '.val'] !== undefined) {
-                                    o[id + '.ack'] = obj.ack;
-                                    o[id + '.lc']  = obj.lc;
-                                }
-                                try {
-                                    vis.states.attr(o);
-                                } catch (e) {
-                                    vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
-                                }
-                            }
-                        }
-
-
-                        if (error) {
-                            console.log("Possibly not authenticated, wait for request from server");
-                            // Possibly not authenticated, wait for request from server
-                        } else {
-                            // Get Server language
-                            vis.conn.getLanguage(function (err, lang) {
-                                systemLang   = lang || systemLang;
-                                vis.language = systemLang;
-                                translateAll();
-                            });
-
-                            // If metaIndex required, load it
-                            if (vis.editMode) {
-                                /* socket.io */
-                                if (vis.isFirstTime) {
-                                    vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
-                                }
-                                // Read all data objects from server
-                                vis.conn.getObjects(function (err, data) {
-                                    vis.objects = data;
-                                });
-                            }
-
-                            //console.log((new Date()) + " socket.io reconnect");
-                            if (vis.isFirstTime) setTimeout(function () {
-                                vis.init();
-                            }, 10);
-                            vis.isFirstTime = false;
-                        }
-                    });
-                } else {
-                    //console.log((new Date()) + " socket.io disconnect");
-                    $("#ccu-io-disconnect").dialog("open");
-                }
-            },
-            onRefresh: function () {
-                window.location.reload();
-            },
-            onUpdate: function (id, state) {
-                var o = {};
-                // Check new model
-                o[id + '.val'] = state.val;
-                o[id + '.ts']  = state.ts;
-                if (vis.states[id + '.val'] !== undefined) {
-                    o[id + '.ack'] = state.ack;
-                    o[id + '.lc']  = state.lc;
-                }
-                try {
-                    vis.states.attr(o);
-                } catch (e) {
-                    vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
-                }
-
-                // Inform other widgets, that do not support canJS
-                for (var i = 0, len = vis.onChangeCallbacks.length; i < len; i++) {
-                    vis.onChangeCallbacks[i].callback(vis.onChangeCallbacks[i].arg, id, state.val, state.ack);
-                }
-            },
-            onAuth: function (message, salt) {
-                if (vis.authRunning) {
-                    return;
-                }
-                vis.authRunning = true;
-                var users;
-                if (visConfig.auth.users && visConfig.auth.users.length) {
-                    users = '<select id="login-username" value="'+visConfig.auth.users[0]+'" class="login-input-field">';
-                    for (var z = 0; z < visConfig.auth.users.length; z++) {
-                        users += '<option value="' + visConfig.auth.users[z] + '">' + visConfig.auth.users[z] + '</option>';
-                    }
-                    users += '</select>';
-                } else {
-                    users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name')+'">'
-                }
-
-                var text = '<div id="login-box" class="login-popup" style="display:none">'+
-                            '<div class="login-message">'+message+'</div>'+
-                            '<div class="login-input-field">'+
-                                '<label class="username">'+
-                                    '<span class="_">'+_('User name')+'</span>'+
-                                    users +
-                                '</label>'+
-                                '<label class="password">'+
-                                    '<span class="_">'+_('Password')+'</span>'+
-                                    '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password')+'">'+
-                                '</label>'+
-                                '<button class="login-button" type="button"  class="_">'+_('Sign in')+'</button>'+
-                            '</div>'+
-                        '</div>';
-
-                $('body').append(text);
-
-                var loginBox = $('#login-box');
-
-                //Fade in the Popup
-                $(loginBox).fadeIn(300);
-
-                //Set the center alignment padding + border see css style
-                var popMargTop = ($(loginBox).height() + 24) / 2;
-                var popMargLeft = ($(loginBox).width() + 24) / 2;
-
-                $(loginBox).css({
-                    'margin-top' : -popMargTop,
-                    'margin-left' : -popMargLeft
-                });
-
-                // Add the mask to body
-                $('body').append('<div id="login-mask"></div>');
-                $('#login-mask').fadeIn(300);
-                // When clicking on the button close or the mask layer the popup closed
-                $('#login-password').keypress(function(e) {
-                    if(e.which == 13) {
-                        $('.login-button').trigger('click');
-                    }
-                });
-                $('.login-button').bind('click', function() {
-                    var user = $('#login-username').val();
-                    var pass = $('#login-password').val();
-                    $('#login_mask , .login-popup').fadeOut(300 , function() {
-                        $('#login-mask').remove();
-                        $('#login-box').remove();
-                    });
-                    setTimeout (function () {
-                        vis.authRunning = false;
-                        console.log("user "+  user + ", " + pass + " " + salt);
-                        vis.conn.authenticate(user, pass, salt);
-                    }, 500);
-                    return true;
-                });
-            },
-            onCommand: function (instance, command, data) {
-                if (instance != vis.instance && instance != 'FFFFFFFF') return false;
-                if (command) {
-                     // external Commands
-                    switch (command) {
-                        case 'alert':
-                            alert(data);
-                            break;
-                        case 'changedView':
-                            // Do nothing
-                            return false;
-                        case 'changeView':
-                            vis.changeView(data);
-                            break;
-                        case 'refresh':
-                        case 'reload':
-                            setTimeout(function () {
-                                window.location.reload();
-                            }, 1);
-                            break;
-                        case 'dialog':
-                            $('#' + data + '_dialog').dialog('open');
-                            break;
-                        case 'popup':
-                            window.open(data);
-                            break;
-                        case 'playSound':
-                            $('#external_sound').attr("src", data);
-                            setTimeout(function () {
-                                document.getElementById("external_sound").play();
-                            }, 1);
-                            break;
-                        default:
-                            vis.conn.logError("unknown external command " + command);
-                    }
-                }
-
-                return true;
-            }
-        });
+        //vis.conn.init(null, {
+        //    onConnChange: function (isConnected) {
+        //        //console.log("onConnChange isConnected="+isConnected);
+        //        if (isConnected) {
+        //            $("#ccu-io-disconnect").dialog("close");
+        //            if (vis.isFirstTime) {
+        //                vis.conn.getVersion(function (version) {
+        //                    if (!version) {
+        //                        // Possible not authenticated, wait for request from server
+        //                    } else {
+        //                        //vis.conn.readFile("www/vis/css/vis-user.css");
+        //
+        //                        if (compareVersion(version, vis.requiredServerVersion)) {
+        //                            // TODO Translate
+        //                            alert("Warning: requires Server version " + vis.requiredServerVersion + " - found Server version " + version + " - please update Server.");
+        //                        }
+        //                    }
+        //                });
+        //
+        //                vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
+        //            }
+        //
+        //            // Read all states from server
+        //            vis.conn.getStates(function (error, data) {
+        //                if (data) {
+        //                    for (var id in data) {
+        //                        var obj = data[id];
+        //                        var o = {};
+        //                        o[id + '.val'] = obj.val;
+        //                        o[id + '.ts']  = obj.ts;
+        //                        if (vis.states[id + '.val'] !== undefined) {
+        //                            o[id + '.ack'] = obj.ack;
+        //                            o[id + '.lc']  = obj.lc;
+        //                        }
+        //                        try {
+        //                            vis.states.attr(o);
+        //                        } catch (e) {
+        //                            vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+        //                        }
+        //                    }
+        //                }
+        //
+        //
+        //                if (error) {
+        //                    console.log("Possibly not authenticated, wait for request from server");
+        //                    // Possibly not authenticated, wait for request from server
+        //                } else {
+        //                    // Get Server language
+        //                    vis.conn.getLanguage(function (err, lang) {
+        //                        systemLang   = lang || systemLang;
+        //                        vis.language = systemLang;
+        //                        translateAll();
+        //                    });
+        //
+        //                    // If metaIndex required, load it
+        //                    if (vis.editMode) {
+        //                        /* socket.io */
+        //                        if (vis.isFirstTime) {
+        //                            vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
+        //                        }
+        //                        // Read all data objects from server
+        //                        vis.conn.getObjects(function (err, data) {
+        //                            vis.objects = data;
+        //                        });
+        //                    }
+        //
+        //                    //console.log((new Date()) + " socket.io reconnect");
+        //                    if (vis.isFirstTime) setTimeout(function () {
+        //                        vis.init();
+        //                    }, 10);
+        //                    vis.isFirstTime = false;
+        //                }
+        //            });
+        //        } else {
+        //            //console.log((new Date()) + " socket.io disconnect");
+        //            $("#ccu-io-disconnect").dialog("open");
+        //        }
+        //    },
+        //    onRefresh: function () {
+        //        window.location.reload();
+        //    },
+        //    onUpdate: function (id, state) {
+        //        var o = {};
+        //        // Check new model
+        //        o[id + '.val'] = state.val;
+        //        o[id + '.ts']  = state.ts;
+        //        if (vis.states[id + '.val'] !== undefined) {
+        //            o[id + '.ack'] = state.ack;
+        //            o[id + '.lc']  = state.lc;
+        //        }
+        //        try {
+        //            vis.states.attr(o);
+        //        } catch (e) {
+        //            vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+        //        }
+        //
+        //        // Inform other widgets, that do not support canJS
+        //        for (var i = 0, len = vis.onChangeCallbacks.length; i < len; i++) {
+        //            vis.onChangeCallbacks[i].callback(vis.onChangeCallbacks[i].arg, id, state.val, state.ack);
+        //        }
+        //    },
+        //    onAuth: function (message, salt) {
+        //        if (vis.authRunning) {
+        //            return;
+        //        }
+        //        vis.authRunning = true;
+        //        var users;
+        //        if (visConfig.auth.users && visConfig.auth.users.length) {
+        //            users = '<select id="login-username" value="'+visConfig.auth.users[0]+'" class="login-input-field">';
+        //            for (var z = 0; z < visConfig.auth.users.length; z++) {
+        //                users += '<option value="' + visConfig.auth.users[z] + '">' + visConfig.auth.users[z] + '</option>';
+        //            }
+        //            users += '</select>';
+        //        } else {
+        //            users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name')+'">'
+        //        }
+        //
+        //        var text = '<div id="login-box" class="login-popup" style="display:none">'+
+        //                    '<div class="login-message">'+message+'</div>'+
+        //                    '<div class="login-input-field">'+
+        //                        '<label class="username">'+
+        //                            '<span class="_">'+_('User name')+'</span>'+
+        //                            users +
+        //                        '</label>'+
+        //                        '<label class="password">'+
+        //                            '<span class="_">'+_('Password')+'</span>'+
+        //                            '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password')+'">'+
+        //                        '</label>'+
+        //                        '<button class="login-button" type="button"  class="_">'+_('Sign in')+'</button>'+
+        //                    '</div>'+
+        //                '</div>';
+        //
+        //        $('body').append(text);
+        //
+        //        var loginBox = $('#login-box');
+        //
+        //        //Fade in the Popup
+        //        $(loginBox).fadeIn(300);
+        //
+        //        //Set the center alignment padding + border see css style
+        //        var popMargTop = ($(loginBox).height() + 24) / 2;
+        //        var popMargLeft = ($(loginBox).width() + 24) / 2;
+        //
+        //        $(loginBox).css({
+        //            'margin-top' : -popMargTop,
+        //            'margin-left' : -popMargLeft
+        //        });
+        //
+        //        // Add the mask to body
+        //        $('body').append('<div id="login-mask"></div>');
+        //        $('#login-mask').fadeIn(300);
+        //        // When clicking on the button close or the mask layer the popup closed
+        //        $('#login-password').keypress(function(e) {
+        //            if(e.which == 13) {
+        //                $('.login-button').trigger('click');
+        //            }
+        //        });
+        //        $('.login-button').bind('click', function() {
+        //            var user = $('#login-username').val();
+        //            var pass = $('#login-password').val();
+        //            $('#login_mask , .login-popup').fadeOut(300 , function() {
+        //                $('#login-mask').remove();
+        //                $('#login-box').remove();
+        //            });
+        //            setTimeout (function () {
+        //                vis.authRunning = false;
+        //                console.log("user "+  user + ", " + pass + " " + salt);
+        //                vis.conn.authenticate(user, pass, salt);
+        //            }, 500);
+        //            return true;
+        //        });
+        //    },
+        //    onCommand: function (instance, command, data) {
+        //        if (instance != vis.instance && instance != 'FFFFFFFF') return false;
+        //        if (command) {
+        //             // external Commands
+        //            switch (command) {
+        //                case 'alert':
+        //                    alert(data);
+        //                    break;
+        //                case 'changedView':
+        //                    // Do nothing
+        //                    return false;
+        //                case 'changeView':
+        //                    vis.changeView(data);
+        //                    break;
+        //                case 'refresh':
+        //                case 'reload':
+        //                    setTimeout(function () {
+        //                        window.location.reload();
+        //                    }, 1);
+        //                    break;
+        //                case 'dialog':
+        //                    $('#' + data + '_dialog').dialog('open');
+        //                    break;
+        //                case 'popup':
+        //                    window.open(data);
+        //                    break;
+        //                case 'playSound':
+        //                    $('#external_sound').attr("src", data);
+        //                    setTimeout(function () {
+        //                        document.getElementById("external_sound").play();
+        //                    }, 1);
+        //                    break;
+        //                default:
+        //                    vis.conn.logError("unknown external command " + command);
+        //            }
+        //        }
+        //
+        //        return true;
+        //    }
+        //});
     });
 
     //vis.preloadImages(["../lib/css/themes/jquery-ui/redmond/images/modalClose.png"]);

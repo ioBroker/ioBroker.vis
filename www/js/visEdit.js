@@ -16,6 +16,7 @@
 // visEdit - the ioBroker.vis Editor
 
 "use strict";
+var dockManager;
 
 vis = $.extend(true, vis, {
     toolbox:                $("#vis_editor"),
@@ -2193,61 +2194,22 @@ vis = $.extend(true, vis, {
         $(".widget_multi_helper").remove();
         vis.multiSelectedWidgets = [];
     },
+    //todo
+    //todo
+    //todo
+    //todo
+    //todo
+    //todo
     editInit: function () {
         var that = this;
-        $(".vis-version").html(this.version);
-        $("#vis_editor").prop("title", "ioBroker.vis " + this.version)
-           .dialog({
-            modal:    false,
-            autoOpen: false,
-            width:    420,
-            minWidth: 420,
-            height:   610,
-            position: {my: "right top", at: "right top", of: window},
-            dialogClass: "vis-editor-dialog",
-            close: function () {
-                that.saveRemote(function () {
-					// Show hint how to get back to edit mode
-					if (typeof storage !== 'undefined') {						
-						if (!storage.get("isEditHintShown")) {
-							alert(_('To get back to edit mode just call "%s" in browser', location.href));
-							storage.set('isEditHintShown', true);
-						}
-					}				
-                	
-                    // Some systems (e.g. offline mode) show here the content of directory if called without index.html
-                    location.href = "./index.html" + window.location.search + "#" + vis.activeView;
-                });
-            },
-            open: function () {
-                that.editPosition();
-            }
-        });
 
-        if ($().dialogExtend) {
-            $("#vis_editor").dialogExtend({
-                "minimizable" : true,
-                "icons" : {
-                    "maximize": "ui-icon-arrow-4-diag"
-                },
-                "minimize" : function (evt) {
-                    $("#vis_editor_mode").hide();
-                    if (that.editorPos == "right" || that.editorPos == "free") {
-                        $("#vis_editor").dialog("option", "position", {my: "right top", at: "right top", of: window});
-                    }
-                    if (that.editorPos == 'left') {
-                        $("#vis_editor").dialog("option", "position", {my: "left top", at: "left top", of: window});
-                    }
-                },
-                restore: function () {
-                    $("#vis_editor_mode").show();
-                    $(".vis-editor-dialog").css({
-                        width: "450px",
-                        height: "610px"
-                    })
-                }
-            });
-        }
+        vis.editInit_dialogs();
+        vis.editInit_menu();
+        vis.editInit_iconbar();
+        vis.editInit_dockspawn();
+
+        $(".vis-version").html(this.version);
+
 
         $("#tabs").tabs();
         $("#widget_helper").hide();
@@ -2440,16 +2402,7 @@ vis = $.extend(true, vis, {
             $(this).trigger('change');
         });
 		
-        $("#inspect_view_theme").change(function () {
-            var theme = $('#inspect_view_theme option:selected').val();
-            //console.log("change theme "+"css/"+theme+"/jquery-ui.min.css");
-            vis.views[vis.activeView].settings.theme = theme;
-            $("#jqui_theme").remove();
-            $('style[data-href$="jquery-ui.min.css"]').remove();
-            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="jqui_theme"/>');
-            vis.additionalThemeCss(theme);
-            vis.save();
-        });
+
 
         $('#select_active_widget').change(function () {
             var widgetId = $(this).val();
@@ -2615,34 +2568,183 @@ vis = $.extend(true, vis, {
             }
         }
     },
-    editInitNext: function () {
-		// ioBroker.vis Editor Init
-        var that = this;
-		var sel;
 
-		var keys = Object.keys(vis.views);
+    editInit_dialogs: function(){
+
+        $("#dialog_about").dialog({
+            autoOpen: false,
+            width: 600,
+            height:500,
+            position:{ my: "center", at: "center", of: $("#main") }
+
+        });
+
+    },
+    editInit_menu:function(){
+        $("#menu.sf-menu").superclick({
+            hoverClass: 'sfHover',
+            uiClass: 'ui-state-hover',  // jQuery-UI modified
+            pathClass: 'overideThisToUse',
+            pathLevels: 1,
+            disableHI: false
+        });
+
+        $('li.ui-state-default').hover(
+            function () {
+                $(this).addClass('ui-state-hover')
+            },
+            function () {
+                $(this).removeClass('ui-state-hover')
+            }
+        );
+
+
+        // Theme auswahl
+        $("#ul_theme li a").click(function () {
+            var theme = $(this).data('info');
+            vis.views[vis.activeView].settings.theme = theme;
+            $("#jqui_theme").remove();
+            $('style[data-href$="jquery-ui.min.css"]').remove();
+            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="jqui_theme"/>');
+            vis.additionalThemeCss(theme);
+            vis.save();
+        });
+
+        $(".pan_state").click(function () {
+            var pan = $(this).attr("id").replace("_state", "");
+            var panel;
+            if (this.checked) {
+                panel = vis.get_panel_by_id(pan);
+                panel._floatingDialog.show()
+            } else {
+                panel = vis.get_panel_by_id(pan);
+                if (panel._floatingDialog) {
+                    panel._floatingDialog.hide()
+                } else {
+
+                    var dialog = dockManager.requestUndockToDialog(panel);
+                    dialog.hide()
+                }
+
+            }
+        });
+
+        $("#m_about").click(function(){
+            $("#dialog_about").dialog("open")
+        });
+    },
+    editInit_iconbar:function(){},
+    editInit_dockspawn:function(){
+        var storeKey = "vis.dock_manager";
+
+        var divDockManager = document.getElementById("main");
+        dockManager = new dockspawn.DockManager(divDockManager);
+        dockManager.initialize();
+        var onResized = function (e) {
+            dockManager.resize(window.innerWidth - (divDockManager.clientLeft + divDockManager.offsetLeft), window.innerHeight - (divDockManager.clientTop + divDockManager.offsetTop));
+        };
+        window.onresize = onResized;
+        onResized(null);
+
+        dockManager.addLayoutListener({
+            onDock: function (self, dockNode) {
+                console.info('onDock: ', self, dockNode);
+                localStorage.setItem(storeKey, dockManager.saveState());
+            },
+            onUndock: function (self, dockNode) {
+                //console.info('onUndock: ', self, dockNode);
+                localStorage.setItem(storeKey, dockManager.saveState());
+            },
+            onCreateDialog: function (self, dialog) {
+                //console.info('onCreateDialog: ', self, dialog);
+                localStorage.setItem(storeKey, dockManager.saveState());
+            },
+            onChangeDialogPosition: function (self, dialog, x, y) {
+                //console.info('onCreateDialog: ', self, dialog, x, y);
+                localStorage.setItem(storeKey, dockManager.saveState());
+            },
+            onResumeLayout: function (self) {
+                //console.info('onResumeLayout: ', self);
+                localStorage.setItem(storeKey, dockManager.saveState());
+            },
+            onClosePanel: function (self, panel) {
+                //console.info('onClosePanel: ', self, panel);
+
+                localStorage.setItem(storeKey, dockManager.saveState());
+            },
+            onHideDialog: function (self, dialog) {
+                //console.info('onHideDialog: ', self, dialog);
+                localStorage.setItem(storeKey, dockManager.saveState());
+            },
+            onShowDialog: function (self, dialog) {
+                //console.info('onShowDialog: ', self, dialog);
+                $("#" + dialog.panel.elementContent.id + "_state").attr("checked", true);
+                localStorage.setItem(storeKey, dockManager.saveState());
+            }
+
+        });
+
+        var lastState = localStorage.getItem(storeKey);
+        //if (!lastState) {
+        //    dockManager.loadState(lastState);
+        //
+        //}else{
+
+        var documentNode = dockManager.context.model.documentManagerNode;
+
+        var _pan_vis_container = new dockspawn.PanelContainer(document.getElementById("vis_container"), dockManager);
+        var _pan_t1 = new dockspawn.PanelContainer(document.getElementById("tabs-1"), dockManager);
+        var _pan_t2 = new dockspawn.PanelContainer(document.getElementById("tabs-2"), dockManager);
+        var _pan_t3 = new dockspawn.PanelContainer(document.getElementById("tabs-3"), dockManager);
+        var _pan_t32 = new dockspawn.PanelContainer(document.getElementById("tabs-32"), dockManager);
+        var _pan_t4 = new dockspawn.PanelContainer(document.getElementById("tabs-4"), dockManager);
+
+
+        var pan_vis_container = dockManager.dockFill(documentNode, _pan_vis_container);
+
+        var pan_t1 = dockManager.dockLeft(documentNode, _pan_t1, 0.15);
+        var pan_active_wid = dockManager.dockRight(documentNode, _pan_t2, 0.15);
+        var pan_t3 = dockManager.dockDown(pan_active_wid, _pan_t3, 0.5);
+        var pan_t32 = dockManager.dockFill(pan_t3, _pan_t32);
+        var pan_add_widget = dockManager.dockLeft(documentNode, _pan_t4, 0.15);
+
+    },
+
+    //todo
+    //todo
+    //todo
+    //todo
+    //todo
+    //todo
+
+    editInitNext: function () {
+        // ioBroker.vis Editor Init
+        var that = this;
+        var sel;
+
+        var keys = Object.keys(vis.views);
         var len  = keys.length;
         var i;
         var k;
 
-		keys.sort();
+        keys.sort();
 
         var $select_view      = $("#select_view");
         var $select_view_copy = $("#select_view_copy");
         var $select_set       = $("#select_set");
 
-		for (i = 0; i < len; i++) {
-			k = keys[i];
+        for (i = 0; i < len; i++) {
+            k = keys[i];
 
-			if (k == this.activeView) {
-				$("#inspect_view").html(this.activeView);
-				sel = " selected";
-			} else {
-				sel = '';
-			}
+            if (k == this.activeView) {
+                $("#inspect_view").html(this.activeView);
+                sel = " selected";
+            } else {
+                sel = '';
+            }
             $select_view.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
             $select_view_copy.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
-		}
+        }
 
         $select_view.multiselect('refresh');
 
@@ -2655,43 +2757,39 @@ vis = $.extend(true, vis, {
 
         $select_view.change(function () {
             that.changeView($(this).val());
-		});
+        });
 
         $select_set.change(vis.refreshWidgetSelect);
         $select_set.html('');
 
-		for (i = 0; i < this.widgetSets.length; i++) {
-			if (this.widgetSets[i].name !== undefined) {
+        for (i = 0; i < this.widgetSets.length; i++) {
+            if (this.widgetSets[i].name !== undefined) {
                 $select_set.append("<option value='" + this.widgetSets[i].name + "'>" + this.widgetSets[i].name + "</option>");
-			} else {
+            } else {
                 $select_set.append("<option value='" + this.widgetSets[i] + "'>" + this.widgetSets[i] + "</option>");
-			}
-		}
+            }
+        }
         $select_set.multiselect('refresh');
 
-		vis.refreshWidgetSelect();
+        vis.refreshWidgetSelect();
 
-		//console.log("TOOLBOX OPEN");
-		$("#vis_editor").dialog("open");
-        $('.ui-dialog').css({'z-index':1000});
-        if (vis.binds.jqueryui) {
-		    vis.binds.jqueryui._disable();
+        //console.log("TOOLBOX OPEN");
+
+
+        // Create background_class property if does not exist
+        if (this.views[vis.activeView] != undefined) {
+            if (this.views[vis.activeView].settings == undefined) {
+                this.views[vis.activeView].settings = {};
+            }
+            if (this.views[vis.activeView].settings.style == undefined) {
+                this.views[vis.activeView].settings.style = {};
+            }
+            if (this.views[vis.activeView].settings.style['background_class'] == undefined) {
+                this.views[vis.activeView].settings.style['background_class'] = '';
+            }
         }
 
-		// Create background_class property if does not exist
-		if (this.views[vis.activeView] != undefined) {
-			if (this.views[vis.activeView].settings == undefined) {
-                this.views[vis.activeView].settings = {};
-			}
-			if (this.views[vis.activeView].settings.style == undefined) {
-                this.views[vis.activeView].settings.style = {};
-			}
-			if (this.views[vis.activeView].settings.style['background_class'] == undefined) {
-                this.views[vis.activeView].settings.style['background_class'] = '';
-			}
-		}
-
-		if (this.fillWizard) this.fillWizard();
+        if (this.fillWizard) this.fillWizard();
 
         // Deselect active widget if click nowhere. Not required if selectable is active
         if (!this.selectable) {
@@ -3674,6 +3772,17 @@ vis = $.extend(true, vis, {
             }
         }
         return null;
+    },
+    get_panel_by_id: function (id) {
+        var panels = dockManager.getPanels()
+        var panel;
+        $.each(panels,function () {
+            if (this.elementContent.id == id) {
+                panel = this;
+                return false
+            }
+        });
+        return panel
     }
 });
 

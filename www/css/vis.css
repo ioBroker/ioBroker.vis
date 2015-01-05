@@ -19,6 +19,42 @@ div#vis_container {
     user-select: none;
 }
 
+
+.menu_body {
+    /* height: 19px; */
+    width: 100% !important;
+    min-height: 20px;
+    z-index: 5000;
+    position: relative;
+}
+
+.menu {
+    margin-top: 0px !important;
+    height: 16px;
+    border: none !important;
+    overflow: visible !important;
+}
+
+#icon_bar {
+    height: 30px;
+    width: 100%;
+    z-index: 80;
+    /*overflow: hidden;*/
+    min-height: 30px;
+    position: relative;
+}
+
+.dashui-inspect-css{
+    color: initial!important;
+
+    height: 22px;
+}
+.dashui-inspect-view-css{
+    color: initial!important;
+
+    height: 22px;
+}
+
 .vis-widget {
     position: absolute;
     overflow: hidden;
@@ -244,11 +280,19 @@ a.ui-dialog-titlebar-restore {
 
 .vis-edit-tab {
 
-    height: 80%;
-    height: calc(100% - 50px);
+    /* height: 80%; */
+    
+
+    /* height: calc(100% - 50px); */
+    
+
     overflow-y: scroll;
-    padding-left:5px !important;
-    padding-top:0px !important;
+    
+
+    /* padding-left:5px !important; */
+    
+
+    /* padding-top:0px !important; */
 
 }
 
