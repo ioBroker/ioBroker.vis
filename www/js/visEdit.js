@@ -1398,8 +1398,7 @@ vis = $.extend(true, vis, {
 
         if (!wid || wid === 'none') {
             vis.clearWidgetHelper();
-            $(".vis-widget-tools").hide();
-            $('#view_inspector').show();
+
             vis.activeWidget = null;
             return false;
         }
@@ -1413,8 +1412,7 @@ vis = $.extend(true, vis, {
         }
 
         // Fill Inspector
-        $('.vis-widget-tools').show();
-        $('#view_inspector').hide();
+
 
         // Fill the css values
         $(".vis-inspect-widget").each(function () {
@@ -2195,11 +2193,8 @@ vis = $.extend(true, vis, {
         vis.multiSelectedWidgets = [];
     },
     //todo
-    //todo
-    //todo
-    //todo
-    //todo
-    //todo
+
+    // todo
     editInit: function () {
         var that = this;
 
@@ -2295,7 +2290,7 @@ vis = $.extend(true, vis, {
             window.open(docUrl, "WidgetDoc", "height=640,width=500,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no,location=no");
         });
 
-		$("#del_widget").button({icons: {primary: "ui-icon-trash"}}).click(vis.delWidget);
+
 
 		$("#dup_widget").button({icons: {primary: "ui-icon-copy"}}).click(function () {
             vis.dupWidget();
@@ -2576,7 +2571,12 @@ vis = $.extend(true, vis, {
             width: 600,
             height:500,
             position:{ my: "center", at: "center", of: $("#main") }
-
+        });
+        $("#dialog_setup").dialog({
+            autoOpen: false,
+            width: 600,
+            height:500,
+            position:{ my: "center", at: "center", of: $("#main") }
         });
 
     },
@@ -2597,7 +2597,6 @@ vis = $.extend(true, vis, {
                 $(this).removeClass('ui-state-hover')
             }
         );
-
 
         // Theme auswahl
         $("#ul_theme li a").click(function () {
@@ -2632,8 +2631,24 @@ vis = $.extend(true, vis, {
         $("#m_about").click(function(){
             $("#dialog_about").dialog("open")
         });
+        $("#m_setup").click(function(){
+            $("#dialog_setup").dialog("open")
+        });
     },
-    editInit_iconbar:function(){},
+    editInit_iconbar:function(){
+
+        $("#ibar_wid-del").click(function () {
+            vis.delWidget()
+            $(this).stop(true, true).effect("highlight")
+
+        }).hover(
+            function () {
+                $(this).addClass("ui-state-focus");
+            }, function () {
+                $(this).removeClass("ui-state-focus");
+            }
+        );
+    },
     editInit_dockspawn:function(){
         var storeKey = "vis.dock_manager";
 
@@ -2693,29 +2708,27 @@ vis = $.extend(true, vis, {
         var documentNode = dockManager.context.model.documentManagerNode;
 
         var _pan_vis_container = new dockspawn.PanelContainer(document.getElementById("vis_container"), dockManager);
-        var _pan_t1 = new dockspawn.PanelContainer(document.getElementById("tabs-1"), dockManager);
-        var _pan_t2 = new dockspawn.PanelContainer(document.getElementById("tabs-2"), dockManager);
-        var _pan_t3 = new dockspawn.PanelContainer(document.getElementById("tabs-3"), dockManager);
-        var _pan_t32 = new dockspawn.PanelContainer(document.getElementById("tabs-32"), dockManager);
-        var _pan_t4 = new dockspawn.PanelContainer(document.getElementById("tabs-4"), dockManager);
+        var _pan_add_view = new dockspawn.PanelContainer(document.getElementById("pan_add_view"), dockManager);
+
+        var _pan_css_view = new dockspawn.PanelContainer(document.getElementById("pan_css_view"), dockManager);
+        var _pan_css_wid = new dockspawn.PanelContainer(document.getElementById("pan_css_wid"), dockManager);
+        var _pan_add_wid = new dockspawn.PanelContainer(document.getElementById("pan_add_wid"), dockManager);
 
 
         var pan_vis_container = dockManager.dockFill(documentNode, _pan_vis_container);
 
-        var pan_t1 = dockManager.dockLeft(documentNode, _pan_t1, 0.15);
-        var pan_active_wid = dockManager.dockRight(documentNode, _pan_t2, 0.15);
-        var pan_t3 = dockManager.dockDown(pan_active_wid, _pan_t3, 0.5);
-        var pan_t32 = dockManager.dockFill(pan_t3, _pan_t32);
-        var pan_add_widget = dockManager.dockLeft(documentNode, _pan_t4, 0.15);
+        var pan_add_view = dockManager.dockLeft(documentNode, _pan_add_view, 0.30);
+        var pan_add_widget = dockManager.dockFill(pan_add_view, _pan_add_wid);
+        var pan_css_wid = dockManager.dockRight(documentNode,_pan_css_wid,0.08  );
+        var pan_css_view = dockManager.dockFill(pan_css_wid, _pan_css_view);
+
 
     },
 
     //todo
+
     //todo
-    //todo
-    //todo
-    //todo
-    //todo
+
 
     editInitNext: function () {
         // ioBroker.vis Editor Init

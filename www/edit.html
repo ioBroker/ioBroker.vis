@@ -10,7 +10,7 @@
 	-->
 
     <meta charset="utf-8"/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <!--<meta name="apple-mobile-web-app-capable" content="yes"/>-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
     <link href="img/faviconEdit.png" rel="shortcut icon" type="image/x-icon"/>
@@ -28,10 +28,9 @@
     <link rel="stylesheet" type="text/css" href="widgets/colorpicker/css/farbtastic.css"/>
 
 
-
     <link rel="stylesheet" type="text/css" href="css/backgrounds.css"/>
     <link rel="stylesheet" type="text/css" href="css/vis.css"/>
-    <link rel="stylesheet" type="text/css" href="css/vis-common-user.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="css/vis-common-user.css"/>-->
     <link rel="stylesheet" type="text/css" id="project_css"/>
 
     <script type="text/javascript" src="lib/js/jquery-1.11.1.min.js"></script>
@@ -60,7 +59,7 @@
     <script type="text/javascript" src="js/config.js"></script>
     <!-- this file must be before vis.js -->
     <script type="text/javascript" src="js/visLang.js"></script>
-    <script type="text/javascript" src="/_socket/info.js"></script>
+    <!--<script type="text/javascript" src="/_socket/info.js"></script>-->
     <script type="text/javascript" src="js/conn.js"></script>
     <script type="text/javascript" src="js/vis.js"></script>
     <script type="text/javascript" src="js/visEditWelcome.js"></script>
@@ -84,10 +83,13 @@
 <div style="display: none;text-align: center" id="dialog_delete">
     <table style="height: 100%;width: 100%">
         <tr>
-            <td><span class="ui-icon ui-icon-alert" style="display:inline-block"></span><span id="dialog_delete_content" style="display:inline-block;padding-left:10px"></span></td>
+            <td><span class="ui-icon ui-icon-alert" style="display:inline-block"></span><span id="dialog_delete_content"
+                                                                                              style="display:inline-block;padding-left:10px"></span>
+            </td>
         </tr>
         <tr>
-            <td style="text-align: left; vertical-align: bottom"><input type="checkbox" id="dialog_delete_is_show" style="display:inline-block;padding-left:10px">
+            <td style="text-align: left; vertical-align: bottom"><input type="checkbox" id="dialog_delete_is_show"
+                                                                        style="display:inline-block;padding-left:10px">
                 <span class="translate">Do not ask again</span></td>
         </tr>
     </table>
@@ -96,24 +98,155 @@
 
     <ul style="font-size: 1.1em; line-height: 2em; display: inline;">
         <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank" class="translate">Webseite</a></li>
-        <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank" class="translate">Unterstützung</a></li>
-        <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank" class="translate">Änderungs-Historie</a></li>
+        <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank"
+               class="translate">Unterstützung</a></li>
+        <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank" class="translate">Änderungs-Historie</a>
+        </li>
     </ul>
 
-    <h4>Copyright &copy; 2013, 2014 <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a>, Bluefox</h4>
+    <h4>Copyright &copy; 2013, 2014 <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a>, Bluefox
+    </h4>
 
-    <p class="translate">CC BY-NC License</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img src="img/cc-nc-by.png"/></a>
+    <p class="translate">CC BY-NC License</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img
+        src="img/cc-nc-by.png"/></a>
     <!--p class="translate">license1</p>
     <p class="translate">license2</p>
     <p class="translate">license3</p>
     <p class="translate">license4</p-->
     <p class="translate">license5</p>
 </div>
+<div style="display: none;text-align: left" title="Setup" id="dialog_setup">
+    <h4 class="translate">Snapping</h4>
+    <table>
+        <tr>
+            <td style="width: 80px" class="translate">Mode:</td>
+            <td>
+                <select id="snap_type">
+                    <option value="0" selected="selected" class="translate">disabled</option>
+                    <option value="1" class="translate">elements</option>
+                    <option value="2" class="translate">grid</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="translate">grid size</td>
+            <td><input id="grid_size" type="number" value=""/></td>
+            </td>
+        </tr>
+    </table>
+
+    <h4 class="translate">Screensize</h4>
+    <table>
+        <tr>
+            <td style="width: 80px" class="translate">Resolution</td>
+            <td>
+                <select id="screen_size">
+                    <option value="user" class="translate">User defined</option>
+                    <option value="320x460">iPhone 3G, 3GS, 4, 4S - Portrait</option>
+                    <option value="480x300">iPhone 3G, 3GS, 4, 4S - Landscape</option>
+                    <option value="320x548">iPhone 5, 5S - Portrait</option>
+                    <option value="568x300">iPhone 5, 5S - Landscape</option>
+                    <option value="768x1004">iPad - Portrait</option>
+                    <option value="1024x748">iPad - Landscape</option>
+                    <option value="480x800">Samsung S2 - Portrait</option>
+                    <option value="800x480">Samsung S2 - Landscape</option>
+                    <option value="720x1280">Samsung S3, Note 2 - Portrait</option>
+                    <option value="1280x720">Samsung S3, Note 2 - Landscape</option>
+                    <option value="1080x1920">Samsung S4, S5, Note 3 - Portrait</option>
+                    <option value="1920x1080">Samsung S4, S5, Note 3 - Landscape</option>
+                    <option value="768x1280">Nexus 4 - Portrait</option>
+                    <option value="1280x768">Nexus 4 - Landscape</option>
+                    <option value="1080x1920">Nexus 5 - Portrait</option>
+                    <option value="1920x1080">Nexus 5 - Landscape</option>
+                    <option value="800x1280">Nexus 7 (2012) - Portrait</option>
+                    <option value="1280x800">Nexus 7 (2012) - Landscape</option>
+                    <option value="1200x1920">Nexus 7 (2013) - Portrait</option>
+                    <option value="1920x1200">Nexus 7 (2013) - Landscape</option>
+                    <option value="1600x2560">Nexus 10 - Portrait</option>
+                    <option value="2560x1600">Nexus 10 - Landscape</option>
+                    <option value="720x1280">HD - Portrait</option>
+                    <option value="1280x720">HD - Landscape</option>
+                    <option value="1080x1920">Full HD - Portrait</option>
+                    <option value="1920x1080">Full HD - Landscape</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 80px" class="translate">Width</td>
+            <td><input id="screen_size_x" type="number" value=""/></td>
+        </tr>
+        <tr>
+            <td class="translate">Height</td>
+            <td><input id="screen_size_y" type="number" value=""/></td>
+        </tr>
+    </table>
+
+    <h4 class="translate">Hide widget description</h4>
+    <table>
+        <tr>
+            <td style="width: 80px" class="translate">Is hide</td>
+            <td><input id="screen_hide_description" type="checkbox"/></td>
+        </tr>
+    </table>
+
+    <h4 class="translate">Wizard</h4>
+    <table>
+        <tr>
+            <td style="width: 80px" class='translate'>Room:</td>
+            <td><select id="wizard_rooms"></select></td>
+        </tr>
+        <tr>
+            <td style="width: 80px" class='translate'>Function:</td>
+            <td><select id="wizard_funcs"></select></td>
+        </tr>
+        <tr>
+            <td style="width: 80px" class='translate'>Widget:</td>
+            <td><select id="wizard_widgets"></select></td>
+        </tr>
+    </table>
+    <button class="vis-editor translateB" type="button" id="wizard_run">wizard_run</button>
+
+
+    <h4 class="translate">External Commands</h4>
+                <span id="instance"><span style=" display: inline-block;width: 80px"
+                                          class="translate">Instance ID</span> <input type="input" id="vis_instance"/>
+                <button type="button" class="vis-editor translateB" id="create_instance">create_instance</button>
+
+                </span>
+
+    <h4>Language</h4>
+    <table>
+        <tr>
+            <td style="width: 80px">Language:
+            </td>
+            <td>
+                <select id="language">
+                    <option value='en'>English</option>
+                    <option value='de'>Deutsch</option>
+                    <option value='ru'>Русский</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+
+    <h4 class="translate">Import / Export View</h4>
+    <button class="vis-editor translateB" id="export_view">export view</button>
+    <button class="vis-editor translateB" id="import_view">import view</button>
+
+    <h4 class="translate" id="local_view" style="display:none">Local Views</h4>
+    <button class="vis-editor translateB" id="export_local_view" style="display:none">export views</button>
+    <button class="vis-editor translateB" id="import_local_view" style="display:none">import views</button>
+    <br>
+    <button class="vis-editor translateB" id="clear_local_view" style="display:none">clear cached views</button>
+
+</div>
 <div style="display: none;" id="dialog_export_view" title="export view" class="translateT">
-    <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;" id="textarea_export_view"></textarea>
+    <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
+              id="textarea_export_view"></textarea>
 </div>
 <div style="display: none;" id="dialog_import_view" title="import view" class="translateT">
-    <textarea rows="50" cols="160" style="width: 99%; height: calc(98% - 40px); font-size: 11px;" id="textarea_import_view"></textarea>
+    <textarea rows="50" cols="160" style="width: 99%; height: calc(98% - 40px); font-size: 11px;"
+              id="textarea_import_view"></textarea>
     <br/>
     <input type="text" id="name_import_view">
     <button id="start_import_view" class="translateB">import</button>
@@ -136,29 +269,31 @@
             <ul>
                 <li class="ui-state-default frame_color menu_item">
                     <div style="display: inline-block; width: 150px" class="translate">Widget CSS</div>
-                    <input style="display: inline-block" type="checkbox" class="pan_state" checked id="pan_wid_css_state">
+                    <input style="display: inline-block" type="checkbox" class="pan_state" checked
+                           id="pan_css_wid_state">
                 </li>
                 <li class="ui-state-default frame_color menu_item">
                     <div style="display: inline-block; width: 150px" class="translate">View CSS</div>
-                    <input style="display: inline-block" type="checkbox" class="pan_state" checked id="pan_view_css_state">
+                    <input style="display: inline-block" type="checkbox" class="pan_state" checked
+                           id="pan_css_view_state">
                 </li>
                 <li class="ui-state-default frame_color menu_item">
                     <div style="display: inline-block; width: 150px" class="translate">Widget</div>
-                    <input style="display: inline-block" type="checkbox" class="pan_state" checked id="pan_wid_state">
+                    <input style="display: inline-block" type="checkbox" class="pan_state" checked id="pan_add_widget_state">
                 </li>
                 <li class="ui-state-default frame_color menu_item">
                     <div style="display: inline-block; width: 150px" class="translate">Active Widget</div>
-                    <input style="display: inline-block" type="checkbox" class="pan_state" checked id="pan_wid_prop_state">
+                    <input style="display: inline-block" type="checkbox" class="pan_state" checked
+                           id="pan_add_view_state">
                 </li>
             </ul>
-        </li>
         </li>
         <li class="ui-state-default ui-corner-all" style="border: none"><a class="menu_font translate">Einstellungen</a>
             <ul>
                 <li class="ui-state-default frame_color menu_item"><a class="translate">Theme</a>
                     <ul id="ul_theme">
                         <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="dark-hive">Dark-Hive</a>
+                            <a class="translate" data-info="dhive">Dark-Hive</a>
                         </li>
                         <li class="ui-state-default frame_color menu_item">
                             <a class="translate" data-info="start">Start</a>
@@ -229,7 +364,6 @@
                 <li class="ui-state-default frame_color menu_item"><a id="m_setup" class="translate">Setup</a></li>
             </ul>
         </li>
-
         <li class="ui-state-default ui-corner-all" style="border: none"><a class="menu_font translate">Help</a>
             <ul>
                 <li class="ui-state-default frame_color menu_item"><a id="m_about" class="translate">About</a></li>
@@ -238,10 +372,15 @@
     </ul>
 </div>
 <div id="icon_bar" class="icon_bar ui-state-default">
-    <select id="select_active_widget" class="vis-editor" data-multiselect-width="370" data-multiselect-height="265"></select>
+    <div style="display:flex;clear: both">
+        <img src="lib/img/delete.png" class="xbar_icon" id="ibar_wid-del" title="Del Widget"/>
+        <select id="select_active_widget" class="vis-editor" data-multiselect-width="300"
+                data-multiselect-height="265"></select>
+    </div>
 </div>
 <div id="main" style="width: 100%;height: 100%">
-    <div id="vis_container" data-panel-caption="Views" style="position: relative; top: 0; left: 0; height:100%; width:100%; overflow: scroll">
+    <div id="vis_container" data-panel-caption="Views"
+         style="position: relative; top: 0; left: 0; height:100%; width:100%; overflow: scroll">
         <div id="widget_helper">
             <div id="widget_inner_helper"></div>
         </div>
@@ -249,12 +388,13 @@
             <div id="allwidgets_inner_helper"></div>
         </div>
 
-        <div id="size_x" style="display:none; z-index: 99; position: absolute; top: 0px; width:0px; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
-        <div id="size_y" style="display:none; z-index: 99; position: absolute; left: 0px; height:0px; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
+        <div id="size_x"
+             style="display:none; z-index: 99; position: absolute; top: 0px; width:0px; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
+        <div id="size_y"
+             style="display:none; z-index: 99; position: absolute; left: 0px; height:0px; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
     </div>
 
-
-    <div class="vis-edit-tab" data-panel-caption="New View" id="tabs-1">
+    <div class="vis-panel ui-widget-content" data-panel-caption="New View"      id="pan_add_view">
         <h4 class="translate">New View</h4>
 
         <div style="width:90px; display:inline-block" class="translate">Name:</div>
@@ -277,147 +417,24 @@
         <table>
             <tr>
                 <td class="vis-edit-td-caption translate">comment</td>
-                <td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_comment" class="vis-inspect-view vis-edit-textbox"/></td>
+                <td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_comment"
+                                                     class="vis-inspect-view vis-edit-textbox"/></td>
             </tr>
             <tr>
                 <td class="vis-edit-td-caption translate">class</td>
-                <td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_class" class="vis-inspect-view vis-edit-textbox"/></td>
+                <td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_class"
+                                                     class="vis-inspect-view vis-edit-textbox"/></td>
 
             </tr>
             <tr>
                 <td class="vis-edit-td-caption translate">default_filter_key</td>
-                <td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_filterkey" class="vis-inspect-view vis-edit-textbox"/></td>
+                <td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_filterkey"
+                                                     class="vis-inspect-view vis-edit-textbox"/></td>
             </tr>
 
         </table>
     </div>
-
-    <div class="vis-edit-tab" data-panel-caption="Active Widget" id="tabs-2">
-        <h4 class="translate">Snapping</h4>
-        <table>
-            <tr>
-                <td style="width: 80px" class="translate">Mode:</td>
-                <td>
-                    <select id="snap_type">
-                        <option value="0" selected="selected" class="translate">disabled</option>
-                        <option value="1" class="translate">elements</option>
-                        <option value="2" class="translate">grid</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="translate">grid size</td>
-                <td><input id="grid_size" type="number" value=""/></td>
-                </td>
-            </tr>
-        </table>
-
-        <h4 class="translate">Screensize</h4>
-        <table>
-            <tr>
-                <td style="width: 80px" class="translate">Resolution</td>
-                <td>
-                    <select id="screen_size">
-                        <option value="user" class="translate">User defined</option>
-                        <option value="320x460">iPhone 3G, 3GS, 4, 4S - Portrait</option>
-                        <option value="480x300">iPhone 3G, 3GS, 4, 4S - Landscape</option>
-                        <option value="320x548">iPhone 5, 5S - Portrait</option>
-                        <option value="568x300">iPhone 5, 5S - Landscape</option>
-                        <option value="768x1004">iPad - Portrait</option>
-                        <option value="1024x748">iPad - Landscape</option>
-                        <option value="480x800">Samsung S2 - Portrait</option>
-                        <option value="800x480">Samsung S2 - Landscape</option>
-                        <option value="720x1280">Samsung S3, Note 2 - Portrait</option>
-                        <option value="1280x720">Samsung S3, Note 2 - Landscape</option>
-                        <option value="1080x1920">Samsung S4, S5, Note 3 - Portrait</option>
-                        <option value="1920x1080">Samsung S4, S5, Note 3 - Landscape</option>
-                        <option value="768x1280">Nexus 4 - Portrait</option>
-                        <option value="1280x768">Nexus 4 - Landscape</option>
-                        <option value="1080x1920">Nexus 5 - Portrait</option>
-                        <option value="1920x1080">Nexus 5 - Landscape</option>
-                        <option value="800x1280">Nexus 7 (2012) - Portrait</option>
-                        <option value="1280x800">Nexus 7 (2012) - Landscape</option>
-                        <option value="1200x1920">Nexus 7 (2013) - Portrait</option>
-                        <option value="1920x1200">Nexus 7 (2013) - Landscape</option>
-                        <option value="1600x2560">Nexus 10 - Portrait</option>
-                        <option value="2560x1600">Nexus 10 - Landscape</option>
-                        <option value="720x1280">HD - Portrait</option>
-                        <option value="1280x720">HD - Landscape</option>
-                        <option value="1080x1920">Full HD - Portrait</option>
-                        <option value="1920x1080">Full HD - Landscape</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td style="width: 80px" class="translate">Width</td>
-                <td><input id="screen_size_x" type="number" value=""/></td>
-            </tr>
-            <tr>
-                <td class="translate">Height</td>
-                <td><input id="screen_size_y" type="number" value=""/></td>
-            </tr>
-        </table>
-
-        <h4 class="translate">Hide widget description</h4>
-        <table>
-            <tr>
-                <td style="width: 80px" class="translate">Is hide</td>
-                <td><input id="screen_hide_description" type="checkbox"/></td>
-            </tr>
-        </table>
-
-        <h4 class="translate">Wizard</h4>
-        <table>
-            <tr>
-                <td style="width: 80px" class='translate'>Room:</td>
-                <td><select id="wizard_rooms"></select></td>
-            </tr>
-            <tr>
-                <td style="width: 80px" class='translate'>Function:</td>
-                <td><select id="wizard_funcs"></select></td>
-            </tr>
-            <tr>
-                <td style="width: 80px" class='translate'>Widget:</td>
-                <td><select id="wizard_widgets"></select></td>
-            </tr>
-        </table>
-        <button class="vis-editor translateB" type="button" id="wizard_run">wizard_run</button>
-
-
-        <h4 class="translate">External Commands</h4>
-                <span id="instance"><span style=" display: inline-block;width: 80px" class="translate">Instance ID</span> <input type="input" id="vis_instance"/>
-                <button type="button" class="vis-editor translateB" id="create_instance">create_instance</button>
-
-                </span>
-
-        <h4>Language</h4>
-        <table>
-            <tr>
-                <td style="width: 80px">Language:
-                </td>
-                <td>
-                    <select id="language">
-                        <option value='en'>English</option>
-                        <option value='de'>Deutsch</option>
-                        <option value='ru'>Русский</option>
-                    </select>
-                </td>
-            </tr>
-        </table>
-
-        <h4 class="translate">Import / Export View</h4>
-        <button class="vis-editor translateB" id="export_view">export view</button>
-        <button class="vis-editor translateB" id="import_view">import view</button>
-
-        <h4 class="translate" id="local_view" style="display:none">Local Views</h4>
-        <button class="vis-editor translateB" id="export_local_view" style="display:none">export views</button>
-        <button class="vis-editor translateB" id="import_local_view" style="display:none">import views</button>
-        <br>
-        <button class="vis-editor translateB" id="clear_local_view" style="display:none">clear cached views</button>
-
-    </div>
-
-    <div class="vis-edit-tab" data-panel-caption="View CSS" id="tabs-3">
+    <div class="vis-panel ui-widget-content" data-panel-caption="View CSS"      id="pan_css_view">
         <table>
             <tr>
                 <td>
@@ -437,31 +454,36 @@
             <tr>
                 <td>&nbsp&nbsp&nbsp-color</td>
                 <td>
-                    <input size="15" type="text" id="inspect_view_css_background-color" class="dashui-inspect-view-css"/>
+                    <input size="15" type="text" id="inspect_view_css_background-color"
+                           class="dashui-inspect-view-css"/>
                 </td>
             </tr>
             <tr>
                 <td>&nbsp&nbsp&nbsp-image</td>
                 <td>
-                    <input size="15" type="text" id="inspect_view_css_background-image" class="dashui-inspect-view-css"/>
+                    <input size="15" type="text" id="inspect_view_css_background-image"
+                           class="dashui-inspect-view-css"/>
                 </td>
             </tr>
             <tr>
                 <td>&nbsp&nbsp&nbsp-repeat</td>
                 <td>
-                    <input size="15" type="text" id="inspect_view_css_background-repeat" class="dashui-inspect-view-css"/>
+                    <input size="15" type="text" id="inspect_view_css_background-repeat"
+                           class="dashui-inspect-view-css"/>
                 </td>
             </tr>
             <tr>
                 <td>&nbsp&nbsp&nbsp-attachment</td>
                 <td>
-                    <input size="15" type="text" id="inspect_view_css_background-attachment" class="dashui-inspect-view-css"/>
+                    <input size="15" type="text" id="inspect_view_css_background-attachment"
+                           class="dashui-inspect-view-css"/>
                 </td>
             </tr>
             <tr>
                 <td>&nbsp&nbsp&nbsp-position</td>
                 <td>
-                    <input size="15" type="text" id="inspect_view_css_background-position" class="dashui-inspect-view-css"/>
+                    <input size="15" type="text" id="inspect_view_css_background-position"
+                           class="dashui-inspect-view-css"/>
                 </td>
             </tr>
             <tr>
@@ -479,7 +501,8 @@
             <tr>
                 <td>&nbsp&nbsp&nbsp-origin</td>
                 <td>
-                    <input size="15" type="text" id="inspect_view_css_background-origin" class="dashui-inspect-view-css"/>
+                    <input size="15" type="text" id="inspect_view_css_background-origin"
+                           class="dashui-inspect-view-css"/>
                 </td>
             </tr>
             <tr>
@@ -548,359 +571,407 @@
             </tr>
         </table>
     </div>
-
-    <div class="vis-widget-tools" data-panel-caption="View CSS" id="tabs-32">
+    <div class="vis-panel ui-widget-content" data-panel-caption="Wid CSS"       id="pan_css_wid">
         <table id="css_table">
             <tr>
-                <td>
-                    <div style="width:120px;display: inline-block">Eigenschaften</div>
-                </td>
-                <td>
-                    <div style="width:133px;display: inline-block">Wert</div>
-                </td>
-                <td>
-                    <div style="width: 13px;display: inline-block;margin-left: -23px">Steal</div>
-                </td>
-            </tr>
-            <tr>
-                <td>left</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_left" class="dashui-inspect-css"/>
-                </td>
-                <td>
+                <td style="text-align: left">left</td>
+                <td width="30px">
                     <input id="steal_left" type="checkbox" data-dashui-steal="left" class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>top</td>
-                <td><input size="15" type="text" id="inspect_css_top" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_left" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>top</td>
                 <td>
                     <input id="steal_top" type="checkbox" data-dashui-steal="top" class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>width</td>
-                <td><input size="15" type="text" id="inspect_css_width" class="dashui-inspect-css"/>
+                <td colspan="2">
+                <input size="22" type="text" id="inspect_css_top" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>width</td>
                 <td>
                     <input id="steal_width" type="checkbox" data-dashui-steal="width" class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>height</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_height" class="dashui-inspect-css"/>
+                <td colspan="2"><input size="22" type="text" id="inspect_css_width" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>height</td>
                 <td>
                     <input id="steal_height" type="checkbox" data-dashui-steal="height" class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>z-index</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_z-index" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_height" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>z-index</td>
                 <td>
                     <input id="steal_zIndex" type="checkbox" data-dashui-steal="z-index" class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_z-index" class="dashui-inspect-css"/>
+                </td>
+            </tr>
+            <tr>
                 <td>overflow-x</td>
                 <td>
-                    <input size="15" type="text" id="inspect_css_overflow-x" class="dashui-inspect-css"/>
+                    <input id="steal_overflowX" type="checkbox" data-dashui-steal="overflow-x"
+                           class="dashui-steal-css"/>
                 </td>
-                <td>
-                    <input id="steal_overflowX" type="checkbox" data-dashui-steal="overflow-x" class="dashui-steal-css"/>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_overflow-x" class="dashui-inspect-css"/>
                 </td>
             </tr>
             <tr>
                 <td>overflow-y</td>
                 <td>
-                    <input size="15" type="text" id="inspect_css_overflow-y" class="dashui-inspect-css"/>
+                    <input id="steal_overflowY" type="checkbox" data-dashui-steal="overflow-y"
+                           class="dashui-steal-css"/>
                 </td>
-                <td>
-                    <input id="steal_overflowY" type="checkbox" data-dashui-steal="overflow-y" class="dashui-steal-css"/>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_overflow-y" class="dashui-inspect-css"/>
                 </td>
             </tr>
             <tr>
                 <td>padding</td>
                 <td>
-                    <input size="15" type="text" id="inspect_css_padding" class="dashui-inspect-css"/>
-                </td>
-                <td>
                     <input id="steal_padding" type="checkbox" data-dashui-steal="padding" class="dashui-steal-css"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_padding" class="dashui-inspect-css"/>
                 </td>
             </tr>
             <tr>
                 <td>box-shadow</td>
                 <td>
-                    <input size="15" type="text" id="inspect_css_box-shadow" class="dashui-inspect-css"/>
-                </td>
-                <td>
                     <input id="steal_boxShadow" type="checkbox" data-dashui-steal="box-shadow"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
-
             <tr>
-                <td colspan="4" class="css-inspector-heading">font / text</td>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_box-shadow" class="dashui-inspect-css"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="css-inspector-heading">font / text</td>
             </tr>
             <tr>
                 <td>&nbsp&nbsp&nbspcolor</td>
                 <td>
-                    <input size="15" type="text" id="inspect_css_color" class="dashui-inspect-css"/>
-                </td>
-                <td>
                     <input id="steal_color" type="checkbox" data-dashui-steal="color" class="dashui-steal-css"/>
                 </td>
-
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_color" class="dashui-inspect-css"/>
+                </td>
             </tr>
             <tr>
                 <td>&nbsp&nbsp&nbsptext-align</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_text-align" class="dashui-inspect-css"/>
-                </td>
                 <td>
                     <input id="steal_textAlign" type="checkbox" data-dashui-steal="text-align"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbsptext-shadow</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_text-shadow" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_text-align" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbsptext-shadow</td>
                 <td>
                     <input id="steal_textShadow" type="checkbox" data-dashui-steal="text-shadow"
                            class="dashui-steal-css"/>
                     <a data-dashui-clear="" class="dashui-clear-css"></a>
                 </td>
             </tr>
-
+            <tr>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_text-shadow" class="dashui-inspect-css"/>
+                </td>
+            </tr>
             <tr>
                 <td>&nbsp&nbsp&nbspfont-family</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_font-family" class="dashui-inspect-css"/>
-                </td>
                 <td>
                     <input id="steal_fontFamily" type="checkbox" data-dashui-steal="font-family"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbspfont-style</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_font-style" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_font-family" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbspfont-style</td>
                 <td>
                     <input id="steal_fontStyle" type="checkbox" data-dashui-steal="font-style"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbspfont-variant</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_font-variant" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_font-style" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbspfont-variant</td>
                 <td>
                     <input id="steal_fontVariant" type="checkbox" data-dashui-steal="font-variant"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbspfont-weight</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_font-weight" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_font-variant" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbspfont-weight</td>
                 <td>
                     <input id="steal_fontWeight" type="checkbox" data-dashui-steal="font-weight"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbspfont-size</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_font-size" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_font-weight" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbspfont-size</td>
                 <td>
                     <input id="steal_fontSize" type="checkbox" data-dashui-steal="font-size" class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbspline-height</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_line-height" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_font-size" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbspline-height</td>
                 <td>
                     <input id="steal_lineHeight" type="checkbox" data-dashui-steal="line-height"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbspletter-spacing</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_letter-spacing" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_line-height" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbspletter-spacing</td>
                 <td>
                     <input id="steal_letterSpacing" type="checkbox" data-dashui-steal="letter-spacing"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbspword-spacing</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_word-spacing" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_letter-spacing" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbspword-spacing</td>
                 <td>
                     <input id="steal_wordSpacing" type="checkbox" data-dashui-steal="word-spacing"
                            class="dashui-steal-css"/>
                     <a data-dashui-clear="" class="dashui-clear-css"></a>
                 </td>
             </tr>
-
             <tr>
-                <td colspan="4" class="css-inspector-heading">background</td>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_word-spacing" class="dashui-inspect-css"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="css-inspector-heading">background</td>
             </tr>
             <tr>
                 <td>&nbsp&nbsp&nbsp-color</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_background-color" class="dashui-inspect-css"/>
-                </td>
                 <td>
                     <input id="steal_backgroundColor" type="checkbox" data-dashui-steal="background-color"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbsp-image</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_background-image" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_background-color" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbsp-image</td>
                 <td>
                     <input id="steal_backgroundImage" type="checkbox" data-dashui-steal="background-image"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbsp-repeat</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_background-repeat" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_background-image" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbsp-repeat</td>
                 <td>
                     <input id="steal_backgroundRepeat" type="checkbox" data-dashui-steal="background-repeat"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbsp-attachment</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_background-attachment" class="dashui-inspect-css"/>
+
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_background-repeat" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbsp-attachment</td>
                 <td>
                     <input id="steal_backgroundAttachment" type="checkbox" data-dashui-steal="background-attachment"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbsp-position</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_background-position" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_background-attachment" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbsp-position</td>
                 <td>
                     <input id="steal_backgroundPosition" type="checkbox" data-dashui-steal="background-position"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbsp-size</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_background-size" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_background-position" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbsp-size</td>
                 <td>
                     <input id="steal_backgroundSize" type="checkbox" data-dashui-steal="background-size"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbsp-clip</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_background-clip" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_background-size" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbsp-clip</td>
                 <td>
                     <input id="steal_backgroundClip" type="checkbox" data-dashui-steal="background-clip"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbsp-origin</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_background-origin" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_background-clip" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbsp-origin</td>
                 <td>
                     <input id="steal_backgroundOrigin" type="checkbox" data-dashui-steal="background-origin"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
-
             <tr>
-                <td colspan="4" class="css-inspector-heading">border</td>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_background-origin" class="dashui-inspect-css"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="css-inspector-heading">border</td>
             </tr>
             <tr>
                 <td>&nbsp&nbsp&nbsp-width</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_border-width" class="dashui-inspect-css"/>
-                </td>
                 <td>
                     <input id="steal_borderWidth" type="checkbox" data-dashui-steal="border-width"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbsp-style</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_border-style" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_border-width" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbsp-style</td>
                 <td>
                     <input id="steal_borderStyle" type="checkbox" data-dashui-steal="border-style"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbsp-color</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_border-color" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_border-style" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbsp-color</td>
                 <td>
                     <input id="steal_borderColor" type="checkbox" data-dashui-steal="border-color"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
             <tr>
-                <td>&nbsp&nbsp&nbsp-radius</td>
-                <td>
-                    <input size="15" type="text" id="inspect_css_border-radius" class="dashui-inspect-css"/>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_border-color" class="dashui-inspect-css"/>
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp&nbsp&nbsp-radius</td>
                 <td>
                     <input id="steal_borderRadius" type="checkbox" data-dashui-steal="border-radius"
                            class="dashui-steal-css"/>
                 </td>
             </tr>
-
+            <tr>
+                <td colspan="2">
+                    <input size="22" type="text" id="inspect_css_border-radius" class="dashui-inspect-css"/>
+                </td>
+            </tr>
         </table>
     </div>
-
-
-    <div class="vis-edit-tab" data-panel-caption="ADD Widget" id="tabs-4" style="overflow-x: hidden">
+    <div class="vis-panel ui-widget-content" data-panel-caption="ADD Widget"    id="pan_add_wid">
         <h4 class="translate">Add Widget:</h4>
 
         <div style="width:103px; display:inline-block" class="translate">Widget Set:</div>
-</br>
+        </br>
         <div style="width:103px; display:inline-block" class="translate">Widget:</div>
         <select id="select_tpl" class="vis-editor" data-multiselect-width="370" data-multiselect-height="360"></select>
         <button class="vis-editor translateB" type="button" id="add_widget">add_widget</button>
         <h4 class="translate">Inspecting Widget:</h4>
-        <select id="select_active_widget" class="vis-editor" data-multiselect-width="370" data-multiselect-height="265"></select>
+
 
         <div class="vis-widget-tools">
             <table>
@@ -934,12 +1005,9 @@
     </div>
 
 
-
-
 </div>
 
 <div style="display: none" id="uploadPreview"></div>
-
 
 
 <div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>

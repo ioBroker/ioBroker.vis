@@ -43,6 +43,11 @@ div#vis_container {
     min-height: 30px;
     position: relative;
 }
+.xbar_icon{
+    width: 22px;
+    padding: 4px;
+    border: 1px solid transparent;
+}
 
 .dashui-inspect-css{
     color: initial!important;
@@ -208,7 +213,7 @@ a.ui-dialog-titlebar-restore {
     margin-top: 5px !important;
     margin-left:5px !important;
 }
-.vis-edit-tab h4 {
+.vis-panel h4 {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 12pt;
 	font-weight: bold;
@@ -278,15 +283,16 @@ a.ui-dialog-titlebar-restore {
     font-weight: bold;
 }
 
-.vis-edit-tab {
+.vis-panel {
 
     /* height: 80%; */
     
 
     /* height: calc(100% - 50px); */
-    
 
+/*color: inherit;*/
     overflow-y: scroll;
+    font-size: 11px;
     
 
     /* padding-left:5px !important; */
@@ -328,7 +334,7 @@ div#vis_editor {
     height: 17px;
 }
 #css_table {
-    width: 400px;
+    width: 220px;
     font-size: 11px;
 }
 

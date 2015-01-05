@@ -36,15 +36,14 @@
 }
 
 .panel-content {
-	/* background-color: #FFF; */
+
 	width: 100%;
-	background-image: none!important;
+
 }
 
 .panel-content * {
     margin: 0px;
-    color: inherit;
-    /* background-image: none!important; */
+
     overflow: auto;
     padding-right: 0px;
     /* margin-right: -4px; */
