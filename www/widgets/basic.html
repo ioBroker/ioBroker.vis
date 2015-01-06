@@ -21,6 +21,7 @@
             "de": "HTML anhängen(Plüral)",
             "ru": "Суффикс значения(множ.ч.)"
         },
+        "stretch":         {"en": "Stretch",               "de": "Streken",            "ru": "Растянуть"},
         "factor":          {"en": "Multiplex factor",      "de": "Multiplikation",     "ru": "Множитеть"},
         "class_true":      {"en": "Class if quality 'true'", "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
         "class_false":     {"en": "Class if quality 'false'", "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
@@ -646,14 +647,14 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplImage" class="vis-tpl" data-vis-set="basic" data-vis-name="static - Image" data-vis-attrs="src;refreshInterval[0]/slider,0,180000,100;refreshOnWakeUp[true]/checkbox;refreshOnViewChange[true]/checkbox">
+<script type="text/ejs" id="tplImage" class="vis-tpl" data-vis-set="basic" data-vis-name="static - Image" data-vis-attrs="src;stretch/checkbox;refreshInterval[0]/slider,0,180000,100;refreshOnWakeUp[true]/checkbox;refreshOnViewChange[true]/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
                 <div class="editmode-helper" />
             <% } %>
-            <img style="position:absolute; width:100%;" <%= this.data.attr('src') ? 'src="'+this.data.attr('src')+'"' : '' %> />
-            <div <%= (el) -> vis.binds.basic.imgRefresh(el, data.attr("src"), data.attr("refreshInterval"), data.attr("refreshOnWakeUp"), data.attr("refreshOnViewChange")) %> />
+            <img style="position:absolute; width:100%;<%= this.data.attr('stretch') ? 'height:100%' : '' %>" <%= this.data.attr('src') ? 'src="'+this.data.attr('src')+'"' : '' %> />
+            <div <%= (el) -> vis.binds.basic.imgRefresh(el, data.attr("src"), data.attr('refreshInterval'), data.attr('refreshOnWakeUp'), data.attr('refreshOnViewChange')) %> />
         </div>
     </div>
 </script>
@@ -761,7 +762,7 @@
                 var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];
             %>
             <img class="vis-widget-element" data-oid="<%= this.data.attr('oid') %>" style="position:absolute; width:100%;" src="<%== srcArr[vis.states.attr(data.attr('oid') + '.val')] %>" />
-            <div <%= (el) -> vis.binds.stateful.image(el, srcArr, data.attr("refreshInterval")) %> />
+            <div <%= (el) -> vis.binds.stateful.image(el, srcArr, data.attr('refreshInterval')) %> />
         </div>
     </div>
 </script>

@@ -190,6 +190,60 @@ var servConn = {
             callback(err, data);
         });
     },
+    readFile64: function (filename, callback) {
+        if (!callback) {
+            throw 'No callback set';
+        }
+        this._socket.emit('readFile', this.namespace, filename, function (err, data) {
+            if (data) {
+                var ext = filename.match(/\.[^.]+$/);
+                var _mimeType;
+                if (ext == '.css') {
+                    _mimeType = 'text/css';
+                } else if (ext == '.bmp') {
+                    _mimeType = 'image/bmp';
+                } else if (ext == '.png') {
+                    _mimeType = 'image/png';
+                } else if (ext == '.jpg') {
+                    _mimeType = 'image/jpeg';
+                } else if (ext == '.jpeg') {
+                    _mimeType = 'image/jpeg';
+                } else if (ext == '.gif') {
+                    _mimeType = 'image/gif';
+                } else if (ext == '.tif') {
+                    _mimeType = 'image/tiff';
+                } else if (ext == '.js') {
+                    _mimeType = 'application/javascript';
+                } else if (ext == '.html') {
+                    _mimeType = 'text/html';
+                } else if (ext == '.htm') {
+                    _mimeType = 'text/html';
+                } else if (ext == '.json') {
+                    _mimeType = 'application/json';
+                } else if (ext == '.xml') {
+                    _mimeType = 'text/xml';
+                } else if (ext == '.svg') {
+                    _mimeType = 'image/svg+xml';
+                } else if (ext == '.eot') {
+                    _mimeType = 'application/vnd.ms-fontobject';
+                } else if (ext == '.ttf') {
+                    _mimeType = 'application/font-sfnt';
+                } else if (ext == '.woff') {
+                    _mimeType = 'application/font-woff';
+                } else if (ext == '.wav') {
+                    _mimeType = 'audio/wav';
+                } else if (ext == '.mp3') {
+                    _mimeType = 'audio/mpeg3';
+                } else {
+                    _mimeType = 'text/javascript';
+                }
+
+                callback(err, {mime: _mimeType, data: btoa(data)});
+            } else {
+                callback(err);
+            }
+        });
+    },
     writeFile: function (filename, data, callback) {
         var that = this;
         if (!this._checkConnection('writeFile', arguments)) return;
@@ -198,16 +252,36 @@ var servConn = {
 
         this._socket.emit('writeFile', this.namespace, filename, data, callback);
     },
+    // Write file base 64
+    writeFile64: function (filename, data, callback) {
+        var that = this;
+        if (!this._checkConnection('writeFile', arguments)) return;
+
+        this._socket.emit('writeFile', this.namespace, filename, atob(data), callback);
+    },
     readDir: function (dirname, callback) {
         //socket.io
         if (this._socket == null) {
             console.log('socket.io not initialized');
             return;
         }
-        this._socket.emit('readdir', dirname, function (data) {
-            if (callback) {
-                callback(data);
-            }
+        this._socket.emit('readDir', this.namespace, dirname, function (err, data) {
+            if (callback) callback(err, data);
+        });
+    },
+    mkdir: function (dirname, callback) {
+        this._socket.emit('mkdir', this.namespace, dirname, function (err) {
+            if (callback) callback(err);
+        });
+    },
+    unlink: function (name, callback) {
+        this._socket.emit('unlink', this.namespace, name, function (err) {
+            if (callback) callback(err);
+        });
+    },
+    renameFile: function (oldname, newname, callback) {
+        this._socket.emit('rename', this.namespace, oldname, newname, function (err) {
+            if (callback) callback(err);
         });
     },
     setState: function (pointId, value) {

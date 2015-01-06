@@ -794,9 +794,9 @@ var vis = {
     saveRemote: function (callback) {
         var that = this;
         if (this.saveRemoteActive) {
-            setTimeout(function (_cb) {
-                that.saveRemote(_cb);
-            }, 1000, cb);
+            setTimeout(function () {
+                that.saveRemote(callback);
+            }, 1000);
             return;
         }
         this.saveRemoteActive = true;
@@ -944,9 +944,6 @@ if ('applicationCache' in window) {
 // Start of initialisation: main ()
 (function ($) {
     $(document).ready(function () {
-        // First of all load project/vis-user.css
-        $('#project_css').attr('href', 'vis.0/' + vis.projectPrefix + 'vis-user.css');
-
         // On some platfors, the can.js is not immediately ready
         vis.states = new can.Map({'nothing_selected.val': null});
 
@@ -1003,6 +1000,11 @@ if ('applicationCache' in window) {
         }
 
         vis.conn = servConn;
+
+        // First of all load project/vis-user.css
+        $('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
+
+
         vis.conn.init(null, {
             onConnChange: function (isConnected) {
                 //console.log("onConnChange isConnected="+isConnected);

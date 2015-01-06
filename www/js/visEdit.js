@@ -910,26 +910,39 @@ vis = $.extend(true, vis, {
         $('#widget_attrs').append('<tr class="vis-add-option"><td colspan="2" class="vis-edit-td-wid_attr">&nbsp</td></tr>');
     },
     editImage: function (widget, wid_attr) {
+        var line = {
+            input:  '<input type="text" id="inspect_' + wid_attr + '"/>'
+        };
         var that = this;
-        // Image src
-        $('#widget_attrs').append('<tr id="option_' + wid_attr + '" class="vis-add-option"><td>' + _(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
 
-        // Filemanager Dialog
-        $("#inspect_" + wid_attr + "_btn").click(function () {
-                $.fm({
-                    root:          "www/",
-                    lang:          that.language,
-                    path:          "www/vis/img/",
-                    file_filter:   ["gif","png", "bmp", "jpg", "jpeg", "tif", "svg"],
-                    folder_filter: false,
-                    mode:          "open",
-                    view:          "prev"
+        if ($.fm) {
+            line.button = {
+                icon:  'ui-icon-note',
+                text:  false,
+                title: _('Select image'),
+                click: function (/*event*/) {
+                    var data = $(this).data('data-attr');
 
-                },function(_data){
-                    var src = _data.path.split("www")[1] + _data.file;
-                    $("#inspect_" + wid_attr).val(src).trigger('change');
-                });
-        });
+                    $.fm({
+                        root:         that.projectPrefix,
+                        rootWeb:      '/' + that.conn.namespace + '/' + that.projectPrefix,
+                        lang:         that.language,
+                        path:         that.projectPrefix + 'img/',
+                        fileFilter:   ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
+                        folderFilter: false,
+                        mode:         'open',
+                        view:         'prev',
+                        userArg:      data,
+                        conn:         that.conn,
+                        zindex:       1001
+                    }, function (_data, userData){
+                        var src = '/' + that.conn.namespace + '/' + _data.path + _data.file;
+                        $('#inspect_' + userData).val(src).trigger('change');
+                    });
+                }
+            };
+        }
+        return line;
     },
     editUrl: function (widget, wid_attr) {
         // Image src
@@ -1124,9 +1137,20 @@ vis = $.extend(true, vis, {
             });
         } else
         */
-        if (wid_attr == 'color') wid_type = 'color';
-        if (wid_attr == 'oid' || wid_attr.match(/^oid-/)) wid_type = 'id';
-        if (wid_attr.match(/nav_view$/)) wid_type = 'views';
+        if (wid_attr == 'color') {
+            wid_type = 'color';
+        } else
+        if (wid_attr == 'oid' || wid_attr.match(/^oid-/)) {
+            wid_type = 'id';
+        } else if (wid_attr.match(/nav_view$/)) {
+            wid_type = 'views';
+        } else
+        if (wid_attr.match(/src$/)) {
+            wid_type = 'image';
+        } else
+        if (wid_attr == 'url') {
+            wid_type = 'url';
+        }
 
         var widgetData = this.views[view].widgets[widget].data;
         var input;
@@ -1156,6 +1180,12 @@ vis = $.extend(true, vis, {
                     break;
                 case 'views':
                     line = this.editViewName(widget, (wid_attr + index));
+                    break;
+                case 'image':
+                    line = this.editImage(widget, (wid_attr + index));
+                    break;
+                case 'url':
+                    line = this.editUrl(widget, (wid_attr + index));
                     break;
                 default:
                     line = '<input type="text" id="inspect_' + (wid_attr + index) + '"/>';
