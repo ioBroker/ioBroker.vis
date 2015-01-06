@@ -220,7 +220,7 @@ a.ui-dialog-titlebar-restore {
 	padding-top: 0;
 	padding-bottom: 0px;
 	padding-left: 6px;
-    width: 100%;
+    width: calc(100% - 7px);
     border-top: 1px dotted white;
     border-left: 1px dotted white;
 }
@@ -288,10 +288,11 @@ a.ui-dialog-titlebar-restore {
     /* height: 80%; */
     
 
-    /* height: calc(100% - 50px); */
+     height:100%!important;
+     width:100%!important;
 
 /*color: inherit;*/
-    overflow-y: scroll;
+    overflow: auto;
     font-size: 11px;
     
 

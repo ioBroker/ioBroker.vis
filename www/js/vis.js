@@ -65,7 +65,7 @@ var vis = {
     instance:               null,
     urlParams:              {},
     settings:               {},
-    views:                  {},
+    views:                  null,
     widgets:                {},
     activeView:             '',
     widgetSets:             visConfig.widgetSets,
@@ -83,6 +83,8 @@ var vis = {
     navChangeCallbacks:     [],
     editMode:               false,
     language:               (typeof systemLang != 'undefined') ? systemLang : visConfig.language,
+
+    local:                  true,
 
     setValue: function (id, val) {
         if (!id) {
@@ -270,7 +272,9 @@ var vis = {
         this.loadWidgetSets(this.initNext);
     },
     initNext: function () {
+
         if (!this.views) {
+            alert("netx")
             this.loadRemote(function () {
                 this.showWaitScreen(false);
 
@@ -319,6 +323,7 @@ var vis = {
                 }
             }
         } else {
+            console.log(this.views)
             if (this.views[hash]) {
                 this.activeView = hash;
             } else {
@@ -769,27 +774,35 @@ var vis = {
     loadRemote: function (callback, callbackArg) {
         var that = this;
         this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
-        this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
-            if (err) alert(that.projectPrefix + 'vis-views.json ' + err);
+   alert("loadremote")
+        if(vis.local){
 
-            if (data) {
-                if (typeof data == 'string') {
-                    try {
-                        that.views = JSON.parse(data);
-                    } catch(e) {
-                        console.log('Cannot parse views file "' + that.projectPrefix + 'vis-views.json"');
-                        alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');
-                        that.views = null;
+            vis.views = JSON.parse(storage.get(vis.storageKeyViews))
+            console.log(that.views)
+        }else
+        {
+            this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
+                if (err) alert(that.projectPrefix + 'vis-views.json ' + err);
+
+                if (data) {
+                    if (typeof data == 'string') {
+                        try {
+                            that.views = JSON.parse(data);
+                        } catch (e) {
+                            console.log('Cannot parse views file "' + that.projectPrefix + 'vis-views.json"');
+                            alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');
+                            that.views = null;
+                        }
+                    } else {
+                        that.views = data;
                     }
                 } else {
-                    that.views = data;
+                    that.views = null;
                 }
-            } else {
-                that.views = null;
-            }
 
-            if (callback) callback.call(that, callbackArg);
-        });       
+            });
+        }
+        if (callback) callback.call(that, callbackArg);
     },
     saveRemoteActive: false,
     saveRemote: function (callback) {
@@ -805,23 +818,29 @@ var vis = {
         if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
             this.syncWidget(this.activeWidget);
         }
-
-        this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
+        if (vis.local){
+            storage.set(vis.storageKeyViews,JSON.stringify(this.views, null, 2) );
             that.saveRemoteActive = false;
-            if (callback) callback();
+        }else{
+            this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
+                that.saveRemoteActive = false;
+                if (callback) callback();
 
-            // If not yet checked => check if project css file exists
-            if (!that.cssChecked) {
-                that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
-                    that.cssChecked = true;
-                    // Create vis-user.css file if not exist
-                    if (err || data == null || data == undefined){
-                        // Create empty css file
-                        that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
-                    }
-                })
-            }
-        });
+                // If not yet checked => check if project css file exists
+                if (!that.cssChecked) {
+                    that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
+                        that.cssChecked = true;
+                        // Create vis-user.css file if not exist
+                        if (err || data == null || data == undefined){
+                            // Create empty css file
+                            that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
+                        }
+                    })
+                }
+            });
+        }
+        if (callback) callback();
+
     },
     additionalThemeCss: function (theme) {
         if (theme == "kian") {

@@ -38,13 +38,13 @@
 .panel-content {
 
 	width: 100%;
+	border: none
+;
 
 }
 
 .panel-content * {
     margin: 0px;
-
-    overflow: auto;
     padding-right: 0px;
     /* margin-right: -4px; */
 }

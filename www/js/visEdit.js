@@ -2716,13 +2716,18 @@ vis = $.extend(true, vis, {
 
 
         var pan_vis_container = dockManager.dockFill(documentNode, _pan_vis_container);
+        //var pan_vis_container = dockManager.dockFill(documentNode, _pan_add_view);
+        //var pan_vis_container = dockManager.dockFill(documentNode, _pan_add_wid);
+        //var pan_vis_container = dockManager.dockFill(documentNode, _pan_css_wid);
+        //var pan_vis_container = dockManager.dockFill(documentNode, _pan_css_view);
 
         var pan_add_view = dockManager.dockLeft(documentNode, _pan_add_view, 0.30);
         var pan_add_widget = dockManager.dockFill(pan_add_view, _pan_add_wid);
         var pan_css_wid = dockManager.dockRight(documentNode,_pan_css_wid,0.08  );
         var pan_css_view = dockManager.dockFill(pan_css_wid, _pan_css_view);
 
-
+        console.log(pan_vis_container)
+        pan_vis_container.container.canUndock(false)
     },
 
     //todo

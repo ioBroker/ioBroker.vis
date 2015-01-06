@@ -1850,10 +1850,13 @@
              */
             DockManager.prototype.requestUndockToDialog = function (container, event, dragOffset) {
                 var node = this._findNodeFromContainer(container);
+
+
                 this.layoutEngine.undock(node);
 
                 // Create a new dialog window for the undocked panel
                 var dialog = new Dialog(node.container, this);
+
 
                 if (event !== undefined) {
                     // Adjust the relative position
@@ -1865,6 +1868,9 @@
                         event.clientY - dragOffset.y);
                     dialog.draggable.onMouseDown(event);
                 }
+
+
+
                 return dialog;
             };
 
@@ -2857,7 +2863,8 @@
                 }
 
                 utils.removeNode(container.containerElement);
-                this.panelElement.appendChild(container.containerElement);
+                var child = this.panelElement.appendChild(container.containerElement);
+                $(child).show();
                 container.containerElement.classList.add(
                     this.stackedVertical ? 'splitter-container-vertical' : 'splitter-container-horizontal'
                 );
@@ -3142,8 +3149,10 @@
                 if (this.parent.container.containerType === 'panel') {
                     this.undockInitiator.enabled = false;
                     var panel = this.parent.container;
+
                     return panel.performUndockToDialog(e, dragOffset);
                 }
+
                 else
                     return null;
             };
@@ -3392,6 +3401,7 @@
             };
 
             TabHost.prototype.onTabPageSelected = function (page) {
+
                 this.activeTab = page;
                 this.pages.forEach(function (tabPage) {
                     var selected = (tabPage === page);
@@ -3460,18 +3470,24 @@
             };
 
             TabPage.prototype.setSelected = function (flag) {
+
                 this.selected = flag;
                 this.handle.setSelected(flag);
 
-                if (this.selected) {
+                if(!$.contains(this.host.contentElement,this.containerElement)){
                     this.host.contentElement.appendChild(this.containerElement);
+                }
+                if (this.selected) {
+                    $(this.containerElement).show();
                     // force a resize again
                     var width = this.host.contentElement.clientWidth;
                     var height = this.host.contentElement.clientHeight;
                     this.container.resize(width, height);
                 }
                 else {
-                    utils.removeNode(this.containerElement);
+                    $(this.containerElement).hide()
+
+                    //utils.removeNode(this.containerElement);
                 }
             };
 
