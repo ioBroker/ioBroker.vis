@@ -484,9 +484,9 @@ vis = $.extend(true, vis, {
         }
     },
     getObjDesc: function (id) {
-        if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
-            return this.objects[id].common.name;
-        }
+        //if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
+        //    return this.objects[id].common.name;
+        //}
             /*var parent = "";
             var p = this.objects[id]["Parent"];
             //console.log('parent metaObject', id, p, vis.objects[p]);
@@ -2654,6 +2654,7 @@ vis = $.extend(true, vis, {
         var divDockManager = document.getElementById("main");
         dockManager = new dockspawn.DockManager(divDockManager);
         dockManager.initialize();
+
         var onResized = function (e) {
             dockManager.resize(window.innerWidth - (divDockManager.clientLeft + divDockManager.offsetLeft), window.innerHeight - (divDockManager.clientTop + divDockManager.offsetTop));
         };
@@ -2663,37 +2664,37 @@ vis = $.extend(true, vis, {
         dockManager.addLayoutListener({
             onDock: function (self, dockNode) {
                 //console.info('onDock: ', self, dockNode);
-                localStorage.setItem(storeKey, dockManager.saveState());
+                //localStorage.setItem(storeKey, dockManager.saveState());
             },
             onUndock: function (self, dockNode) {
                 //console.info('onUndock: ', self, dockNode);
-                localStorage.setItem(storeKey, dockManager.saveState());
+                //localStorage.setItem(storeKey, dockManager.saveState());
             },
             onCreateDialog: function (self, dialog) {
                 //console.info('onCreateDialog: ', self, dialog);
-                localStorage.setItem(storeKey, dockManager.saveState());
+                //localStorage.setItem(storeKey, dockManager.saveState());
             },
             onChangeDialogPosition: function (self, dialog, x, y) {
                 //console.info('onCreateDialog: ', self, dialog, x, y);
-                localStorage.setItem(storeKey, dockManager.saveState());
+                //localStorage.setItem(storeKey, dockManager.saveState());
             },
             onResumeLayout: function (self) {
                 //console.info('onResumeLayout: ', self);
-                localStorage.setItem(storeKey, dockManager.saveState());
+                //localStorage.setItem(storeKey, dockManager.saveState());
             },
             onClosePanel: function (self, panel) {
                 //console.info('onClosePanel: ', self, panel);
 
-                localStorage.setItem(storeKey, dockManager.saveState());
+                //localStorage.setItem(storeKey, dockManager.saveState());
             },
             onHideDialog: function (self, dialog) {
                 //console.info('onHideDialog: ', self, dialog);
-                localStorage.setItem(storeKey, dockManager.saveState());
+                //localStorage.setItem(storeKey, dockManager.saveState());
             },
             onShowDialog: function (self, dialog) {
                 //console.info('onShowDialog: ', self, dialog);
-                $("#" + dialog.panel.elementContent.id + "_state").attr("checked", true);
-                localStorage.setItem(storeKey, dockManager.saveState());
+                //$("#" + dialog.panel.elementContent.id + "_state").attr("checked", true);
+                //localStorage.setItem(storeKey, dockManager.saveState());
             }
 
         });
@@ -2716,10 +2717,6 @@ vis = $.extend(true, vis, {
 
 
         var pan_vis_container = dockManager.dockFill(documentNode, _pan_vis_container);
-        //var pan_vis_container = dockManager.dockFill(documentNode, _pan_add_view);
-        //var pan_vis_container = dockManager.dockFill(documentNode, _pan_add_wid);
-        //var pan_vis_container = dockManager.dockFill(documentNode, _pan_css_wid);
-        //var pan_vis_container = dockManager.dockFill(documentNode, _pan_css_view);
 
         var pan_add_view = dockManager.dockLeft(documentNode, _pan_add_view, 0.30);
         var pan_add_widget = dockManager.dockFill(pan_add_view, _pan_add_wid);
@@ -2728,7 +2725,7 @@ vis = $.extend(true, vis, {
         var pan_css_view = dockManager.dockFill(pan_css_wid, _pan_css_view);
 
 console.log(pan_vis_container)
-        pan_vis_container.container.canUndock(false)
+        //pan_vis_container.container.canUndock(false)
     },
 
     //todo

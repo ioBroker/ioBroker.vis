@@ -1,0 +1,8 @@
+#infovis {
+    position:relative;
+    width:500px;
+    height:500px;
+    overflow:hidden;
+    background-color:#1a1a1a;
+    color:#ccc;
+}

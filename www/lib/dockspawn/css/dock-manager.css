@@ -15,7 +15,7 @@
 	padding-left:10px;
 	padding-top:5px;
 	font-weight: bold;
-	color: inherit;
+	color:#aaa;
 }
 
 .panel-titlebar-button-close {
@@ -27,7 +27,6 @@
 }
 
 .panel-titlebar-button-close:hover {
-    cursor: pointer;
 	float: right;
 	padding-top:5px;
 	padding-right:8px;
@@ -36,19 +35,12 @@
 }
 
 .panel-content {
-
+	background-color: #FFF;
 	width: 100%;
-	border: none
-;
-
 }
 
 .panel-content * {
-    margin: 0px;
-
-    /*overflow: auto;*/
-    padding-right: 0px;
-    /* margin-right: -4px; */
+	margin: 0px;
 }
 
 /***************** Floating dialog box ****************/
@@ -136,28 +128,26 @@
 	background-color:rgba(128, 128, 255, 0.5);
 }
 
-.dock-wheel-fill-icon { background:url(dock_fill.png) 0 0; }
-.dock-wheel-left-icon { background:url(dock_left.png) 0 0; }
-.dock-wheel-right-icon { background:url(dock_right.png) 0 0; }
-.dock-wheel-top-icon { background:url(dock_top.png) 0 0; }
-.dock-wheel-down-icon { background:url(dock_bottom.png) 0 0; }
+.dock-wheel-fill-icon { background:url(../images/dock_fill.png) 0 0; }
+.dock-wheel-left-icon { background:url(../images/dock_left.png) 0 0; }
+.dock-wheel-right-icon { background:url(../images/dock_right.png) 0 0; }
+.dock-wheel-top-icon { background:url(../images/dock_top.png) 0 0; }
+.dock-wheel-down-icon { background:url(../images/dock_bottom.png) 0 0; }
 
-.dock-wheel-fill-icon-hover { background:url(dock_fill_sel.png) 0 0; }
-.dock-wheel-left-icon-hover { background:url(dock_left_sel.png) 0 0; }
-.dock-wheel-right-icon-hover { background:url(dock_right_sel.png) 0 0; }
-.dock-wheel-top-icon-hover { background:url(dock_top_sel.png) 0 0; }
-.dock-wheel-down-icon-hover { background:url(dock_bottom_sel.png) 0 0; }
+.dock-wheel-fill-icon-hover { background:url(../images/dock_fill_sel.png) 0 0; }
+.dock-wheel-left-icon-hover { background:url(../images/dock_left_sel.png) 0 0; }
+.dock-wheel-right-icon-hover { background:url(../images/dock_right_sel.png) 0 0; }
+.dock-wheel-top-icon-hover { background:url(../images/dock_top_sel.png) 0 0; }
+.dock-wheel-down-icon-hover { background:url(../images/dock_bottom_sel.png) 0 0; }
 
 /**************************** Splitter *********************************/
 .splitter-container-horizontal {
 	float:left;
-/*	background-color: #333; */
-	/* display: inline-flex; */
+	/*	background-color: #333; */
 }
 
 .splitter-container-vertical {
-/*	background-color: #333; */
-overflow: hidden;
+	/*	background-color: #333; */
 }
 
 .splitbar-horizontal {
@@ -165,7 +155,6 @@ overflow: hidden;
 	width:100%;
 	height:5px;
 	cursor:n-resize;
-	/* margin-top: 2px; */
 }
 
 .splitbar-vertical {
@@ -199,8 +188,6 @@ overflow: hidden;
 
 .tab-content {
 	background-color: #666;
-	background-image: none!important;
-	overflow: hidden;
 }
 
 /*.tab-content * {
@@ -217,7 +204,10 @@ overflow: hidden;
 	pointer: default;
 	box-shadow: 0px 5px 20px #000;
 }
-
+.tab-handle:hover {
+	background-color: #ffcc00;
+	color:#400;
+}
 
 .tab-handle-selected {
 	background-color: #ffcc00;
@@ -229,7 +219,7 @@ overflow: hidden;
 	margin-left: 6px;
 	margin-right: 6px;
 	white-space: nowrap;
-    overflow: hidden;
+	overflow: hidden;
 	float: left;
 }
 
@@ -244,24 +234,23 @@ overflow: hidden;
 }
 
 .tab-handle-list-container {
-	/* background-color: #333; */
-	height: 24px;
+	background-color: #333;
+	height: 22px;
 	overflow: hidden;
-	margin-top: 1px;
 }
 
 .tab-handle-content-seperator {
-	background-image: none!important;
-	height: 0px;
+	background-color: #ffcc00;
+	height: 4px;
 }
 
 /*************************** Text Selection **************************/
 .disable-selection {
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: default;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+	cursor: default;
 }
 
 
@@ -269,13 +258,13 @@ overflow: hidden;
 .full-screen {
 	display:block;
 
-    /*set the div in the top-left corner of the screen*/
-    top:0;
-    left:0;
+	/*set the div in the top-left corner of the screen*/
+	top:0;
+	left:0;
 
-    /*set the width and height to 100% of the screen*/
-    width:100%;
-    height:100%;
+	/*set the width and height to 100% of the screen*/
+	width:100%;
+	height:100%;
 
 }
 
