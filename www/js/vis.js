@@ -10,6 +10,7 @@
  */
 
 "use strict";
+var local = true;
 
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
@@ -17,7 +18,7 @@ if (typeof systemDictionary !== 'undefined') {
         'Loading Views...': {'en': 'Loading Views...', 'de': 'Lade Views...', 'ru': 'Загрузка пользовательских страниц...'},
         'Connecting to Server...': {'en': 'Connecting to Server...', 'de': 'Verbinde mit Server...', 'ru': 'Соединение с сервером...'},
         'Loading data objects...': {'en': 'Loading data...', 'de': 'Lade Daten...', 'ru': 'Загрузка данных...'},
-        'Loading data values...':  {'en': 'Loading values...', 'de': 'Lade Werte...', 'ru': 'Загрузка значений...'},
+        'Loading data values...': {'en': 'Loading values...', 'de': 'Lade Werte...', 'ru': 'Загрузка значений...'},
         'error - View doesn\'t exist': {'en': 'View doesn\'t exist!', 'de': 'View existiert nicht!', 'ru': 'Страница не существует!'},
         'No Views found on Server': {
             'en': 'No Views found on Server',
@@ -47,7 +48,8 @@ if (typeof systemDictionary !== 'undefined') {
         'Loading Widget-Sets...': {
             'en': 'Loading Widget-Sets...',
             'de': 'Lade Widget-Sätze...',
-            'ru': 'Загрузка наборов элементов...'}
+            'ru': 'Загрузка наборов элементов...'
+        }
     });
 }
 
@@ -84,7 +86,6 @@ var vis = {
     editMode:               false,
     language:               (typeof systemLang != 'undefined') ? systemLang : visConfig.language,
 
-    local:                  true,
 
     setValue: function (id, val) {
         if (!id) {
@@ -101,7 +102,7 @@ var vis = {
             o[id + '.lc'] = this.states.attr(id + '.lc');
         }
         o[id + '.val'] = val;
-        o[id + '.ts']  = t;
+        o[id + '.ts'] = t;
         o[id + '.ack'] = false;
 
         this.conn.setState(id, val);
@@ -119,12 +120,12 @@ var vis = {
         var url = './widgets/' + name + '.html?visVersion=' + this.version;
         var that = this;
         $.ajax({
-            url:      url,
-            type:     'GET',
-            async:    false,
+            url: url,
+            type: 'GET',
+            async: false,
             dataType: 'html',
-            cache:    this.useCache,
-            success:  function (data) {
+            cache: this.useCache,
+            success: function (data) {
 
                 jQuery("head").append(data);
                 that.toLoadSetsCount -= 1;
@@ -134,7 +135,7 @@ var vis = {
                         callback.call(that);
                     }, 100);
                 } else {
-                    that.showWaitScreen(true, null , null, parseInt((100 - that.waitScreenVal) / that.toLoadSetsCount, 10));
+                    that.showWaitScreen(true, null, null, parseInt((100 - that.waitScreenVal) / that.toLoadSetsCount, 10));
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -192,7 +193,7 @@ var vis = {
         var arrSets = [];
 
         // Get list of used widget sets. if Edit mode list is null.
-        var widgetSets = this.editMode ? null: this.getUsedWidgetSets();
+        var widgetSets = this.editMode ? null : this.getUsedWidgetSets();
 
         // Firts calculate how many sets to load
         for (var i = 0; i < this.widgetSets.length; i++) {
@@ -210,7 +211,7 @@ var vis = {
             }
         }
         this.toLoadSetsCount = arrSets.length;
-        $("#widgetset_counter").html("<span style='font-size:10px'>("+(vis.toLoadSetsCount)+")</span>");
+        $("#widgetset_counter").html("<span style='font-size:10px'>(" + (vis.toLoadSetsCount) + ")</span>");
 
         var that = this;
         if (this.toLoadSetsCount) {
@@ -231,7 +232,7 @@ var vis = {
             $('#vis_instance').val(this.instance);
         }
 
-        if (!this.instance && this.editMode){
+        if (!this.instance && this.editMode) {
             this.generateInstance();
         }
 
@@ -265,28 +266,28 @@ var vis = {
 
         // Late initialization (used only for debug)
         /*if (this.binds.hqWidgetsExt) {
-            this.binds.hqWidgetsExt.hqInit();
-        }*/
+         this.binds.hqWidgetsExt.hqInit();
+         }*/
 
         //this.loadRemote(this.loadWidgetSets, this.initNext);
         this.loadWidgetSets(this.initNext);
     },
     initNext: function () {
-
-        if (!this.views) {
-            alert("netx")
             this.loadRemote(function () {
                 this.showWaitScreen(false);
 
                 // First start.
-                this.initViewObject();
+                if (!this.views) {
+                    this.initViewObject();
+                    return false;
+                }else{
+                    this.showWaitScreen(false);
+                }
             });
-            return false;
-        } else {
-            this.showWaitScreen(false);
-        }
+
 
         var hash = window.location.hash.substring(1);
+
 
         // View selected?
         if (hash == '') {
@@ -298,7 +299,7 @@ var vis = {
             // Create default view in demo mode
             if (typeof io == 'undefined') {
                 if (this.activeView == "") {
-                    if (!this.editMode){
+                    if (!this.editMode) {
                         alert(_("error - View doesn't exist"));
                         window.location.href = "./edit.html";
                     } else {
@@ -369,15 +370,15 @@ var vis = {
     setViewSize: function (view) {
         var $view = $("#visview_" + view);
         // Because of background, set the width and height of the view
-        var width  = parseInt(vis.views[view].settings.sizex, 10);
+        var width = parseInt(vis.views[view].settings.sizex, 10);
         var height = parseInt(vis.views[view].settings.sizey, 10);
-        if (!width || width < $( window ).width()) {
+        if (!width || width < $(window).width()) {
             width = '100%';
         }
-        if (!height || height < $( window ).height()) {
+        if (!height || height < $(window).height()) {
             height = '100%';
         }
-        $view.css({width:  width});
+        $view.css({width: width});
         $view.css({height: height});
     },
     renderView: function (view, noThemeChange, hidden) {
@@ -432,7 +433,7 @@ var vis = {
                 vis.binds.jqueryui._disable();
             }
         }
-        
+
         // Views in Container verschieben
         $("#visview_" + view).find("div[id$='container']").each(function () {
             //console.log($(this).attr("id")+ " contains " + $(this).attr("data-vis-contains"));
@@ -581,13 +582,13 @@ var vis = {
         var widgetData = this.widgets[id].data;
 
         try {
-        // Append html element to view
+            // Append html element to view
             if (widget.data && widget.data.oid) {
                 $('#visview_' + view).append(can.view(widget.tpl, {
-                    val:  this.states[widget.data.oid + '.val'],
-                    ts:   this.states[widget.data.oid + '.ts'],
-                    ack:  this.states[widget.data.oid + '.ack'],
-                    lc:   this.states[widget.data.oid + '.lc'],
+                    val: this.states[widget.data.oid + '.val'],
+                    ts: this.states[widget.data.oid + '.ts'],
+                    ack: this.states[widget.data.oid + '.ack'],
+                    lc: this.states[widget.data.oid + '.lc'],
                     data: widgetData,
                     view: view
                 }));
@@ -596,7 +597,7 @@ var vis = {
             }
 
             if (!this.editMode) {
-                if (widget.data.filterkey && widget.data.filterkey != "" && this.viewsActiveFilter[view].length > 0 &&  this.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
+                if (widget.data.filterkey && widget.data.filterkey != "" && this.viewsActiveFilter[view].length > 0 && this.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
                     var mWidget = document.getElementById(id);
                     $('#' + id).hide();
                     if (mWidget &&
@@ -666,7 +667,7 @@ var vis = {
                         if (that.views[view].rerender) {
                             that.views[view].rerender = false;
                             for (var id in this.views[view].widgets) {
-                                if (that.views[view].widgets[id].tpl.substring(0,5) == "tplHq" ||
+                                if (that.views[view].widgets[id].tpl.substring(0, 5) == "tplHq" ||
                                     that.views[view].widgets[id].renderVisible)
                                     that.renderWidget(view, id);
                             }
@@ -676,7 +677,7 @@ var vis = {
                 $("#visview_" + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
                     var list = $("link[href$='jquery-ui.min.css']");
 
-                    if (list.length ==  0) {
+                    if (list.length == 0) {
                         $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + that.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
                     } else {
                         list.attr("href", '../lib/css/themes/jquery-ui/' + that.views[view].settings.theme + '/jquery-ui.min.css');
@@ -690,7 +691,7 @@ var vis = {
                             if (that.views[view].rerender) {
                                 that.views[view].rerender = false;
                                 for (var id in that.views[view].widgets) {
-                                    if (that.views[view].widgets[id].tpl.substring(0,5) == "tplHq" ||
+                                    if (that.views[view].widgets[id].tpl.substring(0, 5) == "tplHq" ||
                                         that.views[view].widgets[id].renderVisible)
                                         that.renderWidget(view, id);
                                 }
@@ -710,7 +711,7 @@ var vis = {
                 if (this.views[view] && this.views[view].settings) {
                     if (this.views[vis.activeView] && this.views[vis.activeView].settings &&
                         this.views[vis.activeView].settings.theme != this.views[view].settings.theme) {
-                        if ($("link[href$='jquery-ui.min.css']").length ==  0) {
+                        if ($("link[href$='jquery-ui.min.css']").length == 0) {
                             $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
                         } else {
                             $("link[href$='jquery-ui.min.css']").attr("href", '../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css');
@@ -725,7 +726,6 @@ var vis = {
 
         } else {
             this.renderView(view);
-
 
 
             // View ggf aus Container heraus holen
@@ -773,14 +773,19 @@ var vis = {
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
-        this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
-   alert("loadremote")
-        if(vis.local){
+        if (local) {
+            try {
+                this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
+                that.views = JSON.parse(storage.get(this.storageKeyViews));
+                if (callback) callback.call(that, callbackArg);
+            } catch (err) {
+                that.views = null
+                if (callback) callback.call(that, callbackArg);
+            }
 
-            vis.views = JSON.parse(storage.get(vis.storageKeyViews))
-            console.log(that.views)
-        }else
-        {
+
+        } else {
+
             this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
                 if (err) alert(that.projectPrefix + 'vis-views.json ' + err);
 
@@ -800,28 +805,31 @@ var vis = {
                     that.views = null;
                 }
 
+                if (callback) callback.call(that, callbackArg);
             });
         }
-        if (callback) callback.call(that, callbackArg);
     },
     saveRemoteActive: false,
     saveRemote: function (callback) {
         var that = this;
+
         if (this.saveRemoteActive) {
             setTimeout(function (_cb) {
                 that.saveRemote(_cb);
-            }, 1000, cb);
+            }, 1000);
             return;
         }
         this.saveRemoteActive = true;
-        // Sync widget before it will be saved
-        if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
-            this.syncWidget(this.activeWidget);
-        }
-        if (vis.local){
-            storage.set(vis.storageKeyViews,JSON.stringify(this.views, null, 2) );
-            that.saveRemoteActive = false;
-        }else{
+
+            // Sync widget before it will be saved
+            if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
+                this.syncWidget(this.activeWidget);
+            }
+
+        if (local) {
+            storage.set(this.storageKeyViews, JSON.stringify(this.views, null, 2));
+            if (callback) callback();
+        } else {
             this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
                 that.saveRemoteActive = false;
                 if (callback) callback();
@@ -831,7 +839,7 @@ var vis = {
                     that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
                         that.cssChecked = true;
                         // Create vis-user.css file if not exist
-                        if (err || data == null || data == undefined){
+                        if (err || data == null || data == undefined) {
                             // Create empty css file
                             that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
                         }
@@ -839,8 +847,6 @@ var vis = {
                 }
             });
         }
-        if (callback) callback();
-
     },
     additionalThemeCss: function (theme) {
         if (theme == "kian") {
@@ -854,7 +860,7 @@ var vis = {
     initWakeUp: function () {
         var that = this;
         var oldTime = (new Date()).getTime();
-        setInterval(function() {
+        setInterval(function () {
             var currentTime = (new Date()).getTime();
             //console.log("checkWakeUp "+ (currentTime - oldTime));
             if (currentTime > (oldTime + 10000)) {
@@ -904,7 +910,7 @@ var vis = {
     registerOnChange: function (callback, arg) {
         for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
             if (this.onChangeCallbacks[i].callback == callback &&
-                this.onChangeCallbacks[i].arg      == arg) {
+                this.onChangeCallbacks[i].arg == arg) {
                 return;
             }
         }
@@ -945,12 +951,12 @@ if ('applicationCache' in window) {
 // Parse Querystring
 (window.onpopstate = function () {
     var match,
-        pl     = /\+/g,
+        pl = /\+/g,
         search = /([^&=]+)=?([^&]*)/g,
         decode = function (s) {
             return decodeURIComponent(s.replace(pl, ' '));
         },
-        query  = window.location.search.substring(1);
+        query = window.location.search.substring(1);
     vis.urlParams = {};
     while (match = search.exec(query)) {
         vis.urlParams[decode(match[1])] = decode(match[2]);
@@ -980,12 +986,12 @@ if ('applicationCache' in window) {
         vis.preloadImages(["img/disconnect.png"]);
 
         $("#ccu-io-disconnect").dialog({
-            modal:         true,
+            modal: true,
             closeOnEscape: false,
-            autoOpen:      false,
-            dialogClass:   'noTitle',
-            width:         400,
-            height:        90
+            autoOpen: false,
+            dialogClass: 'noTitle',
+            width: 400,
+            height: 90
         });
 
         $(".vis-version").html(vis.version);
@@ -995,9 +1001,9 @@ if ('applicationCache' in window) {
 
         vis.showWaitScreen(true, null, _('Connecting to Server...') + '<br/>', 0);
 
-        function compareVersion (instVersion, availVersion) {
-            var instVersionArr  = instVersion.replace(/beta/, '.').split('.');
-            var availVersionArr = availVersion.replace(/beta/,'.').split('.');
+        function compareVersion(instVersion, availVersion) {
+            var instVersionArr = instVersion.replace(/beta/, '.').split('.');
+            var availVersionArr = availVersion.replace(/beta/, '.').split('.');
 
             var updateAvailable = false;
 
@@ -1248,16 +1254,22 @@ if ('applicationCache' in window) {
 if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function (obj, start) {
         for (var i = (start || 0), j = this.length; i < j; i++) {
-            if (this[i] === obj) { return i; }
+            if (this[i] === obj) {
+                return i;
+            }
         }
         return -1;
     }
 }
 function _setTimeout(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
-    return setTimeout(function () {func(arg1, arg2, arg3, arg4, arg5, arg6);}, timeout);
+    return setTimeout(function () {
+        func(arg1, arg2, arg3, arg4, arg5, arg6);
+    }, timeout);
 }
 function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
-    return setInterval(function () {func(arg1, arg2, arg3, arg4, arg5, arg6);}, timeout);
+    return setInterval(function () {
+        func(arg1, arg2, arg3, arg4, arg5, arg6);
+    }, timeout);
 }
 
 if (window.location.search == "?edit") {

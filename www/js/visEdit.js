@@ -24,7 +24,6 @@ vis = $.extend(true, vis, {
     activeWidget:           '',
     isStealCss:             false,
     gridWidth:              undefined,
-    editorPos:              "free",
     undoHistoryMaxLength:   50,
     multiSelectedWidgets:   [],
     clipboard:              null,
@@ -1967,7 +1966,7 @@ vis = $.extend(true, vis, {
                 filterName: 'background',
                 //filterFile: "backgrounds.css",
                 style:      vis.views[view].settings.style.background_class,
-                parent:     $('#inspect_view_bkg_parent'),
+                parent:     $("#inspect_view_bkg_parent"),
                 onchange:   function (newStyle, obj) {
                     if (vis.views[vis.activeView].settings.style['background_class']) {
                         $("#visview_" + vis.activeView).removeClass(vis.views[vis.activeView].settings.style['background_class']);
@@ -2663,7 +2662,7 @@ vis = $.extend(true, vis, {
 
         dockManager.addLayoutListener({
             onDock: function (self, dockNode) {
-                console.info('onDock: ', self, dockNode);
+                //console.info('onDock: ', self, dockNode);
                 localStorage.setItem(storeKey, dockManager.saveState());
             },
             onUndock: function (self, dockNode) {
@@ -2713,6 +2712,7 @@ vis = $.extend(true, vis, {
         var _pan_css_view = new dockspawn.PanelContainer(document.getElementById("pan_css_view"), dockManager);
         var _pan_css_wid = new dockspawn.PanelContainer(document.getElementById("pan_css_wid"), dockManager);
         var _pan_add_wid = new dockspawn.PanelContainer(document.getElementById("pan_add_wid"), dockManager);
+        var _pan_wid_attr = new dockspawn.PanelContainer(document.getElementById("pan_wid_attr"), dockManager);
 
 
         var pan_vis_container = dockManager.dockFill(documentNode, _pan_vis_container);
@@ -2724,9 +2724,10 @@ vis = $.extend(true, vis, {
         var pan_add_view = dockManager.dockLeft(documentNode, _pan_add_view, 0.30);
         var pan_add_widget = dockManager.dockFill(pan_add_view, _pan_add_wid);
         var pan_css_wid = dockManager.dockRight(documentNode,_pan_css_wid,0.08  );
+        var pan_wid_attr = dockManager.dockUp(pan_css_wid,_pan_wid_attr,0.5  );
         var pan_css_view = dockManager.dockFill(pan_css_wid, _pan_css_view);
 
-        console.log(pan_vis_container)
+console.log(pan_vis_container)
         pan_vis_container.container.canUndock(false)
     },
 
@@ -2848,225 +2849,7 @@ vis = $.extend(true, vis, {
             $('#local_view').show();
         }
     },
-    editPosition: function () {
-        var that = this;
-        function left() {
-            $(".ui-dialog-titlebar-minimize").show();
-            if ($(".vis-editor-dialog").parent().attr('id') == "vis-editor-dialog-wrap") {
-                $(".vis-editor-dialog").unwrap();
-            }
-            $("#vis_editor")
-                .dialog("option", "resizable", false)
-                .dialog("option", "draggable", false)
-                .css("height", "calc(100% - 58px)");
 
-            $(".vis-editor-dialog").css({
-                height: "calc(100% - 9px)",
-                width: "450px",
-                left: 0,
-                position: "absolute",
-                right: "auto",
-                top: 0
-            })
-        }
-
-        function right() {
-            $(".ui-dialog-titlebar-minimize").show();
-            if ($(".vis-editor-dialog").parent().attr('id') == "vis-editor-dialog-wrap") {
-                $(".vis-editor-dialog").unwrap();
-            }
-            $("#vis_editor")
-                .dialog("option", "resizable", false)
-                .dialog("option", "draggable", false)
-                .css("height", "calc(100% - 58px)");
-            $(".vis-editor-dialog").css({
-                height: "calc(100% - 9px)",
-                width: "450px",
-                position: "absolute",
-                right: 0,
-                left: "auto",
-                top: 0
-            })
-        }
-
-        function left_ah() {
-            var delay;
-            $(".ui-dialog-titlebar-minimize").hide();
-            if ($(".vis-editor-dialog").parent().attr('id') == "vis-editor-dialog-wrap") {
-                $(".vis-editor-dialog").unwrap();
-            }
-            $("#vis_editor")
-                .dialog("option", "resizable", false)
-                .dialog("option", "draggable", false)
-                .css("height", "calc(100% - 58px)");
-
-            $(".vis-editor-dialog")
-                .wrapAll('<div id="vis-editor-dialog-wrap"></div>')
-                .css({
-                    height: "calc(100% - 9px)",
-                    width: "450px",
-                    left: 0,
-                    position: "relative",
-                    right: "auto",
-                    top: 0
-                })
-                .hide("slide", {direction: 'left'});
-
-            $("#vis-editor-dialog-wrap")
-                .css({
-                    height: "100%",
-                    width: "auto",
-                    left: 0,
-                    position: "absolute",
-                    right: "auto",
-                    top: 0,
-                    minWidth: "20px"
-                })
-                .mouseenter(function () {
-                    clearTimeout(delay);
-                    $(".vis-editor-dialog").show("slide", {direction: 'left'})
-                })
-                .mouseleave(function () {
-                    if ($(".ui-multiselect-menu:visible").length) {
-                        return;
-                    }
-                    delay = setTimeout(function () {
-                        $(".vis-editor-dialog").hide("slide", {direction: 'left'})
-                    }, 750);
-                });
-        }
-
-        function right_ah() {
-            var delay;
-            $(".ui-dialog-titlebar-minimize").hide();
-            if ($(".vis-editor-dialog").parent().attr('id') == "vis-editor-dialog-wrap") {
-                $(".vis-editor-dialog").unwrap();
-            }
-            $("#vis_editor")
-                .dialog("option", "resizable", false)
-                .dialog("option", "draggable", false)
-                .css("height", "calc(100% - 58px)");
-
-            $(".vis-editor-dialog")
-                .wrapAll('<div id="vis-editor-dialog-wrap"></div>')
-                .css({
-                    height: "100%",
-                    width: "450px",
-                    left: "auto",
-                    position: "relative",
-                    right: 0,
-                    top: 0
-
-                })
-                .hide("slide", {direction: "right"});
-
-            $("#vis-editor-dialog-wrap")
-                .css({
-                    height: "calc(100% - 9px)",
-                    width: "auto",
-                    left: "auto",
-                    position: "absolute",
-                    right: 0,
-                    top: 0,
-                    minWidth: "20px"
-                })
-                .mouseenter(function () {
-                    clearTimeout(delay);
-                    $(".vis-editor-dialog").show("slide", {direction: "right"})
-                })
-                .mouseleave(function () {
-                    if ($(".ui-multiselect-menu:visible").length) {
-                         return;
-                    }
-                    delay = setTimeout(function () {
-                        $(".vis-editor-dialog").hide("slide", {direction: "right"})
-                    }, 750);
-                });
-        }
-
-        function free() {
-
-            $(".ui-dialog-titlebar-minimize").show();
-            if ($(".vis-editor-dialog").parent().attr('id') == "vis-editor-dialog-wrap") {
-                $(".vis-editor-dialog").unwrap();
-            }
-            $("#vis_editor")
-                .dialog("option", "resizable", true)
-                .dialog("option", "draggable", true)
-                .css("height", "calc(100% - 58px)");
-
-            $(".vis-editor-dialog").css({
-                position: "absolute",
-                right: 0,
-                left: "auto",
-                top: 0,
-                width: "450px",
-                height: "610px"
-            });
-
-        }
-
-        var save_posi;
-        if (typeof storage !== 'undefined') save_posi = storage.get("editor-position");
-
-        save_posi = save_posi || ["free","*"];
-        this.editorPos = save_posi[0];
-
-        $(".vis-editor-dialog .ui-dialog-titlebar-buttonpane")
-            .append('<div id="vis_editor_mode"></div>')
-            .css({"z-index": 100});
-
-        if ($().xs_combo) {
-            $("#vis_editor_mode").xs_combo({
-                cssText: "xs_text_editor_mode",
-                time:    750,
-                val:     save_posi[1],
-                data:    ["|<", ">|", "<", ">", "*"]
-            });
-            $("#vis_editor_mode").change(function () {
-                var val = $(this).xs_combo();
-                var settings = null;
-                if (val == "|<") {
-                    left();
-                    that.editorPos = 'left';
-                } else if (val == ">|") {
-                    right();
-                    that.editorPos = "right";
-                    settings = ["right", val];
-                } else if (val == "<") {
-                    left_ah();
-                    that.editorPos = "left_ah";
-                    settings = ["left_ah", val];
-                } else if (val == ">") {
-                    right_ah();
-                    that.editorPos = "right_ah";
-                    settings = ["right_ah", val];
-                } else if (val == "*") {
-                    free();
-                    that.editorPos = "free";
-                    settings = ["free", val];
-                }
-
-                if (typeof storage != 'undefined' && settings) storage.set("editor-position", settings);
-            });
-        }
-
-        $(".vis-editor-dialog .ui-dialog-titlebar-buttonpane").append('<span id="button_undo" href="#" role="button">undo (ctrl-z)</span>');
-        $("#button_undo").button({
-            text: false,
-            icons: { primary: "ui-icon-arrowreturnthick-1-w"}
-        }).click(vis.undo).addClass("ui-state-disabled");
-
-        $(".vis-editor-dialog .ui-dialog-titlebar-buttonpane").prepend('<span id="savingProgress" role="button">Saving in progress</span>');
-        $("#savingProgress").button({
-            text: false,
-            icons: { primary: "ui-icon-disk"}
-        }).click(that._saveToServer).hide().addClass("ui-state-active");
-
-
-        var _save_posi = save_posi[0] + '()';
-        eval(_save_posi);
-    },
     refreshWidgetSelect: function () {
         var $select_tpl = $("#select_tpl");
         $select_tpl.html('');

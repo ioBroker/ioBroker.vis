@@ -466,7 +466,7 @@
 
                 // set the size of the dialog elements based on the panel's size
                 var panelWidth = this.elementContent.clientWidth;
-                var panelHeight = this.elementContent.clientHeight ;
+                var panelHeight = this.elementContent.clientHeight;
                 var titleHeight = this.elementTitle.clientHeight;
                 this._setPanelDimensions(panelWidth, panelHeight + titleHeight);
 
@@ -483,7 +483,7 @@
                 var contentTitle = this.elementContent.dataset.panelCaption;
                 var contentIcon = this.elementContent.dataset.panelicon;
                 if (contentTitle) this.title = contentTitle;
-                if (contentIcon) this.iconName = contentIcon
+                if (contentIcon) this.iconName = contentIcon;
                 this._updateTitle();
 
                 this.undockInitiator = new UndockInitiator(this.elementTitle, this.performUndockToDialog.bind(this));
@@ -1850,13 +1850,10 @@
              */
             DockManager.prototype.requestUndockToDialog = function (container, event, dragOffset) {
                 var node = this._findNodeFromContainer(container);
-
-
                 this.layoutEngine.undock(node);
 
                 // Create a new dialog window for the undocked panel
                 var dialog = new Dialog(node.container, this);
-
 
                 if (event !== undefined) {
                     // Adjust the relative position
@@ -1868,9 +1865,6 @@
                         event.clientY - dragOffset.y);
                     dialog.draggable.onMouseDown(event);
                 }
-
-
-
                 return dialog;
             };
 
@@ -2990,7 +2984,12 @@
                 this.elementBase = document.createElement('div');
                 this.elementText = document.createElement('div');
                 this.elementCloseButton = document.createElement('div');
-                this.elementBase.classList.add('tab-handle', 'ui-state-default', 'ui-corner-top');
+                if(parent.constructor.name == "DocumentTabPage"){
+                    this.elementBase.classList.add('tab-handle', 'ui-state-default', 'ui-corner-top');
+                }else{
+                    this.elementBase.classList.add('tab-handle', 'ui-state-default', 'ui-corner-bottom');
+                }
+
                 this.elementBase.classList.add('disable-selection'); // Disable text selection
                 this.elementText.classList.add('tab-handle-text');
                 this.elementCloseButton.classList.add('tab-handle-close-button');
@@ -3149,10 +3148,8 @@
                 if (this.parent.container.containerType === 'panel') {
                     this.undockInitiator.enabled = false;
                     var panel = this.parent.container;
-
                     return panel.performUndockToDialog(e, dragOffset);
                 }
-
                 else
                     return null;
             };
@@ -3401,7 +3398,6 @@
             };
 
             TabHost.prototype.onTabPageSelected = function (page) {
-
                 this.activeTab = page;
                 this.pages.forEach(function (tabPage) {
                     var selected = (tabPage === page);
@@ -3485,9 +3481,9 @@
                     this.container.resize(width, height);
                 }
                 else {
-                    $(this.containerElement).hide()
+                    $(this.containerElement).hide();
 
-                    //utils.removeNode(this.containerElement);
+                    //    removeNode(this.containerElement);
                 }
             };
 
