@@ -253,135 +253,198 @@
     <input type="text" id="name_import_view">
     <button id="start_import_view" class="translateB">import</button>
 </div>
+<div style="height: 32px; width: 100%; position: absolute; top: 0;left:0" class="ui-widget-header ">
+
+</div>
 
 
-<div id="menu_body" class="menu_body ui-state-default">
-    <ul id="menu" style="margin-top: 1px;" class="sf-menu">
-        <li class="ui-state-default ui-corner-all" style="border: none"><a class=" translate">Datei</a>
-            <ul>
-                <li class="ui-state-default frame_color menu_item"><a id="m_neu" class="translate">Neu</a></li>
-                <li class="ui-state-default frame_color menu_item"><a id="m_open" class="translate">Öffnen</a></li>
-                <li class="ui-state-default frame_color menu_item"><a id="m_example" class="translate">Vorlagen</a></li>
-                <li class="ui-state-default frame_color menu_item"><a id="m_save" class="translate">Speichern</a></li>
-                <li class="ui-state-default frame_color menu_item"><a id="m_save_as" class="translate">Speichern als</a>
-                </li>
-            </ul>
+<div id="menu_body" style="padding: 0;border: none; background: transparent; ">
+    <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -2px;">
+        <li>
+            <a href="#ribbon_datei" style="padding: 2px 4px 2px 4px" class="translate">Datei</a>
         </li>
-        <li class="ui-state-default ui-corner-all" style="border: none"><a class=" translate">Ansicht</a>
-            <ul>
-                <li class="ui-state-default frame_color menu_item">
-                    <div style="display: inline-block; width: 150px" class="translate">Widget CSS</div>
-                    <input style="display: inline-block" type="checkbox" class="pan_state" checked
-                           id="pan_css_wid_state">
-                </li>
-                <li class="ui-state-default frame_color menu_item">
-                    <div style="display: inline-block; width: 150px" class="translate">View CSS</div>
-                    <input style="display: inline-block" type="checkbox" class="pan_state" checked
-                           id="pan_css_view_state">
-                </li>
-                <li class="ui-state-default frame_color menu_item">
-                    <div style="display: inline-block; width: 150px" class="translate">Widget</div>
-                    <input style="display: inline-block" type="checkbox" class="pan_state" checked id="pan_add_widget_state">
-                </li>
-                <li class="ui-state-default frame_color menu_item">
-                    <div style="display: inline-block; width: 150px" class="translate">Active Widget</div>
-                    <input style="display: inline-block" type="checkbox" class="pan_state" checked
-                           id="pan_add_view_state">
-                </li>
-            </ul>
+        <li>
+            <a href="#ribbon_view" style="padding: 2px 4px 2px 4px" class="menu_font translate">Views</a>
         </li>
-        <li class="ui-state-default ui-corner-all" style="border: none"><a class="menu_font translate">Einstellungen</a>
-            <ul>
-                <li class="ui-state-default frame_color menu_item"><a class="translate">Theme</a>
-                    <ul id="ul_theme">
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="dhive">Dark-Hive</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="start">Start</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="humanity">humanity</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="blitzer">blitzer</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="swanky-purse">Swanky Purse</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="black-tie">BlackTie</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="cupertino">Cupertino</a>
-                        </li>
-                        <!--<li class="ui-state-default frame_color menu_item">
-                        <a class="translate" data-info="dot-lov">Dot Lov</a></li>-->
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="eggplant">Eggplant</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="excite-bike">excite-bike</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="flick">flick</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="le-frog">le-frog</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="mint-choc">mint-choc</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="overcast">overcast</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="pepper-grinder">pepper-grinder</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="redmond">redmond</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="smoothness">smoothness</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="south-street">south-street</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="sunny">sunny</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="trontastic">trontastic</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="ui-darkness">ui-darkness</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="ui-lightness">ui-lightness</a>
-                        </li>
-                        <li class="ui-state-default frame_color menu_item">
-                            <a class="translate" data-info="vader">vader</a></li>
-                    </ul>
-                </li>
-                <li class="ui-state-default frame_color menu_item"><a id="m_setup" class="translate">Setup</a></li>
-            </ul>
-        </li>
-        <li class="ui-state-default ui-corner-all" style="border: none"><a class="menu_font translate">Help</a>
-            <ul>
-                <li class="ui-state-default frame_color menu_item"><a id="m_about" class="translate">About</a></li>
-            </ul>
+        <li>
+            <a href="#ribbon_widget" style="padding: 2px 4px 2px 4px" class="menu_font translate">Widgets</a>
         </li>
     </ul>
-</div>
-<div id="icon_bar" class="icon_bar ui-state-default">
-    <div style="display:flex;clear: both;height: 28px; width: 300px">
-        <img src="lib/img/delete.png" class="ibar_icon" id="ibar_wid-del" title="Del Widget"/>
-        <select id="select_active_widget" class="vis-editor" data-multiselect-width="300"
-                data-multiselect-height="265"></select>
+    <div id="menu_sf" style="display: inline-block; margin-bottom: -2px;">
+        <ul id="menu" style="margin: 0;height: auto;" class="sf-menu">
+            <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Windows</a>
+                <ul>
+                    <li class="ui-state-default frame_color menu_item">
+                        <div style="display: inline-block; width: 150px" class="translate">Widget CSS</div>
+                        <input style="display: inline-block" type="checkbox" class="pan_state" checked
+                               id="pan_css_wid_state">
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <div style="display: inline-block; width: 150px" class="translate">View CSS</div>
+                        <input style="display: inline-block" type="checkbox" class="pan_state" checked
+                               id="pan_css_view_state">
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <div style="display: inline-block; width: 150px" class="translate">Widget</div>
+                        <input style="display: inline-block" type="checkbox" class="pan_state" checked id="pan_add_widget_state">
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <div style="display: inline-block; width: 150px" class="translate">Active Widget</div>
+                        <input style="display: inline-block" type="checkbox" class="pan_state" checked
+                               id="pan_add_view_state">
+                    </li>
+                </ul>
+            </li>
+            <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Theme</a>
+                <ul id="ul_theme">
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="dhive">Dark-Hive</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="start">Start</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="humanity">humanity</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="blitzer">blitzer</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="swanky-purse">Swanky Purse</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="black-tie">BlackTie</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="cupertino">Cupertino</a>
+                    </li>
+                    <!--<li class="ui-state-default frame_color menu_item">
+                    <a class="translate" data-info="dot-lov">Dot Lov</a></li>-->
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="eggplant">Eggplant</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="excite-bike">excite-bike</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="flick">flick</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="le-frog">le-frog</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="mint-choc">mint-choc</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="overcast">overcast</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="pepper-grinder">pepper-grinder</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="redmond">redmond</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="smoothness">smoothness</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="south-street">south-street</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="sunny">sunny</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="trontastic">trontastic</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="ui-darkness">ui-darkness</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="ui-lightness">ui-lightness</a>
+                    </li>
+                    <li class="ui-state-default frame_color menu_item">
+                        <a class="translate" data-info="vader">vader</a></li>
+                </ul>
+            </li>
+            <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Help</a>
+                <ul>
+                    <li class="ui-state-default frame_color menu_item"><a id="m_about" class="translate">About</a></li>
+                </ul>
+            </li>
+    </div>
+    <div class="ribbon_tab" id="ribbon_datei">
+        <div style="width: 100%; height: 70px" class="ui-widget-content">
+
+        </div>
+    </div>
+    <div class="ribbon_tab" id="ribbon_view">
+        <div class="ribbon_tab_content ui-widget-content">
+
+            <div class="ribbon_fild ui-widget-content ui-corner-all">
+                <table>
+                    <tr >
+                        <td colspan="4"> <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">ADD View</div></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="width:80px; display:inline-block" class="translate">Name:</div>
+                        </td>
+                        <td>
+                            <input id="new_view_name" type="text"/>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="add_view" type="button">add_view</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="dup_view" type="button">dup_view</button>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+            <div class="ribbon_fild ui-widget-content ui-corner-all">
+                <table>
+                    <tr >
+                        <td colspan="3"> <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">Current View</div></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select id="select_view" class="vis-editor-large"></select>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="del_view" type="button">del_view</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_fild ui-widget-content ui-corner-all">
+                <table>
+                    <tr >
+                        <td colspan="3"> <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">Rename View</div></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="new_name" type="text"/>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="rename_view" type="button">rename_view</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="ribbon_tab" id="ribbon_widget">
+        <div style="width: 100%; height: 70px" class="ui-widget-content">
+            <img src="lib/img/delete.png" class="ibar_icon" id="ibar_wid-del" title="Del Widget"/>
+            <select id="select_active_widget" class="vis-editor" data-multiselect-width="300"
+                    data-multiselect-height="265"></select>
+        </div>
     </div>
 </div>
+
 <div id="main" style="width: 100%;height: 100%">
-    <div id="vis_container" data-panel-caption="Views"
+    <div id="vis_container" caption="Views"
          style="position: relative; top: 0; left: 0; height:100%; width:100%; overflow: scroll">
         <div id="widget_helper">
             <div id="widget_inner_helper"></div>
@@ -396,24 +459,7 @@
              style="display:none; z-index: 99; position: absolute; left: 0px; height:0px; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
     </div>
 
-    <div class="vis-panel ui-widget-content" data-panel-caption="New View"      id="pan_add_view">
-        <h4 class="translate">New View</h4>
-
-        <div style="width:90px; display:inline-block" class="translate">Name:</div>
-        <input id="new_view_name" type="text"/>
-        <button class="vis-editor translateB" id="add_view" type="button">add_view</button>
-        <button class="vis-editor translateB" id="dup_view" type="button">dup_view</button>
-
-        <h4 class="translate">Current View</h4>
-
-        <div style="width:90px; display:inline-block" class="translate">View:</div>
-        <select id="select_view" class="vis-editor-large"></select>
-        <button class="vis-editor translateB" id="del_view" type="button">del_view</button>
-        <br><br>
-
-        <div style="width:90px; display:inline-block" class="translate">New Name:</div>
-        <input id="new_name" type="text"/>
-        <button class="vis-editor translateB" id="rename_view" type="button">rename_view</button>
+    <div class="vis-panel ui-widget-content" caption="New View" id="pan_add_view">
 
         <h4 class="translate">View Attributes</h4>
         <table>
@@ -436,12 +482,17 @@
 
         </table>
     </div>
-    <div class="vis-panel ui-widget-content" data-panel-caption="View CSS"      id="pan_css_view">
+    <div class="vis-panel ui-widget-content" caption="View CSS" id="pan_css_view">
         <div id="view_inspector">
             <h4><span class="translate">View:</span> <span id="inspect_view"></span></h4>
             <table>
-                <tr><td colspan="4" class="css-inspector-heading">background</td></tr>
-                <tr><td class="translate">Background</td><td id="inspect_view_bkg_parent"></td></tr>
+                <tr>
+                    <td colspan="4" class="css-inspector-heading">background</td>
+                </tr>
+                <tr>
+                    <td class="translate">Background</td>
+                    <td id="inspect_view_bkg_parent"></td>
+                </tr>
                 <tr>
                     <td>-color</td>
                     <td colspan="3">
@@ -490,7 +541,9 @@
                         <input size="40" type="text" id="inspect_view_css_background-origin" class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
-                <tr><td colspan="4" class="css-inspector-heading">font / text</td></tr>
+                <tr>
+                    <td colspan="4" class="css-inspector-heading">font / text</td>
+                </tr>
 
                 <tr>
                     <td>color</td>
@@ -555,7 +608,7 @@
             </table>
         </div>
     </div>
-    <div class="vis-panel ui-widget-content" data-panel-caption="Widget CSS"       id="pan_css_wid">
+    <div class="vis-panel ui-widget-content" caption="Widget CSS" id="pan_css_wid">
         <table id="css_table">
             <tr>
                 <td style="text-align: left">left</td>
@@ -576,7 +629,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                <input size="22" type="text" id="inspect_css_top" class="dashui-inspect-css"/>
+                    <input size="22" type="text" id="inspect_css_top" class="dashui-inspect-css"/>
                 </td>
             </tr>
             <tr>
@@ -946,23 +999,23 @@
             </tr>
         </table>
     </div>
-    <div class="vis-panel ui-widget-content" data-panel-caption="Widget attr"       id="pan_wid_attr">
-    <div class="vis-widget-tools">
+    <div class="vis-panel ui-widget-content" caption="Widget attr" id="pan_wid_attr">
+        <div class="vis-widget-tools">
 
-        <h4 class="translate">Widget Attributes:</h4>
-        <table style="width: 100%; border: 0px">
-            <colgroup>
-                <col width="*"/>
-                <col width="300px"/>
-                <col width="30px"/>
-            </colgroup>
-            <tbody id="widget_attrs"></tbody>
-        </table>
+            <h4 class="translate">Widget Attributes:</h4>
+            <table style="width: 100%; border: 0px">
+                <colgroup>
+                    <col width="*"/>
+                    <col width="300px"/>
+                    <col width="30px"/>
+                </colgroup>
+                <tbody id="widget_attrs"></tbody>
+            </table>
 
 
+        </div>
     </div>
-</div>
-    <div class="vis-panel ui-widget-content" data-panel-caption="ADD Widget"    id="pan_add_wid">
+    <div class="vis-panel ui-widget-content" caption="ADD Widget" id="pan_add_wid">
         <h4 class="translate">Add Widget:</h4>
 
         <div style="width:103px; display:inline-block" class="translate">Widget Set:</div>

@@ -1,12 +1,10 @@
-(function()
-{
+(function () {
     dockspawn = {version: "0.0.3"};
 
     /**
      * A tab handle represents the tab button on the tab strip
      */
-    dockspawn.TabHandle = function(parent)
-    {
+    dockspawn.TabHandle = function (parent) {
         this.parent = parent;
         var undockHandler = dockspawn.TabHandle.prototype._performUndock.bind(this);
         this.elementBase = document.createElement('div');
@@ -26,8 +24,12 @@
         var title = panel.getRawTitle();
         var that = this;
         this.undockListener = {
-            onDockEnabled:function(e){ that.undockEnabled(e.state)},
-            onHideCloseButton: function(e){that.hideCloseButton(e.state)}
+            onDockEnabled: function (e) {
+                that.undockEnabled(e.state)
+            },
+            onHideCloseButton: function (e) {
+                that.hideCloseButton(e.state)
+            }
         };
         this.eventListeners = [];
         panel.addListener(this.undockListener);
@@ -36,9 +38,9 @@
 
         // Set the close button text (font awesome)
         var closeIcon = "icon-remove-sign";
-        if(this.parent.container instanceof dockspawn.PanelContainer &&  this.parent.container.dockManager.closeTabIconTemplate){
+        if (this.parent.container instanceof dockspawn.PanelContainer && this.parent.container.dockManager.closeTabIconTemplate) {
             this.elementCloseButton.innerHTML = this.parent.container.dockManager.closeTabIconTemplate();
-        } else{
+        } else {
             this.elementCloseButton.innerHTML = '<i class="' + closeIcon + '"></i>';
         }
 
@@ -53,31 +55,26 @@
         this.zIndexCounter = 1000;
     };
 
-    dockspawn.TabHandle.prototype.addListener = function(listener){
+    dockspawn.TabHandle.prototype.addListener = function (listener) {
         this.eventListeners.push(listener);
     };
 
-    dockspawn.TabHandle.prototype.removeListener = function(listener)
-    {
+    dockspawn.TabHandle.prototype.removeListener = function (listener) {
         this.eventListeners.splice(this.eventListeners.indexOf(listener), 1);
     };
 
-    dockspawn.TabHandle.prototype.undockEnabled = function(state)
-    {
+    dockspawn.TabHandle.prototype.undockEnabled = function (state) {
         this.undockInitiator.enabled = state;
     };
 
-    dockspawn.TabHandle.prototype.onMouseDown = function(e)
-    {
-        if(this.undockInitiator.enabled)
+    dockspawn.TabHandle.prototype.onMouseDown = function (e) {
+        if (this.undockInitiator.enabled)
             this.undockInitiator.setThresholdPixels(40, false);
-        if (this.mouseMoveHandler)
-        {
+        if (this.mouseMoveHandler) {
             this.mouseMoveHandler.cancel();
             delete this.mouseMoveHandler;
         }
-        if (this.mouseUpHandler)
-        {
+        if (this.mouseUpHandler) {
             this.mouseUpHandler.cancel();
             delete this.mouseUpHandler;
         }
@@ -86,11 +83,10 @@
         this.mouseUpHandler = new dockspawn.EventHandler(window, 'mouseup', this.onMouseUp.bind(this));
     };
 
-    dockspawn.TabHandle.prototype.onMouseUp = function(e)
-    {
-        if(this.undockInitiator.enabled)
+    dockspawn.TabHandle.prototype.onMouseUp = function (e) {
+        if (this.undockInitiator.enabled)
             this.undockInitiator.setThresholdPixels(10, true);
-        if(this.elementBase){
+        if (this.elementBase) {
             this.elementBase.classList.remove("tab-handle-dragged");
         }
         this.dragged = false;
@@ -101,15 +97,15 @@
 
     };
 
-    dockspawn.TabHandle.prototype.generateMoveTabEvent = function(event, pos){
+    dockspawn.TabHandle.prototype.generateMoveTabEvent = function (event, pos) {
         var contain = pos > event.rect.left && pos < event.rect.right;
         var m = Math.abs(event.bound - pos);
-        if(m < this.moveThreshold && contain)
+        if (m < this.moveThreshold && contain)
             this.moveTabEvent(this, event.state);
     };
 
-    dockspawn.TabHandle.prototype.moveTabEvent = function(that, state){
-        that.eventListeners.forEach(function(listener) {
+    dockspawn.TabHandle.prototype.moveTabEvent = function (that, state) {
+        that.eventListeners.forEach(function (listener) {
             if (listener.onMoveTab) {
                 listener.onMoveTab({self: that, state: state});
             }
@@ -117,44 +113,39 @@
 
     };
 
-    dockspawn.TabHandle.prototype.onMouseMove = function(e)
-    {
-        if(Math.abs(this.stargDragPosition  -  e.clientX) < 10)
+    dockspawn.TabHandle.prototype.onMouseMove = function (e) {
+        if (Math.abs(this.stargDragPosition - e.clientX) < 10)
             return;
         this.elementBase.classList.add("tab-handle-dragged");
         this.dragged = true;
         this.prev = this.current;
         this.current = e.clientX;
-        this.direction =  this.current - this.prev;
+        this.direction = this.current - this.prev;
         var tabRect = this.elementBase.getBoundingClientRect();
-        var event = this.direction < 0 ? {state: "left", bound: tabRect.left, rect:tabRect} :
-        {state: "right", bound: tabRect.right, rect:tabRect};
-        if(this.direction !== 0) this.generateMoveTabEvent(event, this.current);
+        var event = this.direction < 0 ? {state: "left", bound: tabRect.left, rect: tabRect} :
+        {state: "right", bound: tabRect.right, rect: tabRect};
+        if (this.direction !== 0) this.generateMoveTabEvent(event, this.current);
     };
 
-    dockspawn.TabHandle.prototype.hideCloseButton = function(state)
-    {
+    dockspawn.TabHandle.prototype.hideCloseButton = function (state) {
         this.elementCloseButton.style.display = state ? 'none' : 'block';
     };
 
-    dockspawn.TabHandle.prototype.updateTitle = function()
-    {
-        if (this.parent.container instanceof dockspawn.PanelContainer)
-        {
+    dockspawn.TabHandle.prototype.updateTitle = function () {
+        if (this.parent.container instanceof dockspawn.PanelContainer) {
             var panel = this.parent.container;
             var title = panel.getRawTitle();
             this.elementText.innerHTML = title;
         }
     };
 
-    dockspawn.TabHandle.prototype.destroy = function()
-    {
+    dockspawn.TabHandle.prototype.destroy = function () {
         var panel = this.parent.container;
         panel.removeListener(this.undockListener);
 
         this.mouseClickHandler.cancel();
-        if(this.mouseUpHandler)
-        this.mouseUpHandler.cancel();
+        if (this.mouseUpHandler)
+            this.mouseUpHandler.cancel();
 
         this.closeButtonHandler.cancel();
 
@@ -164,10 +155,8 @@
         delete this.elementCloseButton;
     };
 
-    dockspawn.TabHandle.prototype._performUndock = function(e, dragOffset)
-    {
-        if (this.parent.container.containerType == "panel")
-        {
+    dockspawn.TabHandle.prototype._performUndock = function (e, dragOffset) {
+        if (this.parent.container.containerType == "panel") {
             this.undockInitiator.enabled = false;
             var panel = this.parent.container;
             return panel.performUndockToDialog(e, dragOffset);
@@ -176,16 +165,13 @@
             return null;
     };
 
-    dockspawn.TabHandle.prototype.onMouseClicked = function()
-    {
+    dockspawn.TabHandle.prototype.onMouseClicked = function () {
         this.parent.onSelected();
     };
 
-    dockspawn.TabHandle.prototype.onCloseButtonClicked = function()
-    {
+    dockspawn.TabHandle.prototype.onCloseButtonClicked = function () {
         // If the page contains a panel element, undock it and destroy it
-        if (this.parent.container.containerType == "panel")
-        {
+        if (this.parent.container.containerType == "panel") {
             this.parent.container.close();
             // this.undockInitiator.enabled = false;
             // var panel = this.parent.container;
@@ -193,8 +179,7 @@
         }
     };
 
-    dockspawn.TabHandle.prototype.setSelected = function(selected)
-    {
+    dockspawn.TabHandle.prototype.setSelected = function (selected) {
         var selectedClassName = "tab-handle-selected";
         if (selected)
             this.elementBase.classList.add(selectedClassName);
@@ -202,13 +187,11 @@
             this.elementBase.classList.remove(selectedClassName);
     };
 
-    dockspawn.TabHandle.prototype.setZIndex = function(zIndex)
-    {
+    dockspawn.TabHandle.prototype.setZIndex = function (zIndex) {
         this.elementBase.style.zIndex = zIndex;
     };
 
-    dockspawn.TabHandle.prototype._bringToFront = function(element)
-    {
+    dockspawn.TabHandle.prototype._bringToFront = function (element) {
         element.style.zIndex = this.zIndexCounter;
         this.zIndexCounter++;
     };
@@ -216,8 +199,7 @@
      * Tab Host control contains tabs known as TabPages.
      * The tab strip can be aligned in different orientations
      */
-    dockspawn.TabHost = function(tabStripDirection, displayCloseButton)
-    {
+    dockspawn.TabHost = function (tabStripDirection, displayCloseButton) {
         /**
          * Create a tab host with the tab strip aligned in the [tabStripDirection] direciton
          * Only dockspawn.TabHost.DIRECTION_BOTTOM and dockspawn.TabHost.DIRECTION_TOP are supported
@@ -233,7 +215,9 @@
         var that = this;
         that.eventListeners = [];
         this.tabHandleListener = {
-            onMoveTab :function(e){ that.onMoveTab(e)},
+            onMoveTab: function (e) {
+                that.onMoveTab(e)
+            },
         };
         this.hostElement = document.createElement('div');       // The main tab host DOM element
         this.tabListElement = document.createElement('div');    // Hosts the tab handles
@@ -241,14 +225,12 @@
         this.contentElement = document.createElement('div');    // Hosts the active tab content
         this.createTabPage = this._createDefaultTabPage;        // Factory for creating tab pages
 
-        if (this.tabStripDirection == dockspawn.TabHost.DIRECTION_BOTTOM)
-        {
+        if (this.tabStripDirection == dockspawn.TabHost.DIRECTION_BOTTOM) {
             this.hostElement.appendChild(this.contentElement);
             this.hostElement.appendChild(this.separatorElement);
             this.hostElement.appendChild(this.tabListElement);
         }
-        else if (this.tabStripDirection == dockspawn.TabHost.DIRECTION_TOP)
-        {
+        else if (this.tabStripDirection == dockspawn.TabHost.DIRECTION_TOP) {
             this.hostElement.appendChild(this.tabListElement);
             this.hostElement.appendChild(this.separatorElement);
             this.hostElement.appendChild(this.contentElement);
@@ -268,14 +250,14 @@
     dockspawn.TabHost.DIRECTION_LEFT = 2;
     dockspawn.TabHost.DIRECTION_RIGHT = 3;
 
-    dockspawn.TabHost.prototype.onMoveTab = function(e){
+    dockspawn.TabHost.prototype.onMoveTab = function (e) {
         this.tabListElement;
-        var index =  Array.prototype.slice.call(this.tabListElement.childNodes).indexOf(e.self.elementBase);
+        var index = Array.prototype.slice.call(this.tabListElement.childNodes).indexOf(e.self.elementBase);
 
         this.change(/*host*/this, /*handle*/e.self, e.state, index);
     };
 
-    dockspawn.TabHost.prototype.performTabsLayout = function(indexes){
+    dockspawn.TabHost.prototype.performTabsLayout = function (indexes) {
         this.pages = this.pages.orderByIndexes(indexes);
 
         var items = this.tabListElement.childNodes;
@@ -291,35 +273,34 @@
         }
     };
 
-    dockspawn.TabHost.prototype.addListener = function(listener){
+    dockspawn.TabHost.prototype.addListener = function (listener) {
         this.eventListeners.push(listener);
     };
 
-    dockspawn.TabHost.prototype.removeListener = function(listener)
-    {
+    dockspawn.TabHost.prototype.removeListener = function (listener) {
         this.eventListeners.splice(this.eventListeners.indexOf(listener), 1);
     };
 
-    dockspawn.TabHost.prototype.change = function(host, handle, state, index){
-        this.eventListeners.forEach(function(listener) {
+    dockspawn.TabHost.prototype.change = function (host, handle, state, index) {
+        this.eventListeners.forEach(function (listener) {
             if (listener.onChange) {
                 listener.onChange({host: host, handle: handle, state: state, index: index});
             }
         });
     };
 
-    dockspawn.TabHost.prototype._createDefaultTabPage = function(tabHost, container)
-    {
+    dockspawn.TabHost.prototype._createDefaultTabPage = function (tabHost, container) {
         return new dockspawn.TabPage(tabHost, container);
     };
 
-    dockspawn.TabHost.prototype.setActiveTab = function(container)
-    {
-        if(this.pages.length > 0) { this.onTabPageSelected(this.pages[0]) };
+    dockspawn.TabHost.prototype.setActiveTab = function (container) {
+        if (this.pages.length > 0) {
+            this.onTabPageSelected(this.pages[0])
+        }
+        ;
     };
 
-    dockspawn.TabHost.prototype.resize = function(width, height)
-    {
+    dockspawn.TabHost.prototype.resize = function (width, height) {
         this.hostElement.style.width = width + "px";
         this.hostElement.style.height = height + "px";
 
@@ -338,35 +319,33 @@
             this.activeTab.resize(width, contentHeight);
     };
 
-    dockspawn.TabHost.prototype.resizeTabListElement = function(width, height){
-        if(this.pages.length == 0) return;
+    dockspawn.TabHost.prototype.resizeTabListElement = function (width, height) {
+        if (this.pages.length == 0) return;
         var tabListWidth = 0;
-        this.pages.forEach(function(page){
+        this.pages.forEach(function (page) {
             var handle = page.handle;
             handle.elementBase.style.width = ""; //clear
             handle.elementText.style.width = "";
             tabListWidth += handle.elementBase.clientWidth;
         });
         var scaleMultiplier = width / tabListWidth;
-        if(scaleMultiplier > 1.2) return; //with a reserve
+        if (scaleMultiplier > 1.2) return; //with a reserve
         var self = this;
-        this.pages.forEach(function(page, index){
+        this.pages.forEach(function (page, index) {
             var handle = page.handle;
             var newSize = scaleMultiplier * handle.elementBase.clientWidth;
-            if(index == self.pages.length - 1)
+            if (index == self.pages.length - 1)
                 newSize = newSize - 5;
             handle.elementBase.style.width = newSize + "px";
-            if(self.tabStripDirection == dockspawn.TabHost.DIRECTION_TOP){
+            if (self.tabStripDirection == dockspawn.TabHost.DIRECTION_TOP) {
                 handle.elementText.style.width = newSize - handle.elementCloseButton.clientWidth - 16 + "px";
             }
         });
     };
 
-    dockspawn.TabHost.prototype.performLayout = function(children)
-    {
+    dockspawn.TabHost.prototype.performLayout = function (children) {
         // Destroy all existing tab pages
-        this.pages.forEach(function(tab)
-        {
+        this.pages.forEach(function (tab) {
             tab.handle.removeListener(this.tabHandleListener);
             tab.destroy();
         });
@@ -375,17 +354,14 @@
         var oldActiveTab = this.activeTab;
         delete this.activeTab;
 
-        var childPanels = children.filter(function(child)
-        {
+        var childPanels = children.filter(function (child) {
             return child.containerType == "panel";
         });
 
-        if (childPanels.length > 0)
-        {
+        if (childPanels.length > 0) {
             // Rebuild new tab pages
             var self = this;
-            childPanels.forEach(function(child)
-            {
+            childPanels.forEach(function (child) {
                 var page = self.createTabPage(self, child);
                 page.handle.addListener(self.tabHandleListener);
                 self.pages.push(page);
@@ -404,17 +380,14 @@
             this.onTabPageSelected(this.activeTab);
     };
 
-    dockspawn.TabHost.prototype._setTabHandlesVisible = function(visible)
-    {
+    dockspawn.TabHost.prototype._setTabHandlesVisible = function (visible) {
         this.tabListElement.style.display = visible ? "block" : "none";
         this.separatorElement.style.display = visible ? "block" : "none";
     };
 
-    dockspawn.TabHost.prototype.onTabPageSelected = function(page)
-    {
+    dockspawn.TabHost.prototype.onTabPageSelected = function (page) {
         this.activeTab = page;
-        this.pages.forEach(function(tabPage)
-        {
+        this.pages.forEach(function (tabPage) {
             var selected = (tabPage === page);
             tabPage.setSelected(selected);
         });
@@ -422,8 +395,7 @@
         // adjust the zIndex of the tabs to have proper shadow/depth effect
         var zIndexDelta = 1;
         var zIndex = 1000;
-        this.pages.forEach(function(tabPage)
-        {
+        this.pages.forEach(function (tabPage) {
             tabPage.handle.setZIndex(zIndex);
             var selected = (tabPage == page);
             if (selected)
@@ -433,8 +405,7 @@
 
     };
 
-    dockspawn.TabPage = function(host, container)
-    {
+    dockspawn.TabPage = function (host, container) {
         if (arguments.length == 0)
             return;
 
@@ -445,46 +416,39 @@
         this.handle = new dockspawn.TabHandle(this);
         this.containerElement = container.containerElement;
 
-        if (container instanceof dockspawn.PanelContainer)
-        {
+        if (container instanceof dockspawn.PanelContainer) {
             var panel = container;
             panel.onTitleChanged = this.onTitleChanged.bind(this);
         }
     };
 
-    dockspawn.TabPage.prototype.onTitleChanged = function(sender, title)
-    {
+    dockspawn.TabPage.prototype.onTitleChanged = function (sender, title) {
         this.handle.updateTitle();
     };
 
-    dockspawn.TabPage.prototype.destroy = function()
-    {
+    dockspawn.TabPage.prototype.destroy = function () {
         this.handle.destroy();
 
-        if (this.container instanceof dockspawn.PanelContainer)
-        {
+        if (this.container instanceof dockspawn.PanelContainer) {
             var panel = this.container;
             delete panel.onTitleChanged;
         }
     };
 
-    dockspawn.TabPage.prototype.onSelected = function()
-    {
+    dockspawn.TabPage.prototype.onSelected = function () {
         this.host.onTabPageSelected(this);
-        if (this.container instanceof dockspawn.PanelContainer)
-        {
+        if (this.container instanceof dockspawn.PanelContainer) {
             var panel = this.container;
             panel.dockManager.notifyOnTabChange(this);
         }
 
     };
 
-    dockspawn.TabPage.prototype.setSelected = function(flag)
-    {
+    dockspawn.TabPage.prototype.setSelected = function (flag) {
         this.selected = flag;
         this.handle.setSelected(flag);
 
-        if(!$.contains(this.host.contentElement,this.containerElement)){
+        if (!$.contains(this.host.contentElement, this.containerElement)) {
             this.host.contentElement.appendChild(this.containerElement);
         }
         if (this.selected) {
@@ -501,12 +465,10 @@
         }
     };
 
-    dockspawn.TabPage.prototype.resize = function(width, height)
-    {
+    dockspawn.TabPage.prototype.resize = function (width, height) {
         this.container.resize(width, height);
     };
-    dockspawn.Dialog = function(panel, dockManager)
-    {
+    dockspawn.Dialog = function (panel, dockManager) {
         this.panel = panel;
         this.zIndexCounter = 1000;
         this.dockManager = dockManager;
@@ -519,18 +481,16 @@
 
     };
 
-    dockspawn.Dialog.prototype.saveState = function(x, y){
+    dockspawn.Dialog.prototype.saveState = function (x, y) {
         this.position = {x: x, y: y};
         this.dockManager.notifyOnChangeDialogPosition(this, x, y);
     };
 
-    dockspawn.Dialog.fromElement = function(id, dockManager)
-    {
+    dockspawn.Dialog.fromElement = function (id, dockManager) {
         return new dockspawn.Dialog(new dockspawn.PanelContainer(document.getElementById(id), dockManager), dockManager);
     };
 
-    dockspawn.Dialog.prototype._initialize = function()
-    {
+    dockspawn.Dialog.prototype._initialize = function () {
         this.panel.floatingDialog = this;
         this.elementDialog = document.createElement('div');
         this.elementDialog.appendChild(this.panel.elementPanel);
@@ -548,28 +508,23 @@
         this.bringToFront();
     };
 
-    dockspawn.Dialog.prototype.setPosition = function(x, y)
-    {
+    dockspawn.Dialog.prototype.setPosition = function (x, y) {
         this.position = {x: x, y: y};
         this.elementDialog.style.left = x + "px";
         this.elementDialog.style.top = y + "px";
         this.dockManager.notifyOnChangeDialogPosition(this, x, y);
     };
 
-    dockspawn.Dialog.prototype.getPosition = function()
-    {
-        return { left:  this.position.x , top: this.position.y };
+    dockspawn.Dialog.prototype.getPosition = function () {
+        return {left: this.position.x, top: this.position.y};
     };
 
-    dockspawn.Dialog.prototype.onMouseDown = function(e)
-    {
+    dockspawn.Dialog.prototype.onMouseDown = function (e) {
         this.bringToFront();
     };
 
-    dockspawn.Dialog.prototype.destroy = function()
-    {
-        if (this.mouseDownHandler)
-        {
+    dockspawn.Dialog.prototype.destroy = function () {
+        if (this.mouseDownHandler) {
             this.mouseDownHandler.cancel();
             delete this.mouseDownHandler;
         }
@@ -582,49 +537,40 @@
         delete this.panel.floatingDialog;
     };
 
-    dockspawn.Dialog.prototype.resize = function(width, height)
-    {
+    dockspawn.Dialog.prototype.resize = function (width, height) {
         this.resizable.resize(width, height);
     };
 
-    dockspawn.Dialog.prototype.setTitle = function(title)
-    {
+    dockspawn.Dialog.prototype.setTitle = function (title) {
         this.panel.setTitle(title);
     };
 
-    dockspawn.Dialog.prototype.setTitleIcon = function(iconName)
-    {
+    dockspawn.Dialog.prototype.setTitleIcon = function (iconName) {
         this.panel.setTitleIcon(iconName);
     };
 
-    dockspawn.Dialog.prototype.bringToFront = function()
-    {
+    dockspawn.Dialog.prototype.bringToFront = function () {
         this.elementDialog.style.zIndex = this.zIndexCounter++;
     };
 
-    dockspawn.Dialog.prototype.hide = function()
-    {
+    dockspawn.Dialog.prototype.hide = function () {
         this.elementDialog.style.zIndex = 0;
         this.elementDialog.style.display = 'none';
-        if(!this.isHidden)
-        {
+        if (!this.isHidden) {
             this.isHidden = true;
             this.dockManager.notifyOnHideDialog(this);
         }
     };
 
-    dockspawn.Dialog.prototype.show = function()
-    {
+    dockspawn.Dialog.prototype.show = function () {
         this.elementDialog.style.zIndex = 1000;
         this.elementDialog.style.display = 'block';
-        if(this.isHidden)
-        {
+        if (this.isHidden) {
             this.isHidden = false;
             this.dockManager.notifyOnShowDialog(this);
         }
     };
-    dockspawn.DraggableContainer = function(dialog, delegate, topLevelElement, dragHandle)
-    {
+    dockspawn.DraggableContainer = function (dialog, delegate, topLevelElement, dragHandle) {
         this.dialog = dialog;
         this.delegate = delegate;
         this.containerElement = delegate.containerElement;
@@ -637,71 +583,63 @@
         this.minimumAllowedChildNodes = delegate.minimumAllowedChildNodes;
     };
 
-    dockspawn.DraggableContainer.prototype.destroy = function()
-    {
+    dockspawn.DraggableContainer.prototype.destroy = function () {
         this.removeDecorator();
         this.delegate.destroy();
     };
 
-    dockspawn.DraggableContainer.prototype.saveState = function(state)
-    {
+    dockspawn.DraggableContainer.prototype.saveState = function (state) {
         this.delegate.saveState(state);
     };
 
-    dockspawn.DraggableContainer.prototype.loadState = function(state)
-    {
+    dockspawn.DraggableContainer.prototype.loadState = function (state) {
         this.delegate.loadState(state);
     };
 
-    dockspawn.DraggableContainer.prototype.setActiveChild = function(child)
-    {
+    dockspawn.DraggableContainer.prototype.setActiveChild = function (child) {
     };
 
     Object.defineProperty(dockspawn.DraggableContainer.prototype, "width", {
-        get: function() { return this.delegate.width; }
+        get: function () {
+            return this.delegate.width;
+        }
     });
 
     Object.defineProperty(dockspawn.DraggableContainer.prototype, "height", {
-        get: function() { return this.delegate.height; }
+        get: function () {
+            return this.delegate.height;
+        }
     });
 
-    dockspawn.DraggableContainer.prototype.name = function(value)
-    {
+    dockspawn.DraggableContainer.prototype.name = function (value) {
         if (value)
             this.delegate.name = value;
         return this.delegate.name;
     };
 
-    dockspawn.DraggableContainer.prototype.resize = function(width, height)
-    {
+    dockspawn.DraggableContainer.prototype.resize = function (width, height) {
         this.delegate.resize(width, height);
     };
 
-    dockspawn.DraggableContainer.prototype.performLayout = function(children)
-    {
+    dockspawn.DraggableContainer.prototype.performLayout = function (children) {
         this.delegate.performLayout(children);
     };
 
-    dockspawn.DraggableContainer.prototype.removeDecorator = function()
-    {
-        if (this.mouseDownHandler)
-        {
+    dockspawn.DraggableContainer.prototype.removeDecorator = function () {
+        if (this.mouseDownHandler) {
             this.mouseDownHandler.cancel();
             delete this.mouseDownHandler;
         }
     };
 
-    dockspawn.DraggableContainer.prototype.onMouseDown = function(event)
-    {
+    dockspawn.DraggableContainer.prototype.onMouseDown = function (event) {
         this._startDragging(event);
-        this.previousMousePosition = { x: event.pageX, y: event.pageY };
-        if (this.mouseMoveHandler)
-        {
+        this.previousMousePosition = {x: event.pageX, y: event.pageY};
+        if (this.mouseMoveHandler) {
             this.mouseMoveHandler.cancel();
             delete this.mouseMoveHandler;
         }
-        if (this.mouseUpHandler)
-        {
+        if (this.mouseUpHandler) {
             this.mouseUpHandler.cancel();
             delete this.mouseUpHandler;
         }
@@ -710,8 +648,7 @@
         this.mouseUpHandler = new dockspawn.EventHandler(window, 'mouseup', this.onMouseUp.bind(this));
     };
 
-    dockspawn.DraggableContainer.prototype.onMouseUp = function(event)
-    {
+    dockspawn.DraggableContainer.prototype.onMouseUp = function (event) {
         this._stopDragging(event);
         this.mouseMoveHandler.cancel();
         delete this.mouseMoveHandler;
@@ -719,22 +656,19 @@
         delete this.mouseUpHandler;
     };
 
-    dockspawn.DraggableContainer.prototype._startDragging = function(event)
-    {
+    dockspawn.DraggableContainer.prototype._startDragging = function (event) {
         if (this.dialog.eventListener)
             this.dialog.eventListener.onDialogDragStarted(this.dialog, event);
         document.body.classList.add("disable-selection");
     };
 
-    dockspawn.DraggableContainer.prototype._stopDragging = function(event)
-    {
+    dockspawn.DraggableContainer.prototype._stopDragging = function (event) {
         if (this.dialog.eventListener)
             this.dialog.eventListener.onDialogDragEnded(this.dialog, event);
         document.body.classList.remove("disable-selection");
     };
 
-    dockspawn.DraggableContainer.prototype.onMouseMove = function(event)
-    {
+    dockspawn.DraggableContainer.prototype.onMouseMove = function (event) {
         var currentMousePosition = new Point(event.pageX, event.pageY);
 
         var dx = this.dockManager.checkXBounds(this.topLevelElement, currentMousePosition, this.previousMousePosition);
@@ -743,8 +677,7 @@
         this.previousMousePosition = currentMousePosition;
     };
 
-    dockspawn.DraggableContainer.prototype._performDrag = function(dx, dy)
-    {
+    dockspawn.DraggableContainer.prototype._performDrag = function (dx, dy) {
         var left = dx + getPixels(this.topLevelElement.style.marginLeft);
         var top = dy + getPixels(this.topLevelElement.style.marginTop);
         this.topLevelElement.style.marginLeft = left + "px";
@@ -754,8 +687,7 @@
      * Decorates a dock container with resizer handles around its base element
      * This enables the container to be resized from all directions
      */
-    dockspawn.ResizableContainer = function(dialog, delegate, topLevelElement)
-    {
+    dockspawn.ResizableContainer = function (dialog, delegate, topLevelElement) {
         this.dialog = dialog;
         this.delegate = delegate;
         this.containerElement = delegate.containerElement;
@@ -769,12 +701,10 @@
         this.readyToProcessNextResize = true;
     };
 
-    dockspawn.ResizableContainer.prototype.setActiveChild = function(child)
-    {
+    dockspawn.ResizableContainer.prototype.setActiveChild = function (child) {
     };
 
-    dockspawn.ResizableContainer.prototype._buildResizeHandles = function()
-    {
+    dockspawn.ResizableContainer.prototype._buildResizeHandles = function () {
         this.resizeHandles = [];
 //    this._buildResizeHandle(true, false, true, false); // Dont need the corner resizer near the close button
         this._buildResizeHandle(false, true, true, false);
@@ -787,8 +717,7 @@
         this._buildResizeHandle(false, false, false, true);
     };
 
-    dockspawn.ResizableContainer.prototype._buildResizeHandle = function(east, west, north, south)
-    {
+    dockspawn.ResizableContainer.prototype._buildResizeHandle = function (east, west, north, south) {
         var handle = new ResizeHandle();
         handle.east = east;
         handle.west = west;
@@ -815,65 +744,62 @@
         this.resizeHandles.push(handle);
 
         var self = this;
-        handle.mouseDownHandler = new dockspawn.EventHandler(handle.element, 'mousedown', function(e) { self.onMouseDown(handle, e); });
+        handle.mouseDownHandler = new dockspawn.EventHandler(handle.element, 'mousedown', function (e) {
+            self.onMouseDown(handle, e);
+        });
     };
 
-    dockspawn.ResizableContainer.prototype.saveState = function(state)
-    {
+    dockspawn.ResizableContainer.prototype.saveState = function (state) {
         this.delegate.saveState(state);
     };
 
-    dockspawn.ResizableContainer.prototype.loadState = function(state)
-    {
+    dockspawn.ResizableContainer.prototype.loadState = function (state) {
         this.delegate.loadState(state);
     };
 
     Object.defineProperty(dockspawn.ResizableContainer.prototype, "width", {
-        get: function() { return this.delegate.width; }
+        get: function () {
+            return this.delegate.width;
+        }
     });
 
     Object.defineProperty(dockspawn.ResizableContainer.prototype, "height", {
-        get: function() { return this.delegate.height; }
+        get: function () {
+            return this.delegate.height;
+        }
     });
 
-    dockspawn.ResizableContainer.prototype.name = function(value)
-    {
+    dockspawn.ResizableContainer.prototype.name = function (value) {
         if (value)
             this.delegate.name = value;
         return this.delegate.name;
     };
 
-    dockspawn.ResizableContainer.prototype.resize = function(width, height)
-    {
+    dockspawn.ResizableContainer.prototype.resize = function (width, height) {
         this.delegate.resize(width, height);
         this._adjustResizeHandles(width, height);
     };
 
-    dockspawn.ResizableContainer.prototype._adjustResizeHandles = function(width, height)
-    {
+    dockspawn.ResizableContainer.prototype._adjustResizeHandles = function (width, height) {
         var self = this;
-        this.resizeHandles.forEach(function(handle) {
+        this.resizeHandles.forEach(function (handle) {
             handle.adjustSize(self.topLevelElement, width, height);
         });
     };
 
-    dockspawn.ResizableContainer.prototype.performLayout = function(children)
-    {
+    dockspawn.ResizableContainer.prototype.performLayout = function (children) {
         this.delegate.performLayout(children);
     };
 
-    dockspawn.ResizableContainer.prototype.destroy = function()
-    {
+    dockspawn.ResizableContainer.prototype.destroy = function () {
         this.removeDecorator();
         this.delegate.destroy();
     };
 
-    dockspawn.ResizableContainer.prototype.removeDecorator = function()
-    {
+    dockspawn.ResizableContainer.prototype.removeDecorator = function () {
     };
 
-    dockspawn.ResizableContainer.prototype.onMouseMoved = function(handle, e)
-    {
+    dockspawn.ResizableContainer.prototype.onMouseMoved = function (handle, e) {
         if (!this.readyToProcessNextResize)
             return;
         this.readyToProcessNextResize = false;
@@ -886,34 +812,34 @@
         this._performDrag(handle, dx, dy);
         this.previousMousePosition = currentMousePosition;
         this.readyToProcessNextResize = true;
-        if(this.dialog.panel)
+        if (this.dialog.panel)
             this.dockManager.resumeLayout(this.dialog.panel);
     };
 
-    dockspawn.ResizableContainer.prototype.onMouseDown = function(handle, event)
-    {
+    dockspawn.ResizableContainer.prototype.onMouseDown = function (handle, event) {
         this.previousMousePosition = new Point(event.pageX, event.pageY);
-        if (handle.mouseMoveHandler)
-        {
+        if (handle.mouseMoveHandler) {
             handle.mouseMoveHandler.cancel();
             delete handle.mouseMoveHandler
         }
-        if (handle.mouseUpHandler)
-        {
+        if (handle.mouseUpHandler) {
             handle.mouseUpHandler.cancel();
             delete handle.mouseUpHandler
         }
 
         // Create the mouse event handlers
         var self = this;
-        handle.mouseMoveHandler = new dockspawn.EventHandler(window, 'mousemove', function(e) { self.onMouseMoved(handle, e); });
-        handle.mouseUpHandler = new dockspawn.EventHandler(window, 'mouseup', function(e) { self.onMouseUp(handle, e); });
+        handle.mouseMoveHandler = new dockspawn.EventHandler(window, 'mousemove', function (e) {
+            self.onMouseMoved(handle, e);
+        });
+        handle.mouseUpHandler = new dockspawn.EventHandler(window, 'mouseup', function (e) {
+            self.onMouseUp(handle, e);
+        });
 
         document.body.classList.add("disable-selection");
     };
 
-    dockspawn.ResizableContainer.prototype.onMouseUp = function(handle, event)
-    {
+    dockspawn.ResizableContainer.prototype.onMouseUp = function (handle, event) {
         handle.mouseMoveHandler.cancel();
         handle.mouseUpHandler.cancel();
         delete handle.mouseMoveHandler;
@@ -922,8 +848,7 @@
         document.body.classList.remove("disable-selection");
     };
 
-    dockspawn.ResizableContainer.prototype._performDrag = function(handle, dx, dy)
-    {
+    dockspawn.ResizableContainer.prototype._performDrag = function (handle, dx, dy) {
         var bounds = {};
         bounds.left = getPixels(this.topLevelElement.style.marginLeft);
         bounds.top = getPixels(this.topLevelElement.style.marginTop);
@@ -936,28 +861,23 @@
         if (handle.south) this._resizeSouth(dy, bounds);
     };
 
-    dockspawn.ResizableContainer.prototype._resizeWest = function(dx, bounds)
-    {
+    dockspawn.ResizableContainer.prototype._resizeWest = function (dx, bounds) {
         this._resizeContainer(dx, 0, -dx, 0, bounds);
     };
 
-    dockspawn.ResizableContainer.prototype._resizeEast = function(dx, bounds)
-    {
+    dockspawn.ResizableContainer.prototype._resizeEast = function (dx, bounds) {
         this._resizeContainer(0, 0, dx, 0, bounds);
     };
 
-    dockspawn.ResizableContainer.prototype._resizeNorth = function(dy, bounds)
-    {
+    dockspawn.ResizableContainer.prototype._resizeNorth = function (dy, bounds) {
         this._resizeContainer(0, dy, 0, -dy, bounds);
     };
 
-    dockspawn.ResizableContainer.prototype._resizeSouth = function(dy, bounds)
-    {
+    dockspawn.ResizableContainer.prototype._resizeSouth = function (dy, bounds) {
         this._resizeContainer(0, 0, 0, dy, bounds);
     };
 
-    dockspawn.ResizableContainer.prototype._resizeContainer = function(leftDelta, topDelta, widthDelta, heightDelta, bounds)
-    {
+    dockspawn.ResizableContainer.prototype._resizeContainer = function (leftDelta, topDelta, widthDelta, heightDelta, bounds) {
         bounds.left += leftDelta;
         bounds.top += topDelta;
         bounds.width += widthDelta;
@@ -975,8 +895,7 @@
     };
 
 
-    function ResizeHandle()
-    {
+    function ResizeHandle() {
         this.element = undefined;
         this.handleSize = 6;   // TODO: Get this from DOM
         this.cornerSize = 12;  // TODO: Get this from DOM
@@ -987,19 +906,15 @@
         this.corner = false;
     }
 
-    ResizeHandle.prototype.adjustSize = function(container, clientWidth, clientHeight)
-    {
-        if (this.corner)
-        {
+    ResizeHandle.prototype.adjustSize = function (container, clientWidth, clientHeight) {
+        if (this.corner) {
             if (this.west) this.element.style.left = "0px";
             if (this.east) this.element.style.left = (clientWidth - this.cornerSize) + "px";
             if (this.north) this.element.style.top = "0px";
             if (this.south) this.element.style.top = (clientHeight - this.cornerSize) + "px";
         }
-        else
-        {
-            if (this.west)
-            {
+        else {
+            if (this.west) {
                 this.element.style.left = "0px";
                 this.element.style.top = this.cornerSize + "px";
             }
@@ -1023,13 +938,11 @@
             }
         }
     };
-    dockspawn.Exception = function(message)
-    {
+    dockspawn.Exception = function (message) {
         this.message = message;
     }
 
-    dockspawn.Exception.prototype.toString = function()
-    {
+    dockspawn.Exception.prototype.toString = function () {
         return this.message;
     };
     /**
@@ -1038,8 +951,7 @@
      * Initially the document manager takes up the central space and acts as the root node
      */
 
-    dockspawn.DockManager = function(element)
-    {
+    dockspawn.DockManager = function (element) {
         if (element === undefined)
             throw new dockspawn.Exception("Invalid Dock Manager element provided");
 
@@ -1048,8 +960,7 @@
         this.layoutEventListeners = [];
     };
 
-    dockspawn.DockManager.prototype.initialize = function()
-    {
+    dockspawn.DockManager.prototype.initialize = function () {
         this.context = new dockspawn.DockManagerContext(this);
         var documentNode = new dockspawn.DockNode(this.context.documentManagerView);
         this.context.model.rootNode = documentNode;
@@ -1064,47 +975,42 @@
         this.rebuildLayout(this.context.model.rootNode);
     };
 
-    dockspawn.DockManager.prototype.checkXBounds = function(container, currentMousePosition, previousMousePosition){
+    dockspawn.DockManager.prototype.checkXBounds = function (container, currentMousePosition, previousMousePosition) {
         var dx = Math.floor(currentMousePosition.x - previousMousePosition.x);
         leftBounds = currentMousePosition.x + dx < 0 || (container.offsetLeft + container.offsetWidth + dx - 40 ) < 0;
         rightBounds = currentMousePosition.x + dx > this.element.offsetWidth || (container.offsetLeft + dx + 40) > this.element.offsetWidth;
-        if(leftBounds || rightBounds)
-        {
+        if (leftBounds || rightBounds) {
             previousMousePosition.x = currentMousePosition.x;
             dx = 0;
         }
         return dx;
     };
 
-    dockspawn.DockManager.prototype.checkYBounds = function(container, currentMousePosition, previousMousePosition){
+    dockspawn.DockManager.prototype.checkYBounds = function (container, currentMousePosition, previousMousePosition) {
         var dy = Math.floor(currentMousePosition.y - previousMousePosition.y);
         topBounds = container.offsetTop + dy < this.element.offsetTop;
-        bottomBounds = currentMousePosition.y + dy > this.element.offsetHeight ||  (container.offsetTop + dy > this.element.offsetHeight + this.element.offsetTop - 20);
-        if(topBounds || bottomBounds)
-        {
+        bottomBounds = currentMousePosition.y + dy > this.element.offsetHeight || (container.offsetTop + dy > this.element.offsetHeight + this.element.offsetTop - 20);
+        if (topBounds || bottomBounds) {
             previousMousePosition.y = currentMousePosition.y;
             dy = 0;
         }
         return dy;
     };
 
-    dockspawn.DockManager.prototype.rebuildLayout = function(node)
-    {
+    dockspawn.DockManager.prototype.rebuildLayout = function (node) {
         var self = this;
-        node.children.forEach(function(child) {
+        node.children.forEach(function (child) {
             self.rebuildLayout(child);
         });
         node.performLayout();
 
     };
 
-    dockspawn.DockManager.prototype.invalidate = function()
-    {
+    dockspawn.DockManager.prototype.invalidate = function () {
         this.resize(this.element.clientWidth, this.element.clientHeight);
     };
 
-    dockspawn.DockManager.prototype.resize = function(width, height)
-    {
+    dockspawn.DockManager.prototype.resize = function (width, height) {
         this.element.style.width = width + "px";
         this.element.style.height = height + "px";
         this.context.model.rootNode.container.resize(width, height);
@@ -1113,8 +1019,7 @@
     /**
      * Reset the dock model . This happens when the state is loaded from json
      */
-    dockspawn.DockManager.prototype.setModel = function(model)
-    {
+    dockspawn.DockManager.prototype.setModel = function (model) {
         removeNode(this.context.documentManagerView.containerElement);
         this.context.model = model;
         this.setRootNode(model.rootNode);
@@ -1124,10 +1029,9 @@
         // this.invalidate();
     };
 
-    dockspawn.DockManager.prototype.loadResize = function(node)
-    {
+    dockspawn.DockManager.prototype.loadResize = function (node) {
         var self = this;
-        node.children.reverse().forEach(function(child) {
+        node.children.reverse().forEach(function (child) {
             self.loadResize(child);
             node.container.setActiveChild(child.container);
         });
@@ -1137,10 +1041,8 @@
         // node.performLayout();
     };
 
-    dockspawn.DockManager.prototype.setRootNode = function(node)
-    {
-        if (this.context.model.rootNode)
-        {
+    dockspawn.DockManager.prototype.setRootNode = function (node) {
+        if (this.context.model.rootNode) {
             // detach it from the dock manager's base element
 //      context.model.rootNode.detachFromParent();
         }
@@ -1152,23 +1054,19 @@
     };
 
 
-    dockspawn.DockManager.prototype.onDialogDragStarted = function(sender, e)
-    {
+    dockspawn.DockManager.prototype.onDialogDragStarted = function (sender, e) {
         this.dockWheel.activeNode = this._findNodeOnPoint(e.pageX, e.pageY);
         this.dockWheel.activeDialog = sender;
         this.dockWheel.showWheel();
-        if (this.mouseMoveHandler)
-        {
+        if (this.mouseMoveHandler) {
             this.mouseMoveHandler.cancel();
             delete this.mouseMoveHandler;
         }
         this.mouseMoveHandler = new dockspawn.EventHandler(window, 'mousemove', this.onMouseMoved.bind(this));
     };
 
-    dockspawn.DockManager.prototype.onDialogDragEnded = function(sender, e)
-    {
-        if (this.mouseMoveHandler)
-        {
+    dockspawn.DockManager.prototype.onDialogDragEnded = function (sender, e) {
+        if (this.mouseMoveHandler) {
             this.mouseMoveHandler.cancel();
             delete this.mouseMoveHandler;
         }
@@ -1179,8 +1077,7 @@
         sender.saveState(sender.elementDialog.offsetLeft, sender.elementDialog.offsetTop);
     };
 
-    dockspawn.DockManager.prototype.onMouseMoved = function(e)
-    {
+    dockspawn.DockManager.prototype.onMouseMoved = function (e) {
         this.dockWheel.activeNode = this._findNodeOnPoint(e.clientX, e.clientY);
     };
 
@@ -1190,18 +1087,15 @@
      * that is under the mouse cursor
      * Retuns null if no node is found under this point
      */
-    dockspawn.DockManager.prototype._findNodeOnPoint = function(x, y)
-    {
+    dockspawn.DockManager.prototype._findNodeOnPoint = function (x, y) {
         var stack = [];
         stack.push(this.context.model.rootNode);
         var bestMatch;
 
-        while (stack.length > 0)
-        {
+        while (stack.length > 0) {
             var topNode = stack.pop();
 
-            if (isPointInsideNode(x, y, topNode))
-            {
+            if (isPointInsideNode(x, y, topNode)) {
                 // This node contains the point.
                 bestMatch = topNode;
 
@@ -1213,66 +1107,55 @@
     };
 
     /** Dock the [dialog] to the left of the [referenceNode] node */
-    dockspawn.DockManager.prototype.dockDialogLeft = function(referenceNode, dialog)
-    {
+    dockspawn.DockManager.prototype.dockDialogLeft = function (referenceNode, dialog) {
         return this._requestDockDialog(referenceNode, dialog, this.layoutEngine.dockLeft.bind(this.layoutEngine));
     };
 
     /** Dock the [dialog] to the right of the [referenceNode] node */
-    dockspawn.DockManager.prototype.dockDialogRight = function(referenceNode, dialog)
-    {
+    dockspawn.DockManager.prototype.dockDialogRight = function (referenceNode, dialog) {
         return this._requestDockDialog(referenceNode, dialog, this.layoutEngine.dockRight.bind(this.layoutEngine));
     };
 
     /** Dock the [dialog] above the [referenceNode] node */
-    dockspawn.DockManager.prototype.dockDialogUp = function(referenceNode, dialog)
-    {
+    dockspawn.DockManager.prototype.dockDialogUp = function (referenceNode, dialog) {
         return this._requestDockDialog(referenceNode, dialog, this.layoutEngine.dockUp.bind(this.layoutEngine));
     };
 
     /** Dock the [dialog] below the [referenceNode] node */
-    dockspawn.DockManager.prototype.dockDialogDown = function(referenceNode, dialog)
-    {
+    dockspawn.DockManager.prototype.dockDialogDown = function (referenceNode, dialog) {
         return this._requestDockDialog(referenceNode, dialog, this.layoutEngine.dockDown.bind(this.layoutEngine));
     };
 
     /** Dock the [dialog] as a tab inside the [referenceNode] node */
-    dockspawn.DockManager.prototype.dockDialogFill = function(referenceNode, dialog)
-    {
+    dockspawn.DockManager.prototype.dockDialogFill = function (referenceNode, dialog) {
         return this._requestDockDialog(referenceNode, dialog, this.layoutEngine.dockFill.bind(this.layoutEngine));
     };
 
     /** Dock the [container] to the left of the [referenceNode] node */
-    dockspawn.DockManager.prototype.dockLeft = function(referenceNode, container, ratio)
-    {
+    dockspawn.DockManager.prototype.dockLeft = function (referenceNode, container, ratio) {
         return this._requestDockContainer(referenceNode, container, this.layoutEngine.dockLeft.bind(this.layoutEngine), ratio);
     };
 
     /** Dock the [container] to the right of the [referenceNode] node */
-    dockspawn.DockManager.prototype.dockRight = function(referenceNode,  container, ratio)
-    {
+    dockspawn.DockManager.prototype.dockRight = function (referenceNode, container, ratio) {
         return this._requestDockContainer(referenceNode, container, this.layoutEngine.dockRight.bind(this.layoutEngine), ratio);
     };
 
     /** Dock the [container] above the [referenceNode] node */
-    dockspawn.DockManager.prototype.dockUp = function(referenceNode,  container, ratio)
-    {
+    dockspawn.DockManager.prototype.dockUp = function (referenceNode, container, ratio) {
         return this._requestDockContainer(referenceNode, container, this.layoutEngine.dockUp.bind(this.layoutEngine), ratio);
     };
 
     /** Dock the [container] below the [referenceNode] node */
-    dockspawn.DockManager.prototype.dockDown = function(referenceNode,  container, ratio)
-    {
+    dockspawn.DockManager.prototype.dockDown = function (referenceNode, container, ratio) {
         return this._requestDockContainer(referenceNode, container, this.layoutEngine.dockDown.bind(this.layoutEngine), ratio);
     };
 
     /** Dock the [container] as a tab inside the [referenceNode] node */
-    dockspawn.DockManager.prototype.dockFill = function(referenceNode, container)
-    {
+    dockspawn.DockManager.prototype.dockFill = function (referenceNode, container) {
         return this._requestDockContainer(referenceNode, container, this.layoutEngine.dockFill.bind(this.layoutEngine));
     };
-    dockspawn.DockManager.prototype.floatDialog = function(container, x, y)
-    {
+    dockspawn.DockManager.prototype.floatDialog = function (container, x, y) {
         var panel = container;
         removeNode(panel.elementPanel);
         panel.isDialog = true;
@@ -1281,8 +1164,7 @@
         return dialog;
     };
 
-    dockspawn.DockManager.prototype._requestDockDialog = function(referenceNode, dialog, layoutDockFunction)
-    {
+    dockspawn.DockManager.prototype._requestDockDialog = function (referenceNode, dialog, layoutDockFunction) {
         // Get the active dialog that was dragged on to the dock wheel
         var panel = dialog.panel;
         var newNode = new dockspawn.DockNode(panel);
@@ -1293,12 +1175,10 @@
         return newNode;
     };
 
-    dockspawn.DockManager.prototype._requestDockContainer = function(referenceNode, container, layoutDockFunction, ratio)
-    {
+    dockspawn.DockManager.prototype._requestDockContainer = function (referenceNode, container, layoutDockFunction, ratio) {
         // Get the active dialog that was dragged on to the dock wheel
         var newNode = new dockspawn.DockNode(container);
-        if (container.containerType == "panel")
-        {
+        if (container.containerType == "panel") {
             var panel = container;
             panel.prepareForDocking();
             removeNode(panel.elementPanel);
@@ -1306,8 +1186,7 @@
         layoutDockFunction(referenceNode, newNode);
 
         if (ratio && newNode.parent &&
-            (newNode.parent.container.containerType == "vertical" || newNode.parent.container.containerType == "horizontal"))
-        {
+            (newNode.parent.container.containerType == "vertical" || newNode.parent.container.containerType == "horizontal")) {
             var splitter = newNode.parent.container;
             splitter.setContainerRatio(container, ratio);
         }
@@ -1317,7 +1196,7 @@
         return newNode;
     };
 
-    dockspawn.DockManager.prototype._requestTabReorder = function(container, e){
+    dockspawn.DockManager.prototype._requestTabReorder = function (container, e) {
         var node = this._findNodeFromContainer(container);
         this.layoutEngine.reorderTabs(node, e.handle, e.state, e.index);
     };
@@ -1326,15 +1205,14 @@
      * Undocks a panel and converts it into a floating dialog window
      * It is assumed that only leaf nodes (panels) can be undocked
      */
-    dockspawn.DockManager.prototype.requestUndockToDialog = function(container, event, dragOffset)
-    {
+    dockspawn.DockManager.prototype.requestUndockToDialog = function (container, event, dragOffset) {
         var node = this._findNodeFromContainer(container);
         this.layoutEngine.undock(node);
 
         // Create a new dialog window for the undocked panel
         var dialog = new dockspawn.Dialog(node.container, this);
 
-        if(event != undefined){
+        if (event != undefined) {
             // Adjust the relative position
             var dialogWidth = dialog.elementDialog.clientWidth;
             if (dragOffset.x > dialogWidth)
@@ -1350,8 +1228,7 @@
     /** Undocks a panel and converts it into a floating dialog window
      * It is assumed that only leaf nodes (panels) can be undocked
      */
-    dockspawn.DockManager.prototype.requestUndock = function(container)
-    {
+    dockspawn.DockManager.prototype.requestUndock = function (container) {
         var node = this._findNodeFromContainer(container);
         this.layoutEngine.undock(node);
     };
@@ -1360,8 +1237,7 @@
      * Removes a dock container from the dock layout hierarcy
      * Returns the node that was removed from the dock tree
      */
-    dockspawn.DockManager.prototype.requestRemove = function(container)
-    {
+    dockspawn.DockManager.prototype.requestRemove = function (container) {
         var node = this._findNodeFromContainer(container);
         var parent = node.parent;
         node.detachFromParent();
@@ -1371,15 +1247,13 @@
     };
 
     /** Finds the node that owns the specified [container] */
-    dockspawn.DockManager.prototype._findNodeFromContainer = function(container)
-    {
+    dockspawn.DockManager.prototype._findNodeFromContainer = function (container) {
         //this.context.model.rootNode.debug_DumpTree();
 
         var stack = [];
         stack.push(this.context.model.rootNode);
 
-        while (stack.length > 0)
-        {
+        while (stack.length > 0) {
             var topNode = stack.pop();
 
             if (topNode.container === container)
@@ -1390,147 +1264,127 @@
         throw new dockspawn.Exception("Cannot find dock node belonging to the element");
     };
 
-    dockspawn.DockManager.prototype.addLayoutListener = function(listener)
-    {
+    dockspawn.DockManager.prototype.addLayoutListener = function (listener) {
         this.layoutEventListeners.push(listener);
     };
 
-    dockspawn.DockManager.prototype.removeLayoutListener = function(listener)
-    {
+    dockspawn.DockManager.prototype.removeLayoutListener = function (listener) {
         this.layoutEventListeners.splice(this.layoutEventListeners.indexOf(listener), 1);
     };
 
-    dockspawn.DockManager.prototype.suspendLayout = function()
-    {
+    dockspawn.DockManager.prototype.suspendLayout = function () {
         var self = this;
-        this.layoutEventListeners.forEach(function(listener) {
+        this.layoutEventListeners.forEach(function (listener) {
             if (listener.onSuspendLayout) listener.onSuspendLayout(self);
         });
     };
 
-    dockspawn.DockManager.prototype.resumeLayout = function(panel)
-    {
+    dockspawn.DockManager.prototype.resumeLayout = function (panel) {
         var self = this;
-        this.layoutEventListeners.forEach(function(listener) {
+        this.layoutEventListeners.forEach(function (listener) {
             if (listener.onResumeLayout) listener.onResumeLayout(self, panel);
         });
     };
 
-    dockspawn.DockManager.prototype.notifyOnDock = function(dockNode)
-    {
+    dockspawn.DockManager.prototype.notifyOnDock = function (dockNode) {
         var self = this;
-        this.layoutEventListeners.forEach(function(listener) {
+        this.layoutEventListeners.forEach(function (listener) {
             if (listener.onDock) {
                 listener.onDock(self, dockNode);
             }
         });
     };
 
-    dockspawn.DockManager.prototype.notifyOnTabsReorder = function(dockNode)
-    {
+    dockspawn.DockManager.prototype.notifyOnTabsReorder = function (dockNode) {
         var self = this;
-        this.layoutEventListeners.forEach(function(listener) {
+        this.layoutEventListeners.forEach(function (listener) {
             if (listener.onTabsReorder) {
                 listener.onTabsReorder(self, dockNode);
             }
         });
     };
 
-
-    dockspawn.DockManager.prototype.notifyOnUnDock = function(dockNode)
-    {
+    dockspawn.DockManager.prototype.notifyOnUnDock = function (dockNode) {
         var self = this;
-        this.layoutEventListeners.forEach(function(listener) {
+        this.layoutEventListeners.forEach(function (listener) {
             if (listener.onUndock) {
                 listener.onUndock(self, dockNode);
             }
         });
     };
 
-    dockspawn.DockManager.prototype.notifyOnClosePanel = function(panel)
-    {
+    dockspawn.DockManager.prototype.notifyOnClosePanel = function (panel) {
         var self = this;
-        this.layoutEventListeners.forEach(function(listener) {
+        this.layoutEventListeners.forEach(function (listener) {
             if (listener.onClosePanel) {
                 listener.onClosePanel(self, panel);
             }
         });
     };
 
-
-    dockspawn.DockManager.prototype.notifyOnCreateDialog = function(dialog)
-    {
+    dockspawn.DockManager.prototype.notifyOnCreateDialog = function (dialog) {
         var self = this;
-        this.layoutEventListeners.forEach(function(listener) {
+        this.layoutEventListeners.forEach(function (listener) {
             if (listener.onCreateDialog) {
                 listener.onCreateDialog(self, dialog);
             }
         });
     };
 
-    dockspawn.DockManager.prototype.notifyOnHideDialog = function(dialog)
-    {
+    dockspawn.DockManager.prototype.notifyOnHideDialog = function (dialog) {
         var self = this;
-        this.layoutEventListeners.forEach(function(listener) {
+        this.layoutEventListeners.forEach(function (listener) {
             if (listener.onHideDialog) {
                 listener.onHideDialog(self, dialog);
             }
         });
     };
 
-
-    dockspawn.DockManager.prototype.notifyOnShowDialog = function(dialog)
-    {
+    dockspawn.DockManager.prototype.notifyOnShowDialog = function (dialog) {
         var self = this;
-        this.layoutEventListeners.forEach(function(listener) {
+        this.layoutEventListeners.forEach(function (listener) {
             if (listener.onShowDialog) {
                 listener.onShowDialog(self, dialog);
             }
         });
     };
 
-
-    dockspawn.DockManager.prototype.notifyOnChangeDialogPosition = function(dialog, x, y)
-    {
+    dockspawn.DockManager.prototype.notifyOnChangeDialogPosition = function (dialog, x, y) {
         var self = this;
-        this.layoutEventListeners.forEach(function(listener) {
+        this.layoutEventListeners.forEach(function (listener) {
             if (listener.onChangeDialogPosition) {
                 listener.onChangeDialogPosition(self, dialog, x, y);
             }
         });
     };
 
-    dockspawn.DockManager.prototype.notifyOnTabChange = function(tabpage)
-    {
+    dockspawn.DockManager.prototype.notifyOnTabChange = function (tabpage) {
         var self = this;
-        this.layoutEventListeners.forEach(function(listener) {
+        this.layoutEventListeners.forEach(function (listener) {
             if (listener.onTabChanged) {
                 listener.onTabChanged(self, tabpage);
             }
         });
     };
 
-    dockspawn.DockManager.prototype.saveState = function()
-    {
+    dockspawn.DockManager.prototype.saveState = function () {
         var serializer = new dockspawn.DockGraphSerializer();
         return serializer.serialize(this.context.model);
     };
 
-    dockspawn.DockManager.prototype.loadState = function(json)
-    {
+    dockspawn.DockManager.prototype.loadState = function (json) {
         var deserializer = new dockspawn.DockGraphDeserializer(this);
         this.context.model = deserializer.deserialize(json);
         this.setModel(this.context.model);
     };
 
-    dockspawn.DockManager.prototype.getPanels = function()
-    {
+    dockspawn.DockManager.prototype.getPanels = function () {
         var panels = [];
         //all visible nodes
         this._allPanels(this.context.model.rootNode, panels);
 
         //all visible or not dialogs
-        this.context.model.dialogs.forEach(function(dialog) {
+        this.context.model.dialogs.forEach(function (dialog) {
             //TODO: check visible
             panels.push(dialog.panel);
         });
@@ -1538,59 +1392,54 @@
         return panels;
     };
 
-    dockspawn.DockManager.prototype.undockEnabled = function(state)
-    {
+    dockspawn.DockManager.prototype.undockEnabled = function (state) {
         this._undockEnabled = state;
-        this.getPanels().forEach(function(panel){
+        this.getPanels().forEach(function (panel) {
             panel.canUndock(state);
         });
     };
 
-    dockspawn.DockManager.prototype.lockDockState = function(state)
-    {
+    dockspawn.DockManager.prototype.lockDockState = function (state) {
         this.undockEnabled(!state); // false - not enabled
         this.hideCloseButton(state); //true - hide
     };
 
-    dockspawn.DockManager.prototype.hideCloseButton = function(state)
-    {
-        this.getPanels().forEach(function(panel){
+    dockspawn.DockManager.prototype.hideCloseButton = function (state) {
+        this.getPanels().forEach(function (panel) {
             panel.hideCloseButton(state);
         });
     };
 
-    dockspawn.DockManager.prototype.updatePanels = function(ids)
-    {
+    dockspawn.DockManager.prototype.updatePanels = function (ids) {
         var panels = [];
         //all visible nodes
         this._allPanels(this.context.model.rootNode, panels);
         //only remove
-        panels.forEach(function(panel) {
-            if(!ids.contains(panel.elementContent.id)){
+        panels.forEach(function (panel) {
+            if (!ids.contains(panel.elementContent.id)) {
                 panel.close();
             }
         });
         var self = this;
-        this.context.model.dialogs.forEach(function(dialog) {
-            if(ids.contains(dialog.panel.elementContent.id)){
+        this.context.model.dialogs.forEach(function (dialog) {
+            if (ids.contains(dialog.panel.elementContent.id)) {
                 dialog.show();
             }
-            else{
+            else {
                 dialog.hide();
             }
         });
         return panels;
     };
 
-    dockspawn.DockManager.prototype.getVisiblePanels = function()
-    {
+    dockspawn.DockManager.prototype.getVisiblePanels = function () {
         var panels = [];
         //all visible nodes
         this._allPanels(this.context.model.rootNode, panels);
 
         //all visible
-        this.context.model.dialogs.forEach(function(dialog) {
-            if(!dialog.isHidden){
+        this.context.model.dialogs.forEach(function (dialog) {
+            if (!dialog.isHidden) {
                 panels.push(dialog.panel);
             }
         });
@@ -1598,21 +1447,19 @@
         return panels;
     };
 
-    dockspawn.DockManager.prototype._allPanels = function(node, panels)
-    {
+    dockspawn.DockManager.prototype._allPanels = function (node, panels) {
         var self = this;
-        node.children.forEach(function(child) {
+        node.children.forEach(function (child) {
             self._allPanels(child, panels);
         });
-        if (node.container.containerType == "panel"){
+        if (node.container.containerType == "panel") {
             panels.push(node.container);
         }
     };
-    dockspawn.DockManager.prototype.setDefaultDialogPosition = function(x, y)
-    {
+    dockspawn.DockManager.prototype.setDefaultDialogPosition = function (x, y) {
         this.defaultDialogPosition = {x: x, y: y};
     };
-    dockspawn.DockManager.prototype.setCloseTabIconTemplate = function(template){
+    dockspawn.DockManager.prototype.setCloseTabIconTemplate = function (template) {
         this.closeTabIconTemplate = template;
     }
 
@@ -1627,39 +1474,36 @@
 //void onResumeLayout(dockspawn.DockManager dockManager);
 //}
 
-    dockspawn.DockLayoutEngine = function(dockManager)
-    {
+    dockspawn.DockLayoutEngine = function (dockManager) {
         this.dockManager = dockManager;
-    }
+    };
 
     /** docks the [newNode] to the left of [referenceNode] */
-    dockspawn.DockLayoutEngine.prototype.dockLeft = function(referenceNode, newNode)
-    {
+    dockspawn.DockLayoutEngine.prototype.dockLeft = function (referenceNode, newNode) {
         this._performDock(referenceNode, newNode, "horizontal", true);
     };
 
     /** docks the [newNode] to the right of [referenceNode] */
-    dockspawn.DockLayoutEngine.prototype.dockRight = function(referenceNode, newNode) {
+    dockspawn.DockLayoutEngine.prototype.dockRight = function (referenceNode, newNode) {
         this._performDock(referenceNode, newNode, "horizontal", false);
     };
 
     /** docks the [newNode] to the top of [referenceNode] */
-    dockspawn.DockLayoutEngine.prototype.dockUp = function(referenceNode, newNode) {
+    dockspawn.DockLayoutEngine.prototype.dockUp = function (referenceNode, newNode) {
         this._performDock(referenceNode, newNode, "vertical", true);
     };
 
     /** docks the [newNode] to the bottom of [referenceNode] */
-    dockspawn.DockLayoutEngine.prototype.dockDown = function(referenceNode, newNode) {
+    dockspawn.DockLayoutEngine.prototype.dockDown = function (referenceNode, newNode) {
         this._performDock(referenceNode, newNode, "vertical", false);
     };
 
     /** docks the [newNode] by creating a new tab inside [referenceNode] */
-    dockspawn.DockLayoutEngine.prototype.dockFill = function(referenceNode, newNode) {
+    dockspawn.DockLayoutEngine.prototype.dockFill = function (referenceNode, newNode) {
         this._performDock(referenceNode, newNode, "fill", false);
     };
 
-    dockspawn.DockLayoutEngine.prototype.undock = function(node)
-    {
+    dockspawn.DockLayoutEngine.prototype.undock = function (node) {
         var parentNode = node.parent;
         if (!parentNode)
             throw new dockspawn.Exception("Cannot undock.  panel is not a leaf node");
@@ -1675,23 +1519,20 @@
             // If the child count falls below the minimum threshold, destroy the parent and merge
             // the children with their grandparents
             var grandParent = parentNode.parent;
-            for (var i = 0; i < parentNode.children.length; i++)
-            {
+            for (var i = 0; i < parentNode.children.length; i++) {
                 var otherChild = parentNode.children[i];
-                if (grandParent)
-                {
+                if (grandParent) {
                     // parent node is not a root node
                     grandParent.addChildAfter(parentNode, otherChild);
                     parentNode.detachFromParent();
-                    var width =parentNode.container.containerElement.clientWidth;
+                    var width = parentNode.container.containerElement.clientWidth;
                     var height = parentNode.container.containerElement.clientHeight;
                     parentNode.container.destroy();
 
                     otherChild.container.resize(width, height);
                     grandParent.performLayout();
                 }
-                else
-                {
+                else {
                     // Parent is a root node.
                     // Make the other child the root node
                     parentNode.detachFromParent();
@@ -1700,15 +1541,13 @@
                 }
             }
         }
-        else
-        {
+        else {
             // the node to be removed has 2 or more other siblings. So it is safe to continue
             // using the parent composite container.
             parentNode.performLayout();
 
             // Set the next sibling as the active child (e.g. for a Tab host, it would select it as the active tab)
-            if (parentNode.children.length > 0)
-            {
+            if (parentNode.children.length > 0) {
                 var nextActiveSibling = parentNode.children[Math.max(0, siblingIndex - 1)];
                 parentNode.container.setActiveChild(nextActiveSibling.container);
             }
@@ -1718,9 +1557,9 @@
         this.dockManager.notifyOnUnDock(node);
     };
 
-    dockspawn.DockLayoutEngine.prototype.reorderTabs = function(node, handle, state, index){
+    dockspawn.DockLayoutEngine.prototype.reorderTabs = function (node, handle, state, index) {
         var N = node.children.length;
-        var nodeIndexToDelete  = state === "left" ? index : index + 1;
+        var nodeIndexToDelete = state === "left" ? index : index + 1;
         var indexes = Array.apply(null, {length: N}).map(Number.call, Number)
         var indexValue = indexes.splice(nodeIndexToDelete, 1)[0]; //remove element
         indexes.splice(state === "left" ? index - 1 : index, 0, indexValue); //insert
@@ -1730,13 +1569,11 @@
         this.dockManager.notifyOnTabsReorder(node);
     };
 
-    dockspawn.DockLayoutEngine.prototype._performDock = function(referenceNode, newNode, direction, insertBeforeReference)
-    {
+    dockspawn.DockLayoutEngine.prototype._performDock = function (referenceNode, newNode, direction, insertBeforeReference) {
         if (referenceNode.parent && referenceNode.parent.container.containerType == "fill")
             referenceNode = referenceNode.parent;
 
-        if (direction == "fill" && referenceNode.container.containerType == "fill")
-        {
+        if (direction == "fill" && referenceNode.container.containerType == "fill") {
             referenceNode.addChild(newNode);
             referenceNode.performLayout();
             referenceNode.container.setActiveChild(newNode.container);
@@ -1747,18 +1584,15 @@
 
         // Check if reference node is root node
         var model = this.dockManager.context.model;
-        if (referenceNode === model.rootNode)
-        {
+        if (referenceNode === model.rootNode) {
             var compositeContainer = this._createDockContainer(direction, newNode, referenceNode);
             var compositeNode = new dockspawn.DockNode(compositeContainer);
 
-            if (insertBeforeReference)
-            {
+            if (insertBeforeReference) {
                 compositeNode.addChild(newNode);
                 compositeNode.addChild(referenceNode);
             }
-            else
-            {
+            else {
                 compositeNode.addChild(referenceNode);
                 compositeNode.addChild(newNode);
             }
@@ -1791,13 +1625,11 @@
             referenceNode.detachFromParent();
             removeNode(referenceNode.container.containerElement);
 
-            if (insertBeforeReference)
-            {
+            if (insertBeforeReference) {
                 compositeNode.addChild(newNode);
                 compositeNode.addChild(referenceNode);
             }
-            else
-            {
+            else {
                 compositeNode.addChild(referenceNode);
                 compositeNode.addChild(newNode);
             }
@@ -1809,8 +1641,7 @@
             compositeNode.container.resize(referenceNodeWidth, referenceNodeHeight);
             referenceParent.container.resize(referenceNodeParentWidth, referenceNodeParentHeight);
         }
-        else
-        {
+        else {
             // Add as a sibling, since the parent of the reference node is of the right composite type
             var referenceParent = referenceNode.parent;
             if (insertBeforeReference)
@@ -1830,15 +1661,13 @@
         this.dockManager.notifyOnDock(newNode);
     };
 
-    dockspawn.DockLayoutEngine.prototype._forceResizeCompositeContainer = function(container)
-    {
+    dockspawn.DockLayoutEngine.prototype._forceResizeCompositeContainer = function (container) {
         var width = container.containerElement.clientWidth;
         var height = container.containerElement.clientHeight;
         container.resize(width, height);
     };
 
-    dockspawn.DockLayoutEngine.prototype._createDockContainer = function(containerType, newNode, referenceNode)
-    {
+    dockspawn.DockLayoutEngine.prototype._createDockContainer = function (containerType, newNode, referenceNode) {
         if (containerType == "horizontal")
             return new dockspawn.HorizontalDockContainer(this.dockManager, [newNode.container, referenceNode.container]);
         if (containerType == "vertical")
@@ -1854,13 +1683,11 @@
      * The state is not modified in this function.  It is used for showing a preview of where
      * the panel would be docked when hovered over a dock wheel button
      */
-    dockspawn.DockLayoutEngine.prototype.getDockBounds = function(referenceNode, containerToDock, direction, insertBeforeReference)
-    {
+    dockspawn.DockLayoutEngine.prototype.getDockBounds = function (referenceNode, containerToDock, direction, insertBeforeReference) {
         var compositeNode; // The node that contains the splitter / fill node
         var childCount;
         var childPosition;
-        if (direction == "fill")
-        {
+        if (direction == "fill") {
             // Since this is a fill operation, the highlight bounds is the same as the reference node
             // TODO: Create a tab handle highlight to show that it's going to be docked in a tab
             var targetElement = referenceNode.container.containerElement;
@@ -1868,7 +1695,7 @@
             bounds.x = targetElement.offsetLeft;
             bounds.y = targetElement.offsetTop;
             bounds.width = targetElement.clientWidth;
-            bounds.height= targetElement.clientHeight;
+            bounds.height = targetElement.clientHeight;
             return bounds;
         }
 
@@ -1894,8 +1721,7 @@
         var splitBarSize = 5;  // TODO: Get from DOM
         var targetPanelSize = 0;
         var targetPanelStart = 0;
-        if (direction == "vertical" || direction == "horizontal")
-        {
+        if (direction == "vertical" || direction == "horizontal") {
             // Existing size of the composite container (without the splitter bars).
             // This will also be the final size of the composite (splitter / fill)
             // container after the new panel has been docked
@@ -1909,8 +1735,7 @@
             targetPanelSize = newPanelOriginalSize * scaleMultiplier;
             if (hierarchyModified)
                 targetPanelStart = insertBeforeReference ? 0 : compositeSize * scaleMultiplier;
-            else
-            {
+            else {
                 for (var i = 0; i < childPosition; i++)
                     targetPanelStart += this._getVaringDimension(compositeNode.children[i].container, direction);
                 targetPanelStart *= scaleMultiplier;
@@ -1918,8 +1743,7 @@
         }
 
         var bounds = new Rectangle();
-        if (direction == "vertical")
-        {
+        if (direction == "vertical") {
             bounds.x = compositeNode.container.containerElement.offsetLeft;
             bounds.y = compositeNode.container.containerElement.offsetTop + targetPanelStart;
             bounds.width = compositeNode.container.width;
@@ -1934,16 +1758,14 @@
         return bounds;
     };
 
-    dockspawn.DockLayoutEngine.prototype._getVaringDimension = function(container, direction)
-    {
+    dockspawn.DockLayoutEngine.prototype._getVaringDimension = function (container, direction) {
         if (direction == "vertical")
             return container.height;
         if (direction == "horizontal")
             return container.width;
         return 0;
     };
-    dockspawn.DockManagerContext = function(dockManager)
-    {
+    dockspawn.DockManagerContext = function (dockManager) {
         this.dockManager = dockManager;
         this.model = new dockspawn.DockModel();
         this.documentManagerView = new dockspawn.DocumentManagerContainer(this.dockManager);
@@ -1952,53 +1774,44 @@
      * The Dock Model contains the tree hierarchy that represents the state of the
      * panel placement within the dock manager.
      */
-    dockspawn.DockModel = function()
-    {
+    dockspawn.DockModel = function () {
         this.rootNode = this.documentManagerNode = undefined;
     };
 
-    dockspawn.DockNode = function(container)
-    {
+    dockspawn.DockNode = function (container) {
         /** The dock container represented by this node */
         this.container = container;
         this.children = [];
     }
 
-    dockspawn.DockNode.prototype.detachFromParent = function()
-    {
-        if (this.parent)
-        {
+    dockspawn.DockNode.prototype.detachFromParent = function () {
+        if (this.parent) {
             this.parent.removeChild(this);
             delete this.parent;
         }
     };
 
-    dockspawn.DockNode.prototype.removeChild = function(childNode)
-    {
+    dockspawn.DockNode.prototype.removeChild = function (childNode) {
         var index = this.children.indexOf(childNode);
         if (index >= 0)
             this.children.splice(index, 1);
     };
 
-    dockspawn.DockNode.prototype.addChild = function(childNode)
-    {
+    dockspawn.DockNode.prototype.addChild = function (childNode) {
         childNode.detachFromParent();
         childNode.parent = this;
         this.children.push(childNode);
     };
 
-    dockspawn.DockNode.prototype.addChildBefore = function(referenceNode, childNode)
-    {
+    dockspawn.DockNode.prototype.addChildBefore = function (referenceNode, childNode) {
         this._addChildWithDirection(referenceNode, childNode, true);
     };
 
-    dockspawn.DockNode.prototype.addChildAfter = function(referenceNode, childNode)
-    {
+    dockspawn.DockNode.prototype.addChildAfter = function (referenceNode, childNode) {
         this._addChildWithDirection(referenceNode, childNode, false);
     };
 
-    dockspawn.DockNode.prototype._addChildWithDirection = function(referenceNode, childNode, before)
-    {
+    dockspawn.DockNode.prototype._addChildWithDirection = function (referenceNode, childNode, before) {
         // Detach this node from it's parent first
         childNode.detachFromParent();
         childNode.parent = this;
@@ -2008,27 +1821,25 @@
         var postList = this.children.slice(referenceIndex + 1, this.children.length);
 
         this.children = preList.slice(0);
-        if (before)
-        {
+        if (before) {
             this.children.push(childNode);
             this.children.push(referenceNode);
         }
-        else
-        {
+        else {
             this.children.push(referenceNode);
             this.children.push(childNode);
         }
         Array.prototype.push.apply(this.children, postList);
     };
 
-    dockspawn.DockNode.prototype.performLayout = function()
-    {
-        var childContainers = this.children.map(function(childNode) { return childNode.container; });
+    dockspawn.DockNode.prototype.performLayout = function () {
+        var childContainers = this.children.map(function (childNode) {
+            return childNode.container;
+        });
         this.container.performLayout(childContainers);
     };
 
-    dockspawn.DockNode.prototype.debug_DumpTree = function(indent)
-    {
+    dockspawn.DockNode.prototype.debug_DumpTree = function (indent) {
         if (indent === undefined)
             indent = 0;
 
@@ -2039,13 +1850,14 @@
         var parentType = this.parent === undefined ? "null" : this.parent.container.containerType;
         console.log(">>" + message + " [" + parentType + "]");
 
-        this.children.forEach(function(childNode) { childNode.debug_DumpTree(indent + 1) });
+        this.children.forEach(function (childNode) {
+            childNode.debug_DumpTree(indent + 1)
+        });
     };
     /**
      * Manages the dock overlay buttons that are displayed over the dock manager
      */
-    dockspawn.DockWheel = function(dockManager)
-    {
+    dockspawn.DockWheel = function (dockManager) {
         this.dockManager = dockManager;
         this.elementMainWheel = document.createElement("div");    // Contains the main wheel's 5 dock buttons
         this.elementSideWheel = document.createElement("div");    // Contains the 4 buttons on the side
@@ -2055,8 +1867,7 @@
             "left-s", "right-s", "top-s", "down-s"      // Buttons on the extreme 4 sides
         ];
         var self = this;
-        wheelTypes.forEach(function(wheelType)
-        {
+        wheelTypes.forEach(function (wheelType) {
             self.wheelItems[wheelType] = new DockWheelItem(self, wheelType);
             if (wheelType.substr(-2, 2) == "-s")
             // Side button
@@ -2081,14 +1892,14 @@
 
     /** The node over which the dock wheel is being displayed on */
     Object.defineProperty(dockspawn.DockWheel.prototype, "activeNode", {
-        get: function() { return this._activeNode; },
-        set: function(value)
-        {
+        get: function () {
+            return this._activeNode;
+        },
+        set: function (value) {
             var previousValue = this._activeNode;
             this._activeNode = value;
 
-            if (previousValue !== this._activeNode)
-            {
+            if (previousValue !== this._activeNode) {
                 // The active node has been changed.
                 // Reattach the wheel to the new node's element and show it again
                 if (this._visible)
@@ -2097,11 +1908,9 @@
         }
     });
 
-    dockspawn.DockWheel.prototype.showWheel = function()
-    {
+    dockspawn.DockWheel.prototype.showWheel = function () {
         this._visible = true;
-        if (!this.activeNode)
-        {
+        if (!this.activeNode) {
             // No active node selected. make sure the wheel is invisible
             removeNode(this.elementMainWheel);
             removeNode(this.elementSideWheel);
@@ -2128,14 +1937,13 @@
         element.appendChild(this.elementMainWheel);
         this.dockManager.element.appendChild(this.elementSideWheel);
 
-        this._setWheelButtonPosition("left-s",   sideMargin, -dockManagerHeight / 2);
-        this._setWheelButtonPosition("right-s",  dockManagerWidth - sideMargin * 2, -dockManagerHeight / 2);
-        this._setWheelButtonPosition("top-s",    dockManagerWidth / 2, -dockManagerHeight + sideMargin);
-        this._setWheelButtonPosition("down-s",   dockManagerWidth / 2, -sideMargin);
+        this._setWheelButtonPosition("left-s", sideMargin, -dockManagerHeight / 2);
+        this._setWheelButtonPosition("right-s", dockManagerWidth - sideMargin * 2, -dockManagerHeight / 2);
+        this._setWheelButtonPosition("top-s", dockManagerWidth / 2, -dockManagerHeight + sideMargin);
+        this._setWheelButtonPosition("down-s", dockManagerWidth / 2, -sideMargin);
     };
 
-    dockspawn.DockWheel.prototype._setWheelButtonPosition = function(wheelId, left, top)
-    {
+    dockspawn.DockWheel.prototype._setWheelButtonPosition = function (wheelId, left, top) {
         var item = this.wheelItems[wheelId];
         var itemHalfWidth = item.element.clientWidth / 2;
         var itemHalfHeight = item.element.clientHeight / 2;
@@ -2148,8 +1956,7 @@
         item.element.style.marginTop = y + "px";
     };
 
-    dockspawn.DockWheel.prototype.hideWheel = function()
-    {
+    dockspawn.DockWheel.prototype.hideWheel = function () {
         this._visible = false;
         this.activeNode = undefined;
         removeNode(this.elementMainWheel);
@@ -2161,8 +1968,7 @@
             this.wheelItems[wheelType].active = false;
     };
 
-    dockspawn.DockWheel.prototype.onMouseOver = function(wheelItem, e)
-    {
+    dockspawn.DockWheel.prototype.onMouseOver = function (wheelItem, e) {
         if (!this.activeDialog)
             return;
 
@@ -2189,8 +1995,7 @@
             bounds = this.dockManager.layoutEngine.getDockBounds(rootNode, this.activeDialog.panel, "horizontal", false);
         }
 
-        if (bounds)
-        {
+        if (bounds) {
             this.dockManager.element.appendChild(this.elementPanelPreview);
             this.elementPanelPreview.style.left = Math.round(bounds.x) + "px";
             this.elementPanelPreview.style.top = Math.round(bounds.y) + "px";
@@ -2199,8 +2004,7 @@
         }
     };
 
-    dockspawn.DockWheel.prototype.onMouseOut = function(wheelItem, e)
-    {
+    dockspawn.DockWheel.prototype.onMouseOut = function (wheelItem, e) {
         removeNode(this.elementPanelPreview);
     };
 
@@ -2209,8 +2013,7 @@
      * The dialog might not necessarily be dropped in one of the dock wheel buttons,
      * in which case the request will be ignored
      */
-    dockspawn.DockWheel.prototype.onDialogDropped = function(dialog)
-    {
+    dockspawn.DockWheel.prototype.onDialogDropped = function (dialog) {
         // Check if the dialog was dropped in one of the wheel items
         var wheelItem = this._getActiveWheelItem();
         if (wheelItem)
@@ -2220,10 +2023,8 @@
     /**
      * Returns the wheel item which has the mouse cursor on top of it
      */
-    dockspawn.DockWheel.prototype._getActiveWheelItem = function()
-    {
-        for (var wheelType in this.wheelItems)
-        {
+    dockspawn.DockWheel.prototype._getActiveWheelItem = function () {
+        for (var wheelType in this.wheelItems) {
             var wheelItem = this.wheelItems[wheelType];
             if (wheelItem.active)
                 return wheelItem;
@@ -2231,8 +2032,7 @@
         return undefined;
     };
 
-    dockspawn.DockWheel.prototype._handleDockRequest = function(wheelItem, dialog)
-    {
+    dockspawn.DockWheel.prototype._handleDockRequest = function (wheelItem, dialog) {
         if (!this.activeNode)
             return;
         if (wheelItem.id == "left") {
@@ -2256,8 +2056,7 @@
         }
     };
 
-    function DockWheelItem(wheel, id)
-    {
+    function DockWheelItem(wheel, id) {
         this.wheel = wheel;
         this.id = id;
         var wheelType = id.replace("-s", "");
@@ -2272,22 +2071,19 @@
         this.active = false;    // Becomes active when the mouse is hovered over it
     };
 
-    DockWheelItem.prototype.onMouseMoved = function(e)
-    {
+    DockWheelItem.prototype.onMouseMoved = function (e) {
         this.active = true;
         this.element.classList.add(this.hoverIconClass);
         this.wheel.onMouseOver(this, e);
     };
 
-    DockWheelItem.prototype.onMouseOut = function(e)
-    {
+    DockWheelItem.prototype.onMouseOut = function (e) {
         this.active = false;
         this.element.classList.remove(this.hoverIconClass);
         this.wheel.onMouseOut(this, e);
     };
 
-    dockspawn.FillDockContainer = function(dockManager, tabStripDirection)
-    {
+    dockspawn.FillDockContainer = function (dockManager, tabStripDirection) {
         if (arguments.length == 0)
             return;
 
@@ -2306,7 +2102,7 @@
         this.tabHost = new dockspawn.TabHost(this.tabOrientation);
         var that = this;
         this.tabHostListener = {
-            onChange :function(e){
+            onChange: function (e) {
                 that.dockManager._requestTabReorder(that, e);
             }
         };
@@ -2314,37 +2110,31 @@
         this.element.appendChild(this.tabHost.hostElement);
     }
 
-    dockspawn.FillDockContainer.prototype.setActiveChild = function(child)
-    {
+    dockspawn.FillDockContainer.prototype.setActiveChild = function (child) {
         this.tabHost.setActiveTab(child);
     };
 
-    dockspawn.FillDockContainer.prototype.resize = function(width, height)
-    {
+    dockspawn.FillDockContainer.prototype.resize = function (width, height) {
         this.element.style.width = width + "px";
         this.element.style.height = height + "px";
         this.tabHost.resize(width, height);
     };
 
-    dockspawn.FillDockContainer.prototype.performLayout = function(children)
-    {
+    dockspawn.FillDockContainer.prototype.performLayout = function (children) {
         this.tabHost.performLayout(children);
     };
 
-    dockspawn.FillDockContainer.prototype.destroy = function()
-    {
+    dockspawn.FillDockContainer.prototype.destroy = function () {
         if (removeNode(this.element))
             delete this.element;
     };
 
-    dockspawn.FillDockContainer.prototype.saveState = function(state)
-    {
+    dockspawn.FillDockContainer.prototype.saveState = function (state) {
         state.width = this.width;
         state.height = this.height;
     };
 
-    dockspawn.FillDockContainer.prototype.loadState = function(state)
-    {
+    dockspawn.FillDockContainer.prototype.loadState = function (state) {
         // this.resize(state.width, state.height);
         // this.width = state.width;
         // this.height = state.height;
@@ -2352,23 +2142,25 @@
     };
 
     Object.defineProperty(dockspawn.FillDockContainer.prototype, "width", {
-        get: function() {
+        get: function () {
             // if(this.element.clientWidth === 0 && this.stateWidth !== 0)
             //     return this.stateWidth;
             return this.element.clientWidth;
         },
-        set: function(value) {
+        set: function (value) {
             this.element.style.width = value + "px"
         }
     });
 
     Object.defineProperty(dockspawn.FillDockContainer.prototype, "height", {
-        get: function() {
+        get: function () {
             // if(this.element.clientHeight === 0 && this.stateHeight !== 0)
             //     return this.stateHeight;
             return this.element.clientHeight;
         },
-        set: function(value) { this.element.style.height = value + "px" }
+        set: function (value) {
+            this.element.style.height = value + "px"
+        }
     });
 
     /**
@@ -2377,8 +2169,7 @@
      * 3D view in a modelling package etc
      */
 
-    dockspawn.DocumentManagerContainer = function(dockManager)
-    {
+    dockspawn.DocumentManagerContainer = function (dockManager) {
         dockspawn.FillDockContainer.call(this, dockManager, dockspawn.TabHost.DIRECTION_TOP);
         this.minimumAllowedChildNodes = 0;
         this.element.classList.add("document-manager");
@@ -2388,33 +2179,28 @@
     dockspawn.DocumentManagerContainer.prototype = new dockspawn.FillDockContainer();
     dockspawn.DocumentManagerContainer.prototype.constructor = dockspawn.DocumentManagerContainer;
 
-    dockspawn.DocumentManagerContainer.prototype._createDocumentTabPage = function(tabHost, container)
-    {
+    dockspawn.DocumentManagerContainer.prototype._createDocumentTabPage = function (tabHost, container) {
         return new dockspawn.DocumentTabPage(tabHost, container);
     };
 
-    dockspawn.DocumentManagerContainer.prototype.saveState = function(state)
-    {
+    dockspawn.DocumentManagerContainer.prototype.saveState = function (state) {
         dockspawn.FillDockContainer.prototype.saveState.call(this, state);
         state.documentManager = true;
     };
 
     /** Returns the selected document tab */
-    dockspawn.DocumentManagerContainer.prototype.selectedTab = function()
-    {
+    dockspawn.DocumentManagerContainer.prototype.selectedTab = function () {
         return this.tabHost.activeTab;
     };
 
     /**
      * Specialized tab page that doesn't display the panel's frame when docked in a tab page
      */
-    dockspawn.DocumentTabPage = function(host, container)
-    {
+    dockspawn.DocumentTabPage = function (host, container) {
         dockspawn.TabPage.call(this, host, container);
 
         // If the container is a panel, extract the content element and set it as the tab's content
-        if (this.container.containerType == "panel")
-        {
+        if (this.container.containerType == "panel") {
             this.panel = container;
             this.containerElement = this.panel.elementContent;
 
@@ -2428,8 +2214,7 @@
     dockspawn.DocumentTabPage.prototype = new dockspawn.TabPage();
     dockspawn.DocumentTabPage.prototype.constructor = dockspawn.DocumentTabPage;
 
-    dockspawn.DocumentTabPage.prototype.destroy = function()
-    {
+    dockspawn.DocumentTabPage.prototype.destroy = function () {
         dockspawn.TabPage.prototype.destroy.call(this);
 
         // Restore the panel content element back into the panel frame
@@ -2440,8 +2225,7 @@
      * A splitter panel manages the child containers inside it with splitter bars.
      * It can be stacked horizontally or vertically
      */
-    dockspawn.SplitterPanel = function(childContainers, stackedVertical)
-    {
+    dockspawn.SplitterPanel = function (childContainers, stackedVertical) {
         this.childContainers = childContainers;
         this.stackedVertical = stackedVertical;
         this.panelElement = document.createElement('div');
@@ -2449,14 +2233,12 @@
         this._buildSplitterDOM();
     };
 
-    dockspawn.SplitterPanel.prototype._buildSplitterDOM = function()
-    {
+    dockspawn.SplitterPanel.prototype._buildSplitterDOM = function () {
         if (this.childContainers.length <= 1)
             throw new dockspawn.Exception("Splitter panel should contain atleast 2 panels");
 
         this.spiltterBars = [];
-        for (var i = 0; i < this.childContainers.length - 1; i++)
-        {
+        for (var i = 0; i < this.childContainers.length - 1; i++) {
             var previousContainer = this.childContainers[i];
             var nextContainer = this.childContainers[i + 1];
             var splitterBar = new dockspawn.SplitterBar(previousContainer, nextContainer, this.stackedVertical);
@@ -2469,8 +2251,7 @@
         this._insertContainerIntoPanel(this.childContainers.slice(-1)[0]);
     };
 
-    dockspawn.SplitterPanel.prototype.performLayout = function(children)
-    {
+    dockspawn.SplitterPanel.prototype.performLayout = function (children) {
         this.removeFromDOM();
 
         // rebuild
@@ -2478,30 +2259,26 @@
         this._buildSplitterDOM();
     };
 
-    dockspawn.SplitterPanel.prototype.removeFromDOM = function()
-    {
-        this.childContainers.forEach(function(container)
-        {
-            if (container.containerElement)
-            {
+    dockspawn.SplitterPanel.prototype.removeFromDOM = function () {
+        this.childContainers.forEach(function (container) {
+            if (container.containerElement) {
                 container.containerElement.classList.remove("splitter-container-vertical");
                 container.containerElement.classList.remove("splitter-container-horizontal");
                 removeNode(container.containerElement);
             }
         });
-        this.spiltterBars.forEach(function(bar) { removeNode(bar.barElement); });
+        this.spiltterBars.forEach(function (bar) {
+            removeNode(bar.barElement);
+        });
     };
 
-    dockspawn.SplitterPanel.prototype.destroy = function()
-    {
+    dockspawn.SplitterPanel.prototype.destroy = function () {
         this.removeFromDOM();
         this.panelElement.parentNode.removeChild(this.panelElement);
     };
 
-    dockspawn.SplitterPanel.prototype._insertContainerIntoPanel = function(container)
-    {
-        if (!container)
-        {
+    dockspawn.SplitterPanel.prototype._insertContainerIntoPanel = function (container) {
+        if (!container) {
             console.log('undefined');
         }
 
@@ -2517,8 +2294,7 @@
      * Sets the percentage of space the specified [container] takes in the split panel
      * The percentage is specified in [ratio] and is between 0..1
      */
-    dockspawn.SplitterPanel.prototype.setContainerRatio = function(container, ratio)
-    {
+    dockspawn.SplitterPanel.prototype.setContainerRatio = function (container, ratio) {
 
         var splitPanelSize = this.stackedVertical ? this.panelElement.clientHeight : this.panelElement.clientWidth;
         var newContainerSize = splitPanelSize * ratio;
@@ -2527,12 +2303,10 @@
         var otherPanelSizeQuota = splitPanelSize - newContainerSize - barSize * this.spiltterBars.length;
         var otherPanelScaleMultipler = otherPanelSizeQuota / splitPanelSize;
 
-        for (var i = 0; i < this.childContainers.length; i++)
-        {
+        for (var i = 0; i < this.childContainers.length; i++) {
             var child = this.childContainers[i];
             var size;
-            if (child !== container)
-            {
+            if (child !== container) {
                 size = this.stackedVertical ? child.containerElement.clientHeight : child.containerElement.clientWidth;
                 size *= otherPanelScaleMultipler;
             }
@@ -2546,14 +2320,12 @@
         }
     };
 
-    dockspawn.SplitterPanel.prototype.resize = function(width, height)
-    {
+    dockspawn.SplitterPanel.prototype.resize = function (width, height) {
         if (this.childContainers.length <= 1)
             return;
 
         // Adjust the fixed dimension that is common to all (i.e. width, if stacked vertical; height, if stacked horizontally)
-        for (var i = 0; i < this.childContainers.length; i++)
-        {
+        for (var i = 0; i < this.childContainers.length; i++) {
             var childContainer = this.childContainers[i];
             if (this.stackedVertical)
                 childContainer.resize(width, childContainer.height);
@@ -2573,8 +2345,7 @@
         var totalChildPanelSize = 0;
         // Find out how much space existing child containers take up (excluding the splitter bars)
         var self = this;
-        this.childContainers.forEach(function(container)
-        {
+        this.childContainers.forEach(function (container) {
             var size = self.stackedVertical ?
                 container.height :
                 container.width;
@@ -2595,8 +2366,7 @@
 
         // Update the size with this multiplier
         var updatedTotalChildPanelSize = 0;
-        for (var i = 0; i < this.childContainers.length; i++)
-        {
+        for (var i = 0; i < this.childContainers.length; i++) {
             var child = this.childContainers[i];
             var original = this.stackedVertical ?
                 child.containerElement.clientHeight :
@@ -2612,17 +2382,16 @@
 
             // Set the size of the panel
             if (this.stackedVertical)
-                child.resize(child.width, newSize );
+                child.resize(child.width, newSize);
             else
-                child.resize( newSize, child.height);
+                child.resize(newSize, child.height);
         }
 
         this.panelElement.style.width = width + "px";
         this.panelElement.style.height = height + "px";
     };
 
-    dockspawn.SplitterDockContainer = function(name, dockManager, childContainers)
-    {
+    dockspawn.SplitterDockContainer = function (name, dockManager, childContainers) {
         // for prototype inheritance purposes only
         if (arguments.length == 0)
             return;
@@ -2634,8 +2403,7 @@
         this.minimumAllowedChildNodes = 2;
     }
 
-    dockspawn.SplitterDockContainer.prototype.resize = function(width, height)
-    {
+    dockspawn.SplitterDockContainer.prototype.resize = function (width, height) {
 //    if (_cachedWidth == _cachedWidth && _cachedHeight == _height) {
 //      // No need to resize
 //      return;
@@ -2645,17 +2413,14 @@
         this._cachedHeight = height;
     };
 
-    dockspawn.SplitterDockContainer.prototype.performLayout = function(childContainers)
-    {
+    dockspawn.SplitterDockContainer.prototype.performLayout = function (childContainers) {
         this.splitterPanel.performLayout(childContainers);
     };
 
-    dockspawn.SplitterDockContainer.prototype.setActiveChild = function(child)
-    {
+    dockspawn.SplitterDockContainer.prototype.setActiveChild = function (child) {
     };
 
-    dockspawn.SplitterDockContainer.prototype.destroy = function()
-    {
+    dockspawn.SplitterDockContainer.prototype.destroy = function () {
         this.splitterPanel.destroy();
     };
 
@@ -2663,27 +2428,23 @@
      * Sets the percentage of space the specified [container] takes in the split panel
      * The percentage is specified in [ratio] and is between 0..1
      */
-    dockspawn.SplitterDockContainer.prototype.setContainerRatio = function(container, ratio)
-    {
+    dockspawn.SplitterDockContainer.prototype.setContainerRatio = function (container, ratio) {
         this.splitterPanel.setContainerRatio(container, ratio);
         this.resize(this.width, this.height);
     };
 
-    dockspawn.SplitterDockContainer.prototype.saveState = function(state)
-    {
+    dockspawn.SplitterDockContainer.prototype.saveState = function (state) {
         state.width = this.width;
         state.height = this.height;
     };
 
-    dockspawn.SplitterDockContainer.prototype.loadState = function(state)
-    {
+    dockspawn.SplitterDockContainer.prototype.loadState = function (state) {
         this.state = {width: state.width, height: state.height};
         // this.resize(state.width, state.height);
     };
 
     Object.defineProperty(dockspawn.SplitterDockContainer.prototype, "width", {
-        get: function()
-        {
+        get: function () {
             if (this._cachedWidth === undefined)
                 this._cachedWidth = this.splitterPanel.panelElement.clientWidth;
             return this._cachedWidth;
@@ -2691,16 +2452,14 @@
     });
 
     Object.defineProperty(dockspawn.SplitterDockContainer.prototype, "height", {
-        get: function()
-        {
+        get: function () {
             if (this._cachedHeight === undefined)
                 this._cachedHeight = this.splitterPanel.panelElement.clientHeight;
             return this._cachedHeight;
         }
     });
 
-    dockspawn.HorizontalDockContainer = function(dockManager, childContainers)
-    {
+    dockspawn.HorizontalDockContainer = function (dockManager, childContainers) {
         this.stackedVertical = false;
         dockspawn.SplitterDockContainer.call(this, getNextId("horizontal_splitter_"), dockManager, childContainers);
         this.containerType = "horizontal";
@@ -2710,8 +2469,7 @@
     /**
      * This dock container wraps the specified element on a panel frame with a title bar and close button
      */
-    dockspawn.PanelContainer = function(elementContent, dockManager, title)
-    {
+    dockspawn.PanelContainer = function (elementContent, dockManager, title) {
         if (!title)
             title = "Panel";
         this.elementContent = elementContent;
@@ -2728,10 +2486,10 @@
         this._initialize();
     };
 
-    dockspawn.PanelContainer.prototype.canUndock = function(state){
+    dockspawn.PanelContainer.prototype.canUndock = function (state) {
         this._canUndock = state;
         this.undockInitiator.enabled = state;
-        this.eventListeners.forEach(function(listener) {
+        this.eventListeners.forEach(function (listener) {
             if (listener.onDockEnabled) {
                 listener.onDockEnabled({self: this, state: state});
             }
@@ -2739,61 +2497,58 @@
 
     };
 
-    dockspawn.PanelContainer.prototype.addListener = function(listener){
+    dockspawn.PanelContainer.prototype.addListener = function (listener) {
         this.eventListeners.push(listener);
     };
 
-    dockspawn.PanelContainer.prototype.removeListener = function(listener)
-    {
+    dockspawn.PanelContainer.prototype.removeListener = function (listener) {
         this.eventListeners.splice(this.eventListeners.indexOf(listener), 1);
     };
 
     Object.defineProperty(dockspawn.PanelContainer.prototype, "floatingDialog", {
-        get: function() { return this._floatingDialog; },
-        set: function(value)
-        {
+        get: function () {
+            return this._floatingDialog;
+        },
+        set: function (value) {
             this._floatingDialog = value;
             var canUndock = (this._floatingDialog === undefined);
             this.undockInitiator.enabled = canUndock;
         }
     });
 
-    dockspawn.PanelContainer.loadFromState = function(state, dockManager)
-    {
+    dockspawn.PanelContainer.loadFromState = function (state, dockManager) {
         var elementName = state.element;
         var elementContent = document.getElementById(elementName);
-        if(elementContent == null)
+        if (elementContent == null)
             return null;
         var ret = new dockspawn.PanelContainer(elementContent, dockManager);
         ret.loadState(state);
         return ret;
     };
 
-    dockspawn.PanelContainer.prototype.saveState = function(state)
-    {
+    dockspawn.PanelContainer.prototype.saveState = function (state) {
         state.element = this.elementContent.id;
         state.width = this.width;
         state.height = this.height;
     };
 
-    dockspawn.PanelContainer.prototype.loadState = function(state)
-    {
+    dockspawn.PanelContainer.prototype.loadState = function (state) {
         this.width = state.width;
         this.height = state.height;
         this.state = {width: state.width, height: state.height};
         // this.resize(this.width, this.height);
     };
 
-    dockspawn.PanelContainer.prototype.setActiveChild = function(child)
-    {
+    dockspawn.PanelContainer.prototype.setActiveChild = function (child) {
     };
 
     Object.defineProperty(dockspawn.PanelContainer.prototype, "containerElement", {
-        get: function() { return this.elementPanel; }
+        get: function () {
+            return this.elementPanel;
+        }
     });
 
-    dockspawn.PanelContainer.prototype._initialize = function()
-    {
+    dockspawn.PanelContainer.prototype._initialize = function () {
         this.name = getNextId("panel_");
         this.elementPanel = document.createElement('div');
         this.elementTitle = document.createElement('div');
@@ -2840,9 +2595,9 @@
     };
 
 
-    dockspawn.PanelContainer.prototype.hideCloseButton = function(state){
+    dockspawn.PanelContainer.prototype.hideCloseButton = function (state) {
         this.elementButtonClose.style.display = state ? 'none' : 'block';
-        this.eventListeners.forEach(function(listener) {
+        this.eventListeners.forEach(function (listener) {
             if (listener.onHideCloseButton) {
                 listener.onHideCloseButton({self: this, state: state});
             }
@@ -2850,11 +2605,9 @@
     };
 
 
-    dockspawn.PanelContainer.prototype.destroy = function()
-    {
+    dockspawn.PanelContainer.prototype.destroy = function () {
         removeNode(this.elementPanel);
-        if (this.closeButtonClickedHandler)
-        {
+        if (this.closeButtonClickedHandler) {
             this.closeButtonClickedHandler.cancel();
             delete this.closeButtonClickedHandler;
         }
@@ -2863,8 +2616,7 @@
     /**
      * Undocks the panel and and converts it to a dialog box
      */
-    dockspawn.PanelContainer.prototype.performUndockToDialog = function(e, dragOffset)
-    {
+    dockspawn.PanelContainer.prototype.performUndockToDialog = function (e, dragOffset) {
         this.isDialog = true;
         this.undockInitiator.enabled = false;
         return this.dockManager.requestUndockToDialog(this, e, dragOffset);
@@ -2874,25 +2626,23 @@
      * Undocks the container and from the layout hierarchy
      * The container would be removed from the DOM
      */
-    dockspawn.PanelContainer.prototype.performUndock = function()
-    {
+    dockspawn.PanelContainer.prototype.performUndock = function () {
 
         this.undockInitiator.enabled = false;
         this.dockManager.requestUndock(this);
     };
 
-    dockspawn.PanelContainer.prototype.prepareForDocking = function()
-    {
+    dockspawn.PanelContainer.prototype.prepareForDocking = function () {
         this.isDialog = false;
         this.undockInitiator.enabled = this.canUndock;
     };
 
     Object.defineProperty(dockspawn.PanelContainer.prototype, "width", {
-        get: function() { return this._cachedWidth; },
-        set: function(value)
-        {
-            if (value !== this._cachedWidth)
-            {
+        get: function () {
+            return this._cachedWidth;
+        },
+        set: function (value) {
+            if (value !== this._cachedWidth) {
                 this._cachedWidth = value;
                 this.elementPanel.style.width = value + "px";
             }
@@ -2900,19 +2650,18 @@
     });
 
     Object.defineProperty(dockspawn.PanelContainer.prototype, "height", {
-        get: function() { return this._cachedHeight; },
-        set: function(value)
-        {
-            if (value !== this._cachedHeight)
-            {
+        get: function () {
+            return this._cachedHeight;
+        },
+        set: function (value) {
+            if (value !== this._cachedHeight) {
                 this._cachedHeight = value;
                 this.elementPanel.style.height = value + "px";
             }
         }
     });
 
-    dockspawn.PanelContainer.prototype.resize = function(width,  height)
-    {
+    dockspawn.PanelContainer.prototype.resize = function (width, height) {
         // if (this._cachedWidth == width && this._cachedHeight == height)
         // {
         //     // Already in the desired size
@@ -2923,8 +2672,7 @@
         this._cachedHeight = height;
     };
 
-    dockspawn.PanelContainer.prototype._setPanelDimensions = function(width, height)
-    {
+    dockspawn.PanelContainer.prototype._setPanelDimensions = function (width, height) {
         this.elementTitle.style.width = width + "px";
         this.elementContentHost.style.width = width + "px";
         this.elementContent.style.width = width + "px";
@@ -2937,68 +2685,58 @@
         this.elementPanel.style.height = height + "px";
     };
 
-    dockspawn.PanelContainer.prototype.setTitle = function(title)
-    {
+    dockspawn.PanelContainer.prototype.setTitle = function (title) {
         this.title = title;
         this._updateTitle();
         if (this.onTitleChanged)
             this.onTitleChanged(this, title);
     };
 
-    dockspawn.PanelContainer.prototype.setTitleIcon = function(iconName)
-    {
+    dockspawn.PanelContainer.prototype.setTitleIcon = function (iconName) {
         this.iconName = iconName;
         this._updateTitle();
         if (this.onTitleChanged)
             this.onTitleChanged(this, this.title);
     };
 
-    dockspawn.PanelContainer.prototype.setTitleIconTemplate = function(iconTemplate)
-    {
+    dockspawn.PanelContainer.prototype.setTitleIconTemplate = function (iconTemplate) {
         this.iconTemplate = iconTemplate;
         this._updateTitle();
         if (this.onTitleChanged)
             this.onTitleChanged(this, this.title);
     };
 
-    dockspawn.PanelContainer.prototype.setCloseIconTemplate = function(closeIconTemplate)
-    {
+    dockspawn.PanelContainer.prototype.setCloseIconTemplate = function (closeIconTemplate) {
         this.elementButtonClose.innerHTML = closeIconTemplate();
     };
 
-    dockspawn.PanelContainer.prototype._updateTitle = function()
-    {
-        if(this.iconTemplate != null)
-        {
+    dockspawn.PanelContainer.prototype._updateTitle = function () {
+        if (this.iconTemplate != null) {
             this.elementTitleText.innerHTML = this.iconTemplate(this.iconName) + this.title;
             return;
         }
         this.elementTitleText.innerHTML = '<i class="' + this.iconName + '"></i> ' + this.title;
     };
 
-    dockspawn.PanelContainer.prototype.getRawTitle = function()
-    {
+    dockspawn.PanelContainer.prototype.getRawTitle = function () {
         return this.elementTitleText.innerHTML;
     };
 
-    dockspawn.PanelContainer.prototype.performLayout = function(children)
-    {
+    dockspawn.PanelContainer.prototype.performLayout = function (children) {
     };
 
-    dockspawn.PanelContainer.prototype.onCloseButtonClicked = function(e)
-    {
+    dockspawn.PanelContainer.prototype.onCloseButtonClicked = function (e) {
         this.close();
     };
 
-    dockspawn.PanelContainer.prototype.close = function(e){
+    dockspawn.PanelContainer.prototype.close = function (e) {
         //TODO: hide
-        if (this.isDialog){
+        if (this.isDialog) {
             this.floatingDialog.hide();
 
             this.floatingDialog.setPosition(this.dockManager.defaultDialogPosition.x, this.dockManager.defaultDialogPosition.y);
         }
-        else
-        {
+        else {
             this.performUndockToDialog();
             this.floatingDialog.hide();
             this.floatingDialog.setPosition(this.dockManager.defaultDialogPosition.x, this.dockManager.defaultDialogPosition.y);
@@ -3006,16 +2744,14 @@
         this.dockManager.notifyOnClosePanel(this);
     }
 
-    dockspawn.VerticalDockContainer = function(dockManager, childContainers)
-    {
+    dockspawn.VerticalDockContainer = function (dockManager, childContainers) {
         this.stackedVertical = true;
         dockspawn.SplitterDockContainer.call(this, getNextId("vertical_splitter_"), dockManager, childContainers);
         this.containerType = "vertical";
     };
     dockspawn.VerticalDockContainer.prototype = new dockspawn.SplitterDockContainer();
     dockspawn.VerticalDockContainer.prototype.constructor = dockspawn.VerticalDockContainer;
-    dockspawn.SplitterBar = function(previousContainer, nextContainer, stackedVertical)
-    {
+    dockspawn.SplitterBar = function (previousContainer, nextContainer, stackedVertical) {
         this.previousContainer = previousContainer; // The panel to the left/top side of the bar, depending on the bar orientation
         this.nextContainer = nextContainer;         // The panel to the right/bottom side of the bar, depending on the bar orientation
         this.stackedVertical = stackedVertical;
@@ -3026,18 +2762,15 @@
         this.readyToProcessNextDrag = true;
     };
 
-    dockspawn.SplitterBar.prototype.onMouseDown = function(e)
-    {
+    dockspawn.SplitterBar.prototype.onMouseDown = function (e) {
         this._startDragging(e);
     };
 
-    dockspawn.SplitterBar.prototype.onMouseUp = function(e)
-    {
+    dockspawn.SplitterBar.prototype.onMouseUp = function (e) {
         this._stopDragging(e);
     };
 
-    dockspawn.SplitterBar.prototype.onMouseMoved = function(e)
-    {
+    dockspawn.SplitterBar.prototype.onMouseMoved = function (e) {
         if (!this.readyToProcessNextDrag)
             return;
         this.readyToProcessNextDrag = false;
@@ -3059,8 +2792,7 @@
         this.readyToProcessNextDrag = true;
     };
 
-    dockspawn.SplitterBar.prototype._performDrag = function(dx, dy)
-    {
+    dockspawn.SplitterBar.prototype._performDrag = function (dx, dy) {
         var previousWidth = this.previousContainer.containerElement.clientWidth;
         var previousHeight = this.previousContainer.containerElement.clientHeight;
         var nextWidth = this.nextContainer.containerElement.clientWidth;
@@ -3072,8 +2804,7 @@
         var newPreviousPanelSize = previousPanelSize + deltaMovement;
         var newNextPanelSize = nextPanelSize - deltaMovement;
 
-        if (newPreviousPanelSize < this.minPanelSize || newNextPanelSize < this.minPanelSize)
-        {
+        if (newPreviousPanelSize < this.minPanelSize || newNextPanelSize < this.minPanelSize) {
             // One of the panels is smaller than it should be.
             // In that case, check if the small panel's size is being increased
             var continueProcessing = (newPreviousPanelSize < this.minPanelSize && newPreviousPanelSize > previousPanelSize) ||
@@ -3083,20 +2814,17 @@
                 return;
         }
 
-        if (this.stackedVertical)
-        {
+        if (this.stackedVertical) {
             this.previousContainer.resize(previousWidth, newPreviousPanelSize);
             this.nextContainer.resize(nextWidth, newNextPanelSize);
         }
-        else
-        {
+        else {
             this.previousContainer.resize(newPreviousPanelSize, previousHeight);
             this.nextContainer.resize(newNextPanelSize, nextHeight);
         }
     };
 
-    dockspawn.SplitterBar.prototype._startDragging = function(e)
-    {
+    dockspawn.SplitterBar.prototype._startDragging = function (e) {
         this.ghoustBarElement = document.createElement('div');
         this.ddx = 0;
         this.ddy = 0;
@@ -3118,13 +2846,11 @@
         this.barElement.parentNode.appendChild(this.ghoustBarElement);
 
         disableGlobalTextSelection();
-        if (this.mouseMovedHandler)
-        {
+        if (this.mouseMovedHandler) {
             this.mouseMovedHandler.cancel();
             delete this.mouseMovedHandler;
         }
-        if (this.mouseUpHandler)
-        {
+        if (this.mouseUpHandler) {
             this.mouseUpHandler.cancel();
             delete this.mouseUpHandler;
         }
@@ -3133,8 +2859,7 @@
         this.previousMouseEvent = e;
     };
 
-    dockspawn.SplitterBar.prototype._stopDragging = function(e)
-    {
+    dockspawn.SplitterBar.prototype._stopDragging = function (e) {
         removeNode(this.ghoustBarElement);
 
         this._performDrag(this.ddx, this.ddy);
@@ -3145,13 +2870,11 @@
 
         enableGlobalTextSelection();
         document.body.classList.remove("disable-selection");
-        if (this.mouseMovedHandler)
-        {
+        if (this.mouseMovedHandler) {
             this.mouseMovedHandler.cancel();
             delete this.mouseMovedHandler;
         }
-        if (this.mouseUpHandler)
-        {
+        if (this.mouseUpHandler) {
             this.mouseUpHandler.cancel();
             delete this.mouseUpHandler;
         }
@@ -3159,13 +2882,11 @@
     /**
      * Deserializes the dock layout hierarchy from JSON and creates a dock hierarhcy graph
      */
-    dockspawn.DockGraphDeserializer = function(dockManager)
-    {
+    dockspawn.DockGraphDeserializer = function (dockManager) {
         this.dockManager = dockManager;
     };
 
-    dockspawn.DockGraphDeserializer.prototype.deserialize = function(_json)
-    {
+    dockspawn.DockGraphDeserializer.prototype.deserialize = function (_json) {
         var info = JSON.parse(_json);
         var model = new dockspawn.DockModel();
         model.rootNode = this._buildGraph(info.graphInfo);
@@ -3173,26 +2894,24 @@
         return model;
     };
 
-    dockspawn.DockGraphDeserializer.prototype._buildGraph = function(nodeInfo)
-    {
+    dockspawn.DockGraphDeserializer.prototype._buildGraph = function (nodeInfo) {
         var childrenInfo = nodeInfo.children;
         var children = [];
         var self = this;
-        childrenInfo.forEach(function(childInfo)
-        {
+        childrenInfo.forEach(function (childInfo) {
             var childNode = self._buildGraph(childInfo);
-            if(childNode != null)
+            if (childNode != null)
                 children.push(childNode);
         });
 
         // Build the container owned by this node
         var container = this._createContainer(nodeInfo, children);
-        if(container == null)
+        if (container == null)
             return null;
         // Build the node for this container and attach it's children
         var node = new dockspawn.DockNode(container);
         node.children = children;
-        node.children.reverse().forEach(function(childNode) {
+        node.children.reverse().forEach(function (childNode) {
             childNode.parent = node;
         });
         node.children.reverse();
@@ -3200,19 +2919,20 @@
         return node;
     };
 
-    dockspawn.DockGraphDeserializer.prototype._createContainer = function(nodeInfo, children)
-    {
+    dockspawn.DockGraphDeserializer.prototype._createContainer = function (nodeInfo, children) {
         var containerType = nodeInfo.containerType;
         var containerState = nodeInfo.state;
         var container;
 
         var childContainers = [];
-        children.forEach(function(childNode) { childContainers.push(childNode.container); });
+        children.forEach(function (childNode) {
+            childContainers.push(childNode.container);
+        });
 
 
-        if (containerType == "panel"){
+        if (containerType == "panel") {
             container = new dockspawn.PanelContainer.loadFromState(containerState, this.dockManager);
-            if(!container.prepareForDocking)
+            if (!container.prepareForDocking)
                 return null;
             container.prepareForDocking();
             removeNode(container.elementPanel);
@@ -3221,8 +2941,7 @@
             container = new dockspawn.HorizontalDockContainer(this.dockManager, childContainers);
         else if (containerType == "vertical")
             container = new dockspawn.VerticalDockContainer(this.dockManager, childContainers);
-        else if (containerType == "fill")
-        {
+        else if (containerType == "fill") {
             // Check if this is a document manager
 
             // TODO: Layout engine compares the string "fill", so cannot create another subclass type
@@ -3244,28 +2963,27 @@
         return container;
     };
 
-    dockspawn.DockGraphDeserializer.prototype._buildDialogs = function(dialogsInfo)
-    {
+    dockspawn.DockGraphDeserializer.prototype._buildDialogs = function (dialogsInfo) {
         var dialogs = [];
         var self = this;
-        dialogsInfo.forEach(function(dialogInfo) {
+        dialogsInfo.forEach(function (dialogInfo) {
             var containerType = dialogInfo.containerType;
             var containerState = dialogInfo.state;
             var container;
-            if (containerType == "panel"){
+            if (containerType == "panel") {
                 container = new dockspawn.PanelContainer.loadFromState(containerState, self.dockManager);
                 if (container.prepareForDocking) {
                     removeNode(container.elementPanel);
                     container.isDialog = true;
                     var dialog = new dockspawn.Dialog(container, self.dockManager);
-                    if(dialogInfo.position.left > document.body.clientWidth ||
-                        dialogInfo.position.top > document.body.clientHeight - 70){
+                    if (dialogInfo.position.left > document.body.clientWidth ||
+                        dialogInfo.position.top > document.body.clientHeight - 70) {
                         dialogInfo.position.left = 20;
                         dialogInfo.position.top = 70;
                     }
                     dialog.setPosition(dialogInfo.position.left, dialogInfo.position.top);
                     dialog.isHidden = dialogInfo.isHidden;
-                    if(dialog.isHidden)
+                    if (dialog.isHidden)
                         dialog.hide();
                     dialogs.push(dialog);
                 }
@@ -3277,25 +2995,22 @@
     /**
      * The serializer saves / loads the state of the dock layout hierarchy
      */
-    dockspawn.DockGraphSerializer = function()
-    {
+    dockspawn.DockGraphSerializer = function () {
     };
 
-    dockspawn.DockGraphSerializer.prototype.serialize = function(model)
-    {
+    dockspawn.DockGraphSerializer.prototype.serialize = function (model) {
         var graphInfo = this._buildGraphInfo(model.rootNode);
         var dialogs = this._buildDialogsInfo(model.dialogs);
         return JSON.stringify({graphInfo: graphInfo, dialogsInfo: dialogs});
     };
 
-    dockspawn.DockGraphSerializer.prototype._buildGraphInfo = function(node)
-    {
+    dockspawn.DockGraphSerializer.prototype._buildGraphInfo = function (node) {
         var nodeState = {};
         node.container.saveState(nodeState);
 
         var childrenInfo = [];
         var self = this;
-        node.children.forEach(function(childNode) {
+        node.children.forEach(function (childNode) {
             childrenInfo.push(self._buildGraphInfo(childNode));
         });
 
@@ -3306,10 +3021,9 @@
         return nodeInfo;
     };
 
-    dockspawn.DockGraphSerializer.prototype._buildDialogsInfo = function(dialogs)
-    {
+    dockspawn.DockGraphSerializer.prototype._buildDialogsInfo = function (dialogs) {
         var dialogsInfo = [];
-        dialogs.forEach(function(dialog) {
+        dialogs.forEach(function (dialog) {
             var panelState = {};
             var panelContainer = dialog.panel;
             panelContainer.saveState(panelState);
@@ -3324,25 +3038,21 @@
         })
         return dialogsInfo;
     };
-    function getPixels(pixels)
-    {
+    function getPixels(pixels) {
         if (pixels == null)
             return 0;
         return parseInt(pixels.replace("px", ""));
     }
 
-    function disableGlobalTextSelection()
-    {
+    function disableGlobalTextSelection() {
         document.body.classList.add("disable-selection");
     }
 
-    function enableGlobalTextSelection()
-    {
+    function enableGlobalTextSelection() {
         document.body.classList.remove("disable-selection");
     }
 
-    function isPointInsideNode(px, py, node)
-    {
+    function isPointInsideNode(px, py, node) {
         var element = node.container.containerElement;
         var x = element.offsetLeft;
         var y = element.offsetTop;
@@ -3352,35 +3062,32 @@
         return (px >= x && px <= x + width && py >= y && py <= y + height);
     }
 
-    function Rectangle()
-    {
+    function Rectangle() {
 //    num x;
 //    num y;
 //    num width;
 //    num height;
     }
 
-    function getNextId(prefix)
-    {
+    function getNextId(prefix) {
         return prefix + getNextId.counter++;
     }
+
     getNextId.counter = 0;
 
-    function removeNode(node)
-    {
+    function removeNode(node) {
         if (node.parentNode == null)
             return false;
         node.parentNode.removeChild(node);
         return true;
     }
 
-    function Point(x, y)
-    {
+    function Point(x, y) {
         this.x = x;
         this.y = y;
     }
-    dockspawn.EventHandler = function(source, eventName, target)
-    {
+
+    dockspawn.EventHandler = function (source, eventName, target) {
         // wrap the target
         this.target = target;
         this.eventName = eventName;
@@ -3389,8 +3096,7 @@
         this.source.addEventListener(eventName, this.target);
     };
 
-    dockspawn.EventHandler.prototype.cancel = function()
-    {
+    dockspawn.EventHandler.prototype.cancel = function () {
         this.source.removeEventListener(this.eventName, this.target)
     };
     /**
@@ -3399,8 +3105,7 @@
      * when the user clicks on the event and drags is beyond the
      * specified [thresholdPixels]
      */
-    dockspawn.UndockInitiator = function(element, listener, thresholdPixels)
-    {
+    dockspawn.UndockInitiator = function (element, listener, thresholdPixels) {
         if (!thresholdPixels)
             thresholdPixels = 10;
 
@@ -3412,55 +3117,46 @@
     };
 
     Object.defineProperty(dockspawn.UndockInitiator.prototype, "enabled", {
-        get: function() { return this._enabled; },
-        set: function(value)
-        {
+        get: function () {
+            return this._enabled;
+        },
+        set: function (value) {
             this._enabled = value;
-            if (this._enabled)
-            {
-                if (this.mouseDownHandler)
-                {
+            if (this._enabled) {
+                if (this.mouseDownHandler) {
                     this.mouseDownHandler.cancel();
                     delete this.mouseDownHandler;
                 }
                 this.mouseDownHandler = new dockspawn.EventHandler(this.element, 'mousedown', this.onMouseDown.bind(this));
             }
-            else
-            {
-                if (this.mouseDownHandler)
-                {
+            else {
+                if (this.mouseDownHandler) {
                     this.mouseDownHandler.cancel();
                     delete this.mouseDownHandler;
                 }
-                if (this.mouseUpHandler)
-                {
+                if (this.mouseUpHandler) {
                     this.mouseUpHandler.cancel();
                     delete this.mouseUpHandler;
                 }
-                if (this.mouseMoveHandler)
-                {
+                if (this.mouseMoveHandler) {
                     this.mouseMoveHandler.cancel();
                     delete this.mouseMoveHandler;
                 }
             }
         }
     });
-    dockspawn.UndockInitiator.prototype.setThresholdPixels = function(thresholdPixels, horizontalChange){
+    dockspawn.UndockInitiator.prototype.setThresholdPixels = function (thresholdPixels, horizontalChange) {
         this.horizontalChange = horizontalChange;
         this.thresholdPixels = thresholdPixels;
     };
-    dockspawn.UndockInitiator.prototype.onMouseDown = function(e)
-    {
+    dockspawn.UndockInitiator.prototype.onMouseDown = function (e) {
         // Make sure we dont do this on floating dialogs
-        if (this.enabled)
-        {
-            if (this.mouseUpHandler)
-            {
+        if (this.enabled) {
+            if (this.mouseUpHandler) {
                 this.mouseUpHandler.cancel();
                 delete this.mouseUpHandler;
             }
-            if (this.mouseMoveHandler)
-            {
+            if (this.mouseMoveHandler) {
                 this.mouseMoveHandler.cancel();
                 delete this.mouseMoveHandler;
             }
@@ -3470,42 +3166,36 @@
         }
     };
 
-    dockspawn.UndockInitiator.prototype.onMouseUp = function(e)
-    {
-        if (this.mouseUpHandler)
-        {
+    dockspawn.UndockInitiator.prototype.onMouseUp = function (e) {
+        if (this.mouseUpHandler) {
             this.mouseUpHandler.cancel();
             delete this.mouseUpHandler;
         }
-        if (this.mouseMoveHandler)
-        {
+        if (this.mouseMoveHandler) {
             this.mouseMoveHandler.cancel();
             delete this.mouseMoveHandler;
         }
     };
 
-    dockspawn.UndockInitiator.prototype.onMouseMove = function(e)
-    {
+    dockspawn.UndockInitiator.prototype.onMouseMove = function (e) {
         var position = new Point(e.pageX, e.pageY);
         var dx = this.horizontalChange ? position.x - this.dragStartPosition.x : 10;
         var dy = position.y - this.dragStartPosition.y;
         var distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance > this.thresholdPixels)
-        {
+        if (distance > this.thresholdPixels) {
             this.enabled = false;
             this._requestUndock(e);
         }
     };
 
-    dockspawn.UndockInitiator.prototype._requestUndock = function(e)
-    {
+    dockspawn.UndockInitiator.prototype._requestUndock = function (e) {
         var dragOffsetX = this.dragStartPosition.x - this.element.offsetLeft;
         var dragOffsetY = this.dragStartPosition.y - this.element.offsetTop;
         var dragOffset = new Point(dragOffsetX, dragOffsetY);
         this.listener(e, dragOffset);
     };
-    Array.prototype.remove = function(value) {
+    Array.prototype.remove = function (value) {
         var idx = this.indexOf(value);
         if (idx != -1) {
             return this.splice(idx, 1); // The second parameter is the number of elements to remove.
@@ -3513,7 +3203,7 @@
         return false;
     }
 
-    Array.prototype.contains = function(obj) {
+    Array.prototype.contains = function (obj) {
         var i = this.length;
         while (i--) {
             if (this[i] === obj) {
@@ -3523,7 +3213,7 @@
         return false;
     }
 
-    Array.prototype.orderByIndexes = function(indexes){
+    Array.prototype.orderByIndexes = function (indexes) {
         var sortedArray = [];
         for (var i = 0; i < indexes.length; i++) {
             sortedArray.push(this[indexes[i]]);

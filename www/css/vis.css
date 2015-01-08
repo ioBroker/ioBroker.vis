@@ -1,3 +1,8 @@
+html{
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 :focus {
     outline: none;
 }
@@ -20,35 +25,7 @@ div#vis_container {
     user-select: none;
 }
 
-.menu_body {
-    /* height: 19px; */
-    width: 100% !important;
-    min-height: 20px;
-    z-index: 5000;
-    position: relative;
-}
 
-.menu {
-    margin-top: 0px !important;
-    height: 16px;
-    border: none !important;
-    overflow: visible !important;
-}
-
-#icon_bar {
-    height: 30px;
-    width: 100%;
-    z-index: 80;
-    /*overflow: hidden;*/
-    min-height: 30px;
-    position: relative;
-}
-
-.ibar_icon {
-    width: 22px;
-    padding: 4px;
-    border: 1px solid transparent;
-}
 
 .dashui-inspect-css {
     color: initial !important;
@@ -625,20 +602,16 @@ p.xs_text_editor_mode {
 }
 
 #new_view_name {
-    width: 285px;
+    width: 200px;
 
 }
 
 #add_view {
-    margin-left: 94px;
-    margin-top: 5px;
-    width: 125px;
-
+    margin-left: 3px;
 }
 
 #dup_view {
-    margin-top: 5px;
-    width: 125px;
+
 }
 
 #tabs-1 .ui-multiselect {
@@ -647,20 +620,16 @@ p.xs_text_editor_mode {
 }
 
 #del_view {
-    margin-left: 94px;
-    margin-top: 5px;
-    width: 125px;
-
+    margin-left: 3px;
 }
 
 #new_name {
-    width: 285px;
+    width: 200px;
 
 }
 
 #rename_view {
-    margin-left: 94px;
-    margin-top: 5px;
+    margin-left: 3px;
 
 }
 
@@ -832,4 +801,46 @@ div.jGrowl div.warn {
     margin-top: -8px;
     width: 28px;
     height: 28px;
+}
+
+
+/*ribbon*/
+
+.ribbon_tab{
+    max-height: 70px;
+    min-height: 70px;
+    overflow: hidden;
+    padding: 0!important;
+    border-radius: 0!important;
+    border: none;
+    position: relative;
+    /*top: -2px;*/
+}
+.ribbon_tab_content{
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.menu-tab{
+    height: 27px;
+    border-bottom: none!important;
+    padding-right: 4px;
+    padding-left: 4px!important;
+    position: relative!important;
+    top: 1px;
+    margin-left: -9px;
+    margin-right: 13px;
+}
+.menu-tab-text{
+    padding: 2px 4px 2px 4px!important;
+}
+
+.ribbon_fild{
+    height: 55px;
+    margin-left: 5px;
+    background: transparent;
+    font-size: 12px;
 }

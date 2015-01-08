@@ -2583,8 +2583,8 @@ vis = $.extend(true, vis, {
         $("#menu.sf-menu").superclick({
             hoverClass: 'sfHover',
             uiClass: 'ui-state-hover',  // jQuery-UI modified
-            pathClass: 'overideThisToUse',
             pathLevels: 1,
+            cssArrows:     false,
             disableHI: false
         });
 
@@ -2596,6 +2596,8 @@ vis = $.extend(true, vis, {
                 $(this).removeClass('ui-state-hover')
             }
         );
+
+        $("#menu_body").tabs();
 
         // Theme auswahl
         $("#ul_theme li a").click(function () {
@@ -2724,8 +2726,8 @@ vis = $.extend(true, vis, {
         var pan_wid_attr = dockManager.dockUp(pan_css_wid,_pan_wid_attr,0.5  );
         var pan_css_view = dockManager.dockFill(pan_css_wid, _pan_css_view);
 
-console.log(pan_vis_container)
-        //pan_vis_container.container.canUndock(false)
+
+        pan_vis_container.container.canUndock(false)
     },
 
     //todo
