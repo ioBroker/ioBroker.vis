@@ -1219,7 +1219,7 @@
                 if(this.panel._cachedHeight == 0 && h == undefined){
                    h = 300
                 }
-                this.elementDialog.style.marginLeft = (parseInt($("#main").css("width")) - (w || this.panel._cachedWidth)) / 2 + "px";
+                this.elementDialog.style.marginLeft = (parseInt($("#dock_body").css("width")) - (w || this.panel._cachedWidth)) / 2 + "px";
                 this.elementDialog.style.marginTop = "100px";
                 this.elementDialog.style.zIndex = 1000;
                 this.elementDialog.style.display = 'block';

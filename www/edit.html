@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
-<head>
+<head >
     <!-- ioBroker.vis Version 0.0.1 -->
 
     <!--
@@ -74,7 +74,7 @@
     <!--- widgets -->
     <!--- widgetsStop -->
 </head>
-<body style=" margin: 0;width: 100%;height: 100%;overflow: hidden">
+<body>
 <div id='waitScreen' class='vis-wait-screen'>
     <div id='waitDialog' class='waitDialog'>
         <div class='vis-progressbar '></div>
@@ -117,6 +117,7 @@
     <p class="translate">license4</p-->
     <p class="translate">license5</p>
 </div>
+
 <div style="display: none;text-align: left" title="Setup" id="dialog_setup">
     <h4 class="translate">Snapping</h4>
     <table>
@@ -286,7 +287,8 @@
                     </li>
                     <li class="ui-state-default frame_color menu_item">
                         <div style="display: inline-block; width: 150px" class="translate">Widget</div>
-                        <input style="display: inline-block" type="checkbox" class="pan_state" checked id="pan_add_widget_state">
+                        <input style="display: inline-block" type="checkbox" class="pan_state" checked
+                               id="pan_add_widget_state">
                     </li>
                     <li class="ui-state-default frame_color menu_item">
                         <div style="display: inline-block; width: 150px" class="translate">Active Widget</div>
@@ -372,6 +374,7 @@
                 </ul>
             </li>
     </div>
+    <img src="lib/img/edit-undo-8.png" id="button_undo" class="ui-state-default ui-corner-top">
     <div class="ribbon_tab" id="ribbon_datei">
         <div style="width: 100%; height: 70px" class="ui-widget-content">
 
@@ -379,11 +382,17 @@
     </div>
     <div class="ribbon_tab" id="ribbon_view">
         <div class="ribbon_tab_content ui-widget-content">
-
             <div class="ribbon_fild ui-widget-content ui-corner-all">
-                <table>
-                    <tr >
-                        <td colspan="4"> <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">ADD View</div></td>
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td colspan="2">
+                            <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">ADD
+                                View
+                            </div>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="dup_view" type="button">dup_view</button>
+                        </td>
                     </tr>
                     <tr>
                         <td>
@@ -395,17 +404,19 @@
                         <td>
                             <button class="vis-editor translateB" id="add_view" type="button">add_view</button>
                         </td>
-                        <td>
-                            <button class="vis-editor translateB" id="dup_view" type="button">dup_view</button>
-                        </td>
+
                     </tr>
                 </table>
 
             </div>
             <div class="ribbon_fild ui-widget-content ui-corner-all">
                 <table>
-                    <tr >
-                        <td colspan="3"> <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">Current View</div></td>
+                    <tr>
+                        <td colspan="3">
+                            <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">
+                                Current View
+                            </div>
+                        </td>
                     </tr>
                     <tr>
                         <td>
@@ -419,8 +430,12 @@
             </div>
             <div class="ribbon_fild ui-widget-content ui-corner-all">
                 <table>
-                    <tr >
-                        <td colspan="3"> <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">Rename View</div></td>
+                    <tr>
+                        <td colspan="3">
+                            <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">
+                                Rename View
+                            </div>
+                        </td>
                     </tr>
                     <tr>
                         <td>
@@ -432,18 +447,113 @@
                     </tr>
                 </table>
             </div>
+            <div class="ribbon_fild ui-widget-content ui-corner-all" style="font-size: 6px; padding-right: 4px;">
+                <table>
+                    <tr>
+                        <td class="vis-edit-td-caption translate">comment</td>
+                        <td class="vis-edit-td-field"><input size="15" type="text" id="inspect_view_comment"
+                                                             class="vis-inspect-view vis-edit-textbox"/></td>
+                    </tr>
+                    <tr>
+                        <td class="vis-edit-td-caption translate">class</td>
+                        <td class="vis-edit-td-field"><input size="15" type="text" id="inspect_view_class"
+                                                             class="vis-inspect-view vis-edit-textbox"/></td>
+
+                    </tr>
+                    <tr>
+                        <td class="vis-edit-td-caption translate">filter_key</td>
+                        <td class="vis-edit-td-field"><input size="15" type="text" id="inspect_view_filterkey"
+                                                             class="vis-inspect-view vis-edit-textbox"/></td>
+                    </tr>
+
+                </table>
+            </div>
         </div>
     </div>
     <div class="ribbon_tab" id="ribbon_widget">
-        <div style="width: 100%; height: 70px" class="ui-widget-content">
-            <img src="lib/img/delete.png" class="ibar_icon" id="ibar_wid-del" title="Del Widget"/>
-            <select id="select_active_widget" class="vis-editor" data-multiselect-width="300"
-                    data-multiselect-height="265"></select>
+        <div class="ribbon_tab_content ui-widget-content">
+            <div class="ribbon_fild ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td colspan="1" style="text-align: center; height: 24px;">Remove Widget</td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="button" class="vis-editor translateB" id="del_widget">del_widget</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_fild ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td colspan="1">Inspeckt Widget</td>
+                        <td>
+                            <button type="button" class="vis-editor translateB" id="widget_doc">widget_doc</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select class="vis-editor" id="select_view_copy"></select>
+                        </td>
+                        <td>
+                            <button type="button" class="vis-editor translateB" id="dup_widget">dup_widget</button>
+                        </td>
+
+
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_fild ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td colspan="2" style="text-align: center">
+                            <button class="vis-editor translateB" type="button" id="add_widget">add_widget</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="width:103px; display:inline" class="translate">Widget Set:</div>
+                            <select id="select_set" class="vis-editor" data-multiselect-width="100"
+                                    data-multiselect-height="400"></select>
+                        </td>
+                        <td>
+                            <div style="width:103px; display:inline" class="translate">Widget:</div>
+                            <select id="select_tpl" class="vis-editor" data-multiselect-width="200"
+                                    data-multiselect-height="360"></select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_fild ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td colspan="1" style="height: 22px">
+                            <div style="text-align: center" class="translate">Activ Widget:</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select id="select_active_widget" class="vis-editor" data-multiselect-width="250"
+                                    data-multiselect-height="250"></select>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
         </div>
+
+
+        <!--<div style="width: 100%; height: 70px" class="ui-widget-content">-->
+        <!--<img src="lib/img/delete.png" class="ibar_icon" id="ibar_wid-del" title="Del Widget"/>-->
+        <!--<select id="select_active_widget" class="vis-editor" data-multiselect-width="300"-->
+        <!--data-multiselect-height="265"></select>-->
+        <!--</div>-->
     </div>
 </div>
 
-<div id="main" style="width: 100%;height: 100%">
+<div id="dock_body">
     <div id="vis_container" caption="Views"
          style="position: relative; top: 0; left: 0; height:100%; width:100%; overflow: scroll">
         <div id="widget_helper">
@@ -459,29 +569,6 @@
              style="display:none; z-index: 99; position: absolute; left: 0px; height:0px; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
     </div>
 
-    <div class="vis-panel ui-widget-content" caption="New View" id="pan_add_view">
-
-        <h4 class="translate">View Attributes</h4>
-        <table>
-            <tr>
-                <td class="vis-edit-td-caption translate">comment</td>
-                <td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_comment"
-                                                     class="vis-inspect-view vis-edit-textbox"/></td>
-            </tr>
-            <tr>
-                <td class="vis-edit-td-caption translate">class</td>
-                <td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_class"
-                                                     class="vis-inspect-view vis-edit-textbox"/></td>
-
-            </tr>
-            <tr>
-                <td class="vis-edit-td-caption translate">default_filter_key</td>
-                <td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_filterkey"
-                                                     class="vis-inspect-view vis-edit-textbox"/></td>
-            </tr>
-
-        </table>
-    </div>
     <div class="vis-panel ui-widget-content" caption="View CSS" id="pan_css_view">
         <div id="view_inspector">
             <h4><span class="translate">View:</span> <span id="inspect_view"></span></h4>
@@ -496,49 +583,57 @@
                 <tr>
                     <td>-color</td>
                     <td colspan="3">
-                        <input size="40" type="text" id="inspect_view_css_background-color" class="dashui-inspect-view-css"/>
+                        <input size="40" type="text" id="inspect_view_css_background-color"
+                               class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
                 <tr>
                     <td>-image</td>
                     <td colspan="3">
-                        <input size="40" type="text" id="inspect_view_css_background-image" class="dashui-inspect-view-css"/>
+                        <input size="40" type="text" id="inspect_view_css_background-image"
+                               class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
                 <tr>
                     <td>-repeat</td>
                     <td colspan="3">
-                        <input size="40" type="text" id="inspect_view_css_background-repeat" class="dashui-inspect-view-css"/>
+                        <input size="40" type="text" id="inspect_view_css_background-repeat"
+                               class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
                 <tr>
                     <td>-attachment</td>
                     <td colspan="3">
-                        <input size="40" type="text" id="inspect_view_css_background-attachment" class="dashui-inspect-view-css"/>
+                        <input size="40" type="text" id="inspect_view_css_background-attachment"
+                               class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
                 <tr>
                     <td>-position</td>
                     <td colspan="3">
-                        <input size="40" type="text" id="inspect_view_css_background-position" class="dashui-inspect-view-css"/>
+                        <input size="40" type="text" id="inspect_view_css_background-position"
+                               class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
                 <tr>
                     <td>-size</td>
                     <td colspan="3">
-                        <input size="40" type="text" id="inspect_view_css_background-size" class="dashui-inspect-view-css"/>
+                        <input size="40" type="text" id="inspect_view_css_background-size"
+                               class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
                 <tr>
                     <td>-clip</td>
                     <td colspan="3">
-                        <input size="40" type="text" id="inspect_view_css_background-clip" class="dashui-inspect-view-css"/>
+                        <input size="40" type="text" id="inspect_view_css_background-clip"
+                               class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
                 <tr>
                     <td>-origin</td>
                     <td colspan="3">
-                        <input size="40" type="text" id="inspect_view_css_background-origin" class="dashui-inspect-view-css"/>
+                        <input size="40" type="text" id="inspect_view_css_background-origin"
+                               class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
                 <tr>
@@ -572,7 +667,8 @@
                 <tr>
                     <td>font-variant</td>
                     <td colspan="3">
-                        <input size="40" type="text" id="inspect_view_css_font-variant" class="dashui-inspect-view-css"/>
+                        <input size="40" type="text" id="inspect_view_css_font-variant"
+                               class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
                 <tr>
@@ -596,13 +692,15 @@
                 <tr>
                     <td>letter-spacing</td>
                     <td colspan="3">
-                        <input size="40" type="text" id="inspect_view_css_letter-spacing" class="dashui-inspect-view-css"/>
+                        <input size="40" type="text" id="inspect_view_css_letter-spacing"
+                               class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
                 <tr>
                     <td>word-spacing</td>
                     <td colspan="3">
-                        <input size="40" type="text" id="inspect_view_css_word-spacing" class="dashui-inspect-view-css"/>
+                        <input size="40" type="text" id="inspect_view_css_word-spacing"
+                               class="dashui-inspect-view-css"/>
                     </td>
                 </tr>
             </table>
@@ -1001,7 +1099,6 @@
     </div>
     <div class="vis-panel ui-widget-content" caption="Widget attr" id="pan_wid_attr">
         <div class="vis-widget-tools">
-
             <h4 class="translate">Widget Attributes:</h4>
             <table style="width: 100%; border: 0px">
                 <colgroup>
@@ -1011,44 +1108,28 @@
                 </colgroup>
                 <tbody id="widget_attrs"></tbody>
             </table>
-
-
         </div>
     </div>
     <div class="vis-panel ui-widget-content" caption="ADD Widget" id="pan_add_wid">
         <h4 class="translate">Add Widget:</h4>
-
-        <div style="width:103px; display:inline-block" class="translate">Widget Set:</div>
-        <select id="select_set" class="vis-editor" data-multiselect-width="370" data-multiselect-height="400"></select></br>
-        <div style="width:103px; display:inline-block" class="translate">Widget:</div>
-        <select id="select_tpl" class="vis-editor" data-multiselect-width="370" data-multiselect-height="360"></select>
-        <button class="vis-editor translateB" type="button" id="add_widget">add_widget</button>
-        <h4 class="translate">Inspecting Widget:</h4>
-        <table>
-            <tr>
-                <td colspan="2">
-                    <button type="button" class="vis-editor translateB" id="del_widget">del_widget</button>
-                    <button type="button" class="vis-editor translateB" id="widget_doc">widget_doc</button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button type="button" class="vis-editor translateB" id="dup_widget">dup_widget</button>
-                </td>
-                <td>
-                    <select class="vis-editor" id="select_view_copy"></select>
-                </td>
-            </tr>
-        </table>
     </div>
-
-
 </div>
+
+<div id="status_bar" class="ui-widget-header">
+<span>VIS Version: </span><span id="vis-version"></span>
+
+    <span id="savingProgress" role="button">Saving in progress</span>
+</div>
+
+
 
 <div style="display: none" id="uploadPreview"></div>
 
 
 <div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>
 
+
+
 </body>
+
 </html>

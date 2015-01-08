@@ -1,6 +1,23 @@
 html{
     -webkit-user-select: none;
     user-select: none;
+
+    overflow: hidden!important;
+    position: absolute!important;
+    width: 100%!important;
+    height: 100%!important;
+
+}
+body{
+    min-height: 100%!important;
+    max-height: 100%!important;
+    overflow: hidden!important;
+    position: absolute!important;
+    width: 100%!important;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
 }
 
 :focus {
@@ -596,9 +613,12 @@ p.xs_text_editor_mode {
 }
 
 #button_undo {
-    height: 28px;
-    width: 28px;
-    top: -4px;
+    height: 27px;
+    padding-left: 3px;
+    padding-right: 3px;
+    position: relative;
+    top: 4px;
+    left: -15px;
 }
 
 #new_view_name {
@@ -608,10 +628,12 @@ p.xs_text_editor_mode {
 
 #add_view {
     margin-left: 3px;
+    height: 23px;
 }
 
 #dup_view {
-
+    height: 23px;
+    margin-top: 2px;
 }
 
 #tabs-1 .ui-multiselect {
@@ -798,9 +820,11 @@ div.jGrowl div.warn {
 }
 
 #savingProgress {
-    margin-top: -8px;
-    width: 28px;
-    height: 28px;
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    right: 3px;
+    top: 1px;
 }
 
 
@@ -841,6 +865,32 @@ div.jGrowl div.warn {
 .ribbon_fild{
     height: 55px;
     margin-left: 5px;
-    background: transparent;
-    font-size: 12px;
+    background: rgba(0, 0, 0, 0);
+    font-size: 10px;
+    font-weight: bolder;
+    padding-top: 4px;
+}
+
+#dock_body > div > div.dock-container.dock-container-fill.document-manager.splitter-container-horizontal > div > div.tab-handle-list-container{
+    display: none!important;
+}
+#dock_body > div > div.dock-container.dock-container-fill.document-manager.splitter-container-horizontal > div > div.tab-handle-content-seperator{
+    display: none!important;
+}
+
+#dock_body{
+    width: 100%;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+
+}
+
+#status_bar{
+    height: 20px;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    background-color: red;
+
 }
