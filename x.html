@@ -1,0 +1,493 @@
+
+<script type="text/ejs" id="tplHtml" class="vis-tpl" data-vis-set="basic" data-vis-name="static - HTML" data-vis-attrs="html">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <%== this.data.attr('html') %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplIFrame" class="vis-tpl" data-vis-set="basic" data-vis-name="static - iFrame" data-vis-attrs="src;refreshInterval">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <% if (vis.editMode) { %>
+            <div class="editmode-helper" />
+            <% } %>
+            <iframe src="<%= this.data.attr('src') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <div <%= (el) -> vis.binds.basic.iframeRefresh(el, data.attr("src"), data.attr("refreshInterval")) %>></div>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplImage" class="vis-tpl" data-vis-set="basic" data-vis-name="static - Image" data-vis-attrs="src;refreshInterval[0]/slider,0,180000,100;refreshOnWakeUp[true]/checkbox;refreshOnViewChange[true]/checkbox">
+    <div class="vis-widget <%== data.class %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <% if (vis.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
+            <img style="position:absolute; width:100%;" <%= this.data.attr('src') ? 'src="'+this.data.attr('src')+'"' : '' %> />
+            <div <%= (el) -> vis.binds.basic.imgRefresh(el, data.attr("src"), data.attr("refreshInterval"), data.attr("refreshOnWakeUp"), data.attr("refreshOnViewChange")) %> />
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplLink" class="vis-tpl" data-vis-set="basic" data-vis-name="static - link" data-vis-attrs="html;href;target;alt">
+    <div class="vis-widget <%== data.class %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr("target") %>" alt="<%== this.data.attr("alt") %>" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%"><%== this.data.attr("html") %></div></a>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplFrame" class="vis-tpl" data-vis-set="basic" data-vis-name="static - Border"
+        data-vis-attrs="title['Title'];title_font;title_color[black]/color;title_back/color;title_top[-10]/slider,-20,20,1;title_left[15]/slider,-20,30,1;header_height[0]/slider,0,100,1;header_color[black]/color">
+    <div class="vis-widget <%== data.class %>" style="overflow:visible;width:50px;height:50px;border:1px solid #888" id="<%= this.data.attr('wid') %>" >
+        <% if (this.data.attr('header_height')) { %>
+	    <div style="width:100%;height:<%= this.data.attr('header_height') %>px;background-color:<%= this.data.attr('header_color') %>">
+		<% } %>
+        <div style="position:absolute;top:<%= this.data.attr('title_top') %>px;left:<%= this.data.attr('title_left') %>px;color:<%== this.data.attr('title_color') %>;background:<%== this.data.attr('title_back') %>;font:<%== this.data.attr('title_font') %>"><%== this.data.attr('title') %></div>
+        <% if (this.data.attr('header_height')) { %>
+        </div>
+		<% } %>
+    </div>
+
+</script>
+<!-- basic Container -->
+
+<script type="text/ejs" id="tplContainerView" class="vis-tpl" data-vis-set="basic" data-vis-name="container - view in widget" data-vis-attrs="contains_view">
+    <div class="vis-widget <%== data.class %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
+            <% if (vis.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
+            <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body">
+        </div>
+    </div>
+
+</script>
+
+
+<!-- Stateful Widgets -->
+
+<script type="text/ejs" id="tplStatefulContainerView8" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful/container - view in widget 8"
+        data-vis-attrs="oid;persistent/checkbox;contains_view_0;contains_view_1;contains_view_2;contains_view_3;contains_view_4;contains_view_5;contains_view_6;contains_view_7">
+    <div class="vis-widget <%== data.class %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
+        <% if (vis.editMode) { %>
+            <div class="editmode-helper" />
+        <% } %>
+        <%
+            var viewArr = [data.attr("contains_view_0"), data.attr("contains_view_1"), data.attr("contains_view_2"), data.attr("contains_view_3"), data.attr("contains_view_4"), data.attr("contains_view_5"), data.attr("contains_view_6"), data.attr("contains_view_7")];
+        %>
+        <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= viewArr[vis.states.attr(data.attr('oid') + '.val')] %>" class="vis-widget-body">
+            <div class="vis-view-container" data-oid="<%= data.oid %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplStatefulIFrame8" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - iFrame 8" data-vis-attrs="oid;refreshInterval;src_(0-7)">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+        <% if (vis.editMode) { %>
+            <div class="editmode-helper"/>
+        <% } %>
+        <div class="vis-widget-body">
+            <% if (vis.editMode) { %>
+                <div class="editmode-helper"/>
+            <% } %>
+            <%
+                var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];
+            %>
+            <iframe class="vis-widget-element" data-oid="<%= data.oid %>" src="<%== srcArr[vis.states.attr(data.attr('oid') + '.val')] %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <div <%= (el) -> vis.binds.stateful.iframe(el, srcArr, data.attr("refreshInterval")) %> />
+        </div>
+    </div>
+
+</script>
+
+<!-- TODO
+<script type="text/ejs" id="tplStatefulIFrame8Persistent" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - iFrame 8 (persistent)" data-vis-attrs="oid;refreshInterval;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+            <% if (vis.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
+          <div class="vis-widget-body">
+            <% if (vis.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
+            <iframe class="vis-widget-element" src="<%= this.data.attr('src_0') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="vis-widget-element" src="<%= this.data.attr('src_1') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="vis-widget-element" src="<%= this.data.attr('src_2') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="vis-widget-element" src="<%= this.data.attr('src_3') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="vis-widget-element" src="<%= this.data.attr('src_4') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="vis-widget-element" src="<%= this.data.attr('src_5') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="vis-widget-element" src="<%= this.data.attr('src_6') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <iframe class="vis-widget-element" src="<%= this.data.attr('src_7') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
+            <div <%= (el) -> vis.binds.stateful.iframe(el, [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7"]), data.attr("refreshInterval")) %> />
+        </div>
+    </div>
+</script>
+-->
+
+<script type="text/ejs" id="tplStatefulImage8" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - Image 8" data-vis-attrs="oid;refreshInterval;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
+    <div class="vis-widget <%== data.class %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <% if (vis.editMode) { %>
+            <div class="editmode-helper" />
+        <% } %>
+        <div class="vis-widget-body">
+            <% if (vis.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
+            <%
+                var srcArr = [data.attr("src_0"), data.attr("src_1"), data.attr("src_2"), data.attr("src_3"), data.attr("src_4"), data.attr("src_5"), data.attr("src_6"), data.attr("src_7")];
+            %>
+            <img class="vis-widget-element" data-oid="<%= data.oid %>" style="position:absolute; width:100%;" src="<%== srcArr[vis.states.attr(data.attr('oid') + '.val')] %>" />
+            <div <%= (el) -> vis.binds.stateful.image(el, srcArr, data.attr("refreshInterval")) %> />
+        </div>
+    </div>
+
+</script>
+
+
+<script type="text/ejs" id="tplHtmlNav" class="vis-tpl" data-vis-set="basic" data-vis-name="navigation - HTML" data-vis-attrs="html;nav_view;sync/checkbox;body-background/color;group.effects;hide_effect;hide_duration;hide_options;show_effect;show_duration;show_options">
+    <div class="vis-widget <%== data.class %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: (data.attr('hide_options') ? data.attr('hide_options') : {}),duration:data.attr('hide_duration')}, showOptions: {effect:data.attr('show_effect'), options: (data.attr('show_options') ? data.attr('show_options') : {}), duration: data.attr('show_duration')}, sync: data.attr('sync'), background: data.attr('body-background')}) %>>
+        <div class="vis-widget-body">
+            <%== this.data.attr('html') %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplFilterDropdown" class="vis-tpl" data-vis-set="basic" data-vis-name="filter - dropdown" data-vis-attrs="filters;hide_effect;hide_duration;show_effect;show_duration">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left:0px; width: 200px; height: 40px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.filterDropdown(el, data.attr('filters'), data.attr('hide_effect'), data.attr('hide_duration'), data.attr('show_effect'),data.attr('show_duration')) %>>
+        <div class="vis-widget-body">
+            <select id="" name="">
+                <option value="">all</option>
+            </select>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueFloat" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Number" data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
+    <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + ".val") == "true" ||  vis.states.attr(this.data['oid-quality'] + ".val") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== data.class %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= data.oid %>">
+                <%== this.data.attr("html_prepend") %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(vis.states.attr(this.data.oid + ".val")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueString" class="vis-tpl" data-vis-set="basic" data-vis-name="val - String" data-vis-attrs="oid;html_prepend;html_append;test_html">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= data.oid %>">
+                <%== this.data.attr("html_prepend") %><%= (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".val") %><%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueStringRaw" class="vis-tpl" data-vis-set="basic" data-vis-name="val - String (unescaped)" data-vis-attrs="oid;html_prepend;html_append;test_html">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= data.oid %>">
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".val") %><%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueTimestamp" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Timestamp" data-vis-attrs="oid;html_prepend;html_append;test_html">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= data.oid %>">
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".ts") %><%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueLastchange" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Lastchange Timestamp" data-vis-attrs="oid;html_prepend;html_append;test_html">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= data.oid %>">
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".lc") %><%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+
+<script type="text/ejs" id="tplValueStringImg" class="vis-tpl" data-vis-set="basic" data-vis-name="val - String img src" data-vis-attrs="oid;html_prepend;html_append;refreshInterval[0]/slider,0,180000,100">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left:0px; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= data.oid %>">
+                <%== this.data.attr("html_prepend") %>
+                <img <%= vis.states.attr(this.data.oid + ".val" ) ? "src='" +  vis.states.attr(this.data.oid + ".val" ) + "'" : "" %> width="100%"/>
+                 <div <%= (el) -> vis.binds.basic.imgRefresh(el, vis.states.attr(data.oid + ".val" ), data.attr("refreshInterval")) %> />
+                <%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+
+</script>
+<script type="text/ejs" id="tplValueList" class="vis-tpl" data-vis-set="basic" data-vis-name="val - ValueList Text" data-vis-attrs="oid;html_prepend;html_append;valuelist;test_list/-,0,1,2,3,4,5,6,7,8,9,10,11,12">
+    <div class="vis-widget <%== data.class %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= data.oid %>">
+                <%== this.data.attr("html_prepend") %><% var list = (data.vallist ? data.vallist.split(';') : []); %><%= list[(vis.editMode && this.data.attr('test_html')) ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"))] %><%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueListHtml" class="vis-tpl" data-vis-set="basic" data-vis-name="val - ValueList HTML" data-vis-attrs="oid;html_prepend;html_append;valuelist">
+    <div class="vis-widget <%== data.class %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= data.oid %>">
+                <%== this.data.attr("html_prepend") %><% var list = (data.vallist ? data.vallist.split(';') : []); %><%== list[parseInt(vis.states.attr(this.data.oid + ".val"),10)] %><%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+
+</script>
+<script type="text/ejs" id="tplValueListHtml8" class="vis-tpl" data-vis-set="basic" data-vis-name="val - ValueList HTML 8" data-vis-attrs="oid;html_prepend;html_append;value0;value1;value2;value3;value4;value5;value6;value7;style0;style1;style2;style3;style4;style5;style6;style7">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left:0px; width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" style="<% var slist = [data.style0,data.style1,data.style2,data.style3,data.style4,data.style5,data.style6,data.style7]; %><%== slist[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))),10)] %>">
+        <div data-oid="<%= data.oid %>">
+            <%== this.data.attr("html_prepend") %><% var list = [data.val0,data.val1,data.val2,data.val3,data.val4,data.val5,data.val6,data.val7]; %><%== list[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))),10)] %><%== this.data.attr("html_append") %>
+        </div>
+    </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueBool" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Bool HTML" data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= data.oid %>" >
+        <div class="vis-widget-body">
+            <%== this.data.attr("html_prepend") %>
+            <%
+            var str = vis.states.attr(this.data.oid + ".val");
+            var val = parseFloat(str);
+            var state;
+            if (str === false || str === "false" || val == 0) {
+            %>
+            <%== this.data.attr("html_false") %>
+            <% } else { %>
+            <%== this.data.attr("html_true") %>
+            <% } %>
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+
+</script>
+
+
+<script type="text/ejs" id="tplAckBool" class="vis-tpl" data-vis-set="basic" data-vis-name="val - AckFlag HTML" data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= data.oid %>" >
+        <div class="vis-widget-body">
+            <%== this.data.attr("html_prepend") %>
+            <%
+            var str = vis.states.attr(this.data.oid + ".ack");
+            var val = parseFloat(str);
+            var state;
+            if (str === false || str === "false" || val == 0) {
+            %>
+            <%== this.data.attr("html_false") %>
+            <% } else { %>
+            <%== this.data.attr("html_true") %>
+            <% } %>
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueBoolCheckbox" class="vis-tpl" data-vis-set="basic" data-vis-name="ctrl - Bool Checkbox" data-vis-attrs="oid;html_prepend;html_append">
+    <div class="vis-widget <%== data.class %>" style="" id="<%= this.data.attr('wid') %>" >
+        <div class="vis-widget-body">
+			<%== this.data.attr("html_prepend") %>
+			<input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox" id="<%= this.data.attr('wid') %>_checkbox" data-oid="<%= data.oid %>" <%= (el) -> vis.binds.basic.checkbox(el) %>/>
+			<%== this.data.attr("html_append") %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueBoolSelect" class="vis-tpl" data-vis-set="basic" data-vis-name="ctrl - Bool Select" data-vis-attrs="oid;html_prepend;html_append;text_true;text_false">
+    <div class="vis-widget <%== data.class %>" style="" id="<%= this.data.attr('wid') %>" >
+        <div class="vis-widget-body">
+			<%== this.data.attr("html_prepend") %>
+			<select id="<%= this.data.attr('wid') %>_select" data-oid="<%= data.oid %>">
+				<option value="0" selected='selected'><%= this.data.attr('text_false') %></option>
+				<option value="1"><%= this.data.attr('text_true') %></option>
+			</select>
+			<div <%= (el) -> vis.binds.basic.select(el) %>></div>
+			<%== this.data.attr("html_append") %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueBoolCtrl" class="vis-tpl" data-vis-set="basic" data-vis-name="ctrl - Bool HTML" data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= data.oid %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
+        <div class="vis-widget-body">
+			<%== this.data.attr("html_prepend") %>
+			<%
+			var str = vis.states.attr(this.data.oid + ".val");
+			var val = parseFloat(str);
+			var state;
+			if (val === 0 || str === "false" || str === false) {
+			%>
+			    <%== this.data.attr("html_false") %>
+			<% } else { %>
+			    <%== this.data.attr("html_true") %>
+			<% } %>
+			<%== this.data.attr("html_append") %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueBoolCtrlSvg" class="vis-tpl" data-vis-set="basic" data-vis-name="ctrl - Bool SVG" data-vis-attrs="oid;svg_false;svg_true;opacity">
+    <% vis.binds.basic.showSvg(data.class, this.view, this.data.attr('wid'), data.oid,this.data.attr("opacity"),this.data.attr("svg_false"),this.data.attr("svg_true")) %>
+
+</script>
+
+<script type="text/ejs" id="tplBasicState" class="vis-tpl" data-vis-set="basic" data-vis-name="ctrl - HTML State" data-vis-attrs="html;oid;value">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= data.oid %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el) %>>
+        <div class="vis-widget-body">
+			<%== this.data.attr("html") %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplHide" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Hide on 0/False" data-vis-attrs="oid;html;html_prepend;html_append">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left:0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= data.oid %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
+        <div class="vis-widget-body">
+            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplHideTrue" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Hide on >0/True" data-vis-attrs="oid;html;html_prepend;html_append">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left: 0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= data.oid %>" <%= (el) -> vis.binds.basic.hideOnTrue(el) %>>
+        <div class="vis-widget-body">
+            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplShowValue" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Show on Value" data-vis-attrs="oid;value;html;html_prepend;html_append">
+    <div class="vis-widget <%== data.class %>" style="top:0px; left: 0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= data.oid %>" <%= (el) -> vis.binds.basic.showOnValue(el, data.attr('value')) %>>
+        <div class="vis-widget-body">
+            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
+        </div>
+    </div>
+
+</script>
+
+
+<script type="text/ejs" id="tplRedNumber" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Red Number" data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural">
+    <div class="vis-widget <%== data.class %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-oid="<%= data.oid %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
+        <div class="vis-widget-body" >
+            <%== this.data.attr("html_prepend") %><%= parseInt(vis.states.attr(this.data.oid + '.val'), 10) %><%== (parseInt(vis.states.attr(this.data.oid+".val"), 10) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplBulbOnOff" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Bulb on/off" data-vis-attrs="oid">
+    <div data-oid="<%= data.oid %>" class="vis-widget <%== data.class %>" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <% switch (vis.states.attr(this.data.oid + '.val')) { case 0: case "0": case "0.000000": case false: case "false": %>
+            <img src="img/bulb_off.png" width="100%"/>
+            <% break; default: %>
+            <img src="img/bulb_on.png" width="100%"/>
+            <% } %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplBulbOnOffCtrl" class="vis-tpl" data-vis-set="basic" data-vis-name="ctrl - Bulb on/off" data-vis-attrs="oid">
+    <div data-oid="<%= data.oid %>" class="vis-widget <%== data.class %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
+    <div class="vis-widget-body">
+        <% switch (vis.states.attr("_"+this.data.oid+".val")) { case 0: case "0": case "0.000000": case "false": case false: %>
+        <img src="img/bulb_off.png" width="100%"/>
+        <% break; default: %>
+        <img src="img/bulb_on.png" width="100%"/>
+        <% } %>
+    </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplHmWindowRotary" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Drehgriff" data-vis-attrs="oid;html_closed;html_tilt;html_open">
+    <div class="vis-widget <%== data.class %>" style="width:100px;height:20px" id="<%= this.data.attr('wid') %>" data-oid="<%= data.oid %>">
+        <div class="vis-widget-body">
+            <% switch (vis.states.attr(this.data.oid + ".val")) { case 0: case "false": case false: %>
+            <%== this.data.attr("html_closed") %>
+            <% break; case 1: case true: %>
+            <%== this.data.attr("html_tilt") %>
+            <% break; case 2: %>
+            <%== this.data.attr("html_open") %>
+            <% } %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplHmWindow" class="vis-tpl" data-vis-set="basic" data-vis-name="val - TFK" data-vis-attrs="oid;html_closed;html_open">
+    <div data-oid="<%= data.oid %>" class="vis-widget <%== data.class %>" id="<%= this.data.attr('wid') %>" style="height:20px;width:100px">
+        <div class="vis-widget-body">
+            <% switch (vis.states.attr(this.data.oid + ".val")) { case "true": case true: %>
+            <%== this.data.attr("html_open") %>
+            <% break; default: %>
+            <%== this.data.attr("html_closed") %>
+            <% } %>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueFloatBar" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Bar Horizontal" data-vis-attrs="oid;factor[1];color;border;shadow;reverse/checkbox">
+    <div class="vis-widget <%== data.class %>" style="width:240px;height:20px;border:1px solid #888" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" style="<%= (this.data.reverse === "true" || this.data.reverse === true ? "float:right; " : "") %>background-color:<%= this.data.color %>;border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;width:<%= vis.states.attr(this.data.oid + '.val') * this.data.factor %>%;">
+            <div data-oid="<%= data.oid %>">
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/ejs" id="tplValueFloatBarVertical" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Bar Vertical" data-vis-attrs="oid;factor[1];color;border;shadow;reverse/checkbox">
+    <div class="vis-widget <%== data.class %>" style="width:20px;height:240px;border:1px solid #888" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" style="<%= "height:" + parseInt(vis.states.attr(this.data.oid + '.val')) * this.data.factor + "%;" %><%= (this.data.reverse === "true" || this.data.reverse === true ? "left:0px;position:absolute;bottom:0%;" : "") %>border:<%= this.data.border %>;box-shadow:<%= this.data.shadow %>;background-color:<%= this.data.color %>">
+            <div data-oid="<%= data.oid %>">
+            </div>
+        </div>
+    </div>
+
+</script>
+<script type="text/ejs" id="tplNote" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Note" data-vis-attrs="oid;max_width[300];html_prepend;html_append;test_text">
+    <div class="vis-widget <%== data.class %>" style="width:50px;height:50px;border:1px solid #888;background:yellow" id="<%= this.data.attr('wid') %>" onclick="vis.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= data.oid %>')">
+		<div data-oid="<%= data.oid %>" id="div_<%= this.data.attr('wid') %>">
+			<%== this.data.attr("html_prepend") %><%= vis.states.attr(this.data.oid + ".val") == null ? "" : vis.states.attr(this.data.oid + ".val") %><%== this.data.attr("html_append") %>
+		</div>
+    </div>
+
+</script>

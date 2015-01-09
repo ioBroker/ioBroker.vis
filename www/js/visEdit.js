@@ -2655,46 +2655,26 @@ vis = $.extend(true, vis, {
     editInit_addWidget: function () {
         var wid_sets = {};
         $.each(vis.widgetSets, function () {
-            var set = this.toString() ;
-            $("#pan_add_wid").append('<div id="toolset_'+set+'" ></div>');
+            var set = this.toString();
+            $("#pan_add_wid").append('<div id="toolset_' + set + '" class="toolbox"><h4>' + set + ':</h4></div>');
 
-            wid_sets[set.toString()] = [];
             $.each($(".vis-tpl[data-vis-set='" + set + "']"), function () {
 
                 var tpl = $(this).attr("id")
+                var widgetId = tpl + "_prev";
 
-                wid_sets[set].push(tpl);
+                //var start = (new Date).valueOf()
+                var test = {
+                    wid: widgetId,
+                    data: new can.Map($.extend({
+                            "wid": widgetId
+                        })
+                    )
+                };
+                //console.log( (new Date).valueOf()-start)
 
-var data = {}
-
-
-                add(tpl,data, set);
-
-function add (tpl, data, set){
-
-
-
-
-
-    var widgetId = tpl + "_prev";
-
-
-
-
-    var $jWidget = $('#' + widgetId);
-    var style = {position: "relative", left: "0px", top: "10px"}
-
-
-
-    if (style) $jWidget.css(style);
-
-
-
-
-
-    return widgetId;
-}
-
+                $('#toolset_' + set).append('<div class="wid_prev ui-state-default ui-corner-all"><span>' + $("#" + tpl).data("vis-name") + '</span><br></div>');
+                $($('#toolset_' + set).children().last()).append(can.view(tpl, test))
             })
         });
     },

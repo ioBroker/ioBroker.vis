@@ -891,6 +891,24 @@ div.jGrowl div.warn {
     position: absolute;
     width: 100%;
     bottom: 0;
-    background-color: red;
+}
+.toolbox{
+text-align: center;
+}
+.wid_prev{
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    display: inline-block;
+    background-color: white!important;
+    background-image: none!important;
+    color: black!important;
+    margin: 5px;
 
+}
+
+.wid_prev > .vis-widget{
+    position: relative!important;
 }
