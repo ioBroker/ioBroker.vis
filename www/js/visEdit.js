@@ -2247,8 +2247,9 @@ vis = $.extend(true, vis, {
                 height: 410,
                 checkAllText: _("Check all"),
                 uncheckAllText: _("Uncheck all"),
-                noneSelectedText: _("Select options")
+                noneSelectedText: _("Select options"),
             });
+
         });
 
         $("select.vis-editor-xlarge").each(function () {
@@ -2289,6 +2290,8 @@ vis = $.extend(true, vis, {
             });
         });
 
+        $('#select_set').next().addClass("select_set");
+
         $('#widget_doc').button({icons: {primary: 'ui-icon-script'}}).click(function () {
             var tpl = vis.views[vis.activeView].widgets[vis.activeWidget].tpl;
             var widgetSet = $('#' + tpl).attr('data-vis-set');
@@ -2296,33 +2299,8 @@ vis = $.extend(true, vis, {
             window.open(docUrl, "WidgetDoc", "height=640,width=500,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no,location=no");
         });
 
-
         $("#dup_widget").button({icons: {primary: "ui-icon-copy"}}).click(function () {
             vis.dupWidget();
-        });
-
-        $("#add_widget").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
-            var tpl = $("#select_tpl option:selected").val();
-            var $tpl = $('#' + tpl);
-            var renderVisible = $tpl.attr('data-vis-render-visible');
-
-            // Widget attributs default values
-            var attrs = $tpl.attr('data-vis-attrs');
-            var data = {};
-            if (attrs) {
-                attrs = attrs.split(';');
-                if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
-            }
-            if (renderVisible) data.renderVisible = true;
-
-            that.addWidget(tpl, data);
-
-            $('#select_active_widget').append('<option value="' + that.activeWidget + '">' + that.getWidgetName(that.activeView, that.activeWidget) + ')</option>')
-                .multiselect('refresh');
-
-            setTimeout(function () {
-                that.inspectWidget(that.activeWidget)
-            }, 50);
         });
 
         $("#add_view").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
@@ -2527,7 +2505,7 @@ vis = $.extend(true, vis, {
          }, 10000);*/
 
         // Instances
-        if (typeof storage !== 'undefined') {
+        if (typeof storage !== 'undefined' && local == false) {
             // Show what's new
             if (storage.get('lastVersion') != vis.version) {
                 // Read
@@ -2614,6 +2592,19 @@ vis = $.extend(true, vis, {
             active: 2
         });
 
+        // Tabs open Close
+        $("#menu_body > ul > li").dblclick(function(){
+           $(".ribbon_tab").hide()
+                var divDockManager = document.getElementById("dock_body");
+                dockManager.resize(window.innerWidth - (divDockManager.clientLeft + divDockManager.offsetLeft), window.innerHeight - (divDockManager.clientTop + divDockManager.offsetTop) - 20);
+        });
+
+        $("#menu_body > ul > li").click(function(){
+            $("#menu_body").tabs("refresh" );
+            var divDockManager = document.getElementById("dock_body");
+            dockManager.resize(window.innerWidth - (divDockManager.clientLeft + divDockManager.offsetLeft), window.innerHeight - (divDockManager.clientTop + divDockManager.offsetTop) - 20);
+        });
+
         // Theme auswahl
         $("#ul_theme li a").click(function () {
             var theme = $(this).data('info');
@@ -2651,30 +2642,33 @@ vis = $.extend(true, vis, {
             $("#dialog_setup").dialog("open")
         });
     },
-
-    editInit_addWidget: function () {
-        var wid_sets = {};
+    editInit_addWidget_prev: function () {
         $.each(vis.widgetSets, function () {
             var set = this.toString();
             $("#pan_add_wid").append('<div id="toolset_' + set + '" class="toolbox"><h4>' + set + ':</h4></div>');
 
             $.each($(".vis-tpl[data-vis-set='" + set + "']"), function () {
-
                 var tpl = $(this).attr("id")
-                var widgetId = tpl + "_prev";
-
-                //var start = (new Date).valueOf()
-                var test = {
-                    wid: widgetId,
-                    data: new can.Map($.extend({
-                            "wid": widgetId
-                        })
-                    )
-                };
-                //console.log( (new Date).valueOf()-start)
-
-                $('#toolset_' + set).append('<div class="wid_prev ui-state-default ui-corner-all"><span>' + $("#" + tpl).data("vis-name") + '</span><br></div>');
-                $($('#toolset_' + set).children().last()).append(can.view(tpl, test))
+                setTimeout(function(){
+                    var widgetId = tpl + "_prev";
+                    //var start = (new Date).valueOf()
+                    var data = {
+                        wid: widgetId,
+                        data: new can.Map($.extend({
+                                "wid": widgetId
+                            })
+                        )
+                    };
+                    //console.log( (new Date).valueOf()-start)
+                    $('#toolset_' + set).append('<div class="wid_prev ui-state-default ui-corner-all"><span>' + $("#" + tpl).data("vis-name") + '</span><br></div>');
+                    $($('#toolset_' + set).children().last()) //todo geht das nicht besser ?
+                        .append(can.view(tpl, data))
+                        .draggable({
+                            helper: "clone",
+                            containment: $("#dock_body"),
+                            zIndex: 10000,
+                        });
+                },0);
             })
         });
     },
@@ -2877,17 +2871,20 @@ vis = $.extend(true, vis, {
             $('#local_view').show();
         }
 
-        vis.editInit_addWidget();
+
+        setTimeout(function(){
+            vis.editInit_addWidget_prev();
+        },0)
     },
 
     refreshWidgetSelect: function () {
-        var $select_tpl = $("#select_tpl");
-        $select_tpl.html('');
-        var current_set = $("#select_set option:selected").val();
-        $(".vis-tpl[data-vis-set='" + current_set + "']").each(function () {
-            $("#select_tpl").append("<option value='" + $(this).attr('id') + "'>" + $(this).attr("data-vis-name") + "</option>")
-        });
-        $select_tpl.multiselect('refresh');
+        //var $select_tpl = $("#select_tpl");
+        //$select_tpl.html('');
+        //var current_set = $("#select_set option:selected").val();
+        //$(".vis-tpl[data-vis-set='" + current_set + "']").each(function () {
+        //    $("#select_tpl").append("<option value='" + $(this).attr('id') + "'>" + $(this).attr("data-vis-name") + "</option>")
+        //});
+        //$select_tpl.multiselect('refresh');
     },
     // Find free place for new widget
     findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {

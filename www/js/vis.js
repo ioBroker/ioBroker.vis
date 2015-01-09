@@ -14,12 +14,28 @@ var local = true;
 
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
-        'No connection to Server': {'en': 'No connection to Server', 'de': 'Keine Verbindung zu Server', 'ru': 'Нет соединения с сервером'},
-        'Loading Views...': {'en': 'Loading Views...', 'de': 'Lade Views...', 'ru': 'Загрузка пользовательских страниц...'},
-        'Connecting to Server...': {'en': 'Connecting to Server...', 'de': 'Verbinde mit Server...', 'ru': 'Соединение с сервером...'},
+        'No connection to Server': {
+            'en': 'No connection to Server',
+            'de': 'Keine Verbindung zu Server',
+            'ru': 'Нет соединения с сервером'
+        },
+        'Loading Views...': {
+            'en': 'Loading Views...',
+            'de': 'Lade Views...',
+            'ru': 'Загрузка пользовательских страниц...'
+        },
+        'Connecting to Server...': {
+            'en': 'Connecting to Server...',
+            'de': 'Verbinde mit Server...',
+            'ru': 'Соединение с сервером...'
+        },
         'Loading data objects...': {'en': 'Loading data...', 'de': 'Lade Daten...', 'ru': 'Загрузка данных...'},
         'Loading data values...': {'en': 'Loading values...', 'de': 'Lade Werte...', 'ru': 'Загрузка значений...'},
-        'error - View doesn\'t exist': {'en': 'View doesn\'t exist!', 'de': 'View existiert nicht!', 'ru': 'Страница не существует!'},
+        'error - View doesn\'t exist': {
+            'en': 'View doesn\'t exist!',
+            'de': 'View existiert nicht!',
+            'ru': 'Страница не существует!'
+        },
         'No Views found on Server': {
             'en': 'No Views found on Server',
             'de': 'Keine Views gefunden am Server.',
@@ -57,34 +73,34 @@ if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemL
 
 var vis = {
 
-    version:                '0.0.1',
-    requiredServerVersion:  '0.0.0',
-    
-    storageKeyViews:        'visViews',
-    storageKeySettings:     'visSettings',
-    storageKeyInstance:     'visInstance',
-    
-    instance:               null,
-    urlParams:              {},
-    settings:               {},
-    views:                  null,
-    widgets:                {},
-    activeView:             '',
-    widgetSets:             visConfig.widgetSets,
-    initialized:            false,
-    toLoadSetsCount:        0, // Count of widget sets that should be loaded
-    isFirstTime:            true,
-    useCache:               true,
-    authRunning:            false,
-    cssChecked:             false,
-    
-    binds:                  {},
-    onChangeCallbacks:      [],
-    viewsActiveFilter:      {},
-    projectPrefix:          window.location.search ? window.location.search.slice(1) + '/': 'main/',
-    navChangeCallbacks:     [],
-    editMode:               false,
-    language:               (typeof systemLang != 'undefined') ? systemLang : visConfig.language,
+    version: '0.0.1',
+    requiredServerVersion: '0.0.0',
+
+    storageKeyViews: 'visViews',
+    storageKeySettings: 'visSettings',
+    storageKeyInstance: 'visInstance',
+
+    instance: null,
+    urlParams: {},
+    settings: {},
+    views: null,
+    widgets: {},
+    activeView: '',
+    widgetSets: visConfig.widgetSets,
+    initialized: false,
+    toLoadSetsCount: 0, // Count of widget sets that should be loaded
+    isFirstTime: true,
+    useCache: true,
+    authRunning: false,
+    cssChecked: false,
+
+    binds: {},
+    onChangeCallbacks: [],
+    viewsActiveFilter: {},
+    projectPrefix: window.location.search ? window.location.search.slice(1) + '/' : 'main/',
+    navChangeCallbacks: [],
+    editMode: false,
+    language: (typeof systemLang != 'undefined') ? systemLang : visConfig.language,
 
 
     setValue: function (id, val) {
@@ -273,17 +289,17 @@ var vis = {
         this.loadWidgetSets(this.initNext);
     },
     initNext: function () {
-            this.loadRemote(function () {
-                this.showWaitScreen(false);
+        this.loadRemote(function () {
+            this.showWaitScreen(false);
 
-                // First start.
-                if (!this.views) {
-                    this.initViewObject();
-                    return false;
-                }else{
-                    this.showWaitScreen(false);
-                }
-            });
+            // First start.
+            if (!this.views) {
+                this.initViewObject();
+                return false;
+            } else {
+                this.showWaitScreen(false);
+            }
+        });
 
 
         var hash = window.location.hash.substring(1);
@@ -303,7 +319,10 @@ var vis = {
                         alert(_("error - View doesn't exist"));
                         window.location.href = "./edit.html";
                     } else {
-                        this.views["DemoView"] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                        this.views["DemoView"] = this.createDemoView ? this.createDemoView() : {
+                            settings: {style: {}},
+                            widgets: {}
+                        };
                         this.activeView = "DemoView";
                         //vis.showWaitScreen(false);
                     }
@@ -319,7 +338,10 @@ var vis = {
                     //alert("unexpected error - this should not happen :(");
                     //$.error("this should not happen :(");
                     // create demoView
-                    this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                    this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {
+                        settings: {style: {}},
+                        widgets: {}
+                    };
                     this.activeView = 'DemoView';
                 }
             }
@@ -358,7 +380,10 @@ var vis = {
         else {
             if (confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
-                this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {
+                    settings: {style: {}},
+                    widgets: {}
+                };
                 this.saveRemote(function () {
                     window.location.reload()
                 });
@@ -431,6 +456,39 @@ var vis = {
             }
             if (vis.binds.jqueryui && vis.editMode) {
                 vis.binds.jqueryui._disable();
+            }
+
+            if (vis.editMode) {
+                $($view).droppable({
+                    accept: ".wid_prev",
+                    drop: function (event, ui) {
+                        var tpl = $(ui.draggable).children().last().attr("id").replace("_prev", "");
+                        var view_pos = $("#vis_container").position();
+                        var add_pos = {left: ui.position.left - view_pos.left + $("#vis_container").scrollLeft(), top: ui.position.top - view_pos.top +$("#vis_container").scrollTop()};
+
+                        var $tpl = $('#' + tpl);
+                        var renderVisible = $tpl.attr('data-vis-render-visible');
+
+                        // Widget attributs default values
+                        var attrs = $tpl.attr('data-vis-attrs');
+                        var data = {};
+                        if (attrs) {
+                            attrs = attrs.split(';');
+                            if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
+                        }
+                        if (renderVisible) data.renderVisible = true;
+
+                        vis.addWidget(tpl,data,add_pos);
+
+                        $('#select_active_widget').append('<option value="' + vis.activeWidget + '">' + vis.getWidgetName(vis.activeView, vis.activeWidget) + ')</option>')
+                            .multiselect('refresh');
+
+                        setTimeout(function () {
+                            vis.inspectWidget(vis.activeWidget)
+                        }, 50);
+
+                    }
+                });
             }
         }
 
@@ -770,7 +828,7 @@ var vis = {
         this.saveRemote(function () {
             $(window).off('hashchange');
             window.location.hash = "#" + view;
-            window.location.reload();
+            window.location.reload(); // todo das stört !!! Kann man das nicht anders machen ?
         });
     },
     loadRemote: function (callback, callbackArg) {
@@ -823,10 +881,10 @@ var vis = {
         }
         this.saveRemoteActive = true;
 
-            // Sync widget before it will be saved
-            if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
-                this.syncWidget(this.activeWidget);
-            }
+        // Sync widget before it will be saved
+        if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
+            this.syncWidget(this.activeWidget);
+        }
 
         if (local) {
             storage.set(this.storageKeyViews, JSON.stringify(this.views, null, 2));
@@ -1064,10 +1122,10 @@ if ('applicationCache' in window) {
                                     var obj = data[id];
                                     var o = {};
                                     o[id + '.val'] = obj.val;
-                                    o[id + '.ts']  = obj.ts;
+                                    o[id + '.ts'] = obj.ts;
                                     if (vis.states[id + '.val'] !== undefined) {
                                         o[id + '.ack'] = obj.ack;
-                                        o[id + '.lc']  = obj.lc;
+                                        o[id + '.lc'] = obj.lc;
                                     }
                                     try {
                                         vis.states.attr(o);
@@ -1084,7 +1142,7 @@ if ('applicationCache' in window) {
                             } else {
                                 // Get Server language
                                 vis.conn.getLanguage(function (err, lang) {
-                                    systemLang   = lang || systemLang;
+                                    systemLang = lang || systemLang;
                                     vis.language = systemLang;
                                     translateAll();
                                 });
@@ -1120,10 +1178,10 @@ if ('applicationCache' in window) {
                     var o = {};
                     // Check new model
                     o[id + '.val'] = state.val;
-                    o[id + '.ts']  = state.ts;
+                    o[id + '.ts'] = state.ts;
                     if (vis.states[id + '.val'] !== undefined) {
                         o[id + '.ack'] = state.ack;
-                        o[id + '.lc']  = state.lc;
+                        o[id + '.lc'] = state.lc;
                     }
                     try {
                         vis.states.attr(o);
@@ -1143,29 +1201,29 @@ if ('applicationCache' in window) {
                     vis.authRunning = true;
                     var users;
                     if (visConfig.auth.users && visConfig.auth.users.length) {
-                        users = '<select id="login-username" value="'+visConfig.auth.users[0]+'" class="login-input-field">';
+                        users = '<select id="login-username" value="' + visConfig.auth.users[0] + '" class="login-input-field">';
                         for (var z = 0; z < visConfig.auth.users.length; z++) {
                             users += '<option value="' + visConfig.auth.users[z] + '">' + visConfig.auth.users[z] + '</option>';
                         }
                         users += '</select>';
                     } else {
-                        users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name')+'">'
+                        users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name') + '">'
                     }
 
-                    var text = '<div id="login-box" class="login-popup" style="display:none">'+
-                                '<div class="login-message">'+message+'</div>'+
-                                '<div class="login-input-field">'+
-                                    '<label class="username">'+
-                                        '<span class="_">'+_('User name')+'</span>'+
-                                        users +
-                                    '</label>'+
-                                    '<label class="password">'+
-                                        '<span class="_">'+_('Password')+'</span>'+
-                                        '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password')+'">'+
-                                    '</label>'+
-                                    '<button class="login-button" type="button"  class="_">'+_('Sign in')+'</button>'+
-                                '</div>'+
-                            '</div>';
+                    var text = '<div id="login-box" class="login-popup" style="display:none">' +
+                        '<div class="login-message">' + message + '</div>' +
+                        '<div class="login-input-field">' +
+                        '<label class="username">' +
+                        '<span class="_">' + _('User name') + '</span>' +
+                        users +
+                        '</label>' +
+                        '<label class="password">' +
+                        '<span class="_">' + _('Password') + '</span>' +
+                        '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password') + '">' +
+                        '</label>' +
+                        '<button class="login-button" type="button"  class="_">' + _('Sign in') + '</button>' +
+                        '</div>' +
+                        '</div>';
 
                     $('body').append(text);
 
@@ -1179,29 +1237,29 @@ if ('applicationCache' in window) {
                     var popMargLeft = ($(loginBox).width() + 24) / 2;
 
                     $(loginBox).css({
-                        'margin-top' : -popMargTop,
-                        'margin-left' : -popMargLeft
+                        'margin-top': -popMargTop,
+                        'margin-left': -popMargLeft
                     });
 
                     // Add the mask to body
                     $('body').append('<div id="login-mask"></div>');
                     $('#login-mask').fadeIn(300);
                     // When clicking on the button close or the mask layer the popup closed
-                    $('#login-password').keypress(function(e) {
-                        if(e.which == 13) {
+                    $('#login-password').keypress(function (e) {
+                        if (e.which == 13) {
                             $('.login-button').trigger('click');
                         }
                     });
-                    $('.login-button').bind('click', function() {
+                    $('.login-button').bind('click', function () {
                         var user = $('#login-username').val();
                         var pass = $('#login-password').val();
-                        $('#login_mask , .login-popup').fadeOut(300 , function() {
+                        $('#login_mask , .login-popup').fadeOut(300, function () {
                             $('#login-mask').remove();
                             $('#login-box').remove();
                         });
-                        setTimeout (function () {
+                        setTimeout(function () {
                             vis.authRunning = false;
-                            console.log("user "+  user + ", " + pass + " " + salt);
+                            console.log("user " + user + ", " + pass + " " + salt);
                             vis.conn.authenticate(user, pass, salt);
                         }, 500);
                         return true;
@@ -1210,7 +1268,7 @@ if ('applicationCache' in window) {
                 onCommand: function (instance, command, data) {
                     if (instance != vis.instance && instance != 'FFFFFFFF') return false;
                     if (command) {
-                         // external Commands
+                        // external Commands
                         switch (command) {
                             case 'alert':
                                 alert(data);

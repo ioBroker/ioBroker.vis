@@ -51,8 +51,6 @@
     <script type="text/javascript" src="lib/js/html2canvas.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
     <script type="text/javascript" src="lib/dockspawn/js/dockspawn.js"></script>
-    <script type="text/javascript" src="lib/js/ejs.js"></script>
-    <script type="text/javascript" src="lib/js/ejs_production.js"></script>
 
     <script type="text/javascript" src="lib/js/superclick.js"></script>
 
@@ -378,13 +376,13 @@
     </div>
     <img src="lib/img/edit-undo-8.png" id="button_undo" class="ui-state-default ui-corner-top">
     <div class="ribbon_tab" id="ribbon_datei">
-        <div style="width: 100%; height: 70px" class="ui-widget-content">
+        <div class="ribbon_tab_content ui-widget-content">
 
         </div>
     </div>
     <div class="ribbon_tab" id="ribbon_view">
         <div class="ribbon_tab_content ui-widget-content">
-            <div class="ribbon_fild ui-widget-content ui-corner-all">
+            <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table style="border-spacing: 0px">
                     <tr>
                         <td colspan="2">
@@ -411,7 +409,7 @@
                 </table>
 
             </div>
-            <div class="ribbon_fild ui-widget-content ui-corner-all">
+            <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table>
                     <tr>
                         <td colspan="3">
@@ -430,7 +428,7 @@
                     </tr>
                 </table>
             </div>
-            <div class="ribbon_fild ui-widget-content ui-corner-all">
+            <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table>
                     <tr>
                         <td colspan="3">
@@ -449,7 +447,7 @@
                     </tr>
                 </table>
             </div>
-            <div class="ribbon_fild ui-widget-content ui-corner-all" style="font-size: 6px; padding-right: 4px;">
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="font-size: 6px; padding-right: 4px;">
                 <table>
                     <tr>
                         <td class="vis-edit-td-caption translate">comment</td>
@@ -474,7 +472,7 @@
     </div>
     <div class="ribbon_tab" id="ribbon_widget">
         <div class="ribbon_tab_content ui-widget-content">
-            <div class="ribbon_fild ui-widget-content ui-corner-all">
+            <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table style="border-spacing: 0px">
                     <tr>
                         <td colspan="1" style="text-align: center; height: 24px;">Remove Widget</td>
@@ -487,7 +485,7 @@
                     </tr>
                 </table>
             </div>
-            <div class="ribbon_fild ui-widget-content ui-corner-all">
+            <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table style="border-spacing: 0px">
                     <tr>
                         <td colspan="1">Inspeckt Widget</td>
@@ -507,28 +505,7 @@
                     </tr>
                 </table>
             </div>
-            <div class="ribbon_fild ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
-                    <tr>
-                        <td colspan="2" style="text-align: center">
-                            <button class="vis-editor translateB" type="button" id="add_widget">add_widget</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div style="width:103px; display:inline" class="translate">Widget Set:</div>
-                            <select id="select_set" class="vis-editor" data-multiselect-width="100"
-                                    data-multiselect-height="400"></select>
-                        </td>
-                        <td>
-                            <div style="width:103px; display:inline" class="translate">Widget:</div>
-                            <select id="select_tpl" class="vis-editor" data-multiselect-width="200"
-                                    data-multiselect-height="360"></select>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="ribbon_fild ui-widget-content ui-corner-all">
+            <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table style="border-spacing: 0px">
                     <tr>
                         <td colspan="1" style="height: 22px">
@@ -1113,7 +1090,7 @@
         </div>
     </div>
     <div class="vis-panel ui-widget-content" caption="ADD Widget" id="pan_add_wid">
-
+        <select id="select_set" class="vis-editor select-set"></select>
     </div>
 </div>
 

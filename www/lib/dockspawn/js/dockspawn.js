@@ -4,6 +4,7 @@
     /**
      * A tab handle represents the tab button on the tab strip
      */
+
     dockspawn.TabHandle = function (parent) {
         this.parent = parent;
         var undockHandler = dockspawn.TabHandle.prototype._performUndock.bind(this);
@@ -11,6 +12,9 @@
         this.elementText = document.createElement('div');
         this.elementCloseButton = document.createElement('div');
         this.elementBase.classList.add("tab-handle");
+        this.elementBase.classList.add("ui-state-default");
+        this.elementBase.classList.add("ui-corner-bottom");
+        this.elementBase.classList.add("ui-state-active");
         this.elementBase.classList.add("disable-selection"); // Disable text selection
         this.elementText.classList.add("tab-handle-text");
         this.elementCloseButton.classList.add("tab-handle-close-button");
@@ -181,10 +185,14 @@
 
     dockspawn.TabHandle.prototype.setSelected = function (selected) {
         var selectedClassName = "tab-handle-selected";
-        if (selected)
+        if (selected) {
             this.elementBase.classList.add(selectedClassName);
-        else
+            this.elementBase.classList.add("ui-state-active");
+        }
+        else {
             this.elementBase.classList.remove(selectedClassName);
+            this.elementBase.classList.remove("ui-state-active");
+        }
     };
 
     dockspawn.TabHandle.prototype.setZIndex = function (zIndex) {
@@ -241,6 +249,7 @@
         this.hostElement.classList.add("tab-host");
         this.tabListElement.classList.add("tab-handle-list-container");
         this.separatorElement.classList.add("tab-handle-content-seperator");
+        this.separatorElement.classList.add("ui-state-highlight");
         this.contentElement.classList.add("tab-content");
     };
 
@@ -2476,7 +2485,7 @@
         this.dockManager = dockManager;
         this.title = title;
         this.containerType = "panel";
-        this.iconName = "icon-circle-arrow-right";
+        this.iconName = "";
         this.iconTemplate = null;
         this.minimumAllowedChildNodes = 0;
         this._floatingDialog = undefined;
@@ -2565,6 +2574,7 @@
 
         this.elementPanel.classList.add("panel-base");
         this.elementTitle.classList.add("panel-titlebar");
+        this.elementTitle.classList.add("ui-widget-header");
         this.elementTitle.classList.add("disable-selection");
         this.elementTitleText.classList.add("panel-titlebar-text");
         this.elementContentHost.classList.add("panel-content");
@@ -2715,7 +2725,12 @@
             this.elementTitleText.innerHTML = this.iconTemplate(this.iconName) + this.title;
             return;
         }
-        this.elementTitleText.innerHTML = '<i class="' + this.iconName + '"></i> ' + this.title;
+        if(this.iconName == ""){
+            this.elementTitleText.innerHTML = '<span>'+this.title+'</span>';
+        }else{
+            this.elementTitleText.innerHTML = '<span style="display: inline-block" class="ui-icon ' + this.iconName + '"></span><span>'+this.title+'</span>';
+        }
+
     };
 
     dockspawn.PanelContainer.prototype.getRawTitle = function () {
@@ -2757,6 +2772,7 @@
         this.stackedVertical = stackedVertical;
         this.barElement = document.createElement('div');
         this.barElement.classList.add(stackedVertical ? "splitbar-horizontal" : "splitbar-vertical");
+        this.barElement.classList.add("ui-state-default");
         this.mouseDownHandler = new dockspawn.EventHandler(this.barElement, 'mousedown', this.onMouseDown.bind(this));
         this.minPanelSize = 50; // TODO: Get from container configuration
         this.readyToProcessNextDrag = true;
@@ -2834,6 +2850,7 @@
             this.ghoustBarElement.style.height = this.barElement.style.height;
 
         this.ghoustBarElement.classList.add(this.stackedVertical ? "splitbar-horizontal-ghoust" : "splitbar-vertical-ghoust");
+        this.ghoustBarElement.classList.add("ui-state-hover");
         if (this.stackedVertical) {
             this.ghoustBarElement.style.top = this.barElement.offsetTop + "px";
             this.ghoustBarElement.style.marginTop = 0;
