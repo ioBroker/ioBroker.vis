@@ -2292,6 +2292,8 @@ vis = $.extend(true, vis, {
 
         $('#select_set').next().addClass("select_set");
 
+        $('.select_set').find(".ui-icon").remove();
+
         $('#widget_doc').button({icons: {primary: 'ui-icon-script'}}).click(function () {
             var tpl = vis.views[vis.activeView].widgets[vis.activeWidget].tpl;
             var widgetSet = $('#' + tpl).attr('data-vis-set');
@@ -2642,35 +2644,56 @@ vis = $.extend(true, vis, {
             $("#dialog_setup").dialog("open")
         });
     },
-    editInit_addWidget_prev: function () {
-        $.each(vis.widgetSets, function () {
-            var set = this.toString();
-            $("#pan_add_wid").append('<div id="toolset_' + set + '" class="toolbox"><h4>' + set + ':</h4></div>');
+    add_Widget_prev: function (set) {
+            $("#pan_add_wid").append('<div id="toolset_' + set + '" class="toolbox"></div>');
 
-            $.each($(".vis-tpl[data-vis-set='" + set + "']"), function () {
-                var tpl = $(this).attr("id")
+        var tpl_list = $(".vis-tpl[data-vis-set='" + set + "']")
+        var tpl_n = tpl_list.length;
+        var i = 0;
+
+        function add (){
+            var tpl = $(tpl_list[i]).attr("id");
+            var widgetId = tpl + "_prev";
+            var data =  {data:new can.Map($.extend({
+                "wid": widgetId,
+                "width": "40",
+            })),
+            style:{"width": "40",},
+            };
+
+            $('#toolset_' + set).append('<div id="prev_container_' + tpl + '" class="wid_prev" data-tpl="'+tpl+'"><div style="margin-top: 5px">' + $("#" + tpl).data("vis-name") + '</div></div>');
+            try{
+                $('#prev_container_' + tpl).append(can.view(tpl, {
+                    hm: 0,
+                    ts: 0,
+                    ack: 0,
+                    lc: 0,
+                    data: data.data
+
+                },data))
+            }catch (err){
+
+            }
+
+            $('#prev_container_' + tpl).draggable({
+                helper: "clone",
+                containment: $("#dock_body"),
+                zIndex: 10000
+            });
+
+            if(i < tpl_n-1){
+                i++;
                 setTimeout(function(){
-                    var widgetId = tpl + "_prev";
-                    //var start = (new Date).valueOf()
-                    var data = {
-                        wid: widgetId,
-                        data: new can.Map($.extend({
-                                "wid": widgetId
-                            })
-                        )
-                    };
-                    //console.log( (new Date).valueOf()-start)
-                    $('#toolset_' + set).append('<div class="wid_prev ui-state-default ui-corner-all"><span>' + $("#" + tpl).data("vis-name") + '</span><br></div>');
-                    $($('#toolset_' + set).children().last()) //todo geht das nicht besser ?
-                        .append(can.view(tpl, data))
-                        .draggable({
-                            helper: "clone",
-                            containment: $("#dock_body"),
-                            zIndex: 10000,
-                        });
-                },0);
-            })
-        });
+                    add()
+                },20);
+            }
+        }
+
+        if(tpl_n){
+            add()
+        }
+
+
     },
     editInit_dockspawn: function () {
         var storeKey = "vis.dock_manager";
@@ -2800,7 +2823,7 @@ vis = $.extend(true, vis, {
             that.changeView($(this).val());
         });
 
-        $select_set.change(vis.refreshWidgetSelect);
+        //
         $select_set.html('');
 
         for (i = 0; i < this.widgetSets.length; i++) {
@@ -2810,9 +2833,31 @@ vis = $.extend(true, vis, {
                 $select_set.append("<option value='" + this.widgetSets[i] + "'>" + this.widgetSets[i] + "</option>");
             }
         }
+
+        var last_set = storage.get("vis.Last_Widgetset")
+
+        $('#select_set option[value="' + last_set + '"]').prop('selected', true);
         $select_set.multiselect('refresh');
 
-        vis.refreshWidgetSelect();
+        $select_set.change(function(){
+            var tpl = $(this).val();
+            storage.set("vis.Last_Widgetset",tpl)
+            $(".toolbox").hide();
+            if($("#toolset_"+tpl).length){
+                $("#toolset_"+ tpl ).show()
+            }else{
+                setTimeout(function(){
+                    vis.add_Widget_prev(tpl)
+                },0)
+
+            }
+            //
+        });
+
+        vis.add_Widget_prev($($select_set).multiselect("getChecked").val())
+
+
+
 
         //console.log("TOOLBOX OPEN");
 
@@ -2872,20 +2917,9 @@ vis = $.extend(true, vis, {
         }
 
 
-        setTimeout(function(){
-            vis.editInit_addWidget_prev();
-        },0)
     },
 
-    refreshWidgetSelect: function () {
-        //var $select_tpl = $("#select_tpl");
-        //$select_tpl.html('');
-        //var current_set = $("#select_set option:selected").val();
-        //$(".vis-tpl[data-vis-set='" + current_set + "']").each(function () {
-        //    $("#select_tpl").append("<option value='" + $(this).attr('id') + "'>" + $(this).attr("data-vis-name") + "</option>")
-        //});
-        //$select_tpl.multiselect('refresh');
-    },
+
     // Find free place for new widget
     findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
         var editPos = $('.ui-dialog:first').position();

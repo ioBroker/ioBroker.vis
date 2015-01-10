@@ -1,11 +1,11 @@
 var visConfig = {
     widgetSets: [
-        "basic"
+        "basic",
 //        ,
 //        "bars",
 //        "bko",
 //        "colorpicker",
-//        "fancyswitch",
+        "fancyswitch",
 //        {name: "homematic", depends: ["basic", "jqui"]},
 //        "knob",
 ////        {name: "hqWidgets", edit: "hqWidgetsEdit"},

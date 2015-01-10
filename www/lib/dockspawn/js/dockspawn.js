@@ -2757,7 +2757,7 @@
             this.floatingDialog.setPosition(this.dockManager.defaultDialogPosition.x, this.dockManager.defaultDialogPosition.y);
         }
         this.dockManager.notifyOnClosePanel(this);
-    }
+    };
 
     dockspawn.VerticalDockContainer = function (dockManager, childContainers) {
         this.stackedVertical = true;
@@ -2771,8 +2771,8 @@
         this.nextContainer = nextContainer;         // The panel to the right/bottom side of the bar, depending on the bar orientation
         this.stackedVertical = stackedVertical;
         this.barElement = document.createElement('div');
-        this.barElement.classList.add(stackedVertical ? "splitbar-horizontal" : "splitbar-vertical");
         this.barElement.classList.add("ui-state-default");
+        this.barElement.classList.add(stackedVertical ? "splitbar-horizontal" : "splitbar-vertical");
         this.mouseDownHandler = new dockspawn.EventHandler(this.barElement, 'mousedown', this.onMouseDown.bind(this));
         this.minPanelSize = 50; // TODO: Get from container configuration
         this.readyToProcessNextDrag = true;
@@ -2849,8 +2849,8 @@
         else
             this.ghoustBarElement.style.height = this.barElement.style.height;
 
-        this.ghoustBarElement.classList.add(this.stackedVertical ? "splitbar-horizontal-ghoust" : "splitbar-vertical-ghoust");
         this.ghoustBarElement.classList.add("ui-state-hover");
+        this.ghoustBarElement.classList.add(this.stackedVertical ? "splitbar-horizontal-ghoust" : "splitbar-vertical-ghoust");
         if (this.stackedVertical) {
             this.ghoustBarElement.style.top = this.barElement.offsetTop + "px";
             this.ghoustBarElement.style.marginTop = 0;
@@ -2872,11 +2872,12 @@
             delete this.mouseUpHandler;
         }
         this.mouseMovedHandler = new dockspawn.EventHandler(window, 'mousemove', this.onMouseMoved.bind(this));
-        this.mouseUpHandler = new dockspawn.EventHandler(window, 'mouseup', this.onMouseUp.bind(this));
+        this.mouseUpHandler = new dockspawn.EventHandler(document, 'mouseup', this.onMouseUp.bind(this));
         this.previousMouseEvent = e;
     };
 
     dockspawn.SplitterBar.prototype._stopDragging = function (e) {
+
         removeNode(this.ghoustBarElement);
 
         this._performDrag(this.ddx, this.ddy);

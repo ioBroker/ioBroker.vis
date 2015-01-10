@@ -905,10 +905,13 @@ div.jGrowl div.warn {
     position: relative;
     text-align: center;
     display: inline-block;
-    background-color: white!important;
+    background-color: transparent!important;
     background-image: none!important;
-    color: black!important;
+    color: inherit;
     margin: 5px;
+    /* opacity: 0.5; */
+    box-shadow: inset -3px -4px 14px rgba(0, 0, 0, 0.7), inset 3px 5px 14px rgba(255, 255, 255, 0.8);
+    border-radius: 18px;
 
 }
 
@@ -932,6 +935,7 @@ div.jGrowl div.warn {
     font-weight: bold!important;
     border-radius: 0;
     height: 30px!important;
+    text-align: center;
 
 }
 
