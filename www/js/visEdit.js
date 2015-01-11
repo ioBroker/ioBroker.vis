@@ -2595,14 +2595,14 @@ vis = $.extend(true, vis, {
         });
 
         // Tabs open Close
-        $("#menu_body > ul > li").dblclick(function(){
-           $(".ribbon_tab").hide()
-                var divDockManager = document.getElementById("dock_body");
-                dockManager.resize(window.innerWidth - (divDockManager.clientLeft + divDockManager.offsetLeft), window.innerHeight - (divDockManager.clientTop + divDockManager.offsetTop) - 20);
+        $("#menu_body > ul > li").dblclick(function () {
+            $(".ribbon_tab").hide()
+            var divDockManager = document.getElementById("dock_body");
+            dockManager.resize(window.innerWidth - (divDockManager.clientLeft + divDockManager.offsetLeft), window.innerHeight - (divDockManager.clientTop + divDockManager.offsetTop) - 20);
         });
 
-        $("#menu_body > ul > li").click(function(){
-            $("#menu_body").tabs("refresh" );
+        $("#menu_body > ul > li").click(function () {
+            $("#menu_body").tabs("refresh");
             var divDockManager = document.getElementById("dock_body");
             dockManager.resize(window.innerWidth - (divDockManager.clientLeft + divDockManager.offsetLeft), window.innerHeight - (divDockManager.clientTop + divDockManager.offsetTop) - 20);
         });
@@ -2645,24 +2645,25 @@ vis = $.extend(true, vis, {
         });
     },
     add_Widget_prev: function (set) {
-            $("#pan_add_wid").append('<div id="toolset_' + set + '" class="toolbox"></div>');
+        $("#pan_add_wid").append('<div id="toolset_' + set + '" class="toolbox"></div>');
 
         var tpl_list = $(".vis-tpl[data-vis-set='" + set + "']")
         var tpl_n = tpl_list.length;
         var i = 0;
 
-        function add (){
+        function add() {
             var tpl = $(tpl_list[i]).attr("id");
             var widgetId = tpl + "_prev";
-            var data =  {data:new can.Map($.extend({
-                "wid": widgetId,
-                "width": "40",
-            })),
-            style:{"width": "40",},
+            var data = {
+                data: new can.Map($.extend({
+                    "wid": widgetId,
+                    "width": "40",
+                })),
+                style: {"width": "40",},
             };
 
-            $('#toolset_' + set).append('<div id="prev_container_' + tpl + '" class="wid_prev" data-tpl="'+tpl+'"><div style="margin-top: 5px">' + $("#" + tpl).data("vis-name") + '</div></div>');
-            try{
+            $('#toolset_' + set).append('<div id="prev_container_' + tpl + '" class="wid_prev" data-tpl="' + tpl + '"><div style="margin-top: 5px">' + $("#" + tpl).data("vis-name") + '</div></div>');
+            try {
                 $('#prev_container_' + tpl).append(can.view(tpl, {
                     hm: 0,
                     ts: 0,
@@ -2670,8 +2671,8 @@ vis = $.extend(true, vis, {
                     lc: 0,
                     data: data.data
 
-                },data))
-            }catch (err){
+                }, data))
+            } catch (err) {
 
             }
 
@@ -2681,15 +2682,15 @@ vis = $.extend(true, vis, {
                 zIndex: 10000
             });
 
-            if(i < tpl_n-1){
+            if (i < tpl_n - 1) {
                 i++;
-                setTimeout(function(){
+                setTimeout(function () {
                     add()
-                },20);
+                }, 20);
             }
         }
 
-        if(tpl_n){
+        if (tpl_n) {
             add()
         }
 
@@ -2755,7 +2756,7 @@ vis = $.extend(true, vis, {
 
         var documentNode = dockManager.context.model.documentManagerNode;
 
-        var _pan_vis_container = new dockspawn.PanelContainer(document.getElementById("vis_container"), dockManager);
+        var _pan_vis_wrap = new dockspawn.PanelContainer(document.getElementById("vis_wrap"), dockManager);
 
 
         var _pan_css_view = new dockspawn.PanelContainer(document.getElementById("pan_css_view"), dockManager);
@@ -2764,11 +2765,11 @@ vis = $.extend(true, vis, {
         var _pan_wid_attr = new dockspawn.PanelContainer(document.getElementById("pan_wid_attr"), dockManager);
 
 
-        var pan_vis_container = dockManager.dockFill(documentNode, _pan_vis_container);
-        pan_vis_container.container.canUndock(false)
+        var pan_vis_wrap = dockManager.dockFill(documentNode, _pan_vis_wrap);
+        pan_vis_wrap.container.canUndock(false)
 
 
-        var pan_add_widget = dockManager.dockLeft(documentNode, _pan_add_wid, 0.30);
+        var pan_add_widget = dockManager.dockLeft(documentNode, _pan_add_wid, 0.20);
         var pan_css_wid = dockManager.dockRight(documentNode, _pan_css_wid, 0.08);
         var pan_wid_attr = dockManager.dockUp(pan_css_wid, _pan_wid_attr, 0.5);
         var pan_css_view = dockManager.dockFill(pan_css_wid, _pan_css_view);
@@ -2776,14 +2777,74 @@ vis = $.extend(true, vis, {
 
     },
 
+    editInit_select_view: function () {
+        $("#view_select_left").button({
+            icons: {
+                primary: "ui-icon-carat-1-w"
+            },
+            text: false
+        });
+
+        $("#view_select_right").button({
+            icons: {
+                primary: "ui-icon-carat-1-e"
+            },
+            text: false
+        });
+
+        $("#view_select").bind('mousewheel DOMMouseScroll', function (event) {
+            console.log(event.originalEvent.wheelDelta)
+            if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
+                console.log("up")
+            }
+            else {
+                console.log("down")
+            }
+        });
+
+
+        var sel;
+
+        var keys = Object.keys(vis.views);
+        var len = keys.length;
+        var i;
+        var k;
+
+        keys.sort();
+
+        $("#view_select_tabs").on("click", ".view_select_tab", function () {
+            var view = $(this).attr("id").replace("view_tab_", "");
+            $(".view_select_tab").removeClass("ui-tabs-active ui-state-active");
+            $(this).addClass("ui-tabs-active ui-state-active");
+            vis.changeView(view);
+
+        });
+
+
+        for (i = 0; i < len; i++) {
+            k = keys[i];
+
+            if (k == this.activeView) {
+                $("#inspect_view").html(this.activeView);
+                sel = " selected";
+            } else {
+                sel = '';
+            }
+            $("#view_select_tabs").append('<div id="view_tab_' + k + '" class="view_select_tab ui-state-default ui-corner-top">' + k + '</div>');
+
+        }
+
+
+    },
     //todo
 
     //todo
-
-
     editInitNext: function () {
         // ioBroker.vis Editor Init
         var that = this;
+
+        vis.editInit_select_view();
+        // todo Remove the old select view
         var sel;
 
         var keys = Object.keys(vis.views);
@@ -2795,7 +2856,7 @@ vis = $.extend(true, vis, {
 
         var $select_view = $("#select_view");
         var $select_view_copy = $("#select_view_copy");
-        var $select_set = $("#select_set");
+
 
         for (i = 0; i < len; i++) {
             k = keys[i];
@@ -2823,8 +2884,11 @@ vis = $.extend(true, vis, {
             that.changeView($(this).val());
         });
 
-        //
-        $select_set.html('');
+        // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+        var $select_set = $("#select_set");
+        //$select_set.html('');
 
         for (i = 0; i < this.widgetSets.length; i++) {
             if (this.widgetSets[i].name !== undefined) {
@@ -2839,24 +2903,22 @@ vis = $.extend(true, vis, {
         $('#select_set option[value="' + last_set + '"]').prop('selected', true);
         $select_set.multiselect('refresh');
 
-        $select_set.change(function(){
+        $select_set.change(function () {
             var tpl = $(this).val();
-            storage.set("vis.Last_Widgetset",tpl)
+            storage.set("vis.Last_Widgetset", tpl)
             $(".toolbox").hide();
-            if($("#toolset_"+tpl).length){
-                $("#toolset_"+ tpl ).show()
-            }else{
-                setTimeout(function(){
+            if ($("#toolset_" + tpl).length) {
+                $("#toolset_" + tpl).show()
+            } else {
+                setTimeout(function () {
                     vis.add_Widget_prev(tpl)
-                },0)
+                }, 0)
 
             }
             //
         });
 
         vis.add_Widget_prev($($select_set).multiselect("getChecked").val())
-
-
 
 
         //console.log("TOOLBOX OPEN");
@@ -2917,7 +2979,9 @@ vis = $.extend(true, vis, {
         }
 
 
-    },
+    }
+
+    ,
 
 
     // Find free place for new widget
@@ -2971,7 +3035,8 @@ vis = $.extend(true, vis, {
         }
 
         return {left: x, top: y};
-    },
+    }
+    ,
     // Check overlapping
     checkPosition: function (positions, x, y, widgetWidth, widgetHeight) {
         for (var i = 0; i < positions.length; i++) {
@@ -2991,7 +3056,8 @@ vis = $.extend(true, vis, {
             }
         }
         return true;
-    },
+    }
+    ,
     actionNewWidget: function (id) {
         if (id == "none") {
             return;
@@ -3044,7 +3110,8 @@ vis = $.extend(true, vis, {
             animate(_css1, 3000, 'swing', function () {
                 $(this).remove();
             });
-    },
+    }
+    ,
     // collect all filter keys for given view
     updateFilter: function () {
         if (this.activeView && this.views) {
@@ -3071,7 +3138,8 @@ vis = $.extend(true, vis, {
         } else {
             return [];
         }
-    },
+    }
+    ,
     initStealHandlers: function () {
         var that = this;
         $(".vis-steal-css").each(function () {
@@ -3104,7 +3172,8 @@ vis = $.extend(true, vis, {
                 return false;
             });
         })
-    },
+    }
+    ,
     stealCssModeStop: function () {
         this.isStealCss = false;
         $("#stealmode_content").remove();
@@ -3114,7 +3183,8 @@ vis = $.extend(true, vis, {
         $(".vis-steal-css").removeAttr("checked").button('refresh');
         $("#vis_container").removeClass("vis-steal-cursor");
 
-    },
+    }
+    ,
     stealCssMode: function () {
         if (this.selectable) {
             $("#visview_" + this.activeView).selectable("disable");
@@ -3139,7 +3209,8 @@ vis = $.extend(true, vis, {
             vis.stealCss(e);
         });
         $("#vis_container").addClass("vis-steal-cursor");
-    },
+    }
+    ,
     stealCss: function (e) {
         if (this.isStealCss) {
             var that = this;
@@ -3168,7 +3239,8 @@ vis = $.extend(true, vis, {
             });
 
         }
-    },
+    }
+    ,
     combineCssShorthand: function (that, attr) {
         var css;
         var parts = attr.split("-");
@@ -3196,7 +3268,8 @@ vis = $.extend(true, vis, {
             css = cssTop + ' ' + cssRight + ' ' + cssBottom + ' ' + cssLeft;
         }
         return css;
-    },
+    }
+    ,
     _saveTimer: null, // Timeout to save the configuration
     _saveToServer: function () {
         if (!this.undoHistory || this.undoHistory.length == 0 ||
@@ -3212,7 +3285,9 @@ vis = $.extend(true, vis, {
             that._saveTimer = null;
             $('#savingProgress').hide().next().button('enable');
         });
-    },
+    }
+
+    ,
     save: function (cb) {
         if (this._saveTimer) {
             clearTimeout(this._saveTimer);
@@ -3227,7 +3302,8 @@ vis = $.extend(true, vis, {
         if (cb) {
             cb();
         }
-    },
+    }
+    ,
     undo: function () {
         if (vis.undoHistory.length <= 1) return;
 
@@ -3251,7 +3327,8 @@ vis = $.extend(true, vis, {
         for (var i = 0; i < multiSelectedWidgets.length; i++) {
             this.inspectWidgetMulti(multiSelectedWidgets[i]);
         }
-    },
+    }
+    ,
     getWidgetThumbnail: function (widget, maxWidth, maxHeight, callback) {
         var widObj = document.getElementById(widget);
         if (!widObj || !callback) {
@@ -3294,7 +3371,8 @@ vis = $.extend(true, vis, {
                 }
             });
         }
-    },
+    }
+    ,
     showHint: function (content, life, type, onShow) {
         if (!$.jGrowl) {
             alert(content);
@@ -3320,7 +3398,8 @@ vis = $.extend(true, vis, {
                 }
             }
         });
-    },
+    }
+    ,
     selectAll: function () {
         // Select all widgets on view
         var $focused = $(':focus');
@@ -3342,7 +3421,8 @@ vis = $.extend(true, vis, {
         } else {
             return false;
         }
-    },
+    }
+    ,
     deselectAll: function () {
         // Select all widgets on view
         var $focused = $(':focus');
@@ -3356,7 +3436,8 @@ vis = $.extend(true, vis, {
         } else {
             return false;
         }
-    },
+    }
+    ,
     paste: function () {
         var $focused = $(':focus');
         if (!$focused.length) {
@@ -3373,7 +3454,8 @@ vis = $.extend(true, vis, {
                 }
             }
         }
-    },
+    }
+    ,
     copy: function (isCut) {
         var $focused = $(':focus');
         if (!$focused.length && this.activeWidget) {
@@ -3440,7 +3522,8 @@ vis = $.extend(true, vis, {
         } else {
             $('#clipboard_content').remove();
         }
-    },
+    }
+    ,
     onButtonDelete: function () {
         var $focused = $(':focus');
         if (!$focused.length && this.activeWidget) {
@@ -3503,7 +3586,8 @@ vis = $.extend(true, vis, {
         } else {
             return false;
         }
-    },
+    }
+    ,
     onButtonArrows: function (key, isSize, factor) {
         factor = factor || 1;
         var $focused = $(':focus');
@@ -3627,7 +3711,8 @@ vis = $.extend(true, vis, {
         } else {
             return false;
         }
-    },
+    }
+    ,
     onPageClosing: function () {
         // If not saved
         if (this._saveTimer) {
@@ -3638,7 +3723,8 @@ vis = $.extend(true, vis, {
             }
         }
         return null;
-    },
+    }
+    ,
     get_panel_by_id: function (id) {
         var panels = dockManager.getPanels()
         var panel;

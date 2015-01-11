@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
-<head >
+<head>
     <!-- ioBroker.vis Version 0.0.1 -->
 
     <!--
@@ -375,6 +375,7 @@
             </li>
     </div>
     <img src="lib/img/edit-undo-8.png" id="button_undo" class="ui-state-default ui-corner-top">
+
     <div class="ribbon_tab" id="ribbon_datei">
         <div class="ribbon_tab_content ui-widget-content">
 
@@ -533,19 +534,27 @@
 </div>
 
 <div id="dock_body">
-    <div id="vis_container" caption="Views"
-         style="position: relative; top: 0; left: 0; height:100%; width:100%; overflow: scroll">
-        <div id="widget_helper">
-            <div id="widget_inner_helper"></div>
+    <div id="vis_wrap">
+        <div id="view_select" class="ui-widget-content">
+            <button id="view_select_left"></button>
+            <div id="view_select_tabs_wrap">
+                <div id="view_select_tabs"></div>
+            </div>
+            <button id="view_select_right"></button>
         </div>
-        <div id="allwidgets_helper">
-            <div id="allwidgets_inner_helper"></div>
-        </div>
+        <div id="vis_container" caption="Views">
+            <div id="widget_helper">
+                <div id="widget_inner_helper"></div>
+            </div>
+            <div id="allwidgets_helper">
+                <div id="allwidgets_inner_helper"></div>
+            </div>
 
-        <div id="size_x"
-             style="display:none; z-index: 99; position: absolute; top: 0px; width:0px; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
-        <div id="size_y"
-             style="display:none; z-index: 99; position: absolute; left: 0px; height:0px; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
+            <div id="size_x"
+                 style="display:none; z-index: 99; position: absolute; top: 0px; width:0px; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
+            <div id="size_y"
+                 style="display:none; z-index: 99; position: absolute; left: 0px; height:0px; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
+        </div>
     </div>
 
     <div class="vis-panel ui-widget-content" caption="View CSS" id="pan_css_view">
@@ -1095,18 +1104,16 @@
 </div>
 
 <div id="status_bar" class="ui-widget-header">
-<span>VIS Version: </span><span id="vis-version"></span>
+    <span>VIS Version: </span><span id="vis-version"></span>
 
     <span id="savingProgress" role="button">Saving in progress</span>
 </div>
-
 
 
 <div style="display: none" id="uploadPreview"></div>
 
 
 <div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>
-
 
 
 </body>
