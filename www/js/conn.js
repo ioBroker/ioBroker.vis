@@ -28,6 +28,7 @@ var servConn = {
     _type:              1, // 0 - SignalR, 1 - socket.io, 2 - local demo
     _timeout:           0, // 0 - use transport default timeout to detect disconnect
     _reconnectInterval: 10000, // reconnect interval
+    _subscribes:        [],
     namespace:          'vis.0',
     getType: function () {
         return 'socket.io';
@@ -53,6 +54,7 @@ var servConn = {
     init: function (connOptions, connCallbacks) {
         connOptions = connOptions || {};
         var that = this;
+        if (!connOptions.name) connOptions.name = this.namespace;
 
         if (typeof session !== 'undefined') {
             var user = session.get('user');
@@ -93,7 +95,9 @@ var servConn = {
             });
 
             that._socket.on('connect', function () {
-                that._socket.emit('subscribe', '*');
+                this.emit('subscribe', '*');
+                this.emit('name', connOptions.name);
+
                 if (that._disconnectTimeout){
                     clearTimeout(that._disconnectTimeout);
                     that._disconnectTimeout = null;
@@ -120,20 +124,16 @@ var servConn = {
                     }, 5000);
                 }
             });
+            // after reconnect the "connect" event will be called
             that._socket.on('reconnect', function () {
-                that._socket.emit('subscribe', '*');
                 //console.log("socket.io reconnect");
                 var offlineTime = (new Date()).getTime() - that._disconnectedSince;
                 console.log('was offline for ' + (offlineTime / 1000) + 's');
 
                 // TODO does this make sense?
-                if (offlineTime > 12000) {
+                //if (offlineTime > 12000) {
                     //window.location.reload();
-                }
-                that._isConnected = true;
-                if (that._connCallbacks.onConnChange) {
-                    that._connCallbacks.onConnChange(that._isConnected);
-                }
+                //}
                 //that._autoReconnect();
             });
             that._socket.on('objectChange', function (id, obj) {

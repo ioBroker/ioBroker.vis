@@ -31,10 +31,6 @@
     "home automation",
     "SCADA"
   ],
-  "dependencies": {
-    "iobroker.web": "*",
-    "iobroker.socketio": "*"
-  },
   "devDependencies": {
     "grunt": "~0.4.4",
     "grunt-replace": "~0.7.6",

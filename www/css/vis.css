@@ -141,8 +141,8 @@ button.ui-dialog-titlebar-close {
 }
 
 div.vis-editor-dialog {
-    min-width: 440px !important;
-    max-width: 440px !important;
+/*    min-width: 440px !important;
+    max-width: 440px !important;*/
 }
 
 

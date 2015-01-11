@@ -1006,6 +1006,7 @@ if ('applicationCache' in window) {
 
 
         vis.conn.init(null, {
+            name: vis.editMode ? vis.conn.namespace + '.edit' : vis.conn.namespace,
             onConnChange: function (isConnected) {
                 //console.log("onConnChange isConnected="+isConnected);
                 if (isConnected) {

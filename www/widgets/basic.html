@@ -43,7 +43,34 @@
         "group_effects":   {"en": "Show/Hide Effects",     "de": "Anzeige Effekte",     "ru": "Эффекты появления/исчезнования"},
         "group_extended":  {"en": "Extended settings",     "de": "Erweiterte Eistellungen", "ru": "Расширенные настройки"},
         "body-background": {"en": "Background color by changing", "de": "Hintegrund by Wechsel", "ru": "Фон при смене страниц"},
-        "sync":            {"en": "Hide and show together:", "de": "Anzeigen und verbergen gleichzeitig", "ru": "Появления и исчезнование вместе"}
+        "sync":            {"en": "Hide and show together:", "de": "Anzeigen und verbergen gleichzeitig", "ru": "Появления и исчезнование вместе"},
+        // Effects
+        "show":            {"en": "show", "de": "show", "ru": "show"},
+        "blind":           {"en": "blind", "de": "blind", "ru": "blind"},
+        "bounce":          {"en": "bounce", "de": "bounce", "ru": "bounce"},
+        "clip":            {"en": "clip", "de": "clip", "ru": "clip"},
+        "drop":            {"en": "drop", "de": "drop", "ru": "drop"},
+        "explode":         {"en": "explode", "de": "explode", "ru": "explode"},
+        "fade":            {"en": "fade", "de": "fade", "ru": "fade"},
+        "fold":            {"en": "fold", "de": "fold", "ru": "fold"},
+        "highlight":       {"en": "highlight", "de": "highlight", "ru": "highlight"},
+        "puff":            {"en": "puff", "de": "puff", "ru": "puff"},
+        "pulsate":         {"en": "pulsate", "de": "pulsate", "ru": "pulsate"},
+        "scale":           {"en": "scale", "de": "scale", "ru": "scale"},
+        "shake":           {"en": "shake", "de": "shake", "ru": "shake"},
+        "size":            {"en": "size", "de": "size", "ru": "size"},
+        "slide":           {"en": "slide", "de": "slide", "ru": "slide"},
+
+        "hide_effect":     {"en": "Hide effect",           "de": "Verbergeneffekt",    "ru": "Эффект скрытия"},
+        "hide_duration":   {"en": "Hide duration(ms)",     "de": "Verbergendauer",     "ru": "Длительность скрытия(мс)"},
+        "hide_options":    {"en": "Hide options",          "de": "Verbergenoptionen",  "ru": "Опции скрытия"},
+        "show_effect":     {"en": "Show effect",           "de": "Anzeigeeffekt",      "ru": "Эффект появления"},
+        "show_duration":   {"en": "Show duration(ms)",     "de": "Anzeigedauer",       "ru": "Длительность появления(мс)"},
+        "show_options":    {"en": "Show options",          "de": "Anzeigeoptionen",    "ru": "Опции появления"},
+        "left":            {"en": "left",                  "de": "links",              "ru": "лево"},
+        "right":           {"en": "right",                 "de": "rechts",             "ru": "право"},
+        "top":             {"en": "top",                   "de": "oben",               "ru": "верх"},
+        "bottom":          {"en": "bottom",                "de": "unten",              "ru": "низ"}
     });
 
     vis.binds.stateful = {
@@ -769,7 +796,7 @@
 
 
 
-<script type="text/ejs" id="tplHtmlNav" class="vis-tpl" data-vis-set="basic" data-vis-name="navigation - HTML" data-vis-attrs="html;nav_view;sync/checkbox;body-background/color;group.effects;hide_effect;hide_duration;hide_options;show_effect;show_duration;show_options">
+<script type="text/ejs" id="tplHtmlNav" class="vis-tpl" data-vis-set="basic" data-vis-name="navigation - HTML" data-vis-attrs="html;nav_view;sync/checkbox;body-background/color;group.effects;hide_effect/effect;hide_duration/slider,0,10000,100;hide_options/effect-options;show_effect/effect;show_duration/slider,0,10000,100;show_options/effect-options">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: (data.attr('hide_options') ? data.attr('hide_options') : {}),duration:data.attr('hide_duration')}, showOptions: {effect:data.attr('show_effect'), options: (data.attr('show_options') ? data.attr('show_options') : {}), duration: data.attr('show_duration')}, sync: data.attr('sync'), background: data.attr('body-background')}) %>>
         <div class="vis-widget-body">
             <%== this.data.attr('html') %>
@@ -777,7 +804,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplFilterDropdown" class="vis-tpl" data-vis-set="basic" data-vis-name="filter - dropdown" data-vis-attrs="filters;hide_effect;hide_duration;show_effect;show_duration">
+<script type="text/ejs" id="tplFilterDropdown" class="vis-tpl" data-vis-set="basic" data-vis-name="filter - dropdown" data-vis-attrs="filters;group.effects;hide_effect/effect;hide_duration/slider,0,10000,100;show_effect/effect;show_duration/slider,0,10000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 200px; height: 40px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.filterDropdown(el, data.attr('filters'), data.attr('hide_effect'), data.attr('hide_duration'), data.attr('show_effect'),data.attr('show_duration')) %>>
         <div class="vis-widget-body">
             <select id="" name="">
