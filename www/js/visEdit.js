@@ -2490,6 +2490,20 @@ vis = $.extend(true, vis, {
             icons: {primary: "ui-icon-disk"}
         }).click(that._saveToServer).hide().addClass("ui-state-active");
 
+        $("#dev_show_html").button({
+
+        }).click(function(){
+            $("body").append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%"><div id="prev_'+vis.views[vis.activeView].widgets[vis.activeWidget].tpl+'"> '+$("#"+vis.activeWidget).html()+'</div></textarea></div>')
+           $("#dec_html_code").dialog({
+               width: 800,
+               height: 600,
+               close: function () {
+                   $("#dec_html_code").remove()
+               }
+           })
+
+        });
+
         // Bug in firefox or firefox is too slow or too fast
         /*setTimeout(function() {
 
@@ -2555,7 +2569,6 @@ vis = $.extend(true, vis, {
             }
         }
     },
-
     editInit_dialogs: function () {
 
         $("#dialog_about").dialog({
@@ -2654,27 +2667,33 @@ vis = $.extend(true, vis, {
         function add() {
             var tpl = $(tpl_list[i]).attr("id");
             var widgetId = tpl + "_prev";
-            var data = {
-                data: new can.Map($.extend({
-                    "wid": widgetId,
-                    "width": "40",
-                })),
-                style: {"width": "40",},
-            };
 
             $('#toolset_' + set).append('<div id="prev_container_' + tpl + '" class="wid_prev" data-tpl="' + tpl + '"><div style="margin-top: 5px">' + $("#" + tpl).data("vis-name") + '</div></div>');
-            try {
-                $('#prev_container_' + tpl).append(can.view(tpl, {
-                    hm: 0,
-                    ts: 0,
-                    ack: 0,
-                    lc: 0,
-                    data: data.data
 
-                }, data))
-            } catch (err) {
+            if($(tpl_list[i]).data("vis-prev")){
+                $('#prev_container_' + tpl).append($(tpl_list[i]).data("vis-prev"))
+            }else{
+                var data = {
+                    data: new can.Map($.extend({
+                        "wid": widgetId,
+                        "width": "40",
+                    })),
+                    style: {"width": "40",},
+                };
+                try {
+                    $('#prev_container_' + tpl).append(can.view(tpl, {
+                        hm: 0,
+                        ts: 0,
+                        ack: 0,
+                        lc: 0,
+                        data: data.data
 
+                    }, data))
+                } catch (err) {
+
+                }
             }
+
 
             $('#prev_container_' + tpl).draggable({
                 helper: "clone",
@@ -2776,7 +2795,6 @@ vis = $.extend(true, vis, {
 
 
     },
-
     editInit_select_view: function () {
         $("#view_select_left").button({
             icons: {
@@ -2979,11 +2997,7 @@ vis = $.extend(true, vis, {
         }
 
 
-    }
-
-    ,
-
-
+    },
     // Find free place for new widget
     findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
         var editPos = $('.ui-dialog:first').position();
@@ -3035,8 +3049,7 @@ vis = $.extend(true, vis, {
         }
 
         return {left: x, top: y};
-    }
-    ,
+    },
     // Check overlapping
     checkPosition: function (positions, x, y, widgetWidth, widgetHeight) {
         for (var i = 0; i < positions.length; i++) {
@@ -3056,8 +3069,7 @@ vis = $.extend(true, vis, {
             }
         }
         return true;
-    }
-    ,
+    },
     actionNewWidget: function (id) {
         if (id == "none") {
             return;
@@ -3110,8 +3122,7 @@ vis = $.extend(true, vis, {
             animate(_css1, 3000, 'swing', function () {
                 $(this).remove();
             });
-    }
-    ,
+    },
     // collect all filter keys for given view
     updateFilter: function () {
         if (this.activeView && this.views) {
@@ -3138,8 +3149,7 @@ vis = $.extend(true, vis, {
         } else {
             return [];
         }
-    }
-    ,
+    },
     initStealHandlers: function () {
         var that = this;
         $(".vis-steal-css").each(function () {
@@ -3172,8 +3182,7 @@ vis = $.extend(true, vis, {
                 return false;
             });
         })
-    }
-    ,
+    },
     stealCssModeStop: function () {
         this.isStealCss = false;
         $("#stealmode_content").remove();
@@ -3183,8 +3192,7 @@ vis = $.extend(true, vis, {
         $(".vis-steal-css").removeAttr("checked").button('refresh');
         $("#vis_container").removeClass("vis-steal-cursor");
 
-    }
-    ,
+    },
     stealCssMode: function () {
         if (this.selectable) {
             $("#visview_" + this.activeView).selectable("disable");
@@ -3209,8 +3217,7 @@ vis = $.extend(true, vis, {
             vis.stealCss(e);
         });
         $("#vis_container").addClass("vis-steal-cursor");
-    }
-    ,
+    },
     stealCss: function (e) {
         if (this.isStealCss) {
             var that = this;
@@ -3239,8 +3246,7 @@ vis = $.extend(true, vis, {
             });
 
         }
-    }
-    ,
+    },
     combineCssShorthand: function (that, attr) {
         var css;
         var parts = attr.split("-");
@@ -3268,8 +3274,7 @@ vis = $.extend(true, vis, {
             css = cssTop + ' ' + cssRight + ' ' + cssBottom + ' ' + cssLeft;
         }
         return css;
-    }
-    ,
+    },
     _saveTimer: null, // Timeout to save the configuration
     _saveToServer: function () {
         if (!this.undoHistory || this.undoHistory.length == 0 ||
@@ -3285,9 +3290,7 @@ vis = $.extend(true, vis, {
             that._saveTimer = null;
             $('#savingProgress').hide().next().button('enable');
         });
-    }
-
-    ,
+    },
     save: function (cb) {
         if (this._saveTimer) {
             clearTimeout(this._saveTimer);
@@ -3302,8 +3305,7 @@ vis = $.extend(true, vis, {
         if (cb) {
             cb();
         }
-    }
-    ,
+    },
     undo: function () {
         if (vis.undoHistory.length <= 1) return;
 
@@ -3327,8 +3329,7 @@ vis = $.extend(true, vis, {
         for (var i = 0; i < multiSelectedWidgets.length; i++) {
             this.inspectWidgetMulti(multiSelectedWidgets[i]);
         }
-    }
-    ,
+    },
     getWidgetThumbnail: function (widget, maxWidth, maxHeight, callback) {
         var widObj = document.getElementById(widget);
         if (!widObj || !callback) {
@@ -3371,8 +3372,7 @@ vis = $.extend(true, vis, {
                 }
             });
         }
-    }
-    ,
+    },
     showHint: function (content, life, type, onShow) {
         if (!$.jGrowl) {
             alert(content);
@@ -3398,8 +3398,7 @@ vis = $.extend(true, vis, {
                 }
             }
         });
-    }
-    ,
+    },
     selectAll: function () {
         // Select all widgets on view
         var $focused = $(':focus');
@@ -3421,8 +3420,7 @@ vis = $.extend(true, vis, {
         } else {
             return false;
         }
-    }
-    ,
+    },
     deselectAll: function () {
         // Select all widgets on view
         var $focused = $(':focus');
@@ -3436,8 +3434,7 @@ vis = $.extend(true, vis, {
         } else {
             return false;
         }
-    }
-    ,
+    },
     paste: function () {
         var $focused = $(':focus');
         if (!$focused.length) {
@@ -3454,8 +3451,7 @@ vis = $.extend(true, vis, {
                 }
             }
         }
-    }
-    ,
+    },
     copy: function (isCut) {
         var $focused = $(':focus');
         if (!$focused.length && this.activeWidget) {
@@ -3522,8 +3518,7 @@ vis = $.extend(true, vis, {
         } else {
             $('#clipboard_content').remove();
         }
-    }
-    ,
+    },
     onButtonDelete: function () {
         var $focused = $(':focus');
         if (!$focused.length && this.activeWidget) {
@@ -3586,8 +3581,7 @@ vis = $.extend(true, vis, {
         } else {
             return false;
         }
-    }
-    ,
+    },
     onButtonArrows: function (key, isSize, factor) {
         factor = factor || 1;
         var $focused = $(':focus');
@@ -3711,8 +3705,7 @@ vis = $.extend(true, vis, {
         } else {
             return false;
         }
-    }
-    ,
+    },
     onPageClosing: function () {
         // If not saved
         if (this._saveTimer) {
@@ -3723,8 +3716,7 @@ vis = $.extend(true, vis, {
             }
         }
         return null;
-    }
-    ,
+    },
     get_panel_by_id: function (id) {
         var panels = dockManager.getPanels()
         var panel;
@@ -3739,6 +3731,41 @@ vis = $.extend(true, vis, {
 });
 
 $(document).keydown(function (e) {
+
+    // | backspace 	 8    |   e 	            69   |    numpad 8          104
+    // | tab 	     9    |   f 	            70   |    numpad 9          105
+    // | enter 	     13   |   g 	            71   |    multiply          106
+    // | shift 	     16   |   h 	            72   |    add           	107
+    // | ctrl 	     17   |   i 	            73   |    subtract          109
+    // | alt 	     18   |   j 	            74   |    decimal point     110
+    // | pause/break 19   |   k 	            75   |    divide            111
+    // | caps lock 	 20   |   l 	            76   |    f1            	112
+    // | escape 	 27   |   m 	            77   |    f2            	113
+    // | page up 	 33   |   n 	            78   |    f3            	114
+    // | page down 	 34   |   o 	            79   |    f4            	115
+    // | end 	     35   |   p 	            80   |    f5            	116
+    // | home 	     36   |   q 	            81   |    f6            	117
+    // | left arrow  37   |   r 	            82   |    f7            	118
+    // | up arrow 	 38   |   s 	            83   |    f8            	119
+    // | right arrow 39   |   t	                84   |    f9            	120
+    // | down arrow  40   |   u 	            85   |    f10           	121
+    // | insert 	 45   |   v 	            86   |    f11           	122
+    // | delete 	 46   |   w 	            87   |    f12           	123
+    // | 0 	         48   |   x 	            88   |    num lock          144
+    // | 1 	         49   |   y 	            89   |    scroll lock      	145
+    // | 2 	         50   |   z 	            90   |    semi-colon       	186
+    // | 3 	         51   |   left window key   91   |    equal sign       	187
+    // | 4 	         52   |   right window key  92   |    comma             188
+    // | 5 	         53   |   select key 	    93   |    dash          	189
+    // | 6 	         54   |   numpad 0 	        96   |    period            190
+    // | 7 	         55   |   numpad 1 	        97   |    forward slash     191
+    // | 8 	         56   |   numpad 2 	        98   |    grave accent      192
+    // | 9 	         57   |   numpad 3 	        99   |    open bracket      219
+    // | a 	         65   |   numpad 4 	        100  |    back slash        220
+    // | b 	         66   |   numpad 5 	        101  |    close braket      221
+    // | c 	         67   |   numpad 6 	        102  |    single quote 	    222
+    // | d 	         68   |   numpad 7 	        103  |
+
     // Capture ctrl-z (Windows/Linux) and cmd-z (MacOSX)
     if (e.which === 90 && (e.ctrlKey || e.metaKey)) {
         vis.undo();
@@ -3765,6 +3792,9 @@ $(document).keydown(function (e) {
         if (vis.onButtonArrows(e.which, e.shiftKey, (e.ctrlKey || e.metaKey ? 10 : 1))) {
             e.preventDefault();
         }
+    }else if (e.which === 112 && (e.ctrlKey || e.metaKey)) {
+     $("#ribbon_tab_dev").toggle();
+        e.preventDefault();
     }
 });
 
