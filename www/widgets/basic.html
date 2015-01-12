@@ -127,7 +127,7 @@
                 setInterval(function () {
                     var val = vis.states[oid + '.val'] || 0;
                     var src = srcArr[val];
-                    $this.attr('src', src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                    if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                 }, refreshInterval);
             }
         }
@@ -355,10 +355,10 @@
                 });
             }
         },
-        select: function (el) {
+        select: function (el, invert) {
             var $this = $(el).prev();
-            var id    = $this.attr('data-oid');
-            var val   = vis.states[id + '.val'];
+            var oid   = $this.attr('data-oid');
+            var val   = vis.states[oid + '.val'];
             
             if (val === 'false') {
                 val = false;
@@ -374,13 +374,22 @@
                     val = false;
                 }
             }
+
+            if (invert) val = !val;
+
             $this.val(val ? 1 : 0);
             if (!vis.editMode) {
-                $this.change(function () {
-                    vis.setValue($this.attr('data-oid'), $this.find('option:selected').val());
-                });
+                if (oid != 'nothing_selected') {
+                    $this.change(function () {
+                        var val = $this.find('option:selected').val();
+                        if (invert) val = !val;
+                        vis.setValue(oid, val);
+                    });
+                }
             }
-            var oid = id;
+            if (oid != 'nothing_selected') {
+
+            }
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 if (newVal === 'false') {
                     newVal = false;
@@ -413,7 +422,7 @@
                 
                 if (newVal == oldVal) return;
 
-                if (newVal === "false" || newVal === false || parseFloat(newVal) == 0) {
+                if (newVal === 'false' || newVal === false || parseFloat(newVal) == 0) {
                     if ($this.find('option[value="1"]').prop('selected')) {
                         $this.find('option[value="1"]').prop('selected', false);
                         $this.find('option[value="0"]').prop('selected', true);
@@ -459,7 +468,7 @@
                 var $this = $(el).parent().find('iframe');
                 setInterval(function () {
                     if ($this.is(':visible') && $this.parents(':hidden').length == 0) {
-                        $this.attr('src', src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                     }
                 }, refreshInterval);
             }
@@ -471,7 +480,7 @@
                 var widgetView = vis.activeView;
                 vis.navChangeCallbacks.push(function (view) {
                     if (view == widgetView) {
-                        $this.attr('src', src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                     }
                 });
             }
@@ -479,8 +488,7 @@
             if (!vis.editMode && parseInt(refreshInterval, 10) > 0) {
                 setInterval(function () {
                     if ($this.is(':visible') && $this.parents(':hidden').length == 0) {
-                        $this.attr("src", src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
-
+                        if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                     }
                 }, refreshInterval);
             }
@@ -489,8 +497,8 @@
                 vis.onWakeUp(function () {
                     // TODO this does not work. :(
                     //console.log("wakeup refresh!");
-                    $this.attr("src", src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
-                    //console.log($this.attr("src"));
+                    if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                    //console.log($this.attr('src'));
                 });
             }
         },

@@ -118,6 +118,7 @@ $.extend(systemDictionary, {
     'export views': {'en': 'Export views', 'de': 'Exportieren', 'ru': 'Экспорт'},
     'import views': {'en': 'Import views', 'de': 'Importieren', 'ru': 'Импорт'},
     'clear cached views': {'en': 'Clear views from cache', 'de': 'Views aus Browser-Cache löschen', 'ru': 'Очистить страницы из броузера'},
+    "Select object ID": {"en": "Select object ID", "de": "Id vom Objekt auswählen", "ru": "Выбрать ID объекта"},
     'Import / Export View': {
         'en': 'Import / Export View',
         'de': 'Importieren / Exportieren View',

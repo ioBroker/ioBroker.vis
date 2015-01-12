@@ -856,7 +856,7 @@ vis = $.extend(true, vis, {
                 options.value = data;
                 var input = this;
                 options.slide = function (event, ui) {
-                    $(input).val(ui.value);
+                    $(input).val(ui.value).trigger('change');
                 };
                 $('#inspect_' + wid_attr + '_slider').slider(options);
             },
@@ -1873,12 +1873,12 @@ vis = $.extend(true, vis, {
     changeViewEdit: function (view, noChange) {
 
         if (this.selectable) {
-            $(".vis-view.ui-selectable").selectable("destroy");
+            $(".vis-view.ui-selectable").selectable('destroy');
             var that = this;
-            $("#visview_"+view).selectable({
-                filter:    "div.vis-widget",
-                tolerance: "fit",
-				cancel:    "div.vis-widget",
+            $('#visview_' + view).selectable({
+                filter:    'div.vis-widget',
+                tolerance: 'fit',
+				cancel:    'div.vis-widget',
                 start: function (e, ui) {
 
                 },

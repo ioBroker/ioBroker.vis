@@ -23,193 +23,209 @@
 <script type="text/javascript" src="widgets/fancyswitch/js/jquery.ibutton.min.js"></script>
 
 <script type="text/javascript">
-    //jQuery.extend(true, vis.binds, {
-        vis.binds.fancyswitch = {
-            fancyswitch: function (el, src, reverse) {
-                var $this = jQuery(el).parent().find(".fancy-switch");
-                var id = $this.attr("data-hm-id");
-                var hm_id = "_" + id;
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
+    "use strict";
+    // Add words for basic widgets
+    $.extend(true, systemDictionary, {
+        "text_true":        {"en": "Label for true",             "de": "Text für TRUE",      "ru": "Текст для 1"},
+        "text_false":       {"en": "Label for false",            "de": "Text für FALSE",     "ru": "Текст для 0"},
+        "width":            {"en": "Width",                      "de": "Breite",             "ru": "Ширина"},
+        "auto":             {"en": "auto",                       "de": "auto",               "ru": "автоматически"},
+        "true":             {"en": "true",                       "de": "true",               "ru": "да"},
+        "false":            {"en": "false",                      "de": "false",              "ru": "нет"},
+        "labelOn":          {"en": "Label for 'ON'",             "de": "Text für AN",        "ru": "Подпись для 'истина/1'"},
+        "labelOff":         {"en": "Label for 'OFF'",            "de": "Text für AUS",       "ru": "Подпись для 'ложь/0'"},
+        "resizeHandle":     {"en": "resizeHandle",               "de": "Hebelgröße",         "ru": "Изменить размер клавиши"},
+        "resizeContainer":  {"en": "resizeContainer",            "de": "Konteinergröße",     "ru": "Изменить размер виджета"},
+        "enableDrag":       {"en": "Enable drag",                "de": "Ziehen erlaubt",     "ru": "Можно тащить мышкой"},
+        "enableFx":         {"en": "Animation",                  "de": "Animation",          "ru": "Анимация"},
+        "duration":         {"en": "Effect duration(ms)",        "de": "Umschaltdauer(ms)",  "ru": "Длительность анимации"},
+        "highlight_switch": {"en": "Highlight switch",           "de": "Highlight Schalter", "ru": "Подсветить выключатель"},
+        "invert":           {"en": "Invert state",               "de": "Zustand invertieren", "ru": "Инвертировать состояние"},
+        "test":             {"en": "Test",                       "de": "Testen",             "ru": "Тест"}
+    });
 
-                    var num = parseFloat(newVal, 10);
-                    if (num > 0 || newVal === "true" || newVal === true) {
-                        if (reverse) {
-                            $this.css('background-position', 'right');
-                        } else {
-                            $this.css('background-position', 'left');
-                        }
-                        $this.find("input.fancy-on_off[value='0']").removeAttr("checked");
-                        $this.find("input.fancy-on_off[value='1']").attr("checked", true);
-
-                    } else {
-                        if (reverse) {
-                            $this.css('background-position', 'left');
-                        } else {
-                            $this.css('background-position', 'right');
-                        }
-                        $this.find("input.fancy-on_off[value='1']").removeAttr("checked");
-                        $this.find("input.fancy-on_off[value='0']").attr("checked", true);
-                    }
-                });
-
-                $this.css('background', 'url("'+src+'")');
-                $this.find('.fancy-on_off').css('display','none');
-                $this.find('.fancy-on, .fancy-off').css('text-indent','-10000px');
-
-                var newVal = localData.uiState.attr(hm_id+".Value");
-                var num = parseFloat(newVal, 10);
-                if (num > 0 || newVal === "true" || newVal === true) {
-                    if (reverse) {
-                        $this.css('background-position', 'right');
-                    } else {
-                        $this.css('background-position', 'left');
-                    }
-                } else {
-                    if (reverse) {
-                        $this.css('background-position', 'left');
-                    } else {
-                        $this.css('background-position', 'right');
-                    }
-                }
-
-
-                if (!vis.editMode) {
-                    $this.find("input.fancy-on_off").change(function() {
-                        var val = $(this).val();
-                        if (reverse) { val = 1 - val; }
-                        if (val == '0'){ $this.css('background-position', 'right'); }
-                        if (val == '1'){ $this.css('background-position', 'left'); }
-                        localData.setValue( id, val);
-                    });
-                }
-
-            },
-            toggleswitch: function (el, options) {
-                var $this = jQuery(el).prev();
-                $this.toggleSwitch({
-                    highlight: options.highlight,
-                    width:     options.width,
-                    change: function (e) {
-                        //console.log(e);
-                    }
-                });
-            },
-            ibutton: function (el, options) {
-                var $this = jQuery(el);
-                //console.log("ibutton "+$this.attr("id"));
-                //console.log(options);
-
-                setTimeout(function () {
-                    $this.iButton(options);
-                }, 20);
-                var hm_id = "_" + $this.attr("data-hm-id");
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                    var num = parseFloat(newVal, 10);
-                    if (num > 0 || newVal == "true" || newVal == true) {
-                        //console.log("iButton true");
-                        $this.prop("checked",true).trigger("change");//.iButton("repaint");
-                    } else {
-                        //console.log("iButton false");
-                        $this.removeAttr("checked").trigger("change");//.iButton("repaint");
-                    }
+    vis.binds.fancyswitch = {
+        fancyswitch: function (el, options) {
+            var $this = $(el).parent().find('.fancy-switch');
+            var oid   = $this.attr('data-oid');
+            if (oid != 'nothing_selected') {
+                vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                    var num = parseFloat(newVal);
+                    num = (num > 0 || newVal === 'true' || newVal === true);
+                    if (options.invert) num = !num;
+                    $this.css('background-position', num ? 'left' : 'right');
+                    $this.find('input.fancy-on_off[value="0"]').prop('checked', !num);
+                    $this.find('input.fancy-on_off[value="1"]').prop('checked', num);
                 });
             }
-        };
-    //});
+            $this.css('background', 'url("' + options.src + '")');
+            $this.find('.fancy-on_off').css('display', 'none');
+            $this.find('.fancy-on, .fancy-off').css('text-indent', '-10000px');
+
+            var newVal = vis.states.attr(oid + '.val');
+            var num = parseFloat(newVal);
+            num = (num > 0 || newVal === 'true' || newVal === true);
+            if (options.invert) num = !num;
+            if (num) {
+                $this.css('background-position', 'left');
+            } else {
+                $this.css('background-position', 'right');
+            }
+
+            if (!vis.editMode && oid != 'nothing_selected') {
+                $this.find("input.fancy-on_off").change(function() {
+                    var val = $(this).val();
+                    val = parseFloat(val);
+                    $this.css('background-position', val ? 'left' : 'right');
+                    if (options.invert) val = !val;
+                    vis.setValue(oid, val);
+                });
+                $this.click(function() {
+                   console.log('click');
+                });
+            }
+        },
+        toggleSwitch: function (el, options) {
+            var $this = $(el).prev();
+            console.log(JSON.stringify(options) + ' ' + $this.width());
+            $this.toggleSwitch({
+                highlight: options.highlight,
+                width:     parseInt(options.width, 10) || 40,
+                change: function (e) {
+                    console.log(e);
+                }
+            });
+
+            if (vis.editMode) {
+                if (options.test) {
+                    $this.val(!parseInt($this.val(), 10) ? '1' : '0').trigger('change');
+                }
+                setTimeout(function () {
+                    var id = $this.attr('id');
+                    id = id.substring(0, id.length - '_select'.length);
+                    $('#' + id).find('.ui-toggle-switch').css({'pointer-events': 'none'});
+                }, 100);
+            }
+        },
+        iButton: function (el, options) {
+            var $this = $(el);
+
+            setTimeout(function () {
+                $this.iButton(options);
+            }, 20);
+            if (!options.enableFx)   options.enableFx   = false;
+            if (!options.enableDrag) options.enableDrag = false;
+            if (options.resizeHandle === 'false') options.resizeHandle = false;
+            if (options.resizeContainer === 'false') options.resizeContainer = false;
+
+            var oid = $this.attr('data-oid');
+            if (oid != 'nothing_selected') {
+                vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                    var num = (parseFloat(newVal) > 0 || newVal === 'true' || newVal === true);
+                    $this.prop('checked', num).trigger('change');
+                });
+            }
+
+            if (vis.editMode) {
+                if (options.test) $this.prop('checked', !$this.prop('checked')).trigger('change');
+                setTimeout(function () {
+                    var id = $this.attr('id');
+                    id = id.substring(0, id.length - '_checkbox'.length);
+                    $('#' + id).find('.ibutton-container').css({'pointer-events': 'none'});
+                }, 100);
+            }
+        }
+    };
 </script>
 
 
-<script type="text/ejs" id="tplFancySwitch1" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Switch light Off/On" data-dashui-attrs="hm_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
+<script type="text/ejs" id="tplFancySwitch1" class="vis-tpl" data-vis-set="fancyswitch" data-vis-name="ctrl - Bool - Switch light Off/On" data-vis-attrs="oid;invert/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
             </fieldset>
-            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, "widgets/fancyswitch/img/fancyswitch-1.png") %>></div>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-1.png", invert: data.attr('invert')}) %>></div>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplFancySwitch2" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Slider dark Off/On" data-dashui-attrs="hm_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
+<script type="text/ejs" id="tplFancySwitch2" class="vis-tpl" data-vis-set="fancyswitch" data-vis-name="ctrl - Bool - Slider dark Off/On" data-vis-attrs="oid;invert/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
             </fieldset>
-            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, "widgets/fancyswitch/img/fancyswitch-2.png") %>></div>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-2.png", invert: data.attr('invert')}) %>></div>
         </div>
     </div>
 </script>
 
 
-<script type="text/ejs" id="tplFancyDarkAnAus" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Schieber dunkel Ein/Aus" data-dashui-attrs="hm_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
+<script type="text/ejs" id="tplFancyDarkAnAus" class="vis-tpl" data-vis-set="fancyswitch" data-vis-name="ctrl - Bool - Schieber dunkel Ein/Aus" data-vis-attrs="oid;invert/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
             </fieldset>
-            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, "widgets/fancyswitch/img/fancyswitch-3.png") %>></div>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-3.png", invert: data.attr('invert')}) %>></div>
         </div>
     </div>
 </script>
 
 
-<script type="text/ejs" id="tplFancyDarkAnAusRev" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Schieber dunkel Aus/Ein" data-dashui-attrs="hm_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
+<script type="text/ejs" id="tplFancyDarkAnAusRev" class="vis-tpl" data-vis-set="fancyswitch" data-vis-name="ctrl - Bool - Schieber dunkel Aus/Ein" data-vis-attrs="oid;invert/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
             </fieldset>
-            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, "widgets/fancyswitch/img/fancyswitch-4.png") %>></div>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-4.png", invert: data.attr('invert')}) %>></div>
         </div>
     </div>
 </script>
 
 
-<script type="text/ejs" id="tplFancyDarkAnAusWippe" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Wippe dunkel Aus/Ein" data-dashui-attrs="hm_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-hm-id="<%= this.data.attr('hm_id') %>">
+<script type="text/ejs" id="tplFancyDarkAnAusWippe" class="vis-tpl" data-vis-set="fancyswitch" data-vis-name="ctrl - Bool - Wippe dunkel Aus/Ein" data-vis-attrs="oid;invert/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
             </fieldset>
-            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, "widgets/fancyswitch/img/fancyswitch-5.png") %>></div>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-5.png", invert: data.attr('invert')}) %>></div>
         </div>
     </div>
 </script>
 
 
-<script type="text/ejs" id="tplFancyGivaIButton" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Giva Labs iButton"
-        data-dashui-attrs="hm_id;labelOn[ON];labelOff[OFF];resizeHandle[auto]/auto,true,false;resizeContainer[auto]/auto,true,false;enableDrag/checkbox;enableFx/checkbox;duration[200]/slider,0,5000,100">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px;" id="<%= this.data.attr('wid') %>" >
-        <div class="dashui-widget-body">
-            <div>
-                <input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox"
-                       id="<%= this.data.attr('wid') %>_checkbox"
-                       data-hm-id="<%= this.data.attr('hm_id') %>"
-                       value="1"
-                        <%= (el) -> vis.binds.basic.checkbox(el); vis.binds.fancyswitch.ibutton(el, {duration: data.attr('duration'), labelOn: data.attr('labelOn'), labelOff: data.attr('labelOff'), resizeHandle: data.attr('resizeHandle'), resizeContainer: data.attr('resizeContainer'), enableDrag: data.attr('enableDrag'), enableFx: data.attr('enableFx')}); %>/>
-            </div>
+<script type="text/ejs" id="tplFancyGivaIButton" class="vis-tpl" data-vis-set="fancyswitch" data-vis-name="ctrl - Bool - Giva Labs iButton"
+        data-vis-attrs="oid;labelOn[ON];labelOff[OFF];resizeHandle[auto]/select,auto,true,false;resizeContainer[auto]/select,auto,true,false;enableDrag/checkbox;enableFx/checkbox;duration[200]/slider,0,5000,100;test/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px;" id="<%= this.data.attr('wid') %>" >
+        <div class="vis-widget-body">
+            <input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox"
+                   id="<%= this.data.attr('wid') %>_checkbox"
+                   data-oid="<%= this.data.attr('oid') %>"
+                   value="1"
+                    <%= (el) -> vis.binds.basic.checkbox(el); vis.binds.fancyswitch.iButton(el, {duration: data.attr('duration'), labelOn: data.attr('labelOn'), labelOff: data.attr('labelOff'), resizeHandle: data.attr('resizeHandle'), resizeContainer: data.attr('resizeContainer'), enableDrag: data.attr('enableDrag'), enableFx: data.attr('enableFx'), test: data.attr('test')}); %>/>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplFancyToggleswitch" class="dashui-tpl" data-dashui-set="fancyswitch" data-dashui-name="ctrl - Bool - Taitem jqui Toggleswitch" data-dashui-attrs="html_prepend;html_append;hm_id;text_true[ON];text_false[OFF];highlight/checkbox;width[40]/slider,10,500,1">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="padding-left:10px;" id="<%= this.data.attr('wid') %>" >
-        <div class="dashui-widget-body">
-            <div>
-                <%== this.data.attr("html_prepend") %>
-                <select id="<%= this.data.attr('wid') %>_select" data-hm-id="<%= this.data.attr('hm_id') %>">
-                    <option value="0"><%= this.data.attr('text_false') %></option>
-                    <option value="1"><%= this.data.attr('text_true') %></option>
-                </select>
-                <div <%= (el) -> vis.binds.basic.select(el); vis.binds.fancyswitch.toggleswitch(el, {highlight:data.attr('highlight'), width:data.attr('width')}); %>></div>
+<script type="text/ejs" id="tplFancyToggleswitch" class="vis-tpl" data-vis-set="fancyswitch" data-vis-name="ctrl - Bool - Taitem jqui Toggleswitch" data-vis-attrs="html_prepend;html_append;oid;text_true[ON];text_false[OFF];highlight_switch/checkbox;width[40]/slider,10,500,1;test/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="padding-left:10px;" id="<%= this.data.attr('wid') %>" >
+        <div class="vis-widget-body" style="padding-top:5px; text-align: center">
+            <%== this.data.attr("html_prepend") %>
+            <select id="<%= this.data.attr('wid') %>_select" data-oid="<%= (this.data.attr('oid') == 'nothing_selected' ? '' : this.data.attr('oid')) %>">
+                <option value="0"><%= this.data.attr('text_false') %></option>
+                <option value="1"><%= this.data.attr('text_true') %></option>
+            </select>
+            <div <%= (el) -> vis.binds.basic.select(el); vis.binds.fancyswitch.toggleSwitch(el, {highlight: data.attr('highlight_switch'), width: data.attr('width'), test: data.attr('test')}); %>></div>
             <%== this.data.attr("html_append") %>
         </div>
-    </div>
     </div>
 </script>

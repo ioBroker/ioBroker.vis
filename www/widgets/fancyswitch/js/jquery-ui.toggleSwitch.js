@@ -13,7 +13,6 @@ jQuery.fn.toggleSwitch = function (params) {
     });
 
     function generateToggle(selectObj) {
-        console.log("C");
         // create containing element
         var $contain = $("<div />").addClass("ui-toggle-switch");
 
@@ -54,9 +53,7 @@ jQuery.fn.toggleSwitch = function (params) {
 
         $(selectObj).change(function () {
             var cur = $(selectObj).find("option:selected").val();
-            console.log("change cur="+cur);
             var val = $contain.find(".ui-slider").slider("value");
-            console.log("val="+val);
             if ((cur * 100) != val) {
                 $contain.find("label").eq(cur).addClass("ui-state-active").siblings("label").removeClass("ui-state-active");
                 $contain.find(".ui-slider").slider("value", cur * 100);
