@@ -631,7 +631,7 @@
 <script type="text/ejs"
         id="tplHtml"
         class="vis-tpl"
-        data-vis-prev='<div class="vis-widget-body"><div class="editmode-helper"></div><img style="position:absolute; width:100%;" src="img/eg_trans.png"><div></div></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div>'
+        data-vis-prev='<div id="prev_tplImage" style=" position: relative; text-align: initial; ">  <div class="vis-widget_prev ui-selectee ui-draggable ui-resizable" style="width: 99px; height: 97px; left: 90px; top: 0px; z-index: 0;" > <div class="vis-widget-body">  <div class="editmode-helper"></div>  <img style="position:absolute; width:100%;" src="img/eg_trans.png"> <div></div> </div> <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div></div> <div class="vis-widget ui-selectee" style="top: 202px; left: 282.33333349227905px; width: 200px; height: 130px;" > <div class="vis-widget-body">  </div> </div></div>'
         data-vis-set="basic"
         data-vis-name="static - HTML"
         data-vis-attrs="html">
@@ -677,7 +677,12 @@
 
 </script>
 
-<script type="text/ejs" id="tplFrame" class="vis-tpl" data-vis-set="basic" data-vis-name="static - Border"
+<script type="text/ejs"
+        data-vis-prev='<div id="prev_tplFrame" style=" position: relative; text-align: initial; "> 	 <div style="width: 100%; height: 0px; background-color: black;"></div> <div style="position: absolute; top: -10px; left: 15px; color: black;">Title</div>'
+        id="tplFrame"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-name="static - Border"
         data-vis-attrs="title['Title'];title_font;title_color[black]/color;title_back/color;title_top[-10]/slider,-20,20,1;title_left[15]/slider,-20,30,1;header_height[0]/slider,0,100,1;header_color[black]/color">
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible;width:50px;height:50px;border:1px solid #888" id="<%= this.data.attr('wid') %>" >
         <% if (this.data.attr('header_height')) { %>
@@ -1044,7 +1049,13 @@
 
 </script>
 
-<script type="text/ejs" id="tplBulbOnOff" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Bulb on/off" data-vis-attrs="oid">
+<script type="text/ejs"
+        data-vis-prev='<div id="prev_tplBulbOnOff" style=" position: relative; text-align: initial; "> <div class="vis-widget_prev-body">  <img src="img/bulb_on.png" width="100%">  </div> <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div>'
+        id="tplBulbOnOff"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-name="val - Bulb on/off"
+        data-vis-attrs="oid">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% switch (vis.states.attr(this.data.oid + '.val')) { case 0: case "0": case "0.000000": case false: case "false": %>
@@ -1057,7 +1068,13 @@
 
 </script>
 
-<script type="text/ejs" id="tplBulbOnOffCtrl" class="vis-tpl" data-vis-set="basic" data-vis-name="ctrl - Bulb on/off" data-vis-attrs="oid">
+<script type="text/ejs"
+        data-vis-prev='<div id="prev_tplBulbOnOff" style=" position: relative; text-align: initial; "> <div class="vis-widget_prev-body">  <img src="img/bulb_on.png" width="100%">  </div> <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div>'
+        id="tplBulbOnOffCtrl"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-name="ctrl - Bulb on/off"
+        data-vis-attrs="oid">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
     <div class="vis-widget-body">
         <% switch (vis.states.attr("_"+this.data.oid+".val")) { case 0: case "0": case "0.000000": case "false": case false: %>
@@ -1067,7 +1084,6 @@
         <% } %>
     </div>
     </div>
-
 </script>
 
 <script type="text/ejs" id="tplHmWindowRotary" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Drehgriff" data-vis-attrs="oid;html_closed;html_tilt;html_open">

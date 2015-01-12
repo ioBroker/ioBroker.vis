@@ -2493,7 +2493,21 @@ vis = $.extend(true, vis, {
         $("#dev_show_html").button({
 
         }).click(function(){
-            $("body").append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%"><div id="prev_'+vis.views[vis.activeView].widgets[vis.activeWidget].tpl+'"> '+$("#"+vis.activeWidget).html()+'</div></textarea></div>')
+var wid_id = $("#"+vis.activeWidget).attr("id");
+            vis.inspectWidget();
+            console.log(wid_id)
+            var html = $("#"+wid_id).html();
+            html = html.replace("vis-widget ", "vis-widget_prev ");
+            html = html.replace("vis-widget-body", "vis-widget-prev-body")
+
+                .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, "")
+            //.replace(/(  )/g,'')
+            .replace(/(?:\r\n|\r|\n)/g, '')
+            .replace(/ +(?= )/g,'');
+
+            html = 'data-vis-prev=\'<div id="prev_'+vis.views[vis.activeView].widgets[wid_id].tpl+'" style=" position: relative; text-align: initial; ">'+ html.toString() + '\'';
+            console.log(html)
+            $("body").append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%">'+html+'</textarea></div>')
            $("#dec_html_code").dialog({
                width: 800,
                height: 600,
@@ -2668,30 +2682,31 @@ vis = $.extend(true, vis, {
             var tpl = $(tpl_list[i]).attr("id");
             var widgetId = tpl + "_prev";
 
-            $('#toolset_' + set).append('<div id="prev_container_' + tpl + '" class="wid_prev" data-tpl="' + tpl + '"><div style="margin-top: 5px">' + $("#" + tpl).data("vis-name") + '</div></div>');
-
+            $('#toolset_' + set).append('<div id="prev_container_' + tpl + '" class="wid_prev" data-tpl="' + tpl + '"><div>' + $("#" + tpl).data("vis-name") + '</div></div>');
+console.log(i)
+console.log($(tpl_list[i]).data("vis-prev"))
             if($(tpl_list[i]).data("vis-prev")){
                 $('#prev_container_' + tpl).append($(tpl_list[i]).data("vis-prev"))
             }else{
-                var data = {
-                    data: new can.Map($.extend({
-                        "wid": widgetId,
-                        "width": "40",
-                    })),
-                    style: {"width": "40",},
-                };
-                try {
-                    $('#prev_container_' + tpl).append(can.view(tpl, {
-                        hm: 0,
-                        ts: 0,
-                        ack: 0,
-                        lc: 0,
-                        data: data.data
-
-                    }, data))
-                } catch (err) {
-
-                }
+                //var data = {
+                //    data: new can.Map($.extend({
+                //        "wid": widgetId,
+                //        "width": "40",
+                //    })),
+                //    style: {"width": "40",},
+                //};
+                //try {
+                //    $('#prev_container_' + tpl).append(can.view(tpl, {
+                //        hm: 0,
+                //        ts: 0,
+                //        ack: 0,
+                //        lc: 0,
+                //        data: data.data
+                //
+                //    }, data))
+                //} catch (err) {
+                //
+                //}
             }
 
 
@@ -2705,7 +2720,7 @@ vis = $.extend(true, vis, {
                 i++;
                 setTimeout(function () {
                     add()
-                }, 20);
+                }, 0);
             }
         }
 
@@ -3775,7 +3790,6 @@ $(document).keydown(function (e) {
         if (vis.selectAll()) {
             e.preventDefault();
         }
-        ;
     } else if (e.which === 27) {
         // Esc
         if (vis.deselectAll()) {
@@ -3792,7 +3806,7 @@ $(document).keydown(function (e) {
         if (vis.onButtonArrows(e.which, e.shiftKey, (e.ctrlKey || e.metaKey ? 10 : 1))) {
             e.preventDefault();
         }
-    }else if (e.which === 112 && (e.ctrlKey || e.metaKey)) {
+    }else if (e.which === 113 ) {
      $("#ribbon_tab_dev").toggle();
         e.preventDefault();
     }

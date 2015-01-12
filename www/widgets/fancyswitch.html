@@ -198,7 +198,13 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplFancyToggleswitch" class="vis-tpl" data-vis-set="fancyswitch" data-vis-name="ctrl - Bool - Taitem jqui Toggleswitch" data-vis-attrs="html_prepend;html_append;hm_id;text_true[ON];text_false[OFF];highlight/checkbox;width[40]/slider,10,500,1">
+<script type="text/ejs"
+        id="tplFancyToggleswitch"
+        data-vis-prev='<div id="prev_tplFancyToggleswitch" style=" position: relative; text-align: initial; "> <div class="vis-widget-prev-body"> <div> <select data-hm-id="" class="ui-toggle-switch" style="display: none;"> <option value="0">OFF</option> <option value="1">ON</option> </select> <div></div> <div class="ui-toggle-switch"><label style="border: 0px" class="ui-state-active">OFF</label><div class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" aria-disabled="false" style="width: 40px;"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 100%;"></div><a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 0%;"></a></div><label style="border: 0px">ON</label></div></div> </div> '
+        class="vis-tpl"
+        data-vis-set="fancyswitch"
+        data-vis-name="ctrl - Bool - Taitem jqui Toggleswitch"
+        data-vis-attrs="html_prepend;html_append;hm_id;text_true[ON];text_false[OFF];highlight/checkbox;width[40]/slider,10,500,1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="padding-left:10px;" id="<%= this.data.attr('wid') %>" >
         <div class="vis-widget-body">
             <div>
