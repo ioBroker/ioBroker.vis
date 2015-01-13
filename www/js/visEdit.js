@@ -2247,7 +2247,7 @@ vis = $.extend(true, vis, {
                 height: 410,
                 checkAllText: _("Check all"),
                 uncheckAllText: _("Uncheck all"),
-                noneSelectedText: _("Select options"),
+                noneSelectedText: _("Select options")
             });
 
         });
@@ -2433,7 +2433,7 @@ vis = $.extend(true, vis, {
         });
 
         $("#screen_hide_description").change(function () {
-            var val = $("#screen_hide_description")[0].checked
+            var val = $("#screen_hide_description")[0].checked;
             if (vis.views[vis.activeView].settings.hideDescription != val) {
                 vis.views[vis.activeView].settings.hideDescription = val;
                 if (typeof hqWidgets != 'undefined') {
@@ -2649,23 +2649,27 @@ vis = $.extend(true, vis, {
         });
 
         $(".pan_state").click(function () {
-            var pan = $(this).attr("id").replace("_state", "");
-            var panel;
-            if (this.checked) {
-                panel = vis.get_panel_by_id(pan);
+            var $this = $(this)
+            var pan = $(this).attr("id").replace("_state","");
+            var panel = vis.get_panel_by_id(pan);
+            if ($this.hasClass("ui-state-active")){
 
-                panel._floatingDialog.show()
-            } else {
-                panel = vis.get_panel_by_id(pan);
+
                 if (panel._floatingDialog) {
                     panel._floatingDialog.hide()
+
                 } else {
                     console.log(panel)
                     panel.onSelected()
-                   //var dialog = panel.performUndockToDialog();
-                   // dialog.resize(200,200)
+                    //var dialog = panel.performUndockToDialog();
+                    // dialog.resize(200,200)
                     //dialog.hide()
                 }
+            } else {
+
+                panel._floatingDialog.show()
+
+
 
             }
         });
@@ -2740,7 +2744,7 @@ vis = $.extend(true, vis, {
 
         var divDockManager = document.getElementById("dock_body");
         dockManager = new dockspawn.DockManager(divDockManager);
-        dockManager.setDefaultDialogPosition(400,200)
+        dockManager.setDefaultDialogPosition(400,200);
         dockManager.initialize();
 
 
@@ -2780,11 +2784,11 @@ vis = $.extend(true, vis, {
             onHideDialog: function (self, dialog) {
                 //console.info('onHideDialog: ', self, dialog);
                 //localStorage.setItem(storeKey, dockManager.saveState());
-                $("#" + dialog.panel.elementContent.id + "_state").attr("checked", false);
+                $("#" + dialog.panel.elementContent.id + "_state").removeClass("ui-state-active");
             },
             onShowDialog: function (self, dialog) {
                 //console.info('onShowDialog: ', self, dialog);
-                $("#" + dialog.panel.elementContent.id + "_state").attr("checked", true);
+                $("#" + dialog.panel.elementContent.id + "_state").addClass("ui-state-active");
                 //localStorage.setItem(storeKey, dockManager.saveState());
             }
 
@@ -2815,6 +2819,17 @@ vis = $.extend(true, vis, {
         var pan_css_wid = dockManager.dockRight(documentNode, _pan_css_wid, 0.08);
         var pan_wid_attr = dockManager.dockUp(pan_css_wid, _pan_wid_attr, 0.5);
         var pan_css_view = dockManager.dockFill(pan_css_wid, _pan_css_view);
+
+
+
+        var panels = dockManager.getPanels()
+        $.each(panels, function () {
+           if(this._cachedHeight > 0 || this.isDialog == false){
+
+               $("#" +  this.elementContent.id + "_state").addClass("ui-state-active");
+
+           }
+        });
 
 
     },

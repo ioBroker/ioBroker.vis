@@ -950,10 +950,15 @@ div.jGrowl div.warn {
 
 }
 
+div.dock-container.dock-container-fill.document-manager.splitter-container-horizontal > div > div.tab-handle-list-container{
+    display: none!important;
+}
+div.dock-container.dock-container-fill.document-manager.splitter-container-horizontal > div > div.tab-handle-content-seperator.ui-state-highlight{
+    display: none!important;
+}
 
 
-
-/*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
+    /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
 
 
 #vis_wrap{
