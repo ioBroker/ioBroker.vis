@@ -677,7 +677,13 @@ vis = $.extend(true, vis, {
 
         return line;
     },
-    editSelect: function (widget, wid_attr, values, init, onchange) {
+    editSelect: function (widget, wid_attr, values, notTranslate, init, onchange) {
+        if (typeof notTranslate == 'function') {
+            onchange = init;
+            init = notTranslate;
+            notTranslate = false;
+        }
+
         // Select
         var line = {
             input: '<select type="text" id="inspect_' + wid_attr + '">'
@@ -686,7 +692,7 @@ vis = $.extend(true, vis, {
         if (init)     line.init = init;
         if (values.length && values[0] !== undefined) {
             for (var t = 0; t < values.length; t++) {
-                line.input += '<option value="' + values[t] + '">' + _(values[t]) + '</option>';
+                line.input += '<option value="' + values[t] + '">' + (notTranslate ?  values[t] : _(values[t])) + '</option>';
             }
         } else {
             for (var name in values) {
@@ -950,7 +956,7 @@ vis = $.extend(true, vis, {
         //              select,value1,value2,... - dropdown select
         //              hr
         //              br
-        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([0-9-]+\))?(\[.+\])?(\/.+)?/;
+        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([0-9-]*\))?(\[.*])?(\/[-_,\.a-zA-Z0-9]+)?/;
         var view         = this.getViewOfWidget(widget)
         var match        = this.regexAttr.exec(_wid_attr);
 
@@ -959,6 +965,7 @@ vis = $.extend(true, vis, {
         var wid_default  = match[3];
         var wid_type     = match[4];
         var wid_type_opt = null;
+        var notTranslate = true;
         var index        = '';
         var widgetData   = this.views[view].widgets[widget].data;
 
@@ -1049,6 +1056,9 @@ vis = $.extend(true, vis, {
         } else
         if (wid_attr.indexOf('_eff_opt') != -1) {
             wid_type = 'effect-options';
+        } if (wid_type == 'nselect') {
+            wid_type = 'select';
+            notTranslate = true;
         }
 
         // Extract min, max, step for number and slider
@@ -1107,7 +1117,7 @@ vis = $.extend(true, vis, {
                     line = this.editUrl(widget, (wid_attr + index), ['mp3', 'wav', 'ogg']);
                     break;
                 case 'select':
-                    line = this.editSelect(widget, (wid_attr + index), wid_type_opt);
+                    line = this.editSelect(widget, (wid_attr + index), wid_type_opt, notTranslate);
                     break;
                 case 'effect':
                     line = this.editEffect(widget, (wid_attr + index));
