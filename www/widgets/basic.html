@@ -631,7 +631,7 @@
 <script type="text/ejs"
         id="tplHtml"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplImage" style=" position: relative; text-align: initial; ">  <div class="vis-widget_prev ui-selectee ui-draggable ui-resizable" style="width: 99px; height: 97px; left: 90px; top: 0px; z-index: 0;" > <div class="vis-widget-body">  <div class="editmode-helper"></div>  <img style="position:absolute; width:100%;" src="img/eg_trans.png"> <div></div> </div> <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div></div> <div class="vis-widget ui-selectee" style="top: 202px; left: 282.33333349227905px; width: 200px; height: 130px;" > <div class="vis-widget-body">  </div> </div></div>'
+        data-vis-prev='<div id="prev_tplImage" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="width: 80px; height: 80px; left: 179px; top: 211px; z-index: 0;" > <div class="vis-widget-prev-body"> <div class="editmode-helper"></div> <img style="position:absolute; width:100%;" src="img/eg_trans.png"> <div></div> </div> </div>'
         data-vis-set="basic"
         data-vis-name="static - HTML"
         data-vis-attrs="html">
@@ -640,6 +640,7 @@
             <%== this.data.attr('html') %>
         </div>
     </div>
+
 </script>
 
 <script type="text/ejs" id="tplIFrame" class="vis-tpl" data-vis-set="basic" data-vis-name="static - iFrame" data-vis-attrs="src;refreshInterval">
@@ -652,6 +653,7 @@
             <div <%= (el) -> vis.binds.basic.iframeRefresh(el, data.attr("src"), data.attr("refreshInterval")) %>></div>
         </div>
     </div>
+
 
 </script>
 
@@ -666,6 +668,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs" id="tplLink" class="vis-tpl" data-vis-set="basic" data-vis-name="static - link" data-vis-attrs="html;href;target;alt">
@@ -675,10 +678,11 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs"
-        data-vis-prev='<div id="prev_tplFrame" style=" position: relative; text-align: initial; "> 	 <div style="width: 100%; height: 0px; background-color: black;"></div> <div style="position: absolute; top: -10px; left: 15px; color: black;">Title</div>'
+        data-vis-prev='<div id="prev_tplFrame" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="overflow: visible; width: 50px; height: 50px; border: 1px solid rgb(136, 136, 136); left: 167px; top: 179px;" > 	 <div style="width: 100%; height: 0px; background-color: black;">		</div> <div style="position: absolute; top: -10px; left: 15px; color: black;"></div> 		 </div>'
         id="tplFrame"
         class="vis-tpl"
         data-vis-set="basic"
@@ -694,6 +698,7 @@
 		<% } %>
     </div>
 
+
 </script>
 <!-- basic Container -->
 
@@ -705,6 +710,7 @@
             <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body">
         </div>
     </div>
+
 
 </script>
 
@@ -725,6 +731,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs" id="tplStatefulIFrame8" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - iFrame 8" data-vis-attrs="oid;refreshInterval;src_(0-7)">
@@ -743,6 +750,7 @@
             <div <%= (el) -> vis.binds.stateful.iframe(el, srcArr, data.attr("refreshInterval")) %> />
         </div>
     </div>
+
 
 </script>
 
@@ -787,6 +795,7 @@
         </div>
     </div>
 
+
 </script>
 
 
@@ -797,9 +806,16 @@
         </div>
     </div>
 
+
 </script>
 
-<script type="text/ejs" id="tplFilterDropdown" class="vis-tpl" data-vis-set="basic" data-vis-name="filter - dropdown" data-vis-attrs="filters;hide_effect;hide_duration;show_effect;show_duration">
+<script type="text/ejs"
+        id="tplFilterDropdown"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplFilterDropdown" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-selected" style="top: 520px; left: 430.5px; width: 69px; height: 17px; position: absolute;" > <div class="vis-widget-prev-body"> <select id="" name=""> <option value="" selected="selected">all</option> <option value="Filter 1">Filter 1</option><option value="Filter2">Filter2</option></select> </div> </div>'
+        data-vis-set="basic"
+        data-vis-name="filter - dropdown"
+        data-vis-attrs="filters;hide_effect;hide_duration;show_effect;show_duration">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 200px; height: 40px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.filterDropdown(el, data.attr('filters'), data.attr('hide_effect'), data.attr('hide_duration'), data.attr('show_effect'),data.attr('show_duration')) %>>
         <div class="vis-widget-body">
             <select id="" name="">
@@ -807,6 +823,7 @@
             </select>
         </div>
     </div>
+
 
 </script>
 
@@ -819,6 +836,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs" id="tplValueString" class="vis-tpl" data-vis-set="basic" data-vis-name="val - String" data-vis-attrs="oid;html_prepend;html_append;test_html">
@@ -829,6 +847,7 @@
             </div>
         </div>
     </div>
+
 
 </script>
 
@@ -841,6 +860,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs" id="tplValueTimestamp" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Timestamp" data-vis-attrs="oid;html_prepend;html_append;test_html">
@@ -852,6 +872,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs" id="tplValueLastchange" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Lastchange Timestamp" data-vis-attrs="oid;html_prepend;html_append;test_html">
@@ -862,6 +883,7 @@
             </div>
         </div>
     </div>
+
 
 </script>
 
@@ -878,6 +900,7 @@
         </div>
     </div>
 
+
 </script>
 <script type="text/ejs" id="tplValueList" class="vis-tpl" data-vis-set="basic" data-vis-name="val - ValueList Text" data-vis-attrs="oid;html_prepend;html_append;valuelist;test_list/-,0,1,2,3,4,5,6,7,8,9,10,11,12">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
@@ -887,6 +910,7 @@
             </div>
         </div>
     </div>
+
 
 </script>
 
@@ -899,6 +923,7 @@
         </div>
     </div>
 
+
 </script>
 <script type="text/ejs" id="tplValueListHtml8" class="vis-tpl" data-vis-set="basic" data-vis-name="val - ValueList HTML 8" data-vis-attrs="oid;html_prepend;html_append;value0;value1;value2;value3;value4;value5;value6;value7;style0;style1;style2;style3;style4;style5;style6;style7">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
@@ -908,6 +933,7 @@
         </div>
     </div>
     </div>
+
 
 </script>
 
@@ -928,6 +954,7 @@
             <%== this.data.attr("html_append") %>
         </div>
     </div>
+
 
 </script>
 
@@ -950,9 +977,16 @@
         </div>
     </div>
 
+
 </script>
 
-<script type="text/ejs" id="tplValueBoolCheckbox" class="vis-tpl" data-vis-set="basic" data-vis-name="ctrl - Bool Checkbox" data-vis-attrs="oid;html_prepend;html_append">
+<script type="text/ejs"
+        id="tplValueBoolCheckbox"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplValueBoolCheckbox" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="left: 396.5px; top: 153px;" > <div class="vis-widget-prev-body">						<input type="checkbox" name="w00001_checkbox" data-o>			 </div> </div>'
+        data-vis-set="basic"
+        data-vis-name="ctrl - Bool Checkbox"
+        data-vis-attrs="oid;html_prepend;html_append">
     <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>" >
         <div class="vis-widget-body">
 			<%== this.data.attr("html_prepend") %>
@@ -960,6 +994,7 @@
 			<%== this.data.attr("html_append") %>
         </div>
     </div>
+
 
 </script>
 
@@ -975,6 +1010,7 @@
 			<%== this.data.attr("html_append") %>
         </div>
     </div>
+
 
 </script>
 
@@ -996,10 +1032,12 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs" id="tplValueBoolCtrlSvg" class="vis-tpl" data-vis-set="basic" data-vis-name="ctrl - Bool SVG" data-vis-attrs="oid;svg_false;svg_true;opacity">
     <% vis.binds.basic.showSvg(this.data.attr('class'), this.view, this.data.attr('wid'), this.data.attr('oid'),this.data.attr("opacity"),this.data.attr("svg_false"),this.data.attr("svg_true")) %>
+
 
 </script>
 
@@ -1010,6 +1048,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs" id="tplHide" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Hide on 0/False" data-vis-attrs="oid;html;html_prepend;html_append">
@@ -1018,6 +1057,7 @@
             <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
         </div>
     </div>
+
 
 </script>
 
@@ -1028,6 +1068,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs" id="tplShowValue" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Show on Value" data-vis-attrs="oid;value;html;html_prepend;html_append">
@@ -1036,6 +1077,7 @@
             <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
         </div>
     </div>
+
 
 </script>
 
@@ -1047,10 +1089,11 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs"
-        data-vis-prev='<div id="prev_tplBulbOnOff" style=" position: relative; text-align: initial; "> <div class="vis-widget_prev-body">  <img src="img/bulb_on.png" width="100%">  </div> <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div>'
+        data-vis-prev='<div id="prev_tplBulbOnOffCtrl" style=" position: relative; text-align: initial;padding: 4px "> <div class="vis-widget-prev-body"> <img src="img/bulb_on.png" width="100%"> </div> '
         id="tplBulbOnOff"
         class="vis-tpl"
         data-vis-set="basic"
@@ -1066,10 +1109,11 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs"
-        data-vis-prev='<div id="prev_tplBulbOnOff" style=" position: relative; text-align: initial; "> <div class="vis-widget_prev-body">  <img src="img/bulb_on.png" width="100%">  </div> <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div>'
+        data-vis-prev='<div id="prev_tplBulbOnOffCtrl" style=" position: relative; text-align: initial;padding: 4px "> <div class="vis-widget-prev-body"> <img src="img/bulb_on.png" width="100%"> </div> '
         id="tplBulbOnOffCtrl"
         class="vis-tpl"
         data-vis-set="basic"
@@ -1084,6 +1128,7 @@
         <% } %>
     </div>
     </div>
+
 </script>
 
 <script type="text/ejs" id="tplHmWindowRotary" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Drehgriff" data-vis-attrs="oid;html_closed;html_tilt;html_open">
@@ -1099,6 +1144,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs" id="tplHmWindow" class="vis-tpl" data-vis-set="basic" data-vis-name="val - TFK" data-vis-attrs="oid;html_closed;html_open">
@@ -1112,6 +1158,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script type="text/ejs" id="tplValueFloatBar" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Bar Horizontal" data-vis-attrs="oid;factor[1];color;border;shadow;reverse/checkbox">
@@ -1121,6 +1168,7 @@
             </div>
         </div>
     </div>
+
 
 </script>
 
@@ -1132,6 +1180,7 @@
         </div>
     </div>
 
+
 </script>
 <script type="text/ejs" id="tplNote" class="vis-tpl" data-vis-set="basic" data-vis-name="val - Note" data-vis-attrs="oid;max_width[300];html_prepend;html_append;test_text">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:50px;height:50px;border:1px solid #888;background:yellow" id="<%= this.data.attr('wid') %>" onclick="vis.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= this.data.attr('oid') %>')">
@@ -1139,6 +1188,7 @@
 			<%== this.data.attr("html_prepend") %><%= vis.states.attr(this.data.oid + ".val") == null ? "" : vis.states.attr(this.data.oid + ".val") %><%== this.data.attr("html_append") %>
 		</div>
     </div>
+
 
 </script>
 

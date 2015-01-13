@@ -2490,31 +2490,34 @@ vis = $.extend(true, vis, {
             icons: {primary: "ui-icon-disk"}
         }).click(that._saveToServer).hide().addClass("ui-state-active");
 
-        $("#dev_show_html").button({
-
-        }).click(function(){
-var wid_id = $("#"+vis.activeWidget).attr("id");
+        $("#dev_show_html").button({}).click(function () {
+            var wid_id = $("#" + vis.activeWidget).attr("id");
             vis.inspectWidget();
-            console.log(wid_id)
-            var html = $("#"+wid_id).html();
-            html = html.replace("vis-widget ", "vis-widget_prev ");
-            html = html.replace("vis-widget-body", "vis-widget-prev-body")
 
+            var $target = $("#" + wid_id);
+            var $clone = $target.clone();
+            $clone.wrap('<div>');
+            var html = $clone.parent().html();
+
+            html = html
+                .replace("vis-widget ", "vis-widget_prev ")
+                .replace("vis-widget-body", "vis-widget-prev-body")
+                .replace("ui-draggable", " ")
+                .replace("ui-resizable", " ")
                 .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, "")
-            //.replace(/(  )/g,'')
-            .replace(/(?:\r\n|\r|\n)/g, '')
-            .replace(/ +(?= )/g,'');
+                .replace(/(?:\r\n|\r|\n)/g, '')
+                .replace(/[ ]{2,}/g, ' ');
 
-            html = 'data-vis-prev=\'<div id="prev_'+vis.views[vis.activeView].widgets[wid_id].tpl+'" style=" position: relative; text-align: initial; ">'+ html.toString() + '\'';
-            console.log(html)
-            $("body").append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%">'+html+'</textarea></div>')
-           $("#dec_html_code").dialog({
-               width: 800,
-               height: 600,
-               close: function () {
-                   $("#dec_html_code").remove()
-               }
-           })
+            html = 'data-vis-prev=\'<div id="prev_' + vis.views[vis.activeView].widgets[wid_id].tpl + '" style=" position: relative; text-align: initial;padding: 4px ">' + html.toString() + '\'';
+
+            $("body").append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%">' + html + '</textarea></div>')
+            $("#dec_html_code").dialog({
+                width: 800,
+                height: 600,
+                close: function () {
+                    $("#dec_html_code").remove()
+                }
+            })
 
         });
 
@@ -2683,11 +2686,10 @@ var wid_id = $("#"+vis.activeWidget).attr("id");
             var widgetId = tpl + "_prev";
 
             $('#toolset_' + set).append('<div id="prev_container_' + tpl + '" class="wid_prev" data-tpl="' + tpl + '"><div>' + $("#" + tpl).data("vis-name") + '</div></div>');
-console.log(i)
-console.log($(tpl_list[i]).data("vis-prev"))
-            if($(tpl_list[i]).data("vis-prev")){
+
+            if ($(tpl_list[i]).data("vis-prev")) {
                 $('#prev_container_' + tpl).append($(tpl_list[i]).data("vis-prev"))
-            }else{
+            } else {
                 //var data = {
                 //    data: new can.Map($.extend({
                 //        "wid": widgetId,
@@ -2811,11 +2813,39 @@ console.log($(tpl_list[i]).data("vis-prev"))
 
     },
     editInit_select_view: function () {
+
+        $("#view_select_tabs_wrap").resize(function () {
+            var o = {
+                parent_w: $("#view_select_tabs_wrap").width(),
+                self_w: $("#view_select_tabs").width(),
+                self_l: parseInt($("#view_select_tabs").css("left"))
+            };
+            if (o.parent_w >= (o.self_w + o.self_l))
+
+                $("#view_select_tabs").css("left", (o.parent_w - o.self_w) + "px");
+        });
+
         $("#view_select_left").button({
             icons: {
                 primary: "ui-icon-carat-1-w"
             },
             text: false
+        }).click(function () {
+            var o = {
+                parent_w: $("#view_select_tabs_wrap").width(),
+                self_w: $("#view_select_tabs").width(),
+                self_l: parseInt($("#view_select_tabs").css("left"))
+            };
+
+            if (o.self_w != o.parent_w) {
+                if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
+                    $("#view_select_tabs").css("left", o.self_l - 50 + "px")
+                } else {
+                    $("#view_select_tabs").css("left", (o.parent_w - o.self_w) + "px")
+                }
+
+            }
+
         });
 
         $("#view_select_right").button({
@@ -2823,15 +2853,50 @@ console.log($(tpl_list[i]).data("vis-prev"))
                 primary: "ui-icon-carat-1-e"
             },
             text: false
+        }).click(function () {
+            var o = {
+                parent_w: $("#view_select_tabs_wrap").width(),
+                self_w: $("#view_select_tabs").width(),
+                self_l: parseInt($("#view_select_tabs").css("left"))
+            };
+
+            if (o.self_w != o.parent_w) {
+                if ((o.self_l + 50) <= 0) {
+                    $("#view_select_tabs").css("left", o.self_l + 50 + "px")
+                } else {
+                    $("#view_select_tabs").css("left", "0px")
+                }
+
+            }
+
         });
 
         $("#view_select").bind('mousewheel DOMMouseScroll', function (event) {
-            console.log(event.originalEvent.wheelDelta)
+            var o = {
+                parent_w: $("#view_select_tabs_wrap").width(),
+                self_w: $("#view_select_tabs").width(),
+                self_l: parseInt($("#view_select_tabs").css("left"))
+            }
             if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
-                console.log("up")
+
+                if (o.self_w != o.parent_w) {
+                    if ((o.parent_w - o.self_w) <= (o.self_l - 20)) {
+                        $("#view_select_tabs").css("left", o.self_l - 20 + "px")
+                    } else {
+                        $("#view_select_tabs").css("left", (o.parent_w - o.self_w) + "px")
+                    }
+
+                }
             }
             else {
-                console.log("down")
+                if (o.self_w != o.parent_w) {
+                    if ((o.self_l + 20) <= 0) {
+                        $("#view_select_tabs").css("left", o.self_l + 20 + "px")
+                    } else {
+                        $("#view_select_tabs").css("left", "0px")
+                    }
+
+                }
             }
         });
 
@@ -3806,8 +3871,8 @@ $(document).keydown(function (e) {
         if (vis.onButtonArrows(e.which, e.shiftKey, (e.ctrlKey || e.metaKey ? 10 : 1))) {
             e.preventDefault();
         }
-    }else if (e.which === 113 ) {
-     $("#ribbon_tab_dev").toggle();
+    } else if (e.which === 113) {
+        $("#ribbon_tab_dev").toggle();
         e.preventDefault();
     }
 });
