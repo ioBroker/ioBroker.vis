@@ -302,6 +302,7 @@ a.ui-dialog-titlebar-restore {
 }
 
 .vis-panel {
+    font-family: Verdana,Arial,sans-serif!important;
     height: calc(100% - 2px) !important;
     width: calc(100% - 2px) !important;
     overflow: auto;

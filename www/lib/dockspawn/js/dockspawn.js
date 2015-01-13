@@ -571,7 +571,7 @@
         }
     };
 
-    dockspawn.Dialog.prototype.show = function () {
+    dockspawn.Dialog.prototype.show = function (h,w) {
         this.elementDialog.style.zIndex = 1000;
         this.elementDialog.style.display = 'block';
         if (this.isHidden) {
@@ -579,6 +579,7 @@
             this.dockManager.notifyOnShowDialog(this);
         }
     };
+
     dockspawn.DraggableContainer = function (dialog, delegate, topLevelElement, dragHandle) {
         this.dialog = dialog;
         this.delegate = delegate;
@@ -1020,9 +1021,9 @@
     };
 
     dockspawn.DockManager.prototype.resize = function (width, height) {
-        this.element.style.width = width + "px";
-        this.element.style.height = height + "px";
-        this.context.model.rootNode.container.resize(width, height);
+        this.element.style.width = width-1 + "px";
+        this.element.style.height = height-1 + "px";
+        this.context.model.rootNode.container.resize(width-1, height-1);
     };
 
     /**
@@ -2752,7 +2753,9 @@
             this.floatingDialog.setPosition(this.dockManager.defaultDialogPosition.x, this.dockManager.defaultDialogPosition.y);
         }
         else {
+            console.log(this)
             this.performUndockToDialog();
+
             this.floatingDialog.hide();
             this.floatingDialog.setPosition(this.dockManager.defaultDialogPosition.x, this.dockManager.defaultDialogPosition.y);
         }

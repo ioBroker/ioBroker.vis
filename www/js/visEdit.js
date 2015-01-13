@@ -2653,15 +2653,18 @@ vis = $.extend(true, vis, {
             var panel;
             if (this.checked) {
                 panel = vis.get_panel_by_id(pan);
+
                 panel._floatingDialog.show()
             } else {
                 panel = vis.get_panel_by_id(pan);
                 if (panel._floatingDialog) {
                     panel._floatingDialog.hide()
                 } else {
-
-                    var dialog = dockManager.requestUndockToDialog(panel);
-                    dialog.hide()
+                    console.log(panel)
+                    panel.onSelected()
+                   //var dialog = panel.performUndockToDialog();
+                   // dialog.resize(200,200)
+                    //dialog.hide()
                 }
 
             }
@@ -2737,10 +2740,12 @@ vis = $.extend(true, vis, {
 
         var divDockManager = document.getElementById("dock_body");
         dockManager = new dockspawn.DockManager(divDockManager);
+        dockManager.setDefaultDialogPosition(400,200)
         dockManager.initialize();
 
 
         var onResized = function (e) {
+
             dockManager.resize(window.innerWidth - (divDockManager.clientLeft + divDockManager.offsetLeft), window.innerHeight - (divDockManager.clientTop + divDockManager.offsetTop) - 20);
         };
         window.onresize = onResized;
@@ -2775,10 +2780,11 @@ vis = $.extend(true, vis, {
             onHideDialog: function (self, dialog) {
                 //console.info('onHideDialog: ', self, dialog);
                 //localStorage.setItem(storeKey, dockManager.saveState());
+                $("#" + dialog.panel.elementContent.id + "_state").attr("checked", false);
             },
             onShowDialog: function (self, dialog) {
                 //console.info('onShowDialog: ', self, dialog);
-                //$("#" + dialog.panel.elementContent.id + "_state").attr("checked", true);
+                $("#" + dialog.panel.elementContent.id + "_state").attr("checked", true);
                 //localStorage.setItem(storeKey, dockManager.saveState());
             }
 
