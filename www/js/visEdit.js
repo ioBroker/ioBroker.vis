@@ -803,6 +803,10 @@ vis = $.extend(true, vis, {
         var line = {
             input: '<input id="inspect_' + wid_attr + '"/>',
             init: function (w, data) {
+                options = options || {};
+                options.spin = function () {
+                    $(this).trigger('change');
+                }
                 $(this).spinner(options);
             }
         }

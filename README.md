@@ -5,6 +5,9 @@ ioBroker.vis
 WEB visualisation for ioBroker platform.
 
 ## Changelog
+### 0.0.6 (2015-01-14)
+- (bluefox) add update interval to basic/static-HTML
+
 ### 0.0.5 (2015-01-13)
 - (bluefox) fancybuttons and metro
 

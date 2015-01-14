@@ -3,50 +3,48 @@
 <script type="text/javascript" src="widgets/jqplot/js/jquery.jqplot.min.js"></script>
 
 <script type="text/javascript">
-    //jQuery.extend(true, vis.binds, {
-        vis.binds.jqplot = {
-            gauge: function (el, options) {
-                var $this = jQuery(el).find("div[id$='_gauge']");
-                setTimeout(function () {
-                    try {
-                        var jqplotOptions = jQuery.extend(true, {
-                            title: {show: false},
-                            grid: {
-                                background: "transparent"
-                            },
-                            seriesDefaults: {
-                                renderer: $.jqplot.MeterGaugeRenderer,
-                                rendererOptions: {
-                                    min: 0,
-                                    max: 100
-                                }
+    vis.binds.jqplot = {
+        gauge: function (el, options) {
+            var $this = $(el).find('div[id$="_gauge"]');
+            setTimeout(function () {
+                try {
+                    var jqplotOptions = $.extend(true, {
+                        title: {show: false},
+                        grid: {
+                            background: "transparent"
+                        },
+                        seriesDefaults: {
+                            renderer: $.jqplot.MeterGaugeRenderer,
+                            rendererOptions: {
+                                min: 0,
+                                max: 100
                             }
-                        }, options);
-                        var id = "_" + $this.attr("data-hm-id");
-                        var series;
-                        if (localData.uiState[id + '.Value'] !== undefined) {
-                            series = [[localData.uiState[id + '.Value']]];
-                        } else {
-                            series = null;
                         }
-                        var plot = jQuery.jqplot($this.attr("id"), series, jqplotOptions);
-                        localData.uiState.bind(id + ".Value", function (e, newVal, oldVal) {
-                            plot.series[0].data = [[1, newVal]];
-                            plot.redraw();
-                        });
-                    } catch(e) {
-                        servConn.logError("Cannot render widget jqplot: " + e);
+                    }, options);
+                    var oid = $this.attr('data-oid');
+                    var series;
+                    if (vis.states[id + '.val'] !== undefined) {
+                        series = [[localData.uiState[oid + '.val']]];
+                    } else {
+                        series = null;
                     }
-                }, 20);
-            }
-        };
-    //});
+                    var plot = $.jqplot($this.attr('id'), series, jqplotOptions);
+                    vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                        plot.series[0].data = [[1, newVal]];
+                        plot.redraw();
+                    });
+                } catch(e) {
+                    servConn.logError('Cannot render widget jqplot: ' + e);
+                }
+            }, 20);
+        }
+    };
 </script>
 
-<script type="text/ejs" id="tplJqplotGauge" class="dashui-tpl" data-dashui-set="jqplot" data-dashui-name="hm_val - MeterGauge" data-dashui-attrs="hm_id;title;min;max;label;ticks;intervals;intervalColors;showTickLabels;intervalInnerRadius;intervalOuterRadius;diameter;padding;shadowOffset;shadowAlpha;shadowDepth;background;ringColor;ringWidth;hubRadius;tickPadding;needleThickness;needlePad">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="width:460px; height:280px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqplot.gauge(el, { title: data.title, seriesDefaults: {rendererOptions: {min: (data.min ? parseFloat(data.min) : undefined), max: (data.max ? parseFloat(data.max) : undefined), ticks: (data.ticks ? jQuery.map(data.ticks.split(';'), Number ) : undefined), intervals: (data.intervals ? jQuery.map(data.intervals.split(';'), Number ) : undefined), intervalColors: (data.intervalColors ? data.intervalColors.split(';') : undefined), label: data.label, showTickLabels: (data.showTickLabels === "false" ? false : undefined), intervalInnerRadius: (!data.intervalInnerRadius ? undefined : parseInt(data.intervalInnerRadius, 10)),         intervalOuterRadius: (!data.intervalOuterRadius ? undefined : parseInt(data.intervalOuterRadius, 10)),         diameter: (!data.diameter ? undefined : parseInt(data.diameter, 10)),         padding: (!data.padding  ? undefined : parseInt(data.padding, 10)),         shadowOffset: (!data.shadowOffset ? undefined : parseInt(data.shadowOffset, 10)),         shadowAlpha: (!data.shadowAlpha ? undefined : parseInt(data.shadowAlpha, 10)),         shadowDepth: (!data.shadowDepth ? undefined : parseInt(data.shadowDepth, 10)),         background: data.background, ringColor: data.ringColor, tickColor: data.tickColor,         ringWidth: (!data.ringWidth ? undefined : parseInt(data.ringWidth, 10)),        hubRadius: (!data.hubRadius ? undefined : parseInt(data.hubRadius, 10)),       tickPadding: (!data.tickPadding ? undefined : parseInt(data.tickPadding, 10)),        needleThickness: (!data.needleThickness ? undefined : parseInt(data.needleThickness, 10)),        needlePad: (!data.needlePad ? undefined : parseInt(data.needlePad, 10)),        ringWidth: (!data.ringWidth ? undefined : parseInt(data.ringWidth, 10))        }}}) %>>
-        <div class="dashui-widget-body" style="width:100%; height:100%">
-            <div id="<%= this.data.attr('wid') %>_gauge" data-hm-id="<%= this.data.attr('hm_id') %>" style="width:100%; height:100%"/>
+<script type="text/ejs" id="tplJqplotGauge" class="vis-tpl" data-vis-set="jqplot" data-vis-name="number - MeterGauge" data-vis-attrs="oid;title;min;max;label;ticks;intervals;intervalColors;showTickLabels;intervalInnerRadius;intervalOuterRadius;diameter;padding;shadowOffset;shadowAlpha;shadowDepth;background;ringColor;ringWidth;hubRadius;tickPadding;needleThickness;needlePad">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:460px; height:280px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqplot.gauge(el, {title: data.title, seriesDefaults: {rendererOptions: {min: (data.min ? parseFloat(data.min) : undefined), max: (data.max ? parseFloat(data.max) : undefined), ticks: (data.ticks ? jQuery.map(data.ticks.split(';'), Number ) : undefined), intervals: (data.intervals ? jQuery.map(data.intervals.split(';'), Number ) : undefined), intervalColors: (data.intervalColors ? data.intervalColors.split(';') : undefined), label: data.label, showTickLabels: (data.showTickLabels === "false" ? false : undefined), intervalInnerRadius: (!data.intervalInnerRadius ? undefined : parseInt(data.intervalInnerRadius, 10)),         intervalOuterRadius: (!data.intervalOuterRadius ? undefined : parseInt(data.intervalOuterRadius, 10)),         diameter: (!data.diameter ? undefined : parseInt(data.diameter, 10)),         padding: (!data.padding  ? undefined : parseInt(data.padding, 10)),         shadowOffset: (!data.shadowOffset ? undefined : parseInt(data.shadowOffset, 10)),         shadowAlpha: (!data.shadowAlpha ? undefined : parseInt(data.shadowAlpha, 10)),         shadowDepth: (!data.shadowDepth ? undefined : parseInt(data.shadowDepth, 10)),         background: data.background, ringColor: data.ringColor, tickColor: data.tickColor,         ringWidth: (!data.ringWidth ? undefined : parseInt(data.ringWidth, 10)),        hubRadius: (!data.hubRadius ? undefined : parseInt(data.hubRadius, 10)),       tickPadding: (!data.tickPadding ? undefined : parseInt(data.tickPadding, 10)),        needleThickness: (!data.needleThickness ? undefined : parseInt(data.needleThickness, 10)),        needlePad: (!data.needlePad ? undefined : parseInt(data.needlePad, 10)),        ringWidth: (!data.ringWidth ? undefined : parseInt(data.ringWidth, 10))        }}}) %>>
+        <div class="vis-widget-body" style="width:100%; height:100%">
+            <div id="<%= this.data.attr('wid') %>_gauge" data-oid="<%= this.data.attr('oid') %>" style="width:100%; height:100%"/>
         </div>
     </div>
 </script>

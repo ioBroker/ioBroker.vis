@@ -464,11 +464,26 @@
             }
         },
         iframeRefresh: function (el, src, refreshInterval) {
-            if (!vis.editMode && refreshInterval > 0) {
+            refreshInterval = parseInt(refreshInterval, 10);
+            if (src && !vis.editMode && refreshInterval > 0) {
                 var $this = $(el).parent().find('iframe');
+                refreshInterval = parseInt(refreshInterval, 10);
                 setInterval(function () {
                     if ($this.is(':visible') && $this.parents(':hidden').length == 0) {
-                        if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                    }
+                }, refreshInterval);
+            }
+        },
+        htmlRefresh: function (el, html, refreshInterval) {
+            refreshInterval = parseInt(refreshInterval, 10);
+            console.log('AAA');
+            if (html && !vis.editMode && refreshInterval > 0) {
+                var $this = $(el);
+                refreshInterval = parseInt(refreshInterval, 10);
+                setInterval(function () {
+                    if ($this.is(':visible') && $this.parents(':hidden').length == 0) {
+                        $this.html(html);
                     }
                 }, refreshInterval);
             }
@@ -476,30 +491,33 @@
         imgRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange) {
             var $this = $(el).parent().find('img');
 
-            if (!vis.editMode && refreshOnViewChange) {
-                var widgetView = vis.activeView;
-                vis.navChangeCallbacks.push(function (view) {
-                    if (view == widgetView) {
-                        if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
-                    }
-                });
-            }
+            if (!vis.editMode && src) {
+                refreshInterval = parseInt(refreshInterval, 10);
 
-            if (!vis.editMode && parseInt(refreshInterval, 10) > 0) {
-                setInterval(function () {
-                    if ($this.is(':visible') && $this.parents(':hidden').length == 0) {
-                        if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
-                    }
-                }, refreshInterval);
-            }
-            if (refreshOnWakeUp) {
-                //console.log("refreshOnWakeUp!");
-                vis.onWakeUp(function () {
-                    // TODO this does not work. :(
-                    //console.log("wakeup refresh!");
-                    if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
-                    //console.log($this.attr('src'));
-                });
+                if (refreshOnViewChange) {
+                    var widgetView = vis.activeView;
+                    vis.navChangeCallbacks.push(function (view) {
+                        if (view == widgetView) {
+                            $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        }
+                    });
+                }
+                if (refreshInterval > 0) {
+                    setInterval(function () {
+                        if ($this.is(':visible') && $this.parents(':hidden').length == 0) {
+                            $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        }
+                    }, refreshInterval);
+                }
+                if (refreshOnWakeUp) {
+                    //console.log("refreshOnWakeUp!");
+                    vis.onWakeUp(function () {
+                        // TODO this does not work. :(
+                        //console.log("wakeup refresh!");
+                        $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        //console.log($this.attr('src'));
+                    });
+                }
             }
         },
         showSvg: function (myClass, view, wid, oid, opacity, svg_false, svg_true, style) {
@@ -662,15 +680,15 @@
         <!-- Basic Widgets -->
 
 
-<script type="text/ejs" id="tplHtml" class="vis-tpl" data-vis-set="basic" data-vis-name="static - HTML" data-vis-attrs="html">
+<script type="text/ejs" id="tplHtml" class="vis-tpl" data-vis-set="basic" data-vis-name="static - HTML" data-vis-attrs="html;refreshInterval[0]/slider,0,180000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.basic.htmlRefresh(el, this.data.attr('html'), data.attr("refreshInterval")) %>>
             <%== this.data.attr('html') %>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplIFrame" class="vis-tpl" data-vis-set="basic" data-vis-name="static - iFrame" data-vis-attrs="src;refreshInterval">
+<script type="text/ejs" id="tplIFrame" class="vis-tpl" data-vis-set="basic" data-vis-name="static - iFrame" data-vis-attrs="src;;refreshInterval[0]/slider,0,180000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
@@ -742,7 +760,7 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplStatefulIFrame8" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - iFrame 8" data-vis-attrs="oid;refreshInterval;src_(0-7)">
+<script type="text/ejs" id="tplStatefulIFrame8" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - iFrame 8" data-vis-attrs="oid;;refreshInterval[0]/slider,0,180000,100;src_(0-7)">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
             <div class="editmode-helper"/>
@@ -784,7 +802,7 @@
 </script>
 -->
 
-<script type="text/ejs" id="tplStatefulImage8" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - Image 8" data-vis-attrs="oid;refreshInterval;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
+<script type="text/ejs" id="tplStatefulImage8" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - Image 8" data-vis-attrs="oid;;refreshInterval[0]/slider,0,180000,100;src_0;src_1;src_2;src_3;src_4;src_5;src_6;src_7">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
             <div class="editmode-helper" />
