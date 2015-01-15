@@ -310,7 +310,7 @@ div#vis_container{
 }
 
 #panel_body {
-    /* width: 100%; */
+     width: 100%;
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
@@ -328,7 +328,7 @@ div#vis_container{
 }
 .toolbox{
     text-align: center;
-    height: calc(100% - 33px);
+    height: calc(100% - 31px);
     overflow: auto;;
 }
 
@@ -388,6 +388,14 @@ div#vis_container{
 
     display: inline-block;
     height: 100%;
+    left: auto!important;
+    /* overflow: auto; */
+    white-space: nowrap;
+
+}
+
+#inspect_view_bkg_parent{
+    white-space: normal;
 }
 /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
 

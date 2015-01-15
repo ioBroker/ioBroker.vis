@@ -436,7 +436,7 @@ var vis = {
                     drop: function (event, ui) {
                         var tpl = $(ui.draggable).data("tpl");
                         var view_pos = $("#vis_container").position();
-                        var add_pos = {left: ui.position.left - view_pos.left + $("#vis_container").scrollLeft(), top: ui.position.top - view_pos.top +$("#vis_container").scrollTop()};
+                        var add_pos = {left: ui.position.left - $("#toolset_basic").width() + $("#vis_container").scrollLeft() +5, top: ui.position.top - view_pos.top +$("#vis_container").scrollTop()+8};
 
                         var $tpl = $('#' + tpl);
                         var renderVisible = $tpl.attr('data-vis-render-visible');

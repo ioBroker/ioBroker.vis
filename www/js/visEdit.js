@@ -2199,25 +2199,21 @@ vis = $.extend(true, vis, {
 
         $("#pan_add_wid").resizable({
             handles: "e",
-            resize: function (e,a) {
-
-            }
+            maxWidth: 670
         });
+
 
         $(window).resize(function () {
-            layout_h();
-            layout_w();
+         layout()
         });
 
-        function layout_h(){
-            $("#panel_body").height(  $(window).height() - $("#menu_body").height() - 22  )
-        }
-        function layout_w(){
-            $("#vis_wrap").width(  $(window).width() - $("#pan_add_wid").width() - $("#attr_wrap").width()  )
+        function layout(){
+            $("#panel_body").height(  $(window).height() - $("#menu_body").height() - 22  );
+            $("#vis_wrap").width(  $(window).width() - $("#pan_add_wid").width() - $("#attr_wrap").width()  );
         }
 
-        layout_h();
-        layout_w();
+        layout();
+
 
         $("#vis-version").html(this.version);
 
@@ -2717,7 +2713,7 @@ vis = $.extend(true, vis, {
 
             $('#prev_container_' + tpl).draggable({
                 helper: "clone",
-                containment: $("#dock_body"),
+                containment: $("#panel_body"),
                 zIndex: 10000
             });
 

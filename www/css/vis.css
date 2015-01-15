@@ -294,13 +294,8 @@ a.ui-dialog-titlebar-restore {
     font-weight: bold;
 }
 
-.vis-panel {
-    font-family: Verdana,Arial,sans-serif!important;
-    height: 100%;
-    /* width: 100%; */
-    /* overflow: auto; */
-    font-size: 13px;
-}
+
+
 
 div#tabs {
 
