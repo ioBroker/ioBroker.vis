@@ -2196,7 +2196,28 @@ vis = $.extend(true, vis, {
 
         vis.editInit_dialogs();
         vis.editInit_menu();
-        vis.editInit_dockspawn();
+
+        $("#pan_add_wid").resizable({
+            handles: "e",
+            resize: function (e,a) {
+
+            }
+        });
+
+        $(window).resize(function () {
+            layout_h();
+            layout_w();
+        });
+
+        function layout_h(){
+            $("#panel_body").height(  $(window).height() - $("#menu_body").height() - 22  )
+        }
+        function layout_w(){
+            $("#vis_wrap").width(  $(window).width() - $("#pan_add_wid").width() - $("#attr_wrap").width()  )
+        }
+
+        layout_h();
+        layout_w();
 
         $("#vis-version").html(this.version);
 
@@ -2648,31 +2669,6 @@ vis = $.extend(true, vis, {
             vis.save();
         });
 
-        $(".pan_state").click(function () {
-            var $this = $(this)
-            var pan = $(this).attr("id").replace("_state","");
-            var panel = vis.get_panel_by_id(pan);
-            if ($this.hasClass("ui-state-active")){
-
-
-                if (panel._floatingDialog) {
-                    panel._floatingDialog.hide()
-
-                } else {
-                    console.log(panel)
-                    panel.onSelected()
-                    //var dialog = panel.performUndockToDialog();
-                    // dialog.resize(200,200)
-                    //dialog.hide()
-                }
-            } else {
-
-                panel._floatingDialog.show()
-
-
-
-            }
-        });
 
         $("#m_about").click(function () {
             $("#dialog_about").dialog("open")
@@ -2736,100 +2732,6 @@ vis = $.extend(true, vis, {
         if (tpl_n) {
             add()
         }
-
-
-    },
-    editInit_dockspawn: function () {
-        var storeKey = "vis.dock_manager";
-
-        var divDockManager = document.getElementById("dock_body");
-        dockManager = new dockspawn.DockManager(divDockManager);
-        dockManager.setDefaultDialogPosition(400,200);
-        dockManager.initialize();
-
-
-        var onResized = function (e) {
-
-            dockManager.resize(window.innerWidth - (divDockManager.clientLeft + divDockManager.offsetLeft), window.innerHeight - (divDockManager.clientTop + divDockManager.offsetTop) - 20);
-        };
-        window.onresize = onResized;
-        onResized(null);
-
-        dockManager.addLayoutListener({
-            onDock: function (self, dockNode) {
-                //console.info('onDock: ', self, dockNode);
-                //localStorage.setItem(storeKey, dockManager.saveState());
-            },
-            onUndock: function (self, dockNode) {
-                //console.info('onUndock: ', self, dockNode);
-                //localStorage.setItem(storeKey, dockManager.saveState());
-            },
-            onCreateDialog: function (self, dialog) {
-                //console.info('onCreateDialog: ', self, dialog);
-                //localStorage.setItem(storeKey, dockManager.saveState());
-            },
-            onChangeDialogPosition: function (self, dialog, x, y) {
-                //console.info('onCreateDialog: ', self, dialog, x, y);
-                //localStorage.setItem(storeKey, dockManager.saveState());
-            },
-            onResumeLayout: function (self) {
-                //console.info('onResumeLayout: ', self);
-                //localStorage.setItem(storeKey, dockManager.saveState());
-            },
-            onClosePanel: function (self, panel) {
-                //console.info('onClosePanel: ', self, panel);
-
-                //localStorage.setItem(storeKey, dockManager.saveState());
-            },
-            onHideDialog: function (self, dialog) {
-                //console.info('onHideDialog: ', self, dialog);
-                //localStorage.setItem(storeKey, dockManager.saveState());
-                $("#" + dialog.panel.elementContent.id + "_state").removeClass("ui-state-active");
-            },
-            onShowDialog: function (self, dialog) {
-                //console.info('onShowDialog: ', self, dialog);
-                $("#" + dialog.panel.elementContent.id + "_state").addClass("ui-state-active");
-                //localStorage.setItem(storeKey, dockManager.saveState());
-            }
-
-        });
-
-        var lastState = localStorage.getItem(storeKey);
-        //if (!lastState) {
-        //    dockManager.loadState(lastState);
-        //
-        //}else{
-
-        var documentNode = dockManager.context.model.documentManagerNode;
-
-        var _pan_vis_wrap = new dockspawn.PanelContainer(document.getElementById("vis_wrap"), dockManager);
-
-
-        var _pan_css_view = new dockspawn.PanelContainer(document.getElementById("pan_css_view"), dockManager);
-        var _pan_css_wid = new dockspawn.PanelContainer(document.getElementById("pan_css_wid"), dockManager);
-        var _pan_add_wid = new dockspawn.PanelContainer(document.getElementById("pan_add_wid"), dockManager);
-        var _pan_wid_attr = new dockspawn.PanelContainer(document.getElementById("pan_wid_attr"), dockManager);
-
-
-        var pan_vis_wrap = dockManager.dockFill(documentNode, _pan_vis_wrap);
-        pan_vis_wrap.container.canUndock(false)
-
-
-        var pan_add_widget = dockManager.dockLeft(documentNode, _pan_add_wid, 0.20);
-        var pan_css_wid = dockManager.dockRight(documentNode, _pan_css_wid, 0.08);
-        var pan_wid_attr = dockManager.dockUp(pan_css_wid, _pan_wid_attr, 0.5);
-        var pan_css_view = dockManager.dockFill(pan_css_wid, _pan_css_view);
-
-
-
-        var panels = dockManager.getPanels()
-        $.each(panels, function () {
-           if(this._cachedHeight > 0 || this.isDialog == false){
-
-               $("#" +  this.elementContent.id + "_state").addClass("ui-state-active");
-
-           }
-        });
 
 
     },

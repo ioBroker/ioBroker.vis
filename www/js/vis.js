@@ -598,7 +598,6 @@ var vis = {
 
         //console.log("renderWidget("+view+","+id+")");
         // Add to the global array of widgets
-        console.log(widget.data)
         this.widgets[id] = {
             wid: id,
             data: new can.Map($.extend({

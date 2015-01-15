@@ -21,8 +21,6 @@
     <link rel="stylesheet" type="text/css" href="lib/css/fancytree/ui.fancytree.min.css"/>
 
     <link rel="stylesheet" type="text/css" href="lib/css/superfish/superfish.css"/>
-    <link rel="stylesheet" type="text/css" href="lib/dockspawn/css/dock-manager.css"/>
-    <link rel="stylesheet" type="text/css" href="lib/dockspawn/css/font-awesome.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect-1.13.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect.filter.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.jgrowl.min.css"/>
@@ -31,6 +29,7 @@
 
     <link rel="stylesheet" type="text/css" href="css/backgrounds.css"/>
     <link rel="stylesheet" type="text/css" href="css/vis.css"/>
+    <link rel="stylesheet" type="text/css" href="css/vis_editor.css"/>
     <!--<link rel="stylesheet" type="text/css" href="css/vis-common-user.css"/>-->
     <link rel="stylesheet" type="text/css" id="project_css"/>
 
@@ -50,7 +49,6 @@
     <script type="text/javascript" src="lib/js/canjs.2.1.3.min.js"></script>
     <script type="text/javascript" src="lib/js/html2canvas.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
-    <script type="text/javascript" src="lib/dockspawn/js/dockspawn.js"></script>
     <script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script>
 
     <script type="text/javascript" src="lib/js/superclick.js"></script>
@@ -369,6 +367,7 @@
                     <li class="ui-state-default frame_color menu_item"><a id="m_about" class="translate">About</a></li>
                 </ul>
             </li>
+        </ul>
     </div>
     <img src="lib/img/edit-undo-8.png" id="button_undo" class="ui-state-default ui-corner-top">
 
@@ -534,7 +533,10 @@
     </div>
 </div>
 
-<div id="dock_body">
+<div id="panel_body">
+    <div class="vis-panel ui-widget-content"  id="pan_add_wid">
+        <select id="select_set" class="vis-editor select-set"></select>
+    </div>
     <div id="vis_wrap">
         <div id="view_select" class="ui-widget-content">
             <button id="view_select_left"></button>
@@ -557,8 +559,8 @@
                  style="display:none; z-index: 99; position: absolute; left: 0px; height:0px; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
         </div>
     </div>
-
-    <div class="vis-panel ui-widget-content" caption="View CSS" id="pan_css_view">
+    <div id="attr_wrap">
+    <div class="vis-panel ui-widget-content"  id="pan_view_attr">
         <div id="view_inspector">
             <h4><span class="translate">View:</span> <span id="inspect_view"></span></h4>
             <table>
@@ -695,398 +697,7 @@
             </table>
         </div>
     </div>
-    <div class="vis-panel ui-widget-content" caption="Widget CSS" id="pan_css_wid">
-        <table id="css_table">
-            <tr>
-                <td style="text-align: left">left</td>
-                <td width="30px">
-                    <input id="steal_left" type="checkbox" data-dashui-steal="left" class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_left" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>top</td>
-                <td>
-                    <input id="steal_top" type="checkbox" data-dashui-steal="top" class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_top" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>width</td>
-                <td>
-                    <input id="steal_width" type="checkbox" data-dashui-steal="width" class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2"><input size="22" type="text" id="inspect_css_width" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>height</td>
-                <td>
-                    <input id="steal_height" type="checkbox" data-dashui-steal="height" class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_height" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>z-index</td>
-                <td>
-                    <input id="steal_zIndex" type="checkbox" data-dashui-steal="z-index" class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_z-index" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>overflow-x</td>
-                <td>
-                    <input id="steal_overflowX" type="checkbox" data-dashui-steal="overflow-x"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_overflow-x" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>overflow-y</td>
-                <td>
-                    <input id="steal_overflowY" type="checkbox" data-dashui-steal="overflow-y"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_overflow-y" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>padding</td>
-                <td>
-                    <input id="steal_padding" type="checkbox" data-dashui-steal="padding" class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_padding" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>box-shadow</td>
-                <td>
-                    <input id="steal_boxShadow" type="checkbox" data-dashui-steal="box-shadow"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_box-shadow" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td class="css-inspector-heading">font / text</td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbspcolor</td>
-                <td>
-                    <input id="steal_color" type="checkbox" data-dashui-steal="color" class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_color" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsptext-align</td>
-                <td>
-                    <input id="steal_textAlign" type="checkbox" data-dashui-steal="text-align"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_text-align" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsptext-shadow</td>
-                <td>
-                    <input id="steal_textShadow" type="checkbox" data-dashui-steal="text-shadow"
-                           class="dashui-steal-css"/>
-                    <a data-dashui-clear="" class="dashui-clear-css"></a>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_text-shadow" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbspfont-family</td>
-                <td>
-                    <input id="steal_fontFamily" type="checkbox" data-dashui-steal="font-family"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_font-family" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbspfont-style</td>
-                <td>
-                    <input id="steal_fontStyle" type="checkbox" data-dashui-steal="font-style"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_font-style" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbspfont-variant</td>
-                <td>
-                    <input id="steal_fontVariant" type="checkbox" data-dashui-steal="font-variant"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_font-variant" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbspfont-weight</td>
-                <td>
-                    <input id="steal_fontWeight" type="checkbox" data-dashui-steal="font-weight"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_font-weight" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbspfont-size</td>
-                <td>
-                    <input id="steal_fontSize" type="checkbox" data-dashui-steal="font-size" class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_font-size" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbspline-height</td>
-                <td>
-                    <input id="steal_lineHeight" type="checkbox" data-dashui-steal="line-height"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_line-height" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbspletter-spacing</td>
-                <td>
-                    <input id="steal_letterSpacing" type="checkbox" data-dashui-steal="letter-spacing"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_letter-spacing" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbspword-spacing</td>
-                <td>
-                    <input id="steal_wordSpacing" type="checkbox" data-dashui-steal="word-spacing"
-                           class="dashui-steal-css"/>
-                    <a data-dashui-clear="" class="dashui-clear-css"></a>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_word-spacing" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td class="css-inspector-heading">background</td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-color</td>
-                <td>
-                    <input id="steal_backgroundColor" type="checkbox" data-dashui-steal="background-color"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_background-color" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-image</td>
-                <td>
-                    <input id="steal_backgroundImage" type="checkbox" data-dashui-steal="background-image"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_background-image" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-repeat</td>
-                <td>
-                    <input id="steal_backgroundRepeat" type="checkbox" data-dashui-steal="background-repeat"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_background-repeat" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-attachment</td>
-                <td>
-                    <input id="steal_backgroundAttachment" type="checkbox" data-dashui-steal="background-attachment"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_background-attachment" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-position</td>
-                <td>
-                    <input id="steal_backgroundPosition" type="checkbox" data-dashui-steal="background-position"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_background-position" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-size</td>
-                <td>
-                    <input id="steal_backgroundSize" type="checkbox" data-dashui-steal="background-size"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_background-size" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-clip</td>
-                <td>
-                    <input id="steal_backgroundClip" type="checkbox" data-dashui-steal="background-clip"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_background-clip" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-origin</td>
-                <td>
-                    <input id="steal_backgroundOrigin" type="checkbox" data-dashui-steal="background-origin"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_background-origin" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td class="css-inspector-heading">border</td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-width</td>
-                <td>
-                    <input id="steal_borderWidth" type="checkbox" data-dashui-steal="border-width"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_border-width" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-style</td>
-                <td>
-                    <input id="steal_borderStyle" type="checkbox" data-dashui-steal="border-style"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_border-style" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-color</td>
-                <td>
-                    <input id="steal_borderColor" type="checkbox" data-dashui-steal="border-color"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_border-color" class="vis-inspect-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp&nbsp&nbsp-radius</td>
-                <td>
-                    <input id="steal_borderRadius" type="checkbox" data-dashui-steal="border-radius"
-                           class="dashui-steal-css"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input size="22" type="text" id="inspect_css_border-radius" class="vis-inspect-css"/>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div class="vis-panel ui-widget-content" caption="Widget attr" id="pan_wid_attr">
+    <div class="vis-panel ui-widget-content"  id="pan_wid_attr">
         <div class="vis-widget-tools">
             <h4 class="translate">Widget Attributes:</h4>
             <table style="width: 100%; border: 0px">
@@ -1097,11 +708,398 @@
                 </colgroup>
                 <tbody id="widget_attrs"></tbody>
             </table>
-        </div>
+        </div><table id="css_table">
+        <tr>
+            <td style="text-align: left">left</td>
+            <td width="30px">
+                <input id="steal_left" type="checkbox" data-dashui-steal="left" class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_left" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>top</td>
+            <td>
+                <input id="steal_top" type="checkbox" data-dashui-steal="top" class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_top" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>width</td>
+            <td>
+                <input id="steal_width" type="checkbox" data-dashui-steal="width" class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><input size="22" type="text" id="inspect_css_width" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>height</td>
+            <td>
+                <input id="steal_height" type="checkbox" data-dashui-steal="height" class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_height" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>z-index</td>
+            <td>
+                <input id="steal_zIndex" type="checkbox" data-dashui-steal="z-index" class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_z-index" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>overflow-x</td>
+            <td>
+                <input id="steal_overflowX" type="checkbox" data-dashui-steal="overflow-x"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_overflow-x" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>overflow-y</td>
+            <td>
+                <input id="steal_overflowY" type="checkbox" data-dashui-steal="overflow-y"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_overflow-y" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>padding</td>
+            <td>
+                <input id="steal_padding" type="checkbox" data-dashui-steal="padding" class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_padding" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>box-shadow</td>
+            <td>
+                <input id="steal_boxShadow" type="checkbox" data-dashui-steal="box-shadow"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_box-shadow" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="css-inspector-heading">font / text</td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbspcolor</td>
+            <td>
+                <input id="steal_color" type="checkbox" data-dashui-steal="color" class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_color" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsptext-align</td>
+            <td>
+                <input id="steal_textAlign" type="checkbox" data-dashui-steal="text-align"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_text-align" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsptext-shadow</td>
+            <td>
+                <input id="steal_textShadow" type="checkbox" data-dashui-steal="text-shadow"
+                       class="dashui-steal-css"/>
+                <a data-dashui-clear="" class="dashui-clear-css"></a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_text-shadow" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbspfont-family</td>
+            <td>
+                <input id="steal_fontFamily" type="checkbox" data-dashui-steal="font-family"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_font-family" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbspfont-style</td>
+            <td>
+                <input id="steal_fontStyle" type="checkbox" data-dashui-steal="font-style"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_font-style" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbspfont-variant</td>
+            <td>
+                <input id="steal_fontVariant" type="checkbox" data-dashui-steal="font-variant"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_font-variant" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbspfont-weight</td>
+            <td>
+                <input id="steal_fontWeight" type="checkbox" data-dashui-steal="font-weight"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_font-weight" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbspfont-size</td>
+            <td>
+                <input id="steal_fontSize" type="checkbox" data-dashui-steal="font-size" class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_font-size" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbspline-height</td>
+            <td>
+                <input id="steal_lineHeight" type="checkbox" data-dashui-steal="line-height"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_line-height" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbspletter-spacing</td>
+            <td>
+                <input id="steal_letterSpacing" type="checkbox" data-dashui-steal="letter-spacing"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_letter-spacing" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbspword-spacing</td>
+            <td>
+                <input id="steal_wordSpacing" type="checkbox" data-dashui-steal="word-spacing"
+                       class="dashui-steal-css"/>
+                <a data-dashui-clear="" class="dashui-clear-css"></a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_word-spacing" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="css-inspector-heading">background</td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-color</td>
+            <td>
+                <input id="steal_backgroundColor" type="checkbox" data-dashui-steal="background-color"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_background-color" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-image</td>
+            <td>
+                <input id="steal_backgroundImage" type="checkbox" data-dashui-steal="background-image"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_background-image" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-repeat</td>
+            <td>
+                <input id="steal_backgroundRepeat" type="checkbox" data-dashui-steal="background-repeat"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_background-repeat" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-attachment</td>
+            <td>
+                <input id="steal_backgroundAttachment" type="checkbox" data-dashui-steal="background-attachment"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_background-attachment" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-position</td>
+            <td>
+                <input id="steal_backgroundPosition" type="checkbox" data-dashui-steal="background-position"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_background-position" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-size</td>
+            <td>
+                <input id="steal_backgroundSize" type="checkbox" data-dashui-steal="background-size"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_background-size" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-clip</td>
+            <td>
+                <input id="steal_backgroundClip" type="checkbox" data-dashui-steal="background-clip"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_background-clip" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-origin</td>
+            <td>
+                <input id="steal_backgroundOrigin" type="checkbox" data-dashui-steal="background-origin"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_background-origin" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="css-inspector-heading">border</td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-width</td>
+            <td>
+                <input id="steal_borderWidth" type="checkbox" data-dashui-steal="border-width"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_border-width" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-style</td>
+            <td>
+                <input id="steal_borderStyle" type="checkbox" data-dashui-steal="border-style"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_border-style" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-color</td>
+            <td>
+                <input id="steal_borderColor" type="checkbox" data-dashui-steal="border-color"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_border-color" class="vis-inspect-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp-radius</td>
+            <td>
+                <input id="steal_borderRadius" type="checkbox" data-dashui-steal="border-radius"
+                       class="dashui-steal-css"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="22" type="text" id="inspect_css_border-radius" class="vis-inspect-css"/>
+            </td>
+        </tr>
+    </table>
     </div>
-    <div class="vis-panel ui-widget-content" caption="ADD Widget" id="pan_add_wid">
-        <select id="select_set" class="vis-editor select-set"></select>
     </div>
+
 </div>
 
 <div id="status_bar" class="ui-widget-header">
