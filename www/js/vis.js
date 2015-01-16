@@ -847,34 +847,37 @@ var vis = {
             setTimeout(function (_cb) {
                 that.saveRemote(_cb);
             }, 1000);
-            return;
-        }
-        this.saveRemoteActive = true;
-        // Sync widget before it will be saved
-        if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
-            this.syncWidget(this.activeWidget);
-        }
 
-        if (local) {
-            storage.set(this.storageKeyViews, JSON.stringify(this.views, null, 2));
-            if (callback) callback();
-        } else {
-            this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
+        }else {
+            this.saveRemoteActive = true;
+            // Sync widget before it will be saved
+            if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
+                this.syncWidget(this.activeWidget);
+            }
+
+            if (local) {
+
+                storage.set(this.storageKeyViews, JSON.stringify(this.views, null, 2));
                 that.saveRemoteActive = false;
                 if (callback) callback();
+            } else {
+                this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
+                    that.saveRemoteActive = false;
+                    if (callback) callback();
 
-                // If not yet checked => check if project css file exists
-                if (!that.cssChecked) {
-                    that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
-                        that.cssChecked = true;
-                        // Create vis-user.css file if not exist
-                        if (err || data == null || data == undefined) {
-                            // Create empty css file
-                            that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
-                        }
-                    })
-                }
-            });
+                    // If not yet checked => check if project css file exists
+                    if (!that.cssChecked) {
+                        that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
+                            that.cssChecked = true;
+                            // Create vis-user.css file if not exist
+                            if (err || data == null || data == undefined) {
+                                // Create empty css file
+                                that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
+                            }
+                        })
+                    }
+                });
+            }
         }
     },
     additionalThemeCss: function (theme) {

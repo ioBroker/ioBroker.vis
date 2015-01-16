@@ -1958,7 +1958,7 @@ vis = $.extend(true, vis, {
         // Init background selector
         if (this.styleSelect && this.views[view] && this.views[view].settings) {
             this.styleSelect.Show({
-                width: 152,
+                width: 80,
                 name: 'inspect_view_bkg_def',
                 filterName: 'background',
                 //filterFile: "backgrounds.css",
@@ -2196,22 +2196,21 @@ vis = $.extend(true, vis, {
 
         vis.editInit_dialogs();
         vis.editInit_menu();
-
+        $("#attr_wrap").tabs();
         $("#pan_add_wid").resizable({
             handles: "e",
-            maxWidth: 670
+            maxWidth: 670,
+            minWidth: 200
         });
-
 
         $(window).resize(function () {
          layout()
         });
 
         function layout(){
-            $("#panel_body").height(  $(window).height() - $("#menu_body").height() - 22  );
-            $("#vis_wrap").width(  $(window).width() - $("#pan_add_wid").width() - $("#attr_wrap").width()  );
+            $("#panel_body").height(parseInt(  $(window).height() - $("#menu_body").height() - 22 ));
+            $("#vis_wrap").width(parseInt($(window).width() - $("#pan_add_wid").width() - $("#pan_attr").width() - 1));
         }
-
         layout();
 
 
@@ -2229,14 +2228,6 @@ vis = $.extend(true, vis, {
             });
 
         $("#widget_helper").hide();
-
-        $('#language [value="' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + '"]').attr('selected', 'selected');
-
-        $("#language").change(function () {
-            that.language = $(this).val();
-            if (typeof systemLang != 'undefined') systemLang = that.language;
-            translateAll();
-        });
 
         $("input.vis-editor").button();
         $("button.vis-editor").button();
@@ -2609,13 +2600,7 @@ vis = $.extend(true, vis, {
             autoOpen: false,
             width: 600,
             height: 500,
-            position: {my: "center", at: "center", of: $("#dock_body")}
-        });
-        $("#dialog_setup").dialog({
-            autoOpen: false,
-            width: 600,
-            height: 500,
-            position: {my: "center", at: "center", of: $("#dock_body")}
+            position: {my: "center", at: "center", of: $("#panel_body")}
         });
 
     },
@@ -2638,20 +2623,14 @@ vis = $.extend(true, vis, {
         );
 
         $("#menu_body").tabs({
-            active: 2
+            active: 2,
+            collapsible:true
         });
 
         // Tabs open Close
-        $("#menu_body > ul > li").dblclick(function () {
-            $(".ribbon_tab").hide()
-            var divDockManager = document.getElementById("dock_body");
-            dockManager.resize(window.innerWidth - (divDockManager.clientLeft + divDockManager.offsetLeft), window.innerHeight - (divDockManager.clientTop + divDockManager.offsetTop) - 20);
-        });
 
         $("#menu_body > ul > li").click(function () {
-            $("#menu_body").tabs("refresh");
-            var divDockManager = document.getElementById("dock_body");
-            dockManager.resize(window.innerWidth - (divDockManager.clientLeft + divDockManager.offsetLeft), window.innerHeight - (divDockManager.clientTop + divDockManager.offsetTop) - 20);
+            $(window).trigger("resize");
         });
 
         // Theme auswahl
@@ -2665,6 +2644,21 @@ vis = $.extend(true, vis, {
             vis.save();
         });
 
+        //language
+        $('[data-language=' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + ']').addClass("ui-state-active");
+
+        $(".language_select").click(function () {
+            console.log("klick")
+            $('[data-language='+vis.language+']').removeClass("ui-state-active");
+            vis.language = $(this).data('language');
+            $(this).addClass("ui-state-active");
+            if (typeof systemLang != 'undefined') systemLang = vis.language;
+            setTimeout(function(){
+                translateAll();
+            },0)
+
+        });
+
 
         $("#m_about").click(function () {
             $("#dialog_about").dialog("open")
@@ -2674,62 +2668,25 @@ vis = $.extend(true, vis, {
         });
     },
     add_Widget_prev: function (set) {
-        $("#pan_add_wid").append('<div id="toolset_' + set + '" class="toolbox"></div>');
+        var tpl_list = $(".vis-tpl");
+        $.each(vis.widgetSets, function (i) {
+            var set = this;
+            var tpl_list = $(".vis-tpl[data-vis-set='" + set + "']");
+            $.each(tpl_list, function (i) {
+                var tpl = $(tpl_list[i]).attr("id");
 
-        var tpl_list = $(".vis-tpl[data-vis-set='" + set + "']")
-        var tpl_n = tpl_list.length;
-        var i = 0;
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '"><div>' + $("#" + tpl).data("vis-name") + '</div></div>');
 
-        function add() {
-            var tpl = $(tpl_list[i]).attr("id");
-            var widgetId = tpl + "_prev";
-
-            $('#toolset_' + set).append('<div id="prev_container_' + tpl + '" class="wid_prev" data-tpl="' + tpl + '"><div>' + $("#" + tpl).data("vis-name") + '</div></div>');
-
-            if ($(tpl_list[i]).data("vis-prev")) {
-                $('#prev_container_' + tpl).append($(tpl_list[i]).data("vis-prev"))
-            } else {
-                //var data = {
-                //    data: new can.Map($.extend({
-                //        "wid": widgetId,
-                //        "width": "40",
-                //    })),
-                //    style: {"width": "40",},
-                //};
-                //try {
-                //    $('#prev_container_' + tpl).append(can.view(tpl, {
-                //        hm: 0,
-                //        ts: 0,
-                //        ack: 0,
-                //        lc: 0,
-                //        data: data.data
-                //
-                //    }, data))
-                //} catch (err) {
-                //
-                //}
-            }
-
-
-            $('#prev_container_' + tpl).draggable({
-                helper: "clone",
-                containment: $("#panel_body"),
-                zIndex: 10000
+                if ($(tpl_list[i]).data("vis-prev")) {
+                    $('#prev_container_' + tpl).append($(tpl_list[i]).data("vis-prev"))
+                }
+                $('#prev_container_' + tpl).draggable({
+                    helper: "clone",
+                    containment: $("#panel_body"),
+                    zIndex: 10000
+                });
             });
-
-            if (i < tpl_n - 1) {
-                i++;
-                setTimeout(function () {
-                    add()
-                }, 0);
-            }
-        }
-
-        if (tpl_n) {
-            add()
-        }
-
-
+        });
     },
     editInit_select_view: function () {
 
@@ -2922,24 +2879,14 @@ vis = $.extend(true, vis, {
 
         $select_set.change(function () {
             var tpl = $(this).val();
-            storage.set("vis.Last_Widgetset", tpl)
-            $(".toolbox").hide();
-            if ($("#toolset_" + tpl).length) {
-                $("#toolset_" + tpl).show()
-            } else {
-                setTimeout(function () {
-                    vis.add_Widget_prev(tpl)
-                }, 0)
-
-            }
-            //
+            storage.set("vis.Last_Widgetset", tpl);
+            $(".wid_prev").hide();
+            $("." + tpl + "_prev").show();
         });
 
-        vis.add_Widget_prev($($select_set).multiselect("getChecked").val())
+        vis.add_Widget_prev();
 
-
-        //console.log("TOOLBOX OPEN");
-
+        $select_set.trigger("change")
 
         // Create background_class property if does not exist
         if (this.views[vis.activeView] != undefined) {
@@ -3276,17 +3223,17 @@ vis = $.extend(true, vis, {
     },
     _saveTimer: null, // Timeout to save the configuration
     _saveToServer: function () {
-        if (!this.undoHistory || this.undoHistory.length == 0 ||
-            (JSON.stringify(this.views[this.activeView]) != JSON.stringify(this.undoHistory[this.undoHistory.length - 1]))) {
-            this.undoHistory = this.undoHistory || [];
+        if (!vis.undoHistory || vis.undoHistory.length == 0 ||
+            (JSON.stringify(vis.views[vis.activeView]) != JSON.stringify(vis.undoHistory[vis.undoHistory.length - 1]))) {
+            vis.undoHistory = vis.undoHistory || [];
             $("#button_undo").removeClass("ui-state-disabled");
-            if (this.undoHistory.push($.extend(true, {}, this.views[this.activeView])) > this.undoHistoryMaxLength) {
-                this.undoHistory.splice(0, 1);
+            if (vis.undoHistory.push($.extend(true, {}, vis.views[vis.activeView])) > vis.undoHistoryMaxLength) {
+                vis.undoHistory.splice(0, 1);
             }
         }
-        var that = this;
-        this.saveRemote(function () {
-            that._saveTimer = null;
+
+        vis.saveRemote(function () {
+            vis._saveTimer = null;
             $('#savingProgress').hide().next().button('enable');
         });
     },
@@ -3308,25 +3255,25 @@ vis = $.extend(true, vis, {
     undo: function () {
         if (vis.undoHistory.length <= 1) return;
 
-        var activeWidget = this.activeWidget;
-        var multiSelectedWidgets = this.multiSelectedWidgets;
+        var activeWidget = vis.activeWidget;
+        var multiSelectedWidgets = vis.multiSelectedWidgets;
 
-        this.inspectWidget("none");
-        $("#visview_" + this.activeView).remove();
+        vis.inspectWidget("none");
+        $("#visview_" + vis.activeView).remove();
 
-        this.undoHistory.pop();
-        this.views[vis.activeView] = $.extend(true, {}, this.undoHistory[this.undoHistory.length - 1]);
-        this.saveRemote();
+        vis.undoHistory.pop();
+        vis.views[vis.activeView] = $.extend(true, {}, vis.undoHistory[vis.undoHistory.length - 1]);
+        vis.saveRemote();
 
-        if (this.undoHistory.length <= 1) {
+        if (vis.undoHistory.length <= 1) {
             $("#button_undo").addClass("ui-state-disabled").removeClass("ui-state-hover");
         }
 
-        this.renderView(this.activeView);
-        this.changeViewEdit(this.activeView, true);
-        this.inspectWidget(activeWidget);
+        vis.renderView(vis.activeView);
+        vis.changeViewEdit(vis.activeView, true);
+        vis.inspectWidget(activeWidget);
         for (var i = 0; i < multiSelectedWidgets.length; i++) {
-            this.inspectWidgetMulti(multiSelectedWidgets[i]);
+            vis.inspectWidgetMulti(multiSelectedWidgets[i]);
         }
     },
     getWidgetThumbnail: function (widget, maxWidth, maxHeight, callback) {
@@ -3792,6 +3739,14 @@ $(document).keydown(function (e) {
         }
     } else if (e.which === 113) {
         $("#ribbon_tab_dev").toggle();
+        e.preventDefault();
+    }else if (e.which === 114) {
+        $("#vis_container").prependTo('body');
+        $("#vis_container").addClass("fullscreen")
+        e.preventDefault();
+    }else if (e.which === 115) {
+        $("#vis_container").removeClass("fullscreen")
+        $("#vis_container").appendTo('#vis_wrap');
         e.preventDefault();
     }
 });

@@ -1,8 +1,8 @@
 div#vis_container{
-    width: 100%;
-    height: calc(100% - 29px);
+    /* width: 100%; */
+    /* height: calc(100% - 29px); */
     position: relative;
-    overflow: scroll!important;
+    /* overflow: scroll; */
 }
 
 /*--------------------------------------------- SelectID dialog ------------------------------- */
@@ -204,9 +204,9 @@ div#vis_container{
 }
 
 #create_instance {
-    margin-left: 87px;
-    margin-top: 27px;
-    width: 160px;
+    /* margin-left: 87px; */
+    /* margin-top: 27px; */
+    width: 120px;
 
 }
 
@@ -217,7 +217,7 @@ div#vis_container{
 }
 
 #export_view {
-    margin-left: 87px;
+    /* margin-left: 87px; */
 }
 
 #import_view {
@@ -226,16 +226,16 @@ div#vis_container{
 }
 
 #export_local_view {
-    margin-left: 87px;
+    /* margin-left: 87px; */
 }
 
 #import_local_view {
-    float: right;
-    margin-right: 87px;
+    /* float: right; */
+    /* margin-right: 87px; */
 }
 
 #clear_local_view {
-    margin-left: 87px;
+    /* margin-left: 87px; */
 }
 
 #language {
@@ -244,7 +244,7 @@ div#vis_container{
 }
 
 #vis_instance {
-    width: 250px;
+    width: 70px;
 
 }
 
@@ -252,6 +252,14 @@ div#vis_container{
 
 }
 
+.fullscreen{
+    position: absolute!important;
+    z-index: 10000;
+    width: 100%!important;
+    height: 100%!important;
+    overflow: auto!important;
+    background: black;
+}
 
 
 #savingProgress {
@@ -328,7 +336,7 @@ div#vis_container{
 }
 .toolbox{
     text-align: center;
-    height: calc(100% - 31px);
+    height: calc(100% - 59px);
     overflow: auto;;
 }
 
@@ -383,14 +391,16 @@ div#vis_container{
     height: 100%;
     /* margin: 0; */
 }
-#attr_wrap{
+#pan_attr {
     /* float: right; */
-
     display: inline-block;
     height: 100%;
     left: auto!important;
     /* overflow: auto; */
     white-space: nowrap;
+    position: absolute;
+    right: 0;
+    width: 330px;
 
 }
 
@@ -408,10 +418,11 @@ div#vis_container{
     display: inline-block;
     height: 100%;
     /* flex-direction: column; */
+    overflow: hidden;
 }
 
 #view_select{
-    width: 100%;
+    width: calc(100% - 1px);
     height: 27px;
 
     /* background-color: cyan; */
@@ -462,3 +473,21 @@ div#vis_container{
 }
 
 /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
+
+.tab_attr{
+    padding: 0!important;
+
+    border-width: 1px 0 0 0!important;
+    font-size: 11px;
+    font-weight: bold;
+    height: calc(100% - 50px);
+    /* overflow: auto; */
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#attr_wrap{
+    height: calc(100% - 14px);
+    padding: 0;
+    border-radius: 0;
+}
