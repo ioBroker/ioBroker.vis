@@ -40,7 +40,7 @@
     vis.binds.jqplot = {
         gauge: function (el, data) {
             var $this = $(el).find('div[id$="_gauge"]');
-
+            if (!data) return;
             var options = {
                 title: data.title,
                 seriesDefaults: {
@@ -70,6 +70,7 @@
                     }
                 }
             };
+            if (options.seriesDefaults.rendererOptions.ticks && options.seriesDefaults.rendererOptions.ticks.length == 1) options.seriesDefaults.rendererOptions.ticks[1] = options.seriesDefaults.rendererOptions.ticks[0];
 
             $(el).data('options', data);
 

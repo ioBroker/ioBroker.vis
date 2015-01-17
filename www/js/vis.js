@@ -47,7 +47,18 @@ if (typeof systemDictionary !== 'undefined') {
         'Loading Widget-Sets...': {
             'en': 'Loading Widget-Sets...',
             'de': 'Lade Widget-Sätze...',
-            'ru': 'Загрузка наборов элементов...'}
+            'ru': 'Загрузка наборов элементов...'
+        },
+        'error: view not found.': {
+            'en': 'Error: view not found',
+            'de': 'Fehler: View ist nicht gefunden',
+            'ru': 'Ошибка: Страница не существует'
+        },
+        'error: view container recursion.': {
+            'en': 'Error: view container recursion',
+            'de': 'Fehler: View ist rekursiv',
+            'ru': 'Ошибка: Страница вызывет саму себя'
+        }
     });
 }
 
@@ -374,85 +385,88 @@ var vis = {
         $view.css({width:  width});
         $view.css({height: height});
     },
+    updateContainers: function(view) {
+        var that = this;
+        // Set ths views for containers
+        $("#visview_" + view).find('.vis-view-container').each(function () {
+            var cview = $(this).attr('data-vis-contains');
+            if (!that.views[cview]) {
+                $(this).html('<span style="color:red">' + _('error: view not found.') + '</span>');
+            } else if (cview == view) {
+                $(this).html('<span style="color:red">' + _('error: view container recursion.') + '</span>');
+            } else {
+                $(this).html('');
+                that.renderView(cview, true);
+                $('#visview_' + cview).appendTo(this);
+                $('#visview_' + cview).show();
+            }
+        });
+    },
     renderView: function (view, noThemeChange, hidden) {
-        if (!vis.views[view] || !vis.views[view].settings) {
+        if (!this.views[view] || !this.views[view].settings) {
             alert('Cannot render view ' + view + '. Invalid settings');
             return false;
         }
 
         var isViewsConverted = false; // Widgets in the views hav no information which WidgetSet they use, this info must be added and this flag says if that happens to store the views
 
-        vis.views[view].settings.theme = vis.views[view].settings.theme || 'redmond';
+        this.views[view].settings.theme = this.views[view].settings.theme || 'redmond';
 
-        if (vis.views[view].settings.filterkey) {
-            vis.viewsActiveFilter[view] = vis.views[view].settings.filterkey.split(',');
+        if (this.views[view].settings.filterkey) {
+            this.viewsActiveFilter[view] = this.views[view].settings.filterkey.split(',');
         } else {
-            vis.viewsActiveFilter[view] = [];
+            this.viewsActiveFilter[view] = [];
         }
 
         if (!noThemeChange) {
             $("style[data-href$='jquery-ui.min.css']").remove();
             $("link[href$='jquery-ui.min.css']").remove();
-            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + vis.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
-            vis.additionalThemeCss(vis.views[view].settings.theme);
+            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
+            this.additionalThemeCss(this.views[view].settings.theme);
         }
 
         if ($('#visview_' + view).html() === undefined) {
 
             $('#vis_container').append('<div style="display:none;" id="visview_' + view + '" class="vis-view"></div>');
             var $view = $("#visview_" + view);
-            $view.css(vis.views[view].settings.style);
-            if (vis.views[view].settings.style.background_class) $view.addClass(vis.views[view].settings.style.background_class);
+            $view.css(this.views[view].settings.style);
+            if (this.views[view].settings.style.background_class) $view.addClass(this.views[view].settings.style.background_class);
 
-            vis.setViewSize(view);
-            vis.views[view].rerender = true;
+            this.setViewSize(view);
+            this.views[view].rerender = true;
 
             // Render all simple widgets
-            for (var id in vis.views[view].widgets) {
+            for (var id in this.views[view].widgets) {
                 // Try to complete the widgetSet information to optimize the loading of widgetSets
-                if (!vis.views[view].widgets[id].widgetSet) {
-                    var obj = $("#" + vis.views[view].widgets[id].tpl);
+                if (!this.views[view].widgets[id].widgetSet) {
+                    var obj = $("#" + this.views[view].widgets[id].tpl);
                     if (obj) {
-                        vis.views[view].widgets[id].widgetSet = obj.attr("data-vis-set");
+                        this.views[view].widgets[id].widgetSet = obj.attr("data-vis-set");
                         isViewsConverted = true;
                     }
                 }
 
-                if (!vis.views[view].widgets[id].renderVisible) {
-                    vis.renderWidget(view, id);
+                if (!this.views[view].widgets[id].renderVisible) {
+                    this.renderWidget(view, id);
                 }
             }
-            if (vis.binds.jqueryui && vis.editMode) {
-                vis.binds.jqueryui._disable();
+            if (this.binds.jqueryui && vis.editMode) {
+                this.binds.jqueryui._disable();
             }
         }
         
-        // Views in Container verschieben
-        $("#visview_" + view).find("div[id$='container']").each(function () {
-            //console.log($(this).attr("id")+ " contains " + $(this).attr("data-vis-contains"));
-            var cview = $(this).attr("data-vis-contains");
-            if (!vis.views[cview]) {
-                $(this).append("error: view not found.");
-                return false;
-            } else if (cview == view) {
-                $(this).append("error: view container recursion.");
-                return false;
-            }
-            vis.renderView(cview, true);
-            $("#visview_" + cview).appendTo(this);
-            $("#visview_" + cview).show();
-
-        });
+        // Set ths views for containers
+        this.updateContainers(view);
 
         if (!hidden) {
             $("#visview_" + view).show();
 
-            if (vis.views[view].rerender) {
-                vis.views[view].rerender = false;
+            if (this.views[view].rerender) {
+                this.views[view].rerender = false;
                 // render all copmlex widgets, like hqWidgets or bars
-                for (var id in vis.views[view].widgets) {
-                    if (vis.views[view].widgets[id].renderVisible) {
-                        vis.renderWidget(view, id);
+                for (var id in this.views[view].widgets) {
+                    if (this.views[view].widgets[id].renderVisible) {
+                        this.renderWidget(view, id);
                     }
                 }
             }
@@ -460,27 +474,26 @@ var vis = {
 
         // Store modified view
         if (isViewsConverted) {
-            vis.saveRemote();
+            this.saveRemote();
         }
     },
     preloadImages: function (srcs) {
-        if (!vis.preloadImages.cache) {
-            vis.preloadImages.cache = [];
+        if (!this.preloadImages.cache) {
+            this.preloadImages.cache = [];
         }
         var img;
         for (var i = 0; i < srcs.length; i++) {
             img = new Image();
             img.src = srcs[i];
-            vis.preloadImages.cache.push(img);
+            this.preloadImages.cache.push(img);
         }
     },
     reRenderWidget: function (widget) {
         $("#" + widget).remove();
-        vis.renderWidget(vis.activeView, widget);
+        this.renderWidget(this.activeView, widget);
     },
     changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
-
-        var widgets = vis.views[vis.activeView].widgets;
+        var widgets = this.views[vis.activeView].widgets;
         if (filter == "") {
             // show all
             for (var widget in widgets) {
@@ -516,7 +529,7 @@ var vis = {
                 $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
             }
         } else {
-            vis.viewsActiveFilter[vis.activeView] = filter.split(",");
+            this.viewsActiveFilter[vis.activeView] = filter.split(",");
             var mWidget;
             for (var widget in widgets) {
                 //console.log(widgets[widget]);
@@ -552,8 +565,8 @@ var vis = {
             }, parseInt(showDuration) + 10);
         }
 
-        if (vis.binds.bars && vis.binds.bars.filterChanged) {
-            vis.binds.bars.filterChanged(vis.activeView, filter);
+        if (this.binds.bars && this.binds.bars.filterChanged) {
+            this.binds.bars.filterChanged(this.activeView, filter);
         }
     },
     renderWidget: function (view, id) {

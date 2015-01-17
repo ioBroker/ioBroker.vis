@@ -758,7 +758,7 @@ vis = $.extend(true, vis, {
         return line;
     },
     editViewName: function (widget, wid_attr) {
-        var views = [];
+        var views = [''];
         for (var v in this.views) {
             views.push(v);
         }
@@ -960,7 +960,7 @@ vis = $.extend(true, vis, {
         //              select,value1,value2,... - dropdown select
         //              hr
         //              br
-        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([0-9-]*\))?(\[.*])?(\/[-_,\.a-zA-Z0-9]+)?/;
+        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,\.a-zA-Z0-9]+)?/;
         var view         = this.getViewOfWidget(widget)
         var match        = this.regexAttr.exec(_wid_attr);
 
@@ -972,6 +972,7 @@ vis = $.extend(true, vis, {
         var notTranslate = true;
         var index        = '';
         var widgetData   = this.views[view].widgets[widget].data;
+        var attrDepends  = [];
 
         // remove /
         if (wid_type) {
@@ -986,7 +987,7 @@ vis = $.extend(true, vis, {
         // remove ()
         if (wid_repeats) {
             wid_repeats = wid_repeats.substring(1, wid_repeats.length - 1);
-            var parts = wid_repeats.split('-');
+            var parts = wid_repeats.split('-', 2);
             if (parts.length == 2) {
                 wid_repeats = {
                     start: parseInt(parts[0], 10),
@@ -995,6 +996,7 @@ vis = $.extend(true, vis, {
                 // If end is not number, it can be attribute
                 if (parts[1][0] < '0' || parts[1][0] > '9') {
                     wid_repeats.end = (widgetData[parts[1]] !== undefined) ? parseInt(widgetData[parts[1]], 10) : 1;
+                    attrDepends.push(parts[1]);
                 }
 
                 index = wid_repeats.start;
@@ -1153,6 +1155,9 @@ vis = $.extend(true, vis, {
                 line.attrIndex = index;
             }
 
+            if (attrDepends.length) line.depends = attrDepends;
+            line.type = wid_type;
+
             // <tr><td>title:</td><td><input /></td><td>button</td></tr>
             this.groups[group][wid_attr + index] = line;
         } while (wid_repeats && ((++index) <= wid_repeats.end));
@@ -1167,6 +1172,7 @@ vis = $.extend(true, vis, {
     showInspect: function (view, widget) {
         var $widgetAttrs = $('#widget_attrs');
         var that = this;
+        var depends = [];
         for (var group in this.groups) {
             if (this.groupsState[group] === undefined) this.groupsState[group] = false;
             $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="2">' + _('group_' + group) + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>')
@@ -1247,6 +1253,7 @@ vis = $.extend(true, vis, {
                 $input.data('data-attr',   wid_attr);
                 $input.data('data-widget', widget);
                 $input.data('data-view',   view);
+                $input.data('data-type',   line.type)
                 if (line.onchange) $input.data('data-onchange', line.onchange);
                 $input.addClass('vis-inspect-widget');
 
@@ -1254,6 +1261,12 @@ vis = $.extend(true, vis, {
                     for (var i = 1; i < this.groups[group][wid_attr].length; i++) {
                         text = '<tr class="vis-edit-td-caption group-' + group + '"><td></td><td class="vis-edit-td-field" colspan="2">' + this.groups[group][wid_attr][i].input + '</td>';
                         $widgetAttrs.append(text);
+                    }
+                }
+                // Collect list of attribute names on which depends other attributes
+                if (line.depends) {
+                    for (var u = 0; u < line.depends.length; u++) {
+                        if (depends.indexOf(line.depends[u]) == -1) depends.push(line.depends[u]);
                     }
                 }
             }
@@ -1267,6 +1280,8 @@ vis = $.extend(true, vis, {
             for (var wid_attr in this.groups[group]) {
                 var line = this.groups[group][wid_attr];
                 var $input = $('#inspect_' + wid_attr);
+                if (depends.length) $input.data('data-depends', depends);
+
                 if (line[0]) line = line[0];
                 if (typeof line == 'string') line = {input: line};
                 if (typeof line.init == 'function') {
@@ -1285,7 +1300,9 @@ vis = $.extend(true, vis, {
             var attr     = $this.data('data-attr');
             var widget   = $this.data('data-widget');
             var view     = $this.data('data-view');
+            var type     = $this.data('data-type');
             var onchange = $this.data('data-onchange');
+            var depends  = $this.data('data-depends');
 
             if ($this.attr('type') == 'checkbox') {
                 that.widgets[widget].data[attr] = $this.prop('checked');
@@ -1321,6 +1338,17 @@ vis = $.extend(true, vis, {
 
             that.save();
             that.reRenderWidgetEdit(widget);
+
+            // Rebuild attr list
+            if (depends && depends.indexOf(attr) != -1) {
+                that.inspectWidget(widget);
+            }
+
+            //Update containers
+            if (type == 'views') {
+                // Set ths views for containers
+                that.updateContainers(view);
+            }
         });
         
         $('.group-control').each(function () {
@@ -1430,7 +1458,12 @@ vis = $.extend(true, vis, {
             console.log(widget.tpl + " is not included");
             return false;
         }
-        var widgetAttrs  = $widgetTpl.attr('data-vis-attrs').split(";");
+        var widgetAttrs  = $widgetTpl.attr('data-vis-attrs');
+        if (widgetAttrs){
+            widgetAttrs = widgetAttrs.split(';');
+        } else {
+            widgetAttrs = [];
+        }
         var widgetFilter = $widgetTpl.attr('data-vis-filter');
 
         $('#inspect_comment_tr').show();

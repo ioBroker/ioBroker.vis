@@ -1,5 +1,5 @@
 .ui-slider-tabs{
-	
+
 }
 .ui-slider-tabs-list-wrapper{
 	position: relative;
@@ -42,7 +42,7 @@
 	padding: 8px 15px;
 	text-decoration: none;
 	color: #BABABA;
-	// text-shadow: 0px 1px 0px #fff;
+	/* text-shadow: 0px 1px 0px #fff;*/
 	margin: 0;
 }
 .ui-slider-tabs-list li a:hover{

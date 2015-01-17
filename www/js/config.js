@@ -1,12 +1,12 @@
 var visConfig = {
     widgetSets: [
         "basic",
-        {name: "fancyswitch", depends: ["basic"]},
         {name: "metro",       depends: ["basic"]},
+        {name: "fancyswitch", depends: ["basic"]},
+        "tabs",
         "jqplot"
         /*,
         "bars",
-        "bko",
         "colorpicker",
 
         {name: "homematic", depends: ["basic", "jqui"]},
