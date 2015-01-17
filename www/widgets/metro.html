@@ -25,83 +25,124 @@
 <script type="text/javascript">
 
     "use strict";
-    // Add words for basic widgets
-    $.extend(true, systemDictionary, {
+    if (vis.editMode) {
+        // Add words for basic widgets
+        $.extend(true, systemDictionary, {
 
-        "select_current":  {"en": "Select current view", "de": "Aktuelle View selektieren", "ru": "Отметить текущую"},
-        "label":           {"en": "Label", "de": "Beschriftung", "ru": "Надпись"},
-        "icon_src":        {"en": "Icon URL", "de": "Ikone URL", "ru": "URL иконки"},
-        "icon_width":      {"en": "Icon width", "de": "Ikonenbreite", "ru": "Ширина иконки"},
-        "icon_height":     {"en": "Icon height", "de": "Ikonenhöhe", "ru": "Высота иконки"},
-        "icon_class":      {"en": "Icon class", "de": "Ikonenklasse", "ru": "Иконка"},
-        "icon_badge":      {"en": "Icon badge", "de": "Abzeichenikone", "ru": "Иконка бирки"},
-        "bg_class":        {"en": "Background", "de": "Hintergrund", "ru": "Фон"},
-        "bg_class_active": {"en": "Background active", "de": "Aktiver Hintergrund", "ru": "Акивный Фон"},
-        "badge_bg_class":  {"en": "Badge background", "de": "Abzeichen- Hintergrund", "ru": "Фон бирки"},
-        "badge_bg_class_active": {
-            "en": "Badge background active",
-            "de": "Aktiver Abzeichen- Hintergrund",
-            "ru": "Фон активной бирки"
-        },
-        "brand_bg_class":  {"en": "Brand background", "de": "Brand- Hintergrund", "ru": "Фон полоски"},
-        "brand_bg_class_active": {
-            "en": "Brand background active",
-            "de": "Aktiver Brand- Hintergrund",
-            "ru": "Фон активной полоски"
-        },
-        "group_icon":  {"en": "Icon", "de": "Ikone", "ru": "Иконка"},
-        "group_badge":  {"en": "Badge", "de": "Abzeichen", "ru": "Бирка"},
-        "group_bg-and-text":  {"en": "Background and label", "de": "Hintergrund und Titel", "ru": "Фон и надпись"},
-        "group_dialog":  {"en": "Dialog", "de": "Dialog", "ru": "Диалог"},
-        "transform":  {"en": "Transform", "de": "Druckeffekt", "ru": "Эффект нажатия"},
-        "hover":  {"en": "Effect by hover", "de": "Effekt beim Scheben", "ru": "Реакция на курсор"},
-        "Set temperature":  {"en": "Set temperature", "de": "Soll-Temperatur", "ru": "Выставленная темп."},
-        "Actual temp.":  {"en": "Actual temp.", "de": "Ist-Temperatur", "ru": "Актуальная темп."},
-        "Valve position":  {"en": "Valve position", "de": "Ventilstellung", "ru": "Позиция вентиля"},
-        "oid-working": {"en": "Working state ID", "de": "In Arbeit Zustand ID", "ru": "'В работе' ID"},
-        "min": {"en": "Min", "de": "Min", "ru": "Минимум"},
-        "max": {"en": "Max", "de": "Max", "ru": "Максимум"},
-        "step": {"en": "Ыtep", "de": "Schritt", "ru": "Шаг"},
-        "sliderColor": {"en": "Slider color", "de": "Schieberfarbe", "ru": "Цвет ползунка"},
-        "sliderCompleteColor": {"en": "Slider complete color", "de": "Voll Schieberfarbe", "ru": "Цвет ползунка (Полный)"},
-        "sliderMarkerColor": {"en": "Slider handle color", "de": "Schiebergrifffarbe", "ru": "Цвет ручки"},
-        "content_id": {"en": "Content ID", "de": "Inhalt ID", "ru": "ID Содержания"},
-        "dialog_id": {"en": "Dialog ID", "de": "Dialog ID", "ru": "ID Текста для диалога"},
-        "number_id": {"en": "Number ID", "de": "Nummer ID", "ru": "ID Числа"},
-        "hide_on_0": {"en": "Hide by 0", "de": "Verbergen bei 0", "ru": "Скрыть при 0"},
-        "dialog_fontSize": {"en": "Dialog font size", "de": "Dialogschriftgrösse", "ru": "Размер шрифта"},
-        "dialog_padding": {"en": "Dialog padding", "de": "Dialog padding", "ru": "Отступ"},
-        "dialog_textAlign": {"en": "Dialog text align", "de": "Dialogtextausrichtung", "ru": "Выравнивание текста"},
-        "dialog_width": {"en": "Dialog width", "de": "Dialogbreite", "ru": "Ширина"},
-        "dialog_height": {"en": "Dialog height", "de": "Dialoghöhe", "ru": "Высота"},
-        "dialog_title": {"en": "Title", "de": "Titel", "ru": "Надпись"},
-        "dialog_flat": {"en": "Flat Design", "de": "Flaches Design", "ru": "Плоский дизайн"},
-        "dialog_shadow": {"en": "dialog_shadow", "de": "dialog_shadow", "ru": "Показать тень"},
-        "dialog_draggable": {"en": "dialog_draggable", "de": "dialog_draggable", "ru": "Можно двигать"},
-        "dialog_modal": {"en": "dialog_modal", "de": "Modaldialog", "ru": "Модальное окно"},
-        "dialog_icon_src": {"en": "Icon URL", "de": "Ikone URL", "ru": "URL иконки"},
-        "dialog_icon_class": {"en": "Icon class", "de": "Ikoneklasse", "ru": "Класс иконки"},
-        "Select ID": {"en": "Select ID", "de": "Select ID", "ru": "Select ID"},
-        "state_id": {"en": "State ID", "de": "Zustand ID", "ru": "ID Статуса"},
-        "select_on_true": {"en": "Select by true", "de": "Selektieren bei Wahr", "ru": "Отметить при 1"},
-        "label_true": {"en": "Label if true", "de": "Schild bei Wahr", "ru": "Надпись при 1"},
-        "label_false": {"en": "Label if false", "de": "Schild bei Falsch", "ru": "Надпись при 0"},
-        "bg_class_true": {"en": "Background by true", "de": "Hintergrund bei Wahr", "ru": "Фон при 1"},
-        "bg_class_false": {"en": "Background by false", "de": "Hintergrund bei Falsch", "ru": "Фон при 0"},
-        "icon_true_src": {"en": "Icon URL by true", "de": "Ikone URL bei Wahr", "ru": "URL иконки при 1"},
-        "icon_false_src": {"en": "Icon URL by false", "de": "Ikone URL bei Falsch", "ru": "URL иконки при 0"},
-        "icon_class_true": {"en": "Icon class by true", "de": "Ikonenklasse URL bei Wahr", "ru": "Класс иконки при 1"},
-        "icon_class_false": {"en": "Icon class by false", "de": "Ikonenklasse URL bei Falsch", "ru": "Класс иконки при 0"},
-        "badge_bg_class_true": {"en": "Badge background by true", "de": "Abzeichen- Hintergrund bei Wahr", "ru": "Фон бирки при 1"},
-        "badge_bg_class_false": {"en": "Badge background by false", "de": "Abzeichen- Hintergrund bei Falsch", "ru": "Фон бирки при 0"},
-        "brand_bg_class_true": {"en": "Brand background by true", "de": "Brand- Hintergrund bei Wahr", "ru": "Фон полоски при 1"},
-        "brand_bg_class_false": {"en": "Brand background by false", "de": "Brand- Hintergrund bei Falsch", "ru": "Фон полоски при 0"},
-        "icon_true": {"en": "Icon by true", "de": "Ikone bei Wahr", "ru": "Иконка при 1"},
-        "icon_false": {"en": "Icon by false", "de": "Ikone bei Falsch", "ru": "Иконка при 0"},
-        "icon_badge_true": {"en": "Icon badge_true", "de": "Abzeichenikone bei Wahr", "ru": "Иконка бирки при 1"},
-        "icon_badge_false": {"en": "Icon badge_false", "de": "Abzeichenikone bei Falsch", "ru": "Иконка бирки при 0"},
-        "value": {"en": "Value", "de": "Wert", "ru": "Значение"},
-        "select_on_value": {"en": "Select on value", "de": "Selektieren by Wert", "ru": "Отметить при значении"}
+            "select_current": {
+                "en": "Select current view",
+                "de": "Aktuelle View selektieren",
+                "ru": "Отметить текущую"
+            },
+            "label": {"en": "Label", "de": "Beschriftung", "ru": "Надпись"},
+            "icon_src": {"en": "Icon URL", "de": "Ikone URL", "ru": "URL иконки"},
+            "icon_width": {"en": "Icon width", "de": "Ikonenbreite", "ru": "Ширина иконки"},
+            "icon_height": {"en": "Icon height", "de": "Ikonenhöhe", "ru": "Высота иконки"},
+            "icon_class": {"en": "Icon class", "de": "Ikonenklasse", "ru": "Иконка"},
+            "icon_badge": {"en": "Icon badge", "de": "Abzeichenikone", "ru": "Иконка бирки"},
+            "bg_class": {"en": "Background", "de": "Hintergrund", "ru": "Фон"},
+            "bg_class_active": {"en": "Background active", "de": "Aktiver Hintergrund", "ru": "Акивный Фон"},
+            "badge_bg_class": {"en": "Badge background", "de": "Abzeichen- Hintergrund", "ru": "Фон бирки"},
+            "badge_bg_class_active": {
+                "en": "Badge background active",
+                "de": "Aktiver Abzeichen- Hintergrund",
+                "ru": "Фон активной бирки"
+            },
+            "brand_bg_class": {"en": "Brand background", "de": "Brand- Hintergrund", "ru": "Фон полоски"},
+            "brand_bg_class_active": {
+                "en": "Brand background active",
+                "de": "Aktiver Brand- Hintergrund",
+                "ru": "Фон активной полоски"
+            },
+            "group_icon": {"en": "Icon", "de": "Ikone", "ru": "Иконка"},
+            "group_badge": {"en": "Badge", "de": "Abzeichen", "ru": "Бирка"},
+            "group_bg-and-text": {"en": "Background and label", "de": "Hintergrund und Titel", "ru": "Фон и надпись"},
+            "group_dialog": {"en": "Dialog", "de": "Dialog", "ru": "Диалог"},
+            "transform": {"en": "Transform", "de": "Druckeffekt", "ru": "Эффект нажатия"},
+            "hover": {"en": "Effect by hover", "de": "Effekt beim Scheben", "ru": "Реакция на курсор"},
+            "oid-working": {"en": "Working state ID", "de": "In Arbeit Zustand ID", "ru": "'В работе' ID"},
+            "min": {"en": "Min", "de": "Min", "ru": "Минимум"},
+            "max": {"en": "Max", "de": "Max", "ru": "Максимум"},
+            "step": {"en": "Ыtep", "de": "Schritt", "ru": "Шаг"},
+            "sliderColor": {"en": "Slider color", "de": "Schieberfarbe", "ru": "Цвет ползунка"},
+            "sliderCompleteColor": {
+                "en": "Slider complete color",
+                "de": "Voll Schieberfarbe",
+                "ru": "Цвет ползунка (Полный)"
+            },
+            "sliderMarkerColor": {"en": "Slider handle color", "de": "Schiebergrifffarbe", "ru": "Цвет ручки"},
+            "content_id": {"en": "Content ID", "de": "Inhalt ID", "ru": "ID Содержания"},
+            "dialog_id": {"en": "Dialog ID", "de": "Dialog ID", "ru": "ID Текста для диалога"},
+            "number_id": {"en": "Number ID", "de": "Nummer ID", "ru": "ID Числа"},
+            "hide_on_0": {"en": "Hide by 0", "de": "Verbergen bei 0", "ru": "Скрыть при 0"},
+            "dialog_fontSize": {"en": "Dialog font size", "de": "Dialogschriftgrösse", "ru": "Размер шрифта"},
+            "dialog_padding": {"en": "Dialog padding", "de": "Dialog padding", "ru": "Отступ"},
+            "dialog_textAlign": {"en": "Dialog text align", "de": "Dialogtextausrichtung", "ru": "Выравнивание текста"},
+            "dialog_width": {"en": "Dialog width", "de": "Dialogbreite", "ru": "Ширина"},
+            "dialog_height": {"en": "Dialog height", "de": "Dialoghöhe", "ru": "Высота"},
+            "dialog_title": {"en": "Title", "de": "Titel", "ru": "Надпись"},
+            "dialog_flat": {"en": "Flat Design", "de": "Flaches Design", "ru": "Плоский дизайн"},
+            "dialog_shadow": {"en": "dialog_shadow", "de": "dialog_shadow", "ru": "Показать тень"},
+            "dialog_draggable": {"en": "dialog_draggable", "de": "dialog_draggable", "ru": "Можно двигать"},
+            "dialog_modal": {"en": "dialog_modal", "de": "Modaldialog", "ru": "Модальное окно"},
+            "dialog_icon_src": {"en": "Icon URL", "de": "Ikone URL", "ru": "URL иконки"},
+            "dialog_icon_class": {"en": "Icon class", "de": "Ikoneklasse", "ru": "Класс иконки"},
+            "Select ID": {"en": "Select ID", "de": "Select ID", "ru": "Select ID"},
+            "state_id": {"en": "State ID", "de": "Zustand ID", "ru": "ID Статуса"},
+            "select_on_true": {"en": "Select by true", "de": "Selektieren bei Wahr", "ru": "Отметить при 1"},
+            "label_true": {"en": "Label if true", "de": "Schild bei Wahr", "ru": "Надпись при 1"},
+            "label_false": {"en": "Label if false", "de": "Schild bei Falsch", "ru": "Надпись при 0"},
+            "bg_class_true": {"en": "Background by true", "de": "Hintergrund bei Wahr", "ru": "Фон при 1"},
+            "bg_class_false": {"en": "Background by false", "de": "Hintergrund bei Falsch", "ru": "Фон при 0"},
+            "icon_true_src": {"en": "Icon URL by true", "de": "Ikone URL bei Wahr", "ru": "URL иконки при 1"},
+            "icon_false_src": {"en": "Icon URL by false", "de": "Ikone URL bei Falsch", "ru": "URL иконки при 0"},
+            "icon_class_true": {
+                "en": "Icon class by true",
+                "de": "Ikonenklasse URL bei Wahr",
+                "ru": "Класс иконки при 1"
+            },
+            "icon_class_false": {
+                "en": "Icon class by false",
+                "de": "Ikonenklasse URL bei Falsch",
+                "ru": "Класс иконки при 0"
+            },
+            "badge_bg_class_true": {
+                "en": "Badge background by true",
+                "de": "Abzeichen- Hintergrund bei Wahr",
+                "ru": "Фон бирки при 1"
+            },
+            "badge_bg_class_false": {
+                "en": "Badge background by false",
+                "de": "Abzeichen- Hintergrund bei Falsch",
+                "ru": "Фон бирки при 0"
+            },
+            "brand_bg_class_true": {
+                "en": "Brand background by true",
+                "de": "Brand- Hintergrund bei Wahr",
+                "ru": "Фон полоски при 1"
+            },
+            "brand_bg_class_false": {
+                "en": "Brand background by false",
+                "de": "Brand- Hintergrund bei Falsch",
+                "ru": "Фон полоски при 0"
+            },
+            "icon_true": {"en": "Icon by true", "de": "Ikone bei Wahr", "ru": "Иконка при 1"},
+            "icon_false": {"en": "Icon by false", "de": "Ikone bei Falsch", "ru": "Иконка при 0"},
+            "icon_badge_true": {"en": "Icon badge_true", "de": "Abzeichenikone bei Wahr", "ru": "Иконка бирки при 1"},
+            "icon_badge_false": {
+                "en": "Icon badge_false",
+                "de": "Abzeichenikone bei Falsch",
+                "ru": "Иконка бирки при 0"
+            },
+            "value": {"en": "Value", "de": "Wert", "ru": "Значение"},
+            "select_on_value": {"en": "Select on value", "de": "Selektieren by Wert", "ru": "Отметить при значении"}
+        });
+    }
+
+    $.extend(true, systemDictionary, {
+        "Set temperature": {"en": "Set temperature", "de": "Soll-Temperatur", "ru": "Выставленная темп."},
+        "Actual temp.": {"en": "Actual temp.", "de": "Ist-Temperatur", "ru": "Актуальная темп."},
+        "Valve position": {"en": "Valve position", "de": "Ventilstellung", "ru": "Позиция вентиля"}
     });
 
     vis.navChangeCallbacks.push(function (view) {

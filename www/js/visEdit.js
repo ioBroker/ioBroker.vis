@@ -344,7 +344,7 @@ vis = $.extend(true, vis, {
         if (renderVisible) this.widgets[widgetId].renderVisible = true;
 
         if (isViewExist) {
-			$("#visview_"+view).append(can.view(tpl, {
+			$("#visview_" + view).append(can.view(tpl, {
                 hm:   this.states[this.widgets[widgetId].data.oid + '.Value'],
                 ts:   this.states[this.widgets[widgetId].data.oid + '.TimeStamp'],
                 ack:  this.states[this.widgets[widgetId].data.oid + '.Certain'],
@@ -863,7 +863,7 @@ vis = $.extend(true, vis, {
         var line = {
             input: '<table width="100%"><tr><td style="width:50px"><input style="width:50px" id="inspect_' + wid_attr + '"/></td><td width="100%"><div id="inspect_' + wid_attr + '_slider"></div></td></tr>',
             init: function (w, data) {
-                options.value = data;
+                options.value = (data === undefined) ? options.min : data;
                 var input = this;
                 options.slide = function (event, ui) {
                     $(input).val(ui.value).trigger('change');
@@ -871,7 +871,7 @@ vis = $.extend(true, vis, {
                 $('#inspect_' + wid_attr + '_slider').slider(options);
             },
             onchange: function (value) {
-                $('#inspect_' + wid_attr + '_slider').slider('value', value);
+                $('#inspect_' + wid_attr + '_slider').slider('value', (value === undefined) ? options.min : value);
             }
         };
         return line;
@@ -1175,9 +1175,17 @@ vis = $.extend(true, vis, {
                 var line = this.groups[group][wid_attr];
                 if (line[0]) line = line[0];
                 if (typeof line == 'string') line = {input: line};
-                var text = '<tr class="vis-edit-td-caption group-' + group + '" id="td_' + wid_attr + '"><td>' + _(line.attrName) + (line.attrIndex !== '' ? ('[' + line.attrIndex + ']') : '') + ':</td><td class="vis-edit-td-field"';
+                var title = _(wid_attr + '_tooltip');
+                var icon;
+                if (title == wid_attr + '_tooltip'){
+                    title = '';
+                    icon = '';
+                } else {
+                    icon = '<div class="ui-icon ui-icon-notice" style="float: right"/>';
+                }
+                var text = '<tr class="vis-edit-td-caption group-' + group + '" id="td_' + wid_attr + '"><td ' + (title ? 'title="' + title + '"' : '') + '>' + (icon ? '<i>' : '') + _(line.attrName) + (line.attrIndex !== '' ? ('[' + line.attrIndex + ']') : '') + ':' + (icon ? '</i>' : '') + '</td><td class="vis-edit-td-field"';
 
-                if (!line.button) text += ' colspan="2"'
+                if (!line.button) text += ' colspan="2"';
 
                 text += '>' + (line.input || '') + '</td>';
 

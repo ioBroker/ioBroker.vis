@@ -2,7 +2,8 @@ var visConfig = {
     widgetSets: [
         "basic",
         {name: "fancyswitch", depends: ["basic"]},
-        {name: "metro",       depends: ["basic"]}
+        {name: "metro",       depends: ["basic"]},
+        "jqplot"
         /*,
         "bars",
         "bko",

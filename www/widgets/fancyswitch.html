@@ -24,25 +24,28 @@
 
 <script type="text/javascript">
     "use strict";
-    // Add words for basic widgets
-    $.extend(true, systemDictionary, {
-        "text_true":        {"en": "Label for true",             "de": "Text für TRUE",      "ru": "Текст для 1"},
-        "text_false":       {"en": "Label for false",            "de": "Text für FALSE",     "ru": "Текст для 0"},
-        "width":            {"en": "Width",                      "de": "Breite",             "ru": "Ширина"},
-        "auto":             {"en": "auto",                       "de": "auto",               "ru": "автоматически"},
-        "true":             {"en": "true",                       "de": "true",               "ru": "да"},
-        "false":            {"en": "false",                      "de": "false",              "ru": "нет"},
-        "labelOn":          {"en": "Label for 'ON'",             "de": "Text für AN",        "ru": "Подпись для 'истина/1'"},
-        "labelOff":         {"en": "Label for 'OFF'",            "de": "Text für AUS",       "ru": "Подпись для 'ложь/0'"},
-        "resizeHandle":     {"en": "resizeHandle",               "de": "Hebelgröße",         "ru": "Изменить размер клавиши"},
-        "resizeContainer":  {"en": "resizeContainer",            "de": "Konteinergröße",     "ru": "Изменить размер виджета"},
-        "enableDrag":       {"en": "Enable drag",                "de": "Ziehen erlaubt",     "ru": "Можно тащить мышкой"},
-        "enableFx":         {"en": "Animation",                  "de": "Animation",          "ru": "Анимация"},
-        "duration":         {"en": "Effect duration(ms)",        "de": "Umschaltdauer(ms)",  "ru": "Длительность анимации"},
-        "highlight_switch": {"en": "Highlight switch",           "de": "Highlight Schalter", "ru": "Подсветить выключатель"},
-        "invert":           {"en": "Invert state",               "de": "Zustand invertieren", "ru": "Инвертировать состояние"},
-        "test":             {"en": "Test",                       "de": "Testen",             "ru": "Тест"}
-    });
+
+    if (vis.editMode) {
+        // Add words for basic widgets
+        $.extend(true, systemDictionary, {
+            "text_true":        {"en": "Label for true",             "de": "Text für TRUE",      "ru": "Текст для 1"},
+            "text_false":       {"en": "Label for false",            "de": "Text für FALSE",     "ru": "Текст для 0"},
+            "width":            {"en": "Width",                      "de": "Breite",             "ru": "Ширина"},
+            "auto":             {"en": "auto",                       "de": "auto",               "ru": "автоматически"},
+            "true":             {"en": "true",                       "de": "true",               "ru": "да"},
+            "false":            {"en": "false",                      "de": "false",              "ru": "нет"},
+            "labelOn":          {"en": "Label for 'ON'",             "de": "Text für AN",        "ru": "Подпись для 'истина/1'"},
+            "labelOff":         {"en": "Label for 'OFF'",            "de": "Text für AUS",       "ru": "Подпись для 'ложь/0'"},
+            "resizeHandle":     {"en": "resizeHandle",               "de": "Hebelgröße",         "ru": "Изменить размер клавиши"},
+            "resizeContainer":  {"en": "resizeContainer",            "de": "Konteinergröße",     "ru": "Изменить размер виджета"},
+            "enableDrag":       {"en": "Enable drag",                "de": "Ziehen erlaubt",     "ru": "Можно тащить мышкой"},
+            "enableFx":         {"en": "Animation",                  "de": "Animation",          "ru": "Анимация"},
+            "duration":         {"en": "Effect duration(ms)",        "de": "Umschaltdauer(ms)",  "ru": "Длительность анимации"},
+            "highlight_switch": {"en": "Highlight switch",           "de": "Highlight Schalter", "ru": "Подсветить выключатель"},
+            "invert":           {"en": "Invert state",               "de": "Zustand invertieren", "ru": "Инвертировать состояние"},
+            "test":             {"en": "Test",                       "de": "Testen",             "ru": "Тест"}
+        });
+    }
 
     vis.binds.fancyswitch = {
         fancyswitch: function (el, options) {
