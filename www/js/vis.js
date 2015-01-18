@@ -10,6 +10,7 @@
  */
 
 "use strict";
+var local = true;
 
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
@@ -68,15 +69,15 @@ var vis = {
 
     version:                '0.0.1',
     requiredServerVersion:  '0.0.0',
-    
+
     storageKeyViews:        'visViews',
     storageKeySettings:     'visSettings',
     storageKeyInstance:     'visInstance',
-    
+
     instance:               null,
     urlParams:              {},
     settings:               {},
-    views:                  {},
+    views:                  null,
     widgets:                {},
     activeView:             '',
     widgetSets:             visConfig.widgetSets,
@@ -86,7 +87,7 @@ var vis = {
     useCache:               true,
     authRunning:            false,
     cssChecked:             false,
-    
+
     binds:                  {},
     onChangeCallbacks:      [],
     viewsActiveFilter:      {},
@@ -94,6 +95,7 @@ var vis = {
     navChangeCallbacks:     [],
     editMode:               false,
     language:               (typeof systemLang != 'undefined') ? systemLang : visConfig.language,
+
 
     setValue: function (id, val) {
         if (!id) {
@@ -110,7 +112,7 @@ var vis = {
             o[id + '.lc'] = this.states.attr(id + '.lc');
         }
         o[id + '.val'] = val;
-        o[id + '.ts']  = t;
+        o[id + '.ts'] = t;
         o[id + '.ack'] = false;
 
         this.conn.setState(id, val);
@@ -128,12 +130,12 @@ var vis = {
         var url = './widgets/' + name + '.html?visVersion=' + this.version;
         var that = this;
         $.ajax({
-            url:      url,
-            type:     'GET',
-            async:    false,
+            url: url,
+            type: 'GET',
+            async: false,
             dataType: 'html',
-            cache:    this.useCache,
-            success:  function (data) {
+            cache: this.useCache,
+            success: function (data) {
 
                 jQuery("head").append(data);
                 that.toLoadSetsCount -= 1;
@@ -143,7 +145,7 @@ var vis = {
                         callback.call(that);
                     }, 100);
                 } else {
-                    that.showWaitScreen(true, null , null, parseInt((100 - that.waitScreenVal) / that.toLoadSetsCount, 10));
+                    that.showWaitScreen(true, null, null, parseInt((100 - that.waitScreenVal) / that.toLoadSetsCount, 10));
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -201,7 +203,7 @@ var vis = {
         var arrSets = [];
 
         // Get list of used widget sets. if Edit mode list is null.
-        var widgetSets = this.editMode ? null: this.getUsedWidgetSets();
+        var widgetSets = this.editMode ? null : this.getUsedWidgetSets();
 
         // Firts calculate how many sets to load
         for (var i = 0; i < this.widgetSets.length; i++) {
@@ -219,7 +221,7 @@ var vis = {
             }
         }
         this.toLoadSetsCount = arrSets.length;
-        $("#widgetset_counter").html("<span style='font-size:10px'>("+(vis.toLoadSetsCount)+")</span>");
+        $("#widgetset_counter").html("<span style='font-size:10px'>(" + (vis.toLoadSetsCount) + ")</span>");
 
         var that = this;
         if (this.toLoadSetsCount) {
@@ -240,7 +242,7 @@ var vis = {
             $('#vis_instance').val(this.instance);
         }
 
-        if (!this.instance && this.editMode){
+        if (!this.instance && this.editMode) {
             this.generateInstance();
         }
 
@@ -274,23 +276,24 @@ var vis = {
 
         // Late initialization (used only for debug)
         /*if (this.binds.hqWidgetsExt) {
-            this.binds.hqWidgetsExt.hqInit();
-        }*/
+         this.binds.hqWidgetsExt.hqInit();
+         }*/
 
-        this.loadRemote(this.loadWidgetSets, this.initNext);
+        //this.loadRemote(this.loadWidgetSets, this.initNext);
+        this.loadWidgetSets(this.initNext);
     },
     initNext: function () {
-        if (!this.views) {
-            this.loadRemote(function () {
-                this.showWaitScreen(false);
-
-                // First start.
-                this.initViewObject();
-            });
-            return false;
-        } else {
+        this.loadRemote(function () {
             this.showWaitScreen(false);
-        }
+
+            // First start.
+            if (!this.views) {
+                this.initViewObject();
+                return false;
+                }else{
+                this.showWaitScreen(false);
+            }
+        });
 
         var hash = window.location.hash.substring(1);
 
@@ -304,7 +307,7 @@ var vis = {
             // Create default view in demo mode
             if (typeof io == 'undefined') {
                 if (this.activeView == "") {
-                    if (!this.editMode){
+                    if (!this.editMode) {
                         alert(_("error - View doesn't exist"));
                         window.location.href = "./edit.html";
                     } else {
@@ -374,15 +377,15 @@ var vis = {
     setViewSize: function (view) {
         var $view = $("#visview_" + view);
         // Because of background, set the width and height of the view
-        var width  = parseInt(vis.views[view].settings.sizex, 10);
+        var width = parseInt(vis.views[view].settings.sizex, 10);
         var height = parseInt(vis.views[view].settings.sizey, 10);
-        if (!width || width < $( window ).width()) {
+        if (!width || width < $(window).width()) {
             width = '100%';
         }
-        if (!height || height < $( window ).height()) {
+        if (!height || height < $(window).height()) {
             height = '100%';
         }
-        $view.css({width:  width});
+        $view.css({width: width});
         $view.css({height: height});
     },
     updateContainers: function(view) {
@@ -418,16 +421,19 @@ var vis = {
             this.viewsActiveFilter[view] = [];
         }
 
-        if (!noThemeChange) {
-            $("style[data-href$='jquery-ui.min.css']").remove();
-            $("link[href$='jquery-ui.min.css']").remove();
-            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
-            this.additionalThemeCss(this.views[view].settings.theme);
-        }
+        //if (!noThemeChange) {
+        //    $("style[data-href$='jquery-ui.min.css']").remove();
+        //    $("link[href$='jquery-ui.min.css']").remove();
+        //    $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + vis.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
+        //    vis.additionalThemeCss(vis.views[view].settings.theme);
+        //}
 
         if ($('#visview_' + view).html() === undefined) {
 
             $('#vis_container').append('<div style="display:none;" id="visview_' + view + '" class="vis-view"></div>');
+            vis.addViewStyle(view,vis.views[view].settings.theme);
+
+
             var $view = $("#visview_" + view);
             $view.css(this.views[view].settings.style);
             if (this.views[view].settings.style.background_class) $view.addClass(this.views[view].settings.style.background_class);
@@ -453,10 +459,60 @@ var vis = {
             if (this.binds.jqueryui && vis.editMode) {
                 this.binds.jqueryui._disable();
             }
+
+            if (vis.editMode) {
+
+                $($view).droppable({
+                    accept: ".wid_prev",
+                    drop: function (event, ui) {
+                        console.log("hallo")
+                        var tpl = $(ui.draggable).data("tpl");
+                        var view_pos = $("#vis_container").position();
+                        var add_pos = {left: ui.position.left - $('#toolbox').width() + $("#vis_container").scrollLeft() +5, top: ui.position.top - view_pos.top +$("#vis_container").scrollTop()+8};
+
+                        var $tpl = $('#' + tpl);
+                        var renderVisible = $tpl.attr('data-vis-render-visible');
+
+                        // Widget attributs default values
+                        var attrs = $tpl.attr('data-vis-attrs');
+                        var data = {};
+                        if (attrs) {
+                            attrs = attrs.split(';');
+                            if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
+                        }
+                        if (renderVisible) data.renderVisible = true;
+
+
+                        vis.addWidget(tpl,data,add_pos);
+
+                        $('#select_active_widget').append('<option value="' + vis.activeWidget + '">' + vis.getWidgetName(vis.activeView, vis.activeWidget) + ')</option>')
+                            .multiselect('refresh');
+
+                        setTimeout(function () {
+                            vis.inspectWidget(vis.activeWidget)
+                        }, 50);
+
+                    }
+                });
+            }
         }
-        
-        // Set ths views for containers
-        this.updateContainers(view);
+
+        // Views in Container verschieben
+        $("#visview_" + view).find("div[id$='container']").each(function () {
+            //console.log($(this).attr("id")+ " contains " + $(this).attr("data-vis-contains"));
+            var cview = $(this).attr("data-vis-contains");
+            if (!vis.views[cview]) {
+                $(this).append("error: view not found.");
+                return false;
+            } else if (cview == view) {
+                $(this).append("error: view container recursion.");
+                return false;
+            }
+            vis.renderView(cview, true);
+            $("#visview_" + cview).appendTo(this);
+            $("#visview_" + cview).show();
+
+        });
 
         if (!hidden) {
             $("#visview_" + view).show();
@@ -476,6 +532,22 @@ var vis = {
         if (isViewsConverted) {
             this.saveRemote();
         }
+    },
+    addViewStyle:function(view,theme){
+
+        var _view = "visview_"+view;
+        $.ajax({
+            url: "lib/css/themes/jquery-ui/"+theme+"/jquery-ui.min.css",
+            cache: false,
+            success: function (data) {
+                $("#"+view+"_style").remove();
+                data = data.replace(".ui-helper-hidden", "#"+_view+" .ui-helper-hidden");
+                data = data.replace(/(}.)/g, "}#"+_view+" .");
+                data = data.replace(/,\./g, ",#"+_view+" .");
+                data = data.replace(/images/g, "lib/css/themes/jquery-ui/"+theme+"/images/");
+                $('#'+_view).append("<style id='"+view+"_style'>"+data+"</style>")
+            }
+        });
     },
     preloadImages: function (srcs) {
         if (!this.preloadImages.cache) {
@@ -588,13 +660,13 @@ var vis = {
         var widgetData = this.widgets[id].data;
 
         try {
-        // Append html element to view
+            // Append html element to view
             if (widget.data && widget.data.oid) {
                 $('#visview_' + view).append(can.view(widget.tpl, {
-                    val:  this.states[widget.data.oid + '.val'],
-                    ts:   this.states[widget.data.oid + '.ts'],
-                    ack:  this.states[widget.data.oid + '.ack'],
-                    lc:   this.states[widget.data.oid + '.lc'],
+                    val: this.states[widget.data.oid + '.val'],
+                    ts: this.states[widget.data.oid + '.ts'],
+                    ack: this.states[widget.data.oid + '.ack'],
+                    lc: this.states[widget.data.oid + '.lc'],
                     data: widgetData,
                     view: view
                 }));
@@ -603,7 +675,7 @@ var vis = {
             }
 
             if (!this.editMode) {
-                if (widget.data.filterkey && widget.data.filterkey != "" && this.viewsActiveFilter[view].length > 0 &&  this.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
+                if (widget.data.filterkey && widget.data.filterkey != "" && this.viewsActiveFilter[view].length > 0 && this.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
                     var mWidget = document.getElementById(id);
                     $('#' + id).hide();
                     if (mWidget &&
@@ -673,7 +745,7 @@ var vis = {
                         if (that.views[view].rerender) {
                             that.views[view].rerender = false;
                             for (var id in this.views[view].widgets) {
-                                if (that.views[view].widgets[id].tpl.substring(0,5) == "tplHq" ||
+                                if (that.views[view].widgets[id].tpl.substring(0, 5) == "tplHq" ||
                                     that.views[view].widgets[id].renderVisible)
                                     that.renderWidget(view, id);
                             }
@@ -681,15 +753,6 @@ var vis = {
                     }).dequeue();
                 }
                 $("#visview_" + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
-                    var list = $("link[href$='jquery-ui.min.css']");
-
-                    if (list.length ==  0) {
-                        $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + that.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
-                    } else {
-                        list.attr("href", '../lib/css/themes/jquery-ui/' + that.views[view].settings.theme + '/jquery-ui.min.css');
-                    }
-                    $("style[data-href$='jquery-ui.min.css']").remove();
-                    that.additionalThemeCss(that.views[view].settings.theme);
 
                     // If first hide, than show
                     if (!sync) {
@@ -697,7 +760,7 @@ var vis = {
                             if (that.views[view].rerender) {
                                 that.views[view].rerender = false;
                                 for (var id in that.views[view].widgets) {
-                                    if (that.views[view].widgets[id].tpl.substring(0,5) == "tplHq" ||
+                                    if (that.views[view].widgets[id].tpl.substring(0, 5) == "tplHq" ||
                                         that.views[view].widgets[id].renderVisible)
                                         that.renderWidget(view, id);
                                 }
@@ -714,25 +777,24 @@ var vis = {
                     $("#visview_" + view).appendTo("#vis_container");
                 }
 
-                if (this.views[view] && this.views[view].settings) {
-                    if (this.views[vis.activeView] && this.views[vis.activeView].settings &&
-                        this.views[vis.activeView].settings.theme != this.views[view].settings.theme) {
-                        if ($("link[href$='jquery-ui.min.css']").length ==  0) {
-                            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
-                        } else {
-                            $("link[href$='jquery-ui.min.css']").attr("href", '../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css');
-                        }
-                        $("style[data-href$='jquery-ui.min.css']").remove();
-                    }
-                    this.additionalThemeCss(this.views[view].settings.theme);
-                }
+                //if (this.views[view] && this.views[view].settings) {
+                    //if (this.views[vis.activeView] && this.views[vis.activeView].settings &&
+                    //    this.views[vis.activeView].settings.theme != this.views[view].settings.theme) {
+                    //    if ($("link[href$='jquery-ui.min.css']").length == 0) {
+                    //        $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
+                    //    } else {
+                    //        $("link[href$='jquery-ui.min.css']").attr("href", '../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css');
+                    //    }
+                    //    $("style[data-href$='jquery-ui.min.css']").remove();
+                    //}
+                    //this.additionalThemeCss(this.views[view].settings.theme);
+                //}
                 $("#visview_" + view).show();
                 $("#visview_" + this.activeView).hide();
             }
 
         } else {
             this.renderView(view);
-
 
 
             // View ggf aus Container heraus holen
@@ -775,79 +837,101 @@ var vis = {
         this.saveRemote(function () {
             $(window).off('hashchange');
             window.location.hash = "#" + view;
-            window.location.reload();
+            window.location.reload(); // todo das stört !!! Kann man das nicht anders machen ?
         });
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
-        this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
-        this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
-            if (err) alert(that.projectPrefix + 'vis-views.json ' + err);
-
-            if (data) {
-                if (typeof data == 'string') {
-                    try {
-                        that.views = JSON.parse(data);
-                    } catch(e) {
-                        console.log('Cannot parse views file "' + that.projectPrefix + 'vis-views.json"');
-                        alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');
-                        that.views = null;
-                    }
-                } else {
-                    that.views = data;
-                }
-            } else {
-                that.views = null;
+        if (local) {
+            try {
+                this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
+                that.views = JSON.parse(storage.get(this.storageKeyViews));
+                if (callback) callback.call(that, callbackArg);
+            } catch (err) {
+                that.views = null
+                if (callback) callback.call(that, callbackArg);
             }
 
-            if (callback) callback.call(that, callbackArg);
-        });       
+
+        } else {
+
+            this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
+                if (err) alert(that.projectPrefix + 'vis-views.json ' + err);
+
+                if (data) {
+                    if (typeof data == 'string') {
+                        try {
+                            that.views = JSON.parse(data);
+                        } catch (e) {
+                            console.log('Cannot parse views file "' + that.projectPrefix + 'vis-views.json"');
+                            alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');
+                            that.views = null;
+                        }
+                    } else {
+                        that.views = data;
+                    }
+                } else {
+                    that.views = null;
+                }
+
+                if (callback) callback.call(that, callbackArg);
+            });
+        }
     },
     saveRemoteActive: false,
     saveRemote: function (callback) {
         var that = this;
+
         if (this.saveRemoteActive) {
             setTimeout(function () {
                 that.saveRemote(callback);
             }, 1000);
-            return;
-        }
-        this.saveRemoteActive = true;
-        // Sync widget before it will be saved
-        if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
-            this.syncWidget(this.activeWidget);
-        }
 
-        this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
-            that.saveRemoteActive = false;
-            if (callback) callback();
-
-            // If not yet checked => check if project css file exists
-            if (!that.cssChecked) {
-                that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
-                    that.cssChecked = true;
-                    // Create vis-user.css file if not exist
-                    if (err || data == null || data == undefined){
-                        // Create empty css file
-                        that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
-                    }
-                })
+        }else {
+            this.saveRemoteActive = true;
+            // Sync widget before it will be saved
+            if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
+                this.syncWidget(this.activeWidget);
             }
-        });
-    },
-    additionalThemeCss: function (theme) {
-        if (theme == "kian") {
-            $("#additional_theme_css").remove();
-            $("link[href$='jquery-ui.min.css']").after('<link rel="stylesheet" href="css/add_' + theme + '.css" id="additional_theme_css" type="text/css"/>');
-        } else {
-            $("#additional_theme_css").remove();
+
+            if (local) {
+
+                storage.set(this.storageKeyViews, JSON.stringify(this.views, null, 2));
+                that.saveRemoteActive = false;
+                if (callback) callback();
+            } else {
+                this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
+                    that.saveRemoteActive = false;
+                    if (callback) callback();
+
+                    // If not yet checked => check if project css file exists
+                    if (!that.cssChecked) {
+                        that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
+                            that.cssChecked = true;
+                            // Create vis-user.css file if not exist
+                            if (err || data == null || data == undefined) {
+                                // Create empty css file
+                                that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
+                            }
+                        })
+                    }
+                });
+            }
         }
     },
+    //additionalThemeCss: function (theme) {
+    //    if (theme == "kian") {
+    //        $("#additional_theme_css").remove();
+    //        $("link[href$='jquery-ui.min.css']").after('<link rel="stylesheet" href="css/add_' + theme + '.css" id="additional_theme_css" type="text/css"/>');
+    //    } else {
+    //        $("#additional_theme_css").remove();
+    //    }
+    //},
     wakeUpCallbacks: [],
     initWakeUp: function () {
         var that = this;
         var oldTime = (new Date()).getTime();
-        setInterval(function() {
+        setInterval(function () {
             var currentTime = (new Date()).getTime();
             //console.log("checkWakeUp "+ (currentTime - oldTime));
             if (currentTime > (oldTime + 10000)) {
@@ -897,7 +981,7 @@ var vis = {
     registerOnChange: function (callback, arg) {
         for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
             if (this.onChangeCallbacks[i].callback == callback &&
-                this.onChangeCallbacks[i].arg      == arg) {
+                this.onChangeCallbacks[i].arg == arg) {
                 return;
             }
         }
@@ -938,12 +1022,12 @@ if ('applicationCache' in window) {
 // Parse Querystring
 (window.onpopstate = function () {
     var match,
-        pl     = /\+/g,
+        pl = /\+/g,
         search = /([^&=]+)=?([^&]*)/g,
         decode = function (s) {
             return decodeURIComponent(s.replace(pl, ' '));
         },
-        query  = window.location.search.substring(1);
+        query = window.location.search.substring(1);
     vis.urlParams = {};
     while (match = search.exec(query)) {
         vis.urlParams[decode(match[1])] = decode(match[2]);
@@ -970,12 +1054,12 @@ if ('applicationCache' in window) {
         vis.preloadImages(["img/disconnect.png"]);
 
         $("#ccu-io-disconnect").dialog({
-            modal:         true,
+            modal: true,
             closeOnEscape: false,
-            autoOpen:      false,
-            dialogClass:   'noTitle',
-            width:         400,
-            height:        90
+            autoOpen: false,
+            dialogClass: 'noTitle',
+            width: 400,
+            height: 90
         });
 
         $(".vis-version").html(vis.version);
@@ -985,9 +1069,9 @@ if ('applicationCache' in window) {
 
         vis.showWaitScreen(true, null, _('Connecting to Server...') + '<br/>', 0);
 
-        function compareVersion (instVersion, availVersion) {
-            var instVersionArr  = instVersion.replace(/beta/, '.').split('.');
-            var availVersionArr = availVersion.replace(/beta/,'.').split('.');
+        function compareVersion(instVersion, availVersion) {
+            var instVersionArr = instVersion.replace(/beta/, '.').split('.');
+            var availVersionArr = availVersion.replace(/beta/, '.').split('.');
 
             var updateAvailable = false;
 
@@ -1012,129 +1096,131 @@ if ('applicationCache' in window) {
             return updateAvailable;
         }
 
+        vis.init();
+
         vis.conn = servConn;
 
         // First of all load project/vis-user.css
         $('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
 
 
-        vis.conn.init(null, {
-            name: vis.editMode ? vis.conn.namespace + '.edit' : vis.conn.namespace,
-            onConnChange: function (isConnected) {
-                //console.log("onConnChange isConnected="+isConnected);
-                if (isConnected) {
-                    $("#ccu-io-disconnect").dialog("close");
-                    if (vis.isFirstTime) {
-                        vis.conn.getVersion(function (version) {
-                            if (!version) {
-                                // Possible not authenticated, wait for request from server
-                            } else {
-                                //vis.conn.readFile("www/vis/css/vis-user.css");
+        if (!local) {
+            vis.conn.init(null, {
+                onConnChange: function (isConnected) {
+                    //console.log("onConnChange isConnected="+isConnected);
+                    if (isConnected) {
+                        $("#ccu-io-disconnect").dialog("close");
+                        if (vis.isFirstTime) {
+                            vis.conn.getVersion(function (version) {
+                                if (!version) {
+                                    // Possible not authenticated, wait for request from server
+                                } else {
+                                    //vis.conn.readFile("www/vis/css/vis-user.css");
 
-                                if (compareVersion(version, vis.requiredServerVersion)) {
-                                    // TODO Translate
-                                    alert("Warning: requires Server version " + vis.requiredServerVersion + " - found Server version " + version + " - please update Server.");
+                                    if (compareVersion(version, vis.requiredServerVersion)) {
+                                        // TODO Translate
+                                        alert("Warning: requires Server version " + vis.requiredServerVersion + " - found Server version " + version + " - please update Server.");
+                                    }
                                 }
-                            }
-                        });
-
-                        vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
-                    }
-
-                    // Read all states from server
-                    vis.conn.getStates(function (error, data) {
-                        if (data) {
-                            for (var id in data) {
-                                var obj = data[id];
-                                var o = {};
-                                o[id + '.val'] = obj.val;
-                                o[id + '.ts']  = obj.ts;
-                                if (vis.states[id + '.val'] !== undefined) {
-                                    o[id + '.ack'] = obj.ack;
-                                    o[id + '.lc']  = obj.lc;
-                                }
-                                try {
-                                    vis.states.attr(o);
-                                } catch (e) {
-                                    vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
-                                }
-                            }
-                        }
-
-
-                        if (error) {
-                            console.log("Possibly not authenticated, wait for request from server");
-                            // Possibly not authenticated, wait for request from server
-                        } else {
-                            // Get Server language
-                            vis.conn.getLanguage(function (err, lang) {
-                                systemLang   = lang || systemLang;
-                                vis.language = systemLang;
-                                translateAll();
                             });
 
-                            // If metaIndex required, load it
-                            if (vis.editMode) {
-                                /* socket.io */
-                                if (vis.isFirstTime) {
-                                    vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
+                            vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
+                        }
+
+                        // Read all states from server
+                        vis.conn.getStates(function (error, data) {
+                            if (data) {
+                                for (var id in data) {
+                                    var obj = data[id];
+                                    var o = {};
+                                    o[id + '.val'] = obj.val;
+                                    o[id + '.ts'] = obj.ts;
+                                    if (vis.states[id + '.val'] !== undefined) {
+                                        o[id + '.ack'] = obj.ack;
+                                        o[id + '.lc'] = obj.lc;
+                                    }
+                                    try {
+                                        vis.states.attr(o);
+                                    } catch (e) {
+                                        vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                                    }
                                 }
-                                // Read all data objects from server
-                                vis.conn.getObjects(function (err, data) {
-                                    vis.objects = data;
-                                });
                             }
 
-                            //console.log((new Date()) + " socket.io reconnect");
-                            if (vis.isFirstTime) setTimeout(function () {
-                                vis.init();
-                            }, 10);
-                            vis.isFirstTime = false;
-                        }
-                    });
-                } else {
-                    //console.log((new Date()) + " socket.io disconnect");
-                    $("#ccu-io-disconnect").dialog("open");
-                }
-            },
-            onRefresh: function () {
-                window.location.reload();
-            },
-            onUpdate: function (id, state) {
-                var o = {};
-                // Check new model
-                o[id + '.val'] = state.val;
-                o[id + '.ts']  = state.ts;
-                if (vis.states[id + '.val'] !== undefined) {
-                    o[id + '.ack'] = state.ack;
-                    o[id + '.lc']  = state.lc;
-                }
-                try {
-                    vis.states.attr(o);
-                } catch (e) {
-                    vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
-                }
 
-                // Inform other widgets, that do not support canJS
-                for (var i = 0, len = vis.onChangeCallbacks.length; i < len; i++) {
-                    vis.onChangeCallbacks[i].callback(vis.onChangeCallbacks[i].arg, id, state.val, state.ack);
-                }
-            },
-            onAuth: function (message, salt) {
-                if (vis.authRunning) {
-                    return;
-                }
-                vis.authRunning = true;
-                var users;
-                if (visConfig.auth.users && visConfig.auth.users.length) {
-                    users = '<select id="login-username" value="'+visConfig.auth.users[0]+'" class="login-input-field">';
-                    for (var z = 0; z < visConfig.auth.users.length; z++) {
-                        users += '<option value="' + visConfig.auth.users[z] + '">' + visConfig.auth.users[z] + '</option>';
+                            if (error) {
+                                console.log("Possibly not authenticated, wait for request from server");
+                                // Possibly not authenticated, wait for request from server
+                            } else {
+                                // Get Server language
+                                vis.conn.getLanguage(function (err, lang) {
+                                    systemLang = lang || systemLang;
+                                    vis.language = systemLang;
+                                    translateAll();
+                                });
+
+                                // If metaIndex required, load it
+                                if (vis.editMode) {
+                                    /* socket.io */
+                                    if (vis.isFirstTime) {
+                                        vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
+                                    }
+                                    // Read all data objects from server
+                                    vis.conn.getObjects(function (err, data) {
+                                        vis.objects = data;
+                                    });
+                                }
+
+                                //console.log((new Date()) + " socket.io reconnect");
+                                if (vis.isFirstTime) setTimeout(function () {
+                                    vis.init();
+                                }, 10);
+                                vis.isFirstTime = false;
+                            }
+                        });
+                    } else {
+                        //console.log((new Date()) + " socket.io disconnect");
+                        $("#ccu-io-disconnect").dialog("open");
                     }
-                    users += '</select>';
-                } else {
-                    users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name')+'">'
-                }
+                },
+                onRefresh: function () {
+                    window.location.reload();
+                },
+                onUpdate: function (id, state) {
+                    var o = {};
+                    // Check new model
+                    o[id + '.val'] = state.val;
+                    o[id + '.ts'] = state.ts;
+                    if (vis.states[id + '.val'] !== undefined) {
+                        o[id + '.ack'] = state.ack;
+                        o[id + '.lc'] = state.lc;
+                    }
+                    try {
+                        vis.states.attr(o);
+                    } catch (e) {
+                        vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                    }
+
+                    // Inform other widgets, that do not support canJS
+                    for (var i = 0, len = vis.onChangeCallbacks.length; i < len; i++) {
+                        vis.onChangeCallbacks[i].callback(vis.onChangeCallbacks[i].arg, id, state.val, state.ack);
+                    }
+                },
+                onAuth: function (message, salt) {
+                    if (vis.authRunning) {
+                        return;
+                    }
+                    vis.authRunning = true;
+                    var users;
+                    if (visConfig.auth.users && visConfig.auth.users.length) {
+                        users = '<select id="login-username" value="' + visConfig.auth.users[0] + '" class="login-input-field">';
+                        for (var z = 0; z < visConfig.auth.users.length; z++) {
+                            users += '<option value="' + visConfig.auth.users[z] + '">' + visConfig.auth.users[z] + '</option>';
+                        }
+                        users += '</select>';
+                    } else {
+                        users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name') + '">'
+                    }
 
                 var text = '<div id="login-box" class="login-popup" style="display:none">'+
                             '<div class="login-message">'+message+'</div>'+
@@ -1151,86 +1237,87 @@ if ('applicationCache' in window) {
                             '</div>'+
                         '</div>';
 
-                $('body').append(text);
+                    $('body').append(text);
 
-                var loginBox = $('#login-box');
+                    var loginBox = $('#login-box');
 
-                //Fade in the Popup
-                $(loginBox).fadeIn(300);
+                    //Fade in the Popup
+                    $(loginBox).fadeIn(300);
 
-                //Set the center alignment padding + border see css style
-                var popMargTop = ($(loginBox).height() + 24) / 2;
-                var popMargLeft = ($(loginBox).width() + 24) / 2;
+                    //Set the center alignment padding + border see css style
+                    var popMargTop = ($(loginBox).height() + 24) / 2;
+                    var popMargLeft = ($(loginBox).width() + 24) / 2;
 
-                $(loginBox).css({
-                    'margin-top' : -popMargTop,
-                    'margin-left' : -popMargLeft
-                });
-
-                // Add the mask to body
-                $('body').append('<div id="login-mask"></div>');
-                $('#login-mask').fadeIn(300);
-                // When clicking on the button close or the mask layer the popup closed
-                $('#login-password').keypress(function(e) {
-                    if(e.which == 13) {
-                        $('.login-button').trigger('click');
-                    }
-                });
-                $('.login-button').bind('click', function() {
-                    var user = $('#login-username').val();
-                    var pass = $('#login-password').val();
-                    $('#login_mask , .login-popup').fadeOut(300 , function() {
-                        $('#login-mask').remove();
-                        $('#login-box').remove();
+                    $(loginBox).css({
+                        'margin-top': -popMargTop,
+                        'margin-left': -popMargLeft
                     });
-                    setTimeout (function () {
-                        vis.authRunning = false;
-                        console.log("user "+  user + ", " + pass + " " + salt);
-                        vis.conn.authenticate(user, pass, salt);
-                    }, 500);
-                    return true;
-                });
-            },
-            onCommand: function (instance, command, data) {
-                if (instance != vis.instance && instance != 'FFFFFFFF') return false;
-                if (command) {
-                     // external Commands
-                    switch (command) {
-                        case 'alert':
-                            alert(data);
-                            break;
-                        case 'changedView':
-                            // Do nothing
-                            return false;
-                        case 'changeView':
-                            vis.changeView(data);
-                            break;
-                        case 'refresh':
-                        case 'reload':
-                            setTimeout(function () {
-                                window.location.reload();
-                            }, 1);
-                            break;
-                        case 'dialog':
-                            $('#' + data + '_dialog').dialog('open');
-                            break;
-                        case 'popup':
-                            window.open(data);
-                            break;
-                        case 'playSound':
-                            $('#external_sound').attr("src", data);
-                            setTimeout(function () {
-                                document.getElementById("external_sound").play();
-                            }, 1);
-                            break;
-                        default:
-                            vis.conn.logError("unknown external command " + command);
-                    }
-                }
 
-                return true;
-            }
-        });
+                    // Add the mask to body
+                    $('body').append('<div id="login-mask"></div>');
+                    $('#login-mask').fadeIn(300);
+                    // When clicking on the button close or the mask layer the popup closed
+                    $('#login-password').keypress(function (e) {
+                        if (e.which == 13) {
+                            $('.login-button').trigger('click');
+                        }
+                    });
+                    $('.login-button').bind('click', function () {
+                        var user = $('#login-username').val();
+                        var pass = $('#login-password').val();
+                        $('#login_mask , .login-popup').fadeOut(300, function () {
+                            $('#login-mask').remove();
+                            $('#login-box').remove();
+                        });
+                        setTimeout(function () {
+                            vis.authRunning = false;
+                            console.log("user " + user + ", " + pass + " " + salt);
+                            vis.conn.authenticate(user, pass, salt);
+                        }, 500);
+                        return true;
+                    });
+                },
+                onCommand: function (instance, command, data) {
+                    if (instance != vis.instance && instance != 'FFFFFFFF') return false;
+                    if (command) {
+                        // external Commands
+                        switch (command) {
+                            case 'alert':
+                                alert(data);
+                                break;
+                            case 'changedView':
+                                // Do nothing
+                                return false;
+                            case 'changeView':
+                                vis.changeView(data);
+                                break;
+                            case 'refresh':
+                            case 'reload':
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 1);
+                                break;
+                            case 'dialog':
+                                $('#' + data + '_dialog').dialog('open');
+                                break;
+                            case 'popup':
+                                window.open(data);
+                                break;
+                            case 'playSound':
+                                $('#external_sound').attr("src", data);
+                                setTimeout(function () {
+                                    document.getElementById("external_sound").play();
+                                }, 1);
+                                break;
+                            default:
+                                vis.conn.logError("unknown external command " + command);
+                        }
+                    }
+
+                    return true;
+                }
+            });
+        }
     });
 
     //vis.preloadImages(["../lib/css/themes/jquery-ui/redmond/images/modalClose.png"]);
@@ -1242,16 +1329,22 @@ if ('applicationCache' in window) {
 if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function (obj, start) {
         for (var i = (start || 0), j = this.length; i < j; i++) {
-            if (this[i] === obj) { return i; }
+            if (this[i] === obj) {
+                return i;
+            }
         }
         return -1;
     }
 }
 function _setTimeout(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
-    return setTimeout(function () {func(arg1, arg2, arg3, arg4, arg5, arg6);}, timeout);
+    return setTimeout(function () {
+        func(arg1, arg2, arg3, arg4, arg5, arg6);
+    }, timeout);
 }
 function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
-    return setInterval(function () {func(arg1, arg2, arg3, arg4, arg5, arg6);}, timeout);
+    return setInterval(function () {
+        func(arg1, arg2, arg3, arg4, arg5, arg6);
+    }, timeout);
 }
 
 if (window.location.search == "?edit") {

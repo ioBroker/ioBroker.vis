@@ -18,31 +18,30 @@
 "use strict";
 
 vis = $.extend(true, vis, {
-    toolbox:                $("#vis_editor"),
-    selectView:             $("#select_view"),
-    activeWidget:           '',
-    isStealCss:             false,
-    gridWidth:              undefined,
-    editorPos:              "free",
-    undoHistoryMaxLength:   50,
-    multiSelectedWidgets:   [],
-    clipboard:              null,
-    undoHistory:            [],
-    selectable:             true,
-    groupsState:            {'fixed': true, 'common': true},
+    toolbox: $("#vis_editor"),
+    selectView: $("#select_view"),
+    activeWidget: '',
+    isStealCss: false,
+    gridWidth: undefined,
+    undoHistoryMaxLength: 50,
+    multiSelectedWidgets: [],
+    clipboard: null,
+    undoHistory: [],
+    selectable: true,
+    groupsState: {'fixed': true, 'common': true},
     // Array with all objects (Descriptions of objects)
-    objects:                null,
+    objects: null,
 
     renameView: function (newName) {
-            vis.views[newName] = $.extend(true, {}, vis.views[vis.activeView]);
-            $("#vis_container").hide();
-            delete vis.views[vis.activeView];
-            vis.activeView = newName;
-            vis.renderView(newName);
-            vis.changeView(newName);
-            vis.saveRemote(function () {
-                window.location.reload();
-            });
+        vis.views[newName] = $.extend(true, {}, vis.views[vis.activeView]);
+        $("#vis_container").hide();
+        delete vis.views[vis.activeView];
+        vis.activeView = newName;
+        vis.renderView(newName);
+        vis.changeView(newName);
+        vis.saveRemote(function () {
+            window.location.reload();
+        });
     },
     delView: function (view) {
         if (confirm(_("Really delete view %s?", view))) {
@@ -50,7 +49,7 @@ vis = $.extend(true, vis, {
             vis.saveRemote(function () {
                 window.location.href = "edit.html" + window.location.search;
             });
-           }
+        }
     },
     dupView: function (val) {
         vis.views[val] = $.extend(true, {}, vis.views[vis.activeView]);
@@ -86,7 +85,7 @@ vis = $.extend(true, vis, {
             height: 600,
             modal: true,
             open: function (/*event, ui*/) {
-                $('[aria-describedby="dialog_export_view"]').css('z-index',1002);
+                $('[aria-describedby="dialog_export_view"]').css('z-index', 1002);
                 $(".ui-widget-overlay").css('z-index', 1001);
             }
         });
@@ -99,7 +98,7 @@ vis = $.extend(true, vis, {
             var text = $("#textarea_import_view").val();
             importObject = JSON.parse(text);
         } catch (e) {
-            alert(_("invalid JSON") + "\n\n"+e);
+            alert(_("invalid JSON") + "\n\n" + e);
             return;
         }
         if (isAll) {
@@ -140,8 +139,8 @@ vis = $.extend(true, vis, {
         var key = "w" + (("000000" + next).slice(-5));
         for (var view in vis.views) {
             for (var wid in vis.views[view].widgets) {
-				wid = wid.split('_');
-				wid = wid[0];
+                wid = wid.split('_');
+                wid = wid[0];
                 used.push(wid);
             }
             while (used.indexOf(key) > -1) {
@@ -152,92 +151,92 @@ vis = $.extend(true, vis, {
         return key;
     },
     getViewOfWidget: function (id) {
-		// find view of this widget
-		var view = null;
-		for (var v in vis.views) {
-			if (vis.views[v] && vis.views[v].widgets && vis.views[v].widgets[id]) {
-				view = v;
-				break;
-			}
-		}
-		return view;
-	},
-	getViewsOfWidget: function (id) {
-		if (id.indexOf('_') == -1) {
-			var view = vis.getViewOfWidget(id);
-			if (view) {
-				return [view];
-			} else {
-				return [];
-			}
-		} else {
-			var wids = id.split('_', 2);
-			var wid = wids[0];
-			var result = [];
-			for (var v in vis.views) {
-				if (vis.views[v].widgets[wid+'_'+v] !== undefined) {
-					result[result.length] = v;
-				}
-			}
-			return result;
-		}
-	},
-	delWidgetHelper: function (id, isAll) {
+        // find view of this widget
+        var view = null;
+        for (var v in vis.views) {
+            if (vis.views[v] && vis.views[v].widgets && vis.views[v].widgets[id]) {
+                view = v;
+                break;
+            }
+        }
+        return view;
+    },
+    getViewsOfWidget: function (id) {
+        if (id.indexOf('_') == -1) {
+            var view = vis.getViewOfWidget(id);
+            if (view) {
+                return [view];
+            } else {
+                return [];
+            }
+        } else {
+            var wids = id.split('_', 2);
+            var wid = wids[0];
+            var result = [];
+            for (var v in vis.views) {
+                if (vis.views[v].widgets[wid + '_' + v] !== undefined) {
+                    result[result.length] = v;
+                }
+            }
+            return result;
+        }
+    },
+    delWidgetHelper: function (id, isAll) {
 
         if (!id) {
             return;
         }
 
-		if (isAll && id.indexOf('_') != -1) {
-			var views = vis.getViewsOfWidget(id);
-			var wids = id.split('_', 2);
-			for (var i = 0; i < views.length; i++) {
-				vis.delWidgetHelper(wids[0] + '_' + views[i], false);
-			}
-			vis.inspectWidget("none");
-			return;
-		}
+        if (isAll && id.indexOf('_') != -1) {
+            var views = vis.getViewsOfWidget(id);
+            var wids = id.split('_', 2);
+            for (var i = 0; i < views.length; i++) {
+                vis.delWidgetHelper(wids[0] + '_' + views[i], false);
+            }
+            vis.inspectWidget("none");
+            return;
+        }
 
         var $select_active_widget = $('#select_active_widget');
         $select_active_widget.find('option[value="' + id + '"]').remove();
         $select_active_widget.multiselect('refresh');
 
-		var view = vis.getViewOfWidget(id);
-		
-		var widget_div = document.getElementById(id);
-		if (widget_div && widget_div.visCustomEdit && widget_div.visCustomEdit['delete']) {
-			widget_div.visCustomEdit['delete'](id);
-		}
+        var view = vis.getViewOfWidget(id);
+
+        var widget_div = document.getElementById(id);
+        if (widget_div && widget_div.visCustomEdit && widget_div.visCustomEdit['delete']) {
+            widget_div.visCustomEdit['delete'](id);
+        }
 
         if (widget_div && widget_div._customHandlers && widget_div._customHandlers.onDelete) {
             widget_div._customHandlers.onDelete(widget_div, id);
         }
 
-		$("#"+id).remove();
-		if (view) {
-			delete(vis.views[view].widgets[id]);
-		}
-		if (vis.widgets[id]) {
-			delete vis.widgets[id]; 
-			var widgets = [];
-			// Delete old from array
-			for (var w in vis.widgets) {
-				if (w != id) {
-					widgets[w] = vis.widgets[w];
-				}
-			}
-			vis.widgets = widgets;
-		}
-	},
-	delWidget: function (widget, noSave) {
+        $("#" + id).remove();
+        if (view) {
+            delete(vis.views[view].widgets[id]);
+        }
+        if (vis.widgets[id]) {
+            delete vis.widgets[id];
+            var widgets = [];
+            // Delete old from array
+            for (var w in vis.widgets) {
+                if (w != id) {
+                    widgets[w] = vis.widgets[w];
+                }
+            }
+            vis.widgets = widgets;
+        }
+    },
+    delWidget: function (widget, noSave) {
         if (typeof widget != "string") {
             widget = null;
         }
         if (!widget) {
             vis.clearWidgetHelper();
         }
-		vis.delWidgetHelper(widget || vis.activeWidget, true);
-		if (!noSave) {
+        vis.delWidgetHelper(widget || vis.activeWidget, true);
+        if (!noSave) {
             vis.save();
         }
         if (!widget) {
@@ -263,7 +262,7 @@ vis = $.extend(true, vis, {
 
                         //console.log("-> "+vis.multiSelectedWidgets);
                         vis.allWidgetsHelper();
-                        $("#widget_multi_helper_"+widgetId).remove();
+                        $("#widget_multi_helper_" + widgetId).remove();
                         if ($widget.hasClass("ui-draggable")) {
                             try {
                                 $widget.draggable("destroy");
@@ -279,7 +278,7 @@ vis = $.extend(true, vis, {
 
                     var newActive = vis.multiSelectedWidgets.pop();
                     var multiSelectedWidgets = vis.multiSelectedWidgets;
-                    $("#widget_multi_helper_"+newActive).remove();
+                    $("#widget_multi_helper_" + newActive).remove();
                     $("#" + newActive).removeClass("ui-selected");
                     vis.inspectWidget(newActive);
                     for (var i = 0; i < multiSelectedWidgets.length; i++) {
@@ -301,45 +300,45 @@ vis = $.extend(true, vis, {
     },
     addWidget: function (tpl, data, style, wid, view, hidden, noSave) {
         //console.log("addWidget "+wid);
-		var isSelectWidget = (wid === undefined);
-		var isViewExist    = (document.getElementById("visview_"+view) != null);
-        var renderVisible  = data.renderVisible;
+        var isSelectWidget = (wid === undefined);
+        var isViewExist = (document.getElementById("visview_" + view) != null);
+        var renderVisible = data.renderVisible;
 
         if (renderVisible) delete data.renderVisible;
 
-		if (view === undefined) view = this.activeView;
-		
+        if (view === undefined) view = this.activeView;
+
         if (isSelectWidget && !isViewExist) {
 
             this.renderView(view, true, false);
-			isViewExist = true;
+            isViewExist = true;
         }
-		
-		if (isSelectWidget) {
+
+        if (isSelectWidget) {
             this.clearWidgetHelper();
-		}
+        }
 
         var widgetId = wid || this.nextWidget();
 
         this.widgets[widgetId] = {
-			wid: widgetId,
-			data: new can.Map($.extend({
-				"wid":      widgetId,
-				"title":    undefined,
-				"subtitle": undefined,
-				"html":     undefined,
-				"hm_id":    'nothing_selected',
-				"hm_wid":   undefined,
-				"factor":   1,
-				"digits":   '',
-				"min":      0,
-				"max":      1,
-				"step":     0.01,
-				off_text:   undefined,
-				on_text:    undefined,
-				buttontext: undefined
-			}, data))
-		};
+            wid: widgetId,
+            data: new can.Map($.extend({
+                "wid": widgetId,
+                "title": undefined,
+                "subtitle": undefined,
+                "html": undefined,
+                "hm_id": 'nothing_selected',
+                "hm_wid": undefined,
+                "factor": 1,
+                "digits": '',
+                "min": 0,
+                "max": 1,
+                "step": 0.01,
+                off_text: undefined,
+                on_text: undefined,
+                buttontext: undefined
+            }, data))
+        };
 
         if (renderVisible) this.widgets[widgetId].renderVisible = true;
 
@@ -352,37 +351,37 @@ vis = $.extend(true, vis, {
                 data: this.widgets[widgetId]["data"],
                 view: view
             }));
-		}
+        }
 
-        this.views[view].widgets           = this.views[view].widgets || {};
+        this.views[view].widgets = this.views[view].widgets || {};
         this.views[view].widgets[widgetId] = this.views[view].widgets[widgetId] || {};
-		
+
         var $jWidget = $('#' + widgetId);
         style = style || this.findFreePosition(view, widgetId, null, $jWidget.width(), $jWidget.height());
 
-		if(this.views[view].widgets[widgetId].data !== undefined) {
-			data = $.extend(data, this.views[view].widgets[widgetId].data, true);
-		}
+        if (this.views[view].widgets[widgetId].data !== undefined) {
+            data = $.extend(data, this.views[view].widgets[widgetId].data, true);
+        }
 
         vis.views[view].widgets[widgetId] = {
-            tpl:        tpl,
-            data:       data,
-            style:      style,
-            widgetSet:  $("#" + tpl).attr("data-vis-set")
+            tpl: tpl,
+            data: data,
+            style: style,
+            widgetSet: $("#" + tpl).attr("data-vis-set")
         };
 
         if (renderVisible) this.views[view].widgets[widgetId].renderVisible = true;
 
         if (style) $jWidget.css(style);
 
-	    if (isSelectWidget && this.binds.jqueryui) {
+        if (isSelectWidget && this.binds.jqueryui) {
             this.binds.jqueryui._disable();
-	    }
+        }
 
-		if (isSelectWidget) {
+        if (isSelectWidget) {
             this.activeWidget = widgetId;
             this.actionNewWidget(widgetId);
-		}
+        }
 
         if (!noSave) this.save();
 
@@ -408,7 +407,7 @@ vis = $.extend(true, vis, {
         } else {
             activeView = vis.activeView;
             targetView = $("#select_view_copy option:selected").val();
-        //console.log(activeView + "." + vis.activeWidget + " -> " + targetView);
+            //console.log(activeView + "." + vis.activeWidget + " -> " + targetView);
             tpl = vis.views[vis.activeView].widgets[vis.activeWidget].tpl;
             data = $.extend({}, vis.views[vis.activeView].widgets[vis.activeWidget].data);
             style = $.extend({}, vis.views[vis.activeView].widgets[vis.activeWidget].style);
@@ -418,7 +417,7 @@ vis = $.extend(true, vis, {
             style.top = parseInt(style.top, 10);
             style.left = parseInt(style.left, 10);
 
-            style.top  += 10;
+            style.top += 10;
             style.left += 10;
             // Store new settings
             if (widget && widget.widget) {
@@ -430,8 +429,8 @@ vis = $.extend(true, vis, {
             // addWidget Params: tpl, data, style, wid, view, hidden, noSave
             vis.activeWidget = vis.addWidget(tpl, data, style, undefined, undefined, undefined, noSave);
 
-            $('#select_active_widget').append("<option value='"+vis.activeWidget+"'>"+vis.activeWidget+" ("+$("#"+vis.views[vis.activeView].widgets[vis.activeWidget].tpl).attr("data-vis-name")+")</option>")
-            .multiselect('refresh');
+            $('#select_active_widget').append("<option value='" + vis.activeWidget + "'>" + vis.activeWidget + " (" + $("#" + vis.views[vis.activeView].widgets[vis.activeWidget].tpl).attr("data-vis-name") + ")</option>")
+                .multiselect('refresh');
 
             if (!widget || !widget.widget) {
                 setTimeout(function () {
@@ -442,7 +441,7 @@ vis = $.extend(true, vis, {
                 }, 50);
             }
         } else {
-            if ($("#vis_container").find("#visview_"+targetView).html() == undefined) {
+            if ($("#vis_container").find("#visview_" + targetView).html() == undefined) {
                 vis.renderView(targetView, true, true);
             }
             vis.addWidget(tpl, data, style, vis.nextWidget(), targetView, true);
@@ -455,130 +454,130 @@ vis = $.extend(true, vis, {
         }
     },
     renameWidget: function (oldId, newId) {
-		// find view of this widget
-		var view = this.getViewOfWidget(oldId);
-		
-		// create new widget with the same properties
-		if (view) {
+        // find view of this widget
+        var view = this.getViewOfWidget(oldId);
+
+        // create new widget with the same properties
+        if (view) {
             var widgetData = this.views[view].widgets[oldId];
             this.addWidget(widgetData.tpl, widgetData.data, widgetData.style, newId, view);
             $('#select_active_widget').append('<option value=' + newId + '">' + this.getWidgetName(view, newId) + '</option>')
-            .multiselect('refresh');
+                .multiselect('refresh');
 
             this.delWidgetHelper(oldId, false);
-		}
+        }
         this.inspectWidget(newId);
         this.save();
-	},
+    },
     reRenderWidgetEdit: function (wid) {
         this.reRenderWidget(wid);
         if (wid == this.activeWidget) {
-            var $wid = $('#'+wid);
+            var $wid = $('#' + wid);
             // User interaction
             if (!vis.widgets[wid].data._no_move) {
                 vis.draggable($wid);
             }
             if (!vis.widgets[wid].data._no_resize) {
                 vis.resizable($wid);
-            }            
+            }
         }
     },
     getObjDesc: function (id) {
-        if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
-            return this.objects[id].common.name;
+        //if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
+        //    return this.objects[id].common.name;
+        //}
+        /*var parent = "";
+         var p = this.objects[id]["Parent"];
+         //console.log('parent metaObject', id, p, vis.objects[p]);
+         if (p !== undefined && this.objects[p]["DPs"] !== undefined) {
+         parent = this.objects[p]["Name"] + "/";
+         } else if (this.objects[id]["TypeName"] !== undefined) {
+         if (this.objects[id]["TypeName"] == "VARDP") {
+         parent = _("Variable") + " / ";
+         } else if (this.objects[id]["TypeName"] == "PROGRAM") {
+         parent = _("Program") + " / ";
+         }
+         }
+
+         if (this.objects[id]["Address"] !== undefined) {
+         return parent + vis.objects[id]["Name"] + "/" + this.objects[id]["Address"];
+         } else if (this.objects[id]["Name"]) {
+         return parent + this.objects[id]["Name"];
+         } else if (this.objects[id]["name"]) {
+         return parent + this.objects[id]["name"];
+         }
+         } else if (id == 41) {
+         return _("Service messages");
+         } else if (id == 40) {
+         return _("Alarms");
+         }*/
+        return id;
+    },
+    // find this wid in all views,
+    // delete where it is no more exist,
+    // create where it should exist and
+    // sync data
+    syncWidget: function (id, views) {
+        // find view of this widget
+        var view = vis.getViewOfWidget(id);
+
+        if (views === undefined) {
+            views = vis.getViewsOfWidget(id);
         }
-            /*var parent = "";
-            var p = this.objects[id]["Parent"];
-            //console.log('parent metaObject', id, p, vis.objects[p]);
-            if (p !== undefined && this.objects[p]["DPs"] !== undefined) {
-                parent = this.objects[p]["Name"] + "/";
-            } else if (this.objects[id]["TypeName"] !== undefined) {
-                if (this.objects[id]["TypeName"] == "VARDP") {
-                    parent = _("Variable") + " / ";
-                } else if (this.objects[id]["TypeName"] == "PROGRAM") {
-                    parent = _("Program") + " / ";
+
+        if (view) {
+            if (views == null) {
+                views = [];
+            }
+
+            var isFound = false;
+            for (var i = 0; i < views.length; i++) {
+                if (views[i] == view) {
+                    isFound = true;
+                    break;
                 }
             }
 
-            if (this.objects[id]["Address"] !== undefined) {
-                return parent + vis.objects[id]["Name"] + "/" + this.objects[id]["Address"];
-            } else if (this.objects[id]["Name"]) {
-                return parent + this.objects[id]["Name"];
-            } else if (this.objects[id]["name"]) {
-                return parent + this.objects[id]["name"];
+            if (!isFound) {
+                views[views.length] = view;
             }
-        } else if (id == 41) {
-            return _("Service messages");
-        } else if (id == 40) {
-            return _("Alarms");
-        }*/
-        return id;
+            var wids = id.split('_', 2);
+            var wid = wids[0];
+
+            // First sync views
+            for (var v_ in vis.views) {
+                isFound = false;
+                if (v_ == view) {
+                    continue;
+                }
+
+                for (var j = 0; j < views.length; j++) {
+                    if (views[j] == v_) {
+                        isFound = true;
+                        break;
+                    }
+                }
+
+                if (vis.views[v_].widgets[wid + '_' + v_] !== undefined) {
+                    vis.delWidgetHelper(wid + '_' + v_, false);
+                }
+
+                if (isFound) {
+                    // Create
+                    vis.addWidget(vis.views[view].widgets[id].tpl, vis.views[view].widgets[id].data, vis.views[view].widgets[id].style, wid + '_' + v_, v_);
+                }
+            }
+
+
+            if (views.length < 2 && (id.indexOf('_') != -1)) {
+                // rename this widget from "wid_view" to "wid"
+                var wids = id.split('_', 2);
+                vis.renameWidget(id, wids[0]);
+            } else if (views.length > 1 && (id.indexOf('_') == -1)) {
+                vis.renameWidget(id, id + '_' + view);
+            }
+        }
     },
-	// find this wid in all views,
-	// delete where it is no more exist, 
-	// create where it should exist and
-	// sync data
-	syncWidget: function (id, views) {
-		// find view of this widget
-		var view = vis.getViewOfWidget(id);
-		
-		if (views === undefined) {
-			views = vis.getViewsOfWidget(id);
-		}
-		
-		if (view) {
-			if (views == null) {
-				views = [];
-			}
-		
-			var isFound = false;
-			for (var i = 0; i < views.length; i++) {
-				if (views[i] == view) {
-					isFound = true;
-					break;
-				}
-			}
-		
-			if (!isFound) {
-				views[views.length] = view;
-			}
-			var wids = id.split('_', 2);
-			var wid = wids[0];
-			
-			// First sync views
-			for (var v_ in vis.views) {
-				isFound = false;
-				if (v_ == view) {
-					continue;
-				}
-				
-				for (var j = 0; j < views.length; j++) {
-					if (views[j] == v_) {
-						isFound = true;
-						break;
-					}
-				}
-				
-				if (vis.views[v_].widgets[wid+'_'+v_] !== undefined) {
-					vis.delWidgetHelper(wid+'_'+v_, false);
-				}
-				
-				if (isFound) {	
-					// Create 
-					vis.addWidget(vis.views[view].widgets[id].tpl, vis.views[view].widgets[id].data, vis.views[view].widgets[id].style, wid+'_'+v_, v_);
-				}
-			}
-			
-			
-			if (views.length < 2 && (id.indexOf('_') != -1)) {
-				// rename this widget from "wid_view" to "wid"
-				var wids = id.split('_', 2);
-				vis.renameWidget(id, wids[0]);
-			} else if (views.length > 1 && (id.indexOf('_') == -1)) {
-				vis.renameWidget(id, id + '_' + view);
-			}
-		}
-	},
     editObjectID: function (widget, wid_attr, widgetFilter) {
         var that = this;
         // Edit for Object ID
@@ -586,12 +585,12 @@ vis = $.extend(true, vis, {
             {
                 input: '<input type="text" id="inspect_' + wid_attr + '">',
                 button: {
-                    icon:  'ui-icon-note',
-                    text:  false,
+                    icon: 'ui-icon-note',
+                    text: false,
                     title: _('Select object ID'),
                     click: function () {
-                        var attr   = $(this).data('data-attr');
-                        var view   = $(this).data('data-view');
+                        var attr = $(this).data('data-attr');
+                        var view = $(this).data('data-view');
                         var widget = $(this).data('data-widget');
 
                         $('#dialog-select-member-' + attr).selectId('show', that.views[view].widgets[widget].data[attr], function (newId, oldId) {
@@ -602,7 +601,7 @@ vis = $.extend(true, vis, {
                                 if (document.getElementById('inspect_hm_wid')) {
                                     if (that.objects[newId]["Type"] !== undefined && that.objects[value]["Parent"] !== undefined &&
                                         (that.objects[newId]["Type"] == "STATE" ||
-                                            that.objects[newId]["Type"] == "LEVEL")) {
+                                        that.objects[newId]["Type"] == "LEVEL")) {
 
                                         var parent = that.objects[newId]["Parent"];
                                         if (that.objects[parent]["DPs"] !== undefined &&
@@ -644,7 +643,7 @@ vis = $.extend(true, vis, {
                     }
                 },
                 onchange: function (val) {
-                    var attr     = $(this).data('data-attr');
+                    var attr = $(this).data('data-attr');
                     $("#inspect_" + attr + "_desc").html(that.getObjDesc(val));
                 }
             },
@@ -658,21 +657,21 @@ vis = $.extend(true, vis, {
             $('body').append('<div id="dialog-select-member-' + wid_attr + '" style="display:none">');
             $('#dialog-select-member-' + wid_attr).selectId('init', {
                 texts: {
-                    select:   _('Select'),
-                    cancel:   _('Cancel'),
-                    all:      _('All'),
-                    id:       _('ID'),
-                    name:     _('Name'),
-                    role:     _('Role'),
-                    room:     _('Room'),
-                    value:    _('Value'),
+                    select: _('Select'),
+                    cancel: _('Cancel'),
+                    all: _('All'),
+                    id: _('ID'),
+                    name: _('Name'),
+                    role: _('Role'),
+                    room: _('Room'),
+                    value: _('Value'),
                     selectid: _('Select ID')
                 },
                 columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
                 imgPath: '/lib/css/fancytree/',
                 objects: this.objects,
-                states:  this.states,
-                zindex:  1001
+                states: this.states,
+                zindex: 1001
             });
         }
 
@@ -736,25 +735,26 @@ vis = $.extend(true, vis, {
     },
     editColor: function (widget, wid_attr) {
         var line = {
-            input:  '<input type="text" id="inspect_' + wid_attr + '"/>'
+            input: '<input type="text" id="inspect_' + wid_attr + '"/>'
         };
         if ((typeof colorSelect != 'undefined' && $().farbtastic)) {
             line.button = {
-                icon:  'ui-icon-note',
-                text:  false,
+                icon: 'ui-icon-note',
+                text: false,
                 title: _('Select color'),
                 click: function (/*event*/) {
                     var data = $(this).data('data-attr');
                     var _settings = {
-                        current:     $('#inspect_' + data).val(),
+                        current: $('#inspect_' + data).val(),
                         onselectArg: data,
-                        onselect:    function (img, _data) {
+                        onselect: function (img, _data) {
                             $('#inspect_' + _data).val(colorSelect.GetColor()).trigger('change');
-                        }};
+                        }
+                    };
 
                     colorSelect.show(_settings);
                 }
-           };
+            };
         }
         return line;
     },
@@ -879,29 +879,29 @@ vis = $.extend(true, vis, {
         /*// Image src
         $('#widget_attrs').append('<tr id="option_'+wid_attr+'" class="vis-add-option"><td>'+_(wid_attr)+':</td><td><table style="width:100%" class="vis-no-spaces"><tr class="vis-no-spaces"><td  class="vis-no-spaces" style="width:50px"><input type="text" id="inspect_'+wid_attr+'" size="5"/></td><td  class="vis-no-spaces" style="width:20px">'+min+'</td><td><div id="inspect_'+wid_attr+'_slider"></div></td><td  class="vis-no-spaces" style="width:20px;text-align:right">'+max+'</td></tr></table></td></tr>');
 
-        var slider = $("#inspect_"+wid_attr+"_slider");
+        var slider = $("#inspect_" + wid_attr + "_slider");
         slider.slider({
             value: widget.data[wid_attr],
-            min:   min,
-            max:   max,
-            step:  step,
+            min: min,
+            max: max,
+            step: step,
             slide: function (event, ui) {
 
                 var $this = $(this);
-                var text = $("#inspect_"+wid_attr);
+                var text = $("#inspect_" + wid_attr);
                 if (text.val() != ui.value) {
                     text.val(ui.value).trigger('change');
                 }
             }
         });
-        var inspect = $("#inspect_"+wid_attr);
+        var inspect = $("#inspect_" + wid_attr);
 
         inspect.val(widget.data[wid_attr]);
 
         inspect.change(function () {
             var attribute = $(this).attr('id').slice(8);
             var val = $(this).val();
-            var slider = $( "#inspect_"+wid_attr+"_slider");
+            var slider = $("#inspect_" + wid_attr + "_slider");
             if (slider.slider("option", "value") != val) {
                 slider.slider("option", "value", val);
             }
@@ -914,12 +914,12 @@ vis = $.extend(true, vis, {
         });*/
     },
     inspectWidgetMulti: function (id) {
-        var $this = $("#"+id);
+        var $this = $("#" + id);
         var pos = $this.position();
         // May be bug?
         if (pos.left == 0 && pos.top == 0) {
             pos.left = $this[0].style.left;
-            pos.top  = $this[0].style.top;
+            pos.top = $this[0].style.top;
             if (typeof pos.left == 'string') {
                 pos.left = parseInt(pos.left.replace('px', ''), 10);
             }
@@ -931,7 +931,7 @@ vis = $.extend(true, vis, {
             vis.multiSelectedWidgets.push(id);
         }
 
-        $("#vis_container").append('<div id="widget_multi_helper_'+id+'" class="widget_multi_helper"><div class="widget_multi_inner_helper"></div></div>');
+        $("#vis_container").append('<div id="widget_multi_helper_' + id + '" class="widget_multi_helper"><div class="widget_multi_inner_helper"></div></div>');
 
         $("#widget_multi_helper_"+id).css({
             left   : pos.left - 2,
@@ -991,7 +991,7 @@ vis = $.extend(true, vis, {
             if (parts.length == 2) {
                 wid_repeats = {
                     start: parseInt(parts[0], 10),
-                    end:   parseInt(parts[1], 10)
+                    end: parseInt(parts[1], 10)
                 };
                 // If end is not number, it can be attribute
                 if (parts[1][0] < '0' || parts[1][0] > '9') {
@@ -1012,11 +1012,11 @@ vis = $.extend(true, vis, {
             wid_default = undefined;
         }
 
-        if (typeof group =='function') {
+        if (typeof group == 'function') {
             onchange = group;
             group = null;
         }
-        if (typeof options =='function') {
+        if (typeof options == 'function') {
             onchange = options;
             options = null;
         }
@@ -1148,10 +1148,10 @@ vis = $.extend(true, vis, {
             if (typeof line == 'string') line = {input: line};
 
             if (line[0]) {
-                line[0].attrName  = wid_attr;
+                line[0].attrName = wid_attr;
                 line[0].attrIndex = index;
             } else {
-                line.attrName  = wid_attr;
+                line.attrName = wid_attr;
                 line.attrIndex = index;
             }
 
@@ -1196,7 +1196,7 @@ vis = $.extend(true, vis, {
                 text += '>' + (line.input || '') + '</td>';
 
                 if (line.button) {
-                    if (!line.button.html){
+                    if (!line.button.html) {
                         text += '<td><button id="inspect_' + wid_attr + '_btn">' + (line.button.text || line.button.title || '') + '</button></td>';
                     } else {
                         text += '<td>' + line.button.html + '</td>';
@@ -1223,9 +1223,9 @@ vis = $.extend(true, vis, {
                         if (line.button.click) $btn.click(line.button.click);
                         if (line.button.data)  $btn.data('data-custom', line.button.data);
 
-                        $btn.data('data-attr',   wid_attr);
+                        $btn.data('data-attr', wid_attr);
                         $btn.data('data-widget', widget);
-                        $btn.data('data-view',   view);
+                        $btn.data('data-view', view);
                     }
                 }
 
@@ -1250,7 +1250,7 @@ vis = $.extend(true, vis, {
                         }, 500));
                     });
                 }
-                $input.data('data-attr',   wid_attr);
+                $input.data('data-attr', wid_attr);
                 $input.data('data-widget', widget);
                 $input.data('data-view',   view);
                 $input.data('data-type',   line.type)
@@ -1350,7 +1350,7 @@ vis = $.extend(true, vis, {
                 that.updateContainers(view);
             }
         });
-        
+
         $('.group-control').each(function () {
             var group = $(this).attr('data-group');
             $(this).button({
@@ -1362,7 +1362,7 @@ vis = $.extend(true, vis, {
                 var group = $(this).attr('data-group');
                 that.groupsState[group] = !that.groupsState[group];
                 $(this).button("option", {
-                    icons: { primary: that.groupsState[group] ? "ui-icon-triangle-1-n" : "ui-icon-triangle-1-s"}
+                    icons: {primary: that.groupsState[group] ? "ui-icon-triangle-1-n" : "ui-icon-triangle-1-s"}
                 });
                 if (that.groupsState[group]) {
                     $('.group-' + group).show();
@@ -1416,7 +1416,7 @@ vis = $.extend(true, vis, {
         this.groups = {};
         // Clear Inspector
         $widgetAttrs.html('');
-            //.html('<tr><th class="widgetAttrs_header"></th><th></th></tr>');
+        //.html('<tr><th class="widgetAttrs_header"></th><th></th></tr>');
 
         $(".vis-inspect-css").each(function () {
             $(this).val('');
@@ -1424,8 +1424,7 @@ vis = $.extend(true, vis, {
 
         if (!wid || wid === 'none') {
             vis.clearWidgetHelper();
-            $(".vis-widget-tools").hide();
-            $('#view_inspector').show();
+
             vis.activeWidget = null;
             return false;
         }
@@ -1439,8 +1438,7 @@ vis = $.extend(true, vis, {
         }
 
         // Fill Inspector
-        $('.vis-widget-tools').show();
-        $('#view_inspector').hide();
+
 
         // Fill the css values
         $(".vis-inspect-widget").each(function () {
@@ -1475,9 +1473,9 @@ vis = $.extend(true, vis, {
 
         // Add fixed attributes
         var group = 'fixed';
-        this.addToInspect(wid, 'name',      group);
-        this.addToInspect(wid, 'comment',   group);
-        this.addToInspect(wid, 'class',     group);
+        this.addToInspect(wid, 'name', group);
+        this.addToInspect(wid, 'comment', group);
+        this.addToInspect(wid, 'class', group);
         this.addToInspect(wid, 'filterkey', group);
         this.addToInspect(wid, 'views/select-views', group);
 
@@ -1496,7 +1494,7 @@ vis = $.extend(true, vis, {
                 // attr_name can be extended with numbers (1-2) means it will be attr_name1 and attr_name2 created
                 // defaultValue: If defaultValue has ';' it must be replaced by §
                 // Type format: id - Object ID Dialog
-                //              checkbox 
+                //              checkbox
                 //              image - image
                 //              color - color picker
                 //              views - Name of the view
@@ -1508,9 +1506,9 @@ vis = $.extend(true, vis, {
                 //              hr
                 //              br
 
-				var isValueSet = false;
-				var wid_attrs = widgetAttrs[attr].split('/');
-				var wid_attr  = wid_attrs[0];
+                var isValueSet = false;
+                var wid_attrs = widgetAttrs[attr].split('/');
+                var wid_attr = wid_attrs[0];
                 // Try to extract default value
                 var uu = wid_attr.indexOf("[");
                 var defaultValue = null;
@@ -1522,17 +1520,17 @@ vis = $.extend(true, vis, {
                 }
                 var type = (wid_attrs.length > 1) ? wid_attrs[1] : null;
                 if (type && type.indexOf(',') != -1) {
-                    if (type.substring (0, 'slider'.length) == 'slider') {
+                    if (type.substring(0, 'slider'.length) == 'slider') {
                         type = 'slider';
                     } else {
                         type = 'select';
                     }
                 }
-                
+
                 // Try to extract repeat value
                 uu = wid_attr.indexOf("(");
                 var instancesStart = null;
-                var instancesStop  = null;
+                var instancesStop = null;
                 if (uu != -1) {
                     var instances = wid_attr.substring(uu + 1);
                     instances = instances.substring(0, instances.length - 1);
@@ -1541,7 +1539,7 @@ vis = $.extend(true, vis, {
                     instances = instances.split('-');
                     if (instances.length > 1) {
                         instancesStart = parseInt(instances[0], 10);
-                        instancesStop  = parseInt(instances[1], 10);
+                        instancesStop = parseInt(instances[1], 10);
                         if (instancesStart > instancesStop) {
                             var tmp = instancesStop;
                             instancesStop = instancesStart;
@@ -1550,7 +1548,7 @@ vis = $.extend(true, vis, {
                         instancesStop++;
                     }
                 }
-                
+
                 do {
                     var wid_attr_ = wid_attr + ((instancesStart !== null) ? instancesStart : '');
                     var isCustomEdit = false;
@@ -1564,28 +1562,28 @@ vis = $.extend(true, vis, {
                     if (widgetDiv && widgetDiv.visCustomEdit && widgetDiv.visCustomEdit[wid_attr_]) {
                         widgetDiv.visCustomEdit[wid_attr_](vis.activeWidget, $widgetAttrs);
                     } else if (widgetDiv &&
-                        // If only one attribute is custom edited, eg hqoptions
+                            // If only one attribute is custom edited, eg hqoptions
                         widgetDiv._customHandlers &&
                         widgetDiv._customHandlers.onOptionEdited &&
-                        widgetDiv._customHandlers.isOptionEdited(wid_attr_)){
+                        widgetDiv._customHandlers.isOptionEdited(wid_attr_)) {
                         widgetDiv._customHandlers.onOptionEdited({
-                            widgetDiv:   widgetDiv,
-                            widgetId:    vis.activeWidget,
-                            attr:        wid_attr_,
-                            parent:      $widgetAttrs,
-                            imgSelect:   vis.imageSelect,
-                            clrSelect:   colorSelect,
+                            widgetDiv: widgetDiv,
+                            widgetId: vis.activeWidget,
+                            attr: wid_attr_,
+                            parent: $widgetAttrs,
+                            imgSelect: vis.imageSelect,
+                            clrSelect: colorSelect,
                             styleSelect: vis.styleSelect
                         });
                     }
                     else if (wid_attr_ === "oid" || type == 'id') {
-                        vis.editObjectID (widget, wid_attr_, widgetFilter);
+                        vis.editObjectID(widget, wid_attr_, widgetFilter);
                     } else if (wid_attr_ === "oid-working") {
-                        vis.editObjectID (widget, wid_attr_, 'WORKING');
-                    } else if (wid_attr_.indexOf ("src") == wid_attr_.length - 3 || type == "image") {
+                        vis.editObjectID(widget, wid_attr_, 'WORKING');
+                    } else if (wid_attr_.indexOf("src") == wid_attr_.length - 3 || type == "image") {
                         vis.editImage(widget, wid_attr_);
-                    }else if (wid_attr_  == "url") {
-                        vis.editUrl (widget, wid_attr_);
+                    } else if (wid_attr_ == "url") {
+                        vis.editUrl(widget, wid_attr_);
                     } else if (wid_attr_ === "weoid") {
                         // Weather ID
                         $('#widget_attrs').append('<tr class="vis-add-option"><td id="option_' + wid_attr_ + '" ></td></tr>');
@@ -1611,7 +1609,7 @@ vis = $.extend(true, vis, {
                     } else if (type === "slider") {
                         isValueSet = true;
                         var values = wid_attrs[1].split(',');
-                        vis.editSlider (widget, wid_attr_, values[1], values[2], values[3]);
+                        vis.editSlider(widget, wid_attr_, values[1], values[2], values[3]);
                         isCustomEdit = true;
                     } else if (type === "select") {
                         isValueSet = true;
@@ -1623,40 +1621,39 @@ vis = $.extend(true, vis, {
                     } else if (type == "hidden") {
                         isCustomEdit = true;
                     } else if (wid_attr_.indexOf("_effect") != -1 || type == "effect") {
-                        vis.editEffects (widget, wid_attr_);
+                        vis.editEffects(widget, wid_attr_);
                         isCustomEdit = true;
                     } else if (wid_attr_.indexOf("_eff_opt") != -1 || type == "effect_opt") {
                         vis.editEffects_opt(widget, wid_attr_);
                         isCustomEdit = true;
-                    } else if (wid_attr_.indexOf( '_hr') != -1) {
+                    } else if (wid_attr_.indexOf('_hr') != -1) {
                         vis.hr(widget, wid_attr_);
                         isCustomEdit = true;
-                    } else if (wid_attr_.indexOf( '_br') != -1) {
+                    } else if (wid_attr_.indexOf('_br') != -1) {
                         vis.br(widget, wid_attr_);
                         isCustomEdit = true;
-                    } else if (wid_attr_.slice(0,4) !== "html") {
+                    } else if (wid_attr_.slice(0, 4) !== "html") {
                         if (type !== null) {
                             // If description is JSON object
-						    if (type.indexOf('{') != -1) {
+                            if (type.indexOf('{') != -1) {
                                 try {
-								    type = jQuery.parseJSON(type);
+                                    type = jQuery.parseJSON(type);
                                 }
                                 catch (e) {
                                     type = null;
-                                    $('#widget_attrs').append('<tr id="option_'+wid_attr_+'" class="vis-add-option"><td class="vis-edit-td-caption">'+_(wid_attr_)+':</td><td><input type="text" id="inspect_'+wid_attr_+'" size="34"/></td></tr>');
+                                    $('#widget_attrs').append('<tr id="option_' + wid_attr_ + '" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr_) + ':</td><td><input type="text" id="inspect_' + wid_attr_ + '" size="34"/></td></tr>');
                                 }
                             }
 
                             if (type !== null) {
                                 if (typeof type == 'object') {
                                     var title = _(wid_attr_);
-                                    var hint  = '';
+                                    var hint = '';
                                     if (type["name"]) {
                                         if (typeof type["name"] == 'object') {
                                             if (type["name"][this.language]) {
                                                 title = type["name"][this.language];
-                                            } else
-                                            if (type["name"]['en']) {
+                                            } else if (type["name"]['en']) {
                                                 title = type["name"]['en'];
                                             }
                                         } else {
@@ -1668,7 +1665,7 @@ vis = $.extend(true, vis, {
                                     if (type['type'] == "checkbox") {
                                         isValueSet = true;
                                         // All other attributes
-                                        $('#widget_attrs').append('<tr id="option_'+wid_attr_+'" class="vis-add-option"><td class="vis-edit-td-caption" title="'+hint+'">'+title+':</td><td><input title="'+hint+'" id="inspect_'+wid_attr_+'" type="checkbox"' +(widget.data[wid_attr_] ? "checked": '')+'></td></tr>');
+                                        $('#widget_attrs').append('<tr id="option_' + wid_attr_ + '" class="vis-add-option"><td class="vis-edit-td-caption" title="' + hint + '">' + title + ':</td><td><input title="' + hint + '" id="inspect_' + wid_attr_ + '" type="checkbox"' + (widget.data[wid_attr_] ? "checked" : '') + '></td></tr>');
                                     } else if (type['type'] == "view") {
                                     } else if (type['type'] == "color") {
                                     } else if (type['type'] == "font") {
@@ -1681,7 +1678,7 @@ vis = $.extend(true, vis, {
                                         var values = type['values'];
                                         var text = '<tr id="option_' + wid_attr_ + '" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr_) + ':</td><td><select id="inspect_' + wid_attr_ + '">';
                                         for (var t = 0; t < values.length; t++) {
-                                            text += "<option value='" + values[t] + "' " + ((values[t] == widget.data[wid_attr_]) ? 'selected' : '') + ">" + _(values[t])+"</option>";
+                                            text += "<option value='" + values[t] + "' " + ((values[t] == widget.data[wid_attr_]) ? 'selected' : '') + ">" + _(values[t]) + "</option>";
                                         }
                                         text += "</select></td></tr>";
                                         $('#widget_attrs').append(text);
@@ -1690,20 +1687,20 @@ vis = $.extend(true, vis, {
 
                                 } else {
                                     // Simple type
-                                    servConn.logError('Unknown attribute type ' + wid_attr_ +" Type: " + type);
+                                    servConn.logError('Unknown attribute type ' + wid_attr_ + " Type: " + type);
                                 }
                             }
                         } else {
                             // html
-                            $('#widget_attrs').append('<tr id="option_'+wid_attr_+'" class="vis-add-option"><td class="vis-edit-td-caption">'+_(wid_attr_)+':</td><td><input type="text" id="inspect_'+wid_attr_+'" size="34"/></td></tr>');
+                            $('#widget_attrs').append('<tr id="option_' + wid_attr_ + '" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr_) + ':</td><td><input type="text" id="inspect_' + wid_attr_ + '" size="34"/></td></tr>');
                         }
                     } else {
                         // Text area
-                        $('#widget_attrs').append('<tr id="option_'+wid_attr_+'" class="vis-add-option"><td class="vis-edit-td-caption">'+_(wid_attr_)+':</td><td><textarea id="inspect_'+wid_attr_+'" rows="2" cols="34"></textarea></td></tr>');
+                        $('#widget_attrs').append('<tr id="option_' + wid_attr_ + '" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr_) + ':</td><td><textarea id="inspect_' + wid_attr_ + '" rows="2" cols="34"></textarea></td></tr>');
                     }
 
                     if (!isCustomEdit) {
-                        var inspect = $("#inspect_"+wid_attr_);
+                        var inspect = $("#inspect_" + wid_attr_);
 
                         if (!isValueSet) {
                             inspect.val(widget.data[wid_attr_]);
@@ -1715,14 +1712,14 @@ vis = $.extend(true, vis, {
                                 val = $(this).prop("checked");
                             }
                             if (attribute == "oid" || attribute == "oid-working") {
-                                $("#inspect_" + attribute + "_desc").html(vis.getObjDesc (val));
+                                $("#inspect_" + attribute + "_desc").html(vis.getObjDesc(val));
                             }
                             vis.widgets[vis.activeWidget].data.attr(attribute, val);
                             vis.views[vis.activeView].widgets[vis.activeWidget].data[attribute] = val;
                             vis.save();
                             vis.reRenderWidgetEdit(vis.activeWidget);
                         }).keyup(function () {
-                                $(this).trigger('change');
+                            $(this).trigger('change');
                         });
                     }
 
@@ -1736,7 +1733,7 @@ vis = $.extend(true, vis, {
         this.showInspect(view, wid);
         // If widget was rerendered, it can have new div
         var $this = $('#' + wid);
-        
+
         $(".vis-inspect-css").each(function () {
             var attr = $(this).attr('id').slice(12)
             var css = $this.css(attr);
@@ -1753,19 +1750,19 @@ vis = $.extend(true, vis, {
         if (elem) {
             vis.updateFilter();
             elem._save = function () {
-                if (this.timer)  {
-                    clearTimeout (this.timer);
+                if (this.timer) {
+                    clearTimeout(this.timer);
                 }
 
-                this.timer = _setTimeout (function (elem_) {
-                     // If really changed
+                this.timer = _setTimeout(function (elem_) {
+                    // If really changed
                     var $this = $(elem_);
                     var attr = $this.attr('id').slice(8);
                     vis.views[vis.activeView].widgets[vis.activeWidget].data[attr] = $this.val();
-                    vis.save();                  
-                }, 200, this);            
+                    vis.save();
+                }, 200, this);
             };
-            
+
             $(elem).autocomplete({
                 minLength: 0,
                 source: function (request, response) {
@@ -1775,37 +1772,37 @@ vis = $.extend(true, vis, {
                     response(data);
                 },
                 select: function (event, ui) {
-                    this._save();               
+                    this._save();
                 },
                 change: function (event, ui) {
-                    this._save();               
+                    this._save();
                 }
             }).focus(function () {
                 $(this).autocomplete("search", '');
             }).keyup(function () {
-                this._save();               
-            }); 
+                this._save();
+            });
         }
-		
+
         // Put all view names in the select element
-		$('#inspect_views').html('');
-		var views = vis.getViewsOfWidget(vis.activeWidget);
-		for (var v in vis.views) {
-			if (v != vis.activeView) {
-				var selected = '';
-				for (var i = 0; i < views.length; i++) {
-					if (views[i] == v) {
-						selected = 'selected';
-						break;
-					}
-				}
-				$("#inspect_views").append("<option value='" + v + "' " + selected + ">" + v + "</option>");
-			}
-		}
+        $('#inspect_views').html('');
+        var views = vis.getViewsOfWidget(vis.activeWidget);
+        for (var v in vis.views) {
+            if (v != vis.activeView) {
+                var selected = '';
+                for (var i = 0; i < views.length; i++) {
+                    if (views[i] == v) {
+                        selected = 'selected';
+                        break;
+                    }
+                }
+                $("#inspect_views").append("<option value='" + v + "' " + selected + ">" + v + "</option>");
+            }
+        }
 
         $('#inspect_views').multiselect({
 //            minWidth: 300,
-            height:   260,
+            height: 260,
             noneSelectedText: _("Single view"),
             selectedText: function (numChecked, numTotal, checkedItems) {
                 var text = '';
@@ -1815,12 +1812,12 @@ vis = $.extend(true, vis, {
                 return text;
             },
             multiple: true,
-            checkAllText:     _("Check all"),
-            uncheckAllText:   _("Uncheck all")
+            checkAllText: _("Check all"),
+            uncheckAllText: _("Uncheck all")
             //noneSelectedText: _("Select options")
-        }).change (function () {
-            vis.syncWidget (vis.activeWidget, $(this).val());
-            vis.save ();
+        }).change(function () {
+            vis.syncWidget(vis.activeWidget, $(this).val());
+            vis.save();
         });
 
         // Select Widget
@@ -1831,7 +1828,7 @@ vis = $.extend(true, vis, {
         if ($('#snap_type option:selected').val() == 2) {
             vis.gridWidth = parseInt($('#grid_size').val());
 
-            if (vis.gridWidth < 1 || isNaN(vis.gridWidth) ) {
+            if (vis.gridWidth < 1 || isNaN(vis.gridWidth)) {
                 vis.gridWidth = 10;
             }
 
@@ -1843,11 +1840,11 @@ vis = $.extend(true, vis, {
 
             $this.css({'left': x, 'top': y});
         }
-		var pos = $this.position();
+        var pos = $this.position();
         // May be bug?
         if (pos.left == 0 && pos.top == 0) {
             pos.left = $this[0].style.left;
-            pos.top  = $this[0].style.top;
+            pos.top = $this[0].style.top;
             if (typeof pos.left == 'string') {
                 pos.left = parseInt(pos.left.replace('px', ''), 10);
             }
@@ -1855,13 +1852,14 @@ vis = $.extend(true, vis, {
                 pos.top = parseInt(pos.top.replace('px', ''), 10);
             }
         }
-		var w = $this.width();
-		var h = $this.height();
+        var w = $this.width();
+        var h = $this.height();
         $("#widget_helper").css({
             left: pos.left - 2,
-            top:  pos.top - 2,
+            top: pos.top - 2,
             height: $this.outerHeight() + 2,
-            width: $this.outerWidth() + 2}).show();
+            width: $this.outerWidth() + 2
+        }).show();
 
         // User interaction
         if (!vis.widgets[wid].data._no_move) {
@@ -1874,13 +1872,7 @@ vis = $.extend(true, vis, {
         // Inspector
         $('#inspect_wid').html(wid);
 
-        // Show the edit tab
-        var tabs = $('#tabs');
-        var tabActive = tabs.tabs('option', 'active');
 
-        if (tabActive !== 1 && tabActive !== 2) {
-            tabs.tabs('option', 'active', 1);
-        }
     },
 
     // Draw a border around all selected widgets
@@ -1917,9 +1909,9 @@ vis = $.extend(true, vis, {
         }
 
         $allwidgets_helper
-            .css('left',   (l - 3))
-            .css("width",  (r + 6 - l))
-            .css('top',    (t - 3))
+            .css('left', (l - 3))
+            .css("width", (r + 6 - l))
+            .css('top', (t - 3))
             .css("height", (b + 6 - t))
             .show();
     },
@@ -1995,13 +1987,14 @@ vis = $.extend(true, vis, {
 
         // Init background selector
         if (this.styleSelect && this.views[view] && this.views[view].settings) {
-            this.styleSelect.Show({ width: 152,
-                name:       'inspect_view_bkg_def',
+            this.styleSelect.Show({
+                width: 200,
+                name: 'inspect_view_bkg_def',
                 filterName: 'background',
                 //filterFile: "backgrounds.css",
-                style:      vis.views[view].settings.style.background_class,
-                parent:     $('#inspect_view_bkg_parent'),
-                onchange:   function (newStyle, obj) {
+                style: vis.views[view].settings.style.background_class,
+                parent: $("#inspect_view_bkg_parent"),
+                onchange: function (newStyle, obj) {
                     if (vis.views[vis.activeView].settings.style['background_class']) {
                         $("#visview_" + vis.activeView).removeClass(vis.views[vis.activeView].settings.style['background_class']);
                     }
@@ -2012,7 +2005,6 @@ vis = $.extend(true, vis, {
             });
         }
 
-        $("#inspect_view").html(view);
 
         if (this.views[view] && this.views[view].settings) {
             // Try to find this resolution in the list
@@ -2032,10 +2024,10 @@ vis = $.extend(true, vis, {
             $("#screen_size_y").val(this.views[vis.activeView].settings.sizey || '').trigger('change');
 
             $("#screen_hide_description").prop('checked', this.views[this.activeView].settings.hideDescription).trigger('change');
-            
+
             /*if (typeof hqWidgets != 'undefined') {
-                hqWidgets.SetHideDescription(vis.views[vis.activeView].settings.hideDescription);
-            }*/
+             hqWidgets.SetHideDescription(vis.views[vis.activeView].settings.hideDescription);
+             }*/
 
             $("#grid_size").val(this.views[this.activeView].settings.gridSize || '').trigger('change');
 
@@ -2068,11 +2060,11 @@ vis = $.extend(true, vis, {
         $(".vis-inspect-view-css").each(function () {
             var $this = $(this);
             var attr = $this.attr('id').slice(17);
-            var css = $("#visview_"+vis.activeView).css(attr);
+            var css = $("#visview_" + vis.activeView).css(attr);
             $this.val(css);
         });
 
-        if (this.views[view] && this.views[view].settings){
+        if (this.views[view] && this.views[view].settings) {
             $(".vis-inspect-view").each(function () {
                 var $this = $(this);
                 var attr = $this.attr('id').slice(13);
@@ -2110,7 +2102,7 @@ vis = $.extend(true, vis, {
                     vis.views[vis.activeView].widgets[widget].style = {};
                 }
                 vis.views[vis.activeView].widgets[widget].style.left = pos.left;
-                vis.views[vis.activeView].widgets[widget].style.top  = pos.top;
+                vis.views[vis.activeView].widgets[widget].style.top = pos.top;
 
                 if (mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
                     mWidget._customHandlers.onMoveEnd(mWidget, widget);
@@ -2124,7 +2116,7 @@ vis = $.extend(true, vis, {
                         vis.views[vis.activeView].widgets[mid].style = {};
                     }
                     vis.views[vis.activeView].widgets[mid].style.left = pos.left;
-                    vis.views[vis.activeView].widgets[mid].style.top  = pos.top;
+                    vis.views[vis.activeView].widgets[mid].style.top = pos.top;
 
                     if (mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
                         mWidget._customHandlers.onMoveEnd(mWidget, mid);
@@ -2139,7 +2131,7 @@ vis = $.extend(true, vis, {
             drag: function (event, ui) {
 
                 var moveX = ui.position.left - origX;
-                var moveY = ui.position.top  - origY;
+                var moveY = ui.position.top - origY;
 
                 origX = ui.position.left;
                 origY = ui.position.top;
@@ -2151,10 +2143,10 @@ vis = $.extend(true, vis, {
                     var x = pos.left + moveX;
                     var y = pos.top + moveY;
 
-                    $("#widget_multi_helper_"+vis.multiSelectedWidgets[i]).css({left: x - 2, top: y - 2});
+                    $("#widget_multi_helper_" + vis.multiSelectedWidgets[i]).css({left: x - 2, top: y - 2});
 
                     if (ui.helper.attr('id') != vis.multiSelectedWidgets[i]) {
-                        $mWidget.css({left: x, top: y });
+                        $mWidget.css({left: x, top: y});
                     }
 
                     if (mWidget._customHandlers && mWidget._customHandlers.onMove) {
@@ -2169,7 +2161,7 @@ vis = $.extend(true, vis, {
                     var $mWidget = $(mWidget);
                     var pos = $mWidget.position();
                     var x = pos.left + moveX;
-                    var y = pos.top  + moveY;
+                    var y = pos.top + moveY;
                     $mWidget.css({left: x, top: y});
                     $("#widget_helper").css({left: x - 2, top: y - 2});
                 }
@@ -2214,7 +2206,7 @@ vis = $.extend(true, vis, {
                     vis.save();
 
                 },
-                resize: function (event,ui) {
+                resize: function (event, ui) {
                     $("#widget_helper").css({width: ui.element.outerWidth() + 2, height: ui.element.outerHeight() + 2});
                 }
             }, resizableOptions));
@@ -2225,120 +2217,97 @@ vis = $.extend(true, vis, {
         $(".widget_multi_helper").remove();
         vis.multiSelectedWidgets = [];
     },
+    //todo
+
+    // todo
     editInit: function () {
         var that = this;
-        $(".vis-version").html(this.version);
-        $("#vis_editor").prop("title", "ioBroker.vis " + this.version)
-           .dialog({
-            modal:    false,
-            autoOpen: false,
-            width:    420,
-            minWidth: 420,
-            height:   610,
-            position: {my: "right top", at: "right top", of: window},
-            dialogClass: "vis-editor-dialog",
-            close: function () {
-                that.saveRemote(function () {
-					// Show hint how to get back to edit mode
-					if (typeof storage !== 'undefined') {						
-						if (!storage.get("isEditHintShown")) {
-							alert(_('To get back to edit mode just call "%s" in browser', location.href));
-							storage.set('isEditHintShown', true);
-						}
-					}				
-                	
-                    // Some systems (e.g. offline mode) show here the content of directory if called without index.html
-                    location.href = "./index.html" + window.location.search + "#" + vis.activeView;
-                });
-            },
-            open: function () {
-                that.editPosition();
-            }
+
+        vis.editInit_dialogs();
+        vis.editInit_menu();
+        $("#attr_wrap").tabs();
+        $("#pan_add_wid").resizable({
+            handles: "e",
+            maxWidth: 670,
+            minWidth: 200
         });
 
-        if ($().dialogExtend) {
-            $("#vis_editor").dialogExtend({
-                "minimizable" : true,
-                "icons" : {
-                    "maximize": "ui-icon-arrow-4-diag"
-                },
-                "minimize" : function (evt) {
-                    $("#vis_editor_mode").hide();
-                    if (that.editorPos == "right" || that.editorPos == "free") {
-                        $("#vis_editor").dialog("option", "position", {my: "right top", at: "right top", of: window});
-                    }
-                    if (that.editorPos == 'left') {
-                        $("#vis_editor").dialog("option", "position", {my: "left top", at: "left top", of: window});
-                    }
-                },
-                restore: function () {
-                    $("#vis_editor_mode").show();
-                    $(".vis-editor-dialog").css({
-                        width: "450px",
-                        height: "610px"
-                    })
-                }
-            });
+        $(window).resize(function () {
+         layout()
+        });
+
+        function layout(){
+            $("#panel_body").height(parseInt(  $(window).height() - $("#menu_body").height() - 22 ));
+            $("#vis_wrap").width(parseInt($(window).width() - $("#pan_add_wid").width() - $("#pan_attr").width() - 1));
         }
+        //layout();
 
-        $("#tabs").tabs();
+
+        $("#vis-version").html(this.version);
+
+        $('#button_undo')
+            .click(vis.undo)
+            .addClass("ui-state-disabled")
+            .hover(
+            function () {
+                $(this).addClass('ui-state-hover')
+            },
+            function () {
+                $(this).removeClass('ui-state-hover')
+            });
+
         $("#widget_helper").hide();
-
-        $('#language [value="' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + '"]').attr('selected', 'selected');
-
-        $("#language").change(function () {
-            that.language = $(this).val();
-            if (typeof systemLang != 'undefined') systemLang = that.language;
-            translateAll();
-        });
 
         $("input.vis-editor").button();
         $("button.vis-editor").button();
 
         $("select.vis-editor").each(function () {
             $(this).multiselect({
-                multiple:        false,
-                header:          false,
-                selectedList:    1,
-                minWidth:        $(this).attr("data-multiselect-width"),
-                height:          $(this).attr("data-multiselect-height"),
-                checkAllText:    _("Check all"),
-                uncheckAllText:  _("Uncheck all"),
-                noneSelectedText:_("Select options")
+                multiple: false,
+                header: false,
+                selectedList: 1,
+                minWidth: $(this).attr("data-multiselect-width"),
+                height: $(this).attr("data-multiselect-height"),
+                checkAllText: _("Check all"),
+                uncheckAllText: _("Uncheck all"),
+                noneSelectedText: _("Select options")
             });
         });
 
         $("select.vis-editor-large").each(function () {
             $(this).multiselect({
-                multiple:         false,
-                header:           false,
+                multiple: false,
+                header: false,
                 //noneSelectedText: false,
-                selectedList:     1,
-                minWidth:         250,
-                height:           410,
-                checkAllText:     _("Check all"),
-                uncheckAllText:   _("Uncheck all"),
+                selectedList: 1,
+                minWidth: 250,
+                height: 410,
+                checkAllText: _("Check all"),
+                uncheckAllText: _("Uncheck all"),
                 noneSelectedText: _("Select options")
             });
+
         });
 
         $("select.vis-editor-xlarge").each(function () {
             $(this).multiselect({
-                multiple:         false,
-                header:           false,
+                multiple: false,
+                header: false,
                 // noneSelectedText: false,
-                selectedList:     1,
-                minWidth:         420,
-                height:           340,
-                checkAllText:     _("Check all"),
-                uncheckAllText:   _("Uncheck all"),
+                selectedList: 1,
+                minWidth: 420,
+                height: 340,
+                checkAllText: _("Check all"),
+                uncheckAllText: _("Uncheck all"),
                 noneSelectedText: _("Select options")
             });
         });
 
         // Button Click Handler
 
-        $("#export_view").click(function(){vis.exportView(false);});
+        $("#export_view").click(function () {
+            vis.exportView(false);
+        });
 
         $("#import_view").click(function () {
             $("#textarea_import_view").html('');
@@ -2348,8 +2317,8 @@ vis = $.extend(true, vis, {
                 height: 600,
                 modal: true,
                 open: function (event, ui) {
-                    $('[aria-describedby="dialog_import_view"]').css('z-index',1002);
-                    $('.ui-widget-overlay').css('z-index',1001);
+                    $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
+                    $('.ui-widget-overlay').css('z-index', 1001);
                     $("#start_import_view").click(function () {
                         vis.importView();
                     });
@@ -2358,44 +2327,22 @@ vis = $.extend(true, vis, {
             });
         });
 
-		$('#widget_doc').button({icons: {primary: 'ui-icon-script'}}).click(function () {
+        $('#select_set').next().addClass("select_set");
+
+        $('.select_set').find(".ui-icon").remove();
+
+        $('#widget_doc').button({icons: {primary: 'ui-icon-script'}}).click(function () {
             var tpl = vis.views[vis.activeView].widgets[vis.activeWidget].tpl;
             var widgetSet = $('#' + tpl).attr('data-vis-set');
             var docUrl = 'widgets/' + widgetSet + '/doc.html#' + tpl;
             window.open(docUrl, "WidgetDoc", "height=640,width=500,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no,location=no");
         });
 
-		$("#del_widget").button({icons: {primary: "ui-icon-trash"}}).click(vis.delWidget);
-
-		$("#dup_widget").button({icons: {primary: "ui-icon-copy"}}).click(function () {
+        $("#dup_widget").button({icons: {primary: "ui-icon-copy"}}).click(function () {
             vis.dupWidget();
         });
 
-		$("#add_widget").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
-            var tpl = $("#select_tpl option:selected").val();
-            var $tpl = $('#' + tpl);
-            var renderVisible = $tpl.attr('data-vis-render-visible');
-
-            // Widget attributs default values
-            var attrs = $tpl.attr('data-vis-attrs');
-            var data = {};
-            if (attrs) {
-                attrs = attrs.split(';');
-                if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
-            }
-            if (renderVisible) data.renderVisible = true;
-
-            that.addWidget(tpl, data);
-
-            $('#select_active_widget').append('<option value="' + that.activeWidget + '">' + that.getWidgetName(that.activeView, that.activeWidget) + ')</option>')
-            .multiselect('refresh');
-
-            setTimeout(function () {
-                that.inspectWidget(that.activeWidget)
-            }, 50);
-        });
-
-		$("#add_view").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
+        $("#add_view").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
             var name = vis.checkNewView();
             if (name === false) {
                 return;
@@ -2403,40 +2350,44 @@ vis = $.extend(true, vis, {
             vis.addView(name);
         });
 
-		$("#dup_view").button({icons: {primary: "ui-icon-copy"}}).click(function () {
+        $("#dup_view").button({icons: {primary: "ui-icon-copy"}}).click(function () {
             var name = vis.checkNewView();
             if (name === false) return;
             vis.dupView(name);
         });
 
-		$("#del_view").button({icons: {primary: 'ui-icon-trash'}}).click(function () {
+        $("#del_view").button({icons: {primary: 'ui-icon-trash'}}).click(function () {
             vis.delView(vis.activeView);
         });
 
-		$("#rename_view").button({icons: {primary: 'ui-icon-pencil'}}).click(function () {
+        $("#del_widget").button({icons: {primary: 'ui-icon-trash'}}).click(function () {
+            vis.delWidget()
+        });
+
+        $("#rename_view").button({icons: {primary: 'ui-icon-pencil'}}).click(function () {
             var name = vis.checkNewView($("#new_name").val());
             if (name === false) return;
             vis.renameView(name);
         });
 
-		$('#create_instance').button({icons: {primary: 'ui-icon-plus'}}).click(vis.generateInstance);
-		
+        $('#create_instance').button({icons: {primary: 'ui-icon-plus'}}).click(vis.generateInstance);
+
         $('.vis-inspect-css').change(function () {
             var $this = $(this);
             var style = $this.attr('id').substring(12);
-			if (!vis.views[vis.activeView].widgets[vis.activeWidget].style) {
-				vis.views[vis.activeView].widgets[vis.activeWidget].style = {};
-			}
+            if (!vis.views[vis.activeView].widgets[vis.activeWidget].style) {
+                vis.views[vis.activeView].widgets[vis.activeWidget].style = {};
+            }
             vis.views[vis.activeView].widgets[vis.activeWidget].style[style] = $this.val();
             vis.save();
             var activeWidget = document.getElementById(vis.activeWidget);
             var $activeWidget = $(activeWidget);
             $activeWidget.css(style, $this.val());
             $("#widget_helper").css({
-                left:   parseInt($activeWidget.css('left')) - 2,
-                top:    parseInt($activeWidget.css('top'))  - 2,
+                left: parseInt($activeWidget.css('left')) - 2,
+                top: parseInt($activeWidget.css('top')) - 2,
                 height: $activeWidget.outerHeight() + 2,
-                width:  $activeWidget.outerWidth()  + 2
+                width: $activeWidget.outerWidth() + 2
             });
 
             if (activeWidget._customHandlers && activeWidget._customHandlers.onCssEdit) {
@@ -2453,15 +2404,15 @@ vis = $.extend(true, vis, {
             var attr = $this.attr('id').slice(17);
             var val = $this.val();
             $('#visview_' + vis.activeView).css(attr, val);
-			if (!vis.views[vis.activeView].settings.style) {
-				vis.views[vis.activeView].settings.style = {};
-			}
+            if (!vis.views[vis.activeView].settings.style) {
+                vis.views[vis.activeView].settings.style = {};
+            }
             vis.views[vis.activeView].settings.style[attr] = val;
             vis.save();
         }).keyup(function () {
             $(this).trigger('change');
         });
-		
+
         $('.vis-inspect-view').change(function () {
             var $this = $(this);
             var attr = $this.attr('id').slice(13);
@@ -2470,17 +2421,6 @@ vis = $.extend(true, vis, {
             vis.save();
         }).keyup(function () {
             $(this).trigger('change');
-        });
-		
-        $("#inspect_view_theme").change(function () {
-            var theme = $('#inspect_view_theme option:selected').val();
-            //console.log("change theme "+"css/"+theme+"/jquery-ui.min.css");
-            vis.views[vis.activeView].settings.theme = theme;
-            $("#jqui_theme").remove();
-            $('style[data-href$="jquery-ui.min.css"]').remove();
-            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="jqui_theme"/>');
-            vis.additionalThemeCss(theme);
-            vis.save();
         });
 
         $('#select_active_widget').change(function () {
@@ -2494,7 +2434,7 @@ vis = $.extend(true, vis, {
             vis.inspectWidget("none");
         });
 
-        $('#screen_size').change(function() {
+        $('#screen_size').change(function () {
             var val = $(this).find('option:selected').val();
             if (val != 'user') {
                 var size = val.split('x');
@@ -2511,10 +2451,10 @@ vis = $.extend(true, vis, {
             var x = $("#screen_size_x").val();
             var y = $("#screen_size_y").val();
             if (x > 0) {
-                $("#size_x").css('left', (parseInt(x,10)+1)+"px").show();
-                $("#size_y").css("width", (parseInt(x,10)+3)+"px");
+                $("#size_x").css('left', (parseInt(x, 10) + 1) + "px").show();
+                $("#size_y").css("width", (parseInt(x, 10) + 3) + "px");
                 if (y > 0) {
-                    $("#size_x").css("height", (parseInt(y,10)+3)+"px");
+                    $("#size_x").css("height", (parseInt(y, 10) + 3) + "px");
                 }
             } else {
                 $("#size_x").hide();
@@ -2530,7 +2470,7 @@ vis = $.extend(true, vis, {
         });
 
         $("#screen_hide_description").change(function () {
-            var val = $("#screen_hide_description")[0].checked
+            var val = $("#screen_hide_description")[0].checked;
             if (vis.views[vis.activeView].settings.hideDescription != val) {
                 vis.views[vis.activeView].settings.hideDescription = val;
                 if (typeof hqWidgets != 'undefined') {
@@ -2542,7 +2482,6 @@ vis = $.extend(true, vis, {
         }).keyup(function () {
             $(this).trigger('change');
         });
-
 
         $("#screen_size_y").change(function () {
             var x = $("#screen_size_x").val();
@@ -2582,24 +2521,61 @@ vis = $.extend(true, vis, {
                 vis.save();
             }
         });
+
+        $("#savingProgress").button({
+            text: false,
+            icons: {primary: "ui-icon-disk"}
+        }).click(that._saveToServer).hide().addClass("ui-state-active");
+
+        $("#dev_show_html").button({}).click(function () {
+            var wid_id = $("#" + vis.activeWidget).attr("id");
+            vis.inspectWidget();
+
+            var $target = $("#" + wid_id);
+            var $clone = $target.clone();
+            $clone.wrap('<div>');
+            var html = $clone.parent().html();
+
+            html = html
+                .replace("vis-widget ", "vis-widget_prev ")
+                .replace("vis-widget-body", "vis-widget-prev-body")
+                .replace("ui-draggable", " ")
+                .replace("ui-resizable", " ")
+                .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, "")
+                .replace(/(?:\r\n|\r|\n)/g, '')
+                .replace(/[ ]{2,}/g, ' ');
+
+            html = 'data-vis-prev=\'<div id="prev_' + vis.views[vis.activeView].widgets[wid_id].tpl + '" style=" position: relative; text-align: initial;padding: 4px ">' + html.toString() + '\'';
+
+            $("body").append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%">' + html + '</textarea></div>')
+            $("#dec_html_code").dialog({
+                width: 800,
+                height: 600,
+                close: function () {
+                    $("#dec_html_code").remove()
+                }
+            })
+
+        });
+
         // Bug in firefox or firefox is too slow or too fast
         /*setTimeout(function() {
 
-            if (document.getElementById('select_active_widget')._isOpen === undefined) {
-                $('#select_active_widget').html('<option value="none">' + _('none selected') + '</option>');
-                if (vis.activeView && vis.views && vis.views[vis.activeView] && vis.views[vis.activeView].widgets) {
-                    for (var widget in vis.views[vis.activeView].widgets) {
-                        var obj = $("#" + vis.views[vis.activeView].widgets[widget].tpl);
-                        $('#select_active_widget').append("<option value='" + widget + "'>" + this.getWidgetName(vis.activeView, widget) + </option>");
-                    }
-                }
-                $('#select_active_widget').multiselect('refresh');
-            }
+         if (document.getElementById('select_active_widget')._isOpen === undefined) {
+         $('#select_active_widget').html('<option value="none">' + _('none selected') + '</option>');
+         if (vis.activeView && vis.views && vis.views[vis.activeView] && vis.views[vis.activeView].widgets) {
+         for (var widget in vis.views[vis.activeView].widgets) {
+         var obj = $("#" + vis.views[vis.activeView].widgets[widget].tpl);
+         $('#select_active_widget').append("<option value='" + widget + "'>" + this.getWidgetName(vis.activeView, widget) + </option>");
+         }
+         }
+         $('#select_active_widget').multiselect('refresh');
+         }
 
-        }, 10000);*/
+         }, 10000);*/
 
         // Instances
-        if (typeof storage !== 'undefined') {
+        if (typeof storage !== 'undefined' && local == false) {
             // Show what's new
             if (storage.get('lastVersion') != vis.version) {
                 // Read
@@ -2647,34 +2623,281 @@ vis = $.extend(true, vis, {
             }
         }
     },
-    editInitNext: function () {
-		// ioBroker.vis Editor Init
-        var that = this;
-		var sel;
+    editInit_dialogs: function () {
 
-		var keys = Object.keys(vis.views);
-        var len  = keys.length;
+        $("#dialog_about").dialog({
+            autoOpen: false,
+            width: 600,
+            height: 500,
+            position: {my: "center", at: "center", of: $("#panel_body")}
+        });
+
+        $("#dialog_shortcuts").dialog({
+            autoOpen: false,
+            width: 600,
+            height: 500,
+            position: {my: "center", at: "center", of: $("#panel_body")}
+        });
+
+    },
+    editInit_menu: function () {
+        $("#menu.sf-menu").superclick({
+            hoverClass: 'sfHover',
+            uiClass: 'ui-state-hover',  // jQuery-UI modified
+            pathLevels: 1,
+            cssArrows: false,
+            disableHI: false
+        });
+
+        $('li.ui-state-default').hover(
+            function () {
+                $(this).addClass('ui-state-hover')
+            },
+            function () {
+                $(this).removeClass('ui-state-hover')
+            }
+        );
+
+        $("#menu_body").tabs({
+            active: 2,
+            collapsible:true
+        });
+
+        // Tabs open Close
+
+        $("#menu_body > ul > li").click(function () {
+            $(window).trigger("resize");
+        });
+
+        // Theme select Editor
+        var last_theme =  storage.get('vistheme');
+        if(last_theme){
+            $("#editor_theme").remove();
+            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + last_theme + '/jquery-ui.min.css" id="editor_theme"/>');
+        }
+        $("#ul_theme li a").click(function () {
+            var theme = $(this).data('info');
+            vis.views[vis.activeView].settings.theme = theme;
+            $("#editor_theme").remove();
+            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editor_theme"/>');
+            //vis.additionalThemeCss(theme);
+            storage.set('vistheme', theme);
+            vis.save();
+
+        });
+
+        // Theme seleckt View
+        $("#inspect_view_theme").change(function () {
+            var theme = $('#inspect_view_theme option:selected').val();
+            vis.views[vis.activeView].settings.theme = theme;
+            vis.addViewStyle(vis.activeView,theme);
+            //vis.additionalThemeCss(theme);
+            vis.save();
+        });
+
+        //language
+        $('[data-language=' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + ']').addClass("ui-state-active");
+
+        $(".language_select").click(function () {
+            console.log("klick")
+            $('[data-language='+vis.language+']').removeClass("ui-state-active");
+            vis.language = $(this).data('language');
+            $(this).addClass("ui-state-active");
+            if (typeof systemLang != 'undefined') systemLang = vis.language;
+            setTimeout(function(){
+                translateAll();
+            },0)
+
+        });
+
+
+        $("#m_about").click(function () {
+            $("#dialog_about").dialog("open")
+        });
+        $("#m_shortcuts").click(function () {
+            $("#dialog_shortcuts").dialog("open")
+        });
+        //$("#m_setup").click(function () {
+        //    $("#dialog_setup").dialog("open")
+        //});
+    },
+    add_Widget_prev: function (set) {
+        $.each(vis.widgetSets, function (i) {
+            var set = this;
+            var tpl_list = $(".vis-tpl[data-vis-set='" + set + "']");
+            $.each(tpl_list, function (i) {
+                var tpl = $(tpl_list[i]).attr("id");
+
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '"><div>' + $("#" + tpl).data("vis-name") + '</div></div>');
+
+                if ($(tpl_list[i]).data("vis-prev")) {
+                    $('#prev_container_' + tpl).append($(tpl_list[i]).data("vis-prev"))
+                }
+                $('#prev_container_' + tpl).draggable({
+                    helper: "clone",
+                    containment: $("#panel_body"),
+                    zIndex: 10000
+                });
+            });
+        });
+    },
+    editInit_select_view: function () {
+
+        $("#view_select_tabs_wrap").resize(function () {
+            var o = {
+                parent_w: $("#view_select_tabs_wrap").width(),
+                self_w: $("#view_select_tabs").width(),
+                self_l: parseInt($("#view_select_tabs").css("left"))
+            };
+            if (o.parent_w >= (o.self_w + o.self_l))
+
+                $("#view_select_tabs").css("left", (o.parent_w - o.self_w) + "px");
+        });
+
+        $("#view_select_left").button({
+            icons: {
+                primary: "ui-icon-carat-1-w"
+            },
+            text: false
+        }).click(function () {
+            var o = {
+                parent_w: $("#view_select_tabs_wrap").width(),
+                self_w: $("#view_select_tabs").width(),
+                self_l: parseInt($("#view_select_tabs").css("left"))
+            };
+
+            if (o.self_w != o.parent_w) {
+                if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
+                    $("#view_select_tabs").css("left", o.self_l - 50 + "px")
+                } else {
+                    $("#view_select_tabs").css("left", (o.parent_w - o.self_w) + "px")
+                }
+
+            }
+
+        });
+
+        $("#view_select_right").button({
+            icons: {
+                primary: "ui-icon-carat-1-e"
+            },
+            text: false
+        }).click(function () {
+            var o = {
+                parent_w: $("#view_select_tabs_wrap").width(),
+                self_w: $("#view_select_tabs").width(),
+                self_l: parseInt($("#view_select_tabs").css("left"))
+            };
+
+            if (o.self_w != o.parent_w) {
+                if ((o.self_l + 50) <= 0) {
+                    $("#view_select_tabs").css("left", o.self_l + 50 + "px")
+                } else {
+                    $("#view_select_tabs").css("left", "0px")
+                }
+
+            }
+
+        });
+
+        $("#view_select").bind('mousewheel DOMMouseScroll', function (event) {
+            var o = {
+                parent_w: $("#view_select_tabs_wrap").width(),
+                self_w: $("#view_select_tabs").width(),
+                self_l: parseInt($("#view_select_tabs").css("left"))
+            }
+            if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
+
+                if (o.self_w != o.parent_w) {
+                    if ((o.parent_w - o.self_w) <= (o.self_l - 20)) {
+                        $("#view_select_tabs").css("left", o.self_l - 20 + "px")
+                    } else {
+                        $("#view_select_tabs").css("left", (o.parent_w - o.self_w) + "px")
+                    }
+
+                }
+            }
+            else {
+                if (o.self_w != o.parent_w) {
+                    if ((o.self_l + 20) <= 0) {
+                        $("#view_select_tabs").css("left", o.self_l + 20 + "px")
+                    } else {
+                        $("#view_select_tabs").css("left", "0px")
+                    }
+
+                }
+            }
+        });
+
+
+        var sel;
+
+        var keys = Object.keys(vis.views);
+        var len = keys.length;
         var i;
         var k;
 
-		keys.sort();
+        keys.sort();
 
-        var $select_view      = $("#select_view");
+        $("#view_select_tabs").on("click", ".view_select_tab", function () {
+            var view = $(this).attr("id").replace("view_tab_", "");
+            $(".view_select_tab").removeClass("ui-tabs-active ui-state-active");
+            $(this).addClass("ui-tabs-active ui-state-active");
+            vis.changeView(view);
+
+        });
+
+
+        for (i = 0; i < len; i++) {
+            k = keys[i];
+
+            if (k == this.activeView) {
+
+                sel = " selected";
+            } else {
+                sel = '';
+            }
+            $("#view_select_tabs").append('<div id="view_tab_' + k + '" class="view_select_tab ui-state-default ui-corner-top">' + k + '</div>');
+        }
+
+
+        $('#view_tab_' + vis.activeView).addClass('ui-tabs-active ui-state-active')
+
+
+    },
+    //todo
+
+    //todo
+    editInitNext: function () {
+        // ioBroker.vis Editor Init
+        var that = this;
+
+        vis.editInit_select_view();
+        // todo Remove the old select view
+        var sel;
+
+        var keys = Object.keys(vis.views);
+        var len = keys.length;
+        var i;
+        var k;
+
+        keys.sort();
+
+        var $select_view = $("#select_view");
         var $select_view_copy = $("#select_view_copy");
-        var $select_set       = $("#select_set");
 
-		for (i = 0; i < len; i++) {
-			k = keys[i];
 
-			if (k == this.activeView) {
-				$("#inspect_view").html(this.activeView);
-				sel = " selected";
-			} else {
-				sel = '';
-			}
+        for (i = 0; i < len; i++) {
+            k = keys[i];
+
+            if (k == this.activeView) {
+                sel = " selected";
+            } else {
+                sel = '';
+            }
             $select_view.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
             $select_view_copy.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
-		}
+        }
 
         $select_view.multiselect('refresh');
 
@@ -2687,48 +2910,56 @@ vis = $.extend(true, vis, {
 
         $select_view.change(function () {
             that.changeView($(this).val());
-		});
+        });
 
-        $select_set.change(vis.refreshWidgetSelect);
-        $select_set.html('');
+        // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+        var $select_set = $("#select_set");
+        //$select_set.html('');
 
 		for (i = 0; i < this.widgetSets.length; i++) {
 			if (this.widgetSets[i].name !== undefined) {
-                $select_set.append('<option value="' + this.widgetSets[i].name + '">' + this.widgetSets[i].name + '</option>');
+                $select_set.append("<option value='" + this.widgetSets[i].name + "'>" + this.widgetSets[i].name + "</option>");
 			} else {
-                $select_set.append('<option value="' + this.widgetSets[i] + '">' + this.widgetSets[i] + '</option>');
+                $select_set.append("<option value='" + this.widgetSets[i] + "'>" + this.widgetSets[i] + "</option>");
 			}
 		}
-        //$select_set.selectmenu();
+
+        var last_set = storage.get("vis.Last_Widgetset")
+
+        $('#select_set option[value="' + last_set + '"]').prop('selected', true);
         $select_set.multiselect('refresh');
 
-		vis.refreshWidgetSelect();
+        $select_set.change(function () {
+            var tpl = $(this).val();
+            storage.set("vis.Last_Widgetset", tpl);
+            $(".wid_prev").hide();
+            $("." + tpl + "_prev").show();
+        });
 
-		//console.log("TOOLBOX OPEN");
-		$("#vis_editor").dialog("open");
-        $('.ui-dialog').css({'z-index':1000});
-        if (vis.binds.jqueryui) {
-		    vis.binds.jqueryui._disable();
+        vis.add_Widget_prev();
+
+        $select_set.trigger("change")
+
+        // Create background_class property if does not exist
+        if (this.views[vis.activeView] != undefined) {
+            if (this.views[vis.activeView].settings == undefined) {
+                this.views[vis.activeView].settings = {};
+            }
+            if (this.views[vis.activeView].settings.style == undefined) {
+                this.views[vis.activeView].settings.style = {};
+            }
+            if (this.views[vis.activeView].settings.style['background_class'] == undefined) {
+                this.views[vis.activeView].settings.style['background_class'] = '';
+            }
         }
 
-		// Create background_class property if does not exist
-		if (this.views[vis.activeView] != undefined) {
-			if (this.views[vis.activeView].settings == undefined) {
-                this.views[vis.activeView].settings = {};
-			}
-			if (this.views[vis.activeView].settings.style == undefined) {
-                this.views[vis.activeView].settings.style = {};
-			}
-			if (this.views[vis.activeView].settings.style['background_class'] == undefined) {
-                this.views[vis.activeView].settings.style['background_class'] = '';
-			}
-		}
-
-		if (this.fillWizard) this.fillWizard();
+        if (this.fillWizard) this.fillWizard();
 
         // Deselect active widget if click nowhere. Not required if selectable is active
         if (!this.selectable) {
-            $('#vis_container').click (function () {
+            $('#vis_container').click(function () {
                 that.inspectWidget("none");
             });
         }
@@ -2746,8 +2977,8 @@ vis = $.extend(true, vis, {
                     height: 600,
                     modal: true,
                     open: function (event, ui) {
-                        $('[aria-describedby="dialog_import_view"]').css('z-index',1002);
-                        $('.ui-widget-overlay').css('z-index',1001);
+                        $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
+                        $('.ui-widget-overlay').css('z-index', 1001);
                         $("#start_import_view").click(function () {
                             that.importView(true);
                         });
@@ -2764,379 +2995,160 @@ vis = $.extend(true, vis, {
             }).show();
             $('#local_view').show();
         }
+
+
+
+
+
+
+
+
+
     },
-    editPosition: function () {
-        var that = this;
-        function left() {
-            $(".ui-dialog-titlebar-minimize").show();
-            if ($(".vis-editor-dialog").parent().attr('id') == "vis-editor-dialog-wrap") {
-                $(".vis-editor-dialog").unwrap();
+    // Find free place for new widget
+    findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
+        var editPos = $('.ui-dialog:first').position();
+        field = $.extend({x: 0, y: 0, width: editPos.left}, field);
+        widgetWidth = (widgetWidth || 60);
+        widgetHeight = (widgetHeight || 60);
+
+        if (widgetWidth > field.width) field.width = widgetWidth + 1;
+
+        var step = 20;
+        var y = field.y;
+        var x = field.x || step;
+
+        // Prepare coordinates
+        var positions = [];
+        for (var w in this.views[view].widgets) {
+            if (w == id || !this.views[view].widgets[w].tpl) {
+                continue;
             }
-            $("#vis_editor")
-                .dialog("option", "resizable", false)
-                .dialog("option", "draggable", false)
-                .css("height", "calc(100% - 58px)");
 
-            $(".vis-editor-dialog").css({
-                height: "calc(100% - 9px)",
-                width: "450px",
-                left: 0,
-                position: "absolute",
-                right: "auto",
-                top: 0
-            })
-        }
-
-        function right() {
-            $(".ui-dialog-titlebar-minimize").show();
-            if ($(".vis-editor-dialog").parent().attr('id') == "vis-editor-dialog-wrap") {
-                $(".vis-editor-dialog").unwrap();
-            }
-            $("#vis_editor")
-                .dialog("option", "resizable", false)
-                .dialog("option", "draggable", false)
-                .css("height", "calc(100% - 58px)");
-            $(".vis-editor-dialog").css({
-                height: "calc(100% - 9px)",
-                width: "450px",
-                position: "absolute",
-                right: 0,
-                left: "auto",
-                top: 0
-            })
-        }
-
-        function left_ah() {
-            var delay;
-            $(".ui-dialog-titlebar-minimize").hide();
-            if ($(".vis-editor-dialog").parent().attr('id') == "vis-editor-dialog-wrap") {
-                $(".vis-editor-dialog").unwrap();
-            }
-            $("#vis_editor")
-                .dialog("option", "resizable", false)
-                .dialog("option", "draggable", false)
-                .css("height", "calc(100% - 58px)");
-
-            $(".vis-editor-dialog")
-                .wrapAll('<div id="vis-editor-dialog-wrap"></div>')
-                .css({
-                    height: "calc(100% - 9px)",
-                    width: "450px",
-                    left: 0,
-                    position: "relative",
-                    right: "auto",
-                    top: 0
-                })
-                .hide("slide", {direction: 'left'});
-
-            $("#vis-editor-dialog-wrap")
-                .css({
-                    height: "100%",
-                    width: "auto",
-                    left: 0,
-                    position: "absolute",
-                    right: "auto",
-                    top: 0,
-                    minWidth: "20px"
-                })
-                .mouseenter(function () {
-                    clearTimeout(delay);
-                    $(".vis-editor-dialog").show("slide", {direction: 'left'})
-                })
-                .mouseleave(function () {
-                    if ($(".ui-multiselect-menu:visible").length) {
-                        return;
-                    }
-                    delay = setTimeout(function () {
-                        $(".vis-editor-dialog").hide("slide", {direction: 'left'})
-                    }, 750);
-                });
-        }
-
-        function right_ah() {
-            var delay;
-            $(".ui-dialog-titlebar-minimize").hide();
-            if ($(".vis-editor-dialog").parent().attr('id') == "vis-editor-dialog-wrap") {
-                $(".vis-editor-dialog").unwrap();
-            }
-            $("#vis_editor")
-                .dialog("option", "resizable", false)
-                .dialog("option", "draggable", false)
-                .css("height", "calc(100% - 58px)");
-
-            $(".vis-editor-dialog")
-                .wrapAll('<div id="vis-editor-dialog-wrap"></div>')
-                .css({
-                    height: "100%",
-                    width: "450px",
-                    left: "auto",
-                    position: "relative",
-                    right: 0,
-                    top: 0
-
-                })
-                .hide("slide", {direction: "right"});
-
-            $("#vis-editor-dialog-wrap")
-                .css({
-                    height: "calc(100% - 9px)",
-                    width: "auto",
-                    left: "auto",
-                    position: "absolute",
-                    right: 0,
-                    top: 0,
-                    minWidth: "20px"
-                })
-                .mouseenter(function () {
-                    clearTimeout(delay);
-                    $(".vis-editor-dialog").show("slide", {direction: "right"})
-                })
-                .mouseleave(function () {
-                    if ($(".ui-multiselect-menu:visible").length) {
-                         return;
-                    }
-                    delay = setTimeout(function () {
-                        $(".vis-editor-dialog").hide("slide", {direction: "right"})
-                    }, 750);
-                });
-        }
-
-        function free() {
-
-            $(".ui-dialog-titlebar-minimize").show();
-            if ($(".vis-editor-dialog").parent().attr('id') == "vis-editor-dialog-wrap") {
-                $(".vis-editor-dialog").unwrap();
-            }
-            $("#vis_editor")
-                .dialog("option", "resizable", true)
-                .dialog("option", "draggable", true)
-                .css("height", "calc(100% - 58px)");
-
-            $(".vis-editor-dialog").css({
-                position: "absolute",
-                right: 0,
-                left: "auto",
-                top: 0,
-                width: "450px",
-                height: "610px"
-            });
-
-        }
-
-        var save_posi;
-        if (typeof storage !== 'undefined') save_posi = storage.get("editor-position");
-
-        save_posi = save_posi || ["free","*"];
-        this.editorPos = save_posi[0];
-
-        $(".vis-editor-dialog .ui-dialog-titlebar-buttonpane")
-            .append('<div id="vis_editor_mode"></div>')
-            .css({"z-index": 100});
-
-        if ($().xs_combo) {
-            $("#vis_editor_mode").xs_combo({
-                cssText: "xs_text_editor_mode",
-                time:    750,
-                val:     save_posi[1],
-                data:    ["|<", ">|", "<", ">", "*"]
-            });
-            $("#vis_editor_mode").change(function () {
-                var val = $(this).xs_combo();
-                var settings = null;
-                if (val == "|<") {
-                    left();
-                    that.editorPos = 'left';
-                } else if (val == ">|") {
-                    right();
-                    that.editorPos = "right";
-                    settings = ["right", val];
-                } else if (val == "<") {
-                    left_ah();
-                    that.editorPos = "left_ah";
-                    settings = ["left_ah", val];
-                } else if (val == ">") {
-                    right_ah();
-                    that.editorPos = "right_ah";
-                    settings = ["right_ah", val];
-                } else if (val == "*") {
-                    free();
-                    that.editorPos = "free";
-                    settings = ["free", val];
-                }
-
-                if (typeof storage != 'undefined' && settings) storage.set("editor-position", settings);
-            });
-        }
-
-        $(".vis-editor-dialog .ui-dialog-titlebar-buttonpane").append('<span id="button_undo" href="#" role="button">undo (ctrl-z)</span>');
-        $("#button_undo").button({
-            text: false,
-            icons: { primary: "ui-icon-arrowreturnthick-1-w"}
-        }).click(vis.undo).addClass("ui-state-disabled");
-
-        $(".vis-editor-dialog .ui-dialog-titlebar-buttonpane").prepend('<span id="savingProgress" role="button">Saving in progress</span>');
-        $("#savingProgress").button({
-            text: false,
-            icons: { primary: "ui-icon-disk"}
-        }).click(function ()  {
-            that._saveToServer();
-        }).hide().addClass("ui-state-active");
-
-
-        var _save_posi = save_posi[0] + '()';
-        eval(_save_posi);
-    },
-    refreshWidgetSelect: function () {
-        var $select_tpl = $("#select_tpl");
-        $select_tpl.html('');
-        var current_set = $("#select_set option:selected").val();
-        $(".vis-tpl[data-vis-set='" + current_set + "']").each(function () {
-            $("#select_tpl").append("<option value='" + $(this).attr('id') + "'>" + $(this).attr("data-vis-name") + "</option>")
-        });
-        $select_tpl.multiselect('refresh');
-    },
-	// Find free place for new widget
-	findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
-		var editPos = $('.ui-dialog:first').position();
-		field = $.extend({x: 0, y: 0, width: editPos.left}, field);
-		widgetWidth  = (widgetWidth  || 60);
-		widgetHeight = (widgetHeight || 60);
-
-		if (widgetWidth > field.width) field.width = widgetWidth + 1;
-
-		var step = 20;
-		var y = field.y;
-		var x = field.x || step;
-		
-		// Prepare coordinates
-		var positions = [];
-		for (var w in this.views[view].widgets) {
-			if (w == id || !this.views[view].widgets[w].tpl) {
-				continue;
-			}
-
-			if (this.views[view].widgets[w].tpl.indexOf("Image") == -1 &&
+            if (this.views[view].widgets[w].tpl.indexOf("Image") == -1 &&
                 this.views[view].widgets[w].tpl.indexOf("image") == -1) {
-				var $jW = $('#' + w);
+                var $jW = $('#' + w);
                 if ($jW.length) {
                     var s = $jW.position();
-                    s['width']  = $jW.width();
+                    s['width'] = $jW.width();
                     s['height'] = $jW.height();
                     if (s.width > 300 && s.height > 300) {
                         continue;
                     }
                     positions[positions.length] = s;
                 }
-			}
-		}
-		
-		while (!this.checkPosition(positions, x, y, widgetWidth, widgetHeight)) {
-			x += step;
-			if (x + widgetWidth > field.x + field.width) {
-				x = field.x;
-				y += step;
-			}
-		};
-		
-		// No free place on the screen
-		if (y >= $(window).height()) {
-			x = 50;
-			y = 50;
-		}
-		
-		return {left: x, top: y};
-	},
-	// Check overlapping
-	checkPosition: function (positions, x, y, widgetWidth, widgetHeight) {
-		for (var i = 0; i < positions.length; i++) {
-			var s = positions[i];
-			
-			if (((s.left <= x                && (s.left + s.width)  >= x) ||
-				 (s.left <= x + widgetWidth  && (s.left + s.width)  >= x + widgetWidth)) &&
-				((s.top  <= y                && (s.top  + s.height) >= y) ||
-				 (s.top  <= y + widgetHeight && (s.top  + s.height) >= y + widgetHeight))) {
-				return false;
-			}
-			if (((x <= s.left                &&  s.left             <= x + widgetWidth) ||
-				 (x <= (s.left + s.width)    && (s.left + s.width)  <= x + widgetWidth)) &&
-				((y <= s.top                 && s.top               <= y + widgetHeight) ||
-				 (y <= (s.top  + s.height)   && (s.top  + s.height) <= y + widgetHeight))) {
-				return false;
-			}			
-		}
-		return true;
-	},
-	actionNewWidget: function (id) {
+            }
+        }
+
+        while (!this.checkPosition(positions, x, y, widgetWidth, widgetHeight)) {
+            x += step;
+            if (x + widgetWidth > field.x + field.width) {
+                x = field.x;
+                y += step;
+            }
+        }
+
+        // No free place on the screen
+        if (y >= $(window).height()) {
+            x = 50;
+            y = 50;
+        }
+
+        return {left: x, top: y};
+    },
+    // Check overlapping
+    checkPosition: function (positions, x, y, widgetWidth, widgetHeight) {
+        for (var i = 0; i < positions.length; i++) {
+            var s = positions[i];
+
+            if (((s.left <= x && (s.left + s.width) >= x) ||
+                (s.left <= x + widgetWidth && (s.left + s.width) >= x + widgetWidth)) &&
+                ((s.top <= y && (s.top + s.height) >= y) ||
+                (s.top <= y + widgetHeight && (s.top + s.height) >= y + widgetHeight))) {
+                return false;
+            }
+            if (((x <= s.left && s.left <= x + widgetWidth) ||
+                (x <= (s.left + s.width) && (s.left + s.width) <= x + widgetWidth)) &&
+                ((y <= s.top && s.top <= y + widgetHeight) ||
+                (y <= (s.top + s.height) && (s.top + s.height) <= y + widgetHeight))) {
+                return false;
+            }
+        }
+        return true;
+    },
+    actionNewWidget: function (id) {
         if (id == "none") {
             return;
         }
-		var $jWidget = $('#'+id);
+        var $jWidget = $('#' + id);
         if (!$jWidget.length) {
             return;
         }
 
-		var s = $jWidget.position ();
-		s['width']  = $jWidget.width();
-		s['height'] = $jWidget.height();
-		s['radius'] = parseInt($jWidget.css('border-radius'));
-		var _css1 = {
-			left:        s.left - 3.5,
-			top:         s.top  - 3.5,
-			height:      s.height,
-			width:       s.width,
-			opacity:     1,
-			borderRadius: 15};
+        var s = $jWidget.position();
+        s['width'] = $jWidget.width();
+        s['height'] = $jWidget.height();
+        s['radius'] = parseInt($jWidget.css('border-radius'));
+        var _css1 = {
+            left: s.left - 3.5,
+            top: s.top - 3.5,
+            height: s.height,
+            width: s.width,
+            opacity: 1,
+            borderRadius: 15
+        };
 
-		
-		var text = "<div id='"+id+"__action1' style='z-index:2000; top:"+(s.top-3.5)+"px; left:"+(s.left-3.5)+"px; width: "+s.width+"px; height: "+s.height+"px; position: absolute'></div>";
-		$('body').append(text);
-		var _css2 = {
-			left:        s.left - 4 - s.width,
-			top:         s.top  - 4 - s.height,
-			height:      s.height * 3,
-			width:       s.width  * 3,
-			opacity:     0,
-			//borderWidth: 1,
-			borderRadius: s['radius']+(s.height > s.width) ? s.width : s.height};
 
-		$('#'+id+'__action1').
-			addClass('vis-show-new').
-			css(_css2).
-			animate(_css1, 1500, 'swing', function () {
-				$(this).remove();
-			}).click(function () {
-				$(this).stop().remove();
-			});
+        var text = "<div id='" + id + "__action1' style='z-index:2000; top:" + (s.top - 3.5) + "px; left:" + (s.left - 3.5) + "px; width: " + s.width + "px; height: " + s.height + "px; position: absolute'></div>";
+        $('#visview_'+vis.activeView).append(text);
+        var _css2 = {
+            left: s.left - 4 - s.width,
+            top: s.top - 4 - s.height,
+            height: s.height * 3,
+            width: s.width * 3,
+            opacity: 0,
+            //borderWidth: 1,
+            borderRadius: s['radius'] + (s.height > s.width) ? s.width : s.height
+        };
 
-		text = text.replace('action1', 'action2');
-		$('body').append(text);
-		$('#'+id+'__action2').
-			addClass('vis-show-new').
-			css(_css2).
-			animate(_css1, 3000, 'swing', function () {
+        $('#' + id + '__action1').
+            addClass('vis-show-new').
+            css(_css2).
+            animate(_css1, 1500, 'swing', function () {
+                $(this).remove();
+            }).click(function () {
+                $(this).stop().remove();
+            });
+
+        text = text.replace('action1', 'action2');
+        $('#visview_'+vis.activeView).append(text);
+        $('#' + id + '__action2').
+            addClass('vis-show-new').
+            css(_css2).
+            animate(_css1, 3000, 'swing', function () {
                 $(this).remove();
             });
-	},
+    },
     // collect all filter keys for given view
     updateFilter: function () {
         if (this.activeView && this.views) {
             var widgets = this.views[this.activeView].widgets;
             this.views[this.activeView].filterList = [];
-            
+
             for (var widget in widgets) {
                 if (widgets[widget] && widgets[widget].data &&
                     widgets[widget].data.filterkey != '' &&
                     widgets[widget].data.filterkey !== undefined) {
-					var isFound = false;
-					for (var z = 0; z < this.views[this.activeView].filterList.length; z++) {
-						if (this.views[this.activeView].filterList[z] == widgets[widget].data.filterkey) {
-							isFound = true;
-							break;
-						}
-					}					
-					if (!isFound) {
+                    var isFound = false;
+                    for (var z = 0; z < this.views[this.activeView].filterList.length; z++) {
+                        if (this.views[this.activeView].filterList[z] == widgets[widget].data.filterkey) {
+                            isFound = true;
+                            break;
+                        }
+                    }
+                    if (!isFound) {
                         this.views[vis.activeView].filterList[this.views[this.activeView].filterList.length] = widgets[widget].data.filterkey;
-					}
+                    }
                 }
             }
             return this.views[this.activeView].filterList;
@@ -3198,7 +3210,7 @@ vis = $.extend(true, vis, {
         if (!$('#stealmode_content').length) {
             $('body').append('<div id="stealmode_content" style="display:none" class="vis-stealmode">CSS steal mode</div>')
             $("#stealmode_content").fadeIn('fast')
-                .click(function() {
+                .click(function () {
                     $(this).fadeOut("slow");
                 });
         }
@@ -3215,8 +3227,8 @@ vis = $.extend(true, vis, {
     stealCss: function (e) {
         if (this.isStealCss) {
             var that = this;
-            var target= "#" + this.activeWidget;
-            var src= "#" + e.currentTarget.id;
+            var target = "#" + this.activeWidget;
+            var src = "#" + e.currentTarget.id;
 
             $(".vis-steal-css").each(function () {
                 if ($(this).attr("checked")) {
@@ -3248,15 +3260,15 @@ vis = $.extend(true, vis, {
 
         if (attr == "border-radius") {
             // TODO second attribute
-            var cssTop =    that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-left"));
-            var cssRight =  that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-right"));
+            var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-left"));
+            var cssRight = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-right"));
             var cssBottom = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-right"));
-            var cssLeft =   that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-left"));
+            var cssLeft = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-left"));
         } else {
-            var cssTop =    that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top"));
-            var cssRight =  that.css(attr.replace(RegExp(baseAttr), baseAttr + "-right"));
+            var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top"));
+            var cssRight = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-right"));
             var cssBottom = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom"));
-            var cssLeft =   that.css(attr.replace(RegExp(baseAttr), baseAttr + "-left"));
+            var cssLeft = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-left"));
         }
         if (cssLeft == cssRight && cssLeft == cssTop && cssLeft == cssBottom) {
             css = cssLeft;
@@ -3271,17 +3283,17 @@ vis = $.extend(true, vis, {
     },
     _saveTimer: null, // Timeout to save the configuration
     _saveToServer: function () {
-        if (!this.undoHistory || this.undoHistory.length == 0 ||
-            (JSON.stringify(this.views[this.activeView]) != JSON.stringify(this.undoHistory[this.undoHistory.length - 1]))) {
-            this.undoHistory = this.undoHistory || [];
+        if (!vis.undoHistory || vis.undoHistory.length == 0 ||
+            (JSON.stringify(vis.views[vis.activeView]) != JSON.stringify(vis.undoHistory[vis.undoHistory.length - 1]))) {
+            vis.undoHistory = vis.undoHistory || [];
             $("#button_undo").removeClass("ui-state-disabled");
-            if (this.undoHistory.push($.extend(true, {}, this.views[this.activeView])) > this.undoHistoryMaxLength) {
-                this.undoHistory.splice(0, 1);
+            if (vis.undoHistory.push($.extend(true, {}, vis.views[vis.activeView])) > vis.undoHistoryMaxLength) {
+                vis.undoHistory.splice(0, 1);
             }
         }
-        var that = this;
-        this.saveRemote(function() {
-            that._saveTimer = null;
+
+        vis.saveRemote(function () {
+            vis._saveTimer = null;
             $('#savingProgress').hide().next().button('enable');
         });
     },
@@ -3300,27 +3312,27 @@ vis = $.extend(true, vis, {
         if (cb) cb();
     },
     undo: function () {
-        if (this.undoHistory.length <= 1) return;
+        if (vis.undoHistory.length <= 1) return;
 
-        var activeWidget = this.activeWidget;
-        var multiSelectedWidgets = this.multiSelectedWidgets;
+        var activeWidget = vis.activeWidget;
+        var multiSelectedWidgets = vis.multiSelectedWidgets;
 
-        this.inspectWidget("none");
-        $("#visview_" + this.activeView).remove();
+        vis.inspectWidget("none");
+        $("#visview_" + vis.activeView).remove();
 
-        this.undoHistory.pop();
-        this.views[vis.activeView] = $.extend(true, {}, this.undoHistory[this.undoHistory.length - 1]);
-        this.saveRemote();
+        vis.undoHistory.pop();
+        vis.views[vis.activeView] = $.extend(true, {}, vis.undoHistory[vis.undoHistory.length - 1]);
+        vis.saveRemote();
 
-        if (this.undoHistory.length <= 1) {
+        if (vis.undoHistory.length <= 1) {
             $("#button_undo").addClass("ui-state-disabled").removeClass("ui-state-hover");
         }
 
-        this.renderView(this.activeView);
-        this.changeViewEdit(this.activeView, true);
-        this.inspectWidget(activeWidget);
+        vis.renderView(vis.activeView);
+        vis.changeViewEdit(vis.activeView, true);
+        vis.inspectWidget(activeWidget);
         for (var i = 0; i < multiSelectedWidgets.length; i++) {
-            this.inspectWidgetMulti(multiSelectedWidgets[i]);
+            vis.inspectWidgetMulti(multiSelectedWidgets[i]);
         }
     },
     getWidgetThumbnail: function (widget, maxWidth, maxHeight, callback) {
@@ -3328,38 +3340,38 @@ vis = $.extend(true, vis, {
         if (!widObj || !callback) {
             return;
         }
-        maxWidth  = maxWidth  || 200;
+        maxWidth = maxWidth || 200;
         maxHeight = maxHeight || 40;
 
         if (!widObj.innerHTML || widObj.innerHTML.length > 20000) {
             var $elem = $(widObj);
             var newCanvas = document.createElement('canvas');
             newCanvas.height = maxHeight;
-            newCanvas.width  = Math.ceil($elem.width() / $elem.height() * newCanvas.height);
+            newCanvas.width = Math.ceil($elem.width() / $elem.height() * newCanvas.height);
             if (newCanvas.width > maxWidth) {
-                newCanvas.width  = maxWidth;
+                newCanvas.width = maxWidth;
                 newCanvas.height = Math.ceil($elem.height / $elem.width * newCanvas.width);
             }
 
             var ctx = newCanvas.getContext("2d");
-            ctx.clearRect (0, 0, newCanvas.width, newCanvas.height);
-            ctx.fillStyle="#FF0000";
+            ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
+            ctx.fillStyle = "#FF0000";
             ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
-            ctx.font="5px Arial";
+            ctx.font = "5px Arial";
             ctx.fillText("Cannot render", 0, 0);
             callback(newCanvas);
         } else {
             html2canvas(widObj, {
-                onrendered: function(canvas) {
+                onrendered: function (canvas) {
                     var newCanvas = document.createElement('canvas');
                     newCanvas.height = maxHeight;
-                    newCanvas.width  = Math.ceil(canvas.width / canvas.height * newCanvas.height);
+                    newCanvas.width = Math.ceil(canvas.width / canvas.height * newCanvas.height);
                     if (newCanvas.width > maxWidth) {
-                        newCanvas.width  = maxWidth;
+                        newCanvas.width = maxWidth;
                         newCanvas.height = Math.ceil(canvas.height / canvas.width * newCanvas.width);
                     }
                     var ctx = newCanvas.getContext("2d");
-                    ctx.clearRect (0, 0, newCanvas.width, newCanvas.height);
+                    ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
                     ctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
                     callback(newCanvas);
                 }
@@ -3379,10 +3391,10 @@ vis = $.extend(true, vis, {
         }
 
         $('#growl_informator').jGrowl(content, {
-            theme:  type,
-            life:   (life === undefined) ? 10000 : life,
+            theme: type,
+            life: (life === undefined) ? 10000 : life,
             sticky: (life === undefined) ? false : !life,
-            afterOpen: function (e,m,o) {
+            afterOpen: function (e, m, o) {
                 e.click(function () {
                     $(this).find('.jGrowl-close').trigger('jGrowl.close');
                 });
@@ -3450,32 +3462,35 @@ vis = $.extend(true, vis, {
         if (!$focused.length && this.activeWidget) {
             var $clipboard_content = $('#clipboard_content');
             if (!$clipboard_content.length) {
-                $('body').append('<div id="clipboard_content" style="display:none" class="vis-clipboard" title="'+_('Click to hide')+'"></div>');
+                $('body').append('<div id="clipboard_content" style="display:none" class="vis-clipboard" title="' + _('Click to hide') + '"></div>');
                 $clipboard_content = $('#clipboard_content');
             }
 
             this.clipboard = [];
             this.clipboard[0] = {
                 widget: $.extend(true, {}, this.views[this.activeView].widgets[this.activeWidget]),
-                view:   (!isCut) ? this.activeView : '---copied---'
+                view: (!isCut) ? this.activeView : '---copied---'
             };
             var widgetNames = this.activeWidget;
             if (this.multiSelectedWidgets.length) {
                 for (var i = 0, len = this.multiSelectedWidgets.length; i < len; i++) {
                     widgetNames += ', ' + this.multiSelectedWidgets[i];
-                    this.clipboard[i + 1] = {widget: $.extend(true, {}, this.views[this.activeView].widgets[this.multiSelectedWidgets[i]]), view: (!isCut) ? this.activeView : '---copied---'};
+                    this.clipboard[i + 1] = {
+                        widget: $.extend(true, {}, this.views[this.activeView].widgets[this.multiSelectedWidgets[i]]),
+                        view: (!isCut) ? this.activeView : '---copied---'
+                    };
                 }
             }
 
-           /* this.showHint('<table><tr><td>' + _('Clipboard:') + '&nbsp;<b>' + widgetNames + '</b></td><td id="thumbnail" width="200px"></td></tr></table>', 0, null, function () {
-            if (html2canvas) {
-            this.getWidgetThumbnail(this.activeWidget, 0, 0, function (canvas) {
-                    $('#thumbnail').html(canvas);
-                });
-            }
+            /* this.showHint('<table><tr><td>' + _('Clipboard:') + '&nbsp;<b>' + widgetNames + '</b></td><td id="thumbnail" width="200px"></td></tr></table>', 0, null, function () {
+             if (html2canvas) {
+             this.getWidgetThumbnail(this.activeWidget, 0, 0, function (canvas) {
+             $('#thumbnail').html(canvas);
+             });
+             }
 
-            });
-            */
+             });
+             */
             $clipboard_content.html('<table><tr><td>' + _('Clipboard:') + '&nbsp;<b>' + widgetNames + '</b></td><td id="thumbnail"></td></tr></table>');
 
             var that = this;
@@ -3501,10 +3516,10 @@ vis = $.extend(true, vis, {
             }
 
             $clipboard_content.css({left: ($(document).width() - $clipboard_content.width()) / 2})
-            .click(function(){
-                $(this).slideUp("slow");
-            })
-            .fadeIn('fast');
+                .click(function () {
+                    $(this).slideUp("slow");
+                })
+                .fadeIn('fast');
         } else {
             $('#clipboard_content').remove();
         }
@@ -3516,16 +3531,16 @@ vis = $.extend(true, vis, {
             if (typeof storage != "undefined") {
                 isHideDialog = storage.get("dialog_delete_is_show");
             }
-    
+
             if (!isHideDialog) {
                 if (this.multiSelectedWidgets.length) {
                     $("#dialog_delete_content").html(_("Do you want delete %s widgets?", this.multiSelectedWidgets.length + 1));
                 } else {
                     $("#dialog_delete_content").html(_("Do you want delete widget %s?", this.activeWidget));
                 }
-    
+
                 var dialog_buttons = {};
-    
+
                 var delText = _("Delete").replace("&ouml;", "ö");
                 var that = this;
                 dialog_buttons[delText] = function () {
@@ -3534,8 +3549,8 @@ vis = $.extend(true, vis, {
                             storage.set("dialog_delete_is_show", true);
                         }
                     }
-                    $(this).dialog( "close" );
-    
+                    $(this).dialog("close");
+
                     for (var i = 0, len = that.multiSelectedWidgets.length; i < len; i++) {
                         that.delWidget(that.multiSelectedWidgets[i]);
                     }
@@ -3546,15 +3561,15 @@ vis = $.extend(true, vis, {
                 dialog_buttons[_("Cancel")] = function () {
                     $(this).dialog("close");
                 };
-    
+
                 $("#dialog_delete").dialog({
                     autoOpen: true,
-                    width:  500,
+                    width: 500,
                     height: 220,
-                    modal:  true,
-                    title:  _("Confirm widget deletion"),
-                    open:   function (event, ui) {
-                        $('[aria-describedby="dialog_delete"]').css('z-index',1002);
+                    modal: true,
+                    title: _("Confirm widget deletion"),
+                    open: function (event, ui) {
+                        $('[aria-describedby="dialog_delete"]').css('z-index', 1002);
                         $(".ui-widget-overlay").css('z-index', 1001);
                     },
                     buttons: dialog_buttons
@@ -3636,17 +3651,17 @@ vis = $.extend(true, vis, {
                     $actualWidget.css(setCss);
                     if (i == -1) {
                         $("#widget_helper").css({
-                            left:   parseInt($actualWidget.css('left')) - 2,
-                            top:    parseInt($actualWidget.css('top'))  - 2,
+                            left: parseInt($actualWidget.css('left')) - 2,
+                            top: parseInt($actualWidget.css('top')) - 2,
                             height: $actualWidget.outerHeight() + 2,
-                            width:  $actualWidget.outerWidth() + 2
+                            width: $actualWidget.outerWidth() + 2
                         });
                     } else {
                         $("#widget_multi_helper_" + widgetId).css({
-                            left:   parseInt($actualWidget.css('left')) - 2,
-                            top:    parseInt($actualWidget.css('top'))  - 2,
+                            left: parseInt($actualWidget.css('left')) - 2,
+                            top: parseInt($actualWidget.css('top')) - 2,
                             height: $actualWidget.outerHeight() + 2,
-                            width:  $actualWidget.outerWidth() + 2
+                            width: $actualWidget.outerWidth() + 2
                         });
                     }
                 }
@@ -3657,13 +3672,12 @@ vis = $.extend(true, vis, {
             if (vis.delayedSettings) {
                 clearTimeout(vis.delayedSettings);
             }
-            vis.delayedSettings = _setTimeout(function(widgetId) {
+            vis.delayedSettings = _setTimeout(function (widgetId) {
                 // Save new settings
                 var mWidget = document.getElementById(widgetId);
-                if ((what == 'top' || what== 'left') && mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
+                if ((what == 'top' || what == 'left') && mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
                     mWidget._customHandlers.onMoveEnd(mWidget, widgetId);
-                } else
-                if (mWidget._customHandlers && mWidget._customHandlers.onCssEdit) {
+                } else if (mWidget._customHandlers && mWidget._customHandlers.onCssEdit) {
                     mWidget._customHandlers.onCssEdit(mWidget, widgetId);
                 }
 
@@ -3676,10 +3690,9 @@ vis = $.extend(true, vis, {
                 for (var i = 0, len = multiSelectedWidgets.length; i < len; i++) {
                     mWidget = document.getElementById(multiSelectedWidgets[i]);
 
-                    if ((what == 'top' || what== 'left') && mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
+                    if ((what == 'top' || what == 'left') && mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
                         mWidget._customHandlers.onMoveEnd(mWidget, multiSelectedWidgets[i]);
-                    } else
-                    if (mWidget._customHandlers && mWidget._customHandlers.onCssEdit) {
+                    } else if (mWidget._customHandlers && mWidget._customHandlers.onCssEdit) {
                         mWidget._customHandlers.onCssEdit(mWidget, multiSelectedWidgets[i]);
                     }
                     if (mWidget._customHandlers && mWidget._customHandlers.isRerender) {
@@ -3708,10 +3721,57 @@ vis = $.extend(true, vis, {
             }
         }
         return null;
+    },
+    get_panel_by_id: function (id) {
+        var panels = dockManager.getPanels()
+        var panel;
+        $.each(panels, function () {
+            if (this.elementContent.id == id) {
+                panel = this;
+                return false
+            }
+        });
+        return panel
     }
 });
 
 $(document).keydown(function (e) {
+    //                          Keycodes
+    //
+    // | backspace 	 8    |   e 	            69   |    numpad 8          104
+    // | tab 	     9    |   f 	            70   |    numpad 9          105
+    // | enter 	     13   |   g 	            71   |    multiply          106
+    // | shift 	     16   |   h 	            72   |    add           	107
+    // | ctrl 	     17   |   i 	            73   |    subtract          109
+    // | alt 	     18   |   j 	            74   |    decimal point     110
+    // | pause/break 19   |   k 	            75   |    divide            111
+    // | caps lock 	 20   |   l 	            76   |    f1            	112
+    // | escape 	 27   |   m 	            77   |    f2            	113
+    // | page up 	 33   |   n 	            78   |    f3            	114
+    // | page down 	 34   |   o 	            79   |    f4            	115
+    // | end 	     35   |   p 	            80   |    f5            	116
+    // | home 	     36   |   q 	            81   |    f6            	117
+    // | left arrow  37   |   r 	            82   |    f7            	118
+    // | up arrow 	 38   |   s 	            83   |    f8            	119
+    // | right arrow 39   |   t	                84   |    f9            	120
+    // | down arrow  40   |   u 	            85   |    f10           	121
+    // | insert 	 45   |   v 	            86   |    f11           	122
+    // | delete 	 46   |   w 	            87   |    f12           	123
+    // | 0 	         48   |   x 	            88   |    num lock          144
+    // | 1 	         49   |   y 	            89   |    scroll lock      	145
+    // | 2 	         50   |   z 	            90   |    semi-colon       	186
+    // | 3 	         51   |   left window key   91   |    equal sign       	187
+    // | 4 	         52   |   right window key  92   |    comma             188
+    // | 5 	         53   |   select key 	    93   |    dash          	189
+    // | 6 	         54   |   numpad 0 	        96   |    period            190
+    // | 7 	         55   |   numpad 1 	        97   |    forward slash     191
+    // | 8 	         56   |   numpad 2 	        98   |    grave accent      192
+    // | 9 	         57   |   numpad 3 	        99   |    open bracket      219
+    // | a 	         65   |   numpad 4 	        100  |    back slash        220
+    // | b 	         66   |   numpad 5 	        101  |    close braket      221
+    // | c 	         67   |   numpad 6 	        102  |    single quote 	    222
+    // | d 	         68   |   numpad 7 	        103  |
+
     // Capture ctrl-z (Windows/Linux) and cmd-z (MacOSX)
     if (e.which === 90 && (e.ctrlKey || e.metaKey)) {
         vis.undo();
@@ -3720,22 +3780,58 @@ $(document).keydown(function (e) {
         // Ctrl+A
         if (vis.selectAll()) {
             e.preventDefault();
-        };
+        }
     } else if (e.which === 27) {
         // Esc
         if (vis.deselectAll()) {
             e.preventDefault();
         }
-    }else if (e.which === 46) {
+    } else if (e.which === 46) {
         // Capture Delete button
         if (vis.onButtonDelete()) {
             e.preventDefault();
         }
-    } else
-    // Capture down, up, left, right for shift
-    if (e.which === 37 || e.which === 38 || e.which === 40 || e.which === 39) {
+    } else if (e.which === 37 || e.which === 38 || e.which === 40 || e.which === 39) {
+        // Capture down, up, left, right for shift
         if (vis.onButtonArrows(e.which, e.shiftKey, (e.ctrlKey || e.metaKey ? 10 : 1))) {
             e.preventDefault();
+        }
+    } else if (e.which === 113) {
+        $("#ribbon_tab_dev").toggle();
+        e.preventDefault();
+    }else if (e.which === 114) {
+        // Fullscreen
+        var $container = $("#vis_container");
+        if ($container.hasClass('fullscreen')) {
+            $container
+                .removeClass("fullscreen")
+                .appendTo('#vis_wrap');
+        } else {
+            $container.
+                prependTo('body')
+                .addClass("fullscreen")
+        }
+        e.preventDefault();
+    }else if (e.which === 33) {
+        // Next View
+        var $next = $('.view_select_tab.ui-state-active').next();
+
+        if ($next.hasClass('view_select_tab')){
+
+            $next.trigger("click")
+        }else{
+            $('.view_select_tab.ui-state-active').parent().children().first().trigger("click")
+        }
+
+        e.preventDefault();
+    }if (e.which === 34) {
+        // Prev View
+        var $prev = $('.view_select_tab.ui-state-active').prev();
+
+        if ($prev.hasClass('view_select_tab')){
+            $prev.trigger("click")
+        }else{
+            $('.view_select_tab.ui-state-active').parent().children().last().trigger("click")
         }
     }
 });
@@ -3747,6 +3843,8 @@ $(window).on("paste", function (e) {
     vis.copy(e.type == "cut");
 });
 
-window.onbeforeunload = function() {
+window.onbeforeunload = function () {
     return vis.onPageClosing();
 };
+
+

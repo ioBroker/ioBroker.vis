@@ -8,8 +8,11 @@
 		Before you start Chrome anew all other instances should be closed.
 		For local start lib directory from ccu.io is required and datastore in ../ directory.
 	-->
+    <link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/redmond/jquery-ui.min.css" id="editor_theme">
+
 
     <meta charset="utf-8"/>
+
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
@@ -17,25 +20,30 @@
 
     <title>ioBroker.vis</title>
 
-    <link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/redmond/jquery-ui.min.css" id="jqui_theme">
-    <link rel="stylesheet" type="text/css" href="../lib/css/fancytree/ui.fancytree.min.css"/>
 
+    <link rel="stylesheet" type="text/css" href="lib/css/fancytree/ui.fancytree.min.css"/>
+
+    <link rel="stylesheet" type="text/css" href="lib/css/superfish/superfish.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect-1.13.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect.filter.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.jgrowl.min.css"/>
     <link rel="stylesheet" type="text/css" href="widgets/colorpicker/css/farbtastic.css"/>
 
+
     <link rel="stylesheet" type="text/css" href="css/backgrounds.css"/>
     <link rel="stylesheet" type="text/css" href="css/vis.css"/>
-    <link rel="stylesheet" type="text/css" href="css/vis-common-user.css"/>
-    <link rel="stylesheet" type="text/css" id="project_css" />
+    <link rel="stylesheet" type="text/css" href="css/vis_editor.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="css/vis-common-user.css"/>-->
+    <link rel="stylesheet" type="text/css" id="project_css"/>
 
-    <script type="text/javascript" src="../lib/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="lib/js/jquery-ui-1.11.2.full.min.js"></script>
-    <script type="text/javascript" src="../lib/js/jquery.fancytree-all.min.js"></script>
-    <script type="text/javascript" src="../lib/js/selectID.js"></script>
-    <script type="text/javascript" src="../lib/js/socket.io.js"></script>
-    <script type="text/javascript" src="../lib/js/translate.js"></script>
+
+
+    <script type="text/javascript" src="lib/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="lib/js/jquery-ui-1.10.3.full.min.js"></script>
+    <script type="text/javascript" src="lib/js/jquery.fancytree-all.min.js"></script>
+    <script type="text/javascript" src="lib/js/selectID.js"></script>
+    <script type="text/javascript" src="lib/js/socket.io.js"></script>
+    <script type="text/javascript" src="lib/js/translate.js"></script>
 
     <script type="text/javascript" src="lib/js/jquery.multiselect-1.13.js"></script>
     <script type="text/javascript" src="lib/js/jquery.multiselect.filter-1.5pre.js"></script>
@@ -47,19 +55,26 @@
     <script type="text/javascript" src="lib/js/html2canvas.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
 
+    <script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script>
+
+    <script type="text/javascript" src="lib/js/superclick.js"></script>
+
     <script type="text/javascript" src="widgets/colorpicker/js/farbtastic.js"></script>
 
     <script type="text/javascript" src="js/xs_combo.js"></script>
     <script type="text/javascript" src="js/fm/fileManager.js"></script>
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before vis.js -->
 
-    <script type="text/javascript" src="/_socket/info.js"></script>
+    <script type="text/javascript" src="js/config.js"></script>
+    <!-- this file must be before vis.js -->
+    <script type="text/javascript" src="js/visLang.js"></script>
+    <!--<script type="text/javascript" src="/_socket/info.js"></script>-->
     <script type="text/javascript" src="js/conn.js"></script>
     <script type="text/javascript" src="js/vis.js"></script>
     <script type="text/javascript" src="js/visEditWelcome.js"></script>
     <script type="text/javascript" src="js/visEdit.js"></script>
     <script type="text/javascript" src="js/visEditExt.js"></script>
-    <script type="text/javascript" src="js/visLang.js"></script>
+    <!--<script type="text/javascript" src="js/fm/file_manager.js"></script>-->
     <!--script type="text/javascript" src="js/visEditExt.js"></script-->
     <!--script type="text/javascript" src="js/visWizard.js"></script-->
 
@@ -67,131 +82,415 @@
     <!--- widgetsStop -->
 </head>
 <body>
-	<div id='waitScreen' class='vis-wait-screen'>
-        <div id='waitDialog' class='waitDialog'>
-            <div class='vis-progressbar '></div>
-            <div class='vis-wait-text' id='waitText'></div>
+<div id='waitScreen' class='vis-wait-screen'>
+    <div id='waitDialog' class='waitDialog'>
+        <div class='vis-progressbar '></div>
+        <div class='vis-wait-text' id='waitText'></div>
+    </div>
+</div>
+
+<div style="display: none;text-align: center" id="dialog_delete">
+    <table style="height: 100%;width: 100%">
+        <tr>
+            <td><span class="ui-icon ui-icon-alert" style="display:inline-block"></span><span id="dialog_delete_content"
+                                                                                              style="display:inline-block;padding-left:10px"></span>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: left; vertical-align: bottom"><input type="checkbox" id="dialog_delete_is_show"
+                                                                        style="display:inline-block;padding-left:10px">
+                <span class="translate">Do not ask again</span></td>
+        </tr>
+    </table>
+</div>
+<div style="display: none;text-align: center" id="dialog_about">
+
+    <ul style="font-size: 1.1em; line-height: 2em; display: inline;">
+        <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank" class="translate">Webseite</a></li>
+        <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank"
+               class="translate">Unterstützung</a></li>
+        <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank" class="translate">Änderungs-Historie</a>
+        </li>
+    </ul>
+
+    <h4>Copyright &copy; 2013, 2014 <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a>, Bluefox
+    </h4>
+
+    <p class="translate">CC BY-NC License</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img
+        src="img/cc-nc-by.png"/></a>
+    <!--p class="translate">license1</p>
+    <p class="translate">license2</p>
+    <p class="translate">license3</p>
+    <p class="translate">license4</p-->
+    <p class="translate">license5</p>
+</div>
+<div style="display: none;" id="dialog_export_view" title="export view" class="translateT">
+    <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
+              id="textarea_export_view"></textarea>
+</div>
+<div style="display: none;" id="dialog_import_view" title="import view" class="translateT">
+    <textarea rows="50" cols="160" style="width: 99%; height: calc(98% - 40px); font-size: 11px;"
+              id="textarea_import_view"></textarea>
+    <br/>
+    <input type="text" id="name_import_view">
+    <button id="start_import_view" class="translateB">import</button>
+</div>
+<div style="display: none ;text-align: center" id="dialog_shortcuts">
+    <table style="height: 100%;width: 100%">
+        <colgroup>
+            <col style="text-align: left">
+            <col style="text-align: center">
+            <col style="text-align: center">
+        </colgroup>
+        <tr>
+            <td class="translate">
+                Show develop ribbon
+            </td>
+            <td class="translate">
+            </td>
+            <td class="translate">
+                F2
+            </td>
+        </tr>
+        <tr>
+            <td class="translate">
+                Fullsceen
+            </td>
+            <td class="translate">
+
+            </td>
+            <td class="translate">
+                F3
+            </td>
+        </tr>
+        <tr>
+            <td class="translate">
+                Next View
+            </td>
+            <td class="translate">
+
+            </td>
+            <td class="translate">
+                PgUp
+            </td>
+        </tr>
+        <tr>
+            <td class="translate">
+                Prev. View
+            </td>
+            <td class="translate">
+            </td>
+            <td class="translate">
+                PgDown
+            </td>
+        </tr>
+        <tr>
+            <td class="translate">
+                Move Widget 1px
+            </td>
+            <td class="translate">
+            </td>
+            <td class="translate">
+                Arrow Keys
+            </td>
+        </tr>
+        <tr>
+            <td class="translate">
+                Move Widget 10px
+            </td>
+            <td class="translate">
+                STRG / CMD
+            </td>
+            <td class="translate">
+                Arrow Keys
+            </td>
+        </tr>
+        <tr>
+            <td class="translate">
+            </td>
+            <td class="translate">
+            </td>
+            <td class="translate">
+            </td>
+        </tr>
+        <tr>
+            <td class="translate">
+            </td>
+            <td class="translate">
+            </td>
+            <td class="translate">
+            </td>
+        </tr>
+    </table>
+</div>
+<div style="height: 32px; width: 100%; position: absolute; top: 0;left:0" class="ui-widget-header ">
+
+</div>
+
+
+<div id="menu_body" style="padding: 0;border: none; background: transparent;z-index: 100 ">
+    <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -2px;">
+        <li>
+            <a href="#ribbon_datei" style="padding: 2px 4px 2px 4px" class="translate">Datei</a>
+        </li>
+        <li>
+            <a href="#ribbon_view" style="padding: 2px 4px 2px 4px" class=" translate">Views</a>
+        </li>
+        <li>
+            <a href="#ribbon_widget" style="padding: 2px 4px 2px 4px" class="translate">Widgets</a>
+        </li>
+        <li id="ribbon_tab_dev" style="display: none">
+            <a href="#ribbon_dev" style="padding: 2px 4px 2px 4px" class="translate">Dev</a>
+        </li>
+        <li>
+            <a href="#ribbon_tools" style="padding: 2px 4px 2px 4px" class="translate">Tools</a>
+        </li>
+    </ul>
+    <div id="menu_sf" style="display: inline-block; margin-bottom: -2px;">
+        <ul id="menu" style="margin: 0;height: auto;" class="sf-menu">
+            <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Setup</a>
+                <ul style="display: none;">
+                    <li class="ui-state-default menu-tab" role="tab" style="width: 150px">
+                        <a class="menu-tab-text translate">Theme</a>
+                        <ul id="ul_theme">
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="dhive">Dark-Hive</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="start">Start</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="humanity">humanity</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="blitzer">blitzer</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="swanky-purse">Swanky Purse</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="black-tie">BlackTie</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="cupertino">Cupertino</a>
+                            </li>
+                            <!--<li class="ui-state-default  menu_item">
+                            <a class="translate" data-info="dot-lov">Dot Lov</a></li>-->
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="eggplant">Eggplant</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="excite-bike">excite-bike</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="flick">flick</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="le-frog">le-frog</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="mint-choc">mint-choc</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="overcast">overcast</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="pepper-grinder">pepper-grinder</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="redmond">redmond</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="smoothness">smoothness</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="south-street">south-street</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="sunny">sunny</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="trontastic">trontastic</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="ui-darkness">ui-darkness</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="ui-lightness">ui-lightness</a>
+                            </li>
+                            <li class="ui-state-default  menu_item">
+                                <a class="translate" data-info="vader">vader</a></li>
+                        </ul>
+                    </li>
+                    <li class="ui-state-default menu-tab" role="tab" style="width: 150px">
+                        <a class="menu-tab-text translate">Language</a>
+                        <ul>
+                            <li class="ui-state-default language_select  menu_item" data-language="de">
+                                <a class="translate ">German</a>
+                            </li>
+                            <li class="ui-state-default language_select menu_item" data-language="en">
+                                <a class="translate ">English</a>
+                            </li>
+                            <li class="ui-state-default language_select menu_item" data-language="ru">
+                                <a class="translate ">Rusisch</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Help</a>
+                <ul>
+                    <li class="ui-state-default  menu_item"><a id="m_shortcuts" class="translate">Shortcuts</a></li>
+                    <li class="ui-state-default  menu_item"><a id="m_about" class="translate">About</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <img src="lib/img/edit-undo-8.png" id="button_undo" class="ui-state-default ui-corner-top">
+
+    <div class="ribbon_tab" id="ribbon_datei">
+        <div class="ribbon_tab_content ui-widget-content">
+
         </div>
     </div>
-
-    <div style="display: none;text-align: center" id="dialog_delete">
-        <table style="height: 100%;width: 100%">
-            <tr><td><span class="ui-icon ui-icon-alert" style="display:inline-block"></span><span id="dialog_delete_content" style="display:inline-block;padding-left:10px"></span></td></tr>
-            <tr><td style="text-align: left; vertical-align: bottom"><input type="checkbox" id="dialog_delete_is_show" style="display:inline-block;padding-left:10px">
-                <span class="translate">Do not ask again</span></td></tr>
-        </table>
-    </div>
-
-    <div id="vis_container" style="position: absolute; top: 0; left: 0; height:100%; width:100%">
-        <div id="widget_helper">
-            <div id="widget_inner_helper"></div>
-        </div>
-        <div id="allwidgets_helper" style="display:none">
-            <div id="allwidgets_inner_helper"></div>
-        </div>
-
-        <div id="size_x" style="display:none; z-index: 99; position: absolute; top: 0px; width:0px; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
-        <div id="size_y" style="display:none; z-index: 99; position: absolute; left: 0px; height:0px; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
-    </div>
-
-    <div id="vis_editor" title="">
-        <div id="tabs" style="font-size: 0.7em !important">
-            <ul>
-                <li><a href="#tabs-1" class="translate">Views</a></li>
-                <li><a href="#tabs-4" class="translate">Widgets</a></li>
-                <li><a href="#tabs-3" class="translate">CSS Inspector</a></li>
-                <li><a href="#tabs-2" class="translate">Misc</a></li>
-                <li><a href="#tabs-5" class="translate">Info</a></li>
-            </ul>
-
-            <div class="vis-edit-tab" id="tabs-1">
-                <h4 class="translate">New View</h4>
-                <div style="width:90px; display:inline-block" class="translate">Name:</div>
-                <input id="new_view_name" type="text" /><button class="vis-editor translateB" id="add_view" type="button">add_view</button>
-                <button class="vis-editor translateB" id="dup_view" type="button" >dup_view</button>
-
-                <h4 class="translate">Current View</h4>
-                <div style="width:90px; display:inline-block" class="translate">View:</div>
-                <select id="select_view" class="vis-editor-large"></select>
-                <button class="vis-editor translateB" id="del_view" type="button" >del_view</button>
-                <br><br>
-                <div style="width:90px; display:inline-block" class="translate">New Name:</div>
-                <input id="new_name" type="text" /><button class="vis-editor translateB" id="rename_view" type="button">rename_view</button>
-
-                <h4 class="translate">View Attributes</h4>
-                <table>
+    <div class="ribbon_tab" id="ribbon_view">
+        <div class="ribbon_tab_content ui-widget-content">
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
                     <tr>
-                        <td class="vis-edit-td-caption translate">comment</td><td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_comment" class="vis-inspect-view vis-edit-textbox"/></td>
-                    </tr>
-
-                    <tr>
-                        <td class="vis-edit-td-caption translate">theme</td><td class="vis-edit-td-field">
-                            <select id="inspect_view_theme" class="vis-editor vis-edit-select" data-multiselect-width="250" data-multiselect-height="180">
-                                <option value="black-tie">black-tie</option>
-                                <option value="blitzer">blitzer</option>
-                                <option value="cupertino">cupertino</option>
-                                <option value="dhive">dark-hive</option>
-                                <option value="dot-luv">dot-luv</option>
-                                <option value="eggplant">eggplant</option>
-                                <option value="excite-bike">excite-bike</option>
-                                <option value="flick">flick</option>
-                                <option value="hot-sneaks">hot-sneaks</option>
-                                <option value="humanity">humanity</option>
-                                <option value="kian">kiandra</option>
-                                <option value="le-frog">le-frog</option>
-                                <option value="mint-choc">mint-choc</option>
-                                <option value="overcast">overcast</option>
-                                <option value="pepper-grinder">pepper-grinder</option>
-                                <option value="redmond">redmond</option>
-                                <option value="smoothness">smoothness</option>
-                                <option value="south-street">south-street</option>
-                                <option value="start">start</option>
-                                <option value="sunny">sunny</option>
-                                <option value="swanky-purse">swanky-purse</option>
-                                <option value="trontastic">overcast</option>
-                                <option value="ui-dn">ui-darkness</option>
-                                <option value="ui-lightness">ui-lightness</option>
-                                <option value="vader">vader</option>
-
-                            </select>
+                        <td colspan="2">
+                            <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">ADD
+                                View
+                            </div>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="dup_view" type="button">dup_view</button>
                         </td>
                     </tr>
                     <tr>
-                        <td class="vis-edit-td-caption translate">class</td><td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_class" class="vis-inspect-view vis-edit-textbox"/></td>
+                        <td>
+                            <div style="width:80px; display:inline-block" class="translate">Name:</div>
+                        </td>
+                        <td>
+                            <input id="new_view_name" type="text"/>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="add_view" type="button">add_view</button>
+                        </td>
 
+                    </tr>
+                </table>
+
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">
+                                Current View
+                            </div>
+                        </td>
                     </tr>
                     <tr>
-                        <td class="vis-edit-td-caption translate">default_filter_key</td><td class="vis-edit-td-field"><input size="48" type="text" id="inspect_view_filterkey" class="vis-inspect-view vis-edit-textbox"/></td>
+                        <td>
+                            <select id="select_view" class="vis-editor-large"></select>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="del_view" type="button">del_view</button>
+                        </td>
                     </tr>
-
                 </table>
             </div>
-
-            <div class="vis-edit-tab" id="tabs-2">
-                <h4 class="translate">Snapping</h4>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table>
                     <tr>
-                        <td style="width: 80px" class="translate">Mode:</td>
-                        <td>
-                            <select id="snap_type">
-                                <option value="0" selected="selected" class="translate">disabled</option>
-                                <option value="1" class="translate">elements</option>
-                                <option value="2" class="translate">grid</option>
-                            </select>
+                        <td colspan="3">
+                            <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">
+                                Rename View
+                            </div>
                         </td>
-                        </tr>
+                    </tr>
                     <tr>
-                        <td class="translate">grid size</td>
-                        <td><input id="grid_size" type="number" value=""/></td>
+                        <td>
+                            <input id="new_name" type="text"/>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="rename_view" type="button">rename_view</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="ribbon_tab" id="ribbon_widget">
+        <div class="ribbon_tab_content ui-widget-content">
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td colspan="1" style="text-align: center; height: 24px;">Remove Widget</td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="button" class="vis-editor translateB" id="del_widget">del_widget</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td colspan="1">Inspeckt Widget</td>
+                        <td>
+                            <button type="button" class="vis-editor translateB" id="widget_doc">widget_doc</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select class="vis-editor" id="select_view_copy"></select>
+                        </td>
+                        <td>
+                            <button type="button" class="vis-editor translateB" id="dup_widget">dup_widget</button>
+                        </td>
+
+
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td colspan="1" style="height: 22px">
+                            <div style="text-align: center" class="translate">Activ Widget:</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select id="select_active_widget" class="vis-editor" data-multiselect-width="250"
+                                    data-multiselect-height="250"></select>
                         </td>
                     </tr>
                 </table>
 
-                <h4 class="translate">Screensize</h4>
-                <table>
+            </div>
+        </div>
+
+
+        <!--<div style="width: 100%; height: 70px" class="ui-widget-content">-->
+        <!--<img src="lib/img/delete.png" class="ibar_icon" id="ibar_wid-del" title="Del Widget"/>-->
+        <!--<select id="select_active_widget" class="vis-editor" data-multiselect-width="300"-->
+        <!--data-multiselect-height="265"></select>-->
+        <!--</div>-->
+    </div>
+    <div class="ribbon_tab" id="ribbon_tools">
+        <div class="ribbon_tab_content ui-widget-content">
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
                     <tr>
-                        <td style="width: 80px" class="translate">Resolution</td>
-                        <td>
+                        <td colspan="4" style="text-align: center" class="translate">Resolution</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align: center">
                             <select id="screen_size">
                                 <option value="user" class="translate">User defined</option>
                                 <option value="320x460">iPhone 3G, 3GS, 4, 4S - Portrait</option>
@@ -224,523 +523,597 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 80px" class="translate">Width</td>
-                        <td><input id="screen_size_x" type="number" value=""/></td>
-                    </tr>
-                    <tr>
+                        <td class="translate">Width</td>
+                        <td><input id="screen_size_x" type="number" style="width: 60px" value=""/></td>
                         <td class="translate">Height</td>
-                        <td><input id="screen_size_y" type="number" value=""/></td>
+                        <td><input id="screen_size_y" type="number" style="width: 60px" value=""/></td>
+
                     </tr>
                 </table>
-
-                <h4 class="translate">Hide widget description</h4>
-                <table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
                     <tr>
-                        <td style="width: 80px" class="translate">Is hide</td>
-                        <td><input id="screen_hide_description" type="checkbox" /></td>
+                        <td colspan="3" style="text-align: center; height: 24px;" class="translate">
+                            External Commands
+                        </td>
                     </tr>
-                </table>
-
-                <h4 class="translate">Wizard</h4>
-                <table>
-                    <tr><td style="width: 80px" class='translate'>Room:</td>    <td><select id="wizard_rooms"></select></td></tr>
-                    <tr><td style="width: 80px" class='translate'>Function:</td><td><select id="wizard_funcs"></select></td></tr>
-                    <tr><td style="width: 80px" class='translate'>Widget:</td>  <td><select id="wizard_widgets"></select></td></tr>
-                </table>
-                <button class="vis-editor translateB" type="button" id="wizard_run">wizard_run</button>
-
-
-
-                <h4 class="translate">External Commands</h4>
-                <span id="instance"><span style=" display: inline-block;width: 80px" class="translate">Instance ID</span> <input type="input" id="vis_instance"/>
-                <button type="button" class="vis-editor translateB" id="create_instance">create_instance</button>
-
-                </span>
-
-                <h4>Language</h4>
-                <table>
                     <tr>
-                        <td style="width: 80px">Language:
+                        <td>
+                            <span style=" display: inline-block;" class="translate">Instance ID</span>
                         </td>
                         <td>
-                            <select id="language">
-                                <option value='en'>English</option>
-                                <option value='de'>Deutsch</option>
-                                <option value='ru'>Русский</option>
-                             </select>
+                            <input type="input" id="vis_instance"/>
+                        </td>
+                        <td>
+                            <button type="button" class="vis-editor translateB" id="create_instance">create_instance</button>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td colspan="2" style="text-align: center; height: 24px;">Import / Export View</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="vis-editor translateB" id="export_view">export view</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="import_view">import view</button>
                         </td>
                     </tr>
                 </table>
-
-                <h4 class="translate">Import / Export View</h4>
-                <button class="vis-editor translateB" id="export_view">export view</button>
-                <button class="vis-editor translateB" id="import_view">import view</button>
-
-                <h4 class="translate" id="local_view" style="display:none">Local Views</h4>
-                <button class="vis-editor translateB" id="export_local_view" style="display:none">export views</button>
-                <button class="vis-editor translateB" id="import_local_view" style="display:none">import views</button><br>
-                <button class="vis-editor translateB" id="clear_local_view" style="display:none">clear cached views</button>
-
             </div>
 
-            <div class="vis-edit-tab" id="tabs-3">
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td colspan="3" style="text-align: center; height: 24px;">Local Views</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="vis-editor translateB" id="export_local_view">export views</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="import_local_view">import views</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="clear_local_view">clear cached views</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="ribbon_tab" id="ribbon_dev">
+            <div class="ribbon_tab_content ui-widget-content">
+                <button id="dev_show_html">Show Widget HTML</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="panel_body" style="height: 100%">
+    <div class="ui-widget-content" id="pan_add_wid">
+        <div class="ui-state-default translateT" style="height:16px;font-size:16px;padding: 5px;font-weight: bolder;">
+            Add Widget
+        </div>
+        <select id="select_set" class="vis-editor select-set"></select>
+
+        <div id="toolbox" class="toolbox"></div>
+    </div>
+    <div id="vis_wrap">
+        <div id="view_select" class="ui-widget-content">
+            <button id="view_select_left"></button>
+            <div id="view_select_tabs_wrap">
+                <div id="view_select_tabs"></div>
+            </div>
+            <button id="view_select_right"></button>
+        </div>
+        <div id="vis_container" caption="Views">
+            <div id="widget_helper">
+                <div id="widget_inner_helper"></div>
+            </div>
+            <div id="allwidgets_helper">
+                <div id="allwidgets_inner_helper"></div>
+            </div>
+
+            <div id="size_x"
+                 style="display:none; z-index: 99; position: absolute; top: 0; width:0; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
+            <div id="size_y"
+                 style="display:none; z-index: 99; position: absolute; left: 0; height:0; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
+        </div>
+    </div>
+    <div id="pan_attr">
+        <div class="ui-state-default translateT" style="height: 16px;font-size: 16px;padding: 5px;font-weight: bolder;">
+            Attribute
+        </div>
+        <div id="attr_wrap">
+            <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -2px;">
+                <li>
+                    <a href="#tab_wid_attr" style="padding: 2px 4px 2px 4px" class="translate">Widget</a>
+                </li>
+                <li>
+                    <a href="#tab_view_attr" style="padding: 2px 4px 2px 4px" class="translate">View</a>
+                </li>
+            </ul>
+            <div class="tab_attr ui-widget-content" id="tab_view_attr">
                 <div id="view_inspector">
-                    <h4><span class="translate">View:</span> <span id="inspect_view"></span></h4>
-                    <table>
-                        <tr><td colspan="4" class="css-inspector-heading">background</td></tr>
-                        <tr><td class="translate">Background</td><td id="inspect_view_bkg_parent"></td></tr>
+                    <table style="width: 330px; border: 0px">
                         <tr>
-                            <td>-color</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_background-color" class="vis-inspect-view-css"/>
-                            </td>
+                            <td class="vis-edit-td-caption translate">comment</td>
+                            <td class="vis-edit-td-field"><input size="15" type="text" id="inspect_view_comment" class="vis-inspect-view vis-edit-textbox"/></td>
                         </tr>
                         <tr>
-                            <td>-image</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_background-image" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-repeat</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_background-repeat" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-attachment</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_background-attachment" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-position</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_background-position" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-size</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_background-size" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-clip</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_background-clip" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-origin</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_background-origin" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr><td colspan="4" class="css-inspector-heading">font / text</td></tr>
+                            <td class="vis-edit-td-caption translate">class</td>
+                            <td class="vis-edit-td-field"><input size="15" type="text" id="inspect_view_class" class="vis-inspect-view vis-edit-textbox"/></td>
 
-                        <tr>
-                            <td>color</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_color" class="vis-inspect-view-css"/>
-                            </td>
                         </tr>
                         <tr>
-                            <td>text-shadow</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_text-shadow" class="vis-inspect-view-css"/>
-                            </td>
+                            <td class="vis-edit-td-caption translate">filter_key</td>
+                            <td class="vis-edit-td-field"><input size="15" type="text" id="inspect_view_filterkey" class="vis-inspect-view vis-edit-textbox"/></td>
                         </tr>
                         <tr>
-                            <td>font-family</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_font-family" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-style</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_font-style" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-variant</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_font-variant" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-weight</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_font-weight" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-size</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_font-size" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>line-height</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_line-height" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>letter-spacing</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_letter-spacing" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>word-spacing</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_view_css_word-spacing" class="vis-inspect-view-css"/>
+                            <td class="vis-edit-td-caption translate">Theme</td>
+                            <td class="vis-edit-td-field">
+                                <select id="inspect_view_theme" class="vis-editor vis-edit-select" data-multiselect-width="200" data-multiselect-height="250">
+                                    <option value="black-tie">black-tie</option>
+                                    <option value="blitzer">blitzer</option>
+                                    <option value="cupertino">cupertino</option>
+                                    <option value="dhive">dark-hive</option>
+                                    <option value="dot-luv">dot-luv</option>
+                                    <option value="eggplant">eggplant</option>
+                                    <option value="excite-bike">excite-bike</option>
+                                    <option value="flick">flick</option>
+                                    <option value="hot-sneaks">hot-sneaks</option>
+                                    <option value="humanity">humanity</option>
+                                    <option value="kian">kiandra</option>
+                                    <option value="le-frog">le-frog</option>
+                                    <option value="mint-choc">mint-choc</option>
+                                    <option value="overcast">overcast</option>
+                                    <option value="pepper-grinder">pepper-grinder</option>
+                                    <option value="redmond">redmond</option>
+                                    <option value="smoothness">smoothness</option>
+                                    <option value="south-street">south-street</option>
+                                    <option value="start">start</option>
+                                    <option value="sunny">sunny</option>
+                                    <option value="swanky-purse">swanky-purse</option>
+                                    <option value="trontastic">overcast</option>
+                                    <option value="ui-dn">ui-darkness</option>
+                                    <option value="ui-lightness">ui-lightness</option>
+                                    <option value="vader">vader</option>
+                                </select>
                             </td>
                         </tr>
                     </table>
-                </div>
-
-                <div class="vis-widget-tools">
-                    <br><button id="css_view_inspector" class="vis-editor">inspect View CSS</button>
-                    <h4><span class="translate">Widget:</span> <span id="inspect_wid"></span></h4>
-                    <table id="css_table">
+                    <div style="padding-top: 15px;font-size: 20px;font-weight: bolder;" class="translate">CSS:</div>
+                    <table>
                         <tr>
-                            <td>left</td>
-                            <td>
-                                <input size="8" type="text" id="inspect_css_left" class="vis-inspect-css"/>
-                                <input id="steal_left" type="checkbox" data-vis-steal="left" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_left">steal</label>
-                            </td>
-
-                            <td>top</td>
-                            <td><input size="8" type="text" id="inspect_css_top" class="vis-inspect-css"/>
-                                <input id="steal_top" type="checkbox" data-vis-steal="top" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_top">steal</label>
-                            </td>
+                            <td colspan="4" class="css-inspector-heading">Background</td>
                         </tr>
                         <tr>
-                            <td>width</td>
-                            <td><input size="8" type="text" id="inspect_css_width" class="vis-inspect-css"/>
-                                <input id="steal_width" type="checkbox" data-vis-steal="width" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_width">steal</label>
-                            </td>
-                            <td>height</td>
-                            <td>
-                                <input size="8" type="text" id="inspect_css_height" class="vis-inspect-css"/>
-                                <input id="steal_height" type="checkbox" data-vis-steal="height" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_height">steal</label>
-                            </td>
+                            <td colspan="3" id="inspect_view_bkg_parent"></td>
                         </tr>
-                        <tr>
-                            <td>z-index</td>
-                            <td>
-                                <input size="8" type="text" id="inspect_css_z-index" class="vis-inspect-css"/>
-                                <input id="steal_zIndex" type="checkbox" data-vis-steal="z-index" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_zIndex">steal</label>
-                            </td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>overflow-x</td>
-                            <td>
-                                <input size="8" type="text" id="inspect_css_overflow-x" class="vis-inspect-css"/>
-                                <input id="steal_overflowX" type="checkbox" data-vis-steal="overflow-x" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_overflowX">steal</label>
-                            </td>
-                            <td>overflow-y</td>
-                            <td>
-                                <input size="8" type="text" id="inspect_css_overflow-y" class="vis-inspect-css"/>
-                                <input id="steal_overflowY" type="checkbox" data-vis-steal="overflow-y" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_overflowY">steal</label>
-                            </td>
-                        </tr>
-
-                        <tr><td colspan="4" class="css-inspector-heading"></td></tr>
-                        <tr>
-                            <td>padding</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_padding" class="vis-inspect-css"/>
-                                <input id="steal_padding" type="checkbox" data-vis-steal="padding" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_padding">steal</label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>box-shadow</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_box-shadow" class="vis-inspect-css"/>
-                                <input id="steal_boxShadow" type="checkbox" data-vis-steal="box-shadow" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_boxShadow">steal</label>
-                            </td>
-                        </tr>
-
-                        <tr><td colspan="4" class="css-inspector-heading">font / text</td></tr>
-                        <tr>
-                            <td>color</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_color" class="vis-inspect-css"/>
-                                <input id="steal_color" type="checkbox" data-vis-steal="color" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_color">steal</label>
-                            </td>
-
-                        </tr>
-                        <tr>
-                            <td>text-align</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_text-align" class="vis-inspect-css"/>
-                                <input id="steal_textAlign" type="checkbox" data-vis-steal="text-align" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_textAlign">steal</label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>text-shadow</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_text-shadow" class="vis-inspect-css"/>
-                                <input id="steal_textShadow" type="checkbox" data-vis-steal="text-shadow" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_textShadow">steal</label>
-                                <a data-vis-clear="" class="vis-clear-css"></a>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>font-family</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_font-family" class="vis-inspect-css"/>
-                                <input id="steal_fontFamily" type="checkbox" data-vis-steal="font-family" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_fontFamily">steal</label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-style</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_font-style" class="vis-inspect-css"/>
-                                <input id="steal_fontStyle" type="checkbox" data-vis-steal="font-style" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_fontStyle">steal</label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-variant</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_font-variant" class="vis-inspect-css"/>
-                                <input id="steal_fontVariant" type="checkbox" data-vis-steal="font-variant" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_fontVariant">steal</label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-weight</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_font-weight" class="vis-inspect-css"/>
-                                <input id="steal_fontWeight" type="checkbox" data-vis-steal="font-weight" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_fontWeight">steal</label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-size</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_font-size" class="vis-inspect-css"/>
-                                <input id="steal_fontSize" type="checkbox" data-vis-steal="font-size" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_fontSize">steal</label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>line-height</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_line-height" class="vis-inspect-css"/>
-                                <input id="steal_lineHeight" type="checkbox" data-vis-steal="line-height" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_lineHeight">steal</label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>letter-spacing</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_letter-spacing" class="vis-inspect-css"/>
-                                <input id="steal_letterSpacing" type="checkbox" data-vis-steal="letter-spacing" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_letterSpacing">steal</label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>word-spacing</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_word-spacing" class="vis-inspect-css"/>
-                                <input id="steal_wordSpacing" type="checkbox" data-vis-steal="word-spacing" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_wordSpacing">steal</label>
-                                <a data-vis-clear="" class="vis-clear-css"></a>
-                            </td>
-                        </tr>
-
-                        <tr><td colspan="4" class="css-inspector-heading">background</td></tr>
                         <tr>
                             <td>-color</td>
                             <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_background-color" class="vis-inspect-css"/>
-                                <input id="steal_backgroundColor" type="checkbox" data-vis-steal="background-color" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_backgroundColor">steal</label>
+                                <input size="31" type="text" id="inspect_view_css_background-color" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-image</td>
                             <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_background-image" class="vis-inspect-css"/>
-                                <input id="steal_backgroundImage" type="checkbox" data-vis-steal="background-image" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_backgroundImage">steal</label>
+                                <input size="31" type="text" id="inspect_view_css_background-image" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-repeat</td>
                             <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_background-repeat" class="vis-inspect-css"/>
-                                <input id="steal_backgroundRepeat" type="checkbox" data-vis-steal="background-repeat" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_backgroundRepeat">steal</label>
+                                <input size="31" type="text" id="inspect_view_css_background-repeat" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-attachment</td>
                             <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_background-attachment" class="vis-inspect-css"/>
-                                <input id="steal_backgroundAttachment" type="checkbox" data-vis-steal="background-attachment" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_backgroundAttachment">steal</label>
+                                <input size="31" type="text" id="inspect_view_css_background-attachment" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-position</td>
                             <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_background-position" class="vis-inspect-css"/>
-                                <input id="steal_backgroundPosition" type="checkbox" data-vis-steal="background-position" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_backgroundPosition">steal</label>
+                                <input size="31" type="text" id="inspect_view_css_background-position" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-size</td>
                             <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_background-size" class="vis-inspect-css"/>
-                                <input id="steal_backgroundSize" type="checkbox" data-vis-steal="background-size" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_backgroundSize">steal</label>
+                                <input size="31" type="text" id="inspect_view_css_background-size" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-clip</td>
                             <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_background-clip" class="vis-inspect-css"/>
-                                <input id="steal_backgroundClip" type="checkbox" data-vis-steal="background-clip" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_backgroundClip">steal</label>
+                                <input size="31" type="text" id="inspect_view_css_background-clip" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-origin</td>
                             <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_background-origin" class="vis-inspect-css"/>
-                                <input id="steal_backgroundOrigin" type="checkbox" data-vis-steal="background-origin" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_backgroundOrigin">steal</label>
-                            </td>
-                        </tr>
-
-                        <tr><td colspan="4" class="css-inspector-heading">border</td></tr>
-                        <tr>
-                            <td>-width</td>
-                            <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_border-width" class="vis-inspect-css"/>
-                                <input id="steal_borderWidth" type="checkbox" data-vis-steal="border-width" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_borderWidth">steal</label>
+                                <input size="31" type="text" id="inspect_view_css_background-origin" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
-                            <td>-style</td>
+                            <td colspan="4" class="css-inspector-heading">font / text</td>
+                        </tr>
+                        <tr>
+                            <td>color</td>
                             <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_border-style" class="vis-inspect-css"/>
-                                <input id="steal_borderStyle" type="checkbox" data-vis-steal="border-style" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_borderStyle">steal</label>
+                                <input size="31" type="text" id="inspect_view_css_color" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
-                            <td>-color</td>
+                            <td>text-shadow</td>
                             <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_border-color" class="vis-inspect-css"/>
-                                <input id="steal_borderColor" type="checkbox" data-vis-steal="border-color" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_borderColor">steal</label>
+                                <input size="31" type="text" id="inspect_view_css_text-shadow" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
-                            <td>-radius</td>
+                            <td>font-family</td>
                             <td colspan="3">
-                                <input size="40" type="text" id="inspect_css_border-radius" class="vis-inspect-css"/>
-                                <input id="steal_borderRadius" type="checkbox" data-vis-steal="border-radius" class="vis-steal-css"/>
-                                <label class="vis-steal-label" for="steal_borderRadius">steal</label>
+                                <input size="31" type="text" id="inspect_view_css_font-family" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
-
+                        <tr>
+                            <td>font-style</td>
+                            <td colspan="3">
+                                <input size="31" type="text" id="inspect_view_css_font-style" class="vis-inspect-view-css"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>font-variant</td>
+                            <td colspan="3">
+                                <input size="31" type="text" id="inspect_view_css_font-variant" class="vis-inspect-view-css"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>font-weight</td>
+                            <td colspan="3">
+                                <input size="31" type="text" id="inspect_view_css_font-weight" class="vis-inspect-view-css"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>font-size</td>
+                            <td colspan="3">
+                                <input size="31" type="text" id="inspect_view_css_font-size" class="vis-inspect-view-css"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>line-height</td>
+                            <td colspan="3">
+                                <input size="31" type="text" id="inspect_view_css_line-height" class="vis-inspect-view-css"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>letter-spacing</td>
+                            <td colspan="3">
+                                <input size="31" type="text" id="inspect_view_css_letter-spacing" class="vis-inspect-view-css"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>word-spacing</td>
+                            <td colspan="3">
+                                <input size="31" type="text" id="inspect_view_css_word-spacing" class="vis-inspect-view-css"/>
+                            </td>
+                        </tr>
                     </table>
                 </div>
             </div>
-
-            <div class="vis-edit-tab" id="tabs-4" style="overflow-x: hidden">
-                <h4 class="translate">Add Widget:</h4>
-                <div style="width:103px; display:inline-block" class="translate">Widget Set:</div>
-                <select id="select_set" class="vis-editor" data-multiselect-width="370" data-multiselect-height="400"></select></br>
-                <div style="width:103px; display:inline-block" class="translate">Widget:</div>
-                <select id="select_tpl" class="vis-editor" data-multiselect-width="370" data-multiselect-height="360"></select><button class="vis-editor translateB" type="button" id="add_widget">add_widget</button>
-                <h4 class="translate">Inspecting Widget:</h4>
-                <select id="select_active_widget" class="vis-editor" data-multiselect-width="370" data-multiselect-height="265"></select><br/>
+            <div class="tab_attr ui-widget-content" id="tab_wid_attr">
                 <div class="vis-widget-tools">
-                    <table>
-                        <tr><td colspan="2">
-                            <button type="button" class="vis-editor translateB" id="del_widget" >del_widget</button>
-                            <button type="button" class="vis-editor translateB" id="widget_doc">widget_doc</button>
-                        </td></tr>
-                        <tr><td>
-                            <button type="button" class="vis-editor translateB" id="dup_widget" >dup_widget</button>
-                            </td><td>
-                            <select class="vis-editor" id="select_view_copy"></select>
-                        </td></tr>
-                    </table>
                     <h4 class="translate">Widget Attributes:</h4>
-                    <table style="width: 100%; border: 0px">
+                    <table style="width: 330px; border: 0px">
                         <colgroup>
-                            <col width="*"/>
-                            <col width="300px"/>
+                            <col width="100px"/>
+                            <col width="200px"/>
                             <col width="30px"/>
                         </colgroup>
                         <tbody id="widget_attrs"></tbody>
                     </table>
-
-
                 </div>
+                <table id="css_table">
+                    <tr>
+                        <td>left</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_left" class="vis-inspect-css"/>
+                            <input id="steal_left" type="checkbox" data-vis-steal="left" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_left">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>top</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_top" class="vis-inspect-css"/>
+                            <input id="steal_top" type="checkbox" data-vis-steal="top" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_top">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>width</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_width" class="vis-inspect-css"/>
+                            <input id="steal_width" type="checkbox" data-vis-steal="width" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_width">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>height</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_height" class="vis-inspect-css"/>
+                            <input id="steal_height" type="checkbox" data-vis-steal="height" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_height">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>z-index</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_z-index" class="vis-inspect-css"/>
+                            <input id="steal_zIndex" type="checkbox" data-vis-steal="z-index" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_zIndex">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>overflow-x</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_overflow-x" class="vis-inspect-css"/>
+                            <input id="steal_overflowX" type="checkbox" data-vis-steal="overflow-x" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_overflowX">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>overflow-y</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_overflow-y" class="vis-inspect-css"/>
+                            <input id="steal_overflowY" type="checkbox" data-vis-steal="overflow-y" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_overflowY">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="css-inspector-heading"></td>
+                    </tr>
+                    <tr>
+                        <td>padding</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_padding" class="vis-inspect-css"/>
+                            <input id="steal_padding" type="checkbox" data-vis-steal="padding" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_padding">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>box-shadow</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_box-shadow" class="vis-inspect-css"/>
+                            <input id="steal_boxShadow" type="checkbox" data-vis-steal="box-shadow" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_boxShadow">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="css-inspector-heading">font / text</td>
+                    </tr>
+                    <tr>
+                        <td>color</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_color" class="vis-inspect-css"/>
+                            <input id="steal_color" type="checkbox" data-vis-steal="color" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_color">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>text-align</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_text-align" class="vis-inspect-css"/>
+                            <input id="steal_textAlign" type="checkbox" data-vis-steal="text-align" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_textAlign">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>text-shadow</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_text-shadow" class="vis-inspect-css"/>
+                            <input id="steal_textShadow" type="checkbox" data-vis-steal="text-shadow" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_textShadow">steal</label>
+                            <a data-vis-clear="" class="vis-clear-css"></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>font-family</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_font-family" class="vis-inspect-css"/>
+                            <input id="steal_fontFamily" type="checkbox" data-vis-steal="font-family" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_fontFamily">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>font-style</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_font-style" class="vis-inspect-css"/>
+                            <input id="steal_fontStyle" type="checkbox" data-vis-steal="font-style" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_fontStyle">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>font-variant</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_font-variant" class="vis-inspect-css"/>
+                            <input id="steal_fontVariant" type="checkbox" data-vis-steal="font-variant" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_fontVariant">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>font-weight</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_font-weight" class="vis-inspect-css"/>
+                            <input id="steal_fontWeight" type="checkbox" data-vis-steal="font-weight" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_fontWeight">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>font-size</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_font-size" class="vis-inspect-css"/>
+                            <input id="steal_fontSize" type="checkbox" data-vis-steal="font-size" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_fontSize">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>line-height</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_line-height" class="vis-inspect-css"/>
+                            <input id="steal_lineHeight" type="checkbox" data-vis-steal="line-height" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_lineHeight">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>letter-spacing</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_letter-spacing" class="vis-inspect-css"/>
+                            <input id="steal_letterSpacing" type="checkbox" data-vis-steal="letter-spacing" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_letterSpacing">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>word-spacing</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_word-spacing" class="vis-inspect-css"/>
+                            <input id="steal_wordSpacing" type="checkbox" data-vis-steal="word-spacing" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_wordSpacing">steal</label>
+                            <a data-vis-clear="" class="vis-clear-css"></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="css-inspector-heading">background</td>
+                    </tr>
+                    <tr>
+                        <td>-color</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_background-color" class="vis-inspect-css"/>
+                            <input id="steal_backgroundColor" type="checkbox" data-vis-steal="background-color" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_backgroundColor">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>-image</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_background-image" class="vis-inspect-css"/>
+                            <input id="steal_backgroundImage" type="checkbox" data-vis-steal="background-image" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_backgroundImage">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>-repeat</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_background-repeat" class="vis-inspect-css"/>
+                            <input id="steal_backgroundRepeat" type="checkbox" data-vis-steal="background-repeat" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_backgroundRepeat">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>-attachment</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_background-attachment" class="vis-inspect-css"/>
+                            <input id="steal_backgroundAttachment" type="checkbox" data-vis-steal="background-attachment" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_backgroundAttachment">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>-position</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_background-position" class="vis-inspect-css"/>
+                            <input id="steal_backgroundPosition" type="checkbox" data-vis-steal="background-position" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_backgroundPosition">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>-size</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_background-size" class="vis-inspect-css"/>
+                            <input id="steal_backgroundSize" type="checkbox" data-vis-steal="background-size" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_backgroundSize">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>-clip</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_background-clip" class="vis-inspect-css"/>
+                            <input id="steal_backgroundClip" type="checkbox" data-vis-steal="background-clip" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_backgroundClip">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>-origin</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_background-origin" class="vis-inspect-css"/>
+                            <input id="steal_backgroundOrigin" type="checkbox" data-vis-steal="background-origin" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_backgroundOrigin">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="css-inspector-heading">border</td>
+                    </tr>
+                    <tr>
+                        <td>-width</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_border-width" class="vis-inspect-css"/>
+                            <input id="steal_borderWidth" type="checkbox" data-vis-steal="border-width" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_borderWidth">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>-style</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_border-style" class="vis-inspect-css"/>
+                            <input id="steal_borderStyle" type="checkbox" data-vis-steal="border-style" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_borderStyle">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>-color</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_border-color" class="vis-inspect-css"/>
+                            <input id="steal_borderColor" type="checkbox" data-vis-steal="border-color" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_borderColor">steal</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>-radius</td>
+                        <td colspan="3">
+                            <input size="27" type="text" id="inspect_css_border-radius" class="vis-inspect-css"/>
+                            <input id="steal_borderRadius" type="checkbox" data-vis-steal="border-radius" class="vis-steal-css"/>
+                            <label class="vis-steal-label" for="steal_borderRadius">steal</label>
+                        </td>
+                    </tr>
+                </table>
             </div>
-
-            <div class="vis-edit-tab" id="tabs-5">
-
-                <ul style="font-size: 1.1em; line-height: 2em;">
-                    <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank" class="translate">Webseite</a></li>
-                    <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank" class="translate">Unterstützung</a></li>
-                    <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank" class="translate">Änderungs-Historie</a></li>
-                </ul>
-
-                <h4>Copyright &copy; 2013, 2014 <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a>, Bluefox</h4>
-                <p class="translate">CC BY-NC License</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img src="img/cc-nc-by.png"/></a>
-                <!--p class="translate">license1</p>
-                <p class="translate">license2</p>
-                <p class="translate">license3</p>
-                <p class="translate">license4</p-->
-                <p class="translate">license5</p>
-            </div>
-
-
-        </div>
-
-        <div style="display: none" id="uploadPreview"></div>
-        <div style="display: none;" id="dialog_export_view" title="export view" class="translateT">
-            <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;" id="textarea_export_view"></textarea>
-        </div>
-        <div style="display: none;" id="dialog_import_view" title="import view" class="translateT">
-            <textarea rows="50" cols="160" style="width: 99%; height: calc(98% - 40px); font-size: 11px;"  id="textarea_import_view"></textarea>
-            <br/>
-            <input type="text" id="name_import_view">
-            <button id="start_import_view" class="translateB">import</button>
         </div>
     </div>
 
-    <div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>
+</div>
+
+<div id="status_bar" class="ui-widget-header">
+    <span>VIS Version: </span><span id="vis-version"></span>
+
+    <span id="savingProgress" role="button">Saving in progress</span>
+</div>
+
+
+<div style="display: none" id="uploadPreview"></div>
+
+
+<div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>
+
 
 </body>
+
 </html>
