@@ -431,12 +431,14 @@ var vis = {
             }
 
             if (vis.editMode) {
+
                 $($view).droppable({
                     accept: ".wid_prev",
                     drop: function (event, ui) {
+                        console.log("hallo")
                         var tpl = $(ui.draggable).data("tpl");
                         var view_pos = $("#vis_container").position();
-                        var add_pos = {left: ui.position.left - $("#toolset_basic").width() + $("#vis_container").scrollLeft() +5, top: ui.position.top - view_pos.top +$("#vis_container").scrollTop()+8};
+                        var add_pos = {left: ui.position.left - $('#toolbox').width() + $("#vis_container").scrollLeft() +5, top: ui.position.top - view_pos.top +$("#vis_container").scrollTop()+8};
 
                         var $tpl = $('#' + tpl);
                         var renderVisible = $tpl.attr('data-vis-render-visible');
@@ -449,6 +451,7 @@ var vis = {
                             if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
                         }
                         if (renderVisible) data.renderVisible = true;
+
 
                         vis.addWidget(tpl,data,add_pos);
 

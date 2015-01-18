@@ -2805,8 +2805,10 @@ vis = $.extend(true, vis, {
                 sel = '';
             }
             $("#view_select_tabs").append('<div id="view_tab_' + k + '" class="view_select_tab ui-state-default ui-corner-top">' + k + '</div>');
-
         }
+
+
+        $('#view_tab_' + vis.activeView).addClass('ui-tabs-active ui-state-active')
 
 
     },
@@ -2941,6 +2943,18 @@ vis = $.extend(true, vis, {
             }).show();
             $('#local_view').show();
         }
+
+
+
+        // style scoping
+
+        $("head").append('<script type="text/javascript" src="lib/js/scoped.js"></script>')
+        //var $appendedStyles = $( '<style id="test" scoped="true">@import url(lib/css/themes/jquery-ui/swanky-purse/jquery-ui.css);</style>').prependTo($('#vis_container'));
+        //
+        //setTimeout(function(){
+        //    scopePolyFill("$appendedStyles" );
+        //},2000)
+        $.scoped()
 
 
     },
@@ -3741,13 +3755,39 @@ $(document).keydown(function (e) {
         $("#ribbon_tab_dev").toggle();
         e.preventDefault();
     }else if (e.which === 114) {
-        $("#vis_container").prependTo('body');
-        $("#vis_container").addClass("fullscreen")
+
+        var $container = $("#vis_container");
+
+        if ($container.hasClass('fullscreen')) {
+            $container
+                .removeClass("fullscreen")
+                .appendTo('#vis_wrap');
+        } else {
+            $container.
+                prependTo('body')
+                .addClass("fullscreen")
+        }
+
         e.preventDefault();
-    }else if (e.which === 115) {
-        $("#vis_container").removeClass("fullscreen")
-        $("#vis_container").appendTo('#vis_wrap');
+    }else if (e.which === 33) {
+        var $next = $('.view_select_tab.ui-state-active').next();
+
+        if ($next.hasClass('view_select_tab')){
+
+            $next.trigger("click")
+        }else{
+            $next.parent().children().first().trigger("click")
+        }
+
         e.preventDefault();
+    }if (e.which === 34) {
+        var $prev = $('.view_select_tab.ui-state-active').prev();
+
+        if ($prev.hasClass('view_select_tab')){
+            $prev.trigger("click")
+        }else{
+            $('.view_select_tab.ui-state-active').parent().children().last().trigger("click")
+        }
     }
 });
 

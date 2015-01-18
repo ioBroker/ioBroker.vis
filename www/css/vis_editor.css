@@ -1,8 +1,8 @@
 div#vis_container{
-    /* width: 100%; */
-    /* height: calc(100% - 29px); */
+    width: 100%;
+    height: calc(100% - 29px);
     position: relative;
-    /* overflow: scroll; */
+    overflow: scroll;
 }
 
 /*--------------------------------------------- SelectID dialog ------------------------------- */

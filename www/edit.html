@@ -18,6 +18,7 @@
     <title>ioBroker.vis</title>
 
     <link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/redmond/jquery-ui.min.css" id="jqui_theme">
+    <link rel="stylesheet" type="text/css" href="lib/css/test.theme.css" >
     <link rel="stylesheet" type="text/css" href="lib/css/fancytree/ui.fancytree.min.css"/>
 
     <link rel="stylesheet" type="text/css" href="lib/css/superfish/superfish.css"/>
@@ -32,6 +33,8 @@
     <link rel="stylesheet" type="text/css" href="css/vis_editor.css"/>
     <!--<link rel="stylesheet" type="text/css" href="css/vis-common-user.css"/>-->
     <link rel="stylesheet" type="text/css" id="project_css"/>
+
+
 
     <script type="text/javascript" src="lib/js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery-ui-1.10.3.full.min.js"></script>
@@ -49,6 +52,8 @@
     <script type="text/javascript" src="lib/js/canjs.2.1.3.min.js"></script>
     <script type="text/javascript" src="lib/js/html2canvas.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
+
+    <script type="text/javascript" src="lib/js/jquery.scoped.js"></script>
     <!--<script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script>-->
 
     <script type="text/javascript" src="lib/js/superclick.js"></script>
@@ -538,6 +543,7 @@
             <button id="view_select_right"></button>
         </div>
         <div id="vis_container" caption="Views">
+            <style id="test" scoped="true">@import url(lib/css/themes/jquery-ui/swanky-purse/jquery-ui.css);</style>
             <div id="widget_helper">
                 <div id="widget_inner_helper"></div>
             </div>
