@@ -12,6 +12,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
 
 (function ($) {
+    "use strict";
 
     $.fm = function (options, callback) {
         var fmConn;
@@ -29,6 +30,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             // File position by socket connection
             root:         options.root || '',                                // zb. 'www/'
             path:         options.path || '/',                               // zb. 'www/dashui/'
+            uploadDir:    options.uploadDir || '',
             fileFilter:   options.fileFilter || [],
             folderFilter: options.folderFilter || false,
             view:         options.view || 'table',                           // table , list
@@ -42,12 +44,16 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 //            save_data : options.save_data,
 //            save_mime : options.save_mime
         };
-        // File position in the web server
-        o.rootWeb = options.rootWeb || '';
 
         var uploadArray = [];
         var selFile = '';
         var selType = '';
+        //Analyse path, if it is a file name
+        if (o.path && o.path[o.path.length - 1] != '/') {
+            var parts = o.path.split('/');
+            o.currentFile = parts.pop();
+            o.path = parts.join('/') + '/';
+        }
 
         var fmWord = {
             'sort this column'                  : {'de': 'Spalte sortieren',               'en': 'sort this column',            'ru': 'Сортировать'},
@@ -82,7 +88,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             'Name'                              : {'de': 'Name',                           'en': 'Name',                        'ru': 'Имя'},
             'Type'                              : {'de': 'Typ',                            'en': 'Type',                        'ru': 'Тип'},
             'Size'                              : {'de': 'Größe',                          'en': 'Size',                        'ru': 'Размер'},
-            'Date'                              : {'de': 'Datum',                          'en': 'Date',                        'ru': 'Дата'}
+            'Date'                              : {'de': 'Datum',                          'en': 'Date',                        'ru': 'Дата'},
+            'Upload possible only to '          : {'de': 'Kann laden nur in ',             'en': 'Upload possible only to ',    'ru': 'Загрузка возможна только в '}
 
         };
 
@@ -112,6 +119,49 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             } catch (err) {
                 alert(fmTranslate('No connection to server'));
             }
+        }
+
+        function read(o, files, uploadArray) {
+
+            var reader = new FileReader();
+            reader.onload = function () {
+                uploadArray.push({name: files[0].name, value: reader.result});
+
+
+                var type = files[0].name.split(".").pop();
+                var icon = "undef";
+                var class_name = files[0].name.split(".")[0].replace(" ", "_");
+
+                if (o.img.indexOf(type) > -1) {
+
+
+                    $("#fm_add_dropzone").append(
+                        '<div class="fm_prev_container ' + class_name + '" data-file="' + files[0].name + '">' +
+                        '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + reader.result + '"/></div>' +
+                        '<div class="fm_prev_name">' + files[0].name + '</div>' +
+                        '<div class="fm_prev_overlay"></div>' +
+                        '</div>');
+
+                } else {
+                    if (o.icons.indexOf(type) > -1) {
+                        icon = type;
+                    }
+
+                    $("#fm_add_dropzone").append(
+                        '<div class="fm_prev_container ' + class_name + '" data-file="' + files[0].name + '">' +
+                        '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + fmFolder + 'icon/mine/128/' + icon + '.png"/></div>' +
+                        '<div class="fm_prev_name">' + files[0].name + '</div>' +
+                        '<div class="fm_prev_overlay"></div>' +
+                        '</div>');
+                }
+                files.shift();
+                if (files.length > 0) {
+                    read(o, files, uploadArray);
+                } else {
+                    $('.dialog_fm_add > *').css({cursor: "default"})
+                }
+            };
+            reader.readAsDataURL(files[0]);
         }
 
         function build(o) {
@@ -326,6 +376,15 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             }
 
             if (o.data != undefined && o.view == 'prev') {
+                var path = o.root ? o.path.split(o.root)[1] : o.path;
+
+                if (o.uploadDir) {
+                    if (path.substring(0, o.uploadDir.length) == o.uploadDir) {
+                        $('#fm_bar_add').button('enable');
+                    } else {
+                        $('#fm_bar_add').button('disable').attr('title', fmTranslate('Upload possible only to ') + o.uploadDir);
+                    }
+                }
 
                 $.each(o.data, function () {
 
@@ -350,8 +409,6 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                         if (name.length > 0) {
                             // if image
                             if (o.img.indexOf(type) > -1) {
-
-                                var path = o.rootWeb + o.path.split(o.root)[1];
 
                                 $(".fm_files").append(
                                     '<div class="fm_prev_container ' + filter + '" data-sort="' + type + '">' +
@@ -427,7 +484,6 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                         $("#fm_inp_save").val(selFile.split(".")[0]);
                         $("#fm_bar_down").button('enable');
                         $("#fm_bar_del").button('enable');
-
                     }
 
                     if (o.audio.indexOf(type) > -1) {
@@ -443,6 +499,9 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     if (type == "_") {
                         o.path += $(this).prev().text() + "/";
                         load(o.path);
+                    } else {
+                        // Select immediately this image
+                        $('#fm_btn_open').trigger('click');
                     }
                 });
             }
@@ -467,6 +526,16 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 $("#fm_bar_back").button("option", "disabled", true);
             } else {
                 $("#fm_bar_back").button("option", "disabled", false);
+            }
+
+            if (o.currentFile) {
+                $('.fm_prev_name').each(function () {
+                    if ($(this).html() == o.currentFile) {
+                        $(this).parent().find('.fm_prev_overlay').trigger('click');
+                        return false;
+                    }
+                })
+                o.currentFile = null;
             }
         }
 
@@ -654,51 +723,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                             $('.dialog_fm_add > *').css({cursor: "wait"});
 
-                            function read() {
-
-                                var reader = new FileReader();
-                                reader.onload = function () {
-                                    uploadArray.push({name: files[0].name, value: reader.result});
-
-
-                                    var type = files[0].name.split(".").pop();
-                                    var icon = "undef";
-                                    var class_name = files[0].name.split(".")[0].replace(" ", "_");
-
-                                    if (o.img.indexOf(type) > -1) {
-
-
-                                        $("#fm_add_dropzone").append(
-                                                '<div class="fm_prev_container ' + class_name + '" data-file="' + files[0].name + '">' +
-                                                '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + reader.result + '"/></div>' +
-                                                '<div class="fm_prev_name">' + files[0].name + '</div>' +
-                                                '<div class="fm_prev_overlay"></div>' +
-                                                '</div>');
-
-                                    } else {
-                                        if (o.icons.indexOf(type) > -1) {
-                                            icon = type;
-                                        }
-
-                                        $("#fm_add_dropzone").append(
-                                                '<div class="fm_prev_container ' + class_name + '" data-file="' + files[0].name + '">' +
-                                                '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + fmFolder + 'icon/mine/128/' + icon + '.png"/></div>' +
-                                                '<div class="fm_prev_name">' + files[0].name + '</div>' +
-                                                '<div class="fm_prev_overlay"></div>' +
-                                                '</div>');
-                                    }
-                                    files.shift();
-                                    if (files.length > 0) {
-                                        read();
-                                    } else {
-                                        $('.dialog_fm_add > *').css({cursor: "default"})
-                                    }
-                                };
-                                reader.readAsDataURL(files[0]);
-                            }
-                            read();
+                            read(o, files, uploadArray);
                             return false;
-
                         }
                         catch (err) {
                             alert(err);
@@ -865,7 +891,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     if (document.getElementById('fm_sound_play')) {
                         document.getElementById('fm_sound_play').remove();
                     }
-                    $("#dialog_fm").append('<audio id="fm_sound_play" src="' + o.rootWeb + o.path.split(o.root)[1] + selFile + '"></audio>');
+                    $("#dialog_fm").append('<audio id="fm_sound_play" src="' + o.path.split(o.root)[1] + selFile + '"></audio>');
                     document.getElementById('fm_sound_play').play();
 
                 }

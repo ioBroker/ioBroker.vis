@@ -668,6 +668,7 @@ vis = $.extend(true, vis, {
                     value:    _('Value'),
                     selectid: _('Select ID')
                 },
+                columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
                 imgPath: '/lib/css/fancytree/',
                 objects: this.objects,
                 states:  this.states,
@@ -828,10 +829,9 @@ vis = $.extend(true, vis, {
                     var data = $(this).data('data-attr');
 
                     $.fm({
-                        root:         that.projectPrefix,
-                        rootWeb:      '/' + that.conn.namespace + '/' + that.projectPrefix,
                         lang:         that.language,
-                        path:         that.projectPrefix + 'img/',
+                        path:         that.widgets[widget].data[wid_attr] || '/' + that.conn.namespace + '/' + that.projectPrefix + 'img/',
+                        uploadDir:    '/' + that.conn.namespace + '/',
                         fileFilter:   filter || ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
                         folderFilter: false,
                         mode:         'open',
@@ -840,7 +840,7 @@ vis = $.extend(true, vis, {
                         conn:         that.conn,
                         zindex:       1001
                     }, function (_data, userData){
-                        var src = '/' + that.conn.namespace + '/' + _data.path + _data.file;
+                        var src = _data.path + _data.file;
                         $('#inspect_' + userData).val(src).trigger('change');
                     });
                 }
@@ -1051,9 +1051,9 @@ vis = $.extend(true, vis, {
         } else if (wid_attr.match(/nav_view$/)) {
             wid_type = 'views';
         } else
-        if (wid_attr.match(/src$/)) {
+        /*if (wid_attr.match(/src$/)) {
             wid_type = 'image';
-        } else
+        } else*/
         if (wid_attr == 'url' || wid_attr == 'sound') {
             wid_type = 'sound';
         } else
@@ -2978,7 +2978,9 @@ vis = $.extend(true, vis, {
         $("#savingProgress").button({
             text: false,
             icons: { primary: "ui-icon-disk"}
-        }).click(that._saveToServer).hide().addClass("ui-state-active");
+        }).click(function ()  {
+            that._saveToServer();
+        }).hide().addClass("ui-state-active");
 
 
         var _save_posi = save_posi[0] + '()';
@@ -3288,15 +3290,14 @@ vis = $.extend(true, vis, {
             clearTimeout(this._saveTimer);
             this._saveTimer = null;
         }
+        var that = this;
         // Store the changes if nothing changed for 2 seconds
-        this._saveTimer = _setTimeout(function (_vis) {
-            _vis._saveToServer();
-        }, 2000, this);
+        this._saveTimer = setTimeout(function () {
+            that._saveToServer();
+        }, 2000);
 
         $('#savingProgress').show().next().button('disable');
-        if (cb) {
-            cb();
-        }
+        if (cb) cb();
     },
     undo: function () {
         if (this.undoHistory.length <= 1) return;

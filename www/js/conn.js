@@ -257,7 +257,11 @@ var servConn = {
         var that = this;
         if (!this._checkConnection('writeFile', arguments)) return;
 
-        this._socket.emit('writeFile', this.namespace, filename, atob(data), callback);
+        var parts = filename.split('/');
+        var adapter = parts[1];
+        parts.splice(0, 2);
+
+        this._socket.emit('writeFile', adapter, parts.join('/'), atob(data), callback);
     },
     readDir: function (dirname, callback) {
         //socket.io
@@ -265,22 +269,39 @@ var servConn = {
             console.log('socket.io not initialized');
             return;
         }
-        this._socket.emit('readDir', this.namespace, dirname, function (err, data) {
+        var parts = dirname.split('/');
+        var adapter = parts[1];
+        parts.splice(0, 2);
+
+        this._socket.emit('readDir', adapter, parts.join('/'), function (err, data) {
             if (callback) callback(err, data);
         });
     },
     mkdir: function (dirname, callback) {
-        this._socket.emit('mkdir', this.namespace, dirname, function (err) {
+        var parts = dirname.split('/');
+        var adapter = parts[1];
+        parts.splice(0, 2);
+
+        this._socket.emit('mkdir', adapter, parts.join('/'), function (err) {
             if (callback) callback(err);
         });
     },
     unlink: function (name, callback) {
-        this._socket.emit('unlink', this.namespace, name, function (err) {
+        var parts = name.split('/');
+        var adapter = parts[1];
+        parts.splice(0, 2);
+
+        this._socket.emit('unlink', adapter, parts.join('/'), function (err) {
             if (callback) callback(err);
         });
     },
     renameFile: function (oldname, newname, callback) {
-        this._socket.emit('rename', this.namespace, oldname, newname, function (err) {
+        var parts1 = oldname.split('/');
+        var adapter = parts1[1];
+        parts1.splice(0, 2);
+        var parts2 = newname.split('/');
+        parts2.splice(0, 2);
+        this._socket.emit('rename', adapter, parts1.join('/'), parts2.join('/'), function (err) {
             if (callback) callback(err);
         });
     },
