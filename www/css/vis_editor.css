@@ -258,7 +258,7 @@ div#vis_container{
     width: 100%!important;
     height: 100%!important;
     overflow: auto!important;
-    background: black;
+    background: #ffffff;
 }
 
 
@@ -354,6 +354,7 @@ div#vis_container{
     box-shadow: inset -3px -4px 14px rgba(0, 0, 0, 0.7), inset 3px 5px 14px rgba(255, 255, 255, 0.8);
     border-radius: 18px;
     font-weight: bolder;
+    font-size: 12px;
 }
 
 .wid_prev:after{
@@ -400,7 +401,7 @@ div#vis_container{
     white-space: nowrap;
     position: absolute;
     right: 0;
-    width: 330px;
+    width: 355px;
 
 }
 

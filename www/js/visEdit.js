@@ -1464,7 +1464,7 @@ vis = $.extend(true, vis, {
                 // attr_name can be extended with numbers (1-2) means it will be attr_name1 and attr_name2 created
                 // defaultValue: If defaultValue has ';' it must be replaced by §
                 // Type format: id - Object ID Dialog
-                //              checkbox 
+                //              checkbox
                 //              image - image
                 //              color - color picker
                 //              views - Name of the view
@@ -1958,7 +1958,7 @@ vis = $.extend(true, vis, {
         // Init background selector
         if (this.styleSelect && this.views[view] && this.views[view].settings) {
             this.styleSelect.Show({
-                width: 80,
+                width: 200,
                 name: 'inspect_view_bkg_def',
                 filterName: 'background',
                 //filterFile: "backgrounds.css",
@@ -1975,7 +1975,6 @@ vis = $.extend(true, vis, {
             });
         }
 
-        $("#inspect_view").html(view);
 
         if (this.views[view] && this.views[view].settings) {
             // Try to find this resolution in the list
@@ -2211,7 +2210,7 @@ vis = $.extend(true, vis, {
             $("#panel_body").height(parseInt(  $(window).height() - $("#menu_body").height() - 22 ));
             $("#vis_wrap").width(parseInt($(window).width() - $("#pan_add_wid").width() - $("#pan_attr").width() - 1));
         }
-        layout();
+        //layout();
 
 
         $("#vis-version").html(this.version);
@@ -2603,6 +2602,13 @@ vis = $.extend(true, vis, {
             position: {my: "center", at: "center", of: $("#panel_body")}
         });
 
+        $("#dialog_shortcuts").dialog({
+            autoOpen: false,
+            width: 600,
+            height: 500,
+            position: {my: "center", at: "center", of: $("#panel_body")}
+        });
+
     },
     editInit_menu: function () {
         $("#menu.sf-menu").superclick({
@@ -2633,14 +2639,29 @@ vis = $.extend(true, vis, {
             $(window).trigger("resize");
         });
 
-        // Theme auswahl
+        // Theme select Editor
+        var last_theme =  storage.get('vistheme');
+        if(last_theme){
+            $("#editor_theme").remove();
+            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + last_theme + '/jquery-ui.min.css" id="editor_theme"/>');
+        }
         $("#ul_theme li a").click(function () {
             var theme = $(this).data('info');
             vis.views[vis.activeView].settings.theme = theme;
-            $("#jqui_theme").remove();
-            $('style[data-href$="jquery-ui.min.css"]').remove();
-            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="jqui_theme"/>');
-            vis.additionalThemeCss(theme);
+            $("#editor_theme").remove();
+            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editor_theme"/>');
+            //vis.additionalThemeCss(theme);
+            storage.set('vistheme', theme);
+            vis.save();
+
+        });
+
+        // Theme seleckt View
+        $("#inspect_view_theme").change(function () {
+            var theme = $('#inspect_view_theme option:selected').val();
+            vis.views[vis.activeView].settings.theme = theme;
+            vis.addViewStyle(vis.activeView,theme);
+            //vis.additionalThemeCss(theme);
             vis.save();
         });
 
@@ -2663,12 +2684,14 @@ vis = $.extend(true, vis, {
         $("#m_about").click(function () {
             $("#dialog_about").dialog("open")
         });
-        $("#m_setup").click(function () {
-            $("#dialog_setup").dialog("open")
+        $("#m_shortcuts").click(function () {
+            $("#dialog_shortcuts").dialog("open")
         });
+        //$("#m_setup").click(function () {
+        //    $("#dialog_setup").dialog("open")
+        //});
     },
     add_Widget_prev: function (set) {
-        var tpl_list = $(".vis-tpl");
         $.each(vis.widgetSets, function (i) {
             var set = this;
             var tpl_list = $(".vis-tpl[data-vis-set='" + set + "']");
@@ -2799,7 +2822,7 @@ vis = $.extend(true, vis, {
             k = keys[i];
 
             if (k == this.activeView) {
-                $("#inspect_view").html(this.activeView);
+
                 sel = " selected";
             } else {
                 sel = '';
@@ -2838,7 +2861,6 @@ vis = $.extend(true, vis, {
             k = keys[i];
 
             if (k == this.activeView) {
-                $("#inspect_view").html(this.activeView);
                 sel = " selected";
             } else {
                 sel = '';
@@ -2946,15 +2968,10 @@ vis = $.extend(true, vis, {
 
 
 
-        // style scoping
 
-        $("head").append('<script type="text/javascript" src="lib/js/scoped.js"></script>')
-        //var $appendedStyles = $( '<style id="test" scoped="true">@import url(lib/css/themes/jquery-ui/swanky-purse/jquery-ui.css);</style>').prependTo($('#vis_container'));
-        //
-        //setTimeout(function(){
-        //    scopePolyFill("$appendedStyles" );
-        //},2000)
-        $.scoped()
+
+
+
 
 
     },
@@ -3000,7 +3017,6 @@ vis = $.extend(true, vis, {
                 y += step;
             }
         }
-        ;
 
         // No free place on the screen
         if (y >= $(window).height()) {
@@ -3054,7 +3070,7 @@ vis = $.extend(true, vis, {
 
 
         var text = "<div id='" + id + "__action1' style='z-index:2000; top:" + (s.top - 3.5) + "px; left:" + (s.left - 3.5) + "px; width: " + s.width + "px; height: " + s.height + "px; position: absolute'></div>";
-        $('body').append(text);
+        $('#visview_'+vis.activeView).append(text);
         var _css2 = {
             left: s.left - 4 - s.width,
             top: s.top - 4 - s.height,
@@ -3075,7 +3091,7 @@ vis = $.extend(true, vis, {
             });
 
         text = text.replace('action1', 'action2');
-        $('body').append(text);
+        $('#visview_'+vis.activeView).append(text);
         $('#' + id + '__action2').
             addClass('vis-show-new').
             css(_css2).
@@ -3691,7 +3707,8 @@ vis = $.extend(true, vis, {
 });
 
 $(document).keydown(function (e) {
-
+    //                          Keycodes
+    //
     // | backspace 	 8    |   e 	            69   |    numpad 8          104
     // | tab 	     9    |   f 	            70   |    numpad 9          105
     // | enter 	     13   |   g 	            71   |    multiply          106
@@ -3745,9 +3762,8 @@ $(document).keydown(function (e) {
         if (vis.onButtonDelete()) {
             e.preventDefault();
         }
-    } else
-    // Capture down, up, left, right for shift
-    if (e.which === 37 || e.which === 38 || e.which === 40 || e.which === 39) {
+    } else if (e.which === 37 || e.which === 38 || e.which === 40 || e.which === 39) {
+        // Capture down, up, left, right for shift
         if (vis.onButtonArrows(e.which, e.shiftKey, (e.ctrlKey || e.metaKey ? 10 : 1))) {
             e.preventDefault();
         }
@@ -3755,9 +3771,8 @@ $(document).keydown(function (e) {
         $("#ribbon_tab_dev").toggle();
         e.preventDefault();
     }else if (e.which === 114) {
-
+        // Fullscreen
         var $container = $("#vis_container");
-
         if ($container.hasClass('fullscreen')) {
             $container
                 .removeClass("fullscreen")
@@ -3767,20 +3782,21 @@ $(document).keydown(function (e) {
                 prependTo('body')
                 .addClass("fullscreen")
         }
-
         e.preventDefault();
     }else if (e.which === 33) {
+        // Next View
         var $next = $('.view_select_tab.ui-state-active').next();
 
         if ($next.hasClass('view_select_tab')){
 
             $next.trigger("click")
         }else{
-            $next.parent().children().first().trigger("click")
+            $('.view_select_tab.ui-state-active').parent().children().first().trigger("click")
         }
 
         e.preventDefault();
     }if (e.which === 34) {
+        // Prev View
         var $prev = $('.view_select_tab.ui-state-active').prev();
 
         if ($prev.hasClass('view_select_tab')){

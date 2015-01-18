@@ -394,16 +394,19 @@ var vis = {
             vis.viewsActiveFilter[view] = [];
         }
 
-        if (!noThemeChange) {
-            $("style[data-href$='jquery-ui.min.css']").remove();
-            $("link[href$='jquery-ui.min.css']").remove();
-            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + vis.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
-            vis.additionalThemeCss(vis.views[view].settings.theme);
-        }
+        //if (!noThemeChange) {
+        //    $("style[data-href$='jquery-ui.min.css']").remove();
+        //    $("link[href$='jquery-ui.min.css']").remove();
+        //    $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + vis.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
+        //    vis.additionalThemeCss(vis.views[view].settings.theme);
+        //}
 
         if ($('#visview_' + view).html() === undefined) {
 
             $('#vis_container').append('<div style="display:none;" id="visview_' + view + '" class="vis-view"></div>');
+            vis.addViewStyle(view,vis.views[view].settings.theme);
+
+
             var $view = $("#visview_" + view);
             $view.css(vis.views[view].settings.style);
             if (vis.views[view].settings.style.background_class) $view.addClass(vis.views[view].settings.style.background_class);
@@ -502,6 +505,22 @@ var vis = {
         if (isViewsConverted) {
             vis.saveRemote();
         }
+    },
+    addViewStyle:function(view,theme){
+
+        var _view = "visview_"+view;
+        $.ajax({
+            url: "lib/css/themes/jquery-ui/"+theme+"/jquery-ui.min.css",
+            cache: false,
+            success: function (data) {
+                $("#"+view+"_style").remove();
+                data = data.replace(".ui-helper-hidden", "#"+_view+" .ui-helper-hidden");
+                data = data.replace(/(}.)/g, "}#"+_view+" .");
+                data = data.replace(/,\./g, ",#"+_view+" .");
+                data = data.replace(/images/g, "lib/css/themes/jquery-ui/"+theme+"/images/");
+                $('#'+_view).append("<style id='"+view+"_style'>"+data+"</style>")
+            }
+        });
     },
     preloadImages: function (srcs) {
         if (!vis.preloadImages.cache) {
@@ -708,15 +727,6 @@ var vis = {
                     }).dequeue();
                 }
                 $("#visview_" + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
-                    var list = $("link[href$='jquery-ui.min.css']");
-
-                    if (list.length == 0) {
-                        $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + that.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
-                    } else {
-                        list.attr("href", '../lib/css/themes/jquery-ui/' + that.views[view].settings.theme + '/jquery-ui.min.css');
-                    }
-                    $("style[data-href$='jquery-ui.min.css']").remove();
-                    that.additionalThemeCss(that.views[view].settings.theme);
 
                     // If first hide, than show
                     if (!sync) {
@@ -741,18 +751,18 @@ var vis = {
                     $("#visview_" + view).appendTo("#vis_container");
                 }
 
-                if (this.views[view] && this.views[view].settings) {
-                    if (this.views[vis.activeView] && this.views[vis.activeView].settings &&
-                        this.views[vis.activeView].settings.theme != this.views[view].settings.theme) {
-                        if ($("link[href$='jquery-ui.min.css']").length == 0) {
-                            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
-                        } else {
-                            $("link[href$='jquery-ui.min.css']").attr("href", '../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css');
-                        }
-                        $("style[data-href$='jquery-ui.min.css']").remove();
-                    }
-                    this.additionalThemeCss(this.views[view].settings.theme);
-                }
+                //if (this.views[view] && this.views[view].settings) {
+                    //if (this.views[vis.activeView] && this.views[vis.activeView].settings &&
+                    //    this.views[vis.activeView].settings.theme != this.views[view].settings.theme) {
+                    //    if ($("link[href$='jquery-ui.min.css']").length == 0) {
+                    //        $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
+                    //    } else {
+                    //        $("link[href$='jquery-ui.min.css']").attr("href", '../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css');
+                    //    }
+                    //    $("style[data-href$='jquery-ui.min.css']").remove();
+                    //}
+                    //this.additionalThemeCss(this.views[view].settings.theme);
+                //}
                 $("#visview_" + view).show();
                 $("#visview_" + this.activeView).hide();
             }
@@ -883,14 +893,14 @@ var vis = {
             }
         }
     },
-    additionalThemeCss: function (theme) {
-        if (theme == "kian") {
-            $("#additional_theme_css").remove();
-            $("link[href$='jquery-ui.min.css']").after('<link rel="stylesheet" href="css/add_' + theme + '.css" id="additional_theme_css" type="text/css"/>');
-        } else {
-            $("#additional_theme_css").remove();
-        }
-    },
+    //additionalThemeCss: function (theme) {
+    //    if (theme == "kian") {
+    //        $("#additional_theme_css").remove();
+    //        $("link[href$='jquery-ui.min.css']").after('<link rel="stylesheet" href="css/add_' + theme + '.css" id="additional_theme_css" type="text/css"/>');
+    //    } else {
+    //        $("#additional_theme_css").remove();
+    //    }
+    //},
     wakeUpCallbacks: [],
     initWakeUp: function () {
         var that = this;
