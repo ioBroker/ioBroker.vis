@@ -344,7 +344,7 @@ vis = $.extend(true, vis, {
         if (renderVisible) this.widgets[widgetId].renderVisible = true;
 
         if (isViewExist) {
-			$("#visview_"+view).append(can.view(tpl, {
+			$("#visview_" + view).append(can.view(tpl, {
                 hm:   this.states[this.widgets[widgetId].data.oid + '.Value'],
                 ts:   this.states[this.widgets[widgetId].data.oid + '.TimeStamp'],
                 ack:  this.states[this.widgets[widgetId].data.oid + '.Certain'],
@@ -668,6 +668,7 @@ vis = $.extend(true, vis, {
                     value:    _('Value'),
                     selectid: _('Select ID')
                 },
+                columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
                 imgPath: '/lib/css/fancytree/',
                 objects: this.objects,
                 states:  this.states,
@@ -677,19 +678,61 @@ vis = $.extend(true, vis, {
 
         return line;
     },
-    editSelect: function (widget, wid_attr, values) {
-        // Select
-        var text = '<tr id="option_' + wid_attr + '" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr) + ':</td><td><select id="inspect_' + wid_attr + '">';
-        for (var t = 0; t < values.length; t++) {
-            text += "<option value='" + values[t] + "' " + ((values[t] == widget.data[wid_attr]) ? 'selected' : '') + ">" + _(values[t]) + "</option>";
+    editSelect: function (widget, wid_attr, values, notTranslate, init, onchange) {
+        if (typeof notTranslate == 'function') {
+            onchange = init;
+            init = notTranslate;
+            notTranslate = false;
         }
-        text += "</select></td></tr>";
-        $('#widget_attrs').append(text);
+
+        // Select
+        var line = {
+            input: '<select type="text" id="inspect_' + wid_attr + '">'
+        }
+        if (onchange) line.onchange = onchange;
+        if (init)     line.init = init;
+        if (values.length && values[0] !== undefined) {
+            for (var t = 0; t < values.length; t++) {
+                line.input += '<option value="' + values[t] + '">' + (notTranslate ?  values[t] : _(values[t])) + '</option>';
+            }
+        } else {
+            for (var name in values) {
+                line.input += '<option value="' + values[name] + '">' + name + '</option>';
+            }
+        }
+        line.input += '</select></td></tr>';
+        return line;
     },
     editFontName: function (widget, wid_attr) {
         // Select
-        var values = ['', "Arial", "Times", "Andale Mono", "Comic Sans", "Impact"];
+        var values = ['', 'Arial', 'Times', 'Andale Mono', 'Comic Sans', 'Impact'];
         vis.editSelect(widget, wid_attr, values);
+    },
+    editAutoComplete: function (widget, wid_attr, values) {
+        // Effect selector
+        var line = {
+            input:  '<input type="text" id="inspect_' + wid_attr + '"/>',
+            init: function (_wid_attr, data) {
+                $(this).autocomplete({
+                    minLength: 0,
+                    source: function (request, response) {
+                        var _data = $.grep(values, function (value) {
+                            return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                        });
+
+                        response(_data);
+                    },
+                    select: function (event, ui) {
+                        $(this).val(ui.item.value);
+                        $(this).trigger('change', ui.item.value);
+                    }
+                }).focus(function () {
+                    // Show dropdown menu
+                    $(this).autocomplete('search', '');
+                });
+            }
+        };
+        return line;
     },
     editColor: function (widget, wid_attr) {
         var line = {
@@ -716,248 +759,124 @@ vis = $.extend(true, vis, {
         return line;
     },
     editViewName: function (widget, wid_attr) {
+        var views = [''];
+        for (var v in this.views) {
+            views.push(v);
+        }
+
+        return this.editSelect(widget, wid_attr, views);
+    },
+    editEffect: function (widget, wid_attr) {
         var that = this;
-        var line = {
-            input: '<input type="text" id="inspect_' + wid_attr + '"/>',
-            init:  function (attr, val) {
-                // autocomplete for filter key
-                var $attr = $('#inspect_' + attr);
-
-                if ($attr.length) {
-                    $attr.data('data_save', function () {
-                        var $this = $(this);
-
-                        if ($this.data('timer')) clearTimeout($this.data('timer'));
-
-                        $this.data('timer', _setTimeout(function (elem_) {
-                            // If really changed
-                            var $this = $(elem_);
-                            var attr   = $this.data('data-attr');
-                            var view   = $this.data('data-view');
-                            var widget = $this.data('data-widget');
-                            that.widgets[widget].data.attr(attr, $this.val());
-                            that.views[view].widgets[widget].data[attr] = $this.val();
-                            that.reRenderWidgetEdit(widget);
-                            that.save();
-                        }, 200, this));
-                    });
-
-                    $attr.autocomplete({
-                        minLength: 0,
-                        source: function (request, response) {
-                            var views = [];
-                            for (var v in that.views) {
-                                views[views.length] = v;
-                            }
-
-                            var data = $.grep(views, function (value) {
-                                return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
-                            });
-
-                            response(data);
-                        },
-                        select: function (/*event, ui*/) {
-                            $(this).data('data_save').call(this);
-                        },
-                        change: function (/*event, ui*/) {
-                            $(this).data('data_save').call(this);
-                        }
-                    }).focus(function () {
-                        $(this).autocomplete("search", '');
-                    }).keyup(function () {
-                        $(this).data('data_save').call(this);
-                    });
+        return this.editSelect(widget, wid_attr, [
+            '',
+            'show',
+            'blind',
+            'bounce',
+            'clip',
+            'drop',
+            'explode',
+            'fade',
+            'fold',
+            'highlight',
+            'puff',
+            'pulsate',
+            'scale',
+            'shake',
+            'size',
+            'slide'
+        ], null, function (data) {
+            var eff = wid_attr.replace('_effect', '_options');
+            var $elem = $('#inspect_' + eff);
+            if ($elem.length) {
+                if (data == 'slide') {
+                    that.hideShowAttr(widget, eff, true);
+                } else {
+                    that.hideShowAttr(widget, eff, false);
+                    that.widgets[widget].data[eff] = '';
+                    that.views[that.activeView].widgets[widget].data[eff] = '';
                 }
             }
-        };
-
+        });
+    },
+    editNumber: function (widget, wid_attr, options, onchange) {
+        // Select
+        var line = {
+            input: '<input id="inspect_' + wid_attr + '"/>',
+            init: function (w, data) {
+                options = options || {};
+                options.spin = function () {
+                    $(this).trigger('change');
+                }
+                $(this).spinner(options);
+            }
+        }
+        if (onchange) line.onchange = onchange;
         return line;
     },
-    editEffects: function (widget, wid_attr) {
-        // Effect selector
-        $('#widget_attrs').append('<tr nowrap id="option_' + wid_attr + '" class="vis-add-option"><td class="vis-edit-td-wid_attr">' + _(wid_attr.split("_")[0] + " effect") + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/></td></tr>');
-
-        // autocomplete for filter key
-        var elem = document.getElementById('inspect_' + wid_attr);
-        if (elem) {
-            elem._save = function () {
-                if(this.timer) {
-                    clearTimeout(this.timer);
-                }
-
-                this.timer = _setTimeout(function (elem_) {
-                    // If really changed
-                    var $this = $(elem_);
-                    var attr = $this.attr('id').slice(8);
-                    vis.widgets[vis.activeWidget].data.attr(attr, $this.val());
-                    vis.views[vis.activeView].widgets[vis.activeWidget].data[attr] = $this.val();
-                    vis.save();
-                }, 200, this);
-            };
-
-            $(elem).autocomplete({
-                minLength: 0,
-                source: function (request, response) {
-                    var effects = ['',
-                        'show',
-                        'blind',
-                        'bounce',
-                        'clip',
-                        'drop',
-                        'explode',
-                        'fade',
-                        'fold',
-                        'highlight',
-                        'puff',
-                        'pulsate',
-                        'scale',
-                        'shake',
-                        'size',
-                        'slide'];
-
-                    var data = $.grep(effects, function (value) {
-                        return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
-                    });
-
-                    response(data);
-                },
-                select: function (event, ui) {
-                    this._save();
-
-                    $(elem).trigger('change', ui.item.value)
-                },
-                change: function (event, ui) {
-                    this._save();
-                    $(elem).trigger('change', ui.item.value);
-                }
-            }).focus(function () {
-                $(this).autocomplete("search", '');
-            }).keyup(function () {
-                this._save();
-            }).val(widget.data[wid_attr]);
-        }
-    },
-    editEffects_opt: function (widget, wid_attr) {
-        // Effect selector
-        $('#widget_attrs').append('<tr nowrap id="option_' + wid_attr + '" class="vis-add-option"><td class="vis-edit-td-wid_attr">' + _(wid_attr.split("_")[0] + " opt.") + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/></td></tr>');
-
-        // autocomplete for filter key
-        var elem = document.getElementById('inspect_' + wid_attr);
-        if (elem) {
-            elem._save = function () {
-                if (this.timer)
-                    clearTimeout(this.timer);
-
-                this.timer = _setTimeout(function (elem_) {
-                    // If really changed
-                    var $this = $(elem_);
-                    var attr = $this.attr('id').slice(8);
-                    vis.widgets[vis.activeWidget].data.attr(attr, $this.val());
-                    vis.views[vis.activeView].widgets[vis.activeWidget].data[attr] = $this.val();
-                    vis.save();
-                }, 200, this);
-            };
-
-            $(elem).autocomplete({
-                minLength: 0,
-                appendTo: $(elem).parent(),
-                source: [''],
-//                create: function (event, ui) {
-//                  $($(elem).parent()).find("ul").css({position: "relative"})
-//                },
-                select: function (event, ui) {
-                    this._save();
-                },
-                change: function (event, ui) {
-                    this._save();
-                }
-            }).focus(function () {
-                $(this).autocomplete("search", '');
-            }).keyup(function () {
-                this._save();
-            }).val(_(widget.data[wid_attr]));
-
-            var $sel = $('#inspect_' + wid_attr.split('_eff_opt')[0] + ('_effect'));
-            choice_opt($sel.val());
-
-            $sel.change(function (event, data) {
-                choice_opt(data)
-            });
-        }
-
-        function choice_opt(_data) {
-            if (_data == 'slide') {
-                $('#option_' + wid_attr).show();
-                $(elem).autocomplete('option', 'source', [
-                    {label: _('left'),  value:'left'},
-                    {label: _('right'), value:'right'},
-                    {label: _('up'),    value:'up'},
-                    {label: _('down'),  value:'down'}
-                ]);
-            } else {
-                $(elem).autocomplete('option', 'source', ['']);
-                widget.data[wid_attr] = '';
-                $('#option_' + wid_attr).hide();
-            }
-        }
-    },
-    hr: function (widget, wid_attr) {
-        // Effect selector
-        $('#widget_attrs').append('<tr class="vis-add-option"><td colspan="2" class="vis-edit-td-wid_attr"><hr></td></tr>');
-    },
-    br: function (widget, wid_attr) {
-        // Effect selector
-        $('#widget_attrs').append('<tr class="vis-add-option"><td colspan="2" class="vis-edit-td-wid_attr">&nbsp</td></tr>');
-    },
-    editImage: function (widget, wid_attr) {
+    editUrl: function (widget, wid_attr, filter) {
+        var line = {
+            input:  '<input type="text" id="inspect_' + wid_attr + '"/>'
+        };
         var that = this;
-        // Image src
-        $('#widget_attrs').append('<tr id="option_' + wid_attr + '" class="vis-add-option"><td>' + _(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
 
-        // Filemanager Dialog
-        $("#inspect_" + wid_attr + "_btn").click(function () {
-                $.fm({
-                    root:          "www/",
-                    lang:          that.language,
-                    path:          "www/vis/img/",
-                    file_filter:   ["gif","png", "bmp", "jpg", "jpeg", "tif", "svg"],
-                    folder_filter: false,
-                    mode:          "open",
-                    view:          "prev"
+        if ($.fm) {
+            line.button = {
+                icon:  'ui-icon-note',
+                text:  false,
+                title: _('Select image'),
+                click: function (/*event*/) {
+                    var data = $(this).data('data-attr');
 
-                },function(_data){
-                    var src = _data.path.split("www")[1] + _data.file;
-                    $("#inspect_" + wid_attr).val(src).trigger('change');
-                });
-        });
+                    $.fm({
+                        lang:         that.language,
+                        path:         that.widgets[widget].data[wid_attr] || '/' + that.conn.namespace + '/' + that.projectPrefix + 'img/',
+                        uploadDir:    '/' + that.conn.namespace + '/',
+                        fileFilter:   filter || ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
+                        folderFilter: false,
+                        mode:         'open',
+                        view:         'prev',
+                        userArg:      data,
+                        conn:         that.conn,
+                        zindex:       1001
+                    }, function (_data, userData){
+                        var src = _data.path + _data.file;
+                        $('#inspect_' + userData).val(src).trigger('change');
+                    });
+                }
+            };
+        }
+        return line;
     },
-    editUrl: function (widget, wid_attr) {
-        // Image src
-        $('#widget_attrs').append('<tr id="option_' + wid_attr + '" class="vis-add-option"><td>' + _(wid_attr) + ':</td><td><input type="text" id="inspect_' + wid_attr + '" size="34"/><input type="button" id="inspect_' + wid_attr + '_btn" value="..."></td></tr>');
-
-        // Filemanager Dialog
-        $('#inspect_' + wid_attr + '_btn').click(function () {
-
-            $.fm({
-                root:          "www/",
-                lang:          this.language ,
-                path:          "www/vis/img/",
-                file_filter:   ["mp3", "wav", "ogg"],
-                folder_filter: false,
-                mode:          "open",
-                view:          "table"
-
-            },function(_data){
-                var url = _data.path.split('www')[1] + _data.file;
-                $('#inspect_' + wid_attr).val(url).trigger('change');
-            });
-        });
+    hideShowAttr: function (widget, wid_attr, isShow) {
+        if (isShow) {
+            $('#td_' + wid_attr).show();
+        } else {
+            $('#td_' + wid_attr).hide();
+        }
     },
-    editSlider: function (widget, wid_attr, min, max, step) {
-        min = (min === undefined || min === null || min == '') ? 0 : parseFloat(min);
-        max = (max === undefined || max === null || max == '') ? 0 : parseFloat(max);
-        step = (!step) ? (max - min) / 100 : parseFloat(step);
-        // Image src
+    editSlider: function (widget, wid_attr, options) {
+        options.min  = (options.min === undefined || options.min === null || options.min == '') ? 0 : options.min;
+        options.max  = (options.max === undefined || options.max === null || options.max == '') ? 0 : options.max;
+        options.step = (!options.step) ? (options.max - options.min) / 100 : options.step;
+        var that = this;
+        var line = {
+            input: '<table width="100%"><tr><td style="width:50px"><input style="width:50px" id="inspect_' + wid_attr + '"/></td><td width="100%"><div id="inspect_' + wid_attr + '_slider"></div></td></tr>',
+            init: function (w, data) {
+                options.value = (data === undefined) ? options.min : data;
+                var input = this;
+                options.slide = function (event, ui) {
+                    $(input).val(ui.value).trigger('change');
+                };
+                $('#inspect_' + wid_attr + '_slider').slider(options);
+            },
+            onchange: function (value) {
+                $('#inspect_' + wid_attr + '_slider').slider('value', (value === undefined) ? options.min : value);
+            }
+        };
+        return line;
+
+        /*// Image src
         $('#widget_attrs').append('<tr id="option_'+wid_attr+'" class="vis-add-option"><td>'+_(wid_attr)+':</td><td><table style="width:100%" class="vis-no-spaces"><tr class="vis-no-spaces"><td  class="vis-no-spaces" style="width:50px"><input type="text" id="inspect_'+wid_attr+'" size="5"/></td><td  class="vis-no-spaces" style="width:20px">'+min+'</td><td><div id="inspect_'+wid_attr+'_slider"></div></td><td  class="vis-no-spaces" style="width:20px;text-align:right">'+max+'</td></tr></table></td></tr>');
 
         var slider = $("#inspect_"+wid_attr+"_slider");
@@ -967,18 +886,7 @@ vis = $.extend(true, vis, {
             max:   max,
             step:  step,
             slide: function (event, ui) {
-                /*if (this.timer)
-                    clearTimeout (this.timer);
 
-                this.timer = _setTimeout (function (elem_, value) {
-                    // If really changed
-                    var $this = $(elem_);
-                    var attr = $this.attr('id').slice(8);
-                    var text = $("#inspect_"+wid_attr);
-                    if (text.val() != value) {
-                        text.val(value).trigger('change');
-                    }
-                }, 200, this, ui.value);*/
                 var $this = $(this);
                 var text = $("#inspect_"+wid_attr);
                 if (text.val() != ui.value) {
@@ -1003,7 +911,7 @@ vis = $.extend(true, vis, {
             vis.reRenderWidgetEdit(vis.activeWidget);
         }).keyup(function () {
             $(this).trigger('change');
-        });
+        });*/
     },
     inspectWidgetMulti: function (id) {
         var $this = $("#"+id);
@@ -1042,37 +950,55 @@ vis = $.extend(true, vis, {
         // Type format: id - Object ID Dialog
         //              checkbox
         //              image - image
-        //              number[,min,max] - non-float number
+        //              number,min,max,step - non-float number. min,max,step are optional
         //              color - color picker
         //              views - Name of the view
         //              effect - jquery UI show/hide effects
         //              eff_opt - additional option to effect slide (up, down, left, right)
         //              fontName - Font name
         //              slider,min,max,step - Default step is ((max - min) / 100)
-        //              select_value1,select_value2,... - dropdown select
+        //              select,value1,value2,... - dropdown select
         //              hr
         //              br
-        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([0-9-]+\))?(\[.+\])?(\/.+)?/;
-        var view        = this.getViewOfWidget(widget)
-        var match       = this.regexAttr.exec(_wid_attr);
+        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,\.a-zA-Z0-9]+)?/;
+        var view         = this.getViewOfWidget(widget)
+        var match        = this.regexAttr.exec(_wid_attr);
 
-        var wid_attr    = match[1];
-        var wid_repeats = match[2];
-        var wid_default = match[3];
-        var wid_type    = match[4];
-        var index       = '';
+        var wid_attr     = match[1];
+        var wid_repeats  = match[2];
+        var wid_default  = match[3];
+        var wid_type     = match[4];
+        var wid_type_opt = null;
+        var notTranslate = true;
+        var index        = '';
+        var widgetData   = this.views[view].widgets[widget].data;
+        var attrDepends  = [];
 
         // remove /
-        if (wid_type) wid_type = wid_type.substring(1);
+        if (wid_type) {
+            wid_type = wid_type.substring(1);
+            var parts = wid_type.split(',');
+            // extract min,max,step or select values
+            if (parts.length > 1) {
+                wid_type = parts.shift();
+                wid_type_opt = parts;
+            }
+        }
         // remove ()
         if (wid_repeats) {
             wid_repeats = wid_repeats.substring(1, wid_repeats.length - 1);
-            var parts = wid_repeats.split('-');
+            var parts = wid_repeats.split('-', 2);
             if (parts.length == 2) {
                 wid_repeats = {
                     start: parseInt(parts[0], 10),
                     end:   parseInt(parts[1], 10)
                 };
+                // If end is not number, it can be attribute
+                if (parts[1][0] < '0' || parts[1][0] > '9') {
+                    wid_repeats.end = (widgetData[parts[1]] !== undefined) ? parseInt(widgetData[parts[1]], 10) : 1;
+                    attrDepends.push(parts[1]);
+                }
+
                 index = wid_repeats.start;
             } else {
                 throw 'Invalid repeat argument: ' + wid_repeats;
@@ -1100,14 +1026,7 @@ vis = $.extend(true, vis, {
         group = group || 'common';
         this.groups[group] = this.groups[group] || {};
 
-        /*else if (wid_attr_ === "oid" || type == 'id') {
-            vis.editObjectID (widget, wid_attr_, widgetFilter);
-        } else if (wid_attr_ === "oid-working") {
-            vis.editObjectID (widget, wid_attr_, 'WORKING');
-        } else if (wid_attr_.indexOf ("src") == wid_attr_.length - 3 || type == "image") {
-            vis.editImage(widget, wid_attr_);
-        }else if (wid_attr_  == "url") {
-            vis.editUrl (widget, wid_attr_);
+        /*
         } else if (wid_attr_ === "weoid") {
             // Weather ID
             $('#widget_attrs').append('<tr class="vis-add-option"><td id="option_' + wid_attr_ + '" ></td></tr>');
@@ -1124,11 +1043,45 @@ vis = $.extend(true, vis, {
             });
         } else
         */
-        if (wid_attr == 'color') wid_type = 'color';
-        if (wid_attr == 'oid' || wid_attr.match(/^oid-/)) wid_type = 'id';
-        if (wid_attr.match(/nav_view$/)) wid_type = 'views';
+        if (wid_attr == 'color') {
+            wid_type = 'color';
+        } else
+        if (wid_attr == 'oid' || wid_attr.match(/^oid-/)) {
+            wid_type = 'id';
+        } else if (wid_attr.match(/nav_view$/)) {
+            wid_type = 'views';
+        } else
+        /*if (wid_attr.match(/src$/)) {
+            wid_type = 'image';
+        } else*/
+        if (wid_attr == 'url' || wid_attr == 'sound') {
+            wid_type = 'sound';
+        } else
+        if (wid_attr.indexOf('_effect') != -1) {
+            wid_type = 'effect';
+        } else
+        if (wid_attr.indexOf('_eff_opt') != -1) {
+            wid_type = 'effect-options';
+        } if (wid_type == 'nselect') {
+            wid_type = 'select';
+            notTranslate = true;
+        }
 
-        var widgetData = this.views[view].widgets[widget].data;
+        // Extract min, max, step for number and slider
+        if ((wid_type == 'number' || wid_type == 'slider') && wid_type_opt) {
+            var old = wid_type_opt;
+            var wid_type_opt = {};
+            if (old[0] !== undefined) {
+                wid_type_opt.min = parseFloat(old[0]);
+                if (old[1] !== undefined) {
+                    wid_type_opt.max = parseFloat(old[1]);
+                    if (old[2] !== undefined) {
+                        wid_type_opt.step = parseFloat(old[2]);
+                    }
+                }
+            }
+        }
+
         var input;
         var line;
         do {
@@ -1154,8 +1107,40 @@ vis = $.extend(true, vis, {
                 case 'color':
                     line = this.editColor(widget, (wid_attr + index));
                     break;
+                case 'number':
+                    line = this.editNumber(widget, (wid_attr + index), wid_type_opt);
+                    break;
+                case 'slider':
+                    line = this.editSlider(widget, (wid_attr + index), wid_type_opt);
+                    break;
                 case 'views':
                     line = this.editViewName(widget, (wid_attr + index));
+                    break;
+                case 'image':
+                    line = this.editUrl(widget, (wid_attr + index));
+                    break;
+                case 'sound':
+                    line = this.editUrl(widget, (wid_attr + index), ['mp3', 'wav', 'ogg']);
+                    break;
+                case 'select':
+                    line = this.editSelect(widget, (wid_attr + index), wid_type_opt, notTranslate);
+                    break;
+                case 'effect':
+                    line = this.editEffect(widget, (wid_attr + index));
+                    break;
+                case 'effect-options':
+                    line = this.editSelect(widget, (wid_attr + index), {
+                        'left':   _('left'),
+                        'right':  _('right'),
+                        'top':    _('top'),
+                        'bottom': _('bottom')
+                    });
+                    break;
+                case 'hidden':
+                    continue;
+                    break;
+                case 'fontname':
+                    line = this.editFontName(widget, (wid_attr + index));
                     break;
                 default:
                     line = '<input type="text" id="inspect_' + (wid_attr + index) + '"/>';
@@ -1169,6 +1154,9 @@ vis = $.extend(true, vis, {
                 line.attrName  = wid_attr;
                 line.attrIndex = index;
             }
+
+            if (attrDepends.length) line.depends = attrDepends;
+            line.type = wid_type;
 
             // <tr><td>title:</td><td><input /></td><td>button</td></tr>
             this.groups[group][wid_attr + index] = line;
@@ -1184,6 +1172,7 @@ vis = $.extend(true, vis, {
     showInspect: function (view, widget) {
         var $widgetAttrs = $('#widget_attrs');
         var that = this;
+        var depends = [];
         for (var group in this.groups) {
             if (this.groupsState[group] === undefined) this.groupsState[group] = false;
             $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="2">' + _('group_' + group) + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>')
@@ -1192,11 +1181,19 @@ vis = $.extend(true, vis, {
                 var line = this.groups[group][wid_attr];
                 if (line[0]) line = line[0];
                 if (typeof line == 'string') line = {input: line};
-                var text = '<tr class="vis-edit-td-caption group-' + group + '"><td>' + _(line.attrName) + (line.attrIndex !== '' ? ('[' + line.attrIndex + ']') : '') + ':</td><td class="vis-edit-td-field"';
+                var title = _(wid_attr + '_tooltip');
+                var icon;
+                if (title == wid_attr + '_tooltip'){
+                    title = '';
+                    icon = '';
+                } else {
+                    icon = '<div class="ui-icon ui-icon-notice" style="float: right"/>';
+                }
+                var text = '<tr class="vis-edit-td-caption group-' + group + '" id="td_' + wid_attr + '"><td ' + (title ? 'title="' + title + '"' : '') + '>' + (icon ? '<i>' : '') + _(line.attrName) + (line.attrIndex !== '' ? ('[' + line.attrIndex + ']') : '') + ':' + (icon ? '</i>' : '') + '</td><td class="vis-edit-td-field"';
 
-                if (!line.button) text += ' colspan="2"'
+                if (!line.button) text += ' colspan="2"';
 
-                text += '>' + line.input + '</td>';
+                text += '>' + (line.input || '') + '</td>';
 
                 if (line.button) {
                     if (!line.button.html){
@@ -1256,9 +1253,9 @@ vis = $.extend(true, vis, {
                 $input.data('data-attr',   wid_attr);
                 $input.data('data-widget', widget);
                 $input.data('data-view',   view);
+                $input.data('data-type',   line.type)
                 if (line.onchange) $input.data('data-onchange', line.onchange);
                 $input.addClass('vis-inspect-widget');
-
 
                 if (this.groups[group][wid_attr][0]) {
                     for (var i = 1; i < this.groups[group][wid_attr].length; i++) {
@@ -1266,18 +1263,35 @@ vis = $.extend(true, vis, {
                         $widgetAttrs.append(text);
                     }
                 }
-
-                // Call on change
-                if (typeof line.onchange == 'function') {
-                    line.onchange.call($input[0], this.widgets[widget].data[wid_attr]);
-                }
-                if (typeof line.init == 'function') {
-                    line.init.call($input[0], wid_attr, this.widgets[widget].data[wid_attr]);
+                // Collect list of attribute names on which depends other attributes
+                if (line.depends) {
+                    for (var u = 0; u < line.depends.length; u++) {
+                        if (depends.indexOf(line.depends[u]) == -1) depends.push(line.depends[u]);
+                    }
                 }
             }
 
             // Hide elements
             if (!this.groupsState[group]) $('.group-' + group).hide();
+        }
+
+        // Init all elements together
+        for (var group in this.groups) {
+            for (var wid_attr in this.groups[group]) {
+                var line = this.groups[group][wid_attr];
+                var $input = $('#inspect_' + wid_attr);
+                if (depends.length) $input.data('data-depends', depends);
+
+                if (line[0]) line = line[0];
+                if (typeof line == 'string') line = {input: line};
+                if (typeof line.init == 'function') {
+                    line.init.call($input[0], wid_attr, this.widgets[widget].data[wid_attr]);
+                }
+                // Call on change
+                if (typeof line.onchange == 'function') {
+                    line.onchange.call($input[0], this.widgets[widget].data[wid_attr]);
+                }
+            }
         }
 
         var that = this;
@@ -1286,7 +1300,9 @@ vis = $.extend(true, vis, {
             var attr     = $this.data('data-attr');
             var widget   = $this.data('data-widget');
             var view     = $this.data('data-view');
+            var type     = $this.data('data-type');
             var onchange = $this.data('data-onchange');
+            var depends  = $this.data('data-depends');
 
             if ($this.attr('type') == 'checkbox') {
                 that.widgets[widget].data[attr] = $this.prop('checked');
@@ -1322,6 +1338,17 @@ vis = $.extend(true, vis, {
 
             that.save();
             that.reRenderWidgetEdit(widget);
+
+            // Rebuild attr list
+            if (depends && depends.indexOf(attr) != -1) {
+                that.inspectWidget(widget);
+            }
+
+            //Update containers
+            if (type == 'views') {
+                // Set ths views for containers
+                that.updateContainers(view);
+            }
         });
         
         $('.group-control').each(function () {
@@ -1431,7 +1458,12 @@ vis = $.extend(true, vis, {
             console.log(widget.tpl + " is not included");
             return false;
         }
-        var widgetAttrs  = $widgetTpl.attr('data-vis-attrs').split(";");
+        var widgetAttrs  = $widgetTpl.attr('data-vis-attrs');
+        if (widgetAttrs){
+            widgetAttrs = widgetAttrs.split(';');
+        } else {
+            widgetAttrs = [];
+        }
         var widgetFilter = $widgetTpl.attr('data-vis-filter');
 
         $('#inspect_comment_tr').show();
@@ -1573,7 +1605,7 @@ vis = $.extend(true, vis, {
                     } else if (type === "checkbox") {
                         isValueSet = true;
                         vis.editCheckbox(widget, wid_attr_);
-                    } else if (type === "fontName") {
+                    } else if (type === "fontname") {
                         isValueSet = true;
                         vis.editFontName(widget, wid_attr_);
                     } else if (type === "slider") {
@@ -1585,7 +1617,7 @@ vis = $.extend(true, vis, {
                         isValueSet = true;
                         var values = wid_attrs[1].split(',');
                         vis.editSelect (widget, wid_attr_, values);
-                    } else if (wid_attr_.indexOf("nav_view") != -1|| type == "views") {
+                    } else if (wid_attr_.indexOf("nav_view") != -1 || type == "views") {
                         vis.editViewName (widget, wid_attr_);
                         isCustomEdit = true;
                     } else if (type == "hidden") {
@@ -1896,12 +1928,12 @@ vis = $.extend(true, vis, {
     changeViewEdit: function (view, noChange) {
 
         if (this.selectable) {
-            $(".vis-view.ui-selectable").selectable("destroy");
+            $(".vis-view.ui-selectable").selectable('destroy');
             var that = this;
-            $("#visview_"+view).selectable({
-                filter:    "div.vis-widget",
-                tolerance: "fit",
-				cancel:    "div.vis-widget",
+            $('#visview_' + view).selectable({
+                filter:    'div.vis-widget',
+                tolerance: 'fit',
+				cancel:    'div.vis-widget',
                 start: function (e, ui) {
 
                 },
@@ -2648,9 +2680,9 @@ vis = $.extend(true, vis, {
 
         $select_view_copy.multiselect({
             minWidth: 200,
-            checkAllText:_("Check all"),
-            uncheckAllText:_("Uncheck all"),
-            noneSelectedText:_("Select options")
+            checkAllText:_('Check all'),
+            uncheckAllText:_('Uncheck all'),
+            noneSelectedText:_('Select options')
         }).multiselect('refresh');
 
         $select_view.change(function () {
@@ -2662,11 +2694,12 @@ vis = $.extend(true, vis, {
 
 		for (i = 0; i < this.widgetSets.length; i++) {
 			if (this.widgetSets[i].name !== undefined) {
-                $select_set.append("<option value='" + this.widgetSets[i].name + "'>" + this.widgetSets[i].name + "</option>");
+                $select_set.append('<option value="' + this.widgetSets[i].name + '">' + this.widgetSets[i].name + '</option>');
 			} else {
-                $select_set.append("<option value='" + this.widgetSets[i] + "'>" + this.widgetSets[i] + "</option>");
+                $select_set.append('<option value="' + this.widgetSets[i] + '">' + this.widgetSets[i] + '</option>');
 			}
 		}
+        //$select_set.selectmenu();
         $select_set.multiselect('refresh');
 
 		vis.refreshWidgetSelect();
@@ -2945,7 +2978,9 @@ vis = $.extend(true, vis, {
         $("#savingProgress").button({
             text: false,
             icons: { primary: "ui-icon-disk"}
-        }).click(that._saveToServer).hide().addClass("ui-state-active");
+        }).click(function ()  {
+            that._saveToServer();
+        }).hide().addClass("ui-state-active");
 
 
         var _save_posi = save_posi[0] + '()';
@@ -3255,15 +3290,14 @@ vis = $.extend(true, vis, {
             clearTimeout(this._saveTimer);
             this._saveTimer = null;
         }
+        var that = this;
         // Store the changes if nothing changed for 2 seconds
-        this._saveTimer = _setTimeout(function (_vis) {
-            _vis._saveToServer();
-        }, 2000, this);
+        this._saveTimer = setTimeout(function () {
+            that._saveToServer();
+        }, 2000);
 
         $('#savingProgress').show().next().button('disable');
-        if (cb) {
-            cb();
-        }
+        if (cb) cb();
     },
     undo: function () {
         if (this.undoHistory.length <= 1) return;

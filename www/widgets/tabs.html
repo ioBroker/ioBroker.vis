@@ -1,0 +1,50 @@
+<link rel="stylesheet" href="widgets/tabs/styles/jquery.sliderTabs.css">
+<script src="widgets/tabs/jquery.sliderTabs.js"></script>
+<script type="text/javascript">
+    if (vis.editMode) {
+        // Add words for widgets
+        $.extend(true, systemDictionary, {
+            "show_tabs": {"en": "Tabs count", "de": "Tabs-Anzahl", "ru": "Количество закладок"},
+            "title_tab_": {"en": "Tab title ", "de": "Tabtitel ", "ru": "Заголовок закладки"},
+            "contains_view_": {"en": "Contains view", "de": "View für Tab ", "ru": "Имя страницы"}
+        });
+    }
+
+    vis.binds.bko = {
+        stabs: function (el, data) {
+            setTimeout(function () {
+                $(el).sliderTabs({
+                    height: data.Height
+                });
+            }, 50);
+        }
+    };
+</script>
+
+<script type="text/ejs" 
+        id="tplSTab" 
+        class="vis-tpl"
+        data-vis-set="tabs"
+        data-vis-name="SliderTabs" 
+        data-vis-attrs="Height[100]/slider,20,1000,1;show_tabs[3]/slider,1,8,1;title_tab_(1-show_tabs)[Tab];contains_view_(1-show_tabs)/views">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 250px; height: 250px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <span style="width:100%;height:100%" <%= (el) -> vis.binds.bko.stabs(el, data) %>><%= this.data.attr('title') %>
+                <!-- Unordered list representing the tabs -->
+                <ul>
+                    <% for(var i = 1; i <= data.attr('show_tabs'); i++) {%>
+                       <li><a href="#<%= this.data.attr('wid') %>_st<%= i %>"><%= this.data.attr('title_tab_' + i) %></a></li>
+                    <% } %>
+                </ul>
+                <% for(var i = 1; i <= data.attr('show_tabs'); i++) {%>
+                    <div id="<%= this.data.attr('wid') %>_st<%= i %>" style="padding-left:0;height:100%">
+                        <% if (vis.editMode) { %>
+                            <div class="editmode-helper" />
+                        <% } %>
+                        <div data-vis-contains="<%= this.data.attr('contains_view_' + i) %>" class="vis-widget-body vis-view-container"></div>
+                    </div>
+                <% } %>
+            </span>
+        </div>
+    </div>
+</script>

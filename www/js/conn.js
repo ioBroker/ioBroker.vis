@@ -28,6 +28,7 @@ var servConn = {
     _type:              1, // 0 - SignalR, 1 - socket.io, 2 - local demo
     _timeout:           0, // 0 - use transport default timeout to detect disconnect
     _reconnectInterval: 10000, // reconnect interval
+    _subscribes:        [],
     namespace:          'vis.0',
     getType: function () {
         return 'socket.io';
@@ -53,6 +54,7 @@ var servConn = {
     init: function (connOptions, connCallbacks) {
         connOptions = connOptions || {};
         var that = this;
+        if (!connOptions.name) connOptions.name = this.namespace;
 
         if (typeof session !== 'undefined') {
             var user = session.get('user');
@@ -93,7 +95,9 @@ var servConn = {
             });
 
             that._socket.on('connect', function () {
-                that._socket.emit('subscribe', '*');
+                this.emit('subscribe', '*');
+                this.emit('name', connOptions.name);
+
                 if (that._disconnectTimeout){
                     clearTimeout(that._disconnectTimeout);
                     that._disconnectTimeout = null;
@@ -120,20 +124,16 @@ var servConn = {
                     }, 5000);
                 }
             });
+            // after reconnect the "connect" event will be called
             that._socket.on('reconnect', function () {
-                that._socket.emit('subscribe', '*');
                 //console.log("socket.io reconnect");
                 var offlineTime = (new Date()).getTime() - that._disconnectedSince;
                 console.log('was offline for ' + (offlineTime / 1000) + 's');
 
                 // TODO does this make sense?
-                if (offlineTime > 12000) {
+                //if (offlineTime > 12000) {
                     //window.location.reload();
-                }
-                that._isConnected = true;
-                if (that._connCallbacks.onConnChange) {
-                    that._connCallbacks.onConnChange(that._isConnected);
-                }
+                //}
                 //that._autoReconnect();
             });
             that._socket.on('objectChange', function (id, obj) {
@@ -190,6 +190,60 @@ var servConn = {
             callback(err, data);
         });
     },
+    readFile64: function (filename, callback) {
+        if (!callback) {
+            throw 'No callback set';
+        }
+        this._socket.emit('readFile', this.namespace, filename, function (err, data) {
+            if (data) {
+                var ext = filename.match(/\.[^.]+$/);
+                var _mimeType;
+                if (ext == '.css') {
+                    _mimeType = 'text/css';
+                } else if (ext == '.bmp') {
+                    _mimeType = 'image/bmp';
+                } else if (ext == '.png') {
+                    _mimeType = 'image/png';
+                } else if (ext == '.jpg') {
+                    _mimeType = 'image/jpeg';
+                } else if (ext == '.jpeg') {
+                    _mimeType = 'image/jpeg';
+                } else if (ext == '.gif') {
+                    _mimeType = 'image/gif';
+                } else if (ext == '.tif') {
+                    _mimeType = 'image/tiff';
+                } else if (ext == '.js') {
+                    _mimeType = 'application/javascript';
+                } else if (ext == '.html') {
+                    _mimeType = 'text/html';
+                } else if (ext == '.htm') {
+                    _mimeType = 'text/html';
+                } else if (ext == '.json') {
+                    _mimeType = 'application/json';
+                } else if (ext == '.xml') {
+                    _mimeType = 'text/xml';
+                } else if (ext == '.svg') {
+                    _mimeType = 'image/svg+xml';
+                } else if (ext == '.eot') {
+                    _mimeType = 'application/vnd.ms-fontobject';
+                } else if (ext == '.ttf') {
+                    _mimeType = 'application/font-sfnt';
+                } else if (ext == '.woff') {
+                    _mimeType = 'application/font-woff';
+                } else if (ext == '.wav') {
+                    _mimeType = 'audio/wav';
+                } else if (ext == '.mp3') {
+                    _mimeType = 'audio/mpeg3';
+                } else {
+                    _mimeType = 'text/javascript';
+                }
+
+                callback(err, {mime: _mimeType, data: btoa(data)});
+            } else {
+                callback(err);
+            }
+        });
+    },
     writeFile: function (filename, data, callback) {
         var that = this;
         if (!this._checkConnection('writeFile', arguments)) return;
@@ -198,16 +252,57 @@ var servConn = {
 
         this._socket.emit('writeFile', this.namespace, filename, data, callback);
     },
+    // Write file base 64
+    writeFile64: function (filename, data, callback) {
+        var that = this;
+        if (!this._checkConnection('writeFile', arguments)) return;
+
+        var parts = filename.split('/');
+        var adapter = parts[1];
+        parts.splice(0, 2);
+
+        this._socket.emit('writeFile', adapter, parts.join('/'), atob(data), callback);
+    },
     readDir: function (dirname, callback) {
         //socket.io
         if (this._socket == null) {
             console.log('socket.io not initialized');
             return;
         }
-        this._socket.emit('readdir', dirname, function (data) {
-            if (callback) {
-                callback(data);
-            }
+        var parts = dirname.split('/');
+        var adapter = parts[1];
+        parts.splice(0, 2);
+
+        this._socket.emit('readDir', adapter, parts.join('/'), function (err, data) {
+            if (callback) callback(err, data);
+        });
+    },
+    mkdir: function (dirname, callback) {
+        var parts = dirname.split('/');
+        var adapter = parts[1];
+        parts.splice(0, 2);
+
+        this._socket.emit('mkdir', adapter, parts.join('/'), function (err) {
+            if (callback) callback(err);
+        });
+    },
+    unlink: function (name, callback) {
+        var parts = name.split('/');
+        var adapter = parts[1];
+        parts.splice(0, 2);
+
+        this._socket.emit('unlink', adapter, parts.join('/'), function (err) {
+            if (callback) callback(err);
+        });
+    },
+    renameFile: function (oldname, newname, callback) {
+        var parts1 = oldname.split('/');
+        var adapter = parts1[1];
+        parts1.splice(0, 2);
+        var parts2 = newname.split('/');
+        parts2.splice(0, 2);
+        this._socket.emit('rename', adapter, parts1.join('/'), parts2.join('/'), function (err) {
+            if (callback) callback(err);
         });
     },
     setState: function (pointId, value) {
