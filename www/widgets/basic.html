@@ -703,6 +703,11 @@
                     return parseInt(m[1], 10) * (multiplier || 1);
                 }
             }
+        },
+        getCalc: function (data) {
+            //<%=
+            return (data.border) ? ("calc(" + (parseFloat(vis.states.attr(data.oid + '.val')) * data.factor) + "% - " + vis.binds.basic.extractWidth(data.border, 2) + ")") : ((parseFloat(vis.states.attr(data.oid + '.val')) * data.factor) + "%");
+            //        %>
         }
     };
 
@@ -1340,7 +1345,9 @@
         data-vis-name="val - Bar Horizontal"
         data-vis-attrs="oid;factor[1];color[white]/color;border;shadow;reverse/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 240px; height: 20px; border: 1px solid #888" id="<%= this.data.attr('wid') %>">
-        <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget-body" style="<%= (this.data.border) ? "height: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ");" : "" %><%= (this.data.reverse === "true" || this.data.reverse === true ? "float: right; " : "") %>background-color:<%= this.data.color %>;border: <%= this.data.border %>; box-shadow: <%= this.data.shadow %>;width: <%= vis.states.attr(this.data.oid + '.val') * this.data.factor %>%;"></div>
+        <div data-oid="<%= this.data.attr('oid') %>"
+        class="vis-widget-body"
+        style="<%= (this.data.border) ? "height: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ");" : "" %><%= (this.data.reverse === "true" || this.data.reverse === true ? "float: right; " : "") %>background-color:<%= this.data.color %>; border: <%= this.data.border %>; box-shadow: <%= this.data.shadow %>;width: <%= vis.binds.basic.getCalc(this.data) %>"></div>
     </div>
 </script>
 
@@ -1351,7 +1358,7 @@
         data-vis-name="val - Bar Vertical"
         data-vis-attrs="oid;factor[1];color[white]/color;border;shadow;reverse/checkbox">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" style="width:20px; height:240px; border:1px solid #888" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" style="<%= (this.data.border) ? "width: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ");" : ""  %><%= "height:" + parseInt(vis.states.attr(this.data.oid + '.val')) * this.data.factor + "%;" %><%= (this.data.reverse === "true" || this.data.reverse === true ? "left:0px; position:absolute; bottom:0%;" : "") %>border: <%= this.data.border %>; box-shadow:<%= this.data.shadow %>; background-color:<%= this.data.color %>"></div>
+        <div class="vis-widget-body" style="<%= (this.data.border) ? "width: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ");" : ""  %>height:<%= vis.binds.basic.getCalc(this.data) + ";" %> %><%= (this.data.reverse === "true" || this.data.reverse === true ? "left:0px; position:absolute; bottom:0%;" : "") %>;border: <%= this.data.border %>; box-shadow:<%= this.data.shadow %>; background-color:<%= this.data.color %>"></div>
     </div>
 </script>
 
