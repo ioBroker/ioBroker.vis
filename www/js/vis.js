@@ -1100,11 +1100,11 @@ if ('applicationCache' in window) {
 
         vis.conn = servConn;
 
-        // First of all load project/vis-user.css
-        $('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
-
 
         if (!local) {
+            // First of all load project/vis-user.css
+            $('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
+
             vis.conn.init(null, {
                 onConnChange: function (isConnected) {
                     //console.log("onConnChange isConnected="+isConnected);

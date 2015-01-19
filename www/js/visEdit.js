@@ -2231,6 +2231,11 @@ vis = $.extend(true, vis, {
             maxWidth: 670,
             minWidth: 200
         });
+        $("#pan_attr").resizable({
+            handles: "w",
+            maxWidth: 670,
+            minWidth: 100
+        });
 
         $(window).resize(function () {
          layout()
@@ -2541,6 +2546,7 @@ vis = $.extend(true, vis, {
                 .replace("vis-widget-body", "vis-widget-prev-body")
                 .replace("ui-draggable", " ")
                 .replace("ui-resizable", " ")
+                .replace('<div class="editmode-helper"></div>','')
                 .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, "")
                 .replace(/(?:\r\n|\r|\n)/g, '')
                 .replace(/[ ]{2,}/g, ' ');
@@ -2722,14 +2728,22 @@ vis = $.extend(true, vis, {
         //});
     },
     add_Widget_prev: function (set) {
-        $.each(vis.widgetSets, function (i) {
-            var set = this;
+
+        $.each(vis.widgetSets, function () {
+            var set = "";
+            if(this.name){
+               set = this.name
+            }else{
+                set = this;
+            }
+
+
             var tpl_list = $(".vis-tpl[data-vis-set='" + set + "']");
+
             $.each(tpl_list, function (i) {
                 var tpl = $(tpl_list[i]).attr("id");
-
                 $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '"><div>' + $("#" + tpl).data("vis-name") + '</div></div>');
-
+                console.log(tpl_list[i]);
                 if ($(tpl_list[i]).data("vis-prev")) {
                     $('#prev_container_' + tpl).append($(tpl_list[i]).data("vis-prev"))
                 }
