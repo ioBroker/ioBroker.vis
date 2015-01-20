@@ -52,7 +52,6 @@ div#vis_container{
 .select-tr {
     background: rgb(50, 50, 50);
     border-bottom: 1px solid rgb(128, 128, 128);
-    /*border-top: 1px dashed black;*/
 }
 
 .select-td {
@@ -204,10 +203,7 @@ div#vis_container{
 }
 
 #create_instance {
-    /* margin-left: 87px; */
-    /* margin-top: 27px; */
     width: 120px;
-
 }
 
 #remove_instance {
@@ -217,7 +213,6 @@ div#vis_container{
 }
 
 #export_view {
-    /* margin-left: 87px; */
 }
 
 #import_view {
@@ -226,26 +221,20 @@ div#vis_container{
 }
 
 #export_local_view {
-    /* margin-left: 87px; */
 }
 
 #import_local_view {
-    /* float: right; */
-    /* margin-right: 87px; */
 }
 
 #clear_local_view {
-    /* margin-left: 87px; */
 }
 
 #language {
     width: 250px;
-
 }
 
 #vis_instance {
     width: 70px;
-
 }
 
 .ui-selecting {
@@ -260,7 +249,6 @@ div#vis_container{
     overflow: auto!important;
     background: #ffffff;
 }
-
 
 #savingProgress {
     width: 18px;
@@ -280,7 +268,6 @@ div#vis_container{
     border-radius: 0!important;
     border: none;
     position: relative;
-    /*top: -2px;*/
 }
 .ribbon_tab_content{
     width: 100%;
@@ -323,10 +310,7 @@ div#vis_container{
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
-
     display: inline-flex;
-    /* height: auto; */
-    /* vertical-align: top; */
 }
 
 #status_bar{
@@ -361,7 +345,6 @@ div#vis_container{
 .wid_prev:after{
     width: 100%;
     height: 100%;
-    /* background: #F00; */
     content: "";
     display: block;
     position: absolute;
@@ -388,17 +371,14 @@ div#vis_container{
 
 #pan_add_wid{
     width: 200px;
-
     display: inline-block;
     height: 100%;
-    /* margin: 0; */
+
 }
 #pan_attr {
-    /* float: right; */
     display: inline-block;
     height: 100%;
     left: auto!important;
-    /* overflow: auto; */
     white-space: nowrap;
     position: absolute;
     right: 0;
@@ -414,12 +394,10 @@ div#vis_container{
 
 #vis_wrap{
     width: 200px;
-
     max-height: 100%;
     position: relative;
     display: inline-block;
     height: 100%;
-    /* flex-direction: column; */
     overflow: hidden;
 }
 
@@ -427,12 +405,7 @@ div#vis_container{
     width: calc(100% - 1px);
     height: 27px;
 
-    /* background-color: cyan; */
     display: inline-flex;
-    /* justify-content: space-between; */
-    /* flex-direction: row; */
-    /* align-content: stretch; */
-    /* align-items: stretch; */
     position: relative;
 }
 
@@ -484,8 +457,6 @@ div#vis_container{
     font-weight: bold;
     height: calc(100% - 50px);
      overflow: auto;
-    /*overflow-x: hidden;*/
-    /*overflow-y: auto;*/
 }
 
 #attr_wrap{

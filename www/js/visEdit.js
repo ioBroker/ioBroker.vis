@@ -15,11 +15,11 @@
 
 // visEdit - the ioBroker.vis Editor
 
-"use strict";
+'use strict';
 
 vis = $.extend(true, vis, {
     toolbox: $("#vis_editor"),
-    selectView: $("#select_view"),
+    selectView: $('#select_view'),
     activeWidget: '',
     isStealCss: false,
     gridWidth: undefined,
@@ -31,6 +31,670 @@ vis = $.extend(true, vis, {
     groupsState: {'fixed': true, 'common': true},
     // Array with all objects (Descriptions of objects)
     objects: null,
+
+    editInit: function () {
+        var that = this;
+
+        vis.editInit_dialogs();
+        vis.editInit_menu();
+        $('#attr_wrap').tabs();
+        $('#pan_add_wid').resizable({
+            handles: 'e',
+            maxWidth: 670,
+            minWidth: 200
+        });
+        $('#pan_attr').resizable({
+            handles: 'w',
+            maxWidth: 670,
+            minWidth: 100
+        });
+
+        $(window).resize(function () {
+            layout()
+        });
+
+        function layout() {
+            $('#panel_body').height(parseInt(  $(window).height() - $('#menu_body').height() - 22 ));
+            $('#vis_wrap').width(parseInt($(window).width() - $('#pan_add_wid').width() - $('#pan_attr').width() - 1));
+        }
+        //layout();
+
+
+        $('#vis-version').html(this.version);
+
+        $('#button_undo')
+            .click(vis.undo)
+            .addClass('ui-state-disabled')
+            .hover(
+            function () {
+                $(this).addClass('ui-state-hover')
+            },
+            function () {
+                $(this).removeClass('ui-state-hover')
+            });
+
+        $('#widget_helper').hide();
+
+        $('input.vis-editor').button();
+        $("button.vis-editor").button();
+
+        $('select.vis-editor').each(function () {
+            $(this).multiselect({
+                multiple: false,
+                header: false,
+                selectedList: 1,
+                minWidth: $(this).attr('data-multiselect-width'),
+                height: $(this).attr('data-multiselect-height'),
+                checkAllText: _('Check all'),
+                uncheckAllText: _('Uncheck all'),
+                noneSelectedText: _('Select options')
+            });
+        });
+
+        $('select.vis-editor-large').each(function () {
+            $(this).multiselect({
+                multiple: false,
+                header: false,
+                //noneSelectedText: false,
+                selectedList: 1,
+                minWidth: 250,
+                height: 410,
+                checkAllText: _('Check all'),
+                uncheckAllText: _('Uncheck all'),
+                noneSelectedText: _('Select options')
+            });
+
+        });
+
+        $('select.vis-editor-xlarge').each(function () {
+            $(this).multiselect({
+                multiple: false,
+                header: false,
+                // noneSelectedText: false,
+                selectedList: 1,
+                minWidth: 420,
+                height: 340,
+                checkAllText: _('Check all'),
+                uncheckAllText: _('Uncheck all'),
+                noneSelectedText: _('Select options')
+            });
+        });
+
+        // Button Click Handler
+
+        $('#export_view').click(function () {
+            vis.exportView(false);
+        });
+
+        $('#import_view').click(function () {
+            $('#textarea_import_view').html('');
+            $('#dialog_import_view').dialog({
+                autoOpen: true,
+                width: 800,
+                height: 600,
+                modal: true,
+                open: function (event, ui) {
+                    $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
+                    $('.ui-widget-overlay').css('z-index', 1001);
+                    $('#start_import_view').click(function () {
+                        vis.importView();
+                    });
+                    $('#name_import_view').show();
+                }
+            });
+        });
+
+        $('#select_set').next().addClass('select_set');
+
+        $('.select_set').find('.ui-icon').remove();
+
+        $('#widget_doc').button({icons: {primary: 'ui-icon-script'}}).click(function () {
+            var tpl = vis.views[vis.activeView].widgets[vis.activeWidget].tpl;
+            var widgetSet = $('#' + tpl).attr('data-vis-set');
+            var docUrl = 'widgets/' + widgetSet + '/doc.html#' + tpl;
+            window.open(docUrl, 'WidgetDoc', 'height=640,width=500,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no,location=no');
+        });
+
+        $('#dup_widget').button({icons: {primary: 'ui-icon-copy'}}).click(function () {
+            vis.dupWidget();
+        });
+
+        $('#add_view').button({icons: {primary: 'ui-icon-plusthick'}}).click(function () {
+            var name = vis.checkNewView();
+            if (name === false) {
+                return;
+            }
+            vis.addView(name);
+        });
+
+        $('#dup_view').button({icons: {primary: 'ui-icon-copy'}}).click(function () {
+            var name = vis.checkNewView();
+            if (name === false) return;
+            vis.dupView(name);
+        });
+
+        $('#del_view').button({icons: {primary: 'ui-icon-trash'}}).click(function () {
+            vis.delView(vis.activeView);
+        });
+
+        $('#del_widget').button({icons: {primary: 'ui-icon-trash'}}).click(function () {
+            vis.delWidget()
+        });
+
+        $('#rename_view').button({icons: {primary: 'ui-icon-pencil'}}).click(function () {
+            var name = vis.checkNewView($('#new_name').val());
+            if (name === false) return;
+            vis.renameView(name);
+        });
+
+        $('#create_instance').button({icons: {primary: 'ui-icon-plus'}}).click(vis.generateInstance);
+
+        $('.vis-inspect-css').change(function () {
+            var $this = $(this);
+            var style = $this.attr('id').substring(12);
+            if (!vis.views[vis.activeView].widgets[vis.activeWidget].style) {
+                vis.views[vis.activeView].widgets[vis.activeWidget].style = {};
+            }
+            vis.views[vis.activeView].widgets[vis.activeWidget].style[style] = $this.val();
+            vis.save();
+            var activeWidget = document.getElementById(vis.activeWidget);
+            var $activeWidget = $(activeWidget);
+            $activeWidget.css(style, $this.val());
+            $('#widget_helper').css({
+                left: parseInt($activeWidget.css('left')) - 2,
+                top: parseInt($activeWidget.css('top')) - 2,
+                height: $activeWidget.outerHeight() + 2,
+                width: $activeWidget.outerWidth() + 2
+            });
+
+            if (activeWidget._customHandlers && activeWidget._customHandlers.onCssEdit) {
+                activeWidget._customHandlers.onCssEdit(activeWidget, vis.activeWidget);
+            }
+        }).keyup(function () {
+            $(this).trigger('change');
+        });
+
+        vis.initStealHandlers();
+
+        $('.vis-inspect-view-css').change(function () {
+            var $this = $(this);
+            var attr = $this.attr('id').slice(17);
+            var val = $this.val();
+            $('#visview_' + vis.activeView).css(attr, val);
+            if (!vis.views[vis.activeView].settings.style) {
+                vis.views[vis.activeView].settings.style = {};
+            }
+            vis.views[vis.activeView].settings.style[attr] = val;
+            vis.save();
+        }).keyup(function () {
+            $(this).trigger('change');
+        });
+
+        $('.vis-inspect-view').change(function () {
+            var $this = $(this);
+            var attr = $this.attr('id').slice(13);
+            var val = $this.val();
+            vis.views[vis.activeView].settings[attr] = val;
+            vis.save();
+        }).keyup(function () {
+            $(this).trigger('change');
+        });
+
+        $('#select_active_widget').change(function () {
+            var widgetId = $(this).val();
+            /*console.log("select_active_widget change "+widgetId);*/
+            vis.inspectWidget(widgetId);
+            vis.actionNewWidget(widgetId);
+        });
+
+        $('#css_view_inspector').click(function () {
+            vis.inspectWidget('none');
+        });
+
+        $('#screen_size').change(function () {
+            var val = $(this).find('option:selected').val();
+            if (val == 'user') {
+                $('#screen_size_x').removeAttr('disabled');
+                $('#screen_size_y').removeAttr('disabled');
+            } else {
+                var size = val.split('x');
+                $('#screen_size_x').val(size[0]).trigger('change').prop('disabled', true);
+                $('#screen_size_y').val(size[1]).trigger('change').prop('disabled', true);
+            }
+
+        });
+
+        $('#screen_size_x').change(function () {
+            var x = $('#screen_size_x').val();
+            var y = $('#screen_size_y').val();
+            if (x <= 0) {
+                $("#size_x").hide();
+            } else {
+                $('#size_x').css('left', (parseInt(x, 10) + 1) + 'px').show();
+                $('#size_y').css("width", (parseInt(x, 10) + 3) + 'px');
+                if (y > 0) {
+                    $('#size_x').css('height', (parseInt(y, 10) + 3) + 'px');
+                }
+            }
+            if (vis.views[vis.activeView].settings.sizex != x) {
+                vis.views[vis.activeView].settings.sizex = x;
+                vis.setViewSize(vis.activeView);
+                vis.save();
+            }
+
+        }).keyup(function () {
+            $(this).trigger('change');
+        });
+
+        $('#screen_hide_description').change(function () {
+            var val = $('#screen_hide_description')[0].checked;
+            if (vis.views[vis.activeView].settings.hideDescription != val) {
+                vis.views[vis.activeView].settings.hideDescription = val;
+                if (typeof hqWidgets != 'undefined') {
+                    hqWidgets.SetHideDescription(val);
+                }
+                vis.save();
+            }
+
+        }).keyup(function () {
+            $(this).trigger('change');
+        });
+
+        $('#screen_size_y').change(function () {
+            var x = $('#screen_size_x').val();
+            var y = $('#screen_size_y').val();
+            if (y > 0) {
+                $('#size_y').css('top', (parseInt(y, 10) + 1) + "px").show();
+                $('#size_x').css("height", (parseInt(y, 10) + 3) + "px");
+                if (x > 0) {
+                    $('#size_y').css('width', (parseInt(x, 10) + 3) + "px");
+                }
+            } else {
+                $('#size_y').hide();
+
+            }
+            if (vis.views[vis.activeView].settings.sizey != y) {
+                vis.views[vis.activeView].settings.sizey = y;
+                vis.setViewSize(vis.activeView);
+                vis.save();
+            }
+
+        }).keyup(function () {
+            $(this).trigger('change');
+        });
+
+        $('#snap_type').change(function () {
+            var snapType = $('#snap_type option:selected').val();
+            if (vis.views[vis.activeView].settings.snapType != snapType) {
+                vis.views[vis.activeView].settings.snapType = snapType;
+                vis.save();
+            }
+        });
+
+        $('#grid_size').change(function () {
+            var gridSize = $(this).val();
+            if (vis.views[vis.activeView].settings.gridSize != gridSize) {
+                vis.views[vis.activeView].settings.gridSize = gridSize;
+                vis.save();
+            }
+        });
+
+        $('#savingProgress').button({
+            text: false,
+            icons: {primary: 'ui-icon-disk'}
+        }).click(that._saveToServer).hide().addClass('ui-state-active');
+
+        $('#dev_show_html').button({}).click(function () {
+            var wid_id = $('#' + vis.activeWidget).attr('id');
+            vis.inspectWidget();
+
+            var $target = $('#' + wid_id);
+            var $clone = $target.clone();
+            $clone.wrap('<div>');
+            var html = $clone.parent().html();
+
+            html = html
+                .replace('vis-widget ', 'vis-widget_prev ')
+                .replace('vis-widget-body', 'vis-widget-prev-body')
+                .replace('ui-draggable', ' ')
+                .replace('ui-resizable', ' ')
+                .replace('<div class="editmode-helper"></div>','')
+                .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, '')
+                .replace(/(?:\r\n|\r|\n)/g, '')
+                .replace(/[ ]{2,}/g, ' ');
+
+            html = 'data-vis-prev=\'<div id="prev_' + vis.views[vis.activeView].widgets[wid_id].tpl + '" style=" position: relative; text-align: initial;padding: 4px ">' + html.toString() + '\'';
+
+            $('body').append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%">' + html + '</textarea></div>')
+            $('#dec_html_code').dialog({
+                width: 800,
+                height: 600,
+                close: function () {
+                    $('#dec_html_code').remove()
+                }
+            })
+
+        });
+
+        // Bug in firefox or firefox is too slow or too fast
+        /*setTimeout(function() {
+
+         if (document.getElementById('select_active_widget')._isOpen === undefined) {
+         $('#select_active_widget').html('<option value="none">' + _('none selected') + '</option>');
+         if (vis.activeView && vis.views && vis.views[vis.activeView] && vis.views[vis.activeView].widgets) {
+         for (var widget in vis.views[vis.activeView].widgets) {
+         var obj = $("#" + vis.views[vis.activeView].widgets[widget].tpl);
+         $('#select_active_widget').append("<option value='" + widget + "'>" + this.getWidgetName(vis.activeView, widget) + </option>");
+         }
+         }
+         $('#select_active_widget').multiselect('refresh');
+         }
+
+         }, 10000);*/
+
+        // Instances
+        if (typeof storage !== 'undefined' && local == false) {
+            // Show what's new
+            if (storage.get('lastVersion') != vis.version) {
+                // Read
+                storage.set('lastVersion', vis.version);
+                // Read io-addon.json
+                $.ajax({
+                    url: 'io-addon.json',
+                    cache: false,
+                    success: function (data) {
+
+                        try {
+                            var ioaddon = data; // @bluefox: this is already parsed by jQuery.ajax! JSON.parse(data);
+                            if (ioaddon.whatsNew) {
+                                for (var i = 0; i < ioaddon.whatsNew.length; i++) {
+                                    var text = ioaddon.whatsNew[i];
+                                    if (typeof text != 'string') {
+                                        text = ioaddon.whatsNew[i][that.language] || ioaddon.whatsNew[i]['en'];
+                                    }
+                                    // Remove modifier information like (Bluefox) or (Hobbyquaker)
+                                    if (text[0] == '(') {
+                                        var j = text.indexOf(')');
+                                        if (j != -1) {
+                                            text = text.substring(j + 1);
+                                        }
+                                    }
+                                    vis.showHint('<b>' + _('New:') + '</b>' + text, 30000, 'info');
+                                }
+                            }
+                        } catch (e) {
+                            servConn.logError('Cannot parse io-addon.json ' + e);
+                        }
+                    }
+                });
+            }
+            try {
+                // Load groups state and positions
+                var groups = storage.get('groups');
+                try {
+                    if (groups) this.groupsState = JSON.parse(groups);
+                } catch (e) {
+                    console.log('Cannot parse groups: ' + groups);
+                }
+            } catch (e) {
+
+            }
+        }
+    },
+    editInit_dialogs: function () {
+
+        $('#dialog_about').dialog({
+            autoOpen: false,
+            width: 600,
+            height: 500,
+            position: {my: 'center', at: 'center', of: $('#panel_body')}
+        });
+
+        $('#dialog_shortcuts').dialog({
+            autoOpen: false,
+            width: 600,
+            height: 500,
+            position: {my: 'center', at: 'center', of: $('#panel_body')}
+        });
+
+    },
+    editInit_menu: function () {
+        $('#menu.sf-menu').superclick({
+            hoverClass: 'sfHover',
+            uiClass: 'ui-state-hover',  // jQuery-UI modified
+            pathLevels: 1,
+            cssArrows: false,
+            disableHI: false
+        });
+
+        $('li.ui-state-default').hover(
+            function () {
+                $(this).addClass('ui-state-hover')
+            },
+            function () {
+                $(this).removeClass('ui-state-hover')
+            }
+        );
+
+        $('#menu_body').tabs({
+            active: 2,
+            collapsible:true
+        });
+
+        // Tabs open Close
+
+        $('#menu_body > ul > li').click(function () {
+            $(window).trigger("resize");
+        });
+
+        // Theme select Editor
+        var last_theme =  storage.get('vistheme');
+        if(last_theme){
+            $('#editor_theme').remove();
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + last_theme + '/jquery-ui.min.css" id="editor_theme"/>');
+        }
+        $('#ul_theme li a').click(function () {
+            var theme = $(this).data('info');
+            vis.views[vis.activeView].settings.theme = theme;
+            $('#editor_theme').remove();
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editor_theme"/>');
+            //vis.additionalThemeCss(theme);
+            storage.set('vistheme', theme);
+            vis.save();
+
+        });
+
+        // Theme seleckt View
+        $('#inspect_view_theme').change(function () {
+            var theme = $('#inspect_view_theme option:selected').val();
+            vis.views[vis.activeView].settings.theme = theme;
+            vis.addViewStyle(vis.activeView,theme);
+            //vis.additionalThemeCss(theme);
+            vis.save();
+        });
+
+        //language
+        $('[data-language=' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + ']').addClass("ui-state-active");
+
+        $('.language_select').click(function () {
+            $('[data-language='+vis.language+']').removeClass('ui-state-active');
+            vis.language = $(this).data('language');
+            $(this).addClass('ui-state-active');
+            if (typeof systemLang != 'undefined') systemLang = vis.language;
+            setTimeout(function(){
+                translateAll();
+            },0)
+
+        });
+
+
+        $('#m_about').click(function () {
+            $('#dialog_about').dialog('open')
+        });
+        $('#m_shortcuts').click(function () {
+            $('#dialog_shortcuts').dialog('open')
+        });
+        //$("#m_setup").click(function () {
+        //    $("#dialog_setup").dialog("open")
+        //});
+    },
+    editInitNext: function () {
+        // ioBroker.vis Editor Init
+        var that = this;
+
+        vis.editInit_select_view();
+        // todo Remove the old select view
+        var sel;
+
+        var keys = Object.keys(vis.views);
+        var len = keys.length;
+        var i;
+        var k;
+
+        keys.sort();
+
+        var $select_view = $('#select_view');
+        var $select_view_copy = $('#select_view_copy');
+
+
+        for (i = 0; i < len; i++) {
+            k = keys[i];
+
+            if (k == this.activeView) {
+                sel = ' selected';
+            } else {
+                sel = '';
+            }
+            $select_view.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
+            $select_view_copy.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
+        }
+
+        $select_view.multiselect('refresh');
+
+        $select_view_copy.multiselect({
+            minWidth: 200,
+            checkAllText:_('Check all'),
+            uncheckAllText:_('Uncheck all'),
+            noneSelectedText:_('Select options')
+        }).multiselect('refresh');
+
+        $select_view.change(function () {
+            that.changeView($(this).val());
+        });
+
+        // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+        var $select_set = $('#select_set');
+        //$select_set.html('');
+
+        for (i = 0; i < this.widgetSets.length; i++) {
+            if (this.widgetSets[i].name !== undefined) {
+                $select_set.append('<option value="' + this.widgetSets[i].name + '">' + this.widgetSets[i].name + '</option>');
+            } else {
+                $select_set.append('<option value="' + this.widgetSets[i] + '">' + this.widgetSets[i] + '</option>');
+            }
+        }
+
+        var last_set = storage.get('vis.Last_Widgetset')
+
+        $('#select_set option[value="' + last_set + '"]').prop('selected', true);
+        $select_set.multiselect('refresh');
+
+        $select_set.change(function () {
+            var tpl = $(this).val();
+            storage.set('vis.Last_Widgetset', tpl);
+            $('.wid_prev').hide();
+            $('.' + tpl + '_prev').show();
+        });
+
+        vis.add_Widget_prev();
+
+        $select_set.trigger('change')
+
+        // Create background_class property if does not exist
+        if (this.views[vis.activeView] != undefined) {
+            if (this.views[vis.activeView].settings == undefined) {
+                this.views[vis.activeView].settings = {};
+            }
+            if (this.views[vis.activeView].settings.style == undefined) {
+                this.views[vis.activeView].settings.style = {};
+            }
+            if (this.views[vis.activeView].settings.style['background_class'] == undefined) {
+                this.views[vis.activeView].settings.style['background_class'] = '';
+            }
+        }
+
+        if (this.fillWizard) this.fillWizard();
+
+        // Deselect active widget if click nowhere. Not required if selectable is active
+        if (!this.selectable) {
+            $('#vis_container').click(function () {
+                that.inspectWidget('none');
+            });
+        }
+
+        if (this.conn.getType() == 'local') {
+            $('#export_local_view').click(function () {
+                that.exportView(true);
+            }).show();
+
+            $('#import_local_view').click(function () {
+                $('#textarea_import_view').html('');
+                $('#dialog_import_view').dialog({
+                    autoOpen: true,
+                    width: 800,
+                    height: 600,
+                    modal: true,
+                    open: function (event, ui) {
+                        $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
+                        $('.ui-widget-overlay').css('z-index', 1001);
+                        $('#start_import_view').click(function () {
+                            that.importView(true);
+                        });
+                        $('#name_import_view').hide();
+                    }
+                });
+            }).show();
+
+            $('#clear_local_view').click(function () {
+                if (typeof storage !== 'undefined') {
+                    localStorage.clear();
+                    window.location.reload();
+                }
+            }).show();
+            $('#local_view').show();
+        }
+        $('#menu_body').show()
+        $('#panel_body').show()
+    },
+    add_Widget_prev: function (set) {
+
+        $.each(vis.widgetSets, function () {
+            var set = "";
+            if(this.name){
+                set = this.name
+            }else{
+                set = this;
+            }
+
+
+            var tpl_list = $(".vis-tpl[data-vis-set='" + set + "']");
+
+            $.each(tpl_list, function (i) {
+                var tpl = $(tpl_list[i]).attr("id");
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '"><div>' + $("#" + tpl).data("vis-name") + '</div></div>');
+                if ($(tpl_list[i]).data("vis-prev")) {
+                    $('#prev_container_' + tpl).append($(tpl_list[i]).data("vis-prev"))
+                }
+                $('#prev_container_' + tpl).draggable({
+                    helper: "clone",
+                    containment: $("#panel_body"),
+                    zIndex: 10000
+                });
+            });
+        });
+    },
 
     renameView: function (newName) {
         vis.views[newName] = $.extend(true, {}, vis.views[vis.activeView]);
@@ -2217,544 +2881,6 @@ vis = $.extend(true, vis, {
         $(".widget_multi_helper").remove();
         vis.multiSelectedWidgets = [];
     },
-    //todo
-
-    // todo
-    editInit: function () {
-        var that = this;
-
-        vis.editInit_dialogs();
-        vis.editInit_menu();
-        $("#attr_wrap").tabs();
-        $("#pan_add_wid").resizable({
-            handles: "e",
-            maxWidth: 670,
-            minWidth: 200
-        });
-        $("#pan_attr").resizable({
-            handles: "w",
-            maxWidth: 670,
-            minWidth: 100
-        });
-
-        $(window).resize(function () {
-         layout()
-        });
-
-        function layout(){
-            $("#panel_body").height(parseInt(  $(window).height() - $("#menu_body").height() - 22 ));
-            $("#vis_wrap").width(parseInt($(window).width() - $("#pan_add_wid").width() - $("#pan_attr").width() - 1));
-        }
-        //layout();
-
-
-        $("#vis-version").html(this.version);
-
-        $('#button_undo')
-            .click(vis.undo)
-            .addClass("ui-state-disabled")
-            .hover(
-            function () {
-                $(this).addClass('ui-state-hover')
-            },
-            function () {
-                $(this).removeClass('ui-state-hover')
-            });
-
-        $("#widget_helper").hide();
-
-        $("input.vis-editor").button();
-        $("button.vis-editor").button();
-
-        $("select.vis-editor").each(function () {
-            $(this).multiselect({
-                multiple: false,
-                header: false,
-                selectedList: 1,
-                minWidth: $(this).attr("data-multiselect-width"),
-                height: $(this).attr("data-multiselect-height"),
-                checkAllText: _("Check all"),
-                uncheckAllText: _("Uncheck all"),
-                noneSelectedText: _("Select options")
-            });
-        });
-
-        $("select.vis-editor-large").each(function () {
-            $(this).multiselect({
-                multiple: false,
-                header: false,
-                //noneSelectedText: false,
-                selectedList: 1,
-                minWidth: 250,
-                height: 410,
-                checkAllText: _("Check all"),
-                uncheckAllText: _("Uncheck all"),
-                noneSelectedText: _("Select options")
-            });
-
-        });
-
-        $("select.vis-editor-xlarge").each(function () {
-            $(this).multiselect({
-                multiple: false,
-                header: false,
-                // noneSelectedText: false,
-                selectedList: 1,
-                minWidth: 420,
-                height: 340,
-                checkAllText: _("Check all"),
-                uncheckAllText: _("Uncheck all"),
-                noneSelectedText: _("Select options")
-            });
-        });
-
-        // Button Click Handler
-
-        $("#export_view").click(function () {
-            vis.exportView(false);
-        });
-
-        $("#import_view").click(function () {
-            $("#textarea_import_view").html('');
-            $("#dialog_import_view").dialog({
-                autoOpen: true,
-                width: 800,
-                height: 600,
-                modal: true,
-                open: function (event, ui) {
-                    $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
-                    $('.ui-widget-overlay').css('z-index', 1001);
-                    $("#start_import_view").click(function () {
-                        vis.importView();
-                    });
-                    $("#name_import_view").show();
-                }
-            });
-        });
-
-        $('#select_set').next().addClass("select_set");
-
-        $('.select_set').find(".ui-icon").remove();
-
-        $('#widget_doc').button({icons: {primary: 'ui-icon-script'}}).click(function () {
-            var tpl = vis.views[vis.activeView].widgets[vis.activeWidget].tpl;
-            var widgetSet = $('#' + tpl).attr('data-vis-set');
-            var docUrl = 'widgets/' + widgetSet + '/doc.html#' + tpl;
-            window.open(docUrl, "WidgetDoc", "height=640,width=500,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no,location=no");
-        });
-
-        $("#dup_widget").button({icons: {primary: "ui-icon-copy"}}).click(function () {
-            vis.dupWidget();
-        });
-
-        $("#add_view").button({icons: {primary: "ui-icon-plusthick"}}).click(function () {
-            var name = vis.checkNewView();
-            if (name === false) {
-                return;
-            }
-            vis.addView(name);
-        });
-
-        $("#dup_view").button({icons: {primary: "ui-icon-copy"}}).click(function () {
-            var name = vis.checkNewView();
-            if (name === false) return;
-            vis.dupView(name);
-        });
-
-        $("#del_view").button({icons: {primary: 'ui-icon-trash'}}).click(function () {
-            vis.delView(vis.activeView);
-        });
-
-        $("#del_widget").button({icons: {primary: 'ui-icon-trash'}}).click(function () {
-            vis.delWidget()
-        });
-
-        $("#rename_view").button({icons: {primary: 'ui-icon-pencil'}}).click(function () {
-            var name = vis.checkNewView($("#new_name").val());
-            if (name === false) return;
-            vis.renameView(name);
-        });
-
-        $('#create_instance').button({icons: {primary: 'ui-icon-plus'}}).click(vis.generateInstance);
-
-        $('.vis-inspect-css').change(function () {
-            var $this = $(this);
-            var style = $this.attr('id').substring(12);
-            if (!vis.views[vis.activeView].widgets[vis.activeWidget].style) {
-                vis.views[vis.activeView].widgets[vis.activeWidget].style = {};
-            }
-            vis.views[vis.activeView].widgets[vis.activeWidget].style[style] = $this.val();
-            vis.save();
-            var activeWidget = document.getElementById(vis.activeWidget);
-            var $activeWidget = $(activeWidget);
-            $activeWidget.css(style, $this.val());
-            $("#widget_helper").css({
-                left: parseInt($activeWidget.css('left')) - 2,
-                top: parseInt($activeWidget.css('top')) - 2,
-                height: $activeWidget.outerHeight() + 2,
-                width: $activeWidget.outerWidth() + 2
-            });
-
-            if (activeWidget._customHandlers && activeWidget._customHandlers.onCssEdit) {
-                activeWidget._customHandlers.onCssEdit(activeWidget, vis.activeWidget);
-            }
-        }).keyup(function () {
-            $(this).trigger('change');
-        });
-
-        vis.initStealHandlers();
-
-        $('.vis-inspect-view-css').change(function () {
-            var $this = $(this);
-            var attr = $this.attr('id').slice(17);
-            var val = $this.val();
-            $('#visview_' + vis.activeView).css(attr, val);
-            if (!vis.views[vis.activeView].settings.style) {
-                vis.views[vis.activeView].settings.style = {};
-            }
-            vis.views[vis.activeView].settings.style[attr] = val;
-            vis.save();
-        }).keyup(function () {
-            $(this).trigger('change');
-        });
-
-        $('.vis-inspect-view').change(function () {
-            var $this = $(this);
-            var attr = $this.attr('id').slice(13);
-            var val = $this.val();
-            vis.views[vis.activeView].settings[attr] = val;
-            vis.save();
-        }).keyup(function () {
-            $(this).trigger('change');
-        });
-
-        $('#select_active_widget').change(function () {
-            var widgetId = $(this).val();
-            //console.log("select_active_widget change "+widgetId);
-            vis.inspectWidget(widgetId);
-            vis.actionNewWidget(widgetId);
-        });
-
-        $("#css_view_inspector").click(function () {
-            vis.inspectWidget("none");
-        });
-
-        $('#screen_size').change(function () {
-            var val = $(this).find('option:selected').val();
-            if (val != 'user') {
-                var size = val.split('x');
-                $("#screen_size_x").val(size[0]).trigger('change').prop('disabled', true);
-                $("#screen_size_y").val(size[1]).trigger('change').prop('disabled', true);
-            } else {
-                $("#screen_size_x").removeAttr('disabled');
-                $("#screen_size_y").removeAttr('disabled');
-            }
-
-        });
-
-        $("#screen_size_x").change(function () {
-            var x = $("#screen_size_x").val();
-            var y = $("#screen_size_y").val();
-            if (x > 0) {
-                $("#size_x").css('left', (parseInt(x, 10) + 1) + "px").show();
-                $("#size_y").css("width", (parseInt(x, 10) + 3) + "px");
-                if (y > 0) {
-                    $("#size_x").css("height", (parseInt(y, 10) + 3) + "px");
-                }
-            } else {
-                $("#size_x").hide();
-            }
-            if (vis.views[vis.activeView].settings.sizex != x) {
-                vis.views[vis.activeView].settings.sizex = x;
-                vis.setViewSize(vis.activeView);
-                vis.save();
-            }
-
-        }).keyup(function () {
-            $(this).trigger('change');
-        });
-
-        $("#screen_hide_description").change(function () {
-            var val = $("#screen_hide_description")[0].checked;
-            if (vis.views[vis.activeView].settings.hideDescription != val) {
-                vis.views[vis.activeView].settings.hideDescription = val;
-                if (typeof hqWidgets != 'undefined') {
-                    hqWidgets.SetHideDescription(val);
-                }
-                vis.save();
-            }
-
-        }).keyup(function () {
-            $(this).trigger('change');
-        });
-
-        $("#screen_size_y").change(function () {
-            var x = $("#screen_size_x").val();
-            var y = $("#screen_size_y").val();
-            if (y > 0) {
-                $("#size_y").css('top', (parseInt(y, 10) + 1) + "px").show();
-                $("#size_x").css("height", (parseInt(y, 10) + 3) + "px");
-                if (x > 0) {
-                    $("#size_y").css("width", (parseInt(x, 10) + 3) + "px");
-                }
-            } else {
-                $("#size_y").hide();
-
-            }
-            if (vis.views[vis.activeView].settings.sizey != y) {
-                vis.views[vis.activeView].settings.sizey = y;
-                vis.setViewSize(vis.activeView);
-                vis.save();
-            }
-
-        }).keyup(function () {
-            $(this).trigger('change');
-        });
-
-        $("#snap_type").change(function () {
-            var snapType = $("#snap_type option:selected").val();
-            if (vis.views[vis.activeView].settings.snapType != snapType) {
-                vis.views[vis.activeView].settings.snapType = snapType;
-                vis.save();
-            }
-        });
-
-        $("#grid_size").change(function () {
-            var gridSize = $(this).val();
-            if (vis.views[vis.activeView].settings.gridSize != gridSize) {
-                vis.views[vis.activeView].settings.gridSize = gridSize;
-                vis.save();
-            }
-        });
-
-        $("#savingProgress").button({
-            text: false,
-            icons: {primary: "ui-icon-disk"}
-        }).click(that._saveToServer).hide().addClass("ui-state-active");
-
-        $("#dev_show_html").button({}).click(function () {
-            var wid_id = $("#" + vis.activeWidget).attr("id");
-            vis.inspectWidget();
-
-            var $target = $("#" + wid_id);
-            var $clone = $target.clone();
-            $clone.wrap('<div>');
-            var html = $clone.parent().html();
-
-            html = html
-                .replace("vis-widget ", "vis-widget_prev ")
-                .replace("vis-widget-body", "vis-widget-prev-body")
-                .replace("ui-draggable", " ")
-                .replace("ui-resizable", " ")
-                .replace('<div class="editmode-helper"></div>','')
-                .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, "")
-                .replace(/(?:\r\n|\r|\n)/g, '')
-                .replace(/[ ]{2,}/g, ' ');
-
-            html = 'data-vis-prev=\'<div id="prev_' + vis.views[vis.activeView].widgets[wid_id].tpl + '" style=" position: relative; text-align: initial;padding: 4px ">' + html.toString() + '\'';
-
-            $("body").append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%">' + html + '</textarea></div>')
-            $("#dec_html_code").dialog({
-                width: 800,
-                height: 600,
-                close: function () {
-                    $("#dec_html_code").remove()
-                }
-            })
-
-        });
-
-        // Bug in firefox or firefox is too slow or too fast
-        /*setTimeout(function() {
-
-         if (document.getElementById('select_active_widget')._isOpen === undefined) {
-         $('#select_active_widget').html('<option value="none">' + _('none selected') + '</option>');
-         if (vis.activeView && vis.views && vis.views[vis.activeView] && vis.views[vis.activeView].widgets) {
-         for (var widget in vis.views[vis.activeView].widgets) {
-         var obj = $("#" + vis.views[vis.activeView].widgets[widget].tpl);
-         $('#select_active_widget').append("<option value='" + widget + "'>" + this.getWidgetName(vis.activeView, widget) + </option>");
-         }
-         }
-         $('#select_active_widget').multiselect('refresh');
-         }
-
-         }, 10000);*/
-
-        // Instances
-        if (typeof storage !== 'undefined' && local == false) {
-            // Show what's new
-            if (storage.get('lastVersion') != vis.version) {
-                // Read
-                storage.set('lastVersion', vis.version);
-                // Read io-addon.json
-                $.ajax({
-                    url: "io-addon.json",
-                    cache: false,
-                    success: function (data) {
-
-                        try {
-                            var ioaddon = data; // @bluefox: this is already parsed by jQuery.ajax! JSON.parse(data);
-                            if (ioaddon.whatsNew) {
-                                for (var i = 0; i < ioaddon.whatsNew.length; i++) {
-                                    var text = ioaddon.whatsNew[i];
-                                    if (typeof text != 'string') {
-                                        text = ioaddon.whatsNew[i][that.language] || ioaddon.whatsNew[i]['en'];
-                                    }
-                                    // Remove modifier information like (Bluefox) or (Hobbyquaker)
-                                    if (text[0] == '(') {
-                                        var j = text.indexOf(')');
-                                        if (j != -1) {
-                                            text = text.substring(j + 1);
-                                        }
-                                    }
-                                    vis.showHint('<b>' + _('New:') + '</b>' + text, 30000, 'info');
-                                }
-                            }
-                        } catch (e) {
-                            servConn.logError('Cannot parse io-addon.json ' + e);
-                        }
-                    }
-                });
-            }
-            try {
-                // Load groups state and positions
-                var groups = storage.get('groups');
-                try {
-                    if (groups) this.groupsState = JSON.parse(groups);
-                } catch (e) {
-                    console.log('Cannot parse groups: ' + groups);
-                }
-            } catch (e) {
-
-            }
-        }
-    },
-    editInit_dialogs: function () {
-
-        $("#dialog_about").dialog({
-            autoOpen: false,
-            width: 600,
-            height: 500,
-            position: {my: "center", at: "center", of: $("#panel_body")}
-        });
-
-        $("#dialog_shortcuts").dialog({
-            autoOpen: false,
-            width: 600,
-            height: 500,
-            position: {my: "center", at: "center", of: $("#panel_body")}
-        });
-
-    },
-    editInit_menu: function () {
-        $("#menu.sf-menu").superclick({
-            hoverClass: 'sfHover',
-            uiClass: 'ui-state-hover',  // jQuery-UI modified
-            pathLevels: 1,
-            cssArrows: false,
-            disableHI: false
-        });
-
-        $('li.ui-state-default').hover(
-            function () {
-                $(this).addClass('ui-state-hover')
-            },
-            function () {
-                $(this).removeClass('ui-state-hover')
-            }
-        );
-
-        $("#menu_body").tabs({
-            active: 2,
-            collapsible:true
-        });
-
-        // Tabs open Close
-
-        $("#menu_body > ul > li").click(function () {
-            $(window).trigger("resize");
-        });
-
-        // Theme select Editor
-        var last_theme =  storage.get('vistheme');
-        if(last_theme){
-            $("#editor_theme").remove();
-            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + last_theme + '/jquery-ui.min.css" id="editor_theme"/>');
-        }
-        $("#ul_theme li a").click(function () {
-            var theme = $(this).data('info');
-            vis.views[vis.activeView].settings.theme = theme;
-            $("#editor_theme").remove();
-            $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editor_theme"/>');
-            //vis.additionalThemeCss(theme);
-            storage.set('vistheme', theme);
-            vis.save();
-
-        });
-
-        // Theme seleckt View
-        $("#inspect_view_theme").change(function () {
-            var theme = $('#inspect_view_theme option:selected').val();
-            vis.views[vis.activeView].settings.theme = theme;
-            vis.addViewStyle(vis.activeView,theme);
-            //vis.additionalThemeCss(theme);
-            vis.save();
-        });
-
-        //language
-        $('[data-language=' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + ']').addClass("ui-state-active");
-
-        $(".language_select").click(function () {
-            console.log("klick")
-            $('[data-language='+vis.language+']').removeClass("ui-state-active");
-            vis.language = $(this).data('language');
-            $(this).addClass("ui-state-active");
-            if (typeof systemLang != 'undefined') systemLang = vis.language;
-            setTimeout(function(){
-                translateAll();
-            },0)
-
-        });
-
-
-        $("#m_about").click(function () {
-            $("#dialog_about").dialog("open")
-        });
-        $("#m_shortcuts").click(function () {
-            $("#dialog_shortcuts").dialog("open")
-        });
-        //$("#m_setup").click(function () {
-        //    $("#dialog_setup").dialog("open")
-        //});
-    },
-    add_Widget_prev: function (set) {
-
-        $.each(vis.widgetSets, function () {
-            var set = "";
-            if(this.name){
-               set = this.name
-            }else{
-                set = this;
-            }
-
-
-            var tpl_list = $(".vis-tpl[data-vis-set='" + set + "']");
-
-            $.each(tpl_list, function (i) {
-                var tpl = $(tpl_list[i]).attr("id");
-                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '"><div>' + $("#" + tpl).data("vis-name") + '</div></div>');
-                console.log(tpl_list[i]);
-                if ($(tpl_list[i]).data("vis-prev")) {
-                    $('#prev_container_' + tpl).append($(tpl_list[i]).data("vis-prev"))
-                }
-                $('#prev_container_' + tpl).draggable({
-                    helper: "clone",
-                    containment: $("#panel_body"),
-                    zIndex: 10000
-                });
-            });
-        });
-    },
     editInit_select_view: function () {
 
         $("#view_select_tabs_wrap").resize(function () {
@@ -2876,146 +3002,6 @@ vis = $.extend(true, vis, {
 
 
         $('#view_tab_' + vis.activeView).addClass('ui-tabs-active ui-state-active')
-
-
-    },
-    //todo
-
-    //todo
-    editInitNext: function () {
-        // ioBroker.vis Editor Init
-        var that = this;
-
-        vis.editInit_select_view();
-        // todo Remove the old select view
-        var sel;
-
-        var keys = Object.keys(vis.views);
-        var len = keys.length;
-        var i;
-        var k;
-
-        keys.sort();
-
-        var $select_view = $("#select_view");
-        var $select_view_copy = $("#select_view_copy");
-
-
-        for (i = 0; i < len; i++) {
-            k = keys[i];
-
-            if (k == this.activeView) {
-                sel = " selected";
-            } else {
-                sel = '';
-            }
-            $select_view.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
-            $select_view_copy.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
-        }
-
-        $select_view.multiselect('refresh');
-
-        $select_view_copy.multiselect({
-            minWidth: 200,
-            checkAllText:_('Check all'),
-            uncheckAllText:_('Uncheck all'),
-            noneSelectedText:_('Select options')
-        }).multiselect('refresh');
-
-        $select_view.change(function () {
-            that.changeView($(this).val());
-        });
-
-        // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-
-        var $select_set = $("#select_set");
-        //$select_set.html('');
-
-		for (i = 0; i < this.widgetSets.length; i++) {
-			if (this.widgetSets[i].name !== undefined) {
-                $select_set.append("<option value='" + this.widgetSets[i].name + "'>" + this.widgetSets[i].name + "</option>");
-			} else {
-                $select_set.append("<option value='" + this.widgetSets[i] + "'>" + this.widgetSets[i] + "</option>");
-			}
-		}
-
-        var last_set = storage.get("vis.Last_Widgetset")
-
-        $('#select_set option[value="' + last_set + '"]').prop('selected', true);
-        $select_set.multiselect('refresh');
-
-        $select_set.change(function () {
-            var tpl = $(this).val();
-            storage.set("vis.Last_Widgetset", tpl);
-            $(".wid_prev").hide();
-            $("." + tpl + "_prev").show();
-        });
-
-        vis.add_Widget_prev();
-
-        $select_set.trigger("change")
-
-        // Create background_class property if does not exist
-        if (this.views[vis.activeView] != undefined) {
-            if (this.views[vis.activeView].settings == undefined) {
-                this.views[vis.activeView].settings = {};
-            }
-            if (this.views[vis.activeView].settings.style == undefined) {
-                this.views[vis.activeView].settings.style = {};
-            }
-            if (this.views[vis.activeView].settings.style['background_class'] == undefined) {
-                this.views[vis.activeView].settings.style['background_class'] = '';
-            }
-        }
-
-        if (this.fillWizard) this.fillWizard();
-
-        // Deselect active widget if click nowhere. Not required if selectable is active
-        if (!this.selectable) {
-            $('#vis_container').click(function () {
-                that.inspectWidget("none");
-            });
-        }
-
-        if (this.conn.getType() == 'local') {
-            $("#export_local_view").click(function () {
-                that.exportView(true);
-            }).show();
-
-            $("#import_local_view").click(function () {
-                $("#textarea_import_view").html('');
-                $("#dialog_import_view").dialog({
-                    autoOpen: true,
-                    width: 800,
-                    height: 600,
-                    modal: true,
-                    open: function (event, ui) {
-                        $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
-                        $('.ui-widget-overlay').css('z-index', 1001);
-                        $("#start_import_view").click(function () {
-                            that.importView(true);
-                        });
-                        $("#name_import_view").hide();
-                    }
-                });
-            }).show();
-
-            $("#clear_local_view").click(function () {
-                if (typeof storage !== 'undefined') {
-                    localStorage.clear();
-                    window.location.reload();
-                }
-            }).show();
-            $('#local_view').show();
-        }
-
-
-
-
-
-
-
 
 
     },

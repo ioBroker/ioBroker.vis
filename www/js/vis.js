@@ -10,7 +10,8 @@
  */
 
 "use strict";
-var local = true;
+
+var local = document.URL.split("/vis/")[1]?false:true;
 
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
