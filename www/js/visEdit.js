@@ -18,7 +18,7 @@
 'use strict';
 
 vis = $.extend(true, vis, {
-    toolbox: $("#vis_editor"),
+    toolbox: $('#vis_editor'),
     selectView: $('#select_view'),
     activeWidget: '',
     isStealCss: false,
@@ -34,6 +34,10 @@ vis = $.extend(true, vis, {
 
     editInit: function () {
         var that = this;
+
+        if(local){
+            $("#ribbon_tab_datei").show()
+        }
 
         vis.editInit_dialogs();
         vis.editInit_menu();
@@ -76,7 +80,7 @@ vis = $.extend(true, vis, {
         $('#widget_helper').hide();
 
         $('input.vis-editor').button();
-        $("button.vis-editor").button();
+        $('button.vis-editor').button();
 
         $('select.vis-editor').each(function () {
             $(this).multiselect({
@@ -268,10 +272,10 @@ vis = $.extend(true, vis, {
             var x = $('#screen_size_x').val();
             var y = $('#screen_size_y').val();
             if (x <= 0) {
-                $("#size_x").hide();
+                $('#size_x').hide();
             } else {
                 $('#size_x').css('left', (parseInt(x, 10) + 1) + 'px').show();
-                $('#size_y').css("width", (parseInt(x, 10) + 3) + 'px');
+                $('#size_y').css('width', (parseInt(x, 10) + 3) + 'px');
                 if (y > 0) {
                     $('#size_x').css('height', (parseInt(y, 10) + 3) + 'px');
                 }
@@ -304,10 +308,10 @@ vis = $.extend(true, vis, {
             var x = $('#screen_size_x').val();
             var y = $('#screen_size_y').val();
             if (y > 0) {
-                $('#size_y').css('top', (parseInt(y, 10) + 1) + "px").show();
-                $('#size_x').css("height", (parseInt(y, 10) + 3) + "px");
+                $('#size_y').css('top', (parseInt(y, 10) + 1) + 'px').show();
+                $('#size_x').css('height', (parseInt(y, 10) + 3) + 'px');
                 if (x > 0) {
-                    $('#size_y').css('width', (parseInt(x, 10) + 3) + "px");
+                    $('#size_y').css('width', (parseInt(x, 10) + 3) + 'px');
                 }
             } else {
                 $('#size_y').hide();
@@ -484,7 +488,7 @@ vis = $.extend(true, vis, {
         // Tabs open Close
 
         $('#menu_body > ul > li').click(function () {
-            $(window).trigger("resize");
+            $(window).trigger('resize');
         });
 
         // Theme select Editor
@@ -514,7 +518,7 @@ vis = $.extend(true, vis, {
         });
 
         //language
-        $('[data-language=' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + ']').addClass("ui-state-active");
+        $('[data-language=' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + ']').addClass('ui-state-active');
 
         $('.language_select').click(function () {
             $('[data-language='+vis.language+']').removeClass('ui-state-active');
@@ -565,8 +569,8 @@ vis = $.extend(true, vis, {
             } else {
                 sel = '';
             }
-            $select_view.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
-            $select_view_copy.append("<option value='" + k + "'" + sel + ">" + k + "</option>");
+            $select_view.append('<option value=\'' + k + "'" + sel + ">" + k + "</option>");
+            $select_view_copy.append('<option value=\'' + k + "'" + sel + ">" + k + "</option>");
         }
 
         $select_view.multiselect('refresh');
@@ -679,17 +683,17 @@ vis = $.extend(true, vis, {
             }
 
 
-            var tpl_list = $(".vis-tpl[data-vis-set='" + set + "']");
+            var tpl_list = $('.vis-tpl[data-vis-set="' + set + '"]');
 
             $.each(tpl_list, function (i) {
-                var tpl = $(tpl_list[i]).attr("id");
-                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '"><div>' + $("#" + tpl).data("vis-name") + '</div></div>');
-                if ($(tpl_list[i]).data("vis-prev")) {
-                    $('#prev_container_' + tpl).append($(tpl_list[i]).data("vis-prev"))
+                var tpl = $(tpl_list[i]).attr('id');
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '"><div>' + $("#" + tpl).data('vis-name') + '</div></div>');
+                if ($(tpl_list[i]).data('vis-prev')) {
+                    $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'))
                 }
                 $('#prev_container_' + tpl).draggable({
                     helper: "clone",
-                    containment: $("#panel_body"),
+                    containment: $('#panel_body'),
                     zIndex: 10000
                 });
             });
@@ -698,7 +702,7 @@ vis = $.extend(true, vis, {
 
     renameView: function (newName) {
         vis.views[newName] = $.extend(true, {}, vis.views[vis.activeView]);
-        $("#vis_container").hide();
+        $('#vis_container').hide();
         delete vis.views[vis.activeView];
         vis.activeView = newName;
         vis.renderView(newName);
@@ -708,7 +712,7 @@ vis = $.extend(true, vis, {
         });
     },
     delView: function (view) {
-        if (confirm(_("Really delete view %s?", view))) {
+        if (confirm(_('Really delete view %s?', view))) {
             delete vis.views[view];
             vis.saveRemote(function () {
                 window.location.href = "edit.html" + window.location.search;
@@ -736,33 +740,33 @@ vis = $.extend(true, vis, {
         var wid;
         if (!isAll) {
             for (var widget in exportView.widgets) {
-                wid = "e" + (("0000" + num).slice(-5));
+                wid = "e" + (('0000' + num).slice(-5));
                 num += 1;
                 exportView.widgets[wid] = exportView.widgets[widget];
                 delete exportView.widgets[widget];
             }
         }
-        $("#textarea_export_view").html(JSON.stringify(exportView, null, "  "));
-        $("#dialog_export_view").dialog({
+        $('#textarea_export_view').html(JSON.stringify(exportView, null, "  "));
+        $('#dialog_export_view').dialog({
             autoOpen: true,
             width: 800,
             height: 600,
             modal: true,
             open: function (/*event, ui*/) {
                 $('[aria-describedby="dialog_export_view"]').css('z-index', 1002);
-                $(".ui-widget-overlay").css('z-index', 1001);
+                $('.ui-widget-overlay').css('z-index', 1001);
             }
         });
     },
     importView: function (isAll) {
-        var name = vis.checkNewView($("#name_import_view").val());
+        var name = vis.checkNewView($('#name_import_view').val());
         var importObject;
         if (name === false) return;
         try {
-            var text = $("#textarea_import_view").val();
+            var text = $('#textarea_import_view').val();
             importObject = JSON.parse(text);
         } catch (e) {
-            alert(_("invalid JSON") + "\n\n" + e);
+            alert(_('invalid JSON') + "\n\n" + e);
             return;
         }
         if (isAll) {
@@ -786,12 +790,12 @@ vis = $.extend(true, vis, {
         }
     },
     checkNewView: function (name) {
-        name = name || $("#new_view_name").val().trim();
+        name = name || $('#new_view_name').val().trim();
         if (name == '') {
-            alert(_("Please enter the name for the new view!"));
+            alert(_('Please enter the name for the new view!'));
             return false;
         } else if (vis.views[name]) {
-            alert(_("The view with the same name yet exists!"));
+            alert(_('The view with the same name yet exists!'));
             return false;
         } else {
             return name;
@@ -800,7 +804,7 @@ vis = $.extend(true, vis, {
     nextWidget: function () {
         var next = 1;
         var used = [];
-        var key = "w" + (("000000" + next).slice(-5));
+        var key = "w" + (('000000' + next).slice(-5));
         for (var view in vis.views) {
             for (var wid in vis.views[view].widgets) {
                 wid = wid.split('_');
@@ -809,7 +813,7 @@ vis = $.extend(true, vis, {
             }
             while (used.indexOf(key) > -1) {
                 next += 1;
-                key = "w" + (("000000" + next).slice(-5));
+                key = "w" + (('000000' + next).slice(-5));
             }
         }
         return key;
@@ -857,7 +861,7 @@ vis = $.extend(true, vis, {
             for (var i = 0; i < views.length; i++) {
                 vis.delWidgetHelper(wids[0] + '_' + views[i], false);
             }
-            vis.inspectWidget("none");
+            vis.inspectWidget('none');
             return;
         }
 
@@ -876,7 +880,7 @@ vis = $.extend(true, vis, {
             widget_div._customHandlers.onDelete(widget_div, id);
         }
 
-        $("#" + id).remove();
+        $('#' + id).remove();
         if (view) {
             delete(vis.views[view].widgets[id]);
         }
@@ -904,12 +908,12 @@ vis = $.extend(true, vis, {
             vis.save();
         }
         if (!widget) {
-            vis.inspectWidget("none");
+            vis.inspectWidget('none');
         }
     },
     bindWidgetClick: function (id) {
 
-        $("#" + id).click(function (e) {
+        $('#' + id).click(function (e) {
             if (vis.dragging) return;
 
             var widgetId = $(this).attr('id');
@@ -921,15 +925,15 @@ vis = $.extend(true, vis, {
                     if (vis.multiSelectedWidgets.indexOf(widgetId) != -1) {
                         //console.log("splice "+id)
                         vis.multiSelectedWidgets.splice(vis.multiSelectedWidgets.indexOf(widgetId), 1);
-                        var $widget = $("#" + widgetId);
-                        $widget.removeClass("ui-selected");
+                        var $widget = $('#' + widgetId);
+                        $widget.removeClass('ui-selected');
 
                         //console.log("-> "+vis.multiSelectedWidgets);
                         vis.allWidgetsHelper();
-                        $("#widget_multi_helper_" + widgetId).remove();
-                        if ($widget.hasClass("ui-draggable")) {
+                        $('#widget_multi_helper_' + widgetId).remove();
+                        if ($widget.hasClass('ui-draggable')) {
                             try {
-                                $widget.draggable("destroy");
+                                $widget.draggable('destroy');
                             } catch (e) {
                                 servConn.logError('inspectWidget - Cannot destroy draggable ' + widgetId + ' ' + e);
                             }
@@ -942,8 +946,8 @@ vis = $.extend(true, vis, {
 
                     var newActive = vis.multiSelectedWidgets.pop();
                     var multiSelectedWidgets = vis.multiSelectedWidgets;
-                    $("#widget_multi_helper_" + newActive).remove();
-                    $("#" + newActive).removeClass("ui-selected");
+                    $('#widget_multi_helper_' + newActive).remove();
+                    $('#' + newActive).removeClass('ui-selected');
                     vis.inspectWidget(newActive);
                     for (var i = 0; i < multiSelectedWidgets.length; i++) {
                         vis.inspectWidgetMulti(multiSelectedWidgets[i]);
@@ -965,7 +969,7 @@ vis = $.extend(true, vis, {
     addWidget: function (tpl, data, style, wid, view, hidden, noSave) {
         //console.log("addWidget "+wid);
         var isSelectWidget = (wid === undefined);
-        var isViewExist = (document.getElementById("visview_" + view) != null);
+        var isViewExist = (document.getElementById('visview_' + view) != null);
         var renderVisible = data.renderVisible;
 
         if (renderVisible) delete data.renderVisible;
@@ -1007,7 +1011,7 @@ vis = $.extend(true, vis, {
         if (renderVisible) this.widgets[widgetId].renderVisible = true;
 
         if (isViewExist) {
-			$("#visview_" + view).append(can.view(tpl, {
+			$('#visview_' + view).append(can.view(tpl, {
                 hm:   this.states[this.widgets[widgetId].data.oid + '.Value'],
                 ts:   this.states[this.widgets[widgetId].data.oid + '.TimeStamp'],
                 ack:  this.states[this.widgets[widgetId].data.oid + '.Certain'],
@@ -1031,7 +1035,7 @@ vis = $.extend(true, vis, {
             tpl: tpl,
             data: data,
             style: style,
-            widgetSet: $("#" + tpl).attr("data-vis-set")
+            widgetSet: $('#' + tpl).attr('data-vis-set')
         };
 
         if (renderVisible) this.views[view].widgets[widgetId].renderVisible = true;
@@ -1070,7 +1074,7 @@ vis = $.extend(true, vis, {
             widget.view = vis.activeView;
         } else {
             activeView = vis.activeView;
-            targetView = $("#select_view_copy option:selected").val();
+            targetView = $('#select_view_copy option:selected').val();
             //console.log(activeView + "." + vis.activeWidget + " -> " + targetView);
             tpl = vis.views[vis.activeView].widgets[vis.activeWidget].tpl;
             data = $.extend({}, vis.views[vis.activeView].widgets[vis.activeWidget].data);
@@ -1093,7 +1097,7 @@ vis = $.extend(true, vis, {
             // addWidget Params: tpl, data, style, wid, view, hidden, noSave
             vis.activeWidget = vis.addWidget(tpl, data, style, undefined, undefined, undefined, noSave);
 
-            $('#select_active_widget').append("<option value='" + vis.activeWidget + "'>" + vis.activeWidget + " (" + $("#" + vis.views[vis.activeView].widgets[vis.activeWidget].tpl).attr("data-vis-name") + ")</option>")
+            $('#select_active_widget').append('<option value="' + vis.activeWidget + '">' + vis.activeWidget + ' (' + $("#" + vis.views[vis.activeView].widgets[vis.activeWidget].tpl).attr("data-vis-name") + ')</option>')
                 .multiselect('refresh');
 
             if (!widget || !widget.widget) {
@@ -1105,7 +1109,7 @@ vis = $.extend(true, vis, {
                 }, 50);
             }
         } else {
-            if ($("#vis_container").find("#visview_" + targetView).html() == undefined) {
+            if ($('#vis_container').find('#visview_' + targetView).html() == undefined) {
                 vis.renderView(targetView, true, true);
             }
             vis.addWidget(tpl, data, style, vis.nextWidget(), targetView, true);
@@ -1113,7 +1117,7 @@ vis = $.extend(true, vis, {
                 vis.save();
             }
             if (!widget || !widget.widget) {
-                vis.showHint(_("Widget copied to view %s", targetView) + ".", 30000);
+                vis.showHint(_('Widget copied to view %s', targetView) + ".", 30000);
             }
         }
     },
@@ -1259,19 +1263,19 @@ vis = $.extend(true, vis, {
 
                         $('#dialog-select-member-' + attr).selectId('show', that.views[view].widgets[widget].data[attr], function (newId, oldId) {
                             if (oldId != newId) {
-                                $("#inspect_" + attr).val(newId);
-                                $("#inspect_" + attr).trigger('change');
+                                $('#inspect_' + attr).val(newId);
+                                $('#inspect_' + attr).trigger('change');
 
                                 if (document.getElementById('inspect_hm_wid')) {
-                                    if (that.objects[newId]["Type"] !== undefined && that.objects[value]["Parent"] !== undefined &&
-                                        (that.objects[newId]["Type"] == "STATE" ||
-                                        that.objects[newId]["Type"] == "LEVEL")) {
+                                    if (that.objects[newId]['Type'] !== undefined && that.objects[value]['Parent'] !== undefined &&
+                                        (that.objects[newId]['Type'] == 'STATE' ||
+                                        that.objects[newId]['Type'] == 'LEVEL')) {
 
-                                        var parent = that.objects[newId]["Parent"];
-                                        if (that.objects[parent]["DPs"] !== undefined &&
-                                            that.objects[parent]["DPs"]["WORKING"] !== undefined) {
-                                            $("#inspect_hm_wid").val(that.objects[parent]["DPs"]["WORKING"]);
-                                            $("#inspect_hm_wid").trigger('change');
+                                        var parent = that.objects[newId]['Parent'];
+                                        if (that.objects[parent]['DPs'] !== undefined &&
+                                            that.objects[paret]['DPs']['WORKING'] !== undefined) {
+                                            $('#inspect_hm_wid').val(that.objects[parent]['DPs']['WORKING']);
+                                            $('#inspect_hm_wid').trigger('change');
                                         }
                                     }
                                 }
@@ -1282,10 +1286,10 @@ vis = $.extend(true, vis, {
                                     if ($filterkey.val() == '') {
                                         var oid = newId;
                                         var func = null;
-                                        if (that.metaIndex && that.metaIndex["ENUM_FUNCTIONS"]) {
+                                        if (that.metaIndex && that.metaIndex['ENUM_FUNCTIONS']) {
                                             while (oid && that.objects[oid]) {
-                                                for (var t = 0; t < that.metaIndex["ENUM_FUNCTIONS"].length; t++) {
-                                                    var list = that.objects[that.metaIndex["ENUM_FUNCTIONS"][t]];
+                                                for (var t = 0; t < that.metaIndex['ENUM_FUNCTIONS'].length; t++) {
+                                                    var list = that.objects[that.metaIndex['ENUM_FUNCTIONS'][t]];
                                                     for (var z = 0; z < list['Channels'].length; z++) {
                                                         if (list['Channels'][z] == oid) {
                                                             func = list.Name;
@@ -1308,7 +1312,7 @@ vis = $.extend(true, vis, {
                 },
                 onchange: function (val) {
                     var attr = $(this).data('data-attr');
-                    $("#inspect_" + attr + "_desc").html(that.getObjDesc(val));
+                    $('#inspect_' + attr + '_desc').html(that.getObjDesc(val));
                 }
             },
             {
@@ -1595,9 +1599,9 @@ vis = $.extend(true, vis, {
             vis.multiSelectedWidgets.push(id);
         }
 
-        $("#vis_container").append('<div id="widget_multi_helper_' + id + '" class="widget_multi_helper"><div class="widget_multi_inner_helper"></div></div>');
+        $('#vis_container').append('<div id="widget_multi_helper_' + id + '" class="widget_multi_helper"><div class="widget_multi_inner_helper"></div></div>');
 
-        $("#widget_multi_helper_"+id).css({
+        $('#widget_multi_helper_'+id).css({
             left   : pos.left - 2,
             top    : pos.top - 2,
             height : $this.outerHeight() + 2,
@@ -1979,7 +1983,7 @@ vis = $.extend(true, vis, {
             // The result is DashUI tries to remove draggable and resizable properties and fails
             if (attr == 'class') {
                 var val = that.views[view].widgets[widget].data[attr];
-                if (val.indexOf("ui-draggable") != -1 || val.indexOf("ui-resizable") != -1) {
+                if (val.indexOf("ui-draggable") != -1 || val.indexOf('ui-resizable') != -1) {
                     var vals = val.split(' ');
                     val = '';
                     for (var j = 0; j < vals.length; j++) {
@@ -2025,7 +2029,7 @@ vis = $.extend(true, vis, {
             }).css({width: 22, height: 22}).click(function () {
                 var group = $(this).attr('data-group');
                 that.groupsState[group] = !that.groupsState[group];
-                $(this).button("option", {
+                $(this).button('option', {
                     icons: {primary: that.groupsState[group] ? "ui-icon-triangle-1-n" : "ui-icon-triangle-1-s"}
                 });
                 if (that.groupsState[group]) {
@@ -2046,29 +2050,29 @@ vis = $.extend(true, vis, {
         var view = this.getViewOfWidget(wid);
 
         if (!onlyUpdate) {
-            $(".widget_multi_helper").remove();
+            $('.widget_multi_helper').remove();
             vis.multiSelectedWidgets = [];
-            $("#allwidgets_helper").hide();
+            $('#allwidgets_helper').hide();
 
             $('#select_active_widget').find('option[value="' + wid + '"]').prop('selected', true);
             $('#select_active_widget').multiselect('refresh');
 
             // Remove selection from all widgets and remove resizable and draggable properties
-            $(".vis-widget").each(function () {
+            $('.vis-widget').each(function () {
                 var $this = $(this);
-                $this.removeClass("vis-widget-edit");
+                $this.removeClass('vis-widget-edit');
 
-                if ($this.hasClass("ui-draggable")) {
+                if ($this.hasClass('ui-draggable')) {
                     try {
-                        $this.draggable("destroy");
+                        $this.draggable('destroy');
                     } catch (e) {
                         servConn.logError('inspectWidget - Cannot destroy draggable ' + $this.attr('id') + ' ' + e);
                     }
                 }
 
-                if ($this.hasClass("ui-resizable")) {
+                if ($this.hasClass('ui-resizable')) {
                     try {
-                        $this.resizable("destroy");
+                        $this.resizable('destroy');
                     } catch (e) {
                         servConn.logError('inspectWidget - Cannot destroy resizable ' + $this.attr('id') + ' ' + e);
                     }
@@ -2082,7 +2086,7 @@ vis = $.extend(true, vis, {
         $widgetAttrs.html('');
         //.html('<tr><th class="widgetAttrs_header"></th><th></th></tr>');
 
-        $(".vis-inspect-css").each(function () {
+        $('.vis-inspect-css').each(function () {
             $(this).val('');
         });
 
@@ -2105,7 +2109,7 @@ vis = $.extend(true, vis, {
 
 
         // Fill the css values
-        $(".vis-inspect-widget").each(function () {
+        $('.vis-inspect-widget').each(function () {
             var $this_ = $(this);
             var attr = $this_.attr('id').slice(8);
             if (vis.views[vis.activeView].widgets[vis.activeWidget] && vis.views[vis.activeView].widgets[vis.activeWidget].data) {
@@ -2115,7 +2119,7 @@ vis = $.extend(true, vis, {
 
         if (!widget.tpl) return false;
 
-        var $widgetTpl = $("#" + widget.tpl);
+        var $widgetTpl = $('#' + widget.tpl);
         if (!$widgetTpl) {
             console.log(widget.tpl + " is not included");
             return false;
@@ -2174,7 +2178,7 @@ vis = $.extend(true, vis, {
                 var wid_attrs = widgetAttrs[attr].split('/');
                 var wid_attr = wid_attrs[0];
                 // Try to extract default value
-                var uu = wid_attr.indexOf("[");
+                var uu = wid_attr.indexOf('[');
                 var defaultValue = null;
                 if (uu != -1) {
                     var defaultValue = wid_attr.substring(uu + 1);
@@ -2192,7 +2196,7 @@ vis = $.extend(true, vis, {
                 }
 
                 // Try to extract repeat value
-                uu = wid_attr.indexOf("(");
+                uu = wid_attr.indexOf('(');
                 var instancesStart = null;
                 var instancesStop = null;
                 if (uu != -1) {
@@ -2244,7 +2248,7 @@ vis = $.extend(true, vis, {
                         vis.editObjectID(widget, wid_attr_, widgetFilter);
                     } else if (wid_attr_ === "oid-working") {
                         vis.editObjectID(widget, wid_attr_, 'WORKING');
-                    } else if (wid_attr_.indexOf("src") == wid_attr_.length - 3 || type == "image") {
+                    } else if (wid_attr_.indexOf('src') == wid_attr_.length - 3 || type == "image") {
                         vis.editImage(widget, wid_attr_);
                     } else if (wid_attr_ == "url") {
                         vis.editUrl(widget, wid_attr_);
@@ -2279,15 +2283,15 @@ vis = $.extend(true, vis, {
                         isValueSet = true;
                         var values = wid_attrs[1].split(',');
                         vis.editSelect (widget, wid_attr_, values);
-                    } else if (wid_attr_.indexOf("nav_view") != -1 || type == "views") {
+                    } else if (wid_attr_.indexOf('nav_view') != -1 || type == "views") {
                         vis.editViewName (widget, wid_attr_);
                         isCustomEdit = true;
                     } else if (type == "hidden") {
                         isCustomEdit = true;
-                    } else if (wid_attr_.indexOf("_effect") != -1 || type == "effect") {
+                    } else if (wid_attr_.indexOf('_effect') != -1 || type == "effect") {
                         vis.editEffects(widget, wid_attr_);
                         isCustomEdit = true;
-                    } else if (wid_attr_.indexOf("_eff_opt") != -1 || type == "effect_opt") {
+                    } else if (wid_attr_.indexOf('_eff_opt') != -1 || type == "effect_opt") {
                         vis.editEffects_opt(widget, wid_attr_);
                         isCustomEdit = true;
                     } else if (wid_attr_.indexOf('_hr') != -1) {
@@ -2364,7 +2368,7 @@ vis = $.extend(true, vis, {
                     }
 
                     if (!isCustomEdit) {
-                        var inspect = $("#inspect_" + wid_attr_);
+                        var inspect = $('#inspect_' + wid_attr_);
 
                         if (!isValueSet) {
                             inspect.val(widget.data[wid_attr_]);
@@ -2373,10 +2377,10 @@ vis = $.extend(true, vis, {
                             var attribute = $(this).attr('id').slice(8);
                             var val = $(this).val();
                             if (this.type == "checkbox") {
-                                val = $(this).prop("checked");
+                                val = $(this).prop('checked');
                             }
                             if (attribute == "oid" || attribute == "oid-working") {
-                                $("#inspect_" + attribute + "_desc").html(vis.getObjDesc(val));
+                                $('#inspect_' + attribute + "_desc").html(vis.getObjDesc(val));
                             }
                             vis.widgets[vis.activeWidget].data.attr(attribute, val);
                             vis.views[vis.activeView].widgets[vis.activeWidget].data[attribute] = val;
@@ -2398,7 +2402,7 @@ vis = $.extend(true, vis, {
         // If widget was rerendered, it can have new div
         var $this = $('#' + wid);
 
-        $(".vis-inspect-css").each(function () {
+        $('.vis-inspect-css').each(function () {
             var attr = $(this).attr('id').slice(12)
             var css = $this.css(attr);
 
@@ -2442,7 +2446,7 @@ vis = $.extend(true, vis, {
                     this._save();
                 }
             }).focus(function () {
-                $(this).autocomplete("search", '');
+                $(this).autocomplete('search', '');
             }).keyup(function () {
                 this._save();
             });
@@ -2460,14 +2464,14 @@ vis = $.extend(true, vis, {
                         break;
                     }
                 }
-                $("#inspect_views").append("<option value='" + v + "' " + selected + ">" + v + "</option>");
+                $('#inspect_views').append('<option value=\'' + v + "' " + selected + ">" + v + "</option>");
             }
         }
 
         $('#inspect_views').multiselect({
 //            minWidth: 300,
             height: 260,
-            noneSelectedText: _("Single view"),
+            noneSelectedText: _('Single view'),
             selectedText: function (numChecked, numTotal, checkedItems) {
                 var text = '';
                 for (var i = 0; i < checkedItems.length; i++) {
@@ -2476,8 +2480,8 @@ vis = $.extend(true, vis, {
                 return text;
             },
             multiple: true,
-            checkAllText: _("Check all"),
-            uncheckAllText: _("Uncheck all")
+            checkAllText: _('Check all'),
+            uncheckAllText: _('Uncheck all')
             //noneSelectedText: _("Select options")
         }).change(function () {
             vis.syncWidget(vis.activeWidget, $(this).val());
@@ -2518,7 +2522,7 @@ vis = $.extend(true, vis, {
         }
         var w = $this.width();
         var h = $this.height();
-        $("#widget_helper").css({
+        $('#widget_helper').css({
             left: pos.left - 2,
             top: pos.top - 2,
             height: $this.outerHeight() + 2,
@@ -2562,7 +2566,7 @@ vis = $.extend(true, vis, {
 
         // Find outer edges of all selected widgets
         for (var i = 0; i < selectedWidgets.length; i++) {
-            var $widget = $("#" + selectedWidgets[i]);
+            var $widget = $('#' + selectedWidgets[i]);
             var pos = $widget.position();
             pos.right = pos.left + $widget.width();
             pos.bottom = pos.top + $widget.height();
@@ -2574,9 +2578,9 @@ vis = $.extend(true, vis, {
 
         $allwidgets_helper
             .css('left', (l - 3))
-            .css("width", (r + 6 - l))
+            .css('width', (r + 6 - l))
             .css('top', (t - 3))
-            .css("height", (b + 6 - t))
+            .css('height', (b + 6 - t))
             .show();
     },
 
@@ -2584,7 +2588,7 @@ vis = $.extend(true, vis, {
     changeViewEdit: function (view, noChange) {
 
         if (this.selectable) {
-            $(".vis-view.ui-selectable").selectable('destroy');
+            $('.vis-view.ui-selectable').selectable('destroy');
             var that = this;
             $('#visview_' + view).selectable({
                 filter:    'div.vis-widget',
@@ -2595,18 +2599,18 @@ vis = $.extend(true, vis, {
                 },
                 stop: function (e, ui) {
                     //console.log('stop ' + $(".ui-selected").length)
-                    var $allwidgets_helper = $("#allwidgets_helper");
-                    switch ($(".ui-selected").length) {
+                    var $allwidgets_helper = $('#allwidgets_helper');
+                    switch ($('.ui-selected').length) {
                         case 0:
-                            $(".widget-multi-helper").remove();
+                            $('.widget-multi-helper').remove();
                             that.multiSelectedWidgets = [];
-                            that.inspectWidget("none");
+                            that.inspectWidget('none');
                             $allwidgets_helper.hide();
                             break;
                         case 1:
-                            $(".widget-multi-helper").remove();
+                            $('.widget-multi-helper').remove();
                             that.multiSelectedWidgets = [];
-                            that.inspectWidget($(".ui-selected").attr('id'));
+                            that.inspectWidget($('.ui-selected').attr('id'));
                             $allwidgets_helper.hide();
                             break;
                         default:
@@ -2626,7 +2630,7 @@ vis = $.extend(true, vis, {
                 },
                 unselecting: function (e, ui) {
                     //console.log('unselecting ' + ui.unselecting.id)
-                    if ($("#widget_multi_helper_" + ui.unselecting.id).html()) {
+                    if ($('#widget_multi_helper_' + ui.unselecting.id).html()) {
                         $("#widget_multi_helper_" + ui.unselecting.id).remove();
                         that.multiSelectedWidgets.splice(that.multiSelectedWidgets.indexOf(ui.unselecting.id), 1);
                     }
@@ -2657,13 +2661,13 @@ vis = $.extend(true, vis, {
                 filterName: 'background',
                 //filterFile: "backgrounds.css",
                 style: vis.views[view].settings.style.background_class,
-                parent: $("#inspect_view_bkg_parent"),
+                parent: $('#inspect_view_bkg_parent'),
                 onchange: function (newStyle, obj) {
                     if (vis.views[vis.activeView].settings.style['background_class']) {
-                        $("#visview_" + vis.activeView).removeClass(vis.views[vis.activeView].settings.style['background_class']);
+                        $('#visview_' + vis.activeView).removeClass(vis.views[vis.activeView].settings.style['background_class']);
                     }
                     vis.views[vis.activeView].settings.style['background_class'] = newStyle;
-                    $("#visview_" + vis.activeView).addClass(vis.views[vis.activeView].settings.style['background_class']);
+                    $('#visview_' + vis.activeView).addClass(vis.views[vis.activeView].settings.style['background_class']);
                     vis.save();
                 }
             });
@@ -2680,25 +2684,25 @@ vis = $.extend(true, vis, {
                 }
             });
             if (!res) {
-                $("#screen_size_x").prop('disabled', true);
-                $("#screen_size_y").prop('disabled', true);
+                $('#screen_size_x').prop('disabled', true);
+                $('#screen_size_y').prop('disabled', true);
             }
 
-            $("#screen_size_x").val(this.views[vis.activeView].settings.sizex || '').trigger('change');
-            $("#screen_size_y").val(this.views[vis.activeView].settings.sizey || '').trigger('change');
+            $('#screen_size_x').val(this.views[vis.activeView].settings.sizex || '').trigger('change');
+            $('#screen_size_y').val(this.views[vis.activeView].settings.sizey || '').trigger('change');
 
-            $("#screen_hide_description").prop('checked', this.views[this.activeView].settings.hideDescription).trigger('change');
+            $('#screen_hide_description').prop('checked', this.views[this.activeView].settings.hideDescription).trigger('change');
 
             /*if (typeof hqWidgets != 'undefined') {
              hqWidgets.SetHideDescription(vis.views[vis.activeView].settings.hideDescription);
              }*/
 
-            $("#grid_size").val(this.views[this.activeView].settings.gridSize || '').trigger('change');
+            $('#grid_size').val(this.views[this.activeView].settings.gridSize || '').trigger('change');
 
             var snapType = this.views[this.activeView].settings.snapType || 0;
 
-            $("#snap_type option").removeAttr('selected');
-            $("#snap_type option[value='" + snapType + "']").attr('selected', true);
+            $('#snap_type option').removeAttr('selected');
+            $('#snap_type option[value="' + snapType + '"]').attr('selected', true);
         }
 
         var $selectWidget = $('#select_active_widget').html('<option value="none">' + _('none selected') + '</option>');
@@ -2711,35 +2715,35 @@ vis = $.extend(true, vis, {
 
         $selectWidget.multiselect('refresh');
 
-        if ($("#select_view option:selected").val() != view) {
-            $("#select_view option").removeAttr('selected');
-            $("#select_view option[value='" + view + "']").prop('selected', 'selected');
-            $("#select_view").multiselect('refresh');
+        if ($('#select_view option:selected').val() != view) {
+            $('#select_view option').removeAttr('selected');
+            $('#select_view option[value="' + view + '"]').prop('selected', 'selected');
+            $('#select_view').multiselect('refresh');
         }
-        $("#select_view_copy option").removeAttr('selected');
-        $("#select_view_copy option[value='" + view + "']").prop('selected', 'selected');
-        $("#select_view_copy").multiselect('refresh');
+        $('#select_view_copy option').removeAttr('selected');
+        $('#select_view_copy option[value=\'' + view + "']").prop('selected', 'selected');
+        $('#select_view_copy').multiselect('refresh');
 
         // View CSS Inspector
-        $(".vis-inspect-view-css").each(function () {
+        $('.vis-inspect-view-css').each(function () {
             var $this = $(this);
             var attr = $this.attr('id').slice(17);
-            var css = $("#visview_" + vis.activeView).css(attr);
+            var css = $('#visview_' + vis.activeView).css(attr);
             $this.val(css);
         });
 
         if (this.views[view] && this.views[view].settings) {
-            $(".vis-inspect-view").each(function () {
+            $('.vis-inspect-view').each(function () {
                 var $this = $(this);
                 var attr = $this.attr('id').slice(13);
-                $("#" + $this.attr('id')).val(that.views[that.activeView].settings[attr]);
+                $('#' + $this.attr('id')).val(that.views[that.activeView].settings[attr]);
             });
 
             this.views[this.activeView].settings['theme'] = this.views[this.activeView].settings['theme'] || 'redmond';
 
-            $("#inspect_view_theme option[value='" + this.views[this.activeView].settings.theme + "']").prop('selected', true);
+            $('#inspect_view_theme option[value=\'' + this.views[this.activeView].settings.theme + "']").prop('selected', true);
         }
-        $("#inspect_view_theme").multiselect('refresh');
+        $('#inspect_view_theme').multiselect('refresh');
     },
     dragging: false,
     draggable: function (obj) {
@@ -2760,8 +2764,8 @@ vis = $.extend(true, vis, {
                 var mWidget = document.getElementById(widget);
                 var pos = $(mWidget).position();
 
-                $("#inspect_css_top").val(pos.top + "px");
-                $("#inspect_css_left").val(pos.left + "px");
+                $('#inspect_css_top').val(pos.top + "px");
+                $('#inspect_css_left').val(pos.left + "px");
                 if (!vis.views[vis.activeView].widgets[widget].style) {
                     vis.views[vis.activeView].widgets[widget].style = {};
                 }
@@ -2807,7 +2811,7 @@ vis = $.extend(true, vis, {
                     var x = pos.left + moveX;
                     var y = pos.top + moveY;
 
-                    $("#widget_multi_helper_" + vis.multiSelectedWidgets[i]).css({left: x - 2, top: y - 2});
+                    $('#widget_multi_helper_' + vis.multiSelectedWidgets[i]).css({left: x - 2, top: y - 2});
 
                     if (ui.helper.attr('id') != vis.multiSelectedWidgets[i]) {
                         $mWidget.css({left: x, top: y});
@@ -2820,37 +2824,37 @@ vis = $.extend(true, vis, {
                 var mWidget = document.getElementById(vis.activeWidget);
 
                 if (ui.helper.attr('id') == vis.activeWidget) {
-                    $("#widget_helper").css({left: origX - 2, top: origY - 2});
+                    $('#widget_helper').css({left: origX - 2, top: origY - 2});
                 } else {
                     var $mWidget = $(mWidget);
                     var pos = $mWidget.position();
                     var x = pos.left + moveX;
                     var y = pos.top + moveY;
                     $mWidget.css({left: x, top: y});
-                    $("#widget_helper").css({left: x - 2, top: y - 2});
+                    $('#widget_helper').css({left: x - 2, top: y - 2});
                 }
 
                 if (mWidget._customHandlers && mWidget._customHandlers.onMove) {
                     mWidget._customHandlers.onMove(mWidget, vis.activeWidget);
                 }
-                if ($("#allwidgets_helper").is(":visible")) {
-                    var pos = $("#allwidgets_helper").position();
-                    $("#allwidgets_helper").css({left: pos.left + moveX, top: pos.top + moveY});
+                if ($('#allwidgets_helper').is(':visible')) {
+                    var pos = $('#allwidgets_helper').position();
+                    $('#allwidgets_helper').css({left: pos.left + moveX, top: pos.top + moveY});
                 }
             }
         };
-        if ($("#snap_type option:selected").val() == 1) {
+        if ($('#snap_type option:selected').val() == 1) {
             draggableOptions.snap = "#vis_container div.vis-widget";
         }
-        if ($("#snap_type option:selected").val() == 2) {
+        if ($('#snap_type option:selected').val() == 2) {
             draggableOptions.grid = [vis.gridWidth, vis.gridWidth];
         }
         obj.draggable(draggableOptions);
     },
     resizable: function (obj) {
         var resizableOptions;
-        if (obj.attr("data-vis-resizable")) {
-            resizableOptions = $.parseJSON(obj.attr("data-vis-resizable"));
+        if (obj.attr('data-vis-resizable')) {
+            resizableOptions = $.parseJSON(obj.attr('data-vis-resizable'));
         }
         if (!resizableOptions) {
             resizableOptions = {};
@@ -2860,8 +2864,8 @@ vis = $.extend(true, vis, {
             obj.resizable($.extend({
                 stop: function (event, ui) {
                     var widget = ui.helper.attr('id')
-                    $("#inspect_css_width").val(ui.size.width + "px");
-                    $("#inspect_css_height").val(ui.size.height + "px");
+                    $('#inspect_css_width').val(ui.size.width + "px");
+                    $('#inspect_css_height').val(ui.size.height + "px");
                     if (!vis.views[vis.activeView].widgets[widget].style) {
                         vis.views[vis.activeView].widgets[widget].style = {};
                     }
@@ -2871,88 +2875,88 @@ vis = $.extend(true, vis, {
 
                 },
                 resize: function (event, ui) {
-                    $("#widget_helper").css({width: ui.element.outerWidth() + 2, height: ui.element.outerHeight() + 2});
+                    $('#widget_helper').css({width: ui.element.outerWidth() + 2, height: ui.element.outerHeight() + 2});
                 }
             }, resizableOptions));
         }
     },
     clearWidgetHelper: function () {
-        $("#widget_helper").hide();
-        $(".widget_multi_helper").remove();
+        $('#widget_helper').hide();
+        $('.widget_multi_helper').remove();
         vis.multiSelectedWidgets = [];
     },
     editInit_select_view: function () {
 
-        $("#view_select_tabs_wrap").resize(function () {
+        $('#view_select_tabs_wrap').resize(function () {
             var o = {
-                parent_w: $("#view_select_tabs_wrap").width(),
-                self_w: $("#view_select_tabs").width(),
-                self_l: parseInt($("#view_select_tabs").css("left"))
+                parent_w: $('#view_select_tabs_wrap').width(),
+                self_w: $('#view_select_tabs').width(),
+                self_l: parseInt($('#view_select_tabs').css('left'))
             };
             if (o.parent_w >= (o.self_w + o.self_l))
 
-                $("#view_select_tabs").css("left", (o.parent_w - o.self_w) + "px");
+                $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px");
         });
 
-        $("#view_select_left").button({
+        $('#view_select_left').button({
             icons: {
                 primary: "ui-icon-carat-1-w"
             },
             text: false
         }).click(function () {
             var o = {
-                parent_w: $("#view_select_tabs_wrap").width(),
-                self_w: $("#view_select_tabs").width(),
-                self_l: parseInt($("#view_select_tabs").css("left"))
+                parent_w: $('#view_select_tabs_wrap').width(),
+                self_w: $('#view_select_tabs').width(),
+                self_l: parseInt($('#view_select_tabs').css('left'))
             };
 
             if (o.self_w != o.parent_w) {
                 if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
-                    $("#view_select_tabs").css("left", o.self_l - 50 + "px")
+                    $('#view_select_tabs').css('left', o.self_l - 50 + "px")
                 } else {
-                    $("#view_select_tabs").css("left", (o.parent_w - o.self_w) + "px")
+                    $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
                 }
 
             }
 
         });
 
-        $("#view_select_right").button({
+        $('#view_select_right').button({
             icons: {
                 primary: "ui-icon-carat-1-e"
             },
             text: false
         }).click(function () {
             var o = {
-                parent_w: $("#view_select_tabs_wrap").width(),
-                self_w: $("#view_select_tabs").width(),
-                self_l: parseInt($("#view_select_tabs").css("left"))
+                parent_w: $('#view_select_tabs_wrap').width(),
+                self_w: $('#view_select_tabs').width(),
+                self_l: parseInt($('#view_select_tabs').css('left'))
             };
 
             if (o.self_w != o.parent_w) {
                 if ((o.self_l + 50) <= 0) {
-                    $("#view_select_tabs").css("left", o.self_l + 50 + "px")
+                    $('#view_select_tabs').css('left', o.self_l + 50 + "px")
                 } else {
-                    $("#view_select_tabs").css("left", "0px")
+                    $('#view_select_tabs').css('left', "0px")
                 }
 
             }
 
         });
 
-        $("#view_select").bind('mousewheel DOMMouseScroll', function (event) {
+        $('#view_select').bind('mousewheel DOMMouseScroll', function (event) {
             var o = {
-                parent_w: $("#view_select_tabs_wrap").width(),
-                self_w: $("#view_select_tabs").width(),
-                self_l: parseInt($("#view_select_tabs").css("left"))
+                parent_w: $('#view_select_tabs_wrap').width(),
+                self_w: $('#view_select_tabs').width(),
+                self_l: parseInt($('#view_select_tabs').css('left'))
             }
             if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
 
                 if (o.self_w != o.parent_w) {
                     if ((o.parent_w - o.self_w) <= (o.self_l - 20)) {
-                        $("#view_select_tabs").css("left", o.self_l - 20 + "px")
+                        $('#view_select_tabs').css('left', o.self_l - 20 + "px")
                     } else {
-                        $("#view_select_tabs").css("left", (o.parent_w - o.self_w) + "px")
+                        $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
                     }
 
                 }
@@ -2960,9 +2964,9 @@ vis = $.extend(true, vis, {
             else {
                 if (o.self_w != o.parent_w) {
                     if ((o.self_l + 20) <= 0) {
-                        $("#view_select_tabs").css("left", o.self_l + 20 + "px")
+                        $('#view_select_tabs').css('left', o.self_l + 20 + "px")
                     } else {
-                        $("#view_select_tabs").css("left", "0px")
+                        $('#view_select_tabs').css('left', "0px")
                     }
 
                 }
@@ -2979,10 +2983,10 @@ vis = $.extend(true, vis, {
 
         keys.sort();
 
-        $("#view_select_tabs").on("click", ".view_select_tab", function () {
-            var view = $(this).attr("id").replace("view_tab_", "");
-            $(".view_select_tab").removeClass("ui-tabs-active ui-state-active");
-            $(this).addClass("ui-tabs-active ui-state-active");
+        $('#view_select_tabs').on('click', ".view_select_tab", function () {
+            var view = $(this).attr('id').replace('view_tab_', "");
+            $('.view_select_tab').removeClass('ui-tabs-active ui-state-active');
+            $(this).addClass('ui-tabs-active ui-state-active');
             vis.changeView(view);
 
         });
@@ -2997,7 +3001,7 @@ vis = $.extend(true, vis, {
             } else {
                 sel = '';
             }
-            $("#view_select_tabs").append('<div id="view_tab_' + k + '" class="view_select_tab ui-state-default ui-corner-top">' + k + '</div>');
+            $('#view_select_tabs').append('<div id="view_tab_' + k + '" class="view_select_tab ui-state-default ui-corner-top">' + k + '</div>');
         }
 
 
@@ -3025,8 +3029,8 @@ vis = $.extend(true, vis, {
                 continue;
             }
 
-            if (this.views[view].widgets[w].tpl.indexOf("Image") == -1 &&
-                this.views[view].widgets[w].tpl.indexOf("image") == -1) {
+            if (this.views[view].widgets[w].tpl.indexOf('Image') == -1 &&
+                this.views[view].widgets[w].tpl.indexOf('image') == -1) {
                 var $jW = $('#' + w);
                 if ($jW.length) {
                     var s = $jW.position();
@@ -3158,21 +3162,21 @@ vis = $.extend(true, vis, {
     },
     initStealHandlers: function () {
         var that = this;
-        $(".vis-steal-css").each(function () {
+        $('.vis-steal-css').each(function () {
             $(this).button({
                 icons: {
                     primary: "ui-icon-star"
                 },
                 text: false
             }).click(function (e) {
-                if (!$(this).attr("checked")) {
-                    $(this).attr("checked", true).button('refresh');
+                if (!$(this).attr('checked')) {
+                    $(this).attr('checked', true).button('refresh');
                 } else {
-                    $(this).removeAttr("checked").button('refresh');
+                    $(this).removeAttr('checked').button('refresh');
                 }
                 var isSelected = false;
-                $(".vis-steal-css").each(function () {
-                    if ($(this).attr("checked")) {
+                $('.vis-steal-css').each(function () {
+                    if ($(this).attr('checked')) {
                         isSelected = true;
                     }
                 });
@@ -3191,38 +3195,38 @@ vis = $.extend(true, vis, {
     },
     stealCssModeStop: function () {
         this.isStealCss = false;
-        $("#stealmode_content").remove();
+        $('#stealmode_content').remove();
         if (this.selectable) {
-            $("#visview_" + this.activeView).selectable("enable");
+            $('#visview_' + this.activeView).selectable('enable');
         }
-        $(".vis-steal-css").removeAttr("checked").button('refresh');
-        $("#vis_container").removeClass("vis-steal-cursor");
+        $('.vis-steal-css').removeAttr('checked').button('refresh');
+        $('#vis_container').removeClass('vis-steal-cursor');
 
     },
     stealCssMode: function () {
         if (this.selectable) {
-            $("#visview_" + this.activeView).selectable("disable");
+            $("#visview_" + this.activeView).selectable('disable');
         }
         this.isStealCss = true;
-        $(".widget_multi_helper").remove();
+        $('.widget_multi_helper').remove();
         this.multiSelectedWidgets = [];
 
         if (!$('#stealmode_content').length) {
             $('body').append('<div id="stealmode_content" style="display:none" class="vis-stealmode">CSS steal mode</div>')
-            $("#stealmode_content").fadeIn('fast')
+            $('#stealmode_content').fadeIn('fast')
                 .click(function () {
-                    $(this).fadeOut("slow");
+                    $(this).fadeOut('slow');
                 });
         }
 
-        $(".vis-widget").one("click", function (e) {
+        $('.vis-widget').one('click', function (e) {
             e.stopImmediatePropagation();
             e.stopPropagation();
             e.preventDefault();
 
             vis.stealCss(e);
         });
-        $("#vis_container").addClass("vis-steal-cursor");
+        $('#vis_container').addClass('vis-steal-cursor');
     },
     stealCss: function (e) {
         if (this.isStealCss) {
@@ -3230,10 +3234,10 @@ vis = $.extend(true, vis, {
             var target = "#" + this.activeWidget;
             var src = "#" + e.currentTarget.id;
 
-            $(".vis-steal-css").each(function () {
-                if ($(this).attr("checked")) {
-                    $(this).removeAttr("checked").button('refresh');
-                    var cssAttribute = $(this).attr("data-vis-steal");
+            $('.vis-steal-css').each(function () {
+                if ($(this).attr('checked')) {
+                    $(this).removeAttr('checked').button('refresh');
+                    var cssAttribute = $(this).attr('data-vis-steal');
                     if (cssAttribute.match(/border-/) || cssAttribute.match(/padding/)) {
                         var val = that.combineCssShorthand($(src), cssAttribute);
                     } else {
@@ -3255,7 +3259,7 @@ vis = $.extend(true, vis, {
     },
     combineCssShorthand: function (that, attr) {
         var css;
-        var parts = attr.split("-");
+        var parts = attr.split('-');
         var baseAttr = parts[0];
 
         if (attr == "border-radius") {
@@ -3286,7 +3290,7 @@ vis = $.extend(true, vis, {
         if (!vis.undoHistory || vis.undoHistory.length == 0 ||
             (JSON.stringify(vis.views[vis.activeView]) != JSON.stringify(vis.undoHistory[vis.undoHistory.length - 1]))) {
             vis.undoHistory = vis.undoHistory || [];
-            $("#button_undo").removeClass("ui-state-disabled");
+            $('#button_undo').removeClass('ui-state-disabled');
             if (vis.undoHistory.push($.extend(true, {}, vis.views[vis.activeView])) > vis.undoHistoryMaxLength) {
                 vis.undoHistory.splice(0, 1);
             }
@@ -3317,15 +3321,15 @@ vis = $.extend(true, vis, {
         var activeWidget = vis.activeWidget;
         var multiSelectedWidgets = vis.multiSelectedWidgets;
 
-        vis.inspectWidget("none");
-        $("#visview_" + vis.activeView).remove();
+        vis.inspectWidget('none');
+        $('#visview_' + vis.activeView).remove();
 
         vis.undoHistory.pop();
         vis.views[vis.activeView] = $.extend(true, {}, vis.undoHistory[vis.undoHistory.length - 1]);
         vis.saveRemote();
 
         if (vis.undoHistory.length <= 1) {
-            $("#button_undo").addClass("ui-state-disabled").removeClass("ui-state-hover");
+            $('#button_undo').addClass('ui-state-disabled').removeClass('ui-state-hover');
         }
 
         vis.renderView(vis.activeView);
@@ -3353,12 +3357,12 @@ vis = $.extend(true, vis, {
                 newCanvas.height = Math.ceil($elem.height / $elem.width * newCanvas.width);
             }
 
-            var ctx = newCanvas.getContext("2d");
+            var ctx = newCanvas.getContext('2d');
             ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
             ctx.fillStyle = "#FF0000";
             ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
             ctx.font = "5px Arial";
-            ctx.fillText("Cannot render", 0, 0);
+            ctx.fillText('Cannot render', 0, 0);
             callback(newCanvas);
         } else {
             html2canvas(widObj, {
@@ -3370,7 +3374,7 @@ vis = $.extend(true, vis, {
                         newCanvas.width = maxWidth;
                         newCanvas.height = Math.ceil(canvas.height / canvas.width * newCanvas.width);
                     }
-                    var ctx = newCanvas.getContext("2d");
+                    var ctx = newCanvas.getContext('2d');
                     ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
                     ctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
                     callback(newCanvas);
@@ -3502,7 +3506,7 @@ vis = $.extend(true, vis, {
                             that.delWidget(that.multiSelectedWidgets[i]);
                         }
                         that.delWidget(that.activeWidget);
-                        that.inspectWidget("none");
+                        that.inspectWidget('none');
                     }
                 });
             } else {
@@ -3511,13 +3515,13 @@ vis = $.extend(true, vis, {
                         this.delWidget(this.multiSelectedWidgets[i]);
                     }
                     this.delWidget(this.activeWidget);
-                    this.inspectWidget("none");
+                    this.inspectWidget('none');
                 }
             }
 
             $clipboard_content.css({left: ($(document).width() - $clipboard_content.width()) / 2})
                 .click(function () {
-                    $(this).slideUp("slow");
+                    $(this).slideUp('slow');
                 })
                 .fadeIn('fast');
         } else {
@@ -3529,48 +3533,48 @@ vis = $.extend(true, vis, {
         if (!$focused.length && this.activeWidget) {
             var isHideDialog = false;
             if (typeof storage != "undefined") {
-                isHideDialog = storage.get("dialog_delete_is_show");
+                isHideDialog = storage.get('dialog_delete_is_show');
             }
 
             if (!isHideDialog) {
                 if (this.multiSelectedWidgets.length) {
-                    $("#dialog_delete_content").html(_("Do you want delete %s widgets?", this.multiSelectedWidgets.length + 1));
+                    $('#dialog_delete_content').html(_('Do you want delete %s widgets?', this.multiSelectedWidgets.length + 1));
                 } else {
-                    $("#dialog_delete_content").html(_("Do you want delete widget %s?", this.activeWidget));
+                    $('#dialog_delete_content').html(_('Do you want delete widget %s?', this.activeWidget));
                 }
 
                 var dialog_buttons = {};
 
-                var delText = _("Delete").replace("&ouml;", "ö");
+                var delText = _('Delete').replace('&ouml;', "ö");
                 var that = this;
                 dialog_buttons[delText] = function () {
                     if ($('#dialog_delete_is_show').prop('checked')) {
                         if (typeof storage != "undefined") {
-                            storage.set("dialog_delete_is_show", true);
+                            storage.set('dialog_delete_is_show', true);
                         }
                     }
-                    $(this).dialog("close");
+                    $(this).dialog('close');
 
                     for (var i = 0, len = that.multiSelectedWidgets.length; i < len; i++) {
                         that.delWidget(that.multiSelectedWidgets[i]);
                     }
                     that.delWidget(that.activeWidget);
                     // vis.clearWidgetHelper(); - will be done in inspectWidget("none")
-                    that.inspectWidget("none");
+                    that.inspectWidget('none');
                 }
-                dialog_buttons[_("Cancel")] = function () {
-                    $(this).dialog("close");
+                dialog_buttons[_('Cancel')] = function () {
+                    $(this).dialog('close');
                 };
 
-                $("#dialog_delete").dialog({
+                $('#dialog_delete').dialog({
                     autoOpen: true,
                     width: 500,
                     height: 220,
                     modal: true,
-                    title: _("Confirm widget deletion"),
+                    title: _('Confirm widget deletion'),
                     open: function (event, ui) {
                         $('[aria-describedby="dialog_delete"]').css('z-index', 1002);
-                        $(".ui-widget-overlay").css('z-index', 1001);
+                        $('.ui-widget-overlay').css('z-index', 1001);
                     },
                     buttons: dialog_buttons
                 });
@@ -3580,7 +3584,7 @@ vis = $.extend(true, vis, {
                 }
                 this.delWidget(this.activeWidget);
                 // this.clearWidgetHelper(); - will be done in inspectWidget("none")
-                this.inspectWidget("none");
+                this.inspectWidget('none');
             }
             return true;
         } else {
@@ -3650,14 +3654,14 @@ vis = $.extend(true, vis, {
                     setCss[what] = vis.views[vis.activeView].widgets[widgetId].style[what];
                     $actualWidget.css(setCss);
                     if (i == -1) {
-                        $("#widget_helper").css({
+                        $('#widget_helper').css({
                             left: parseInt($actualWidget.css('left')) - 2,
                             top: parseInt($actualWidget.css('top')) - 2,
                             height: $actualWidget.outerHeight() + 2,
                             width: $actualWidget.outerWidth() + 2
                         });
                     } else {
-                        $("#widget_multi_helper_" + widgetId).css({
+                        $('#widget_multi_helper_' + widgetId).css({
                             left: parseInt($actualWidget.css('left')) - 2,
                             top: parseInt($actualWidget.css('top')) - 2,
                             height: $actualWidget.outerHeight() + 2,
@@ -3714,7 +3718,7 @@ vis = $.extend(true, vis, {
     onPageClosing: function () {
         // If not saved
         if (this._saveTimer) {
-            if (confirm(_("Changes are not saved. Are you sure?"))) {
+            if (confirm(_('Changes are not saved. Are you sure?'))) {
                 return null;
             } else {
                 return "Configuration not saved.";
@@ -3797,19 +3801,19 @@ $(document).keydown(function (e) {
             e.preventDefault();
         }
     } else if (e.which === 113) {
-        $("#ribbon_tab_dev").toggle();
+        $('#ribbon_tab_dev').toggle();
         e.preventDefault();
     }else if (e.which === 114) {
         // Fullscreen
-        var $container = $("#vis_container");
+        var $container = $('#vis_container');
         if ($container.hasClass('fullscreen')) {
             $container
-                .removeClass("fullscreen")
+                .removeClass('fullscreen')
                 .appendTo('#vis_wrap');
         } else {
             $container.
                 prependTo('body')
-                .addClass("fullscreen")
+                .addClass('fullscreen')
         }
         e.preventDefault();
     }else if (e.which === 33) {
@@ -3818,9 +3822,9 @@ $(document).keydown(function (e) {
 
         if ($next.hasClass('view_select_tab')){
 
-            $next.trigger("click")
+            $next.trigger('click')
         }else{
-            $('.view_select_tab.ui-state-active').parent().children().first().trigger("click")
+            $('.view_select_tab.ui-state-active').parent().children().first().trigger('click')
         }
 
         e.preventDefault();
@@ -3829,17 +3833,17 @@ $(document).keydown(function (e) {
         var $prev = $('.view_select_tab.ui-state-active').prev();
 
         if ($prev.hasClass('view_select_tab')){
-            $prev.trigger("click")
+            $prev.trigger('click')
         }else{
-            $('.view_select_tab.ui-state-active').parent().children().last().trigger("click")
+            $('.view_select_tab.ui-state-active').parent().children().last().trigger('click')
         }
     }
 });
 
 // Copy paste mechanism
-$(window).on("paste", function (e) {
+$(window).on('paste', function (e) {
     vis.paste();
-}).on("copy cut", function (e) {
+}).on('copy cut', function (e) {
     vis.copy(e.type == "cut");
 });
 
