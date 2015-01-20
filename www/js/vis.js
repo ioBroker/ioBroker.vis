@@ -1,8 +1,8 @@
 /**
  *  vis
- *  https://github.com/hobbyquaker/vis/
+ *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
+ *  Copyright (c) 2013-2014 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -68,7 +68,7 @@ if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemL
 
 var vis = {
 
-    version:                '0.0.1',
+    version:                '0.0.8',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -96,8 +96,20 @@ var vis = {
     navChangeCallbacks:     [],
     editMode:               false,
     language:               (typeof systemLang != 'undefined') ? systemLang : visConfig.language,
+    statesDebounce:         {},
 
+    _setValue: function (id, state) {
+        this.conn.setState(id, state[id + '.val']);
 
+        if (this.states[id] || this.states[id + '.val'] !== undefined) {
+            this.states.attr(state);
+
+            // Inform other widgets, that does not support canJS
+            for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
+                this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, val);
+            }
+        }
+    },
     setValue: function (id, val) {
         if (!id) {
             console.log('ID is null for val=' + val);
@@ -115,16 +127,23 @@ var vis = {
         o[id + '.val'] = val;
         o[id + '.ts'] = t;
         o[id + '.ack'] = false;
+        var that = this;
 
-        this.conn.setState(id, val);
-
-        if (this.states[id] || this.states[id + '.val'] !== undefined) {
-            this.states.attr(o);
-
-            // Inform other widgets, that does not support canJS
-            for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
-                this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, val);
-            }
+        // if no de-bounce running
+        if (!this.statesDebounce[id]) {
+            // send control command
+            this._setValue(id, o);
+            // Start timeout
+            this.statesDebounce[id] = {
+                timeout: _setTimeout(function () {
+                        if (that.statesDebounce[id].state) that._setValue(id, that.statesDebounce[id].state);
+                        delete that.statesDebounce[id];
+                    }, 1000, id),
+                state: null
+            };
+        } else {
+            // If some de-bounce running, change last value
+            this.statesDebounce[id].state = o;
         }
     },
     loadWidgetSet: function (name, callback) {
