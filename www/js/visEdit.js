@@ -603,18 +603,19 @@ vis = $.extend(true, vis, {
         var last_set = storage.get('vis.Last_Widgetset')
 
         $('#select_set option[value="' + last_set + '"]').prop('selected', true);
-        $select_set.multiselect('refresh');
 
+        $select_set.selectmenu();
+        //$select_set.multiselect('refresh');
+        //
         $select_set.change(function () {
             var tpl = $(this).val();
             storage.set('vis.Last_Widgetset', tpl);
             $('.wid_prev').hide();
             $('.' + tpl + '_prev').show();
         });
-
-        vis.add_Widget_prev();
-
-        $select_set.trigger('change')
+        //
+        //vis.add_Widget_prev();
+        //$select_set.trigger('change')
 
         // Create background_class property if does not exist
         if (this.views[vis.activeView] != undefined) {
@@ -642,7 +643,6 @@ vis = $.extend(true, vis, {
             $('#export_local_view').click(function () {
                 that.exportView(true);
             }).show();
-
             $('#import_local_view').click(function () {
                 $('#textarea_import_view').html('');
                 $('#dialog_import_view').dialog({
@@ -660,7 +660,6 @@ vis = $.extend(true, vis, {
                     }
                 });
             }).show();
-
             $('#clear_local_view').click(function () {
                 if (typeof storage !== 'undefined') {
                     localStorage.clear();
