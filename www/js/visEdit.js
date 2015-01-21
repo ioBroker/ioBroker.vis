@@ -148,10 +148,6 @@ vis = $.extend(true, vis, {
             });
         });
 
-        $('#select_set').next().addClass('select_set');
-
-        $('.select_set').find('.ui-icon').remove();
-
         $('#widget_doc').button({icons: {primary: 'ui-icon-script'}}).click(function () {
             var tpl = vis.views[vis.activeView].widgets[vis.activeWidget].tpl;
             var widgetSet = $('#' + tpl).attr('data-vis-set');
@@ -604,17 +600,28 @@ vis = $.extend(true, vis, {
 
         $('#select_set option[value="' + last_set + '"]').prop('selected', true);
 
-        $select_set.selectmenu();
+        vis.add_Widget_prev();
+
+        $select_set.selectmenu({
+            change:function(event, ui){
+                console.log(ui)
+                var tpl = ui.item.value;
+                storage.set('vis.Last_Widgetset', tpl);
+                $('.wid_prev').hide();
+                $('.' + tpl + '_prev').show();
+            }
+        });
+
+        $('.wid_prev').hide();
+        $('.' + last_set + '_prev').show();
+
         //$select_set.multiselect('refresh');
         //
-        $select_set.change(function () {
-            var tpl = $(this).val();
-            storage.set('vis.Last_Widgetset', tpl);
-            $('.wid_prev').hide();
-            $('.' + tpl + '_prev').show();
-        });
+        //$select_set.change(function () {
         //
-        //vis.add_Widget_prev();
+        //});
+        //
+
         //$select_set.trigger('change')
 
         // Create background_class property if does not exist
@@ -671,8 +678,8 @@ vis = $.extend(true, vis, {
         $('#menu_body').show()
         $('#panel_body').show()
     },
-    add_Widget_prev: function (set) {
-
+    add_Widget_prev: function () {
+console.log("1")
         $.each(vis.widgetSets, function () {
             var set = "";
             if(this.name){
@@ -681,10 +688,11 @@ vis = $.extend(true, vis, {
                 set = this;
             }
 
-
+            console.log("2")
             var tpl_list = $('.vis-tpl[data-vis-set="' + set + '"]');
 
             $.each(tpl_list, function (i) {
+                console.log("3")
                 var tpl = $(tpl_list[i]).attr('id');
                 $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '"><div>' + $("#" + tpl).data('vis-name') + '</div></div>');
                 if ($(tpl_list[i]).data('vis-prev')) {

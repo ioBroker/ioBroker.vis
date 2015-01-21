@@ -468,4 +468,10 @@ div#vis_container{
 #select_set-button{
     width: calc(100% - 2px)!important;
     border-radius: 0!important;
+    height: 30px;
+    padding: 0;
+}
+#select_set-button > span.ui-selectmenu-text{
+    padding-top: 3px!important;
+    padding-bottom: 3px!important;
 }
