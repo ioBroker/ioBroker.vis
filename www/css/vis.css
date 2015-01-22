@@ -279,7 +279,7 @@ a.ui-dialog-titlebar-restore {
 }
 
 .vis-edit-textbox {
-    width: 100%
+    width: calc(100% - 4px);
 }
 
 .vis-edit-select {

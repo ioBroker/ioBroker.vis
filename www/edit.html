@@ -379,7 +379,7 @@
             <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table>
                     <tr>
-                        <td colspan="3">
+                        <td >
                             <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">
                                 Current View
                             </div>
@@ -398,7 +398,7 @@
             <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table>
                     <tr>
-                        <td colspan="3">
+                        <td >
                             <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">
                                 Rename View
                             </div>
@@ -528,7 +528,7 @@
             <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table style="border-spacing: 0px">
                     <tr>
-                        <td colspan="3" style="text-align: center; height: 24px;" class="translate">
+                        <td  style="text-align: center; height: 24px;" class="translate">
                             External Commands
                         </td>
                     </tr>
@@ -565,7 +565,7 @@
             <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table style="border-spacing: 0px">
                     <tr>
-                        <td colspan="3" style="text-align: center; height: 24px;">Local Views</td>
+                        <td  style="text-align: center; height: 24px;">Local Views</td>
                     </tr>
                     <tr>
                         <td>
@@ -594,6 +594,8 @@
     <div class="ui-widget-content" id="pan_add_wid">
         <div class="ui-state-default translateT" style="height:16px;font-size:16px;padding: 5px;font-weight: bolder;">
             Add Widget
+            <div id="btn_prev_type" class="ui-"><span class="ui-icon  ui-icon-tag"></span></div>
+            <div id="btn_prev_zoom" class="ui-"><span class="ui-icon  ui-icon-zoomout"></span></div>
         </div>
         <select id="select_set" style="width: 100%" class="select-set"></select>
 
@@ -689,53 +691,53 @@
                             <td colspan="4" class="css-inspector-heading">Background</td>
                         </tr>
                         <tr>
-                            <td colspan="3" id="inspect_view_bkg_parent"></td>
+                            <td  colspan="2"  id="inspect_view_bkg_parent"></td>
                         </tr>
                         <tr>
                             <td>-color</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_background-color" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-image</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_background-image" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-repeat</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_background-repeat" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-attachment</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_background-attachment" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-position</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_background-position" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-size</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_background-size" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-clip</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_background-clip" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>-origin</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_background-origin" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
@@ -744,61 +746,61 @@
                         </tr>
                         <tr>
                             <td>color</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_color" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>text-shadow</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_text-shadow" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>font-family</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_font-family" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>font-style</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_font-style" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>font-variant</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_font-variant" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>font-weight</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_font-weight" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>font-size</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_font-size" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>line-height</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_line-height" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>letter-spacing</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_letter-spacing" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
                         <tr>
                             <td>word-spacing</td>
-                            <td colspan="3">
+                            <td >
                                 <input size="31" type="text" id="inspect_view_css_word-spacing" class="vis-inspect-view-css"/>
                             </td>
                         </tr>
@@ -808,70 +810,78 @@
             <div class="tab_attr ui-widget-content" id="tab_wid_attr">
                 <div class="vis-widget-tools">
                     <h4 class="translate">Widget Attributes:</h4>
-                    <table style="width: 330px; border: 0px">
+                    <table cellspacing=0 style="width: 330px; border: 0px; table-layout: fixed; word-wrap:break-word;">
                         <colgroup>
-                            <col width="100px"/>
-                            <col width="200px"/>
-                            <col width="30px"/>
+                            <col width="120px"/>
+                            <col width="180px" style="padding-right: 5px"/>
+                            <col width="26px" style=""/>
                         </colgroup>
                         <tbody id="widget_attrs"></tbody>
                     </table>
                 </div>
-                <table id="css_table">
+                <br>
+                <hr>
+                <br>
+                <table id="css_table" cellspacing=0 style="width: 330px; border: 0px; table-layout: fixed; word-wrap:break-word;">
+                    <colgroup>
+                        <col width="120px"/>
+                        <col width="180px" style="padding-right: 5px"/>
+                        <col width="26px" style=""/>
+                    </colgroup>
                     <tr>
                         <td>left</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_left" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_left" class="vis-inspect-css"/>
                             <input id="steal_left" type="checkbox" data-vis-steal="left" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_left">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_left">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>top</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_top" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_top" class="vis-inspect-css"/>
                             <input id="steal_top" type="checkbox" data-vis-steal="top" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_top">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_top">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>width</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_width" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_width" class="vis-inspect-css"/>
                             <input id="steal_width" type="checkbox" data-vis-steal="width" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_width">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_width">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>height</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_height" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_height" class="vis-inspect-css"/>
                             <input id="steal_height" type="checkbox" data-vis-steal="height" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_height">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_height">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>z-index</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_z-index" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_z-index" class="vis-inspect-css"/>
                             <input id="steal_zIndex" type="checkbox" data-vis-steal="z-index" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_zIndex">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_zIndex">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>overflow-x</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_overflow-x" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_overflow-x" class="vis-inspect-css"/>
                             <input id="steal_overflowX" type="checkbox" data-vis-steal="overflow-x" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_overflowX">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_overflowX">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>overflow-y</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_overflow-y" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_overflow-y" class="vis-inspect-css"/>
                             <input id="steal_overflowY" type="checkbox" data-vis-steal="overflow-y" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_overflowY">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_overflowY">steal</label>
                         </td>
                     </tr>
                     <tr>
@@ -879,18 +889,18 @@
                     </tr>
                     <tr>
                         <td>padding</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_padding" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_padding" class="vis-inspect-css"/>
                             <input id="steal_padding" type="checkbox" data-vis-steal="padding" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_padding">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_padding">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>box-shadow</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_box-shadow" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_box-shadow" class="vis-inspect-css"/>
                             <input id="steal_boxShadow" type="checkbox" data-vis-steal="box-shadow" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_boxShadow">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_boxShadow">steal</label>
                         </td>
                     </tr>
                     <tr>
@@ -898,91 +908,91 @@
                     </tr>
                     <tr>
                         <td>color</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_color" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_color" class="vis-inspect-css"/>
                             <input id="steal_color" type="checkbox" data-vis-steal="color" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_color">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_color">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>text-align</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_text-align" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_text-align" class="vis-inspect-css"/>
                             <input id="steal_textAlign" type="checkbox" data-vis-steal="text-align" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_textAlign">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_textAlign">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>text-shadow</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_text-shadow" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_text-shadow" class="vis-inspect-css"/>
                             <input id="steal_textShadow" type="checkbox" data-vis-steal="text-shadow" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_textShadow">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_textShadow">steal</label>
                             <a data-vis-clear="" class="vis-clear-css"></a>
                         </td>
                     </tr>
                     <tr>
                         <td>font-family</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_font-family" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_font-family" class="vis-inspect-css"/>
                             <input id="steal_fontFamily" type="checkbox" data-vis-steal="font-family" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_fontFamily">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_fontFamily">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>font-style</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_font-style" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_font-style" class="vis-inspect-css"/>
                             <input id="steal_fontStyle" type="checkbox" data-vis-steal="font-style" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_fontStyle">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_fontStyle">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>font-variant</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_font-variant" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_font-variant" class="vis-inspect-css"/>
                             <input id="steal_fontVariant" type="checkbox" data-vis-steal="font-variant" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_fontVariant">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_fontVariant">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>font-weight</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_font-weight" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_font-weight" class="vis-inspect-css"/>
                             <input id="steal_fontWeight" type="checkbox" data-vis-steal="font-weight" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_fontWeight">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_fontWeight">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>font-size</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_font-size" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_font-size" class="vis-inspect-css"/>
                             <input id="steal_fontSize" type="checkbox" data-vis-steal="font-size" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_fontSize">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_fontSize">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>line-height</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_line-height" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_line-height" class="vis-inspect-css"/>
                             <input id="steal_lineHeight" type="checkbox" data-vis-steal="line-height" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_lineHeight">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_lineHeight">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>letter-spacing</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_letter-spacing" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_letter-spacing" class="vis-inspect-css"/>
                             <input id="steal_letterSpacing" type="checkbox" data-vis-steal="letter-spacing" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_letterSpacing">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_letterSpacing">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>word-spacing</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_word-spacing" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_word-spacing" class="vis-inspect-css"/>
                             <input id="steal_wordSpacing" type="checkbox" data-vis-steal="word-spacing" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_wordSpacing">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_wordSpacing">steal</label>
                             <a data-vis-clear="" class="vis-clear-css"></a>
                         </td>
                     </tr>
@@ -991,66 +1001,66 @@
                     </tr>
                     <tr>
                         <td>-color</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_background-color" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_background-color" class="vis-inspect-css"/>
                             <input id="steal_backgroundColor" type="checkbox" data-vis-steal="background-color" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_backgroundColor">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_backgroundColor">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>-image</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_background-image" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_background-image" class="vis-inspect-css"/>
                             <input id="steal_backgroundImage" type="checkbox" data-vis-steal="background-image" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_backgroundImage">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_backgroundImage">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>-repeat</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_background-repeat" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_background-repeat" class="vis-inspect-css"/>
                             <input id="steal_backgroundRepeat" type="checkbox" data-vis-steal="background-repeat" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_backgroundRepeat">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_backgroundRepeat">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>-attachment</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_background-attachment" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_background-attachment" class="vis-inspect-css"/>
                             <input id="steal_backgroundAttachment" type="checkbox" data-vis-steal="background-attachment" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_backgroundAttachment">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_backgroundAttachment">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>-position</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_background-position" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_background-position" class="vis-inspect-css"/>
                             <input id="steal_backgroundPosition" type="checkbox" data-vis-steal="background-position" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_backgroundPosition">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_backgroundPosition">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>-size</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_background-size" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_background-size" class="vis-inspect-css"/>
                             <input id="steal_backgroundSize" type="checkbox" data-vis-steal="background-size" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_backgroundSize">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_backgroundSize">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>-clip</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_background-clip" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_background-clip" class="vis-inspect-css"/>
                             <input id="steal_backgroundClip" type="checkbox" data-vis-steal="background-clip" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_backgroundClip">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_backgroundClip">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>-origin</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_background-origin" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_background-origin" class="vis-inspect-css"/>
                             <input id="steal_backgroundOrigin" type="checkbox" data-vis-steal="background-origin" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_backgroundOrigin">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_backgroundOrigin">steal</label>
                         </td>
                     </tr>
                     <tr>
@@ -1058,34 +1068,34 @@
                     </tr>
                     <tr>
                         <td>-width</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_border-width" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_border-width" class="vis-inspect-css"/>
                             <input id="steal_borderWidth" type="checkbox" data-vis-steal="border-width" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_borderWidth">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_borderWidth">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>-style</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_border-style" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_border-style" class="vis-inspect-css"/>
                             <input id="steal_borderStyle" type="checkbox" data-vis-steal="border-style" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_borderStyle">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_borderStyle">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>-color</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_border-color" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_border-color" class="vis-inspect-css"/>
                             <input id="steal_borderColor" type="checkbox" data-vis-steal="border-color" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_borderColor">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_borderColor">steal</label>
                         </td>
                     </tr>
                     <tr>
                         <td>-radius</td>
-                        <td colspan="3">
-                            <input size="27" type="text" id="inspect_css_border-radius" class="vis-inspect-css"/>
+                        <td >
+                            <input size="21" type="text" id="inspect_css_border-radius" class="vis-inspect-css"/>
                             <input id="steal_borderRadius" type="checkbox" data-vis-steal="border-radius" class="vis-steal-css"/>
-                            <label class="vis-steal-label" for="steal_borderRadius">steal</label>
+                            </td><td><label class="vis-steal-label" for="steal_borderRadius">steal</label>
                         </td>
                     </tr>
                 </table>

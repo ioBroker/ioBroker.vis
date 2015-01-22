@@ -66,6 +66,43 @@ vis = $.extend(true, vis, {
 
         $('#vis-version').html(this.version);
 
+
+        $('#btn_prev_zoom').hover(
+            function() {
+                $(this).addClass('ui-state-hover');
+            },
+            function() {
+                $(this).removeClass('ui-state-hover');
+            }
+        ).click(function(){
+                if($(this).hasClass("ui-state-active")){
+                    $(this).removeClass("ui-state-active");
+                    $(".wid_prev").removeClass("wid_prev_k")
+                    $(".wid_prev_content").css("zoom",1)
+                }else{
+                    $(this).addClass("ui-state-active");
+                    $(".wid_prev").addClass("wid_prev_k")
+                    $(".wid_prev_content").css("zoom",0.5)
+               }
+            })
+
+        $('#btn_prev_type').hover(
+            function() {
+                $(this).addClass('ui-state-hover');
+            },
+            function() {
+                $(this).removeClass('ui-state-hover');
+            }
+        ).click(function(){
+                if($(this).hasClass("ui-state-active")){
+                    $(this).removeClass("ui-state-active");
+                    $(".wid_prev_type").hide()
+                }else{
+                    $(this).addClass("ui-state-active");
+                    $(".wid_prev_type").show()
+                }
+            })
+
         $('#button_undo')
             .click(vis.undo)
             .addClass('ui-state-disabled')
@@ -679,7 +716,6 @@ vis = $.extend(true, vis, {
         $('#panel_body').show()
     },
     add_Widget_prev: function () {
-console.log("1")
         $.each(vis.widgetSets, function () {
             var set = "";
             if(this.name){
@@ -687,21 +723,36 @@ console.log("1")
             }else{
                 set = this;
             }
-
-            console.log("2")
             var tpl_list = $('.vis-tpl[data-vis-set="' + set + '"]');
 
             $.each(tpl_list, function (i) {
-                console.log("3")
                 var tpl = $(tpl_list[i]).attr('id');
-                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '"><div>' + $("#" + tpl).data('vis-name') + '</div></div>');
-                if ($(tpl_list[i]).data('vis-prev')) {
-                    $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'))
+                var type = "";
+                if($("#" + tpl).data('vis-type')){
+                    type= '<div class="wid_prev_type">'+$("#" + tpl).data("vis-type")+'</div>'
                 }
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">'+type+'<div>' + $("#" + tpl).data('vis-name') + '</div></div>');
+                if ($(tpl_list[i]).data('vis-prev')) {
+
+                    var test = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'))
+                    $(test).children().last().addClass("wid_prev_content")
+                }
+
+                $('#prev_container_' + tpl)
+
                 $('#prev_container_' + tpl).draggable({
                     helper: "clone",
                     containment: $('#panel_body'),
-                    zIndex: 10000
+                    zIndex: 10000,
+                    cursorAt: {top: 0, left: 0},
+
+                    start: function (event, ui) {
+                        if (ui.helper.children().length > 1) {
+                            ui.helper.children()[0].remove()
+                        }else{
+                           $(ui.helper.children()[0]).addClass("ui-state-highlight ui-corner-all").css({padding: "2px","font-size": "12px"})
+                        }
+                    }
                 });
             });
         });
@@ -2488,8 +2539,9 @@ console.log("1")
             }
         }
 
+
         $('#inspect_views').multiselect({
-//            minWidth: 300,
+            maxWidth: 180,
             height: 260,
             noneSelectedText: _('Single view'),
             selectedText: function (numChecked, numTotal, checkedItems) {
@@ -2507,6 +2559,7 @@ console.log("1")
             vis.syncWidget(vis.activeWidget, $(this).val());
             vis.save();
         });
+        $("#inspect_views").next().css('width', 206);
 
         // Select Widget
         $('#select_active_widget option').removeAttr('selected');

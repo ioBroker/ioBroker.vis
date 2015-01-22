@@ -323,11 +323,12 @@ div#vis_container{
     text-align: center;
     height: calc(100% - 59px);
     overflow: auto;;
+    border-color: inherit;
 }
 
 .wid_prev{
     width: 130px;
-    padding: 5px 5px 5px 10px;
+    padding: 0;
     overflow: hidden;
     position: relative;
     text-align: center;
@@ -336,10 +337,52 @@ div#vis_container{
     align-items: center;
     background-color: rgba(0, 0, 0, 0)!important;
     margin: 5px;
-    box-shadow: inset -3px -3px 5px rgba(20, 20, 20, 0.7), inset 3px 3px 5px rgba(220, 220, 220, 0.8);
-    border-radius: 6px;
+    /*box-shadow: inset -3px -3px 5px rgba(20, 20, 20, 0.7), inset 3px 3px 5px rgba(220, 220, 220, 0.8);*/
+    border-radius: 2px;
     font-weight: bolder;
     font-size: 11px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+}
+.wid_prev_k {
+    width: 80px!important;
+    font-size: 9px!important;
+    /* padding: 0!important; */
+    margin: 2px!important;
+    border-radius: 3px!important;
+    font-weight: bolder!important;
+}
+.wid_prev_content{
+    padding: 0;
+    margin: 0;
+    height: auto;
+}
+.wid_prev_type{
+display: none;
+}
+
+
+#btn_prev_zoom{
+    display: inline-block;
+    float: right;
+    padding: 3px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+    border-radius: 6px;
+    margin-top: -4px;
+    margin-right: 2px;
+}
+#btn_prev_type{
+    display: inline-block;
+    float: right;
+    padding: 3px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+    border-radius: 6px;
+    margin-top: -4px;
 }
 
 .wid_prev:after{
@@ -357,6 +400,7 @@ div#vis_container{
     position: relative!important;
     top: 0!important;
     left: 0!important;
+    padding: 0!important;
 }
 .select_set{
     width: 100%!important;
@@ -379,7 +423,7 @@ div#vis_container{
     display: inline-block;
     height: 100%;
     left: auto!important;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
     position: absolute;
     right: 0;
     width: 355px;
