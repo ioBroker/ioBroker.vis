@@ -494,8 +494,7 @@ display: none;
 /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
 
 .tab_attr{
-    padding: 0!important;
-
+    padding: 0px 0px 0px 4px!important;
     border-width: 1px 0 0 0!important;
     font-size: 11px;
     font-weight: bold;
@@ -518,4 +517,9 @@ display: none;
 #select_set-button > span.ui-selectmenu-text{
     padding-top: 3px!important;
     padding-bottom: 3px!important;
+}
+
+.vis-edit-td-field .ui-slider{
+    width: calc(100% - 10px);
+    margin-left: 5px;
 }
