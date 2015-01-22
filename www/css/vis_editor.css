@@ -130,8 +130,6 @@ div#vis_container{
 }
 
 #del_widget {
-    width: 142px;
-
 }
 
 #widget_doc {
@@ -268,6 +266,7 @@ div#vis_container{
     border-radius: 0!important;
     border: none;
     position: relative;
+
 }
 .ribbon_tab_content{
     width: 100%;
@@ -301,7 +300,6 @@ div#vis_container{
     background: rgba(0, 0, 0, 0);
     font-size: 11px;
     font-weight: bolder;
-    padding-top: 4px;
     font-family: Arial, sans-serif;
 }
 
@@ -321,9 +319,12 @@ div#vis_container{
 }
 .toolbox{
     text-align: center;
-    height: calc(100% - 59px);
-    overflow: auto;;
+    height: calc(100% - 62px);
+    overflow: auto;
     border-color: inherit;
+    margin: 0;
+    position: relative;
+    top: -4px;
 }
 
 .wid_prev{
@@ -522,4 +523,16 @@ display: none;
 .vis-edit-td-field .ui-slider{
     width: calc(100% - 10px);
     margin-left: 5px;
+}
+
+.btn_iconbar{
+    width: 26px;
+    height: 26px;
+    position: relative;
+    top: -1px;
+}
+.icon_onIconbar{
+    height: 24px;
+    width: 24px;
+    margin: 1px;
 }

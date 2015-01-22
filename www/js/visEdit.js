@@ -214,9 +214,7 @@ vis = $.extend(true, vis, {
             vis.delView(vis.activeView);
         });
 
-        $('#del_widget').button({icons: {primary: 'ui-icon-trash'}}).click(function () {
-            vis.delWidget()
-        });
+
 
         $('#rename_view').button({icons: {primary: 'ui-icon-pencil'}}).click(function () {
             var name = vis.checkNewView($('#new_name').val());
@@ -528,13 +526,13 @@ vis = $.extend(true, vis, {
         var last_theme =  storage.get('vistheme');
         if(last_theme){
             $('#editor_theme').remove();
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + last_theme + '/jquery-ui.min.css" id="editor_theme"/>');
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + last_theme + '/jquery-ui.min.css" id="editor_theme"/>');
         }
         $('#ul_theme li a').click(function () {
             var theme = $(this).data('info');
             vis.views[vis.activeView].settings.theme = theme;
             $('#editor_theme').remove();
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editor_theme"/>');
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editor_theme"/>');
             //vis.additionalThemeCss(theme);
             storage.set('vistheme', theme);
             vis.save();
@@ -574,6 +572,24 @@ vis = $.extend(true, vis, {
         //$("#m_setup").click(function () {
         //    $("#dialog_setup").dialog("open")
         //});
+
+
+
+        // Widget ----------------------------------------------------------------
+
+        $('#del_widget').hover(
+            function() {
+                $(this).addClass('ui-state-hover');
+            },
+            function() {
+                $(this).removeClass('ui-state-hover');
+            }
+        ).click(function(){
+                $(this).stop(true, true).effect("highlight")
+                vis.delWidget()
+
+            })
+
     },
     editInitNext: function () {
         // ioBroker.vis Editor Init
@@ -624,7 +640,7 @@ vis = $.extend(true, vis, {
 
         var $select_set = $('#select_set');
         //$select_set.html('');
-
+        $select_set.append('<option value="all">*</option>');
         for (i = 0; i < this.widgetSets.length; i++) {
             if (this.widgetSets[i].name !== undefined) {
                 $select_set.append('<option value="' + this.widgetSets[i].name + '">' + this.widgetSets[i].name + '</option>');
@@ -633,7 +649,7 @@ vis = $.extend(true, vis, {
             }
         }
 
-        var last_set = storage.get('vis.Last_Widgetset')
+        var last_set = storage.get('vis.Last_Widgetset');
 
         $('#select_set option[value="' + last_set + '"]').prop('selected', true);
 
@@ -641,25 +657,24 @@ vis = $.extend(true, vis, {
 
         $select_set.selectmenu({
             change:function(event, ui){
-                console.log(ui)
+
                 var tpl = ui.item.value;
+
                 storage.set('vis.Last_Widgetset', tpl);
-                $('.wid_prev').hide();
-                $('.' + tpl + '_prev').show();
+                if(tpl == "all"){
+                    $('.wid_prev').show()
+                }else{
+                    $('.wid_prev').hide();
+                    $('.' + tpl + '_prev').show();
+                }
             }
         });
 
-        $('.wid_prev').hide();
-        $('.' + last_set + '_prev').show();
+        if(last_set != "all"){
+            $('.wid_prev').hide();
+            $('.' + last_set + '_prev').show();
+        }
 
-        //$select_set.multiselect('refresh');
-        //
-        //$select_set.change(function () {
-        //
-        //});
-        //
-
-        //$select_set.trigger('change')
 
         // Create background_class property if does not exist
         if (this.views[vis.activeView] != undefined) {
@@ -734,24 +749,31 @@ vis = $.extend(true, vis, {
                 $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">'+type+'<div>' + $("#" + tpl).data('vis-name') + '</div></div>');
                 if ($(tpl_list[i]).data('vis-prev')) {
 
-                    var test = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'))
-                    $(test).children().last().addClass("wid_prev_content")
+                    var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
+                    $(content).children().last().addClass("wid_prev_content")
                 }
 
-                $('#prev_container_' + tpl)
+
 
                 $('#prev_container_' + tpl).draggable({
                     helper: "clone",
+                    appendTo:$('#panel_body'),
                     containment: $('#panel_body'),
                     zIndex: 10000,
                     cursorAt: {top: 0, left: 0},
 
                     start: function (event, ui) {
-                        if (ui.helper.children().length > 1) {
-                            ui.helper.children()[0].remove()
+                        if (ui.helper.children().length < 3) {
+                            $(ui.helper).addClass("ui-state-highlight ui-corner-all").css({padding: "2px","font-size": "12px"})
+
                         }else{
-                           $(ui.helper.children()[0]).addClass("ui-state-highlight ui-corner-all").css({padding: "2px","font-size": "12px"})
+                            ui.helper.children()[0].remove();
+                            ui.helper.children()[0].remove();
+                            //$(ui.helper.children()[0]).css("border","none")
+                            $(ui.helper).css("border","none")
                         }
+
+
                     }
                 });
             });
