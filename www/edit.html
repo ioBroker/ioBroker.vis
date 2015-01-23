@@ -349,95 +349,107 @@
     </div>
     <div class="ribbon_tab" id="ribbon_view">
         <div class="ribbon_tab_content ui-widget-content">
-            <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
-                    <tr>
-                        <td colspan="2">
-                            <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">ADD
-                                View
-                            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 500px;">
+                <table style="border-spacing: 0px; width: 100%">
+                    <colgroup>
+                        <col width="80px" style="text-align:left"/>
+                        <col width="*"/>
+                        <col span="10" width="26px"/>
+                    </colgroup>
+                    <tr id="rib_view_add_tr" style="display:none">
+                        <td style=" height: 22px; padding-right:3px" class="translate">New Name:</td>
+                        <td>
+                            <input type="text" id="rib_view_addname" >
                         </td>
                         <td>
-                            <button class="vis-editor translateB" id="dup_view" type="button">dup_view</button>
+                            <div id="rib_view_add_ok" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/ok.png"></div>
+                        </td>
+                        <td>
+                            <div id="rib_view_add_cancel" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/cancel.png"></div>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="rib_view_rename_tr" style="display:none">
+                        <td style=" height: 22px; padding-right:3px" class="translate">New Name:</td>
                         <td>
-                            <div style="width:80px; display:inline-block" class="translate">Name:</div>
+                            <input type="text" id="rib_view_newname" >
                         </td>
                         <td>
-                            <input id="new_view_name" type="text"/>
+                            <div id="rib_view_rename_ok" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/ok.png"></div>
                         </td>
                         <td>
-                            <button class="vis-editor translateB" id="add_view" type="button">add_view</button>
+                            <div id="rib_view_rename_cancel" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/cancel.png"></div>
                         </td>
-
+                    </tr>
+                    <tr id="rib_view_copy_tr" style="display:none">
+                        <td style=" height: 22px; padding-right:3px" class="translate">New Name:</td>
+                        <td>
+                            <input type="text" id="rib_view_copyname" >
+                        </td>
+                        <td>
+                            <div id="rib_view_copy_ok" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/ok.png"></div>
+                        </td>
+                        <td>
+                            <div id="rib_view_copy_cancel" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/cancel.png"></div>
+                        </td>
+                    </tr>
+                    <tr id="rib_view">
+                        <td style=" height: 22px; padding-right:3px" class="translate">Activ View:
+                        </td>
+                        <td>
+                            <select id="select_view" style="width: 100%" ></select>
+                        </td>
+                        <td>
+                            <div id="rib_view_add" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/add.png" style="width: 16px;height: 16px;margin: 3px;"></div>
+                        </td>
+                        <td>
+                            <div id="rib_view_del" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/delete.png"></div>
+                        </td>
+                        <td>
+                            <div id="rib_view_rename" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/rename.png"></div>
+                        </td>
+                        <td>
+                            <div id="rib_view_copy" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/copy.png"></div>
+                        </td>
                     </tr>
                 </table>
 
-            </div>
-            <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table>
-                    <tr>
-                        <td >
-                            <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">
-                                Current View
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <select id="select_view" class="vis-editor-large"></select>
-                        </td>
-                        <td>
-                            <button class="vis-editor translateB" id="del_view" type="button">del_view</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table>
-                    <tr>
-                        <td >
-                            <div style="text-align: center; font-weight: bold; font-size: 14px;" class="translate">
-                                Rename View
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <input id="new_name" type="text"/>
-                        </td>
-                        <td>
-                            <button class="vis-editor translateB" id="rename_view" type="button">rename_view</button>
-                        </td>
-                    </tr>
-                </table>
             </div>
         </div>
     </div>
     <div class="ribbon_tab" id="ribbon_widget">
         <div class="ribbon_tab_content ui-widget-content">
-            <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
-                    <tr>
-                        <td colspan="2" style="text-align: center; height: 22px;">Activ Widget:</td>
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 461px;">
+                <table style="border-spacing: 0px; width: 100%; text-align: left">
+                    <colgroup>
+                        <col width="80px" style="text-align:left"/>
+                        <col width="*"/>
+                        <col span="10" width="26px"/>
+                    </colgroup>
+                    <tr id="rib_wid_copy_tr" style="display:none">
+                    <td  style="height: 22px; padding-right:3px" class="translate">To View:</td>
+                    <td>
+                        <select class="" id="rib_wid_copy_view"></select>
+                    </td>
+                    <td>
+                        <div id="rib_wid_copy_ok" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/ok.png"></div>
+                    </td>
+                    <td>
+                        <div id="rib_wid_copy_cancel" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/cancel.png"></div>
+                    </td>
                     </tr>
-                    <tr>
+                    <tr id="rib_wid">
+                        <td style=" height: 22px; padding-right:3px" class="translate">Activ Widget:</td>
                         <td>
                             <select id="select_active_widget" class="vis-editor" data-multiselect-width="400" data-multiselect-height="250"></select>
                         </td>
                         <td>
-                            <div id="del_widget" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/delete.png"></div>
+                            <div id="rib_wid_del" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/delete.png"></div>
                         </td>
                         <td>
-                            <div id="rename_widget" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/rename.png"></div>
+                            <div id="rib_wid_copy" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/copy.png"></div>
                         </td>
                         <td>
-                            <div id="copy_widget" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/copy.png"></div>
-                        </td>
-                        <td>
-                            <div id="widget_doc" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/info.png"></div>
+                            <div id="rib_wid_doc" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/info.png"></div>
                         </td>
                     </tr>
                 </table>
@@ -445,45 +457,61 @@
             <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table style="border-spacing: 0px">
                     <tr>
-                        <td colspan="1">Inspeckt Widget</td>
-                    </tr>
-                    <tr>
+                        <td  style="text-align: center; height: 22px; padding-right:3px">Selectet Widget:</td>
                         <td>
-                            <select class="vis-editor" id="select_view_copy"></select>
+                            <div id="wid_align_left" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-horizontal-left.png"></div>
                         </td>
                         <td>
-                            <button type="button" class="vis-editor translateB" id="dup_widget">dup_widget</button>
+                            <div id="wid_align_right" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-horizontal-right-2.png"></div>
                         </td>
-
-
+                        <td>
+                            <div id="wid_align_top" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-vertical-top-2.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_align_buttom" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-vertical-bottom-2.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_align_hc" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-horizontal-center-2.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_align_vc" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-vertical-center-2.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_dis_h" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/distribute-horizontal-equal.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_dis_v" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/distribute-vertical-equal.png"></div>
+                        </td>
                     </tr>
                 </table>
-            </div>
-            <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
-                    <tr>
-                        <td colspan="1" style="height: 22px">
-                            <div style="text-align: center" class="translate"></div>
-                        </td>
-                    </tr>
-                    <tr>
-
-                    </tr>
-                </table>
-
             </div>
         </div>
     </div>
-    <div class="ribbon_tab" id="ribbon_tools">
-        <div class="ribbon_tab_content ui-widget-content">
-            <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
-                    <tr>
-                        <td colspan="4" style="text-align: center" class="translate">Resolution</td>
+    <div class="ribbon_tab" id="ribbon_tools" >
+        <div class="ribbon_tab_content ui-widget-content" >
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 350px">
+                <table style="border-spacing: 0px; width: 100%">
+                    <colgroup>
+                        <col width="80px" style="text-align:left"/>
+                        <col width="*"/>
+                        <col span="10" width="26px"/>
+                    </colgroup>
+                    <tr id="rib_tools_resolution_manuel" style="display:none">
+                        <td class="translate">Resolution</td>
+                        <td>
+                            <div style="display: inline-block" class="translate">Width</div>
+                            <input id="screen_size_x" type="number" style="width: 60px" value=""/>
+                            <div style="display: inline-block" class="translate">Height</div>
+                            <input id="screen_size_y" type="number" style="width: 60px" value=""/>
+                        </td>
+                        <td>
+                            <div class="btn_iconbar ui-corner-all rib_tool_resolution_toggel"><img class="icon_onIconbar" src="icon/refresh-4.png"></div>
+                        </td>
                     </tr>
-                    <tr>
-                        <td colspan="4" style="text-align: center">
-                            <select id="screen_size">
+                    <tr id="rib_tools_resolution_fix">
+                        <td class="translate">Resolution</td>
+                        <td>
+                            <select id="screen_size" class="vis-editor vis-edit-select">
                                 <option value="user" class="translate">User defined</option>
                                 <option value="320x460">iPhone 3G, 3GS, 4, 4S - Portrait</option>
                                 <option value="480x300">iPhone 3G, 3GS, 4, 4S - Landscape</option>
@@ -513,71 +541,67 @@
                                 <option value="1920x1080">Full HD - Landscape</option>
                             </select>
                         </td>
+                        <td>
+                            <div class="btn_iconbar ui-corner-all rib_tool_resolution_toggel"><img class="icon_onIconbar" src="icon/refresh-4.png"></div>
+                        </td>
                     </tr>
-                    <tr>
-                        <td class="translate">Width</td>
-                        <td><input id="screen_size_x" type="number" style="width: 60px" value=""/></td>
-                        <td class="translate">Height</td>
-                        <td><input id="screen_size_y" type="number" style="width: 60px" value=""/></td>
+                </table>
+            </div>
+            <!--<div class="ribbon_field ui-widget-content ui-corner-all">-->
+                <!--<table style="border-spacing: 0px">-->
+                    <!--<tr>-->
+                        <!--<td  style="text-align: center; height: 24px;" class="translate">-->
+                            <!--External Commands-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td>-->
+                            <!--<span style=" display: inline-block;" class="translate">Instance ID</span>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<input type="input" id="vis_instance"/>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<button type="button" class="vis-editor translateB" id="create_instance">create_instance</button>-->
+                        <!--</td>-->
 
-                    </tr>
-                </table>
-            </div>
-            <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
-                    <tr>
-                        <td  style="text-align: center; height: 24px;" class="translate">
-                            External Commands
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span style=" display: inline-block;" class="translate">Instance ID</span>
-                        </td>
-                        <td>
-                            <input type="input" id="vis_instance"/>
-                        </td>
-                        <td>
-                            <button type="button" class="vis-editor translateB" id="create_instance">create_instance</button>
-                        </td>
+                    <!--</tr>-->
+                <!--</table>-->
+            <!--</div>-->
+            <!--<div class="ribbon_field ui-widget-content ui-corner-all">-->
+                <!--<table style="border-spacing: 0px">-->
+                    <!--<tr>-->
+                        <!--<td colspan="2" style="text-align: center; height: 24px;">Import / Export View</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td>-->
+                            <!--<button class="vis-editor translateB" id="export_view">export view</button>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<button class="vis-editor translateB" id="import_view">import view</button>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                <!--</table>-->
+            <!--</div>-->
 
-                    </tr>
-                </table>
-            </div>
-            <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
-                    <tr>
-                        <td colspan="2" style="text-align: center; height: 24px;">Import / Export View</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button class="vis-editor translateB" id="export_view">export view</button>
-                        </td>
-                        <td>
-                            <button class="vis-editor translateB" id="import_view">import view</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
-                    <tr>
-                        <td  style="text-align: center; height: 24px;">Local Views</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button class="vis-editor translateB" id="export_local_view">export views</button>
-                        </td>
-                        <td>
-                            <button class="vis-editor translateB" id="import_local_view">import views</button>
-                        </td>
-                        <td>
-                            <button class="vis-editor translateB" id="clear_local_view">clear cached views</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            <!--<div class="ribbon_field ui-widget-content ui-corner-all">-->
+                <!--<table style="border-spacing: 0px">-->
+                    <!--<tr>-->
+                        <!--<td  style="text-align: center; height: 24px;">Local Views</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td>-->
+                            <!--<button class="vis-editor translateB" id="export_local_view">export views</button>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<button class="vis-editor translateB" id="import_local_view">import views</button>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<button class="vis-editor translateB" id="clear_local_view">clear cached views</button>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                <!--</table>-->
+            <!--</div>-->
         </div>
 
     </div>

@@ -110,18 +110,16 @@ div#vis_container{
     height: 28px;
 }
 
-#del_view {
-    margin-left: 3px;
+#rib_view_del {
+
 }
 
 #new_name {
     width: 200px;
-
 }
 
 #rename_view {
     margin-left: 3px;
-
 }
 
 
@@ -257,8 +255,8 @@ div#vis_container{
 /*ribbon*/
 
 .ribbon_tab{
-    max-height: 70px;
-    min-height: 70px;
+    max-height: 46px;
+    min-height: 46px;
     overflow: hidden;
     padding: 0!important;
     border-radius: 0!important;
@@ -268,7 +266,7 @@ div#vis_container{
 }
 .ribbon_tab_content{
     width: 100%;
-    height: 68px;
+    height: 44px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -293,12 +291,17 @@ div#vis_container{
 }
 
 .ribbon_field{
-    height: 55px;
+    height: 34px;
     margin-left: 5px;
     background: rgba(0, 0, 0, 0);
     font-size: 11px;
     font-weight: bolder;
     font-family: Arial, sans-serif;
+    padding-left: 3px;
+    padding-right: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #panel_body {
@@ -335,7 +338,7 @@ div#vis_container{
     flex-direction: column;
     align-items: center;
     background-color: rgba(0, 0, 0, 0)!important;
-    margin: 5px;
+    margin: 3px;
     /*box-shadow: inset -3px -3px 5px rgba(20, 20, 20, 0.7), inset 3px 3px 5px rgba(220, 220, 220, 0.8);*/
     border-radius: 2px;
     font-weight: bolder;
@@ -413,7 +416,7 @@ display: none;
 
 
 #pan_add_wid{
-    width: 200px;
+    width: 160px;
     display: inline-block;
     height: 100%;
 
@@ -524,22 +527,25 @@ display: none;
 }
 
 .btn_iconbar{
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
     position: relative;
-    border: 1px solid transparent;
+    border: 1px solid rgba(0, 0, 0, 0);
+    display: inline-block;
 }
 .icon_onIconbar{
-    height: 24px;
-    width: 24px;
-    margin: 1px;
+    height: 18px;
+    width: 18px;
+    margin: 2px;
+    display: inline-block;
 }
 
 #select_active_widget + button{
-    width: 280px!important;
+    width: 100%!important;
     font-size: 12px;
     white-space: nowrap;
-    height: 24px;
+    height: 22px;
+    /* padding-top: 3px; */
 }
 .select_active_widget {
     width: 400px!important;
@@ -549,4 +555,54 @@ td > .select_active_widget :nth-child(2){
     width: 255px;
     overflow: hidden;
     display: inline-block;
+    height: 15px;
+    padding-top: 1px;
+}
+.select_view{
+    width: 350px!important;
+}
+
+#select_view + button{
+    width: 100%!important;
+    font-size: 12px;
+    white-space: nowrap;
+    height: 22px;
+}
+
+.select_view :nth-child(2){
+    position: relative;
+    top: 2px;
+}
+
+#rib_wid_copy_view +button {
+    width: 100%!important;
+    height: 22px;
+    font: inherit;
+}
+
+#rib_view_copyname{
+    width: calc(100% - 3px);
+    height: 22px;
+    font: inherit;
+}
+#rib_view_newname{
+    width: calc(100% - 3px);
+    height: 22px;
+    font: inherit;
+}
+#rib_view_addname{
+    width: calc(100% - 3px);
+    height: 22px;
+    font: inherit;
+}
+
+.screen_size{
+    font-size: 12px;
+width: 300px!important;
+    margin-top: 5px;
+}
+
+#screen_size + button{
+    width: 100%!important;
+    white-space: nowrap;
 }
