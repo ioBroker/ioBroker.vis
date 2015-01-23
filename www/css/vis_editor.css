@@ -210,8 +210,6 @@ div#vis_container{
 }
 
 #import_view {
-    float: right;
-    margin-right: 87px;
 }
 
 #export_local_view {
@@ -582,24 +580,24 @@ td > .select_active_widget :nth-child(2){
 
 #rib_view_copyname{
     width: calc(100% - 3px);
-    height: 22px;
+    height: 15px;
     font: inherit;
 }
 #rib_view_newname{
     width: calc(100% - 3px);
-    height: 22px;
+    height: 15px;
     font: inherit;
 }
 #rib_view_addname{
     width: calc(100% - 3px);
-    height: 22px;
+    height: 15px;
     font: inherit;
 }
 
 .screen_size{
     font-size: 12px;
 width: 300px!important;
-    margin-top: 5px;
+    height: 24px!important;
 }
 
 #screen_size + button{

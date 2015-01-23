@@ -497,7 +497,7 @@
                         <col span="10" width="26px"/>
                     </colgroup>
                     <tr id="rib_tools_resolution_manuel" style="display:none">
-                        <td class="translate">Resolution</td>
+                        <td class="translate">Resolution: </td>
                         <td>
                             <div style="display: inline-block" class="translate">Width</div>
                             <input id="screen_size_x" type="number" style="width: 60px" value=""/>
@@ -509,7 +509,7 @@
                         </td>
                     </tr>
                     <tr id="rib_tools_resolution_fix">
-                        <td class="translate">Resolution</td>
+                        <td class="translate">Resolution:</td>
                         <td>
                             <select id="screen_size" class="vis-editor vis-edit-select">
                                 <option value="user" class="translate">User defined</option>
@@ -547,67 +547,63 @@
                     </tr>
                 </table>
             </div>
-            <!--<div class="ribbon_field ui-widget-content ui-corner-all">-->
-                <!--<table style="border-spacing: 0px">-->
-                    <!--<tr>-->
-                        <!--<td  style="text-align: center; height: 24px;" class="translate">-->
-                            <!--External Commands-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                    <!--<tr>-->
-                        <!--<td>-->
-                            <!--<span style=" display: inline-block;" class="translate">Instance ID</span>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<input type="input" id="vis_instance"/>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<button type="button" class="vis-editor translateB" id="create_instance">create_instance</button>-->
-                        <!--</td>-->
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
+                            <span style=" display: inline-block;" class="translate">Instance ID</span>
+                        </td>
+                        <td>
+                            <input type="input" id="vis_instance"/>
+                        </td>
+                        <td>
+                            <button type="button" class="vis-editor translateB" id="create_instance">create_instance</button>
+                        </td>
 
-                    <!--</tr>-->
-                <!--</table>-->
-            <!--</div>-->
-            <!--<div class="ribbon_field ui-widget-content ui-corner-all">-->
-                <!--<table style="border-spacing: 0px">-->
-                    <!--<tr>-->
-                        <!--<td colspan="2" style="text-align: center; height: 24px;">Import / Export View</td>-->
-                    <!--</tr>-->
-                    <!--<tr>-->
-                        <!--<td>-->
-                            <!--<button class="vis-editor translateB" id="export_view">export view</button>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<button class="vis-editor translateB" id="import_view">import view</button>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                <!--</table>-->
-            <!--</div>-->
-
-            <!--<div class="ribbon_field ui-widget-content ui-corner-all">-->
-                <!--<table style="border-spacing: 0px">-->
-                    <!--<tr>-->
-                        <!--<td  style="text-align: center; height: 24px;">Local Views</td>-->
-                    <!--</tr>-->
-                    <!--<tr>-->
-                        <!--<td>-->
-                            <!--<button class="vis-editor translateB" id="export_local_view">export views</button>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<button class="vis-editor translateB" id="import_local_view">import views</button>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<button class="vis-editor translateB" id="clear_local_view">clear cached views</button>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                <!--</table>-->
-            <!--</div>-->
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                                  <tr>
+                        <td>
+                            <button class="vis-editor translateB" id="export_view">export view</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="import_view">import view</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
     </div>
     <div class="ribbon_tab" id="ribbon_dev">
         <div class="ribbon_tab_content ui-widget-content">
-            <button id="dev_show_html">Show Widget HTML</button>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
+                            <button id="dev_show_html">Show Widget HTML</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
+                            <button class="vis-editor translateB" id="export_local_view">export views</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="import_local_view">import views</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="clear_local_view">clear cached views</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 </div>
