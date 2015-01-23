@@ -133,8 +133,6 @@ div#vis_container{
 }
 
 #widget_doc {
-    width: 142px;
-
 }
 
 #dup_widget {
@@ -529,10 +527,26 @@ display: none;
     width: 26px;
     height: 26px;
     position: relative;
-    top: -1px;
+    border: 1px solid transparent;
 }
 .icon_onIconbar{
     height: 24px;
     width: 24px;
     margin: 1px;
+}
+
+#select_active_widget + button{
+    width: 280px!important;
+    font-size: 12px;
+    white-space: nowrap;
+    height: 24px;
+}
+.select_active_widget {
+    width: 400px!important;
+    font-size: 12px;
+}
+td > .select_active_widget :nth-child(2){
+    width: 255px;
+    overflow: hidden;
+    display: inline-block;
 }

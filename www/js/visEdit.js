@@ -67,41 +67,7 @@ vis = $.extend(true, vis, {
         $('#vis-version').html(this.version);
 
 
-        $('#btn_prev_zoom').hover(
-            function() {
-                $(this).addClass('ui-state-hover');
-            },
-            function() {
-                $(this).removeClass('ui-state-hover');
-            }
-        ).click(function(){
-                if($(this).hasClass("ui-state-active")){
-                    $(this).removeClass("ui-state-active");
-                    $(".wid_prev").removeClass("wid_prev_k")
-                    $(".wid_prev_content").css("zoom",1)
-                }else{
-                    $(this).addClass("ui-state-active");
-                    $(".wid_prev").addClass("wid_prev_k")
-                    $(".wid_prev_content").css("zoom",0.5)
-               }
-            })
 
-        $('#btn_prev_type').hover(
-            function() {
-                $(this).addClass('ui-state-hover');
-            },
-            function() {
-                $(this).removeClass('ui-state-hover');
-            }
-        ).click(function(){
-                if($(this).hasClass("ui-state-active")){
-                    $(this).removeClass("ui-state-active");
-                    $(".wid_prev_type").hide()
-                }else{
-                    $(this).addClass("ui-state-active");
-                    $(".wid_prev_type").show()
-                }
-            })
 
         $('#button_undo')
             .click(vis.undo)
@@ -122,6 +88,7 @@ vis = $.extend(true, vis, {
         $('select.vis-editor').each(function () {
             $(this).multiselect({
                 multiple: false,
+                classes: $(this).attr("id"),
                 header: false,
                 selectedList: 1,
                 minWidth: $(this).attr('data-multiselect-width'),
@@ -185,12 +152,6 @@ vis = $.extend(true, vis, {
             });
         });
 
-        $('#widget_doc').button({icons: {primary: 'ui-icon-script'}}).click(function () {
-            var tpl = vis.views[vis.activeView].widgets[vis.activeWidget].tpl;
-            var widgetSet = $('#' + tpl).attr('data-vis-set');
-            var docUrl = 'widgets/' + widgetSet + '/doc.html#' + tpl;
-            window.open(docUrl, 'WidgetDoc', 'height=640,width=500,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no,location=no');
-        });
 
         $('#dup_widget').button({icons: {primary: 'ui-icon-copy'}}).click(function () {
             vis.dupWidget();
@@ -574,10 +535,9 @@ vis = $.extend(true, vis, {
         //});
 
 
+        // Ribbon icons Golbal
 
-        // Widget ----------------------------------------------------------------
-
-        $('#del_widget').hover(
+        $('.btn_iconbar').hover(
             function() {
                 $(this).addClass('ui-state-hover');
             },
@@ -586,10 +546,110 @@ vis = $.extend(true, vis, {
             }
         ).click(function(){
                 $(this).stop(true, true).effect("highlight")
-                vis.delWidget()
 
             })
 
+
+
+        // Widget ----------------------------------------------------------------
+
+        $('#del_widget').click(function(){
+                vis.delWidget()
+            })
+
+        $('#widget_doc').click(function () {
+            var tpl = vis.views[vis.activeView].widgets[vis.activeWidget].tpl;
+            var widgetSet = $('#' + tpl).attr('data-vis-set');
+            var docUrl = 'widgets/' + widgetSet + '/doc.html#' + tpl;
+            window.open(docUrl, 'WidgetDoc', 'height=640,width=500,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no,location=no');
+        });
+
+
+    },
+    editInit_Widget_prev: function () {
+        $('#btn_prev_zoom').hover(
+            function() {
+                $(this).addClass('ui-state-hover');
+            },
+            function() {
+                $(this).removeClass('ui-state-hover');
+            }
+        ).click(function(){
+                if($(this).hasClass("ui-state-active")){
+                    $(this).removeClass("ui-state-active");
+                    $(".wid_prev").removeClass("wid_prev_k")
+                    $(".wid_prev_content").css("zoom",1)
+                }else{
+                    $(this).addClass("ui-state-active");
+                    $(".wid_prev").addClass("wid_prev_k")
+                    $(".wid_prev_content").css("zoom",0.5)
+                }
+            })
+
+        $('#btn_prev_type').hover(
+            function() {
+                $(this).addClass('ui-state-hover');
+            },
+            function() {
+                $(this).removeClass('ui-state-hover');
+            }
+        ).click(function(){
+                if($(this).hasClass("ui-state-active")){
+                    $(this).removeClass("ui-state-active");
+                    $(".wid_prev_type").hide()
+                }else{
+                    $(this).addClass("ui-state-active");
+                    $(".wid_prev_type").show()
+                }
+            })
+
+        $.each(vis.widgetSets, function () {
+            var set = "";
+            if(this.name){
+                set = this.name
+            }else{
+                set = this;
+            }
+            var tpl_list = $('.vis-tpl[data-vis-set="' + set + '"]');
+
+            $.each(tpl_list, function (i) {
+                var tpl = $(tpl_list[i]).attr('id');
+                var type = "";
+                if($("#" + tpl).data('vis-type')){
+                    type= '<div class="wid_prev_type">'+$("#" + tpl).data("vis-type")+'</div>'
+                }
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">'+type+'<div>' + $("#" + tpl).data('vis-name') + '</div></div>');
+                if ($(tpl_list[i]).data('vis-prev')) {
+
+                    var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
+                    $(content).children().last().addClass("wid_prev_content")
+                }
+
+
+
+                $('#prev_container_' + tpl).draggable({
+                    helper: "clone",
+                    appendTo:$('#panel_body'),
+                    containment: $('#panel_body'),
+                    zIndex: 10000,
+                    cursorAt: {top: 0, left: 0},
+
+                    start: function (event, ui) {
+                        if (ui.helper.children().length < 3) {
+                            $(ui.helper).addClass("ui-state-highlight ui-corner-all").css({padding: "2px","font-size": "12px"})
+
+                        }else{
+                            ui.helper.children()[0].remove();
+                            ui.helper.children()[0].remove();
+                            //$(ui.helper.children()[0]).css("border","none")
+                            $(ui.helper).css("border","none")
+                        }
+
+
+                    }
+                });
+            });
+        });
     },
     editInitNext: function () {
         // ioBroker.vis Editor Init
@@ -653,7 +713,7 @@ vis = $.extend(true, vis, {
 
         $('#select_set option[value="' + last_set + '"]').prop('selected', true);
 
-        vis.add_Widget_prev();
+        vis.editInit_Widget_prev();
 
         $select_set.selectmenu({
             change:function(event, ui){
@@ -730,55 +790,7 @@ vis = $.extend(true, vis, {
         $('#menu_body').show()
         $('#panel_body').show()
     },
-    add_Widget_prev: function () {
-        $.each(vis.widgetSets, function () {
-            var set = "";
-            if(this.name){
-                set = this.name
-            }else{
-                set = this;
-            }
-            var tpl_list = $('.vis-tpl[data-vis-set="' + set + '"]');
 
-            $.each(tpl_list, function (i) {
-                var tpl = $(tpl_list[i]).attr('id');
-                var type = "";
-                if($("#" + tpl).data('vis-type')){
-                    type= '<div class="wid_prev_type">'+$("#" + tpl).data("vis-type")+'</div>'
-                }
-                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">'+type+'<div>' + $("#" + tpl).data('vis-name') + '</div></div>');
-                if ($(tpl_list[i]).data('vis-prev')) {
-
-                    var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
-                    $(content).children().last().addClass("wid_prev_content")
-                }
-
-
-
-                $('#prev_container_' + tpl).draggable({
-                    helper: "clone",
-                    appendTo:$('#panel_body'),
-                    containment: $('#panel_body'),
-                    zIndex: 10000,
-                    cursorAt: {top: 0, left: 0},
-
-                    start: function (event, ui) {
-                        if (ui.helper.children().length < 3) {
-                            $(ui.helper).addClass("ui-state-highlight ui-corner-all").css({padding: "2px","font-size": "12px"})
-
-                        }else{
-                            ui.helper.children()[0].remove();
-                            ui.helper.children()[0].remove();
-                            //$(ui.helper.children()[0]).css("border","none")
-                            $(ui.helper).css("border","none")
-                        }
-
-
-                    }
-                });
-            });
-        });
-    },
 
     renameView: function (newName) {
         vis.views[newName] = $.extend(true, {}, vis.views[vis.activeView]);
