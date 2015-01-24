@@ -197,7 +197,7 @@ div#vis_container{
 }
 
 #create_instance {
-    width: 120px;
+    width: 160px;
 }
 
 #remove_instance {
@@ -414,7 +414,7 @@ display: none;
 
 
 #pan_add_wid{
-    width: 160px;
+    width: 190px;
     display: inline-block;
     height: 100%;
 
@@ -596,11 +596,13 @@ td > .select_active_widget :nth-child(2){
 
 .screen_size{
     font-size: 12px;
-width: 300px!important;
-    height: 24px!important;
+    width: 260px!important;
+
 }
+
 
 #screen_size + button{
     width: 100%!important;
     white-space: nowrap;
+    height: 24px!important;
 }

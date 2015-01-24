@@ -849,17 +849,6 @@ var vis = {
 
         return;
     },
-    addView: function (view) {
-        if (this[view]) {
-            return false;
-        }
-        this.views[view] = {settings: {style: {}}, widgets: {}};
-        this.saveRemote(function () {
-            $(window).off('hashchange');
-            window.location.hash = "#" + view;
-            window.location.reload(); // todo das stört !!! Kann man das nicht anders machen ?
-        });
-    },
     loadRemote: function (callback, callbackArg) {
         var that = this;
         if (local) {

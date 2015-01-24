@@ -44,8 +44,8 @@ vis = $.extend(true, vis, {
         $('#attr_wrap').tabs();
         $('#pan_add_wid').resizable({
             handles: 'e',
-            maxWidth: 575,
-            minWidth: 160
+            maxWidth: 570,
+            minWidth: 190
         });
         $('#pan_attr').resizable({
             handles: 'w',
@@ -565,7 +565,7 @@ vis = $.extend(true, vis, {
         });
 
         function view_add() {
-            var name = vis.checkNewView();
+            var name = vis.checkNewViewName();
             if (name === false) {
                 return;
             }
@@ -576,6 +576,7 @@ vis = $.extend(true, vis, {
 
         // Delete View -----------------
         $('#rib_view_del').click(function () {
+
             vis.delView(vis.activeView);
         });
         // Rename View -----------------
@@ -596,7 +597,7 @@ vis = $.extend(true, vis, {
             view_rename();
         });
         function view_rename() {
-            var name = vis.checkNewView($('#rib_view_newname').val());
+            var name = vis.checkNewViewName($('#rib_view_newname').val());
             if (name === false) return;
             vis.renameView(name);
             $('#rib_view').show();
@@ -621,7 +622,7 @@ vis = $.extend(true, vis, {
         });
 
         function view_copy() {
-            var name = vis.checkNewView();
+            var name = vis.checkNewViewName();
             if (name === false) return;
             vis.dupView(name);
             $('#rib_view').show();
@@ -714,6 +715,7 @@ vis = $.extend(true, vis, {
                             ui.helper.children()[0].remove();
                             //$(ui.helper.children()[0]).css("border","none")
                             $(ui.helper).css("border", "none")
+                            $(ui.helper).css("width","auto")
                         }
 
 
@@ -721,6 +723,129 @@ vis = $.extend(true, vis, {
                 });
             });
         });
+    },
+    editInit_select_view: function () {
+
+        $('#view_select_tabs_wrap').resize(function () {
+            var o = {
+                parent_w: $('#view_select_tabs_wrap').width(),
+                self_w: $('#view_select_tabs').width(),
+                self_l: parseInt($('#view_select_tabs').css('left'))
+            };
+            if (o.parent_w >= (o.self_w + o.self_l))
+
+                $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px");
+        });
+
+        $('#view_select_left').button({
+            icons: {
+                primary: "ui-icon-carat-1-w"
+            },
+            text: false
+        }).click(function () {
+            var o = {
+                parent_w: $('#view_select_tabs_wrap').width(),
+                self_w: $('#view_select_tabs').width(),
+                self_l: parseInt($('#view_select_tabs').css('left'))
+            };
+
+            if (o.self_w != o.parent_w) {
+                if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
+                    $('#view_select_tabs').css('left', o.self_l - 50 + "px")
+                } else {
+                    $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
+                }
+
+            }
+
+        });
+
+        $('#view_select_right').button({
+            icons: {
+                primary: "ui-icon-carat-1-e"
+            },
+            text: false
+        }).click(function () {
+            var o = {
+                parent_w: $('#view_select_tabs_wrap').width(),
+                self_w: $('#view_select_tabs').width(),
+                self_l: parseInt($('#view_select_tabs').css('left'))
+            };
+
+            if (o.self_w != o.parent_w) {
+                if ((o.self_l + 50) <= 0) {
+                    $('#view_select_tabs').css('left', o.self_l + 50 + "px")
+                } else {
+                    $('#view_select_tabs').css('left', "0px")
+                }
+
+            }
+
+        });
+
+        $('#view_select').bind('mousewheel DOMMouseScroll', function (event) {
+            var o = {
+                parent_w: $('#view_select_tabs_wrap').width(),
+                self_w: $('#view_select_tabs').width(),
+                self_l: parseInt($('#view_select_tabs').css('left'))
+            }
+            if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
+
+                if (o.self_w != o.parent_w) {
+                    if ((o.parent_w - o.self_w) <= (o.self_l - 20)) {
+                        $('#view_select_tabs').css('left', o.self_l - 20 + "px")
+                    } else {
+                        $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
+                    }
+
+                }
+            }
+            else {
+                if (o.self_w != o.parent_w) {
+                    if ((o.self_l + 20) <= 0) {
+                        $('#view_select_tabs').css('left', o.self_l + 20 + "px")
+                    } else {
+                        $('#view_select_tabs').css('left', "0px")
+                    }
+
+                }
+            }
+        });
+
+
+        var sel;
+
+        var keys = Object.keys(vis.views);
+        var len = keys.length;
+        var i;
+        var k;
+
+        keys.sort();
+
+        $('#view_select_tabs').on('click', ".view_select_tab", function () {
+            var view = $(this).attr('id').replace('view_tab_', "");
+            $('.view_select_tab').removeClass('ui-tabs-active ui-state-active');
+            $(this).addClass('ui-tabs-active ui-state-active');
+            vis.changeView(view);
+
+        });
+
+
+        for (i = 0; i < len; i++) {
+            k = keys[i];
+
+            if (k == this.activeView) {
+
+                sel = " selected";
+            } else {
+                sel = '';
+            }
+            $('#view_select_tabs').append('<div id="view_tab_' + k + '" class="view_select_tab ui-state-default ui-corner-top sel_opt_'+k+'">' + k + '</div>');
+        }
+
+        $('#view_tab_' + vis.activeView).addClass('ui-tabs-active ui-state-active')
+
+
     },
     editInitNext: function () {
         // ioBroker.vis Editor Init
@@ -749,8 +874,8 @@ vis = $.extend(true, vis, {
             } else {
                 sel = '';
             }
-            $select_view.append('<option value=\'' + k + "'" + sel + ">" + k + "</option>");
-            $rib_wid_copy_view.append('<option value=\'' + k + "'" + sel + ">" + k + "</option>");
+            $select_view.append('<option class="sel_opt_'+k+'" value=\'' + k + "'" + sel + ">" + k + "</option>");
+            $rib_wid_copy_view.append('<option class="sel_opt_'+k+'" value=\'' + k + "'" + sel + ">" + k + "</option>");
         }
 
         $select_view.multiselect({
@@ -876,7 +1001,17 @@ vis = $.extend(true, vis, {
         $('#panel_body').show();
     },
 
-
+    addView: function (view) {
+        if (this[view]) {
+            return false;
+        }
+        this.views[view] = {settings: {style: {}}, widgets: {}};
+        this.saveRemote(function () {
+            $(window).off('hashchange');
+            window.location.hash = "#" + view;
+            window.location.reload(); // todo das stört !!! Kann man das nicht anders machen ?
+        });
+    },
     renameView: function (newName) {
         vis.views[newName] = $.extend(true, {}, vis.views[vis.activeView]);
         $('#vis_container').hide();
@@ -890,9 +1025,15 @@ vis = $.extend(true, vis, {
     },
     delView: function (view) {
         if (confirm(_('Really delete view %s?', view))) {
+            if (view == vis.activeView){
+                vis.nextView();
+            }
             delete vis.views[view];
             vis.saveRemote(function () {
-                window.location.href = "edit.html" + window.location.search;
+                //window.location.href = "edit.html" + window.location.search;
+                $(".sel_opt_"+view).remove();
+                $('#select_view').multiselect('refresh');
+                $('#rib_wid_copy_view').multiselect('refresh');
             });
         }
     },
@@ -909,6 +1050,24 @@ vis = $.extend(true, vis, {
             vis.changeView(val);
             window.location.reload();
         });
+    },
+    nextView: function () {
+        var $next = $('.view_select_tab.ui-state-active').next();
+
+        if ($next.hasClass('view_select_tab')) {
+
+            $next.trigger('click')
+        } else {
+            $('.view_select_tab.ui-state-active').parent().children().first().trigger('click')
+        }
+    },
+    prevView: function () {     var $prev = $('.view_select_tab.ui-state-active').prev();
+
+        if ($prev.hasClass('view_select_tab')) {
+            $prev.trigger('click')
+        } else {
+            $('.view_select_tab.ui-state-active').parent().children().last().trigger('click')
+        }
     },
     exportView: function (isAll) {
         var exportView = $.extend(true, {}, isAll ? vis.views : vis.views[vis.activeView]);
@@ -936,7 +1095,7 @@ vis = $.extend(true, vis, {
         });
     },
     importView: function (isAll) {
-        var name = vis.checkNewView($('#name_import_view').val());
+        var name = vis.checkNewViewName($('#name_import_view').val());
         var importObject;
         if (name === false) return;
         try {
@@ -966,7 +1125,7 @@ vis = $.extend(true, vis, {
             });
         }
     },
-    checkNewView: function (name) {
+    checkNewViewName: function (name) {
         name = name || $('#rib_view_addname').val().trim();
         if (name == '') {
             alert(_('Please enter the name for the new view!'));
@@ -978,6 +1137,7 @@ vis = $.extend(true, vis, {
             return name;
         }
     },
+
     nextWidget: function () {
         var next = 1;
         var used = [];
@@ -3076,130 +3236,7 @@ vis = $.extend(true, vis, {
         $('.widget_multi_helper').remove();
         vis.multiSelectedWidgets = [];
     },
-    editInit_select_view: function () {
 
-        $('#view_select_tabs_wrap').resize(function () {
-            var o = {
-                parent_w: $('#view_select_tabs_wrap').width(),
-                self_w: $('#view_select_tabs').width(),
-                self_l: parseInt($('#view_select_tabs').css('left'))
-            };
-            if (o.parent_w >= (o.self_w + o.self_l))
-
-                $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px");
-        });
-
-        $('#view_select_left').button({
-            icons: {
-                primary: "ui-icon-carat-1-w"
-            },
-            text: false
-        }).click(function () {
-            var o = {
-                parent_w: $('#view_select_tabs_wrap').width(),
-                self_w: $('#view_select_tabs').width(),
-                self_l: parseInt($('#view_select_tabs').css('left'))
-            };
-
-            if (o.self_w != o.parent_w) {
-                if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
-                    $('#view_select_tabs').css('left', o.self_l - 50 + "px")
-                } else {
-                    $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
-                }
-
-            }
-
-        });
-
-        $('#view_select_right').button({
-            icons: {
-                primary: "ui-icon-carat-1-e"
-            },
-            text: false
-        }).click(function () {
-            var o = {
-                parent_w: $('#view_select_tabs_wrap').width(),
-                self_w: $('#view_select_tabs').width(),
-                self_l: parseInt($('#view_select_tabs').css('left'))
-            };
-
-            if (o.self_w != o.parent_w) {
-                if ((o.self_l + 50) <= 0) {
-                    $('#view_select_tabs').css('left', o.self_l + 50 + "px")
-                } else {
-                    $('#view_select_tabs').css('left', "0px")
-                }
-
-            }
-
-        });
-
-        $('#view_select').bind('mousewheel DOMMouseScroll', function (event) {
-            var o = {
-                parent_w: $('#view_select_tabs_wrap').width(),
-                self_w: $('#view_select_tabs').width(),
-                self_l: parseInt($('#view_select_tabs').css('left'))
-            }
-            if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
-
-                if (o.self_w != o.parent_w) {
-                    if ((o.parent_w - o.self_w) <= (o.self_l - 20)) {
-                        $('#view_select_tabs').css('left', o.self_l - 20 + "px")
-                    } else {
-                        $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
-                    }
-
-                }
-            }
-            else {
-                if (o.self_w != o.parent_w) {
-                    if ((o.self_l + 20) <= 0) {
-                        $('#view_select_tabs').css('left', o.self_l + 20 + "px")
-                    } else {
-                        $('#view_select_tabs').css('left', "0px")
-                    }
-
-                }
-            }
-        });
-
-
-        var sel;
-
-        var keys = Object.keys(vis.views);
-        var len = keys.length;
-        var i;
-        var k;
-
-        keys.sort();
-
-        $('#view_select_tabs').on('click', ".view_select_tab", function () {
-            var view = $(this).attr('id').replace('view_tab_', "");
-            $('.view_select_tab').removeClass('ui-tabs-active ui-state-active');
-            $(this).addClass('ui-tabs-active ui-state-active');
-            vis.changeView(view);
-
-        });
-
-
-        for (i = 0; i < len; i++) {
-            k = keys[i];
-
-            if (k == this.activeView) {
-
-                sel = " selected";
-            } else {
-                sel = '';
-            }
-            $('#view_select_tabs').append('<div id="view_tab_' + k + '" class="view_select_tab ui-state-default ui-corner-top">' + k + '</div>');
-        }
-
-
-        $('#view_tab_' + vis.activeView).addClass('ui-tabs-active ui-state-active')
-
-
-    },
     // Find free place for new widget
     findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
         var editPos = $('.ui-dialog:first').position();
@@ -3927,7 +3964,10 @@ vis = $.extend(true, vis, {
             }
         });
         return panel
-    }
+    },
+
+
+
 });
 
 $(document).keydown(function (e) {
@@ -4009,26 +4049,14 @@ $(document).keydown(function (e) {
         e.preventDefault();
     } else if (e.which === 33) {
         // Next View
-        var $next = $('.view_select_tab.ui-state-active').next();
-
-        if ($next.hasClass('view_select_tab')) {
-
-            $next.trigger('click')
-        } else {
-            $('.view_select_tab.ui-state-active').parent().children().first().trigger('click')
-        }
+        vis.nextView();
 
         e.preventDefault();
     }
     if (e.which === 34) {
         // Prev View
-        var $prev = $('.view_select_tab.ui-state-active').prev();
-
-        if ($prev.hasClass('view_select_tab')) {
-            $prev.trigger('click')
-        } else {
-            $('.view_select_tab.ui-state-active').parent().children().last().trigger('click')
-        }
+        vis.prevView();
+        e.preventDefault();
     }
 });
 
