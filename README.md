@@ -5,6 +5,9 @@ ioBroker.vis
 WEB visualisation for ioBroker platform.
 
 ## Changelog
+### 0.0.8 (2015-01-24)
+- (smiling_Jack) New Editor
+
 ### 0.0.7 (2015-01-18)
 - (bluefox) image select dialog is connected
 
