@@ -558,7 +558,7 @@ vis = $.extend(true, vis, {
             $('#rib_view_add_tr').hide();
         });
         $('#rib_view_addname').change(function () {
-            view_add();
+            //view_add();
         });
         $("#rib_view_add_ok").click(function () {
             view_add()
@@ -568,10 +568,16 @@ vis = $.extend(true, vis, {
             var name = vis.checkNewViewName();
             if (name === false) {
                 return;
+            }else{
+                setTimeout(function(){
+                    vis.addView(name);
+                    $('#rib_view').show();
+                    $('#rib_view_add_tr').hide();
+                },0)
+
             }
-            vis.addView(name);
-            $('#rib_view').show();
-            $('#rib_view_add_tr').hide();
+
+
         }
 
         // Delete View -----------------
@@ -755,9 +761,7 @@ vis = $.extend(true, vis, {
                 } else {
                     $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
                 }
-
             }
-
         });
 
         $('#view_select_right').button({
@@ -778,9 +782,7 @@ vis = $.extend(true, vis, {
                 } else {
                     $('#view_select_tabs').css('left', "0px")
                 }
-
             }
-
         });
 
         $('#view_select').bind('mousewheel DOMMouseScroll', function (event) {
@@ -797,7 +799,6 @@ vis = $.extend(true, vis, {
                     } else {
                         $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
                     }
-
                 }
             }
             else {
@@ -807,7 +808,6 @@ vis = $.extend(true, vis, {
                     } else {
                         $('#view_select_tabs').css('left', "0px")
                     }
-
                 }
             }
         });
@@ -1007,9 +1007,21 @@ vis = $.extend(true, vis, {
         }
         this.views[view] = {settings: {style: {}}, widgets: {}};
         this.saveRemote(function () {
-            $(window).off('hashchange');
-            window.location.hash = "#" + view;
-            window.location.reload(); // todo das stört !!! Kann man das nicht anders machen ?
+            //$(window).off('hashchange');
+            //window.location.hash = "#" + view;
+            //window.location.reload(); // todo das stört !!! Kann man das nicht anders machen ?
+
+            $('#view_tab_' + vis.activeView).removeClass('ui-tabs-active ui-state-active')
+            vis.changeView(view);
+            $('#view_select_tabs').append('<div id="view_tab_' + view + '" class="view_select_tab ui-state-default ui-corner-top sel_opt_'+view+'">' + view + '</div>');
+
+            $( "#select_view option:selected").removeAttr("selected")
+            $( "#rib_wid_copy_view option:selected").removeAttr("selected")
+            $('#select_view').append('<option class="sel_opt_'+view+'" value="' + view + '" selected>'+ view + '</option>');
+            $('#rib_wid_copy_view').append('<option class="sel_opt_'+view+'" value="' + view + '" selected>'+ view + '</option>');
+            $('#select_view').multiselect('refresh');
+            $('#rib_wid_copy_view').multiselect('refresh');
+            $('#view_tab_' + vis.activeView).addClass('ui-tabs-active ui-state-active')
         });
     },
     renameView: function (newName) {
