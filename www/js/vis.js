@@ -13,6 +13,7 @@
 
 var local = document.URL.split("/vis/")[1]?false:true;
 
+
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
         'No connection to Server': {'en': 'No connection to Server', 'de': 'Keine Verbindung zu Server', 'ru': 'Нет соединения с сервером'},
@@ -313,7 +314,7 @@ var vis = {
                 }else{
                 this.showWaitScreen(false);
             }
-        });
+
 
         var hash = window.location.hash.substring(1);
 
@@ -377,6 +378,7 @@ var vis = {
         this.initialized = true;
         // If this function called earlier, it makes problems under FireFox.
         this.changeView(this.activeView);
+    });
     },
     initViewObject: function () {
         if (!this.editMode) {
@@ -1105,7 +1107,7 @@ if ('applicationCache' in window) {
             return updateAvailable;
         }
 
-        vis.init();
+
 
         vis.conn = servConn;
 
@@ -1326,6 +1328,8 @@ if ('applicationCache' in window) {
                     return true;
                 }
             });
+        }else{
+            vis.init();
         }
     });
 

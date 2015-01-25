@@ -17,7 +17,7 @@ function translateWord(text, lang, dictionary) {
             }
         }
     } else {
-        console.log('"' + text + '": {"en": "' + text + '", "de": "' + text + '", "ru": "' + text + '"},');
+        //console.log('"' + text + '": {"en": "' + text + '", "de": "' + text + '", "ru": "' + text + '"},');
     }
     return text;
 }

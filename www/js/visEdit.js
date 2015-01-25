@@ -940,7 +940,7 @@ vis = $.extend(true, vis, {
             }
         });
 
-        if (last_set != "all") {
+        if (last_set != "all" && last_set ) {
             $('.wid_prev').hide();
             $('.' + last_set + '_prev').show();
         }
@@ -997,6 +997,7 @@ vis = $.extend(true, vis, {
             }).show();
             $('#local_view').show();
         }
+        this.showWaitScreen(false);
         $('#menu_body').show();
         $('#panel_body').show();
     },
