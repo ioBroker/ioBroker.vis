@@ -11,7 +11,9 @@
 
 "use strict";
 
-var local = document.URL.split("/vis/")[1]?false:true;
+// we should detect either local path here and not online.
+// I want to have possibility to start vis not only from broker web server, but from some others too.
+var local = document.URL.split('/local/')[1] ? true : false;
 
 
 if (typeof systemDictionary !== 'undefined') {

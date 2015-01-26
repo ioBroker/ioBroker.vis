@@ -1,7 +1,11 @@
-<script type="text/ejs" id="tplYrAdapter" class="dashui-tpl" data-dashui-set="weather-adapter" data-dashui-name="yr.no Wetter" data-dashui-attrs="">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
-
-        <div class="dashui-widget-body">
+<script id="tplYrAdapter"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="weather-adapter"
+        data-vis-name="yr.no Wetter"
+        data-vis-attrs="">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
             <div data-hm-id="70000">
                 <%== localData.uiState.attr("_70000.Value") %>
             </div>
@@ -9,7 +13,12 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplDwdAdapterSmall" class="dashui-tpl" data-dashui-set="weather-adapter" data-dashui-name="DWD Wetterwarnungen klein" data-dashui-attrs="">
+<script id="tplDwdAdapterSmall"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="weather-adapter"
+        data-vis-name="DWD Wetterwarnungen klein"
+        data-vis-attrs="">
     <%
     var dwdBackground = [
         "",
@@ -19,8 +28,8 @@
         "darkviolet"
         ];
     %>
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 160px; height: 21px;  font-family: Arial; " id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(localData.uiState.attr("_70052.Value"),10)] %>;">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 160px; height: 21px;  font-family: Arial; " id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(localData.uiState.attr("_70052.Value"),10)] %>;">
             <div data-hm-id="700053">
                 <%== localData.uiState.attr("_70053.Value") %>
             </div>
@@ -28,8 +37,13 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplDwdAdapter" class="dashui-tpl" data-dashui-set="weather-adapter" data-dashui-name="DWD Wetterwarnungen" data-dashui-attrs="">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 585px; height: 85px; font-family: Arial; " id="<%= this.data.attr('wid') %>">
+<script id="tplDwdAdapter"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="weather-adapter"
+        data-vis-name="DWD Wetterwarnungen"
+        data-vis-attrs="">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 585px; height: 85px; font-family: Arial; " id="<%= this.data.attr('wid') %>">
         <%
         var dwdBackground = [
             "",
@@ -40,7 +54,7 @@
         ];
         %>
 
-        <div class="dashui-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(localData.uiState.attr("_70052.Value"),10)] %>;">
+        <div class="vis-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(localData.uiState.attr("_70052.Value"),10)] %>;">
             <div style="font-size: 1.5em; font-weight: bold;" data-hm-id="70054">
                 <%== localData.uiState.attr("_70054.Value") %>
             </div>

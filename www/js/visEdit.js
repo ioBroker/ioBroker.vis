@@ -1267,7 +1267,7 @@ vis = $.extend(true, vis, {
             if (vis.dragging) return;
 
             var widgetId = $(this).attr('id');
-            var widgetData = vis.widgets[widgetId]["data"];
+            var widgetData = vis.widgets[widgetId].data;
             //console.log("click id="+widgetId+" active="+vis.activeWidget);
             //console.log(vis.multiSelectedWidgets);
             if (e.shiftKey || e.ctrlKey || e.metaKey) {
@@ -1879,6 +1879,42 @@ vis = $.extend(true, vis, {
         }
         return line;
     },
+    editCustom: function (widget, wid_attr, options) {
+        if (!options) {
+            console.log('No path to custom function');
+        } else {
+            var funcs = options[0].split('.');
+            options.unshift();
+            if (funcs[0] == 'vis') funcs.unshift();
+            if (funcs[0] == 'binds') funcs.unshift();
+            if (funcs.length == 1) {
+                if (typeof this.binds[funcs[0]] == 'function') {
+                    return this.binds[funcs[0]](widget, wid_attr, options);
+                } else {
+                    console.log('No function: vis.binds.' +  + funcs.join('.'));
+                }
+            } else if (funcs.length == 2) {
+                if (this.binds[funcs[0]] && typeof this.binds[funcs[0]][funcs[1]] == 'function') {
+                    return this.binds[funcs[0]][funcs[1]](widget, wid_attr, options);
+                } else {
+                    console.log('No function: vis.binds.' + funcs.join('.'));
+                }
+            } else if (funcs.length == 3) {
+                if (this.binds[funcs[0]] && this.binds[funcs[0]][funcs[1]] && typeof this.binds[funcs[0]][funcs[1]][funcs[2]] == 'function') {
+                    return this.binds[funcs[0]][funcs[1]][funcs[2]](widget, wid_attr, options);
+                } else {
+                    console.log('No function: vis.binds.' + funcs.join('.'));
+                }
+            } else {
+                if (funcs.length == 0) {
+                    console.log('Function name is too short: vis.binds');
+                } else {
+                    console.log('Function name is too long: vis.binds.' + funcs.join('.'));
+                }
+            }
+            return {};
+        }
+    },
     hideShowAttr: function (widget, wid_attr, isShow) {
         if (isShow) {
             $('#td_' + wid_attr).show();
@@ -1945,7 +1981,7 @@ vis = $.extend(true, vis, {
          });*/
     },
     inspectWidgetMulti: function (id) {
-        var $this = $("#" + id);
+        var $this = $('#' + id);
         var pos = $this.position();
         // May be bug?
         if (pos.left == 0 && pos.top == 0) {
@@ -1958,8 +1994,8 @@ vis = $.extend(true, vis, {
                 pos.top = parseInt(pos.top.replace('px', ''), 10);
             }
         }
-        if (vis.multiSelectedWidgets.indexOf(id) == -1 && id != vis.activeWidget) {
-            vis.multiSelectedWidgets.push(id);
+        if (this.multiSelectedWidgets.indexOf(id) == -1 && id != this.activeWidget) {
+            this.multiSelectedWidgets.push(id);
         }
 
         $('#vis_container').append('<div id="widget_multi_helper_' + id + '" class="widget_multi_helper"><div class="widget_multi_inner_helper"></div></div>');
@@ -1971,8 +2007,8 @@ vis = $.extend(true, vis, {
                 width: $this.outerWidth() + 2
             }
         ).show();
-        vis.allWidgetsHelper();
-        vis.draggable($this);
+        this.allWidgetsHelper();
+        this.draggable($this);
 
     },
     addToInspect: function (widget, _wid_attr, group, options, onchange) {
@@ -1990,8 +2026,8 @@ vis = $.extend(true, vis, {
         //              fontName - Font name
         //              slider,min,max,step - Default step is ((max - min) / 100)
         //              select,value1,value2,... - dropdown select
-        //              hr
-        //              br
+        //              custom,functionName,options,... - functionName is starting from vis.binds.[widgetset.funct]. E.g. custom/timeAndWeather.editWeather,short
+        //              group.name - define new or old group. All following attributes belongs to new group till new group.xyz
         if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,\.a-zA-Z0-9]+)?/;
         var view = this.getViewOfWidget(widget)
         var match = this.regexAttr.exec(_wid_attr);
@@ -2145,6 +2181,9 @@ vis = $.extend(true, vis, {
                     break;
                 case 'views':
                     line = this.editViewName(widget, (wid_attr + index));
+                    break;
+                case 'custom':
+                    line = this.editCustom(widget, (wid_attr + index), wid_type_opt);
                     break;
                 case 'image':
                     line = this.editUrl(widget, (wid_attr + index));

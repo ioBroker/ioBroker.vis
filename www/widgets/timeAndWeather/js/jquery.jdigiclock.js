@@ -504,7 +504,7 @@ var jdigiclockCounter = 0;
                 
                 var $this = $(this);
                 var o = options;
-				$this._showCitySelector ($this, o.currentValue, _('City:'), o.onselect, o.onselectArg);
+				$this._showCitySelector($this, o.currentValue, _('City:'), o.onselect, o.onselectArg);
 			});
 		}
 	});
@@ -584,14 +584,15 @@ var jdigiclockCounter = 0;
 	}
 	
 	$.fn._showCitySelector = function (elemParent, curSelection, selectText, onselect, onselectArg) {
-		if (elemParent == null || elemParent === undefined)
-			elemParent = $('body');
-		var html = "<table><tr><td>";
-		html += (selectText == null) ? "Select:" : selectText;
+		if (elemParent == null || elemParent === undefined) elemParent = $('body');
+
+		var html = '<table><tr><td>';
+		html += (selectText == null) ? 'Select:' : selectText;
 		html += '<input type="text" id="weatherLocation" name="weatherLocation" size="33" value="'+((curSelection != null) ? curSelection : "")+'"/>';
 		html += '<input id="weatherLocationBtn" type="submit" name="submit" value="..." /></td></tr>';
 		html += '<tr><td id="weatherList"></td></tr>';
 		elemParent.html(html);
+
 		$('#weatherLocationBtn').click( function(e) {
 			e.preventDefault();
 			$.fn._weatherGeocode(document.getElementById('weatherLocation').value, 'weatherList', onselect, onselectArg);

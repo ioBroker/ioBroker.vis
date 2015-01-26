@@ -16,21 +16,23 @@
     "use strict";
 
 	// Add words for bars
-	$.extend(systemDictionary, {
-		"hideSeconds"      : {"en" : "Hide seconds",  "de": "Zeige keine Sekunden","ru": "Скрыть секунды"},
-		"blink"            : {"en" : "Blink",         "de": "Blinken",             "ru": "Мигать"},
-		"showWeekDay"      : {"en" : "Show day of week", "de": "Wochentag",        "ru": "День недели"},
-		"noClass"          : {"en" : "No style",      "de": "Kein Stil",           "ru": "Без стиля"},
-        "weoid"            : {"en" : "City",          "de": "Stadt",               "ru": "Город"},
-		"shortWeekDay"     : {"en" : "Short week day","de": "Kurzer Wochentag",    "ru": "Короткий день недели"},
-		"shortYear"        : {"en" : "Short year",    "de": "Kurzes Jahr",         "ru": "Короткий год"},
-		"prependZero"      : {"en" : "Prepend zero",  "de": "Null vorne",          "ru": "Ноль в начале"},
-		"monthWord"        : {"en" : "Month as word", "de": "Monat als text",      "ru": "Месяц словом"},
-		"shortMonth"       : {"en" : "Short month",   "de": "Kurzer Monat",        "ru": "Короткий месяц"},
-		"americanOrder"    : {"en" : "American format","de": "USA-Format",         "ru": "Формат USA"},
-        "City:"            : {"en" : "City:",         "de": "Stadt:",              "ru": "Город:"}
-	});
-    //jQuery.extend(true, vis.binds, {
+    if (vis.editMode) {
+        $.extend(systemDictionary, {
+            "hideSeconds"      : {"en" : "Hide seconds",  "de": "Zeige keine Sekunden","ru": "Скрыть секунды"},
+            "blink"            : {"en" : "Blink",         "de": "Blinken",             "ru": "Мигать"},
+            "showWeekDay"      : {"en" : "Show day of week", "de": "Wochentag",        "ru": "День недели"},
+            "noClass"          : {"en" : "No style",      "de": "Kein Stil",           "ru": "Без стиля"},
+            "weoid"            : {"en" : "City",          "de": "Stadt",               "ru": "Город"},
+            "shortWeekDay"     : {"en" : "Short week day","de": "Kurzer Wochentag",    "ru": "Короткий день недели"},
+            "shortYear"        : {"en" : "Short year",    "de": "Kurzes Jahr",         "ru": "Короткий год"},
+            "prependZero"      : {"en" : "Prepend zero",  "de": "Null vorne",          "ru": "Ноль в начале"},
+            "monthWord"        : {"en" : "Month as word", "de": "Monat als text",      "ru": "Месяц словом"},
+            "shortMonth"       : {"en" : "Short month",   "de": "Kurzer Monat",        "ru": "Короткий месяц"},
+            "americanOrder"    : {"en" : "American format","de": "USA-Format",         "ru": "Формат USA"},
+            "City:"            : {"en" : "City:",         "de": "Stadt:",              "ru": "Город:"}
+        });
+    }
+
     vis.binds.timeAndWeather = {
         startTime: function (view, elem, hideSeconds, blink, noClass, timerId) {
             var today = new Date();
@@ -38,31 +40,31 @@
             var m =     today.getMinutes();
             var s =     today.getSeconds();
             // add a zero in front of numbers<10
-            m = (m<10) ? ("0"+m) : m;
+            m = (m < 10) ? ("0" + m) : m;
             if (!hideSeconds) {
-                s = (s<10) ? ("0"+s) : s;
+                s = (s < 10) ? ("0" + s) : s;
             }
-            h = (h<10) ? ("0"+h) : h;
+            h = (h < 10) ? ("0" + h) : h;
             var hl = document.getElementById(elem);
             if (hideSeconds === "false") {
                 hideSeconds = false;
             }
             if (!hl) {
-                $('#visview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' clock') + '" id="'+elem+'" ></div>');
+                $('#visview_'+view).append('<div class="vis-widget'+ (noClass ? '' : ' clock') + '" id="' + elem + '" ></div>');
                 hl = document.getElementById(elem);
                 hl.dashId = today.getTime();
             }
             if (hl && (timerId === undefined || hl.dashId == timerId)) {
                 if (hideSeconds) {
-                    hl.innerHTML = h+'<span style="display:inline-block" id="'+elem+'_space">:</span>'+m;
-                    if (blink && (s%2)) {
-                        var r = $('#'+elem+'_space');
+                    hl.innerHTML = h + '<span style="display:inline-block" id="' + elem + '_space">:</span>' + m;
+                    if (blink && (s % 2)) {
+                        var r = $('#' + elem + '_space');
                         var w = r.width();
                         r.css({width: w});
                         r.html("");
                     }
                 } else {
-                    hl.innerHTML = h+":"+m+":"+s;
+                    hl.innerHTML = h + ":" + m + ":" + s;
                 }
                 hl.dashTimer = _setTimeout(vis.binds.timeAndWeather.startTime, 1000, view, elem, hideSeconds, blink, noClass, hl.dashId);
             }
@@ -112,8 +114,8 @@
             if (shortYear) y = y.toString().slice(2);
 
             // add a zero in front of numbers<10
-            if (prependZero) d = (d<10) ? ("0"+d) : d;
-            if (prependZero) m = (m<10) ? ("0"+m) : m;
+            if (prependZero) d = (d < 10) ? ("0" + d) : d;
+            if (prependZero) m = (m < 10) ? ("0" + m) : m;
 
             if (showWeekDay === "false") {
                 showWeekDay = false;
@@ -121,7 +123,7 @@
 
             var hl = document.getElementById(elem);
             if (!hl) {
-                $('#visview_'+view).append('<div class="dashui-widget'+ (noClass ? '' : ' date') + '" id="'+elem+'" ></div>');
+                $('#visview_' + view).append('<div class="vis-widget' + (noClass ? '' : ' date') + '" id="' + elem + '" ></div>');
                 hl = document.getElementById(elem);
                 hl.dashId = (new Date()).getTime();
             }
@@ -152,32 +154,32 @@
                             }
 
                             if (american) {
-                                dateString += monthString+" "+d+", "+y;
+                                dateString += monthString + " " + d + ", " + y;
                             } else {
-                                dateString += d+" "+monthString+", "+y;
+                                dateString += d + " " + monthString + ", " + y;
                             }
 
                             break;
                         default:
-                            dateString += d+". "+monthString+" "+y;
+                            dateString += d + ". " + monthString + " " + y;
                     }
                 } else {
                     switch (vis.language) {
                         case "en":
                             if (american) {
-                                dateString += m+"/"+d+"/"+y;
+                                dateString += m + "/" + d + "/" + y;
                             } else {
-                                dateString += d+"/"+m+"/"+y;
+                                dateString += d + "/" + m + "/" + y;
                             }
 
                             break;
                         default:
-                            dateString += d+"."+m+"."+y;
+                            dateString += d + "." + m + "." + y;
                     }
                 }
 
                 hl.innerHTML = dateString;
-                hl.dashTimer = _setTimeout(vis.binds.timeAndWeather.startDate, (24*3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId, shortWeekDay, shortYear, prependZero, monthWord, shortMonth, american);
+                hl.dashTimer = _setTimeout(vis.binds.timeAndWeather.startDate, (24 * 3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId, shortWeekDay, shortYear, prependZero, monthWord, shortMonth, american);
             }
         },
         tplTwCoolClock: function (view, data) {
@@ -194,10 +196,10 @@
             }
 
             var myClass = 'CoolClock:'+(data.attr('theme') || 'classic')+':'+radius+':'+(data.attr('noSeconds') ? 'noSeconds' : '')+'::'+(data.attr('showDigital') ? 'showDigital' : '') + '::'+(data.attr('showAmPm') ? 'showAmPm' : '');
-            var text = '<div id="'+data.attr('wid')+'" data-myclass="'+myClass+'" class="dashui-widget"><canvas style="width:100%; height:100%" class="'+myClass+'"></canvas></div>';
-            jQuery('#visview_'+view).append(text);
-            jQuery('#'+data.attr('wid')).bind("resize", function () {
-                var t = jQuery(this);
+            var text = '<div id="'+data.attr('wid') + '" data-myclass="' + myClass + '" class="vis-widget"><canvas style="width:100%; height:100%" class="'+myClass+'"></canvas></div>';
+            $('#visview_'+view).append(text);
+            $('#'+data.attr('wid')).bind("resize", function () {
+                var t = $(this);
                 var myClass = t.attr('data-myclass');
                 var myClasses = myClass.split(':');
                 myClasses[2] = t.width();
@@ -212,15 +214,15 @@
             CoolClock.findAndCreateClocks();
         },
         tplTwFlipClock: function (view, data) {
-            var text = '<div class="dashui-widget" style="width:500px; height: 110px" id="'+data.attr('wid')+'" data-dashui-resizable=';
+            var text = '<div class="vis-widget" style="width:500px; height: 110px" id="'+data.attr('wid')+'" data-vis-resizable=';
             text += "'" + '{"disabled":true}' + "'></div>";
-            jQuery('#visview_'+view).append(text);
-            var clock = jQuery('#'+data.attr('wid')).FlipClock({clockFace: 'TwentyFourHourClock'});
+            $('#visview_'+view).append(text);
+            var clock = $('#'+data.attr('wid')).FlipClock({clockFace: 'TwentyFourHourClock'});
         },
         tplTwHtcWeather: function (view, data) {
-            var text = '<div class="dashui-widget" style="width:500px; height: 420px" id="'+data.attr('wid')+'" data-dashui-resizable=';
+            var text = '<div class="vis-widget" style="width:500px; height: 420px" id="'+data.attr('wid')+'" data-vis-resizable=';
             text += "'" + '{"disabled":true}' + "'></div>";
-            jQuery('#visview_'+view).append(text);
+            $('#visview_'+view).append(text);
             var weoid = data.attr('weoid');
             if (weoid !== undefined && weoid !== null) {
                 var i = weoid.indexOf('[');
@@ -233,7 +235,7 @@
             else
                 weoid = '664942';
 
-            var clock = jQuery('#'+data.attr('wid')).jdigiclock({
+            var clock = $('#'+data.attr('wid')).jdigiclock({
                 weatherLocationCode: weoid,
                 weatherUpdate: 5,
                 lang: vis.language,
@@ -241,8 +243,8 @@
             });
         },
         tplTwYahooWeather: function (view, data) {
-            var text = '<div class="dashui-widget ui-widget-content" id="'+data.attr('wid')+'"></div>';
-            jQuery('#visview_'+view).append(text);
+            var text = '<div class="vis-widget ui-widget-content" id="'+data.attr('wid')+'"></div>';
+            $('#visview_' + view).append(text);
             var weoid = data.attr('weoid');
             if (weoid !== undefined && weoid !== null) {
                 var i = weoid.indexOf('[');
@@ -252,10 +254,64 @@
                     weoid = weoid.substring(0, i);
                 }
             }
-            else
+            else {
                 weoid = '664942';
-            jQuery('#'+data.attr('wid')).weatherfeed([weoid], {lang:vis.language, woeid: true, humidity: true, forecast: true, link: false, resizable: (vis.editMode)});
+            }
 
+            $('#' + data.attr('wid')).weatherfeed([weoid], {lang: vis.language, woeid: true, humidity: true, forecast: true, link: false, resizable: (vis.editMode)});
+        },
+        editWeather: function (widget, wid_attr, options) {
+            var line = {
+                input:  '<input type="text" id="inspect_' + wid_attr + '"/>',
+                init: function (_wid_attr, data) {
+                    $('#inspect_' + _wid_attr).jweatherCity({
+                        lang: vis.language,
+                        currentValue: vis.widgets[widget].data[_wid_attr],
+                        onselect: function (wid, text) {
+                            vis.widgets[vis.activeWidget].data.attr('weoid', text);
+                            vis.views[vis.activeView].widgets[vis.activeWidget].data['weoid'] = text;
+                            vis.save();
+                            vis.reRenderWidgetEdit(vis.activeWidget);
+                        }
+                    });
+                }
+            };
+            var that = this;
+            console.log('BBB');
+            /*line.button = {
+                icon:  'ui-icon-note',
+                text:  false,
+                title: _('Select image'),
+                click: function () {
+                    $('#option_' + wid_attr_).jweatherCity({
+                        lang: vis.language, currentValue: widget.data[wid_attr_],
+                        onselect: function (wid, text) {
+                            vis.widgets[vis.activeWidget].data.attr('weoid', text);
+                            vis.views[vis.activeView].widgets[vis.activeWidget].data['weoid'] = text;
+                            vis.save();
+                            vis.reRenderWidgetEdit(vis.activeWidget);
+                        }
+                    });
+                    var data = $(this).data('data-attr');
+
+                    $.fm({
+                        lang:         that.language,
+                        path:         that.widgets[widget].data[wid_attr] || '/' + that.conn.namespace + '/' + that.projectPrefix + 'img/',
+                        uploadDir:    '/' + that.conn.namespace + '/',
+                        fileFilter:   filter || ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
+                        folderFilter: false,
+                        mode:         'open',
+                        view:         'prev',
+                        userArg:      data,
+                        conn:         that.conn,
+                        zindex:       1001
+                    }, function (_data, userData){
+                        var src = _data.path + _data.file;
+                        $('#inspect_' + userData).val(src).trigger('change');
+                    });
+                }
+            };*/
+            return line;
         }
     };
     //});
@@ -263,35 +319,65 @@
 </script>
 <!-- startDate: function (view, elem, showWeekDay, noClass, timerId, shortWeekDay, shortYear, prependZero, monthWord, shortMonth, american) {
             -->
-<script type="text/ejs" id="tplTwSimpleDate" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleDate" data-dashui-attrs="showWeekDay/checkbox;shortWeekDay/checkbox;shortYear/checkbox;prependZero[true]/checkbox;monthWord/checkbox;shortMonth/checkbox;americanOrder/checkbox;noClass/checkbox">
+<script id="tplTwSimpleDate"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="timeAndWeather"
+        data-vis-name="SimpleDate"
+        data-vis-attrs="showWeekDay/checkbox;shortWeekDay/checkbox;shortYear/checkbox;prependZero[true]/checkbox;monthWord/checkbox;shortMonth/checkbox;americanOrder/checkbox;noClass/checkbox">
     <%
 		vis.binds.timeAndWeather.startDate(this.view, this.data.attr('wid'), this.data.attr('showWeekDay'), this.data.attr('noClass'), undefined, this.data.attr('shortWeekDay'), this.data.attr('shortYear'), this.data.attr('prependZero'), this.data.attr('monthWord'), this.data.attr('shortMonth'), this.data.attr('americanOrder'));
     %>
 </script>
 
-<script type="text/ejs" id="tplTwSimpleClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="SimpleClock" data-dashui-attrs="hideSeconds/checkbox;blink/checkbox;noClass/checkbox">
+<script id="tplTwSimpleClock"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="timeAndWeather"
+        data-vis-name="SimpleClock"
+        data-vis-attrs="hideSeconds/checkbox;blink/checkbox;noClass/checkbox">
     <%
         vis.binds.timeAndWeather.startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'), this.data.attr('blink'), this.data.attr('noClass'));
     %>
 </script>
-<script type="text/ejs" id="tplTwCoolClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="CoolClock" data-dashui-attrs="theme/fancy,swissRail,chunkySwiss,machine,simonbaird_com,classic,classicWhite,modern,simple,securephp,Tes2,Lev,Sand,Sun,Tor,Cold,Babosa,Tumb,Stone,Disc,watermelon;noSeconds/checkbox;showDigital/checkbox;showAmPm/checkbox" >
+<script id="tplTwCoolClock"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="timeAndWeather"
+        data-vis-name="CoolClock"
+        data-vis-attrs="theme/fancy,swissRail,chunkySwiss,machine,simonbaird_com,classic,classicWhite,modern,simple,securephp,Tes2,Lev,Sand,Sun,Tor,Cold,Babosa,Tumb,Stone,Disc,watermelon;noSeconds/checkbox;showDigital/checkbox;showAmPm/checkbox" >
     <%
         vis.binds.timeAndWeather.tplTwCoolClock(this.view, this.data);
     %>
 </script>
 
-<script type="text/ejs" id="tplTwFlipClock" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="FlipClock" data-dashui-attrs="">
+<script id="tplTwFlipClock"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="timeAndWeather"
+        data-vis-name="FlipClock"
+        data-vis-attrs="">
     <%
         vis.binds.timeAndWeather.tplTwFlipClock(this.view, this.data);
     %>
 </script>
 
-<script type="text/ejs" id="tplTwHtcWeather" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="HtcWeather" data-dashui-attrs="weoid">
+<script id="tplTwHtcWeather"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="timeAndWeather"
+        data-vis-name="HtcWeather"
+        data-vis-attrs="weoid/custom,timeAndWeather.editWeather">
     <% 
         vis.binds.timeAndWeather.tplTwHtcWeather(this.view, this.data);
     %>
 </script>
-<script type="text/ejs" id="tplTwYahooWeather" class="dashui-tpl" data-dashui-set="timeAndWeather" data-dashui-name="YahooWeather" data-dashui-attrs="weoid">
+<script id="tplTwYahooWeather"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="timeAndWeather"
+        data-vis-name="YahooWeather"
+        data-vis-attrs="weoid/custom,timeAndWeather.editWeather">
     <% 
         vis.binds.timeAndWeather.tplTwYahooWeather(this.view, this.data);
     %>
