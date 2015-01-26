@@ -98,20 +98,19 @@
         </tr>
     </table>
 </div>
-<div style="display: none;text-align: center" id="dialog_about">
+<div style="display: none;text-align: center" id="dialog_about" title="About" class="translateT">
 
     <ul style="font-size: 1.1em; line-height: 2em; display: inline;">
-        <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank" class="translate">Webseite</a></li>
+        <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank" class="translate">Web</a></li>
         <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank"
-               class="translate">Unterstützung</a></li>
-        <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank" class="translate">Änderungs-Historie</a>
+               class="translate">Community</a></li>
+        <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank" class="translate">Change log</a>
         </li>
     </ul>
 
-    <h4>Copyright &copy; 2013, 2014 <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a>, Bluefox
-    </h4>
+    <h4>Copyright &copy; 2013-2015 Bluefox, <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a></h4>
 
-    <p class="translate">CC BY-NC License</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img
+    <p class="translate">CC BY-NC License 4.0</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img
         src="img/cc-nc-by.png"/></a>
     <!--p class="translate">license1</p>
     <p class="translate">license2</p>
@@ -130,7 +129,7 @@
     <input type="text" id="name_import_view">
     <button id="start_import_view" class="translateB">import</button>
 </div>
-<div style="display: none ;text-align: center" id="dialog_shortcuts">
+<div style="display: none ;text-align: center" id="dialog_shortcuts" title="Shortcuts" class="translateT">
     <table style="height: 100%;width: 100%">
         <colgroup>
             <col style="text-align: left">
@@ -139,22 +138,12 @@
         </colgroup>
         <tr>
             <td class="translate">
-                Show develop ribbon
+                Full screen
             </td>
-            <td class="translate">
-            </td>
-            <td class="translate">
-                F2
-            </td>
-        </tr>
-        <tr>
-            <td class="translate">
-                Fullsceen
-            </td>
-            <td class="translate">
+            <td>
 
             </td>
-            <td class="translate">
+            <td>
                 F3
             </td>
         </tr>
@@ -162,7 +151,7 @@
             <td class="translate">
                 Next View
             </td>
-            <td class="translate">
+            <td>
 
             </td>
             <td class="translate">
@@ -173,7 +162,7 @@
             <td class="translate">
                 Prev. View
             </td>
-            <td class="translate">
+            <td>
             </td>
             <td class="translate">
                 PgDown
@@ -183,7 +172,7 @@
             <td class="translate">
                 Move Widget 1px
             </td>
-            <td class="translate">
+            <td>
             </td>
             <td class="translate">
                 Arrow Keys
@@ -194,10 +183,20 @@
                 Move Widget 10px
             </td>
             <td class="translate">
-                STRG / CMD
+                Ctrl / CMD
             </td>
             <td class="translate">
                 Arrow Keys
+            </td>
+        </tr>
+        <tr>
+            <td class="translate" style="color:rgba(1,1,1,0.05)">
+                Show develop ribbon
+            </td>
+            <td>
+            </td>
+            <td style="color:rgba(1,1,1,0.05)">
+                F2
             </td>
         </tr>
         <tr>
@@ -226,7 +225,7 @@
 <div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 100 ">
     <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -2px;">
         <li id="ribbon_tab_datei" style="display: none">
-            <a href="#ribbon_datei" style="padding: 2px 4px 2px 4px" class="translate">Datei</a>
+            <a href="#ribbon_datei" style="padding: 2px 4px 2px 4px" class="translate">File</a>
         </li>
         <li>
             <a href="#ribbon_view" style="padding: 2px 4px 2px 4px" class=" translate">Views</a>
