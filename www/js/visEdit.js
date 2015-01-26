@@ -58,7 +58,7 @@ vis = $.extend(true, vis, {
         });
 
         function layout() {
-            $('#panel_body').height(parseInt($(window).height() - $('#menu_body').height() - 22));
+            $('#panel_body').height(parseInt($(window).height() - $('#menu_body').height()));
             $('#vis_wrap').width(parseInt($(window).width() - $('#pan_add_wid').width() - $('#pan_attr').width() - 1));
         }
 
@@ -303,10 +303,7 @@ vis = $.extend(true, vis, {
             }
         });
 
-        $('#savingProgress').button({
-            text: false,
-            icons: {primary: 'ui-icon-disk'}
-        }).click(that._saveToServer).hide().addClass('ui-state-active');
+
 
         $('#dev_show_html').button({}).click(function () {
             var wid_id = $('#' + vis.activeWidget).attr('id');
@@ -503,6 +500,13 @@ vis = $.extend(true, vis, {
         //});
 
 
+
+        $('#savingProgress').button({
+            text: false,
+            icons: {primary: 'ui-icon-disk'}
+        }).click(vis._saveToServer).hide().addClass('ui-state-active');
+
+
         // Ribbon icons Golbal
 
         $('.btn_iconbar')
@@ -519,11 +523,11 @@ vis = $.extend(true, vis, {
 
         // Widget ----------------------------------------------------------------
 
-        $('#del_widget').click(function () {
+        $('#rib_wid_del').click(function () {
             vis.delWidget()
         });
 
-        $('#widget_doc').click(function () {
+        $('#rib_wid_doc').click(function () {
             var tpl = vis.views[vis.activeView].widgets[vis.activeWidget].tpl;
             var widgetSet = $('#' + tpl).attr('data-vis-set');
             var docUrl = 'widgets/' + widgetSet + '/doc.html#' + tpl;
