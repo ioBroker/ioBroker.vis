@@ -4,8 +4,10 @@ var visConfig = {
         {name: "metro",       depends: ["basic"]},
         {name: "fancyswitch", depends: ["basic"]},
         "tabs",
-        "jqplot"
+        "jqplot",
+        "timeAndWeather"
         /*,
+         "weather-adapter"
         "bars",
         "colorpicker",
 
@@ -19,8 +21,6 @@ var visConfig = {
         "RGraph",
         "special",
         "swipe",
-        "timeAndWeather",
-        "weather-adapter",
         "table",
         "dev"*/
     ],
