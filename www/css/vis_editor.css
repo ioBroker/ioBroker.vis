@@ -2,7 +2,7 @@ div#vis_container{
     width: 100%;
     height: calc(100% - 29px);
     position: relative;
-    overflow: scroll;
+    overflow: auto;
 }
 
 /*--------------------------------------------- SelectID dialog ------------------------------- */
@@ -88,6 +88,16 @@ div#vis_container{
     position: relative;
     top: 4px;
     left: -15px;
+    display: inline-block;
+}
+#savingProgress {
+    width: 26px;
+    height: 26px;
+    position: relative;
+    right: 5px;
+    top: 4px;
+    display: inline-block;
+    float: right;
 }
 
 #new_view_name {
@@ -242,13 +252,7 @@ div#vis_container{
     background: #ffffff;
 }
 
-#savingProgress {
-    width: 18px;
-    height: 18px;
-    position: absolute;
-    right: 3px;
-    top: 1px;
-}
+
 
 /*ribbon*/
 
@@ -303,19 +307,13 @@ div#vis_container{
 }
 
 #panel_body {
-     width: 100%;
-    margin-bottom: 20px;
+    width: 100%;
     position: relative;
     overflow: hidden;
     display: inline-flex;
 }
 
-#status_bar{
-    height: 20px;
-    position: absolute;
-    width: 100%;
-    bottom: 0;
-}
+
 .toolbox{
     text-align: center;
     height: calc(100% - 62px);
