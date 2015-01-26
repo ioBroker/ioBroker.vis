@@ -1,0 +1,608 @@
+div#vis_container{
+    width: 100%;
+    height: calc(100% - 29px);
+    position: relative;
+    overflow: scroll;
+}
+
+/*--------------------------------------------- SelectID dialog ------------------------------- */
+.select-plus {
+    display: inline-block !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin-right: 5px;
+    vertical-align: middle !important;
+    cursor: crosshair;
+}
+
+.select-header {
+    font-size: 11px
+    top: 0;
+    height: 60px;
+    table-layout: fixed;
+    font-family: Arial, sans-serif;
+}
+
+.select-header-title {
+    font-weight: bold;
+    text-align: left;
+    padding-left: 5px;
+}
+
+.select-body {
+    table-layout: fixed;
+    white-space: nowrap;
+    height: calc(100% - 110px) !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    width: 100%;
+}
+
+.select-table {
+    border-collapse: collapse;
+    border-style: solid;
+    border-width: 1px;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.select-tr {
+    background: rgb(50, 50, 50);
+    border-bottom: 1px solid rgb(128, 128, 128);
+}
+
+.select-td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.select-search {
+    width: 95%;
+    height: 22px;
+    border-radius: 2px 2px 2px 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+
+.select-filter-clear {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.css-inspector-heading {
+    text-align: center;
+    font-weight: bold;
+    padding-top: 6px;
+}
+
+#button_undo {
+    height: 27px;
+    padding-left: 3px;
+    padding-right: 3px;
+    position: relative;
+    top: 4px;
+    left: -15px;
+}
+
+#new_view_name {
+    width: 200px;
+
+}
+
+#add_view {
+    margin-left: 3px;
+    height: 23px;
+}
+
+#dup_view {
+    height: 23px;
+    margin-top: 2px;
+}
+
+#tabs-1 .ui-multiselect {
+    width: 292px !important;
+    height: 28px;
+}
+
+#rib_view_del {
+
+}
+
+#new_name {
+    width: 200px;
+}
+
+#rename_view {
+    margin-left: 3px;
+}
+
+
+#add_widget {
+
+}
+
+#del_widget {
+}
+
+#widget_doc {
+}
+
+#dup_widget {
+    width: 142px;
+}
+
+.vis-widget-tools > .ui-multiselect {
+    height: 28px;
+    margin-top: 15px;
+    width: 244px !important;
+    position: relative;
+    left: 1px;
+    top: 9px;
+
+}
+
+.widget_attrs_header {
+    width: 115px !important;
+}
+
+#widget_attrs_fix .ui-multiselect {
+    width: 265px !important;
+}
+
+#widget_attrs_fix .vis-edit-textbox {
+    width: 260px !important;
+
+}
+
+#snap_type {
+    width: 255px;
+
+}
+
+#grid_size {
+    width: 250px;
+
+}
+
+#screen_size_x {
+    width: 250px;
+}
+
+#screen_size_y {
+    width: 250px;
+
+}
+
+#wizard_rooms {
+    width: 250px;
+}
+
+#wizard_funcs {
+    width: 250px;
+}
+
+#wizard_widgets {
+    width: 250px;
+}
+
+#wizard_run {
+    margin-left: 87px;
+    margin-top: 5px;
+}
+
+#create_instance {
+    width: 160px;
+}
+
+#remove_instance {
+    margin-left: 87px;
+    margin-top: 5px;
+    width: 160px;
+}
+
+#export_view {
+}
+
+#import_view {
+}
+
+#export_local_view {
+}
+
+#import_local_view {
+}
+
+#clear_local_view {
+}
+
+#language {
+    width: 250px;
+}
+
+#vis_instance {
+    width: 70px;
+}
+
+.ui-selecting {
+
+}
+
+.fullscreen{
+    position: absolute!important;
+    z-index: 10000;
+    width: 100%!important;
+    height: 100%!important;
+    overflow: auto!important;
+    background: #ffffff;
+}
+
+#savingProgress {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    right: 3px;
+    top: 1px;
+}
+
+/*ribbon*/
+
+.ribbon_tab{
+    max-height: 46px;
+    min-height: 46px;
+    overflow: hidden;
+    padding: 0!important;
+    border-radius: 0!important;
+    border: none;
+    position: relative;
+
+}
+.ribbon_tab_content{
+    width: 100%;
+    height: 44px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.menu-tab{
+    height: 27px;
+    border-bottom: none!important;
+    padding-right: 4px;
+    padding-left: 4px!important;
+    position: relative!important;
+    top: 1px;
+    margin-left: -9px;
+    margin-right: 13px;
+}
+.menu-tab-text{
+    padding: 2px 4px 2px 4px!important;
+}
+
+.menu_item{
+    background-image: none!important;
+}
+
+.ribbon_field{
+    height: 34px;
+    margin-left: 5px;
+    background: rgba(0, 0, 0, 0);
+    font-size: 11px;
+    font-weight: bolder;
+    font-family: Arial, sans-serif;
+    padding-left: 3px;
+    padding-right: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#panel_body {
+     width: 100%;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+}
+
+#status_bar{
+    height: 20px;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+.toolbox{
+    text-align: center;
+    height: calc(100% - 62px);
+    overflow: auto;
+    border-color: inherit;
+    margin: 0;
+    position: relative;
+    top: -4px;
+}
+
+.wid_prev{
+    width: 130px;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0)!important;
+    margin: 3px;
+    /*box-shadow: inset -3px -3px 5px rgba(20, 20, 20, 0.7), inset 3px 3px 5px rgba(220, 220, 220, 0.8);*/
+    border-radius: 2px;
+    font-weight: bolder;
+    font-size: 11px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+}
+.wid_prev_k {
+    width: 80px!important;
+    font-size: 9px!important;
+    /* padding: 0!important; */
+    margin: 2px!important;
+    border-radius: 3px!important;
+    font-weight: bolder!important;
+}
+.wid_prev_content{
+    padding: 0;
+    margin: 0;
+    height: auto;
+}
+.wid_prev_type{
+display: none;
+}
+
+
+#btn_prev_zoom{
+    display: inline-block;
+    float: right;
+    padding: 3px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+    border-radius: 6px;
+    margin-top: -4px;
+    margin-right: 2px;
+}
+#btn_prev_type{
+    display: inline-block;
+    float: right;
+    padding: 3px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+    border-radius: 6px;
+    margin-top: -4px;
+}
+
+.wid_prev:after{
+    width: 100%;
+    height: 100%;
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 90;
+}
+
+.vis-widget_prev{
+    position: relative!important;
+    top: 0!important;
+    left: 0!important;
+    padding: 0!important;
+}
+.select_set{
+    width: 100%!important;
+    font-size: 21px!important;
+    font-weight: bold!important;
+    border-radius: 0;
+    height: 30px!important;
+    text-align: center;
+
+}
+
+
+#pan_add_wid{
+    width: 190px;
+    display: inline-block;
+    height: 100%;
+
+}
+#pan_attr {
+    display: inline-block;
+    height: 100%;
+    left: auto!important;
+    /*white-space: nowrap;*/
+    position: absolute;
+    right: 0;
+    width: 355px;
+
+}
+
+#inspect_view_bkg_parent{
+    white-space: normal;
+}
+/*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
+
+
+#vis_wrap{
+    width: 200px;
+    max-height: 100%;
+    position: relative;
+    display: inline-block;
+    height: 100%;
+    overflow: hidden;
+}
+
+#view_select{
+    width: calc(100% - 1px);
+    height: 27px;
+
+    display: inline-flex;
+    position: relative;
+}
+
+#view_select_left{
+    height: 27px;
+    width: 27px;
+    border-radius: 0px;
+    margin: 0;
+}
+#view_select_tabs_wrap{
+    height: 27px;
+    max-width: calc(100% - 54px);
+    overflow: hidden;
+}
+#view_select_tabs{
+    width: auto;
+    display: inline-flex;
+    left: 0;
+    position: relative;
+}
+#view_select_right{
+    height: 27px;
+    width: 27px;
+    position: absolute;
+    right: -2px;
+    border-radius: 0px;
+}
+
+.view_select_tab{
+    display: inline-block;
+    margin-left: 1px;
+    margin-right: 1px;
+    padding: 2px 6px 3px 6px;
+    min-width: 40px;
+    text-align: center;
+    font-size: 16px;
+    height: 19px;
+    top: 2px;
+    position: relative;
+}
+
+/*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
+
+.tab_attr{
+    padding: 0px 0px 0px 4px!important;
+    border-width: 1px 0 0 0!important;
+    font-size: 11px;
+    font-weight: bold;
+    height: calc(100% - 50px);
+     overflow: auto;
+}
+
+#attr_wrap{
+    height: calc(100% - 14px);
+    padding: 0;
+    border-radius: 0;
+}
+
+#select_set-button{
+    width: calc(100% - 2px)!important;
+    border-radius: 0!important;
+    height: 30px;
+    padding: 0;
+}
+#select_set-button > span.ui-selectmenu-text{
+    padding-top: 3px!important;
+    padding-bottom: 3px!important;
+}
+
+.vis-edit-td-field .ui-slider{
+    width: calc(100% - 10px);
+    margin-left: 5px;
+}
+
+.btn_iconbar{
+    width: 22px;
+    height: 22px;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0);
+    display: inline-block;
+}
+.icon_onIconbar{
+    height: 18px;
+    width: 18px;
+    margin: 2px;
+    display: inline-block;
+}
+
+#select_active_widget + button{
+    width: 100%!important;
+    font-size: 12px;
+    white-space: nowrap;
+    height: 22px;
+    /* padding-top: 3px; */
+}
+.select_active_widget {
+    width: 400px!important;
+    font-size: 12px;
+}
+td > .select_active_widget :nth-child(2){
+    width: 255px;
+    overflow: hidden;
+    display: inline-block;
+    height: 15px;
+    padding-top: 1px;
+}
+.select_view{
+    width: 350px!important;
+}
+
+#select_view + button{
+    width: 100%!important;
+    font-size: 12px;
+    white-space: nowrap;
+    height: 22px;
+}
+
+.select_view :nth-child(2){
+    position: relative;
+    top: 2px;
+}
+
+#rib_wid_copy_view +button {
+    width: 100%!important;
+    height: 22px;
+    font: inherit;
+}
+
+#rib_view_copyname{
+    width: calc(100% - 3px);
+    height: 15px;
+    font: inherit;
+}
+#rib_view_newname{
+    width: calc(100% - 3px);
+    height: 15px;
+    font: inherit;
+}
+#rib_view_addname{
+    width: calc(100% - 3px);
+    height: 15px;
+    font: inherit;
+}
+
+.screen_size{
+    font-size: 12px;
+    width: 260px!important;
+
+}
+
+
+#screen_size + button{
+    width: 100%!important;
+    white-space: nowrap;
+    height: 24px!important;
+}
