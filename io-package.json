@@ -21,7 +21,7 @@
         ],
         "localLink":                "http://%ip%:%web_port%/vis/edit.html",
         "license":                  "CC BY-NC",
-        "dependencies":             ["socketio", "web"],
+        "dependencies":             ["web"],
         "onlyWWW":                  true,
         "singleton":                true
     },
