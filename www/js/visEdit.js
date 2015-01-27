@@ -1,6 +1,6 @@
 /**
  *  ioBroker.vis
- *  https://github.com/hobbyquaker/vis/
+ *  https://github.com/ioBroker/ioBroker.vis
  *
  *  Copyright (c) 2013-2014 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
@@ -39,8 +39,8 @@ vis = $.extend(true, vis, {
             $("#ribbon_tab_datei").show()
         }
 
-        vis.editInit_dialogs();
-        vis.editInit_menu();
+        this.editInitDialogs();
+        this.editInitMenu();
         $('#attr_wrap').tabs();
         $('#pan_add_wid').resizable({
             handles: 'e',
@@ -402,7 +402,7 @@ vis = $.extend(true, vis, {
             }
         }
     },
-    editInit_dialogs: function () {
+    editInitDialogs: function () {
 
         $('#dialog_about').dialog({
             autoOpen: false,
@@ -419,21 +419,21 @@ vis = $.extend(true, vis, {
         });
 
     },
-    editInit_menu: function () {
+    editInitMenu: function () {
         $('#menu.sf-menu').superclick({
             hoverClass: 'sfHover',
-            uiClass: 'ui-state-hover',  // jQuery-UI modified
+            uiClass:    'ui-state-hover',  // jQuery-UI modified
             pathLevels: 1,
-            cssArrows: false,
-            disableHI: false
+            cssArrows:  false,
+            disableHI:  false
         });
 
         $('li.ui-state-default').hover(
             function () {
-                $(this).addClass('ui-state-hover')
+                $(this).addClass('ui-state-hover');
             },
             function () {
-                $(this).removeClass('ui-state-hover')
+                $(this).removeClass('ui-state-hover');
             }
         );
 
@@ -449,11 +449,12 @@ vis = $.extend(true, vis, {
         });
 
         // Theme select Editor
-        var last_theme = storage.get('vistheme');
-        if (last_theme) {
+        var lastTheme = storage.get('vistheme');
+        if (lastTheme) {
             $('#editor_theme').remove();
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + last_theme + '/jquery-ui.min.css" id="editor_theme"/>');
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + lastTheme + '/jquery-ui.min.css" id="editor_theme"/>');
         }
+
         $('#ul_theme li a').click(function () {
             var theme = $(this).data('info');
             vis.views[vis.activeView].settings.theme = theme;
@@ -462,7 +463,6 @@ vis = $.extend(true, vis, {
             //vis.additionalThemeCss(theme);
             storage.set('vistheme', theme);
             vis.save();
-
         });
 
         // Theme seleckt View
@@ -509,7 +509,7 @@ vis = $.extend(true, vis, {
 
         // Ribbon icons Golbal
 
-        $('.btn_iconbar')
+        $('.icon-on-iconbar')
             .hover(
             function () {
                 $(this).addClass('ui-state-hover');
@@ -518,7 +518,7 @@ vis = $.extend(true, vis, {
                 $(this).removeClass('ui-state-hover');
             })
             .click(function () {
-                $(this).stop(true, true).effect("highlight")
+                $(this).stop(true, true).effect("highlight");
             });
 
         // Widget ----------------------------------------------------------------
@@ -2893,7 +2893,7 @@ vis = $.extend(true, vis, {
             vis.syncWidget(vis.activeWidget, $(this).val());
             vis.save();
         });
-        $("#inspect_views").next().css('width', 206);
+        $("#inspect_views").next().css('width', '100%');
 
         // Select Widget
         $('#select_active_widget option').removeAttr('selected');

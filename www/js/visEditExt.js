@@ -15,7 +15,7 @@
 
 // visEdit - the ioBroker.vis Editor extensions
 
-"use strict";
+'use strict';
 
 // Add words for bars
 $.extend(systemDictionary, {
