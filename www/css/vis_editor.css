@@ -171,15 +171,20 @@ div#vis_container{
 }
 
 #snap_type {
-    width: 255px;
-
+    width: 60px;
 }
 
 #grid_size {
-    width: 250px;
-
+    width: 50px;
 }
-
+#screen_hide_description{
+    width: 15px;
+    height: 15px;
+    position: relative;
+    top: 4px;
+    float: right;
+    margin-right: 3px;
+}
 #screen_size_x {
     width: 250px;
 }
@@ -190,15 +195,15 @@ div#vis_container{
 }
 
 #wizard_rooms {
-    width: 250px;
+    width: 100px;
 }
 
 #wizard_funcs {
-    width: 250px;
+    width: 100px;
 }
 
 #wizard_widgets {
-    width: 250px;
+    width: 100px;
 }
 
 #wizard_run {
