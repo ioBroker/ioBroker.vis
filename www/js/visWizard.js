@@ -14,7 +14,7 @@
  */
  // visEdit - the ioBroker.vis Editor Wizard
 
-"use strict";
+'use strict';
 
 // Add words for bars
 jQuery.extend(systemDictionary, {
