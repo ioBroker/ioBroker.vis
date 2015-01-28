@@ -82,6 +82,7 @@ vis = $.extend(true, vis, {
         $('#widget_helper').hide();
 
         $('input.vis-editor').button();
+
         $('button.vis-editor').button();
 
         $('select.vis-editor').each(function () {
@@ -721,7 +722,6 @@ vis = $.extend(true, vis, {
                     containment: $('#panel_body'),
                     zIndex: 10000,
                     cursorAt: {top: 0, left: 0},
-
                     start: function (event, ui) {
                         if (ui.helper.children().length < 3) {
                             $(ui.helper).addClass("ui-state-highlight ui-corner-all").css({padding: "2px", "font-size": "12px"})
@@ -733,8 +733,6 @@ vis = $.extend(true, vis, {
                             $(ui.helper).css("border", "none")
                             $(ui.helper).css("width","auto")
                         }
-
-
                     }
                 });
             });
@@ -1408,12 +1406,20 @@ vis = $.extend(true, vis, {
 
         if (isSelectWidget) {
             this.activeWidget = widgetId;
-            this.actionNewWidget(widgetId);
+            //this.actionNewWidget(widgetId);
         }
 
         if (!noSave) this.save();
 
         this.bindWidgetClick(widgetId);
+
+        if ($("#wid_all_lock").hasClass("ui-state-active")){
+            setTimeout(function(){
+                console.log($jWidget)
+                $($jWidget).addClass("vis-widget-lock")
+                console.log($jWidget)
+            },500)
+        }
 
         return widgetId;
     },
@@ -2488,6 +2494,7 @@ vis = $.extend(true, vis, {
                         servConn.logError('inspectWidget - Cannot destroy resizable ' + $this.attr('id') + ' ' + e);
                     }
                 }
+
             });
         }
 
@@ -2948,6 +2955,9 @@ vis = $.extend(true, vis, {
         }
         if (!vis.widgets[wid].data._no_resize) {
             vis.resizable($this);
+        }
+        if ($("#wid_all_lock").hasClass("ui-state-active")){
+            $("#"+wid).addClass("vis-widget-lock")
         }
 
         // Inspector

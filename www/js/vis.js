@@ -494,7 +494,6 @@ var vis = {
                 $($view).droppable({
                     accept: ".wid_prev",
                     drop: function (event, ui) {
-                        console.log("hallo")
                         var tpl = $(ui.draggable).data("tpl");
                         var view_pos = $("#vis_container").position();
                         var add_pos = {left: ui.position.left - $('#toolbox').width() + $("#vis_container").scrollLeft() +5, top: ui.position.top - view_pos.top +$("#vis_container").scrollTop()+8};
@@ -518,9 +517,6 @@ var vis = {
                             .multiselect('refresh');
 
                         setTimeout(function () {
-                            if($("#wid_all_lock").hasClass("ui-state-active")) {
-                                $('#' + vis.activeWidget).addClass("vis-widget-lock")
-                            }
                             vis.inspectWidget(vis.activeWidget)
                         }, 50);
 
