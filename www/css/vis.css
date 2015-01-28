@@ -62,6 +62,8 @@ div#vis_container {
 .vis-view {
     position: absolute;
     top: 0px;
+    min-height: 100%;
+    min-width: 100%;
 }
 
 .tplSpanOnOff {
