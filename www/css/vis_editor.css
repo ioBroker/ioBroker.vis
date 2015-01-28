@@ -460,12 +460,12 @@ display: none;
     border-radius: 0px;
     margin: 0;
 }
-#view_select_tabs_wrap{
+#view-select-tabs_wrap{
     height: 27px;
     max-width: calc(100% - 54px);
     overflow: hidden;
 }
-#view_select_tabs{
+#view-select-tabs{
     width: auto;
     display: inline-flex;
     left: 0;
@@ -479,7 +479,7 @@ display: none;
     border-radius: 0px;
 }
 
-.view_select_tab{
+.view-select-tab{
     display: inline-block;
     margin-left: 1px;
     margin-right: 1px;
@@ -490,6 +490,7 @@ display: none;
     height: 19px;
     top: 2px;
     position: relative;
+    cursor: pointer;
 }
 
 /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
