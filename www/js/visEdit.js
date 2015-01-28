@@ -54,7 +54,7 @@ vis = $.extend(true, vis, {
         });
 
         $(window).resize(function () {
-            layout()
+            layout();
         });
 
         function layout() {
@@ -73,10 +73,10 @@ vis = $.extend(true, vis, {
             .addClass('ui-state-disabled')
             .hover(
             function () {
-                $(this).addClass('ui-state-hover')
+                $(this).addClass('ui-state-hover');
             },
             function () {
-                $(this).removeClass('ui-state-hover')
+                $(this).removeClass('ui-state-hover');
             });
 
         $('#widget_helper').hide();
@@ -499,14 +499,6 @@ vis = $.extend(true, vis, {
         //    $("#dialog_setup").dialog("open")
         //});
 
-
-
-        $('#savingProgress').button({
-            text: false,
-            icons: {primary: 'ui-icon-disk'}
-        }).click(vis._saveToServer).hide().addClass('ui-state-active');
-
-
         // Ribbon icons Golbal
 
         $('.icon-on-iconbar')
@@ -648,8 +640,13 @@ vis = $.extend(true, vis, {
             $("#rib_tools_resolution_manuel").toggle();
         })
 
+        $('#savingProgress').button({
+            text: false,
+            icons: {primary: 'ui-icon-disk'}
+        }).click(vis._saveToServer).hide().addClass('ui-state-active');
+
     },
-    editInit_Widget_prev: function () {
+    editInitWidgetPreview: function () {
         $('#btn_prev_zoom').hover(
             function () {
                 $(this).addClass('ui-state-hover');
@@ -734,7 +731,7 @@ vis = $.extend(true, vis, {
             });
         });
     },
-    editInit_select_view: function () {
+    editInitSelectView: function () {
 
         $('#view_select_tabs_wrap').resize(function () {
             var o = {
@@ -855,7 +852,7 @@ vis = $.extend(true, vis, {
         // ioBroker.vis Editor Init
         var that = this;
 
-        vis.editInit_select_view();
+        vis.editInitSelectView();
         // todo Remove the old select view
         var sel;
 
@@ -927,7 +924,7 @@ vis = $.extend(true, vis, {
 
         $('#select_set option[value="' + last_set + '"]').prop('selected', true);
 
-        vis.editInit_Widget_prev();
+        vis.editInitWidgetPreview();
 
         $select_set.selectmenu({
             change: function (event, ui) {
@@ -3582,7 +3579,7 @@ vis = $.extend(true, vis, {
 
         vis.saveRemote(function () {
             vis._saveTimer = null;
-            $('#savingProgress').hide().next().button('enable');
+            $('#savingProgress').hide();
         });
     },
     save: function (cb) {
@@ -3596,7 +3593,7 @@ vis = $.extend(true, vis, {
             that._saveToServer();
         }, 2000);
 
-        $('#savingProgress').show().next().button('disable');
+        $('#savingProgress').show();
         if (cb) cb();
     },
     undo: function () {
