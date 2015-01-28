@@ -352,7 +352,7 @@
                     <tr id="rib_view">
                         <td style=" height: 22px; padding-right:3px" class="translate">Active View:</td>
                         <td>
-                            <select id="select_view" style="width: 100%" ></select>
+                            <select id="select_view" style="width: 310px"></select>
                         </td>
                         <td>
                             <div id="rib_view_add" class="btn-iconbar ui-corner-all translateT" title="Add new view"><img class="icon-on-iconbar" src="icon/add.png" style="width: 16px;height: 16px;margin: 3px;"></div>
@@ -382,16 +382,16 @@
                         <col span="10" width="26px"/>
                     </colgroup>
                     <tr id="rib_wid_copy_tr" style="display:none">
-                    <td  style="height: 22px; padding-right:3px" class="translate">To View:</td>
-                    <td>
-                        <select class="" id="rib_wid_copy_view"></select>
-                    </td>
-                    <td>
-                        <div id="rib_wid_copy_ok" class="btn-iconbar ui-corner-all"> <img class="icon-on-iconbar" src="icon/ok.png"></div>
-                    </td>
-                    <td>
-                        <div id="rib_wid_copy_cancel" class="btn-iconbar ui-corner-all"> <img class="icon-on-iconbar" src="icon/cancel.png"></div>
-                    </td>
+                        <td style="height: 22px; padding-right: 3px" class="translate">To View:</td>
+                        <td>
+                            <select id="rib_wid_copy_view" style="width: 310px"></select>
+                        </td>
+                        <td>
+                            <div id="rib_wid_copy_ok" class="btn-iconbar ui-corner-all"> <img class="icon-on-iconbar" src="icon/ok.png"></div>
+                        </td>
+                        <td>
+                            <div id="rib_wid_copy_cancel" class="btn-iconbar ui-corner-all"> <img class="icon-on-iconbar" src="icon/cancel.png"></div>
+                        </td>
                     </tr>
                     <tr id="rib_wid">
                         <td style=" height: 22px; padding-right:3px" class="translate">Active Widget:</td>
@@ -399,13 +399,13 @@
                             <select id="select_active_widget" class="vis-editor" data-multiselect-width="400" data-multiselect-height="250"></select>
                         </td>
                         <td>
-                            <div id="rib_wid_del" class="btn-iconbar ui-corner-all translateT" title="Delete widget"><img class="icon-on-iconbar" src="icon/delete.png"></div>
+                            <div id="rib_wid_del" class="btn-iconbar ui-corner-all translateT" title="Delete widget"></div>
                         </td>
                         <td>
-                            <div id="rib_wid_copy" class="btn-iconbar ui-corner-all translateT" title="Copy widget"><img class="icon-on-iconbar" src="icon/copy.png"></div>
+                            <div id="rib_wid_copy" class="btn-iconbar ui-corner-all translateT" title="Copy widget"></div>
                         </td>
                         <td>
-                            <div id="rib_wid_doc" class="btn-iconbar ui-corner-all translateT" title="Help about widget"><img class="icon-on-iconbar" src="icon/info.png"></div>
+                            <div id="rib_wid_doc" class="btn-iconbar ui-corner-all translateT" title="Help about widget"></div>
                         </td>
                     </tr>
                 </table>
@@ -1116,6 +1116,18 @@
             </div>
         </div>
     </div>
+</div>
+<div id="dialog-message" title="Message" style="display: none">
+    <p>
+        <span id="dialog-message-icon" class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+        <span id="dialog-message-text"></span>
+    </p>
+</div>
+<div id="dialog-confirm" title="Question" style="display: none">
+    <p>
+        <span id="dialog-confirm-icon" class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+        <span id="dialog-confirm-text"></span>
+    </p>
 </div>
 
 <div style="display: none" id="uploadPreview"></div>

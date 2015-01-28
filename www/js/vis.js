@@ -743,7 +743,7 @@ var vis = {
         if (hideOptions.effect == 'show') effect = false;
 
         if (this.inspectWidget) {
-            this.inspectWidget("none");
+            this.inspectWidget('none');
             this.clearWidgetHelper();
             $("#select_active_widget").html('<option value="none">' + _('none selected') + '</option>');
         }
@@ -756,20 +756,20 @@ var vis = {
             view = prop;
         }
 
+        // If really changed
         if (this.activeView !== view) {
-
             if (effect) {
                 //console.log("effect");
                 this.renderView(view, true, true);
 
                 // View ggf aus Container heraus holen
-                if ($("#visview_" + view).parent().attr("id") !== "vis_container") {
-                    $("#visview_" + view).appendTo("#vis_container");
+                if ($('#visview_' + view).parent().attr("id") !== 'vis_container') {
+                    $('#visview_' + view).appendTo('#vis_container');
                 }
 
                 // If hide and show at the same time
                 if (sync) {
-                    $("#visview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
+                    $('#visview_' + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
                         if (that.views[view].rerender) {
                             that.views[view].rerender = false;
                             for (var id in this.views[view].widgets) {
@@ -1146,10 +1146,10 @@ if ('applicationCache' in window) {
                                     var obj = data[id];
                                     var o = {};
                                     o[id + '.val'] = obj.val;
-                                    o[id + '.ts'] = obj.ts;
+                                    o[id + '.ts']  = obj.ts;
                                     if (vis.states[id + '.val'] !== undefined) {
                                         o[id + '.ack'] = obj.ack;
-                                        o[id + '.lc'] = obj.lc;
+                                        o[id + '.lc']  = obj.lc;
                                     }
                                     try {
                                         vis.states.attr(o);
