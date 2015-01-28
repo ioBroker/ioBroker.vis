@@ -504,10 +504,10 @@ vis = $.extend(true, vis, {
         $('.icon-on-iconbar')
             .hover(
             function () {
-                $(this).addClass('ui-state-hover');
+                $(this).parent().addClass('ui-state-hover');
             },
             function () {
-                $(this).removeClass('ui-state-hover');
+                $(this).parent().removeClass('ui-state-hover');
             })
             .click(function () {
                 $(this).stop(true, true).effect("highlight");
@@ -631,6 +631,15 @@ vis = $.extend(true, vis, {
             $('#rib_view_copy_tr').hide();
         }
 
+        $("#wid_all_lock").click(function () {
+            $(this).toggleClass("ui-state-active");
+
+            if ($(this).hasClass("ui-state-active")) {
+                $(".vis-widget").addClass("vis-widget-lock")
+            } else {
+                $(".vis-widget").removeClass("vis-widget-lock")
+            }
+        });
 
         // Tools ----------------------------------------------------------------
         // Resolutuion -----------------

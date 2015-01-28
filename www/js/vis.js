@@ -518,6 +518,9 @@ var vis = {
                             .multiselect('refresh');
 
                         setTimeout(function () {
+                            if($("#wid_all_lock").hasClass("ui-state-active")) {
+                                $('#' + vis.activeWidget).addClass("vis-widget-lock")
+                            }
                             vis.inspectWidget(vis.activeWidget)
                         }, 50);
 
