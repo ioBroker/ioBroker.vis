@@ -1071,19 +1071,16 @@ if ('applicationCache' in window) {
 
         vis.preloadImages(["img/disconnect.png"]);
 
-        $("#ccu-io-disconnect").dialog({
-            modal: true,
+        $("#server-disconnect").dialog({
+            modal:         true,
             closeOnEscape: false,
-            autoOpen: false,
-            dialogClass: 'noTitle',
-            width: 400,
-            height: 90
+            autoOpen:      false,
+            dialogClass:   'noTitle',
+            width:         400,
+            height:        90
         });
 
         $(".vis-version").html(vis.version);
-
-        // Init edit dialog
-        if (vis.editMode && vis.editInit) vis.editInit();
 
         vis.showWaitScreen(true, null, _('Connecting to Server...') + '<br/>', 0);
 
@@ -1114,8 +1111,6 @@ if ('applicationCache' in window) {
             return updateAvailable;
         }
 
-
-
         vis.conn = servConn;
 
 
@@ -1127,7 +1122,7 @@ if ('applicationCache' in window) {
                 onConnChange: function (isConnected) {
                     //console.log("onConnChange isConnected="+isConnected);
                     if (isConnected) {
-                        $("#ccu-io-disconnect").dialog("close");
+                        $("#server-disconnect").dialog("close");
                         if (vis.isFirstTime) {
                             vis.conn.getVersion(function (version) {
                                 if (!version) {
@@ -1175,14 +1170,19 @@ if ('applicationCache' in window) {
                                     systemLang = lang || systemLang;
                                     vis.language = systemLang;
                                     translateAll();
+                                    if (vis.isFirstTime) {
+                                        // Init edit dialog
+                                        if (vis.editMode && vis.editInit) vis.editInit();
+                                        vis.isFirstTime = false;
+                                        vis.init();
+                                    }
                                 });
 
                                 // If metaIndex required, load it
                                 if (vis.editMode) {
                                     /* socket.io */
-                                    if (vis.isFirstTime) {
-                                        vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
-                                    }
+                                    if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
+
                                     // Read all data objects from server
                                     vis.conn.getObjects(function (err, data) {
                                         vis.objects = data;
@@ -1190,15 +1190,21 @@ if ('applicationCache' in window) {
                                 }
 
                                 //console.log((new Date()) + " socket.io reconnect");
-                                if (vis.isFirstTime) setTimeout(function () {
-                                    vis.init();
-                                }, 10);
-                                vis.isFirstTime = false;
+                                if (vis.isFirstTime) {
+                                    setTimeout(function () {
+                                        if (vis.isFirstTime) {
+                                            // Init edit dialog
+                                            if (vis.editMode && vis.editInit) vis.editInit();
+                                            vis.isFirstTime = false;
+                                            vis.init();
+                                        }
+                                    }, 1000);
+                                }
                             }
                         });
                     } else {
                         //console.log((new Date()) + " socket.io disconnect");
-                        $("#ccu-io-disconnect").dialog("open");
+                        $("#server-disconnect").dialog("open");
                     }
                 },
                 onRefresh: function () {
@@ -1336,6 +1342,8 @@ if ('applicationCache' in window) {
                 }
             });
         }else{
+            // Init edit dialog
+            if (vis.editMode && vis.editInit) vis.editInit();
             vis.init();
         }
     });

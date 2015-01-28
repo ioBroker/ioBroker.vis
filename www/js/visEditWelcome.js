@@ -13,6 +13,7 @@
  * (Free for non-commercial use).
  */
 
+'use strict';
 
 $.extend(systemDictionary, {
     'Bath'             : {'en': 'Bath',          'de': 'Badezimmer',           'ru': 'Ванная'},

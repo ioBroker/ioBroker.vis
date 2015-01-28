@@ -12,7 +12,7 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-"use strict";
+'use strict';
 
 // Languages
 $.extend(systemDictionary, {
@@ -163,7 +163,7 @@ $.extend(systemDictionary, {
         'de': 'Bitte einen Namen für die neue View eingeben!',
         'ru': 'Пожалуста введите имя для новой страницы!'
     },
-    'Instance ID': {'en': 'Instance ID ', 'de': 'Instanz ID ', 'ru': 'Instance ID '},
+    'Instance ID': {'en': 'Instance ID', 'de': 'Instanz ID', 'ru': 'ID броузера'},
     'Single view': {'en': 'Single view', 'de': 'Nur in aktueller View', 'ru': 'Только на текущей странице'},
 //                'Single mode'      : {'en' : 'Only in actual view',  'de': 'Nur in aktueller View', 'ru': 'Только на текущей странице'},
     'CC BY-NC License': {'en': 'CC BY-NC License', 'de': 'CC BY-NC Lizenz', 'ru': 'Лицензия CC BY-NC'},
@@ -190,5 +190,56 @@ $.extend(systemDictionary, {
     },
     'group_fixed':  {'en': 'Fixed',  'de': 'Fixt',      'ru': 'Фиксированные'},
     'group_common': {'en': 'Common', 'de': 'Allgemein', 'ru': 'Общие'},
+    "File": {"en": "File", "de": "Datei", "ru": "Файл"},
+    "Dev": {"en": "Dev", "de": "Dev", "ru": "Dev"},
+    "Tools": {"en": "Tools", "de": "Tools", "ru": "Инструменты"},
+    "Setup": {"en": "Setup", "de": "Setup", "ru": "Настройки"},
+    "Theme": {"en": "Theme", "de": "Thema", "ru": "Темы"},
+    "Language": {"en": "Language", "de": "Sprache", "ru": "Язык"},
+    "Help": {"en": "Help", "de": "Hilfe", "ru": "Помощь"},
+    "Shortcuts": {"en": "Shortcuts", "de": "Shortcuts", "ru": "Быстрые клавиши"},
+    "About": {"en": "About", "de": "Über das Projekt", "ru": "О проекте"},
+    "Active View:": {"en": "Active View:", "de": "Aktiv View:", "ru": "Выбранная страница:"},
+    "To View:": {"en": "To View:", "de": "In View:", "ru": "На страницу:"},
+    "Active Widget:": {"en": "Active widget:", "de": "Aktiv Widget:", "ru": "Выбранный элемент:"},
+    "Resolution:": {"en": "Resolution: ", "de": "Auflöung: ", "ru": "Разрешение экрана: "},
+    "Widget": {"en": "Widget", "de": "Widget", "ru": "Элемент"},
+    "View": {"en": "View", "de": "View", "ru": "Страница"},
+    "filter_key": {"en": "filter_key", "de": "filter_key", "ru": "filter_key"},
+    "CSS:": {"en": "CSS:", "de": "CSS:", "ru": "CSS:"},
+    "Web": {"en": "Web", "de": "Web", "ru": "Веб"},
+    "Community": {"en": "Community", "de": "Community", "ru": "Разработка"},
+    "Change log": {"en": "Change log", "de": "Änderungen", "ru": "Изменения"},
+    "CC BY-NC License 4.0": {"en": "CC BY-NC License 4.0", "de": "CC BY-NC Lizenz 4.0", "ru": "CC BY-NC лицензия 4.0"},
+    "not defined": {"en": "not defined", "de": "nicht definiert", "ru": "не задано"},
+    "PgUp": {"en": "PgUp", "de": "BildOben", "ru": "PgUp"},
+    "Prev. View": {"en": "Previous view", "de": "Prev. View", "ru": "Предыдущая страница"},
+    "PgDown": {"en": "PgDown", "de": "BildUnten", "ru": "PgDown"},
+    "Move Widget 1px": {"en": "Move Widget 1px", "de": "Schiebe Widget auf 1px", "ru": "Сдвинуть элемент на 1 пиксель"},
+    "Arrow Keys": {"en": "Arrow Keys", "de": "Pfeiltasten", "ru": "Стрелки"},
+    "Move Widget 10px": {"en": "Move Widget 10px", "de": "Schiebe Widget auf 10px", "ru": "Сдвинуть элемент на 10 пикселей"},
+    "Ctrl / CMD": {"en": "Ctrl / CMD", "de": "Strg / CMD", "ru": "Ctrl / CMD"},
+    "Show develop ribbon": {"en": "Show develop ribbon", "de": "Zeige Entwicklerpanel", "ru": "Показать панель разработчика"},
+    "Full screen": {"en": "Full screen", "de": "Vollbild", "ru": "Полный экран"},
+    "Next View": {"en": "Next View", "de": "Nächste View", "ru": "Следующая страница"},
+    "Add Widget": {"en": "Add Widget", "de": "Einfügen", "ru": "Добавить"},
+    "Attributes": {"en": "Attributes", "de": "Eigenschaften", "ru": "Свойства"},
+    "Align widgets:": {"en": "Align widgets:", "de": "Widgets ausrichten:", "ru": "Выровнять элементы:"},
+    "Undo": {"en": "Undo", "de": "Undo", "ru": "Отменить последние действия"},
+    "Add new view": {"en": "Add new view", "de": "Neue View einfügen", "ru": "Добавить новую страницу"},
+    "Delete actual view": {"en": "Delete actual view", "de": "Löschen aktuelle View", "ru": "Удалить текущую страницу"},
+    "Rename view": {"en": "Rename view", "de": "View umbennenen", "ru": "Переименовать страницу"},
+    "Copy view": {"en": "Copy view", "de": "View kopieren", "ru": "Скопировать страницу"},
+    "Delete widget": {"en": "Delete widget", "de": "Widget löschen", "ru": "Удалить элемент"},
+    "Copy widget": {"en": "Copy widget", "de": "Widget kopieren", "ru": "Скопировать элемент"},
+    "Help about widget": {"en": "Help about widget", "de": "Hilfe über Widget", "ru": "Помощь к элементу"},
+    "Align horizontal/left": {"en": "Align horizontal/left", "de": "Ausrichten waagerecht links", "ru": "Выровнять по горизонтали налево"},
+    "Align horizontal/right": {"en": "Align horizontal/right", "de": "Ausrichten waagerecht rechts", "ru": "Выровнять по горизонтали направо"},
+    "Align vertical/top": {"en": "Align vertical/top", "de": "Ausrichten senkrecht oben", "ru": "Выровнять по вертикали наверх"},
+    "Align vertical/bottom": {"en": "Align vertical/bottom", "de": "Ausrichten senkrecht unten", "ru": "Выровнять по вертикали к низу"},
+    "Align horizontal/center": {"en": "Align horizontal/center", "de": "Ausrichten waagerecht zentriert", "ru": "Выровнять по горизонтали по центру"},
+    "Align vertical/center": {"en": "Align vertical/center", "de": "Ausrichten senkrecht zentriert", "ru": "Выровнять по вертикали по центру"},
+    "Align horizontal/equal": {"en": "Align horizontal/equal", "de": "Ausrichten waagerecht/gleicher Abstand", "ru": "Выровнять по горизонтали на равном расстоянии"},
+    "Align vertical/equal": {"en": "Align vertical/equal", "de": "Ausrichten senkrecht/gleicher Abstand", "ru": "Выровнять по вертикали на равном расстоянии"}
 });
 

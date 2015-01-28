@@ -102,11 +102,11 @@
         <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank" class="translate">Web</a></li>
         <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank"
                class="translate">Community</a></li>
-        <li><a href="https://github.com/hobbyquaker/DashUI/blob/master/README.md" target="_blank" class="translate">Change log</a>
+        <li><a href="https://github.com/ioBroker/ioBroker.vis/blob/master/README.md" target="_blank" class="translate">Change log</a>
         </li>
     </ul>
 
-    <h4>Copyright &copy; 2013-2015 Bluefox, <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a></h4>
+    <h4>Copyright &copy; 2013-2015 <a href="https://github.com/GermanBluefox" target="_blank">Bluefox</a>, <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a>, <a href="https://github.com/smiling-Jack" target="_blank">smiling-Jack</a></h4>
 
     <p class="translate">CC BY-NC License 4.0</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img
         src="img/cc-nc-by.png"/></a>
@@ -135,83 +135,35 @@
             <col style="text-align: center">
         </colgroup>
         <tr>
-            <td class="translate">
-                Full screen
-            </td>
-            <td>
-
-            </td>
-            <td>
-                F3
-            </td>
+            <td class="translate">Full screen</td>
+            <td></td>
+            <td>F3</td>
         </tr>
         <tr>
-            <td class="translate">
-                Next View
-            </td>
-            <td>
-
-            </td>
-            <td class="translate">
-                PgUp
-            </td>
+            <td class="translate">Next View</td>
+            <td></td>
+            <td class="translate">PgUp</td>
         </tr>
         <tr>
-            <td class="translate">
-                Prev. View
-            </td>
+            <td class="translate">Prev. View</td>
+            <td></td>
+            <td class="translate">PgDown</td>
+        </tr>
+        <tr>
+            <td class="translate">Move Widget 1px</td>
             <td>
             </td>
-            <td class="translate">
-                PgDown
-            </td>
+            <td class="translate">Arrow Keys</td>
         </tr>
         <tr>
-            <td class="translate">
-                Move Widget 1px
-            </td>
-            <td>
-            </td>
-            <td class="translate">
-                Arrow Keys
-            </td>
+            <td class="translate">Move Widget 10px</td>
+            <td class="translate">Ctrl / CMD</td>
+            <td class="translate">Arrow Keys</td>
         </tr>
         <tr>
-            <td class="translate">
-                Move Widget 10px
-            </td>
-            <td class="translate">
-                Ctrl / CMD
-            </td>
-            <td class="translate">
-                Arrow Keys
-            </td>
-        </tr>
-        <tr>
-            <td class="translate" style="color:rgba(1,1,1,0.05)">
-                Show develop ribbon
-            </td>
-            <td>
-            </td>
-            <td style="color:rgba(1,1,1,0.05)">
-                F2
-            </td>
-        </tr>
-        <tr>
-            <td class="translate">
-            </td>
-            <td class="translate">
-            </td>
-            <td class="translate">
-            </td>
-        </tr>
-        <tr>
-            <td class="translate">
-            </td>
-            <td class="translate">
-            </td>
-            <td class="translate">
-            </td>
+            <td class="translate" style="color:rgba(1,1,1,0.05)">Show develop ribbon</td>
+            <td></td>
+            <td style="color:rgba(1,1,1,0.05)">F2</td>
         </tr>
     </table>
 </div>
@@ -221,11 +173,11 @@
 
 </div>
 <div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 100 ">
-    <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span>VIS </span><span id="vis-version"></span></div>
+    <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span>vis </span><span id="vis-version"></span></div>
 
     <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -2px;">
         <li id="ribbon_tab_datei" style="display: none">
-            <a href="#ribbon_datei" style="padding: 2px 4px 2px 4px" class="translate">File</a>
+            <a href="#ribbon_file" style="padding: 2px 4px 2px 4px" class="translate">File</a>
         </li>
         <li>
             <a href="#ribbon_view" style="padding: 2px 4px 2px 4px" class=" translate">Views</a>
@@ -245,7 +197,7 @@
             <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Setup</a>
                 <ul style="display: none;">
                     <li class="ui-state-default menu-tab" role="tab" style="width: 150px ; background-image: none">
-                        <a class="menu-tab-text translate">Theme</a>
+                        <a class="menu-tab-text"><span class="translate">Theme</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
                         <ul id="ul_theme">
                             <li class="ui-state-default  menu_item">
                                 <a data-info="dark-hive">Dark-Hive</a>
@@ -317,16 +269,16 @@
                         </ul>
                     </li>
                     <li class="ui-state-default menu-tab" role="tab" style="width: 150px;  background-image: none">
-                        <a class="menu-tab-text translate">Language</a>
+                        <a class="menu-tab-text"><span class="translate">Language</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
                         <ul>
-                            <li class="ui-state-default language_select  menu_item" data-language="de">
-                                <a class="translate ">German</a>
+                            <li class="ui-state-default language_select menu_item" data-language="de">
+                                <a>Deutsch</a>
                             </li>
                             <li class="ui-state-default language_select menu_item" data-language="en">
-                                <a class="translate ">English</a>
+                                <a>English</a>
                             </li>
                             <li class="ui-state-default language_select menu_item" data-language="ru">
-                                <a class="translate ">Rusisch</a>
+                                <a>русский</a>
                             </li>
                         </ul>
                     </li>
@@ -340,11 +292,11 @@
             </li>
         </ul>
     </div>
-    <img src="lib/img/edit-undo-8.png" id="button_undo" class="ui-state-default ui-corner-top">
-    <span id="savingProgress"></span>
+    <img src="lib/img/edit-undo-8.png" id="button_undo" class="ui-state-default ui-corner-top translateT" title="Undo">
+    <button id="savingProgress"></button>
 
 
-    <div class="ribbon_tab" id="ribbon_datei">
+    <div class="ribbon_tab" id="ribbon_file">
         <div class="ribbon_tab_content ui-widget-content">
 
         </div>
@@ -364,10 +316,10 @@
                             <input type="text" id="rib_view_addname" >
                         </td>
                         <td>
-                            <div id="rib_view_add_ok" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/ok.png"></div>
+                            <div id="rib_view_add_ok" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/ok.png"></div>
                         </td>
                         <td>
-                            <div id="rib_view_add_cancel" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/cancel.png"></div>
+                            <div id="rib_view_add_cancel" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/cancel.png"></div>
                         </td>
                     </tr>
                     <tr id="rib_view_rename_tr" style="display:none">
@@ -376,10 +328,10 @@
                             <input type="text" id="rib_view_newname" >
                         </td>
                         <td>
-                            <div id="rib_view_rename_ok" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/ok.png"></div>
+                            <div id="rib_view_rename_ok" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/ok.png"></div>
                         </td>
                         <td>
-                            <div id="rib_view_rename_cancel" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/cancel.png"></div>
+                            <div id="rib_view_rename_cancel" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/cancel.png"></div>
                         </td>
                     </tr>
                     <tr id="rib_view_copy_tr" style="display:none">
@@ -388,29 +340,28 @@
                             <input type="text" id="rib_view_copyname" >
                         </td>
                         <td>
-                            <div id="rib_view_copy_ok" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/ok.png"></div>
+                            <div id="rib_view_copy_ok" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/ok.png"></div>
                         </td>
                         <td>
-                            <div id="rib_view_copy_cancel" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/cancel.png"></div>
+                            <div id="rib_view_copy_cancel" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/cancel.png"></div>
                         </td>
                     </tr>
                     <tr id="rib_view">
-                        <td style=" height: 22px; padding-right:3px" class="translate">Activ View:
-                        </td>
+                        <td style=" height: 22px; padding-right:3px" class="translate">Active View:</td>
                         <td>
                             <select id="select_view" style="width: 100%" ></select>
                         </td>
                         <td>
-                            <div id="rib_view_add" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/add.png" style="width: 16px;height: 16px;margin: 3px;"></div>
+                            <div id="rib_view_add" class="btn-iconbar ui-corner-all translateT" title="Add new view"><img class="icon-on-iconbar" src="icon/add.png" style="width: 16px;height: 16px;margin: 3px;"></div>
                         </td>
                         <td>
-                            <div id="rib_view_del" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/delete.png"></div>
+                            <div id="rib_view_del" class="btn-iconbar ui-corner-all translateT" title="Delete actual view"><img class="icon-on-iconbar" src="icon/delete.png"></div>
                         </td>
                         <td>
-                            <div id="rib_view_rename" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/rename.png"></div>
+                            <div id="rib_view_rename" class="btn-iconbar ui-corner-all translateT" title="Rename view"><img class="icon-on-iconbar" src="icon/rename.png"></div>
                         </td>
                         <td>
-                            <div id="rib_view_copy" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/copy.png"></div>
+                            <div id="rib_view_copy" class="btn-iconbar ui-corner-all translateT" title="Copy view"><img class="icon-on-iconbar" src="icon/copy.png"></div>
                         </td>
                     </tr>
                 </table>
@@ -433,25 +384,25 @@
                         <select class="" id="rib_wid_copy_view"></select>
                     </td>
                     <td>
-                        <div id="rib_wid_copy_ok" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/ok.png"></div>
+                        <div id="rib_wid_copy_ok" class="btn-iconbar ui-corner-all"> <img class="icon-on-iconbar" src="icon/ok.png"></div>
                     </td>
                     <td>
-                        <div id="rib_wid_copy_cancel" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/cancel.png"></div>
+                        <div id="rib_wid_copy_cancel" class="btn-iconbar ui-corner-all"> <img class="icon-on-iconbar" src="icon/cancel.png"></div>
                     </td>
                     </tr>
                     <tr id="rib_wid">
-                        <td style=" height: 22px; padding-right:3px" class="translate">Activ Widget:</td>
+                        <td style=" height: 22px; padding-right:3px" class="translate">Active Widget:</td>
                         <td>
                             <select id="select_active_widget" class="vis-editor" data-multiselect-width="400" data-multiselect-height="250"></select>
                         </td>
                         <td>
-                            <div id="rib_wid_del" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/delete.png"></div>
+                            <div id="rib_wid_del" class="btn-iconbar ui-corner-all translateT" title="Delete widget"><img class="icon-on-iconbar" src="icon/delete.png"></div>
                         </td>
                         <td>
-                            <div id="rib_wid_copy" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/copy.png"></div>
+                            <div id="rib_wid_copy" class="btn-iconbar ui-corner-all translateT" title="Copy widget"><img class="icon-on-iconbar" src="icon/copy.png"></div>
                         </td>
                         <td>
-                            <div id="rib_wid_doc" class="btn_iconbar ui-corner-all"><img class="icon_onIconbar" src="icon/info.png"></div>
+                            <div id="rib_wid_doc" class="btn-iconbar ui-corner-all translateT" title="Help about widget"><img class="icon-on-iconbar" src="icon/info.png"></div>
                         </td>
                     </tr>
                 </table>
@@ -459,30 +410,30 @@
             <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table style="border-spacing: 0px">
                     <tr>
-                        <td  style="text-align: center; height: 22px; padding-right:3px">Selectet Widget:</td>
+                        <td class="translate" style="text-align: center; height: 22px; padding-right: 3px">Align widgets:</td>
                         <td>
-                            <div id="wid_align_left" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-horizontal-left.png"></div>
+                            <div id="wid_align_left" class="btn-iconbar ui-corner-all translateT" title="Align horizontal/left"><img class="icon-on-iconbar" src="icon/align-horizontal-left.png"></div>
                         </td>
                         <td>
-                            <div id="wid_align_right" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-horizontal-right-2.png"></div>
+                            <div id="wid_align_right" class="btn-iconbar ui-corner-all translateT" title="Align horizontal/right"><img class="icon-on-iconbar" src="icon/align-horizontal-right-2.png"></div>
                         </td>
                         <td>
-                            <div id="wid_align_top" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-vertical-top-2.png"></div>
+                            <div id="wid_align_top" class="btn-iconbar ui-corner-all translateT" title="Align vertical/top"><img class="icon-on-iconbar" src="icon/align-vertical-top-2.png"></div>
                         </td>
                         <td>
-                            <div id="wid_align_buttom" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-vertical-bottom-2.png"></div>
+                            <div id="wid_align_buttom" class="btn-iconbar ui-corner-all translateT" title="Align vertical/bottom"><img class="icon-on-iconbar" src="icon/align-vertical-bottom-2.png"></div>
                         </td>
                         <td>
-                            <div id="wid_align_hc" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-horizontal-center-2.png"></div>
+                            <div id="wid_align_hc" class="btn-iconbar ui-corner-all translateT" title="Align horizontal/center"><img class="icon-on-iconbar" src="icon/align-horizontal-center-2.png"></div>
                         </td>
                         <td>
-                            <div id="wid_align_vc" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/align-vertical-center-2.png"></div>
+                            <div id="wid_align_vc" class="btn-iconbar ui-corner-all translateT" title="Align vertical/center"><img class="icon-on-iconbar" src="icon/align-vertical-center-2.png"></div>
                         </td>
                         <td>
-                            <div id="wid_dis_h" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/distribute-horizontal-equal.png"></div>
+                            <div id="wid_dis_h" class="btn-iconbar ui-corner-all translateT" title="Align horizontal/equal"><img class="icon-on-iconbar" src="icon/distribute-horizontal-equal.png"></div>
                         </td>
                         <td>
-                            <div id="wid_dis_v" class="btn_iconbar ui-corner-all"> <img class="icon_onIconbar" src="icon/distribute-vertical-equal.png"></div>
+                            <div id="wid_dis_v" class="btn-iconbar ui-corner-all translateT" title="Align vertical/equal"><img class="icon-on-iconbar" src="icon/distribute-vertical-equal.png"></div>
                         </td>
                     </tr>
                 </table>
@@ -499,7 +450,7 @@
                         <col span="10" width="26px"/>
                     </colgroup>
                     <tr id="rib_tools_resolution_manuel" style="display:none">
-                        <td class="translate">Resolution: </td>
+                        <td class="translate">Resolution:</td>
                         <td>
                             <div style="display: inline-block" class="translate">Width</div>
                             <input id="screen_size_x" type="number" style="width: 60px" value=""/>
@@ -507,13 +458,14 @@
                             <input id="screen_size_y" type="number" style="width: 60px" value=""/>
                         </td>
                         <td>
-                            <div class="btn_iconbar ui-corner-all rib_tool_resolution_toggel"><img class="icon_onIconbar" src="icon/refresh-4.png"></div>
+                            <div class="btn-iconbar ui-corner-all rib_tool_resolution_toggel"><img class="icon-on-iconbar" src="icon/refresh-4.png"></div>
                         </td>
                     </tr>
                     <tr id="rib_tools_resolution_fix">
                         <td class="translate">Resolution:</td>
                         <td>
                             <select id="screen_size" class="vis-editor vis-edit-select" data-multiselect-height="450" data-multiselect-width="300" >
+                                <option value="" class="translate">not defined</option>
                                 <option value="user" class="translate">User defined</option>
                                 <option value="320x460">iPhone 3G, 3GS, 4, 4S - Portrait</option>
                                 <option value="480x300">iPhone 3G, 3GS, 4, 4S - Landscape</option>
@@ -544,7 +496,7 @@
                             </select>
                         </td>
                         <td>
-                            <div class="btn_iconbar ui-corner-all rib_tool_resolution_toggel"><img class="icon_onIconbar" src="icon/refresh-4.png"></div>
+                            <div class="btn-iconbar ui-corner-all rib_tool_resolution_toggel"><img class="icon-on-iconbar" src="icon/refresh-4.png"></div>
                         </td>
                     </tr>
                 </table>
@@ -612,8 +564,8 @@
 
 <div id="panel_body" style="display: none; height: 100%">
     <div class="ui-widget-content" id="pan_add_wid">
-        <div class="ui-state-default translateT" style="height:16px;font-size:16px;padding: 5px;font-weight: bolder;">
-            Add Widget
+        <div class="ui-state-default" style="height:16px;font-size:16px;padding: 5px;font-weight: bolder;">
+            <span class="translate">Add Widget</span>
             <div id="btn_prev_type" class="ui-"><span class="ui-icon  ui-icon-tag"></span></div>
             <div id="btn_prev_zoom" class="ui-"><span class="ui-icon  ui-icon-zoomout"></span></div>
         </div>
@@ -644,9 +596,7 @@
         </div>
     </div>
     <div id="pan_attr">
-        <div class="ui-state-default translateT" style="height: 16px;font-size: 16px;padding: 5px;font-weight: bolder;">
-            Attribute
-        </div>
+        <div class="ui-state-default translate" style="height: 16px;font-size: 16px;padding: 5px;font-weight: bolder;">Attributes</div>
         <div id="attr_wrap">
             <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -2px;">
                 <li>
@@ -830,10 +780,10 @@
             <div class="tab_attr ui-widget-content" id="tab_wid_attr">
                 <div class="vis-widget-tools" style="margin-top: 3px;">
                     <!--<h4 class="translate">Widget Attributes:</h4>-->
-                    <table cellspacing=0 style="width: 330px; border: 0px; table-layout: fixed; word-wrap:break-word;">
+                    <table cellspacing=0 style="width: 100%; border: 0px; table-layout: fixed; word-wrap: break-word;">
                         <colgroup>
-                            <col width="120px"/>
-                            <col width="180px" style="padding-right: 5px"/>
+                            <col width="40%"/>
+                            <col width="60%" style="padding-right: 5px"/>
                             <col width="26px" style=""/>
                         </colgroup>
                         <tbody id="widget_attrs"></tbody>

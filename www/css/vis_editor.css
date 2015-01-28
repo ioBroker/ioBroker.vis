@@ -286,10 +286,13 @@ div#vis_container{
 }
 .menu-tab-text{
     padding: 2px 4px 2px 4px!important;
+    cursor: pointer;
 }
 
 .menu_item{
     background-image: none!important;
+    cursor: pointer;
+    height: 27px;
 }
 
 .ribbon_field{
@@ -494,10 +497,10 @@ display: none;
 .tab_attr{
     padding: 0px 0px 0px 4px!important;
     border-width: 1px 0 0 0!important;
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: normal !important;
     height: calc(100% - 50px);
-     overflow: auto;
+    overflow: auto;
 }
 
 #attr_wrap{
@@ -522,14 +525,14 @@ display: none;
     margin-left: 5px;
 }
 
-.btn_iconbar{
+.btn-iconbar{
     width: 22px;
     height: 22px;
     position: relative;
     border: 1px solid rgba(0, 0, 0, 0);
     display: inline-block;
 }
-.icon_onIconbar{
+.icon-on-iconbar{
     height: 18px;
     width: 18px;
     margin: 2px;
