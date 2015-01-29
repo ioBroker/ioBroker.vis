@@ -1571,12 +1571,8 @@ vis = $.extend(true, vis, {
         if (wid == this.activeWidget) {
             var $wid = $('#' + wid);
             // User interaction
-            if (!vis.widgets[wid].data._no_move) {
-                vis.draggable($wid);
-            }
-            if (!vis.widgets[wid].data._no_resize) {
-                vis.resizable($wid);
-            }
+            if (!this.widgets[wid].data._no_move)   this.draggable($wid);
+            if (!this.widgets[wid].data._no_resize) this.resizable($wid);
         }
     },
     getObjDesc: function (id) {
@@ -1809,7 +1805,7 @@ vis = $.extend(true, vis, {
                 line.input += '<option value="' + values[name] + '">' + name + '</option>';
             }
         }
-        line.input += '</select></td></tr>';
+        line.input += '</select>';
         return line;
     },
     editFontName: function (widget, wid_attr) {
@@ -1820,7 +1816,7 @@ vis = $.extend(true, vis, {
     editAutoComplete: function (widget, wid_attr, values) {
         // Effect selector
         var line = {
-            input: '<input type="text" id="inspect_' + wid_attr + '"/>',
+            input: '<input type="text" id="inspect_' + wid_attr + '" class="vis-edit-textbox"/>',
             init: function (_wid_attr, data) {
                 $(this).autocomplete({
                     minLength: 0,
@@ -1910,15 +1906,17 @@ vis = $.extend(true, vis, {
         });
     },
     editNumber: function (widget, wid_attr, options, onchange) {
+        // options = {min: ?,max: ?,step: ?}
         // Select
         var line = {
-            input: '<input id="inspect_' + wid_attr + '"/>',
+            input: '<input id="inspect_' + wid_attr + '" style="width: 100%"/>',
             init: function (w, data) {
                 options = options || {};
                 options.spin = function () {
                     $(this).trigger('change');
-                }
+                };
                 $(this).spinner(options);
+                $(this).parent().css({width: '100%'});
             }
         }
         if (onchange) line.onchange = onchange;
@@ -2090,6 +2088,69 @@ vis = $.extend(true, vis, {
         this.draggable($this);
 
     },
+    editCssCommon: function (widget) {
+        var group = 'css_common';
+        var line;
+        this.groups[group] = this.groups[group] || {};
+
+        this.groups[group]['css_left']       = {input: '<input type="text" id="inspect_css_left"/>'};
+        this.groups[group]['css_top']        = {input: '<input type="text" id="inspect_css_top"/>'};
+        this.groups[group]['css_width']      = {input: '<input type="text" id="inspect_css_width"/>'};
+        this.groups[group]['css_height']     = {input: '<input type="text" id="inspect_css_height"/>'};
+        this.groups[group]['css_z-index']    = this.editNumber(widget, 'css_z-index');
+        this.groups[group]['css_overflow-x'] = this.editSelect(widget, 'css_overflow-x', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
+        this.groups[group]['css_overflow-y'] = this.editSelect(widget, 'css_overflow-y', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
+
+        for(var attr in this.groups[group]) {
+            this.groups[group][attr].css = true;
+            this.groups[group][attr].attrName = attr;
+            this.groups[group][attr].attrIndex = '';
+        }
+    },
+    editCssFontText: function (widget) {
+        var group = 'css_font_text';
+        var line;
+        this.groups[group] = this.groups[group] || {};
+
+        this.groups[group]['css_color']          = this.editColor(widget, 'css_color');
+        this.groups[group]['css_text-align']     = this.editSelect(widget, 'css_text-align', ['', 'left', 'right', 'center' ,'justify', 'initial', 'inherit'], true);
+        this.groups[group]['css_text-shadow']    = {input: '<input type="text" id="inspect_css_text-shadow"/>'};
+        this.groups[group]['css_font-family']    = {input: '<input type="text" id="inspect_css_font-family"/>'};
+        this.groups[group]['css_font-style']     = this.editSelect(widget, 'css_font-style', ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'], true);
+        this.groups[group]['css_font-variant']   = this.editSelect(widget, 'css_font-variant', ['', 'normal', 'small-caps', 'initial', 'inherit'], true);
+        this.groups[group]['css_font-weight']    = this.editAutoComplete(widget, 'css_font-weight', ['', 'normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit'], true);
+        this.groups[group]['css_font-size']      = this.editAutoComplete(widget, 'css_font-size', ['', 'medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'], true);
+        this.groups[group]['css_line-height']    = {input: '<input type="text" id="inspect_css_line-height"/>'};
+        this.groups[group]['css_letter-spacing'] = {input: '<input type="text" id="inspect_css_letter-spacing"/>'};
+        this.groups[group]['css_word-spacing']   = {input: '<input type="text" id="inspect_css_word-spacing"/>'};
+
+        for(var attr in this.groups[group]) {
+            this.groups[group][attr].css = true;
+            this.groups[group][attr].attrName = attr;
+            this.groups[group][attr].attrIndex = '';
+        }
+    },
+    editCssBackground: function (widget) {
+        var group = 'css_background';
+        var line;
+        this.groups[group] = this.groups[group] || {};
+
+        this.groups[group]['css_background']            = {input: '<input type="text" id="inspect_css_background"/>'};
+        this.groups[group]['css_background-color']      = this.editColor(widget, 'css_background-color');
+        this.groups[group]['css_background-image']      = {input: '<input type="text" id="inspect_background-image"/>'};
+        this.groups[group]['css_background-repeat']     = this.editSelect(widget, 'css_background-repeat', ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'], true);;
+        this.groups[group]['css_background-attachment'] = this.editSelect(widget, 'css_background-attachment', ['', 'scroll', 'fixed', 'local', 'initial', 'inherit'], true);
+        this.groups[group]['css_background-position']   = {input: '<input type="text" id="inspect_background-position"/>'};
+        this.groups[group]['css_background-size']       = {input: '<input type="text" id="inspect_background-size"/>'};
+        this.groups[group]['css_background-clip']       = this.editSelect(widget, 'css_background-clip', ['', 'border-box', 'padding-box', 'content-box', 'initial', 'inherit'], true);
+        this.groups[group]['css_background-origin']     = this.editSelect(widget, 'css_background-origin', ['', 'padding-box', 'border-box', 'content-box', 'initial', 'inherit'], true);
+
+        for(var attr in this.groups[group]) {
+            this.groups[group][attr].css = true;
+            this.groups[group][attr].attrName = attr;
+            this.groups[group][attr].attrIndex = '';
+        }
+    },
     addToInspect: function (widget, _wid_attr, group, options, onchange) {
         // Format: attr_name(start-end)[default_value]/type
         // attr_name can be extended with numbers (1-2) means it will be attr_name1 and attr_name2 created
@@ -2159,7 +2220,7 @@ vis = $.extend(true, vis, {
             wid_default = undefined;
         }
 
-        if (typeof group == 'function') {
+        if (typeof group   == 'function') {
             onchange = group;
             group = null;
         }
@@ -2323,7 +2384,7 @@ vis = $.extend(true, vis, {
         var depends = [];
         for (var group in this.groups) {
             if (this.groupsState[group] === undefined) this.groupsState[group] = false;
-            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="2">' + _('group_' + group) + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>')
+            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="3">' + _('group_' + group) + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>')
 
             for (var wid_attr in this.groups[group]) {
                 var line = this.groups[group][wid_attr];
@@ -2339,7 +2400,13 @@ vis = $.extend(true, vis, {
                 }
                 var text = '<tr class="vis-edit-td-caption group-' + group + '" id="td_' + wid_attr + '"><td ' + (title ? 'title="' + title + '"' : '') + '>' + (icon ? '<i>' : '') + _(line.attrName) + (line.attrIndex !== '' ? ('[' + line.attrIndex + ']') : '') + ':' + (icon ? '</i>' : '') + '</td><td class="vis-edit-td-field"';
 
-                if (!line.button) text += ' colspan="2"';
+                if (!line.button && !line.css) {
+                    text += ' colspan="3"';
+                } else if (!line.css){
+                    if (!line.button && !line.css) text += ' colspan="2"';
+                } else if (!line.button){
+                    text += ' colspan="2"';
+                }
 
                 text += '>' + (line.input || '') + '</td>';
 
@@ -2349,6 +2416,9 @@ vis = $.extend(true, vis, {
                     } else {
                         text += '<td>' + line.button.html + '</td>';
                     }
+                }
+                if (line.css) {
+                    text += '<td><input id="steal_' + wid_attr + '" type="checkbox" data-vis-steal="' + wid_attr.substring(4) + '" class="vis-steal-css"/><label class="vis-steal-label" for="steal_' + wid_attr + '">steal</label></td>';
                 }
 
                 text += '</tr>';
@@ -2384,9 +2454,17 @@ vis = $.extend(true, vis, {
 
                 // Set the value
                 if ($input.attr('type') == 'checkbox') {
-                    $input.prop('checked', this.widgets[widget].data[wid_attr]);
+                    if (line.css) {
+                        $input.prop('checked', that.views[wdata.view].widgets[wdata.widget].style && that.views[wdata.view].widgets[wdata.widget].style[wid_attr.substring(4)]);
+                    } else {
+                        $input.prop('checked', this.widgets[widget].data[wid_attr]);
+                    }
                 } else {
-                    $input.val(this.widgets[widget].data[wid_attr]);
+                    if (line.css) {
+                        $input.val(that.views[wdata.view].widgets[wdata.widget].style ? that.views[wdata.view].widgets[wdata.widget].style[wid_attr.substring(4)] : '');
+                    } else {
+                        $input.val(this.widgets[widget].data[wid_attr]);
+                    }
                     $input.keyup(function () {
                         var $this = $(this);
                         var timer = $this.data('timer');
@@ -2398,12 +2476,16 @@ vis = $.extend(true, vis, {
                         }, 500));
                     });
                 }
-                $input.data('data-attr', wid_attr);
-                $input.data('data-widget', widget);
-                $input.data('data-view', view);
-                $input.data('data-type', line.type)
-                if (line.onchange) $input.data('data-onchange', line.onchange);
+                var wdata = {
+                    attr:   wid_attr,
+                    widget: widget,
+                    view:   view,
+                    type:   line.type,
+                    css:    line.css
+                };
+                if (line.onchange) wdata.onchange = line.onchange;
                 $input.addClass('vis-inspect-widget');
+                $input.data('data-wdata', wdata);
 
                 if (this.groups[group][wid_attr][0]) {
                     for (var i = 1; i < this.groups[group][wid_attr].length; i++) {
@@ -2441,28 +2523,44 @@ vis = $.extend(true, vis, {
                 }
             }
         }
+        this.initStealHandlers();
 
         var that = this;
         $('.vis-inspect-widget').change(function (e) {
-            var $this = $(this);
-            var attr = $this.data('data-attr');
-            var widget = $this.data('data-widget');
-            var view = $this.data('data-view');
-            var type = $this.data('data-type');
-            var onchange = $this.data('data-onchange');
+            var $this   = $(this);
+            var wdata   = $this.data('data-wdata');
             var depends = $this.data('data-depends');
 
-            if ($this.attr('type') == 'checkbox') {
-                that.widgets[widget].data[attr] = $this.prop('checked');
+            if (wdata.css) {
+                var css = wdata.attr.substring(4);
+                if (!that.views[wdata.view].widgets[wdata.widget].style) {
+                    that.views[wdata.view].widgets[wdata.widget].style = {};
+                }
+                var val = $this.val();
+                that.views[wdata.view].widgets[wdata.widget].style[css] = val;
+                var $widget = $('#' + wdata.widget);
+                $widget.css(css, val);
+                if (wdata.widget == that.activeWidget) {
+                    $('#widget_helper').css({
+                        left:   parseInt($widget.css('left')) - 2,
+                        top:    parseInt($widget.css('top'))  - 2,
+                        height: $widget.outerHeight()         + 2,
+                        width:  $widget.outerWidth()          + 2
+                    });
+                }
             } else {
-                that.widgets[widget].data[attr] = $this.val();
+                if ($this.attr('type') == 'checkbox') {
+                    that.widgets[wdata.widget].data[wdata.attr] = $this.prop('checked');
+                } else {
+                    that.widgets[wdata.widget].data[wdata.attr] = $this.val();
+                }
+                that.views[wdata.view].widgets[wdata.widget].data[wdata.attr] = that.widgets[wdata.widget].data[wdata.attr];
             }
-            that.views[view].widgets[widget].data[attr] = that.widgets[widget].data[attr];
 
             // Some user adds ui-draggable and ui-resizable as class to widget.
             // The result is DashUI tries to remove draggable and resizable properties and fails
-            if (attr == 'class') {
-                var val = that.views[view].widgets[widget].data[attr];
+            if (wdata.attr == 'class') {
+                var val = that.views[wdata.view].widgets[wdata.widget].data[wdata.attr];
                 if (val.indexOf("ui-draggable") != -1 || val.indexOf('ui-resizable') != -1) {
                     var vals = val.split(' ');
                     val = '';
@@ -2471,31 +2569,32 @@ vis = $.extend(true, vis, {
                             val += ((val) ? ' ' : '') + vals[j];
                         }
                     }
-                    that.views[view].widgets[widget].data[attr] = val;
+                    that.views[wdata.view].widgets[wdata.widget].data[wdata.attr] = val;
                     $this.val(val);
                 }
             }
 
             // Update select widget dropdown
-            if (attr == 'name') {
-                $('#select_active_widget option[value="' + widget + '"]').text(that.getWidgetName(view, widget));
+            if (wdata.attr == 'name') {
+                $('#select_active_widget option[value="' + wdata.widget + '"]').text(that.getWidgetName(wdata.view, wdata.widget));
                 $('#select_active_widget').multiselect('refresh');
             }
 
-            if (typeof onchange == 'function') onchange.call(this, that.widgets[widget].data[attr]);
+
+            if (typeof wdata.onchange == 'function') wdata.onchange.call(this, that.widgets[wdata.widget].data[wdata.attr]);
 
             that.save();
-            that.reRenderWidgetEdit(widget);
+            if (!wdata.css) that.reRenderWidgetEdit(wdata.widget);
 
             // Rebuild attr list
-            if (depends && depends.indexOf(attr) != -1) {
-                that.inspectWidget(widget);
+            if (depends && depends.indexOf(wdata.attr) != -1) {
+                that.inspectWidget(wdata.widget);
             }
 
             //Update containers
-            if (type == 'views') {
+            if (wdata.type == 'views') {
                 // Set ths views for containers
-                that.updateContainers(view);
+                that.updateContainers(wdata.view);
             }
         });
 
@@ -2892,6 +2991,11 @@ vis = $.extend(true, vis, {
             }
         }
 
+        // Add common css
+        this.editCssCommon(wid);
+        this.editCssFontText(wid);
+        this.editCssBackground(wid);
+
         this.showInspect(view, wid);
         // If widget was rerendered, it can have new div
         var $this = $('#' + wid);
@@ -3029,10 +3133,10 @@ vis = $.extend(true, vis, {
         var w = $this.width();
         var h = $this.height();
         $('#widget_helper').css({
-            left: pos.left - 2,
-            top: pos.top - 2,
+            left:   pos.left - 2,
+            top:    pos.top - 2,
             height: $this.outerHeight() + 2,
-            width: $this.outerWidth() + 2
+            width:  $this.outerWidth() + 2
         }).show();
 
         // User interaction
@@ -3048,8 +3152,6 @@ vis = $.extend(true, vis, {
 
         // Inspector
         $('#inspect_wid').html(wid);
-
-
     },
 
     // Draw a border around all selected widgets
@@ -3278,15 +3380,15 @@ vis = $.extend(true, vis, {
             stop: function (event, ui) {
                 var widget = vis.activeWidget;
                 var mWidget = document.getElementById(widget);
-                var pos = $(mWidget).position();
+                var pos = $('#' + widget).position();
 
-                $('#inspect_css_top').val(pos.top + "px");
-                $('#inspect_css_left').val(pos.left + "px");
+                $('#inspect_css_top').val(pos.top + 'px');
+                $('#inspect_css_left').val(pos.left + 'px');
                 if (!vis.views[vis.activeView].widgets[widget].style) {
                     vis.views[vis.activeView].widgets[widget].style = {};
                 }
                 vis.views[vis.activeView].widgets[widget].style.left = pos.left;
-                vis.views[vis.activeView].widgets[widget].style.top = pos.top;
+                vis.views[vis.activeView].widgets[widget].style.top  = pos.top;
 
                 if (mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
                     mWidget._customHandlers.onMoveEnd(mWidget, widget);
@@ -3595,6 +3697,7 @@ vis = $.extend(true, vis, {
 
     },
     stealCssMode: function () {
+        var that = this;
         if (this.selectable) {
             $("#visview_" + this.activeView).selectable('disable');
         }
@@ -3615,24 +3718,25 @@ vis = $.extend(true, vis, {
             e.stopPropagation();
             e.preventDefault();
 
-            vis.stealCss(e);
+            that.stealCss(e);
         });
         $('#vis_container').addClass('vis-steal-cursor');
     },
     stealCss: function (e) {
         if (this.isStealCss) {
-            var that = this;
+            var that   = this;
             var target = "#" + this.activeWidget;
-            var src = "#" + e.currentTarget.id;
+            var src    = "#" + e.currentTarget.id;
 
             $('.vis-steal-css').each(function () {
                 if ($(this).attr('checked')) {
                     $(this).removeAttr('checked').button('refresh');
                     var cssAttribute = $(this).attr('data-vis-steal');
+                    var val;
                     if (cssAttribute.match(/border-/) || cssAttribute.match(/padding/)) {
-                        var val = that.combineCssShorthand($(src), cssAttribute);
+                        val = that.combineCssShorthand($(src), cssAttribute);
                     } else {
-                        var val = $(src).css(cssAttribute);
+                        val = $(src).css(cssAttribute);
                     }
                     $(target).css(cssAttribute, val);
                     that.views[that.activeView].widgets[that.activeWidget].style[cssAttribute] = val;
@@ -3640,12 +3744,9 @@ vis = $.extend(true, vis, {
             });
 
             this.save(function () {
-
                 that.stealCssModeStop();
                 that.inspectWidget(that.activeWidget);
-
             });
-
         }
     },
     combineCssShorthand: function (that, attr) {
