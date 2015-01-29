@@ -1,3 +1,5 @@
+
+
 div#vis_container{
     width: 100%;
     height: calc(100% - 29px);
@@ -86,7 +88,7 @@ div#vis_container{
     padding-left: 3px;
     padding-right: 3px;
     position: relative;
-    top: 4px;
+    top: 5px;
     left: -15px;
     display: inline-block;
 }
@@ -273,7 +275,7 @@ div#vis_container{
 }
 .ribbon_tab_content{
     width: 100%;
-    height: 44px;
+    height: 45px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
