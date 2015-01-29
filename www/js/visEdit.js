@@ -36,7 +36,7 @@ vis = $.extend(true, vis, {
         var that = this;
         this.$selectView = $('#select_view');
         this.$copyWidgetSelectView = $('#rib_wid_copy_view');
-
+        $("#wid_all_lock_function").trigger("click");
         if (local) $("#ribbon_tab_datei").show();
 
         this.editInitDialogs();
@@ -624,14 +624,16 @@ vis = $.extend(true, vis, {
             $('#rib_view_copy_tr').hide();
         });
 
-        $("#wid_all_lock").click(function () {
-            $(this).toggleClass("ui-state-active");
-
-            if ($(this).hasClass("ui-state-active")) {
-                $(".vis-widget").addClass("vis-widget-lock")
+        $("#wid_all_lock_function").button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
+            if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
+                $("#vis_container").find(".vis-widget").addClass("vis-widget-lock")
             } else {
-                $(".vis-widget").removeClass("vis-widget-lock")
+                $("#vis_container").find(".vis-widget").removeClass("vis-widget-lock")
             }
+            $('#wid_all_lock_f').removeClass("ui-state-focus")
+        });
+        $("#wid_all_lock_drag").button({icons: {primary: 'ui-icon-extlink', secondary: null}, text: false}).click(function () {
+            $('#wid_all_lock_d').removeClass("ui-state-focus")
         });
 
         // Tools ----------------------------------------------------------------
@@ -967,9 +969,11 @@ vis = $.extend(true, vis, {
             }).show();
             $('#local_view').show();
         }
+
         this.showWaitScreen(false);
         $('#menu_body').show();
         $('#panel_body').show();
+
     },
     showMessage: function (message, title, icon) {
         if (!this.$dialogMessage) {
@@ -1476,14 +1480,6 @@ vis = $.extend(true, vis, {
         if (!noSave) this.save();
 
         this.bindWidgetClick(widgetId);
-
-        if ($("#wid_all_lock").hasClass("ui-state-active")){
-            setTimeout(function(){
-                console.log($jWidget)
-                $($jWidget).addClass("vis-widget-lock")
-                console.log($jWidget)
-            },500)
-        }
 
         return widgetId;
     },
@@ -3036,20 +3032,16 @@ vis = $.extend(true, vis, {
         }).show();
 
         // User interaction
-        if (!vis.widgets[wid].data._no_move) {
-            vis.draggable($this);
+        if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
+            if (!vis.widgets[wid].data._no_move) {
+                vis.draggable($this);
+            }
+            if (!vis.widgets[wid].data._no_resize) {
+                vis.resizable($this);
+            }
         }
-        if (!vis.widgets[wid].data._no_resize) {
-            vis.resizable($this);
-        }
-        if ($("#wid_all_lock").hasClass("ui-state-active")){
-            $("#"+wid).addClass("vis-widget-lock")
-        }
-
         // Inspector
         $('#inspect_wid').html(wid);
-
-
     },
 
     // Draw a border around all selected widgets
