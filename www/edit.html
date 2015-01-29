@@ -196,7 +196,7 @@
         <ul id="menu" style="margin: 0;height: auto;" class="sf-menu">
             <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Setup</a>
                 <ul style="display: none;">
-                    <li class="ui-state-default menu-tab" role="tab" style="width: 150px ; background-image: none">
+                    <li class="ui-state-default " role="tab" style="width: 250px ; background-image: none">
                         <a class="menu-tab-text"><span class="translate">Theme</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
                         <ul id="ul_theme">
                             <li class="ui-state-default  menu_item">
@@ -268,7 +268,7 @@
                                 <a data-info="vader">vader</a></li>
                         </ul>
                     </li>
-                    <li class="ui-state-default menu-tab" role="tab" style="width: 150px;  background-image: none">
+                    <li class="ui-state-default " role="tab" style="width: 250px;  background-image: none">
                         <a class="menu-tab-text"><span class="translate">Language</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
                         <ul>
                             <li class="ui-state-default language_select menu_item" data-language="de">
@@ -282,6 +282,10 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="ui-state-default " role="tab" style="width: 250px;  background-image: none">
+                        <div style="display: inline-block" class="translate">Hide widget description</div>
+                        <input id="screen_hide_description" type="checkbox"/>
+                    </li>
                 </ul>
             </li>
             <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Help</a>
@@ -294,7 +298,6 @@
     </div>
     <img src="lib/img/edit-undo-8.png" id="button_undo" class="ui-state-default ui-corner-top translateT" title="Undo">
     <button id="savingProgress"></button>
-
 
     <div class="ribbon_tab" id="ribbon_file">
         <div class="ribbon_tab_content ui-widget-content">
@@ -438,6 +441,17 @@
                     </tr>
                 </table>
             </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td class="translate" style="text-align: center; height: 22px; padding-right: 3px">All widgets:</td>
+                        <td>
+                            <div id="wid_all_lock" class="btn-iconbar ui-corner-all translateT" title="Lock all Widgets"><img class="icon-on-iconbar" src="icon/lock.png"></div>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
     <div class="ribbon_tab" id="ribbon_tools" >
@@ -505,6 +519,24 @@
                 <table style="border-spacing: 0px">
                     <tr>
                         <td>
+                            <span style=" display: inline-block;" class="translate">Grid</span>
+                        </td>
+                        <td style="padding-left: 5px">
+                            <select id="snap_type" class="vis-editor" data-multiselect-width="100">
+                                <option value="0" selected="selected" class="translate">disabled</option>
+                                <option value="1" class="translate">elements</option>
+                                <option value="2" class="translate">grid</option>
+                            </select>
+                        </td>
+                        <td class="translate" style="padding-left: 5px">grid size</td>
+                        <td><input id="grid_size" type="number" value=""></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
                             <span style=" display: inline-block;" class="translate">Instance ID</span>
                         </td>
                         <td>
@@ -526,6 +558,18 @@
                         <td>
                             <button class="vis-editor translateB" id="import_view">import view</button>
                         </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="display: none">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td style="width: 80px" class='translate'>Room:</td>
+                        <td><select id="wizard_rooms"></select></td>
+                        <td style="width: 80px" class='translate'>Function:</td>
+                        <td><select id="wizard_funcs"></select></td>
+                        <td style="width: 80px" class='translate'>Widget:</td>
+                        <td><select id="wizard_widgets"></select></td>
                     </tr>
                 </table>
             </div>

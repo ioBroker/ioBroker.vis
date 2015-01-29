@@ -81,6 +81,7 @@ vis = $.extend(true, vis, {
         $('#widget_helper').hide();
 
         $('input.vis-editor').button();
+
         $('button.vis-editor').button();
 
         $('select.vis-editor').each(function () {
@@ -502,10 +503,10 @@ vis = $.extend(true, vis, {
         $('.icon-on-iconbar')
             .hover(
             function () {
-                $(this).addClass('ui-state-hover');
+                $(this).parent().addClass('ui-state-hover');
             },
             function () {
-                $(this).removeClass('ui-state-hover');
+                $(this).parent().removeClass('ui-state-hover');
             })
             .click(function () {
                 $(this).stop(true, true).effect("highlight");
@@ -622,6 +623,16 @@ vis = $.extend(true, vis, {
             that.dupView(that.activeView, name);
             $('#rib_view').show();
             $('#rib_view_copy_tr').hide();
+        }
+
+        $("#wid_all_lock").click(function () {
+            $(this).toggleClass("ui-state-active");
+
+            if ($(this).hasClass("ui-state-active")) {
+                $(".vis-widget").addClass("vis-widget-lock")
+            } else {
+                $(".vis-widget").removeClass("vis-widget-lock")
+            }
         });
 
         // Tools ----------------------------------------------------------------
@@ -1466,6 +1477,14 @@ vis = $.extend(true, vis, {
         if (!noSave) this.save();
 
         this.bindWidgetClick(widgetId);
+
+        if ($("#wid_all_lock").hasClass("ui-state-active")){
+            setTimeout(function(){
+                console.log($jWidget)
+                $($jWidget).addClass("vis-widget-lock")
+                console.log($jWidget)
+            },500)
+        }
 
         return widgetId;
     },
@@ -2549,6 +2568,7 @@ vis = $.extend(true, vis, {
                         servConn.logError('inspectWidget - Cannot destroy resizable ' + $this.attr('id') + ' ' + e);
                     }
                 }
+
             });
         }
 
@@ -3019,6 +3039,9 @@ vis = $.extend(true, vis, {
         }
         if (!vis.widgets[wid].data._no_resize) {
             vis.resizable($this);
+        }
+        if ($("#wid_all_lock").hasClass("ui-state-active")){
+            $("#"+wid).addClass("vis-widget-lock")
         }
 
         // Inspector
