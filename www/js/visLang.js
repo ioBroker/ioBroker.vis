@@ -240,6 +240,9 @@ $.extend(systemDictionary, {
     "Align horizontal/center": {"en": "Align horizontal/center", "de": "Ausrichten waagerecht zentriert", "ru": "Выровнять по горизонтали по центру"},
     "Align vertical/center": {"en": "Align vertical/center", "de": "Ausrichten senkrecht zentriert", "ru": "Выровнять по вертикали по центру"},
     "Align horizontal/equal": {"en": "Align horizontal/equal", "de": "Ausrichten waagerecht/gleicher Abstand", "ru": "Выровнять по горизонтали на равном расстоянии"},
-    "Align vertical/equal": {"en": "Align vertical/equal", "de": "Ausrichten senkrecht/gleicher Abstand", "ru": "Выровнять по вертикали на равном расстоянии"}
+    "Align vertical/equal": {"en": "Align vertical/equal", "de": "Ausrichten senkrecht/gleicher Abstand", "ru": "Выровнять по вертикали на равном расстоянии"},
+    "All widgets:": {"en": "All widgets:", "de": "Alle Widgets:", "ru": "Все элементы:"},
+    "Grid": {"en": "Grid", "de": "Gitter", "ru": "Сетка"},
+    "Lock all Widgets": {"en": "Lock all Widgets", "de": "Alle Widgets fixieren", "ru": "Блокировать все элементы"}
 });
 

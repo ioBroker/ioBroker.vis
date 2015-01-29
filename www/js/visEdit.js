@@ -257,7 +257,6 @@ vis = $.extend(true, vis, {
                 }
                 that.save();
             }
-
         }).keyup(function () {
             $(this).trigger('change');
         });
@@ -530,12 +529,12 @@ vis = $.extend(true, vis, {
             $('#rib_wid').hide();
             $('#rib_wid_copy_tr').show();
         });
-        $("#rib_wid_copy_cancel").click(function () {
+        $("#rib_wid_copy_cancel").button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
             $('#rib_wid').show();
             $('#rib_wid_copy_tr').hide();
         });
 
-        $("#rib_widget_copy_ok").click(function () {
+        $("#rib_wid_copy_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
             that.dupWidget();
             $('#rib_wid').show();
             $('#rib_wid_copy_tr').hide();
@@ -543,12 +542,12 @@ vis = $.extend(true, vis, {
 
         // View ----------------------------------------------------------------
         // Add View -----------------
-        $('#rib_view_add').click(function () {
+        $('#rib_view_add').button({icons: {primary: 'ui-icon-plusthick', secondary: null}, text: false}).click(function () {
             $('#rib_view').hide();
             $('#rib_view_add_tr').show();
             $('#rib_view_addname').val('').focus();
         });
-        $("#rib_view_add_cancel").click(function () {
+        $("#rib_view_add_cancel").button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
             $('#rib_view').show();
             $('#rib_view_add_tr').hide();
         });
@@ -559,7 +558,7 @@ vis = $.extend(true, vis, {
             if (e.which === 27) $("#rib_view_add_cancel").trigger('click');
         });
 
-        $("#rib_view_add_ok").click(function () {
+        $("#rib_view_add_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
             var name = that.checkNewViewName();
             if (name === false) {
                 return;
@@ -573,17 +572,17 @@ vis = $.extend(true, vis, {
         });
 
         // Delete View -----------------
-        $('#rib_view_del').click(function () {
+        $('#rib_view_del').button({icons: {primary: 'ui-icon-trash', secondary: null}, text: false}).click(function () {
             that.delView(that.activeView);
         });
         // Rename View -----------------
 
-        $('#rib_view_rename').click(function () {
+        $('#rib_view_rename').button({icons: {primary: 'ui-icon-pencil', secondary: null}, text: false}).click(function () {
             $('#rib_view').hide();
             $('#rib_view_rename_tr').show();
             $('#rib_view_newname').val(that.activeView).focus()
         });
-        $("#rib_view_rename_cancel").click(function () {
+        $("#rib_view_rename_cancel").button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
             $('#rib_view').show();
             $('#rib_view_rename_tr').hide();
         });
@@ -593,7 +592,7 @@ vis = $.extend(true, vis, {
             // esc
             if (e.which === 27) $("#rib_view_rename_cancel").trigger('click');
         });
-        $("#rib_view_rename_ok").click(function () {
+        $("#rib_view_rename_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
             var name = that.checkNewViewName($('#rib_view_newname').val().trim());
             if (name === false) return;
             that.renameView(that.activeView, name);
@@ -602,12 +601,12 @@ vis = $.extend(true, vis, {
         });
 
         // Copy View -----------------
-        $('#rib_view_copy').click(function () {
+        $('#rib_view_copy').button({icons: {primary: 'ui-icon-copy', secondary: null}, text: false}).click(function () {
             $('#rib_view').hide();
             $('#rib_view_copy_tr').show();
             $('#rib_view_copyname').val(that.activeView + "_new").focus();
         });
-        $("#rib_view_copy_cancel").click(function () {
+        $("#rib_view_copy_cancel").button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
             $('#rib_view').show();
             $('#rib_view_copy_tr').hide();
         });
@@ -617,13 +616,13 @@ vis = $.extend(true, vis, {
             // esc
             if (e.which === 27) $("#rib_view_copy_cancel").trigger('click');
         });
-        $("#rib_view_copy_ok").click(function () {
+        $("#rib_view_copy_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
             var name = that.checkNewViewName($('#rib_view_copyname').val().trim());
             if (name === false) return;
             that.dupView(that.activeView, name);
             $('#rib_view').show();
             $('#rib_view_copy_tr').hide();
-        }
+        });
 
         $("#wid_all_lock").click(function () {
             $(this).toggleClass("ui-state-active");
@@ -1497,26 +1496,25 @@ vis = $.extend(true, vis, {
 
         if (widget && widget.widget) {
             var objWidget = widget.widget;
-            targetView = this.activeView;
-            activeView = widget.view;
-            tpl = objWidget.tpl;
-            data = objWidget.data;
-            style = objWidget.style;
-            widget.view = this.activeView;
+            targetView    = this.activeView;
+            activeView    = widget.view;
+            tpl           = objWidget.tpl;
+            data          = objWidget.data;
+            style         = objWidget.style;
+            widget.view   = this.activeView;
         } else {
             activeView = this.activeView;
             targetView = this.$copyWidgetSelectView.val();
-            //console.log(activeView + "." + vis.activeWidget + " -> " + targetView);
-            tpl = this.views[this.activeView].widgets[this.activeWidget].tpl;
-            data = $.extend({}, this.views[this.activeView].widgets[this.activeWidget].data);
-            style = $.extend({}, this.views[this.activeView].widgets[this.activeWidget].style);
+            tpl        = this.views[this.activeView].widgets[this.activeWidget].tpl;
+            data       = $.extend({}, this.views[this.activeView].widgets[this.activeWidget].data);
+            style      = $.extend({}, this.views[this.activeView].widgets[this.activeWidget].style);
         }
 
         if (activeView == targetView) {
-            style.top = parseInt(style.top, 10);
+            style.top  = parseInt(style.top, 10);
             style.left = parseInt(style.left, 10);
 
-            style.top += 10;
+            style.top  += 10;
             style.left += 10;
             // Store new settings
             if (widget && widget.widget) {
@@ -1542,7 +1540,7 @@ vis = $.extend(true, vis, {
             if ($('#vis_container').find('#visview_' + targetView).html() == undefined) {
                 this.renderView(targetView, true, true);
             }
-            this.addWidget(tpl, data, style, vis.nextWidget(), targetView, true);
+            this.addWidget(tpl, data, style, this.nextWidget(), targetView, true);
 
             if (!noSave) this.save();
 
@@ -2538,6 +2536,10 @@ vis = $.extend(true, vis, {
 
             $('#select_active_widget').find('option[value="' + wid + '"]').prop('selected', true);
             $('#select_active_widget').multiselect('refresh');
+
+            // Disable copy widget if was active
+            $("#rib_wid_copy_cancel").trigger('click');
+
             if (wid && wid != 'none') {
                 $('#rib_wid_del').button('enable');
                 $('#rib_wid_copy').button('enable');
@@ -3150,6 +3152,11 @@ vis = $.extend(true, vis, {
             this.undoHistory = [$.extend(true, {}, this.views[this.activeView])];
             $('#button_undo').addClass('ui-state-disabled').removeClass('ui-state-hover');
         }
+
+        // Dsiable rename if enabled
+        $("#rib_view_copy_cancel").trigger('click');
+        $("#rib_view_rename_cancel").trigger('click');
+        $("#rib_view_add_cancel").trigger('click');
 
         // Load meta data if not yet loaded
         if (!this.objects) {
