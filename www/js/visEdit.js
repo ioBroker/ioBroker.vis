@@ -58,7 +58,7 @@ vis = $.extend(true, vis, {
         });
 
         function layout() {
-            $('#panel_body').height(parseInt($(window).height() - $('#menu_body').height()));
+            $('#panel_body').height(parseInt($(window).height() - $('#menu_body').height() -3));
             $('#vis_wrap').width(parseInt($(window).width() - $('#pan_add_wid').width() - $('#pan_attr').width() - 1));
         }
 
@@ -451,30 +451,6 @@ vis = $.extend(true, vis, {
         if (lastTheme) {
             $('#editor_theme').remove();
             $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + lastTheme + '/jquery-ui.min.css" id="editor_theme"/>');
-            $('head').prepend('<style id="scrollbar_style">html{}\
-        ::-webkit-scrollbar {\
-            width: 12px;\
-            height: 12px;\
-            background-color: transparent!important;\
-        }\
-        ::-webkit-scrollbar-track {\
-            background-color: transparent!important;\
-        }\
-        ::-webkit-scrollbar-track-piece{\
-            background-color: transparent!important;\
-        }\
-        ::-webkit-scrollbar-thumb {\
-            border-radius: 10px;\
-            background-color: '+$("#toolbox").css("background-color")+';\
-            -webkit-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6), inset 0 0 100px rgba(255, 255, 255, 0.35);\
-            background-image: none;\
-        }\
-        ::-webkit-scrollbar-corner{\
-            background-color: transparent;\
-        }\
-        ::-webkit-scrollbar-button{\
-            display: none ;\
-        }</style>');
         }
 
         $('#ul_theme li a').click(function () {
@@ -484,32 +460,7 @@ vis = $.extend(true, vis, {
             $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editor_theme"/>');
             //vis.additionalThemeCss(theme);
             $("#scrollbar_style").remove();
-            $('head').prepend('<style id="scrollbar_style">html{}\
-        ::-webkit-scrollbar {\
-            width: 12px;\
-            height: 12px;\
-            background-color: transparent!important;\
-        }\
-        ::-webkit-scrollbar-track {\
-            background-color: transparent!important;\
-        }\
-        ::-webkit-scrollbar-track-piece{\
-            background-color: transparent!important;\
-        }\
-        ::-webkit-scrollbar-thumb {\
-            border-radius: 10px;\
-            background-color: '+$(".ui-state-default").css("background-color")+';\
-            -webkit-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6), inset 0 0 100px rgba(255, 255, 255, 0.35);\
-            background-image: none;\
-        }\
-        ::-webkit-scrollbar-corner{\
-            background-color: transparent;\
-        }\
-        ::-webkit-scrollbar-button{\
-            display: none ;\
-        }</style>');
-
-
+            $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: '+$(".ui-widget-header ").first().css("background-color")+'}</style>');
 
             storage.set('vistheme', theme);
             that.save();
@@ -1025,6 +976,7 @@ vis = $.extend(true, vis, {
         this.showWaitScreen(false);
         $('#menu_body').show();
         $('#panel_body').show();
+        $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: '+$(".ui-widget-header ").first().css("background-color")+'}</style>');
 
     },
     showMessage: function (message, title, icon) {

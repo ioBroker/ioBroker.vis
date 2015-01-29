@@ -1,10 +1,70 @@
 
-
-div#vis_container{
-    width: 100%;
-    height: calc(100% - 29px);
+div#vis_container {
+    width: calc(100% - 2px);
+    height: calc(100% - 30px);
     position: relative;
     overflow: auto;
+    border-bottom-width: 0px;
+}
+body{
+    border-width: 0px 1px 1px 1px!important;
+    width: calc(100% - 2px)!important;
+    min-height: calc(100% - 1px)!important;
+    max-height: calc(100% - 1px)!important;
+}
+html{}
+::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+    background-color: transparent !important;
+}
+
+::-webkit-scrollbar-track{
+    background-color: transparent !important;
+}
+
+::-webkit-scrollbar-track-piece {
+    background-color: transparent !important;
+
+}
+
+::-webkit-scrollbar-thumb {
+    max-height: 5px!important;
+    border-radius: 10px;
+    -webkit-box-shadow: inset -2px -2px 7px rgba(0, 0, 0, 0.5), inset 2px 2px 7px rgba(255, 255, 255, 0.5);
+    background-image: none;
+    border-color: transparent!important;
+    border-width: 2px;
+    border-style: solid;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-button {
+    display: none ;
+}
+
+
+#vis_container::-webkit-scrollbar-track:horizontal {
+    background-color: transparent !important;
+    border-color: inherit!important;
+    border-top-width: 1px!important;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-style: solid;
+}
+#vis_container::-webkit-scrollbar-track:vertical {
+    background-color: transparent !important;
+    border-color: inherit!important;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    border-left-width: 1px!important;
+    border-right-width: 0px;
+    border-style: solid;
 }
 
 /*--------------------------------------------- SelectID dialog ------------------------------- */
@@ -332,6 +392,9 @@ div#vis_container{
     margin: 0;
     position: relative;
     top: -4px;
+    border-right-width: 0px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
 }
 
 .wid_prev{
@@ -436,16 +499,21 @@ display: none;
     display: inline-block;
     height: 100%;
 
+    border-right-width: 0px;
+    /* border-bottom-width: 1px; */
+    border-top-width: 0px;
+    border-left-width: 0px;
 }
 #pan_attr {
     display: inline-block;
     height: 100%;
     left: auto!important;
-    /*white-space: nowrap;*/
+    /* white-space: nowrap; */
     position: absolute;
     right: 0;
     width: 355px;
 
+    margin-right: 1px;
 }
 
 #inspect_view_bkg_parent{
@@ -465,15 +533,16 @@ display: none;
 
 #view_select{
     width: calc(100% - 1px);
-    height: 27px;
+    height: 28px;
 
     display: inline-flex;
     position: relative;
+    border: none;
 }
 
 #view_select_left{
-    height: 27px;
-    width: 27px;
+    height: 28px;
+    width: 28px;
     border-radius: 0px;
     margin: 0;
 }
@@ -489,8 +558,8 @@ display: none;
     position: relative;
 }
 #view_select_right{
-    height: 27px;
-    width: 27px;
+    height: 28px;
+    width: 28px;
     position: absolute;
     right: -2px;
     border-radius: 0px;
