@@ -2151,6 +2151,40 @@ vis = $.extend(true, vis, {
             this.groups[group][attr].attrIndex = '';
         }
     },
+    editCssBorder: function (widget) {
+        var group = 'css_border';
+        var line;
+        this.groups[group] = this.groups[group] || {};
+
+        this.groups[group]['css_border-width']      = {input: '<input type="text" id="inspect_css_border-width"/>'};
+        this.groups[group]['css_border-style']      = this.editAutoComplete(widget, 'css_border-style', ['', 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'initial', 'inherit'], true);
+        this.groups[group]['css_border-color']      = this.editColor(widget, 'css_border-color');
+        this.groups[group]['css_border-radius']     = {input: '<input type="text" id="inspect_css_border-radius"/>'};
+
+        for(var attr in this.groups[group]) {
+            this.groups[group][attr].css = true;
+            this.groups[group][attr].attrName = attr;
+            this.groups[group][attr].attrIndex = '';
+        }
+    },
+    editCssShadowPadding: function (widget) {
+        var group = 'css_shadow_padding';
+        var line;
+        this.groups[group] = this.groups[group] || {};
+
+        this.groups[group]['css_padding']        = {input: '<input type="text" id="inspect_css_padding"/>'};
+        this.groups[group]['css_padding-left']   = {input: '<input type="text" id="inspect_css_padding-left"/>'};
+        this.groups[group]['css_padding-top']    = {input: '<input type="text" id="inspect_css_padding-top"/>'};
+        this.groups[group]['css_padding-right']  = {input: '<input type="text" id="inspect_css_padding-right"/>'};
+        this.groups[group]['css_padding-bottom'] = {input: '<input type="text" id="inspect_css_padding-bottom"/>'};
+        this.groups[group]['css_box-shadow']     = {input: '<input type="text" id="inspect_css_box-shadow"/>'};
+
+        for(var attr in this.groups[group]) {
+            this.groups[group][attr].css = true;
+            this.groups[group][attr].attrName = attr;
+            this.groups[group][attr].attrIndex = '';
+        }
+    },
     addToInspect: function (widget, _wid_attr, group, options, onchange) {
         // Format: attr_name(start-end)[default_value]/type
         // attr_name can be extended with numbers (1-2) means it will be attr_name1 and attr_name2 created
@@ -2995,6 +3029,8 @@ vis = $.extend(true, vis, {
         this.editCssCommon(wid);
         this.editCssFontText(wid);
         this.editCssBackground(wid);
+        this.editCssBorder(wid);
+        this.editCssShadowPadding(wid);
 
         this.showInspect(view, wid);
         // If widget was rerendered, it can have new div

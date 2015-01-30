@@ -246,6 +246,68 @@ $.extend(systemDictionary, {
     "Align vertical/equal": {"en": "Align vertical/equal", "de": "Ausrichten senkrecht/gleicher Abstand", "ru": "Выровнять по вертикали на равном расстоянии"},
     "All widgets:": {"en": "All widgets:", "de": "Alle Widgets:", "ru": "Все элементы:"},
     "Grid": {"en": "Grid", "de": "Gitter", "ru": "Сетка"},
-    "Lock all Widgets": {"en": "Lock all Widgets", "de": "Alle Widgets fixieren", "ru": "Блокировать все элементы"}
+    "Lock all Widgets": {"en": "Lock all Widgets", "de": "Alle Widgets fixieren", "ru": "Блокировать все элементы"},
+
+    "css_left": {"en": "left", "de": "left", "ru": "left"},
+    "css_top": {"en": "top", "de": "top", "ru": "top"},
+    "css_width": {"en": "width", "de": "width", "ru": "width"},
+    "css_height": {"en": "height", "de": "height", "ru": "height"},
+    "css_z-index": {"en": "z-index", "de": "z-index", "ru": "z-index"},
+    "css_overflow-x": {"en": "overflow-x", "de": "overflow-x", "ru": "overflow-x"},
+    "css_overflow-y": {"en": "overflow-y", "de": "overflow-y", "ru": "overflow-y"},
+    "css_color": {"en": "color", "de": "color", "ru": "color"},
+    "css_text-align": {"en": "text-align", "de": "text-align", "ru": "text-align"},
+    "css_text-shadow": {"en": "text-shadow", "de": "text-shadow", "ru": "text-shadow"},
+    "css_font-family": {"en": "font-family", "de": "font-family", "ru": "font-family"},
+    "css_font-style": {"en": "font-style", "de": "font-style", "ru": "font-style"},
+    "css_font-variant": {"en": "font-variant", "de": "font-variant", "ru": "font-variant"},
+    "css_font-weight": {"en": "font-weight", "de": "font-weight", "ru": "font-weight"},
+    "css_font-size": {"en": "font-size", "de": "font-size", "ru": "font-size"},
+    "css_line-height": {"en": "line-height", "de": "line-height", "ru": "line-height"},
+    "css_letter-spacing": {"en": "letter-spacing", "de": "letter-spacing", "ru": "letter-spacing"},
+    "css_word-spacing": {"en": "word-spacing", "de": "word-spacing", "ru": "word-spacing"},
+    "css_background": {"en": "background", "de": "background", "ru": "background"},
+    "css_background-color": {"en": "background-color", "de": "background-color", "ru": "background-color"},
+    "css_background-image": {"en": "background-image", "de": "background-image", "ru": "background-image"},
+    "css_background-repeat": {"en": "background-repeat", "de": "background-repeat", "ru": "background-repeat"},
+    "css_background-attachment": {"en": "background-attachment", "de": "background-attachment", "ru": "background-attachment"},
+    "css_background-position": {"en": "background-position", "de": "background-position", "ru": "background-position"},
+    "css_background-size": {"en": "background-size", "de": "background-size", "ru": "background-size"},
+    "css_background-clip": {"en": "background-clip", "de": "background-clip", "ru": "background-clip"},
+    "css_background-origin": {"en": "background-origin", "de": "background-origin", "ru": "background-origin"},
+    "group_css_border": {"en": "CSS Border", "de": "CSS Border", "ru": "CSS рамка"},
+    "css_border-width": {"en": "border-width", "de": "border-width", "ru": "border-width"},
+    "css_border-style": {"en": "border-style", "de": "border-style", "ru": "border-style"},
+    "css_border-color": {"en": "border-color", "de": "border-color", "ru": "border-color"},
+    "css_border-radius": {"en": "border-radius", "de": "border-radius", "ru": "border-radius"},
+    "group_css_shadow_padding": {"en": "CSS padding & shadow", "de": "CSS Shatten und Abstand", "ru": "CSS Тень и отступы"},
+    "css_padding": {"en": "padding", "de": "padding", "ru": "padding"},
+    "css_padding-left": {"en": "padding-left", "de": "padding-left", "ru": "padding-left"},
+    "css_padding-top": {"en": "padding-top", "de": "padding-top", "ru": "padding-top"},
+    "css_padding-right": {"en": "padding-right", "de": "padding-right", "ru": "padding-right"},
+    "css_padding-bottom": {"en": "padding-bottom", "de": "padding-bottom", "ru": "padding-bottom"},
+    "css_box-shadow": {"en": "box-shadow", "de": "box-shadow", "ru": "box-shadow"},
+    "css_box-shadow_tooltip": {
+        "en": "h-shadow v-shadow blur spread color\x0A" +
+              "h-shadow: Required. The position of the horizontal shadow. Negative values are allowed\x0A" +
+              "v-shadow: Required. The position of the vertical shadow. Negative values are allowed\x0A" +
+              "blur: Optional. The blur distance\x0A" +
+              "spread: Optional. The size of shadow\x0A" +
+              "color: Optional. The color of the shadow. The default value is black. Look at CSS Color Values for a complete list of possible color values.\x0A" +
+              "inset: Optional. Changes the shadow from an outer shadow (outset) to an inner shadow.",
+        "de": "inset [<X-Verschiebung> <Y-Verschiebung> <Unschärfe-Radius> <Ausbreitungsradius> <Farbe>]\x0A" +
+              "inset: Die Angabe ist optional. Wenn nicht festgelegt, wird angenommen, dass es sich um einen Schlagschatten handelt.\x0A" +
+              "X-Verschiebung Y-Verschiebung: Eine Angabe ist erforderlich. Es gibt zwei Längenwerte, die die Verschiebung des Schattens angeben. Negative Werte sind auch möglich.\x0A" +
+              "Unschärfe-Radius: Die Angabe ist optional und Null, wenn kein <Unschärfe-Radius> gesetzt wurde. Je großer der Wert, desto größer die Unschärfe.\x0A" +
+              "Ausbreitungsradius: Eine weitere Längenangabe, deren Angabe optional ist. Wenn nicht festgelegt ist der Ausbreitungsradius 0 und der Schatten hat die gleiche Größe wie das Element.\x0A" +
+              "Farbe: Die Angabe ist optional. Wenn nicht festgelegt, hängt die Farbe vom Browser ab. In Gecko (Firefox) wird der Wert der color Eigenschaft verwendet.\x0A",
+        "ru": "inset <сдвиг по x> <сдвиг по y> <радиус размытия> <растяжение> <цвет>\x0A" +
+              "inset: Тень выводится внутри элемента. Необязательный параметр.\x0A" +
+              "сдвиг по x: Смещение тени по горизонтали относительно элемента. Положительное значение этого параметра задает сдвиг тени вправо, отрицательное — влево. Обязательный параметр.\x0A" +
+              "сдвиг по y: Смещение тени по вертикали относительно элемента. Положительное значение задает сдвиг тени вниз, отрицательное — вверх. Обязательный параметр.\x0A" +
+              "радиус размытия: Задает радиус размытия тени. Чем больше это значение, тем сильнее тень сглаживается, становится шире и светлее. Если этот параметр не задан, по умолчанию устанавливается равным 0, тень при этом будет четкой, а не размытой.\x0A" +
+              "растяжение: Положительное значение растягивает тень, отрицательное, наоборот, ее сжимает. Если этот параметр не задан, по умолчанию устанавливается 0, при этом тень будет того же размера, что и элемент.\x0A" +
+              "цвет: Цвет тени в любом доступном CSS формате, по умолчанию тень черная. Необязательный параметр."
+    }
 });
 
