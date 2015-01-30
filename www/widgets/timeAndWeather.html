@@ -321,6 +321,7 @@
 <script id="tplTwSimpleDate"
         type="text/ejs"
         class="vis-tpl"
+        data-vis-prev='<div id="prev_tplTwSimpleDate" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev date vis-widget-lock ui-selectee" style="left: 139px; top: 76px;">30.01.2015</div>'
         data-vis-set="timeAndWeather"
         data-vis-name="SimpleDate"
         data-vis-attrs="showWeekDay/checkbox;shortWeekDay/checkbox;shortYear/checkbox;prependZero[true]/checkbox;monthWord/checkbox;shortMonth/checkbox;americanOrder/checkbox;noClass/checkbox">
@@ -332,6 +333,7 @@
 <script id="tplTwSimpleClock"
         type="text/ejs"
         class="vis-tpl"
+        data-vis-prev='<div id="prev_tplTwSimpleClock" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev clock vis-widget-lock ui-selectee" style="left: 132px; top: 179px; font-size: 28px;">11:01:57</div>'
         data-vis-set="timeAndWeather"
         data-vis-name="SimpleClock"
         data-vis-attrs="hideSeconds/checkbox;blink/checkbox;noClass/checkbox">
@@ -342,6 +344,7 @@
 <script id="tplTwCoolClock"
         type="text/ejs"
         class="vis-tpl"
+        data-vis-prev='<img src="widgets\timeAndWeather\img\Prev_CoolClock.png"></img>'
         data-vis-set="timeAndWeather"
         data-vis-name="CoolClock"
         data-vis-attrs="theme/fancy,swissRail,chunkySwiss,machine,simonbaird_com,classic,classicWhite,modern,simple,securephp,Tes2,Lev,Sand,Sun,Tor,Cold,Babosa,Tumb,Stone,Disc,watermelon;noSeconds/checkbox;showDigital/checkbox;showAmPm/checkbox" >
@@ -353,6 +356,7 @@
 <script id="tplTwFlipClock"
         type="text/ejs"
         class="vis-tpl"
+        data-vis-prev='<img src="widgets\timeAndWeather\img\Prev_FlipClock.png"></img>'
         data-vis-set="timeAndWeather"
         data-vis-name="FlipClock"
         data-vis-attrs="">
@@ -364,6 +368,7 @@
 <script id="tplTwHtcWeather"
         type="text/ejs"
         class="vis-tpl"
+        data-vis-prev='<img src="widgets\timeAndWeather\img\Prev_HTCWeather.png"></img>'
         data-vis-set="timeAndWeather"
         data-vis-name="HtcWeather"
         data-vis-attrs="weoid/custom,timeAndWeather.editWeather">
@@ -371,9 +376,11 @@
         vis.binds.timeAndWeather.tplTwHtcWeather(this.view, this.data);
     %>
 </script>
+
 <script id="tplTwYahooWeather"
         type="text/ejs"
         class="vis-tpl"
+        data-vis-prev='<img src="widgets\timeAndWeather\img\Prev_YahooWeather.png"></img>'
         data-vis-set="timeAndWeather"
         data-vis-name="YahooWeather"
         data-vis-attrs="weoid/custom,timeAndWeather.editWeather">

@@ -36,7 +36,7 @@ vis = $.extend(true, vis, {
         var that = this;
         this.$selectView = $('#select_view');
         this.$copyWidgetSelectView = $('#rib_wid_copy_view');
-
+        $("#wid_all_lock_function").trigger("click");
         if (local) $("#ribbon_tab_datei").show();
 
         this.editInitDialogs();
@@ -58,7 +58,7 @@ vis = $.extend(true, vis, {
         });
 
         function layout() {
-            $('#panel_body').height(parseInt($(window).height() - $('#menu_body').height()));
+            $('#panel_body').height(parseInt($(window).height() - $('#menu_body').height() -3));
             $('#vis_wrap').width(parseInt($(window).width() - $('#pan_add_wid').width() - $('#pan_attr').width() - 1));
         }
 
@@ -459,6 +459,11 @@ vis = $.extend(true, vis, {
             $('#editor_theme').remove();
             $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editor_theme"/>');
             //vis.additionalThemeCss(theme);
+            setTimeout(function(){
+                $("#scrollbar_style").remove();
+                $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: '+$(".ui-widget-header ").first().css("background-color")+'}</style>');
+            },300);
+
             storage.set('vistheme', theme);
             that.save();
         });
@@ -540,7 +545,22 @@ vis = $.extend(true, vis, {
             $('#rib_wid_copy_tr').hide();
         });
 
+        // All Widget ---------------------
+        $("#wid_all_lock_function").button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
+            if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
+                $("#vis_container").find(".vis-widget").addClass("vis-widget-lock")
+            } else {
+                $("#vis_container").find(".vis-widget").removeClass("vis-widget-lock")
+            }
+            $('#wid_all_lock_f').removeClass("ui-state-focus")
+        });
+        $("#wid_all_lock_drag").button({icons: {primary: 'ui-icon-extlink', secondary: null}, text: false}).click(function () {
+            $('#wid_all_lock_d').removeClass("ui-state-focus")
+            vis.inspectWidget('none')
+        });
+
         // View ----------------------------------------------------------------
+
         // Add View -----------------
         $('#rib_view_add').button({icons: {primary: 'ui-icon-plusthick', secondary: null}, text: false}).click(function () {
             $('#rib_view').hide();
@@ -624,15 +644,6 @@ vis = $.extend(true, vis, {
             $('#rib_view_copy_tr').hide();
         });
 
-        $("#wid_all_lock").click(function () {
-            $(this).toggleClass("ui-state-active");
-
-            if ($(this).hasClass("ui-state-active")) {
-                $(".vis-widget").addClass("vis-widget-lock")
-            } else {
-                $(".vis-widget").removeClass("vis-widget-lock")
-            }
-        });
 
         // Tools ----------------------------------------------------------------
         // Resolutuion -----------------
@@ -967,9 +978,12 @@ vis = $.extend(true, vis, {
             }).show();
             $('#local_view').show();
         }
+
         this.showWaitScreen(false);
         $('#menu_body').show();
         $('#panel_body').show();
+        $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: '+$(".ui-widget-header ").first().css("background-color")+'}</style>');
+
     },
     showMessage: function (message, title, icon) {
         if (!this.$dialogMessage) {
@@ -1476,14 +1490,6 @@ vis = $.extend(true, vis, {
         if (!noSave) this.save();
 
         this.bindWidgetClick(widgetId);
-
-        if ($("#wid_all_lock").hasClass("ui-state-active")){
-            setTimeout(function(){
-                console.log($jWidget)
-                $($jWidget).addClass("vis-widget-lock")
-                console.log($jWidget)
-            },500)
-        }
 
         return widgetId;
     },
@@ -3176,16 +3182,14 @@ vis = $.extend(true, vis, {
         }).show();
 
         // User interaction
-        if (!vis.widgets[wid].data._no_move) {
-            vis.draggable($this);
+        if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
+            if (!vis.widgets[wid].data._no_move) {
+                vis.draggable($this);
+            }
+            if (!vis.widgets[wid].data._no_resize) {
+                vis.resizable($this);
+            }
         }
-        if (!vis.widgets[wid].data._no_resize) {
-            vis.resizable($this);
-        }
-        if ($("#wid_all_lock").hasClass("ui-state-active")){
-            $("#"+wid).addClass("vis-widget-lock")
-        }
-
         // Inspector
         $('#inspect_wid').html(wid);
     },

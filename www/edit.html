@@ -74,7 +74,7 @@
     <!--- widgets -->
     <!--- widgetsStop -->
 </head>
-<body>
+<body class="ui-widget-content">
 <div id='waitScreen' class='vis-wait-screen'>
     <div id='waitDialog' class='waitDialog'>
         <div class='vis-progressbar '></div>
@@ -175,7 +175,7 @@
 <div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 100 ">
     <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span>vis </span><span id="vis-version"></span></div>
 
-    <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -2px;">
+    <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -4px;position: relative; z-index: 2">
         <li id="ribbon_tab_datei" style="display: none">
             <a href="#ribbon_file" style="padding: 2px 4px 2px 4px" class="translate">File</a>
         </li>
@@ -192,7 +192,7 @@
             <a href="#ribbon_tools" style="padding: 2px 4px 2px 4px" class="translate">Tools</a>
         </li>
     </ul>
-    <div id="menu_sf" style="display: inline-block; margin-bottom: -2px;">
+    <div id="menu_sf" style="display: inline-block; margin-bottom: -4px;">
         <ul id="menu" style="margin: 0;height: auto;" class="sf-menu">
             <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Setup</a>
                 <ul style="display: none;">
@@ -446,7 +446,10 @@
                     <tr>
                         <td class="translate" style="text-align: center; height: 22px; padding-right: 3px">All widgets:</td>
                         <td>
-                            <div id="wid_all_lock" class="btn-iconbar ui-corner-all translateT" title="Lock all Widgets"><img class="icon-on-iconbar" src="icon/lock.png"></div>
+                            <input id="wid_all_lock_function"  type="checkbox" /><label style="width: 23px;height: 23px" id="wid_all_lock_f" for="wid_all_lock_function"  class="translateT ui-state-active" title="Lock Widget function"></label>
+                        </td>
+                        <td>
+                            <input id="wid_all_lock_drag"  type="checkbox" /><label style="width: 23px;height: 23px" id="wid_all_lock_d" for="wid_all_lock_drag"  class="translateT" title="Lock Widget dragging"></label>
                         </td>
 
                     </tr>
@@ -606,7 +609,7 @@
     </div>
 </div>
 
-<div id="panel_body" style="display: none; height: 100%">
+<div id="panel_body" class="ui-widget-content" style="display: none; height: 100%">
     <div class="ui-widget-content" id="pan_add_wid">
         <div class="ui-state-default" style="height:16px;font-size:16px;padding: 5px;font-weight: bolder;">
             <span class="translate">Add Widget</span>
@@ -625,7 +628,7 @@
             </div>
             <button id="view_select_right"></button>
         </div>
-        <div id="vis_container" caption="Views">
+        <div id="vis_container" class="ui-widget-content" caption="Views">
             <div id="widget_helper">
                 <div id="widget_inner_helper"></div>
             </div>

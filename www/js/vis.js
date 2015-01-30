@@ -380,11 +380,14 @@ var vis = {
 
         // EDIT mode
         if (this.editMode) {
-            this.editInitNext();
-        }
+                this.editInitNext();
+            }
         this.initialized = true;
         // If this function called earlier, it makes problems under FireFox.
         this.changeView(this.activeView);
+
+
+
     });
     },
     initViewObject: function () {
@@ -721,6 +724,9 @@ var vis = {
             // If edit mode, bind on click event to open this widget in edit dialog
             if (this.editMode) {
                 this.bindWidgetClick(id);
+                if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
+                    $("#"+ id).addClass("vis-widget-lock")
+                }
             }
         } catch (e) {
             this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
