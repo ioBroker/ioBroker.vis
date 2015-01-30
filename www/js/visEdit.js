@@ -459,8 +459,10 @@ vis = $.extend(true, vis, {
             $('#editor_theme').remove();
             $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editor_theme"/>');
             //vis.additionalThemeCss(theme);
-            $("#scrollbar_style").remove();
-            $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: '+$(".ui-widget-header ").first().css("background-color")+'}</style>');
+            setTimeout(function(){
+                $("#scrollbar_style").remove();
+                $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: '+$(".ui-widget-header ").first().css("background-color")+'}</style>');
+            },300);
 
             storage.set('vistheme', theme);
             that.save();
@@ -543,7 +545,22 @@ vis = $.extend(true, vis, {
             $('#rib_wid_copy_tr').hide();
         });
 
+        // All Widget ---------------------
+        $("#wid_all_lock_function").button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
+            if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
+                $("#vis_container").find(".vis-widget").addClass("vis-widget-lock")
+            } else {
+                $("#vis_container").find(".vis-widget").removeClass("vis-widget-lock")
+            }
+            $('#wid_all_lock_f').removeClass("ui-state-focus")
+        });
+        $("#wid_all_lock_drag").button({icons: {primary: 'ui-icon-extlink', secondary: null}, text: false}).click(function () {
+            $('#wid_all_lock_d').removeClass("ui-state-focus")
+            vis.inspectWidget('none')
+        });
+
         // View ----------------------------------------------------------------
+
         // Add View -----------------
         $('#rib_view_add').button({icons: {primary: 'ui-icon-plusthick', secondary: null}, text: false}).click(function () {
             $('#rib_view').hide();
@@ -627,17 +644,6 @@ vis = $.extend(true, vis, {
             $('#rib_view_copy_tr').hide();
         });
 
-        $("#wid_all_lock_function").button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
-            if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
-                $("#vis_container").find(".vis-widget").addClass("vis-widget-lock")
-            } else {
-                $("#vis_container").find(".vis-widget").removeClass("vis-widget-lock")
-            }
-            $('#wid_all_lock_f').removeClass("ui-state-focus")
-        });
-        $("#wid_all_lock_drag").button({icons: {primary: 'ui-icon-extlink', secondary: null}, text: false}).click(function () {
-            $('#wid_all_lock_d').removeClass("ui-state-focus")
-        });
 
         // Tools ----------------------------------------------------------------
         // Resolutuion -----------------
