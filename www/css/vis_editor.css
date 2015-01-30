@@ -138,7 +138,7 @@ html{}
 }
 
 .css-inspector-heading {
-    text-align: center;
+    text-align: left;
     font-weight: bold;
     padding-top: 6px;
 }
@@ -228,8 +228,7 @@ html{}
 }
 
 #widget_attrs_fix .vis-edit-textbox {
-    width: 260px !important;
-
+    width: 100%;
 }
 
 #snap_type {

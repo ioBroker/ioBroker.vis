@@ -597,6 +597,7 @@ var vis = {
     },
     changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
         var widgets = this.views[vis.activeView].widgets;
+        var that = this;
         if (filter == "") {
             // show all
             for (var widget in widgets) {
@@ -637,7 +638,7 @@ var vis = {
             for (var widget in widgets) {
                 //console.log(widgets[widget]);
                 if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
-                    if (vis.viewsActiveFilter[vis.activeView].length > 0 && vis.viewsActiveFilter[vis.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
+                    if (this.viewsActiveFilter[this.activeView].length > 0 && this.viewsActiveFilter[this.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
                         mWidget = document.getElementById(widget);
                         if (mWidget &&
                             mWidget._customHandlers &&
@@ -652,14 +653,14 @@ var vis = {
             }
             setTimeout(function () {
                 var mWidget;
-                // Show copmlex widgets like hqWidgets or bars
+                // Show complex widgets like hqWidgets or bars
                 for (var widget in widgets) {
                     mWidget = document.getElementById(widget);
                     if (mWidget &&
                         mWidget._customHandlers &&
                         mWidget._customHandlers.onShow) {
                         if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
-                            if (!(vis.viewsActiveFilter[vis.activeView].length > 0 && vis.viewsActiveFilter[vis.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
+                            if (!(that.viewsActiveFilter[that.activeView].length > 0 && that.viewsActiveFilter[that.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
                                 mWidget._customHandlers.onShow(mWidget, widget);
                             }
                         }

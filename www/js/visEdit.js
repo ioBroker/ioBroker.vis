@@ -300,8 +300,6 @@ vis = $.extend(true, vis, {
             }
         });
 
-
-
         $('#dev_show_html').button({}).click(function () {
             var wid_id = $('#' + that.activeWidget).attr('id');
             vis.inspectWidget();
@@ -470,7 +468,7 @@ vis = $.extend(true, vis, {
 
         // Theme seleckt View
         $('#inspect_view_theme').change(function () {
-            var theme = $('#inspect_view_theme option:selected').val();
+            var theme = $(this).val();
             that.views[that.activeView].settings.theme = theme;
             that.addViewStyle(that.activeView, theme);
             //that.additionalThemeCss(theme);
@@ -884,7 +882,7 @@ vis = $.extend(true, vis, {
         });
         this.$copyWidgetSelectView.val(this.activeView);
         this.$copyWidgetSelectView.selectmenu();
-
+        $('#inspect_view_theme').selectmenu({width: '100%'});
 
         // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
@@ -904,7 +902,7 @@ vis = $.extend(true, vis, {
 
         $('#select_set option[value="' + last_set + '"]').prop('selected', true);
 
-        vis.editInitWidgetPreview();
+        this.editInitWidgetPreview();
 
         $select_set.selectmenu({
             change: function (event, ui) {
@@ -926,9 +924,42 @@ vis = $.extend(true, vis, {
             $('.' + last_set + '_prev').show();
         }
 
+        // Expand/Collapse view settings
+        $('.view-group').each(function () {
+            $(this).button({
+                icons: {
+                    primary: "ui-icon-triangle-1-s"
+                },
+                text: false
+            }).css({width: 22, height: 22}).click(function () {
+                var group = $(this).attr('data-group');
+                that.groupsState[group] = !that.groupsState[group];
+                $(this).button('option', {
+                    icons: {primary: that.groupsState[group] ? "ui-icon-triangle-1-n" : "ui-icon-triangle-1-s"}
+                });
+                if (that.groupsState[group]) {
+                    $('.group-' + group).show();
+                } else {
+                    $('.group-' + group).hide();
+                }
+                if (typeof storage != 'undefined') {
+                    storage.set('groups', JSON.stringify(that.groupsState));
+                }
+            });
+            var group = $(this).attr('data-group');
+            if (that.groupsState && !that.groupsState[group]) $('.group-' + group).hide();
+        });
+
+        // Init inspect view settings buttons
+        $('.view-edit-button').each(function () {
+            var type = $(this).attr('data-type');
+            if (type == 'color') {
+                //var line = that.editColor()
+            }
+        });
 
         // Create background_class property if does not exist
-        if (this.views[vis.activeView] != undefined) {
+        if (this.views[this.activeView] != undefined) {
             if (this.views[vis.activeView].settings == undefined) {
                 this.views[vis.activeView].settings = {};
             }
@@ -3295,7 +3326,7 @@ vis = $.extend(true, vis, {
             $('#button_undo').addClass('ui-state-disabled').removeClass('ui-state-hover');
         }
 
-        // Dsiable rename if enabled
+        // Disable rename if enabled
         $("#rib_view_copy_cancel").trigger('click');
         $("#rib_view_rename_cancel").trigger('click');
         $("#rib_view_add_cancel").trigger('click');
@@ -3311,7 +3342,7 @@ vis = $.extend(true, vis, {
         // Init background selector
         if (this.styleSelect && this.views[view] && this.views[view].settings) {
             this.styleSelect.Show({
-                width: 200,
+                width: '100%',
                 name: 'inspect_view_bkg_def',
                 filterName: 'background',
                 //filterFile: "backgrounds.css",
@@ -3399,9 +3430,9 @@ vis = $.extend(true, vis, {
 
             this.views[this.activeView].settings['theme'] = this.views[this.activeView].settings['theme'] || 'redmond';
 
-            $('#inspect_view_theme option[value=\'' + this.views[this.activeView].settings.theme + "']").prop('selected', true);
+            $('#inspect_view_theme').val(this.views[this.activeView].settings.theme);
         }
-        $('#inspect_view_theme').multiselect('refresh');
+        $('#inspect_view_theme').selectmenu('refresh');
     },
     dragging: false,
     draggable: function (obj) {

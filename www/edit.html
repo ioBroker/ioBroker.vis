@@ -655,172 +655,177 @@
             </ul>
             <div class="tab_attr ui-widget-content" id="tab_view_attr">
                 <div id="view_inspector">
-                    <table style="width: 330px; border: 0px">
-                        <tr>
-                            <td class="vis-edit-td-caption translate">comment</td>
-                            <td class="vis-edit-td-field"><input size="15" type="text" id="inspect_view_comment" class="vis-inspect-view vis-edit-textbox"/></td>
-                        </tr>
-                        <tr>
-                            <td class="vis-edit-td-caption translate">class</td>
-                            <td class="vis-edit-td-field"><input size="15" type="text" id="inspect_view_class" class="vis-inspect-view vis-edit-textbox"/></td>
+                    <table style="width: 100%; border: 0px">
+                        <colgroup>
+                            <col width="40%"/>
+                            <col width="60%" style="padding-right: 5px"/>
+                            <col width="26px" style=""/>
+                        </colgroup>
+                        <tbody>
+                            <tr><td colspan="3" class="ui-state-default"><span class="translate">group_css_common</span><button class="view-group" style="float:right" data-group="view-css-common"></button></td></tr>
+                            <tr class="group-view-css-common">
+                                <td class="vis-edit-td-caption translate">comment</td>
+                                <td class="vis-edit-td-field" colspan="2"><input type="text" id="inspect_view_comment" class="vis-inspect-view vis-edit-textbox"/></td>
+                            </tr>
+                            <tr class="group-view-css-common">
+                                <td class="vis-edit-td-caption translate">class</td>
+                                <td class="vis-edit-td-field" colspan="2"><input type="text" id="inspect_view_class" class="vis-inspect-view vis-edit-textbox"/></td>
 
-                        </tr>
-                        <tr>
-                            <td class="vis-edit-td-caption translate">filter_key</td>
-                            <td class="vis-edit-td-field"><input size="15" type="text" id="inspect_view_filterkey" class="vis-inspect-view vis-edit-textbox"/></td>
-                        </tr>
-                        <tr>
-                            <td class="vis-edit-td-caption translate">Theme</td>
-                            <td class="vis-edit-td-field">
-                                <select id="inspect_view_theme" class="vis-editor vis-edit-select" data-multiselect-width="200" data-multiselect-height="250">
-                                    <option value="black-tie">black-tie</option>
-                                    <option value="blitzer">blitzer</option>
-                                    <option value="cupertino">cupertino</option>
-                                    <option value="dhive">dark-hive</option>
-                                    <option value="dot-luv">dot-luv</option>
-                                    <option value="eggplant">eggplant</option>
-                                    <option value="excite-bike">excite-bike</option>
-                                    <option value="flick">flick</option>
-                                    <option value="hot-sneaks">hot-sneaks</option>
-                                    <option value="humanity">humanity</option>
-                                    <option value="kian">kiandra</option>
-                                    <option value="le-frog">le-frog</option>
-                                    <option value="mint-choc">mint-choc</option>
-                                    <option value="overcast">overcast</option>
-                                    <option value="pepper-grinder">pepper-grinder</option>
-                                    <option value="redmond">redmond</option>
-                                    <option value="smoothness">smoothness</option>
-                                    <option value="south-street">south-street</option>
-                                    <option value="start">start</option>
-                                    <option value="sunny">sunny</option>
-                                    <option value="swanky-purse">swanky-purse</option>
-                                    <option value="trontastic">overcast</option>
-                                    <option value="ui-dn">ui-darkness</option>
-                                    <option value="ui-lightness">ui-lightness</option>
-                                    <option value="vader">vader</option>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
-                    <div style="padding-top: 15px;font-size: 20px;font-weight: bolder;" class="translate">CSS:</div>
-                    <table>
-                        <tr>
-                            <td colspan="4" class="css-inspector-heading">Background</td>
-                        </tr>
-                        <tr>
-                            <td  colspan="2"  id="inspect_view_bkg_parent"></td>
-                        </tr>
-                        <tr>
-                            <td>-color</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_background-color" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-image</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_background-image" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-repeat</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_background-repeat" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-attachment</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_background-attachment" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-position</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_background-position" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-size</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_background-size" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-clip</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_background-clip" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>-origin</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_background-origin" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="4" class="css-inspector-heading">font / text</td>
-                        </tr>
-                        <tr>
-                            <td>color</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_color" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>text-shadow</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_text-shadow" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-family</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_font-family" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-style</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_font-style" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-variant</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_font-variant" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-weight</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_font-weight" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>font-size</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_font-size" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>line-height</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_line-height" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>letter-spacing</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_letter-spacing" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>word-spacing</td>
-                            <td >
-                                <input size="31" type="text" id="inspect_view_css_word-spacing" class="vis-inspect-view-css"/>
-                            </td>
-                        </tr>
+                            </tr>
+                            <tr class="group-view-css-common">
+                                <td class="vis-edit-td-caption translateT" style="font-style: italic" title="filter_key_tooltip"><span class="translate">filter_key</span></td>
+                                <td class="vis-edit-td-field" colspan="2"><input type="text" id="inspect_view_filterkey" class="vis-inspect-view vis-edit-textbox"/></td>
+                            </tr>
+                            <tr class="group-view-css-common">
+                                <td class="vis-edit-td-caption translate">Theme</td>
+                                <td class="vis-edit-td-field" colspan="2">
+                                    <select id="inspect_view_theme" class="vis-edit-textbox" style="width:100%">
+                                        <option value="black-tie">black-tie</option>
+                                        <option value="blitzer">blitzer</option>
+                                        <option value="cupertino">cupertino</option>
+                                        <option value="dhive">dark-hive</option>
+                                        <option value="dot-luv">dot-luv</option>
+                                        <option value="eggplant">eggplant</option>
+                                        <option value="excite-bike">excite-bike</option>
+                                        <option value="flick">flick</option>
+                                        <option value="hot-sneaks">hot-sneaks</option>
+                                        <option value="humanity">humanity</option>
+                                        <option value="kian">kiandra</option>
+                                        <option value="le-frog">le-frog</option>
+                                        <option value="mint-choc">mint-choc</option>
+                                        <option value="overcast">overcast</option>
+                                        <option value="pepper-grinder">pepper-grinder</option>
+                                        <option value="redmond">redmond</option>
+                                        <option value="smoothness">smoothness</option>
+                                        <option value="south-street">south-street</option>
+                                        <option value="start">start</option>
+                                        <option value="sunny">sunny</option>
+                                        <option value="swanky-purse">swanky-purse</option>
+                                        <option value="trontastic">overcast</option>
+                                        <option value="ui-dn">ui-darkness</option>
+                                        <option value="ui-lightness">ui-lightness</option>
+                                        <option value="vader">vader</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="css-inspector-heading ui-state-default"><span class="translate">group_css_background</span><button  style="float:right" class="view-group" data-group="view-css-background"></button></td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td colspan="3" id="inspect_view_bkg_parent"></td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-color</td>
+                                <td ><input size="31" type="text" id="inspect_view_css_background-color" class="vis-edit-textbox vis-inspect-view-css"/></td>
+                                <td><button id="inspect_view_css_background-color_btn" class="view-edit-button" data-type="color"></button></td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-image</td>
+                                <td colspan="2">
+                                    <input size="31" type="text" id="inspect_view_css_background-image" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-repeat</td>
+                                <td  colspan="2">
+                                    <input size="31" type="text" id="inspect_view_css_background-repeat" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-attachment</td>
+                                <td  colspan="2">
+                                    <input size="31" type="text" id="inspect_view_css_background-attachment" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-position</td>
+                                <td  colspan="2">
+                                    <input size="31" type="text" id="inspect_view_css_background-position" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-size</td>
+                                <td  colspan="2">
+                                    <input size="31" type="text" id="inspect_view_css_background-size" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-clip</td>
+                                <td  colspan="2">
+                                    <input size="31" type="text" id="inspect_view_css_background-clip" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-origin</td>
+                                <td  colspan="2">
+                                    <input size="31" type="text" id="inspect_view_css_background-origin" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="css-inspector-heading ui-state-default"><span class="translate">group_css_font_text</span><button style="float:right" class="view-group" data-group="view-css-font-text"></button></td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>color</td>
+                                <td >
+                                    <input size="31" type="text" id="inspect_view_css_color" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                                <td><button id="inspect_view_css_color_btn" class="view-edit-button" data-type="color"></button></td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>text-shadow</td>
+                                <td >
+                                    <input size="31" type="text" id="inspect_view_css_text-shadow" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>font-family</td>
+                                <td >
+                                    <input size="31" type="text" id="inspect_view_css_font-family" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>font-style</td>
+                                <td >
+                                    <input size="31" type="text" id="inspect_view_css_font-style" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>font-variant</td>
+                                <td >
+                                    <input size="31" type="text" id="inspect_view_css_font-variant" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>font-weight</td>
+                                <td >
+                                    <input size="31" type="text" id="inspect_view_css_font-weight" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>font-size</td>
+                                <td >
+                                    <input size="31" type="text" id="inspect_view_css_font-size" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>line-height</td>
+                                <td >
+                                    <input size="31" type="text" id="inspect_view_css_line-height" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>letter-spacing</td>
+                                <td >
+                                    <input size="31" type="text" id="inspect_view_css_letter-spacing" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>word-spacing</td>
+                                <td >
+                                    <input size="31" type="text" id="inspect_view_css_word-spacing" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
