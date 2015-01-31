@@ -380,7 +380,7 @@ var jdigiclockCounter = 0;
 				break;
 			case 'yahoo':
 				var now = new Date();
-			// Create Yahoo Weather feed API address
+			    // Create Yahoo Weather feed API address
 				var query = "select * from weather.forecast where woeid in ('"+ el.weatherLocationCode +"') and u='"+ (el.weatherMetric ? 'c' : 'f') +"'";
 				var api = 'http://query.yahooapis.com/v1/public/yql?q='+ encodeURIComponent(query) +'&rnd='+ now.getFullYear() + now.getMonth() + now.getDay() + now.getHours() +'&format=json&callback=?';
 				
@@ -490,85 +490,6 @@ var jdigiclockCounter = 0;
         }
     }
 	
-    $.fn.extend({
-        jweatherCity: function(options) {
-            var defaults = {
-                lang:         'en',
-                currentValue: null,
-				onselect:     null,
-				onselectArg:  null,
-                proxyType:   'yahoo'   // Actually unused             
-            };		
-            var options = $.extend(defaults, options);
-            return this.each(function() {
-                
-                var $this = $(this);
-                var o = options;
-				$this._showCitySelector($this, o.currentValue, _('City:'), o.onselect, o.onselectArg);
-			});
-		}
-	});
-	
-	$.fn._weatherGeocode = function (search, outputId, onselect, onselectArg) {
-
-		// Set document elements
-		var output = document.getElementById(outputId);
-
-		if (search) {
-			$(output).empty();
-
-			// Cache results for an hour to prevent overuse
-			now = new Date();
-
-			// Create Yahoo Weather feed API address
-			var query = 'select * from geo.places where text="'+ search +'"';
-			var api = 'http://query.yahooapis.com/v1/public/yql?q='+ encodeURIComponent(query) +'&rnd='+ now.getFullYear() + now.getMonth() + now.getDay() + now.getHours() +'&format=json&callback=?';
-
-			// Send request
-			$.ajax({
-				type: 'GET',
-				url: api,
-				dataType: 'json',
-				success: function(data) {
-
-					if (data.query.count > 0 ) {						
-
-						var html = '<select id="weatherAddress">';
-
-						// List multiple returns
-						if (data.query.count > 1) {
-							for (var i=0; i<data.query.count; i++) {
-								html += '<option value="'+ data.query.results.place[i].woeid +'">' + $.fn._getWeatherAddress(data.query.results.place[i]) +'</option>';
-							}
-						} else {
-							html += '<option value="'+ data.query.results.place.woeid +'" >'+ $.fn._getWeatherAddress(data.query.results.place) +'</option>';
-						}
-  	
-						html += '</select>';
-
-						$(output).html (html);
-
-						// Bind callback links
-						$("#weatherAddress").unbind('change').change(function(e) {
-							if (this.options.selectedIndex >= 0 && onselect)
-								onselect (this.options[this.options.selectedIndex].value, this.options[this.options.selectedIndex].text, onselectArg);
-						}).trigger('change'); 
-					} else {
-						$(output).html ('The location could not be found');
-					}
-				},
-				error: function(data) {
-					$(output).html ('An error has occurred');
-				}
-			});
-
-		} else {
-
-			// No search given
-			$(output).html ('Please enter a location or partial address');
-		}
-	}
-
 	$.fn._getWeatherAddress = function (data) {
 
 		// Get address
@@ -582,22 +503,4 @@ var jdigiclockCounter = 0;
 
 		return address + '\n['+ woeid +']';
 	}
-	
-	$.fn._showCitySelector = function (elemParent, curSelection, selectText, onselect, onselectArg) {
-		if (elemParent == null || elemParent === undefined) elemParent = $('body');
-
-		var html = '<table><tr><td>';
-		html += (selectText == null) ? 'Select:' : selectText;
-		html += '<input type="text" id="weatherLocation" name="weatherLocation" size="33" value="'+((curSelection != null) ? curSelection : "")+'"/>';
-		html += '<input id="weatherLocationBtn" type="submit" name="submit" value="..." /></td></tr>';
-		html += '<tr><td id="weatherList"></td></tr>';
-		elemParent.html(html);
-
-		$('#weatherLocationBtn').click( function(e) {
-			e.preventDefault();
-			$.fn._weatherGeocode(document.getElementById('weatherLocation').value, 'weatherList', onselect, onselectArg);
-		});
-
-	}
-	
 })(jQuery);

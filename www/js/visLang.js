@@ -192,7 +192,7 @@ $.extend(systemDictionary, {
     'group_common': {'en': 'Common', 'de': 'Allgemein', 'ru': 'Общие'},
     'group_css_common': {'en': 'CSS Common', 'de': 'CSS Allgemein', 'ru': 'CSS Основные'},
     'group_css_font_text': {'en': 'CSS Font & Text', 'de': 'CSS Font & Text', 'ru': 'CSS шрифт и текст'},
-    'group_css_background': {'en': 'CSS backgroubd', 'de': 'CSS Hintergrund', 'ru': 'CSS фон'},
+    'group_css_background': {'en': 'CSS background', 'de': 'CSS Hintergrund', 'ru': 'CSS фон'},
     "File": {"en": "File", "de": "Datei", "ru": "Файл"},
     "Dev": {"en": "Dev", "de": "Dev", "ru": "Dev"},
     "Tools": {"en": "Tools", "de": "Tools", "ru": "Инструменты"},
@@ -208,7 +208,15 @@ $.extend(systemDictionary, {
     "Resolution:": {"en": "Resolution: ", "de": "Auflöung: ", "ru": "Разрешение экрана: "},
     "Widget": {"en": "Widget", "de": "Widget", "ru": "Элемент"},
     "View": {"en": "View", "de": "View", "ru": "Страница"},
-    "filter_key": {"en": "filter_key", "de": "filter_key", "ru": "filter_key"},
+    "filter_key": {"en": "Initial filter", "de": "Anfangsfilter", "ru": "Фильтр при показе"},
+    "filter_key_tooltip": {
+        "en": "If set only widgets with this filter key will be shown.\x0A" +
+              "Many filter words can be set deivided by comma.",
+        "de": "Falls gesetzt nur die Widgets mit diesem Filterwort werden angezeig.\x0A" +
+              "Es können mehere Filterworte mit Komma geteilt gesetzt werden.",
+        "ru": "Если задано, то элементы только с таким ключём фильтра будут показаны.\x0A" +
+              "Можно задать несколько ключей через запятую"
+    },
     "CSS:": {"en": "CSS:", "de": "CSS:", "ru": "CSS:"},
     "Web": {"en": "Web", "de": "Web", "ru": "Веб"},
     "Community": {"en": "Community", "de": "Community", "ru": "Разработка"},
@@ -309,5 +317,6 @@ $.extend(systemDictionary, {
               "растяжение: Положительное значение растягивает тень, отрицательное, наоборот, ее сжимает. Если этот параметр не задан, по умолчанию устанавливается 0, при этом тень будет того же размера, что и элемент.\x0A" +
               "цвет: Цвет тени в любом доступном CSS формате, по умолчанию тень черная. Необязательный параметр."
     }
+
 });
 

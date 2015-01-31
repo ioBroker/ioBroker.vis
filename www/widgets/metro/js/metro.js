@@ -441,8 +441,8 @@ function touch2Mouse(e)
  element.addEventListener("touchstart", touch2Mouse, true);
  element.addEventListener("touchmove", touch2Mouse, true);
  element.addEventListener("touchend", touch2Mouse, true);
- }
- */
+ }*/
+ 
 
 
     $.widget("metro.metroSlider", {
@@ -545,7 +545,17 @@ function touch2Mouse(e)
         _startMoveMarker: function(e){
             var element = this.element, o = this.options, that = this, hint = element.children('.hint');
             that.sliderActive = true;
-            $(document).on('mousemove.metroSlider', function (event) {
+            $(document).on('touchend.metroSlider', function () {
+				$(document).off('mousemove.metroSlider');
+				$(document).off('mouseup.metroSlider');
+				element.data('value', that.options.position);
+				element.trigger('changed', that.options.position);
+				o.changed(that.options.position, element);
+				if (!element.hasClass('permanent-hint')) {
+					hint.css('display', 'none');
+                }
+            });
+			$(document).on('mousemove.metroSlider', function (event) {
                 that._movingMarker(event);
                 if (!element.hasClass('permanent-hint')) {
                     hint.css('display', 'block');
@@ -562,6 +572,7 @@ function touch2Mouse(e)
                     hint.css('display', 'none');
                 }
             });
+
 
             this._initPoints();
 

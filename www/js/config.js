@@ -7,7 +7,8 @@ var visConfig = {
         "jqplot",
         "timeAndWeather"
         /*,
-         "weather-adapter"
+         "weather-adapter",
+         {name: "jqui",        depends: ["basic"]}
         "bars",
         "colorpicker",
 
@@ -15,7 +16,6 @@ var visConfig = {
         "knob",
 //        {name: "hqWidgets", edit: "hqWidgetsEdit"},
         "jqplot",
-        {name: "jqui",     depends: ["basic"]},
         {name: "jqui-mfd", depends: ["basic", "jqui"]},
         {name: "lcars",    depends: ["basic"]},
         "RGraph",
