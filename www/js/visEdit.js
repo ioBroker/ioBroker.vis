@@ -36,7 +36,8 @@ vis = $.extend(true, vis, {
         var that = this;
         this.$selectView = $('#select_view');
         this.$copyWidgetSelectView = $('#rib_wid_copy_view');
-        $("#wid_all_lock_function").trigger("click");
+        // @SJ cannot select menu and dialogs if it is enabled
+        //$("#wid_all_lock_function").trigger("click");
         if (local) $("#ribbon_tab_datei").show();
 
         this.editInitDialogs();
@@ -185,9 +186,19 @@ vis = $.extend(true, vis, {
             var attr = $this.attr('id').slice(17);
             var val = $this.val();
             $('#visview_' + that.activeView).css(attr, val);
-            if (!that.views[that.activeView].settings.style) {
-                that.views[that.activeView].settings.style = {};
+            // Updtae backgorund-xxx if changed background and vice versa
+            if (attr.match(/^background-/)) {
+                $('#inspect_view_css_background').val($('#visview_' + that.activeView).css('background'));
+            } else if (attr == 'background'){
+                $('.vis-inspect-view-css').each(function () {
+                    var attr = $(this).attr('id').slice(17);
+                    if (attr.match(/^background-/)) {
+                        $(this).val($('#visview_' + that.activeView).css(attr));
+                    }
+                });
             }
+
+            if (!that.views[that.activeView].settings.style) that.views[that.activeView].settings.style = {};
             that.views[that.activeView].settings.style[attr] = val;
             that.save();
         }).keyup(function () {
@@ -449,24 +460,29 @@ vis = $.extend(true, vis, {
         if (lastTheme) {
             $('#editor_theme').remove();
             $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + lastTheme + '/jquery-ui.min.css" id="editor_theme"/>');
+            $('[data-theme=' + lastTheme + ']').addClass('ui-state-active');
         }
 
         $('#ul_theme li a').click(function () {
             var theme = $(this).data('info');
-            that.views[that.activeView].settings.theme = theme;
+            // deselect all
+            $('#ul_theme li').removeClass('ui-state-active');
             $('#editor_theme').remove();
             $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editor_theme"/>');
             //vis.additionalThemeCss(theme);
             setTimeout(function(){
-                $("#scrollbar_style").remove();
+                $('#scrollbar_style').remove();
                 $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: '+$(".ui-widget-header ").first().css("background-color")+'}</style>');
             },300);
+            
+            // Select active theme in menu
+            $('[data-theme=' + theme + ']').addClass('ui-state-active');
 
             storage.set('vistheme', theme);
             that.save();
         });
 
-        // Theme seleckt View
+        // Theme select View
         $('#inspect_view_theme').change(function () {
             var theme = $(this).val();
             that.views[that.activeView].settings.theme = theme;
@@ -478,7 +494,7 @@ vis = $.extend(true, vis, {
         //language
         $('[data-language=' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + ']').addClass('ui-state-active');
 
-        $('.language_select').click(function () {
+        $('.language-select').click(function () {
             $('[data-language=' + that.language + ']').removeClass('ui-state-active');
             that.language = $(this).data('language');
             $(this).addClass('ui-state-active');
@@ -651,10 +667,28 @@ vis = $.extend(true, vis, {
             $("#rib_tools_resolution_manuel").toggle();
         })
 
-        $('#savingProgress').button({
-            text: false,
+        $('#saving_progress').button({
+            text:  false,
             icons: {primary: 'ui-icon-disk'}
         }).click(that._saveToServer).hide().addClass('ui-state-active');
+
+        $('#exit_button').button({
+            text:  false,
+            icons: {primary: 'ui-icon-close'}
+        }).click(function () {
+            that.saveRemote(function () {
+                // Show hint how to get back to edit mode
+                if (typeof storage !== 'undefined') {
+                    if (!storage.get("isEditHintShown")) {
+                        that.showMessage(_('To get back to edit mode just call "%s" in browser', location.href));
+                        storage.set('isEditHintShown', true);
+                    }
+                }
+
+                // Some systems (e.g. offline mode) show here the content of directory if called without index.html
+                location.href = 'index.html' + window.location.search + '#' + that.activeView;
+            });
+        });
     },
     editInitWidgetPreview: function () {
         $('#btn_prev_zoom').hover(
@@ -954,7 +988,25 @@ vis = $.extend(true, vis, {
         $('.view-edit-button').each(function () {
             var type = $(this).attr('data-type');
             if (type == 'color') {
-                //var line = that.editColor()
+                if ((typeof colorSelect != 'undefined' && $().farbtastic)) {
+                    $(this).button({
+                        text: false,
+                        icons: {
+                            primary: 'ui-icon-note'
+                        }
+                    }).click(function () {
+                        var data = $(this).attr('data-attr');
+                        var _settings = {
+                            current: $('#inspect_' + data).val(),
+                            onselectArg: data,
+                            onselect: function (img, _data) {
+                                $('#inspect_' + _data).val(colorSelect.GetColor()).trigger('change');
+                            }
+                        };
+                        colorSelect.show(_settings);
+                    }).css({width: 22, height: 22}).attr('title',_('Select color'));
+                }
+
             }
         });
 
@@ -1026,7 +1078,7 @@ vis = $.extend(true, vis, {
                     {
                         text: _('Ok'),
                         click: function () {
-                            $(this).dialog("close");
+                            $(this).dialog('close');
                         }
                     }
                 ]
@@ -2740,7 +2792,6 @@ vis = $.extend(true, vis, {
                         servConn.logError('inspectWidget - Cannot destroy resizable ' + $this.attr('id') + ' ' + e);
                     }
                 }
-
             });
         }
 
@@ -2755,11 +2806,15 @@ vis = $.extend(true, vis, {
         });
 
         if (!wid || wid === 'none') {
-            vis.clearWidgetHelper();
+            this.clearWidgetHelper();
 
-            vis.activeWidget = null;
+            this.activeWidget = null;
+            // Switch tabs to View settings
+            $('#attr_wrap').tabs({active: 1}).tabs('option', 'disabled', [0]);
             return false;
         }
+        $('#attr_wrap').tabs({active: 1}).tabs('option', 'disabled', []);
+        $('#attr_wrap').tabs({active: 0});
 
         this.activeWidget = wid;
         var widget = vis.views[vis.activeView].widgets[wid];
@@ -3087,11 +3142,9 @@ vis = $.extend(true, vis, {
         // autocomplete for filter key
         var elem = document.getElementById('inspect_filterkey');
         if (elem) {
-            vis.updateFilter();
+            this.updateFilter();
             elem._save = function () {
-                if (this.timer) {
-                    clearTimeout(this.timer);
-                }
+                if (this.timer) clearTimeout(this.timer);
 
                 this.timer = _setTimeout(function (elem_) {
                     // If really changed
@@ -3268,9 +3321,9 @@ vis = $.extend(true, vis, {
 
     // Init all edit fields for one view
     changeViewEdit: function (view, noChange) {
+        var that = this;
         if (this.selectable) {
             $('.vis-view.ui-selectable').selectable('destroy');
-            var that = this;
             $('#visview_' + view).selectable({
                 filter: 'div.vis-widget',
                 tolerance: 'fit',
@@ -3322,7 +3375,7 @@ vis = $.extend(true, vis, {
         }
 
         if (!noChange) {
-            this.undoHistory = [$.extend(true, {}, this.views[this.activeView])];
+            this.undoHistory = [$.extend(true, {}, this.views[view])];
             $('#button_undo').addClass('ui-state-disabled').removeClass('ui-state-hover');
         }
 
@@ -3342,27 +3395,28 @@ vis = $.extend(true, vis, {
         // Init background selector
         if (this.styleSelect && this.views[view] && this.views[view].settings) {
             this.styleSelect.Show({
-                width: '100%',
-                name: 'inspect_view_bkg_def',
+                width:      '100%',
+                name:       'inspect_view_bkg_def',
                 filterName: 'background',
                 //filterFile: "backgrounds.css",
-                style: vis.views[view].settings.style.background_class,
+                style: this.views[view].settings.style.background_class,
                 parent: $('#inspect_view_bkg_parent'),
                 onchange: function (newStyle, obj) {
-                    if (vis.views[vis.activeView].settings.style['background_class']) {
-                        $('#visview_' + vis.activeView).removeClass(vis.views[vis.activeView].settings.style['background_class']);
+                    if (that.views[view].settings.style['background_class']) {
+                        $('#visview_' + view).removeClass(that.views[view].settings.style['background_class']);
                     }
-                    vis.views[vis.activeView].settings.style['background_class'] = newStyle;
-                    $('#visview_' + vis.activeView).addClass(vis.views[vis.activeView].settings.style['background_class']);
-                    vis.save();
+                    that.views[view].settings.style['background_class'] = newStyle;
+                    if (newStyle) $('#inspect_view_css_background').val('').trigger('change');
+
+                    $('#visview_' + view).addClass(that.views[view].settings.style['background_class']);
+                    that.save();
                 }
             });
         }
 
-
         if (this.views[view] && this.views[view].settings) {
             // Try to find this resolution in the list
-            var res = this.views[this.activeView].settings.sizex + 'x' + this.views[this.activeView].settings.sizey;
+            var res = this.views[view].settings.sizex + 'x' + this.views[view].settings.sizey;
             $('#screen_size option').each(function () {
                 if ($(this).val() == res) {
                     $(this).attr('selected', true);
@@ -3374,18 +3428,18 @@ vis = $.extend(true, vis, {
                 $('#screen_size_y').prop('disabled', true);
             }
 
-            $('#screen_size_x').val(this.views[vis.activeView].settings.sizex || '').trigger('change');
-            $('#screen_size_y').val(this.views[vis.activeView].settings.sizey || '').trigger('change');
+            $('#screen_size_x').val(this.views[view].settings.sizex || '').trigger('change');
+            $('#screen_size_y').val(this.views[view].settings.sizey || '').trigger('change');
 
-            $('#screen_hide_description').prop('checked', this.views[this.activeView].settings.hideDescription).trigger('change');
+            $('#screen_hide_description').prop('checked', this.views[view].settings.hideDescription).trigger('change');
 
             /*if (typeof hqWidgets != 'undefined') {
-             hqWidgets.SetHideDescription(vis.views[vis.activeView].settings.hideDescription);
+             hqWidgets.SetHideDescription(vis.views[view].settings.hideDescription);
              }*/
 
-            $('#grid_size').val(this.views[this.activeView].settings.gridSize || '').trigger('change');
+            $('#grid_size').val(this.views[view].settings.gridSize || '').trigger('change');
 
-            var snapType = this.views[this.activeView].settings.snapType || 0;
+            var snapType = this.views[view].settings.snapType || 0;
 
             $('#snap_type option').removeAttr('selected');
             $('#snap_type option[value="' + snapType + '"]').attr('selected', true);
@@ -3393,9 +3447,9 @@ vis = $.extend(true, vis, {
 
         var $selectWidget = $('#select_active_widget').html('<option value="none">' + _('none selected') + '</option>');
 
-        if (this.views[this.activeView].widgets) {
-            for (var widget in this.views[this.activeView].widgets) {
-                $selectWidget.append('<option value="' + widget + '">' + this.getWidgetName(this.activeView, widget) + '</option>');
+        if (this.views[view].widgets) {
+            for (var widget in this.views[view].widgets) {
+                $selectWidget.append('<option value="' + widget + '">' + this.getWidgetName(view, widget) + '</option>');
             }
         }
 
@@ -3417,7 +3471,7 @@ vis = $.extend(true, vis, {
         $('.vis-inspect-view-css').each(function () {
             var $this = $(this);
             var attr = $this.attr('id').slice(17);
-            var css = $('#visview_' + this.activeView).css(attr);
+            var css = $('#visview_' + view).css(attr);
             $this.val(css);
         });
 
@@ -3425,18 +3479,19 @@ vis = $.extend(true, vis, {
             $('.vis-inspect-view').each(function () {
                 var $this = $(this);
                 var attr = $this.attr('id').slice(13);
-                $('#' + $this.attr('id')).val(that.views[that.activeView].settings[attr]);
+                $('#' + $this.attr('id')).val(that.views[view].settings[attr]);
             });
 
-            this.views[this.activeView].settings['theme'] = this.views[this.activeView].settings['theme'] || 'redmond';
+            this.views[view].settings['theme'] = this.views[view].settings['theme'] || 'redmond';
 
-            $('#inspect_view_theme').val(this.views[this.activeView].settings.theme);
+            $('#inspect_view_theme').val(this.views[view].settings.theme);
         }
         $('#inspect_view_theme').selectmenu('refresh');
     },
     dragging: false,
     draggable: function (obj) {
         var origX, origY;
+        var that = this;
         var draggableOptions = {
 
             cancel: false,
@@ -3861,7 +3916,7 @@ vis = $.extend(true, vis, {
 
         vis.saveRemote(function () {
             vis._saveTimer = null;
-            $('#savingProgress').hide();
+            $('#saving_progress').hide();
         });
     },
     save: function (cb) {
@@ -3875,7 +3930,7 @@ vis = $.extend(true, vis, {
             that._saveToServer();
         }, 2000);
 
-        $('#savingProgress').show();
+        $('#saving_progress').show();
         if (cb) cb();
     },
     undo: function () {

@@ -227,7 +227,7 @@ var vis = {
         return widgetSets;
     },
     loadWidgetSets: function (callback) {
-        this.showWaitScreen(true, _('Loading Widget-Sets...') + ' <span id="widgetset_counter"></span>', null, 20);
+        this.showWaitScreen(true, '<br>' + _('Loading Widget-Sets...') + ' <span id="widgetset_counter"></span>', null, 20);
         var arrSets = [];
 
         // Get list of used widget sets. if Edit mode list is null.
@@ -566,17 +566,17 @@ var vis = {
     },
     addViewStyle:function(view,theme){
 
-        var _view = "visview_"+view;
+        var _view = 'visview_' + view;
         $.ajax({
-            url: "lib/css/themes/jquery-ui/"+theme+"/jquery-ui.min.css",
+            url: 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
             cache: false,
             success: function (data) {
-                $("#"+view+"_style").remove();
-                data = data.replace(".ui-helper-hidden", "#"+_view+" .ui-helper-hidden");
-                data = data.replace(/(}.)/g, "}#"+_view+" .");
-                data = data.replace(/,\./g, ",#"+_view+" .");
-                data = data.replace(/images/g, "lib/css/themes/jquery-ui/"+theme+"/images/");
-                $('#'+_view).append("<style id='"+view+"_style'>"+data+"</style>")
+                $('#' + view + '_style').remove();
+                data = data.replace('.ui-helper-hidden', '#' + _view + ' .ui-helper-hidden');
+                data = data.replace(/(}.)/g, '}#' + _view + ' .');
+                data = data.replace(/,\./g, ',#' + _view + ' .');
+                data = data.replace(/images/g, "lib/css/themes/jquery-ui/" + theme + "/images/");
+                $('#' + _view).append('<style id="' + view + '_style">' + data + '</style>');
             }
         });
     },
@@ -725,9 +725,11 @@ var vis = {
             // If edit mode, bind on click event to open this widget in edit dialog
             if (this.editMode) {
                 this.bindWidgetClick(id);
-                if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
-                    $("#"+ id).addClass("vis-widget-lock")
-                }
+
+                // @SJ cannot select menu and dialogs if it is enabled
+                /*if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
+                    $("#" + id).addClass("vis-widget-lock")
+                }*/
             }
         } catch (e) {
             this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
@@ -875,7 +877,6 @@ var vis = {
                 that.views = null
                 if (callback) callback.call(that, callbackArg);
             }
-
 
         } else {
 

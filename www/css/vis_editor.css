@@ -152,19 +152,17 @@ html{}
     left: -15px;
     display: inline-block;
 }
-#savingProgress {
-    width: 26px;
-    height: 26px;
-    position: relative;
-    right: 5px;
-    top: 4px;
-    display: inline-block;
-    float: right;
+#saving_progress {
+    width:    26px;
+    height:   26px;
+}
+#exit_button {
+    width:    26px;
+    height:   26px;
 }
 
 #new_view_name {
     width: 200px;
-
 }
 
 #add_view {
@@ -355,7 +353,7 @@ html{}
     cursor: pointer;
 }
 
-.menu_item{
+.menu-item{
     background-image: none!important;
     cursor: pointer;
     height: 27px;
@@ -474,7 +472,6 @@ display: none;
     width: calc(100% - 4px);
     height: calc(100% - 4px);
     z-index: 1000;
-
 }
 
 .vis-widget_prev{
