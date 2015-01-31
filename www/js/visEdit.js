@@ -474,7 +474,7 @@ vis = $.extend(true, vis, {
                 $('#scrollbar_style').remove();
                 $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: '+$(".ui-widget-header ").first().css("background-color")+'}</style>');
             },300);
-            
+
             // Select active theme in menu
             $('[data-theme=' + theme + ']').addClass('ui-state-active');
 
