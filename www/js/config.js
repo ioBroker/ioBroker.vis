@@ -5,10 +5,11 @@ var visConfig = {
         {name: "fancyswitch", depends: ["basic"]},
         "tabs",
         "jqplot",
-        "timeAndWeather"
+        "timeAndWeather",
+        {name: "jqui",        depends: ["basic"]},
+        {name: "jqui-mfd",    depends: ["basic", "jqui"]}
         /*,
-         "weather-adapter",
-         {name: "jqui",        depends: ["basic"]}
+         "weather-adapter"
         "bars",
         "colorpicker",
 
@@ -16,7 +17,6 @@ var visConfig = {
         "knob",
 //        {name: "hqWidgets", edit: "hqWidgetsEdit"},
         "jqplot",
-        {name: "jqui-mfd", depends: ["basic", "jqui"]},
         {name: "lcars",    depends: ["basic"]},
         "RGraph",
         "special",

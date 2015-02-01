@@ -1362,7 +1362,7 @@ vis = $.extend(true, vis, {
     },
     getViewsOfWidget: function (id) {
         if (id.indexOf('_') == -1) {
-            var view = vis.getViewOfWidget(id);
+            var view = this.getViewOfWidget(id);
             if (view) {
                 return [view];
             } else {
@@ -1372,8 +1372,8 @@ vis = $.extend(true, vis, {
             var wids = id.split('_', 2);
             var wid = wids[0];
             var result = [];
-            for (var v in vis.views) {
-                if (vis.views[v].widgets[wid + '_' + v] !== undefined) {
+            for (var v in this.views) {
+                if (this.views[v].widgets[wid + '_' + v] !== undefined) {
                     result[result.length] = v;
                 }
             }
@@ -1428,6 +1428,7 @@ vis = $.extend(true, vis, {
         if (typeof widgets != 'object') widgets = null;
 
         if (!widgets){
+            // Store array, because it will be modified in delWidgetHelper
             widgets = [];
             for (var i = 0; i < this.activeWidgets.length; i++) {
                 widgets.push(this.activeWidgets[i]);
