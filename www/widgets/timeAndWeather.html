@@ -51,6 +51,7 @@
             var h =     today.getHours();
             var m =     today.getMinutes();
             var s =     today.getSeconds();
+
             // add a zero in front of numbers<10
             m = (m < 10) ? ("0" + m) : m;
             if (!hideSeconds) {
@@ -117,7 +118,7 @@
             var today = new Date();
             var d =     today.getDate();
             var dow =   today.getDay();
-            var m =     today.getMonth()+1;
+            var m =     today.getMonth() + 1;
             var y =     today.getFullYear();
 
             var monthString = vis.binds.timeAndWeather.months[m][vis.language];
@@ -126,26 +127,24 @@
             if (shortYear) y = y.toString().slice(2);
 
             // add a zero in front of numbers<10
-            if (prependZero) d = (d < 10) ? ("0" + d) : d;
-            if (prependZero) m = (m < 10) ? ("0" + m) : m;
+            if (prependZero) d = (d < 10) ? ('0' + d) : d;
+            if (prependZero) m = (m < 10) ? ('0' + m) : m;
 
-            if (showWeekDay === "false") {
-                showWeekDay = false;
-            }
+            if (showWeekDay === 'false') showWeekDay = false;
 
-            var hl = document.getElementById(elem);
-            if (!hl) {
+            var $hl = $('#' + elem);
+            if (!$hl.length) {
                 $('#visview_' + view).append('<div class="vis-widget' + (noClass ? '' : ' date') + '" id="' + elem + '" ></div>');
-                hl = document.getElementById(elem);
-                hl.dashId = (new Date()).getTime();
+                $hl = $('#' + elem);
+                $hl.data('dashId', (new Date()).getTime());
             }
 
-            if (hl && (timerId === undefined || hl.dashId == timerId)) {
+            if ($hl.length && (timerId === undefined || $hl.data('dashId') == timerId)) {
                 var dateString = '';
                 if (showWeekDay && !shortWeekDay) {
-                    dateString += vis.binds.timeAndWeather.weekdays[dow][vis.language] + ", ";
+                    dateString += vis.binds.timeAndWeather.weekdays[dow][vis.language] + ', ';
                 } else if (showWeekDay && shortWeekDay) {
-                    dateString += vis.binds.timeAndWeather.weekdaysShort[dow][vis.language] + ", ";
+                    dateString += vis.binds.timeAndWeather.weekdaysShort[dow][vis.language] + ', ';
                 }
 
                 if (monthWord) {
@@ -190,37 +189,43 @@
                     }
                 }
 
-                hl.innerHTML = dateString;
-                hl.dashTimer = _setTimeout(vis.binds.timeAndWeather.startDate, (24 * 3600 - (today.getHours() * 60 * 60 + today.getMinutes()*60 + today.getSeconds()))*1000, view, elem, showWeekDay, noClass, hl.dashId, shortWeekDay, shortYear, prependZero, monthWord, shortMonth, american);
+                $hl.html(dateString);
+                $hl.data('dashTimer', _setTimeout(vis.binds.timeAndWeather.startDate, (24 * 3600 - (today.getHours() * 60 * 60 + today.getMinutes() * 60 + today.getSeconds())) * 1000, view, elem, showWeekDay, noClass, $hl.data('dashId'), shortWeekDay, shortYear, prependZero, monthWord, shortMonth, american));
             }
         },
         tplTwCoolClock: function (view, data) {
             var style;
+            var wid = data.attr('wid');
             console.log('tplTwCoolClock');
             if (vis.views[view] &&
-                vis.views[view].widgets[data.attr('wid')] &&
-                vis.views[view].widgets[data.attr('wid')].style) {
-                style = vis.views[view].widgets[data.attr('wid')].style;
+                vis.views[view].widgets[wid] &&
+                vis.views[view].widgets[wid].style) {
+                style = vis.views[view].widgets[wid].style;
             }
             var radius = 85;
             style = style || {};
-            if (style) {
-                style.width = style.width || 85;
-                radius = style.width;
-                if ((style.height || 85) < radius) radius = (style.height || 85);
-                radius = Math.round(radius / 2);
+            style.width  = style.width || 85;
+            style.height = style.height || 85;
+            radius = style.width;
+            if (vis.views[view].widgets[wid]) {
+                vis.views[view].widgets[wid].style = style;
             }
 
+            // Take the smallest value
+            if (style.height < radius) radius = style.height;
+            radius = Math.round(radius / 2);
+
             var myClass = 'CoolClock:' + (data.attr('theme') || 'classic') + ':' + radius + ':' + (data.attr('noSeconds') ? 'noSeconds' : '') + '::' + (data.attr('showDigital') ? 'showDigital' : '') + '::' + (data.attr('showAmPm') ? 'showAmPm' : '');
-            var text = '<div id="' + data.attr('wid') + '" data-myclass="' + myClass + '" class="vis-widget"><canvas style="width:100%; height:100%" class="' + myClass + '"></canvas></div>';
+            var text = '<div id="' + data.attr('wid') + '" data-myclass="' + myClass + '" style="width: 85px; height: 85px" class="vis-widget"><canvas style="width:100%; height:100%" class="' + myClass + '"></canvas></div>';
             $('#visview_' + view).append(text);
-            $('#' + data.attr('wid')).bind("resize", function () {
+            $('#' + data.attr('wid')).bind('resize', function () {
                 var t = $(this);
-                var myClass = t.attr('data-myclass');
+                var myClass   = t.attr('data-myclass');
                 var myClasses = myClass.split(':');
                 myClasses[2] = t.width();
-                if (t.height() < myClasses[2])
-                    myClasses[2] = t.height();
+
+                if (t.height() < myClasses[2]) myClasses[2] = t.height();
+
                 myClasses[2] = Math.round(myClasses[2] / 2);
                 myClass = myClasses.join(':');
                 t.html('<canvas class="' + myClass + '"></canvas>');
@@ -275,7 +280,7 @@
 
             $('#' + data.attr('wid')).weatherfeed([weoid], {lang: vis.language, woeid: true, humidity: true, forecast: true, link: false, resizable: (vis.editMode)});
         },
-        editWeather: function (widget, wid_attr, options) {
+        editWeather: function (wid_attr, options) {
             var line = {
                 input:  '<input type="text" id="inspect_' + wid_attr + '"/>',
                 init: function (_wid_attr, data) {
@@ -348,6 +353,7 @@
         vis.binds.timeAndWeather.startTime(this.view, this.data.attr('wid'), this.data.attr('hideSeconds'), this.data.attr('blink'), this.data.attr('noClass'));
     %>
 </script>
+
 <script id="tplTwCoolClock"
         type="text/ejs"
         class="vis-tpl"

@@ -322,73 +322,72 @@ var vis = {
                 this.showWaitScreen(false);
             }
 
+            var hash = window.location.hash.substring(1);
 
-        var hash = window.location.hash.substring(1);
-
-        // View selected?
-        if (hash == '') {
-            // Take first view in the list
-            for (var view in this.views) {
-                this.activeView = view;
-                break;
-            }
-            // Create default view in demo mode
-            if (typeof io == 'undefined') {
-                if (this.activeView == "") {
-                    if (!this.editMode) {
-                        alert(_("error - View doesn't exist"));
-                        window.location.href = "./edit.html";
-                    } else {
-                        this.views["DemoView"] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                        this.activeView = "DemoView";
-                        //vis.showWaitScreen(false);
+            // View selected?
+            if (hash == '') {
+                // Take first view in the list
+                for (var view in this.views) {
+                    this.activeView = view;
+                    break;
+                }
+                // Create default view in demo mode
+                if (typeof io == 'undefined') {
+                    if (this.activeView == "") {
+                        if (!this.editMode) {
+                            alert(_("error - View doesn't exist"));
+                            window.location.href = "./edit.html";
+                        } else {
+                            this.views["DemoView"] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                            this.activeView = "DemoView";
+                            //vis.showWaitScreen(false);
+                        }
                     }
                 }
-            }
 
-            if (this.activeView == '') {
-                if (!this.editMode) {
-                    alert(_('error - View doesn\'t exist'));
-                    window.location.href = 'edit.html';
+                if (this.activeView == '') {
+                    if (!this.editMode) {
+                        alert(_('error - View doesn\'t exist'));
+                        window.location.href = 'edit.html';
+                    } else {
+                        // All views were deleted, but file exists. Create demo View
+                        //alert("unexpected error - this should not happen :(");
+                        //$.error("this should not happen :(");
+                        // create demoView
+                        this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                        this.activeView = 'DemoView';
+                    }
+                }
+            } else {
+                if (this.views[hash]) {
+                    this.activeView = hash;
                 } else {
-                    // All views were deleted, but file exists. Create demo View
-                    //alert("unexpected error - this should not happen :(");
-                    //$.error("this should not happen :(");
-                    // create demoView
-                    this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                    this.activeView = 'DemoView';
+                    alert(_("error - View doesn't exist"));
+                    window.location.href = "./edit.html";
+                    $.error("vis Error can't find view");
                 }
             }
-        } else {
-            if (this.views[hash]) {
-                this.activeView = hash;
-            } else {
-                alert(_("error - View doesn't exist"));
-                window.location.href = "./edit.html";
-                $.error("vis Error can't find view");
-            }
-        }
 
-        $('#active_view').html(this.activeView);
+            $('#active_view').html(this.activeView);
 
-        // Navigation
-        $(window).bind('hashchange', function (e) {
-            this.changeView(window.location.hash.slice(1));
+            // Navigation
+            $(window).bind('hashchange', function (e) {
+                this.changeView(window.location.hash.slice(1));
+            });
+
+            this.bindInstance();
+
+            // EDIT mode
+            if (this.editMode) {
+                    this.editInitNext();
+                }
+            this.initialized = true;
+            // If this function called earlier, it makes problems under FireFox.
+            this.changeView(this.activeView);
+
+
+
         });
-
-        this.bindInstance();
-
-        // EDIT mode
-        if (this.editMode) {
-                this.editInitNext();
-            }
-        this.initialized = true;
-        // If this function called earlier, it makes problems under FireFox.
-        this.changeView(this.activeView);
-
-
-
-    });
     },
     initViewObject: function () {
         if (!this.editMode) {
@@ -484,47 +483,13 @@ var vis = {
                     }
                 }
 
-                if (!this.views[view].widgets[id].renderVisible) {
-                    this.renderWidget(view, id);
-                }
-            }
-            if (this.binds.jqueryui && vis.editMode) {
-                this.binds.jqueryui._disable();
+                if (!this.views[view].widgets[id].renderVisible) this.renderWidget(view, id);
             }
 
-            if (vis.editMode) {
+            if (this.editMode) {
+                if (this.binds.jqueryui) this.binds.jqueryui._disable();
 
-                $($view).droppable({
-                    accept: ".wid_prev",
-                    drop: function (event, ui) {
-                        var tpl = $(ui.draggable).data("tpl");
-                        var view_pos = $("#vis_container").position();
-                        var add_pos = {left: ui.position.left - $('#toolbox').width() + $("#vis_container").scrollLeft() +5, top: ui.position.top - view_pos.top +$("#vis_container").scrollTop()+8};
-
-                        var $tpl = $('#' + tpl);
-                        var renderVisible = $tpl.attr('data-vis-render-visible');
-
-                        // Widget attributs default values
-                        var attrs = $tpl.attr('data-vis-attrs');
-                        var data = {};
-                        if (attrs) {
-                            attrs = attrs.split(';');
-                            if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
-                        }
-                        if (renderVisible) data.renderVisible = true;
-
-
-                        vis.addWidget(tpl,data,add_pos);
-
-                        $('#select_active_widget').append('<option value="' + vis.activeWidget + '">' + vis.getWidgetName(vis.activeView, vis.activeWidget) + ')</option>')
-                            .multiselect('refresh');
-
-                        setTimeout(function () {
-                            vis.inspectWidget(vis.activeWidget)
-                        }, 50);
-
-                    }
-                });
+                this.droppable(view);
             }
         }
 

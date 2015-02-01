@@ -91,48 +91,6 @@ div#vis_container {
     padding: .5em 0em;
 }
 
-#widget_helper {
-    border: 1px dashed white;
-    position: absolute;
-    z-index: 90;
-    pointer-events: none;
-}
-
-#widget_inner_helper {
-    border: 1px dashed black;
-    pointer-events: none;
-    width: 100%;
-    height: 100%;
-}
-
-#allwidgets_helper {
-    border: 1px dotted #aaa;
-    position: absolute;
-    z-index: 90;
-    pointer-events: none;
-}
-
-#allwidgets_inner_helper {
-    border: 1px dotted #555;
-    pointer-events: none;
-    width: 100%;
-    height: 100%;
-}
-
-.widget_multi_helper {
-    border: 1px dotted white;
-    position: absolute;
-    z-index: 90;
-    pointer-events: none;
-}
-
-.widget_multi_inner_helper {
-    border: 1px dotted black;
-    pointer-events: none;
-    width: 100%;
-    height: 100%;
-}
-
 .vis-widget-button {
     width: auto;
     height: auto;
