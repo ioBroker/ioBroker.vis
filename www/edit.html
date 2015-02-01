@@ -399,7 +399,7 @@
                     <tr id="rib_wid">
                         <td style=" height: 22px; padding-right:3px" class="translate">Active Widget:</td>
                         <td>
-                            <select id="select_active_widget" class="vis-editor" data-multiselect-width="400" data-multiselect-height="250"></select>
+                            <select id="select_active_widget" multiple="multiple" data-multiselect-width="400" data-multiselect-height="250"></select>
                         </td>
                         <td>
                             <div id="rib_wid_del" class="btn-iconbar ui-corner-all translateT" title="Delete widget"></div>
@@ -631,12 +631,9 @@
             <button id="view_select_right"></button>
         </div>
         <div id="vis_container" class="ui-widget-content" caption="Views">
-            <div id="widget_helper">
-                <div id="widget_inner_helper"></div>
-            </div>
-            <div id="allwidgets_helper">
+            <!--div id="allwidgets_helper" style="display: none">
                 <div id="allwidgets_inner_helper"></div>
-            </div>
+            </div-->
 
             <div id="size_x"
                  style="display:none; z-index: 99; position: absolute; top: 0; width:0; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
