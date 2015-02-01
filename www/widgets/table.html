@@ -1,0 +1,578 @@
+<link rel="stylesheet" type="text/css" href="widgets/table/css/table.css" />
+<script language="javascript">
+    //"use strict";
+    // Following classes shoud be used if variable table_class="tclass"
+    // <table class="tclass">
+    //    <tr class="tclass-th">
+    //       <th class="tclass-th1">Time</th>
+    //       <th class="tclass-th2">Event</th>
+    //    </tr>
+    //    <tr class="tclass-tr tclass-tr-even tclass-tr-selected">
+    //       <td>12:34:34</td>
+    //       <td>Door opened</td>
+    //    </tr>
+    //    <tr class="tclass-tr tclass-tr-odd tclass-tr-red">
+    //       <td>12:34:35</td>
+    //       <td>Door closed</td>
+    //    </tr>
+    //    <tr class="tclass-tr tclass-tr-even">
+    //       <td>12:34:36</td>
+    //       <td>Window opened</td>
+    //    </tr>
+    // </table>
+    //
+    // following json string or object is expected:
+    //    '[\
+    //       {"Time": "12:34:34", "Event", "Door opened", "_data":{"Type": "1", "Event" : "SomeEvent1"}, "_class" : "selected"},\
+    //       {"Time": "12:34:35", "Event", "Door closed", "_data":{"Type": "2", "Event" : "SomeEvent2"}, "_class": "red" },\
+    //       {"Time": "12:34:36", "Event", "Window opened", "_data":{"Type": "3", "Event" : "SomeEvent3"}}\
+    //     ]'
+    //
+    //  If _data object found and detailed_wid is defined
+    //  following object will be created by selecting of one row:
+    // <table class="tclass-detail">
+    //     <tr class="tclass-detail-tr tclass-detail-tr-even"><td class="tclass-detail-td-name">Type</td><td class="tclass-detail-td-value">1</td></tr>
+    //     <tr class="tclass-detail-tr tclass-detail-tr-odd"><td class="tclass-detail-td-name">Event</td><td class="tclass-detail-td-value">SomeEvent1</td></tr>
+    // </table>
+    //
+    // Dialog
+    // Can be opened by writing "open" into trigger_id.
+    // As dialog closed the trigger_id will be written with the text of button
+    // "show" option is active only in edit mode and has no effect
+    //
+
+    //jQuery.extend(true, vis.binds, {
+        vis.binds.table = {
+            // Register callback in dashUI
+            initTable: function () {
+                if (!vis.binds.table.regElements) {
+                    vis.binds.table.regElements = [];
+                    vis.registerOnChange (vis.binds.table.onchange, null);
+                    console.log("table");
+                    vis.binds.table.scrollSize = vis.binds.table.getBrowserScrollSize();
+                }
+            },
+
+            getBrowserScrollSize: function (){
+                var css = {
+                    "border":  "none",
+                    "height":  "200px",
+                    "margin":  "0",
+                    "padding": "0",
+                    "width":   "200px"
+                };
+
+                var inner = $("<div>").css($.extend({}, css));
+                var outer = $("<div>").css($.extend({
+                    "left":       "-1000px",
+                    "overflow":   "scroll",
+                    "position":   "absolute",
+                    "top":        "-1000px"
+                }, css)).append(inner).appendTo("body")
+                        .scrollLeft(1000)
+                        .scrollTop(1000);
+
+                var scrollSize = {
+                    "height": (outer.offset().top - inner.offset().top) || 0,
+                    "width": (outer.offset().left - inner.offset().left) || 0
+                };
+
+                outer.remove();
+                return scrollSize;
+            },
+
+            registerIds: function (wid, objId) {
+                if (typeof objId == "object" || typeof objId == "array") {
+                    for (var i = 0, len = objId.length; i < len; i++)
+                        if (objId[i] && (!vis.binds.table.regElements[objId[i]] || vis.binds.table.regElements[objId[i]].indexOf (wid) == -1)) {
+                            if (!vis.binds.table.regElements[objId[i]]) {
+                                vis.binds.table.regElements[objId[i]] = [wid];
+                            }
+                            else {
+                                vis.binds.table.regElements[objId[i]].push (wid);
+                            }
+                        }
+                }
+                else
+                if (!vis.binds.table.regElements[objId] || vis.binds.table.regElements[objId].indexOf (wid) == -1) {
+                    if (!vis.binds.table.regElements[objId]) {
+                        vis.binds.table.regElements[objId] = [wid];
+                    }
+                    else {
+                        vis.binds.table.regElements[objId].push (wid);
+                    }
+                }
+            },
+
+            onchange: function  (arg, objId, newEvent) {
+                if (vis.binds.table.regElements[objId]) {
+                    for (var i = 0, len = vis.binds.table.regElements[objId].length; i < len; i++) {
+                        var elem = document.getElementById (vis.binds.table.regElements[objId][i]);
+                        if (elem) {
+                            if (elem.triggered) {
+                                elem.triggered (objId, newEvent);
+                            }
+                        }
+                    }
+                }
+            },
+
+            // Show detailed information
+            onRowClick: function  () {
+                var that = this;
+                var options = that._parent._options;
+                // Deselect all rows
+                $('.' + that._parent._wid + '-id').removeClass (options.tclass + '-tr-selected');
+                // Select a new one
+                $(that).addClass(options.tclass + '-tr-selected');
+
+                // Get container for detailed information
+                var el = document.getElementById (options.detailed_wid);
+                if (el && that._data) {
+                    var text = "";
+                    var print = null;
+                    // Try to find special attributes starting with '_'
+                    for (var obj in that._data) {
+                        if (obj.length > 0 && obj[0] == '_' && obj != '_class' && obj.substring(0,4) != '_btn' && obj != '_id') {
+                            text += '<table class="'+options.tclass+'-detail">';
+                            // Show that object
+                            var r = 0;
+                            // Go through all attributes
+                            for (var odata in that._data[obj]) {
+                                var val = that._data[obj][odata];
+                                if (odata.length > 1 && odata[0] == '_' && obj != '_class' && obj.substring(0,4) != '_btn' && obj != '_id') {
+                                    continue;
+                                }
+                                text += '<tr class="'+options.tclass+'-detail-tr '+options.tclass+'-detail-tr-'+((r%2) ? 'odd' : 'even')+'"><td class="'+options.tclass+'-detail-td-name">'+odata+'</td>' +
+                                        '<td class="'+options.tclass+'-detail-td-value">'+val+'</td></tr>';
+                                if (val && val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
+                                    text += '<tr class="'+options.tclass+'-detail-tr"><td colspan="2">&nbsp;</td></tr>';
+                                }
+                                r++;
+                            }
+                            text += '</table>';
+                        }
+                    }
+
+                    // If no special _data object found => show standart elements
+                    if (!text) {
+                        text = '<table class="'+options.tclass+'-detail">';
+                        // Go through all attributes
+                        var row = 0;
+                        for (var data_obj in that._data) {
+                            // Show that object
+                            if (data_obj.length > 1 && data_obj[0] == '_' && data_obj != '_class' && data_obj.substring(0,4) != '_btn' && data_obj != '_id') {
+                                continue;
+                            }
+
+                            text += '<tr class="'+options.tclass+'-detail-tr '+options.tclass+'-detail-tr-'+((row%2) ? 'odd' : 'even')+'"><td class="'+options.tclass+'-detail-td-name">'+data_obj+'</td>' +
+                                    '<td class="'+options.tclass+'-detail-td-value">'+that._data[data_obj]+'</td></tr>';
+
+                            if (val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
+                                text += '<tr class="'+options.tclass+'-detail-tr"><td colspan="2">&nbsp;</td></tr>';
+                            }
+                            row++;
+                        }
+                        text += '</table>';
+                    }
+
+                    $(el).html (text);
+
+                    if (options.btn_print) {
+                        $(el).append ('<button id="print_'+that._parent._wid+'" class="'+options.tclass+'-print-button">' + options.btn_print + '</button>');
+                        var btn = document.getElementById ('print_'+that._parent._wid);
+                        btn._parent = that._parent;
+                        btn._print_id = that._data._print_id || JSON.stringify(that._data);
+
+                        if (btn && !vis.editMode) {
+                            $(btn).bind('click', function () {
+                                if (that._parent._options.ack_id) {
+                                    localData.setValue(that._parent._options.ack_id, that._print_id);
+                                }
+
+                                if (that._parent._options.view_for_print) {
+                                    vis.changeView(that._parent._options.view_for_print);
+                                }
+                                setTimeout(function () {
+                                    window.print();
+                                    window.location.reload()
+                                }, 500);
+                            });
+                        }
+                    }
+                }
+            },
+
+            onAckButton: function () {
+                //if (btn && !vis.editMode)
+                if (this._parent._options.ack_id) {
+                    localData.setValue(this._parent._options.ack_id, this._ack_id);
+                }
+            },
+
+            createRow: function  (rowData, wid, options, rowNumber, noTR, serverID) {
+                var _classes = rowData['_class'] ? rowData['_class'].split(' ') : null;
+                var text;
+                // Create row
+                if (!noTR) {
+                    text = '<tr class="' + options.tclass + '-tr ' +
+                            options.tclass + ((rowNumber % 2) ? '-tr-even' : '-tr-odd') + ' ' +
+                        wid + '-id';
+                if (_classes) {
+                    for (var t = 0, len = _classes.length; t < len; t++)  {
+                        text += ' ' + (options.tclass + '-tr-' + _classes[t]);
+                    }
+                }
+                    text += '" id="tr_' + wid + '_' + ((serverID === undefined) ? rowNumber : serverID) + '" data-index="' + serverID + '">';
+                } else {
+                    text = '';
+                }
+                var k = 1;
+                for (var obj in rowData) {
+                    if(obj.substring(0,6) == 'jQuery') continue;
+
+                    if (obj.length > 0 && obj[0] == '_') {
+                        if (obj.length > 4 && obj.substring(0,4) == '_btn') {
+                            var btnText = "";
+                            var btnClass="";
+                            if (typeof rowData[obj] == 'string') {
+                                btnText  = rowData[obj];
+                            } else {
+                                btnText  = rowData[obj].caption;
+                                btnClass = rowData[obj]._class;
+                            }
+                            if (btnText) {
+                                text += '<td class="' + options.tclass + '-th' + k + '"><button id="ack_button_' + wid + '_' + ((serverID === undefined) ? rowNumber : serverID) +'" class="'+ options.tclass+'-ack-button'+(btnClass ? ('-'+btnClass) : '')+'">'+btnText+'</button></td>';
+                            }
+                            else {
+                                text += '<td class="' + options.tclass + '-th' + k + '"></td>';
+                            }
+                            k++;
+                        }
+                        continue;
+                    }
+                    text += '<td class="' + options.tclass + '-th' + k + '">' + rowData[obj] + '</td>';
+                    k++;
+                }
+                if (!noTR) {
+                text += '</tr>';
+                }
+                return text;
+            },
+
+            showTable: function  (view, wid, options) {
+                vis.binds.table.initTable();
+                options.tclass = options.tclass || 'tclass';
+
+                if (options.event_id) {
+                    vis.binds.table.registerIds(wid, options.event_id);
+                } else {
+                    vis.binds.table.registerIds(wid, options.table_id);
+                }
+
+                // Set default width and height
+                var style = vis.views[view].widgets[wid] ? vis.views[view].widgets[wid].style : {};
+                style.width = style.width || options.defaultWidth;
+                style.height = style.height || options.defaultHeight;
+
+                // read actual table as json string
+                var tableJson = options.table_id ? localData.uiState.attr('_' + options.table_id + '.Value') : null;
+                var table = [];
+                if (tableJson && (typeof tableJson == "string")) {
+                    try {
+                        table = JSON.parse(tableJson);
+                    }
+                    catch (e) {
+                        console.log ("showTable: Cannot parse json table");
+                        table = [];
+                    }
+                } else {
+                    table = tableJson;
+                }
+                
+                if (!table) {
+                    table = [];
+                }
+
+                // Create widget container
+                $('#' + wid).remove();
+                $('#visview_' + view).append('<div class="dashui-widget ' + (options.tclass || "") + '" id="' + wid + '" data-hm-id="' + options.table_id + '" ></div>');
+                var elem = document.getElementById(wid);
+                if (style) {
+                    $(elem).css(style);
+                }
+
+                // Start creation of table
+                var text   = '<div class="' + (options.tclass || "") + '-inner' + ((options.show_scroll) ? ' tclass-inner-overflow' : '') + '"><table id="t' + wid + '" class="' + options.tclass + '">';
+                var header = '<table id="h' + wid + '" class="' + options.tclass + '">';
+                var headerDone = false;
+                var j = 0;
+                var selectedId = null;
+
+                // Go through all lines
+                for (var ii = 0, ilen = table.length; ii < ilen; ii++) {
+                    if (!table[ii])  {
+                        continue;
+                    }
+                    var _classes = table[ii]['_class'] ? table[ii]['_class'].split(' ') : null;
+
+                    //  Create table header
+                    if (!headerDone) {
+                        header += '<tr class="' + options.tclass + '-th">';
+                        var k = 1;
+                        for (var obj in table[ii]) {
+                            if(obj.substring(0,6) == 'jQuery') continue;
+                            if (obj.length > 0 && obj[0] == '_') {
+                                if (obj.length > 4 && obj.substring(0,4) == '_btn') {
+                                    header += '<th class="' + options.tclass + '-th' + k + '"></th>';
+                                    k++;
+                                }
+                                continue;
+                            }
+                            header += '<th class="' + options.tclass + '-th' + k + '">' + obj + '</th>';
+                            k++;
+                        }
+
+                        header += '<td style="width:'+(vis.binds.table.scrollSize.width-6)+ 'px"></td></tr>';
+                        //header += '</tr>';
+                        headerDone = true;
+                    }
+
+                    if (_classes &&_classes.indexOf('selected') != -1) {
+                        selectedId = ii;
+                    }
+
+                    text += vis.binds.table.createRow(table[ii], wid, options, j, false, (table[ii]._id === undefined) ? ii : table[ii]._id);
+                    j++;
+                }
+                text += '</table>\n';
+                header += '</table>\n';
+                // Insert table into container
+                $(elem).append((options.hide_header ? '' : header) + text);
+                elem._options = options;
+                elem._wid     = wid;
+                elem._view    = view;
+
+                $('.'+options.tclass+'-ack-button').bind('click', vis.binds.table.onAckButton);
+
+                // Set additional data for every row
+                for (var i = 0, len = table.length; i < len; i++) {
+                    if (!table[i]) {
+                        continue;
+                    }
+                    var _el = document.getElementById('ack_button_' + wid + '_' + ((table[i]._id === undefined) ? i : table[i]._id));
+                    if (_el) {
+                        _el._data   = table[i];
+                        _el._parent = elem;
+                        _el._ack_id = table[i]._ack_id || JSON.stringify(table[i]);
+                    }
+                }
+                // If detailed information desired
+                if (options.detailed_wid) {
+                    // Bind on click event for every row
+                    $('.' + wid + '-id').bind("click", vis.binds.table.onRowClick);
+
+                    // Set additional data for every row
+                    for (i = 0, len = table.length; i < len; i++) {
+                        if (!table[i]) continue;
+                        var el = document.getElementById('tr_' + wid + '_' + ((table[i]._id === undefined) ? i : table[i]._id));
+                        if (el) {
+                            el._data   = table[i];
+                            el._parent = elem;
+                        }
+                    }
+                    if (selectedId) {
+                        setTimeout (function () {
+                            $('#tr_' + wid + '_' + selectedId).trigger('click');
+                        }, 200);
+                    }
+                }
+
+                // Remember index to calculate even or odd
+                elem._rowNum = options.new_on_top ? 0 : j;
+
+                // New event coming
+                elem.triggered = function (objId, _newEvent) {
+                    var options = this._options;
+                    var newEvent;
+                    // Convert event to json
+                    if (_newEvent) {
+                        if (typeof _newEvent == 'string') {
+                            try {
+                                newEvent = JSON.parse(_newEvent);
+                            }
+                            catch (e)
+                            {
+                                console.log('elem.triggered: Cannot parse json new event ' + _newEvent);
+                                return;
+                            }
+                        } else {
+                            newEvent = _newEvent;
+                        }
+                    }
+                    else
+                        return;
+
+                    // If new event came
+                    if (objId == options.event_id) {
+                        // Try to find, if this event yet exists
+                        var $row = (newEvent._id !== undefined) ? $('tr[data-index="'+ newEvent._id+'"]') : [];
+                        //
+                        if (!$row.length) {
+                            // get next row number for new line
+                            this._rowNum++;
+                        }
+
+                        var text = vis.binds.table.createRow(newEvent, this._wid, this._options, this._rowNum, ($row.length > 0), (newEvent._id === undefined) ? this._rowNum : newEvent._id);
+                        console.log('AAA');
+
+                        if ($row.length) {
+                            $row.html(text).addClass(newEvent._class || '');
+                        } else {
+                            // If add to the top of table
+                            if (this._options.new_on_top) {
+                                $('#t' + this.id).prepend(text);
+                            } else {
+                                // Add to the bottom of table
+                                $('#t' + this.id).append(text);
+                            }
+                        }
+
+                        // If detailed widget desired
+                        if (this._options.detailed_wid) {
+                            var el = document.getElementById('tr_' + this._wid + '_' + ((newEvent._id === undefined) ? this._rowNum : newEvent._id));
+                            if (el) {
+                                el._data   = newEvent;
+                                el._parent = this;
+                            }
+                            $(el).bind("click", vis.binds.table.onRowClick);
+                        }
+                        el = document.getElementById('ack_button_' + this._wid + '_' + ((newEvent._id === undefined) ? this._rowNum : newEvent._id));
+                            if (el) {
+                                el._data   = newEvent;
+                                el._parent = this;
+                                el._ack_id = newEvent._ack_id || JSON.stringify(newEvent);
+                                $(el).bind("click", vis.binds.table.onAckButton);
+                            }
+
+                    } else {
+                        // Update whole table
+                        _setTimeout(vis.binds.table.showTable, 50, this._view, this._wid, this._options);
+                    }
+                }
+            },
+
+            showDialog: function  (view, wid, options) {
+                var trigger_value = localData.uiState.attr('_' + options.trigger_id + '.Value');
+                // Register callback in dashUI
+                if (options.trigger_id) {
+                    vis.binds.table.registerIds(wid, options.trigger_id);
+                }
+
+                // Create widget container
+                $('#' + wid).remove();
+                $('#visview_' + view).append('<div class="dashui-widget ' + (options._class || "") + '" id="' + wid + '" data-hm-id="' + (options.trigger_id || '') + '" title="'+options.title+'">' +
+                        '<table  style="margin-left: '+options.margin_left+'px;margin-top:'+options.margin_top+'px"><tr><td>'+(options.image ? '<img src="'+options.image+'"/>': '') + '</td><td>'+options.text+'</td></tr></table>'+
+                        '</div>');
+
+                var elem = document.getElementById(wid);
+
+                var buttons = {};
+                for (var t = 0, len = options.buttons.length; t < len; t++) {
+                    if (options.buttons[t]) {
+                        buttons[options.buttons[t]] = {
+                            text: options.buttons[t],
+                            data: {data: options.buttons[t], trigger_id: options.trigger_id},
+                            click: function (evt, ui) {
+                                if (1 || !vis.editMode) {
+                                    if (vis.binds.dialog_trigger_id) {
+                                        localData.setValue(vis.binds.dialog_trigger_id, evt.currentTarget.textContent);
+                                    }
+                                }
+                                $(this).dialog('close');
+                            }
+                        }
+                    }
+                }
+                elem._options = options;
+
+                // Disable autofocus in edit mode
+                if (vis.editMode) {
+                    $.ui.dialog.prototype._focusTabbable = function () {
+                    };
+                }
+
+                $(elem).dialog({
+                    resizable: false,
+                    height: options.height || 200,
+                    width: options.width || 400,
+                    autoOpen: false,
+                    modal: (options.modal === true || options.modal === "true"),
+                    draggable: false,
+                    buttons: buttons
+                });
+
+                if ((vis.editMode && options.show) || trigger_value == "open") {
+                    $(elem).dialog('open');
+                    vis.binds.dialog_trigger_id = options.trigger_id;
+                }
+
+                elem.triggered = function (objId, _newEvent) {
+                    if (_newEvent == "open") {
+                        $(this).dialog('open');
+                        vis.binds.dialog_trigger_id = this._options.trigger_id;
+                    }
+                }
+            }
+        };
+    //});
+
+</script>
+
+<script type="text/ejs" id="tplTableBody" class="dashui-tpl" data-dashui-set="table" data-dashui-name="Table" data-dashui-attrs="table_id/id;event_id/id;table_class;hide_header[true]/checkbox;show_scroll/checkbox;detailed_wid;new_on_top/checkbox;btn_print;view_for_print/views;ack_id/id">
+    <%
+        var options =  {
+            _class: this.data.attr('class'),
+            hide_header: this.data.attr('hide_header'),
+            style: this.data.attr('style'),
+            table_id: this.data.attr('table_id'),
+            event_id: this.data.attr('event_id'),
+            new_on_top: this.data.attr('new_on_top'),
+            show_scroll: this.data.attr('show_scroll'),
+            tclass: this.data.attr('table_class'),
+            detailed_wid: this.data.attr('detailed_wid'),
+            btn_print: this.data.attr('btn_print'),
+            view_for_print: this.data.attr('view_for_print'),
+            ack_id: this.data.attr('ack_id'),
+            defaultWidth: 200,
+            defaultHeight: 200
+        };
+        vis.binds.table.showTable(this.view, this.data.attr('wid'), options);
+    %>
+</script>
+
+<script type="text/ejs" id="tplDialog" class="dashui-tpl" data-dashui-set="table" data-dashui-name="Dialog" data-dashui-attrs="show/checkbox;trigger_id/id;button(1-3);title;text;image/image;width[400]/slider,50,1000,10;height[200]/slider,50,1000,10;modal/checkbox;_no_style[true]/hidden;_no_move[true]/hidden;_no_resize[true]/hidden;margin_left[0]/slider,0,200,1;margin_top[0]/slider,0,200,1">
+    <%
+        var options =  {
+            trigger_id: this.data.attr('trigger_id'),
+            buttons: [this.data.attr('button1'), this.data.attr('button2'), this.data.attr('button3')],
+            image: this.data.attr('image'),
+            title: this.data.attr('title'),
+            text: this.data.attr('text'),
+            width: this.data.attr('width'),
+            height: this.data.attr('height'),
+            show: this.data.attr('show'),
+            modal: this.data.attr('modal'),
+            margin_left: this.data.attr('margin_left'),
+            margin_top: this.data.attr('margin_top')
+        };
+        vis.binds.table.showDialog(this.view, this.data.attr('wid'), options);
+    %>
+</script>
+<script type="text/ejs" id="tplExLink" class="dashui-tpl" data-dashui-set="table" data-dashui-name="static - link + session clean" data-dashui-attrs="html;href;target;alt;key">
+    <div class="dashui-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>">
+        <div class="dashui-widget-body">
+            <a href="<%== this.data.attr('href') %>" <%== (!vis.editMode && this.data.attr('key')) ? 'onclick="session.remove(\''+this.data.attr('key')+'\')"' : '' %> target="<%== this.data.attr("target") %>" alt="<%== this.data.attr("alt") %>" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%"><%== this.data.attr("html") %></div></a>
+        </div>
+    </div>
+</script>

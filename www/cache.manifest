@@ -1,0 +1,18 @@
+CACHE MANIFEST
+
+# ioBroker.vis Version 0.0.1
+# dev build 10
+
+
+
+NETWORK:
+*
+
+
+CACHE:
+./img/disconnect.png
+
+FALLBACK:
+./index.html ./offline.html
+./edit.html ./offline.html
+

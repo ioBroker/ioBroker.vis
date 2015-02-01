@@ -1,0 +1,22 @@
+.clock {
+    text-shadow:3px 3px 4px rgba(0,0,0,0.9);
+    font-weight:bold;
+    color:#969696;
+    letter-spacing:-3pt;
+    word-spacing:-10pt;
+    text-align:left;
+    font-family:trebuchet MS, sans-serif;
+    font-size: 80px;
+    overflow: visible;
+}
+
+.date {
+    text-shadow:3px 3px 4px rgba(0,0,0,0.9);
+    font-weight:bold;
+    color:#969696;
+    letter-spacing:-1pt;
+    text-align:left;
+    font-family:trebuchet MS, sans-serif;
+    font-size: 26px;
+    overflow: visible;
+}
