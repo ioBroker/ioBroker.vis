@@ -1,0 +1,20 @@
+.bars_line {
+    border-top: 2px solid white;
+}
+
+.bars_bottom_panel {
+/*    width: 100%;*/
+    position: absolute;
+    bottom: 0;
+}
+
+.bars_bottom_button {
+    padding: 5px;
+}
+
+.bars_bottom_content {
+	text-align: center;
+    display: none;
+    /*background-color: #aaaaaa;
+    padding: 10px;*/
+}

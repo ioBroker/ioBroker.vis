@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
+<head>
+
+    <!-- ioBroker.vis Version 0.0.1 -->
+
+    <!--
+		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
+		Before you start Chrome anew all other instances should be closed.
+		For local start lib directory from ccu.io is required and datastore in ../ directory.
+	-->
+    <link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/redmond/jquery-ui.min.css" id="editor_theme">
+
+    <meta charset="utf-8"/>
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
+    <link href="img/faviconEdit.png" rel="shortcut icon" type="image/x-icon"/>
+
+    <title>ioBroker.vis</title>
+
+    <link rel="stylesheet" type="text/css" href="lib/css/fancytree/ui.fancytree.min.css"/>
+
+    <link rel="stylesheet" type="text/css" href="lib/css/superfish/superfish.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect-1.13.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect.filter.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/css/jquery.jgrowl.min.css"/>
+    <link rel="stylesheet" type="text/css" href="widgets/colorpicker/css/farbtastic.css"/>
+
+    <link rel="stylesheet" type="text/css" href="css/backgrounds.css"/>
+    <link rel="stylesheet" type="text/css" href="css/vis.css"/>
+    <link rel="stylesheet" type="text/css" href="css/vis_editor.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="css/vis-common-user.css"/>-->
+    <link rel="stylesheet" type="text/css" id="project_css"/>
+
+    <script type="text/javascript" src="lib/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="lib/js/jquery-ui-1.11.3.full.min.js"></script>
+    <script type="text/javascript" src="lib/js/jquery.fancytree-all.min.js"></script>
+    <script type="text/javascript" src="lib/js/selectID.js"></script>
+    <script type="text/javascript" src="lib/js/socket.io.js"></script>
+    <script type="text/javascript" src="lib/js/translate.js"></script>
+
+    <script type="text/javascript" src="lib/js/jquery.multiselect-1.13.js"></script>
+    <script type="text/javascript" src="lib/js/jquery.multiselect.filter-1.5pre.js"></script>
+    <script type="text/javascript" src="lib/js/loStorage.js"></script>
+    <script type="text/javascript" src="lib/js/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="lib/js/dropzone.js"></script>
+    <script type="text/javascript" src="lib/js/canjs.2.1.3.min.js"></script>
+    <script type="text/javascript" src="lib/js/html2canvas.min.js"></script>
+    <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
+
+    <script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script>
+
+    <script type="text/javascript" src="lib/js/superclick.js"></script>
+
+    <script type="text/javascript" src="widgets/colorpicker/js/farbtastic.js"></script>
+
+    <script type="text/javascript" src="js/xs_combo.js"></script>
+    <script type="text/javascript" src="js/fm/fileManager.js"></script>
+    <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before vis.js -->
+
+    <script type="text/javascript" src="js/visLang.js"></script>
+    <script type="text/javascript" src="/_socket/info.js"></script>
+    <script type="text/javascript" src="js/conn.js"></script>
+    <script type="text/javascript" src="js/vis.js"></script>
+    <script type="text/javascript" src="js/visEditWelcome.js"></script>
+    <script type="text/javascript" src="js/visEdit.js"></script>
+    <script type="text/javascript" src="js/visEditExt.js"></script>
+    <!--<script type="text/javascript" src="js/fm/file_manager.js"></script>-->
+    <!--script type="text/javascript" src="js/visEditExt.js"></script-->
+    <!--script type="text/javascript" src="js/visWizard.js"></script-->
+
+    <!--- widgets -->
+    <!--- widgetsStop -->
+</head>
+<body class="ui-widget-content">
+<div id='waitScreen' class='vis-wait-screen'>
+    <div id='waitDialog' class='waitDialog'>
+        <div class='vis-progressbar '></div>
+        <div class='vis-wait-text' id='waitText'></div>
+    </div>
+</div>
+
+<div style="display: none;text-align: center" id="dialog_delete">
+    <table style="height: 100%;width: 100%">
+        <tr>
+            <td><span class="ui-icon ui-icon-alert" style="display:inline-block"></span><span id="dialog_delete_content"
+                                                                                              style="display:inline-block;padding-left:10px"></span>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: left; vertical-align: bottom"><input type="checkbox" id="dialog_delete_is_show"
+                                                                        style="display:inline-block;padding-left:10px">
+                <span class="translate">Do not ask again</span></td>
+        </tr>
+    </table>
+</div>
+<div style="display: none;text-align: center" id="dialog_about" title="About" class="translateT">
+
+    <ul style="font-size: 1.1em; line-height: 2em; display: inline;">
+        <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank" class="translate">Web</a></li>
+        <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank"
+               class="translate">Community</a></li>
+        <li><a href="https://github.com/ioBroker/ioBroker.vis/blob/master/README.md" target="_blank" class="translate">Change log</a>
+        </li>
+    </ul>
+
+    <h4>Copyright &copy; 2013-2015 <a href="https://github.com/GermanBluefox" target="_blank">Bluefox</a>, <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a>, <a href="https://github.com/smiling-Jack" target="_blank">smiling-Jack</a></h4>
+
+    <p class="translate">CC BY-NC License 4.0</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img
+        src="img/cc-nc-by.png"/></a>
+    <!--p class="translate">license1</p>
+    <p class="translate">license2</p>
+    <p class="translate">license3</p>
+    <p class="translate">license4</p-->
+    <p class="translate">license5</p>
+</div>
+<div style="display: none;" id="dialog_export_view" title="export view" class="translateT">
+    <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
+              id="textarea_export_view"></textarea>
+</div>
+<div style="display: none;" id="dialog_import_view" title="import view" class="translateT">
+    <textarea rows="50" cols="160" style="width: 99%; height: calc(98% - 40px); font-size: 11px;"
+              id="textarea_import_view"></textarea>
+    <br/>
+    <input type="text" id="name_import_view">
+    <button id="start_import_view" class="translateB">import</button>
+</div>
+<div style="display: none ;text-align: center" id="dialog_shortcuts" title="Shortcuts" class="translateT">
+    <table style="height: 100%;width: 100%">
+        <colgroup>
+            <col style="text-align: left">
+            <col style="text-align: center">
+            <col style="text-align: center">
+        </colgroup>
+        <tr>
+            <td class="translate">Full screen</td>
+            <td></td>
+            <td>F3</td>
+        </tr>
+        <tr>
+            <td class="translate">Next View</td>
+            <td></td>
+            <td class="translate">PgUp</td>
+        </tr>
+        <tr>
+            <td class="translate">Prev. View</td>
+            <td></td>
+            <td class="translate">PgDown</td>
+        </tr>
+        <tr>
+            <td class="translate">Move Widget 1px</td>
+            <td>
+            </td>
+            <td class="translate">Arrow Keys</td>
+        </tr>
+        <tr>
+            <td class="translate">Move Widget 10px</td>
+            <td class="translate">Ctrl / CMD</td>
+            <td class="translate">Arrow Keys</td>
+        </tr>
+        <tr>
+            <td class="translate" style="color:rgba(1,1,1,0.05)">Show develop ribbon</td>
+            <td></td>
+            <td style="color:rgba(1,1,1,0.05)">F2</td>
+        </tr>
+    </table>
+</div>
+
+
+<div style="height: 34px; width: 100%; position: absolute; top: 0;left:0" class="ui-widget-header ">
+
+</div>
+<div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 100 ">
+    <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span>vis </span><span id="vis-version"></span></div>
+
+    <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -4px;position: relative; z-index: 2">
+        <li id="ribbon_tab_datei" style="display: none">
+            <a href="#ribbon_file" style="padding: 2px 4px 2px 4px" class="translate">File</a>
+        </li>
+        <li>
+            <a href="#ribbon_view" style="padding: 2px 4px 2px 4px" class=" translate">Views</a>
+        </li>
+        <li>
+            <a href="#ribbon_widget" style="padding: 2px 4px 2px 4px" class="translate">Widgets</a>
+        </li>
+        <li id="ribbon_tab_dev" style="display: none">
+            <a href="#ribbon_dev" style="padding: 2px 4px 2px 4px" class="translate">Dev</a>
+        </li>
+        <li>
+            <a href="#ribbon_tools" style="padding: 2px 4px 2px 4px" class="translate">Tools</a>
+        </li>
+    </ul>
+    <div id="menu_sf" style="display: inline-block; margin-bottom: -4px;">
+        <ul id="menu" style="margin: 0;height: auto;" class="sf-menu">
+            <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Setup</a>
+                <ul style="display: none;">
+                    <li class="ui-state-default " role="tab" style="width: 250px ; background-image: none">
+                        <a class="menu-tab-text"><span class="translate">Theme</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
+                        <ul id="ul_theme">
+                            <li class="ui-state-default menu-item" data-theme="dark-hive">
+                                <a data-info="dark-hive">Dark-Hive</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="start">
+                                <a data-info="start">Start</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="humanity">
+                                <a data-info="humanity">humanity</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="blitzer">
+                                <a data-info="blitzer">blitzer</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="swanky-purse">
+                                <a data-info="swanky-purse">Swanky Purse</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="black-tie">
+                                <a data-info="black-tie">BlackTie</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="cupertino">
+                                <a data-info="cupertino">Cupertino</a>
+                            </li>
+                            <!--<li class="ui-state-default  menu-item">
+                            <a  data-info="dot-lov">Dot Lov</a></li>-->
+                            <li class="ui-state-default menu-item" data-theme="eggplant">
+                                <a data-info="eggplant">Eggplant</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="excite-bike">
+                                <a data-info="excite-bike">excite-bike</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="flick">
+                                <a data-info="flick">flick</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="le-frog">
+                                <a data-info="le-frog">le-frog</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="mint-choc">
+                                <a data-info="mint-choc">mint-choc</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="overcast">
+                                <a data-info="overcast">overcast</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="pepper-grinder">
+                                <a data-info="pepper-grinder">pepper-grinder</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="redmond">
+                                <a data-info="redmond">redmond</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="smoothness">
+                                <a data-info="smoothness">smoothness</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="south-street">
+                                <a data-info="south-street">south-street</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="sunny">
+                                <a data-info="sunny">sunny</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="trontastic">
+                                <a data-info="trontastic">trontastic</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="ui-darkness">
+                                <a data-info="ui-darkness">ui-darkness</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="ui-lightness">
+                                <a data-info="ui-lightness">ui-lightness</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="vader">
+                                <a data-info="vader">vader</a></li>
+                        </ul>
+                    </li>
+                    <li class="ui-state-default " role="tab" style="width: 250px;  background-image: none">
+                        <a class="menu-tab-text"><span class="translate">Language</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
+                        <ul>
+                            <li class="ui-state-default language-select menu-item" data-language="de">
+                                <a>Deutsch</a>
+                            </li>
+                            <li class="ui-state-default language-select menu-item" data-language="en">
+                                <a>English</a>
+                            </li>
+                            <li class="ui-state-default language-select menu-item" data-language="ru">
+                                <a>русский</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="ui-state-default " role="tab" style="width: 250px;  background-image: none; display: none">
+                        <div style="display: inline-block" class="translate">Hide widget description</div>
+                        <input id="screen_hide_description" type="checkbox"/>
+                    </li>
+                </ul>
+            </li>
+            <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Help</a>
+                <ul>
+                    <li class="ui-state-default  menu-item"><a id="m_shortcuts" class="translate">Shortcuts</a></li>
+                    <li class="ui-state-default  menu-item"><a id="m_about" class="translate">About</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <img src="lib/img/edit-undo-8.png" id="button_undo" class="ui-state-default ui-corner-top translateT" title="Undo">
+    <table style="display: inline-block; float: right">
+        <tr>
+            <td><button id="saving_progress"></button></td>
+            <td><button id="exit_button"></button></td>
+        </tr>
+    </table>
+
+    <div class="ribbon_tab" id="ribbon_file">
+        <div class="ribbon_tab_content ui-widget-content"></div>
+    </div>
+    <div class="ribbon_tab" id="ribbon_view">
+        <div class="ribbon_tab_content ui-widget-content">
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 500px;">
+                <table style="border-spacing: 0px; width: 100%">
+                    <colgroup>
+                        <col width="80px" style="text-align:left"/>
+                        <col width="*"/>
+                        <col span="10" width="26px"/>
+                    </colgroup>
+                    <tr id="rib_view_add_tr" style="display:none">
+                        <td style=" height: 22px; padding-right:3px" class="translate">New Name:</td>
+                        <td>
+                            <input type="text" id="rib_view_addname" >
+                        </td>
+                        <td>
+                            <div id="rib_view_add_ok" class="btn-iconbar ui-corner-all"></div>
+                        </td>
+                        <td>
+                            <div id="rib_view_add_cancel" class="btn-iconbar ui-corner-all"></div>
+                        </td>
+                    </tr>
+                    <tr id="rib_view_rename_tr" style="display:none">
+                        <td style=" height: 22px; padding-right:3px" class="translate">New Name:</td>
+                        <td>
+                            <input type="text" id="rib_view_newname" >
+                        </td>
+                        <td>
+                            <div id="rib_view_rename_ok" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/ok.png"></div>
+                        </td>
+                        <td>
+                            <div id="rib_view_rename_cancel" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/cancel.png"></div>
+                        </td>
+                    </tr>
+                    <tr id="rib_view_copy_tr" style="display:none">
+                        <td style=" height: 22px; padding-right:3px" class="translate">New Name:</td>
+                        <td>
+                            <input type="text" id="rib_view_copyname" >
+                        </td>
+                        <td>
+                            <div id="rib_view_copy_ok" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/ok.png"></div>
+                        </td>
+                        <td>
+                            <div id="rib_view_copy_cancel" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/cancel.png"></div>
+                        </td>
+                    </tr>
+                    <tr id="rib_view">
+                        <td style=" height: 22px; padding-right:3px" class="translate">Active View:</td>
+                        <td>
+                            <select id="select_view" style="width: 310px"></select>
+                        </td>
+                        <td>
+                            <div id="rib_view_add" class="btn-iconbar ui-corner-all translateT" title="Add new view"><img class="icon-on-iconbar" src="icon/add.png" style="width: 16px;height: 16px;margin: 3px;"></div>
+                        </td>
+                        <td>
+                            <div id="rib_view_del" class="btn-iconbar ui-corner-all translateT" title="Delete actual view"><img class="icon-on-iconbar" src="icon/delete.png"></div>
+                        </td>
+                        <td>
+                            <div id="rib_view_rename" class="btn-iconbar ui-corner-all translateT" title="Rename view"><img class="icon-on-iconbar" src="icon/rename.png"></div>
+                        </td>
+                        <td>
+                            <div id="rib_view_copy" class="btn-iconbar ui-corner-all translateT" title="Copy view"><img class="icon-on-iconbar" src="icon/copy.png"></div>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <div class="ribbon_tab" id="ribbon_widget">
+        <div class="ribbon_tab_content ui-widget-content">
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 461px;">
+                <table style="border-spacing: 0px; width: 100%; text-align: left">
+                    <colgroup>
+                        <col width="80px" style="text-align:left"/>
+                        <col width="*"/>
+                        <col span="10" width="26px"/>
+                    </colgroup>
+                    <tr id="rib_wid_copy_tr" style="display:none">
+                        <td style="height: 22px; padding-right: 3px" class="translate">To View:</td>
+                        <td>
+                            <select id="rib_wid_copy_view" style="width: 310px"></select>
+                        </td>
+                        <td>
+                            <div id="rib_wid_copy_ok" class="btn-iconbar ui-corner-all"> <img class="icon-on-iconbar" src="icon/ok.png"></div>
+                        </td>
+                        <td>
+                            <div id="rib_wid_copy_cancel" class="btn-iconbar ui-corner-all"> <img class="icon-on-iconbar" src="icon/cancel.png"></div>
+                        </td>
+                    </tr>
+                    <tr id="rib_wid">
+                        <td style=" height: 22px; padding-right:3px" class="translate">Active Widget:</td>
+                        <td>
+                            <select id="select_active_widget" multiple="multiple" data-multiselect-width="400" data-multiselect-height="250"></select>
+                        </td>
+                        <td>
+                            <div id="rib_wid_del" class="btn-iconbar ui-corner-all translateT" title="Delete widget"></div>
+                        </td>
+                        <td>
+                            <div id="rib_wid_copy" class="btn-iconbar ui-corner-all translateT" title="Copy widget"></div>
+                        </td>
+                        <td>
+                            <div id="rib_wid_doc" class="btn-iconbar ui-corner-all translateT" title="Help about widget"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="display:none">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td class="translate" style="text-align: center; height: 22px; padding-right: 3px">Align widgets:</td>
+                        <td>
+                            <div id="wid_align_left" class="btn-iconbar ui-corner-all translateT" title="Align horizontal/left"><img class="icon-on-iconbar" src="icon/align-horizontal-left.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_align_right" class="btn-iconbar ui-corner-all translateT" title="Align horizontal/right"><img class="icon-on-iconbar" src="icon/align-horizontal-right-2.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_align_top" class="btn-iconbar ui-corner-all translateT" title="Align vertical/top"><img class="icon-on-iconbar" src="icon/align-vertical-top-2.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_align_buttom" class="btn-iconbar ui-corner-all translateT" title="Align vertical/bottom"><img class="icon-on-iconbar" src="icon/align-vertical-bottom-2.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_align_hc" class="btn-iconbar ui-corner-all translateT" title="Align horizontal/center"><img class="icon-on-iconbar" src="icon/align-horizontal-center-2.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_align_vc" class="btn-iconbar ui-corner-all translateT" title="Align vertical/center"><img class="icon-on-iconbar" src="icon/align-vertical-center-2.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_dis_h" class="btn-iconbar ui-corner-all translateT" title="Align horizontal/equal"><img class="icon-on-iconbar" src="icon/distribute-horizontal-equal.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_dis_v" class="btn-iconbar ui-corner-all translateT" title="Align vertical/equal"><img class="icon-on-iconbar" src="icon/distribute-vertical-equal.png"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="display:none">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td class="translate" style="text-align: center; height: 22px; padding-right: 3px">All widgets:</td>
+                        <td>
+                            <input id="wid_all_lock_function" type="checkbox" /><label style="width: 23px;height: 23px" id="wid_all_lock_f" for="wid_all_lock_function"  class="translateT ui-state-active" title="Lock Widget function"></label>
+                        </td>
+                        <td>
+                            <input id="wid_all_lock_drag" type="checkbox" /><label style="width: 23px;height: 23px" id="wid_all_lock_d" for="wid_all_lock_drag"  class="translateT" title="Lock Widget dragging"></label>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="ribbon_tab" id="ribbon_tools" >
+        <div class="ribbon_tab_content ui-widget-content" >
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 350px">
+                <table style="border-spacing: 0px; width: 100%">
+                    <colgroup>
+                        <col width="80px" style="text-align:left"/>
+                        <col width="*"/>
+                        <col span="10" width="26px"/>
+                    </colgroup>
+                    <tr id="rib_tools_resolution_manuel" style="display:none">
+                        <td class="translate">Resolution:</td>
+                        <td>
+                            <div style="display: inline-block" class="translate">Width</div>
+                            <input id="screen_size_x" type="number" style="width: 60px" value=""/>
+                            <div style="display: inline-block" class="translate">Height</div>
+                            <input id="screen_size_y" type="number" style="width: 60px" value=""/>
+                        </td>
+                        <td>
+                            <div class="btn-iconbar ui-corner-all rib_tool_resolution_toggel"><img class="icon-on-iconbar" src="icon/refresh-4.png"></div>
+                        </td>
+                    </tr>
+                    <tr id="rib_tools_resolution_fix">
+                        <td class="translate">Resolution:</td>
+                        <td>
+                            <select id="screen_size" class="vis-editor vis-edit-select" data-multiselect-height="450" data-multiselect-width="300" >
+                                <option value="" class="translate">not defined</option>
+                                <option value="user" class="translate">User defined</option>
+                                <option value="320x460">iPhone 3G, 3GS, 4, 4S - Portrait</option>
+                                <option value="480x300">iPhone 3G, 3GS, 4, 4S - Landscape</option>
+                                <option value="320x548">iPhone 5, 5S - Portrait</option>
+                                <option value="568x300">iPhone 5, 5S - Landscape</option>
+                                <option value="768x1004">iPad - Portrait</option>
+                                <option value="1024x748">iPad - Landscape</option>
+                                <option value="480x800">Samsung S2 - Portrait</option>
+                                <option value="800x480">Samsung S2 - Landscape</option>
+                                <option value="720x1280">Samsung S3, Note 2 - Portrait</option>
+                                <option value="1280x720">Samsung S3, Note 2 - Landscape</option>
+                                <option value="1080x1920">Samsung S4, S5, Note 3 - Portrait</option>
+                                <option value="1920x1080">Samsung S4, S5, Note 3 - Landscape</option>
+                                <option value="768x1280">Nexus 4 - Portrait</option>
+                                <option value="1280x768">Nexus 4 - Landscape</option>
+                                <option value="1080x1920">Nexus 5 - Portrait</option>
+                                <option value="1920x1080">Nexus 5 - Landscape</option>
+                                <option value="800x1280">Nexus 7 (2012) - Portrait</option>
+                                <option value="1280x800">Nexus 7 (2012) - Landscape</option>
+                                <option value="1200x1920">Nexus 7 (2013) - Portrait</option>
+                                <option value="1920x1200">Nexus 7 (2013) - Landscape</option>
+                                <option value="1600x2560">Nexus 10 - Portrait</option>
+                                <option value="2560x1600">Nexus 10 - Landscape</option>
+                                <option value="720x1280">HD - Portrait</option>
+                                <option value="1280x720">HD - Landscape</option>
+                                <option value="1080x1920">Full HD - Portrait</option>
+                                <option value="1920x1080">Full HD - Landscape</option>
+                            </select>
+                        </td>
+                        <td>
+                            <div class="btn-iconbar ui-corner-all rib_tool_resolution_toggel"><img class="icon-on-iconbar" src="icon/refresh-4.png"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
+                            <span style=" display: inline-block;" class="translate">Grid</span>
+                        </td>
+                        <td style="padding-left: 5px">
+                            <select id="snap_type" class="vis-editor" data-multiselect-width="100">
+                                <option value="0" selected="selected" class="translate">disabled</option>
+                                <option value="1" class="translate">elements</option>
+                                <option value="2" class="translate">grid</option>
+                            </select>
+                        </td>
+                        <td class="translate" style="padding-left: 5px">grid size</td>
+                        <td><input id="grid_size" type="number" value=""></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
+                            <span style=" display: inline-block;" class="translate">Instance ID</span>
+                        </td>
+                        <td>
+                            <input type="input" id="vis_instance"/>
+                        </td>
+                        <td>
+                            <button type="button" class="vis-editor translateB" id="create_instance">create_instance</button>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                                  <tr>
+                        <td>
+                            <button class="vis-editor translateB" id="export_view">export view</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="import_view">import view</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="display: none">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td style="width: 80px" class='translate'>Room:</td>
+                        <td><select id="wizard_rooms"></select></td>
+                        <td style="width: 80px" class='translate'>Function:</td>
+                        <td><select id="wizard_funcs"></select></td>
+                        <td style="width: 80px" class='translate'>Widget:</td>
+                        <td><select id="wizard_widgets"></select></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <div class="ribbon_tab" id="ribbon_dev">
+        <div class="ribbon_tab_content ui-widget-content">
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
+                            <button id="dev_show_html">Show Widget HTML</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
+                            <button class="vis-editor translateB" id="export_local_view">export views</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="import_local_view">import views</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="clear_local_view">clear cached views</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="panel_body" class="ui-widget-content" style="display: none; height: 100%">
+    <div class="ui-widget-content" id="pan_add_wid">
+        <div class="ui-state-default" style="height:16px;font-size:16px;padding: 5px;font-weight: bolder;">
+            <span class="translate">Add Widget</span>
+            <div id="btn_prev_type" class="ui-"><span class="ui-icon  ui-icon-tag"></span></div>
+            <div id="btn_prev_zoom" class="ui-"><span class="ui-icon  ui-icon-zoomout"></span></div>
+        </div>
+        <select id="select_set" style="width: 100%" class="select-set"></select>
+
+        <div id="toolbox" class="toolbox"></div>
+    </div>
+    <div id="vis_wrap">
+        <div id="view_select" class="ui-widget-content">
+            <button id="view_select_left"></button>
+            <div id="view_select_tabs_wrap">
+                <div id="view_select_tabs"></div>
+            </div>
+            <button id="view_select_right"></button>
+        </div>
+        <div id="vis_container" class="ui-widget-content" caption="Views">
+            <!--div id="allwidgets_helper" style="display: none">
+                <div id="allwidgets_inner_helper"></div>
+            </div-->
+
+            <div id="size_x"
+                 style="display:none; z-index: 99; position: absolute; top: 0; width:0; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
+            <div id="size_y"
+                 style="display:none; z-index: 99; position: absolute; left: 0; height:0; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
+        </div>
+    </div>
+    <div id="pan_attr">
+        <div class="ui-state-default translate" style="height: 16px;font-size: 16px;padding: 5px;font-weight: bolder;">Attributes</div>
+        <div id="attr_wrap">
+            <ul style="border-radius: 0; display: inline-block; background: transparent; border: none; margin-bottom: -2px">
+                <li>
+                    <a href="#tab_wid_attr" style="padding: 2px 4px 2px 4px" class="translate">Widget</a>
+                </li>
+                <li>
+                    <a href="#tab_view_attr" style="padding: 2px 4px 2px 4px" class="translate">View</a>
+                </li>
+            </ul>
+            <div class="tab_attr ui-widget-content" id="tab_view_attr">
+                <div id="view_inspector">
+                    <table style="width: 100%; border: 0px">
+                        <colgroup>
+                            <col width="40%"/>
+                            <col width="60%" style="padding-right: 5px"/>
+                            <col width="26px" style=""/>
+                        </colgroup>
+                        <tbody>
+                            <tr><td colspan="3" class="ui-state-default"><span class="translate">group_css_common</span><button class="view-group" style="float:right" data-group="view-css-common"></button></td></tr>
+                            <tr class="group-view-css-common">
+                                <td class="vis-edit-td-caption translate">comment</td>
+                                <td class="vis-edit-td-field" colspan="2"><input type="text" id="inspect_view_comment" class="vis-inspect-view vis-edit-textbox"/></td>
+                            </tr>
+                            <tr class="group-view-css-common">
+                                <td class="vis-edit-td-caption translate">class</td>
+                                <td class="vis-edit-td-field" colspan="2"><input type="text" id="inspect_view_class" class="vis-inspect-view vis-edit-textbox"/></td>
+
+                            </tr>
+                            <tr class="group-view-css-common">
+                                <td class="vis-edit-td-caption translateT" style="font-style: italic" title="filter_key_tooltip"><span class="translate">filter_key</span></td>
+                                <td class="vis-edit-td-field" colspan="2"><input type="text" id="inspect_view_filterkey" class="vis-inspect-view vis-edit-textbox"/></td>
+                            </tr>
+                            <tr class="group-view-css-common">
+                                <td class="vis-edit-td-caption translate">Theme</td>
+                                <td class="vis-edit-td-field" colspan="2">
+                                    <select id="inspect_view_theme" class="vis-edit-textbox" style="width:100%">
+                                        <option value="black-tie">black-tie</option>
+                                        <option value="blitzer">blitzer</option>
+                                        <option value="cupertino">cupertino</option>
+                                        <option value="dhive">dark-hive</option>
+                                        <option value="dot-luv">dot-luv</option>
+                                        <option value="eggplant">eggplant</option>
+                                        <option value="excite-bike">excite-bike</option>
+                                        <option value="flick">flick</option>
+                                        <option value="hot-sneaks">hot-sneaks</option>
+                                        <option value="humanity">humanity</option>
+                                        <option value="kian">kiandra</option>
+                                        <option value="le-frog">le-frog</option>
+                                        <option value="mint-choc">mint-choc</option>
+                                        <option value="overcast">overcast</option>
+                                        <option value="pepper-grinder">pepper-grinder</option>
+                                        <option value="redmond">redmond</option>
+                                        <option value="smoothness">smoothness</option>
+                                        <option value="south-street">south-street</option>
+                                        <option value="start">start</option>
+                                        <option value="sunny">sunny</option>
+                                        <option value="swanky-purse">swanky-purse</option>
+                                        <option value="trontastic">overcast</option>
+                                        <option value="ui-dn">ui-darkness</option>
+                                        <option value="ui-lightness">ui-lightness</option>
+                                        <option value="vader">vader</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="css-inspector-heading ui-state-default"><span class="translate">group_css_background</span><button  style="float:right" class="view-group" data-group="view-css-background"></button></td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td colspan="3" id="inspect_view_bkg_parent"></td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>background</td>
+                                <td colspan="2">
+                                    <input type="text" id="inspect_view_css_background" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-color</td>
+                                <td ><input type="text" id="inspect_view_css_background-color" class="vis-edit-textbox vis-inspect-view-css"/></td>
+                                <td><button data-attr="view_css_background-color" class="view-edit-button" data-type="color"></button></td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-image</td>
+                                <td colspan="2">
+                                    <input type="text" id="inspect_view_css_background-image" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-repeat</td>
+                                <td  colspan="2">
+                                    <input type="text" id="inspect_view_css_background-repeat" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-attachment</td>
+                                <td  colspan="2">
+                                    <input type="text" id="inspect_view_css_background-attachment" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-position</td>
+                                <td  colspan="2">
+                                    <input type="text" id="inspect_view_css_background-position" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-size</td>
+                                <td  colspan="2">
+                                    <input type="text" id="inspect_view_css_background-size" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-clip</td>
+                                <td  colspan="2">
+                                    <input type="text" id="inspect_view_css_background-clip" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-background">
+                                <td>-origin</td>
+                                <td colspan="2">
+                                    <input type="text" id="inspect_view_css_background-origin" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="css-inspector-heading ui-state-default"><span class="translate">group_css_font_text</span><button style="float:right" class="view-group" data-group="view-css-font-text"></button></td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>color</td>
+                                <td>
+                                    <input type="text" id="inspect_view_css_color" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                                <td><button data-attr="view_css_color" class="view-edit-button" data-type="color"></button></td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>text-shadow</td>
+                                <td>
+                                    <input type="text" id="inspect_view_css_text-shadow" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>font-family</td>
+                                <td >
+                                    <input type="text" id="inspect_view_css_font-family" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>font-style</td>
+                                <td >
+                                    <input type="text" id="inspect_view_css_font-style" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>font-variant</td>
+                                <td >
+                                    <input type="text" id="inspect_view_css_font-variant" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>font-weight</td>
+                                <td >
+                                    <input type="text" id="inspect_view_css_font-weight" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>font-size</td>
+                                <td >
+                                    <input type="text" id="inspect_view_css_font-size" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>line-height</td>
+                                <td >
+                                    <input type="text" id="inspect_view_css_line-height" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>letter-spacing</td>
+                                <td >
+                                    <input type="text" id="inspect_view_css_letter-spacing" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-font-text">
+                                <td>word-spacing</td>
+                                <td >
+                                    <input type="text" id="inspect_view_css_word-spacing" class="vis-edit-textbox vis-inspect-view-css"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab_attr ui-widget-content" id="tab_wid_attr">
+                <div class="vis-widget-tools" style="margin-top: 3px;">
+                    <!--<h4 class="translate">Widget Attributes:</h4>-->
+                    <table cellspacing=0 style="width: 100%; border: 0px; table-layout: fixed; word-wrap: break-word;">
+                        <colgroup>
+                            <col width="40%"/>
+                            <col width="60%" style="padding-right: 5px"/>
+                            <col width="26px" style=""/>
+                            <col width="26px" style=""/>
+                        </colgroup>
+                        <tbody id="widget_attrs"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialog-message" title="Message" style="display: none">
+    <p>
+        <span id="dialog-message-icon" class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+        <span id="dialog-message-text"></span>
+    </p>
+</div>
+<div id="dialog-confirm" title="Question" style="display: none">
+    <p>
+        <span id="dialog-confirm-icon" class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+        <span id="dialog-confirm-text"></span>
+    </p>
+</div>
+
+<div style="display: none" id="uploadPreview"></div>
+
+<div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>
+
+</body>
+
+</html>

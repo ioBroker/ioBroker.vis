@@ -1,0 +1,281 @@
+<style type="text/css">
+    .fancy-switch{
+        border:none;
+        background:left no-repeat;
+        width:105px;
+        height:46px;
+        padding:0;
+        margin:0;
+    }
+
+    .fancy-on, .fancy-off{
+        width:50px;
+        height:40px;
+        display:inline-block;
+        cursor:pointer;
+    }
+
+
+</style>
+<link rel="stylesheet" type="text/css" href="widgets/fancyswitch/css/jquery.ibutton.min.css"/>
+
+<script type="text/javascript" src="widgets/fancyswitch/js/jquery-ui.toggleSwitch.js"></script>
+<script type="text/javascript" src="widgets/fancyswitch/js/jquery.ibutton.min.js"></script>
+
+<script type="text/javascript">
+    "use strict";
+
+    if (vis.editMode) {
+        // Add words for basic widgets
+        $.extend(true, systemDictionary, {
+            "text_true":        {"en": "Label for true",             "de": "Text für TRUE",      "ru": "Текст для 1"},
+            "text_false":       {"en": "Label for false",            "de": "Text für FALSE",     "ru": "Текст для 0"},
+            "width":            {"en": "Width",                      "de": "Breite",             "ru": "Ширина"},
+            "auto":             {"en": "auto",                       "de": "auto",               "ru": "автоматически"},
+            "true":             {"en": "true",                       "de": "true",               "ru": "да"},
+            "false":            {"en": "false",                      "de": "false",              "ru": "нет"},
+            "labelOn":          {"en": "Label for 'ON'",             "de": "Text für AN",        "ru": "Подпись для 'истина/1'"},
+            "labelOff":         {"en": "Label for 'OFF'",            "de": "Text für AUS",       "ru": "Подпись для 'ложь/0'"},
+            "resizeHandle":     {"en": "resizeHandle",               "de": "Hebelgröße",         "ru": "Изменить размер клавиши"},
+            "resizeContainer":  {"en": "resizeContainer",            "de": "Konteinergröße",     "ru": "Изменить размер виджета"},
+            "enableDrag":       {"en": "Enable drag",                "de": "Ziehen erlaubt",     "ru": "Можно тащить мышкой"},
+            "enableFx":         {"en": "Animation",                  "de": "Animation",          "ru": "Анимация"},
+            "duration":         {"en": "Effect duration(ms)",        "de": "Umschaltdauer(ms)",  "ru": "Длительность анимации"},
+            "highlight_switch": {"en": "Highlight switch",           "de": "Highlight Schalter", "ru": "Подсветить выключатель"},
+            "invert":           {"en": "Invert state",               "de": "Zustand invertieren", "ru": "Инвертировать состояние"},
+            "test":             {"en": "Test",                       "de": "Testen",             "ru": "Тест"}
+        });
+    }
+
+    vis.binds.fancyswitch = {
+        fancyswitch: function (el, options) {
+            var $this = $(el).parent().find('.fancy-switch');
+            var oid   = $this.attr('data-oid');
+            if (oid != 'nothing_selected') {
+                vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                    var num = parseFloat(newVal);
+                    num = (num > 0 || newVal === 'true' || newVal === true);
+                    if (options.invert) num = !num;
+                    $this.css('background-position', num ? 'left' : 'right');
+                    $this.find('input.fancy-on_off[value="0"]').prop('checked', !num);
+                    $this.find('input.fancy-on_off[value="1"]').prop('checked', num);
+                });
+            }
+            $this.css('background', 'url("' + options.src + '")');
+            $this.find('.fancy-on_off').css('display', 'none');
+            $this.find('.fancy-on, .fancy-off').css('text-indent', '-10000px');
+
+            var newVal = vis.states.attr(oid + '.val');
+            var num = parseFloat(newVal);
+            num = (num > 0 || newVal === 'true' || newVal === true);
+            if (options.invert) num = !num;
+            if (num) {
+                $this.css('background-position', 'left');
+            } else {
+                $this.css('background-position', 'right');
+            }
+
+            if (!vis.editMode && oid != 'nothing_selected') {
+                $this.find("input.fancy-on_off").change(function() {
+                    var val = $(this).val();
+                    val = parseFloat(val);
+                    $this.css('background-position', val ? 'left' : 'right');
+                    if (options.invert) val = !val;
+                    vis.setValue(oid, val);
+                });
+                $this.click(function() {
+                   console.log('click');
+                });
+            }
+        },
+        toggleSwitch: function (el, options) {
+            var $this = $(el).prev();
+            console.log(JSON.stringify(options) + ' ' + $this.width());
+            $this.toggleSwitch({
+                highlight: options.highlight,
+                width:     parseInt(options.width, 10) || 40,
+                change: function (e) {
+                    console.log(e);
+                }
+            });
+
+            if (vis.editMode) {
+                if (options.test) {
+                    $this.val(!parseInt($this.val(), 10) ? '1' : '0').trigger('change');
+                }
+                setTimeout(function () {
+                    var id = $this.attr('id');
+                    id = id.substring(0, id.length - '_select'.length);
+                    $('#' + id).find('.ui-toggle-switch').css({'pointer-events': 'none'});
+                }, 100);
+            }
+        },
+        iButton: function (el, options) {
+            var $this = $(el);
+
+            setTimeout(function () {
+                $this.iButton(options);
+            }, 20);
+            if (!options.enableFx)   options.enableFx   = false;
+            if (!options.enableDrag) options.enableDrag = false;
+            if (options.resizeHandle === 'false') options.resizeHandle = false;
+            if (options.resizeContainer === 'false') options.resizeContainer = false;
+
+            var oid = $this.attr('data-oid');
+            if (oid != 'nothing_selected') {
+                vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                    var num = (parseFloat(newVal) > 0 || newVal === 'true' || newVal === true);
+                    $this.prop('checked', num).trigger('change');
+                });
+            }
+
+            if (vis.editMode) {
+                if (options.test) $this.prop('checked', !$this.prop('checked')).trigger('change');
+                setTimeout(function () {
+                    var id = $this.attr('id');
+                    id = id.substring(0, id.length - '_checkbox'.length);
+                    $('#' + id).find('.ibutton-container').css({'pointer-events': 'none'});
+                }, 100);
+            }
+        }
+    };
+</script>
+
+
+<script type="text/ejs"
+        id="tplFancySwitch1"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplFancySwitch1" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 104px; height: 40px; left: 179.5px; top: 46px; position: absolute;" > <div class="vis-widget-prev-body"> <fieldset class="fancy-switch" data-o style="background-image: url(widgets/fancyswitch/img/fancyswitch-1.png); background-position: 100% 50%; background-repeat: initial initial;"> <label class="fancy-off" style="text-indent: -10000px;">Off<input type="radio" class="fancy-on_off" name="w00004_on_off" value="0" style="display: none;"></label> <label class="fancy-on" style="text-indent: -10000px;">On<input type="radio" class="fancy-on_off" name="w00004_on_off" value="1" style="display: none;"></label> </fieldset> <div></div> </div> </div>'
+        data-vis-set="fancyswitch"
+        data-vis-type="ctrl - Bool"
+        data-vis-name="Switch light Off/On"
+        data-vis-attrs="oid;invert/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
+                <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
+                <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
+            </fieldset>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-1.png", invert: data.attr('invert')}) %>></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs"
+        id="tplFancySwitch2"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplFancySwitch2" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="width: 105px; height: 46px; left: 408px; top: 404px;" > <div class="vis-widget-prev-body"> <fieldset class="fancy-switch" data-o style="background-image: url(widgets/fancyswitch/img/fancyswitch-2.png); background-position: 100% 50%; background-repeat: initial initial;"> <label class="fancy-off" style="text-indent: -10000px;">Off<input type="radio" class="fancy-on_off" name="w00005_on_off" value="0" style="display: none;"></label> <label class="fancy-on" style="text-indent: -10000px;">On<input type="radio" class="fancy-on_off" name="w00005_on_off" value="1" style="display: none;"></label> </fieldset> <div></div> </div> </div>'
+        data-vis-set="fancyswitch"
+        data-vis-type="ctrl - Bool"
+        data-vis-name="Slider dark Off/On"
+        data-vis-attrs="oid;invert/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
+                <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
+                <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
+            </fieldset>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-2.png", invert: data.attr('invert')}) %>></div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ejs"
+        id="tplFancyDarkAnAus"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplFancyDarkAnAus" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 105px; height: 46px; left: 136px; top: 613px;" > <div class="vis-widget-prev-body"> <fieldset class="fancy-switch" data-o style="background-image: url(widgets/fancyswitch/img/fancyswitch-3.png); background-position: 100% 50%; background-repeat: initial initial;"> <label class="fancy-off" style="text-indent: -10000px;">Off<input type="radio" class="fancy-on_off" name="w00006_on_off" value="0" style="display: none;"></label> <label class="fancy-on" style="text-indent: -10000px;">On<input type="radio" class="fancy-on_off" name="w00006_on_off" value="1" style="display: none;"></label> </fieldset> <div></div> </div> </div>'
+        data-vis-set="fancyswitch"
+        data-vis-type="ctrl - Bool"
+        data-vis-name="Schieber dunkel Ein/Aus"
+        data-vis-attrs="oid;invert/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
+                <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
+                <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
+            </fieldset>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-3.png", invert: data.attr('invert')}) %>></div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplFancyDarkAnAusRev"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplFancyDarkAnAusRev" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 105px; height: 46px; left: 278px; top: 527px;" > <div class="vis-widget-prev-body"> <fieldset class="fancy-switch" data-o style="background-image: url(widgets/fancyswitch/img/fancyswitch-4.png); background-position: 100% 50%; background-repeat: initial initial;"> <label class="fancy-off" style="text-indent: -10000px;">Off<input type="radio" class="fancy-on_off" name="w00007_on_off" value="0" style="display: none;"></label> <label class="fancy-on" style="text-indent: -10000px;">On<input type="radio" class="fancy-on_off" name="w00007_on_off" value="1" style="display: none;"></label> </fieldset> <div></div> </div> </div>'
+        data-vis-set="fancyswitch"
+        data-vis-type="ctrl - Bool"
+        data-vis-name="Schieber dunkel Aus/Ein"
+        data-vis-attrs="oid;invert/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
+                <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
+                <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
+            </fieldset>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-4.png", invert: data.attr('invert')}) %>></div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ejs"
+        id="tplFancyDarkAnAusWippe"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplFancyDarkAnAusWippe" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="width: 102px; height: 49px; left: 73px; top: 232px; position: absolute;" > <div class="vis-widget-prev-body"> <fieldset class="fancy-switch" data-o style="background-image: url(widgets/fancyswitch/img/fancyswitch-5.png); background-position: 100% 50%; background-repeat: initial initial;"> <label class="fancy-off" style="text-indent: -10000px;">Off<input type="radio" class="fancy-on_off" name="w00002_on_off" value="0" style="display: none;"></label> <label class="fancy-on" style="text-indent: -10000px;">On<input type="radio" class="fancy-on_off" name="w00002_on_off" value="1" style="display: none;"></label> </fieldset> <div></div> </div> </div>'
+        data-vis-set="fancyswitch"
+        data-vis-type="ctrl - Bool"
+        data-vis-name="Wippe dunkel Aus/Ein"
+        data-vis-attrs="oid;invert/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
+                <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="0"/></label>
+                <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="1"/></label>
+            </fieldset>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-5.png", invert: data.attr('invert')}) %>></div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ejs"
+        id="tplFancyGivaIButton"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplFancyGivaIButton" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="top: 514px; left: 186px;" > <div class="vis-widget-prev-body"> <div class="ibutton-container" style="pointer-events: none;"><input type="checkbox" name="w00004_checkbox" data-o value="1"><div class="ibutton-handle" style="left: 0px;"><div class="ibutton-handle-right"><div class="ibutton-handle-middle"></div></div></div><div class="ibutton-label-off"><span style="margin-right: 0px;"><label>OFF</label></span></div><div class="ibutton-label-on" style="width: 4px;"><span style="margin-left: -50px;"><label>ON</label></span></div><div class="ibutton-padding-left"></div><div class="ibutton-padding-right"></div></div> </div> </div>'
+        data-vis-set="fancyswitch"
+        data-vis-type="ctrl - Bool"
+        data-vis-name="Giva Labs iButton"
+        data-vis-attrs="oid;labelOn[ON];labelOff[OFF];resizeHandle[auto]/select,auto,true,false;resizeContainer[auto]/select,auto,true,false;enableDrag/checkbox;enableFx/checkbox;duration[200]/slider,0,5000,100;test/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px;" id="<%= this.data.attr('wid') %>" >
+        <div class="vis-widget-body">
+            <input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox"
+                   id="<%= this.data.attr('wid') %>_checkbox"
+                   data-oid="<%= this.data.attr('oid') %>"
+                   value="1"
+                    <%= (el) -> vis.binds.basic.checkbox(el); vis.binds.fancyswitch.iButton(el, {duration: data.attr('duration'), labelOn: data.attr('labelOn'), labelOff: data.attr('labelOff'), resizeHandle: data.attr('resizeHandle'), resizeContainer: data.attr('resizeContainer'), enableDrag: data.attr('enableDrag'), enableFx: data.attr('enableFx'), test: data.attr('test')}); %>/>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs"
+        id="tplFancyToggleswitch"
+        data-vis-prev='<div id="prev_tplFancyToggleswitch" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="padding-left: 10px; left: 109px; top: 604px; position: absolute; height: 62px; width: 45px;" > <div class="vis-widget-prev-body" style="padding-top:5px; text-align: center"> <select data-oid="" class="ui-toggle-switch" style="display: none; pointer-events: none;"> <option value="0">OFF</option> <option value="1">ON</option> </select> <div></div> <div class="ui-toggle-switch" style="pointer-events: none;"><label style="border: 0px" class="ui-state-active">OFF</label><div class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" aria-disabled="false" style="width: 40px;"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 100%;"></div><a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 0%;"></a></div><label style="border: 0px">ON</label></div></div> </div>'
+        class="vis-tpl"
+        data-vis-set="fancyswitch"
+        data-vis-type="ctrl - Bool"
+        data-vis-name="Taitem jqui Toggleswitch"
+        data-vis-attrs="html_prepend;html_append;oid;text_true[ON];text_false[OFF];highlight_switch/checkbox;width[40]/slider,10,500,1;test/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="padding-left:10px;" id="<%= this.data.attr('wid') %>" >
+        <div class="vis-widget-body" style="padding-top:5px; text-align: center">
+            <%== this.data.attr("html_prepend") %>
+            <select id="<%= this.data.attr('wid') %>_select" data-oid="<%= (this.data.attr('oid') == 'nothing_selected' ? '' : this.data.attr('oid')) %>">
+                <option value="0"><%= this.data.attr('text_false') %></option>
+                <option value="1"><%= this.data.attr('text_true') %></option>
+            </select>
+            <div <%= (el) -> vis.binds.basic.select(el); vis.binds.fancyswitch.toggleSwitch(el, {highlight: data.attr('highlight_switch'), width: data.attr('width'), test: data.attr('test')}); %>></div>
+            <%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>

@@ -1,0 +1,364 @@
+/*
+LCARS Framework jQuery Plugin v2.0
+Requires Jquery 1.4.*
+@author: Josh Messer
+@date: 1.26.2011
+
++--------------------------+
+| LCARS COLOR TABLE        |
++--------------------------+
+orange = #ff9900
+purple = #cc99cc
+blue = #9999ff
+lightBlue = #9999cc
+red = #cc0000
+lightRed = #cc6666
+tan = #ff9966
+lightTan = #ffcc99
+pink = #cc6699
+white = #ccccff
++--------------------------+
+*/
+
+
+@font-face {
+    font-family: 'lcars_font';
+    src: url(//:) format('no404'), url('../font/lcars-webfont.woff') format('woff'), url('../font/lcars-webfont.ttf') format('truetype'), url('../font/lcars-webfont.svg#webfontMzhP0WIg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+div.dashui-lcars h1{font-size: 40px;font-weight:normal;margin:0;padding:0;}
+div.dashui-lcars h2{font-size: 35px;font-weight:normal;margin:0;padding:0;}
+div.dashui-lcars h3{font-size: 30px;font-weight:normal;margin:0;padding:0;}
+
+div.dashui-lcars a:link, div.dashui-lcars a:visited{
+    color:#aaF;
+    text-decoration:none;
+}
+div.dashui-lcars a:hover{
+    color:#66F;
+    text-decoration:none;
+}
+
+div.dashui-lcars{
+    background-color:#000;
+    color:#fff;
+    margin:0;
+    padding:0;
+    font-family:lcars_font;
+    font-size:25px;
+    font-weight:normal;
+    /* Prevents double scroll bars */
+    overflow:hidden;
+    /* This helps to make the text easy to read. */
+    letter-spacing: 1px;
+}
+
+
+/* LINE STYLEING */
+div.dashui-lcars .line-top{
+    width:100%;
+    height:25px;
+    margin:0;
+    background-image: url(../img/Line.png);
+    background-repeat: no-repeat;
+    background-position:0 -31px;
+}
+div.dashui-lcars .line-bottom{
+    width:100%;
+    height:25px;
+    margin:0;
+    background-image: url(../img/Line.png);
+    background-repeat: no-repeat;
+    background-position:0 0;
+}
+div.dashui-lcars .line-middle{
+    width:100%;
+    height:50px;
+    position:absolute;
+    top:0;
+    left:0;
+    margin:0;
+    background-color:transparent;
+    float:left;
+}
+div.dashui-lcars .line-middle .top{
+    height:25px;
+    width:100%;
+    margin:0;
+    background-image: url(../img/Line.png);
+    background-repeat: no-repeat;
+    background-position:0 0;
+}
+div.dashui-lcars .line-middle .bottom{
+    height:25px;
+    width:100%;
+    margin:0;
+    background-image: url(../img/Line.png);
+    background-repeat: no-repeat;
+    background-position:0 -31px;
+}
+/* // LINE STYLEING */
+
+/* CONTENT AND SIDE PANEL */
+div.dashui-lcars .content{
+    width:auto;
+    height:auto;
+    overflow:auto;
+    background:transparent;
+    float:left;
+    position:relative;
+    margin:0;
+    padding:0;
+}
+
+div.dashui-lcars .side-panel{
+    color:black;
+    width:87px;
+    background:transparent;
+    margin:0;
+    padding:0;
+    list-style-type:none;
+    float:left;
+}
+
+div.dashui-lcars .side-panel li{
+    height:auto;
+    width:100%;
+    text-align:right;
+    border-bottom:2px solid black;
+    margin:0;
+    padding:0;
+}
+
+div.dashui-lcars .side-panel a{
+    color:black;
+    text-decoration:none;
+    font-family:lcars_font;
+    font-size:15px;
+    font-size:20px;
+}
+
+div.dashui-lcars .upper-content{
+    width:auto;
+    height:auto;
+    overflow:auto;
+    background:transparent;
+    float:left;
+    position:relative;
+}
+/* // CONTENT AND SIDE PANEL */
+
+/* TITLE BBAR FOR PANEL SCREEN */
+div.dashui-lcars .lcars-title{
+    background-color:transparent;
+    height: 50px;
+    line-height:50px; /* Centers text */
+    width: 100%;
+    text-align:right;
+    margin-bottom:5px;
+    margin:0;
+    padding:0;
+
+    border-radius:50px;
+    -webkit-border-radius:50px;
+    -moz-border-radius:50px;
+    -o-border-radius:50px;
+}
+div.dashui-lcars .lcars-title h1{
+    margin:0;
+    padding:0;
+    font-size:30px;
+    padding-right:15px;
+    color:black;
+    font-weight:normal;
+}
+div.dashui-lcars .lcars-subTitle{
+    background-color:transparent;
+    height: 50px;
+    line-height: 50px; /* Centers text */
+    width: 100%;
+    clear:both;
+    margin:0;
+    padding:0;
+
+    border-radius:50px;
+    -webkit-border-radius:50px;
+    -moz-border-radius:50px;
+    -o-border-radius:50px;
+}
+div.dashui-lcars .lcars-subTitle h2{
+    margin:0;
+    padding:0;
+    font-size: 20px;
+    padding-left:15px;
+    color:black;
+    font-weight:normal;
+}
+/* // TITLE BBAR FOR PANEL SCREEN */
+
+/* DEBUG BOX STYLING */
+div.dashui-lcars div.lcars-debug{
+    display:none;
+    height:auto;
+    width:600px;
+    overflow:auto;
+    background-color:white;
+    position:absolute;
+    bottom:20px;
+    right:5px;
+    z-index:1000;
+    font-family:console;
+    font-size:12px;
+
+    border-radius: 10px 10px 0 10px;
+    -webkit-border-radius: 10px 10px 0 10px;
+    -moz-border-radius: 10px 10px 0 10px;
+    -o-border-radius: 10px 10px 0 10px;
+}
+div.dashui-lcars a.lcars-debug{
+    color:black;
+    text-decoration:none;
+    background:white;
+    display:block;
+    display:none;
+    padding: 5px 10px;
+    position:absolute;
+    bottom:0;
+    right:5px;
+    z-index:1000;
+    font-size: 20px;
+}
+/* // DEBUG BOX STYLING */
+
+/* MEDIA STYLING FOR SMALL SCREENS
+@media screen and (max-device-width:400px) {
+body{font-family:verdana;font-size:12px;overflow:auto!important;}
+h1{font-size: 26px;}
+h2{font-size: 22px;}
+h3{font-size: 18px;}
+.line-top, .line-bottom, .line-middle{display:none;}
+.side-panel{width:100%;}
+.side-panel li{height:25px!important;text-align:center;margin:0!important;}
+.side-panel li div{line-height:20px!important;}
+.content, .upper-content{width:100%!important;height:auto!important;overflow:auto!important;}
+a.lcars-debug{position:relative;display:none!important;}
+div.lcars-debug{position:relative:}
+.button{font-size:12px!important;}
+.B_titleR, .B_titleL{font-size:12px!important;line-height:35px;}
+}
+/* // MEDIA STYLING FOR SMALL SCREENS */
+
+/* BUTTON STYLING */
+div.dashui-lcars .button{
+    display:block;
+    height: 30px;
+    width:100%;
+    color:black;
+    padding: 0.3em 1em;
+    background-color:#ffcc00;
+    /*font-size: 25px;*/
+    line-height:30px;
+    text-decoration:none;
+    text-align:right;
+    overflow:hidden;
+    cursor:pointer;
+    border:none;
+}
+div.dashui-lcars .B_titleR{
+    display:block;
+    float:right;
+    height:40px;
+    line-height:40px;
+    color:#FFCC00;
+    font-size:32px;
+    background:#000;
+    padding:2px;
+    margin-top:-0.2em;
+}
+div.dashui-lcars .B_titleL{
+    display:block;
+    float:left;
+    height:40px;
+    line-height:40px;
+    color:#FFCC00;
+    font-size:32px;
+    background:#000;
+    padding:2px;
+    margin-top:-0.2em;
+}
+
+div.dashui-lcars .B_blankL{
+    color:#000;
+    background:#000;
+    display:block;
+    padding:10px;
+    height:40px;
+    margin-top:-0.3em;
+    margin-left:0em;
+    width:100%;
+}
+div.dashui-lcars .B_blankR{
+    color:#000;
+    background:#000;
+    display:block;
+    padding:10px;
+    height:40px;
+    margin-top:-0.3em;
+    margin-left:-1em;
+    width:100%;
+}
+div.dashui-lcars .RR{border-radius:20px;-moz-border-radius:20px;-webkit-border-radius:20px;}
+div.dashui-lcars .SR{-moz-border-radius-topright:20px;-moz-border-radius-bottomright:20px;-webkit-border-top-right-radius:20px;-webkit-border-bottom-right-radius:20px;}
+div.dashui-lcars .RS{-moz-border-radius-topleft:20px;-moz-border-radius-bottomleft:20px;-webkit-border-top-left-radius:20px;-webkit-border-bottom-left-radius:20px;}
+div.dashui-lcars .L{width:100px;}
+div.dashui-lcars .B_title a:link, div.dashui-lcars .B_title a:visited, div.dashui-lcars .B_title a:hover{color:#fc0;text-decoration:none;}
+div.dashui-lcars .button a:link, div.dashui-lcars .button a:visited, div.dashui-lcars .button a:hover{color:black;text-decoration:none!important;}
+div.dashui-lcars a.button:link, div.dashui-lcars a.button:visited, div.dashui-lcars a.button:hover{color:black;text-decoration:none!important;}
+/* // BUTTON STYLING */
+
+/* INPUT STYLING */
+div.dashui-lcars input{
+    background:transparent;
+    color: white;
+    padding:0;
+    margin:0;
+    font-size:25px;
+    border:2px solid #ff9900;
+    font-family:lcars_font;
+    padding:0 5px;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+}
+div.dashui-lcars input:focus{
+    background:#ff9900;
+    color:black;
+}
+div.dashui-lcars input[type=button], div.dashui-lcars input[type=submit], div.dashui-lcars button{
+    background:#ff9900;
+    font-family:lcars_font;
+    font-size:25px;
+    height:35px;
+    line-height:35px;
+    border:none;
+    text-align:right;
+    color:black;
+    padding-left:2em;
+    padding-right:1em;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -o-border-radius: 15px;
+    border-radius: 15px;
+}
+div.dashui-lcars input[type=button]:hover, div.dashui-lcars input[type=submit]:hover, div.dashui-lcars button:hover{
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -o-border-radius: 30px;
+    border-radius: 30px;
+}
+
+/* // INPUT STYLING */
