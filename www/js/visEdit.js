@@ -995,10 +995,10 @@ vis = $.extend(true, vis, {
                             primary: 'ui-icon-note'
                         }
                     }).click(function () {
-                        var data = $(this).attr('data-attr');
+                        var attr = $(this).attr('data-attr');
                         var _settings = {
-                            current: $('#inspect_' + data).val(),
-                            onselectArg: data,
+                            current: $('#inspect_' + attr).val(),
+                            onselectArg: attr,
                             onselect: function (img, _data) {
                                 $('#inspect_' + _data).val(colorSelect.GetColor()).trigger('change');
                             }
@@ -1794,8 +1794,8 @@ vis = $.extend(true, vis, {
                     }
                 },
                 onchange: function (val) {
-                    var attr = $(this).data('data-attr');
-                    $('#inspect_' + attr + '_desc').html(that.getObjDesc(val));
+                    var wdata = $(this).data('data-wdata');
+                    $('#inspect_' + wdata.attr + '_desc').html(that.getObjDesc(val));
                 }
             },
             {
@@ -1907,12 +1907,12 @@ vis = $.extend(true, vis, {
                 text: false,
                 title: _('Select color'),
                 click: function (/*event*/) {
-                    var data = $(this).data('data-attr');
+                    var wdata = $(this).data('data-wdata');
                     var _settings = {
-                        current: $('#inspect_' + data).val(),
-                        onselectArg: data,
+                        current: $('#inspect_' + wdata.attr).val(),
+                        onselectArg: wdata,
                         onselect: function (img, _data) {
-                            $('#inspect_' + _data).val(colorSelect.GetColor()).trigger('change');
+                            $('#inspect_' + wdata.attr).val(colorSelect.GetColor()).trigger('change');
                         }
                     };
 
@@ -1991,22 +1991,22 @@ vis = $.extend(true, vis, {
                 text: false,
                 title: _('Select image'),
                 click: function (/*event*/) {
-                    var data = $(this).data('data-attr');
+                    var wdata = $(this).data('data-wdata');
 
                     $.fm({
                         lang: that.language,
-                        path: that.widgets[widget].data[widAttr] || '/' + that.conn.namespace + '/' + that.projectPrefix + 'img/',
+                        path: that.widgets[wdata.widgets[0]].data[wdata.attr] || '/' + that.conn.namespace + '/' + that.projectPrefix + 'img/',
                         uploadDir: '/' + that.conn.namespace + '/',
                         fileFilter: filter || ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
                         folderFilter: false,
                         mode: 'open',
                         view: 'prev',
-                        userArg: data,
+                        userArg: wdata,
                         conn: that.conn,
                         zindex: 1001
                     }, function (_data, userData) {
                         var src = _data.path + _data.file;
-                        $('#inspect_' + userData).val(src).trigger('change');
+                        $('#inspect_' + wdata.attr).val(src).trigger('change');
                     });
                 }
             };

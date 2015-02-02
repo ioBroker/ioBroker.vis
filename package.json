@@ -1,16 +1,15 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for ioBroker.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "bluefox",
     "email": "bluefox@ccu.io"
   },
   "contributors": [
-    {
-      "name": "bluefox",
-      "email": "bluefox@ccu.io"
-    }
+    "bluefox <bluefox@ccu.io>",
+    "hobbyquaker <hq@ccu.io>",
+    "smilingJack <smilingJack@ccu.io>"
   ],
   "homepage": "https://github.com/ioBroker/ioBroker.vis",
   "repository": {
@@ -19,7 +18,7 @@
   },
   "licenses": [
     {
-      "type": "Apache 2.0",
+      "type": "CC BY-NC",
       "url": "https://github.com/ioBroker/ioBroker.vis/blob/master/LICENSE"
     }
   ],
