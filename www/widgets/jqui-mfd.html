@@ -72,7 +72,7 @@
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
 
@@ -116,12 +116,12 @@
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
     var str = vis.states.attr('_' + this.data.oid + '.val');
     var val = parseFloat(str, 10);
-    if (str === true) { val = 1; }
+    if (str === true)  { val = 1; }
     if (str === false) { val = 0; }
     if (val !== 0) {
     %>
@@ -166,7 +166,7 @@
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
     var str = vis.states.attr('_' + this.data.oid + '.val');
@@ -226,7 +226,7 @@
         <%
         var styles = "";
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+            styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
 
         var str = vis.states.attr('_' + this.data.oid + '.val');
@@ -248,7 +248,7 @@
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
     var str = vis.states.attr('_' + this.data.oid + '.val');
@@ -306,7 +306,7 @@
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
 
     var val = 1.0 - parseFloat(vis.states.attr('_' + this.data.oid + '.val'));
