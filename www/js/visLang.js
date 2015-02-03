@@ -29,6 +29,7 @@ $.extend(systemDictionary, {
     'grid': {'en': 'Grid', 'de': 'Raster', 'ru': 'таблица'},
     'grid size': {'en': 'Grid size:', 'de': 'Rastermaß:', 'ru': 'Шаг:'},
     'theme': {'en': 'Theme:', 'de': 'Thema:', 'ru': 'Тема:'},
+    '--different--': {'en': 'different:', 'de': 'verschiedene', 'ru': 'разное'},
     'Screensize': {'en': 'Screensize:', 'de': 'Bildschirmgröße', 'ru': 'Размер экрана'},
     'Width': {'en': 'Width (px)', 'de': 'Breite (px)', 'ru': 'Ширина (пикс.)'},
     'Height': {'en': 'Height (px)', 'de': 'Höhe (px)', 'ru': 'Высота (пикс.)'},

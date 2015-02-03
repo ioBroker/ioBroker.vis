@@ -2375,39 +2375,8 @@ vis = $.extend(true, vis, {
                 if ($input.attr('type') == 'text') $input.addClass('vis-edit-textbox');
 
                 // Set the value
-                if ($input.attr('type') == 'checkbox') {
-                    if (line.css) {
-                        val = this.findCommonValue(widgets, widAttr.substring(4), true);
-                        $input.prop('checked', val);
-                    } else {
-                        if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
-                        $input.prop('checked', values[widAttr]);
-                    }
-                } else {
-                    if (line.css) {
-                        val = this.findCommonValue(widgets, widAttr.substring(4), true);
-                        $input.val(val);
-                        if (val == '--different--') {
-                            $input.addClass('vis-edit-different').val(_('--different--'));
-                        }
-                    } else {
-                        if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
-                        $input.val(values[widAttr]);
-                        if (values[widAttr] == '--different--') {
-                            $input.addClass('vis-edit-different').val(_('--different--'));
-                        }
-                    }
-                    $input.keyup(function () {
-                        var $this = $(this);
-                        var timer = $this.data('timer');
-                        if (timer) clearTimeout(timer);
+                this.setAttrValue(this.activeWidgets, widAttr, line.css, values);
 
-                        $this.data('timer', setTimeout(function () {
-                            $this.data('timer', null);
-                            $this.trigger('change');
-                        }, 500));
-                    });
-                }
                 var wdata = {
                     attr:    widAttr,
                     widgets: widgets,
@@ -2416,6 +2385,7 @@ vis = $.extend(true, vis, {
                     css:     line.css
                 };
                 if (line.onchange) wdata.onchange = line.onchange;
+
                 $input.addClass('vis-inspect-widget');
                 $input.data('data-wdata', wdata);
 
@@ -2464,6 +2434,10 @@ vis = $.extend(true, vis, {
             var $this   = $(this);
             var wdata   = $this.data('data-wdata');
             var depends = $this.data('data-depends');
+            var diff    = $this.data('different');
+
+            // Set flag, that value was modified
+            if (diff) $this.data('different', false).removeClass('vis-edit-different');
 
             for (var i = 0; i < wdata.widgets.length; i++) {
                 if (wdata.css) {
@@ -2783,21 +2757,78 @@ vis = $.extend(true, vis, {
         return allWidgetsAttr;
     },
     findCommonValue: function (widgets, attr, isStyle) {
-        var value = '-------no one set something -------------';
+        var widgetValues = [];
+        var values = [];
         for (var i = 0; i < widgets.length; i++) {
             var widget = this.views[this.activeView].widgets[widgets[i]];
             var obj = isStyle ? widget.style : widget.data;
             if (!obj) obj = {};
             if (isStyle && obj[attr] === undefined) obj[attr] = '';
-            if (value == '-------no one set something -------------') {
-                value = obj[attr];
-            } else {
-                if (value != obj[attr]) {
-                    return '--different--';
-                }
+
+            widgetValues[i] = obj[attr];
+            if (values.indexOf(obj[attr]) == -1) values.push(obj[attr]);
+        }
+        if (values.length == 1) {
+            return values[0];
+        } else {
+            return {
+                values:       values,
+                widgetValues: widgetValues
             }
         }
-        return value;
+    },
+    setAttrValue: function (widgets, attr, isStyle, values) {
+        var $input = $('#inspect_' + attr);
+        if (isStyle && attr.substring(0, 4) == 'css_') attr = attr.substring(4);
+
+        if (values[attr] === undefined) values[attr] = this.findCommonValue(widgets, attr, isStyle);
+        if ($input.attr('type') == 'checkbox') {
+            if (typeof values[attr] == 'object') {
+                $input.prop('indeterminate', true);
+            } else {
+                $input.prop('checked', values[attr]);
+            }
+        } else {
+            if (typeof values[attr] == 'object') {
+                $input.addClass('vis-edit-different').val(_('--different--')).data('value', values[attr]).data('different', true);
+                $input.autocomplete({
+                    minLength: 0,
+                    source: function (request, response) {
+                        var data = $.grep(this.element.data('value').values, function (value) {
+                            return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                        });
+                        response(data);
+                    },
+                    select: function (event, ui) {
+                        $(this).val(ui.item.value).trigger('change');
+                    },
+                    change: function (event, ui) {
+                        //$(this).trigger('change');
+                    }
+                }).focus(function (event, ui) {
+                    if ($(this).data('different')) {
+                        $(this).val('');
+                    }
+                    $(this).autocomplete('search', '');
+                }).blur(function (event, ui) {
+                    if ($(this).data('different')) {
+                        $(this).val(_('--different--')).addClass('vis-edit-different');
+                    }
+                });
+            } else {
+                $input.val(values[attr]);
+            }
+        }
+        $input.keyup(function () {
+            var $this = $(this);
+            var timer = $this.data('timer');
+            if (timer) clearTimeout(timer);
+
+            $this.data('timer', setTimeout(function () {
+                $this.data('timer', null);
+                $this.trigger('change');
+            }, 500));
+        });
     },
     inspectWidgets: function (addWidget, delWidget, onlyUpdate) {
         if (this.isStealCss) return false;
