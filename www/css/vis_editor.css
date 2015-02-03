@@ -685,9 +685,7 @@ td > .select_active_widget :nth-child(2){
 .screen_size{
     font-size: 12px;
     width: 260px!important;
-
 }
-
 
 #screen_size + button{
     width: 100%!important;
@@ -701,36 +699,8 @@ td > .select_active_widget :nth-child(2){
     pointer-events: none;
 }
 
-#widget_inner_helper {
+.widget_inner_helper {
     border: 1px dashed black;
-    pointer-events: none;
-    width: 100%;
-    height: 100%;
-}
-
-#allwidgets_helper {
-    border: 1px dotted #aaa;
-    position: absolute;
-    z-index: 90;
-    pointer-events: none;
-}
-
-#allwidgets_inner_helper {
-    border: 1px dotted #555;
-    pointer-events: none;
-    width: 100%;
-    height: 100%;
-}
-
-.widget-multi-helper {
-    border: 1px dotted white;
-    position: absolute;
-    z-index: 90;
-    pointer-events: none;
-}
-
-.widget-multi-inner-helper {
-    border: 1px dotted black;
     pointer-events: none;
     width: 100%;
     height: 100%;

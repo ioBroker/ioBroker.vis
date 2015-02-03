@@ -2553,7 +2553,7 @@ vis = $.extend(true, vis, {
             }
 
             if (!$('#widget_helper_' + wid).length) {
-                $('#vis_container').append('<div id="widget_helper_' + wid + '" class="widget-helper"><div class="widget-multi-inner-helper"></div></div>');
+                $('#vis_container').append('<div id="widget_helper_' + wid + '" class="widget-helper"><div class="widget_inner_helper"></div></div>');
             }
 
             $('#widget_helper_' + wid).css({
@@ -3468,8 +3468,18 @@ vis = $.extend(true, vis, {
                     var pos = $wid.position();
                     if (!that.views[that.activeView].widgets[wid].style) that.views[that.activeView].widgets[wid].style = {};
 
-                    pos.left = pos.left.toFixed(0);
-                    pos.top  = pos.top.toFixed(0);
+                    if (typeof pos.left == 'string' && pos.left.indexOf('px') == -1) {
+                        pos.left += 'px';
+                    }
+                    else {
+                        pos.left = pos.left.toFixed(0) + 'px';
+                    }
+                    if (typeof pos.top == 'string' && pos.top.indexOf('px') == -1) {
+                        pos.top += 'px';
+                    }
+                    else {
+                        pos.top = pos.top.toFixed(0) + 'px';
+                    }
 
                     that.views[that.activeView].widgets[wid].style.left = pos.left;
                     that.views[that.activeView].widgets[wid].style.top  = pos.top;
@@ -3489,7 +3499,7 @@ vis = $.extend(true, vis, {
             drag: function (event, ui) {
 
                 var moveX = ui.position.left - origX;
-                var moveY = ui.position.top - origY;
+                var moveY = ui.position.top  - origY;
 
                 origX = ui.position.left;
                 origY = ui.position.top;
@@ -3499,13 +3509,11 @@ vis = $.extend(true, vis, {
                     var $mWidget = $(mWidget);
                     var pos = $mWidget.position();
                     var x = pos.left + moveX;
-                    var y = pos.top + moveY;
+                    var y = pos.top  + moveY;
 
                     $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 2, top: y - 2});
 
-                    if (ui.helper.attr('id') != that.activeWidgets[i]) {
-                        $mWidget.css({left: x, top: y});
-                    }
+                    if (ui.helper.attr('id') != that.activeWidgets[i]) $mWidget.css({left: x, top: y});
 
                     if (mWidget._customHandlers && mWidget._customHandlers.onMove) {
                         mWidget._customHandlers.onMove(mWidget, vis.activeWidgets[i]);
@@ -3550,17 +3558,26 @@ vis = $.extend(true, vis, {
             obj.resizable($.extend({
                 stop: function (event, ui) {
                     var widget = ui.helper.attr('id');
+                    var w = ui.size.width;
+                    var h = ui.size.height;
+                    if (typeof w == 'string' && w.indexOf('px') == -1) {
+                        w += 'px';
+                    } else {
+                        w = w.toFixed(0) + 'px';
+                    }
+                    if (typeof h == 'string' && h.indexOf('px') == -1) {
+                        h += 'px';
+                    } else {
+                        h = h.toFixed(0) + 'px';
+                    }
 
-                    $('#inspect_css_width').val(ui.size.width + 'px');
-                    $('#inspect_css_height').val(ui.size.height + 'px');
+                    $('#inspect_css_width').val(w);
+                    $('#inspect_css_height').val(h);
 
                     if (!that.views[that.activeView].widgets[widget].style) that.views[that.activeView].widgets[widget].style = {};
 
-                    ui.size.width = ui.size.width.toFixed(0);
-                    ui.size.height.top  = ui.size.height.toFixed(0);
-
-                    that.views[that.activeView].widgets[widget].style.width  = ui.size.width;
-                    that.views[that.activeView].widgets[widget].style.height = ui.size.height;
+                    that.views[that.activeView].widgets[widget].style.width  = w;
+                    that.views[that.activeView].widgets[widget].style.height = h;
                     that.save();
                 },
                 resize: function (event, ui) {
