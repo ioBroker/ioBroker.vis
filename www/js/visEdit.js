@@ -2762,11 +2762,10 @@ vis = $.extend(true, vis, {
         for (var i = 0; i < widgets.length; i++) {
             var widget = this.views[this.activeView].widgets[widgets[i]];
             var obj = isStyle ? widget.style : widget.data;
-            if (!obj) obj = {};
-            if (isStyle && obj[attr] === undefined) obj[attr] = '';
+            var val = (isStyle && (!obj || obj[attr] === undefined)) ? '' : obj[attr];
 
-            widgetValues[i] = obj[attr];
-            if (values.indexOf(obj[attr]) == -1) values.push(obj[attr]);
+            widgetValues[i] = val;
+            if (values.indexOf(val) == -1) values.push(val);
         }
         if (values.length == 1) {
             return values[0];
@@ -2998,254 +2997,6 @@ vis = $.extend(true, vis, {
                 this.addToInspect(this.activeWidgets, this.actualAttrs[group][attr], group);
             }
         }
-        if(0)
-        for (var i = 0; i < widgetAttrs.length; i++) {
-            if (widgetAttrs[i].match(/^group\./)) {
-                group = widgetAttrs[i].substring('group.'.length);
-                continue;
-            }
-            if (widgetAttrs[i] != '') this.addToInspect(wid, widgetAttrs[i], group);
-            /*
-            if (widgetAttrs[attr] != '') {
-                // Format: attr_name(start-end)[default_value]/type
-                // attr_name can be extended with numbers (1-2) means it will be attr_name1 and attr_name2 created
-                // defaultValue: If defaultValue has ';' it must be replaced by §
-                // Type format: id - Object ID Dialog
-                //              checkbox
-                //              image - image
-                //              color - color picker
-                //              views - Name of the view
-                //              effect - jquery UI show/hide effects
-                //              eff_opt - additional option to effect slide (up, down, left, right)
-                //              fontName - Font name
-                //              slider,min,max,step - Default step is ((max - min) / 100)
-                //              select_value1,select_value2,... - dropdown select
-                //              hr
-                //              br
-
-                var isValueSet = false;
-                var wid_attrs = widgetAttrs[attr].split('/');
-                var widAttr = wid_attrs[0];
-                // Try to extract default value
-                var uu = widAttr.indexOf('[');
-                var defaultValue = null;
-                if (uu != -1) {
-                    var defaultValue = widAttr.substring(uu + 1);
-                    defaultValue = defaultValue.substring(0, defaultValue.length - 1);
-                    defaultValue = defaultValue.replace(/§/g, ';');
-                    widAttr = widAttr.substring(0, uu);
-                }
-                var type = (wid_attrs.length > 1) ? wid_attrs[1] : null;
-                if (type && type.indexOf(',') != -1) {
-                    if (type.substring(0, 'slider'.length) == 'slider') {
-                        type = 'slider';
-                    } else {
-                        type = 'select';
-                    }
-                }
-
-                // Try to extract repeat value
-                uu = widAttr.indexOf('(');
-                var instancesStart = null;
-                var instancesStop = null;
-                if (uu != -1) {
-                    var instances = widAttr.substring(uu + 1);
-                    instances = instances.substring(0, instances.length - 1);
-                    widAttr = widAttr.substring(0, uu);
-                    // Now instances has 1-8
-                    instances = instances.split('-');
-                    if (instances.length > 1) {
-                        instancesStart = parseInt(instances[0], 10);
-                        instancesStop = parseInt(instances[1], 10);
-                        if (instancesStart > instancesStop) {
-                            var tmp = instancesStop;
-                            instancesStop = instancesStart;
-                            instancesStart = tmp;
-                        }
-                        instancesStop++;
-                    }
-                }
-
-                do {
-                    var wid_attr_ = widAttr + ((instancesStart !== null) ? instancesStart : '');
-                    var isCustomEdit = false;
-
-                    if (defaultValue !== null && (widget.data[wid_attr_] == null || widget.data[wid_attr_] === undefined)) {
-                        widget.data[wid_attr_] = defaultValue;
-                        vis.reRenderWidgetEdit(vis.activeWidget);
-                    }
-
-                    // If completely custom edit
-                    if (widgetDiv && widgetDiv.visCustomEdit && widgetDiv.visCustomEdit[wid_attr_]) {
-                        widgetDiv.visCustomEdit[wid_attr_](vis.activeWidget, $widgetAttrs);
-                    } else if (widgetDiv &&
-                            // If only one attribute is custom edited, eg hqoptions
-                        widgetDiv._customHandlers &&
-                        widgetDiv._customHandlers.onOptionEdited &&
-                        widgetDiv._customHandlers.isOptionEdited(wid_attr_)) {
-                        widgetDiv._customHandlers.onOptionEdited({
-                            widgetDiv: widgetDiv,
-                            widgetId: vis.activeWidget,
-                            attr: wid_attr_,
-                            parent: $widgetAttrs,
-                            imgSelect: vis.imageSelect,
-                            clrSelect: colorSelect,
-                            styleSelect: vis.styleSelect
-                        });
-                    }
-                    else if (wid_attr_ === "oid" || type == 'id') {
-                        vis.editObjectID(widget, wid_attr_, widgetFilter);
-                    } else if (wid_attr_ === "oid-working") {
-                        vis.editObjectID(widget, wid_attr_, 'WORKING');
-                    } else if (wid_attr_.indexOf('src') == wid_attr_.length - 3 || type == "image") {
-                        vis.editImage(widget, wid_attr_);
-                    } else if (wid_attr_ == "url") {
-                        vis.editUrl(widget, wid_attr_);
-                    } else if (wid_attr_ === "weoid") {
-                        // Weather ID
-                        $('#widget_attrs').append('<tr class="vis-add-option"><td id="option_' + wid_attr_ + '" ></td></tr>');
-                        $('#inspect_comment_tr').hide();
-                        $('#inspect_class_tr').hide();
-                        $('#option_' + wid_attr_).jweatherCity({
-                            lang: this.language, currentValue: widget.data[wid_attr_],
-                            onselect: function (wid, text) {
-                                vis.widgets[vis.activeWidget].data.attr('weoid', text);
-                                vis.views[vis.activeView].widgets[vis.activeWidget].data['weoid'] = text;
-                                vis.save();
-                                vis.reRenderWidgetEdit(vis.activeWidget);
-                            }
-                        });
-                    } else if (wid_attr_ === "color" || type == "color") {
-                        vis.editColor(widget, wid_attr_);
-                    } else if (type === "checkbox") {
-                        isValueSet = true;
-                        vis.editCheckbox(widget, wid_attr_);
-                    } else if (type === "fontname") {
-                        isValueSet = true;
-                        vis.editFontName(widget, wid_attr_);
-                    } else if (type === "slider") {
-                        isValueSet = true;
-                        var values = wid_attrs[1].split(',');
-                        vis.editSlider(widget, wid_attr_, values[1], values[2], values[3]);
-                        isCustomEdit = true;
-                    } else if (type === "select") {
-                        isValueSet = true;
-                        var values = wid_attrs[1].split(',');
-                        vis.editSelect(widget, wid_attr_, values);
-                    } else if (wid_attr_.indexOf('nav_view') != -1 || type == "views") {
-                        vis.editViewName(widget, wid_attr_);
-                        isCustomEdit = true;
-                    } else if (type == "hidden") {
-                        isCustomEdit = true;
-                    } else if (wid_attr_.indexOf('_effect') != -1 || type == "effect") {
-                        vis.editEffects(widget, wid_attr_);
-                        isCustomEdit = true;
-                    } else if (wid_attr_.indexOf('_eff_opt') != -1 || type == "effect_opt") {
-                        vis.editEffects_opt(widget, wid_attr_);
-                        isCustomEdit = true;
-                    } else if (wid_attr_.indexOf('_hr') != -1) {
-                        vis.hr(widget, wid_attr_);
-                        isCustomEdit = true;
-                    } else if (wid_attr_.indexOf('_br') != -1) {
-                        vis.br(widget, wid_attr_);
-                        isCustomEdit = true;
-                    } else if (wid_attr_.slice(0, 4) !== "html") {
-                        if (type !== null) {
-                            // If description is JSON object
-                            if (type.indexOf('{') != -1) {
-                                try {
-                                    type = jQuery.parseJSON(type);
-                                }
-                                catch (e) {
-                                    type = null;
-                                    $('#widget_attrs').append('<tr id="option_' + wid_attr_ + '" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr_) + ':</td><td><input type="text" id="inspect_' + wid_attr_ + '" size="34"/></td></tr>');
-                                }
-                            }
-
-                            if (type !== null) {
-                                if (typeof type == 'object') {
-                                    var title = _(wid_attr_);
-                                    var hint = '';
-                                    if (type["name"]) {
-                                        if (typeof type["name"] == 'object') {
-                                            if (type["name"][this.language]) {
-                                                title = type["name"][this.language];
-                                            } else if (type["name"]['en']) {
-                                                title = type["name"]['en'];
-                                            }
-                                        } else {
-                                            title = type["name"];
-                                        }
-                                    }
-
-
-                                    if (type['type'] == "checkbox") {
-                                        isValueSet = true;
-                                        // All other attributes
-                                        $('#widget_attrs').append('<tr id="option_' + wid_attr_ + '" class="vis-add-option"><td class="vis-edit-td-caption" title="' + hint + '">' + title + ':</td><td><input title="' + hint + '" id="inspect_' + wid_attr_ + '" type="checkbox"' + (widget.data[wid_attr_] ? "checked" : '') + '></td></tr>');
-                                    } else if (type['type'] == "view") {
-                                    } else if (type['type'] == "color") {
-                                    } else if (type['type'] == "font") {
-                                    } else if (type['type'] == "rooms") {
-                                    } else if (type['type'] == "favorites") {
-                                    } else if (type['type'] == "functions") {
-                                    } else if (type['type'] == "rooms") {
-                                    } else if (type['type'] == "select") {
-                                        // Select
-                                        var values = type['values'];
-                                        var text = '<tr id="option_' + wid_attr_ + '" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr_) + ':</td><td><select id="inspect_' + wid_attr_ + '">';
-                                        for (var t = 0; t < values.length; t++) {
-                                            text += "<option value='" + values[t] + "' " + ((values[t] == widget.data[wid_attr_]) ? 'selected' : '') + ">" + _(values[t]) + "</option>";
-                                        }
-                                        text += "</select></td></tr>";
-                                        $('#widget_attrs').append(text);
-                                        isValueSet = true;
-                                    }
-
-                                } else {
-                                    // Simple type
-                                    servConn.logError('Unknown attribute type ' + wid_attr_ + " Type: " + type);
-                                }
-                            }
-                        } else {
-                            // html
-                            $('#widget_attrs').append('<tr id="option_' + wid_attr_ + '" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr_) + ':</td><td><input type="text" id="inspect_' + wid_attr_ + '" size="34"/></td></tr>');
-                        }
-                    } else {
-                        // Text area
-                        $('#widget_attrs').append('<tr id="option_' + wid_attr_ + '" class="vis-add-option"><td class="vis-edit-td-caption">' + _(wid_attr_) + ':</td><td><textarea id="inspect_' + wid_attr_ + '" rows="2" cols="34"></textarea></td></tr>');
-                    }
-
-                    if (!isCustomEdit) {
-                        var inspect = $('#inspect_' + wid_attr_);
-
-                        if (!isValueSet) {
-                            inspect.val(widget.data[wid_attr_]);
-                        }
-                        inspect.change(function () {
-                            var attribute = $(this).attr('id').slice(8);
-                            var val = $(this).val();
-                            if (this.type == "checkbox") {
-                                val = $(this).prop('checked');
-                            }
-                            if (attribute == "oid" || attribute == "oid-working") {
-                                $('#inspect_' + attribute + "_desc").html(vis.getObjDesc(val));
-                            }
-                            vis.widgets[vis.activeWidget].data.attr(attribute, val);
-                            vis.views[vis.activeView].widgets[vis.activeWidget].data[attribute] = val;
-                            vis.save();
-                            vis.reRenderWidgetEdit(vis.activeWidget);
-                        }).keyup(function () {
-                            $(this).trigger('change');
-                        });
-
-
-                    if (instancesStart !== null) {
-                        instancesStart++;
-                    }
-                } while (instancesStart != instancesStop);}
-            }*/
-        }
 
         // Add common css
         this.editCssCommon();
@@ -3334,7 +3085,6 @@ vis = $.extend(true, vis, {
                    } else {
                         var newWidgets = [];
                         $('.ui-selected').each(function () {
-                            console.log('Stop selection ' + $(this).attr('id'));
                             if ($(this).attr('id')) newWidgets.push($(this).attr('id'));
                         });
                         that.inspectWidgets(newWidgets);
@@ -3342,14 +3092,12 @@ vis = $.extend(true, vis, {
                     //$('#allwidgets_helper').hide();
                 },
                 selecting: function (e, ui) {
-                    console.log('selecting ' + ui.selecting.id);
                     if (ui.selecting.id && that.activeWidgets.indexOf(ui.selecting.id) == -1) {
                         that.activeWidgets.push(ui.selecting.id);
                         that.showWidgetHelper(ui.selecting.id, true);
                     }
                 },
                 unselecting: function (e, ui) {
-                    console.log('unselecting ' + ui.unselecting.id);
                     var pos = that.activeWidgets.indexOf(ui.unselecting.id);
                     if (pos != -1) {
                         that.activeWidgets.splice(pos, 1);
@@ -3643,7 +3391,13 @@ vis = $.extend(true, vis, {
             drop: function (event, ui) {
                 var tpl = $(ui.draggable).data("tpl");
                 var view_pos = $("#vis_container").position();
-                var add_pos = {left: ui.position.left - $('#toolbox').width() + $("#vis_container").scrollLeft() +5, top: ui.position.top - view_pos.top +$("#vis_container").scrollTop()+8};
+                var addPos = {
+                    left: ui.position.left - $('#toolbox').width() + $("#vis_container").scrollLeft() + 5,
+                    top:  ui.position.top - view_pos.top + $("#vis_container").scrollTop() + 8
+                };
+
+                addPos.left = addPos.left.toFixed(0) + 'px';
+                addPos.top  = addPos.top.toFixed(0)  + 'px';
 
                 var $tpl = $('#' + tpl);
                 var renderVisible = $tpl.attr('data-vis-render-visible');
@@ -3657,7 +3411,7 @@ vis = $.extend(true, vis, {
                 }
                 if (renderVisible) data.renderVisible = true;
 
-                var widgetId = that.addWidget(tpl, data, add_pos);
+                var widgetId = that.addWidget(tpl, data, addPos);
 
                 that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + ')</option>')
                     .multiselect('refresh');
@@ -3674,7 +3428,7 @@ vis = $.extend(true, vis, {
     findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
         var editPos = $('.ui-dialog:first').position();
         field = $.extend({x: 0, y: 0, width: editPos.left}, field);
-        widgetWidth = (widgetWidth || 60);
+        widgetWidth  = (widgetWidth || 60);
         widgetHeight = (widgetHeight || 60);
 
         if (widgetWidth > field.width) field.width = widgetWidth + 1;

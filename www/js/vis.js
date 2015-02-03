@@ -868,17 +868,23 @@ var vis = {
             });
         }
     },
-    saveRemoteActive: false,
+    saveRemoteActive: 0,
     saveRemote: function (callback) {
         var that = this;
 
-        if (this.saveRemoteActive) {
+        if (this.saveRemoteActive % 10) {
+            this.saveRemoteActive--;
             setTimeout(function () {
                 that.saveRemote(callback);
             }, 1000);
 
         }else {
-            this.saveRemoteActive = true;
+            if (!this.saveRemoteActive) this.saveRemoteActive = 30;
+            if (this.saveRemoteActive == 10) {
+                console.log('possible no connection');
+                this.saveRemoteActive = 0;
+                return;
+            }
             // Sync widget before it will be saved
             if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
                 this.syncWidget(this.activeWidget);
@@ -887,11 +893,11 @@ var vis = {
             if (local) {
 
                 storage.set(this.storageKeyViews, JSON.stringify(this.views, null, 2));
-                that.saveRemoteActive = false;
+                that.saveRemoteActive = 0;
                 if (callback) callback();
             } else {
                 this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
-                    that.saveRemoteActive = false;
+                    that.saveRemoteActive = 0;
                     if (callback) callback();
 
                     // If not yet checked => check if project css file exists
