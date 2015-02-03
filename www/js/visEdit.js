@@ -309,35 +309,42 @@ vis = $.extend(true, vis, {
         });
 
         $('#dev_show_html').button({}).click(function () {
-            var wid_id = $('#' + that.activeWidgets[0]).attr('id');
-            that.inspectWidgets();
+            var text = '';
+            for (var i = 0; i < that.activeWidgets.length; i++) {
+                var widID = $('#' + that.activeWidgets[i]).attr('id');
 
-            var $target = $('#' + wid_id);
-            var $clone = $target.clone();
-            $clone.wrap('<div>');
-            var html = $clone.parent().html();
+                var $target = $('#' + widID);
+                var $clone = $target.clone();
+                $clone.wrap('<div>');
+                var html = $clone.parent().html();
 
-            html = html
-                .replace('vis-widget ', 'vis-widget_prev ')
-                .replace('vis-widget-body', 'vis-widget-prev-body')
-                .replace('ui-draggable', ' ')
-                .replace('ui-resizable', ' ')
-                .replace('<div class="editmode-helper"></div>', '')
-                .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, '')
-                .replace(/(?:\r\n|\r|\n)/g, '')
-                .replace(/[ ]{2,}/g, ' ');
+                html = html
+                    .replace('vis-widget ', 'vis-widget_prev ')
+                    .replace('vis-widget-body', 'vis-widget-prev-body')
+                    .replace('ui-draggable', ' ')
+                    .replace('ui-resizable', ' ')
+                    .replace('<div class="editmode-helper"></div>', '')
+                    .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, '')
+                    .replace(/(?:\r\n|\r|\n)/g, '')
+                    .replace(/[ ]{2,}/g, ' ');
 
-            html = 'data-vis-prev=\'<div id="prev_' + that.views[that.activeView].widgets[wid_id].tpl + '" style=" position: relative; text-align: initial;padding: 4px ">' + html.toString() + '\'';
+                html = html
+                    .replace('<div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div>', '')
+                    .replace('<div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div>', '')
+                    .replace('<div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div>', '')
+                    .replace('<div></div>', '')
 
-            $('body').append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%">' + html + '</textarea></div>')
+                html = '<div id="prev_' + that.views[that.activeView].widgets[widID].tpl + '" style="position: relative; text-align: initial;padding: 4px ">' + html.toString() + '</div>';
+                text += html;
+            }
+            $('body').append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%">data-vis-prev=\'' + text + '\'</textarea></div>');
             $('#dec_html_code').dialog({
                 width: 800,
                 height: 600,
                 close: function () {
-                    $('#dec_html_code').remove()
+                    $('#dec_html_code').remove();
                 }
-            })
-
+            });
         });
 
         // Bug in firefox or firefox is too slow or too fast
@@ -2363,23 +2370,32 @@ vis = $.extend(true, vis, {
 
                 // Init value
                 var $input = $('#inspect_' + widAttr);
+                var val;
 
                 if ($input.attr('type') == 'text') $input.addClass('vis-edit-textbox');
 
                 // Set the value
                 if ($input.attr('type') == 'checkbox') {
                     if (line.css) {
-                        $input.prop('checked', this.findCommonValue(widgets, widAttr.substring(4), true));
+                        val = this.findCommonValue(widgets, widAttr.substring(4), true);
+                        $input.prop('checked', val);
                     } else {
                         if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
                         $input.prop('checked', values[widAttr]);
                     }
                 } else {
                     if (line.css) {
-                        $input.val(this.findCommonValue(widgets, widAttr.substring(4), true));
+                        val = this.findCommonValue(widgets, widAttr.substring(4), true);
+                        $input.val(val);
+                        if (val == '--different--') {
+                            $input.addClass('vis-edit-different').val(_('--different--'));
+                        }
                     } else {
                         if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
                         $input.val(values[widAttr]);
+                        if (values[widAttr] == '--different--') {
+                            $input.addClass('vis-edit-different').val(_('--different--'));
+                        }
                     }
                     $input.keyup(function () {
                         var $this = $(this);
@@ -2728,7 +2744,7 @@ vis = $.extend(true, vis, {
             var attrs = {};
             for (var j = 0; j < widgetAttrs.length; j++) {
                 if (widgetAttrs[j].match(/^group\./)) {
-                    group = widgetAttrs[i].substring('group.'.length);
+                    group = widgetAttrs[j].substring('group.'.length);
                     continue;
                 }
                 if (!widgetAttrs[j]) continue;
