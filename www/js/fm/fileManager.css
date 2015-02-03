@@ -101,8 +101,9 @@
 }
 
 .fm_bar_icon {
-    height: 28px;
-    width: 28px;
+    height: 25px;
+    width: 25px;
+    top: -1px;
 }
 
 #fm_bar_all {

@@ -565,9 +565,11 @@
 
 <script id="tplJquiButtonLink" 
         type="text/ejs" 
-        class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="static - Button Link" 
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplJquiButtonLink" style=" position: relative; text-align: initial;padding: 4px "><div style="top: 127px; left: 225px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00001_button" value=" Button " data-vis-link="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
+        data-vis-set="jqui"
+        data-vis-type="static"
+        data-vis-name="Button Link"
         data-vis-attrs="html_prepend;html_append;buttontext;href">
     <div style="top:0px; left:0px;" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
@@ -580,9 +582,11 @@
 
 <script id="tplJquiButtonLinkBlank" 
         type="text/ejs" 
-        class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="static - Button Link _blank" 
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplJquiButtonLinkBlank" style=" position: relative; text-align: initial;padding: 4px "><div style="top: 334px; left: 223px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00003_button" value=" Link " data-vis-link="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
+        data-vis-set="jqui"
+        data-vis-type="static"
+        data-vis-name="Button Link _blank"
         data-vis-attrs="html_prepend;html_append;buttontext;href">
     <div style="top:50px;" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
@@ -595,7 +599,7 @@
 
 <script id="tplIconLink" 
         type="text/ejs" 
-        class="vis-tpl" 
+        class="vis-tpl"
         data-vis-set="jqui" 
         data-vis-name="static - Icon link" 
         data-vis-attrs="src;href;target;alt;text;invert_icon/checkbox">
@@ -759,8 +763,10 @@
 <script id="tplJquiButtonNav" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-set="jqui" 
-        data-vis-name="navigation - Button" 
+        data-vis-prev='<div id="prev_tplJquiButtonNav" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="left: 167px; top: 129px;" > <div class="vis-widget-prev-body"> <input type="button" name="w00006_button" value=" Nav Button " class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> '
+        data-vis-set="jqui"
+        data-vis-type="navigation"
+        data-vis-name="Button"
         data-vis-attrs="html_prepend;html_append;buttontext;nav_view;hide_effect;hide_duration;show_effect;show_duration">
     <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
@@ -788,8 +794,10 @@
 <script id="tplJquiInput" 
         type="text/ejs" 
         class="vis-tpl"
+        data-vis-prev='<div id="prev_tplJquiInput" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 445px; left: 314px; width: 116px; height: 25px;" > <div class="vis-widget-prev-body" style="text-align: center"> <label for="w00005_input" style=" display: none;">Input</label><input type="text" name="w00005_input" value=" Input" size="10" data-o class="ui-button ui-widget ui-state-default ui-corner-all" role="button" style="font-family: inherit; font-size: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; line-height: inherit; text-align: left; outline: none; cursor: text;"> </div> '
         data-vis-set="jqui" 
-        data-vis-name="ctrl - Input" 
+        data-vis-type="ctrl"
+        data-vis-name="Input"
         data-vis-attrs="label[Input];oid;digits[0]/slider,0,10,1;size[10]/slider,10,100,1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:275px;height:44px;" id="<%= this.data.attr("wid") %>">
         <div class="vis-widget-body">
@@ -894,12 +902,13 @@
     </div>
 </script>
 
-
 <script id="tplJquiButtonState" 
         type="text/ejs" 
-        class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="ctrl - Button State"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplJquiButtonState" style=" position: relative; text-align: initial;padding: 4px "><div style="left: 384px; top: 470px;" class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00001_button" value=" Button " data-o data-hm-val="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
+        data-vis-set="jqui"
+        data-vis-type="ctrl"
+        data-vis-name="Button State"
         data-vis-attrs="html_prepend;html_append;buttontext;value;oid;">
     <div style="" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
@@ -912,9 +921,11 @@
 
 <script id="tplJquiRadio" 
         type="text/ejs" 
-        class="vis-tpl" 
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplJquiRadio" style=" position: relative; text-align: initial;padding: 4px "><div style="top: 243px; left: 348px; font-size: 9px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" name="w00005_radio" value="0" class="ui-helper-hidden-accessible"><label for="w00005_radio0" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" name="w00005_radio" value="1" class="ui-helper-hidden-accessible"><label for="w00005_radio1" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">ON</span></label> </div> </div> </div>'
         data-vis-set="jqui"
-        data-vis-name="ctrl - Radiobuttons on/off"
+        data-vis-type="ctrl"
+        data-vis-name="Radiobuttons on/off"
         data-vis-attrs="off_text[OFF];on_text[ON];oid">
     <div style="top:0px; left:0px;" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
         <div class="vis-widget-body" >
@@ -929,9 +940,11 @@
 
 <script id="tplJquiRadioList" 
         type="text/ejs" 
-        class="vis-tpl" 
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplJquiRadioList" style=" position: relative; text-align: initial;padding: 4px "><div style="top: 228px; left: 83px; font-size: 8px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" name="w00004_radio" value="0" class="ui-helper-hidden-accessible"><label for="w00004_radio0" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" name="w00004_radio" value="1" class="ui-helper-hidden-accessible"><label for="w00004_radio1" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">AUTO</span></label> </div> </div> </div>'
         data-vis-set="jqui"
-        data-vis-name="ctrl - Radiobuttons ValueList"
+        data-vis-type="ctrl"
+        data-vis-name="Radiobuttons ValueList"
         data-vis-attrs="oid;values[0§1§2];texts[OFF§ON§AUTO]">
     <div style="top:0px; left:0px; width:250px; height:41px;" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
         <div class="vis-widget-body" >
@@ -955,8 +968,10 @@
 <script id="tplJquiSelectList" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-set="jqui" 
-        data-vis-name="ctrl - Select ValueList" 
+        data-vis-prev='<div id="prev_tplJquiSelectList" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}" style="left: 336px; top: 323px;"> <div class="vis-widget-prev-body"> <select data-o disabled="" style="display: none;"> <option value="0">OFF</option> <option value="1">ON</option> <option value="2">AUTO</option> </select><button type="button" class="ui-multiselect ui-widget ui-state-default ui-corner-all" aria-haspopup="true" style="width: 86px;"><span class="ui-icon ui-icon-triangle-2-n-s"></span><span>OFF</span></button> </div> </div>'
+        data-vis-set="jqui"
+        data-vis-type="ctrl"
+        data-vis-name="Select ValueList"
         data-vis-attrs="oid;values[0§1§2];texts[OFF§ON§AUTO];width[80]/slider,5,1000,1;height[100]/slider,15,500,1;open/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
         <% if (vis.editMode) { %>
@@ -982,8 +997,10 @@
 <script id="tplJquiRadioSteps" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-set="jqui" 
-        data-vis-name="ctrl - Radiobuttons 25%" 
+        data-vis-prev='<div id="prev_tplJquiRadioSteps" style="zoom: 0.99; position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}" style="left: 85px; top: 258px; font-size: 5px;"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" name="w00006_radio" value="0" class="ui-helper-hidden-accessible"><label for="w00006_radio0" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">aus</span></label> <input type="radio" name="w00006_radio" value="0.25" class="ui-helper-hidden-accessible"><label for="w00006_radio1" class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">25%</span></label> <input type="radio" name="w00006_radio" value="0.5" class="ui-helper-hidden-accessible"><label for="w00006_radio2" class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">50%</span></label> <input type="radio" name="w00006_radio" value="0.75" class="ui-helper-hidden-accessible"><label for="w00006_radio3" class="ui-button ui-widget ui-state-default ui-button-text-only ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">75%</span></label> <input type="radio" name="w00006_radio" value="1" class="ui-helper-hidden-accessible"><label for="w00006_radio4" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">100%</span></label> </div> </div> </div>'
+        data-vis-set="jqui"
+        data-vis-type="ctrl"
+        data-vis-name="Radiobuttons 25%"
         data-vis-attrs="oid">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
@@ -999,10 +1016,12 @@
 </script>
 
 <script id="tplJquiSliderVertical" 
-        type="text/ejs" 
+        type="text/ejs"
+        data-vis-prev='<div id="prev_tplJquiSliderVertical" style=" position: relative; text-align: initial;padding: 4px "><div data-vis-resizable="{"minWidth":23, "maxWidth":23}" class="vis-widget_prev ui-selectee ui-draggable-handle " style="width: 23px; height: 106px; overflow: visible !important; left: 235px; top: 508px;"> <div class="vis-widget-prev-body " style="width: 100%; padding: 4px; "> <div class="sliderJQUI ui-slider ui-slider-vertical ui-widget ui-widget-content ui-corner-all ui-slider-disabled" data-o data-hm-wid=""><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span></div></div> '
         data-vis-attrs="oid;hm_wid;min;max;step" 
         class="vis-tpl" data-vis-set="jqui" 
-        data-vis-name="ctrl - Slider vertical">
+        data-vis-type="ctrl"
+        data-vis-name="Slider vertical">
     <div id="<%= this.data.attr("wid") %>" data-vis-resizable='{"minWidth":23, "maxWidth":23}' class="vis-widget" style="width:23px; height:160px; overflow:visible !important;">
         <div class="vis-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
             <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step),orientation:"vertical"}) %> /></div>
@@ -1011,11 +1030,13 @@
 </script>
 
 <script id="tplJquiSlider" 
-        type="text/ejs" 
+        type="text/ejs"
+        data-vis-prev='<div id="prev_tplJquiSlider" style=" position: relative; text-align: initial;padding: 4px "><div data-vis-resizable="{"minHeight":23, "maxHeight":23}" class="vis-widget_prev ui-selectee ui-draggable-handle " style="width: 120px; overflow: visible !important; left: 227px; top: 199px; height: 23px;"> <div class="vis-widget-prev-body " style="padding: 4px;"> <div class="sliderJQUI ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all ui-slider-disabled" data-o data-hm-wid=""><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span></div></div> '
         data-vis-attrs="oid;hm_wid;min;max;step" 
         class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="ctrl - Slider horizontal">
+        data-vis-set="jqui"
+        data-vis-type="ctrl"
+        data-vis-name="Slider horizontal">
     <div id="<%= this.data.attr("wid") %>" data-vis-resizable='{"minHeight":23, "maxHeight":23}' class="vis-widget" style="height:23; width:160px; overflow:visible !important;">
         <div class="vis-widget-body <%== this.data.attr('class') %>" style="padding: 4px;">
             <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step)}) %> /></div>

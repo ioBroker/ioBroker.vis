@@ -318,14 +318,17 @@ vis = $.extend(true, vis, {
             var html = $clone.parent().html();
 
             html = html
-                .replace('vis-widget ', 'vis-widget_prev ')
+                .replace(/(vis-widget )/g, 'vis-widget_prev ')
                 .replace('vis-widget-body', 'vis-widget-prev-body')
                 .replace('ui-draggable', ' ')
                 .replace('ui-resizable', ' ')
-                .replace('<div class="editmode-helper"></div>', '')
-                .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, '')
-                .replace(/(?:\r\n|\r|\n)/g, '')
+                .replace('<div class="editmode-helper"></div>', ' ')
+                .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, ' ')
+                .replace(/(?:\r\n|\r|\n)/g, ' ')
+                .replace(/(<div class="ui-resizable-handle).+(<\/div>)/g, ' ')
+                .replace(/\t/g, ' ')
                 .replace(/[ ]{2,}/g, ' ');
+
 
             html = 'data-vis-prev=\'<div id="prev_' + that.views[that.activeView].widgets[wid_id].tpl + '" style=" position: relative; text-align: initial;padding: 4px ">' + html.toString() + '\'';
 
@@ -557,6 +560,13 @@ vis = $.extend(true, vis, {
             $('#rib_wid').show();
             $('#rib_wid_copy_tr').hide();
         });
+
+        // Widget Align ---------------------
+
+        $("#wid_align_left").click(function(){
+            console.log(vis.activeWidgets)
+            console.log(vis.widgets)
+        })
 
         // All Widget ---------------------
         $("#wid_all_lock_function").button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
