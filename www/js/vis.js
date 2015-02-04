@@ -716,14 +716,9 @@ var vis = {
         showOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, showOptions);
         if (hideOptions.effect == 'show') effect = false;
 
-        if (this.inspectWidget) {
-            this.inspectWidget('none');
-            this.clearWidgetHelper();
-            $("#select_active_widget").html('<option value="none">' + _('none selected') + '</option>');
-        }
-
         if (!this.views[view]) {
-            for (var prop in this.views) {
+            var prop;
+            for (prop in this.views) {
                 // object[prop]
                 break;
             }
@@ -798,14 +793,13 @@ var vis = {
         } else {
             this.renderView(view);
 
-
             // View ggf aus Container heraus holen
             if ($("#visview_" + view).parent().attr("id") !== "vis_container") {
                 $("#visview_" + view).appendTo("#vis_container");
             }
         }
-
         this.activeView = view;
+
 
         $('#visview_' + view).find('div[id$="container"]').each(function () {
             $('#visview_' + $(this).attr('data-vis-contains')).show();

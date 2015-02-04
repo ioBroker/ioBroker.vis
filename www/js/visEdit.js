@@ -37,9 +37,10 @@ vis = $.extend(true, vis, {
     editInit: function () {
         var that = this;
         this.editLoadConfig();
-        this.$selectView = $('#select_view');
+
+        this.$selectView           = $('#select_view');
         this.$copyWidgetSelectView = $('#rib_wid_copy_view');
-        this.$selectActiveWidgets = $('#select_active_widget');
+        this.$selectActiveWidgets  = $('#select_active_widget');
         // @SJ cannot select menu and dialogs if it is enabled
         //$("#wid_all_lock_function").trigger("click");
         if (local) $("#ribbon_tab_datei").show();
@@ -69,14 +70,17 @@ vis = $.extend(true, vis, {
             maxWidth: 670,
             minWidth: 100
         });
+        if (this.config['size/pan_add_wid']) $('#pan_add_wid').width(this.config['size/pan_add_wid']);
+        if (this.config['size/pan_attr'])    $('#pan_attr').width(this.config['size/pan_attr']);
 
-        $(window).resize(function () {
-            layout();
-        });
+
+        $(window).resize(layout);
 
         function layout() {
-            $('#panel_body').height(parseInt($(window).height() - $('#menu_body').height() -3));
+            $('#panel_body').height(parseInt($(window).height() - $('#menu_body').height() - 3));
             $('#vis_wrap').width(parseInt($(window).width() - $('#pan_add_wid').width() - $('#pan_attr').width() - 1));
+            that.editSaveConfig('size/pan_add_wid', $('#pan_add_wid').width());
+            that.editSaveConfig('size/pan_attr',    $('#pan_attr').width());
         }
 
         layout();
@@ -378,9 +382,9 @@ vis = $.extend(true, vis, {
         // Instances
         if (typeof storage !== 'undefined' && local == false) {
             // Show what's new
-            if (storage.get('lastVersion') != vis.version) {
+            if (storage.get('lastVersion') != this.version) {
                 // Read
-                storage.set('lastVersion', vis.version);
+                storage.set('lastVersion', this.version);
                 // Read io-addon.json
                 $.ajax({
                     url: 'io-addon.json',
@@ -411,18 +415,8 @@ vis = $.extend(true, vis, {
                     }
                 });
             }
-            try {
-                // Load groups state and positions
-                var groups = storage.get('groups');
-                try {
-                    if (groups) this.groupsState = JSON.parse(groups);
-                } catch (e) {
-                    console.log('Cannot parse groups: ' + groups);
-                }
-            } catch (e) {
-
-            }
         }
+        if (this.config.groupsState) this.groupsState = this.config.groupsState;
     },
     editInitDialogs: function () {
 
@@ -461,7 +455,7 @@ vis = $.extend(true, vis, {
         );
 
         $('#menu_body').tabs({
-            active: this.config['tabs/menu_body'] === undefined ? 2 : this.config['tabs/menu_body'],
+            active:      this.config['tabs/menu_body'] === undefined ? 2 : this.config['tabs/menu_body'],
             collapsible: true,
             activate: function (event, ui) {
                 // Find out index
@@ -478,23 +472,26 @@ vis = $.extend(true, vis, {
 
         // Tabs open Close
         $('#menu_body > ul > li').click(function () {
+            // TODO store if collapsed or not
+            if (!$('#menu_body').tabs('option', 'active')) that.editSaveConfig('tabs/menu_body', false);
             $(window).trigger('resize');
         });
 
+        if (this.config['show/ribbon_tab_dev']) $('#ribbon_tab_dev').toggle();
+
         // Theme select Editor
-        var lastTheme = storage.get('vistheme');
-        if (lastTheme) {
-            $('#editor_theme').remove();
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + lastTheme + '/jquery-ui.min.css" id="editor_theme"/>');
-            $('[data-theme=' + lastTheme + ']').addClass('ui-state-active');
+        if (this.config.editorTheme) {
+            $('#editorTheme').remove();
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + lastTheme + '/jquery-ui.min.css" id="editorTheme"/>');
+            $('[data-theme=' + this.config.editorTheme + ']').addClass('ui-state-active');
         }
 
         $('#ul_theme li a').click(function () {
             var theme = $(this).data('info');
             // deselect all
             $('#ul_theme li').removeClass('ui-state-active');
-            $('#editor_theme').remove();
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editor_theme"/>');
+            $('#editorTheme').remove();
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editorTheme"/>');
             //vis.additionalThemeCss(theme);
             setTimeout(function(){
                 $('#scrollbar_style').remove();
@@ -504,7 +501,7 @@ vis = $.extend(true, vis, {
             // Select active theme in menu
             $('[data-theme=' + theme + ']').addClass('ui-state-active');
 
-            storage.set('vistheme', theme);
+            this.editSaveConfig('editorTheme', theme);
             that.save();
         });
 
@@ -707,11 +704,9 @@ vis = $.extend(true, vis, {
         }).click(function () {
             that.saveRemote(function () {
                 // Show hint how to get back to edit mode
-                if (typeof storage !== 'undefined') {
-                    if (!storage.get("isEditHintShown")) {
-                        that.showMessage(_('To get back to edit mode just call "%s" in browser', location.href));
-                        storage.set('isEditHintShown', true);
-                    }
+                if (!this.config['dialog/isEditHintShown']) {
+                    that.showMessage(_('To get back to edit mode just call "%s" in browser', location.href));
+                    that.editSaveConfig('dialog/isEditHintShown', true);
                 }
 
                 // Some systems (e.g. offline mode) show here the content of directory if called without index.html
@@ -720,6 +715,7 @@ vis = $.extend(true, vis, {
         });
     },
     editInitWidgetPreview: function () {
+        var that = this;
         $('#btn_prev_zoom').hover(
             function () {
                 $(this).addClass('ui-state-hover');
@@ -729,15 +725,17 @@ vis = $.extend(true, vis, {
             }
         ).click(function () {
                 if ($(this).hasClass("ui-state-active")) {
+                    that.editSaveConfig('button/btn_prev_zoom', false);
                     $(this).removeClass("ui-state-active");
                     $(".wid_prev").removeClass("wid_prev_k")
                     $(".wid_prev_content").css("zoom", 1)
                 } else {
+                    that.editSaveConfig('button/btn_prev_zoom', true);
                     $(this).addClass("ui-state-active");
                     $(".wid_prev").addClass("wid_prev_k")
                     $(".wid_prev_content").css("zoom", 0.5)
                 }
-            })
+            });
 
         $('#btn_prev_type').hover(
             function () {
@@ -748,15 +746,17 @@ vis = $.extend(true, vis, {
             }
         ).click(function () {
                 if ($(this).hasClass("ui-state-active")) {
+                    that.editSaveConfig('button/btn_prev_type', false);
                     $(this).removeClass("ui-state-active");
                     $(".wid_prev_type").hide()
                 } else {
+                    that.editSaveConfig('button/btn_prev_type', true);
                     $(this).addClass("ui-state-active");
                     $(".wid_prev_type").show()
                 }
-            })
+            });
 
-        $.each(vis.widgetSets, function () {
+        $.each(this.widgetSets, function () {
             var set = "";
             if (this.name) {
                 set = this.name
@@ -802,6 +802,9 @@ vis = $.extend(true, vis, {
                 });
             });
         });
+
+        if (this.config['button/btn_prev_type']) $('#btn_prev_type').trigger('click');
+        if (this.config['button/btn_prev_zoom']) $('#btn_prev_zoom').trigger('click');
     },
     editInitSelectView: function () {
         var that = this;
@@ -961,18 +964,16 @@ vis = $.extend(true, vis, {
             }
         }
 
-        var last_set = storage.get('vis.Last_Widgetset');
-
-        $('#select_set option[value="' + last_set + '"]').prop('selected', true);
+        if (this.config['select/select_set']) {
+            $('#select_set option[value="' + this.config['select/select_set'] + '"]').prop('selected', true);
+        }
 
         this.editInitWidgetPreview();
 
         $select_set.selectmenu({
             change: function (event, ui) {
-
                 var tpl = ui.item.value;
-
-                storage.set('vis.Last_Widgetset', tpl);
+                that.editSaveConfig('select/select_set', tpl);
                 if (tpl == "all") {
                     $('.wid_prev').show()
                 } else {
@@ -982,9 +983,9 @@ vis = $.extend(true, vis, {
             }
         });
 
-        if (last_set != "all" && last_set ) {
+        if (this.config['select/select_set'] != "all" && this.config['select/select_set']) {
             $('.wid_prev').hide();
-            $('.' + last_set + '_prev').show();
+            $('.' + this.config['select/select_set'] + '_prev').show();
         }
 
         // Expand/Collapse view settings
@@ -1005,9 +1006,7 @@ vis = $.extend(true, vis, {
                 } else {
                     $('.group-' + group).hide();
                 }
-                if (typeof storage != 'undefined') {
-                    storage.set('groups', JSON.stringify(that.groupsState));
-                }
+                that.editSaveConfig('groupsState', that.groupsState);
             });
             var group = $(this).attr('data-group');
             if (that.groupsState && !that.groupsState[group]) $('.group-' + group).hide();
@@ -1117,9 +1116,8 @@ vis = $.extend(true, vis, {
         }
     },
     editSaveConfig: function (attr, value) {
-        if (attr) {
-            this.config[attr] = value;
-        }
+        if (attr) this.config[attr] = value;
+
         if (typeof storage != 'undefined') {
             storage.set('visConfig', JSON.stringify(this.config));
         }
@@ -1486,7 +1484,7 @@ vis = $.extend(true, vis, {
         }
         if (!noSave) this.save();
 
-        this.inspectWidgets();
+        this.inspectWidgets([]);
     },
     bindWidgetClick: function (id) {
         var that = this;
@@ -2562,9 +2560,8 @@ vis = $.extend(true, vis, {
                 } else {
                     $('.group-' + group).hide();
                 }
-                if (typeof storage != 'undefined') {
-                    storage.set('groups', JSON.stringify(that.groupsState));
-                }
+                that.editSaveConfig('groupsState', that.groupsState);
+
             });
         });
     },
@@ -2893,7 +2890,12 @@ vis = $.extend(true, vis, {
         var view = this.getViewOfWidget(wid);
 
         if (!onlyUpdate) {
-            //$('#allwidgets_helper').hide();
+            var s = JSON.stringify(this.activeWidgets);
+            if (JSON.stringify(this.views[this.activeView].activeWidgets) != s) {
+                this.views[this.activeView].activeWidgets = JSON.parse(s);
+                // Store selected widgets
+                this.save();
+            }
 
             //this.$selectActiveWidgets.find('option[value="' + wid + '"]').prop('selected', true);
             //this.$selectActiveWidgets.multiselect('refresh');
@@ -3152,7 +3154,7 @@ vis = $.extend(true, vis, {
         if (!noChange) {
             this.undoHistory = [$.extend(true, {}, this.views[view])];
             $('#button_undo').addClass('ui-state-disabled').removeClass('ui-state-hover');
-            this.inspectWidgets([]);
+            this.inspectWidgets(this.views[view].activeWidgets || []);
         }
 
         // Disable rename if enabled
@@ -3225,7 +3227,7 @@ vis = $.extend(true, vis, {
 
         if (this.views[view].widgets) {
             for (var widget in this.views[view].widgets) {
-                this.$selectActiveWidgets.append('<option value="' + widget + '">' + this.getWidgetName(view, widget) + '</option>');
+                this.$selectActiveWidgets.append('<option value="' + widget + '" ' + ((this.activeWidgets.indexOf(widget) != -1) ? 'selected' :'')+ '>' + this.getWidgetName(view, widget) + '</option>');
             }
         }
 
@@ -3949,10 +3951,7 @@ vis = $.extend(true, vis, {
     onButtonDelete: function () {
         var $focused = $(':focus');
         if (!$focused.length && this.activeWidgets.length) {
-            var isHideDialog = false;
-            if (typeof storage != "undefined") {
-                isHideDialog = storage.get('dialog_delete_is_show');
-            }
+            var isHideDialog = this.config['dialog/delete_is_show'] || false;
 
             if (!isHideDialog) {
                 if (this.activeWidgets.length > 1) {
@@ -3967,9 +3966,7 @@ vis = $.extend(true, vis, {
                 var that = this;
                 dialog_buttons[delText] = function () {
                     if ($('#dialog_delete_is_show').prop('checked')) {
-                        if (typeof storage != "undefined") {
-                            storage.set('dialog_delete_is_show', true);
-                        }
+                        that.editSaveConfig('dialog/delete_is_show', true);
                     }
                     $(this).dialog('close');
                     that.delWidgets();
@@ -4179,6 +4176,7 @@ $(document).keydown(function (e) {
         }
     } else if (e.which === 113) {
         $('#ribbon_tab_dev').toggle();
+        vis.editSaveConfig(['show/ribbon_tab_dev'], $('#ribbon_tab_dev').is(":visible"));
         e.preventDefault();
     } else if (e.which === 114) {
         // Fullscreen
