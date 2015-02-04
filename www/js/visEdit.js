@@ -46,7 +46,19 @@ vis = $.extend(true, vis, {
 
         this.editInitDialogs();
         this.editInitMenu();
-        $('#attr_wrap').tabs();
+        $('#attr_wrap').tabs({
+            activate: function(event, ui) {
+                // Find out index
+                var i = 0;
+                $(this).find('a').each(function () {
+                    if ($(this).attr('href') == ui.newPanel.selector) {
+                        return false;
+                    }
+                    i++;
+                });
+                that.editSaveConfig('tabs/attr_wrap', i);
+            }
+        });
         $('#pan_add_wid').resizable({
             handles:  'e',
             maxWidth: 570,
@@ -449,12 +461,22 @@ vis = $.extend(true, vis, {
         );
 
         $('#menu_body').tabs({
-            active: 2,
-            collapsible: true
+            active: this.config['tabs/menu_body'] === undefined ? 2 : this.config['tabs/menu_body'],
+            collapsible: true,
+            activate: function (event, ui) {
+                // Find out index
+                var i = 0;
+                $(this).find('a').each(function () {
+                    if ($(this).attr('href') == ui.newPanel.selector) {
+                        return false;
+                    }
+                    i++;
+                });
+                that.editSaveConfig('tabs/menu_body', i);
+            }
         });
 
         // Tabs open Close
-
         $('#menu_body > ul > li').click(function () {
             $(window).trigger('resize');
         });
@@ -600,7 +622,7 @@ vis = $.extend(true, vis, {
         });
 
         $("#rib_view_add_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
-            var name = that.checkNewViewName();
+            var name = that.checkNewViewName($('#rib_view_addname').val().trim());
             if (name === false) {
                 return;
             } else {
@@ -1081,7 +1103,25 @@ vis = $.extend(true, vis, {
         // Selected widget or view page
         // Selected filter
         if (typeof storage != 'undefined') {
-            this.config = storage.get('visConfig') || {};
+            try {
+                this.config = storage.get('visConfig');
+                if (this.config) {
+                    this.config = JSON.parse(this.config);
+                } else {
+                    this.config = {};
+                }
+            } catch(e) {
+                console.log('Cannot load edit config');
+                this.config = {};
+            }
+        }
+    },
+    editSaveConfig: function (attr, value) {
+        if (attr) {
+            this.config[attr] = value;
+        }
+        if (typeof storage != 'undefined') {
+            storage.set('visConfig', JSON.stringify(this.config));
         }
     },
     showMessage: function (message, title, icon) {
@@ -1177,7 +1217,7 @@ vis = $.extend(true, vis, {
     },
     renameView: function (oldName, newName) {
         this.views[newName] = $.extend(true, {}, this.views[oldName]);
-        $('#vis_container').hide();
+        $('#vis_container').html('');
         delete this.views[oldName];
         this.activeView = newName;
         this.renderView(newName);
@@ -1195,7 +1235,6 @@ vis = $.extend(true, vis, {
         $opt.html(newName).attr('value', newName);
         this.$copyWidgetSelectView.val(newName);
         this.$copyWidgetSelectView.selectmenu('refresh');
-
         this.saveRemote(function () {
 
         });
@@ -1328,7 +1367,7 @@ vis = $.extend(true, vis, {
         }
     },
     checkNewViewName: function (name) {
-        if (name == '') {
+        if (!name && name !== 0) {
             this.showMessage(_('Please enter the name for the new view!'));
             return false;
         } else if (this.views[name]) {
@@ -2951,8 +2990,7 @@ vis = $.extend(true, vis, {
             $('#attr_wrap').tabs({active: 1}).tabs('option', 'disabled', [0]);
             return false;
         }
-        $('#attr_wrap').tabs({active: 1}).tabs('option', 'disabled', []);
-        $('#attr_wrap').tabs({active: 0});
+        $('#attr_wrap').tabs('option', 'disabled', []).tabs({active: 0});;
 
         var widget = this.views[this.activeView].widgets[wid];
 
