@@ -1713,64 +1713,63 @@ vis = $.extend(true, vis, {
     // delete where it is no more exist,
     // create where it should exist and
     // sync data
-    syncWidget: function (id, views) {
-        // find view of this widget
-        var view = vis.getViewOfWidget(id);
+    syncWidgets: function (widgets, views) {
+        for (var i = 0; i < widgets.length; i++) {
+            // find view of this widget
+            var view = this.getViewOfWidget(widgets[i]);
 
-        if (views === undefined) {
-            views = vis.getViewsOfWidget(id);
-        }
-
-        if (view) {
-            if (views == null) {
-                views = [];
+            if (views === undefined) {
+                views = this.getViewsOfWidget(widgets[i]);
             }
 
-            var isFound = false;
-            for (var i = 0; i < views.length; i++) {
-                if (views[i] == view) {
-                    isFound = true;
-                    break;
-                }
-            }
+            if (view) {
+                if (views == null) views = [];
 
-            if (!isFound) {
-                views[views.length] = view;
-            }
-            var wids = id.split('_', 2);
-            var wid = wids[0];
-
-            // First sync views
-            for (var v_ in vis.views) {
-                isFound = false;
-                if (v_ == view) {
-                    continue;
-                }
-
+                var isFound = false;
                 for (var j = 0; j < views.length; j++) {
-                    if (views[j] == v_) {
+                    if (views[j] == view) {
                         isFound = true;
                         break;
                     }
                 }
 
-                if (vis.views[v_].widgets[wid + '_' + v_] !== undefined) {
-                    vis.delWidgetHelper(wid + '_' + v_, false);
+                if (!isFound) views[views.length] = view;
+
+                var wids = widgets[i].split('_', 2);
+                var wid = wids[0];
+
+                // First sync views
+                for (var v_ in vis.views) {
+                    isFound = false;
+                    if (v_ == view) {
+                        continue;
+                    }
+
+                    for (var j = 0; j < views.length; j++) {
+                        if (views[j] == v_) {
+                            isFound = true;
+                            break;
+                        }
+                    }
+
+                    if (this.views[v_].widgets[wid + '_' + v_] !== undefined) {
+                        this.delWidgetHelper(wid + '_' + v_, false);
+                    }
+
+                    if (isFound) {
+                        // Create
+                        this.addWidget(this.views[view].widgets[widgets[i]].tpl, this.views[view].widgets[widgets[i]].data, this.views[view].widgets[widgets[i]].style, wid + '_' + v_, v_);
+                    }
                 }
 
-                if (isFound) {
-                    // Create
-                    vis.addWidget(vis.views[view].widgets[id].tpl, vis.views[view].widgets[id].data, vis.views[view].widgets[id].style, wid + '_' + v_, v_);
+
+                if (views.length < 2 && (widgets[i].indexOf('_') != -1)) {
+                    // rename this widget from "wid_view" to "wid"
+                    var wids = widgets[i].split('_', 2);
+                    this.renameWidget(widgets[i], wids[0]);
+                } else if (views.length > 1 && (widgets[i].indexOf('_') == -1)) {
+                    this.renameWidget(widgets[i], widgets[i] + '_' + view);
                 }
-            }
-
-
-            if (views.length < 2 && (id.indexOf('_') != -1)) {
-                // rename this widget from "wid_view" to "wid"
-                var wids = id.split('_', 2);
-                vis.renameWidget(id, wids[0]);
-            } else if (views.length > 1 && (id.indexOf('_') == -1)) {
-                vis.renameWidget(id, id + '_' + view);
             }
         }
     },
@@ -2260,7 +2259,6 @@ vis = $.extend(true, vis, {
                 // All other attributes
                 line = '<input id="inspect_' + widAttr.name + '" type="checkbox"/>';
                 break;
-
             case 'select-views':
                 line = '<select multiple="multiple" id="inspect_' + widAttr.name + '" class="select-views"></select>';
                 break;
@@ -3102,6 +3100,46 @@ vis = $.extend(true, vis, {
                 $this.css({'left': x, 'top': y});
             }
         }
+
+        // Put all view names in the select element
+        $('#inspect_views').html('');
+        // TODO
+        var views = this.getViewsOfWidget(this.activeWidgets[0]);
+        for (var v in this.views) {
+            if (v != this.activeView) {
+                var selected = '';
+                for (var i = 0; i < views.length; i++) {
+                    if (views[i] == v) {
+                        selected = 'selected';
+                        break;
+                    }
+                }
+                $('#inspect_views').append('<option value=\'' + v + "' " + selected + ">" + v + "</option>");
+            }
+        }
+
+
+        $('#inspect_views').multiselect({
+            maxWidth: 180,
+            height: 260,
+            noneSelectedText: _('Single view'),
+            selectedText: function (numChecked, numTotal, checkedItems) {
+                var text = '';
+                for (var i = 0; i < checkedItems.length; i++) {
+                    text += ((text == '') ? '' : ",") + checkedItems[i].title;
+                }
+                return text;
+            },
+            multiple: true,
+            checkAllText: _('Check all'),
+            uncheckAllText: _('Uncheck all')
+            //noneSelectedText: _("Select options")
+        }).change(function () {
+            that.syncWidgets(that.activeWidgets, $(this).val());
+            that.save();
+        });
+        $("#inspect_views").next().css('width', '100%');
+
         // SJ: it is done at the start of the function
         // User interaction
         /*if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {

@@ -880,8 +880,11 @@ var vis = {
                 return;
             }
             // Sync widget before it will be saved
-            if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
-                this.syncWidget(this.activeWidget);
+            for (var t = 0; t < this.activeWidgets.length; t++) {
+                if (this.activeWidgets[t].indexOf('_') != -1 && this.syncWidgets) {
+                    this.syncWidgets(this.activeWidgets);
+                    break;
+                }
             }
 
             if (local) {
