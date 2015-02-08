@@ -3113,6 +3113,7 @@ vis = $.extend(true, vis, {
             });
         }
 
+        // snap objects to the grid, elsewise cannot move
         if (this.views[view].settings.snapType == 2) {
             this.gridWidth = parseInt(this.views[view].settings.gridSize);
 
@@ -3123,8 +3124,8 @@ vis = $.extend(true, vis, {
                 var x = parseInt($this.css('left'));
                 var y = parseInt($this.css('top'));
 
-                x = Math.floor(x / this.gridWidth) * this.gridWidth;
-                y = Math.floor(y / this.gridWidth) * this.gridWidth;
+                x = Math.round(x / this.gridWidth) * this.gridWidth;
+                y = Math.round(y / this.gridWidth) * this.gridWidth;
 
                 $this.css({'left': x, 'top': y});
                 this.showWidgetHelper(this.activeWidgets[i], true);

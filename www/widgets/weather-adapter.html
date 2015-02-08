@@ -2,13 +2,11 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="weather-adapter"
-        data-vis-name="yr.no Wetter"
-        data-vis-attrs="">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; padding: 3px; background-color:#ccc; font-family: Arial; " id="<%= this.data.attr('wid') %>">
+        data-vis-name="yr.no Weather"
+        data-vis-attrs="oid[yr.0.forecast.html]">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="padding: 3px; background-color:#ccc; font-family: Arial; width: 310px; height: 80px" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
-            <div data-hm-id="70000">
-                <%== localData.uiState.attr("_70000.Value") %>
-            </div>
+            <%== vis.states.attr(this.data.oid + '.val') %>
         </div>
     </div>
 </script>
@@ -18,7 +16,7 @@
         class="vis-tpl"
         data-vis-set="weather-adapter"
         data-vis-name="DWD Wetterwarnungen klein"
-        data-vis-attrs="">
+        data-vis-attrs="oid[dwd.0.warning.text];oid-severity[dwd.0.warning.severity]">
     <%
     var dwdBackground = [
         "",
@@ -28,10 +26,10 @@
         "darkviolet"
         ];
     %>
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 160px; height: 21px;  font-family: Arial; " id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(localData.uiState.attr("_70052.Value"),10)] %>;">
-            <div data-hm-id="700053">
-                <%== localData.uiState.attr("_70053.Value") %>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 160px; height: 21px; font-family: Arial" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(vis.states.attr(this.data['oid-severity'] + '.val'), 10)] %>;">
+            <div data-oid="<%= this.data.attr('oid') %>">
+                <%== vis.states.attr(this.data.oid + '.val') %>
             </div>
         </div>
     </div>
@@ -42,8 +40,8 @@
         class="vis-tpl"
         data-vis-set="weather-adapter"
         data-vis-name="DWD Wetterwarnungen"
-        data-vis-attrs="">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 585px; height: 85px; font-family: Arial; " id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="oid-begin[dwd.0.warning.begin];oid-end[dwd.0.warning.end];oid-headline[dwd.0.warning.headline];oid[dwd.0.warning.description];oid-severity[dwd.0.warning.severity]">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 585px; height: 85px; font-family: Arial" id="<%= this.data.attr('wid') %>">
         <%
         var dwdBackground = [
             "",
@@ -53,13 +51,12 @@
             "darkviolet"
         ];
         %>
-
-        <div class="vis-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(localData.uiState.attr("_70052.Value"),10)] %>;">
-            <div style="font-size: 1.5em; font-weight: bold;" data-hm-id="70054">
-                <%== localData.uiState.attr("_70054.Value") %>
+        <div class="vis-widget-body" style="padding: 3px; background-color: <%= dwdBackground[parseInt(vis.states.attr(this.data['oid-severity'] + '.val'), 10)] %>;">
+            <div style="font-size: 1.5em; font-weight: bold;" data-oid="<%= this.data.attr('oid-headline') %>">
+                <%== vis.states.attr(this.data['oid-header'] + '.val') %>
             </div>
-            <p><%== localData.uiState.attr("_70055.Value") %><br/>
-            <%== localData.uiState.attr("_70050.Value") %> - <%== localData.uiState.attr("_70051.Value") %></p>
+            <p><%== vis.states.attr(this.data['oid'] + '.val') %><br/>
+            <%== vis.states.attr(this.data['oid-begin'] + '.val') %> <%== vis.states.attr(this.data['oid-begin'] + '.val') ? ' - ' : '' %><%== vis.states.attr(this.data['oid-end'] + '.val') %></p>
         </div>
     </div>
 </script>
