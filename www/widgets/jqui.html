@@ -1000,25 +1000,25 @@
 
 <script id="tplJquiSliderVertical" 
         type="text/ejs" 
-        data-vis-attrs="oid;hm_wid;min;max;step" 
+        data-vis-attrs="oid;oid-working;min;max;step" 
         class="vis-tpl" data-vis-set="jqui" 
         data-vis-name="ctrl - Slider vertical">
     <div id="<%= this.data.attr("wid") %>" data-vis-resizable='{"minWidth":23, "maxWidth":23}' class="vis-widget" style="width:23px; height:160px; overflow:visible !important;">
         <div class="vis-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
-            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step),orientation:"vertical"}) %> /></div>
+            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step),orientation:"vertical"}) %> /></div>
         </div>
     </div>
 </script>
 
 <script id="tplJquiSlider" 
         type="text/ejs" 
-        data-vis-attrs="oid;hm_wid;min;max;step" 
+        data-vis-attrs="oid;oid-working;min;max;step" 
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="ctrl - Slider horizontal">
     <div id="<%= this.data.attr("wid") %>" data-vis-resizable='{"minHeight":23, "maxHeight":23}' class="vis-widget" style="height:23; width:160px; overflow:visible !important;">
         <div class="vis-widget-body <%== this.data.attr('class') %>" style="padding: 4px;">
-            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step)}) %> /></div>
+            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step)}) %> /></div>
         </div>
     </div>
 </script>
