@@ -477,13 +477,13 @@
                             <input id="screen_size_y" type="number" style="width: 60px" value=""/>
                         </td>
                         <td>
-                            <div class="btn-iconbar ui-corner-all rib_tool_resolution_toggel"><img class="icon-on-iconbar" src="icon/refresh-4.png"></div>
+                            <div class="rib_tool_resolution_toggle"></div>
                         </td>
                     </tr>
                     <tr id="rib_tools_resolution_fix">
                         <td class="translate">Resolution:</td>
                         <td>
-                            <select id="screen_size" class="vis-editor vis-edit-select" data-multiselect-height="450" data-multiselect-width="300" >
+                            <select id="screen_size">
                                 <option value="" class="translate">not defined</option>
                                 <option value="user" class="translate">User defined</option>
                                 <option value="320x460">iPhone 3G, 3GS, 4, 4S - Portrait</option>
@@ -515,7 +515,7 @@
                             </select>
                         </td>
                         <td>
-                            <div class="btn-iconbar ui-corner-all rib_tool_resolution_toggel"><img class="icon-on-iconbar" src="icon/refresh-4.png"></div>
+                            <div class="rib_tool_resolution_toggle"></div>
                         </td>
                     </tr>
                 </table>
@@ -527,8 +527,8 @@
                             <span style=" display: inline-block;" class="translate">Grid</span>
                         </td>
                         <td style="padding-left: 5px">
-                            <select id="snap_type" class="vis-editor" data-multiselect-width="100">
-                                <option value="0" selected="selected" class="translate">disabled</option>
+                            <select id="snap_type">
+                                <option value="0" class="translate">disabled</option>
                                 <option value="1" class="translate">elements</option>
                                 <option value="2" class="translate">grid</option>
                             </select>
@@ -542,10 +542,10 @@
                 <table style="border-spacing: 0px">
                     <tr>
                         <td>
-                            <span style=" display: inline-block;" class="translate">Instance ID</span>
+                            <span style="display: inline-block" class="translate">Instance ID</span>
                         </td>
                         <td>
-                            <input type="input" id="vis_instance"/>
+                            <input type="text" id="vis_instance"/>
                         </td>
                         <td>
                             <button type="button" class="vis-editor translateB" id="create_instance">create_instance</button>

@@ -265,35 +265,11 @@ var vis = {
         }
     },
     bindInstance: function () {
-        if (typeof storage !== 'undefined') {
-            this.instance = storage.get(this.storageKeyInstance);
-            $('#vis_instance').val(this.instance);
-        }
-
-        if (!this.instance && this.editMode) {
-            this.generateInstance();
-        }
-
-        $('#vis_instance').change(function () {
-            vis.instance = $(this).val();
-            if (typeof storage !== 'undefined') {
-                storage.set(vis.storageKeyInstance, vis.instance);
-            }
-        });
-    },
-    generateInstance: function () {
-        if (typeof storage !== 'undefined') {
-            this.instance = (Math.random() * 4294967296).toString(16);
-            this.instance = '0000000' + this.instance;
-            this.instance = this.instance.substring(this.instance.length - 8);
-            $('#vis_instance').val(this.instance);
-            storage.set(this.storageKeyInstance, this.instance);
-        }
+        if (typeof storage !== 'undefined') this.instance = storage.get(this.storageKeyInstance);
+        if (this.editMode) this.bindInstanceEdit();
     },
     init: function () {
-        if (this.initialized) {
-            return;
-        }
+        if (this.initialized) return;
 
         if (typeof storage !== 'undefined') {
             var settings = storage.get(this.storageKeySettings);

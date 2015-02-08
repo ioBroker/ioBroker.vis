@@ -236,18 +236,29 @@ vis = $.extend(true, vis, {
             $(this).trigger('change');
         });
 
-
-
-        $('#screen_size').change(function () {
-            var val = $(this).find('option:selected').val();
-            if (val == 'user') {
-                $('#screen_size_x').removeAttr('disabled');
-                $('#screen_size_y').removeAttr('disabled');
-            } else {
-                var size = val.split('x');
-                $('#screen_size_x').val(size[0]).trigger('change').prop('disabled', true);
-                $('#screen_size_y').val(size[1]).trigger('change').prop('disabled', true);
-            }
+        $('#screen_size').selectmenu({
+            change: function () {
+                var val = $(this).val();
+                if (val == '') {
+                    $('#screen_size_x').prop('disabled', true);
+                    $('#screen_size_y').prop('disabled', true);
+                    $('#screen_size_x').val('').trigger('change');
+                    $('#screen_size_y').val('').trigger('change');
+                    $('.rib_tool_resolution_toggle').button('disable');
+                } else if (val == 'user') {
+                    $('#screen_size_x').prop('disabled', false);
+                    $('#screen_size_y').prop('disabled', false);
+                    $('.rib_tool_resolution_toggle').button('enable');
+                    $("#rib_tools_resolution_fix").toggle();
+                    $("#rib_tools_resolution_manuel").toggle();
+                } else {
+                    var size = val.split('x');
+                    $('.rib_tool_resolution_toggle').button('enable');
+                    $('#screen_size_x').val(size[0]).trigger('change').prop('disabled', true);
+                    $('#screen_size_y').val(size[1]).trigger('change').prop('disabled', true);
+                }
+            },
+            width: '100%'
         });
 
         $('#screen_size_x').change(function () {
@@ -308,20 +319,31 @@ vis = $.extend(true, vis, {
             $(this).trigger('change');
         });
 
-        $('#snap_type').change(function () {
-            var snapType = $('#snap_type option:selected').val();
-            if (that.views[that.activeView].settings.snapType != snapType) {
-                that.views[that.activeView].settings.snapType = snapType;
-                that.save();
-            }
-        });
-
         $('#grid_size').change(function () {
             var gridSize = $(this).val();
             if (that.views[that.activeView].settings.gridSize != gridSize) {
+                var aw = JSON.stringify(that.activeWidgets);
                 that.views[that.activeView].settings.gridSize = gridSize;
                 that.save();
+                that.inspectWidgets([]);
+                setTimeout(function () {
+                    that.inspectWidgets(JSON.parse(aw));
+                }, 200);
             }
+        });
+        $('#snap_type').selectmenu({
+            change: function () {
+                var aw = JSON.stringify(that.activeWidgets);
+                that.views[that.activeView].settings.snapType = $(this).val();
+                $('#grid_size').prop('disabled', that.views[that.activeView].settings.snapType != 2);
+                if (that.views[that.activeView].settings.snapType == 2 && !$('#grid_size').val()) $('#grid_size').val(10).trigger('change');
+                that.save();
+                that.inspectWidgets([]);
+                setTimeout(function () {
+                    that.inspectWidgets(JSON.parse(aw));
+                }, 200);
+            },
+            width: '100%'
         });
 
         $('#dev_show_html').button({}).click(function () {
@@ -688,10 +710,13 @@ vis = $.extend(true, vis, {
         // Tools ----------------------------------------------------------------
         // Resolutuion -----------------
 
-        $(".rib_tool_resolution_toggel").click(function(){
+        $(".rib_tool_resolution_toggle").button({
+            text:  false,
+            icons: {primary: 'ui-icon-refresh'}
+        }).css({width: 22, height: 22}).click(function(){
             $("#rib_tools_resolution_fix").toggle();
             $("#rib_tools_resolution_manuel").toggle();
-        })
+        });
 
         $('#saving_progress').button({
             text:  false,
@@ -2037,16 +2062,16 @@ vis = $.extend(true, vis, {
                     var wdata = $(this).data('data-wdata');
 
                     $.fm({
-                        lang: that.language,
-                        path: that.widgets[wdata.widgets[0]].data[wdata.attr] || '/' + that.conn.namespace + '/' + that.projectPrefix + 'img/',
-                        uploadDir: '/' + that.conn.namespace + '/',
+                        lang:       that.language,
+                        path:       that.widgets[wdata.widgets[0]].data[wdata.attr] || '/' + that.conn.namespace + '/' + that.projectPrefix + 'img/',
+                        uploadDir:  '/' + that.conn.namespace + '/',
                         fileFilter: filter || ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
                         folderFilter: false,
-                        mode: 'open',
-                        view: 'prev',
-                        userArg: wdata,
-                        conn: that.conn,
-                        zindex: 1001
+                        mode:       'open',
+                        view:       'prev',
+                        userArg:    wdata,
+                        conn:       that.conn,
+                        zindex:     1001
                     }, function (_data, userData) {
                         var src = _data.path + _data.file;
                         $('#inspect_' + wdata.attr).val(src).trigger('change');
@@ -2566,6 +2591,10 @@ vis = $.extend(true, vis, {
     showWidgetHelper: function (wid, isShow) {
         if (isShow) {
             var $widget = $('#' + wid);
+            if (!$widget.length) {
+                console.log('Cannot find in DOM ' + wid);
+                return;
+            }
             var pos   = $widget.position();
 
             // May be bug?
@@ -3084,8 +3113,8 @@ vis = $.extend(true, vis, {
             });
         }
 
-        if ($('#snap_type option:selected').val() == 2) {
-            this.gridWidth = parseInt($('#grid_size').val());
+        if (this.views[view].settings.snapType == 2) {
+            this.gridWidth = parseInt(this.views[view].settings.gridSize);
 
             if (this.gridWidth < 1 || isNaN(this.gridWidth)) this.gridWidth = 10;
 
@@ -3098,6 +3127,7 @@ vis = $.extend(true, vis, {
                 y = Math.floor(y / this.gridWidth) * this.gridWidth;
 
                 $this.css({'left': x, 'top': y});
+                this.showWidgetHelper(this.activeWidgets[i], true);
             }
         }
 
@@ -3234,18 +3264,24 @@ vis = $.extend(true, vis, {
             // Try to find this resolution in the list
             var res = this.views[view].settings.sizex + 'x' + this.views[view].settings.sizey;
             $('#screen_size option').each(function () {
-                if ($(this).val() == res) {
+                if ($(this).attr('value') == res) {
                     $(this).attr('selected', true);
                     res = null;
+                    return false;
                 }
             });
-            if (!res) {
+            if (!res || res == 'x') {
                 $('#screen_size_x').prop('disabled', true);
                 $('#screen_size_y').prop('disabled', true);
+            } else {
+                $('#screen_size').val('user');
             }
+
+            $('#screen_size').selectmenu('refresh');
 
             $('#screen_size_x').val(this.views[view].settings.sizex || '').trigger('change');
             $('#screen_size_y').val(this.views[view].settings.sizey || '').trigger('change');
+            if (res == 'x') $('.rib_tool_resolution_toggle').button('disable');
 
             $('#screen_hide_description').prop('checked', this.views[view].settings.hideDescription).trigger('change');
 
@@ -3254,11 +3290,8 @@ vis = $.extend(true, vis, {
              }*/
 
             $('#grid_size').val(this.views[view].settings.gridSize || '').trigger('change');
-
-            var snapType = this.views[view].settings.snapType || 0;
-
-            $('#snap_type option').removeAttr('selected');
-            $('#snap_type option[value="' + snapType + '"]').attr('selected', true);
+            $('#snap_type').val(this.views[view].settings.snapType || 0).selectmenu('refresh');
+            $('#grid_size').prop('disabled', this.views[view].settings.snapType != 2);
         }
 
         this.$selectActiveWidgets.html('');//('<option value="none">' + _('none selected') + '</option>');
@@ -3310,12 +3343,12 @@ vis = $.extend(true, vis, {
         var that = this;
         var draggableOptions = {
             cancel: false,
-            start: function (event, ui) {
+            start:  function (event, ui) {
                 that.dragging = true;
                 origX = ui.position.left;
                 origY = ui.position.top;
             },
-            stop: function (event, ui) {
+            stop:   function (event, ui) {
                 //var mWidget = document.getElementById(widget);
                 //var pos = $('#' + widget).position();
 
@@ -3369,7 +3402,7 @@ vis = $.extend(true, vis, {
                 }, 20);
 
             },
-            drag: function (event, ui) {
+            drag:   function (event, ui) {
 
                 var moveX = ui.position.left - origX;
                 var moveY = ui.position.top  - origY;
@@ -3411,11 +3444,11 @@ vis = $.extend(true, vis, {
                 }*/
             }
         };
-        if ($('#snap_type option:selected').val() == 1) {
+        if (this.views[this.activeView].settings.snapType == 1) {
             draggableOptions.snap = "#vis_container div.vis-widget";
-        }
-        if ($('#snap_type option:selected').val() == 2) {
-            draggableOptions.grid = [vis.gridWidth, vis.gridWidth];
+        } else
+        if (this.views[this.activeView].settings.snapType == 2) {
+            draggableOptions.grid = [this.gridWidth, this.gridWidth];
         }
         obj.draggable(draggableOptions);
     },
@@ -4137,6 +4170,24 @@ vis = $.extend(true, vis, {
             }
         }
         return null;
+    },
+    generateInstance: function () {
+        if (typeof storage !== 'undefined') {
+            this.instance = (Math.random() * 4294967296).toString(16);
+            this.instance = '0000000' + this.instance;
+            this.instance = this.instance.substring(this.instance.length - 8);
+            $('#vis_instance').val(this.instance);
+            storage.set(this.storageKeyInstance, this.instance);
+        }
+    },
+    bindInstanceEdit: function () {
+        var that = this;
+        if (!this.instance) this.generateInstance();
+
+        $('#vis_instance').change(function () {
+            that.instance = $(this).val();
+            if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
+        }).val(this.instance);
     },
     get_panel_by_id: function (id) {
         var panels = dockManager.getPanels()
