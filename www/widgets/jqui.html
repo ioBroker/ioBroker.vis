@@ -1082,23 +1082,5 @@
     </div>
 </script>
 
-<script id="tplIconProgram" 
-        type="text/ejs" 
-        class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="ctrl - Icon ProgramExecute"
-        data-vis-attrs="oid;text;src/image;alt;invert_icon/checkbox">
-    <%
-    var styles = "";
-    if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
-    }
-    %>
-    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.program(el); vis.binds.jqueryui.classes(el) %>>
-        <div class="vis-widget-body">
-            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %>; vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
-        </div>
-    </div>
-</script>
 
 

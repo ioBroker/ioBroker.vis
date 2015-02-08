@@ -42,6 +42,10 @@
     vertical-align: -10%
 }
 
+.metro .icon-custom:before {
+    content: ""
+}
+
 .metro .icon-newspaper:before {
     content: "\e001"
 }

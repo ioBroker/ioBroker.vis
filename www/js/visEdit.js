@@ -729,7 +729,7 @@ vis = $.extend(true, vis, {
         }).click(function () {
             that.saveRemote(function () {
                 // Show hint how to get back to edit mode
-                if (!this.config['dialog/isEditHintShown']) {
+                if (!that.config['dialog/isEditHintShown']) {
                     that.showMessage(_('To get back to edit mode just call "%s" in browser', location.href));
                     that.editSaveConfig('dialog/isEditHintShown', true);
                 }

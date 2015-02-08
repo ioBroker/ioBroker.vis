@@ -15,9 +15,9 @@
         type="text/ejs" 
         class="vis-tpl" 
         data-vis-set="jqui-mfd" 
-        data-vis-name="hm_val - Light/Dimmer" 
+        data-vis-name="value - Light/Dimmer" 
         data-vis-attrs="oid;invert_icon/checkbox">
-    <div data-hm-id="<%= this.data.attr('oid') %>" class="vis-widget  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
         <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']);  %>>
         <%
         var styles = "";
@@ -28,7 +28,7 @@
 
         var str = vis.states.attr('_' + this.data.oid + '.val');
         var val = parseFloat(str,10);
-        if (str === true) { val = 1; }
+        if (str === true)  { val = 1; }
         if (str === false) { val = 0; }
         if (val !== 0) {
 
@@ -65,9 +65,9 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui-mfd"
-        data-vis-name="hm_ctrl - Light"
+        data-vis-name="ctrl - Light"
         data-vis-attrs="oid;invert_icon/checkbox">
-    <div data-hm-id="<%= this.data.attr('oid') %>" class="vis-widget ui-button ui-corner-all ui-state-default  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %>>
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget ui-button ui-corner-all ui-state-default  <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %>>
     <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']);  %>>
     <%
     var styles = "";
@@ -110,8 +110,8 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplMfdLightOnOffDialog" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="hm_ctrl - Light + jqui Dialog" data-vis-attrs="oid;hm_wid;title;autoclose/checkbox;invert_icon/checkbox;modal/checkbox">
-    <div data-hm-id="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+<script type="text/ejs" id="tplMfdLightOnOffDialog" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="ctrl - Light + jqui Dialog" data-vis-attrs="oid;hm_wid;title;autoclose/checkbox;invert_icon/checkbox;modal/checkbox">
+    <div data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
     var styles = "";
@@ -151,7 +151,7 @@
     <% } %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
-        <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+        <div id="<%= this.data.attr('wid') %>_radio"  data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
         <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0">aus</label>
         <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">an</label>
     </div>
@@ -160,8 +160,8 @@
     <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { vis.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
-<script type="text/ejs" id="tplMfdLightDialog" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="hm_ctrl - Dimmer + jqui Dialog" data-vis-attrs="oid;hm_wid;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox">
-    <div data-hm-id="<%= this.data.attr('oid') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+<script type="text/ejs" id="tplMfdLightDialog" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="ctrl - Dimmer + jqui Dialog" data-vis-attrs="oid;hm_wid;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox">
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
     var styles = "";
@@ -201,7 +201,7 @@
     <% } %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
-        <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+        <div id="<%= this.data.attr('wid') %>_radio"  data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
         <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0">aus</label>
         <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="0.25" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
         <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="0.5" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
@@ -209,7 +209,7 @@
         <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">100%</label>
     </div>
     <br/>
-    <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:1,step:0.01}) %> />
+    <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:1,step:0.01}) %> />
     <br/>
     <%= (parseFloat(vis.states.attr("_" + this.data.oid + ".Value")) * 1/*00*/).toFixed(0) %>%
     </div>
@@ -220,8 +220,13 @@
 
 
 
-<script type="text/ejs" id="tplMfdSocket" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="hm_val - Socket" data-vis-attrs="oid;invert_icon/checkbox">
-    <div data-hm-id="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px">
+<script id="tplMfdSocket" 
+        type="text/ejs"
+        class="vis-tpl" 
+        data-vis-set="jqui-mfd" 
+        data-vis-name="value - Socket" 
+        data-vis-attrs="oid;invert_icon/checkbox">
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px">
         <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['img/mfd/message_socket_on.png','img/mfd/message_socket_off.png']);  %>>
         <%
         var styles = "";
@@ -242,8 +247,8 @@
     </div>
     </div>
 </script>
-<script type="text/ejs" id="tplMfdSocketCtrl" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="hm_ctrl - Socket" data-vis-attrs="oid;invert_icon/checkbox">
-    <div data-hm-id="<%= this.data.attr('oid') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px"  <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %> >
+<script type="text/ejs" id="tplMfdSocketCtrl" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="ctrl - Socket" data-vis-attrs="oid;invert_icon/checkbox">
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px"  <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %> >
     <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['img/mfd/message_socket_on.png','img/mfd/message_socket_off.png']);  %>>
     <%
     var styles = "";
@@ -266,8 +271,8 @@
 </script>
 
 
-<script type="text/ejs" id="tplMfdShutter" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="hm_val - Shutter" data-vis-attrs="oid;invert_icon/checkbox">
-    <div data-hm-id="<%= this.data.attr('oid') %>" class="vis-widget vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el, true) %>><div class="vis-widget-body">
+<script type="text/ejs" id="tplMfdShutter" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="value - Shutter" data-vis-attrs="oid;invert_icon/checkbox">
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el, true) %>><div class="vis-widget-body">
     <%
     var styles = "";
     if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -300,8 +305,8 @@
     <% } %>
 </div></div>
 </script>
-<script type="text/ejs" id="tplMfdShutterDialog" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="hm_ctrl - Shutter + jqui Dialog" data-vis-attrs="oid;hm_wid;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox" >
-    <div data-hm-id="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el, true) %>>
+<script type="text/ejs" id="tplMfdShutterDialog" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="ctrl - Shutter + jqui Dialog" data-vis-attrs="oid;hm_wid;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox" >
+    <div data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el, true) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
     var styles = "";
@@ -336,7 +341,7 @@
     <% } %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
-        <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+        <div id="<%= this.data.attr('wid') %>_radio"  data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
         <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0">zu</label>
         <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="0.250000" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
         <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="0.500000" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
@@ -344,7 +349,7 @@
         <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">offen</label>
     </div>
     <br/>
-    <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:1,step:0.01}) %> />
+    <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:1,step:0.01}) %> />
     <br/>
     <%= (vis.states.attr("_" + this.data.oid + ".Value") * 1/*00*/).toFixed(0) %>%
     </div>
@@ -353,8 +358,8 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplMfdHeating" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="hm_ctrl - Heizung + jqui Dialog" data-vis-attrs="oid;hm_wid;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox">
-    <div data-hm-id="<%= this.data.attr('oid') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
+<script type="text/ejs" id="tplMfdHeating" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="ctrl - Heizung + jqui Dialog" data-vis-attrs="oid;hm_wid;title;autoclose/checkbox;modal/checkbox;invert_icon/checkbox">
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" >
     <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%">
         <%
         var styles = "";
@@ -365,7 +370,7 @@
         <img style="<%= styles %>" src="img/mfd/sani_heating_temp.png" width="100%"/>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
-        <div id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+        <div id="<%= this.data.attr('wid') %>_radio"  data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
         <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="6" /><label for="<%= this.data.attr('wid') %>_radio1">6°</label>
         <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="12" /><label for="<%= this.data.attr('wid') %>_radio2">12°</label>
         <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="16" /><label for="<%= this.data.attr('wid') %>_radio3">16°</label>
@@ -376,7 +381,7 @@
         <input type="radio" id="<%= this.data.attr('wid') %>_radio9" name="<%= this.data.attr('wid') %>_radio" value="22"/><label for="<%= this.data.attr('wid') %>_radio9">22°</label>
     </div>
     <br/>
-    <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:6,max:30,step:0.1}) %> />
+    <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:6,max:30,step:0.1}) %> />
     <br/>
     <%= (parseFloat(vis.states.attr("_" + this.data.oid + ".Value"))).toFixed(1) %>°C
     </div>
@@ -387,7 +392,7 @@
 
 
 <script type="text/ejs" id="tplMfdWindow" class="vis-tpl"  data-vis-set="jqui-mfd" data-vis-name="val - Fenster Drehgriff" data-vis-attrs="oid;invert_icon/checkbox">
-    <div class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('oid') %>" style="height:76px; width:76px;" >
+    <div class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" style="height:76px; width:76px;" >
         <div class="vis-widget-body">
             <%
             var styles = "";
@@ -408,7 +413,7 @@
     </div>
 </script>
 <script type="text/ejs" id="tplMfdWindowBool" class="vis-tpl"  data-vis-set="jqui-mfd" data-vis-name="val - Fenster" data-vis-attrs="oid;invert_icon/checkbox">
-    <div class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('oid') %>" style="height:76px; width:76px;"  >
+    <div class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" style="height:76px; width:76px;"  >
         <div class="vis-widget-body">
             <%
             var styles = "";
@@ -426,7 +431,7 @@
     </div>
 </script>
 <script type="text/ejs" id="tplMfdRoofWindowBool" class="vis-tpl"  data-vis-set="jqui-mfd" data-vis-name="val - Dachfenster" data-vis-attrs="oid;invert_icon/checkbox">
-    <div class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-hm-id="<%= this.data.attr('oid') %>" style="height:76px; width:76px;">
+    <div class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" style="height:76px; width:76px;">
         <div class="vis-widget-body">
             <%
             var styles = "";
@@ -444,7 +449,7 @@
 </script>
 
 <script type="text/ejs" id="tplMfdDoor" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="val - Türe" data-vis-attrs="oid;invert_icon/checkbox">
-    <div data-hm-id="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px;">
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px;">
         <div class="vis-widget-body">
             <%
             var styles = "";
@@ -461,7 +466,7 @@
     </div>
 </script>
 <script type="text/ejs" id="tplMfdGarage" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="val - Garage" data-vis-attrs="oid;invert_icon/checkbox">
-    <div data-hm-id="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px;">
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px;">
         <div class="vis-widget-body">
             <%
             var styles = "";
@@ -502,7 +507,7 @@
     }
 
     %>
-    <div data-hm-id="<%= hueIDs.STATE %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+    <div data-oid="<%= hueIDs.STATE %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
     var str = vis.states.attr('_' + hueIDs.LEVEL + '.val');
@@ -538,7 +543,7 @@
     <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
 
         <br/>
-        <span id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= hueIDs.STATE %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+        <span id="<%= this.data.attr('wid') %>_radio"  data-oid="<%= hueIDs.STATE %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
         <input type="radio" id="<%= this.data.attr('wid') %>_radio_off" name="<%= this.data.attr('wid') %>_radio" value="false" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_off">aus</label>
         <input type="radio" id="<%= this.data.attr('wid') %>_radio_on" name="<%= this.data.attr('wid') %>_radio" value="true"/><label for="<%= this.data.attr('wid') %>_radio_on">an</label>
         </span>
@@ -547,7 +552,7 @@
 
         <br/><br/>
         Helligkeit
-        <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= hueIDs.LEVEL %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
+        <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= hueIDs.LEVEL %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
 
 
     </div>
@@ -584,7 +589,7 @@
         };
     }
     %>
-    <div data-hm-id="<%= hueIDs.STATE %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+    <div data-oid="<%= hueIDs.STATE %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
     var str = vis.states.attr('_' + hueIDs.LEVEL + '.val');
@@ -620,7 +625,7 @@
     <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
 
         <br/>
-        <span id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= hueIDs.STATE %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+        <span id="<%= this.data.attr('wid') %>_radio"  data-oid="<%= hueIDs.STATE %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
         <input type="radio" id="<%= this.data.attr('wid') %>_radio_off" name="<%= this.data.attr('wid') %>_radio" value="false" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_off">aus</label>
         <input type="radio" id="<%= this.data.attr('wid') %>_radio_on" name="<%= this.data.attr('wid') %>_radio" value="true"/><label for="<%= this.data.attr('wid') %>_radio_on">an</label>
         </span>
@@ -629,15 +634,15 @@
 
         <br/><br/>
         Helligkeit
-        <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= hueIDs.LEVEL %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
+        <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= hueIDs.LEVEL %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
         <br/>
 
         <br/>
         <div class="hue-mode-hue">
-            <div class="sliderJQUI hue-slider-hue" style="width:90%" id="<%= this.data.attr('wid') %>_hue_hue_slider" data-hm-id="<%= hueIDs.HUE %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:'nothing_selected',step:1}) %> />
+            <div class="sliderJQUI hue-slider-hue" style="width:90%" id="<%= this.data.attr('wid') %>_hue_hue_slider" data-oid="<%= hueIDs.HUE %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:'nothing_selected',step:1}) %> />
             <br/>
             Sättigung
-            <div class="sliderJQUI hue-slider-sat" style="width:90%" id="<%= this.data.attr('wid') %>_hue_sat_slider" data-hm-id="<%= hueIDs.SAT %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
+            <div class="sliderJQUI hue-slider-sat" style="width:90%" id="<%= this.data.attr('wid') %>_hue_sat_slider" data-oid="<%= hueIDs.SAT %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
         </div>
 
     </div>
@@ -678,7 +683,7 @@
         };
     }
     %>
-    <div data-hm-id="<%= hueIDs.STATE %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+    <div data-oid="<%= hueIDs.STATE %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
     <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
     <%
     var str = vis.states.attr('_' + hueIDs.LEVEL + '.val');
@@ -714,30 +719,30 @@
     <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.title %>" style="padding-left:20px;">
 
         <br/>
-        <span id="<%= this.data.attr('wid') %>_radio"  data-hm-id="<%= hueIDs.STATE %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+        <span id="<%= this.data.attr('wid') %>_radio"  data-oid="<%= hueIDs.STATE %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
             <input type="radio" id="<%= this.data.attr('wid') %>_radio_off" name="<%= this.data.attr('wid') %>_radio" value="false" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_off">aus</label>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio_on" name="<%= this.data.attr('wid') %>_radio" value="true"/><label for="<%= this.data.attr('wid') %>_radio_on">an</label>
         </span>
 
-        <span style="padding-left: 25px" id="<%= this.data.attr('wid') %>_radio_cm"  data-hm-id="<%= hueIDs.COLORMODE %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+        <span style="padding-left: 25px" id="<%= this.data.attr('wid') %>_radio_cm"  data-oid="<%= hueIDs.COLORMODE %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
             <input type="radio" id="<%= this.data.attr('wid') %>_radio_cm_ct" name="<%= this.data.attr('wid') %>_radio_cm" value="ct" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio_cm_ct">weiß</label>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio_cm_hs" name="<%= this.data.attr('wid') %>_radio_cm" value="hs"/><label for="<%= this.data.attr('wid') %>_radio_cm_hs">farbe</label>
         </span>
 
         <br/><br/>
         Helligkeit
-        <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-hm-id="<%= hueIDs.LEVEL %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
+        <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= hueIDs.LEVEL %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
         <br/>
 
         <br/>
         <div class="hue-mode-ct">
-            <div class="sliderJQUI hue-slider-ct" style="width:90%" id="<%= this.data.attr('wid') %>_hue_ct_slider" data-hm-id="<%= hueIDs.CT %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:153,max:500,step:1}) %> />
+            <div class="sliderJQUI hue-slider-ct" style="width:90%" id="<%= this.data.attr('wid') %>_hue_ct_slider" data-oid="<%= hueIDs.CT %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:153,max:500,step:1}) %> />
         </div>
         <div class="hue-mode-hue">
-            <div class="sliderJQUI hue-slider-hue" style="width:90%" id="<%= this.data.attr('wid') %>_hue_hue_slider" data-hm-id="<%= hueIDs.HUE %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:'nothing_selected',step:1}) %> />
+            <div class="sliderJQUI hue-slider-hue" style="width:90%" id="<%= this.data.attr('wid') %>_hue_hue_slider" data-oid="<%= hueIDs.HUE %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:'nothing_selected',step:1}) %> />
             <br/>
             Sättigung
-            <div class="sliderJQUI hue-slider-sat" style="width:90%" id="<%= this.data.attr('wid') %>_hue_sat_slider" data-hm-id="<%= hueIDs.SAT %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
+            <div class="sliderJQUI hue-slider-sat" style="width:90%" id="<%= this.data.attr('wid') %>_hue_sat_slider" data-oid="<%= hueIDs.SAT %>" data-hm-wid="<%= this.data.attr('hm_wid') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:255,step:1}) %> />
         </div>
 
     </div>
@@ -855,7 +860,12 @@
     </div>
 </script>
 
-<script type="text/ejs" id="tplValMfdCamVideo" class="vis-tpl" data-vis-set="jqui-mfd" data-vis-name="val - Cam/Video (html5) - Dialog" data-vis-attrs="oid;alt;text;poster_url;title;modal/checkbox;width[640];height[480];invert_icon/checkbox">
+<script id="tplValMfdCamVideo"
+        type="text/ejs"
+        class="vis-tpl" 
+        data-vis-set="jqui-mfd"
+        data-vis-name="val - Cam/Video (html5) - Dialog" 
+        data-vis-attrs="oid;alt;text;poster_url;title;modal/checkbox;width[640];height[480];invert_icon/checkbox">
     <%
         var styles = "";
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
