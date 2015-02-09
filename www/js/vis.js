@@ -265,35 +265,11 @@ var vis = {
         }
     },
     bindInstance: function () {
-        if (typeof storage !== 'undefined') {
-            this.instance = storage.get(this.storageKeyInstance);
-            $('#vis_instance').val(this.instance);
-        }
-
-        if (!this.instance && this.editMode) {
-            this.generateInstance();
-        }
-
-        $('#vis_instance').change(function () {
-            vis.instance = $(this).val();
-            if (typeof storage !== 'undefined') {
-                storage.set(vis.storageKeyInstance, vis.instance);
-            }
-        });
-    },
-    generateInstance: function () {
-        if (typeof storage !== 'undefined') {
-            this.instance = (Math.random() * 4294967296).toString(16);
-            this.instance = '0000000' + this.instance;
-            this.instance = this.instance.substring(this.instance.length - 8);
-            $('#vis_instance').val(this.instance);
-            storage.set(this.storageKeyInstance, this.instance);
-        }
+        if (typeof storage !== 'undefined') this.instance = storage.get(this.storageKeyInstance);
+        if (this.editMode) this.bindInstanceEdit();
     },
     init: function () {
-        if (this.initialized) {
-            return;
-        }
+        if (this.initialized) return;
 
         if (typeof storage !== 'undefined') {
             var settings = storage.get(this.storageKeySettings);
@@ -716,14 +692,9 @@ var vis = {
         showOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, showOptions);
         if (hideOptions.effect == 'show') effect = false;
 
-        if (this.inspectWidget) {
-            this.inspectWidget('none');
-            this.clearWidgetHelper();
-            $("#select_active_widget").html('<option value="none">' + _('none selected') + '</option>');
-        }
-
         if (!this.views[view]) {
-            for (var prop in this.views) {
+            var prop;
+            for (prop in this.views) {
                 // object[prop]
                 break;
             }
@@ -798,14 +769,13 @@ var vis = {
         } else {
             this.renderView(view);
 
-
             // View ggf aus Container heraus holen
             if ($("#visview_" + view).parent().attr("id") !== "vis_container") {
                 $("#visview_" + view).appendTo("#vis_container");
             }
         }
-
         this.activeView = view;
+
 
         $('#visview_' + view).find('div[id$="container"]').each(function () {
             $('#visview_' + $(this).attr('data-vis-contains')).show();
@@ -868,30 +838,39 @@ var vis = {
             });
         }
     },
-    saveRemoteActive: false,
+    saveRemoteActive: 0,
     saveRemote: function (callback) {
         var that = this;
 
-        if (this.saveRemoteActive) {
+        if (this.saveRemoteActive % 10) {
+            this.saveRemoteActive--;
             setTimeout(function () {
                 that.saveRemote(callback);
             }, 1000);
 
         }else {
-            this.saveRemoteActive = true;
+            if (!this.saveRemoteActive) this.saveRemoteActive = 30;
+            if (this.saveRemoteActive == 10) {
+                console.log('possible no connection');
+                this.saveRemoteActive = 0;
+                return;
+            }
             // Sync widget before it will be saved
-            if (this.activeWidget && this.activeWidget.indexOf('_') != -1 && this.syncWidget) {
-                this.syncWidget(this.activeWidget);
+            for (var t = 0; t < this.activeWidgets.length; t++) {
+                if (this.activeWidgets[t].indexOf('_') != -1 && this.syncWidgets) {
+                    this.syncWidgets(this.activeWidgets);
+                    break;
+                }
             }
 
             if (local) {
 
                 storage.set(this.storageKeyViews, JSON.stringify(this.views, null, 2));
-                that.saveRemoteActive = false;
+                that.saveRemoteActive = 0;
                 if (callback) callback();
             } else {
                 this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
-                    that.saveRemoteActive = false;
+                    that.saveRemoteActive = 0;
                     if (callback) callback();
 
                     // If not yet checked => check if project css file exists

@@ -67,82 +67,9 @@ html{}
     border-style: solid;
 }
 
-/*--------------------------------------------- SelectID dialog ------------------------------- */
-.select-plus {
-    display: inline-block !important;
-    width: 16px !important;
-    height: 16px !important;
-    margin-right: 5px;
-    vertical-align: middle !important;
-    cursor: crosshair;
+.vis-edit-different {
+    color: #ccc
 }
-
-.select-header {
-    font-size: 11px
-    top: 0;
-    height: 60px;
-    table-layout: fixed;
-    font-family: Arial, sans-serif;
-}
-
-.select-header-title {
-    font-weight: bold;
-    text-align: left;
-    padding-left: 5px;
-}
-
-.select-body {
-    table-layout: fixed;
-    white-space: nowrap;
-    height: calc(100% - 110px) !important;
-    overflow-x: hidden;
-    overflow-y: auto;
-    position: relative;
-    font-size: 11px;
-    font-family: Arial, sans-serif;
-    width: 100%;
-}
-
-.select-table {
-    border-collapse: collapse;
-    border-style: solid;
-    border-width: 1px;
-    table-layout: fixed;
-    width: 100%;
-}
-
-.select-tr {
-    background: rgb(50, 50, 50);
-    border-bottom: 1px solid rgb(128, 128, 128);
-}
-
-.select-td {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.select-search {
-    width: 95%;
-    height: 22px;
-    border-radius: 2px 2px 2px 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-}
-
-.select-filter-clear {
-    display: inline-block;
-    vertical-align: middle;
-    cursor: pointer;
-}
-
-.css-inspector-heading {
-    text-align: left;
-    font-weight: bold;
-    padding-top: 6px;
-}
-
 #button_undo {
     height: 27px;
     padding-left: 3px;
@@ -454,14 +381,14 @@ display: none;
 }
 
 .wid_prev:after{
-    width: 100%;
-    height: 100%;
-    content: "";
-    display: block;
+    width:    100%;
+    height:   100%;
+    content:  "";
+    display:  block;
     position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 90;
+    top:      0;
+    left:     0;
+    z-index:  90;
 }
 
 .vis-widget-lock:after{
@@ -685,9 +612,7 @@ td > .select_active_widget :nth-child(2){
 .screen_size{
     font-size: 12px;
     width: 260px!important;
-
 }
-
 
 #screen_size + button{
     width: 100%!important;
@@ -701,36 +626,8 @@ td > .select_active_widget :nth-child(2){
     pointer-events: none;
 }
 
-#widget_inner_helper {
+.widget_inner_helper {
     border: 1px dashed black;
-    pointer-events: none;
-    width: 100%;
-    height: 100%;
-}
-
-#allwidgets_helper {
-    border: 1px dotted #aaa;
-    position: absolute;
-    z-index: 90;
-    pointer-events: none;
-}
-
-#allwidgets_inner_helper {
-    border: 1px dotted #555;
-    pointer-events: none;
-    width: 100%;
-    height: 100%;
-}
-
-.widget-multi-helper {
-    border: 1px dotted white;
-    position: absolute;
-    z-index: 90;
-    pointer-events: none;
-}
-
-.widget-multi-inner-helper {
-    border: 1px dotted black;
     pointer-events: none;
     width: 100%;
     height: 100%;
