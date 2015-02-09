@@ -16,7 +16,7 @@
 
 // ok But I need the local flag in Webstorm too (faster Page reload) 
 var local = false;
-if (document.URL.split('/local/')[1]  || document.URL.split('/localhost:63342/')[1]){
+if (document.URL.split('/local/')[1]  || document.URL.split('/localhost:63343/')[1]){
     local = true;
 }
 

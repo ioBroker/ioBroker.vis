@@ -1,0 +1,14 @@
+
+<script id="tplHtml"
+		type="text/ejs"
+		class="vis-tpl"
+		data-vis-set="plumb"
+		data-vis-type="static"
+		data-vis-name="H"
+		data-vis-attrs="html">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.basic.htmlRefresh(el, this.data.attr('html'), data.attr("refreshInterval")) %>>
+
+        </div>
+    </div>
+</script>
