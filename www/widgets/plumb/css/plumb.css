@@ -1,0 +1,75 @@
+.pipe_v{
+    background: #00F;
+    height: 100%;
+    width: 100%;
+    /*box-shadow: inset 10px 0px 11px -11px #000,inset -11px 0px 11px -11px #000;*/
+}
+
+.bogen_br {
+    border-top-left-radius: 100%;
+    background-color: #00F;
+    width: 100%;
+    height: 100%;
+}
+
+.bogen_br_shadow{
+    border: 1px solid #F00;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    bottom: -100%;
+    right: -100%;
+    box-shadow: -27px -27px 100px #000;
+}
+
+.bogen_bl {
+    border-top-right-radius: 100%;
+    background-color: #00F;
+    width: 100%;
+    height: 100%;
+}
+
+.bogen_bl_shadow{
+    border: 1px solid #F00;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    bottom: -100%;
+    left: -100%;
+    box-shadow: -27px -27px 100px #000;
+}
+
+.plumb_dock_top{
+    background: transparent;
+    width: 100%;
+    height: 20px;
+    position: absolute;
+    top: -10px;}
+.plumb_dock_bottom{
+    background: transparent;
+    width: 100%;
+    height: 20px;
+    position: absolute;
+    bottom: -10px;
+}
+.plumb_dock_left{
+    background: transparent;
+    width: 20px;
+    height: 100%;
+    position: absolute;
+    left: -10px;}
+.plumb_dock_right{
+    background: transparent;
+    width: 20px;
+    height: 100%;
+    position: absolute;
+    right: -10px;
+}
+
+.drop-hover{
+    background-color: #9ACD32;
+    border-radius: 100%;
+    box-shadow: 0px 0px 3px 3px #9ACD32;
+}

@@ -1,14 +1,231 @@
+<link rel="stylesheet" type="text/css" href="widgets/plumb/css/plumb.css"/>
 
-<script id="tplHtml"
-		type="text/ejs"
-		class="vis-tpl"
-		data-vis-set="plumb"
-		data-vis-type="static"
-		data-vis-name="H"
-		data-vis-attrs="html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" <%= (el) -> vis.binds.basic.htmlRefresh(el, this.data.attr('html'), data.attr("refreshInterval")) %>>
+<script type="text/javascript">
+    "use strict";
+    vis.binds.plumb = {
 
+        plumb_drop: function ($this, no_pos) {
+
+            $($this).find(".plumb_dock_top").droppable({
+                accept: ".pl_b:not(#" + $($this).parent().attr("id") + ")",
+                hoverClass: "drop-hover",
+                tolerance: "touch",
+                drop: function (event, ui) {
+                    vis.views[vis.activeView].widgets[$this.parent().attr("id")].data.conTop = $(ui.draggable).attr("id");
+                    vis.views[vis.activeView].widgets[$(ui.draggable).attr("id")].data.conBottom =  $this.parent().attr("id");
+                    $("#inspect_conBottom").val($this.parent().attr("id"));
+                    vis.widgets[$(ui.draggable).attr("id")].data.attr("conBottom", $this.parent().attr("id"));
+                    vis.save()
+                    if (!no_pos) {
+                        $(ui.draggable).css({
+                            "left": $this.parent().position().left + "px",
+                            "top": $this.parent().position().top - ui.draggable.height() + "px"
+                        })
+                    }
+                }
+            });
+            $($this).find(".plumb_dock_bottom").droppable({
+                accept: ".pl_t:not(#" + $($this).parent().attr("id") + ")",
+                hoverClass: "drop-hover",
+                tolerance: "touch",
+                drop: function (event, ui) {
+                    vis.views[vis.activeView].widgets[$this.parent().attr("id")].data.conBottom = $(ui.draggable).attr("id");
+                    vis.views[vis.activeView].widgets[$(ui.draggable).attr("id")].data.conTop =  $this.parent().attr("id");
+                    $("#inspect_conTop").val($this.parent().attr("id"));
+                    if (!no_pos) {
+                        $(ui.draggable).css({
+                            "left": $this.parent().position().left + "px",
+                            "top": $this.parent().position().top + $this.parent().height() + "px"
+                        })
+                    }
+                }
+            });
+
+            $($this).find(".plumb_dock_left").droppable({
+                accept: ".pl_r:not(#" + $($this).parent().attr("id") + ")",
+                hoverClass: "drop-hover",
+                tolerance: "touch",
+                drop: function (event, ui) {
+                    vis.views[vis.activeView].widgets[$this.parent().attr("id")].data.conLeft = $(ui.draggable).attr("id");
+                    vis.views[vis.activeView].widgets[$(ui.draggable).attr("id")].data.conRight =  $this.parent().attr("id");
+                    $("#inspect_conRight").val($this.parent().attr("id"));
+                    if (!no_pos) {
+                        $(ui.draggable).css({
+                            "left": $this.parent().position().left - ui.draggable.width() + "px",
+                            "top": $this.parent().position().top + "px"
+                        })
+                    }
+                }
+            });
+            $($this).find(".plumb_dock_right").droppable({
+                accept: ".pl_l:not(#" + $($this).parent().attr("id") + ")",
+                hoverClass: "drop-hover",
+                tolerance: "touch",
+                drop: function (event, ui) {
+                    vis.views[vis.activeView].widgets[$this.parent().attr("id")].data.conRight= $(ui.draggable).attr("id");
+                    vis.views[vis.activeView].widgets[$(ui.draggable).attr("id")].data.conLeft =  $this.parent().attr("id");
+                    $("#inspect_conLeft").val($this.parent().attr("id"));
+                    if (!no_pos) {
+                        $(ui.draggable).css({
+                            "left": $this.parent().position().left + $this.parent().width() + "px",
+                            "top": $this.parent().position().top + "px"
+                        })
+                    }
+                }
+            });
+        },
+        pump: function (el, oid) {
+            var $this = $(el);
+            vis.binds.plumb.plumb_drop($this, true)
+        },
+        pipe_h: function (el) {
+            var $this = $(el);
+
+            $($this).on("resize", function () {
+                var shadow = parseInt($this.height() / 2);
+                $($this).children().css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+            })
+
+            vis.binds.plumb.plumb_drop($this)
+
+
+        },
+        pipe_v: function (el) {
+            var $this = $(el);
+
+            $($this).on("resize", function () {
+                var shadow = parseInt($this.width() / 2);
+                $($this).children().css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'})
+            });
+
+
+            vis.binds.plumb.plumb_drop($this)
+
+        },
+        bogen_br: function (el) {
+            var $this = $(el);
+
+            $($this).on("resize", function () {
+                var shadow = parseInt($this.width() / 2);
+                $($this).children().css({"box-shadow": 'inset ' + shadow / 2 + 'px ' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
+                $($this).find(".bogen_br_shadow").css({"box-shadow": '-' + parseInt(shadow / 2 / 2) + 'px -' + parseInt(shadow / 2 / 2) + 'px ' + shadow + 'px #000 '});
+            })
+            vis.binds.plumb.plumb_drop($this)
+        },
+        bogen_bl: function (el) {
+            var $this = $(el);
+
+            $($this).on("resize", function () {
+                var shadow = parseInt($this.width() / 2);
+                $($this).children().css({"box-shadow": 'inset -' + shadow / 2 + 'px ' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
+                $($this).find(".bogen_bl_shadow").css({"box-shadow": '' + parseInt(shadow / 2 / 2) + 'px -' + parseInt(shadow / 2 / 2) + 'px ' + shadow + 'px #000 '});
+            })
+            vis.binds.plumb.plumb_drop($this)
+        }
+
+    }
+</script>
+
+<script id="tplPlump_pump"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplPlump_pump" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_b pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{}" style="top: 138px; left: 142px; width: 50px; height: 50px;" > <div class="vis-widget-prev-body">			<div class="pipe_v" style="">				<div class="plumb_dock_top ui-droppable"></div>				<div class="plumb_dock_bottom ui-droppable"></div>				<div class="plumb_dock_left ui-droppable"></div>				<div class="plumb_dock_right ui-droppable"></div>			</div> </div> </div></div>'
+        data-vis-set="plumb"
+        data-vis-type="val"
+        data-vis-name="Pump"
+        data-vis-attrs="oid">
+    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t" data-vis-resizable='{}' style="top:0px; left: 0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pump(el, data.oid) %>>
+			<div class="pipe_v" style="">
+				<div class="plumb_dock_top"></div>
+				<div class="plumb_dock_bottom"></div>
+				<div class="plumb_dock_left"></div>
+				<div class="plumb_dock_right"></div>
+			</div>
         </div>
     </div>
+
+
+
+</script>
+
+<script id="tplPlump_pipe_V"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplPlump_pipe_V" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 238px; left: 82px; width: 20px; height: 100px;" > <div class="vis-widget-prev-body">			<div class="pipe_v" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;">				<div class="plumb_dock_top"></div>				<div class="plumb_dock_bottom"></div>			</div> </div> </div></div>'
+        data-vis-set="plumb"
+        data-vis-type="static"
+        data-vis-name="Pipe_V"
+        data-vis-attrs="conTop;conBottom">
+    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t" data-vis-resizable='{"grid": [ 10, 1 ]}' style="top:0px; left: 0px; width: 20px; height: 100px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_v(el) %>>
+			<div class="pipe_v" style="">
+				<div class="plumb_dock_top"></div>
+				<div class="plumb_dock_bottom"></div>
+			</div>
+        </div>
+    </div>
+
+
+
+</script>
+
+<script id="tplPlump_pipe_H"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplPlump_pipe_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 203px; left: 181px; width: 100px; height: 20px;" > <div class="vis-widget-prev-body">			<div class="pipe_v" style="box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset;">				<div class="plumb_dock_top"></div>				<div class="plumb_dock_bottom"></div>			</div> </div> </div></div>'
+        data-vis-set="plumb"
+        data-vis-type="static"
+        data-vis-name="Pipe_H"
+        data-vis-attrs="conLeft;conRight">
+    <div class="vis-widget <%== this.data.attr('class') %> pl_l pl_r " data-vis-resizable='{"grid": [ 1, 10 ]}' style="top:0px; left: 0px; width: 100px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_h(el) %>>
+			<div class="pipe_v" style="">
+				<div class="plumb_dock_left"></div>
+				<div class="plumb_dock_right"></div>
+			</div>
+        </div>
+    </div>
+
+
+
+</script>
+
+<script id="tplPlump_bogen_br"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplPlump_bogen_br" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 186px; left: 85px; width: 20px; height: 20px;" > <div class="vis-widget-prev-body">			<div class="bogen_br" style="box-shadow: rgb(0, 0, 0) 5px 5px 10px -6px inset;">				<div class="bogen_br_shadow" style="box-shadow: rgb(0, 0, 0) -2px -2px 10px;"></div>				<div class="plumb_dock_right"></div>				<div class="plumb_dock_bottom"></div>			</div> </div> </div></div>'
+        data-vis-set="plumb"
+        data-vis-type="static"
+        data-vis-name="Bogen_br"
+        data-vis-attrs="">
+    <div class="vis-widget <%== this.data.attr('class')%>  pl_r pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style="top:0px; left: 0px; width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_br(el) %>>
+			<div class="bogen_br">
+				<div class="bogen_br_shadow"></div>
+				<div class="plumb_dock_right"></div>
+				<div class="plumb_dock_bottom"></div>
+			</div>
+        </div>
+    </div>
+
+</script>
+<script id="tplPlump_bogen_bl"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplPlump_bogen_bl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_l pl_b ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="top: 252px; left: 147px; width: 20px; height: 20px;" > <div class="vis-widget-prev-body">			<div class="bogen_bl" style="box-shadow: rgb(0, 0, 0) -5px 5px 10px -6px inset;">				<div class="bogen_bl_shadow" style="box-shadow: rgb(0, 0, 0) 2px -2px 10px;"></div>				<div class="plumb_dock_left ui-droppable"></div>				<div class="plumb_dock_bottom ui-droppable"></div>			</div> </div> </div></div>'
+        data-vis-set="plumb"
+        data-vis-type="static"
+        data-vis-name="Bogen_bl"
+        data-vis-attrs="">
+    <div class="vis-widget <%== this.data.attr('class')%>  pl_l pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style="top:0px; left: 0px; width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_bl(el) %>>
+			<div class="bogen_bl">
+				<div class="bogen_bl_shadow"></div>
+				<div class="plumb_dock_left"></div>
+				<div class="plumb_dock_bottom"></div>
+			</div>
+        </div>
+    </div>
+
 </script>
