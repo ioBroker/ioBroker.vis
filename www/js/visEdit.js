@@ -738,6 +738,37 @@ vis = $.extend(true, vis, {
                 location.href = 'index.html' + window.location.search + '#' + that.activeView;
             });
         });
+
+        // Dev ----------------------------------------------------------------
+        $("#oid_none_0").click(function(){
+            var o = {};
+            //o['nothing_selected.val'] = 0;
+            //o['nothing_selected.ack'] = true;
+            //vis.states.attr(o);
+
+            vis.setValue("nothing_selected", 0);
+        });
+        $("#oid_none_1").click(function(){
+            //var o = {};
+            //o['nothing_selected.val'] = 1;
+            //o['nothing_selected.ack'] = true;
+            //vis.states.attr(o);
+            vis.setValue("nothing_selected", 1);
+        });
+        $("#oid_none_slider").slider({
+            min:0,
+            max:100,
+            setp:1,
+            slide:function(e,ui){
+                vis.setValue("nothing_selected", ui.value);
+
+            }
+        }),
+            vis.states.bind('nothing_selected.val', function (e, newVal, oldVal) {
+                if (newVal != $("#oid_none_slider").slider("value")) {
+                    $("#oid_none_slider").slider("value", newVal)
+                }
+            });
     },
     editInitWidgetPreview: function () {
         var that = this;
