@@ -2,6 +2,20 @@
     background: #00F;
     height: 100%;
     width: 100%;
+    box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;
+}
+
+.pipe_h{
+    background: #00F;
+    height: 100%;
+    width: 100%;
+    box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset;
+}
+
+.pump{
+    /*background: #00F;*/
+    height: 100%;
+    width: 100%;
     /*box-shadow: inset 10px 0px 11px -11px #000,inset -11px 0px 11px -11px #000;*/
 }
 
@@ -10,6 +24,7 @@
     background-color: #00F;
     width: 100%;
     height: 100%;
+    box-shadow: rgb(0, 0, 0) 5px 5px 10px -6px inset;
 }
 
 .bogen_br_shadow{
@@ -20,7 +35,7 @@
     border-radius: 100%;
     bottom: -100%;
     right: -100%;
-    box-shadow: -27px -27px 100px #000;
+    box-shadow: rgb(0, 0, 0) -2px -2px 10px;
 }
 
 .bogen_bl {
@@ -28,6 +43,7 @@
     background-color: #00F;
     width: 100%;
     height: 100%;
+    box-shadow: rgb(0, 0, 0) -5px 5px 10px -6px inset;
 }
 
 .bogen_bl_shadow{
@@ -38,7 +54,7 @@
     border-radius: 100%;
     bottom: -100%;
     left: -100%;
-    box-shadow: -27px -27px 100px #000;
+    box-shadow: rgb(0, 0, 0) 2px -2px 10px;
 }
 
 .plumb_dock_top{

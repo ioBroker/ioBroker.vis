@@ -1,125 +1,182 @@
 <link rel="stylesheet" type="text/css" href="widgets/plumb/css/plumb.css"/>
-
 <script type="text/javascript">
     "use strict";
+
+    if (vis.editMode) {
+        $.extend(true, systemDictionary, {
+            "conTop": {"en": "conTop", "de": "conTop", "ru": "conTop"},
+            "conBottom": {"en": "conBottom", "de": "conBottom", "ru": "conBottom"},
+            "conLeft": {"en": "conLeft", "de": "conLeft", "ru": "conLeft"},
+            "conRight": {"en": "conRight", "de": "conRight", "ru": "conRight"}
+        });
+    }
+
     vis.binds.plumb = {
 
         plumb_drop: function ($this, no_pos) {
+var drag_id;
+            var self_id
 
             $($this).find(".plumb_dock_top").droppable({
-                accept: ".pl_b:not(#" + $($this).parent().attr("id") + ")",
+                accept: ".pl_b:not(#" + $($this).attr("id") + ")",
                 hoverClass: "drop-hover",
                 tolerance: "touch",
                 drop: function (event, ui) {
-                    vis.views[vis.activeView].widgets[$this.parent().attr("id")].data.conTop = $(ui.draggable).attr("id");
-                    vis.views[vis.activeView].widgets[$(ui.draggable).attr("id")].data.conBottom =  $this.parent().attr("id");
-                    $("#inspect_conBottom").val($this.parent().attr("id"));
-                    vis.widgets[$(ui.draggable).attr("id")].data.attr("conBottom", $this.parent().attr("id"));
+                    drag_id = $(ui.draggable).attr("id");
+                    self_id = $this.attr("id");
+                    vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
+                    vis.views[vis.activeView].widgets[drag_id].data.conLeft = self_id;
+                    $("#inspect_conBottom").val(self_id);
                     vis.save()
                     if (!no_pos) {
                         $(ui.draggable).css({
-                            "left": $this.parent().position().left + "px",
-                            "top": $this.parent().position().top - ui.draggable.height() + "px"
+                            "left": $this.position().left + "px",
+                            "top": $this.position().top - ui.draggable.height() + "px"
                         })
                     }
                 }
             });
             $($this).find(".plumb_dock_bottom").droppable({
-                accept: ".pl_t:not(#" + $($this).parent().attr("id") + ")",
+                accept: ".pl_t:not(#" + $($this).attr("id") + ")",
                 hoverClass: "drop-hover",
                 tolerance: "touch",
                 drop: function (event, ui) {
-                    vis.views[vis.activeView].widgets[$this.parent().attr("id")].data.conBottom = $(ui.draggable).attr("id");
-                    vis.views[vis.activeView].widgets[$(ui.draggable).attr("id")].data.conTop =  $this.parent().attr("id");
-                    $("#inspect_conTop").val($this.parent().attr("id"));
+                    drag_id = $(ui.draggable).attr("id");
+                    self_id = $this.attr("id");
+                    vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
+                    vis.views[vis.activeView].widgets[drag_id].data.conLeft = self_id;
+                    $("#inspect_conTop").val(self_id);
                     if (!no_pos) {
                         $(ui.draggable).css({
-                            "left": $this.parent().position().left + "px",
-                            "top": $this.parent().position().top + $this.parent().height() + "px"
+                            "left": $this.position().left + "px",
+                            "top": $this.position().top + $this.height() + "px"
                         })
                     }
                 }
             });
 
             $($this).find(".plumb_dock_left").droppable({
-                accept: ".pl_r:not(#" + $($this).parent().attr("id") + ")",
+                accept: ".pl_r:not(#" + $($this).attr("id") + ")",
                 hoverClass: "drop-hover",
                 tolerance: "touch",
                 drop: function (event, ui) {
-                    vis.views[vis.activeView].widgets[$this.parent().attr("id")].data.conLeft = $(ui.draggable).attr("id");
-                    vis.views[vis.activeView].widgets[$(ui.draggable).attr("id")].data.conRight =  $this.parent().attr("id");
-                    $("#inspect_conRight").val($this.parent().attr("id"));
+                    drag_id = $(ui.draggable).attr("id");
+                    self_id = $this.attr("id");
+                    vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
+                    vis.views[vis.activeView].widgets[drag_id].data.conLeft = self_id;
+                    $("#inspect_conRight").val(self_id);
                     if (!no_pos) {
                         $(ui.draggable).css({
-                            "left": $this.parent().position().left - ui.draggable.width() + "px",
-                            "top": $this.parent().position().top + "px"
+                            "left": $this.position().left - ui.draggable.width() + "px",
+                            "top": $this.position().top + "px"
                         })
                     }
                 }
             });
             $($this).find(".plumb_dock_right").droppable({
-                accept: ".pl_l:not(#" + $($this).parent().attr("id") + ")",
+                accept: ".pl_l:not(#" + $($this).attr("id") + ")",
                 hoverClass: "drop-hover",
                 tolerance: "touch",
                 drop: function (event, ui) {
-                    vis.views[vis.activeView].widgets[$this.parent().attr("id")].data.conRight= $(ui.draggable).attr("id");
-                    vis.views[vis.activeView].widgets[$(ui.draggable).attr("id")].data.conLeft =  $this.parent().attr("id");
-                    $("#inspect_conLeft").val($this.parent().attr("id"));
+                    drag_id = $(ui.draggable).attr("id");
+                    self_id = $this.attr("id");
+
+                    vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
+                    vis.views[vis.activeView].widgets[drag_id].data.conLeft = self_id;
+                    $("#inspect_conLeft").val(self_id);
                     if (!no_pos) {
                         $(ui.draggable).css({
-                            "left": $this.parent().position().left + $this.parent().width() + "px",
-                            "top": $this.parent().position().top + "px"
+                            "left": $this.position().left + $this.width() + "px",
+                            "top": $this.position().top + "px"
                         })
                     }
                 }
             });
         },
-        pump: function (el, oid) {
-            var $this = $(el);
-            vis.binds.plumb.plumb_drop($this, true)
+        pump: function (el, oid, color_off, color_on, conTop, conBottom, conLeft, conRight) {
+            var $this = $(el).parent();
+            vis.binds.plumb.plumb_drop($this, true);
+
+            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+
+                if (newVal > 0) {
+                    var e = {
+                        type:"plumb_change",
+                        from:$this.attr("id"),
+                        color:color_on
+                    };
+                    console.log(e);
+                    $("#" + conTop).trigger(e);
+                    $("#" + conBottom).trigger(e);
+                    $("#" + conLeft).trigger(e);
+                    $("#" + conRight).trigger(e);
+                }
+            });
         },
-        pipe_h: function (el) {
-            var $this = $(el);
+        pipe_h: function (el, conLeft, conRight) {
+            var $this = $(el).parent();
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.height() / 2);
-                $($this).children().css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
-            })
+                $($this).find(".pipe_h").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+            });
 
             vis.binds.plumb.plumb_drop($this)
 
+            $this.bind("plumb_change", function (event) {
+            $($this).find(".pipe_h").css("background-color", event.color)
+                var e = {
+                    type:"plumb_change",
+                    from: $this.parent().attr("id"),
+                    color: event.color
+                };
+                console.log(event.from)
+                console.log(conLeft)
+                if(conLeft == event.from){
+                    console.log("2 r")
+                    $("#" + conRight).trigger(e);
+                }else{
+                    console.log("2 l")
+                    $("#" + conLeft).trigger(e);
+                }
+            })
 
         },
         pipe_v: function (el) {
-            var $this = $(el);
+            var $this = $(el).parent();
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
-                $($this).children().css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".pipe_v").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'})
             });
 
-
             vis.binds.plumb.plumb_drop($this)
+
+            $this.bind("plumb_change", function (from) {
+                console.log(from)
+            })
 
         },
         bogen_br: function (el) {
-            var $this = $(el);
+            var $this = $(el).parent();
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
-                $($this).children().css({"box-shadow": 'inset ' + shadow / 2 + 'px ' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
+                $($this).find(".bogen_br").css({"box-shadow": 'inset ' + shadow / 2 + 'px ' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
                 $($this).find(".bogen_br_shadow").css({"box-shadow": '-' + parseInt(shadow / 2 / 2) + 'px -' + parseInt(shadow / 2 / 2) + 'px ' + shadow + 'px #000 '});
-            })
+            });
+
             vis.binds.plumb.plumb_drop($this)
         },
         bogen_bl: function (el) {
-            var $this = $(el);
+            var $this = $(el).parent();
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
-                $($this).children().css({"box-shadow": 'inset -' + shadow / 2 + 'px ' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
+                $($this).find(".bogen_bl").css({"box-shadow": 'inset -' + shadow / 2 + 'px ' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
                 $($this).find(".bogen_bl_shadow").css({"box-shadow": '' + parseInt(shadow / 2 / 2) + 'px -' + parseInt(shadow / 2 / 2) + 'px ' + shadow + 'px #000 '});
-            })
+            });
+
             vis.binds.plumb.plumb_drop($this)
         }
 
@@ -129,14 +186,18 @@
 <script id="tplPlump_pump"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_pump" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_b pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{}" style="top: 138px; left: 142px; width: 50px; height: 50px;" > <div class="vis-widget-prev-body">			<div class="pipe_v" style="">				<div class="plumb_dock_top ui-droppable"></div>				<div class="plumb_dock_bottom ui-droppable"></div>				<div class="plumb_dock_left ui-droppable"></div>				<div class="plumb_dock_right ui-droppable"></div>			</div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_pump" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_b pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{}" style="top: 163px; left: 449px; width: 57px; height: 183px;" > <div class="vis-widget-prev-body">			<div class="pump" style=""><img style="position: absolute; width: 100%;" src="./widgets/plumb/img/pumpe.png"><div class="plumb_dock_top ui-droppable"></div><div class="plumb_dock_bottom ui-droppable"></div>				<div class="plumb_dock_left ui-droppable"></div>				<div class="plumb_dock_right ui-droppable"></div>			</div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Pump"
-        data-vis-attrs="oid">
-    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t" data-vis-resizable='{}' style="top:0px; left: 0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pump(el, data.oid) %>>
-			<div class="pipe_v" style="">
+        data-vis-attrs="oid;src[./widgets/plumb/img/pumpe.png];stretch/checkbox;Off/color;ON/color;conTop;conBottom;conLeft;conRight">
+    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t" data-vis-resizable='{}' style="top:0px; left: 0px; width: 65px; height: 205px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pump(el, data.oid, data.OFF, data.ON, data.conTop, data.conBottom, data.conLeft, data.conRight) %>>
+			<div class="pump" style="">
+			   <% if (vis.editMode) { %>
+                <div class="editmode-helper" style="z-index:0" />
+            <% } %>
+            <img style="position:absolute; width:100%;<%= this.data.attr('stretch') ? 'height:100%' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_bottom"></div>
 				<div class="plumb_dock_left"></div>
@@ -144,8 +205,6 @@
 			</div>
         </div>
     </div>
-
-
 
 </script>
 
@@ -167,7 +226,6 @@
     </div>
 
 
-
 </script>
 
 <script id="tplPlump_pipe_H"
@@ -179,14 +237,13 @@
         data-vis-name="Pipe_H"
         data-vis-attrs="conLeft;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl_l pl_r " data-vis-resizable='{"grid": [ 1, 10 ]}' style="top:0px; left: 0px; width: 100px; height: 20px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_h(el) %>>
-			<div class="pipe_v" style="">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_h(el, data.conLeft, data.conRight) %>>
+			<div class="pipe_h" style="">
 				<div class="plumb_dock_left"></div>
 				<div class="plumb_dock_right"></div>
 			</div>
         </div>
     </div>
-
 
 
 </script>
@@ -209,7 +266,9 @@
         </div>
     </div>
 
+
 </script>
+
 <script id="tplPlump_bogen_bl"
         type="text/ejs"
         class="vis-tpl"
@@ -227,5 +286,7 @@
 			</div>
         </div>
     </div>
+
+
 
 </script>

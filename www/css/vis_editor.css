@@ -262,6 +262,7 @@ html {
     border: none;
     position: relative;
 
+    width: 100%;
 }
 
 .ribbon_tab_content {
