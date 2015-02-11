@@ -36,6 +36,11 @@ vis = $.extend(true, vis, {
 
     editInit: function () {
         var that = this;
+        vis.states["dev1.val"] = null;
+        vis.states["dev2.val"] = null;
+        vis.states["dev3.val"] = null;
+        vis.states["dev4.val"] = null;
+        vis.states["dev5.val"] = 1;
         this.editLoadConfig();
 
         this.$selectView           = $('#select_view');
@@ -740,35 +745,10 @@ vis = $.extend(true, vis, {
         });
 
         // Dev ----------------------------------------------------------------
-        $("#oid_none_0").click(function(){
-            var o = {};
-            //o['nothing_selected.val'] = 0;
-            //o['nothing_selected.ack'] = true;
-            //vis.states.attr(o);
-
-            vis.setValue("nothing_selected", 0);
+        $(".oid-dev").change(function(){
+            vis.setValue($(this).attr("id").split("_")[1], parseInt($(this).val()));
         });
-        $("#oid_none_1").click(function(){
-            //var o = {};
-            //o['nothing_selected.val'] = 1;
-            //o['nothing_selected.ack'] = true;
-            //vis.states.attr(o);
-            vis.setValue("nothing_selected", 1);
-        });
-        $("#oid_none_slider").slider({
-            min:0,
-            max:100,
-            setp:1,
-            slide:function(e,ui){
-                vis.setValue("nothing_selected", ui.value);
 
-            }
-        }),
-            vis.states.bind('nothing_selected.val', function (e, newVal, oldVal) {
-                if (newVal != $("#oid_none_slider").slider("value")) {
-                    $("#oid_none_slider").slider("value", newVal)
-                }
-            });
     },
     editInitWidgetPreview: function () {
         var that = this;
