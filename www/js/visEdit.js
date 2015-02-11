@@ -177,7 +177,7 @@ vis = $.extend(true, vis, {
         // Button Click Handler
 
         $('#export_view').click(function () {
-            vis.exportView(false);
+            that.exportView(false);
         });
 
         $('#import_view').click(function () {
@@ -191,7 +191,7 @@ vis = $.extend(true, vis, {
                     $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
                     $('.ui-widget-overlay').css('z-index', 1001);
                     $('#start_import_view').click(function () {
-                        vis.importView();
+                        that.importView();
                     });
                     $('#name_import_view').show();
                 }
@@ -390,10 +390,10 @@ vis = $.extend(true, vis, {
 
          if (document.getElementById('select_active_widget')._isOpen === undefined) {
          $('#select_active_widget').html('<option value="none">' + _('none selected') + '</option>');
-         if (vis.activeView && vis.views && vis.views[vis.activeView] && vis.views[vis.activeView].widgets) {
-         for (var widget in vis.views[vis.activeView].widgets) {
-         var obj = $("#" + vis.views[vis.activeView].widgets[widget].tpl);
-         $('#select_active_widget').append("<option value='" + widget + "'>" + this.getWidgetName(vis.activeView, widget) + </option>");
+         if (this.activeView && this.views && this.views[this.activeView] && this.views[this.activeView].widgets) {
+         for (var widget in this.views[this.activeView].widgets) {
+         var obj = $("#" + this.views[this.activeView].widgets[widget].tpl);
+         $('#select_active_widget').append("<option value='" + widget + "'>" + this.getWidgetName(this.activeView, widget) + </option>");
          }
          }
          $('#select_active_widget').multiselect('refresh');
@@ -514,7 +514,7 @@ vis = $.extend(true, vis, {
             $('#ul_theme li').removeClass('ui-state-active');
             $('#editorTheme').remove();
             $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editorTheme"/>');
-            //vis.additionalThemeCss(theme);
+            //that.additionalThemeCss(theme);
             setTimeout(function(){
                 $('#scrollbar_style').remove();
                 $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: '+$(".ui-widget-header ").first().css("background-color")+'}</style>');
@@ -916,7 +916,7 @@ vis = $.extend(true, vis, {
 
         var sel;
 
-        var keys = Object.keys(vis.views);
+        var keys = Object.keys(this.views);
         var len = keys.length;
         var i;
         var k;
@@ -1065,14 +1065,14 @@ vis = $.extend(true, vis, {
 
         // Create background_class property if does not exist
         if (this.views[this.activeView] != undefined) {
-            if (this.views[vis.activeView].settings == undefined) {
+            if (this.views[this.activeView].settings == undefined) {
                 this.views[vis.activeView].settings = {};
             }
-            if (this.views[vis.activeView].settings.style == undefined) {
+            if (this.views[this.activeView].settings.style == undefined) {
                 this.views[vis.activeView].settings.style = {};
             }
-            if (this.views[vis.activeView].settings.style['background_class'] == undefined) {
-                this.views[vis.activeView].settings.style['background_class'] = '';
+            if (this.views[this.activeView].settings.style['background_class'] == undefined) {
+                this.views[this.activeView].settings.style['background_class'] = '';
             }
         }
 
@@ -1334,7 +1334,7 @@ vis = $.extend(true, vis, {
         }
     },
     exportView: function (isAll) {
-        var exportView = $.extend(true, {}, isAll ? vis.views : vis.views[vis.activeView]);
+        var exportView = $.extend(true, {}, isAll ? this.views : this.views[this.activeView]);
         // Allen Widgets eine neue ID verpassen...
         var num = 1;
         var wid;
@@ -1359,7 +1359,8 @@ vis = $.extend(true, vis, {
         });
     },
     importView: function (isAll) {
-        var name = vis.checkNewViewName($('#name_import_view').val());
+        var that = this;
+        var name = this.checkNewViewName($('#name_import_view').val());
         var importObject;
         if (name === false) return;
         try {
@@ -1370,21 +1371,21 @@ vis = $.extend(true, vis, {
             return;
         }
         if (isAll) {
-            vis.views = importObject;
-            vis.saveRemote(function () {
+            this.views = importObject;
+            this.saveRemote(function () {
                 window.location.reload();
             });
         } else {
-            vis.views[name] = importObject;
+            this.views[name] = importObject;
 
             // Allen Widgets eine neue ID verpassen...
-            for (var widget in vis.views[name].widgets) {
-                vis.views[name].widgets[vis.nextWidget()] = vis.views[name].widgets[widget];
-                delete vis.views[name].widgets[widget];
+            for (var widget in this.views[name].widgets) {
+                this.views[name].widgets[this.nextWidget()] = this.views[name].widgets[widget];
+                delete this.views[name].widgets[widget];
             }
-            vis.saveRemote(function () {
-                vis.renderView(name);
-                vis.changeView(name);
+            this.saveRemote(function () {
+                that.renderView(name);
+                that.changeView(name);
                 window.location.reload();
             });
         }
@@ -1405,8 +1406,8 @@ vis = $.extend(true, vis, {
         var next = 1;
         var used = [];
         var key = "w" + (('000000' + next).slice(-5));
-        for (var view in vis.views) {
-            for (var wid in vis.views[view].widgets) {
+        for (var view in this.views) {
+            for (var wid in this.views[view].widgets) {
                 wid = wid.split('_');
                 wid = wid[0];
                 used.push(wid);
@@ -1421,8 +1422,8 @@ vis = $.extend(true, vis, {
     getViewOfWidget: function (id) {
         // find view of this widget
         var view = null;
-        for (var v in vis.views) {
-            if (vis.views[v] && vis.views[v].widgets && vis.views[v].widgets[id]) {
+        for (var v in this.views) {
+            if (this.views[v] && this.views[v].widgets && this.views[v].widgets[id]) {
                 view = v;
                 break;
             }
@@ -1655,7 +1656,7 @@ vis = $.extend(true, vis, {
                 newWidgets.push(this.addWidget(tpl, data, style, undefined, undefined, undefined, true));
 
                 this.$selectActiveWidgets
-                    .append('<option value="' + newWidgets[newWidgets.length - 1] + '">' + newWidgets[newWidgets.length - 1] + ' (' + $("#" + vis.views[vis.activeView].widgets[newWidgets[newWidgets.length - 1]].tpl).attr("data-vis-name") + ')</option>')
+                    .append('<option value="' + newWidgets[newWidgets.length - 1] + '">' + newWidgets[newWidgets.length - 1] + ' (' + $("#" + this.views[this.activeView].widgets[newWidgets[newWidgets.length - 1]].tpl).attr("data-vis-name") + ')</option>')
                     .multiselect('refresh');
             } else {
                 if ($('#vis_container').find('#visview_' + targetView).html() == undefined) {
@@ -1709,7 +1710,7 @@ vis = $.extend(true, vis, {
         //}
         /*var parent = "";
          var p = this.objects[id]["Parent"];
-         //console.log('parent metaObject', id, p, vis.objects[p]);
+         //console.log('parent metaObject', id, p, this.objects[p]);
          if (p !== undefined && this.objects[p]["DPs"] !== undefined) {
          parent = this.objects[p]["Name"] + "/";
          } else if (this.objects[id]["TypeName"] !== undefined) {
@@ -1721,7 +1722,7 @@ vis = $.extend(true, vis, {
          }
 
          if (this.objects[id]["Address"] !== undefined) {
-         return parent + vis.objects[id]["Name"] + "/" + this.objects[id]["Address"];
+         return parent + this.objects[id]["Name"] + "/" + this.objects[id]["Address"];
          } else if (this.objects[id]["Name"]) {
          return parent + this.objects[id]["Name"];
          } else if (this.objects[id]["name"]) {
@@ -1764,7 +1765,7 @@ vis = $.extend(true, vis, {
                 var wid = wids[0];
 
                 // First sync views
-                for (var v_ in vis.views) {
+                for (var v_ in this.views) {
                     isFound = false;
                     if (v_ == view) {
                         continue;
@@ -3287,7 +3288,7 @@ vis = $.extend(true, vis, {
             $('#screen_hide_description').prop('checked', this.views[view].settings.hideDescription).trigger('change');
 
             /*if (typeof hqWidgets != 'undefined') {
-             hqWidgets.SetHideDescription(vis.views[view].settings.hideDescription);
+             hqWidgets.SetHideDescription(this.views[view].settings.hideDescription);
              }*/
 
             $('#grid_size').val(this.views[view].settings.gridSize || '').trigger('change');
@@ -3423,12 +3424,12 @@ vis = $.extend(true, vis, {
                     if (ui.helper.attr('id') != that.activeWidgets[i]) $mWidget.css({left: x, top: y});
 
                     if (mWidget._customHandlers && mWidget._customHandlers.onMove) {
-                        mWidget._customHandlers.onMove(mWidget, vis.activeWidgets[i]);
+                        mWidget._customHandlers.onMove(mWidget, that.activeWidgets[i]);
                     }
                 }
-                /*var mWidget = document.getElementById(vis.activeWidget);
+                /*var mWidget = document.getElementById(that.activeWidget);
 
-                if (ui.helper.attr('id') == vis.activeWidget) {
+                if (ui.helper.attr('id') == that.activeWidget) {
                     $('#widget_helper').css({left: origX - 2, top: origY - 2});
                 } else {
                     var $mWidget = $(mWidget);
@@ -3457,6 +3458,9 @@ vis = $.extend(true, vis, {
         var resizableOptions;
         var that = this;
         if (obj.attr('data-vis-resizable')) resizableOptions = JSON.parse(obj.attr('data-vis-resizable'));
+
+        // Why resizable brings the flag position: relative within?
+        obj.css({position: 'absolute'});
 
         if (!resizableOptions) resizableOptions = {};
 
@@ -3676,7 +3680,7 @@ vis = $.extend(true, vis, {
                         }
                     }
                     if (!isFound) {
-                        this.views[vis.activeView].filterList[this.views[this.activeView].filterList.length] = widgets[widget].data.filterkey;
+                        this.views[this.activeView].filterList[this.views[this.activeView].filterList.length] = widgets[widget].data.filterkey;
                     }
                 }
             }
@@ -3810,17 +3814,17 @@ vis = $.extend(true, vis, {
     },
     _saveTimer: null, // Timeout to save the configuration
     _saveToServer: function () {
-        if (!vis.undoHistory || vis.undoHistory.length == 0 ||
-            (JSON.stringify(vis.views[vis.activeView]) != JSON.stringify(vis.undoHistory[vis.undoHistory.length - 1]))) {
-            vis.undoHistory = vis.undoHistory || [];
+        if (!this.undoHistory || this.undoHistory.length == 0 ||
+            (JSON.stringify(this.views[this.activeView]) != JSON.stringify(this.undoHistory[this.undoHistory.length - 1]))) {
+            this.undoHistory = this.undoHistory || [];
             $('#button_undo').removeClass('ui-state-disabled');
-            if (vis.undoHistory.push($.extend(true, {}, vis.views[vis.activeView])) > vis.undoHistoryMaxLength) {
-                vis.undoHistory.splice(0, 1);
+            if (this.undoHistory.push($.extend(true, {}, this.views[this.activeView])) > this.undoHistoryMaxLength) {
+                this.undoHistory.splice(0, 1);
             }
         }
-
-        vis.saveRemote(function () {
-            vis._saveTimer = null;
+        var that = this;
+        this.saveRemote(function () {
+            that._saveTimer = null;
             $('#saving_progress').hide();
         });
     },
@@ -3945,7 +3949,7 @@ vis = $.extend(true, vis, {
     deselectAll: function () {
         // Select all widgets on view
         var $focused = $(':focus');
-        if (!$focused.length && vis.activeView) {
+        if (!$focused.length && this.activeView) {
             this.inspectWidgets([]);
             return true;
         } else {

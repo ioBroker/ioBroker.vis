@@ -134,7 +134,7 @@
         iframe: function (el, srcArr, refreshInterval) {
             var $this = $(el).parent().find('iframe');
             var oid   = $this.attr('data-oid');
- 
+
             vis.states.bind(oid + ".val", function (e, newVal, oldVal) {
                 $this.attr('src', srcArr[newVal]);
             });
@@ -209,10 +209,10 @@
             var $this = $(el);
             var oid = (id ? id : $this.attr('data-oid'));
             var val = $this.attr('data-val');
-            
+
             if (val === 'true')  val = true;
             if (val === 'false') val = false;
-            
+
             $this.on('click', function (e) {
                 if (!vis.editMode) {
                     vis.setValue($this.attr('data-oid'), val);
@@ -220,12 +220,12 @@
             });
             // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
             /*
-            $this.on('touchend',function (e) {
-                if (!vis.editMode) {
-                    vis.setValue($this.attr('data-oid'), val);
-                }
-            });
-            */
+             $this.on('touchend',function (e) {
+             if (!vis.editMode) {
+             vis.setValue($this.attr('data-oid'), val);
+             }
+             });
+             */
         },
         pressed: null,
         pressedNext: null,
@@ -285,13 +285,13 @@
 
             if (interval) {
                 $(el).on('mousedown', intervalStart)
-                    .on('touchstart', intervalStart)
-                    .on('touchend', function () {
-                        clearTimeout(vis.binds.basic.pressed);
-                    })
-                    .on('mouseup', function () {
-                        clearTimeout(vis.binds.basic.pressed);
-                    });
+                        .on('touchstart', intervalStart)
+                        .on('touchend', function () {
+                            clearTimeout(vis.binds.basic.pressed);
+                        })
+                        .on('mouseup', function () {
+                            clearTimeout(vis.binds.basic.pressed);
+                        });
             }
         },
         navigation: function (el, options) {
@@ -341,7 +341,7 @@
             });
             if (!vis.editMode) {
                 if (parseFloat(vis.states.attr(oid + ".val")) != 0 && vis.states.attr(oid + ".val") !== false) {
-                 $this.hide();
+                    $this.hide();
                 }
             }
         },
@@ -370,7 +370,7 @@
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 // If still working
                 if (wid && (vis.states.attr(wid + '.val') === true)) return;
-                
+
                 $this.prop('checked', !(newVal === false || parseFloat(newVal) === 0.0));
             });
             var val = vis.states.attr(oid + '.val');
@@ -389,9 +389,9 @@
                     val = false;
                 }
             }
-            
+
             if (val > 0) $this.prop('checked', true);
-            
+
             if (!vis.editMode) {
                 $this.change(function () {
                     if ($this.prop('checked')) {
@@ -406,7 +406,7 @@
             var $this = $(el).prev();
             var oid   = $this.attr('data-oid');
             var val   = vis.states[oid + '.val'];
-            
+
             if (val === 'false') {
                 val = false;
             } else if (val === 'true') {
@@ -465,8 +465,8 @@
                     } else {
                         oldVal = false;
                     }
-                }                
-                
+                }
+
                 if (newVal == oldVal) return;
 
                 if (newVal === 'false' || newVal === false || parseFloat(newVal) == 0) {
@@ -489,17 +489,17 @@
             var id = $this.attr('data-oid');
             function toggle() {
                 var val = vis.states[id + '.val'];
-                
+
                 if (val === false || val === 'false') {
                     vis.setValue(id, true);
                 } else if (val === true || val === 'true') {
                     vis.setValue(id, false);
                 } else {
                     val = parseFloat(val);
-                    if (val >= 0.5) { 
-                        val = 1; 
-                    } else { 
-                        val = 0; 
+                    if (val >= 0.5) {
+                        val = 1;
+                    } else {
+                        val = 0;
                     }
                     vis.setValue( id,  1 - val);
                 }
@@ -641,7 +641,7 @@
 
             var $this = $('#div_' + wid);
             $('body').append('<div id="dlg_' + wid + '" title="' + _('Edit note') + '">' +
-                              '<textarea style="width:95%; height:92%" id="text_' + wid + '">' + $this.text().trim() + '</textarea></div>');
+            '<textarea style="width:95%; height:92%" id="text_' + wid + '">' + $this.text().trim() + '</textarea></div>');
 
             var buttons = {};
             buttons[_('Clear')] = function () {
@@ -654,14 +654,14 @@
                 var wid  = dlg.attr('data-wid');
                 var text = $('#text_' + wid).val();
                 text = text.replace('\n', '<br>\n');
-                
+
                 if (!oid) $('#div_' + wid).html(text);
                 /*if (!text) {
-                    $('#' + wid).css({width: min_width, height: min_height});
-                }
-                else {
-                    $('#' + wid).css({width: max_width, height: 'auto'});
-                }*/
+                 $('#' + wid).css({width: min_width, height: min_height});
+                 }
+                 else {
+                 $('#' + wid).css({width: max_width, height: 'auto'});
+                 }*/
 
                 if (oid) vis.setValue(oid, text);
 
@@ -720,7 +720,7 @@
 </script>
 
 
-        <!-- Basic Widgets -->
+<!-- Basic Widgets -->
 
 
 <script id="tplHtml"
@@ -1307,12 +1307,12 @@
 <script id="tplBulbOnOff"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplBulbOnOff" style=" position: relative; text-align: initial;padding: 4px "><div data-o class="vis-widget_prev ui-selectee" style="left: 82px; top: 31px;"> <div class="vis-widget-prev-body"> <img src="img/bulb_on.png" width="100%"> </div> </div>'
+        data-vis-prev='<div id="prev_tplBulbOnOff" style="position: relative; text-align: initial;padding: 4px "><div data-o class="vis-widget_prev ui-selectee" style="left: 82px; top: 31px;"> <div class="vis-widget-prev-body"> <img src="img/bulb_on.png" width="100%"> </div> </div>'
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Bulb on/off"
         data-vis-attrs="oid">
-    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 44px; height: 59px">
         <div class="vis-widget-body">
             <% switch (vis.states.attr(this.data.oid + '.val')) { case 0: case "0": case "0.000000": case false: case "false": %>
             <img src="img/bulb_off.png" width="100%"/>
@@ -1331,7 +1331,7 @@
         data-vis-type="ctrl"
         data-vis-name="Bulb on/off"
         data-vis-attrs="oid">
-    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>  style="width: 44px; height: 59px">
     <div class="vis-widget-body">
         <% switch (vis.states.attr("_"+this.data.oid+".val")) { case 0: case "0": case "0.000000": case "false": case false: %>
         <img src="img/bulb_off.png" width="100%"/>
