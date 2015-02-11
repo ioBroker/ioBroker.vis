@@ -94,6 +94,11 @@
             "html_closed":     {"en": "HTML by 'closed'",      "de": "HTML bei 'zu'",      "ru": "HTML если закрыто"},
             "html_open":       {"en": "HTML by 'open'",        "de": "HTML bei 'auf'",     "ru": "HTML если открыто"},
             "html_tilt":       {"en": "HTML by 'tilted'",      "de": "HTML bei 'gekippt'", "ru": "HTML если наклоненно"},
+            "html_tilt_tooltip": {
+                "en": "0 - Closed, 1 - tilt, 2 - open",
+                "de": "0- Zu, 1 - gekippt, 2 - auf",
+                "ru": "0 - закрыто, 1 - откинуто, 2 - открыто"
+            },
             "color":           {"en": "Color",                 "de": "Farbe",              "ru": "Цвет"},
             "shadow":          {"en": "Opacity",               "de": "Durchsichtigkeit",   "ru": "Тень"},
             "shadow_tooltip":  {
@@ -112,6 +117,13 @@
             "max_width":       {"en": "Max. width",            "de": "Maximale Breite",    "ru": "Максимальная ширина"}
         });
     }
+
+    $.extend(true, systemDictionary, {
+        "Edit note": {"en": "Edit note", "de": "Meldung eingeben", "ru": "Сообщение"},
+        "Clear": {"en": "Clear", "de": "Löschen", "ru": "Очистить"},
+        "Ok": {"en": "Ok", "de": "Ok", "ru": "Ok"},
+        "Cancel": {"en": "Cancel", "de": "Abbrechen", "ru": "Отмена"}
+    });
 
     vis.binds.stateful = {
         view: function (el, viewArr, persistent) {
@@ -641,7 +653,7 @@
 
             var $this = $('#div_' + wid);
             $('body').append('<div id="dlg_' + wid + '" title="' + _('Edit note') + '">' +
-            '<textarea style="width:95%; height:92%" id="text_' + wid + '">' + $this.text().trim() + '</textarea></div>');
+            '<textarea style="resize: none; width:95%; height:92%" id="text_' + wid + '">' + $this.text().trim() + '</textarea></div>');
 
             var buttons = {};
             buttons[_('Clear')] = function () {
@@ -1296,6 +1308,7 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Red Number"
+        data-vis-prev='<div id="prev_tplRedNumber" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="padding: 3px; width: auto; min-width: 21px; height: 21px; border-radius: 16px; border: 3px solid white; color: white; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 20px; line-height: normal; font-family: Helvetica; text-align: center; position: absolute; background-color: red;" data-o> <div class="vis-widget-prev-body"> 5 </div> </div></div>'
         data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural">
     <div class="vis-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
         <div class="vis-widget-body" >
@@ -1333,7 +1346,7 @@
         data-vis-attrs="oid">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>  style="width: 44px; height: 59px">
     <div class="vis-widget-body">
-        <% switch (vis.states.attr("_"+this.data.oid+".val")) { case 0: case "0": case "0.000000": case "false": case false: %>
+        <% switch (vis.states.attr(this.data.oid + ".val")) { case 0: case "0": case "0.000000": case "false": case false: %>
         <img src="img/bulb_off.png" width="100%"/>
         <% break; default: %>
         <img src="img/bulb_on.png" width="100%"/>
@@ -1357,6 +1370,8 @@
             <%== this.data.attr("html_tilt") %>
             <% break; case 2: %>
             <%== this.data.attr("html_open") %>
+            <% break; default: %>
+            <%== this.data.attr("html_closed") %>
             <% } %>
         </div>
     </div>
@@ -1386,7 +1401,8 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Bar Horizontal"
-        data-vis-attrs="oid;factor[1];color[white]/color;border;shadow;reverse/checkbox">
+        data-vis-prev='<div id="prev_tplValueFloatBar" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="width: 54px; height: 17px; border: 1px solid rgb(136, 136, 136); left: 458px; top: 292px; position: absolute;" > <div data-o class="vis-widget-prev-body" style="width: 68.6%; background-color: blue;"></div> </div></div>'
+        data-vis-attrs="oid;factor[1];color[blue]/color;border;shadow;reverse/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 240px; height: 20px; border: 1px solid #888" id="<%= this.data.attr('wid') %>">
         <div data-oid="<%= this.data.attr('oid') %>"
         class="vis-widget-body"
@@ -1400,7 +1416,8 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Bar Vertical"
-        data-vis-attrs="oid;factor[1];color[white]/color;border;shadow;reverse/checkbox">
+        data-vis-prev='<div id="prev_tplValueFloatBarVertical" style="position: relative; text-align: initial;padding: 4px "><div data-o class="vis-widget_prev ui-draggable-handle " style="width: 17px; height: 54px; border: 1px solid rgb(136, 136, 136); left: 435px; top: 105px; position: absolute;" > <div class="vis-widget-prev-body" style="height: 68.58%; position: absolute; bottom: 0%; background-color: blue;"></div> </div></div>'
+        data-vis-attrs="oid;factor[1];color[blue]/color;border;shadow;reverse/checkbox">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" style="width:20px; height:240px; border:1px solid #888" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="<%= (this.data.border) ? "width: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ");" : ""  %>height:<%= vis.binds.basic.getCalc(this.data) + ";" %> %><%= (this.data.reverse === "true" || this.data.reverse === true ? "left:0px; position:absolute; bottom:0%;" : "") %>;border: <%= this.data.border %>; box-shadow:<%= this.data.shadow %>; background-color:<%= this.data.color %>"></div>
     </div>
@@ -1412,9 +1429,10 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Note"
+        data-vis-prev='<div id="prev_tplNote" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="width: 70px; height: 50px; border: 1px solid rgb(136, 136, 136); left: 965px; top: 16px; position: absolute; background: rgba(255, 255, 105, 0.8);"><div style="padding: 10px">Message</div></div></div>'
         data-vis-attrs="oid;max_width[300];html_prepend;html_append;test_text">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:50px; height:50px; border:1px solid #888; background: yellow" id="<%= this.data.attr('wid') %>" onclick="vis.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= this.data.attr('oid') %>')">
-		<div data-oid="<%= this.data.attr('oid') %>" id="div_<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:50px; height:50px; border:1px solid #888; background: rgba(255,255,105,0.8)" id="<%= this.data.attr('wid') %>" onclick="vis.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= this.data.attr('oid') %>')">
+		<div data-oid="<%= this.data.attr('oid') %>" id="div_<%= this.data.attr('wid') %>" style="padding: 10px">
 			<%== this.data.attr("html_prepend") %><%= (this.data.test_text && vis.editMode) ? this.data.test_text : (vis.states.attr(this.data.oid + ".val") == null ? "" : vis.states.attr(this.data.oid + ".val")) %><%== this.data.attr("html_append") %>
 		</div>
     </div>
