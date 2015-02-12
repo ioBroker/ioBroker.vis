@@ -5,6 +5,11 @@ ioBroker.vis
 WEB visualisation for ioBroker platform.
 
 ## Changelog
+### 0.2.0 (2015-02-12)
+- (smiling_Jack) widget preview icons
+- (bluefox) fixed many bugs
+- (bluefox) multiedit (many widgets can be edited together)
+
 ### 0.1.0 (2015-01-31)
 - (smiling_Jack) New Editor
 - (bluefox) new features (many and small)
