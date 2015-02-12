@@ -1,5 +1,5 @@
 /*
- Copyright 2014 bluefox <bluefox@ccu.io>
+ Copyright 2014-2015 bluefox <bluefox@ccu.io>
 
  To use this dialog as standalone in ioBroker environment include:
  <link type="text/css" rel="stylesheet" href="lib/css/redmond/jquery-ui.min.css">
@@ -156,7 +156,12 @@
 
             if (objects[id].enums) {
                 for (var e in objects[id].enums) {
-                    if (objects[e].common.members.indexOf(id) == -1) objects[e].common.members.push(id);
+                    if (objects[e] &&
+                        objects[e].common &&
+                        objects[e].common.members &&
+                        objects[e].common.members.indexOf(id) == -1) {
+                        objects[e].common.members.push(id);
+                    }
                 }
             }
 

@@ -825,6 +825,30 @@ vis = $.extend(true, vis, {
 
                     }
                 });
+                // Add widget by double click
+                $('#prev_container_' + tpl).dblclick(function () {
+                    var tpl = $(this).data('tpl');
+                    var $tpl = $('#' + tpl);
+                    var renderVisible = $tpl.attr('data-vis-render-visible');
+
+                    // Widget attributs default values
+                    var attrs = $tpl.attr('data-vis-attrs');
+                    var data = {};
+                    if (attrs) {
+                        attrs = attrs.split(';');
+                        if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
+                    }
+                    if (renderVisible) data.renderVisible = true;
+
+                    var widgetId = that.addWidget(tpl, data);
+
+                    that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + ')</option>')
+                        .multiselect('refresh');
+
+                    setTimeout(function () {
+                        that.inspectWidgets();
+                    }, 50);
+                });
             });
         });
 
