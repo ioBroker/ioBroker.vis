@@ -36,10 +36,10 @@ vis = $.extend(true, vis, {
 
     editInit: function () {
         var that = this;
-        vis.states["dev1.val"] = null;
-        vis.states["dev2.val"] = null;
-        vis.states["dev3.val"] = null;
-        vis.states["dev4.val"] = null;
+        vis.states["dev1.val"] = 0;
+        vis.states["dev2.val"] = 0;
+        vis.states["dev3.val"] = 0;
+        vis.states["dev4.val"] = 0;
         vis.states["dev5.val"] = 1;
         this.editLoadConfig();
 
@@ -1999,6 +1999,13 @@ vis = $.extend(true, vis, {
                 }
             };
         }
+        setTimeout(function () {
+            $('#inspect_' + widAttr).css("background-color", $('#inspect_' + widAttr).val())
+            $('#inspect_' + widAttr).on("change", function () {
+                $(this).css("background-color", $(this).val())
+            })
+        });
+
         return line;
     },
     editViewName: function (widAttr) {
