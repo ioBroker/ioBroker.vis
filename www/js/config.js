@@ -1,6 +1,5 @@
 var visConfig = {
     widgetSets: [
-        "plumb",
         "basic",
         {name: "metro",       depends: ["basic"]},
         {name: "fancyswitch", depends: ["basic"]},
