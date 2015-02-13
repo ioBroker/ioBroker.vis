@@ -31,7 +31,7 @@ vis = $.extend(true, vis, {
     selectable:            true,
     groupsState:           {'fixed': true, 'common': true},
     // Array with all objects (Descriptions of objects)
-    objects:               null,
+    objects:               {},
     config:                {},
 
     editInit: function () {
@@ -1741,7 +1741,8 @@ vis = $.extend(true, vis, {
         }
     },
     getObjDesc: function (id) {
-        if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
+
+        if (this.objects[id] && this.objects[id].common && this.objects[id].common.name ) {
             return this.objects[id].common.name;
         }
         return id;
