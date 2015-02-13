@@ -89,7 +89,9 @@ vis = $.extend(true, vis, {
 
 
         $('#button_undo')
-            .click(this.undo)
+            .click(function () {
+                that.undo();
+            })
             .addClass('ui-state-disabled')
             .hover(
             function () {
@@ -601,7 +603,7 @@ vis = $.extend(true, vis, {
         });
 
         $("#rib_wid_copy_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
-            that.dupWidgets();
+            that.dupWidgets(null, $('#rib_wid_copy_view').val());
             $('#rib_wid').show();
             $('#rib_wid_copy_tr').hide();
         });
@@ -824,6 +826,30 @@ vis = $.extend(true, vis, {
                         }
 
                     }
+                });
+                // Add widget by double click
+                $('#prev_container_' + tpl).dblclick(function () {
+                    var tpl = $(this).data('tpl');
+                    var $tpl = $('#' + tpl);
+                    var renderVisible = $tpl.attr('data-vis-render-visible');
+
+                    // Widget attributs default values
+                    var attrs = $tpl.attr('data-vis-attrs');
+                    var data = {};
+                    if (attrs) {
+                        attrs = attrs.split(';');
+                        if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
+                    }
+                    if (renderVisible) data.renderVisible = true;
+
+                    var widgetId = that.addWidget(tpl, data);
+
+                    that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + ')</option>')
+                        .multiselect('refresh');
+
+                    setTimeout(function () {
+                        that.inspectWidgets();
+                    }, 50);
                 });
             });
         });
@@ -1705,34 +1731,9 @@ vis = $.extend(true, vis, {
         }
     },
     getObjDesc: function (id) {
-        //if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
-        //    return this.objects[id].common.name;
-        //}
-        /*var parent = "";
-         var p = this.objects[id]["Parent"];
-         //console.log('parent metaObject', id, p, this.objects[p]);
-         if (p !== undefined && this.objects[p]["DPs"] !== undefined) {
-         parent = this.objects[p]["Name"] + "/";
-         } else if (this.objects[id]["TypeName"] !== undefined) {
-         if (this.objects[id]["TypeName"] == "VARDP") {
-         parent = _("Variable") + " / ";
-         } else if (this.objects[id]["TypeName"] == "PROGRAM") {
-         parent = _("Program") + " / ";
-         }
-         }
-
-         if (this.objects[id]["Address"] !== undefined) {
-         return parent + this.objects[id]["Name"] + "/" + this.objects[id]["Address"];
-         } else if (this.objects[id]["Name"]) {
-         return parent + this.objects[id]["Name"];
-         } else if (this.objects[id]["name"]) {
-         return parent + this.objects[id]["name"];
-         }
-         } else if (id == 41) {
-         return _("Service messages");
-         } else if (id == 40) {
-         return _("Alarms");
-         }*/
+        if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
+            return this.objects[id].common.name;
+        }
         return id;
     },
     // find this wid in all views,

@@ -22,6 +22,16 @@
                 "de": "HTML anhängen(Plüral)",
                 "ru": "Суффикс значения(множ.ч.)"
             },
+            "html_prepend_tooltip":    {
+                "en": "Write HTML code here that will be placed before,\x0Ae.g. <b> ",
+                "de": "HTML Kod, der wird vom dem Wert platziert,\x0Az.B. <b>",
+                "ru": "HTML код будет помещён перед значением,\x0Aнапример <b>"
+            },
+            "html_append_tooltip":     {
+                "en": "Write HTML code here that will be placed before,\x0Ae.g. </b>",
+                "de": "HTML Kod, der wird vom dem Wert platziert,\x0Az.B. </b>",
+                "ru": "HTML код будет помещён после значения,\x0Aнапример </b>"
+            },
             "stretch":         {"en": "Stretch",               "de": "Streken",            "ru": "Растянуть"},
             "factor":          {"en": "Multiplex factor",      "de": "Multiplikation",     "ru": "Множитеть"},
             "class_true":      {"en": "Class if quality 'true'", "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
@@ -114,7 +124,13 @@
                 "ru": "CSS бордюр, как 'green 5px solid'"
             },
             "test_text":       {"en": "Test text",             "de": "Testtext",           "ru": "Тестовый текст"},
-            "max_width":       {"en": "Max. width",            "de": "Maximale Breite",    "ru": "Максимальная ширина"}
+            "max_width":       {"en": "Max. width",            "de": "Maximale Breite",    "ru": "Максимальная ширина"},
+            "style":           {"en": "Style for ",            "de": "Stil für ",          "ru": "Стиль для "},
+            "style_tooltip":   {
+                "en": "Write here css style, like: 'color:red;background:white'",
+                "de": "Hier muss CSS Stil stehen, wie 'color:red;background:white'",
+                "ru": "CSS Стиль, например: 'color:red;background:white'"},
+            "count":           {"en": "Values number to",      "de": "Wertsanzahl bis",        "ru": "Количество значений до"}
         });
     }
 
@@ -1113,12 +1129,12 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val"
-        data-vis-name="ValueList HTML 8"
-        data-vis-attrs="oid;html_prepend;html_append;value(0-7);style(0-7)">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" style="<% var slist = [data.style0, data.style1, data.style2, data.style3, data.style4, data.style5, data.style6, data.style7]; %><%== slist[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10)] %>">
+        data-vis-name="ValueList HTML Style"
+        data-vis-attrs="oid;html_prepend;html_append;count[2];value(0-count);style(0-count)">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" style="<% var slist = []; var i = 0; while (data['style' + i] !== undefined) {slist[i] = data['style' + i]; i++;} %><%== slist[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10)] %>">
         <div data-oid="<%= this.data.attr('oid') %>">
-            <%== this.data.attr("html_prepend") %><% var list = [data.val0, data.val1, data.val2, data.val3, data.val4, data.val5, data.val6, data.val7]; %><%== list[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))),10)] %><%== this.data.attr("html_append") %>
+           <%== this.data.attr("html_prepend") %><% var list = []; var j = 0; while (data['value' + j] !== undefined) {list[j] = data['value' + j]; j++;}; %><%== list[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))),10)] %><%== this.data.attr("html_append") %>
         </div>
     </div>
     </div>
@@ -1131,7 +1147,7 @@
         data-vis-type="val"
         data-vis-name="Bool HTML"
         data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" >
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
             <%
@@ -1156,7 +1172,7 @@
         data-vis-type="val"
         data-vis-name="AckFlag HTML"
         data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" >
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
             <%
@@ -1218,7 +1234,7 @@
         data-vis-type="ctrl"
         data-vis-name="Bool HTML"
         data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
         <div class="vis-widget-body">
 			<%== this.data.attr("html_prepend") %>
 			<%
@@ -1253,7 +1269,7 @@
         data-vis-type="ctrl"
         data-vis-name="HTML State"
         data-vis-attrs="html;oid;value">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el) %>>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el) %>>
         <div class="vis-widget-body">
 			<%== this.data.attr("html") %>
         </div>
@@ -1267,7 +1283,7 @@
         data-vis-type="val"
         data-vis-name="Hide on 0/False"
         data-vis-attrs="oid;html;html_prepend;html_append">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
         </div>
