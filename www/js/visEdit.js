@@ -1735,9 +1735,13 @@ vis = $.extend(true, vis, {
         if (this.activeWidgets.indexOf(wid) != -1) {
             var $wid = $('#' + wid);
             // User interaction
-            if (!this.widgets[wid].data._no_move) this.draggable($wid);
+            if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
+                if (!this.widgets[wid].data._no_move) this.draggable($wid);
+            }
             // If only one selected
             if (this.activeWidgets.length == 1) if (!this.widgets[wid].data._no_resize) this.resizable($wid);
+
+
         }
     },
     getObjDesc: function (id) {
@@ -2997,7 +3001,10 @@ vis = $.extend(true, vis, {
                 $widget = $('#' + select[i]);
                 this.$selectActiveWidgets.find('option[value="' + select[i] + '"]').attr('selected', 'selected');
                 this.showWidgetHelper(select[i], true);
-                this.draggable($widget);
+
+                if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
+                    this.draggable($widget);
+                }
             }
 
             // Enable disable buttons
@@ -3191,12 +3198,7 @@ vis = $.extend(true, vis, {
         });
         $("#inspect_views").next().css('width', '100%');
 
-        // SJ: it is done at the start of the function
-        // User interaction
-        /*if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
-            if (!this.widgets[wid].data._no_move)   this.draggable($this);
-            if (!this.widgets[wid].data._no_resize) this.resizable($this);
-        }*/
+
     },
     // Init all edit fields for one view
     changeViewEdit: function (view, noChange) {
