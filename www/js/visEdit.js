@@ -1729,34 +1729,9 @@ vis = $.extend(true, vis, {
         }
     },
     getObjDesc: function (id) {
-        //if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
-        //    return this.objects[id].common.name;
-        //}
-        /*var parent = "";
-         var p = this.objects[id]["Parent"];
-         //console.log('parent metaObject', id, p, this.objects[p]);
-         if (p !== undefined && this.objects[p]["DPs"] !== undefined) {
-         parent = this.objects[p]["Name"] + "/";
-         } else if (this.objects[id]["TypeName"] !== undefined) {
-         if (this.objects[id]["TypeName"] == "VARDP") {
-         parent = _("Variable") + " / ";
-         } else if (this.objects[id]["TypeName"] == "PROGRAM") {
-         parent = _("Program") + " / ";
-         }
-         }
-
-         if (this.objects[id]["Address"] !== undefined) {
-         return parent + this.objects[id]["Name"] + "/" + this.objects[id]["Address"];
-         } else if (this.objects[id]["Name"]) {
-         return parent + this.objects[id]["Name"];
-         } else if (this.objects[id]["name"]) {
-         return parent + this.objects[id]["name"];
-         }
-         } else if (id == 41) {
-         return _("Service messages");
-         } else if (id == 40) {
-         return _("Alarms");
-         }*/
+        if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
+            return this.objects[id].common.name;
+        }
         return id;
     },
     // find this wid in all views,
