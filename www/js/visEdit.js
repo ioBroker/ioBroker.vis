@@ -601,7 +601,7 @@ vis = $.extend(true, vis, {
         });
 
         $("#rib_wid_copy_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
-            that.dupWidgets();
+            that.dupWidgets(null, $('#rib_wid_copy_view').val());
             $('#rib_wid').show();
             $('#rib_wid_copy_tr').hide();
         });
