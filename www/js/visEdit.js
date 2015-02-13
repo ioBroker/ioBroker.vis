@@ -807,7 +807,7 @@ vis = $.extend(true, vis, {
                 if ($("#" + tpl).data('vis-type')) {
                     type = '<div class="wid_prev_type">' + $("#" + tpl).data("vis-type") + '</div>'
                 }
-                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">' + type + '<div>' + $("#" + tpl).data('vis-name') + '</div></div>');
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div></div>');
                 if ($(tpl_list[i]).data('vis-prev')) {
 
                     var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
@@ -827,9 +827,8 @@ vis = $.extend(true, vis, {
                             $(ui.helper).addClass("ui-state-highlight ui-corner-all").css({padding: "2px", "font-size": "12px"})
 
                         } else {
-                            ui.helper.children()[0].remove();
-                            ui.helper.children()[0].remove();
-                            //$(ui.helper.children()[0]).css("border","none")
+                            $(ui.helper).find(".wid_prev_type").remove();
+                            $(ui.helper).find(".wid_prev_name").remove();
                             $(ui.helper).css("border", "none")
                             $(ui.helper).css("width","auto")
                         }
@@ -1011,10 +1010,10 @@ vis = $.extend(true, vis, {
                 var tpl = ui.item.value;
                 that.editSaveConfig('select/select_set', tpl);
                 if (tpl == "all") {
-                    $('.wid_prev').show()
+                    $('.wid_prev').css("display","inline-block");
                 } else {
                     $('.wid_prev').hide();
-                    $('.' + tpl + '_prev').show();
+                    $('.' + tpl + '_prev').css("display","inline-block");
                 }
             }
         });

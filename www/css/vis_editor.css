@@ -313,7 +313,8 @@ html {
     width: 100%;
     position: relative;
     overflow: hidden;
-    display: inline-flex;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .toolbox {
@@ -327,6 +328,8 @@ html {
     border-right-width: 0px;
     border-bottom-width: 1px;
     border-bottom-style: solid;
+    /* display: table; */
+    vertical-align: middle;
 }
 
 .wid_prev {
@@ -335,9 +338,9 @@ html {
     overflow: hidden;
     position: relative;
     text-align: center;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
+    display: inline-block;
+    /* flex-direction: column; */
+    /* align-items: center; */
     background-color: rgba(0, 0, 0, 0) !important;
     margin: 3px;
     /*box-shadow: inset -3px -3px 5px rgba(20, 20, 20, 0.7), inset 3px 3px 5px rgba(220, 220, 220, 0.8);*/
@@ -363,6 +366,8 @@ html {
     margin: 4px;
     height: auto;
     overflow: hidden;
+    /* text-align: center!important; */
+    display: inline-block;
 }
 
 .wid_prev_type {
@@ -439,6 +444,8 @@ html {
     /* border-bottom-width: 1px; */
     border-top-width: 0px;
     border-left-width: 0px;
+    /* display: inline-block; */
+    float: left;
 }
 
 #pan_attr {
@@ -451,6 +458,7 @@ html {
     width: 355px;
 
     margin-right: 1px;
+    float: right;
 }
 
 #inspect_view_bkg_parent {
@@ -466,6 +474,7 @@ html {
     display: inline-block;
     height: 100%;
     overflow: hidden;
+    clear: both;
 }
 
 #view_select {
