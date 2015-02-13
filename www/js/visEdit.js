@@ -89,7 +89,9 @@ vis = $.extend(true, vis, {
 
 
         $('#button_undo')
-            .click(this.undo)
+            .click(function () {
+                that.undo();
+            })
             .addClass('ui-state-disabled')
             .hover(
             function () {
