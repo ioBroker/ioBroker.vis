@@ -1,5 +1,5 @@
 /*
- Copyright 2014 bluefox <bluefox@ccu.io>
+ Copyright 2014-2015 bluefox <bluefox@ccu.io>
 
  To use this dialog as standalone in ioBroker environment include:
  <link type="text/css" rel="stylesheet" href="lib/css/redmond/jquery-ui.min.css">
@@ -33,7 +33,8 @@
              onSuccess:  null,     // callback function to be called if user press "Select". Can be overwritten in "show"
              onChange:   null,     // called every time the new object selected
              noDialog:   false,    // do not make dialog
-             buttons:    null      // array with buttons, that should be shown in last column
+             buttons:    null,     // array with buttons, that should be shown in last column
+             list:       false,    // tree view or list view
              texts: {
                  select:   'Select',
                  cancel:   'Cancel',
@@ -55,13 +56,16 @@
                  refresh:  'Rebuild tree',
                  edit:     'Edit',
                  ok:       'Ok',
-                 wait:     'Processing...'
+                 wait:     'Processing...',
+                 list:     'Show list view'
+                 tree:     'Show tree view'
              },
              columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button'],
              widths:    null,   // array with width for every column
              editEnd:   null,   // function (id, newValues) for edit lines (only id and name can be edited)
              editStart: null,   // function (id, $inputs) called after edit start to correct input fields (inputs are jquery objects),
-             zindex:    null    // z-index of dialog or table
+             zindex:    null,   // z-index of dialog or table
+             customButtonFilter: null // if in the filter over the buttons some specific button must be shown. It has type like {icons:{primary: 'ui-icon-close'}, text: false, callback: function ()}
      }
  +  show(currentId, filter, callback) - all arguments are optional if set by "init"
  +  clear() - clear object tree to read and buildit anew (used only if objects set by "init")
@@ -84,7 +88,7 @@
         //    ("0" + (dateObj.getMinutes()).toString(10)).slice(-2) + ':' +
         //    ("0" + (dateObj.getSeconds()).toString(10)).slice(-2);
         // Following implementation is 5 times faster
-
+        if (!dateObj) return '';
 
         var text = dateObj.getFullYear();
         var v = dateObj.getMonth() + 1;
@@ -142,6 +146,7 @@
         var isType  = data.columns.indexOf('type') != -1;
         var isRoom  = data.columns.indexOf('room') != -1;
         var isRole  = data.columns.indexOf('role') != -1;
+        data.tree = {title: '', children: [], count: 0, root: true};
 
         for (var id in objects) {
 
@@ -149,7 +154,19 @@
 
             treeInsert(data, id, data.currentId == id);
 
+            if (objects[id].enums) {
+                for (var e in objects[id].enums) {
+                    if (objects[e] &&
+                        objects[e].common &&
+                        objects[e].common.members &&
+                        objects[e].common.members.indexOf(id) == -1) {
+                        objects[e].common.members.push(id);
+                    }
+                }
+            }
+
             if (isRoom && objects[id].type == 'enum' && data.regexEnumRooms.test(id)) data.enums.push(id);
+
 
             if (isType && data.types.indexOf(objects[id].type) == -1) data.types.push(objects[id].type);
 
@@ -215,6 +232,7 @@
             //error
         }
     }
+
     function deleteTree(data, id, deletedNodes) {
         var node = findTree(data, id);
         if (!node) {
@@ -247,7 +265,7 @@
     }
 
     function treeInsert(data, id, isExpanded, addedNodes) {
-        return _treeInsert(data.tree, treeSplit(data, id, false), id, 0, isExpanded, addedNodes);
+        return _treeInsert(data.tree, data.list ? [id] : treeSplit(data, id, false), id, 0, isExpanded, addedNodes);
     }
     function _treeInsert(tree, parts, id, index, isExpanded, addedNodes) {
         if (!index) index = 0;
@@ -295,6 +313,20 @@
         }
     }
 
+    function showActive($dlg, scrollIntoView)  {
+        var data = $dlg.data('selectId');
+        // Select current element
+        if (data.selectedID) {
+            data.$tree.fancytree('getTree').visit(function (node) {
+                if (node.key == data.selectedID) {
+                    node.setActive();
+                    node.makeVisible({scrollIntoView: scrollIntoView || false});
+                    return false;
+                }
+            });
+        }
+    }
+
     function initTreeDialog($dlg) {
         var c;
         var data = $dlg.data('selectId');
@@ -336,7 +368,7 @@
         }
 
         // Store current filter
-        var filter = {ID:      $('#filter_ID_' + data.instance).val()};
+        var filter = {ID: $('#filter_ID_' + data.instance).val()};
         for (var u = 0; u < data.columns.length; u++) {
             filter[data.columns[u]] = $('#filter_' + data.columns[u] + '_' + data.instance).val();
         }
@@ -399,9 +431,10 @@
         text += '        </colgroup>';
         text += '        <thead>';
         text += '            <tr><th></th><th><table style="width: 100%; padding:0" cellspacing="0" cellpadding="0"><tr>';
-        text += '                <td><button id="btn_collapse_' + data.instance + '"></button></td>';
-        text += '<td><button id="btn_expand_' + data.instance + '"></button></td>';
         text += '<td><button id="btn_refresh_' + data.instance + '"></button></td>';
+        text += '<td><button id="btn_list_' + data.instance + '"></button></td>';
+        text += '<td><button id="btn_collapse_' + data.instance + '"></button></td>';
+        text += '<td><button id="btn_expand_' + data.instance + '"></button></td>';
         if (data.panelButtons) {
             for (c = 0; c < data.panelButtons.length; c++) {
                 text += '<td><button id="btn_custom_' + data.instance + '_' + c + '"></button></td>';
@@ -432,7 +465,17 @@
             } else if (data.columns[c] == 'room') {
                 text += '<td>' + textRooms + '</td>';
             } else if (data.columns[c] == 'button') {
-                text += '<td></td>';
+                text += '<td style="text-align: center">';
+                if (data.customButtonFilter) {
+                    var t = '<select id="filter_' + data.columns[c] + '_'  + data.instance + '" class="filter_' + data.instance + '">';
+                    t += '<option value="">'      + data.texts.all     + '</option>';
+                    t += '<option value="true">'  + data.texts.with    + '</option>';
+                    t += '<option value="false">' + data.texts.without + '</option>';
+                    t += '</select>';
+
+                    text += '<table cellpadding="0" cellspacing="0" style="border-spacing: 0px 0px"><tr><td>' + t + '</td>' + '<td><button id="filter_' + data.columns[c] + '_'  + data.instance + '_btn"></button></td></tr></table>'
+                }
+                text += '</td>';
             }
         }
 
@@ -582,7 +625,7 @@
                         base++;
                     } else
                     if (data.columns[c] == 'name') {
-                        $tdList.eq(base++).text(isCommon ? data.objects[node.key].common.name : '');
+                        $tdList.eq(base++).text(isCommon ? data.objects[node.key].common.name : '').css({overflow: 'hidden', 'white-space': 'nowrap', 'text-overflow': 'ellipsis'}).attr('title', isCommon ? data.objects[node.key].common.name : '');
                     } else
                     if (data.columns[c] == 'type') {
                         $tdList.eq(base++).text(data.objects[node.key] ? data.objects[node.key].type: '');
@@ -610,20 +653,30 @@
 
                     } else
                     if (data.columns[c] == 'value') {
-                        if (data.states && data.states[node.key]) {
-                            var val = data.states[node.key].val;
-                            var fullVal;
-                            if (val === undefined) {
-                                val = '';
-                            } else {
-                                if (isCommon && data.objects[node.key].common.unit) val += ' ' + data.objects[node.key].common.unit;
-                                fullVal = data.texts.value + ': ' + val;
-                                fullVal += '\x0A' + data.texts.ack  + ': ' + data.states[node.key].ack;
-                                fullVal += '\x0A' + data.texts.ts   + ': ' + formatDate(new Date(data.states[node.key].ts * 1000));
-                                fullVal += '\x0A' + data.texts.lc   + ': ' + formatDate(new Date(data.states[node.key].lc * 1000));
-                                fullVal += '\x0A' + data.texts.from + ': ' + (data.states[node.key].from || '');
+                        if (data.states && (data.states[node.key] || data.states[node.key + '.val'] !== undefined)) {
+                            var state = data.states[node.key];
+                            if (!state) {
+                                state = {
+                                    val:  data.states[node.key + '.val'],
+                                    ts:   data.states[node.key + '.ts'],
+                                    lc:   data.states[node.key + '.lc'],
+                                    from: data.states[node.key + '.from'],
+                                    ack: (data.states[node.key + '.ack'] === undefined) ? '' : data.states[node.key + '.ack']
+                                };
                             }
-                            $tdList.eq(base).text(val);
+
+                            var fullVal;
+                            if (state.val === undefined) {
+                                state.val = '';
+                            } else {
+                                if (isCommon && data.objects[node.key].common.unit) state.val += ' ' + data.objects[node.key].common.unit;
+                                fullVal  =          data.texts.value + ': ' + state.val;
+                                fullVal += '\x0A' + data.texts.ack   + ': ' + state.ack;
+                                fullVal += '\x0A' + data.texts.ts    + ': ' + (state.ts ? formatDate(new Date(state.ts * 1000)) : '');
+                                fullVal += '\x0A' + data.texts.lc    + ': ' + (state.lc ? formatDate(new Date(state.lc * 1000)) : '');
+                                fullVal += '\x0A' + data.texts.from  + ': ' + (state.from || '');
+                            }
+                            $tdList.eq(base).text(state.val);
                             $tdList.eq(base).attr('title', fullVal);
                         } else {
                             $tdList.eq(base).text('');
@@ -717,6 +770,11 @@
                         base++;
                     }
                 }
+            },
+            dblclick: function (event, _data) {
+                if (data.buttonsDlg && _data && _data.node && !_data.node.folder) {
+                    data.buttonsDlg[0].click();
+                }
             }
         };
         if (data.editEnd) {
@@ -807,7 +865,7 @@
             // context menu:
             var refNode;
             var moveMode;
-            var tree = $(this).fancytree("getTree");
+            var tree = $(this).fancytree('getTree');
             var node = tree.getActiveNode();
 
             switch (data.cmd) {
@@ -924,7 +982,7 @@
                     if (data.filterVals[f] === 'true') {
                         if (!isCommon || !data.objects[node.key].common.history || !data.objects[node.key].common.history.enabled) return false;
                     } else if (data.filterVals[f] === 'false') {
-                        if (!isCommon || (data.objects[node.key].common.history && data.objects[node.key].common.history.enabled)) return false;
+                        if (!isCommon || data.objects[node.key].type != 'state' || (data.objects[node.key].common.history && data.objects[node.key].common.history.enabled)) return false;
                     }
                 } else
                 if (f == 'room') {
@@ -940,8 +998,8 @@
                                 rooms.indexOf(data.objects[data.enums[i]].common.name) == -1) {
                                 rooms.push(data.objects[data.enums[i]].common.name);
                             }
-                            data.rooms[node.key] = rooms;
                         }
+                        data.rooms[node.key] = rooms;
                     }
 
                     if (rooms.indexOf(data.filterVals[f]) == -1) return false;
@@ -954,7 +1012,7 @@
         $('.filter_' + data.instance).change(function () {
             data.filterVals = null;
             $('#process_running_' + data.instance).show();
-            data.$tree.fancytree("getTree").filterNodes(customFilter, false);
+            data.$tree.fancytree('getTree').filterNodes(customFilter, false);
             $('#process_running_' + data.instance).hide();
         }).keyup(function () {
             var tree = data.$tree[0];
@@ -966,22 +1024,24 @@
             }, 200);
         });
 
-        $('.filter_btn_' + data.instance).button({icons:{primary: 'ui-icon-close'}, text: false}).css({width: 18, height: 18}).click(function () {
+        $('.filter_btn_' + data.instance).button({icons: {primary: 'ui-icon-close'}, text: false}).css({width: 18, height: 18}).click(function () {
             $('#' + $(this).attr('data-id')).val('').trigger('change');
         }).attr('title', data.texts.collapse);
-        $('#btn_collapse_' + data.instance).button({icons:{primary: 'ui-icon-folder-collapsed'}, text: false}).css({width: 18, height: 18}).click(function () {
+
+        $('#btn_collapse_' + data.instance).button({icons: {primary: 'ui-icon-folder-collapsed'}, text: false}).css({width: 18, height: 18}).click(function () {
             $('#process_running_' + data.instance).show();
             setTimeout(function () {
-                data.$tree.fancytree("getRootNode").visit(function (node) {
+                data.$tree.fancytree('getRootNode').visit(function (node) {
                     if (!data.filterVals.length || node.match || node.subMatch) node.setExpanded(false);
                 });
                 $('#process_running_' + data.instance).hide();
             }, 100);
         });
-        $('#btn_expand_' + data.instance).button({icons:{primary: 'ui-icon-folder-open'}, text: false}).css({width: 18, height: 18}).click(function () {
+
+        $('#btn_expand_' + data.instance).button({icons: {primary: 'ui-icon-folder-open'}, text: false}).css({width: 18, height: 18}).click(function () {
             $('#process_running_' + data.instance).show();
             setTimeout(function () {
-                data.$tree.fancytree("getRootNode").visit(function (node) {
+                data.$tree.fancytree('getRootNode').visit(function (node) {
                     if (!data.filterVals.length || node.match || node.subMatch)
                         node.setExpanded(true);
                 });
@@ -989,7 +1049,35 @@
             }, 100);
         }).attr('title', data.texts.expand);
 
-        $('#btn_refresh_' + data.instance).button({icons:{primary: 'ui-icon-refresh'}, text: false}).css({width: 18, height: 18}).click(function () {
+        $('#btn_list_' + data.instance).button({icons: {primary: 'ui-icon-grip-dotted-horizontal'}, text: false}).css({width: 18, height: 18}).click(function () {
+            $('#process_running_' + data.instance).show();
+            data.list = !data.list;
+            if (data.list) {
+                $('#btn_list_' + data.instance).addClass('ui-state-error');
+                $('#btn_expand_' + data.instance).hide();
+                $('#btn_collapse_' + data.instance).hide();
+                $(this).attr('title', data.texts.list);
+            } else {
+                $('#btn_list_' + data.instance).removeClass('ui-state-error');
+                $('#btn_expand_' + data.instance).show();
+                $('#btn_collapse_' + data.instance).show();
+                $(this).attr('title', data.texts.tree);
+            }
+            $('#process_running_' + data.instance).show();
+            setTimeout(function () {
+                data.inited = false;
+                initTreeDialog(data.$dlg);
+                $('#process_running_' + data.instance).hide();
+            }, 200);
+        }).attr('title', data.texts.tree)
+        if (data.list) {
+            $('#btn_list_' + data.instance).addClass('ui-state-error');
+            $('#btn_expand_' + data.instance).hide();
+            $('#btn_collapse_' + data.instance).hide();
+            $('#btn_list_' + data.instance).attr('title', data.texts.list);
+        }
+
+        $('#btn_refresh_' + data.instance).button({icons: {primary: 'ui-icon-refresh'}, text: false}).css({width: 18, height: 18}).click(function () {
             $('#process_running_' + data.instance).show();
             data.inited = false;
             initTreeDialog(data.$dlg);
@@ -1006,6 +1094,12 @@
                 text += '<td><button id="btn_custom_' + data.instance + '_' + z + '"></button></td>';
             }
         }
+
+        if (data.customButtonFilter) {
+            $('#filter_button_' + data.instance + '_btn').button(data.customButtonFilter).css({width: 18, height: 18}).click(data.customButtonFilter.callback);
+        }
+
+        showActive($dlg);
     }
 
     var methods = {
@@ -1021,6 +1115,7 @@
                 onSuccess:  null,
                 onChange:   null,
                 zindex:     null,
+                list:       false,
                 columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button']
             }, options);
 
@@ -1046,9 +1141,12 @@
                 refresh:  'Rebuild tree',
                 edit:     'Edit',
                 ok:       'Ok',
-                wait:     'Processing...'
+                wait:     'Processing...',
+                list:     'Show list view',
+                tree:     'Show tree view'
             }, settings.texts);
 
+            var that = this;
             for (var i = 0; i < this.length; i++) {
                 var dlg = this[i];
                 var $dlg = $(dlg);
@@ -1076,10 +1174,22 @@
                         (data.filter && settings.filter && JSON.stringify(data.filter) != JSON.stringify(settings.filter))) {
                         data.inited = false;
                     }
-                    if (data.inited && settings.currentId !== undefined && (data.currentId != settings.currentId)) data.inited = false;
-
+                    if (data.inited && settings.currentId !== undefined && (data.currentId != settings.currentId)) {
+                        // Deactivate current line
+                        var tree = data.$tree.fancytree('getTree');
+                        tree.visit(function (node) {
+                            if (node.key == data.currentId) {
+                                node.setActive(false);
+                                return false;
+                            }
+                        });
+                    }
                 }
+
                 data = $.extend(data, settings);
+
+                data.selectedID = data.currentId;
+
                 // make a copy of filter
                 data.filter = JSON.parse(JSON.stringify(data.filter));
 
@@ -1095,19 +1205,36 @@
                         data.socketSESSION = data.connCfg.socketSession;
                     }
 
-                    data.socket = io.connect(data.socketURL, {
+                    var connectTimeout = setTimeout(function () {
+                        if ($('#select-id-dialog').length == 0) {
+                            $('body').append('<div id="select-id-dialog"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 50px 0;"></span><span>' + (data.texts.noconnection || 'No connection to server') + '</span></div>');
+                        }
+                        $('#select-id-dialog').dialog({
+                            modal: true
+                        });
+                    }, 5000);
+
+                   data.socket = io.connect(data.socketURL, {
                         'query': 'key=' + data.socketSESSION,
                         'reconnection limit': 10000,
                         'max reconnection attempts': Infinity
                     });
 
                     data.socket.on('connect', function () {
-                        data.socket.emit('getObjects', function (err, res) {
+                        if (connectTimeout) clearTimeout(connectTimeout);
+                        this.emit('name', data.connCfg.socketName || 'selectId');
+                        this.emit('getObjects', function (err, res) {
                             data.objects = res;
                             data.socket.emit('getStates', function (err, res) {
                                 data.states = res;
                             });
                         });
+                    });
+                    data.socket.on('stateChange', function (id, obj) {
+                        that.selectId('state', id, obj);
+                    });
+                    data.socket.on('objectChange', function (id, obj) {
+                        that.selectId('object', id, obj);
                     });
                 }
 
@@ -1130,7 +1257,7 @@
                 var dlg = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
-
+                if (!data) continue;
                 if (data.inited) {
                     // Re-init tree if filter or selectedID changed
                     if ((data.filter && !filter && filter !== undefined) ||
@@ -1138,19 +1265,41 @@
                         (data.filter &&  filter && JSON.stringify(data.filter) != JSON.stringify(filter))) {
                         data.inited = false;
                     }
-                    if (data.inited && currentId !== undefined && (data.currentId != currentId)) data.inited = false;
+
+                    if (data.inited && currentId !== undefined && (data.currentId != currentId)) {
+                        // Deactivate current line
+                        var tree = data.$tree.fancytree('getTree');
+                        tree.visit(function (node) {
+                            if (node.key == data.currentId) {
+                                node.setActive(false);
+                                return false;
+                            }
+                        });
+                    }
                 }
                 if (currentId !== undefined) data.currentId = currentId;
                 if (filter    !== undefined) data.filter    = JSON.parse(JSON.stringify(filter));
-                if (onSuccess  !== undefined) {
+                if (onSuccess !== undefined) {
                     data.onSuccess  = onSuccess;
                     data.$tree = $('#selectID_' + data.instance);
                     if (data.$tree[0]) data.$tree[0]._onSuccess = data.onSuccess;
                 }
+                data.selectedID = data.currentId;
 
                 if (!data.inited) {
                     data.$dlg = $dlg;
                     initTreeDialog($dlg);
+                } else {
+                    if (data.selectedID) {
+                        var tree = data.$tree.fancytree('getTree');
+                        tree.visit(function (node) {
+                            if (node.key == data.selectedID) {
+                                node.setActive();
+                                node.makeVisible({scrollIntoView: false});
+                                return false;
+                            }
+                        });
+                    }
                 }
                 if (!data.noDialog) {
                     $dlg.dialog('option', 'title', data.texts.selectid +  ' - ' + (data.currentId || ' '));
@@ -1165,8 +1314,10 @@
                     }
 
                     $dlg.dialog('open');
+                    showActive($dlg, true);
                 } else {
                     $dlg.show();
+                    showActive($dlg, true);
                 }
             }
 
@@ -1176,7 +1327,8 @@
             for (var i = 0; i < this.length; i++) {
                 var dlg = this[i];
                 var $dlg = $(dlg);
-                if (!data.noDialog) {
+                var data = $dlg.data('selectId');
+                if (data && !data.noDialog) {
                     $dlg.dialog('hide');
                 } else {
                     $dlg.hide();
@@ -1205,7 +1357,7 @@
                 var dlg = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
-                if (data.objects) {
+                if (data && data.objects) {
                     return data.objects[id];
                 }
             }
@@ -1216,8 +1368,9 @@
                 var dlg = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
+                if (!data || !data.$tree) continue;
 
-                var tree = data.$tree.fancytree("getTree");
+                var tree = data.$tree.fancytree('getTree');
                 var node = null;
                 tree.visit(function (n) {
                     if (n.key == id) {
@@ -1270,10 +1423,10 @@
                 var dlg = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
-                if (!data || !data.states) continue;
+                if (!data || !data.states || !data.$tree) continue;
                 if (data.states[id] && state && data.states[id].val == state.val) return;
                 data.states[id] = state;
-                var tree = data.$tree.fancytree("getTree");
+                var tree = data.$tree.fancytree('getTree');
                 var node = null;
                 tree.visit(function (n) {
                     if (n.key == id) {
@@ -1291,11 +1444,11 @@
                 var dlg = this[k];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
-                if (!data || !data.objects) continue;
+                if (!data || !data.$tree || !data.objects) continue;
 
                 if (id.match(/^enum\.rooms/)) data.rooms = {};
 
-                var tree = data.$tree.fancytree("getTree");
+                var tree = data.$tree.fancytree('getTree');
                 var node = null;
                 tree.visit(function (n) {
                     if (n.key == id) {
@@ -1325,7 +1478,7 @@
                             });
 
                         } else {
-                            node = data.$tree.fancytree("getRootNode");
+                            node = data.$tree.fancytree('getRootNode');
                         }
                         // if no children
                         if (!node.children || !node.children.length) {
@@ -1379,6 +1532,22 @@
                 }
             }
             return this;
+        },
+        "getFilteredIds": function () {
+            for (var k = 0; k < this.length; k++) {
+                var dlg = this[k];
+                var $dlg = $(dlg);
+                var data = $dlg.data('selectId');
+                if (!data || !data.$tree || !data.objects) continue;
+
+                var tree = data.$tree.fancytree('getTree');
+                var nodes = [];
+                tree.visit(function (n) {
+                    if (n.match) nodes.push(n.key);
+                });
+                return nodes;
+            }
+            return null;
         }
     };
 
