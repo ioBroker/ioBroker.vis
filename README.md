@@ -5,6 +5,15 @@ ioBroker.vis
 WEB visualisation for ioBroker platform.
 
 ## Changelog
+### 0.2.1 (2015-02-14)
+- (smiling_Jack) widget lock & no Drag
+- (bluefox) fix yahoo weather widget and resizeable
+- (bluefox) fix undo
+- (smiling_Jack) Safari 6.0 prefix and OSX bug fixing
+- (bluefox) fix duplicate widgets
+- (bluefox) change ValueList HTML 8
+- (smiling_Jack) color attribute preview
+
 ### 0.2.0 (2015-02-12)
 - (smiling_Jack) widget preview icons
 - (bluefox) fixed many bugs
