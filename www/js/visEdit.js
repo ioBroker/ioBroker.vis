@@ -53,17 +53,17 @@ vis = $.extend(true, vis, {
         this.editInitDialogs();
         this.editInitMenu();
         $('#pan_attr').tabs({
-            activate: function(event, ui) {
-                // Find out index
-                var i = 0;
-                $(this).find('a').each(function () {
-                    if ($(this).attr('href') == ui.newPanel.selector) {
-                        return false;
-                    }
-                    i++;
-                });
-                that.editSaveConfig('tabs/pan_attr', i);
-            }
+            //activate: function(event, ui) {
+            //    // Find out index
+            //    //var i = 0;
+            //    //$(this).find('a').each(function () {
+            //    //    if ($(this).attr('href') == ui.newPanel.selector) {
+            //    //        return false;
+            //    //    }
+            //    //    i++;
+            //    //});
+            //    //that.editSaveConfig('tabs/pan_attr', i);
+            //}
         });
         $('#pan_add_wid').resizable({
             handles:  'e',
@@ -74,7 +74,7 @@ vis = $.extend(true, vis, {
             handles: 'w',
             maxWidth: 670,
             minWidth: 100,
-            resize:function(e, ui){
+            resize:function(){
                 $(this).css("left","auto")
             }
 
@@ -3054,10 +3054,12 @@ vis = $.extend(true, vis, {
 
         if (!wid || wid === 'none') {
             // Switch tabs to View settings
-            $('#attr_wrap').tabs({active: 1}).tabs('option', 'disabled', [0]);
+            $('#pan_attr').tabs({active: 1}).tabs('option', 'disabled', [1]);
+            $('#widget_tab').text(_("Widget"));
             return false;
         }
-        $('#attr_wrap').tabs('option', 'disabled', []).tabs({active: 0});;
+        $('#pan_attr').tabs('option', 'disabled', [0]).tabs({active: 2});
+        $('#widget_tab').text(_("Widget")+": "+wid)
 
         var widget = this.views[this.activeView].widgets[wid];
 
@@ -4308,29 +4310,28 @@ $(document).keydown(function (e) {
         // Fullscreen
         var $container = $('#vis_container');
         var $pan_attr = $('#attr_wrap');
+        var delay;
 
         if ($container.hasClass('fullscreen')) {
             $("#attr_wrap").unbind("mouseenter").unbind("mouseleave");
-            $("#pan_attr").show()
+            $("#pan_attr").show();
             $container.removeClass('fullscreen').appendTo('#vis_wrap');
             $pan_attr.removeClass('fullscreen-pan-attr').appendTo('#panel_body');
 
         } else {
             $container.prependTo('body').addClass('fullscreen');
-            $pan_attr.prependTo('body').addClass('fullscreen-pan-attr')
-
-            var delay;
-
+            $pan_attr.prependTo('body').addClass('fullscreen-pan-attr');
 
             $("#attr_wrap").bind("mouseenter",function () {
-                console.log("enter")
                 clearTimeout(delay);
                 $("#pan_attr").show("slide", {direction: "right"})
             })
             .bind("mouseleave",function () {
-                    console.log("leve")
                     delay = setTimeout(function () {
-                        $("#pan_attr").hide("slide", {direction: "right"})
+                        if($pan_attr.hasClass("fullscreen-pan-attr")){
+                            $("#pan_attr").hide("slide", {direction: "right"})
+                        }
+
                     }, 750);
                 });
             $("#pan_attr").hide()

@@ -714,7 +714,7 @@ td > .select_active_widget :nth-child(2) {
 .fullscreen-pan-attr{
     z-index: 10001;
     width: auto;
-    position: absolute!;
+    position: absolute;
     right: 0;
     /* height: 100%; */
     min-width: 20px;
