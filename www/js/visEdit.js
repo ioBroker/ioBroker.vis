@@ -3054,11 +3054,11 @@ vis = $.extend(true, vis, {
 
         if (!wid || wid === 'none') {
             // Switch tabs to View settings
-            $('#pan_attr').tabs({active: 1}).tabs('option', 'disabled', [1]);
+            $('#pan_attr').tabs('option', 'disabled', [1]).tabs({active: 0});
             $('#widget_tab').text(_("Widget"));
             return false;
         }
-        $('#pan_attr').tabs('option', 'disabled', [0]).tabs({active: 2});
+        $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
         $('#widget_tab').text(_("Widget")+": "+wid)
 
         var widget = this.views[this.activeView].widgets[wid];
