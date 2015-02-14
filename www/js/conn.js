@@ -308,7 +308,7 @@ var servConn = {
     setState: function (pointId, value) {
         //socket.io
         if (this._socket == null) {
-            console.log('socket.io not initialized');
+            //console.log('socket.io not initialized');
             return;
         }
         this._socket.emit('setState', pointId, value);
@@ -330,9 +330,22 @@ var servConn = {
     // callback (err, data)
     getObjects: function (callback) {
         if (!this._checkConnection('getObjects', arguments)) return;
-
+        var that = this;
         this._socket.emit('getObjects', function (err, data) {
-            if (callback) callback(err, data);
+
+            // Read all enums
+            that._socket.emit('getObjectView', 'system', 'enum', {startkey: 'enum.', endkey: 'enum.\u9999'}, function (err, res) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                var result = {};
+                for (var i = 0; i < res.rows.length; i++) {
+                    data[res.rows[i].id] = res.rows[i].value;
+                }
+
+                if (callback) callback(err, data);
+            });
         });
     },
     addObject: function (objId, obj, callback) {

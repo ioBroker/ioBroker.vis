@@ -16,7 +16,7 @@
 
 // ok But I need the local flag in Webstorm too (faster Page reload) 
 var local = false;
-if (document.URL.split('/local/')[1]  || document.URL.split('/localhost:63342/')[1]){
+if (document.URL.split('/local/')[1]  || document.URL.split('/localhost:63343/')[1] || document.URL.split('/localhost:63342/')[1]){
     local = true;
 }
 
@@ -76,7 +76,7 @@ if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemL
 
 var vis = {
 
-    version:                '0.0.8',
+    version:                '0.2.1',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -158,26 +158,26 @@ var vis = {
         var url = './widgets/' + name + '.html?visVersion=' + this.version;
         var that = this;
         $.ajax({
-            url: url,
-            type: 'GET',
-            async: false,
+            url:      url,
+            type:     'GET',
             dataType: 'html',
-            cache: this.useCache,
-            success: function (data) {
-
-                jQuery("head").append(data);
-                that.toLoadSetsCount -= 1;
-                if (that.toLoadSetsCount <= 0) {
-                    that.showWaitScreen(true, null, null, 100);
-                    setTimeout(function () {
-                        callback.call(that);
-                    }, 100);
-                } else {
-                    that.showWaitScreen(true, null, null, parseInt((100 - that.waitScreenVal) / that.toLoadSetsCount, 10));
-                }
+            cache:    this.useCache,
+            success:  function (data) {
+                setTimeout(function () {
+                    $('head').append(data);
+                    that.toLoadSetsCount -= 1;
+                    if (that.toLoadSetsCount <= 0) {
+                        that.showWaitScreen(true, null, null, 100);
+                        setTimeout(function () {
+                            callback.call(that);
+                        }, 100);
+                    } else {
+                        that.showWaitScreen(true, null, null, parseInt((100 - that.waitScreenVal) / that.toLoadSetsCount, 10));
+                    }
+                }, 0);
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                that.conn.logError("Cannot load widget set " + name + " " + errorThrown);
+                that.conn.logError('Cannot load widget set ' + name + ' ' + errorThrown);
             }
         });
     },
@@ -506,7 +506,6 @@ var vis = {
         }
     },
     addViewStyle:function(view,theme){
-
         var _view = 'visview_' + view;
         $.ajax({
             url: 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',

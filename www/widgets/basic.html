@@ -22,6 +22,16 @@
                 "de": "HTML anhängen(Plüral)",
                 "ru": "Суффикс значения(множ.ч.)"
             },
+            "html_prepend_tooltip":    {
+                "en": "Write HTML code here that will be placed before,\x0Ae.g. <b> ",
+                "de": "HTML Kod, der wird vom dem Wert platziert,\x0Az.B. <b>",
+                "ru": "HTML код будет помещён перед значением,\x0Aнапример <b>"
+            },
+            "html_append_tooltip":     {
+                "en": "Write HTML code here that will be placed before,\x0Ae.g. </b>",
+                "de": "HTML Kod, der wird vom dem Wert platziert,\x0Az.B. </b>",
+                "ru": "HTML код будет помещён после значения,\x0Aнапример </b>"
+            },
             "stretch":         {"en": "Stretch",               "de": "Streken",            "ru": "Растянуть"},
             "factor":          {"en": "Multiplex factor",      "de": "Multiplikation",     "ru": "Множитеть"},
             "class_true":      {"en": "Class if quality 'true'", "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
@@ -94,6 +104,11 @@
             "html_closed":     {"en": "HTML by 'closed'",      "de": "HTML bei 'zu'",      "ru": "HTML если закрыто"},
             "html_open":       {"en": "HTML by 'open'",        "de": "HTML bei 'auf'",     "ru": "HTML если открыто"},
             "html_tilt":       {"en": "HTML by 'tilted'",      "de": "HTML bei 'gekippt'", "ru": "HTML если наклоненно"},
+            "html_tilt_tooltip": {
+                "en": "0 - Closed, 1 - tilt, 2 - open",
+                "de": "0- Zu, 1 - gekippt, 2 - auf",
+                "ru": "0 - закрыто, 1 - откинуто, 2 - открыто"
+            },
             "color":           {"en": "Color",                 "de": "Farbe",              "ru": "Цвет"},
             "shadow":          {"en": "Opacity",               "de": "Durchsichtigkeit",   "ru": "Тень"},
             "shadow_tooltip":  {
@@ -109,9 +124,22 @@
                 "ru": "CSS бордюр, как 'green 5px solid'"
             },
             "test_text":       {"en": "Test text",             "de": "Testtext",           "ru": "Тестовый текст"},
-            "max_width":       {"en": "Max. width",            "de": "Maximale Breite",    "ru": "Максимальная ширина"}
+            "max_width":       {"en": "Max. width",            "de": "Maximale Breite",    "ru": "Максимальная ширина"},
+            "style":           {"en": "Style for ",            "de": "Stil für ",          "ru": "Стиль для "},
+            "style_tooltip":   {
+                "en": "Write here css style, like: 'color:red;background:white'",
+                "de": "Hier muss CSS Stil stehen, wie 'color:red;background:white'",
+                "ru": "CSS Стиль, например: 'color:red;background:white'"},
+            "count":           {"en": "Values number to",      "de": "Wertsanzahl bis",        "ru": "Количество значений до"}
         });
     }
+
+    $.extend(true, systemDictionary, {
+        "Edit note": {"en": "Edit note", "de": "Meldung eingeben", "ru": "Сообщение"},
+        "Clear": {"en": "Clear", "de": "Löschen", "ru": "Очистить"},
+        "Ok": {"en": "Ok", "de": "Ok", "ru": "Ok"},
+        "Cancel": {"en": "Cancel", "de": "Abbrechen", "ru": "Отмена"}
+    });
 
     vis.binds.stateful = {
         view: function (el, viewArr, persistent) {
@@ -134,7 +162,7 @@
         iframe: function (el, srcArr, refreshInterval) {
             var $this = $(el).parent().find('iframe');
             var oid   = $this.attr('data-oid');
- 
+
             vis.states.bind(oid + ".val", function (e, newVal, oldVal) {
                 $this.attr('src', srcArr[newVal]);
             });
@@ -209,10 +237,10 @@
             var $this = $(el);
             var oid = (id ? id : $this.attr('data-oid'));
             var val = $this.attr('data-val');
-            
+
             if (val === 'true')  val = true;
             if (val === 'false') val = false;
-            
+
             $this.on('click', function (e) {
                 if (!vis.editMode) {
                     vis.setValue($this.attr('data-oid'), val);
@@ -220,12 +248,12 @@
             });
             // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
             /*
-            $this.on('touchend',function (e) {
-                if (!vis.editMode) {
-                    vis.setValue($this.attr('data-oid'), val);
-                }
-            });
-            */
+             $this.on('touchend',function (e) {
+             if (!vis.editMode) {
+             vis.setValue($this.attr('data-oid'), val);
+             }
+             });
+             */
         },
         pressed: null,
         pressedNext: null,
@@ -285,13 +313,13 @@
 
             if (interval) {
                 $(el).on('mousedown', intervalStart)
-                    .on('touchstart', intervalStart)
-                    .on('touchend', function () {
-                        clearTimeout(vis.binds.basic.pressed);
-                    })
-                    .on('mouseup', function () {
-                        clearTimeout(vis.binds.basic.pressed);
-                    });
+                        .on('touchstart', intervalStart)
+                        .on('touchend', function () {
+                            clearTimeout(vis.binds.basic.pressed);
+                        })
+                        .on('mouseup', function () {
+                            clearTimeout(vis.binds.basic.pressed);
+                        });
             }
         },
         navigation: function (el, options) {
@@ -341,7 +369,7 @@
             });
             if (!vis.editMode) {
                 if (parseFloat(vis.states.attr(oid + ".val")) != 0 && vis.states.attr(oid + ".val") !== false) {
-                 $this.hide();
+                    $this.hide();
                 }
             }
         },
@@ -370,7 +398,7 @@
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 // If still working
                 if (wid && (vis.states.attr(wid + '.val') === true)) return;
-                
+
                 $this.prop('checked', !(newVal === false || parseFloat(newVal) === 0.0));
             });
             var val = vis.states.attr(oid + '.val');
@@ -389,9 +417,9 @@
                     val = false;
                 }
             }
-            
+
             if (val > 0) $this.prop('checked', true);
-            
+
             if (!vis.editMode) {
                 $this.change(function () {
                     if ($this.prop('checked')) {
@@ -406,7 +434,7 @@
             var $this = $(el).prev();
             var oid   = $this.attr('data-oid');
             var val   = vis.states[oid + '.val'];
-            
+
             if (val === 'false') {
                 val = false;
             } else if (val === 'true') {
@@ -465,8 +493,8 @@
                     } else {
                         oldVal = false;
                     }
-                }                
-                
+                }
+
                 if (newVal == oldVal) return;
 
                 if (newVal === 'false' || newVal === false || parseFloat(newVal) == 0) {
@@ -489,17 +517,17 @@
             var id = $this.attr('data-oid');
             function toggle() {
                 var val = vis.states[id + '.val'];
-                
+
                 if (val === false || val === 'false') {
                     vis.setValue(id, true);
                 } else if (val === true || val === 'true') {
                     vis.setValue(id, false);
                 } else {
                     val = parseFloat(val);
-                    if (val >= 0.5) { 
-                        val = 1; 
-                    } else { 
-                        val = 0; 
+                    if (val >= 0.5) {
+                        val = 1;
+                    } else {
+                        val = 0;
                     }
                     vis.setValue( id,  1 - val);
                 }
@@ -641,7 +669,7 @@
 
             var $this = $('#div_' + wid);
             $('body').append('<div id="dlg_' + wid + '" title="' + _('Edit note') + '">' +
-                              '<textarea style="width:95%; height:92%" id="text_' + wid + '">' + $this.text().trim() + '</textarea></div>');
+            '<textarea style="resize: none; width:95%; height:92%" id="text_' + wid + '">' + $this.text().trim() + '</textarea></div>');
 
             var buttons = {};
             buttons[_('Clear')] = function () {
@@ -654,14 +682,14 @@
                 var wid  = dlg.attr('data-wid');
                 var text = $('#text_' + wid).val();
                 text = text.replace('\n', '<br>\n');
-                
+
                 if (!oid) $('#div_' + wid).html(text);
                 /*if (!text) {
-                    $('#' + wid).css({width: min_width, height: min_height});
-                }
-                else {
-                    $('#' + wid).css({width: max_width, height: 'auto'});
-                }*/
+                 $('#' + wid).css({width: min_width, height: min_height});
+                 }
+                 else {
+                 $('#' + wid).css({width: max_width, height: 'auto'});
+                 }*/
 
                 if (oid) vis.setValue(oid, text);
 
@@ -720,7 +748,7 @@
 </script>
 
 
-        <!-- Basic Widgets -->
+<!-- Basic Widgets -->
 
 
 <script id="tplHtml"
@@ -729,8 +757,9 @@
         data-vis-set="basic"
         data-vis-type="static"
         data-vis-name="HTML"
+        data-vis-prev='<img src="widgets\basic\img\Prev_HTML.png"></img>'
         data-vis-attrs="html;refreshInterval[0]/slider,0,180000,100">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.basic.htmlRefresh(el, this.data.attr('html'), data.attr("refreshInterval")) %>>
             <%== this.data.attr('html') %>
         </div>
@@ -776,8 +805,7 @@
 <script id="tplLink"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplLink" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee vis-widget-lock" style="width: 141px; height: 22px; left: 194px; top: 113px;" > <div class="vis-widget-prev-body"> <a href="www.ioBroker.com" target="www.ioBroker.com" alt="" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%;text-algin:center">www.ioBroker.com</div></a> </div> </div>'
-        data-vis-prev='<div id="prev_tplLink" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee vis-widget-lock" style="width: 141px; height: 22px; left: 194px; top: 113px;" > <div class="vis-widget-prev-body"> <a href="www.ioBroker.com" target="www.ioBroker.com" alt="" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%;text-algin:center">www.ioBroker.com</div></a> </div> </div>'
+        data-vis-prev='<div id="prev_tplLink" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee vis-widget-lock" style="height: 22px" > <div class="vis-widget-prev-body"> <a href="www.ioBroker.com" target="www.ioBroker.com" alt="" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%;text-algin:center">www.ioBroker.com</div></a> </div> </div>'
         data-vis-set="basic"
         data-vis-type="static"
         data-vis-name="link"
@@ -1101,12 +1129,12 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val"
-        data-vis-name="ValueList HTML 8"
-        data-vis-attrs="oid;html_prepend;html_append;value(0-7);style(0-7)">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" style="<% var slist = [data.style0, data.style1, data.style2, data.style3, data.style4, data.style5, data.style6, data.style7]; %><%== slist[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10)] %>">
+        data-vis-name="ValueList HTML Style"
+        data-vis-attrs="oid;html_prepend;html_append;count[2];value(0-count);style(0-count)">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" style="<% var slist = []; var i = 0; while (data['style' + i] !== undefined) {slist[i] = data['style' + i]; i++;} %><%== slist[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10)] %>">
         <div data-oid="<%= this.data.attr('oid') %>">
-            <%== this.data.attr("html_prepend") %><% var list = [data.val0, data.val1, data.val2, data.val3, data.val4, data.val5, data.val6, data.val7]; %><%== list[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))),10)] %><%== this.data.attr("html_append") %>
+           <%== this.data.attr("html_prepend") %><% var list = []; var j = 0; while (data['value' + j] !== undefined) {list[j] = data['value' + j]; j++;}; %><%== list[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))),10)] %><%== this.data.attr("html_append") %>
         </div>
     </div>
     </div>
@@ -1119,7 +1147,7 @@
         data-vis-type="val"
         data-vis-name="Bool HTML"
         data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" >
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
             <%
@@ -1144,7 +1172,7 @@
         data-vis-type="val"
         data-vis-name="AckFlag HTML"
         data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" >
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
             <%
@@ -1206,7 +1234,7 @@
         data-vis-type="ctrl"
         data-vis-name="Bool HTML"
         data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
         <div class="vis-widget-body">
 			<%== this.data.attr("html_prepend") %>
 			<%
@@ -1241,7 +1269,7 @@
         data-vis-type="ctrl"
         data-vis-name="HTML State"
         data-vis-attrs="html;oid;value">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el) %>>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el) %>>
         <div class="vis-widget-body">
 			<%== this.data.attr("html") %>
         </div>
@@ -1255,7 +1283,7 @@
         data-vis-type="val"
         data-vis-name="Hide on 0/False"
         data-vis-attrs="oid;html;html_prepend;html_append">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
         </div>
@@ -1296,6 +1324,7 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Red Number"
+        data-vis-prev='<div id="prev_tplRedNumber" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="padding: 3px; width: auto; min-width: 21px; height: 21px; border-radius: 16px; border: 3px solid white; color: white; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 20px; line-height: normal; font-family: Helvetica; text-align: center; position: absolute; background-color: red;" data-o> <div class="vis-widget-prev-body"> 5 </div> </div></div>'
         data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural">
     <div class="vis-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
         <div class="vis-widget-body" >
@@ -1307,12 +1336,12 @@
 <script id="tplBulbOnOff"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplBulbOnOff" style=" position: relative; text-align: initial;padding: 4px "><div data-o class="vis-widget_prev ui-selectee" style="left: 82px; top: 31px;"> <div class="vis-widget-prev-body"> <img src="img/bulb_on.png" width="100%"> </div> </div>'
+        data-vis-prev='<div id="prev_tplBulbOnOff" style="position: relative; text-align: initial;padding: 4px "><div data-o class="vis-widget_prev ui-selectee" style="left: 82px; top: 31px;"> <div class="vis-widget-prev-body"> <img src="img/bulb_on.png" width="100%"> </div> </div>'
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Bulb on/off"
         data-vis-attrs="oid">
-    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 44px; height: 59px">
         <div class="vis-widget-body">
             <% switch (vis.states.attr(this.data.oid + '.val')) { case 0: case "0": case "0.000000": case false: case "false": %>
             <img src="img/bulb_off.png" width="100%"/>
@@ -1331,9 +1360,9 @@
         data-vis-type="ctrl"
         data-vis-name="Bulb on/off"
         data-vis-attrs="oid">
-    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>  style="width: 44px; height: 59px">
     <div class="vis-widget-body">
-        <% switch (vis.states.attr("_"+this.data.oid+".val")) { case 0: case "0": case "0.000000": case "false": case false: %>
+        <% switch (vis.states.attr(this.data.oid + ".val")) { case 0: case "0": case "0.000000": case "false": case false: %>
         <img src="img/bulb_off.png" width="100%"/>
         <% break; default: %>
         <img src="img/bulb_on.png" width="100%"/>
@@ -1357,6 +1386,8 @@
             <%== this.data.attr("html_tilt") %>
             <% break; case 2: %>
             <%== this.data.attr("html_open") %>
+            <% break; default: %>
+            <%== this.data.attr("html_closed") %>
             <% } %>
         </div>
     </div>
@@ -1386,7 +1417,8 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Bar Horizontal"
-        data-vis-attrs="oid;factor[1];color[white]/color;border;shadow;reverse/checkbox">
+        data-vis-prev='<div id="prev_tplValueFloatBar" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="width: 54px; height: 17px; border: 1px solid rgb(136, 136, 136); left: 458px; top: 292px; position: absolute;" > <div data-o class="vis-widget-prev-body" style="width: 68.6%; background-color: blue;"></div> </div></div>'
+        data-vis-attrs="oid;factor[1];color[blue]/color;border;shadow;reverse/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 240px; height: 20px; border: 1px solid #888" id="<%= this.data.attr('wid') %>">
         <div data-oid="<%= this.data.attr('oid') %>"
         class="vis-widget-body"
@@ -1400,7 +1432,8 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Bar Vertical"
-        data-vis-attrs="oid;factor[1];color[white]/color;border;shadow;reverse/checkbox">
+        data-vis-prev='<div id="prev_tplValueFloatBarVertical" style="position: relative; text-align: initial;padding: 4px "><div data-o class="vis-widget_prev ui-draggable-handle " style="width: 17px; height: 54px; border: 1px solid rgb(136, 136, 136); left: 435px; top: 105px; position: absolute;" > <div class="vis-widget-prev-body" style="height: 68.58%; position: absolute; bottom: 0%; background-color: blue;"></div> </div></div>'
+        data-vis-attrs="oid;factor[1];color[blue]/color;border;shadow;reverse/checkbox">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" style="width:20px; height:240px; border:1px solid #888" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="<%= (this.data.border) ? "width: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ");" : ""  %>height:<%= vis.binds.basic.getCalc(this.data) + ";" %> %><%= (this.data.reverse === "true" || this.data.reverse === true ? "left:0px; position:absolute; bottom:0%;" : "") %>;border: <%= this.data.border %>; box-shadow:<%= this.data.shadow %>; background-color:<%= this.data.color %>"></div>
     </div>
@@ -1412,9 +1445,10 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Note"
+        data-vis-prev='<div id="prev_tplNote" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="width: 70px; height: 50px; border: 1px solid rgb(136, 136, 136); left: 965px; top: 16px; position: absolute; background: rgba(255, 255, 105, 0.8);"><div style="padding: 10px">Message</div></div></div>'
         data-vis-attrs="oid;max_width[300];html_prepend;html_append;test_text">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:50px; height:50px; border:1px solid #888; background: yellow" id="<%= this.data.attr('wid') %>" onclick="vis.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= this.data.attr('oid') %>')">
-		<div data-oid="<%= this.data.attr('oid') %>" id="div_<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:50px; height:50px; border:1px solid #888; background: rgba(255,255,105,0.8)" id="<%= this.data.attr('wid') %>" onclick="vis.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= this.data.attr('oid') %>')">
+		<div data-oid="<%= this.data.attr('oid') %>" id="div_<%= this.data.attr('wid') %>" style="padding: 10px">
 			<%== this.data.attr("html_prepend") %><%= (this.data.test_text && vis.editMode) ? this.data.test_text : (vis.states.attr(this.data.oid + ".val") == null ? "" : vis.states.attr(this.data.oid + ".val")) %><%== this.data.attr("html_append") %>
 		</div>
     </div>

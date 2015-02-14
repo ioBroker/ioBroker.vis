@@ -6,9 +6,10 @@ var visConfig = {
         "tabs",
         "jqplot",
         "timeAndWeather",
-        {name: "jqui",        depends: ["basic"]},
-        {name: "jqui-mfd",    depends: ["basic", "jqui"]},
-        "weather-adapter"
+        //"plumb",
+        //{name: "jqui",        depends: ["basic"]},
+        //{name: "jqui-mfd",    depends: ["basic", "jqui"]},
+        //"weather-adapter"
         /*,
         "bars",
         "colorpicker",

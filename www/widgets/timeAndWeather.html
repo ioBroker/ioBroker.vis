@@ -263,7 +263,7 @@
             });
         },
         tplTwYahooWeather: function (view, data) {
-            var text = '<div class="vis-widget ui-widget-content" id="'+data.attr('wid')+'"></div>';
+            var text = '<div class="vis-widget ui-widget-content" id="' + data.attr('wid') + '" style="width:250px; height: 500px; color: #ddd"></div>';
             $('#visview_' + view).append(text);
             var weoid = data.attr('weoid');
             if (weoid !== undefined && weoid !== null) {
@@ -278,13 +278,24 @@
                 weoid = '664942';
             }
 
-            $('#' + data.attr('wid')).weatherfeed([weoid], {lang: vis.language, woeid: true, humidity: true, forecast: true, link: false, resizable: (vis.editMode)});
+            $('#' + data.attr('wid')).weatherfeed([weoid], {
+                lang:      vis.language,
+                woeid:     true,
+                humidity:  true,
+                forecast:  true,
+                link:      false,
+                resizable: false,
+                rendered:  function () {
+                    if (vis.editMode && vis.activeWidgets.indexOf(data.attr('wid')) != -1) {
+                        vis.resizable($('#' + data.attr('wid')).resizable('destroy'));
+                    }
+                }
+            });
         },
         editWeather: function (wid_attr, options) {
             var line = {
                 input:  '<input type="text" id="inspect_' + wid_attr + '"/>',
                 init: function (_wid_attr, data) {
-                    console.log('AAA');
                     $('#inspect_' + _wid_attr).autocomplete({
                         source: function (req, callback) {
                             console.log(req.term);
@@ -297,7 +308,7 @@
                                 type:     'GET',
                                 url:      api,
                                 dataType: 'json',
-                                success: function(data) {
+                                success:  function(data) {
                                     if (data.query.count > 0 ) {
                                         var arr = [];
                                         for (var i = 0; i < data.query.count; i++) {
@@ -311,7 +322,7 @@
                                         callback([]);
                                     }
                                 },
-                                error: function(data) {
+                                error:    function(data) {
                                     callback([]);
                                 }
                             });

@@ -18,15 +18,15 @@ var jdigiclockCounter = 0;
         jdigiclock: function(options) {
 
             var defaults = {
-                clockImagesPath:   'images/clock/',
-                weatherImagesPath: 'images/weather/',
-                lang: 'en',
-                am_pm: false,
+                clockImagesPath:     'images/clock/',
+                weatherImagesPath:   'images/weather/',
+                lang:                'en',
+                am_pm:               false,
                 weatherLocationCode: 'EUR|BG|BU002|BOURGAS',
-                weatherMetric: 'C',
-                weatherUpdate: 0,
-                proxyType: 'yahoo',
-                curID: 0
+                weatherMetric:       'C',
+                weatherUpdate:       0,
+                proxyType:           'yahoo',
+                curID:               0
             };
 
             var regional = [];
@@ -386,11 +386,11 @@ var jdigiclockCounter = 0;
 				
 				// Send request
 				$.ajax({
-					type: 'GET',
-					url: api,
+					type:     'GET',
+					url:      api,
 					dataType: 'json',
-					context: el,
-					success: function(data) {
+					context:  el,
+					success:  function(data) {
 						if (data.query) {
 							var modData = {};
 							var feed = data.query.results.channel;
