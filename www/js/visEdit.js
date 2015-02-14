@@ -1745,9 +1745,8 @@ vis = $.extend(true, vis, {
         }
     },
     getObjDesc: function (id) {
-
-        if (this.objects[id] && this.objects[id].common && this.objects[id].common.name ) {
-            return this.objects[id].common.name;
+        if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
+            return this.objects[id].common.name || id;
         }
         return id;
     },
