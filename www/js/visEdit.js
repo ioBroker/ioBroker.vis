@@ -52,7 +52,7 @@ vis = $.extend(true, vis, {
 
         this.editInitDialogs();
         this.editInitMenu();
-        $('#attr_wrap').tabs({
+        $('#pan_attr').tabs({
             activate: function(event, ui) {
                 // Find out index
                 var i = 0;
@@ -62,7 +62,7 @@ vis = $.extend(true, vis, {
                     }
                     i++;
                 });
-                that.editSaveConfig('tabs/attr_wrap', i);
+                that.editSaveConfig('tabs/pan_attr', i);
             }
         });
         $('#pan_add_wid').resizable({
@@ -73,7 +73,11 @@ vis = $.extend(true, vis, {
         $('#pan_attr').resizable({
             handles: 'w',
             maxWidth: 670,
-            minWidth: 100
+            minWidth: 100,
+            resize:function(e, ui){
+                $(this).css("left","auto")
+            }
+
         });
         if (this.config['size/pan_add_wid']) $('#pan_add_wid').width(this.config['size/pan_add_wid']);
         if (this.config['size/pan_attr'])    $('#pan_attr').width(this.config['size/pan_attr']);
@@ -4303,11 +4307,35 @@ $(document).keydown(function (e) {
     } else if (e.which === 114) {
         // Fullscreen
         var $container = $('#vis_container');
+        var $pan_attr = $('#attr_wrap');
+
         if ($container.hasClass('fullscreen')) {
+            $("#attr_wrap").unbind("mouseenter").unbind("mouseleave");
+            $("#pan_attr").show()
             $container.removeClass('fullscreen').appendTo('#vis_wrap');
+            $pan_attr.removeClass('fullscreen-pan-attr').appendTo('#panel_body');
+
         } else {
-            $container.prependTo('body').addClass('fullscreen')
+            $container.prependTo('body').addClass('fullscreen');
+            $pan_attr.prependTo('body').addClass('fullscreen-pan-attr')
+
+            var delay;
+
+
+            $("#attr_wrap").bind("mouseenter",function () {
+                console.log("enter")
+                clearTimeout(delay);
+                $("#pan_attr").show("slide", {direction: "right"})
+            })
+            .bind("mouseleave",function () {
+                    console.log("leve")
+                    delay = setTimeout(function () {
+                        $("#pan_attr").hide("slide", {direction: "right"})
+                    }, 750);
+                });
+            $("#pan_attr").hide()
         }
+
         e.preventDefault();
     } else if (e.which === 33) {
         // Next View
