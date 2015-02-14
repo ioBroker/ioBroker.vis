@@ -308,7 +308,7 @@ var servConn = {
     setState: function (pointId, value) {
         //socket.io
         if (this._socket == null) {
-            console.log('socket.io not initialized');
+            //console.log('socket.io not initialized');
             return;
         }
         this._socket.emit('setState', pointId, value);

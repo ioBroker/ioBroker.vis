@@ -1,0 +1,158 @@
+.pipe_v{
+    background: #00F;
+    height: 100%;
+    width: 100%;
+    box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;
+}
+
+.pipe_h{
+    background: #00F;
+    height: 100%;
+    width: 100%;
+    box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset;
+}
+
+.pump{
+    /*background: #00F;*/
+    height: 100%;
+    width: 100%;
+    /*box-shadow: inset 10px 0px 11px -11px #000,inset -11px 0px 11px -11px #000;*/
+}
+
+.bogen_br {
+    border-top-left-radius: 100%;
+    background-color: #00F;
+    width: 100%;
+    height: 100%;
+    box-shadow: rgb(0, 0, 0) 5px 5px 10px -6px inset;
+}
+
+.bogen_br_shadow{
+    border: 1px solid #F00;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    bottom: -100%;
+    right: -100%;
+    box-shadow: rgb(0, 0, 0) -2px -2px 10px;
+}
+
+.bogen_bl {
+    border-top-right-radius: 100%;
+    background-color: #00F;
+    width: 100%;
+    height: 100%;
+    box-shadow: rgb(0, 0, 0) -5px 5px 10px -6px inset;
+}
+
+.bogen_bl_shadow{
+    border: 1px solid #F00;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    bottom: -100%;
+    left: -100%;
+    box-shadow: rgb(0, 0, 0) 2px -2px 10px;
+}
+
+.bogen_tr {
+    border-bottom-left-radius: 100%;
+    background-color: #00F;
+    width: 100%;
+    height: 100%;
+    box-shadow: #000 5px -5px 10px -6px inset;
+}
+
+.bogen_tr_shadow{
+    border: 1px solid #F00;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    top: -100%;
+    right: -100%;
+    box-shadow: #000 -2px 2px 10px;
+}
+.bogen_tl {
+    border-bottom-right-radius: 100%;
+    background-color: #00F;
+    width: 100%;
+    height: 100%;
+    box-shadow: #000 -5px -5px 10px -6px inset;
+}
+
+.bogen_tl_shadow{
+    border: 1px solid #F00;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    top: -100%;
+    left: -100%;
+    box-shadow: #000 2px 2px 10px;
+}
+
+.plumb_dock_top{
+    background: transparent;
+    width: 100%;
+    height: 20px;
+    position: absolute;
+    top: -10px;
+    left:0;
+}
+
+.plumb_dock_bottom{
+    background: transparent;
+    width: 100%;
+    height: 20px;
+    position: absolute;
+    bottom: -10px;
+    left:0
+}
+.plumb_dock_left{
+    background: transparent;
+    width: 20px;
+    height: 100%;
+    position: absolute;
+    left: -10px;
+    top:0;
+}
+
+.plumb_dock_right{
+    background: transparent;
+    width: 20px;
+    height: 100%;
+    position: absolute;
+    right: -10px;
+    top:0;
+}
+
+.drop-hover{
+    background-color: #9ACD32;
+    border-radius: 100%;
+    box-shadow: 0px 0px 3px 3px #9ACD32;
+}
+
+.valve_h{
+
+}
+.plumb_valve_l{
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 0px 10px 20px;
+    border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #0F0;
+
+}
+.plumb_valve_r{
+    width: 0;
+    height: 0;
+    border-style: solid;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-width: 10px 20px 10px 0px;
+    border-color: rgba(0, 0, 0, 0) #0F0 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+}
