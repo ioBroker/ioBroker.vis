@@ -1313,7 +1313,7 @@ if ('applicationCache' in window) {
                             case 'playSound':
                                 setTimeout(function () {
                                     var href;
-                                    if (data.match(/^http(s):\/\//)) {
+                                    if (data.match(/^http(s)?:\/\//)) {
                                         href = data;
                                     } else {
                                         href = location.protocol + '//' + location.hostname + ':' + location.port + data;

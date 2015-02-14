@@ -75,8 +75,16 @@ Commands:
 
     "control.data" must have id of dialog widget, e.g. "w00056".
 * popup - opens a new browser window. Link must be specified in "control.data", e.g. http://google.com
-* playSound - play sound file. The link to file is specified in "control.data", e.g. http://www.mbr-pwrc.usgs.gov/id/htmwav/h7180c2.mp3.
+* playSound - play sound file. The link to file is specified in "control.data", e.g. http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
   You can upload your own file in vis and let it play as for instance "/vis.0/main/img/myFile.mp3".
+
+If user changes the view or at start the variables will be filled by vis with
+
+- "control.instance": browser instance and ack=true
+- "control.data": project and view name in form "project/view", e.g. "main/view" (and ack=true)
+- "control.command": "changedView" and ack=true
+
+
 
 ## Licence
  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker

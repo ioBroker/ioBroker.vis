@@ -151,12 +151,12 @@ var servConn = {
                     if (state.val && state.val.instance) {
                         if (that._connCallbacks.onCommand(state.val.instance, state.val.command, state.val.data)) {
                             // clear state
-                            that.setState(id, '', true);
+                            that.setState(id, {val: '', ack: true});
                         }
                     } else {
                         if (that._connCallbacks.onCommand(that._cmdInstance, state.val, that._cmdData)) {
                             // clear state
-                            that.setState(id, '', true);
+                            that.setState(id, {val: '', ack: true});
                         }
                     }
                 } else if (id == that.namespace + '.control.data') {
@@ -474,8 +474,8 @@ var servConn = {
         });
     },
     sendCommand: function (instance, command, data) {
-        this.setState(this.namespace + '.control.instance', instance);
-        this.setState(this.namespace + '.control.data',     data);
-        this.setState(this.namespace + '.control.command',  command);
+        this.setState(this.namespace + '.control.instance', {val: instance, ack: true});
+        this.setState(this.namespace + '.control.data',     {val: data, ack: true});
+        this.setState(this.namespace + '.control.command',  {val: command, ack: true});
     }
 };
