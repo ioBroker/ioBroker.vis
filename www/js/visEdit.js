@@ -737,7 +737,7 @@ vis = $.extend(true, vis, {
             that.saveRemote(function () {
                 // Show hint how to get back to edit mode
                 if (!that.config['dialog/isEditHintShown']) {
-                    that.showMessage(_('To get back to edit mode just call "%s" in browser', location.href));
+                    alert(_('To get back to edit mode just call "%s" in browser', location.href));
                     that.editSaveConfig('dialog/isEditHintShown', true);
                 }
 
@@ -1182,33 +1182,6 @@ vis = $.extend(true, vis, {
         if (typeof storage != 'undefined') {
             storage.set('visConfig', JSON.stringify(this.config));
         }
-    },
-    showMessage: function (message, title, icon) {
-        if (!this.$dialogMessage) {
-            this.$dialogMessage = $('#dialog-message');
-            this.$dialogMessage.dialog({
-                autoOpen: false,
-                modal:    true,
-                buttons: [
-                    {
-                        text: _('Ok'),
-                        click: function () {
-                            $(this).dialog('close');
-                        }
-                    }
-                ]
-            });
-        }
-        this.$dialogMessage.dialog('option', 'title', title || _('Message'));
-        $('#dialog-message-text').html(message);
-        if (icon) {
-            $('#dialog-message-icon').show();
-            $('#dialog-message-icon').attr('class', '');
-            $('#dialog-message-icon').addClass('ui-icon ui-icon-' + icon);
-        } else {
-            $('#dialog-message-icon').hide();
-        }
-        this.$dialogMessage.dialog('open');
     },
     confirmMessage: function (message, title, icon, callback) {
         if (!this.$dialogConfirm) {

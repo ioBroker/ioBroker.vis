@@ -29,6 +29,8 @@ var servConn = {
     _timeout:           0, // 0 - use transport default timeout to detect disconnect
     _reconnectInterval: 10000, // reconnect interval
     _subscribes:        [],
+    _cmdData:           null,
+    _cmdInstance:       null,
     namespace:          'vis.0',
     getType: function () {
         return 'socket.io';
@@ -143,14 +145,26 @@ var servConn = {
             that._socket.on('stateChange', function (id, state) {
                 if (!id || state == null || typeof state != 'object') return;
 
-                if (id == that.namespace + '.command'){
-                    if (that._connCallbacks.onCommand && state.val && !state.val.instance) {
+                if (that._connCallbacks.onCommand && id == that.namespace + '.control.command'){
+                    if (state.ack) return;
+                    // if command is an object {instance: 'iii', command: 'cmd', data: 'ddd'}
+                    if (state.val && state.val.instance) {
                         if (that._connCallbacks.onCommand(state.val.instance, state.val.command, state.val.data)) {
                             // clear state
-                            that.setState(id, '');
+                            that.setState(id, '', true);
+                        }
+                    } else {
+                        if (that._connCallbacks.onCommand(that._cmdInstance, state.val, that._cmdData)) {
+                            // clear state
+                            that.setState(id, '', true);
                         }
                     }
-                } else if (that._connCallbacks.onUpdate) {
+                } else if (id == that.namespace + '.control.data') {
+                    that._cmdData = state.val;
+                } else if (id == that.namespace + '.control.instance') {
+                    that._cmdInstance = state.val;
+                }
+                else if (that._connCallbacks.onUpdate) {
                     that._connCallbacks.onUpdate(id, state);
                 }
             });
@@ -460,6 +474,8 @@ var servConn = {
         });
     },
     sendCommand: function (instance, command, data) {
-        this.setState(this.namespace + '.command', {instance: instance, command: command, data: data});
+        this.setState(this.namespace + '.control.instance', instance);
+        this.setState(this.namespace + '.control.data',     data);
+        this.setState(this.namespace + '.control.command',  command);
     }
 };

@@ -781,7 +781,7 @@ var vis = {
         });
 
         if (!this.editMode && this.instance) {
-            this.conn.sendCommand(this.instance, 'changedView', that.viewFileSuffix ? that.viewFileSuffix + '/' + this.activeView : this.activeView);
+            this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
         }
 
         if (window.location.hash.slice(1) != view) {
@@ -915,6 +915,33 @@ var vis = {
     },
     onWakeUp: function (callback) {
         this.wakeUpCallbacks.push(callback);
+    },
+    showMessage: function (message, title, icon) {
+        if (!this.$dialogMessage) {
+            this.$dialogMessage = $('#dialog-message');
+            this.$dialogMessage.dialog({
+                autoOpen: false,
+                modal:    true,
+                buttons: [
+                    {
+                        text: _('Ok'),
+                        click: function () {
+                            $(this).dialog('close');
+                        }
+                    }
+                ]
+            });
+        }
+        this.$dialogMessage.dialog('option', 'title', title || _('Message'));
+        $('#dialog-message-text').html(message);
+        if (icon) {
+            $('#dialog-message-icon').show();
+            $('#dialog-message-icon').attr('class', '');
+            $('#dialog-message-icon').addClass('ui-icon ui-icon-' + icon);
+        } else {
+            $('#dialog-message-icon').hide();
+        }
+        this.$dialogMessage.dialog('open');
     },
     waitScreenVal: 0,
     showWaitScreen: function (isShow, appendText, newText, step) {
@@ -1082,7 +1109,7 @@ if ('applicationCache' in window) {
 
                                     if (compareVersion(version, vis.requiredServerVersion)) {
                                         // TODO Translate
-                                        alert("Warning: requires Server version " + vis.requiredServerVersion + " - found Server version " + version + " - please update Server.");
+                                        vis.showMessage('Warning: requires Server version ' + vis.requiredServerVersion + ' - found Server version ' + version + ' - please update Server.');
                                     }
                                 }
                             });
@@ -1252,18 +1279,24 @@ if ('applicationCache' in window) {
                     });
                 },
                 onCommand: function (instance, command, data) {
+                    var parts;
                     if (instance != vis.instance && instance != 'FFFFFFFF') return false;
                     if (command) {
                         // external Commands
                         switch (command) {
                             case 'alert':
-                                alert(data);
+                                parts = data.split(';');
+                                vis.showMessage(parts[0], parts[1], parts[2]);
                                 break;
                             case 'changedView':
                                 // Do nothing
                                 return false;
                             case 'changeView':
-                                vis.changeView(data);
+                                parts = data.split('/');
+                                if (parts[1]) {
+                                    // Todo switch to desired project
+                                }
+                                vis.changeView(parts[1] || parts[0]);
                                 break;
                             case 'refresh':
                             case 'reload':
@@ -1278,13 +1311,28 @@ if ('applicationCache' in window) {
                                 window.open(data);
                                 break;
                             case 'playSound':
-                                $('#external_sound').attr("src", data);
                                 setTimeout(function () {
-                                    document.getElementById("external_sound").play();
+                                    var href;
+                                    if (data.match(/^http(s):\/\//)) {
+                                        href = data;
+                                    } else {
+                                        href = location.protocol + '//' + location.hostname + ':' + location.port + data;
+                                    }
+
+                                    if (typeof Audio != 'undefined') {
+                                        var snd = new Audio(href); // buffers automatically when created
+                                        snd.play();
+                                    } else {
+                                        if (!$('#external_sound').length) {
+                                            $('body').append('<audio id="external_sound"></audio>');
+                                        }
+                                        $('#external_sound').attr('src', href);
+                                        document.getElementById('external_sound').play();
+                                    }
                                 }, 1);
                                 break;
                             default:
-                                vis.conn.logError("unknown external command " + command);
+                                vis.conn.logError('unknown external command ' + command);
                         }
                     }
 
