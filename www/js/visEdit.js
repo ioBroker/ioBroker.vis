@@ -621,9 +621,240 @@ vis = $.extend(true, vis, {
         // Widget Align ---------------------
 
         $("#wid_align_left").click(function(){
-            console.log(vis.activeWidgets)
-            console.log(vis.widgets)
-        })
+            var data=[];
+           $.each(vis.activeWidgets,function(){
+               var _data={
+                   wid: this,
+                   left: parseInt($("#"+this).css("left"))
+               }
+               data.push(_data)
+           });
+
+            function SortByLeft(a, b) {
+                var aName = a.left;
+                var bName = b.left;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByLeft);
+            var left = data.shift().left;
+
+            $.each(data, function(){
+                $("#"+this.wid).css("left", left  +"px");
+                $("#widget_helper_"+this.wid).css("left", left-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.left = left  +"px";
+
+            });
+            vis.save();
+
+        });
+        $("#wid_align_right").click(function(){
+            var data=[];
+            $.each(vis.activeWidgets,function(){
+                var _data={
+                    wid: this,
+                    left: parseInt($("#"+this).css("left"))
+                }
+                data.push(_data)
+            });
+
+            function SortByLeft(a, b) {
+                var aName = a.left;
+                var bName = b.left;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByLeft);
+            var left = data.pop().left;
+
+            $.each(data, function(){
+                $("#"+this.wid).css("left", left  +"px");
+                $("#widget_helper_"+this.wid).css("left", left-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.left = left  +"px";
+
+            });
+            vis.save();
+
+        });
+        $("#wid_align_top").click(function(){
+            var data=[];
+            $.each(vis.activeWidgets,function(){
+                var _data={
+                    wid: this,
+                    top: parseInt($("#"+this).css("top"))
+                };
+                data.push(_data)
+            });
+
+            function SortBytop(a, b) {
+                var aName = a.top;
+                var bName = b.top;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortBytop);
+            var top = data.shift().top;
+
+            $.each(data, function(){
+                $("#"+this.wid).css("top", top  +"px");
+                $("#widget_helper_"+this.wid).css("top", top-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.top = top  +"px";
+
+            });
+            vis.save();
+
+        });
+        $("#wid_align_bottom").click(function(){
+            var data=[];
+            $.each(vis.activeWidgets,function(){
+                var _data={
+                    wid: this,
+                    top: parseInt($("#"+this).css("top"))
+                };
+                data.push(_data)
+            });
+
+            function SortBytop(a, b) {
+                var aName = a.top;
+                var bName = b.top;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortBytop);
+            var top = data.pop().top;
+
+            $.each(data, function(){
+                $("#"+this.wid).css("top", top  +"px");
+                $("#widget_helper_"+this.wid).css("top", top-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.top = top  +"px";
+
+            });
+            vis.save();
+
+        });
+        $("#wid_align_vc").click(function(){
+            var min_top =9999;
+            var max_bottom = 0;
+            var middle;
+            $.each(vis.activeWidgets, function () {
+                var top = parseInt($("#" + this).css("top"));
+                var bottom = top + $("#" + this).height();
+                if (min_top > top)min_top = top;
+                if (max_bottom < bottom)max_bottom = bottom;
+            });
+            middle = min_top + (max_bottom - min_top)/2;
+            $.each(vis.activeWidgets, function(){
+                var top = middle - ($("#"+this).height() / 2);
+                $("#"+this).css("top", top +"px");
+                $("#widget_helper_"+this).css("top", top-2 +"px");
+                vis.views[vis.activeView].widgets[this].style.top = top  +"px";
+
+            });
+            vis.save();
+        });
+        $("#wid_align_hc").click(function(){
+            var min_left =9999;
+            var max_right = 0;
+            var middle;
+            $.each(vis.activeWidgets, function () {
+                var left = parseInt($("#" + this).css("left"));
+                var right = left + $("#" + this).width();
+                if (min_left > left)min_left = left;
+                if (max_right < right)max_right = right;
+            });
+            middle = min_left + (max_right - min_left)/2;
+            $.each(vis.activeWidgets, function(){
+                var left = middle - ($("#"+this).width() / 2);
+                $("#"+this).css("left", left +"px");
+                $("#widget_helper_"+this).css("left", left-2 +"px");
+                vis.views[vis.activeView].widgets[this].style.left = left  +"px";
+
+            });
+            vis.save();
+        });
+        $("#wid_dis_h").click(function(){
+            var data=[];
+            var min_left =9999;
+            var max_right = 0;
+            var cont_size = 0;
+            var between;
+            $.each(vis.activeWidgets, function () {
+                var left = parseInt($("#" + this).css("left"));
+                var right = left + $("#" + this).width;
+                cont_size = cont_size + $("#" + this).width;
+                if (min_left > left)min_left = left;
+                if (max_right < right)max_right = right;
+
+                var _data={
+                    wid: this,
+                    left: left
+                };
+                data.push(_data)
+            });
+
+            between = (max_right - min_left - cont_size)/  (vis.activeWidgets.length - 1);
+           if (between < 0 ) between = 0;
+            function SortByLeft(a, b) {
+                var aName = a.left;
+                var bName = b.left;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByLeft);
+            var first = data.shift()
+            var left =  first.left + $("#"+first.wid).width;
+
+            $.each(data, function(){
+                left = left + between;
+                $("#"+this.wid).css("left", left +"px");
+                $("#widget_helper_"+this.wid).css("left", left-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.left = left  +"px";
+
+                left = left+  $("#"+this.wid).width;
+
+            });
+            vis.save();
+        });
+        $("#wid_dis_v").click(function(){
+            var data=[];
+            var min_top =9999;
+            var max_bottom = 0;
+            var cont_size = 0;
+            var between;
+            $.each(vis.activeWidgets, function () {
+                var top = parseInt($("#" + this).css("top"));
+                var bottom = top + $("#" + this).height;
+                cont_size = cont_size + $("#" + this).height;
+                if (min_top > top)min_top = top;
+                if (max_bottom < bottom)max_bottom = bottom;
+
+                var _data={
+                    wid: this,
+                    top: top
+                };
+                data.push(_data)
+            });
+
+            between = (max_bottom - min_top - cont_size)/  (vis.activeWidgets.length - 1);
+            if (between < 0 ) between = 0;
+            function SortByTop(a, b) {
+                var aName = a.top;
+                var bName = b.top;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByTop);
+            var first = data.shift()
+            var top =  first.top + $("#"+first.wid).height;
+            $.each(data, function(){
+                top = top + between;
+                $("#"+this.wid).css("top", top +"px");
+                $("#widget_helper_"+this.wid).css("top", top-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.top = top  +"px";
+                top = top+  $("#"+this.wid).height;
+            });
+            vis.save();
+        });
 
         // All Widget ---------------------
         $("#wid_all_lock_function").button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
@@ -2054,7 +2285,6 @@ vis = $.extend(true, vis, {
                     }
                 }catch (err){}
             }
-
 
             $('#inspect_' + widAttr).on("change", function () {
                 $(this).css("background-color", $(this).val());
@@ -4271,17 +4501,6 @@ vis = $.extend(true, vis, {
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
     },
-    get_panel_by_id: function (id) {
-        var panels = dockManager.getPanels()
-        var panel;
-        $.each(panels, function () {
-            if (this.elementContent.id == id) {
-                panel = this;
-                return false
-            }
-        });
-        return panel
-    }
 });
 
 $(document).keydown(function (e) {
