@@ -2017,11 +2017,54 @@ vis = $.extend(true, vis, {
             };
         }
         setTimeout(function () {
-            $('#inspect_' + widAttr).css("background-color", $('#inspect_' + widAttr).val())
+            $('#inspect_' + widAttr).css("background-color", $('#inspect_' + widAttr).val());
+
+            setFontColor($('#inspect_' + widAttr));
+
+            function setFontColor(element) {
+                try {
+                    var r;
+                    var b;
+                    var g;
+                    var hsp;
+                    var a = $(element).css('background-color');
+                    if (a.match(/^rgb/)) {
+                        a = a.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
+                        r = a[1];
+                        b = a[2];
+                        g = a[3];
+                    } else {
+                        a = +("0x" + a.slice(1).replace(
+                            a.length < 5 && /./g, '$&$&'
+                        )
+                        );
+                        r = a >> 16;
+                        b = a >> 8 & 255;
+                        g = a & 255;
+                    }
+                    hsp = Math.sqrt(
+                        0.299 * (r * r) +
+                        0.587 * (g * g) +
+                        0.114 * (b * b)
+                    );
+                    if (hsp > 127.5) {
+                        $('#inspect_' + widAttr).css("color", "#000000")
+                    } else {
+                        $('#inspect_' + widAttr).css("color", "#FFFFFF")
+                    }
+                }catch (err){}
+            }
+
+
             $('#inspect_' + widAttr).on("change", function () {
-                $(this).css("background-color", $(this).val())
-            })
+                $(this).css("background-color", $(this).val());
+                setFontColor($('#inspect_' + widAttr));
+            });
+
         });
+
+
+
 
         return line;
     },
@@ -3059,7 +3102,7 @@ vis = $.extend(true, vis, {
             return false;
         }
         $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
-        $('#widget_tab').text(_("Widget")+": "+wid)
+        $('#widget_tab').text(_("Widget")+": "+wid);
 
         var widget = this.views[this.activeView].widgets[wid];
 
