@@ -52,18 +52,18 @@ vis = $.extend(true, vis, {
 
         this.editInitDialogs();
         this.editInitMenu();
-        $('#attr_wrap').tabs({
-            activate: function(event, ui) {
-                // Find out index
-                var i = 0;
-                $(this).find('a').each(function () {
-                    if ($(this).attr('href') == ui.newPanel.selector) {
-                        return false;
-                    }
-                    i++;
-                });
-                that.editSaveConfig('tabs/attr_wrap', i);
-            }
+        $('#pan_attr').tabs({
+            //activate: function(event, ui) {
+            //    // Find out index
+            //    //var i = 0;
+            //    //$(this).find('a').each(function () {
+            //    //    if ($(this).attr('href') == ui.newPanel.selector) {
+            //    //        return false;
+            //    //    }
+            //    //    i++;
+            //    //});
+            //    //that.editSaveConfig('tabs/pan_attr', i);
+            //}
         });
         $('#pan_add_wid').resizable({
             handles:  'e',
@@ -73,7 +73,11 @@ vis = $.extend(true, vis, {
         $('#pan_attr').resizable({
             handles: 'w',
             maxWidth: 670,
-            minWidth: 100
+            minWidth: 100,
+            resize:function(){
+                $(this).css("left","auto")
+            }
+
         });
         if (this.config['size/pan_add_wid']) $('#pan_add_wid').width(this.config['size/pan_add_wid']);
         if (this.config['size/pan_attr'])    $('#pan_attr').width(this.config['size/pan_attr']);
@@ -371,6 +375,7 @@ vis = $.extend(true, vis, {
                     .replace('<div class="editmode-helper"></div>', '')
                     .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, '')
                     .replace(/(?:\r\n|\r|\n)/g, '')
+                    .replace(/\t/g, ' ')
                     .replace(/[ ]{2,}/g, ' ');
 
                 html = html
@@ -611,6 +616,244 @@ vis = $.extend(true, vis, {
             that.dupWidgets(null, $('#rib_wid_copy_view').val());
             $('#rib_wid').show();
             $('#rib_wid_copy_tr').hide();
+        });
+
+        // Widget Align ---------------------
+
+        $("#wid_align_left").click(function(){
+            var data=[];
+           $.each(vis.activeWidgets,function(){
+               var _data={
+                   wid: this,
+                   left: parseInt($("#"+this).css("left"))
+               }
+               data.push(_data)
+           });
+
+            function SortByLeft(a, b) {
+                var aName = a.left;
+                var bName = b.left;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByLeft);
+            var left = data.shift().left;
+
+            $.each(data, function(){
+                $("#"+this.wid).css("left", left  +"px");
+                $("#widget_helper_"+this.wid).css("left", left-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.left = left  +"px";
+
+            });
+            vis.save();
+
+        });
+        $("#wid_align_right").click(function(){
+            var data=[];
+            $.each(vis.activeWidgets,function(){
+                var _data={
+                    wid: this,
+                    left: parseInt($("#"+this).css("left"))
+                }
+                data.push(_data)
+            });
+
+            function SortByLeft(a, b) {
+                var aName = a.left;
+                var bName = b.left;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByLeft);
+            var left = data.pop().left;
+
+            $.each(data, function(){
+                $("#"+this.wid).css("left", left  +"px");
+                $("#widget_helper_"+this.wid).css("left", left-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.left = left  +"px";
+
+            });
+            vis.save();
+
+        });
+        $("#wid_align_top").click(function(){
+            var data=[];
+            $.each(vis.activeWidgets,function(){
+                var _data={
+                    wid: this,
+                    top: parseInt($("#"+this).css("top"))
+                };
+                data.push(_data)
+            });
+
+            function SortBytop(a, b) {
+                var aName = a.top;
+                var bName = b.top;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortBytop);
+            var top = data.shift().top;
+
+            $.each(data, function(){
+                $("#"+this.wid).css("top", top  +"px");
+                $("#widget_helper_"+this.wid).css("top", top-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.top = top  +"px";
+
+            });
+            vis.save();
+
+        });
+        $("#wid_align_bottom").click(function(){
+            var data=[];
+            $.each(vis.activeWidgets,function(){
+                var _data={
+                    wid: this,
+                    top: parseInt($("#"+this).css("top"))
+                };
+                data.push(_data)
+            });
+
+            function SortBytop(a, b) {
+                var aName = a.top;
+                var bName = b.top;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortBytop);
+            var top = data.pop().top;
+
+            $.each(data, function(){
+                $("#"+this.wid).css("top", top  +"px");
+                $("#widget_helper_"+this.wid).css("top", top-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.top = top  +"px";
+
+            });
+            vis.save();
+
+        });
+        $("#wid_align_vc").click(function(){
+            var min_top =9999;
+            var max_bottom = 0;
+            var middle;
+            $.each(vis.activeWidgets, function () {
+                var top = parseInt($("#" + this).css("top"));
+                var bottom = top + $("#" + this).height();
+                if (min_top > top)min_top = top;
+                if (max_bottom < bottom)max_bottom = bottom;
+            });
+            middle = min_top + (max_bottom - min_top)/2;
+            $.each(vis.activeWidgets, function(){
+                var top = middle - ($("#"+this).height() / 2);
+                $("#"+this).css("top", top +"px");
+                $("#widget_helper_"+this).css("top", top-2 +"px");
+                vis.views[vis.activeView].widgets[this].style.top = top  +"px";
+
+            });
+            vis.save();
+        });
+        $("#wid_align_hc").click(function(){
+            var min_left =9999;
+            var max_right = 0;
+            var middle;
+            $.each(vis.activeWidgets, function () {
+                var left = parseInt($("#" + this).css("left"));
+                var right = left + $("#" + this).width();
+                if (min_left > left)min_left = left;
+                if (max_right < right)max_right = right;
+            });
+            middle = min_left + (max_right - min_left)/2;
+            $.each(vis.activeWidgets, function(){
+                var left = middle - ($("#"+this).width() / 2);
+                $("#"+this).css("left", left +"px");
+                $("#widget_helper_"+this).css("left", left-2 +"px");
+                vis.views[vis.activeView].widgets[this].style.left = left  +"px";
+
+            });
+            vis.save();
+        });
+        $("#wid_dis_h").click(function(){
+            var data=[];
+            var min_left =9999;
+            var max_right = 0;
+            var cont_size = 0;
+            var between;
+            $.each(vis.activeWidgets, function () {
+                var left = parseInt($("#" + this).css("left"));
+                var right = left + $("#" + this).width;
+                cont_size = cont_size + $("#" + this).width;
+                if (min_left > left)min_left = left;
+                if (max_right < right)max_right = right;
+
+                var _data={
+                    wid: this,
+                    left: left
+                };
+                data.push(_data)
+            });
+
+            between = (max_right - min_left - cont_size)/  (vis.activeWidgets.length - 1);
+           if (between < 0 ) between = 0;
+            function SortByLeft(a, b) {
+                var aName = a.left;
+                var bName = b.left;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByLeft);
+            var first = data.shift()
+            var left =  first.left + $("#"+first.wid).width;
+
+            $.each(data, function(){
+                left = left + between;
+                $("#"+this.wid).css("left", left +"px");
+                $("#widget_helper_"+this.wid).css("left", left-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.left = left  +"px";
+
+                left = left+  $("#"+this.wid).width;
+
+            });
+            vis.save();
+        });
+        $("#wid_dis_v").click(function(){
+            var data=[];
+            var min_top =9999;
+            var max_bottom = 0;
+            var cont_size = 0;
+            var between;
+            $.each(vis.activeWidgets, function () {
+                var top = parseInt($("#" + this).css("top"));
+                var bottom = top + $("#" + this).height;
+                cont_size = cont_size + $("#" + this).height;
+                if (min_top > top)min_top = top;
+                if (max_bottom < bottom)max_bottom = bottom;
+
+                var _data={
+                    wid: this,
+                    top: top
+                };
+                data.push(_data)
+            });
+
+            between = (max_bottom - min_top - cont_size)/  (vis.activeWidgets.length - 1);
+            if (between < 0 ) between = 0;
+            function SortByTop(a, b) {
+                var aName = a.top;
+                var bName = b.top;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByTop);
+            var first = data.shift()
+            var top =  first.top + $("#"+first.wid).height;
+            $.each(data, function(){
+                top = top + between;
+                $("#"+this.wid).css("top", top +"px");
+                $("#widget_helper_"+this.wid).css("top", top-2 +"px");
+                vis.views[vis.activeView].widgets[this.wid].style.top = top  +"px";
+                top = top+  $("#"+this.wid).height;
+            });
+            vis.save();
         });
 
         // All Widget ---------------------
@@ -1978,11 +2221,53 @@ vis = $.extend(true, vis, {
             };
         }
         setTimeout(function () {
-            $('#inspect_' + widAttr).css("background-color", $('#inspect_' + widAttr).val())
+            $('#inspect_' + widAttr).css("background-color", $('#inspect_' + widAttr).val());
+
+            setFontColor($('#inspect_' + widAttr));
+
+            function setFontColor(element) {
+                try {
+                    var r;
+                    var b;
+                    var g;
+                    var hsp;
+                    var a = $(element).css('background-color');
+                    if (a.match(/^rgb/)) {
+                        a = a.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
+                        r = a[1];
+                        b = a[2];
+                        g = a[3];
+                    } else {
+                        a = +("0x" + a.slice(1).replace(
+                            a.length < 5 && /./g, '$&$&'
+                        )
+                        );
+                        r = a >> 16;
+                        b = a >> 8 & 255;
+                        g = a & 255;
+                    }
+                    hsp = Math.sqrt(
+                        0.299 * (r * r) +
+                        0.587 * (g * g) +
+                        0.114 * (b * b)
+                    );
+                    if (hsp > 127.5) {
+                        $('#inspect_' + widAttr).css("color", "#000000")
+                    } else {
+                        $('#inspect_' + widAttr).css("color", "#FFFFFF")
+                    }
+                }catch (err){}
+            }
+
             $('#inspect_' + widAttr).on("change", function () {
-                $(this).css("background-color", $(this).val())
-            })
+                $(this).css("background-color", $(this).val());
+                setFontColor($('#inspect_' + widAttr));
+            });
+
         });
+
+
+
 
         return line;
     },
@@ -3015,10 +3300,12 @@ vis = $.extend(true, vis, {
 
         if (!wid || wid === 'none') {
             // Switch tabs to View settings
-            $('#attr_wrap').tabs({active: 1}).tabs('option', 'disabled', [0]);
+            $('#pan_attr').tabs('option', 'disabled', [1]).tabs({active: 0});
+            $('#widget_tab').text(_("Widget"));
             return false;
         }
-        $('#attr_wrap').tabs('option', 'disabled', []).tabs({active: 0});;
+        $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
+        $('#widget_tab').text(_("Widget")+": "+wid);
 
         var widget = this.views[this.activeView].widgets[wid];
 
@@ -4187,17 +4474,6 @@ vis = $.extend(true, vis, {
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
     },
-    get_panel_by_id: function (id) {
-        var panels = dockManager.getPanels()
-        var panel;
-        $.each(panels, function () {
-            if (this.elementContent.id == id) {
-                panel = this;
-                return false
-            }
-        });
-        return panel
-    }
 });
 
 $(document).keydown(function (e) {
@@ -4268,11 +4544,34 @@ $(document).keydown(function (e) {
     } else if (e.which === 114) {
         // Fullscreen
         var $container = $('#vis_container');
+        var $pan_attr = $('#attr_wrap');
+        var delay;
+
         if ($container.hasClass('fullscreen')) {
+            $("#attr_wrap").unbind("mouseenter").unbind("mouseleave");
+            $("#pan_attr").show();
             $container.removeClass('fullscreen').appendTo('#vis_wrap');
+            $pan_attr.removeClass('fullscreen-pan-attr').appendTo('#panel_body');
+
         } else {
-            $container.prependTo('body').addClass('fullscreen')
+            $container.prependTo('body').addClass('fullscreen');
+            $pan_attr.prependTo('body').addClass('fullscreen-pan-attr');
+
+            $("#attr_wrap").bind("mouseenter",function () {
+                clearTimeout(delay);
+                $("#pan_attr").show("slide", {direction: "right"})
+            })
+            .bind("mouseleave",function () {
+                    delay = setTimeout(function () {
+                        if($pan_attr.hasClass("fullscreen-pan-attr")){
+                            $("#pan_attr").hide("slide", {direction: "right"})
+                        }
+
+                    }, 750);
+                });
+            $("#pan_attr").hide()
         }
+
         e.preventDefault();
     } else if (e.which === 33) {
         // Next View
