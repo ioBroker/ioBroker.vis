@@ -1,12 +1,14 @@
 
 div#vis_container {
-    width: -webkit-calc(100% - 2px);
-    width: calc(100% - 2px);
+    width: -webkit-calc(100% - 5px);
+    width: calc(100% - 5px);
     height: -webkit-calc(100% - 30px);
     height: calc(100% - 30px);
     position: relative;
     overflow: auto;
     border-bottom-width: 0px;
+    /* margin: 0; */
+    /* padding: 0; */
 }
 
 body {
@@ -464,16 +466,20 @@ html {
 }
 
 #pan_attr {
-    display: inline-block;
+    display: block;
     height: 100%;
-    left: auto !important;
+    /* left: auto; */
     /* white-space: nowrap; */
-    position: absolute;
-    right: 0;
+    /* position: absolute; */
+    /* right: 0; */
     width: 355px;
 
     margin-right: 1px;
-    float: right;
+    /* float: right; */
+    margin: 0;
+    padding: 0;
+    /* top: 0; */
+    border-radius: 0;
 }
 
 #inspect_view_bkg_parent {
@@ -483,13 +489,15 @@ html {
 /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
 
 #vis_wrap {
-    width: 200px;
+    /* width: auto; */
     max-height: 100%;
-    position: relative;
+    position: absolute;
     display: inline-block;
     height: 100%;
     overflow: hidden;
     clear: both;
+    /* right: 0; */
+    /* top: 0; */
 }
 
 #view_select {
@@ -559,10 +567,16 @@ html {
 }
 
 #attr_wrap {
-    height: -webkit-calc(100% - 14px);
-    height: calc(100% - 14px);
+    /* height: -webkit-calc(100% - 14px); */
+    height: 100%;
     padding: 0;
     border-radius: 0;
+    position: absolute;
+    right: 0;
+    top: -1px;
+    min-width: 20px;
+    width: auto;
+    overflow: visible;
 }
 
 #select_set-button {
@@ -691,8 +705,26 @@ td > .select_active_widget :nth-child(2) {
     height: 100%;
 }
 
-.oid-dev{
+.oid-dev {
     width: 50px;
-    padding: 0!important;
+    padding: 0 !important;
     height: 18px;
+}
+
+.fullscreen-pan-attr{
+    z-index: 10001;
+    width: auto;
+    position: absolute;
+    right: 0;
+    /* height: 100%; */
+    min-width: 20px;
+    background: transparent;
+    border: none;
+}
+#pan_attr_hover{
+    height: 100%;
+    width: calc(100% + 30px);
+    position: absolute;
+    top: 0;
+    right: 0;
 }
