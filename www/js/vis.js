@@ -8,7 +8,16 @@
  *  http://creativecommons.org/licenses/by-nc/4.0/
  *
  */
-
+/* jshint browser:true */
+/* global document*/
+/* global console*/
+/* global session*/
+/* global window*/
+/* global location*/
+/* global setTimeout*/
+/* global clearTimeout*/
+/* global io*/
+/* global $*/
 "use strict";
 
 // we should detect either local path here and not online.
@@ -16,7 +25,7 @@
 
 // ok But I need the local flag in Webstorm too (faster Page reload) 
 var local = false;
-if (document.URL.split('/local/')[1]  || document.URL.split('/localhost:63343/')[1] || document.URL.split('/localhost:63342/')[1]){
+if (document.URL.split('/local/')[1] || document.URL.split('/localhost:63343/')[1] || document.URL.split('/localhost:63342/')[1]) {
     local = true;
 }
 
@@ -76,7 +85,7 @@ if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemL
 
 var vis = {
 
-    version:                '0.2.0',
+    version:                '0.2.2',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -100,7 +109,7 @@ var vis = {
     binds:                  {},
     onChangeCallbacks:      [],
     viewsActiveFilter:      {},
-    projectPrefix:          window.location.search ? window.location.search.slice(1) + '/': 'main/',
+    projectPrefix:          window.location.search ? window.location.search.slice(1) + '/' : 'main/',
     navChangeCallbacks:     [],
     editMode:               false,
     language:               (typeof systemLang != 'undefined') ? systemLang : visConfig.language,
@@ -158,26 +167,26 @@ var vis = {
         var url = './widgets/' + name + '.html?visVersion=' + this.version;
         var that = this;
         $.ajax({
-            url: url,
-            type: 'GET',
-            async: false,
+            url:      url,
+            type:     'GET',
             dataType: 'html',
-            cache: this.useCache,
-            success: function (data) {
-
-                jQuery("head").append(data);
-                that.toLoadSetsCount -= 1;
-                if (that.toLoadSetsCount <= 0) {
-                    that.showWaitScreen(true, null, null, 100);
-                    setTimeout(function () {
-                        callback.call(that);
-                    }, 100);
-                } else {
-                    that.showWaitScreen(true, null, null, parseInt((100 - that.waitScreenVal) / that.toLoadSetsCount, 10));
-                }
+            cache:    this.useCache,
+            success:  function (data) {
+                setTimeout(function () {
+                    $('head').append(data);
+                    that.toLoadSetsCount -= 1;
+                    if (that.toLoadSetsCount <= 0) {
+                        that.showWaitScreen(true, null, null, 100);
+                        setTimeout(function () {
+                            callback.call(that);
+                        }, 100);
+                    } else {
+                        that.showWaitScreen(true, null, null, parseInt((100 - that.waitScreenVal) / that.toLoadSetsCount, 10));
+                    }
+                }, 0);
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                that.conn.logError("Cannot load widget set " + name + " " + errorThrown);
+                that.conn.logError('Cannot load widget set ' + name + ' ' + errorThrown);
             }
         });
     },
@@ -253,10 +262,10 @@ var vis = {
 
         var that = this;
         if (this.toLoadSetsCount) {
-            for (var i = 0, len = this.toLoadSetsCount; i < len; i++) {
+            for (var j = 0, len = this.toLoadSetsCount; j < len; j++) {
                 _setTimeout(function (_i) {
                     that.loadWidgetSet(arrSets[_i], callback);
-                }, 100, i);
+                }, 100, j);
             }
         } else {
             if (callback) {
@@ -294,14 +303,14 @@ var vis = {
             if (!this.views) {
                 this.initViewObject();
                 return false;
-                }else{
+            } else {
                 this.showWaitScreen(false);
             }
 
             var hash = window.location.hash.substring(1);
 
             // View selected?
-            if (hash == '') {
+            if (!hash) {
                 // Take first view in the list
                 for (var view in this.views) {
                     this.activeView = view;
@@ -309,12 +318,12 @@ var vis = {
                 }
                 // Create default view in demo mode
                 if (typeof io == 'undefined') {
-                    if (this.activeView == "") {
+                    if (!this.activeView) {
                         if (!this.editMode) {
                             alert(_("error - View doesn't exist"));
                             window.location.href = "./edit.html";
                         } else {
-                            this.views["DemoView"] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                            this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                             this.activeView = "DemoView";
                             //vis.showWaitScreen(false);
                         }
@@ -330,7 +339,7 @@ var vis = {
                         //alert("unexpected error - this should not happen :(");
                         //$.error("this should not happen :(");
                         // create demoView
-                        this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                        this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                         this.activeView = 'DemoView';
                     }
                 }
@@ -368,8 +377,7 @@ var vis = {
     initViewObject: function () {
         if (!this.editMode) {
             window.location.href = './edit.html' + window.location.search;
-        }
-        else {
+        } else {
             if (confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
                 this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
@@ -395,7 +403,7 @@ var vis = {
         $view.css({width: width});
         $view.css({height: height});
     },
-    updateContainers: function(view) {
+    updateContainers: function (view) {
         var that = this;
         // Set ths views for containers
         $("#visview_" + view).find('.vis-view-container').each(function () {
@@ -438,7 +446,7 @@ var vis = {
         if ($('#visview_' + view).html() === undefined) {
 
             $('#vis_container').append('<div style="display:none;" id="visview_' + view + '" class="vis-view"></div>');
-            vis.addViewStyle(view,vis.views[view].settings.theme);
+            this.addViewStyle(view, this.views[view].settings.theme);
 
 
             var $view = $("#visview_" + view);
@@ -505,8 +513,7 @@ var vis = {
             this.saveRemote();
         }
     },
-    addViewStyle:function(view,theme){
-
+    addViewStyle: function (view,theme) {
         var _view = 'visview_' + view;
         $.ajax({
             url: 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
@@ -782,7 +789,7 @@ var vis = {
         });
 
         if (!this.editMode && this.instance) {
-            this.conn.sendCommand(this.instance, 'changedView', that.viewFileSuffix ? that.viewFileSuffix + '/' + this.activeView : this.activeView);
+            this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
         }
 
         if (window.location.hash.slice(1) != view) {
@@ -882,7 +889,7 @@ var vis = {
                                 // Create empty css file
                                 that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
                             }
-                        })
+                        });
                     }
                 });
             }
@@ -917,6 +924,33 @@ var vis = {
     onWakeUp: function (callback) {
         this.wakeUpCallbacks.push(callback);
     },
+    showMessage: function (message, title, icon) {
+        if (!this.$dialogMessage) {
+            this.$dialogMessage = $('#dialog-message');
+            this.$dialogMessage.dialog({
+                autoOpen: false,
+                modal:    true,
+                buttons: [
+                    {
+                        text: _('Ok'),
+                        click: function () {
+                            $(this).dialog('close');
+                        }
+                    }
+                ]
+            });
+        }
+        this.$dialogMessage.dialog('option', 'title', title || _('Message'));
+        $('#dialog-message-text').html(message);
+        if (icon) {
+            $('#dialog-message-icon').show();
+            $('#dialog-message-icon').attr('class', '');
+            $('#dialog-message-icon').addClass('ui-icon ui-icon-' + icon);
+        } else {
+            $('#dialog-message-icon').hide();
+        }
+        this.$dialogMessage.dialog('open');
+    },
     waitScreenVal: 0,
     showWaitScreen: function (isShow, appendText, newText, step) {
         var waitScreen = document.getElementById("waitScreen");
@@ -940,7 +974,7 @@ var vis = {
                 this.waitScreenVal += step;
                 setTimeout(function (_val) {
                     $(".vis-progressbar").progressbar("value", _val);
-                }, 0, this.waitScreenVal)
+                }, 0, this.waitScreenVal);
 
             }
         } else if (waitScreen) {
@@ -977,8 +1011,8 @@ if ('applicationCache' in window) {
                 jQuery(".vis-progressbar").hide();
                 try {
                     window.applicationCache.swapCache();
-                } catch (e) {
-                    servConn.logError('Cannot execute window.applicationCache.swapCache - ' + e);
+                } catch (_e) {
+                    servConn.logError('Cannot execute window.applicationCache.swapCache - ' + _e);
                 }
                 setTimeout(function () {
                     window.location.reload();
@@ -1076,16 +1110,16 @@ if ('applicationCache' in window) {
                         $("#server-disconnect").dialog("close");
                         if (vis.isFirstTime) {
                             vis.conn.getVersion(function (version) {
-                                if (!version) {
-                                    // Possible not authenticated, wait for request from server
-                                } else {
+                                if (version) {
                                     //vis.conn.readFile("www/vis/css/vis-user.css");
 
                                     if (compareVersion(version, vis.requiredServerVersion)) {
                                         // TODO Translate
-                                        alert("Warning: requires Server version " + vis.requiredServerVersion + " - found Server version " + version + " - please update Server.");
+                                        vis.showMessage('Warning: requires Server version ' + vis.requiredServerVersion + ' - found Server version ' + version + ' - please update Server.');
                                     }
-                                }
+                                } //else {
+                                    // Possible not authenticated, wait for request from server
+                                //}
                             });
 
                             vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
@@ -1197,19 +1231,19 @@ if ('applicationCache' in window) {
                         users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name') + '">'
                     }
 
-                var text = '<div id="login-box" class="login-popup" style="display:none">'+
-                            '<div class="login-message">'+message+'</div>'+
-                            '<div class="login-input-field">'+
-                                '<label class="username">'+
-                                    '<span class="_">'+_('User name')+'</span>'+
+                var text = '<div id="login-box" class="login-popup" style="display:none">' +
+                            '<div class="login-message">' + message + '</div>' +
+                            '<div class="login-input-field">' +
+                                '<label class="username">' +
+                                    '<span class="_">' + _('User name') + '</span>' +
                                     users +
-                                '</label>'+
-                                '<label class="password">'+
-                                    '<span class="_">'+_('Password')+'</span>'+
-                                    '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password')+'">'+
-                                '</label>'+
-                                '<button class="login-button" type="button"  class="_">'+_('Sign in')+'</button>'+
-                            '</div>'+
+                                '</label>' +
+                                '<label class="password">' +
+                                    '<span class="_">' + _('Password') + '</span>' +
+                                    '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password') + '">' +
+                                '</label>' +
+                                '<button class="login-button" type="button"  class="_">' + _('Sign in') + '</button>' +
+                            '</div>' +
                         '</div>';
 
                     $('body').append(text);
@@ -1253,18 +1287,24 @@ if ('applicationCache' in window) {
                     });
                 },
                 onCommand: function (instance, command, data) {
+                    var parts;
                     if (instance != vis.instance && instance != 'FFFFFFFF') return false;
                     if (command) {
                         // external Commands
                         switch (command) {
                             case 'alert':
-                                alert(data);
+                                parts = data.split(';');
+                                vis.showMessage(parts[0], parts[1], parts[2]);
                                 break;
                             case 'changedView':
                                 // Do nothing
                                 return false;
                             case 'changeView':
-                                vis.changeView(data);
+                                parts = data.split('/');
+                                //if (parts[1]) {
+                                    // Todo switch to desired project
+                                //}
+                                vis.changeView(parts[1] || parts[0]);
                                 break;
                             case 'refresh':
                             case 'reload':
@@ -1279,20 +1319,35 @@ if ('applicationCache' in window) {
                                 window.open(data);
                                 break;
                             case 'playSound':
-                                $('#external_sound').attr("src", data);
                                 setTimeout(function () {
-                                    document.getElementById("external_sound").play();
+                                    var href;
+                                    if (data.match(/^http(s)?:\/\//)) {
+                                        href = data;
+                                    } else {
+                                        href = location.protocol + '//' + location.hostname + ':' + location.port + data;
+                                    }
+
+                                    if (typeof Audio != 'undefined') {
+                                        var snd = new Audio(href); // buffers automatically when created
+                                        snd.play();
+                                    } else {
+                                        if (!$('#external_sound').length) {
+                                            $('body').append('<audio id="external_sound"></audio>');
+                                        }
+                                        $('#external_sound').attr('src', href);
+                                        document.getElementById('external_sound').play();
+                                    }
                                 }, 1);
                                 break;
                             default:
-                                vis.conn.logError("unknown external command " + command);
+                                vis.conn.logError('unknown external command ' + command);
                         }
                     }
 
                     return true;
                 }
             });
-        }else{
+        } else {
             // Init edit dialog
             if (vis.editMode && vis.editInit) vis.editInit();
             vis.init();
@@ -1313,7 +1368,7 @@ if (!Array.prototype.indexOf) {
             }
         }
         return -1;
-    }
+    };
 }
 function _setTimeout(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
     return setTimeout(function () {

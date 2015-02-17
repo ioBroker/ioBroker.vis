@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.2.0",
+        "version": "0.2.2",
         "title":                    "ioBroker Visualisation",
         "desc": {
             "en":                   "Graphical user interface for ioBroker.",
@@ -26,5 +26,50 @@
         "singleton":                true
     },
     "native": {
-    }
+    },
+    "instanceObjects": [
+        {
+            "_id":  "control",
+            "type": "channel",
+            "common": {
+                "name": "Control vis"
+            },
+            "native": {
+            }
+        },
+        {
+            "_id":  "control.instance",
+            "type": "state",
+            "common": {
+                "name": "Control vis",
+                "type": "string",
+                "desc": "Write here browser instance ID to control or 'FFFFFFFF' to control all instances"
+            },
+            "native": {
+            }
+        },
+      {
+          "_id":  "control.command",
+          "type": "state",
+          "common": {
+              "name": "Command for vis",
+              "type": "string",
+              "desc": "Writing this variable akt as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+              "states": ["alert", "changeView", "refresh", "reload", "dialog", "popup", "playSound", "changedView"]
+          },
+          "native": {
+          }
+      },
+      {
+          "_id":  "control.data",
+          "type": "state",
+          "common": {
+              "name": "Data for control vis",
+              "type": "string",
+              "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
+          },
+          "native": {
+          }
+      }
+    ]
 }

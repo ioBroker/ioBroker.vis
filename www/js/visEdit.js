@@ -14,6 +14,16 @@
  */
 
 // visEdit - the ioBroker.vis Editor
+/* jshint browser:true */
+/* global document*/
+/* global console*/
+/* global session*/
+/* global window*/
+/* global location*/
+/* global setTimeout*/
+/* global clearTimeout*/
+/* global io*/
+/* global $*/
 
 'use strict';
 
@@ -52,18 +62,18 @@ vis = $.extend(true, vis, {
 
         this.editInitDialogs();
         this.editInitMenu();
-        $('#attr_wrap').tabs({
-            activate: function(event, ui) {
-                // Find out index
-                var i = 0;
-                $(this).find('a').each(function () {
-                    if ($(this).attr('href') == ui.newPanel.selector) {
-                        return false;
-                    }
-                    i++;
-                });
-                that.editSaveConfig('tabs/attr_wrap', i);
-            }
+        $('#pan_attr').tabs({
+            //activate: function(event, ui) {
+            //    // Find out index
+            //    //var i = 0;
+            //    //$(this).find('a').each(function () {
+            //    //    if ($(this).attr('href') == ui.newPanel.selector) {
+            //    //        return false;
+            //    //    }
+            //    //    i++;
+            //    //});
+            //    //that.editSaveConfig('tabs/pan_attr', i);
+            //}
         });
         $('#pan_add_wid').resizable({
             handles:  'e',
@@ -73,7 +83,11 @@ vis = $.extend(true, vis, {
         $('#pan_attr').resizable({
             handles: 'w',
             maxWidth: 670,
-            minWidth: 100
+            minWidth: 100,
+            resize: function () {
+                $(this).css("left", "auto");
+            }
+
         });
         if (this.config['size/pan_add_wid']) $('#pan_add_wid').width(this.config['size/pan_add_wid']);
         if (this.config['size/pan_attr'])    $('#pan_attr').width(this.config['size/pan_attr']);
@@ -217,7 +231,7 @@ vis = $.extend(true, vis, {
             // Update background-xxx if changed background and vice versa
             if (attr.match(/^background-/)) {
                 $('#inspect_view_css_background').val($('#visview_' + that.activeView).css('background'));
-            } else if (attr == 'background'){
+            } else if (attr == 'background') {
                 $('.vis-inspect-view-css').each(function () {
                     var attr = $(this).attr('id').slice(17);
                     if (attr.match(/^background-/)) {
@@ -371,13 +385,14 @@ vis = $.extend(true, vis, {
                     .replace('<div class="editmode-helper"></div>', '')
                     .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, '')
                     .replace(/(?:\r\n|\r|\n)/g, '')
+                    .replace(/\t/g, ' ')
                     .replace(/[ ]{2,}/g, ' ');
 
                 html = html
                     .replace('<div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div>', '')
                     .replace('<div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div>', '')
                     .replace('<div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div>', '')
-                    .replace('<div></div>', '')
+                    .replace('<div></div>', '');
 
                 html = '<div id="prev_' + that.views[that.activeView].widgets[widID].tpl + '" style="position: relative; text-align: initial;padding: 4px ">' + html.toString() + '</div>';
                 text += html;
@@ -522,10 +537,10 @@ vis = $.extend(true, vis, {
             $('#editorTheme').remove();
             $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editorTheme"/>');
             //that.additionalThemeCss(theme);
-            setTimeout(function(){
+            setTimeout(function () {
                 $('#scrollbar_style').remove();
-                $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: '+$(".ui-widget-header ").first().css("background-color")+'}</style>');
-            },300);
+                $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: ' + $(".ui-widget-header ").first().css("background-color") + '}</style>');
+            }, 300);
 
             // Select active theme in menu
             $('[data-theme=' + theme + ']').addClass('ui-state-active');
@@ -613,6 +628,240 @@ vis = $.extend(true, vis, {
             $('#rib_wid_copy_tr').hide();
         });
 
+        // Widget Align ---------------------
+
+        $("#wid_align_left").click(function () {
+           var data = [];
+           $.each(that.activeWidgets, function () {
+               var _data = {
+                   wid:  this,
+                   left: parseInt($("#" + this).css("left"))
+               }
+               data.push(_data);
+           });
+
+            function SortByLeft(a, b) {
+                var aName = a.left;
+                var bName = b.left;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByLeft);
+            var left = data.shift().left;
+
+            $.each(data, function () {
+                $("#" + this.wid).css('left', left  + 'px');
+                $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
+                that.views[that.activeView].widgets[this.wid].style.left = left + "px";
+            });
+            that.save();
+        });
+
+        $("#wid_align_right").click(function () {
+            var data = [];
+            $.each(that.activeWidgets, function () {
+                var _data = {
+                    wid:  this,
+                    left: parseInt($("#" + this).css("left"))
+                }
+                data.push(_data);
+            });
+
+            function SortByLeft(a, b) {
+                var aName = a.left;
+                var bName = b.left;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByLeft);
+            var left = data.pop().left;
+
+            $.each(data, function(){
+                $("#" + this.wid).css("left", left + "px");
+                $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
+                that.views[that.activeView].widgets[this.wid].style.left = left + "px";
+            });
+            that.save();
+        });
+
+        $("#wid_align_top").click(function () {
+            var data = [];
+            $.each(that.activeWidgets, function () {
+                var _data = {
+                    wid: this,
+                    top: parseInt($("#" + this).css("top"))
+                };
+                data.push(_data);
+            });
+
+            function SortBytop(a, b) {
+                var aName = a.top;
+                var bName = b.top;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortBytop);
+            var top = data.shift().top;
+
+            $.each(data, function () {
+                $("#" + this.wid).css("top", top  +"px");
+                $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
+                that.views[that.activeView].widgets[this.wid].style.top = top + "px";
+            });
+            that.save();
+        });
+
+        $("#wid_align_bottom").click(function () {
+            var data = [];
+            $.each(that.activeWidgets, function () {
+                var _data = {
+                    wid: this,
+                    top: parseInt($("#" + this).css("top"))
+                };
+                data.push(_data);
+            });
+
+            function SortBytop(a, b) {
+                var aName = a.top;
+                var bName = b.top;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortBytop);
+            var top = data.pop().top;
+
+            $.each(data, function () {
+                $("#" + this.wid).css("top", top  +"px");
+                $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
+                that.views[that.activeView].widgets[this.wid].style.top = top + "px";
+            });
+            that.save();
+        });
+
+        $("#wid_align_vc").click(function () {
+            var min_top =9999;
+            var max_bottom = 0;
+            var middle;
+            $.each(that.activeWidgets, function () {
+                var top = parseInt($("#" + this).css("top"));
+                var bottom = top + $("#" + this).height();
+                if (min_top > top) min_top = top;
+                if (max_bottom < bottom) max_bottom = bottom;
+            });
+            middle = min_top + (max_bottom - min_top) / 2;
+            $.each(that.activeWidgets, function () {
+                var top = middle - ($("#" + this).height() / 2);
+                $("#" + this).css("top", top + "px");
+                $("#widget_helper_" + this).css("top", top - 2 + "px");
+                that.views[that.activeView].widgets[this].style.top = top + "px";
+            });
+            that.save();
+        });
+
+        $("#wid_align_hc").click(function () {
+            var min_left =9999;
+            var max_right = 0;
+            var middle;
+            $.each(that.activeWidgets, function () {
+                var left = parseInt($("#" + this).css("left"));
+                var right = left + $("#" + this).width();
+                if (min_left > left) min_left = left;
+                if (max_right < right) max_right = right;
+            });
+            middle = min_left + (max_right - min_left) / 2;
+            $.each(that.activeWidgets, function () {
+                var left = middle - ($("#" + this).width() / 2);
+                $("#" + this).css("left", left +"px");
+                $("#widget_helper_"+this).css("left", left - 2 + "px");
+                that.views[that.activeView].widgets[this].style.left = left + "px";
+            });
+            that.save();
+        });
+        $("#wid_dis_h").click(function () {
+            var data = [];
+            var min_left = 9999;
+            var max_right = 0;
+            var cont_size = 0;
+            var between;
+            $.each(that.activeWidgets, function () {
+                var left = parseInt($("#" + this).css("left"));
+                var right = left + $("#" + this).width;
+                cont_size = cont_size + $("#" + this).width;
+                if (min_left > left) min_left = left;
+                if (max_right < right) max_right = right;
+
+                var _data = {
+                    wid:  this,
+                    left: left
+                };
+                data.push(_data);
+            });
+
+            between = (max_right - min_left - cont_size) / (that.activeWidgets.length - 1);
+            if (between < 0 ) between = 0;
+
+            function SortByLeft(a, b) {
+                var aName = a.left;
+                var bName = b.left;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByLeft);
+            var first = data.shift();
+            var left  = first.left + $("#" + first.wid).width;
+
+            $.each(data, function(){
+                left = left + between;
+                $("#" + this.wid).css("left", left + "px");
+                $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
+                that.views[that.activeView].widgets[this.wid].style.left = left + "px";
+                left = left + $("#" + this.wid).width;
+            });
+            that.save();
+        });
+        $("#wid_dis_v").click(function () {
+            var data = [];
+            var min_top = 9999;
+            var max_bottom = 0;
+            var cont_size = 0;
+            var between;
+
+            $.each(that.activeWidgets, function () {
+                var top = parseInt($("#" + this).css("top"));
+                var bottom = top + $("#" + this).height;
+                cont_size = cont_size + $("#" + this).height;
+                if (min_top > top) min_top = top;
+                if (max_bottom < bottom) max_bottom = bottom;
+
+                var _data = {
+                    wid: this,
+                    top: top
+                };
+                data.push(_data);
+            });
+
+            between = (max_bottom - min_top - cont_size) / (that.activeWidgets.length - 1);
+            if (between < 0 ) between = 0;
+            function SortByTop(a, b) {
+                var aName = a.top;
+                var bName = b.top;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            }
+
+            data.sort(SortByTop);
+            var first = data.shift();
+            var top  = first.top + $("#" + first.wid).height;
+
+            $.each(data, function () {
+                top = top + between;
+                $("#" + this.wid).css("top", top + "px");
+                $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
+                that.views[that.activeView].widgets[this.wid].style.top = top + "px";
+                top = top + $("#" + this.wid).height;
+            });
+            that.save();
+        });
+
         // All Widget ---------------------
         $("#wid_all_lock_function").button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
             if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
@@ -652,11 +901,11 @@ vis = $.extend(true, vis, {
             if (name === false) {
                 return;
             } else {
-                setTimeout(function(){
+                setTimeout(function () {
                     that.addView(name);
                     $('#rib_view').show();
                     $('#rib_view_add_tr').hide();
-                },0)
+                }, 0);
             }
         });
 
@@ -720,7 +969,7 @@ vis = $.extend(true, vis, {
         $(".rib_tool_resolution_toggle").button({
             text:  false,
             icons: {primary: 'ui-icon-refresh'}
-        }).css({width: 22, height: 22}).click(function(){
+        }).css({width: 22, height: 22}).click(function () {
             $("#rib_tools_resolution_fix").toggle();
             $("#rib_tools_resolution_manuel").toggle();
         });
@@ -737,7 +986,7 @@ vis = $.extend(true, vis, {
             that.saveRemote(function () {
                 // Show hint how to get back to edit mode
                 if (!that.config['dialog/isEditHintShown']) {
-                    that.showMessage(_('To get back to edit mode just call "%s" in browser', location.href));
+                    alert(_('To get back to edit mode just call "%s" in browser', location.href));
                     that.editSaveConfig('dialog/isEditHintShown', true);
                 }
 
@@ -747,8 +996,8 @@ vis = $.extend(true, vis, {
         });
 
         // Dev ----------------------------------------------------------------
-        $(".oid-dev").change(function(){
-            vis.setValue($(this).attr("id").split("_")[1], parseInt($(this).val()));
+        $(".oid-dev").change(function () {
+            that.setValue($(this).attr("id").split("_")[1], parseInt($(this).val()));
         });
 
     },
@@ -831,8 +1080,8 @@ vis = $.extend(true, vis, {
                         } else {
                             $(ui.helper).find(".wid_prev_type").remove();
                             $(ui.helper).find(".wid_prev_name").remove();
-                            $(ui.helper).css("border", "none")
-                            $(ui.helper).css("width","auto")
+                            $(ui.helper).css("border", "none");
+                            $(ui.helper).css("width",  "auto");
                         }
 
                     }
@@ -875,7 +1124,7 @@ vis = $.extend(true, vis, {
                 self_w:   $('#view_select_tabs').width(),
                 self_l:   parseInt($('#view_select_tabs').css('left'))
             };
-            if (o.parent_w >= (o.self_w + o.self_l)){
+            if (o.parent_w >= (o.self_w + o.self_l)) {
                 $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px");
             }
         });
@@ -937,8 +1186,7 @@ vis = $.extend(true, vis, {
                         $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
                     }
                 }
-            }
-            else {
+            } else {
                 if (o.self_w != o.parent_w) {
                     if ((o.self_l + 20) <= 0) {
                         $('#view_select_tabs').css('left', o.self_l + 20 + "px")
@@ -976,7 +1224,7 @@ vis = $.extend(true, vis, {
             } else {
                 sel = '';
             }
-            $('#view_select_tabs').append('<div id="view_tab_' + k + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_'+k+'">' + k + '</div>');
+            $('#view_select_tabs').append('<div id="view_tab_' + k + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + k + '">' + k + '</div>');
         }
 
         $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active')
@@ -1003,7 +1251,7 @@ vis = $.extend(true, vis, {
         }
         this.$selectView.val(this.activeView);
         this.$selectView.selectmenu({
-            change: function( event, ui ) {
+            change: function (event, ui) {
                 that.changeView($(this).val());
             }
         });
@@ -1036,10 +1284,10 @@ vis = $.extend(true, vis, {
                 var tpl = ui.item.value;
                 that.editSaveConfig('select/select_set', tpl);
                 if (tpl == "all") {
-                    $('.wid_prev').css("display","inline-block");
+                    $('.wid_prev').css("display", "inline-block");
                 } else {
                     $('.wid_prev').hide();
-                    $('.' + tpl + '_prev').css("display","inline-block");
+                    $('.' + tpl + '_prev').css("display", "inline-block");
                 }
             }
         });
@@ -1093,7 +1341,7 @@ vis = $.extend(true, vis, {
                             }
                         };
                         colorSelect.show(_settings);
-                    }).css({width: 22, height: 22}).attr('title',_('Select color'));
+                    }).css({width: 22, height: 22}).attr('title', _('Select color'));
                 }
 
             }
@@ -1154,7 +1402,7 @@ vis = $.extend(true, vis, {
         this.showWaitScreen(false);
         $('#menu_body').show();
         $('#panel_body').show();
-        $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: '+$(".ui-widget-header ").first().css("background-color")+'}</style>');
+        $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: ' + $(".ui-widget-header ").first().css("background-color") + '}</style>');
 
     },
     editLoadConfig: function () {
@@ -1170,7 +1418,7 @@ vis = $.extend(true, vis, {
                 } else {
                     this.config = {};
                 }
-            } catch(e) {
+            } catch (e) {
                 console.log('Cannot load edit config');
                 this.config = {};
             }
@@ -1182,33 +1430,6 @@ vis = $.extend(true, vis, {
         if (typeof storage != 'undefined') {
             storage.set('visConfig', JSON.stringify(this.config));
         }
-    },
-    showMessage: function (message, title, icon) {
-        if (!this.$dialogMessage) {
-            this.$dialogMessage = $('#dialog-message');
-            this.$dialogMessage.dialog({
-                autoOpen: false,
-                modal:    true,
-                buttons: [
-                    {
-                        text: _('Ok'),
-                        click: function () {
-                            $(this).dialog('close');
-                        }
-                    }
-                ]
-            });
-        }
-        this.$dialogMessage.dialog('option', 'title', title || _('Message'));
-        $('#dialog-message-text').html(message);
-        if (icon) {
-            $('#dialog-message-icon').show();
-            $('#dialog-message-icon').attr('class', '');
-            $('#dialog-message-icon').addClass('ui-icon ui-icon-' + icon);
-        } else {
-            $('#dialog-message-icon').hide();
-        }
-        this.$dialogMessage.dialog('open');
     },
     confirmMessage: function (message, title, icon, callback) {
         if (!this.$dialogConfirm) {
@@ -1262,14 +1483,14 @@ vis = $.extend(true, vis, {
             $('#view_tab_' + that.activeView).removeClass('ui-tabs-active ui-state-active');
             that.changeView(view);
 
-            $('#view_select_tabs').append('<div id="view_tab_' + view + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_'+view+'">' + view + '</div>');
+            $('#view_select_tabs').append('<div id="view_tab_' + view + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + view + '">' + view + '</div>');
             $('#view_tab_' + that.activeView).addClass('ui-tabs-active ui-state-active');
 
             that.$selectView.append('<option value="' + view + '">' + view + '</option>');
             that.$selectView.val(view);
             that.$selectView.selectmenu('refresh');
 
-            that.$copyWidgetSelectView.append('<option value="' + view + '">'+ view + '</option>');
+            that.$copyWidgetSelectView.append('<option value="' + view + '">' + view + '</option>');
             that.$copyWidgetSelectView.val(view);
             that.$copyWidgetSelectView.selectmenu('refresh');
         });
@@ -1533,7 +1754,7 @@ vis = $.extend(true, vis, {
     delWidgets: function (widgets, noSave) {
         if (typeof widgets != 'object') widgets = null;
 
-        if (!widgets){
+        if (!widgets) {
             // Store array, because it will be modified in delWidgetHelper
             widgets = [];
             for (var i = 0; i < this.activeWidgets.length; i++) {
@@ -1745,9 +1966,8 @@ vis = $.extend(true, vis, {
         }
     },
     getObjDesc: function (id) {
-
-        if (this.objects[id] && this.objects[id].common && this.objects[id].common.name ) {
-            return this.objects[id].common.name;
+        if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
+            return this.objects[id].common.name || id;
         }
         return id;
     },
@@ -2006,11 +2226,55 @@ vis = $.extend(true, vis, {
             };
         }
         setTimeout(function () {
-            $('#inspect_' + widAttr).css("background-color", $('#inspect_' + widAttr).val())
+            $('#inspect_' + widAttr).css("background-color", $('#inspect_' + widAttr).val());
+
+            setFontColor($('#inspect_' + widAttr));
+
+            function setFontColor(element) {
+                try {
+                    var r;
+                    var b;
+                    var g;
+                    var hsp;
+                    var a = $(element).css('background-color');
+                    if (a.match(/^rgb/)) {
+                        a = a.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
+                        r = a[1];
+                        b = a[2];
+                        g = a[3];
+                    } else {
+
+                        // @SJ: Could not understand why "+" at start?
+                        a = +("0x" + a.slice(1).replace(
+                                a.length < 5 && /./g, '$&$&'
+                            )
+                        );
+                        r = a >> 16;
+                        b = a >> 8 & 255;
+                        g = a & 255;
+                    }
+                    hsp = Math.sqrt(
+                        0.299 * (r * r) +
+                        0.587 * (g * g) +
+                        0.114 * (b * b)
+                    );
+                    if (hsp > 127.5) {
+                        $('#inspect_' + widAttr).css("color", "#000000");
+                    } else {
+                        $('#inspect_' + widAttr).css("color", "#FFFFFF");
+                    }
+                }catch (err){}
+            }
+
             $('#inspect_' + widAttr).on("change", function () {
-                $(this).css("background-color", $(this).val())
-            })
+                $(this).css("background-color", $(this).val());
+                setFontColor($('#inspect_' + widAttr));
+            });
+
         });
+
+
+
 
         return line;
     },
@@ -3043,10 +3307,12 @@ vis = $.extend(true, vis, {
 
         if (!wid || wid === 'none') {
             // Switch tabs to View settings
-            $('#attr_wrap').tabs({active: 1}).tabs('option', 'disabled', [0]);
+            $('#pan_attr').tabs('option', 'disabled', [1]).tabs({active: 0});
+            $('#widget_tab').text(_("Widget"));
             return false;
         }
-        $('#attr_wrap').tabs('option', 'disabled', []).tabs({active: 0});;
+        $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
+        $('#widget_tab').text(_("Widget") + ": " + wid);
 
         var widget = this.views[this.activeView].widgets[wid];
 
@@ -4215,17 +4481,6 @@ vis = $.extend(true, vis, {
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
     },
-    get_panel_by_id: function (id) {
-        var panels = dockManager.getPanels()
-        var panel;
-        $.each(panels, function () {
-            if (this.elementContent.id == id) {
-                panel = this;
-                return false
-            }
-        });
-        return panel
-    }
 });
 
 $(document).keydown(function (e) {
@@ -4296,11 +4551,33 @@ $(document).keydown(function (e) {
     } else if (e.which === 114) {
         // Fullscreen
         var $container = $('#vis_container');
+        var $pan_attr = $('#attr_wrap');
+        var delay;
+
         if ($container.hasClass('fullscreen')) {
+            $("#attr_wrap").unbind("mouseenter").unbind("mouseleave");
+            $("#pan_attr").show();
             $container.removeClass('fullscreen').appendTo('#vis_wrap');
+            $pan_attr.removeClass('fullscreen-pan-attr').appendTo('#panel_body');
+
         } else {
-            $container.prependTo('body').addClass('fullscreen')
+            $container.prependTo('body').addClass('fullscreen');
+            $pan_attr.prependTo('body').addClass('fullscreen-pan-attr');
+
+            $("#attr_wrap").bind("mouseenter",function () {
+                clearTimeout(delay);
+                $("#pan_attr").show("slide", {direction: "right"});
+            })
+            .bind("mouseleave",function () {
+                    delay = setTimeout(function () {
+                        if ($pan_attr.hasClass("fullscreen-pan-attr")){
+                            $("#pan_attr").hide("slide", {direction: "right"});
+                        }
+                    }, 750);
+                });
+            $("#pan_attr").hide();
         }
+
         e.preventDefault();
     } else if (e.which === 33) {
         // Next View

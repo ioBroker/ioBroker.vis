@@ -1,5 +1,15 @@
 ////// ----------------------- Connection "class" ---------------------- ////////////
 
+/* jshint browser:true */
+/* global document*/
+/* global console*/
+/* global session*/
+/* global window*/
+/* global location*/
+/* global setTimeout*/
+/* global clearTimeout*/
+/* global io*/
+/* global $*/
 
 // The idea of servConn is to use this class later in every addon (Yahui, Control and so on).
 // The addon just must say, what must be loaded (values, objects, indexes) and
@@ -69,7 +79,7 @@ var servConn = {
         this._connCallbacks = connCallbacks;
 
         var connLink = visConfig.connLink || window.localStorage.getItem("connLink");
-        if (type == 0 || type == 'signalr') {
+        if (type === 0 || type == 'signalr') {
             this._type = 0;
 
             this.connection = $.hubConnection(connLink);
@@ -117,21 +127,21 @@ var servConn = {
                 }
                 that._autoReconnect();
             });
-            this.connection.reconnecting(function() {
+            this.connection.reconnecting(function () {
                 that._isConnected = false;
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
                 that._autoReconnect();
             });
-            this.connection.reconnected(function() {
+            this.connection.reconnected(function () {
                 that._isConnected = true;
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
                 }
                 that._autoReconnect();
             });
-            this.connection.disconnected(function() {
+            this.connection.disconnected(function () {
                 that._isConnected = false;
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(that._isConnected);
@@ -161,7 +171,7 @@ var servConn = {
 
                 this._socket.on('connect', function () {
                     //console.log("socket.io connect");
-                    if (this._myParent._isConnected == true) {
+                    if (this._myParent._isConnected === true) {
                         // This seems to be a reconnect because we're already connected!
                         // -> prevent firing onConnChange twice
                         return;
@@ -189,9 +199,9 @@ var servConn = {
                     //console.log("was offline for " + (offlineTime / 1000) + "s");
 
                     // TODO does this make sense?
-                    if (offlineTime > 12000) {
+                    //if (offlineTime > 12000) {
                         //window.location.reload();
-                    }
+                    //}
                     this._myParent._isConnected = true;
                     if (this._myParent._connCallbacks.onConnChange) {
                         this._myParent._connCallbacks.onConnChange(this._myParent._isConnected);
@@ -205,12 +215,12 @@ var servConn = {
                 });
 
                 this._socket.on('event', function (obj) {
-                    if (obj == null) {
+                    if (obj === null) {
                         return;
                     }
 
                     var o = {};
-                    o.name = obj[0]+"";
+                    o.name = obj[0] + "";
                     o.val  = obj[1];
                     o.ts   = obj[2];
                     o.ack  = obj[3];
@@ -221,9 +231,9 @@ var servConn = {
                     }
 
                 });
-            } else {
+            } //else {
                 //console.log("socket.io not initialized");
-            }
+            //}
         } else if (type == 2 || type == "local") {
             this._type       = 2;
             this._isAuthDone = true;
@@ -310,7 +320,7 @@ var servConn = {
                         if (k != -1) {
                             url = url.substring(0, k);
                         }
-                        url += '?random='+Date.now().toString();
+                        url += '?random=' + Date.now().toString();
                         var parts = url.split('/');
                         parts = parts.slice(3);
                         url = '/' + parts.join('/');
@@ -463,7 +473,7 @@ var servConn = {
                 },
                 error: function (state) {
                     // TODO Translate
-                    alert('Cannot get ' + location.href + '/../datastore/'+filename + '\n' + state.statusText);
+                    alert('Cannot get ' + location.href + '/../datastore/' + filename + '\n' + state.statusText);
                     callback([]);
                 }
             });
@@ -477,7 +487,7 @@ var servConn = {
 
         if (this._type == 0) {
             //SignalR
-            this._hub.invoke('touchFile',filename);
+            this._hub.invoke('touchFile', filename);
         } else if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
@@ -524,7 +534,7 @@ var servConn = {
     readDir: function (dirname, callback) {
         if (this._type == 0) {
             //SignalR
-            this._hub.invoke('readDir',dirname).done(function (jsonString) {
+            this._hub.invoke('readDir', dirname).done(function (jsonString) {
                 var data;
                 try {
                     data = JSON.parse(jsonString);
@@ -615,7 +625,7 @@ var servConn = {
                     if (callback) {
                         callback('Authentication required');
                     }
-                } else  if (jsonString !== undefined) {
+                } else if (jsonString !== undefined) {
                     try {
                         var _data = (JSON && JSON.parse(jsonString)) || jQuery.parseJSON(jsonString);
                     } catch (e) {
@@ -635,7 +645,7 @@ var servConn = {
                         data[dp] = obj;
                         if (localData.uiState['_' + dp + '.Value'] === undefined) {
                             var o = {};
-                            o['_' + dp] = { Value: data[dp].val, Timestamp: data[dp].ts, Certain: data[dp].ack, LastChange: data[dp].lc}
+                            o['_' + dp] = {Value: data[dp].val, Timestamp: data[dp].ts, Certain: data[dp].ack, LastChange: data[dp].lc};
                             localData.uiState.attr(o);
                         } else {
                             var o = {};
@@ -710,7 +720,7 @@ var servConn = {
                             // TODO possible problem with legacy
                             console.log(dp);
                             localData.uiState.attr(dp, _localData.uiState[dp]);
-                        } catch(e) {
+                        } catch (e) {
                             servConn.logError('Cannot export ' + dp);
                         }
                     }
@@ -718,7 +728,7 @@ var servConn = {
                 },
                 error: function (state) {
                     console.log(state.statusText);
-                    localData.uiState.attr('_no', { Value: false, Timestamp: null, Certain: true, LastChange: null});
+                    localData.uiState.attr('_no', {Value: false, Timestamp: null, Certain: true, LastChange: null});
                     // Local
                     if(callback) {
                         callback(null);
@@ -928,11 +938,12 @@ var servConn = {
             console.log("No connection!");
             return;
         }
-        if (this._type == 0) {
+        //if (this._type == 0) {
             //SignalR
             //this._hub.invoke('getUrl(url).done(function (jsonString) {
             //});
-        } else if (this._type == 1) {
+        //} else
+        if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
                 console.log('socket.io not initialized');
@@ -951,10 +962,11 @@ var servConn = {
             //console.log("No connection!");
             return;
         }
-        if (this._type == 0) {
+        //if (this._type == 0) {
             //SignalR
             //this._hub.server.log(errorText);
-        } else if (this._type == 1) {
+        //} else
+        if (this._type == 1) {
             //socket.io
             if (this._socket == null) {
                 console.log('socket.io not initialized');
@@ -1006,7 +1018,7 @@ var servConn = {
         if (user !== undefined) {
             this._authInfo = {
                 user: user,
-                hash: password+salt,
+                hash: password + salt,
                 salt: salt
             };
         }
@@ -1039,7 +1051,7 @@ var servConn = {
                     that._cmdQueue = null;
                     that._cmdQueue = [];
                     for (var t = 0, len = __cmdQueue.length; t < len; t++) {
-                        that[__cmdQueue[t].func](__cmdQueue[t].args[0],__cmdQueue[t].args[1], __cmdQueue[t].args[2], __cmdQueue[t].args[3]);
+                        that[__cmdQueue[t].func](__cmdQueue[t].args[0], __cmdQueue[t].args[1], __cmdQueue[t].args[2], __cmdQueue[t].args[3]);
                     }
                 } else {
                     // Another authRequest should come, wait for this

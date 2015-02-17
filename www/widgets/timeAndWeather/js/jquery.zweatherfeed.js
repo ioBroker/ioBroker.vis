@@ -61,7 +61,10 @@
 			this.startUpdater = function () {
 				_requestData ();
 				if (options.update > 0)
-					setTimeout (function (obj) {obj.startUpdater();}, options.update * 60000, this);
+                    var that = this;
+					setTimeout(function () {
+                        that.startUpdater();
+                    }, options.update * 60000);
 			}
 
 
@@ -71,9 +74,9 @@
 
 				var locationid = '';
 
-				for (var i=0; i<count; i++) {
+				for (var i = 0; i < count; i++) {
 					if (locationid != '') locationid += ',';
-					locationid += "'"+ locations[i] + "'";
+					locationid += "'" + locations[i] + "'";
 				}
 
 				// Cache results for an hour to prevent overuse
@@ -83,16 +86,16 @@
 				var queryType = options.woeid ? 'woeid' : 'location';
 						
 				// Create Yahoo Weather feed API address
-				var query = "select * from weather.forecast where "+ queryType +" in ("+ locationid +") and u='"+ options.unit +"'";
-				var api = 'http://query.yahooapis.com/v1/public/yql?q='+ encodeURIComponent(query) +'&rnd='+ now.getFullYear() + now.getMonth() + now.getDay() + now.getHours() +'&format=json&callback=?';
+				var query = "select * from weather.forecast where " + queryType + " in (" + locationid + ") and u='" + options.unit + "'";
+				var api = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent(query) + '&rnd=' + now.getFullYear() + now.getMonth() + now.getDay() + now.getHours() +'&format=json&callback=?';
 				
 				// Send request
 				$.ajax({
-					type: 'GET',
-					url: api,
+					type:    'GET',
+					url:      api,
 					dataType: 'json',
-					context: $e,
-					success: function(data) {
+					context:  $e,
+					success:  function(data) {
 
 						if (data.query && data.query.results) {
 						
@@ -119,7 +122,7 @@
 							if (options.showerror) $e.html('<p>Weather information unavailable</p>');
 						}
 					},
-					error: function(data) {
+					error:    function(data) {
 						if (options.showerror) $e.html('<p>Weather request failed</p>');
 					}
 				});
@@ -323,28 +326,28 @@
 					tss = _getTimeAsDate(feed.astronomy.sunset);
 
 					// Get night or day
-					if (tpb>tsr && tpb<tss) { daynight = 'day'; } else { daynight = 'night'; }
+					if (tpb > tsr && tpb < tss) { daynight = 'day'; } else { daynight = 'night'; }
 
 					// Add item container
-					var html = '<div class="weatherItem '+ row +' '+ daynight +'"';
-					if (options.image) html += ' style="background-image: url(http://l.yimg.com/a/i/us/nws/weather/gr/'+ feed.item.condition.code + daynight.substring(0,1) +'.png); background-repeat: no-repeat;"';
+					var html = '<div class="weatherItem '+ row + ' ' + daynight + '"';
+					if (options.image) html += ' style="background-image: url(http://l.yimg.com/a/i/us/nws/weather/gr/' + feed.item.condition.code + daynight.substring(0,1) + '.png); background-repeat: no-repeat;"';
 					html += '>';
 		
 					// Add item data
-					html += '<div class="weatherCity">'+ feed.location.city +'</div>';
-					if (options.country) html += '<div class="weatherCountry">'+ feed.location.country +'</div>';
-					html += '<div class="weatherTemp">'+ feed.item.condition.temp +'&deg;</div>';
-					html += '<div class="weatherDesc">'+ (_tt[feed.item.condition.code][options.lang] || _tt[feed.item.condition.code]['en']) +'</div>';
+					html += '<div class="weatherCity">' + feed.location.city + '</div>';
+					if (options.country) html += '<div class="weatherCountry">' + feed.location.country + '</div>';
+					html += '<div class="weatherTemp">' + feed.item.condition.temp + '&deg;</div>';
+					html += '<div class="weatherDesc">' + (_tt[feed.item.condition.code][options.lang] || _tt[feed.item.condition.code]['en']) + '</div>';
 				
 					// Add optional data
-					if (options.highlow  && !isShort) html += '<div class="weatherRange">'+_translate('High', options.lang)+': '+ wf.high +'&deg; '+_translate('Low', options.lang)+': '+ wf.low +'&deg;</div>';
-					if (options.highlow  && isShort)  html += '<div class="weatherRange">'+ wf.low +'&deg;-'+ wf.high +'&deg;</div>';
-					if (options.wind     && !isShort) html += '<div class="weatherWind">'+_translate('Wind', options.lang)+': '+ wd +' '+ feed.wind.speed + _translate(feed.units.speed) +'</div>';
-					if (options.humidity && !isShort) html += '<div class="weatherHumidity">'+_translate('Humidity', options.lang)+': '+ feed.atmosphere.humidity +'%</div>';
-					if (options.humidity && isShort)  html += '<div class="weatherHumidity">'+ feed.atmosphere.humidity +'%</div>';
-					if (options.visibility) html += '<div class="weatherVisibility">'+_translate('Visibility', options.lang)+': '+ feed.atmosphere.visibility +'</div>';
-					if (options.sunrise)    html += '<div class="weatherSunrise">'+_translate('Sunrise', options.lang)+': '+ feed.astronomy.sunrise +'</div>';
-					if (options.sunset)     html += '<div class="weatherSunset">'+_translate('Sunset', options.lang)+': '+ feed.astronomy.sunset +'</div>';
+					if (options.highlow  && !isShort) html += '<div class="weatherRange">' + _translate('High', options.lang) + ': ' + wf.high + '&deg; ' + _translate('Low', options.lang) + ': ' + wf.low + '&deg;</div>';
+					if (options.highlow  && isShort)  html += '<div class="weatherRange">' + wf.low + '&deg;-' + wf.high + '&deg;</div>';
+					if (options.wind     && !isShort) html += '<div class="weatherWind">' + _translate('Wind', options.lang) + ': ' + wd + ' ' + feed.wind.speed + _translate(feed.units.speed) + '</div>';
+					if (options.humidity && !isShort) html += '<div class="weatherHumidity">' + _translate('Humidity', options.lang) + ': ' + feed.atmosphere.humidity + '%</div>';
+					if (options.humidity && isShort)  html += '<div class="weatherHumidity">' + feed.atmosphere.humidity + '%</div>';
+					if (options.visibility) html += '<div class="weatherVisibility">' + _translate('Visibility', options.lang) + ': ' + feed.atmosphere.visibility + '</div>';
+					if (options.sunrise)    html += '<div class="weatherSunrise">' + _translate('Sunrise', options.lang) + ': ' + feed.astronomy.sunrise + '</div>';
+					if (options.sunset)     html += '<div class="weatherSunset">' + _translate('Sunset', options.lang) + ': ' + feed.astronomy.sunset + '</div>';
 
 					// Add item forecast data
 					if (options.forecast) {
@@ -372,8 +375,8 @@
 					if (options.link) html += '<div class="weatherLink"><a href="'+ feed.link +'" target="'+ options.linktarget +'" title="'+_translate('Read full forecast', options.lang)+'">'+_translate('Full forecast', options.lang)+'</a></div>';
 
 				} else {
-					var html = '<div class="weatherItem '+ row +'">';
-					html += '<div class="weatherError">'+_translate('City not found', options.lang)+'</div>';
+					var html = '<div class="weatherItem ' + row + '">';
+					html += '<div class="weatherError">' + _translate('City not found', options.lang) + '</div>';
 				}
 
 				html += '</div>';
@@ -381,16 +384,20 @@
 				// Alternate row classes
 				if (row == 'odd') { row = 'even'; } else { row = 'odd';	}
 		
-				$e.append(html);				
-				if (options.resizable)
-					$e.resizable().resize (function() {
-						clearTimeout (timer);
-						timer = setTimeout ( function () {
-							options.width  = $e.width();
-							options.height = $e.height();
-							_process (e, options);
-						}, 1000);
-					});
+				$e.append(html);
+                if (typeof options.rendered == 'function') options.rendered();
+
+				if (options.resizable) {
+                    $e.resizable().resize (function() {
+                        clearTimeout (timer);
+                        timer = setTimeout ( function () {
+                            options.width  = $e.width();
+                            options.height = $e.height();
+                            _process (e, options);
+                        }, 1000);
+                    });
+                    console.log('B');
+                }
 			};
 
 			// Get time string as date

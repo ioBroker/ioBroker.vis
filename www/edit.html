@@ -396,7 +396,8 @@
                     </tr>
                 </table>
             </div>
-            <div class="ribbon_field ui-widget-content ui-corner-all" style="display:none">
+            <!--<div class="ribbon_field ui-widget-content ui-corner-all"style="display:none">-->
+            <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table style="border-spacing: 0px">
                     <tr>
                         <td class="translate" style="text-align: center; height: 22px; padding-right: 3px">Align widgets:</td>
@@ -410,7 +411,7 @@
                             <div id="wid_align_top" class="btn-iconbar ui-corner-all translateT" title="Align vertical/top"><img class="icon-on-iconbar" src="icon/align-vertical-top-2.png"></div>
                         </td>
                         <td>
-                            <div id="wid_align_buttom" class="btn-iconbar ui-corner-all translateT" title="Align vertical/bottom"><img class="icon-on-iconbar" src="icon/align-vertical-bottom-2.png"></div>
+                            <div id="wid_align_bottom" class="btn-iconbar ui-corner-all translateT" title="Align vertical/bottom"><img class="icon-on-iconbar" src="icon/align-vertical-bottom-2.png"></div>
                         </td>
                         <td>
                             <div id="wid_align_hc" class="btn-iconbar ui-corner-all translateT" title="Align horizontal/center"><img class="icon-on-iconbar" src="icon/align-horizontal-center-2.png"></div>
@@ -654,16 +655,17 @@
                  style="display:none; z-index: 99; position: absolute; left: 0; height:0; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
         </div>
     </div>
-    <div id="pan_attr">
-        <div class="ui-state-default translate" style="height: 16px;font-size: 16px;padding: 5px;font-weight: bolder;">Attributes</div>
-        <div id="attr_wrap">
+    <div id="attr_wrap">
+        <div id="pan_attr">
+            <div class="ui-state-default translate" style="height: 16px;font-size: 16px;padding: 5px;font-weight: bolder;">Attributes</div>
             <ul style="border-radius: 0; display: inline-block; background: transparent; border: none; margin-bottom: -2px">
-                <li>
-                    <a href="#tab_wid_attr" style="padding: 2px 4px 2px 4px" class="translate">Widget</a>
-                </li>
                 <li>
                     <a href="#tab_view_attr" style="padding: 2px 4px 2px 4px" class="translate">View</a>
                 </li>
+                <li>
+                    <a id="widget_tab" href="#tab_wid_attr" style="padding: 2px 4px 2px 4px" class="translate">Widget</a>
+                </li>
+
             </ul>
             <div class="tab_attr ui-widget-content" id="tab_view_attr">
                 <div id="view_inspector">
