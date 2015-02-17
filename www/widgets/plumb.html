@@ -19,6 +19,7 @@
     }
 
     vis.binds.plumb = {
+
         data:{},
         plumb_drop: function ($this, no_pos) {
             var drag_id;
@@ -119,7 +120,7 @@
                         $("#inspect_conLeft").val(self_id);
                         vis.save();
                         if (!no_pos) {
-                            console.log(($(ui.draggable).height() - $this.height()) / 2)
+
                             $(ui.draggable).css({
                                 "left": $this.position().left + $this.width() + "px",
                                 "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
@@ -139,249 +140,127 @@
             }
         },
         check: function(id, event){
-            console.log("check : " +id );
+            var data = {
+                type: "plumb_change",
+                from: event.from,
+                color: event.color,
+                color_from: event.color_from,
+                status: event.status
+                    };
+
             var $this = $("#"+id);
             var plumb = vis.binds.plumb.data;
             var self = vis.binds.plumb.data[id];
 
             if (self.coli) {
                 if (!event.status) {
-                    vis.binds.plumb.rest_collision(id,event)
+                    vis.binds.plumb.rest_collision(id,data)
                 }
             } else {
                 if (event.status) {
                     if ((self.status == true && event.status == true && self.color != event.color)) {
                         vis.binds.plumb.set_collision(id)
                     } else {
-                        vis.binds.plumb.set_normal(id, event)
+                        vis.binds.plumb.set_normal(id, data)
                     }
                 } else {
-                    vis.binds.plumb.set_normal(id, event)
+                    if(self.color_from == event.color_from){
+                        vis.binds.plumb.set_normal(id, data)
+                    }
+
+
                 }
             }
+
         },
         set_normal: function(id,event){
-            var $this = $("#"+id);
+            console.log("set_normal")
+            var $this = $("#" + id);
             var self = vis.binds.plumb.data[id];
 
-            $($this).find(".pipe_h").css({
+            $($this).find(".plumb_body").css({
                 "background-image": "none",
                 "background-color": event.color
             });
             self.status = event.status;
             self.color = event.color;
+            self.color_from = event.color_from;
 
-            var e = event;
-            e.from = id;
-            vis.binds.plumb.trigger(id,e,event)
+            vis.binds.plumb.trigger(id, event)
 
         },
-
         set_collision: function(id){
-            console.log("set colli : " +id );
+            console.log("set_collision")
             var $this = $("#"+id);
             var plumb = vis.binds.plumb.data;
             var self = vis.binds.plumb.data[id];
             self.status = true;
             self.coli = true;
-            $($this).find(".pipe_h").css("background-image", "linear-gradient(to right, " + plumb[self.conLeft].color + " , " + plumb[self.conRight].color + ")");
 
+            if(self.conLeft && self.conRight) {
+                console.log(plumb[self.conLeft].color),
+                console.log(plumb[self.conRight].color),
+                $($this).find(".pipe_h").css("background-image", "linear-gradient(to right, " + plumb[self.conLeft].color + " , " + plumb[self.conRight].color + ")");
+            }
         },
         rest_collision: function(id, event){
-            console.log("reset coli : " +id );
+            console.log("reste_collision")
             var $this = $("#"+id);
             var plumb = vis.binds.plumb.data;
             var self = vis.binds.plumb.data[id];
+            var e = JSON.parse( JSON.stringify( event ) );
 
-            var e = event;
-            e.from = id;
-            e.status = true;
+           e.status = true;
 
-
-
-            if (event.side == "left") {
-                $($this).find(".pipe_h").css({
-                    "background-image": "none",
-                    "background-color": plumb[self.conLeft].color
-                });
-                e.color = plumb[self.conLeft].color
-                e.side = "right";
-                e.status = true;
-                $("#" + self.conRight).trigger(e);
-            } else {
-                $($this).find(".pipe_h").css({
-                    "background-image": "none",
-                    "background-color": plumb[self.conRight].color
-                });
-                e.color = plumb[self.conRight].color;
-                e.side = "left";
-                e.status = true;
-                $("#" + self.conLeft).trigger(e);
-            }
-
-
-            if (self.cons == "lr") {
-                if (event.side == "right") {
-                    e.side = "right";
-                    $("#" + self.conRight).trigger(e);
-                } else {
-                    e.side = "left";
-                    $("#" + self.conLeft).trigger(e);
+            $.each(self.cons, function () {
+                if (self[this] != event.from) {
+                    e.color = plumb[self[this]].color;
+                    e.color_from = plumb[self[this]].color_from;
+                    self.color = e.color;
+                    self.color_from = e.color_from;
                 }
-            } else if (self.cons == "tb") {
-                if (event.side == "top") {
-                    e.side = "top";
-                    $("#" + self.conTop).trigger(e);
-                } else {
-                    e.side = "bottom";
-                    $("#" + self.conBottom).trigger(e);
-                }
-            } else if (self.cons == "bl") {
-                if (event.side == "top") {
-                    e.side = "left";
-                    $("#" + self.conLeft).trigger(e);
-                } else {
-                    e.side = "bottom";
-                    $("#" + self.conBottom).trigger(e);
-                }
-            } else if (self.cons == "br") {
-                if (event.side == "top") {
-                    e.side = "right";
-                    $("#" + self.conRight).trigger(e);
-                } else {
-                    e.side = "bottom";
-                    $("#" + self.conBottom).trigger(e);
-                }
-            } else if (self.cons == "tl") {
-                if (event.side == "top") {
-                    e.side = "left";
-                    $("#" + self.conLeft).trigger(e);
-                } else {
-                    e.side = "top";
-                    $("#" + self.conTop).trigger(e);
-                }
-            } else if (self.cons == "tr") {
-                if (event.side == "top") {
-                    e.side = "right";
-                    $("#" + self.conRight).trigger(e);
-                } else {
-                    e.side = "top";
-                    $("#" + self.conTop).trigger(e);
-                }
-            }
+            });
 
+            $($this).find(".plumb_body").css({
+                "background-image": "none",
+                "background-color": e.color
+            });
 
+            vis.binds.plumb.trigger_b(id,e)
             self.coli = false;
 
+
+
+
         },
-        trigger: function(id,e,event){
+        trigger: function (id, event) {
             var self = vis.binds.plumb.data[id];
+            var e = JSON.parse( JSON.stringify( event ) );
+
+                $.each(self.cons, function () {
+
+                    if (self[this] != event.from) {
+                       e.from = id;
+                            $("#" + self[this]).trigger(e);
+                    }
+                });
 
 
-            if (self.cons == "lr") {
-                if (event.side == "right") {
-                    e.side = "right";
-                    $("#" + self.conRight).trigger(e);
-                } else {
-                    e.side = "left";
-                    $("#" + self.conLeft).trigger(e);
-                }
-            } else if (self.cons == "tb") {
-                if (event.side == "top") {
-                    e.side = "top";
-                    $("#" + self.conTop).trigger(e);
-                } else {
-                    e.side = "bottom";
-                    $("#" + self.conBottom).trigger(e);
-                }
-            } else if (self.cons == "bl") {
-                if (event.side == "top") {
-                    e.side = "left";
-                    $("#" + self.conLeft).trigger(e);
-                } else {
-                    e.side = "bottom";
-                    $("#" + self.conBottom).trigger(e);
-                }
-            } else if (self.cons == "br") {
-                if (event.side == "top") {
-                    e.side = "right";
-                    $("#" + self.conRight).trigger(e);
-                } else {
-                    e.side = "bottom";
-                    $("#" + self.conBottom).trigger(e);
-                }
-            } else if (self.cons == "tl") {
-                if (event.side == "top") {
-                    e.side = "left";
-                    $("#" + self.conLeft).trigger(e);
-                } else {
-                    e.side = "top";
-                    $("#" + self.conTop).trigger(e);
-                }
-            } else if (self.cons == "tr") {
-                if (event.side == "top") {
-                    e.side = "right";
-                    $("#" + self.conRight).trigger(e);
-                } else {
-                    e.side = "top";
-                    $("#" + self.conTop).trigger(e);
-                }
-            }
         },
-        trigger: function(id,e,event){
+        trigger_b: function (id, event) {
             var self = vis.binds.plumb.data[id];
+            var e = JSON.parse( JSON.stringify( event ) );
+
+            $.each(self.cons, function () {
+                if (self[this] == event.from) {
+                    e.from = id;
+                    $("#" + self[this]).trigger(e);
+                }
+            });
 
 
-            if (self.cons == "lr") {
-                if (event.side == "right") {
-                    e.side = "right";
-                    $("#" + self.conRight).trigger(e);
-                } else {
-                    e.side = "left";
-                    $("#" + self.conLeft).trigger(e);
-                }
-            } else if (self.cons == "tb") {
-                if (event.side == "top") {
-                    e.side = "top";
-                    $("#" + self.conTop).trigger(e);
-                } else {
-                    e.side = "bottom";
-                    $("#" + self.conBottom).trigger(e);
-                }
-            } else if (self.cons == "bl") {
-                if (event.side == "top") {
-                    e.side = "left";
-                    $("#" + self.conLeft).trigger(e);
-                } else {
-                    e.side = "bottom";
-                    $("#" + self.conBottom).trigger(e);
-                }
-            } else if (self.cons == "br") {
-                if (event.side == "top") {
-                    e.side = "right";
-                    $("#" + self.conRight).trigger(e);
-                } else {
-                    e.side = "bottom";
-                    $("#" + self.conBottom).trigger(e);
-                }
-            } else if (self.cons == "tl") {
-                if (event.side == "top") {
-                    e.side = "left";
-                    $("#" + self.conLeft).trigger(e);
-                } else {
-                    e.side = "top";
-                    $("#" + self.conTop).trigger(e);
-                }
-            } else if (self.cons == "tr") {
-                if (event.side == "top") {
-                    e.side = "right";
-                    $("#" + self.conRight).trigger(e);
-                } else {
-                    e.side = "top";
-                    $("#" + self.conTop).trigger(e);
-                }
-            }
         },
+
         pump: function (el, oid, color_off, color_on, conTop, conBottom, conLeft, conRight) {
             var $this = $(el).parent();
             var id = $this.attr("id");
@@ -390,28 +269,32 @@
             if (!plumb[id]){
                 vis.binds.plumb.data[id] = {
                     type: "pump",
-                    cons:2,
-                    conTop:conTop,
-                    conBottom:conBottom,
-                    conLeft:conLeft,
-                    conRight:conRight,
-                    evLeft:null,
-                    evRight:null,
-                    status: false,
-                    self_color: null,
-                    last_from: null
+                    cons: ["conTop","conBottom","conLeft", "conRight"],
+                    coli: false,
+                    from: id,
+                    conLeft:null,
+                    conRight:null,
+                    conTop:null,
+                    conBottom:null,
+                    status: false
                 }
             }
             var self = plumb[id];
 
+            self.conLeft = conLeft || null;
+            self.conRight = conRight || null;
+            self.conTop = conTop || null;
+            self.conBottom = conBottom || null;
+
+
             vis.binds.plumb.plumb_drop($this, true);
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-
+                vis.binds.plumb.stop = 0;
                 var ev = {
                     type: "plumb_change",
                     from: id,
-                    default: color_off
+                    color_from: id
                 };
                 if (newVal >= 1) {
                     self.color = color_on;
@@ -422,24 +305,21 @@
                     ev.color = color_off;
                     ev.status = false
                 }
-                ev.side = "top";
-                $("#" + conTop).trigger(ev);
 
-                ev.side = "bottom";
-                $("#" + conBottom).trigger(ev);
+                $.each(self.cons, function () {
+                    if($("#" + self[this])){
+                        $("#" + self[this]).trigger(ev);
+                    }
 
-                ev.side = "left";
-                $("#" + conLeft).trigger(ev);
 
-                ev.side = "right";
-                $("#" + conRight).trigger(ev);
+                });
             });
 
             setTimeout(function () {
                 var ev = {
                     type: "plumb_change",
                     from: id,
-                    default: color_off
+                    color_from: id
                 };
                 if (vis.states[oid + '.val'] >= 1) {
                     ev.color = color_on;
@@ -449,18 +329,16 @@
                     ev.status = false
                 }
 
-                ev.side = "top";
-                $("#" + conTop).trigger(ev);
-                ev.side = "bottom";
-                $("#" + conBottom).trigger(ev);
-                ev.side = "left";
-                $("#" + conLeft).trigger(ev);
-                ev.side = "right";
-                $("#" + conRight).trigger(ev);
+                $.each(self.cons, function () {
+
+                        $("#" + self[this]).trigger(ev);
+
+                });
             }, 2);
 
         },
-        pipe_h: function (el, conLeft, conRight, conTop, conBottom) {
+
+        pipe_h: function (el, conLeft, conRight) {
             var $this = $(el).parent();
             var id = $this.attr("id");
             var plumb = vis.binds.plumb.data;
@@ -468,21 +346,19 @@
             if (!plumb[id]) {
                 vis.binds.plumb.data[id] = {
                     type: "pipe",
-                    cons:"lr",
+                    cons: ["conLeft", "conRight"],
                     coli: false,
                     conLeft:null,
                     conRight:null,
                     conTop:null,
                     conBottom:null,
-                    status: false,
+                    status: false
                 }
             }
             var self = plumb[id];
 
             self.conLeft = conLeft || null;
             self.conRight = conRight || null;
-            self.conTop = conTop || null;
-            self.conBottom = conBottom || null;
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.height() / 2);
@@ -492,45 +368,34 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
+//
                 vis.binds.plumb.check(id,event)
             });
 
         },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         pipe_v: function (el, conTop, conBottom) {
             var $this = $(el).parent();
             var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conTop", "conBottom"],
+                    coli: false,
+                    conLeft:null,
+                    conRight:null,
+                    conTop:null,
+                    conBottom:null,
+                    status: false
+                }
+            }
+            var self = plumb[id];
+
+
+            self.conTop = conTop || null;
+            self.conBottom = conBottom || null;
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
@@ -540,29 +405,33 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
-                console.log("----------------------------")
-                console.log("From " + event.from + " --> " + id);
-                console.log(conBottom)
-                console.log(conTop)
-
-                $($this).find(".pipe_v").css("background-color", event.color);
-                var e = {
-                    type: "plumb_change",
-                    from: id,
-                    color: event.color,
-                    default: event.default
-                };
-                if (conTop == event.from) {
-                    $("#" + conBottom).trigger(e);
-                } else {
-                    $("#" + conTop).trigger(e);
-                }
-            })
+//                console.log(event)
+                vis.binds.plumb.check(id,event)
+            });
 
         },
         bogen_br: function (el, conBottom, conRight) {
             var $this = $(el).parent();
             var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conRight", "conBottom"],
+                    coli: false,
+                    conLeft:null,
+                    conRight:null,
+                    conTop:null,
+                    conBottom:null,
+                    status: false
+                }
+            }
+            var self = plumb[id];
+
+
+            self.conRight = conRight || null;
+            self.conBottom = conBottom || null;
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
@@ -573,24 +442,43 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
+                vis.binds.plumb.check(id,event)
 
-                $($this).find(".bogen_br").css("background-color", event.color);
-                var e = {
-                    type: "plumb_change",
-                    from: id,
-                    color: event.color,
-                    default: event.default
-                };
-                if (conBottom == event.from) {
-                    $("#" + conRight).trigger(e);
-                } else {
-                    $("#" + conBottom).trigger(e);
-                }
+//                $($this).find(".bogen_br").css("background-color", event.color);
+//                var e = {
+//                    type: "plumb_change",
+//                    from: id,
+//                    color: event.color,
+//                    default: event.default
+//                };
+//                if (conBottom == event.from) {
+//                    $("#" + conRight).trigger(e);
+//                } else {
+//                    $("#" + conBottom).trigger(e);
+//                }
             })
         },
         bogen_bl: function (el, conBottom, conLeft) {
             var $this = $(el).parent();
             var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conLeft", "conBottom"],
+                    coli: false,
+                    conLeft:null,
+                    conRight:null,
+                    conTop:null,
+                    conBottom:null,
+                    status: false
+                }
+            }
+            var self = plumb[id];
+
+            self.conLeft = conLeft || null;
+            self.conBottom = conBottom || null;
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
@@ -601,25 +489,45 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
+                vis.binds.plumb.check(id,event)
 
-                $($this).find(".bogen_bl").css("background-color", event.color);
-                var e = {
-                    type: "plumb_change",
-                    from: id,
-                    color: event.color,
-                    default: event.default
-                };
-                if (conBottom == event.from) {
-                    $("#" + conLeft).trigger(e);
-                } else {
-                    $("#" + conBottom).trigger(e);
-                }
+//                $($this).find(".bogen_bl").css("background-color", event.color);
+//                var e = {
+//                    type: "plumb_change",
+//                    from: id,
+//                    color: event.color,
+//                    default: event.default
+//                };
+//                if (conBottom == event.from) {
+//                    $("#" + conLeft).trigger(e);
+//                } else {
+//                    $("#" + conBottom).trigger(e);
+//                }
             })
         },
 
         bogen_tr: function (el, conTop, conRight) {
             var $this = $(el).parent();
             var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conRight", "conTop"],
+                    coli: false,
+                    conLeft:null,
+                    conRight:null,
+                    conTop:null,
+                    conBottom:null,
+                    status: false
+                }
+            }
+            var self = plumb[id];
+
+
+            self.conRight = conRight || null;
+            self.conTop = conTop || null;
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
@@ -630,26 +538,42 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
-
-                $($this).find(".bogen_tr").css("background-color", event.color);
-                var e = {
-                    type: "plumb_change",
-                    from: id,
-                    color: event.color,
-                    default: event.default
-                };
-                if (conTop == event.from) {
-                    $("#" + conRight).trigger(e);
-                } else {
-                    $("#" + conTop).trigger(e);
-                }
+                vis.binds.plumb.check(id,event);
+//                $($this).find(".bogen_tr").css("background-color", event.color);
+//                var e = {
+//                    type: "plumb_change",
+//                    from: id,
+//                    color: event.color,
+//                    default: event.default
+//                };
+//                if (conTop == event.from) {
+//                    $("#" + conRight).trigger(e);
+//                } else {
+//                    $("#" + conTop).trigger(e);
+//                }
             })
         },
         bogen_tl: function (el, conTop, conLeft) {
             var $this = $(el).parent();
             var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
 
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conLeft", "conTop"],
+                    coli: false,
+                    conLeft:null,
+                    conRight:null,
+                    conTop:null,
+                    conBottom:null,
+                    status: false
+                }
+            }
+            var self = plumb[id];
 
+            self.conLeft = conLeft || null;
+            self.conTop = conTop || null;
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
                 $($this).find(".bogen_tl").css({"box-shadow": 'inset -' + shadow / 2 + 'px -' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
@@ -659,28 +583,44 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
-
-                $($this).find(".bogen_tl").css("background-color", event.color);
-                var e = {
-                    type: "plumb_change",
-                    from: id,
-                    color: event.color,
-                    default: event.default
-                };
-                if (conTop == event.from) {
-                    $("#" + conLeft).trigger(e);
-                } else {
-                    $("#" + conTop).trigger(e);
-                }
+                vis.binds.plumb.check(id,event);
+//                $($this).find(".bogen_tl").css("background-color", event.color);
+//                var e = {
+//                    type: "plumb_change",
+//                    from: id,
+//                    color: event.color,
+//                    default: event.default
+//                };
+//                if (conTop == event.from) {
+//                    $("#" + conLeft).trigger(e);
+//                } else {
+//                    $("#" + conTop).trigger(e);
+//                }
             })
         },
         valve_h: function (el, oid, conLeft, conRight, ctrl) {
             var $this = $(el).parent();
             var id = $this.attr("id");
-            var last_from;
-            var color_on;
-            var color_off;
+            var plumb = vis.binds.plumb.data;
             var self_color;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conLeft", "conRight"],
+                    coli: false,
+                    conLeft:null,
+                    conRight:null,
+                    conTop:null,
+                    conBottom:null,
+                    status: false
+                }
+            }
+            var self = plumb[id];
+
+
+            self.conLeft = conLeft || null;
+            self.conRight = conRight || null;
 
             $($this).on("resize", function () {
                 var height = $this.height();
@@ -708,50 +648,52 @@
             });
 
             $this.bind("plumb_change", function (event) {
-                color_on = event.color;
-                color_off = event.default;
-                last_from = event.from;
+
                 if (vis.states[oid + '.val'] >= 1) {
-                    var e = {
-                        type: "plumb_change",
-                        from: id,
-                        color: event.color,
-                        default: event.default
-                    };
-                    if (conLeft == event.from) {
-                        console.log("r")
-                        $("#" + conRight).trigger(e);
-                    } else {
-                        console.log("l")
-                        $("#" + conLeft).trigger(e);
-                    }
+                    vis.binds.plumb.check(id,event)
                 }
             });
 
             function set(newVal) {
-                var ev = {
-                    type: "plumb_change",
-                    from: id
-                };
+
                 if (newVal >= 1) {
-                    ev.color = color_on;
+
                     self_color = "#0F0";
                     $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) " + self_color});
                     $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) " + self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
                 } else {
-                    ev.color = color_off;
+
                     self_color = "#F00";
                     $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) " + self_color});
                     $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) " + self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
                 }
 
-                if (conLeft == last_from) {
+
+                var ev = {
+                    type: "plumb_change",
+                    from: id,
+                    status : true
+                };
+
+                if (plumb[self.conLeft].status) {
+                    ev.color = plumb[self.conLeft].color;
+                    ev.color_from = plumb[self.conLeft].color_from;
+                    self.color = ev.color;
+                    self.color_from = ev.color_from;
+
                     console.log(ev)
                     $("#" + conRight).trigger(ev);
-                } else {
-                    console.log("2")
+                }
+
+                if (plumb[self.conRight].status) {
+                    ev.color = plumb[self.conRight].color;
+                    ev.color_from = plumb[self.conRight].color_from;
+                    self.color = ev.color;
+                    self.color_from = ev.color_from;
+                    console.log(ev)
                     $("#" + conLeft).trigger(ev);
                 }
+
             }
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
@@ -806,7 +748,7 @@
         data-vis-attrs="conTop;conBottom">
     <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t" data-vis-resizable='{"grid": [ 10, 1 ]}' style="width: 20px; height: 100px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_v(el, data.conTop, data.conBottom) %>>
-			<div class="pipe_v" style="">
+			<div class="pipe_v plumb_body" style="">
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_bottom"></div>
 			</div>
@@ -825,7 +767,7 @@
         data-vis-attrs="conLeft;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl_l pl_r " data-vis-resizable='{"grid": [ 1, 10 ]}' style=" width: 100px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_h(el, data.conLeft, data.conRight) %>>
-			<div class="pipe_h" style="">
+			<div class="pipe_h plumb_body" style="">
 				<div class="plumb_dock_left"></div>
 				<div class="plumb_dock_right"></div>
 			</div>
@@ -844,7 +786,7 @@
         data-vis-attrs="conBottom;conRight">
     <div class="vis-widget <%== this.data.attr('class')%>  pl_r pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_br(el, data.conBottom, data.conRight) %>>
-			<div class="bogen_br">
+			<div class="bogen_br plumb_body">
 				<div class="bogen_br_shadow"></div>
 				<div class="plumb_dock_right"></div>
 				<div class="plumb_dock_bottom"></div>
@@ -864,7 +806,7 @@
         data-vis-attrs="conBottom;conLeft">
     <div class="vis-widget <%== this.data.attr('class')%>  pl_l pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_bl(el, data.conBottom, data.conLeft) %>>
-			<div class="bogen_bl">
+			<div class="bogen_bl plumb_body">
 				<div class="bogen_bl_shadow"></div>
 				<div class="plumb_dock_left"></div>
 				<div class="plumb_dock_bottom"></div>
@@ -884,7 +826,7 @@
         data-vis-attrs="conTop;conRight">
     <div class="vis-widget <%== this.data.attr('class')%>  pl_t pl_r " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_tr(el, data.conTop, data.conRight) %>>
-			<div class="bogen_tr">
+			<div class="bogen_tr plumb_body">
 				<div class="bogen_tr_shadow"></div>
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_right"></div>
@@ -904,7 +846,7 @@
         data-vis-attrs="conTop;conLeft">
     <div class="vis-widget <%== this.data.attr('class')%>  pl_t pl_l " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_tl(el, data.conTop, data.conLeft) %>>
-			<div class="bogen_tl">
+			<div class="bogen_tl plumb_body">
 				<div class="bogen_tl_shadow"></div>
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_left"></div>
@@ -924,7 +866,7 @@
         data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %> pl_l pl_r " data-vis-resizable='{"grid": [ 20, 10 ],"aspectRatio": true}' style=" width: 40px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_h(el, data.oid, data.conLeft, data.conRight, data.ctrl) %>>
-			<div class="valve_h" style="">
+			<div class="valve_h " style="">
 			    <div class="plumb_valve_l"></div>
 			    <div class="plumb_valve_r"></div>
 				<div class="plumb_dock_left"></div>
