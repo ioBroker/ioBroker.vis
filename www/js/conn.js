@@ -1,5 +1,16 @@
 ////// ----------------------- Connection "class" ---------------------- ////////////
+/* jshint browser:true */
+/* global document*/
+/* global console*/
+/* global session*/
+/* global window*/
+/* global location*/
+/* global setTimeout*/
+/* global clearTimeout*/
+/* global io*/
+/* global $*/
 
+'use strict';
 
 // The idea of servConn is to use this class later in every addon.
 // The addon just must say, what must be loaded (values, objects, indexes) and
@@ -29,6 +40,8 @@ var servConn = {
     _timeout:           0, // 0 - use transport default timeout to detect disconnect
     _reconnectInterval: 10000, // reconnect interval
     _subscribes:        [],
+    _cmdData:           null,
+    _cmdInstance:       null,
     namespace:          'vis.0',
     getType: function () {
         return 'socket.io';
@@ -36,16 +49,16 @@ var servConn = {
     getIsConnected: function () {
         return this._isConnected;
     },
-    _checkConnection: function (func, arguments) {
+    _checkConnection: function (func, _arguments) {
         if (!this._isConnected) {
             console.log('No connection!');
             return false;
         }
 
-        if (this._queueCmdIfRequired(func, arguments)) return false;
+        if (this._queueCmdIfRequired(func, _arguments)) return false;
 
         //socket.io
-        if (this._socket == null) {
+        if (this._socket === null) {
             console.log('socket.io not initialized');
             return false;
         }
@@ -98,12 +111,12 @@ var servConn = {
                 this.emit('subscribe', '*');
                 this.emit('name', connOptions.name);
 
-                if (that._disconnectTimeout){
+                if (that._disconnectTimeout) {
                     clearTimeout(that._disconnectTimeout);
                     that._disconnectTimeout = null;
                 }
                 //console.log("socket.io connect");
-                if (that._isConnected == true) {
+                if (that._isConnected === true) {
                     // This seems to be a reconnect because we're already connected!
                     // -> prevent firing onConnChange twice
                     return;
@@ -143,13 +156,24 @@ var servConn = {
             that._socket.on('stateChange', function (id, state) {
                 if (!id || state == null || typeof state != 'object') return;
 
-                if (id == that.namespace + '.command'){
-                    if (that._connCallbacks.onCommand && state.val && !state.val.instance) {
+                if (that._connCallbacks.onCommand && id == that.namespace + '.control.command') {
+                    if (state.ack) return;
+                    // if command is an object {instance: 'iii', command: 'cmd', data: 'ddd'}
+                    if (state.val && state.val.instance) {
                         if (that._connCallbacks.onCommand(state.val.instance, state.val.command, state.val.data)) {
                             // clear state
-                            that.setState(id, '');
+                            that.setState(id, {val: '', ack: true});
+                        }
+                    } else {
+                        if (that._connCallbacks.onCommand(that._cmdInstance, state.val, that._cmdData)) {
+                            // clear state
+                            that.setState(id, {val: '', ack: true});
                         }
                     }
+                } else if (id == that.namespace + '.control.data') {
+                    that._cmdData = state.val;
+                } else if (id == that.namespace + '.control.instance') {
+                    that._cmdInstance = state.val;
                 } else if (that._connCallbacks.onUpdate) {
                     that._connCallbacks.onUpdate(id, state);
                 }
@@ -171,7 +195,7 @@ var servConn = {
             return;
         }
         //socket.io
-        if (this._socket == null) {
+        if (this._socket === null) {
             console.log('socket.io not initialized');
             return;
         }
@@ -265,7 +289,7 @@ var servConn = {
     },
     readDir: function (dirname, callback) {
         //socket.io
-        if (this._socket == null) {
+        if (this._socket === null) {
             console.log('socket.io not initialized');
             return;
         }
@@ -307,7 +331,7 @@ var servConn = {
     },
     setState: function (pointId, value) {
         //socket.io
-        if (this._socket == null) {
+        if (this._socket === null) {
             //console.log('socket.io not initialized');
             return;
         }
@@ -354,7 +378,7 @@ var servConn = {
             return;
         }
         //socket.io
-        if (this._socket == null) {
+        if (this._socket === null) {
             console.log('socket.io not initialized');
             return;
         }
@@ -370,7 +394,7 @@ var servConn = {
             return;
         }
         //socket.io
-        if (this._socket == null) {
+        if (this._socket === null) {
             console.log('socket.io not initialized');
             return;
         }
@@ -387,7 +411,7 @@ var servConn = {
             return;
         }
         //socket.io
-        if (this._socket == null) {
+        if (this._socket === null) {
             console.log('socket.io not initialized');
             return;
         }
@@ -434,7 +458,7 @@ var servConn = {
         if (user !== undefined) {
             this._authInfo = {
                 user: user,
-                hash: password+salt,
+                hash: password + salt,
                 salt: salt
             };
         }
@@ -451,15 +475,17 @@ var servConn = {
     getLanguage: function (callback) {
         if (!this._checkConnection('getLanguage', arguments)) return;
 
-        this._socket.emit('getObject', 'system.config', function (err, obj){
+        this._socket.emit('getObject', 'system.config', function (err, obj) {
             if (callback && obj && obj.common) {
                 callback(null, obj.common.language);
-            } else{
+            } else {
                 callback('Cannot read language');
             }
         });
     },
     sendCommand: function (instance, command, data) {
-        this.setState(this.namespace + '.command', {instance: instance, command: command, data: data});
+        this.setState(this.namespace + '.control.instance', {val: instance, ack: true});
+        this.setState(this.namespace + '.control.data',     {val: data, ack: true});
+        this.setState(this.namespace + '.control.command',  {val: command, ack: true});
     }
 };
