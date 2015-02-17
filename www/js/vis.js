@@ -85,7 +85,7 @@ if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemL
 
 var vis = {
 
-    version:                '0.2.1',
+    version:                '0.2.2',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -109,7 +109,7 @@ var vis = {
     binds:                  {},
     onChangeCallbacks:      [],
     viewsActiveFilter:      {},
-    projectPrefix:          window.location.search ? window.location.search.slice(1) + '/': 'main/',
+    projectPrefix:          window.location.search ? window.location.search.slice(1) + '/' : 'main/',
     navChangeCallbacks:     [],
     editMode:               false,
     language:               (typeof systemLang != 'undefined') ? systemLang : visConfig.language,

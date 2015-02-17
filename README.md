@@ -5,6 +5,13 @@ ioBroker.vis
 WEB visualisation for ioBroker platform.
 
 ## Changelog
+### 0.2.2 (2015-02-17)
+- (smiling_Jack) align icons
+- (bluefox) support of sayIt and control
+- (smiling_Jack) show color in edit
+- (smiling_Jack) show settings in full screen mode
+
+
 ### 0.2.1 (2015-02-14)
 - (smiling_Jack) widget lock & no Drag
 - (bluefox) fix yahoo weather widget and resizeable
