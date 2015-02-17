@@ -11,69 +11,71 @@
 <script language="javascript">
     "use strict";
     // Add words for bars
-    $.extend(systemDictionary, {
-        "min_value"          : {"en": "Min value",      "de": "Min Wert",             "ru": "Мин. значение"},
-        "max_value"          : {"en": "Max value",      "de": "Max Wert",             "ru": "Макс. значение"},
-        "max_value_id"       : {"en": "Max value ID",   "de": "Max Wert Objekt",      "ru": "ID макс. значения"},
-        "width"              : {"en": "Widget width",   "de": "Widgetbreite",         "ru": "Ширина элемента"},
-        "control"            : {"en": "Control",        "de": "Steuerung",            "ru": "Контроль"},
-        "factor"             : {"en": "Multiply factor","de": "Wert multiplizieren",  "ru": "Фактор-множитель"},
-        "value_offset"       : {"en": "Offset factor",  "de": "Offsetwert",           "ru": "Фактор сдвига"},
-        "color"              : {"en": "Color",          "de": "Farbe",                "ru": "Цвет"},
-        "show_scale"         : {"en": "Show scale",     "de": "Zeige Skala",          "ru": "Показать шкалу"},
-        "labels_color"       : {"en": "Labels color",   "de": "Labelfarbe",           "ru": "Цвет подписей шкалы"},
-        "labels_font"        : {"en": "Labels font",    "de": "Labelfont",            "ru": "Шрифт подписей шкалы"},
-        "labels_size"        : {"en": "Labels font size","de": "Labelsfontgröße",     "ru": "Размер подписей шкалы"},
-        "title"              : {"en": "Title",          "de": "Titel",                "ru": "Подпись"},
-        "title_side"         : {"en": "Side title",     "de": "Seitentitel",           "ru": "Вертикальная подпись"},
-        "title_side_font"    : {"en": "Side title font","de": "Seitentitelfont",       "ru": "Шрифт вертикальной подписи"},
-        "title_side_size"    : {"en": "Side title font size","de": "Seitentitelfontgröße","ru": "Размер вертикальной подписи"},
-        "shadow"             : {"en": "Show shadow",    "de": "Zeige Schatten",       "ru": "Показать тень"},
-        "ticksize"           : {"en": "Tick length",    "de": "Zeichenlänge",         "ru": "Длина штриха"},
-        "units_pre"          : {"en": "Units pre",      "de": "Einheitsprefix",       "ru": "Префикс"},
-        "units_post"         : {"en": "Units post",     "de": "Einheitspostfix",      "ru": "Суффикс"},
-        "scale_decimals"     : {"en": "Scale decimals", "de": "Nachkommazeichen bei Skala","ru": "Чисел после запятой шкалы"},
-        "show_value"         : {"en": "Show value",     "de": "Zeige Wert",           "ru": "Показать значение"},
-        "value_decimals"     : {"en": "Value decimals", "de": "Nachkommazeichen beim Wert","ru": "Чисел после запятой значения"},
-        "labels_count"       : {"en": "Labels count",   "de": "Anzahl von Labels",    "ru": "Кол-во подписей в шкале"},
-        "animate"            : {"en": "Show animation", "de": "Zeige Animation",      "ru": "Плавное изменение"},
-        // Gauge
-        "hm_id_2"            : {"en": "Second object ID",    "de": "Zweite ObjektID",          "ru": "ID второго объекта"},
-        "hm_id_3"            : {"en": "Third object ID",     "de": "Dritte ObjektID",          "ru": "ID третьего объекта"},
-        "a_start"            : {"en": "Scale start",         "de": "Anfang von Skala",         "ru": "Начало шкалы"},
-        "a_end"              : {"en": "Scale end",           "de": "Ende von Skala",           "ru": "Конец шкалы"},
-        "ticks_big_color"    : {"en": "Big tick color",      "de": "Farbe von langen Ticks",   "ru": "Цвет длинных штрихов"},
-        "ticks_small_color"  : {"en": "Small tick color",    "de": "Farbe von kurzen Ticks",   "ru": "Цвет коротких штрихов"},
-        "border_outer_color" : {"en": "Outer border color",  "de": "Aussenrand-Farbe",         "ru": "Цвет внешней каймы"},
-        "border_inner_color" : {"en": "Inner border color",  "de": "Innenrabd-Farbe",          "ru": "Цвет внутренней каймы"},
-        "back_color"         : {"en": "Background color",    "de": "Hintergrund-Farbe",        "ru": "Цвет фона"},
-        "background_gradient": {"en": "Gradient background", "de": "Hintergrund mit Gradient", "ru": "Фон с градиентом"},
-        "border_outline_color" : {"en": "Outline border color","de": "Abgrenzungrand-Farbe",   "ru": "Цвет границы"},
-        "needle_colors"      : {"en": "Needle colors",       "de": "Zeigerfarben",             "ru": "Цвет стрелки"},
-        "needle_type"        : {"en": "Needle type",         "de": "Zeigertyp",                "ru": "Тип стрелки"},
-        "needle_tail"        : {"en": "Show needle tail",    "de": "Zeige Zeigerschwanz",      "ru": "Показать хвостик стрелки"},
-        "needle_size"        : {"en": "Needle size",         "de": "Zeigergröße",              "ru": "Размер стрелки"},
-        "centerpin_radius"   : {"en": "Center radius",       "de": "Radius von Mittelpunkt",   "ru": "Радиус центральной точки"},
-        "centerpin_color"    : {"en": "Center color",        "de": "Farbe von Mittelpunkt",    "ru": "Цвет центральной точки"},
-        "title_color"        : {"en": "Top title color",     "de": "Obere Beschriftungsfarbe", "ru": "Цвет верхней подписи"},
-        "title_font"         : {"en": "Top title font",      "de": "Oberer Beschriftungsfont", "ru": "Шрифт верхней подписи"},
-        "title_size"         : {"en": "Top title size",      "de": "Obere Beschriftungsgröße", "ru": "Размер верхней подписи"},
-        "title_pos"          : {"en": "Top title position",  "de": "Obere Beschriftungs- Position","ru": "Положение верхней подписи"},
-        "title_bottom"       : {"en": "Bottom title",        "de": "Untere Beschriftung",      "ru": "Нижняя подпись"},
-        "title_bottom_color" : {"en": "Bottom title color",  "de": "Untere Beschriftungsfarbe","ru": "Цвет нижней подписи"},
-        "title_bottom_font"  : {"en": "Bottom title font",   "de": "Unterer Beschriftungfont", "ru": "Шрифт нижней подписи"},
-        "title_bottom_size"  : {"en": "Bottom title size",   "de": "Untere Beschriftungsgröße","ru": "Размер верхней подписи"},
-        "title_bottom_pos"   : {"en": "Bottom title position","de": "Untere Beschriftungs- Position","ru": "Положение нижней подписи"},
-        "labels_centered"    : {"en": "Centered labels",     "de": "Labels zentriert",         "ru": "Подписи шкалы ближе к границе"},
-        "labels_offset"      : {"en": "Labels offset",       "de": "Offsetlables",             "ru": "Сдвиг подписей шкалы"},
-        "red_start"          : {"en": "End of third sector", "de": "Ende von dritten Sektor",  "ru": "Конец третьего сектора"},
-        "red_color"          : {"en": "Color of third sector", "de": "Farbe von dritten Sektor","ru": "Цвет третьего сектора"},
-        "yellow_color"       : {"en": "Color of second sector","de": "Farbe von zweten Sektor","ru": "Цвет второго сектора"},
-        "green_color"        : {"en": "Color of first sector", "de": "Farbe von ersten Sektor","ru": "Цвет первого сектора"},
-        "green_end"          : {"en": "End of first sector",   "de": "Ende von ersten Sektor", "ru": "Конец первого сектора"},
-        "padding_left"       : {"en": "Padding left",        "de": "Abstand links",            "ru": "Отступ слева"},
-        "padding_right"      : {"en": "Padding right",        "de": "Abstand rechts",            "ru": "Отступ справа"}
-    });
+    if (vis.editMode) {
+        $.extend(systemDictionary, {
+            "min_value"          : {"en": "Min value",      "de": "Min Wert",             "ru": "Мин. значение"},
+            "max_value"          : {"en": "Max value",      "de": "Max Wert",             "ru": "Макс. значение"},
+            "max_value_id"       : {"en": "Max value ID",   "de": "Max Wert Objekt",      "ru": "ID макс. значения"},
+            "width"              : {"en": "Widget width",   "de": "Widgetbreite",         "ru": "Ширина элемента"},
+            "control"            : {"en": "Control",        "de": "Steuerung",            "ru": "Контроль"},
+            "factor"             : {"en": "Multiply factor","de": "Wert multiplizieren",  "ru": "Фактор-множитель"},
+            "value_offset"       : {"en": "Offset factor",  "de": "Offsetwert",           "ru": "Фактор сдвига"},
+            "color"              : {"en": "Color",          "de": "Farbe",                "ru": "Цвет"},
+            "show_scale"         : {"en": "Show scale",     "de": "Zeige Skala",          "ru": "Показать шкалу"},
+            "labels_color"       : {"en": "Labels color",   "de": "Labelfarbe",           "ru": "Цвет подписей шкалы"},
+            "labels_font"        : {"en": "Labels font",    "de": "Labelfont",            "ru": "Шрифт подписей шкалы"},
+            "labels_size"        : {"en": "Labels font size","de": "Labelsfontgröße",     "ru": "Размер подписей шкалы"},
+            "title"              : {"en": "Title",          "de": "Titel",                "ru": "Подпись"},
+            "title_side"         : {"en": "Side title",     "de": "Seitentitel",           "ru": "Вертикальная подпись"},
+            "title_side_font"    : {"en": "Side title font","de": "Seitentitelfont",       "ru": "Шрифт вертикальной подписи"},
+            "title_side_size"    : {"en": "Side title font size","de": "Seitentitelfontgröße","ru": "Размер вертикальной подписи"},
+            "shadow"             : {"en": "Show shadow",    "de": "Zeige Schatten",       "ru": "Показать тень"},
+            "ticksize"           : {"en": "Tick length",    "de": "Zeichenlänge",         "ru": "Длина штриха"},
+            "units_pre"          : {"en": "Units pre",      "de": "Einheitsprefix",       "ru": "Префикс"},
+            "units_post"         : {"en": "Units post",     "de": "Einheitspostfix",      "ru": "Суффикс"},
+            "scale_decimals"     : {"en": "Scale decimals", "de": "Nachkommazeichen bei Skala","ru": "Чисел после запятой шкалы"},
+            "show_value"         : {"en": "Show value",     "de": "Zeige Wert",           "ru": "Показать значение"},
+            "value_decimals"     : {"en": "Value decimals", "de": "Nachkommazeichen beim Wert","ru": "Чисел после запятой значения"},
+            "labels_count"       : {"en": "Labels count",   "de": "Anzahl von Labels",    "ru": "Кол-во подписей в шкале"},
+            "animate"            : {"en": "Show animation", "de": "Zeige Animation",      "ru": "Плавное изменение"},
+            // Gauge
+            "oid_2"            : {"en": "Second object ID",    "de": "Zweite ObjektID",          "ru": "ID второго объекта"},
+            "oid_3"            : {"en": "Third object ID",     "de": "Dritte ObjektID",          "ru": "ID третьего объекта"},
+            "a_start"            : {"en": "Scale start",         "de": "Anfang von Skala",         "ru": "Начало шкалы"},
+            "a_end"              : {"en": "Scale end",           "de": "Ende von Skala",           "ru": "Конец шкалы"},
+            "ticks_big_color"    : {"en": "Big tick color",      "de": "Farbe von langen Ticks",   "ru": "Цвет длинных штрихов"},
+            "ticks_small_color"  : {"en": "Small tick color",    "de": "Farbe von kurzen Ticks",   "ru": "Цвет коротких штрихов"},
+            "border_outer_color" : {"en": "Outer border color",  "de": "Aussenrand-Farbe",         "ru": "Цвет внешней каймы"},
+            "border_inner_color" : {"en": "Inner border color",  "de": "Innenrabd-Farbe",          "ru": "Цвет внутренней каймы"},
+            "back_color"         : {"en": "Background color",    "de": "Hintergrund-Farbe",        "ru": "Цвет фона"},
+            "background_gradient": {"en": "Gradient background", "de": "Hintergrund mit Gradient", "ru": "Фон с градиентом"},
+            "border_outline_color" : {"en": "Outline border color","de": "Abgrenzungrand-Farbe",   "ru": "Цвет границы"},
+            "needle_colors"      : {"en": "Needle colors",       "de": "Zeigerfarben",             "ru": "Цвет стрелки"},
+            "needle_type"        : {"en": "Needle type",         "de": "Zeigertyp",                "ru": "Тип стрелки"},
+            "needle_tail"        : {"en": "Show needle tail",    "de": "Zeige Zeigerschwanz",      "ru": "Показать хвостик стрелки"},
+            "needle_size"        : {"en": "Needle size",         "de": "Zeigergröße",              "ru": "Размер стрелки"},
+            "centerpin_radius"   : {"en": "Center radius",       "de": "Radius von Mittelpunkt",   "ru": "Радиус центральной точки"},
+            "centerpin_color"    : {"en": "Center color",        "de": "Farbe von Mittelpunkt",    "ru": "Цвет центральной точки"},
+            "title_color"        : {"en": "Top title color",     "de": "Obere Beschriftungsfarbe", "ru": "Цвет верхней подписи"},
+            "title_font"         : {"en": "Top title font",      "de": "Oberer Beschriftungsfont", "ru": "Шрифт верхней подписи"},
+            "title_size"         : {"en": "Top title size",      "de": "Obere Beschriftungsgröße", "ru": "Размер верхней подписи"},
+            "title_pos"          : {"en": "Top title position",  "de": "Obere Beschriftungs- Position","ru": "Положение верхней подписи"},
+            "title_bottom"       : {"en": "Bottom title",        "de": "Untere Beschriftung",      "ru": "Нижняя подпись"},
+            "title_bottom_color" : {"en": "Bottom title color",  "de": "Untere Beschriftungsfarbe","ru": "Цвет нижней подписи"},
+            "title_bottom_font"  : {"en": "Bottom title font",   "de": "Unterer Beschriftungfont", "ru": "Шрифт нижней подписи"},
+            "title_bottom_size"  : {"en": "Bottom title size",   "de": "Untere Beschriftungsgröße","ru": "Размер верхней подписи"},
+            "title_bottom_pos"   : {"en": "Bottom title position","de": "Untere Beschriftungs- Position","ru": "Положение нижней подписи"},
+            "labels_centered"    : {"en": "Centered labels",     "de": "Labels zentriert",         "ru": "Подписи шкалы ближе к границе"},
+            "labels_offset"      : {"en": "Labels offset",       "de": "Offsetlables",             "ru": "Сдвиг подписей шкалы"},
+            "red_start"          : {"en": "End of third sector", "de": "Ende von dritten Sektor",  "ru": "Конец третьего сектора"},
+            "red_color"          : {"en": "Color of third sector", "de": "Farbe von dritten Sektor","ru": "Цвет третьего сектора"},
+            "yellow_color"       : {"en": "Color of second sector","de": "Farbe von zweten Sektor","ru": "Цвет второго сектора"},
+            "green_color"        : {"en": "Color of first sector", "de": "Farbe von ersten Sektor","ru": "Цвет первого сектора"},
+            "green_end"          : {"en": "End of first sector",   "de": "Ende von ersten Sektor", "ru": "Конец первого сектора"},
+            "padding_left"       : {"en": "Padding left",        "de": "Abstand links",            "ru": "Отступ слева"},
+            "padding_right"      : {"en": "Padding right",        "de": "Abstand rechts",            "ru": "Отступ справа"}
+        });
+    }    
 
     //jQuery.extend(true, vis.binds, {
     vis.binds.RGraph = {
@@ -81,7 +83,7 @@
         init: function  () {
             if (!vis.binds.RGraph.regElements) {
                 vis.binds.RGraph.regElements = [];
-                vis.registerOnChange (vis.binds.RGraph.onchange, null);
+                vis.registerOnChange(vis.binds.RGraph.onchange, null);
             }
         },
 
@@ -89,11 +91,9 @@
         onchange: function (arg, objId, newState, isFromDevice, lastchange) {
             if (vis.binds.RGraph.regElements[objId]) {
                 for (var i = 0, len = vis.binds.RGraph.regElements[objId].length; i < len; i++) {
-                    var elem = document.getElementById (vis.binds.RGraph.regElements[objId][i]);
-                    if (elem) {
-                        if (elem.rgraphValueChange) {
-                            elem.rgraphValueChange (objId, newState, isFromDevice);
-                        }
+                    var elem = document.getElementById(vis.binds.RGraph.regElements[objId][i]);
+                    if (elem && elem.rgraphValueChange) {
+                        elem.rgraphValueChange(objId, newState, isFromDevice);
                     }
                 }
             }
@@ -123,24 +123,25 @@
         },
 
         // Create or replace div with canvas inside it
-        createCanvas: function (view, wid, _class, hm_id, width, height, canvas_width, canvas_height) {
-            vis.binds.RGraph.init ();
-            vis.binds.RGraph.registerIds (wid, hm_id);
-            var style    = vis.views[view].widgets[wid] ? vis.views[view].widgets[wid].style : {};
+        createCanvas: function (view, wid, _class, oid, width, height, canvas_width, canvas_height) {
+            vis.binds.RGraph.init();
+            vis.binds.RGraph.registerIds(wid, oid);
+
+            var style    = vis.views[view].widgets[wid] ? vis.views[view].widgets[wid].style || {} : {};
             style.width  = parseInt(style.width)  || parseInt(width);
             style.height = parseInt(style.height) || parseInt(height);
 
             //$('#'+wid).remove ();
             if (!document.getElementById(wid)) {
-                $('#visview_' + view).append('<div class="dashui-widget ' + (_class || "") + '" id="' + wid + '" data-hm-id="' + hm_id + '" >' +
-                        '<canvas class="dashui-widget" id="c' + wid + '" ></canvas></div>');
+                $('#visview_' + view).append('<div class="vis-widget ' + (_class || "") + '" id="' + wid + '" data-oid="' + oid + '" >' +
+                        '<canvas class="vis-widget" id="c' + wid + '"></canvas></div>');
             } else {
-                $('#'+wid).addClass(_class || '');
+                $('#' + wid).addClass(_class || '');
             }
-            $('#'+wid).css(style);
+            $('#' + wid).css(style);
 
             // Canvas understand no Style, so set width and height extra
-            var can = document.getElementById ('c' + wid);
+            var can = document.getElementById('c' + wid);
             canvas_width  = parseInt(canvas_width)  || style.width;
             canvas_height = parseInt(canvas_height) || style.height;
             can.width  = canvas_width;
@@ -148,22 +149,18 @@
         },
 
         updateChart: function (wid) {
-            var div = document.getElementById (wid);
-            var can = document.getElementById ('c' + wid);
+            var div = document.getElementById(wid);
+            var can = document.getElementById('c' + wid);
 
             if (div && can) {
-                if (div._timeout) {
-                    clearTimeout (div._timeout);
-                }
+                if (div._timeout) clearTimeout(div._timeout);
 
-                var updateInterval = div.rgraph.Get("update_interval");
-                var values = div.rgraph.Get("my_values");
+                var updateInterval = div.rgraph.Get('update_interval');
+                var values = div.rgraph.Get('my_values');
                 var len = div.rgraph.original_data.length;
                 if (!values) {
                     len = 0;
-                }
-                else
-                if (len > values.length) {
+                } else if (len > values.length) {
                     len = values.length;
                 }
                 for (var j = 0; j < len; j++) {
@@ -173,20 +170,18 @@
                     div.rgraph.original_data[j] = RGraph.array_shift(d1);
                 }
 
-                RGraph.Clear (can);
+                RGraph.Clear(can);
                 div.rgraph.Draw();
                 div._timeout = _setTimeout (vis.binds.RGraph.updateChart, updateInterval, wid);
             }
         },
 
         updateBar: function (wid) {
-            var div = document.getElementById (wid);
-            var can = document.getElementById ('c' + wid);
+            var div = document.getElementById(wid);
+            var can = document.getElementById('c' + wid);
 
             if (div && can) {
-                if (div._timeout) {
-                    clearTimeout (div._timeout);
-                }
+                if (div._timeout) clearTimeout(div._timeout);
 
                 var options = div.rgraph.Get("my_options");
                 var values  = div.rgraph.Get("my_values");
@@ -204,13 +199,12 @@
         },
 
         tplRGtermometer: function (view, data) {
-            vis.binds.RGraph.createCanvas (view, data.attr('wid'), data.attr('class'), data.attr('hm_id'), 100, 400);
+            vis.binds.RGraph.createCanvas(view, data.attr('wid'), data.attr('class'), data.attr('oid'), 100, 400);
 
-            var str = localData.uiState.attr("_" + data.attr('hm_id') + ".Value");
-            if (str === null || str === undefined) {
-                str = data.attr("min_value");
-            }
-            var t = new RGraph.Thermometer("c"+data.attr('wid'), parseFloat(data.attr("min_value")), parseFloat(data.attr("max_value")), parseFloat(str));
+            var str = vis.states.attr(data.attr('oid') + '.val');
+            if (str === null || str === undefined) str = data.attr('min_value');
+            
+            var t = new RGraph.Thermometer('c' + data.attr('wid'), parseFloat(data.attr('min_value')), parseFloat(data.attr('max_value')), parseFloat(str));
             if (data.attr('color')) {
                 var color = data.attr('color');
                 t.colorsParsed = false;
@@ -223,7 +217,7 @@
 
                 }
                 if (isValid) {
-                    t.properties['chart.colors'] = ["Gradient("+color+")"];
+                    t.properties['chart.colors'] = ["Gradient(" + color + ")"];
                 }
             }
 
@@ -235,14 +229,14 @@
             }
             if (data.attr("control") !== "" && data.attr("control") !== null && data.attr("control") !== undefined) {
                 t.Set('adjustable', (data.attr("control") == "true" || data.attr("control") == true));
-                t.Set ("hm_id", data.attr('hm_id'));
+                t.Set ("oid", data.attr('oid'));
                 if (!vis.editMode) {
                     RGraph.AddCustomEventListener (t, "onadjust", function (obj) {
                         if (obj.setTimer) {
                             clearTimeout (obj.setTimer);
                         }
                         obj.setTimer = _setTimeout (function (o) {
-                            localData.setValue(o.properties["chart.hm_id"], o.value);
+                            localData.setValue(o.properties["chart.oid"], o.value);
                         }, 300, obj);
                     });
                 }
@@ -256,9 +250,7 @@
                 {
 
                 }
-                if (isValid) {
-                    t.Set('text.color', data.attr("labels_color"));
-                }
+                if (isValid) t.Set('text.color', data.attr("labels_color"));
             }
             if (data.attr("labels_font") !== "") {
                 t.Set('text.font', data.attr("labels_font"));
@@ -334,12 +326,12 @@
             } catch (e) {
                 servConn.logError("Cannot render tplRGtermometer: " + e);
             }
-            var elem = document.getElementById (data.attr('wid'));
+            var elem = document.getElementById(data.attr('wid'));
             elem.rgraph = t;
             t.Set('animate', data.attr("animate") == "true" || data.attr("animate") == true)
-            jQuery('#'+data.attr('wid')).bind("resize", function () {
-                var div = jQuery(this);
-                var can = document.getElementById ('c' + div.attr('id'));
+            $('#' + data.attr('wid')).bind("resize", function () {
+                var div = $(this);
+                var can = document.getElementById('c' + div.attr('id'));
 
                 can.width  = div.width();
                 can.height = div.height();
@@ -367,8 +359,7 @@
                 //this.rgraph.canvas.getContext('2d').clearRect (0, 0, this.rgraph.canvas.width, this.rgraph.canvas.height);
                 if (this.rgraph.Get("animate")) {
                     RGraph.Effects.Thermometer.Grow(this.rgraph);
-                }
-                else {
+                } else {
                     try {
                         this.rgraph.Draw();
                     } catch (e) {
@@ -379,7 +370,7 @@
         },
         tplRLiveChart: function (view, data) {
             var wid = data.attr('wid');
-            var elem_ = document.getElementById (wid);
+            var elem_ = document.getElementById(wid);
             var oldIDs = null;
             var oldValues = null;
             if (elem_) {
@@ -389,29 +380,29 @@
                 }
                 // save data
                 if (elem.rgraph) {
-                    oldIDs    = elem.rgraph.Get("hm_ids");
+                    oldIDs    = elem.rgraph.Get("oids");
                     oldValues = RGraph.array_clone(elem.rgraph.original_data);
                 }
             }
 
             var pointsCount = parseInt(data.attr('points_count')) || 250;
-            var len = 1;
-            var IDs = [];
-            var IDs_show = [];
-            var colors = [];
+            var len       = 1;
+            var IDs       = [];
+            var IDs_show  = [];
+            var colors    = [];
             var thickness = [];
             var id;
             var validColor = 'black';
             var validThickness = 1;
             // Read IDs, colors and line thickness
-            while (id = data.attr('hm_id'+ len)) {
+            while (id = data.attr('oid' + len)) {
                 IDs.push(id);
                 // If ID changed
                 if (oldIDs && IDs[IDs.length - 1] != oldIDs[IDs.length - 1]){
                     oldValues = null;
                     oldIDs    = null;
                 }
-                IDs_show[IDs.length - 1] = data.attr('hm_id_show'+ len);
+                IDs_show[IDs.length - 1] = data.attr('oid_show' + len);
                 id = data.attr('line_color' + len);
                 if (id) {
                     validColor = id;
@@ -431,9 +422,8 @@
                 }
 
                 id = data.attr('line_thick' + len);
-                if (id) {
-                    validThickness = id;
-                }
+                if (id) validThickness = id;
+
                 thickness.push(validThickness);
 
                 len++;
@@ -456,7 +446,7 @@
 
             var values = [];
             for (var i = 0, len = IDs.length; i < len; i++) {
-                values[i] = localData.uiState.attr('_' + IDs[i] + '.Value');
+                values[i] = vis.states.attr('_' + IDs[i] + '.val');
                 if (values[i] === null || values[i] === undefined) {
                     values[i] = min_value;
                 }
@@ -464,8 +454,8 @@
                 values[i] = values[i] * factor + offset;
             }
 
-            var elem = document.getElementById (wid);
-            var can  = document.getElementById ('c'+wid);
+            var elem = document.getElementById(wid);
+            var can  = document.getElementById('c'+wid);
 
             var arr = [];
 
@@ -491,7 +481,7 @@
 
             var t = new RGraph.Line ("c"+wid, arr);
 
-            t.Set ("hm_ids",      IDs);
+            t.Set ("oids",      IDs);
             t.Set ("hm_show_ids", IDs_show);
             t.Set ("my_values", values);
             t.Set ("update_interval", update_interval);
@@ -523,7 +513,7 @@
             // Set visibility of charts
             for (var i = 0, len = IDs_show.length; i < len; i++){
                 if (IDs_show[i]) {
-                    var isVisible = localData.uiState.attr("_" + IDs_show[i] + ".Value");
+                    var isVisible = vis.states.attr(IDs_show[i] + '.val');
                     if (isVisible == "false" || isVisible === false) {
                         colors[i] = 'rgba(0,0,0,0)';
                     }
@@ -573,14 +563,14 @@
             }
 
             elem.rgraph = t;
-            jQuery(elem).bind("resize", function () {
+            $(elem).bind("resize", function () {
                 if (this._resizeTimer){
                     clearTimeout (this._resizeTimer);
                 }
                 this._resizeTimer = _setTimeout (function (_wid) {
-                    var _div = document.getElementById (_wid);
-                    var div  = jQuery(_div);
-                    var can  = document.getElementById ('c' + _wid);
+                    var _div = document.getElementById(_wid);
+                    var div  = $(_div);
+                    var can  = document.getElementById('c' + _wid);
 
                     can.width  = div.width();
                     can.height = div.height ();
@@ -602,7 +592,7 @@
             });
 
             elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
-                var IDs      = this.rgraph.Get("hm_ids");
+                var IDs      = this.rgraph.Get("oids");
                 var IDs_show = this.rgraph.Get("hm_show_ids");
 
                 for (var i = 0, len = IDs.length; i < len; i++){
@@ -611,7 +601,7 @@
                         var factor = this.rgraph.Get("factor");
                         var offset = this.rgraph.Get("value_offset");
 
-                        values[i] = localData.uiState.attr("_" + IDs[i] + ".Value");
+                        values[i] = vis.states.attr(IDs[i] + '.val');
                         if (values[i] === null || values[i] === undefined) {
                             values[i] = this.rgraph.min;
                         }
@@ -625,7 +615,7 @@
                     if (IDs_show[i] && IDs_show[i] == objId) {
                         var colors    = this.rgraph.Get("colors");
                         var my_colors = this.rgraph.Get("my_colors");
-                        var isVisible = localData.uiState.attr("_" + IDs_show[i] + ".Value");
+                        var isVisible = vis.states.attr(IDs_show[i] + '.val');
                         if (isVisible == "false" || isVisible === false) {
                             colors[i] = 'rgba(0,0,0,0)';
                         }
@@ -645,30 +635,25 @@
             }
         },
         tplRGgauge: function (view, data) {
-            vis.binds.RGraph.createCanvas (view, data.attr('wid'), data.attr('class'), [data.attr('hm_id'), data.attr('hm_id_2'), data.attr('hm_id_3')], 200, 200);
+            vis.binds.RGraph.createCanvas (view, data.attr('wid'), data.attr('class'), [data.attr('oid'), data.attr('oid_2'), data.attr('oid_3')], 200, 200);
 
-            var str = localData.uiState.attr("_" + data.attr('hm_id') + ".Value");
+            var str = vis.states.attr(data.attr('oid') + '.val');
             if (str === null || str === undefined) {
                 str = data.attr("min_value");
             }
 
-            var str2 = data.attr('hm_id_2') ? localData.uiState.attr("_" + data.attr('hm_id_2') + ".Value") : null;
-            if (str2 === undefined) {
-                str2 = data.attr("min_value");
-            }
+            var str2 = data.attr('oid_2') ? vis.states.attr(data.attr('oid_2') + '.val') : null;
+            
+            if (str2 === undefined) str2 = data.attr("min_value");
 
-            var str3 = data.attr('hm_id_3') ? localData.uiState.attr("_" + data.attr('hm_id_3') + ".Value") : null;
-            if (str3 === undefined) {
-                str3 = data.attr("min_value");
-            }
+            var str3 = data.attr('oid_3') ? vis.states.attr(data.attr('oid_3') + '.val') : null;
+            
+            if (str3 === undefined) str3 = data.attr("min_value");
 
             var values = [parseFloat(str) || 0];
             if (str2 !== null) {
                 values[1] = str2 || 0;
-
-                if (str3 !== null) {
-                    values[2] = str3 || 0;
-                }
+                if (str3 !== null) values[2] = str3 || 0;
             }
             var factor = data.attr("factor") || 1;
             factor = parseFloat(factor);
@@ -678,13 +663,13 @@
 
             values[0] = values[0] * factor + offset;
 
-            var max_value = data.attr("max_value_id") ? localData.uiState.attr("_" + data.attr('max_value_id') + '.Value') : data.attr('max_value');
+            var max_value = data.attr("max_value_id") ? vis.states.attr(data.attr('max_value_id') + '.val') : data.attr('max_value');
 
             var t = new RGraph.Gauge("c"+data.attr('wid'), parseFloat(data.attr("min_value")), parseFloat(max_value), values);
 
-            t.Set ("hm_id",   data.attr('hm_id'));
-            t.Set ("hm_id_2", data.attr('hm_id_2'));
-            t.Set ("hm_id_3", data.attr('hm_id_3'));
+            t.Set ("oid",   data.attr('oid'));
+            t.Set ("oid_2", data.attr('oid_2'));
+            t.Set ("oid_3", data.attr('oid_3'));
             t.Set ("factor", factor);
             t.Set ("value_offset", offset);
 
@@ -693,14 +678,14 @@
                     t.Set('adjustable', true);
 
                     RGraph.AddCustomEventListener (t, "onadjust", function (obj) {
-                        var hm_id_2 = obj.Get("hm_id_2");
-                        var hm_id_3 = obj.Get("hm_id_3");
+                        var oid_2 = obj.Get("oid_2");
+                        var oid_3 = obj.Get("oid_3");
 
                         var values = [obj.value];
-                        var str2 = hm_id_2 ? localData.uiState.attr("_" + hm_id_2 + ".Value") : null;
+                        var str2 = oid_2 ? vis.states.attr(oid_2 + '.val') : null;
                         if (str2 === undefined) str2 = obj.min;
 
-                        var str3 = hm_id_3 ? localData.uiState.attr("_" + hm_id_3 + ".Value") : null;
+                        var str3 = oid_3 ? vis.states.attr(oid_3 + '.val') : null;
                         if (str3 === undefined) str3 = obj.min;
 
                         if (str2 !== null) {
@@ -723,7 +708,7 @@
                             obj.setTimer = _setTimeout (function (o) {
                                 var factor  = o.Get("factor");
                                 var offset  = o.Get("value_offset");
-                                localData.setValue(o.Get("hm_id"), (o.value[0] - offset) / factor);
+                                localData.setValue(o.Get("oid"), (o.value[0] - offset) / factor);
                             }, 300, obj);
                         }
                     });
@@ -886,11 +871,11 @@
                 servConn.logError("Cannot render tplRGgauge: " + e);
             }
             t.Set('animate', data.attr("animate") == "true" || data.attr("animate") == true)
-            var elem = document.getElementById (data.attr('wid'));
+            var elem = document.getElementById(data.attr('wid'));
             elem.rgraph = t;
-            jQuery('#'+data.attr('wid')).bind("resize", function () {
-                var div = jQuery(this);
-                var can = document.getElementById ('c' + div.attr('id'));
+            $('#' + data.attr('wid')).bind("resize", function () {
+                var div = $(this);
+                var can = document.getElementById('c' + div.attr('id'));
 
                 can.width  = div.width();
                 can.height = div.height ();
@@ -912,18 +897,18 @@
             });
 
             elem.rgraphValueChange = function (objId, newValue, isFromDevice) {
-                var hm_id_2 = this.rgraph.Get("hm_id_2");
-                var hm_id_3 = this.rgraph.Get("hm_id_3");
+                var oid_2 = this.rgraph.Get("oid_2");
+                var oid_3 = this.rgraph.Get("oid_3");
                 var factor  = this.rgraph.Get("factor");
                 var offset  = this.rgraph.Get("value_offset");
 
-                var str = localData.uiState.attr("_" + this.rgraph.Get('hm_id') + ".Value");
+                var str = vis.states.attr(this.rgraph.Get('oid') + '.val');
                 if (str === null || str === undefined) str = this.rgraph.min;
 
-                var str2 = hm_id_2 ? localData.uiState.attr("_" + hm_id_2 + ".Value") : null;
+                var str2 = oid_2 ? vis.states.attr(oid_2 + '.val') : null;
                 if (str2 === undefined) str2 = this.rgraph.min;
 
-                var str3 = hm_id_3 ? localData.uiState.attr("_" + hm_id_3 + ".Value") : null;
+                var str3 = oid_3 ? vis.states.attr(oid_3 + '.val') : null;
                 if (str3 === undefined) str3 = this.rgraph.min;
 
                 var values = [parseFloat(str) || 0];
@@ -972,7 +957,7 @@
             var valid_max = null;
 
             // Read IDs and max values
-            while (id = data.attr('hm_id'+ len)) {
+            while (id = data.attr('oid' + len)) {
                 IDs.push(id);
 
                 id = data.attr('name' + len);
@@ -980,7 +965,7 @@
 
                 id = data.attr('max_value' + len);
                 if (id || valid_max) {
-                    max_values.push (id);
+                    max_values.push(id);
                     valid_max = id;
                 }
 
@@ -998,15 +983,14 @@
             var values  = [];
             for (var i = 0, len = IDs.length; i < len; i++) {
                 values[i] = [];
-                var val = localData.uiState.attr('_' + IDs[i] + '.Value');
+                var val = vis.states.attr('_' + IDs[i] + '.val');
                 if (val === null || val === undefined) {
                     val = data.attr("min_value");
                 }
                 val = parseFloat (val);
                 val = val * factor + offset;
-                if (val < 0) {
-                    val = 0;
-                }
+                
+                if (val < 0) val = 0;
 
                 if (max_values) {
                     values[i][0] = max_values[i] - val;
@@ -1017,7 +1001,6 @@
                 } else {
                     values[i][0] = val;
                 }
-
             }
 
             var options = {
@@ -1050,10 +1033,10 @@
             options.bar_labels_bold = !(options.bar_labels_bold != "true" && options.bar_labels_bold !== true);
 
 
-            vis.binds.RGraph.createCanvas (view, wid, data.attr('class'), IDs, 200, 200);
+            vis.binds.RGraph.createCanvas(view, wid, data.attr('class'), IDs, 200, 200);
 
-            var elem = document.getElementById (wid);
-            var can  = document.getElementById ('c'+wid);
+            var elem = document.getElementById(wid);
+            var can  = document.getElementById('c'+wid);
 
             var t = new RGraph.Bar ("c"+wid, values);
 
@@ -1119,31 +1102,31 @@
                         }
                     }
                 })
-                        .draw();
+                .draw();
             } catch (e) {
                 servConn.logError("Cannot render tplRBarChart: " + e);
             }
 
             elem.rgraph = t;
-            jQuery(elem).bind("resize", function () {
-                if (this._resizeTimer){
-                    clearTimeout (this._resizeTimer);
-                }
-                this._resizeTimer = _setTimeout (function (_wid) {
-                    var _div = document.getElementById (_wid);
-                    var div  = jQuery(_div);
-                    var can  = document.getElementById ('c' + _wid);
+            $(elem).bind("resize", function () {
+                if (this._resizeTimer) clearTimeout(this._resizeTimer);
+                
+                this._resizeTimer = _setTimeout(function (_wid) {
+                    var _div = document.getElementById(_wid);
+                    var div  = $(_div);
+                    var can  = document.getElementById('c' + _wid);
 
                     can.width  = div.width();
                     can.height = div.height ();
 
                     if (can.width == 0 || can.height == 0) {
                         // My be jQuery bug
-                        can.width = parseInt(_div.style.width);
+                        can.width  = parseInt(_div.style.width);
                         can.height = parseInt(_div.style.height);
                     }
 
-                    RGraph.Clear (can);
+                    RGraph.Clear(can);
+                    
                     try {
                         _div.rgraph.Draw();
                     } catch (e) {
@@ -1159,7 +1142,7 @@
                 for (var i = 0, len = options.IDs.length; i < len; i++){
                     if (options.IDs[i] == objId) {
                         var values  = this.rgraph.Get("my_values");
-                        var val = localData.uiState.attr("_" + options.IDs[i] + ".Value");
+                        var val = vis.states.attr(options.IDs[i] + '.val');
                         if (val === null || val === undefined) {
                             val = this.rgraph.min;
                         }
@@ -1194,22 +1177,43 @@
 
 </script>
 
-<script type="text/ejs" id="tplRGtermometer" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Thermometer" data-dashui-attrs="hm_id;min_value[0];max_value[100];control/checkbox;padding_left/slider,0,100,1;padding_right/slider,0,100,1;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontname;labels_size/slider,1,100;title;title_side;title_side_font/fontname;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
+<script id="tplRGtermometer" 
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-type="temperature,value"
+        data-vis-set="RGraph" 
+        data-vis-name="Thermometer" 
+        data-vis-attrs="oid;min_value[0];max_value[100];control/checkbox;padding_left/slider,0,100,1;padding_right/slider,0,100,1;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontname;labels_size/slider,1,100;title;title_side;title_side_font/fontname;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
     <%
         vis.binds.RGraph.tplRGtermometer(this.view, this.data);
     %>
 </script>
-<script type="text/ejs" id="tplRGgauge" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="Gauge-Basic" data-dashui-attrs="hm_id/id;hm_id_2/id;hm_id_3/id;min_value[0];max_value[100];max_value_id/id;factor[1];value_offset[0];control/checkbox;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;title;title_color/color;title_font/fontname;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontname;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;labels_color[#000000]/color;labels_font/fontname;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1;animate/checkbox">
+<script id="tplRGgauge"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-type="gauge,value"
+        data-vis-set="RGraph" 
+        data-vis-name="Gauge-Basic" data-vis-attrs="oid/id;oid_2/id;oid_3/id;min_value[0];max_value[100];max_value_id/id;factor[1];value_offset[0];control/checkbox;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;title;title_color/color;title_font/fontname;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontname;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;labels_color[#000000]/color;labels_font/fontname;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1;animate/checkbox">
     <%
         vis.binds.RGraph.tplRGgauge(this.view, this.data);
     %>
 </script>
-<script type="text/ejs" id="tplRLiveChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="LiveChart" data-dashui-attrs="hm_id(1-8)/id;line_color(1-8)[black]/color;line_thick(1-8)[1]/slider,0.5,5,0.5;min_value[0];max_value[0];factor[1];value_offset[0];update_interval[5000]/slider,100,20000,100;points_count[250]/slider,10,2000,10;title;title_x;title_y;num_hlines[3]/slider,0,20,1;spline/checkbox;filled/checkbox;hm_id_show(1-8)/id;">
+<script id="tplRLiveChart" 
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-type="chart,value"
+        data-vis-set="RGraph" 
+        data-vis-name="LiveChart" data-vis-attrs="oid(1-8)/id;line_color(1-8)[black]/color;line_thick(1-8)[1]/slider,0.5,5,0.5;min_value[0];max_value[0];factor[1];value_offset[0];update_interval[5000]/slider,100,20000,100;points_count[250]/slider,10,2000,10;title;title_x;title_y;num_hlines[3]/slider,0,20,1;spline/checkbox;filled/checkbox;oid_show(1-8)/id;">
     <%
         vis.binds.RGraph.tplRLiveChart(this.view, this.data);
     %>
 </script>
-<script type="text/ejs" id="tplRBarChart" class="dashui-tpl" data-dashui-set="RGraph" data-dashui-name="BarChart" data-dashui-attrs="hm_id(1-8)/id;name(1-8);filled_color[black]/color;empty_color[white]/color;label_color[black]/color;max_value(1-8);factor[1];value_offset[0];update_interval[0]/slider,0,20000,100;title;legend/checkbox;filled_text[Level];empty_text[Empty];labels_above[true]/checkbox;label_size[12]/slider,1,40,1;labels_above_angle/checkbox;decimals[2]/slider,0,10,1;shadow/checkbox;gutter_left[45]/slider,0,200,1;horz_margin[15]/slider,0,200,1;bar_labels_color[black]/color;bar_labels_bold/checkbox;bar_labels_center/checkbox;num_hlines/slider,0,20,1">
+<script id="tplRBarChart"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-type="chart,value"
+        data-vis-set="RGraph" 
+        data-vis-name="BarChart" data-vis-attrs="oid(1-8)/id;name(1-8);filled_color[black]/color;empty_color[white]/color;label_color[black]/color;max_value(1-8);factor[1];value_offset[0];update_interval[0]/slider,0,20000,100;title;legend/checkbox;filled_text[Level];empty_text[Empty];labels_above[true]/checkbox;label_size[12]/slider,1,40,1;labels_above_angle/checkbox;decimals[2]/slider,0,10,1;shadow/checkbox;gutter_left[45]/slider,0,200,1;horz_margin[15]/slider,0,200,1;bar_labels_color[black]/color;bar_labels_bold/checkbox;bar_labels_center/checkbox;num_hlines/slider,0,20,1">
     <%
         vis.binds.RGraph.tplRBarChart(this.view, this.data);
     %>

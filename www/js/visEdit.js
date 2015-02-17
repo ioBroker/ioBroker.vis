@@ -2174,7 +2174,7 @@ vis = $.extend(true, vis, {
     editFontName: function (widAttr) {
         // Select
         var values = ['', 'Arial', 'Times', 'Andale Mono', 'Comic Sans', 'Impact'];
-        this.editSelect(widAttr, values);
+        return this.editSelect(widAttr, values);
     },
     editAutoComplete: function (widAttr, values) {
         // Effect selector

@@ -8,7 +8,8 @@ var visConfig = {
         "timeAndWeather",
         {name: "jqui",        depends: ["basic"]},
         {name: "jqui-mfd",    depends: ["basic", "jqui"]},
-        "weather-adapter"
+        "weather-adapter",
+        "RGraph"
         //"plumb",
         /*,
         "bars",
