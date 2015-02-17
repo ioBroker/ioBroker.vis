@@ -53,7 +53,7 @@ module.exports = function (grunt) {
         // Lint
         jshint: require(__dirname + '/tasks/jshint.js'),
         http: {
-            get_hjscs: {
+            /*get_hjscs: {
                 options: {
                     url: 'https://raw.githubusercontent.com/ioBroker/ioBroker.js-controller/master/tasks/jscs.js'
                 },
@@ -70,7 +70,7 @@ module.exports = function (grunt) {
                     url: 'https://raw.githubusercontent.com/ioBroker/ioBroker.build/master/adapters/Gruntfile.js'
                 },
                 dest: 'Gruntfile.js'
-            },
+            },*/
             get_utilsfile: {
                 options: {
                     url: 'https://raw.githubusercontent.com/ioBroker/ioBroker.build/master/adapters/utils.js'

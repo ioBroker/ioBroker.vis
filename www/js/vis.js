@@ -8,7 +8,16 @@
  *  http://creativecommons.org/licenses/by-nc/4.0/
  *
  */
-
+/* jshint browser:true */
+/* global document*/
+/* global console*/
+/* global session*/
+/* global window*/
+/* global location*/
+/* global setTimeout*/
+/* global clearTimeout*/
+/* global io*/
+/* global $*/
 "use strict";
 
 // we should detect either local path here and not online.
@@ -16,7 +25,7 @@
 
 // ok But I need the local flag in Webstorm too (faster Page reload) 
 var local = false;
-if (document.URL.split('/local/')[1]  || document.URL.split('/localhost:63343/')[1] || document.URL.split('/localhost:63342/')[1]){
+if (document.URL.split('/local/')[1] || document.URL.split('/localhost:63343/')[1] || document.URL.split('/localhost:63342/')[1]) {
     local = true;
 }
 
@@ -253,10 +262,10 @@ var vis = {
 
         var that = this;
         if (this.toLoadSetsCount) {
-            for (var i = 0, len = this.toLoadSetsCount; i < len; i++) {
+            for (var j = 0, len = this.toLoadSetsCount; j < len; j++) {
                 _setTimeout(function (_i) {
                     that.loadWidgetSet(arrSets[_i], callback);
-                }, 100, i);
+                }, 100, j);
             }
         } else {
             if (callback) {
@@ -294,14 +303,14 @@ var vis = {
             if (!this.views) {
                 this.initViewObject();
                 return false;
-                }else{
+            } else {
                 this.showWaitScreen(false);
             }
 
             var hash = window.location.hash.substring(1);
 
             // View selected?
-            if (hash == '') {
+            if (!hash) {
                 // Take first view in the list
                 for (var view in this.views) {
                     this.activeView = view;
@@ -309,12 +318,12 @@ var vis = {
                 }
                 // Create default view in demo mode
                 if (typeof io == 'undefined') {
-                    if (this.activeView == "") {
+                    if (!this.activeView) {
                         if (!this.editMode) {
                             alert(_("error - View doesn't exist"));
                             window.location.href = "./edit.html";
                         } else {
-                            this.views["DemoView"] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                            this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                             this.activeView = "DemoView";
                             //vis.showWaitScreen(false);
                         }
@@ -330,7 +339,7 @@ var vis = {
                         //alert("unexpected error - this should not happen :(");
                         //$.error("this should not happen :(");
                         // create demoView
-                        this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                        this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                         this.activeView = 'DemoView';
                     }
                 }
@@ -368,8 +377,7 @@ var vis = {
     initViewObject: function () {
         if (!this.editMode) {
             window.location.href = './edit.html' + window.location.search;
-        }
-        else {
+        } else {
             if (confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
                 this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
@@ -395,7 +403,7 @@ var vis = {
         $view.css({width: width});
         $view.css({height: height});
     },
-    updateContainers: function(view) {
+    updateContainers: function (view) {
         var that = this;
         // Set ths views for containers
         $("#visview_" + view).find('.vis-view-container').each(function () {
@@ -438,7 +446,7 @@ var vis = {
         if ($('#visview_' + view).html() === undefined) {
 
             $('#vis_container').append('<div style="display:none;" id="visview_' + view + '" class="vis-view"></div>');
-            vis.addViewStyle(view,vis.views[view].settings.theme);
+            this.addViewStyle(view, this.views[view].settings.theme);
 
 
             var $view = $("#visview_" + view);
@@ -505,7 +513,7 @@ var vis = {
             this.saveRemote();
         }
     },
-    addViewStyle:function(view,theme){
+    addViewStyle: function (view,theme) {
         var _view = 'visview_' + view;
         $.ajax({
             url: 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
@@ -881,7 +889,7 @@ var vis = {
                                 // Create empty css file
                                 that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
                             }
-                        })
+                        });
                     }
                 });
             }
@@ -966,7 +974,7 @@ var vis = {
                 this.waitScreenVal += step;
                 setTimeout(function (_val) {
                     $(".vis-progressbar").progressbar("value", _val);
-                }, 0, this.waitScreenVal)
+                }, 0, this.waitScreenVal);
 
             }
         } else if (waitScreen) {
@@ -1003,8 +1011,8 @@ if ('applicationCache' in window) {
                 jQuery(".vis-progressbar").hide();
                 try {
                     window.applicationCache.swapCache();
-                } catch (e) {
-                    servConn.logError('Cannot execute window.applicationCache.swapCache - ' + e);
+                } catch (_e) {
+                    servConn.logError('Cannot execute window.applicationCache.swapCache - ' + _e);
                 }
                 setTimeout(function () {
                     window.location.reload();
@@ -1102,16 +1110,16 @@ if ('applicationCache' in window) {
                         $("#server-disconnect").dialog("close");
                         if (vis.isFirstTime) {
                             vis.conn.getVersion(function (version) {
-                                if (!version) {
-                                    // Possible not authenticated, wait for request from server
-                                } else {
+                                if (version) {
                                     //vis.conn.readFile("www/vis/css/vis-user.css");
 
                                     if (compareVersion(version, vis.requiredServerVersion)) {
                                         // TODO Translate
                                         vis.showMessage('Warning: requires Server version ' + vis.requiredServerVersion + ' - found Server version ' + version + ' - please update Server.');
                                     }
-                                }
+                                } //else {
+                                    // Possible not authenticated, wait for request from server
+                                //}
                             });
 
                             vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
@@ -1223,19 +1231,19 @@ if ('applicationCache' in window) {
                         users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name') + '">'
                     }
 
-                var text = '<div id="login-box" class="login-popup" style="display:none">'+
-                            '<div class="login-message">'+message+'</div>'+
-                            '<div class="login-input-field">'+
-                                '<label class="username">'+
-                                    '<span class="_">'+_('User name')+'</span>'+
+                var text = '<div id="login-box" class="login-popup" style="display:none">' +
+                            '<div class="login-message">' + message + '</div>' +
+                            '<div class="login-input-field">' +
+                                '<label class="username">' +
+                                    '<span class="_">' + _('User name') + '</span>' +
                                     users +
-                                '</label>'+
-                                '<label class="password">'+
-                                    '<span class="_">'+_('Password')+'</span>'+
-                                    '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password')+'">'+
-                                '</label>'+
-                                '<button class="login-button" type="button"  class="_">'+_('Sign in')+'</button>'+
-                            '</div>'+
+                                '</label>' +
+                                '<label class="password">' +
+                                    '<span class="_">' + _('Password') + '</span>' +
+                                    '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password') + '">' +
+                                '</label>' +
+                                '<button class="login-button" type="button"  class="_">' + _('Sign in') + '</button>' +
+                            '</div>' +
                         '</div>';
 
                     $('body').append(text);
@@ -1293,9 +1301,9 @@ if ('applicationCache' in window) {
                                 return false;
                             case 'changeView':
                                 parts = data.split('/');
-                                if (parts[1]) {
+                                //if (parts[1]) {
                                     // Todo switch to desired project
-                                }
+                                //}
                                 vis.changeView(parts[1] || parts[0]);
                                 break;
                             case 'refresh':
@@ -1339,7 +1347,7 @@ if ('applicationCache' in window) {
                     return true;
                 }
             });
-        }else{
+        } else {
             // Init edit dialog
             if (vis.editMode && vis.editInit) vis.editInit();
             vis.init();
@@ -1360,7 +1368,7 @@ if (!Array.prototype.indexOf) {
             }
         }
         return -1;
-    }
+    };
 }
 function _setTimeout(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
     return setTimeout(function () {
