@@ -784,12 +784,11 @@ vis = $.extend(true, vis, {
             var cont_size = 0;
             var between;
             $.each(that.activeWidgets, function () {
-                var left = parseInt($("#" + this).css("left"));
-                var right = left + $("#" + this).width;
-                cont_size = cont_size + $("#" + this).width;
+                var left = $("#" + this).position().left;
+                var right = left + $("#" + this).width();
+                cont_size = cont_size + $("#" + this).width();
                 if (min_left > left) min_left = left;
                 if (max_right < right) max_right = right;
-
                 var _data = {
                     wid:  this,
                     left: left
@@ -798,6 +797,7 @@ vis = $.extend(true, vis, {
             });
 
             between = (max_right - min_left - cont_size) / (that.activeWidgets.length - 1);
+
             if (between < 0 ) between = 0;
 
             function SortByLeft(a, b) {
@@ -808,14 +808,15 @@ vis = $.extend(true, vis, {
 
             data.sort(SortByLeft);
             var first = data.shift();
-            var left  = first.left + $("#" + first.wid).width;
+            var left  = first.left + $("#" + first.wid).width();
 
             $.each(data, function(){
                 left = left + between;
+                console.log(left)
                 $("#" + this.wid).css("left", left + "px");
                 $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.left = left + "px";
-                left = left + $("#" + this.wid).width;
+                left = left + $("#" + this.wid).width();
             });
             that.save();
         });
@@ -828,8 +829,8 @@ vis = $.extend(true, vis, {
 
             $.each(that.activeWidgets, function () {
                 var top = parseInt($("#" + this).css("top"));
-                var bottom = top + $("#" + this).height;
-                cont_size = cont_size + $("#" + this).height;
+                var bottom = top + $("#" + this).height();
+                cont_size = cont_size + $("#" + this).height();
                 if (min_top > top) min_top = top;
                 if (max_bottom < bottom) max_bottom = bottom;
 
@@ -850,14 +851,14 @@ vis = $.extend(true, vis, {
 
             data.sort(SortByTop);
             var first = data.shift();
-            var top  = first.top + $("#" + first.wid).height;
+            var top  = first.top + $("#" + first.wid).height();
 
             $.each(data, function () {
                 top = top + between;
                 $("#" + this.wid).css("top", top + "px");
                 $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.top = top + "px";
-                top = top + $("#" + this.wid).height;
+                top = top + $("#" + this.wid).height();
             });
             that.save();
         });

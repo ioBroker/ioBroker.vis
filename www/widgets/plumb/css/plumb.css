@@ -230,18 +230,35 @@
 }
 
 .plumb_sprinkler_i{
-    width: 1px;
+    width: 6px;
     height: 50%;
     background-color: red;
     position: absolute;
     left: 50%;
-
+    border-radius: 10px;
 }
 
 .plumb_sprinkler_i_body{
-    /*-webkit-animation:spin 4s linear infinite;*/
-    /*-moz-animation:spin 4s linear infinite;*/
-    animation:spin 4s linear infinite;
+    -moz-transform: rotate(30deg);
+    -ms-transform: rotate(30deg);
+    -o-transform: rotate(30deg);
+    opacity: 0.7;
+    /* border-radius: 46px; */
+    /* -webkit-transform: rotate(30deg); */
+
+    -webkit-animation: NAME-YOUR-ANIMATION 1s infinite linear; /* Safari 4+ */
+    animation:         NAME-YOUR-ANIMATION 1s infinite linear;
+}
+
+@-webkit-keyframes NAME-YOUR-ANIMATION {
+    0%   { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+
+}
+@keyframes NAME-YOUR-ANIMATION {
+    0%   { transform: rotate(0deg); }
+    80%   { transform: rotate(180deg); }
+    100% { transform: rotate(0deg); }
 }
 
 
