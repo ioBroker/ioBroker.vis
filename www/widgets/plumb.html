@@ -113,6 +113,8 @@
                     hoverClass: "drop-hover",
                     tolerance: "touch",
                     drop: function (event, ui) {
+                        console.log(event)
+                        console.log(ui)
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
                         vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
@@ -138,6 +140,151 @@
 
                     }
                 });
+                $($this).find(".plumb_dock_center").droppable({
+                    accept: ".pl:not(#" + $($this).attr("id") + ")",
+                    hoverClass: "drop-hover",
+                    tolerance: "touch",
+                    drop: function (event, ui) {
+                        console.log(event)
+                        console.log(ui)
+                        drag_id = $(ui.draggable).attr("id");
+                        self_id = $this.attr("id");
+
+                        var dl = ui.draggable[0].offsetLeft;
+                        var dt = ui.draggable[0].offsetTop;
+                        var dw = ui.draggable[0].offsetWidth;
+                        var dh = ui.draggable[0].offsetHeight;
+                        var cl = $this.position().left + ($this.width() /2) -10 ;
+                        var ct = $this.position().top + ($this.height() /2) -10 ;
+
+
+                        var data = {
+                            left: (cl - dl - dw) * -1,
+                            right: (dl - cl - 20) * -1,
+                            top: (ct - dt - dh) * -1,
+                            bottom: (dt - ct - 20) * -1,
+
+                        };
+
+                        var ist = 9999;
+                        var _ist;
+                        $.each(data, function (key) {
+                            if (this < ist) {
+                                ist = this;
+                                _ist = key;
+                            }
+
+                        });
+
+                        if (_ist = "left"){
+                            vis.views[vis.activeView].widgets[self_id].data.conLeft = drag_id;
+                            vis.views[vis.activeView].widgets[drag_id].data.conRight = self_id;
+                            $("#inspect_conRight").val(self_id);
+                            vis.save();
+                            if (!no_pos) {
+                                $(ui.draggable).css({
+                                    "left": $this.position().left - ui.draggable.width() + "px",
+                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
+                                });
+                                $(".widget-helper").css({
+                                    "left": $this.position().left - ui.draggable.width() - 1 + "px",
+                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
+                                });
+                            }
+                            setTimeout(function () {
+                                vis.reRenderWidgetEdit(drag_id);
+                                vis.reRenderWidgetEdit(self_id);
+                            }, 0)
+                        }
+                        if (_ist = "right"){
+                            vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
+                            vis.views[vis.activeView].widgets[drag_id].data.conLeft = self_id;
+
+                            $("#inspect_conLeft").val(self_id);
+                            vis.save();
+                            if (!no_pos) {
+
+                                $(ui.draggable).css({
+                                    "left": $this.position().left + $this.width() + "px",
+                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
+                                });
+                                $(".widget-helper").css({
+                                    "left": $this.position().left + $this.width() - 1 + "px",
+                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) - 1 + "px"
+                                });
+                            }
+                            setTimeout(function () {
+                                vis.reRenderWidgetEdit(drag_id);
+                                vis.reRenderWidgetEdit(self_id);
+                            }, 0)
+
+                        }
+                        if (_ist = "top"){
+                            vis.views[vis.activeView].widgets[self_id].data.conTop = drag_id;
+                            vis.views[vis.activeView].widgets[drag_id].data.conBottom = self_id;
+                            $("#inspect_conBottom").val(self_id);
+                            vis.save();
+                            if (!no_pos) {
+                                $(ui.draggable).css({
+                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
+                                    "top": $this.position().top - ui.draggable.height() + "px"
+                                });
+                                $(".widget-helper").css({
+                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) - 1 + "px",
+                                    "top": $this.position().top - ui.draggable.height() - 1 + "px"
+                                });
+                            }
+                            setTimeout(function () {
+                                vis.reRenderWidgetEdit(drag_id);
+                                vis.reRenderWidgetEdit(self_id);
+                            }, 0)
+                        }
+                        if (_ist = "bottom"){
+                            vis.views[vis.activeView].widgets[self_id].data.conBottom = drag_id;
+                            vis.views[vis.activeView].widgets[drag_id].data.conTop = self_id;
+                            $("#inspect_conTop").val(self_id);
+                            vis.save();
+                            if (!no_pos) {
+                                $(ui.draggable).css({
+                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
+                                    "top": $this.position().top + $this.height() + "px"
+                                });
+                                $(".widget-helper").css({
+                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) - 1 + "px",
+                                    "top": $this.position().top + $this.height() - 1 + "px"
+                                });
+                            }
+                            setTimeout(function () {
+                                vis.reRenderWidgetEdit(drag_id);
+                                vis.reRenderWidgetEdit(self_id);
+                            }, 0)
+                        }
+
+
+//                        vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
+//                        vis.views[vis.activeView].widgets[drag_id].data.conLeft = self_id;
+//
+//                        $("#inspect_conLeft").val(self_id);
+//                        vis.save();
+//                        if (!no_pos) {
+//
+//                            $(ui.draggable).css({
+//                                "left": $this.position().left + $this.width() + "px",
+//                                "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
+//                            });
+//                            $(".widget-helper").css({
+//                                "left": $this.position().left + $this.width() - 1 + "px",
+//                                "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) - 1 + "px"
+//                            });
+//                        }
+//                        setTimeout(function () {
+//                            vis.reRenderWidgetEdit(drag_id);
+//                            vis.reRenderWidgetEdit(self_id);
+//                        }, 0)
+
+                    }
+                });
+
             }
         },
         check: function (id, event) {
@@ -397,7 +544,7 @@
             var $this = $(el).parent();
             var id = $this.attr("id");
             var plumb = vis.binds.plumb.data;
-
+            var wp = $this.find(".plumb_sprinkler_i");
             if (!plumb[id]) {
                 vis.binds.plumb.data[id] = {
                     type: "pump",
@@ -417,38 +564,61 @@
             self.conRight = data.conRight || null;
             self.conTop = data.conTop || null;
             self.conBottom = data.conBottom || null;
+            $this.css("overflow","visible")
 
-
-            vis.binds.plumb.plumb_drop($this, true);
+            vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
+console.log(event)
+                if(event.status){
+                    wp.show()
+                }else{
+                    wp.hide()
+                }
+
+
 
 
             });
 
-            setTimeout(function(){
-//
-//                $.keyframe.define([{
-//                    name: 'ball-roll',
-//                    '0%': {
-//                        'transform': 'rotate(90deg)',
-//                    },
-//                    '50%': {
-//                        'transform': 'rotate(450deg)',
-//                    },
-//                    '100%': {
-//                        'transform': 'rotate(90deg)',
-//                    }
-//                }]);
-//
-//                $('.plumb_sprinkler_i_body').playKeyframe({
-//                    name: 'ball-roll',
-//                    duration: "3s",
-//                    timingFunction: 'linear',
-//                    iterationCount: 'infinite',
-//                });
-            })
 
+            setTimeout(function(){
+                $('#'+id+'_style').remove();
+
+                $('<style id="'+id+'_style">\
+                @-webkit-keyframes '+id+'-ANIMATION {\
+                    0%   { -webkit-transform: rotate('+data.start+'deg); }\
+                    80%  { -webkit-transform: rotate('+data.ende+'deg); }\
+                    100% { -webkit-transform: rotate('+data.start+'deg); }\
+                }\
+                @keyframes '+id+'-ANIMATION {\
+                    0%   { transform: rotate('+data.start+'deg); }\
+                    80%   { transform: rotate('+data.ende+'deg); }\
+                    100% { transform: rotate('+data.start+'deg); }\
+                }\
+                <style>').appendTo("head")
+
+
+                wp.css({
+                "-webkit-animation": id+"-ANIMATION "+data.time+"s infinite linear",
+                "animation":         id+"-ANIMATION "+data.time+"s infinite linear",
+                 display: "none"
+                })
+                $this.find(".plumb_splinkler_i_water").css({
+                    height: data.width +"px",
+                    width: data.stroke + "px",
+                    left: parseInt($(wp).width()/2-data.stroke/2) +"px",
+                    top: parseInt($(wp).height()/2-data.width) +"px",
+                    position:"relative",
+                    "box-shadow": '0px 0px '+(data.stroke*2)+'px '+data.stroke+'px #000066',
+
+                })
+
+
+
+
+
+            })
 
 
         },
@@ -558,6 +728,8 @@
                 }
             }
             var self = plumb[id];
+
+
 
 
             self.conRight = conRight || null;
@@ -1031,7 +1203,7 @@
 
                 $($this).find(".tpice-t, .bogen_tr_shadow, .bogen_tl_shadow, .tpice-hr, .tpice-hm, .tpice-hl").css({
                     height: size + "px",
-                    width: size + "px",
+                    width: size + "px"
                 })
 
             });
@@ -1056,14 +1228,17 @@
         data-vis-type="val"
         data-vis-name="Pump"
         data-vis-attrs="oid;src[./widgets/plumb/img/pumpe.png];stretch/checkbox;Off[#969696]/color;ON[#00ff00]/color;conTop;conBottom;conLeft;conRight">
-    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t pl_l pl_r" data-vis-resizable='{}' style=" width: 65px; height: 205px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{}' style=" width: 65px; height: 205px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pump(el, data.oid, data.Off, data.ON, data.conTop, data.conBottom, data.conLeft, data.conRight) %>>
 			<div class="pump" style="">
 			   <% if (vis.editMode) { %>
                 <div class="editmode-helper" style="z-index:0" />
             <% } %>
             <img style="position:absolute; width:100%;<%= this.data.attr('stretch') ? 'height:100%' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
-				<div class="plumb_dock_center"></div>
+				<div class="plumb_dock_top"></div>
+				<div class="plumb_dock_bottom"></div>
+				<div class="plumb_dock_left"></div>
+				<div class="plumb_dock_right"></div>
 			</div>
         </div>
     </div>
@@ -1076,12 +1251,16 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Sprinker I"
-        data-vis-attrs="time;start;ende;stroke">
-    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t pl_l pl_r" data-vis-resizable='{}' style=" width: 100px; height: 100px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="width[100];time[4];start[0];ende[90];stroke[4];opacity[0.8];">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{"disabled": true}' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="plumb_sprinkler_i_body vis-widget-body" <%= (el) -> vis.binds.plumb.sprinkler_i(el, data) %>>
-				<div class="plumb_sprinkler_i"></div>
-				<div class="plumb_dock_center"></div>
-			</div>
+				<div class="plumb_sprinkler_i">
+				<div class="plumb_splinkler_i_water"></div>
+				</div>
+            	<div class="plumb_dock_top"></div>
+				<div class="plumb_dock_bottom"></div>
+				<div class="plumb_dock_left"></div>
+				<div class="plumb_dock_right"></div>
         </div>
     </div>
 </script>
@@ -1094,7 +1273,7 @@
         data-vis-type="static"
         data-vis-name="Pipe_V"
         data-vis-attrs="conTop;conBottom">
-    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t" data-vis-resizable='{"grid": [ 10, 1 ],"handles": "all" }' style="width: 20px; height: 100px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t" data-vis-resizable='{"grid": [ 10, 1 ],"handles": "all" }' style="width: 20px; height: 100px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_v(el, data.conTop, data.conBottom) %>>
 			<div class="pipe_v plumb_body" style="">
 				<div class="plumb_dock_top"></div>
@@ -1113,7 +1292,7 @@
         data-vis-type="static"
         data-vis-name="Pipe_H"
         data-vis-attrs="conLeft;conRight">
-    <div class="vis-widget <%== this.data.attr('class') %> pl_l pl_r " data-vis-resizable='{"grid": [ 1, 10 ]}' style=" width: 100px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 1, 10 ]}' style=" width: 100px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_h(el, data.conLeft, data.conRight) %>>
 			<div class="pipe_h plumb_body" style="">
 				<div class="plumb_dock_left"></div>
@@ -1132,7 +1311,7 @@
         data-vis-type="static"
         data-vis-name="Bogen_br"
         data-vis-attrs="conBottom;conRight">
-    <div class="vis-widget <%== this.data.attr('class')%>  pl_r pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_r pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_br(el, data.conBottom, data.conRight) %>>
 			<div class="bogen_br plumb_body">
 				<div class="bogen_br_shadow"></div>
@@ -1152,7 +1331,7 @@
         data-vis-type="static"
         data-vis-name="Bogen_bl"
         data-vis-attrs="conBottom;conLeft">
-    <div class="vis-widget <%== this.data.attr('class')%>  pl_l pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_l pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_bl(el, data.conBottom, data.conLeft) %>>
 			<div class="bogen_bl plumb_body">
 				<div class="bogen_bl_shadow"></div>
@@ -1172,7 +1351,7 @@
         data-vis-type="static"
         data-vis-name="Bogen_tr"
         data-vis-attrs="conTop;conRight">
-    <div class="vis-widget <%== this.data.attr('class')%>  pl_t pl_r " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_t pl_r " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_tr(el, data.conTop, data.conRight) %>>
 			<div class="bogen_tr plumb_body">
 				<div class="bogen_tr_shadow"></div>
@@ -1192,7 +1371,7 @@
         data-vis-type="static"
         data-vis-name="Bogen_tl"
         data-vis-attrs="conTop;conLeft">
-    <div class="vis-widget <%== this.data.attr('class')%>  pl_t pl_l " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_t pl_l " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_tl(el, data.conTop, data.conLeft) %>>
 			<div class="bogen_tl plumb_body">
 				<div class="bogen_tl_shadow"></div>
@@ -1212,7 +1391,7 @@
         data-vis-type="val"
         data-vis-name="valve_H"
         data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %> pl_l pl_r " data-vis-resizable='{"grid": [ 20, 10 ],"aspectRatio": true}' style=" width: 40px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 20, 10 ],"aspectRatio": true}' style=" width: 40px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_h(el, data.oid, data.conLeft, data.conRight, data.ctrl) %>>
 			<div class="valve_h " style="">
 			    <div class="plumb_valve_l"></div>
@@ -1237,7 +1416,7 @@
         data-vis-type="val"
         data-vis-name="valve_V"
         data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %> pl_t pl_b " data-vis-resizable='{"grid": [ 10, 20 ],"aspectRatio": true}' style=" width: 20px; height: 40px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " data-vis-resizable='{"grid": [ 10, 20 ],"aspectRatio": true}' style=" width: 20px; height: 40px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_v(el, data.oid, data.conTop, data.conBottom, data.ctrl) %>>
 			<div class="valve_v " style="">
 			    <div class="plumb_valve_t"></div>
@@ -1258,7 +1437,7 @@
         data-vis-type="static"
         data-vis-name="Pipe_HT"
         data-vis-attrs="conLeft;conRight;conTop">
-    <div class="vis-widget <%== this.data.attr('class') %> pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 30, 30 ],"aspectRatio": true}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 30, 30 ],"aspectRatio": true}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_ht(el, data.conTop, data.conLeft, data.conRight) %>>
 			<div class="tpice_ht " style="">
 			    <div class="tpice-hl plumb_body"></div>

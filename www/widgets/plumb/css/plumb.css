@@ -129,8 +129,14 @@
     top:0;
 }
 .plumb_dock_center{
-
+    width: 20px!important;
+    height: 20px!important;
+    left: calc(50% - 10px)!important;
+    top: calc(50% - 10px)!important;
+    position: absolute;
+    background: red;
 }
+
 
 .drop-hover{
     background-color: #9ACD32;
@@ -229,16 +235,17 @@
     width: 20px;
 }
 
-.plumb_sprinkler_i{
-    width: 6px;
-    height: 50%;
-    background-color: red;
-    position: absolute;
-    left: 50%;
-    border-radius: 10px;
-}
 
-.plumb_sprinkler_i_body{
+.plumb_sprinkler_i{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    /* display: flex; */
+    /* align-content: center; */
+    /* justify-content: center; */
+    /* left: 50%; */
+    /* top: 50%; */
+    /* background-color: black; */
     -moz-transform: rotate(30deg);
     -ms-transform: rotate(30deg);
     -o-transform: rotate(30deg);
@@ -246,19 +253,26 @@
     /* border-radius: 46px; */
     /* -webkit-transform: rotate(30deg); */
 
-    -webkit-animation: NAME-YOUR-ANIMATION 1s infinite linear; /* Safari 4+ */
-    animation:         NAME-YOUR-ANIMATION 1s infinite linear;
+
+    border-radius: 100%;
+    /* text-align: center; */
 }
 
-@-webkit-keyframes NAME-YOUR-ANIMATION {
-    0%   { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
+/*@-webkit-keyframes NAME-YOUR-ANIMATION {*/
+    /*0%   { -webkit-transform: rotate(0deg); }*/
+    /*100% { -webkit-transform: rotate(360deg); }*/
 
-}
-@keyframes NAME-YOUR-ANIMATION {
-    0%   { transform: rotate(0deg); }
-    80%   { transform: rotate(180deg); }
-    100% { transform: rotate(0deg); }
-}
+/*}*/
+/*@keyframes NAME-YOUR-ANIMATION {*/
+    /*0%   { transform: rotate(0deg); }*/
+    /*80%   { transform: rotate(180deg); }*/
+    /*100% { transform: rotate(0deg); }*/
+/*}*/
 
+.plumb_splinkler_i_water{
+    width: 100px;
+    height: 10px;
+    background-color: #000066;
+    border-radius: 20px;
+}
 
