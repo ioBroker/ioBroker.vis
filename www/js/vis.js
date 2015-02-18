@@ -380,7 +380,7 @@ var vis = {
         } else {
             if (confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
-                this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                 this.saveRemote(function () {
                     window.location.reload()
                 });
@@ -1171,6 +1171,11 @@ if ('applicationCache' in window) {
                                     // Read all data objects from server
                                     vis.conn.getObjects(function (err, data) {
                                         vis.objects = data;
+                                        // Detect if objects are loaded
+                                        for (var ob in data) {
+                                            vis.objectSelector = true;
+                                            break;
+                                        }
                                     });
                                 }
 

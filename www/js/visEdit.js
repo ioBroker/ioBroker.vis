@@ -43,6 +43,7 @@ vis = $.extend(true, vis, {
     // Array with all objects (Descriptions of objects)
     objects:               {},
     config:                {},
+    objectSelector:        false, // if object select ID activated
 
     editInit: function () {
         var that = this;
@@ -2040,108 +2041,110 @@ vis = $.extend(true, vis, {
         // Edit for Object ID
         var line = [
             {
-                input: '<input type="text" id="inspect_' + widAttr + '">',
-                button: {
-                    icon: 'ui-icon-note',
-                    text: false,
-                    title: _('Select object ID'),
-                    click: function () {
-                        var wdata = $(this).data('data-wdata');
-
-                        $('#dialog-select-member-' + wdata.attr).selectId('show', that.views[wdata.view].widgets[wdata.widgets[0]].data[wdata.attr], function (newId, oldId) {
-                            if (oldId != newId) {
-                                $('#inspect_' + wdata.attr).val(newId);
-                                $('#inspect_' + wdata.attr).trigger('change');
-
-                                /*
-                                if (document.getElementById('inspect_hm_wid')) {
-                                    if (that.objects[newId]['Type'] !== undefined && that.objects[value]['Parent'] !== undefined &&
-                                        (that.objects[newId]['Type'] == 'STATE' ||
-                                         that.objects[newId]['Type'] == 'LEVEL')) {
-
-                                        var parent = that.objects[newId]['Parent'];
-                                        if (that.objects[parent]['DPs'] !== undefined &&
-                                            that.objects[parent]['DPs']['WORKING'] !== undefined) {
-                                            $('#inspect_hm_wid').val(that.objects[parent]['DPs']['WORKING']);
-                                            $('#inspect_hm_wid').trigger('change');
-                                        }
-                                    }
-                                }
-
-                                // Try to find Function of the device and fill the Filter field
-                                var $filterkey = $('#inspect_filterkey');
-                                if ($filterkey.length) {
-                                    if ($filterkey.val() == '') {
-                                        var oid = newId;
-                                        var func = null;
-                                        if (that.metaIndex && that.metaIndex['ENUM_FUNCTIONS']) {
-                                            while (oid && that.objects[oid]) {
-                                                for (var t = 0; t < that.metaIndex['ENUM_FUNCTIONS'].length; t++) {
-                                                    var list = that.objects[that.metaIndex['ENUM_FUNCTIONS'][t]];
-                                                    for (var z = 0; z < list['Channels'].length; z++) {
-                                                        if (list['Channels'][z] == oid) {
-                                                            func = list.Name;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (func) break;
-                                                }
-                                                if (func) break;
-
-                                                oid = that.objects[oid]['Parent'];
-                                            }
-                                        }
-                                        if (func) $filterkey.val(func).trigger('change');
-                                    }
-                                }*/
-                            }
-                        });
-                    }
-                },
-                onchange: function (val) {
-                    var wdata = $(this).data('data-wdata');
-                    $('#inspect_' + wdata.attr + '_desc').html(that.getObjDesc(val));
-                }
-            },
-            {
-                input: '<div id="inspect_' + widAttr + '_desc"></div>'
+                input: '<input type="text" id="inspect_' + widAttr + '">'
             }
         ];
 
-        // Init select dialog
-        if (!$('#dialog-select-member-' + widAttr).length) {
-            $('body').append('<div id="dialog-select-member-' + widAttr + '" style="display:none">');
-            $('#dialog-select-member-' + widAttr).selectId('init', {
-                texts: {
-                    select: _('Select'),
-                    cancel: _('Cancel'),
-                    all: _('All'),
-                    id: _('ID'),
-                    name: _('Name'),
-                    role: _('Role'),
-                    room: _('Room'),
-                    value: _('Value'),
-                    selectid: _('Select ID'),
-                    enum: _('Members'),
-                    from: _('from'),
-                    lc: _('lc'),
-                    ts: _('ts'),
-                    ack: _('ack'),
-                    expand: _('expand'),
-                    collapse: _('collapse'),
-                    refresh: _('refresh'),
-                    edit: _('edit'),
-                    ok: _('ok'),
-                    wait: _('wait'),
-                    list: _('list'),
-                    tree: _('tree')
-                },
-                columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
-                imgPath: '/lib/css/fancytree/',
-                objects: this.objects,
-                states: this.states,
-                zindex: 1001
-            });
+        if (this.objectSelector) {
+            line[0].button = {
+                icon: 'ui-icon-note',
+                    text: false,
+                    title: _('Select object ID'),
+                    click: function () {
+                    var wdata = $(this).data('data-wdata');
+
+                    $('#dialog-select-member-' + wdata.attr).selectId('show', that.views[wdata.view].widgets[wdata.widgets[0]].data[wdata.attr], function (newId, oldId) {
+                        if (oldId != newId) {
+                            $('#inspect_' + wdata.attr).val(newId);
+                            $('#inspect_' + wdata.attr).trigger('change');
+
+                            /*
+                             if (document.getElementById('inspect_hm_wid')) {
+                             if (that.objects[newId]['Type'] !== undefined && that.objects[value]['Parent'] !== undefined &&
+                             (that.objects[newId]['Type'] == 'STATE' ||
+                             that.objects[newId]['Type'] == 'LEVEL')) {
+
+                             var parent = that.objects[newId]['Parent'];
+                             if (that.objects[parent]['DPs'] !== undefined &&
+                             that.objects[parent]['DPs']['WORKING'] !== undefined) {
+                             $('#inspect_hm_wid').val(that.objects[parent]['DPs']['WORKING']);
+                             $('#inspect_hm_wid').trigger('change');
+                             }
+                             }
+                             }
+
+                             // Try to find Function of the device and fill the Filter field
+                             var $filterkey = $('#inspect_filterkey');
+                             if ($filterkey.length) {
+                             if ($filterkey.val() == '') {
+                             var oid = newId;
+                             var func = null;
+                             if (that.metaIndex && that.metaIndex['ENUM_FUNCTIONS']) {
+                             while (oid && that.objects[oid]) {
+                             for (var t = 0; t < that.metaIndex['ENUM_FUNCTIONS'].length; t++) {
+                             var list = that.objects[that.metaIndex['ENUM_FUNCTIONS'][t]];
+                             for (var z = 0; z < list['Channels'].length; z++) {
+                             if (list['Channels'][z] == oid) {
+                             func = list.Name;
+                             break;
+                             }
+                             }
+                             if (func) break;
+                             }
+                             if (func) break;
+
+                             oid = that.objects[oid]['Parent'];
+                             }
+                             }
+                             if (func) $filterkey.val(func).trigger('change');
+                             }
+                             }*/
+                        }
+                    });
+                }
+            };
+            line[0].onchange = function (val) {
+                var wdata = $(this).data('data-wdata');
+                $('#inspect_' + wdata.attr + '_desc').html(that.getObjDesc(val));
+            };
+
+            line.push({input: '<div id="inspect_' + widAttr + '_desc"></div>'});
+
+            // Init select dialog
+            if (!$('#dialog-select-member-' + widAttr).length) {
+                $('body').append('<div id="dialog-select-member-' + widAttr + '" style="display:none">');
+                $('#dialog-select-member-' + widAttr).selectId('init', {
+                    texts: {
+                        select: _('Select'),
+                        cancel: _('Cancel'),
+                        all: _('All'),
+                        id: _('ID'),
+                        name: _('Name'),
+                        role: _('Role'),
+                        room: _('Room'),
+                        value: _('Value'),
+                        selectid: _('Select ID'),
+                        enum: _('Members'),
+                        from: _('from'),
+                        lc: _('lc'),
+                        ts: _('ts'),
+                        ack: _('ack'),
+                        expand: _('expand'),
+                        collapse: _('collapse'),
+                        refresh: _('refresh'),
+                        edit: _('edit'),
+                        ok: _('ok'),
+                        wait: _('wait'),
+                        list: _('list'),
+                        tree: _('tree')
+                    },
+                    columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
+                    imgPath: '/lib/css/fancytree/',
+                    objects: this.objects,
+                    states:  this.states,
+                    zindex:  1001
+                });
+            }
         }
 
         return line;
