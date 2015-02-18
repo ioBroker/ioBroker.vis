@@ -128,6 +128,9 @@
     right: -10px;
     top:0;
 }
+.plumb_dock_center{
+
+}
 
 .drop-hover{
     background-color: #9ACD32;
@@ -225,3 +228,20 @@
     height: 20px;
     width: 20px;
 }
+
+.plumb_sprinkler_i{
+    width: 1px;
+    height: 50%;
+    background-color: red;
+    position: absolute;
+    left: 50%;
+
+}
+
+.plumb_sprinkler_i_body{
+    /*-webkit-animation:spin 4s linear infinite;*/
+    /*-moz-animation:spin 4s linear infinite;*/
+    animation:spin 4s linear infinite;
+}
+
+

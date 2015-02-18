@@ -117,6 +117,7 @@
                         self_id = $this.attr("id");
                         vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
                         vis.views[vis.activeView].widgets[drag_id].data.conLeft = self_id;
+
                         $("#inspect_conLeft").val(self_id);
                         vis.save();
                         if (!no_pos) {
@@ -192,7 +193,8 @@
 
         },
         set_collision: function (id) {
-            //console.log("set_collision")
+            console.log("set_collision")
+
             var $this = $("#" + id);
             var plumb = vis.binds.plumb.data;
             var self = vis.binds.plumb.data[id];
@@ -200,7 +202,35 @@
             self.coli = true;
 
             if (self.conLeft && self.conRight) {
-                $($this).find(".pipe_h").css("background-image", "linear-gradient(to right, " + plumb[self.conLeft].color.c + " , " + plumb[self.conRight].color.c + ")");
+                $($this).find(".plumb_body")
+                        .css("background-image", "linear-gradient(to right, " + plumb[self.conLeft].color.c + " , " + plumb[self.conRight].color.c + ")")
+                        .css("background-image", "-webkit-linear-gradient(to right, " + plumb[self.conLeft].color.c + " , " + plumb[self.conRight].color.c + ")");
+            }else
+            if (self.conTop && self.conBottom) {
+                $($this).find(".plumb_body")
+                        .css("background-image", "linear-gradient(" + plumb[self.conTop].color.c + " , " + plumb[self.conBottom].color.c + ")")
+                        .css("background-image", "-webkit-linear-gradient(" + plumb[self.conTop].color.c + " , " + plumb[self.conBottom].color.c + ")")
+            }else
+            if (self.conTop && self.conRight) {
+                console.log("background-image", "-webkit-linear-gradient(top left , " + plumb[self.conTop].color.c + " , " + plumb[self.conRight].color.c + ")")
+                $($this).find(".plumb_body")
+                        .css("background-image", "linear-gradient(top left , " + plumb[self.conTop].color.c + " , " + plumb[self.conRight].color.c + ")")
+                        .css("background-image", "-webkit-linear-gradient(top left , " + plumb[self.conTop].color.c + " , " + plumb[self.conRight].color.c + ")")
+            }else
+            if (self.conTop && self.conLeft) {
+                $($this).find(".plumb_body")
+                        .css("background-image", "linear-gradient(right top, " + plumb[self.conTop].color.c + " , " + plumb[self.conLeft].color.c + ")")
+                        .css("background-image", "-webkit-linear-gradient(right top, " + plumb[self.conTop].color.c + " , " + plumb[self.conLeft].color.c + ")")
+            }else
+            if (self.conBottom && self.conRight) {
+                $($this).find(".plumb_body")
+                        .css("background-image", "linear-gradient(left bottom, " + plumb[self.conBottom].color.c + " , " + plumb[self.conRight].color.c + ")")
+                        .css("background-image", "-webkit-linear-gradient(left bottom, " + plumb[self.conBottom].color.c + " , " + plumb[self.conRight].color.c + ")")
+            }else
+            if (self.conBottom && self.conLeft) {
+                $($this).find(".plumb_body")
+                        .css("background-image", "linear-gradient(right bottom, " + plumb[self.conBottom].color.c + " , " + plumb[self.conRight].color.c + ")")
+                        .css("background-image", "-webkit-linear-gradient(right bottom, " + plumb[self.conBottom].color.c + " , " + plumb[self.conRight].color.c + ")")
             }
         },
         rest_collision: function (id, event) {
@@ -360,6 +390,43 @@
                     }
                 });
             }, 2);
+
+        },
+
+        sprinkler_i: function (el, data) {
+            var $this = $(el).parent();
+            var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pump",
+                    cons: ["conTop", "conBottom", "conLeft", "conRight"],
+                    coli: false,
+                    from: id,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false
+                }
+            }
+            var self = plumb[id];
+
+            self.conLeft = data.conLeft || null;
+            self.conRight = data.conRight || null;
+            self.conTop = data.conTop || null;
+            self.conBottom = data.conBottom || null;
+
+
+            vis.binds.plumb.plumb_drop($this, true);
+
+            $this.bind("plumb_change", function (event) {
+
+
+            });
+
+
 
         },
 
@@ -931,7 +998,7 @@
                 var size = parseInt($this.height() / 3);
                 var shadow = parseInt($this.height() / 3 / 2);
                 $($this).find(".tpice-hl").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
-                $($this).find(".tpice-hm").css({"box-shadow": 'inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-hm").css({"box-shadow": 'inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
                 $($this).find(".tpice-hr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
 
                 $($this).find(".bogen_tl_shadow").css({"box-shadow": '' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 1.33) + 'px #000 '});
@@ -966,24 +1033,34 @@
         data-vis-type="val"
         data-vis-name="Pump"
         data-vis-attrs="oid;src[./widgets/plumb/img/pumpe.png];stretch/checkbox;Off[#969696]/color;ON[#00ff00]/color;conTop;conBottom;conLeft;conRight">
-    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t" data-vis-resizable='{}' style=" width: 65px; height: 205px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t pl_l pl_r" data-vis-resizable='{}' style=" width: 65px; height: 205px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pump(el, data.oid, data.Off, data.ON, data.conTop, data.conBottom, data.conLeft, data.conRight) %>>
 			<div class="pump" style="">
 			   <% if (vis.editMode) { %>
                 <div class="editmode-helper" style="z-index:0" />
             <% } %>
             <img style="position:absolute; width:100%;<%= this.data.attr('stretch') ? 'height:100%' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
-				<div class="plumb_dock_top"></div>
-				<div class="plumb_dock_bottom"></div>
-				<div class="plumb_dock_left"></div>
-				<div class="plumb_dock_right"></div>
+				<div class="plumb_dock_center"></div>
 			</div>
         </div>
     </div>
+</script>
 
-
-
-
+<script id="tplPlump_istrinkler"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplPlump_pump" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_b pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{}" style="top: 163px; left: 449px; width: 57px; height: 183px;" > <div class="vis-widget-prev-body">			<div class="pump" style=""><img style="position: absolute; width: 100%;" src="./widgets/plumb/img/pumpe.png"><div class="plumb_dock_top ui-droppable"></div><div class="plumb_dock_bottom ui-droppable"></div>				<div class="plumb_dock_left ui-droppable"></div>				<div class="plumb_dock_right ui-droppable"></div>			</div> </div> </div></div>'
+        data-vis-set="plumb"
+        data-vis-type="val"
+        data-vis-name="Sprinker I"
+        data-vis-attrs="time;start;ende;stroke">
+    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t pl_l pl_r" data-vis-resizable='{}' style=" width: 100px; height: 100px;" id="<%= this.data.attr('wid') %>">
+        <div class="plumb_sprinkler_i_body vis-widget-body" <%= (el) -> vis.binds.plumb.sprinkler_i(el, data) %>>
+				<div class="plumb_sprinkler_i"></div>
+				<div class="plumb_dock_center"></div>
+			</div>
+        </div>
+    </div>
 </script>
 
 <script id="tplPlump_pipe_V"
