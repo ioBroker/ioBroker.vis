@@ -542,6 +542,7 @@
 
         sprinkler_i: function (el, data) {
             var $this = $(el).parent();
+            var $head = $(el)
             var id = $this.attr("id");
             var plumb = vis.binds.plumb.data;
             var wp = $this.find(".plumb_sprinkler_i");
@@ -555,7 +556,6 @@
                     conRight: null,
                     conTop: null,
                     conBottom: null,
-                    status: false
                 }
             }
             var self = plumb[id];
@@ -564,60 +564,94 @@
             self.conRight = data.conRight || null;
             self.conTop = data.conTop || null;
             self.conBottom = data.conBottom || null;
-            $this.css("overflow","visible")
+            $this.css("overflow","visible");
 
             vis.binds.plumb.plumb_drop($this);
 
-            $this.bind("plumb_change", function (event) {
-console.log(event)
-                if(event.status){
-                    wp.show()
-                }else{
-                    wp.hide()
-                }
-
-
-
-
+            $($this).on("resize", function () {
+               set()
             });
 
+            $this.bind("plumb_change", function (event) {
+                self.status = event.status;
+                if(event.status == true ){
+                    wp.show()
+                    $head.css({
+                        "background-color": data["head-color"]
+                    });
+                }else{
+                    wp.hide()
+                    console.log(data)
+                    if(data["head-show"] == false ){
+                     $head.css({
+                         "background-color": "transparent"
+                     });
+                    }
+                }
+            });
 
-            setTimeout(function(){
-                $('#'+id+'_style').remove();
+            function set() {
+                $('#' + id + '_style').remove();
 
-                $('<style id="'+id+'_style">\
-                @-webkit-keyframes '+id+'-ANIMATION {\
-                    0%   { -webkit-transform: rotate('+data.start+'deg); }\
-                    80%  { -webkit-transform: rotate('+data.ende+'deg); }\
-                    100% { -webkit-transform: rotate('+data.start+'deg); }\
+                $('<style id="' + id + '_style">\
+                @-webkit-keyframes ' + id + '-ANIMATION {\
+                    0%   { -webkit-transform: rotate(' + data.start + 'deg); }\
+                    80%  { -webkit-transform: rotate(' + data.ende + 'deg); }\
+                    100% { -webkit-transform: rotate(' + data.start + 'deg); }\
                 }\
-                @keyframes '+id+'-ANIMATION {\
-                    0%   { transform: rotate('+data.start+'deg); }\
-                    80%   { transform: rotate('+data.ende+'deg); }\
-                    100% { transform: rotate('+data.start+'deg); }\
+                @keyframes ' + id + '-ANIMATION {\
+                    0%   { transform: rotate(' + data.start + 'deg); }\
+                    80%   { transform: rotate(' + data.ende + 'deg); }\
+                    100% { transform: rotate(' + data.start + 'deg); }\
                 }\
-                <style>').appendTo("head")
+                <style>').appendTo("head");
 
 
                 wp.css({
-                "-webkit-animation": id+"-ANIMATION "+data.time+"s infinite linear",
-                "animation":         id+"-ANIMATION "+data.time+"s infinite linear",
-                 display: "none"
-                })
+                    "-webkit-animation": id + "-ANIMATION " + data.time + "s infinite linear",
+                    "animation": id + "-ANIMATION " + data.time + "s infinite linear",
+
+                });
                 $this.find(".plumb_splinkler_i_water").css({
-                    height: data.width +"px",
+                    height: data.width + "px",
                     width: data.stroke + "px",
-                    left: parseInt($(wp).width()/2-data.stroke/2) +"px",
-                    top: parseInt($(wp).height()/2-data.width) +"px",
-                    position:"relative",
-                    "box-shadow": '0px 0px '+(data.stroke*2)+'px '+data.stroke+'px #000066',
+                    left: parseInt($(wp).width() / 2 - data.stroke / 2) + "px",
+                    top: parseInt($(wp).height() / 2 - data.width) + "px",
+                    position: "relative",
+                    "background-color": data.water_color
+                });
 
-                })
+                if (data.fog == true) {
+                    $this.find(".plumb_splinkler_i_water").css({
+                        "box-shadow": '0px 0px ' + (data.stroke * 2) + 'px ' + data.stroke + 'px ' + data["water-color"],
+                    })
+                }
 
+                if (data["head-round"]) {
+                    $head.css({
+                        "border-radius": "100%"
+                    });
+                }
 
+                if (self.status == true || (vis.editMode == true && data.test == true)) {
+                    wp.show()
+                } else {
+                    wp.hide()
+                }
 
+                if ((self.status == true || data["head-show"] == true ) || (vis.editMode == true && data.test == true)) {
+                    $head.css({
+                        "background-color": data["head-color"]
+                    });
+                } else {
+                    $head.css({
+                        "background-color": "pransparent"
+                    });
+                }
+            }
 
-
+            setTimeout(function () {
+                set()
             })
 
 
@@ -1247,14 +1281,14 @@ console.log(event)
 <script id="tplPlump_istrinkler"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_pump" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_b pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{}" style="top: 163px; left: 449px; width: 57px; height: 183px;" > <div class="vis-widget-prev-body">			<div class="pump" style=""><img style="position: absolute; width: 100%;" src="./widgets/plumb/img/pumpe.png"><div class="plumb_dock_top ui-droppable"></div><div class="plumb_dock_bottom ui-droppable"></div>				<div class="plumb_dock_left ui-droppable"></div>				<div class="plumb_dock_right ui-droppable"></div>			</div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_istrinkler" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_t pl_l pl_r ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ]}" style="width: 20px; height: 17px; overflow: visible; left: 242px; top: 228px; position: absolute;" > <div class="plumb_sprinkler_i_body vis-widget-prev-body" style="border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; background-color: rgb(0, 0, 0);"> <div class="plumb_sprinkler_i" style=""> <div class="plumb_splinkler_i_water" style="height: 60px; width: 5px; left: 7px; top: -51px; position: relative; background-color: rgb(27, 138, 222);"></div> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Sprinker I"
-        data-vis-attrs="width[100];time[4];start[0];ende[90];stroke[4];opacity[0.8];">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{"disabled": true}' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="test/checkbox;width[100];time[4];start[0];ende[90];stroke[4];opacity[0.8];fog/checkbox;water_color[blue]/color;head_color[black]/color;head_show[true]/checkbox;head_round[true]/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{"grid": [ 10, 10 ]}' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="plumb_sprinkler_i_body vis-widget-body" <%= (el) -> vis.binds.plumb.sprinkler_i(el, data) %>>
-				<div class="plumb_sprinkler_i">
+				<div class="plumb_sprinkler_i" style="display: 'none'">
 				<div class="plumb_splinkler_i_water"></div>
 				</div>
             	<div class="plumb_dock_top"></div>
@@ -1273,7 +1307,7 @@ console.log(event)
         data-vis-type="static"
         data-vis-name="Pipe_V"
         data-vis-attrs="conTop;conBottom">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t" data-vis-resizable='{"grid": [ 10, 1 ],"handles": "all" }' style="width: 20px; height: 100px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t" data-vis-resizable='{"grid": [ 10, 10 ],"handles": "all" }' style="width: 20px; height: 100px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_v(el, data.conTop, data.conBottom) %>>
 			<div class="pipe_v plumb_body" style="">
 				<div class="plumb_dock_top"></div>
