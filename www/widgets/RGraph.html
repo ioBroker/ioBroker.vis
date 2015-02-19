@@ -29,7 +29,7 @@
             "title_side"         : {"en": "Side title",     "de": "Seitentitel",           "ru": "Вертикальная подпись"},
             "title_side_font"    : {"en": "Side title font","de": "Seitentitelfont",       "ru": "Шрифт вертикальной подписи"},
             "title_side_size"    : {"en": "Side title font size","de": "Seitentitelfontgröße","ru": "Размер вертикальной подписи"},
-            "shadow"             : {"en": "Show shadow",    "de": "Zeige Schatten",       "ru": "Показать тень"},
+            "show_shadow"        : {"en": "Show shadow",    "de": "Zeige Schatten",       "ru": "Показать тень"},
             "ticksize"           : {"en": "Tick length",    "de": "Zeichenlänge",         "ru": "Длина штриха"},
             "units_pre"          : {"en": "Units pre",      "de": "Einheitsprefix",       "ru": "Префикс"},
             "units_post"         : {"en": "Units post",     "de": "Einheitspostfix",      "ru": "Суффикс"},
@@ -73,7 +73,51 @@
             "green_color"        : {"en": "Color of first sector", "de": "Farbe von ersten Sektor","ru": "Цвет первого сектора"},
             "green_end"          : {"en": "End of first sector",   "de": "Ende von ersten Sektor", "ru": "Конец первого сектора"},
             "padding_left"       : {"en": "Padding left",        "de": "Abstand links",            "ru": "Отступ слева"},
-            "padding_right"      : {"en": "Padding right",        "de": "Abstand rechts",            "ru": "Отступ справа"}
+            "padding_right"      : {"en": "Padding right",        "de": "Abstand rechts",          "ru": "Отступ справа"},
+            "animate_tooltip"    : {"en": "Slow changes of value", "de": "Langsame Wertänderung",  "ru": "Анимированное изменение значения"},
+            "Arial"              : {"en": "Arial",               "de": "Arial",                    "ru": "Arial"},
+            "Times"              : {"en": "Times",               "de": "Times",                    "ru": "Times"},
+            "Andale Mono"        : {"en": "Andale Mono",         "de": "Andale Mono",              "ru": "Andale Mono"},
+            "Comic Sans"         : {"en": "Comic Sans",          "de": "Comic Sans",               "ru": "Comic Sans"},
+            "Impact"             : {"en": "Impact",              "de": "Impact",                   "ru": "Impact"},
+            "group_scale"        : {"en": "Scale",               "de": "Skala",                    "ru": "Шкала"},
+            "group_title"        : {"en": "Title",               "de": "Beschriftung",             "ru": "Подпись"},
+            "group_advanced"     : {"en": "Advanced",            "de": "Erweitert",                "ru": "Дополнительно"},
+            "group_background"   : {"en": "Background",          "de": "Hintergrund",              "ru": "Фон"},
+            "group_labels"       : {"en": "Labels",              "de": "Aufschrift",               "ru": "Надписи"},
+            "group_sectors"      : {"en": "Sectors",             "de": "Sektoren",                 "ru": "Сектора"},
+            "line_color"         : {"en": "Line color",          "de": "Liniefarbe",               "ru": "Цвет линии"},
+            "line_thick"         : {"en": "Line thickness",      "de": "Linienbreite",             "ru": "Толщина линии"},
+            "update_interval"    : {"en": "Update interval(ms)", "de": "Aktualisierungs- Intervall(ms)", "ru": "Обновление(мс)"},
+            "update_interval_tooltip": {"en": "How offten the new point will be painted on graphics.\x0AMake it smaller to see the changes.", "de": "Wie oft wird neuen Punkt gemalt.\x0AMach es kleiner um die Änderungen zu sehen.", "ru": "Как часто рисуется новая точка на графике\x0AНапиши маленькое значение, что бы понять, как работает график."},
+            "points_count"       : {"en": "Points number on X",  "de": "Punktenanzahl über X",     "ru": "Количество точек в графике по X"},
+            "title_x"            : {"en": "Title for x axis",    "de": "Beschriftung X-Achse",     "ru": "Подпись шкалы X"},
+            "title_y"            : {"en": "Title for y axis",    "de": "Beschriftung Y-Achse",     "ru": "Подпись шкалы Y"},
+            "num_hlines"         : {"en": "Horizontal lines number", "de": "Anzahl von horizontalen Linien", "ru": "Кол-во горизонтальных линий"},
+            "spline"             : {"en": "Spline smoothing",    "de": "Splineglättung",           "ru": "Сглаживание сплайном"},
+            "filled"             : {"en": "Filled graphics",     "de": "Gefüllte Grafik",          "ru": "Закрашеный график"},
+            "group_oid_show"     : {"en": "Show lines depends on", "de": "Zeige Linien abhängig von", "ru": "Показать линии в зависимости от"},
+            "oid_show"           : {"en": "Show line depends on", "de": "Zeige Linie abhängig von", "ru": "Показать линию в зависимости от"},
+            "triangle"           : {"en": "Triangle form",       "de": "Dreieckform",              "ru": "Треугольной формы"},
+            "line"               : {"en": "Line",                "de": "Linie",                    "ru": "Линия"},
+            "group_settings"     : {"en": "Settings",            "de": "Einstellungen",            "ru": "Настройки"},
+            "filled_color"       : {"en": "Color of the bar's bottom",  "de": "Barfarbe unten",    "ru": "Цвет графика снизу"},
+            "empty_color"        : {"en": "Color of the bar top", "de": "Barfarbe unten",          "ru": "Цвет графика сверху"},
+            "label_color"        : {"en": "Labels color",        "de": "Beschriftungs- Farbe",     "ru": "Цвет подписей"},
+            "legend"             : {"en": "Show legend",         "de": "Zeige Legende",            "ru": "Показать легенду"},
+            "filled_text"        : {"en": "Legend for filled value", "de": "Legende für den Wert", "ru": "Легенда для значения"},
+            "empty_text"         : {"en": "Legend for non-filled value",  "de": "Legende für den Gegenwert",               "ru": "Легенда для пустого значения"},
+            "labels_above"       : {"en": "Show max value at top",  "de": "Zeige maximales Wert oben", "ru": "Показать максимальное значение"},
+            "label_size"         : {"en": "Label's size",        "de": "Beschriftungs- größe",     "ru": "Размер подписей"},
+            "labels_above_angle" : {"en": "Max value at top with angle", "de": "Zeige maximales Wert oben diagonal", "ru": "Максимальное значение под углом"},
+            "decimals"           : {"en": "Digits after comma",  "de": "Nach Kommazahlen",         "ru": "Чисел после запятой"},
+            "gutter_left"        : {"en": "Gutter left",         "de": "Abstand links",            "ru": "Отступ слева"},
+            "horz_margin"        : {"en": "Horizontal margin",   "de": "Horizontaler Abstand",     "ru": "Горизонтальный отступ"},
+            "bar_labels_color"   : {"en": "Bar value's color",   "de": "Bar-Wert-Farbe",           "ru": "Цвет значения"},
+            "bar_labels_bold"    : {"en": "Bar value's bold font", "de": "Bar-Wert-Dick",          "ru": "Жирный шрифт значения"},
+            "bar_labels_center"  : {"en": "Show value in middle",  "de": "Zeige Wert in der Mitte", "ru": "Показать значение в центре"},
+            "group_colors"       : {"en": "Colors",              "de": "Farben",                   "ru": "Цвета"},
+            "group_max_values"   : {"en": "Max values",          "de": "Maximale Werte",           "ru": "Максимальные значения"}
         });
     }    
 
@@ -224,8 +268,8 @@
             if (data.attr("show_scale")) {
                 t.Set('scale.visible', true);
             }
-            if (data.attr("shadow") !== "" && data.attr("shadow") !== null && data.attr("shadow") !== undefined) {
-                t.Set('shadow', (data.attr("shadow") == "true" || data.attr("shadow") == true));
+            if (data.attr("show_shadow") !== "" && data.attr("show_shadow") !== null && data.attr("show_shadow") !== undefined) {
+                t.Set('shadow', (data.attr("show_shadow") == "true" || data.attr("show_shadow") == true));
             }
             if (data.attr("control") !== "" && data.attr("control") !== null && data.attr("control") !== undefined) {
                 t.Set('adjustable', (data.attr("control") == "true" || data.attr("control") == true));
@@ -725,7 +769,7 @@
                 f = f * Math.PI / 180;
                 t.Set('angles.end', f);
             }
-            if (data.attr("shadow")) {
+            if (data.attr("show_shadow")) {
                 t.Set('shadow', true);
             }
             if (data.attr("value_text")) {
@@ -939,7 +983,6 @@
             }
         },
         tplRBarChart: function (view, data) {
-            console.log ("tplRBarChart");
             var wid = data.attr('wid')
 
             var factor = data.attr('factor') || 1;
@@ -1021,7 +1064,7 @@
                 label_color:  data.attr('label_color'),
                 labels_above: data.attr('labels_above'),
                 decimals:     parseInt(data.attr('decimals')),
-                shadow:       data.attr('shadow'),
+                shadow:       data.attr('show_shadow'),
                 bar_labels_color: data.attr('bar_labels_color'),
                 bar_labels_bold: data.attr('bar_labels_bold'),
                 bar_labels_center: data.attr('bar_labels_center'),
@@ -1045,7 +1088,7 @@
 
             t.set('grouping', 'stacked');
             t.set('labels', options.names);
-            t.set('labels.above.angle', options.labels_above_angle);
+            t.set('labels.above.angle', options.labels_above_angle ? 45 : 0);
             t.set('labels.above', options.labels_above);
             t.set('labels.above.size', parseInt(options.label_size) || 12);
             //t.set('labels.above.color', options.label_color);
@@ -1053,10 +1096,10 @@
             t.set('linewidth', 1);
             t.set('strokestyle', 'black');
             t.set('colors', max_values ? [options.empty_color, options.filled_color] : [options.filled_color]);
-            t.set('shadow', options.shadow);
-            t.set('shadow.offsetx', 1);
-            t.set('shadow.offsety', 1);
-            t.set('shadow.blue', 5);
+            t.set('shadow', options.show_shadow);
+            t.set('shadow.offsetx', 4);
+            t.set('shadow.offsety', 4);
+            t.set('shadow.blur', 15);
             t.set('hmargin', parseInt(options.horz_margin));
             t.set('gutter.left', parseInt(options.gutter_left));
             t.set('background.grid.vlines', false);
@@ -1069,9 +1112,9 @@
             if (options.legend) {
                 t.set('key', max_values ? [options.empty_text || ' ', options.filled_text || ' '] : options.filled_text || ' ');
                 t.set('key.position.gutter.boxed', true);
-                t.set('key.position', 'gutter');
-                t.set('key.position.x', t.canvas.width - 300)
-                t.set('key.position.y', 20)
+                t.set('key.position', 'graph');
+                t.set('key.position.x', 10)
+                t.set('key.position.y', 10)
                 t.set('key.colors', max_values ? [options.empty_color, options.filled_color] : [options.filled_color]);
             }
 
@@ -1184,7 +1227,10 @@
         data-vis-set="RGraph" 
         data-vis-name="Thermometer"
         data-vis-prev='<img src="widgets/RGraph/img/Prev_thermometr.png"></img>'
-        data-vis-attrs="oid;min_value[0];max_value[100];control/checkbox;padding_left/slider,0,100,1;padding_right/slider,0,100,1;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontname;labels_size/slider,1,100;title;title_side;title_side_font/fontname;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
+        data-vis-attrs="oid;min_value[0];max_value[100];control/checkbox;padding_left/slider,0,100,1;padding_right/slider,0,100,1;factor[1];value_offset[0];color;animate/checkbox;"
+        data-vis-attrs0="group.scale;show_scale/checkbox;labels_color/color;labels_font/fontname;labels_size/slider,1,100;"
+        data-vis-attrs1="group.title;title;title_side;title_side_font/fontname;title_side_size/slider,1,100;"
+        data-vis-attrs2="group.advanced;show_shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1">
     <%
         vis.binds.RGraph.tplRGtermometer(this.view, this.data);
     %>
@@ -1196,7 +1242,14 @@
         data-vis-type="gauge,number"
         data-vis-prev='<img src="widgets/RGraph/img/Prev_gauge.png"></img>'
         data-vis-set="RGraph"
-        data-vis-name="Gauge-Basic" data-vis-attrs="oid/id;oid_2/id;oid_3/id;min_value[0];max_value[100];max_value_id/id;factor[1];value_offset[0];control/checkbox;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;title;title_color/color;title_font/fontname;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontname;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;labels_color[#000000]/color;labels_font/fontname;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1;animate/checkbox">
+        data-vis-name="Gauge-Basic"
+        data-vis-attrs="oid/id;oid_2/id;oid_3/id;min_value[0];max_value[100];max_value_id/id;factor[1];value_offset[0];control/checkbox;animate/checkbox;"
+        data-vis-attrs0="group.scale;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;"
+        data-vis-attrs1="group.background;back_color/color;background_gradient/checkbox;border_outline_color/color;"
+        data-vis-attrs2="group.needle;needle_colors/color;needle_type/select,triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;"
+        data-vis-attrs3="group.title;title;title_color/color;title_font/fontname;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontname;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;"
+        data-vis-attrs4="group.labels;labels_color[#000000]/color;labels_font/fontname;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;"
+        data-vis-attrs5="group.sectors;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1">
     <%
         vis.binds.RGraph.tplRGgauge(this.view, this.data);
     %>
@@ -1208,7 +1261,10 @@
         data-vis-type="chart,number"
         data-vis-prev='<img src="widgets/RGraph/img/Prev_liveChart.png"></img>'
         data-vis-set="RGraph"
-        data-vis-name="LiveChart" data-vis-attrs="oid(1-8)/id;line_color(1-8)[black]/color;line_thick(1-8)[1]/slider,0.5,5,0.5;min_value[0];max_value[0];factor[1];value_offset[0];update_interval[5000]/slider,100,20000,100;points_count[250]/slider,10,2000,10;title;title_x;title_y;num_hlines[3]/slider,0,20,1;spline/checkbox;filled/checkbox;oid_show(1-8)/id;">
+        data-vis-name="LiveChart"
+        data-vis-attrs="oid(1-8)/id;line_color(1-8)[black]/color;line_thick(1-8)[1]/slider,0.5,5,0.5;"
+        data-vis-attrs0="group.settings;min_value[0];max_value[0];factor[1];value_offset[0];update_interval[5000]/slider,100,20000,100;points_count[250]/slider,10,2000,10;title;title_x;title_y;num_hlines[3]/slider,0,20,1;spline/checkbox;filled/checkbox;"
+        data-vis-attrs1="group.oid_show;oid_show(1-8)/id;">
     <%
         vis.binds.RGraph.tplRLiveChart(this.view, this.data);
     %>
@@ -1219,7 +1275,12 @@
         data-vis-type="chart,number,barchart"
         data-vis-prev='<img src="widgets/RGraph/img/Prev_barChart.png"></img>'
         data-vis-set="RGraph"
-        data-vis-name="BarChart" data-vis-attrs="oid(1-8)/id;name(1-8);filled_color[black]/color;empty_color[white]/color;label_color[black]/color;max_value(1-8);factor[1];value_offset[0];update_interval[0]/slider,0,20000,100;title;legend/checkbox;filled_text[Level];empty_text[Empty];labels_above[true]/checkbox;label_size[12]/slider,1,40,1;labels_above_angle/checkbox;decimals[2]/slider,0,10,1;shadow/checkbox;gutter_left[45]/slider,0,200,1;horz_margin[15]/slider,0,200,1;bar_labels_color[black]/color;bar_labels_bold/checkbox;bar_labels_center/checkbox;num_hlines/slider,0,20,1">
+        data-vis-name="BarChart"
+        data-vis-attrs="oid(1-8)/id;name(1-8);"
+        data-vis-attrs0="group.colors;filled_color[black]/color;empty_color[white]/color;label_color[black]/color;"
+        data-vis-attrs1="group.max_values;max_value(1-8);"
+        data-vis-attrs2="group.settings;factor[1];value_offset[0];update_interval[0]/slider,0,20000,100;title;legend/checkbox;filled_text[Level];empty_text[Empty];labels_above[true]/checkbox;label_size[12]/slider,1,40,1;labels_above_angle/checkbox;decimals[2]/slider,0,10,1;show_shadow/checkbox;gutter_left[45]/slider,0,200,1;horz_margin[15]/slider,0,200,1;num_hlines/slider,0,20,1;"
+        data-vis-attrs3="bar_labels_color[black]/color;bar_labels_bold/checkbox;bar_labels_center/checkbox">
     <%
         vis.binds.RGraph.tplRBarChart(this.view, this.data);
     %>

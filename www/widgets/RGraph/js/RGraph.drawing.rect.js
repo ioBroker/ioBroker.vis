@@ -1,10 +1,15 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
     
@@ -17,11 +22,6 @@
     RGraph = window.RGraph || {isRGraph: true};
     RGraph.Drawing = RGraph.Drawing || {};
 
-
-
-
-
-
     /**
     * The constructor. This function sets up the object. It takes the ID (the HTML attribute) of the canvas as the
     * first argument and the data as the second. If you need to change this, you can.
@@ -32,17 +32,47 @@
     * @param number w  The width of the rectangle
     * @param number h  The height of the rectangle
     */
-    RGraph.Drawing.Rect = function (id, x, y, w, h)
+    RGraph.Drawing.Rect = function (conf)
     {
-        var tmp = RGraph.getCanvasTag(id);
+        /**
+        * Allow for object config style
+        */
+        if (   typeof conf === 'object'
+            && typeof conf.x === 'number'
+            && typeof conf.y === 'number'
+            && typeof conf.width === 'number'
+            && typeof conf.height === 'number'
+            && typeof conf.id === 'string') {
 
-        // Get the canvas and context objects
-        this.id                = tmp[0];
-        this.canvas            = tmp[1];
-        this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
+            var id     = conf.id
+            var x      = conf.x;
+            var y      = conf.y;
+            var width  = conf.width;
+            var height = conf.height;
+
+            var parseConfObjectForOptions = true; // Set this so the config is parsed (at the end of the constructor)
+        
+        } else {
+
+            var id     = conf;
+            var x      = arguments[1];
+            var y      = arguments[2];
+            var width  = arguments[3];
+            var height = arguments[4];
+        }
+
+
+
+
+        // id, x, y, w, h
+        this.id                = id;
+        this.canvas            = document.getElementById(this.id);
+        this.context           = this.canvas.getContext('2d');
         this.colorsParsed      = false;
         this.canvas.__object__ = this;
         this.original_colors   = [];
+        this.coordsText        = [];
+        this.firstDraw         = true; // After the first draw this will be false
 
         /**
         * This defines the type of this shape
@@ -68,12 +98,6 @@
         this.canvas.uid = this.canvas.uid ? this.canvas.uid : RGraph.CreateUID();
 
 
-        /**
-        * This does a few things, for example adding the .fillText() method to the canvas 2D context when
-        * it doesn't exist. This facilitates the graphs to be still shown in older browser (though without
-        * text obviously). You'll find the function in RGraph.common.core.js
-        */
-        //RGraph.OldBrowserCompat(this.context);
 
 
         /**
@@ -112,7 +136,7 @@
         /**
         * This can be used to store the coordinates of shapes on the graph
         */
-        this.coords = [[Math.round(x), Math.round(y), w, h]];
+        this.coords = [[Math.round(x), Math.round(y), width, height]];
         
         /**
         * Create the dollar object so that functions can be added to them
@@ -162,8 +186,22 @@
         * @param value mixed  The value of the property
         */
         this.set =
-        this.Set = function (name, value)
+        this.Set = function (name)
         {
+            var value = typeof arguments[1] === 'undefined' ? null : arguments[1];
+
+            /**
+            * the number of arguments is only one and it's an
+            * object - parse it for configuration data and return.
+            */
+            if (arguments.length === 1 && typeof name === 'object') {
+                RG.parseObjectStyleConfig(this, name);
+                return this;
+            }
+
+
+
+
             name = name.toLowerCase();
     
             /**
@@ -213,7 +251,17 @@
             */
             RG.FireCustomEvent(this, 'onbeforedraw');
     
-    
+
+
+
+            /**
+            * Stop this growing uncntrollably
+            */
+            this.coordsText = [];
+
+
+
+
             /**
             * Parse the colors. This allows for simple gradient syntax
             */
@@ -249,7 +297,19 @@
             */
             RG.InstallEventListeners(this);
     
-    
+
+            /**
+            * Fire the onfirstdraw event
+            */
+            if (this.firstDraw) {
+                RG.fireCustomEvent(this, 'onfirstdraw');
+                this.firstDraw = false;
+                this.firstDrawFunc();
+            }
+
+
+
+
             /**
             * Fire the ondraw event
             */
@@ -392,7 +452,6 @@
         */
         this.parseColors = function ()
         {
-
             // Save the original colors so that they can be restored when the canvas is reset
             if (this.original_colors.length === 0) {
                 this.original_colors['chart.fillstyle']        = RG.array_clone(prop['chart.fillstyle']);
@@ -411,6 +470,17 @@
             prop['chart.strokestyle']      = this.parseSingleColorForGradient(prop['chart.strokestyle']);
             prop['chart.highlight.stroke'] = this.parseSingleColorForGradient(prop['chart.highlight.stroke']);
             prop['chart.highlight.fill']   = this.parseSingleColorForGradient(prop['chart.highlight.fill']);
+        };
+
+
+
+
+        /**
+        * Use this function to reset the object to the post-constructor state. Eg reset colors if
+        * need be etc
+        */
+        this.reset = function ()
+        {
         };
 
 
@@ -467,11 +537,31 @@
 
 
 
+        /**
+        * This function runs once only
+        * (put at the end of the file (before any effects))
+        */
+        this.firstDrawFunc = function ()
+        {
+        };
+
+
+
+
 
         /**
         * Objects are now always registered so that the chart is redrawn if need be.
         */
         RG.Register(this);
-    };
-// version: 2014-03-28
 
+
+
+
+        /**
+        * This is the 'end' of the constructor so if the first argument
+        * contains configuration data - handle that.
+        */
+        if (parseConfObjectForOptions) {
+            RG.parseObjectStyleConfig(this, conf.options);
+        }
+    };

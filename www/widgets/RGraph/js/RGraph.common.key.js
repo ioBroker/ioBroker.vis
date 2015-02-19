@@ -1,17 +1,20 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
 
     RGraph      = window.RGraph || {isRGraph: true};
     RGraph.HTML = RGraph.HTML || {};
-
-
 
 // Module pattern
 (function (win, doc, undefined)
@@ -106,8 +109,11 @@
         */
         function DrawKey_graph (obj, key, colors)
         {
-            var text_size    = typeof(prop['chart.key.text.size']) == 'number' ? prop['chart.key.text.size'] : prop['chart.text.size'];
-            var text_font    = prop['chart.text.font'];
+            var text_size   = typeof(prop['chart.key.text.size']) == 'number' ? prop['chart.key.text.size'] : prop['chart.text.size'];
+            var text_italic = prop['chart.key.text.italic'] ?  true : false
+            var text_bold   = prop['chart.key.text.bold'] ?  true : false
+            var text_font   = prop['chart.key.text.font'] || prop['chart.key.font'] || prop['chart.text.font'];
+
             var gutterLeft   = obj.gutterLeft;
             var gutterRight  = obj.gutterRight;
             var gutterTop    = obj.gutterTop;
@@ -148,7 +154,8 @@
             if (   prop['chart.yaxispos'] == 'left'
                 || (obj.type === 'pie' && !prop['chart.yaxispos'])
                 || (obj.type === 'hbar' && !prop['chart.yaxispos'])
-                || (obj.type === 'hbar' && prop['chart.yaxispos'] == 'center')
+                || (obj.type === 'hbar' && prop['chart.yaxispos'] === 'center')
+                || (obj.type === 'hbar' && prop['chart.yaxispos'] === 'right')
                 || (obj.type === 'rscatter' && !prop['chart.yaxispos'])
                 || (obj.type === 'radar' && !prop['chart.yaxispos'])
                 || (obj.type === 'rose' && !prop['chart.yaxispos'])
@@ -156,10 +163,10 @@
                 || (obj.type === 'vprogress' && !prop['chart.yaxispos'])
                 || (obj.type === 'hprogress' && !prop['chart.yaxispos'])
                ) {
-    
+
                 hpos -= width;
             }
-    
+
             /**
             * Horizontal alignment
             */
@@ -292,6 +299,8 @@
                 
                     ret = RG.Text2(obj, {'font': text_font,
                                          'size': text_size,
+                                         'bold': text_bold,
+                                         'italic': text_italic,
                                          'x': hpos + blob_size + 5 + 5,
                                          'y': vpos + (5 * j) + (text_size * j) + 3,
                                          'text': key[i]});
@@ -333,7 +342,9 @@
         function DrawKey_gutter (obj, key, colors)
         {
             var text_size    = typeof(prop['chart.key.text.size']) == 'number' ? prop['chart.key.text.size'] : prop['chart.text.size'],
-                text_font    = prop['chart.text.font'],
+                text_bold    = prop['chart.key.text.bold'],
+                text_italic  = prop['chart.key.text.italic'],
+                text_font    = prop['chart.key.text.font'] || prop['chart.key.font'] || prop['chart.text.font'],
                 text_color   = prop['chart.key.text.color'],
                 gutterLeft   = obj.gutterLeft,
                 gutterRight  = obj.gutterRight,
@@ -348,7 +359,7 @@
                 fillstyle    = prop['chart.key.background'],
                 strokestyle  = '#999',
                 length       = 0;
-            
+
             if (!obj.coords) obj.coords = {};
             obj.coords.key = [];
     
@@ -518,7 +529,15 @@
     
                 co.beginPath();
                     co.fillStyle = typeof text_color == 'object' ? text_color[i] : text_color;;
-                    var ret = RG.Text2(obj, {'font':text_font,'size':text_size,'x':pos,'y':vpos + text_size + 3, 'text': key[i]});
+                    var ret = RG.Text2(obj, {
+                        'font':text_font,
+                        'bold':text_bold,
+                        'size':text_size,
+                        'italic': text_italic,
+                        'x':pos,
+                        'y':vpos + text_size + 3,
+                        'text': key[i]
+                    });
                 co.fill();
                 pos += co.measureText(key[i]).width;
                 
@@ -645,7 +664,7 @@
     RGraph.HTML.Key = function (id, prop)
     {
         var div = doc.getElementById(id);
-        
+
         
         /**
         * Create the table that becomes the key
@@ -703,7 +722,7 @@
             })() + '>' + prop.labels[i] + '</span>' + (prop.links && prop.links[i] ? '</a>' : '') + '</td></tr>';
         }
         
-        div.innerHTML += str + '</table>';
+        div.innerHTML += (str + '</table>');
 
         // Return the TABLE object that is the HTML key
         return doc.getElementById('rgraph_key');
@@ -714,5 +733,3 @@
 
 // End module pattern
 })(window, document);
-// version: 2014-03-28
-

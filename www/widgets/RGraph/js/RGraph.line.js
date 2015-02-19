@@ -1,16 +1,19 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
+
     RGraph = window.RGraph || {isRGraph: true};
-
-
-
 
     /**
     * The line chart constructor
@@ -18,28 +21,48 @@
     * @param object canvas The cxanvas object
     * @param array  ...    The lines to plot
     */
-    RGraph.Line = function (id)
+    RGraph.Line = function (conf)
     {
-        var tmp = RGraph.getCanvasTag(id);
+        /**
+        * Allow for object config style
+        */
+        if (   typeof conf === 'object'
+            && typeof conf.data === 'object'
+            && typeof conf.id === 'string') {
 
-        // Get the canvas and context objects
-        this.id                = tmp[0];
-        this.canvas            = tmp[1];
-        this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
-        this.canvas.__object__ = this;
-        this.type              = 'line';
-        this.max               = 0;
-        this.coords            = [];
-        this.coords2           = [];
-        this.coords.key        = [];
-        this.coordsText        = [];
-        this.coordsSpline      = [];
-        this.hasnegativevalues = false;
-        this.isRGraph          = true;
-        this.uid               = RGraph.CreateUID();
-        this.canvas.uid        = this.canvas.uid ? this.canvas.uid : RGraph.CreateUID();
-        this.colorsParsed      = false;
-        this.original_colors   = [];
+            var id                        = conf.id;
+            var canvas                    = document.getElementById(id);
+            var data                      = conf.data;
+            var parseConfObjectForOptions = true; // Set this so the config is parsed (at the end of the constructor)
+        
+        } else {
+        
+            var id     = conf;
+            var canvas = document.getElementById(id);
+            var data   = arguments[1];
+        }
+
+
+
+
+        this.id                 = id;
+        this.canvas             = canvas;
+        this.context            = this.canvas.getContext('2d');
+        this.canvas.__object__  = this;
+        this.type               = 'line';
+        this.max                = 0;
+        this.coords             = [];
+        this.coords2            = [];
+        this.coords.key         = [];
+        this.coordsText         = [];
+        this.coordsSpline       = [];
+        this.hasnegativevalues  = false;
+        this.isRGraph           = true;
+        this.uid                = RGraph.CreateUID();
+        this.canvas.uid         = this.canvas.uid ? this.canvas.uid : RGraph.CreateUID();
+        this.colorsParsed       = false;
+        this.original_colors    = [];
+        this.firstDraw          = true; // After the first draw this will be false
 
 
         /**
@@ -80,6 +103,7 @@
             'chart.labels.ingraph':         null,
             'chart.labels.above':           false,
             'chart.labels.above.size':      8,
+            'chart.labels.above.decimals':  null,
             'chart.xtickgap':               20,
             'chart.smallxticks':            3,
             'chart.largexticks':            5,
@@ -93,6 +117,11 @@
             'chart.tickmarks.dot.color':    'white',
             'chart.tickmarks':              'endcircle',
             'chart.tickmarks.linewidth':    null,
+            'chart.tickmarks.image':        null,
+            'chart.tickmarks.image.halign': 'center',
+            'chart.tickmarks.image.valign': 'center',
+            'chart.tickmarks.image.offsetx':0,
+            'chart.tickmarks.image.offsety':0,
             'chart.ticksize':               3,
             'chart.gutter.left':            25,
             'chart.gutter.right':           25,
@@ -139,7 +168,7 @@
             'chart.shadow.offsetx':         2,
             'chart.shadow.offsety':         2,
             'chart.shadow.blur':            3,
-            'chart.shadow.color':           'rgba(0,0,0,0.5)',
+            'chart.shadow.color':           'rgba(128,128,128,0.5)',
             'chart.tooltips':               null,
             'chart.tooltips.hotspot.xonly': false,
             'chart.tooltips.hotspot.size':  5,
@@ -204,7 +233,7 @@
             'chart.variant':                null,
             'chart.axis.color':             'black',
             'chart.axis.linewidth':         1,
-            'chart.numxticks':              (arguments[1] && typeof(arguments[1][0]) == 'number' ? arguments[1].length : 20),
+            'chart.numxticks':              (data && typeof(data[0]) == 'number' ? data.length - 1: 20),
             'chart.numyticks':              10,
             'chart.zoom.factor':            1.5,
             'chart.zoom.fade.in':           true,
@@ -234,8 +263,7 @@
             'chart.curvy':                    false,
             'chart.line.visible':             true,
             'chart.events.click':             null,
-            'chart.events.mousemove':         null,
-            'chart.drawingcache':             false
+            'chart.events.mousemove':         null
         }
 
         /**
@@ -249,25 +277,47 @@
 
 
         /**
-        * Store the original data. Thiss also allows for giving arguments as one big array.
+        * Store the original data. This also allows for giving arguments as one big array.
         */
         this.original_data = [];
 
-        for (var i=1; i<arguments.length; ++i) {
-            if (arguments[1] && typeof(arguments[1]) == 'object' && arguments[1][0] && typeof(arguments[1][0]) == 'object' && arguments[1][0].length) {
+        // This allows for the new object based configuration style
+        if (typeof conf === 'object' && conf.data) {
+            if (typeof conf.data[0] === 'number' || RGraph.isNull(conf.data[0])) {
 
-                var tmp = [];
+                this.original_data[0] = RGraph.arrayClone(conf.data);
 
-                for (var i=0; i<arguments[1].length; ++i) {
-                    tmp[i] = RGraph.array_clone(arguments[1][i]);
-                }
-
-                for (var j=0; j<tmp.length; ++j) {
-                    this.original_data[j] = RGraph.array_clone(tmp[j]);
-                }
-
+            //} else if (typeof conf.data[0] === 'object' && !RGraph.isNull(conf.data[0])) {
             } else {
-                this.original_data[i - 1] = RGraph.array_clone(arguments[i]);
+
+                for (var i=0; i<conf.data.length; ++i) {
+                    this.original_data[i] = RGraph.arrayClone(conf.data[i]);
+                }
+            }
+
+        // Allow for the older configuration style
+        } else {
+            for (var i=1; i<arguments.length; ++i) {
+                
+                if (   arguments[1]
+                    && typeof(arguments[1]) == 'object'
+                    && arguments[1][0]
+                    && typeof(arguments[1][0]) == 'object'
+                    && arguments[1][0].length) {
+    
+                    var tmp = [];
+    
+                    for (var i=0; i<arguments[1].length; ++i) {
+                        tmp[i] = RGraph.array_clone(arguments[1][i]);
+                    }
+    
+                    for (var j=0; j<tmp.length; ++j) {
+                        this.original_data[j] = RGraph.array_clone(tmp[j]);
+                    }
+    
+                } else {
+                    this.original_data[i - 1] = RGraph.array_clone(arguments[i]);
+                }
             }
         }
 
@@ -332,8 +382,22 @@
         * @param mixed value The value of the property
         */
         this.set =
-        this.Set = function (name, value)
+        this.Set = function (name)
         {
+            var value = typeof arguments[1] === 'undefined' ? null : arguments[1];
+
+            /**
+            * the number of arguments is only one and it's an
+            * object - parse it for configuration data and return.
+            */
+            if (arguments.length === 1 && typeof name === 'object') {
+                RG.parseObjectStyleConfig(this, name);
+                return this;
+            }
+
+
+
+
             name = name.toLowerCase();
     
             /**
@@ -486,8 +550,12 @@
             * Fire the onbeforedraw event
             */
             RG.FireCustomEvent(this, 'onbeforedraw');
-    
-    
+
+
+
+
+
+
             /**
             * Parse the colors. This allows for simple gradient syntax
             */
@@ -530,7 +598,7 @@
     
             // Reset the data back to that which was initially supplied
             this.data = RG.array_clone(this.original_data);
-    
+
     
             // Reset the max value
             this.max = 0;
@@ -540,11 +608,11 @@
             *  COMMENTED OUT 15TH AUGUST 2011
             */
             //this.data = RG.array_reverse(this.data);
-    
+
             if (prop['chart.filled'] && !prop['chart.filled.range'] && this.data.length > 1 && prop['chart.filled.accumulative']) {
     
                 var accumulation = [];
-            
+
                 for (var set=0; set<this.data.length; ++set) {
                     for (var point=0; point<this.data[set].length; ++point) {
                         this.data[set][point] = Number(accumulation[point] ? accumulation[point] : 0) + this.data[set][point];
@@ -579,16 +647,17 @@
                 // Check for negative values
                 if (!prop['chart.outofbounds']) {
                     for (dataset=0; dataset<this.data.length; ++dataset) {
-                        for (var datapoint=0; datapoint<this.data[dataset].length; datapoint++) {
-                
-                            // Check for negative values
-                            this.hasnegativevalues = (this.data[dataset][datapoint] < 0) || this.hasnegativevalues;
+                        if (RGraph.isArray(this.data[dataset])) {
+                            for (var datapoint=0; datapoint<this.data[dataset].length; datapoint++) {
+                                // Check for negative values
+                                this.hasnegativevalues = (this.data[dataset][datapoint] < 0) || this.hasnegativevalues;
+                            }
                         }
                     }
                 }
     
             } else {
-    
+
                 this.min = prop['chart.ymin'] ? prop['chart.ymin'] : 0;
     
                 // Work out the max Y value
@@ -653,10 +722,8 @@
             }
             
             // Progressively Draw the chart
-            RG.cachedDraw(this, 'background', function (obj)
-            {
-                RG.background.Draw(obj);
-            });
+            RG.background.Draw(this);
+
     
             /**
             * Draw any horizontal bars that have been defined
@@ -728,7 +795,7 @@
                         var tickmarks = null;
                     }
         
-        
+
                     this.DrawLine(this.data[i],
                                   prop['chart.colors'][j],
                                   fill,
@@ -944,9 +1011,24 @@
             * This installs the event listeners
             */
             RG.InstallEventListeners(this);
-    
-    
             
+            
+
+    
+    
+
+            /**
+            * Fire the onfirstdraw event
+            */
+            if (this.firstDraw) {
+                RG.fireCustomEvent(this, 'onfirstdraw');
+                this.firstDraw = false;
+                this.firstDrawFunc();
+            }
+
+
+
+
             /**
             * Fire the RGraph ondraw event
             */
@@ -987,7 +1069,7 @@
                 if (prop['chart.xaxispos'] == 'center') {
                     co.moveTo(this.gutterLeft, Math.round((this.grapharea / 2) + this.gutterTop));
                     co.lineTo(ca.width - this.gutterRight, Math.round((this.grapharea / 2) + this.gutterTop));
-                } else if (prop['chart.xaxispos'] == 'top') {
+                } else if (prop['chart.xaxispos'] === 'top') {
                     co.moveTo(this.gutterLeft, this.gutterTop);
                     co.lineTo(ca.width - this.gutterRight, this.gutterTop);
                 } else {
@@ -1578,11 +1660,12 @@
     
                         var labelX = ((ca.width - this.gutterLeft - this.gutterRight - (2 * prop['chart.hmargin'])) / (numLabels - 1) ) * i;
                             labelX += this.gutterLeft + prop['chart.hmargin'];
-    
+
                         /**
                         * Account for an unrelated number of labels
                         */
-                        if (prop['chart.labels'].length != this.data[0].length) {
+
+                        if (this.data.length === 0 || !this.data[0] || prop['chart.labels'].length != this.data[0].length) {
                             labelX = this.gutterLeft + prop['chart.hmargin'] + ((ca.width - this.gutterLeft - this.gutterRight - (2 * prop['chart.hmargin'])) * (i / (prop['chart.labels'].length - 1)));
                         }
                         
@@ -1628,10 +1711,6 @@
         this.drawLine =
         this.DrawLine = function (lineData, color, fill, linewidth, tickmarks, index)
         {
-            //var ca   = this.canvas;
-            //var co   = this.context;
-            //var prop = this.properties;
-    
             // This facilitates the Rise animation (the Y value only)
             if (prop['chart.animation.unfold.y'] && prop['chart.animation.factor'] != 1) {
                 for (var i=0; i<lineData.length; ++i) {
@@ -1651,30 +1730,32 @@
             if (index > 0) {
                 var prevLineCoords = this.coords2[index - 1];
             }
-    
+
+
             // Work out the X interval
             var xInterval = (ca.width - (2 * prop['chart.hmargin']) - this.gutterLeft - this.gutterRight) / (lineData.length - 1);
     
             // Loop thru each value given, plotting the line
             // (FORMERLY FIRST)
-            for (i=0; i<lineData.length; i++) {
-    
+            for (i=0,len=lineData.length; i<len; i+=1) {
+
                 var data_point = lineData[i];
     
                 /**
                 * Get the yPos for the given data point
                 */
                 var yPos = this.getYCoord(data_point);
-    
-    
+
+
                 // Null data points, and a special case for this bug:http://dev.rgraph.net/tests/ymin.html
                 if (   lineData[i] == null
                     || (prop['chart.xaxispos'] == 'bottom' && lineData[i] < this.min && !prop['chart.outofbounds'])
-                    ||  (prop['chart.xaxispos'] == 'center' && lineData[i] < (-1 * this.max) && !prop['chart.outofbounds'])) {
+                    ||  (prop['chart.xaxispos'] == 'center' && lineData[i] < (-1 * this.max) && !prop['chart.outofbounds'])
+                    || (((lineData[i] < this.min && prop['chart.xaxispos'] !== 'center') || lineData[i] > this.max) && !prop['chart.outofbounds'])) {
     
                     yPos = null;
                 }
-    
+
                 // Not always very noticeable, but it does have an effect
                 // with thick lines
                 co.lineCap  = 'round';
@@ -1701,9 +1782,9 @@
                 this.coords.push([xPos, yPos]);
                 lineCoords.push([xPos, yPos]);
             }
-            
+
             co.stroke();
-    
+
             // Store the coords in another format, indexed by line number
             this.coords2[index] = lineCoords;
     
@@ -1713,7 +1794,9 @@
             if (RG.ISOLD && prop['chart.shadow']) {
                 this.DrawIEShadow(lineCoords, co.shadowColor);
             }
-    
+
+
+
             /**
             * Now draw the actual line [FORMERLY SECOND]
             */
@@ -1724,7 +1807,7 @@
             if (fill) {
                 co.fillStyle   = fill;
             }
-    
+
             var isStepped = prop['chart.stepped'];
             var isFilled  = prop['chart.filled'];
             
@@ -1735,9 +1818,11 @@
             } else if (prop['chart.xaxispos'] == 'bottom') {
                 var xAxisPos = ca.height - this.gutterBottom;
             }
-    
-    
-            for (var i=0; i<lineCoords.length; ++i) {
+
+
+
+
+            for (var i=0,len=lineCoords.length; i<len; i+=1) {
     
                 xPos = lineCoords[i][0];
                 yPos = lineCoords[i][1];
@@ -1749,20 +1834,26 @@
                 /**
                 * This nullifys values which are out-of-range
                 */
-                if (prevY < this.gutterTop || prevY > (ca.height - this.gutterBottom) ) {
+                if (!prop['chart.outofbounds'] && (prevY < this.gutterTop || prevY > (ca.height - this.gutterBottom) ) ) {
                     penUp = true;
                 }
     
                 if (i == 0 || penUp || !yPos || !prevY || prevY < this.gutterTop) {
-    
+
                     if (prop['chart.filled'] && !prop['chart.filled.range']) {
     
-                        co.moveTo(xPos + 1, xAxisPos);
-    
+                        if (!prop['chart.outofbounds'] || prevY === null || yPos === null) {
+                            co.moveTo(xPos + 1, xAxisPos);
+                        }
+
                         // This facilitates the X axis being at the top
                         // NOTE: Also done below
                         if (prop['chart.xaxispos'] == 'top') {
                             co.moveTo(xPos + 1, xAxisPos);
+                        }
+                        
+                        if (isStepped && i > 0) {
+                            co.lineTo(xPos, lineCoords[i - 1][1]);
                         }
     
                         co.lineTo(xPos, yPos);
@@ -1817,7 +1908,7 @@
                     }
                 }
             }
-    
+
             /**
             * Draw a line to the X axis if the chart is filled
             */
@@ -1825,7 +1916,7 @@
     
                 // Is this needed ??
                 var fillStyle = prop['chart.fillstyle'];
-    
+
                 /**
                 * Draw the bottom edge of the filled bit using either the X axis or the prevlinedata,
                 * depending on the index of the line. The first line uses the X axis, and subsequent
@@ -1834,12 +1925,12 @@
                 if (index > 0 && prop['chart.filled.accumulative']) {
                     
                     co.lineTo(xPos, prevLineCoords ? prevLineCoords[i - 1][1] : (ca.height - this.gutterBottom - 1 + (prop['chart.xaxispos'] == 'center' ? (ca.height - this.gutterTop - this.gutterBottom) / 2 : 0)));
-                
+
                     for (var k=(i - 1); k>=0; --k) {
                         co.lineTo(k == 0 ? prevLineCoords[k][0] + 1: prevLineCoords[k][0], prevLineCoords[k][1]);
                     }
                 } else {
-    
+
                     // Draw a line down to the X axis
                     if (prop['chart.xaxispos'] == 'top') {
                         co.lineTo(xPos, prop['chart.gutter.top'] +  1);
@@ -1857,7 +1948,7 @@
     
                 co.fill();
                 co.beginPath();
-    
+
             }
     
             /**
@@ -1975,13 +2066,13 @@
             if (!prop['chart.line.visible']) {
                 return;
             } else if (RG.is_null(yPos)) {
-                return;
+                return false;
             } else if ((yPos > (ca.height - this.gutterBottom)) && !prop['chart.outofbounds']) {
                 return;
              } else if ((yPos < this.gutterTop) && !prop['chart.outofbounds']) {
                 return;
             }
-    
+
             co.beginPath();
     
             var offset   = 0;
@@ -2168,7 +2259,71 @@
 
                 // Revert to original lineWidth
                 co.lineWidth = orig_linewidth;
-            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /**
+            * Image based tickmark
+            */
+            // lineData, xPos, yPos, color, isShadow, prevX, prevY, tickmarks, index
+            } else if (
+                       typeof tickmarks === 'string' &&
+                           (
+                            tickmarks.substr(0, 6) === 'image:'  ||
+                            tickmarks.substr(0, 5) === 'data:'   ||
+                            tickmarks.substr(0, 1) === '/'       ||
+                            tickmarks.substr(0, 3) === '../'     ||
+                            tickmarks.substr(0, 7) === 'images/'
+                           )
+                      ) {
+
+                var img = new Image();
+                
+                if (tickmarks.substr(0, 6) === 'image:') {
+                    img.src = tickmarks.substr(6);
+                } else {
+                    img.src = tickmarks;
+                }
+
+
+                img.onload = function ()
+                {
+                    if (prop['chart.tickmarks.image.halign'] === 'center') xPos -= (this.width / 2);
+                    if (prop['chart.tickmarks.image.halign'] === 'right')  xPos -= this.width;
+                    
+                    if (prop['chart.tickmarks.image.valign'] === 'center') yPos -= (this.height / 2);
+                    if (prop['chart.tickmarks.image.valign'] === 'bottom') yPos -= this.height;
+                    
+                    xPos += prop['chart.tickmarks.image.offsetx'];
+                    yPos += prop['chart.tickmarks.image.offsety'];
+
+                    co.drawImage(this, xPos, yPos);
+                };
+
+
+
+
+
+
+
+
+
+
+
+
+
             /**
             * Custom tick drawing function
             */
@@ -2271,10 +2426,6 @@
         this.redrawLine =
         this.RedrawLine = function (coords, color, linewidth, index)
         {
-            var ca   = this.canvas;
-            var co   = this.context;
-            var prop = this.properties;
-    
             if (prop['chart.noredraw'] || prop['chart.filled.range']) {
                 return;
             }
@@ -2333,7 +2484,7 @@
                     || prevY == null
                     || penUp == true
                    ) && (!prop['chart.outofbounds'] || yPos == null || prevY == null) ) {
-    
+
                     if (RG.ISOLD && yPos == null) {
                         // ...?
                     } else {
@@ -2388,25 +2539,26 @@
         this.drawIEShadow =
         this.DrawIEShadow = function (coords, color)
         {
-            //var ca   = this.canvas;
-            //var co   = this.context;
-            //var prop = this.properties;
-    
             var offsetx = prop['chart.shadow.offsetx'];
             var offsety = prop['chart.shadow.offsety'];
             
             co.lineWidth   = prop['chart.linewidth'];
             co.strokeStyle = color;
+
             co.beginPath();
-    
-            for (var i=0; i<coords.length; ++i) {
-                if (i == 0) {
-                    co.moveTo(coords[i][0] + offsetx, coords[i][1] + offsety);
-                } else {
-                    co.lineTo(coords[i][0] + offsetx, coords[i][1] + offsety);
+                for (var i=0; i<coords.length; ++i) {
+                
+                    var isNull     = RG.isNull(coords[i][1]);
+                    var prevIsNull = RG.isNull(coords[i-1]) || RG.isNull(coords[i-1][1]);
+
+                    if (i == 0 || isNull || prevIsNull) {
+                        if (!isNull) {
+                            co.moveTo(coords[i][0] + offsetx, coords[i][1] + offsety);
+                        }
+                    } else {
+                        co.lineTo(coords[i][0] + offsetx, coords[i][1] + offsety);
+                    }
                 }
-            }
-    
             co.stroke();
         };
 
@@ -2463,7 +2615,7 @@
         this.GetLineWidth = function (i)
         {
             var linewidth = prop['chart.linewidth'];
-            
+
             if (typeof(linewidth) == 'number') {
                 return linewidth;
             
@@ -2553,28 +2705,25 @@
         this.drawAboveLabels =
         this.DrawAboveLabels = function ()
         {
-            //var RG   = RGraph;
-            //var ca   = this.canvas;
-            //var co   = this.context;
-            //var prop = this.properties;
-    
-            var context    = co;
             var size       = prop['chart.labels.above.size'];
             var font       = prop['chart.text.font'];
             var units_pre  = prop['chart.units.pre'];
             var units_post = prop['chart.units.post'];
+            var decimals   = prop['chart.labels.above.decimals'];
     
+            // Use this to 'reset' the drawing state
             co.beginPath();
     
             // Don't need to check that chart.labels.above is enabled here, it's been done already
-            for (var i=0, len=this.coords.length; i<len; ++i) {
+            for (var i=0, len=this.coords.length; i<len; i+=1) {
+
                 var coords = this.coords[i];
-                
+
                 RG.Text2(this, {'font':font,
                                 'size':size,
                                 'x':coords[0],
                                 'y':coords[1] - 5 - size,
-                                'text':RG.number_format(this, this.data_arr[i], units_pre, units_post),
+                                'text':RG.numberFormat(this, typeof decimals === 'number' ? this.data_arr[i].toFixed(decimals) : this.data_arr[i], units_pre, units_post),
                                 'valign':'center',
                                 'halign':'center',
                                 'bounding':true,
@@ -2582,8 +2731,6 @@
                                 'tag': 'labels.above'
                                });
             }
-            
-            co.fill();
         };
 
 
@@ -2762,11 +2909,7 @@
         * @param int value The value to get the Y coordinate for
         */
         this.getYCoord = function (value)
-        {
-            //var ca      = this.canvas;
-            //var co      = this.context;
-            //var prop    = this.properties;
-    
+        {    
             if (typeof(value) != 'number') {
                 return null;
             }
@@ -2783,9 +2926,9 @@
             if (xaxispos == 'top') {
             
                 // Account for negative numbers
-                if (value < 0) {
-                    value = Math.abs(value);
-                }
+                //if (value < 0) {
+                //    value = Math.abs(value);
+                //}
     
                 y = ((value - this.min) / (this.max - this.min)) * this.grapharea;
     
@@ -3051,6 +3194,17 @@
 
 
         /**
+        * Use this function to reset the object to the post-constructor state. Eg reset colors if
+        * need be etc
+        */
+        this.reset = function ()
+        {
+        };
+
+
+
+
+        /**
         * This parses a single color value
         */
         this.parseSingleColorForGradient = function (color)
@@ -3193,6 +3347,17 @@
             this[type] = func;
     
             return this;
+        };
+
+
+
+
+        /**
+        * This function runs once only
+        * (put at the end of the file (before any effects))
+        */
+        this.firstDrawFunc = function ()
+        {
         };
 
 
@@ -3691,6 +3856,15 @@
         * Register the object so it is redrawn when necessary
         */
         RG.Register(this);
-    };
-// version: 2014-03-28
 
+
+
+
+        /**
+        * This is the 'end' of the constructor so if the first argument
+        * contains configuration data - handle that.
+        */
+        if (parseConfObjectForOptions) {
+            RG.parseObjectStyleConfig(this, conf.options);
+        }
+    };

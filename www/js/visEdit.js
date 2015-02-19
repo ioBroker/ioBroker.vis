@@ -1093,8 +1093,15 @@ vis = $.extend(true, vis, {
                     var $tpl = $('#' + tpl);
                     var renderVisible = $tpl.attr('data-vis-render-visible');
 
-                    // Widget attributs default values
+                    // Widget attributes default values
                     var attrs = $tpl.attr('data-vis-attrs');
+                    // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+                    var t = 0;
+                    var attr;
+                    while (attr = $tpl.attr('data-vis-attrs' + t)) {
+                        attrs += attr;
+                        t++;
+                    }
                     var data = {};
                     if (attrs) {
                         attrs = attrs.split(';');
@@ -2950,7 +2957,7 @@ vis = $.extend(true, vis, {
         var wid_default  = match[3];
         var wid_type     = match[4];
         var wid_type_opt = null;
-        var notTranslate = true;
+        var notTranslate = false;
         var index        = '';
         var attrDepends  = [];
 
@@ -3063,6 +3070,13 @@ vis = $.extend(true, vis, {
                 return [];
             }
             var widgetAttrs = $widgetTpl.attr('data-vis-attrs');
+            // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+            var t = 0;
+            var attr;
+            while (attr = $widgetTpl.attr('data-vis-attrs' + t)) {
+                widgetAttrs += attr;
+                t++;
+            }
             if (widgetAttrs) {
                 widgetAttrs = widgetAttrs.split(';');
             } else {
@@ -3332,6 +3346,13 @@ vis = $.extend(true, vis, {
             return false;
         }
         var widgetAttrs = $widgetTpl.attr('data-vis-attrs');
+        // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+        var t = 0;
+        var attr;
+        while (attr = $widgetTpl.attr('data-vis-attrs' + t)) {
+            widgetAttrs += attr;
+            t++;
+        }
         if (widgetAttrs) {
             widgetAttrs = widgetAttrs.split(';');
         } else {
@@ -3810,6 +3831,13 @@ vis = $.extend(true, vis, {
 
                 // Widget attributs default values
                 var attrs = $tpl.attr('data-vis-attrs');
+                // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+                var t = 0;
+                var attr;
+                while (attr = $tpl.attr('data-vis-attrs' + t)) {
+                    attrs += attr;
+                    t++;
+                }
                 var data = {};
                 if (attrs) {
                     attrs = attrs.split(';');

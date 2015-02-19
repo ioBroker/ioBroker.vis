@@ -1,10 +1,15 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
 
@@ -19,14 +24,29 @@
     * @param object canvas The canvas object
     * @param array  data   The chart data
     */
-    RGraph.Bar = function (id, data)
+    RGraph.Bar = function (conf)
     {
-        var tmp = RGraph.getCanvasTag(id);
+        /**
+        * Allow for object config style
+        */
+        if (typeof conf === 'object' && typeof conf.data === 'object'&& typeof conf.id === 'string') {
+            var id                        = conf.id
+            var canvas                    = document.getElementById(id);
+            var data                      = conf.data;
+            var parseConfObjectForOptions = true; // Set this so the config is parsed (at the end of the constructor)
+        } else {
+            var id     = conf;
+            var canvas = document.getElementById(id);
+            var data   = arguments[1];
+        }
+
+
+
 
         // Get the canvas and context objects
-        this.id                     = tmp[0];
-        this.canvas                 = tmp[1];
-        this.context                = this.canvas.getContext ? this.canvas.getContext("2d") : null;
+        this.id                     = id;
+        this.canvas                 = canvas;
+        this.context                = this.canvas.getContext('2d');
         this.canvas.__object__      = this;
         this.type                   = 'bar';
         this.max                    = 0;
@@ -37,6 +57,7 @@
         this.colorsParsed           = false;
         this.original_colors        = [];
         this.cachedBackgroundCanvas = null;
+        this.firstDraw              = true; // After the first draw this will be false
 
 
         /**
@@ -70,6 +91,7 @@
             'chart.background.image.h':     null,
             'chart.background.image.align': null,
             'chart.background.color':       null,
+            'chart.background.hbars':       null,
             'chart.numyticks':              10,
             'chart.hmargin':                5,
             'chart.hmargin.grouped':        1,
@@ -87,6 +109,7 @@
             'chart.labels.above.size':      null,
             'chart.labels.above.color':     null,
             'chart.labels.above.angle':     null,
+            'chart.labels.above.offset':    4,
             'chart.ylabels':                true,
             'chart.ylabels.count':          5,
             'chart.ylabels.inside':         false,
@@ -123,7 +146,7 @@
             'chart.title.x':                null,
             'chart.title.y':                null,
             'chart.title.halign':           null,
-            'chart.title.valign':           null,            
+            'chart.title.valign':           null,
             'chart.colors':                 [
                                              'Gradient(#F9D5C9:#E65F2D:#E65F2D:#E65F2D)',
                                              'Gradient(#F7DCD1:#D4592A:#D4592A:#D4592A)',
@@ -149,7 +172,6 @@
             'chart.tooltips.highlight':     true,
             'chart.highlight.stroke':       'rgba(0,0,0,0)',
             'chart.highlight.fill':         'rgba(255,255,255,0.7)',
-            'chart.background.hbars':       null,
             'chart.key':                    null,
             'chart.key.background':         'white',
             'chart.key.position':           'graph',
@@ -203,8 +225,7 @@
             'chart.events.click':           null,
             'chart.events.mousemove':       null,
             'chart.numxticks':              null,
-            'chart.bevel':                  false,
-            'drawingcache':                 false
+            'chart.bevel':                  false
         }
 
         // Check for support
@@ -217,7 +238,7 @@
         * Determine whether the chart will contain stacked or grouped bars
         */
         for (var i=0; i<data.length; ++i) {
-            if (typeof(data[i]) == 'object' && !RGraph.is_null(data[i])) {
+            if (typeof data[i] === 'object' && !RGraph.is_null(data[i])) {
                 this.stackedOrGrouped = true;
             }
         }
@@ -263,6 +284,7 @@
 
 
 
+
         // Short variable names
         var RG    = RGraph;
         var ca    = this.canvas;
@@ -293,8 +315,22 @@
         * @param value mixed  The value of the property
         */
         this.set =
-        this.Set = function (name, value)
+        this.Set = function (name)
         {
+            var value = typeof arguments[1] === 'undefined' ? null : arguments[1];
+
+            /**
+            * the number of arguments is only one and it's an
+            * object - parse it for configuration data and return.
+            */
+            if (arguments.length === 1 && typeof arguments[0] === 'object') {
+                RG.parseObjectStyleConfig(this, arguments[0]);
+                return this;
+            }
+
+
+
+
             name = name.toLowerCase();
 
 
@@ -438,13 +474,9 @@
             this.halfTextHeight = prop['chart.text.size'] / 2;
     
 
-            // Draw the background grid etc
-            // Is cached as it can dramatically slow down some effects
-            RG.cachedDraw(this, 'background-grid', function (obj)
-            {
-                // Now draw the background on to the main canvas
-                RG.background.Draw(obj);
-            });
+
+            // Now draw the background on to the main canvas
+            RG.background.Draw(this);
 
     
     
@@ -505,12 +537,22 @@
             * This installs the event listeners
             */
             RG.InstallEventListeners(this);
-    
-    
+            
+            
+            /**
+            * Fire the onfirstdraw event
+            */
+            if (this.firstDraw) {
+                RG.fireCustomEvent(this, 'onfirstdraw');
+                this.firstDraw = false;
+                this.firstDrawFunc();
+            }
+
+
             /**
             * Fire the RGraph ondraw event
             */
-            RG.FireCustomEvent(this, 'ondraw');
+            RG.fireCustomEvent(this, 'ondraw');
             
             return this;
         };
@@ -687,11 +729,10 @@
         this.drawbars =
         this.Drawbars = function ()
         {
-
             // Variable "caching" so the context can be accessed as a local variable
-            var ca   = this.canvas;
-            var co   = this.context;
-            var prop = this.properties;
+            //var ca   = this.canvas;
+            //var co   = this.context;
+            //var prop = this.properties;
     
             co.lineWidth   = prop['chart.linewidth'];
             co.strokeStyle = prop['chart.strokecolor'];
@@ -822,13 +863,13 @@
                     co.shadowOffsetX = shadowOffsetX;
                     co.shadowOffsetY = shadowOffsetY;
                 }
-    
+
                 /**
                 * Draw the bar
                 */
                 co.beginPath();
                     if (typeof(this.data[i]) == 'number') {
-    
+
                         var barWidth = width - (2 * hmargin);
                         
                         /**
@@ -848,7 +889,7 @@
                         if (prop['chart.colors.sequential']) {
                             co.fillStyle = colors[i];
                         }
-    
+
                         if (variant == 'sketch') {
     
                             co.lineCap = 'round';
@@ -895,7 +936,7 @@
     
                         // Regular bar
                         } else if (variant == 'bar' || variant == '3d' || variant == 'glass' || variant == 'bevel') {
-                        
+
                             if (RGraph.ISOLD && shadow) {
                                 this.DrawIEShadow([x + hmargin, y, barWidth, height]);
                             }
@@ -989,64 +1030,7 @@
                                 co.fillRect(x + hmargin + 2,y + (this.data[i] > 0 ? 2 : 0),(barWidth / 2) - 2,height - 2);
                                 co.fill();
                             }
-    
-                            // This bit draws the text labels that appear above the bars if requested
-                            if (prop['chart.labels.above']) {
-    
-                                // Turn off any shadow
-                                if (shadow) {
-                                    RGraph.NoShadow(this);
-                                }
-    
-                                var yPos = y - 3;
-                                var xPos = x + hmargin + (barWidth / 2);
-    
-                                // Account for negative bars
-                                if (this.data[i] < 0) {
-                                    yPos += height + 6 + (prop['chart.text.size']);
-                                }
-    
-                                // Account for chart.xaxispos=top
-                                if (prop['chart.xaxispos'] == 'top') {
-                                    yPos = this.gutterTop + height + 6 + (typeof(prop['chart.labels.above.size']) == 'number' ? prop['chart.labels.above.size'] : prop['chart.text.size'] - 4);
-                                }
-    
-                                // Account for chart.variant=3d
-                                if (prop['chart.variant'] == '3d') {
-                                    yPos -= 3;
-                                    xPos += 5;
-                                }
-                                
-                                // Angled above labels
-                                if (this.properties['chart.labels.above.angle']) {
-                                    var angle = -45;
-                                    var halign = 'left';
-                                    var valign = 'center';
-                                } else {
-                                    var angle = 0;
-                                    var halign = 'center';
-                                    var valign = 'bottom';
-                                }
 
-                                // Above labels color
-                                if (typeof this.properties['chart.labels.above.color'] == 'string') {
-                                    co.fillStyle = prop['chart.labels.above.color'];
-                                } else {
-                                    co.fillStyle = prop['chart.text.color'];
-                                }
-    
-                                RGraph.Text2(this, {'font': prop['chart.text.font'],
-                                                    'size': typeof(prop['chart.labels.above.size']) == 'number' ? prop['chart.labels.above.size'] : prop['chart.text.size'] - 3,
-                                                       'x': xPos,
-                                                       'y': yPos,
-                                                    'text': RGraph.number_format(this, Number(this.data[i]).toFixed(prop['chart.labels.above.decimals']),prop['chart.units.pre'],prop['chart.units.post']),
-                                                  'halign': halign,
-                                                  'marker': false,
-                                                  'valign': valign,
-                                                  'angle': angle,
-                                                  'tag': 'labels.above'
-                                                 });
-                            }
     
                         // Dot chart
                         } else if (variant == 'dot') {
@@ -1245,51 +1229,7 @@
     
                             y += height;
                         }
-    
-                        // This bit draws the text labels that appear above the bars if requested
-                        if (prop['chart.labels.above']) {
-    
-                            // Turn off any shadow
-                            RG.NoShadow(this);
-    
-                            // Above labels color
-                            if (typeof this.properties['chart.labels.above.color'] == 'string') {
-                                co.fillStyle = prop['chart.labels.above.color'];
-                            } else {
-                                co.fillStyle = prop['chart.text.color'];
-                            }
-    
-                            // Angled above labels
-                            if (prop['chart.labels.above.angle']) {
-                                var angle = -45;
-                                var halign = 'left';
-                                var valign = 'center';
-                            } else {
-                                var angle = 0;
-                                var halign = 'center';
-                                var valign = 'bottom';
-                            }
-    
-                            RGraph.Text2(this,{'font': prop['chart.text.font'],
-                                               'size': typeof(prop['chart.labels.above.size']) == 'number' ? prop['chart.labels.above.size'] : prop['chart.text.size'] - 3,
-                                               'x': startX + (barWidth / 2) + prop['chart.hmargin'],
-                                               'y': startY - (prop['chart.shadow'] && prop['chart.shadow.offsety'] < 0 ? 7 : 4) - (prop['chart.variant'] == '3d' ? 5 : 0),
-                                               'text': String(prop['chart.units.pre'] + RGraph.array_sum(this.data[i]).toFixed(prop['chart.labels.above.decimals']) + prop['chart.units.post']),
-                                               'angle': angle,
-                                               'valign': valign,
-                                               'halign': halign,
-                                                'tag': 'labels.above'
-                                              });
-    
-                          
-                            // Turn any shadow back on
-                            if (shadow) {
-                                co.shadowColor   = shadowColor;
-                                co.shadowBlur    = shadowBlur;
-                                co.shadowOffsetX = shadowOffsetX;
-                                co.shadowOffsetY = shadowOffsetY;
-                            }
-                        }
+
                         
     
                         /**
@@ -1313,6 +1253,7 @@
                             // Reset the redraw coords to be empty
                             redrawCoords = [];
                         }
+
                     /**
                     * Grouped bar
                     */
@@ -1455,67 +1396,13 @@
                             if (prop['chart.shadow']) {
                                 redrawCoords.push([startX + groupedMargin, startY, individualBarWidth - (2 * groupedMargin), height, co.fillStyle]);
                             }
-    
-    
-                            // This bit draws the text labels that appear above the bars if requested
-                            if (prop['chart.labels.above']) {
-    
-                                co.strokeStyle = 'rgba(0,0,0,0)';
-                            
-                                // Turn off any shadow
-                                if (shadow) {
-                                    RGraph.NoShadow(this);
-                                }
-                            
-                                var yPos = y - 3;
-    
-                                // Angled above labels
-                                if (prop['chart.labels.above.angle']) {
-                                    var angle = -45;
-                                    var halign = 'left';
-                                    var valign = 'center';
-                                } else {
-    
-                                    var angle = 0;
-                                    var halign = 'center';
-                                    var valign = 'bottom';
-                            
-                                    // Account for negative bars
-                                    if (this.data[i][j] < 0 || prop['chart.xaxispos'] == 'top') {
-                                        yPos = startY + height + 6;
-                                        var valign = 'top';
-                                    } else {
-                                        yPos = startY;
-                                    }
-                                }
-    
-                                // Above labels color
-                                if (typeof this.properties['chart.labels.above.color'] == 'string') {
-                                    co.fillStyle = prop['chart.labels.above.color'];
-                                } else {
-                                    co.fillStyle = prop['chart.text.color'];
-                                }
-    
-                                RGraph.Text2(this, {'font': prop['chart.text.font'],
-                                                    'size': typeof(prop['chart.labels.above.size']) == 'number' ? prop['chart.labels.above.size'] : prop['chart.text.size'] - 3,
-                                                    'x': startX + (individualBarWidth / 2),
-                                                    'y': yPos - 3,
-                                                    'text': RGraph.number_format(this, this.data[i][j].toFixed(prop['chart.labels.above.decimals'])),
-                                                    'halign': halign,
-                                                    'valign': valign,
-                                                    'angle':angle,
-                                                    'tag': 'labels.above'
-                                                   });
-                              
-                                // Turn any shadow back on
-                                if (shadow) {
-                                    co.shadowColor   = shadowColor;
-                                    co.shadowBlur    = shadowBlur;
-                                    co.shadowOffsetX = shadowOffsetX;
-                                    co.shadowOffsetY = shadowOffsetY;
-                                }
-                            }
                         }
+
+
+
+
+
+
 
                         /**
                         * Redraw the bar if shadows are going to the left
@@ -1631,35 +1518,9 @@
             }
             
             /**
-            * If chart.labels.above.specific is specified, draw them
+            * Draw above labels
             */
-            if (prop['chart.labels.above.specific']) {
-            
-                var labels = prop['chart.labels.above.specific'];
-                
-                for (var i=0; i<this.coords.length; ++i) {
-    
-                    var xaxispos = prop['chart.xaxispos'];
-                    var coords = this.coords[i];
-                    var value  = this.data_arr[i];
-                    var valign =  (value >=0 && xaxispos != 'top') ? 'bottom' : 'top';
-                    var halign = 'center';
-                    var text   = labels[i];
-    
-    
-                    if (text && text.toString().length > 0) {
-                        RGraph.Text2(this, {'font': prop['chart.text.font'],
-                                            'size': prop['chart.labels.above.size'] ? prop['chart.labels.above.size'] : prop['chart.text.size'],
-                                            'x': coords[0] + (coords[2] / 2),
-                                            'y': (value >=0 && xaxispos != 'top') ? coords[1] - 5 : coords[1] + coords[3] + 3,
-                                            'text': String(labels[i]),
-                                            'valign': valign,
-                                            'halign': halign,
-                                            'tag': 'labels.above'
-                                           });
-                    }
-                }
-            }
+            this.drawAboveLabels();
         };
     
     
@@ -2491,6 +2352,17 @@
              prop['chart.strokecolor']           = this.parseSingleColorForGradient(prop['chart.strokecolor']);
              prop['chart.axis.color']            = this.parseSingleColorForGradient(prop['chart.axis.color']);
         };
+
+
+
+
+        /**
+        * Use this function to reset the object to the post-constructor state. Eg reset colors if
+        * need be etc
+        */
+        this.reset = function ()
+        {
+        };
     
     
     
@@ -2642,8 +2514,8 @@
                     co.fillStyle = prop['chart.key.interactive.highlight.chart.fill'];
                     co.strokeStyle = prop['chart.key.interactive.highlight.chart.stroke'];
                     co.lineWidth   = 2;
-                    co.fillRect(x, y, w, h);
                     co.strokeRect(x, y, w, h);
+                    co.fillRect(x, y, w, h);
                 }
             });
         };
@@ -2667,29 +2539,218 @@
     
             return this;
         };
+        
+        
+        
+        
+        /**
+        * Draws the above labels
+        */
+        this.drawAboveLabels = function ()
+        {
+            var labels    = prop['chart.labels.above'];
+            var specific  = prop['chart.labels.above.specific'];
+            var color     = prop['chart.labels.above.color'];
+            var decimals  = prop['chart.labels.above.decimals'];
+            var size      = prop['chart.labels.above.size'];
+            var angle     = -1 * prop['chart.labels.above.angle'];
+            var coords    = this.coords;
+            var coords2   = this.coords2;
+            var data      = this.data;
+            var ldata     = RG.arrayLinearize(this.data);
+            var offset    = prop['chart.labels.above.offset'];
+            var text_font = prop['chart.text.font'];
+            var text_size = prop['chart.text.size'];
+            var grouping  = prop['chart.grouping']
+
+
+            // Turn off any shadow
+            RG.noShadow(this);
+
+            // Color
+            co.fillStyle = typeof color === 'string' ? color : prop['chart.text.color'];
+
+
+            // This bit draws the text labels that appear above the bars if requested
+            if (labels && grouping === 'grouped') {
+                for (var i=0,len=data.length,sequentialIndex=0; i<len; i+=1) {
+
+                    // Alignment for regular, positive bars
+                    if (typeof data[i] === 'number' && data[i] >= 0) {
+                        
+                        var angle  = angle;
+                        var halign = (angle ? 'left' : 'center');
+                        var valign = angle !== 0 ? 'center' : 'bottom';
+
+                        RG.text2(this, {'font': text_font,
+                                        'size': typeof size === 'number' ? size : text_size - 3,
+                                        'x': coords2[i][0][0] + (coords2[i][0][2] / 2),
+                                        'y': coords2[i][0][1] - offset,
+                                        'text': specific ? (specific[sequentialIndex] || '') : RG.numberFormat(this, Number(typeof data[i] === 'object' ? data[i][0] : data[i]).toFixed(decimals)), // TODO Units?
+                                        'halign': halign,
+                                        'valign': valign,
+                                        'angle': angle,
+                                        'marker': false,
+                                        'bounding': false,
+                                        'tag': 'labels.above'
+                                      });
+
+                        sequentialIndex++;
+
+
+
+
+
+
+                    // Alignment for regular, negative bars
+                    } else if (typeof data[i] === 'number' && data[i] < 0) {
+
+                        var angle  = angle;
+                        var halign = angle ? 'right' : 'center';
+                        var valign = angle !== 0 ? 'center' : 'top';
+
+
+                        RG.text2(this, {'font': text_font,
+                                        'size': typeof size === 'number' ? size : text_size - 3,
+                                        'x': coords2[i][0][0] + (coords2[i][0][2] / 2),
+                                        'y': coords2[i][0][1] + coords2[i][0][3] + offset,
+                                        'text': specific ? (specific[sequentialIndex] || '') : RG.numberFormat(this, Number(typeof data[i] === 'object' ? data[i][0] : data[i]).toFixed(decimals)), // TODO Units?
+                                        'halign': halign,
+                                        'valign': valign,
+                                        'angle': angle,
+                                        'bounding': false,
+                                        'marker': false,
+                                        'tag': 'labels.above'
+                                      });
+                        
+                        sequentialIndex++;
+
+
+
+
+
+
+                    // Alignment for grouped bars
+                    } else if (typeof data[i] === 'object') {
+                
+                            for (var j=0,len2=data[i].length; j<len2; j+=1) {
+
+                                var angle  = angle;
+                                var halign = data[i][j] < 0 ? 'right' : 'left';
+                                    halign = angle === 0 ? 'center' : halign;
+                                var valign = data[i][j] < 0 ? 'top' : 'bottom';
+                                    valign = angle != 0 ? 'center' : valign;
+
+                                RG.text2(this, {'font': text_font,
+                                                'size': typeof size === 'number' ? size : text_size - 3,
+                                                'x': coords2[i][j][0] + (coords2[i][j][2] / 2),
+                                                'y': coords2[i][j][1] + (data[i][j] < 0 ? coords2[i][j][3] + offset: -offset),
+                                                'text': specific ? (specific[sequentialIndex] || '') : RG.numberFormat(this, Number(data[i][j]).toFixed(decimals)), // TODO Units?
+                                                'halign': halign,
+                                                'valign': valign,
+                                                'angle': angle,
+                                                'bounding': false,
+                                                'marker': false,
+                                                'tag': 'labels.above'
+                                              });
+                                sequentialIndex++;
+                            }
+                    }
+                }
+
+
+
+
+
+            /**
+            * STACKED bars
+            */
+            } else if (labels && grouping === 'stacked') {
+                for (var i=0,len=data.length,sequentialIndex=0; i<len; i+=1) {
+                    if (typeof data[i] === 'object') {
+
+                        var angle  = angle;
+                        var halign = angle != 0 ? 'left' : 'center';
+                        var valign = angle != 0 ? 'center' : 'bottom';
+
+                        RG.text2(this, {'font': text_font,
+                                        'size': typeof size === 'number' ? size : text_size - 3,
+                                        'x': coords2[i][0][0] + (coords2[i][0][2] / 2),
+                                        'y': coords2[i][0][1] + (data[i][0] < 0 ? coords2[i][0][3] : 0) - offset,
+                                        'text': specific ? (specific[sequentialIndex] || '') : RG.numberFormat(this, Number(RG.arraySum(data[i])).toFixed(decimals)), // TODO Units?
+                                        'halign': halign,
+                                        'valign': valign,
+                                        'angle': angle,
+                                        'bounding': false,
+                                        'marker': false,
+                                        'tag': 'labels.above'
+                                      });
+
+                        sequentialIndex += data[i].length;
+                    
+                    /**
+                    * Regular numbers but in a stacked grouping
+                    */
+                    } else {
+
+                        var angle  = angle;
+                        var halign = angle != 0 ? 'left' : 'center';
+                        var valign = angle != 0 ? 'center' : 'bottom';
+
+                        RG.text2(this, {'font': text_font,
+                                        'size': typeof size === 'number' ? size : text_size - 3,
+                                        'x': coords2[i][0][0] + (coords2[i][0][2] / 2),
+                                        'y': coords2[i][0][1] + (data[i][0] < 0 ? coords2[i][0][3] : 0) - offset,
+                                        'text': specific ? (specific[sequentialIndex] || '') : RG.numberFormat(this, Number(data[i]).toFixed(decimals)), // TODO Units?
+                                        'halign': halign,
+                                        'valign': valign,
+                                        'angle': angle,
+                                        'bounding': false,
+                                        'marker': false,
+                                        'tag': 'labels.above'
+                                      });
+                        
+                        sequentialIndex++;
+                    }
+                }
+            }
+        };
+
+
+
+
+        /**
+        * This function runs once only
+        */
+        this.firstDrawFunc = function ()
+        {
+        };
+
 
 
 
         /**
         * Bar chart Wave effect This effect defaults to 30 frames - which is
-        * approximately half a second
+        * approximately half a second. This the prior, older implementation
+        * of the Wave effect. It can be slower due to the many timers set
         * 
         * @param object obj The chart object
         */
-        this.wave = function ()
+        this.waveOld = function ()
         {
             var obj           = this;
             var opt           = arguments[0] ? arguments[0] : {};
                 opt.frames    = opt.frames ? opt.frames : 15;
+                opt.delay     = opt.delay || 50;
             var callback      = arguments[1] ? arguments[1] : function () {};
             var original_data = [];
             var frame         = [];
             var length        = obj.data.length;
-    
+
             obj.draw();
             //var scale = RGraph.getScale2(obj, {'max':obj.max});
             obj.Set('chart.ymax', obj.scale2.max);
-            RGraph.Clear(obj.canvas);
+            RG.clear(obj.canvas);
             
             for (var i=0,len=length; i<len; ++i) {
                 (function (idx)
@@ -2697,17 +2758,20 @@
                     original_data[idx] = obj.data[idx];
                     obj.data[idx] = typeof obj.data[idx] === 'object' ? [] : 0;
                     frame[idx]   = typeof obj.data[idx] === 'object' ? [] : 0;
-                    setTimeout(function () {iterator(idx, opt.frames);}, 100 * idx)
+                    setTimeout(function () {iterator(idx, opt.frames);}, opt.delay * idx)
                 })(i);
             }
-            
+
+            return this;
+
+
             function iterator (idx, frames)
             {
-                if (frame[idx] < frames) {
+                if (frame[idx] <= frames) {
     
                     // Update the data point
                     if (typeof obj.data[idx] === 'number') {
-                        obj.data[idx] = (frame[idx] / frames) * original_data[idx]
+                      obj.data[idx] = (frame[idx] / frames) * original_data[idx]
     
                     } else if (typeof obj.data[idx] === 'object') {
                         for (var k=0,len=original_data[idx].length; k<len; ++k) {
@@ -2715,16 +2779,105 @@
                         }
                     }
     
-                    RGraph.clear(obj.canvas);
-                    RGraph.redrawCanvas(obj.canvas);
+                    RG.clear(obj.canvas);
+                    RG.redrawCanvas(obj.canvas);
                     
                     ++frame[idx];
-                    RGraph.Effects.updateCanvas(function () {iterator(idx, frames);});
+                    RG.Effects.updateCanvas(function () {iterator(idx, frames);});
                 
-                } else if (idx == (length - 1) ) {
+                } else if (idx === (length - 1) ) {
                     callback(obj);
                 }
             }
+        };
+
+
+
+
+        /**
+        * (new) Bar chart Wave effect. This is a rewrite that should be smoother
+        * because it just uses a single loop and not setTimeout
+        * 
+        * @param object   OPTIONAL An object map of options. You specify 'frames' here to give the number of frames in the effect
+        * @param function OPTIONAL A function that will be called when the effect is complete
+        */
+        this.wave = function ()
+        {
+            var obj = this;
+            var opt = arguments[0] || {};
+                opt.frames =  opt.frames || 60;
+                opt.startFrames = [];
+                opt.counters    = [];
+
+            var framesperbar   = opt.frames / 3;
+            var frame          = -1;
+            var callback       = arguments[1] || function () {};
+            var original       = RG.arrayClone(obj.data);
+
+            for (var i=0,len=obj.data.length; i<len; i+=1) {
+                opt.startFrames[i] = ((opt.frames / 2) / (obj.data.length - 1)) * i;
+                
+                if (typeof obj.data[i] === 'object' && obj.data[i]) {
+                    opt.counters[i] = [];
+                    for (var j=0; j<obj.data[i].length; j++) {
+                        opt.counters[i][j] = 0;
+                    }
+                } else {
+                    opt.counters[i]    = 0;
+                }
+            }
+
+            /**
+            * This stops the chart from jumping
+            */
+            obj.draw();
+            obj.Set('ymax', obj.scale2.max);
+            RG.clear(obj.canvas);
+
+            function iterator ()
+            {
+                ++frame;
+
+                for (var i=0,len=obj.data.length; i<len; i+=1) {
+                        if (frame > opt.startFrames[i]) {
+                            if (typeof obj.data[i] === 'number') {
+                                obj.data[i] = ma.min(
+                                                     ma.abs(original[i]),
+                                                     ma.abs(original[i] * ( (opt.counters[i]++) / framesperbar))
+                                                    );
+                                // Make the number negative if the original was
+                                if (original[i] < 0) {
+                                    obj.data[i] *= -1;
+                                }
+                            } else if (!RG.isNull(obj.data[i])) {
+                                for (var j=0,len2=obj.data[i].length; j<len2; j+=1) {
+                                    obj.data[i][j] = ma.min(
+                                                            ma.abs(original[i][j]),
+                                                            ma.abs(original[i][j] * ( (opt.counters[i][j]++) / framesperbar))
+                                                           );
+                                    // Make the number negative if the original was
+                                    if (original[i][j] < 0) {
+                                        obj.data[i][j] *= -1;
+                                    }
+                                }
+                            }
+                        } else {
+                            obj.data[i] = typeof obj.data[i] === 'object' && obj.data[i] ? RG.arrayPad([], obj.data[i].length, 0) : (RG.isNull(obj.data[i]) ? null : 0);
+                        }
+                }
+
+
+                if (frame >= opt.frames) {
+                    callback(obj);
+                } else {
+                    RG.redrawCanvas(obj.canvas);
+                    RG.Effects.updateCanvas(iterator);
+                }
+            }
+            
+            iterator();
+
+            return this;
         };
 
 
@@ -2820,6 +2973,17 @@
         * Register the object
         */
         RG.register(this);
+
+
+
+
+        /**
+        * This is the 'end' of the constructor so if the first argument
+        * contains configuration dsta - handle that.
+        */
+        if (parseConfObjectForOptions) {
+            RG.parseObjectStyleConfig(this, conf.options);
+        }
     };
 
 
@@ -2929,5 +3093,3 @@
             this.objects[i].Draw();
         }
     };
-// version: 2014-03-28
-

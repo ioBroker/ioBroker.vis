@@ -1,10 +1,15 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
 
@@ -187,7 +192,7 @@
 
 
     /**
-    * fadeSlideOut
+    * fadeSlideIn
     * 
     * This function fades the canvas in in a sliding motion
     */
@@ -225,7 +230,7 @@
             {
                 if (pc < 120) {
                     $('div#rgraph_fadeslide_cover_' + obj.id).css({
-                                                                   background: 'linear-gradient(135deg, rgba(255,255,255,0) ' + pc + '%, ' + color + ' ' + (pc + 20) + '%)',
+                                                                   background: 'linear-gradient(135deg, rgba(255,255,255,0) ' + pc + '%, ' + color + ' ' + (pc + 20) + '%)'
                                                                   });
                     pc += step;
                     RG.Effects.updateCanvas(iterator);
@@ -282,7 +287,7 @@
             {
                 if (pc < 120) {
                     $('div#rgraph_fadeslide_cover_' + obj.id).css({
-                                                                   background: 'linear-gradient(135deg, ' + color + ' ' + pc + '%, rgba(255,255,255,0) ' + (pc + 20) + '%)',
+                                                                   background: 'linear-gradient(135deg, ' + color + ' ' + pc + '%, rgba(255,255,255,0) ' + (pc + 20) + '%)'
                                                                   });
                     pc += step;
                     RG.Effects.updateCanvas(iterator);
@@ -345,7 +350,7 @@
             if (frame < frames) {
 
                     $('div#rgraph_fadeslide_cover_' + obj.id).css({
-                                                                   background: 'radial-gradient(rgba(255,255,255,0) ' + ((frame++ / frames) * 100) + '%, ' + color + ' ' + ((frame++ / frames) * 150) + '%)',
+                                                                   background: 'radial-gradient(rgba(255,255,255,0) ' + ((frame++ / frames) * 100) + '%, ' + color + ' ' + ((frame++ / frames) * 150) + '%)'
                                                                   });
                     RG.Effects.updateCanvas(iterator);
             
@@ -403,7 +408,7 @@
             if (frame < frames) {
 
                     $('div#rgraph_fadeslide_cover_' + obj.id).css({
-                                                                   background: 'radial-gradient(' + color + ' ' + ((frame++ / frames) * 100) + '%, rgba(255,255,255,0) ' + ((frame++ / frames) * 150) + '%)',
+                                                                   background: 'radial-gradient(' + color + ' ' + ((frame++ / frames) * 100) + '%, rgba(255,255,255,0) ' + ((frame++ / frames) * 150) + '%)'
                                                                   });
                     RG.Effects.updateCanvas(iterator);
             
@@ -461,7 +466,7 @@
             if (frame < frames) {
 
                     $('div#rgraph_fadeslide_cover_' + obj.id).css({
-                                                                   background: 'radial-gradient(' + color + ' ' + (( (frames - frame++) / frames) * 100) + '%, rgba(255,255,255,0) ' + (( (frames - frame++) / frames) * 120) + '%)',
+                                                                   background: 'radial-gradient(' + color + ' ' + (( (frames - frame++) / frames) * 100) + '%, rgba(255,255,255,0) ' + (( (frames - frame++) / frames) * 120) + '%)'
                                                                   });
                     RG.Effects.updateCanvas(iterator);
             
@@ -517,7 +522,7 @@
             if (frame < frames) {
 
                     $('div#rgraph_fadeslide_cover_' + obj.id).css({
-                                                                   background: 'radial-gradient(rgba(255,255,255,0) ' + (( (frames - frame++) / frames) * 100) + '%, ' + color + ' ' + (( (frames - frame++) / frames) * 120) + '%)',
+                                                                   background: 'radial-gradient(rgba(255,255,255,0) ' + (( (frames - frame++) / frames) * 100) + '%, ' + color + ' ' + (( (frames - frame++) / frames) * 120) + '%)'
                                                                   });
                     RG.Effects.updateCanvas(iterator);
             
@@ -1462,5 +1467,3 @@
 
 // End Module pattern
 })(window, document);
-// version: 2014-03-28
-
