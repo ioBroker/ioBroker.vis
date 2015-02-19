@@ -517,8 +517,7 @@
             var id = $this.attr('data-oid');
             function toggle() {
                 var val = vis.states[id + '.val'];
-
-                if (val === false || val === 'false') {
+                if (val === null || val === '' || val === undefined || val === false || val === 'false') {
                     vis.setValue(id, true);
                 } else if (val === true || val === 'true') {
                     vis.setValue(id, false);
@@ -633,7 +632,7 @@
                     var $this = $(this);
                     var id = $this.attr('data-oid');
                     var val = vis.states[id + '.val'];
-                    if (val === false || val === "false") {
+                    if (val === null || val === '' || val === undefined || val === false || val === "false") {
                         vis.setValue(id, true);
                     } else if (val === true || val === "true") {
                         vis.setValue(id, false);
@@ -1343,7 +1342,7 @@
         data-vis-attrs="oid">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 44px; height: 59px">
         <div class="vis-widget-body">
-            <% switch (vis.states.attr(this.data.oid + '.val')) { case 0: case "0": case "0.000000": case false: case "false": %>
+            <% switch (vis.states.attr(this.data.oid + '.val')) { case null: case '': case undefined: case 0: case "0": case "0.000000": case false: case "false": %>
             <img src="img/bulb_off.png" width="100%"/>
             <% break; default: %>
             <img src="img/bulb_on.png" width="100%"/>
@@ -1362,7 +1361,7 @@
         data-vis-attrs="oid">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>  style="width: 44px; height: 59px">
     <div class="vis-widget-body">
-        <% switch (vis.states.attr(this.data.oid + ".val")) { case 0: case "0": case "0.000000": case "false": case false: %>
+        <% switch (vis.states.attr(this.data.oid + ".val")) { case null: case '': case undefined: case 0: case "0": case "0.000000": case "false": case false: %>
         <img src="img/bulb_off.png" width="100%"/>
         <% break; default: %>
         <img src="img/bulb_on.png" width="100%"/>

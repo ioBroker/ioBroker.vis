@@ -65,6 +65,9 @@ var servConn = {
         return true;
     },
     init: function (connOptions, connCallbacks) {
+        // init namespace
+        if (typeof socketNamespace != 'undefined') this.namespace = socketNamespace;
+
         connOptions = connOptions || {};
         var that = this;
         if (!connOptions.name) connOptions.name = this.namespace;
@@ -293,6 +296,7 @@ var servConn = {
             console.log('socket.io not initialized');
             return;
         }
+        if (!dirname) dirname = '/';
         var parts = dirname.split('/');
         var adapter = parts[1];
         parts.splice(0, 2);

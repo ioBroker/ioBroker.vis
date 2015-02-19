@@ -446,7 +446,7 @@
 
             var values = [];
             for (var i = 0, len = IDs.length; i < len; i++) {
-                values[i] = vis.states.attr('_' + IDs[i] + '.val');
+                values[i] = vis.states.attr(IDs[i] + '.val');
                 if (values[i] === null || values[i] === undefined) {
                     values[i] = min_value;
                 }
@@ -965,7 +965,7 @@
 
                 id = data.attr('max_value' + len);
                 if (id || valid_max) {
-                    max_values.push(id);
+                    max_values.push(parseInt(id, 10));
                     valid_max = id;
                 }
 
@@ -983,7 +983,7 @@
             var values  = [];
             for (var i = 0, len = IDs.length; i < len; i++) {
                 values[i] = [];
-                var val = vis.states.attr('_' + IDs[i] + '.val');
+                var val = vis.states.attr(IDs[i] + '.val');
                 if (val === null || val === undefined) {
                     val = data.attr("min_value");
                 }
@@ -1180,29 +1180,34 @@
 <script id="tplRGtermometer" 
         type="text/ejs"
         class="vis-tpl"
-        data-vis-type="temperature,value"
+        data-vis-type="temperature,number"
         data-vis-set="RGraph" 
-        data-vis-name="Thermometer" 
+        data-vis-name="Thermometer"
+        data-vis-prev='<img src="widgets/RGraph/img/Prev_thermometr.png"></img>'
         data-vis-attrs="oid;min_value[0];max_value[100];control/checkbox;padding_left/slider,0,100,1;padding_right/slider,0,100,1;factor[1];value_offset[0];color;show_scale/checkbox;labels_color/color;labels_font/fontname;labels_size/slider,1,100;title;title_side;title_side_font/fontname;title_side_size/slider,1,100;shadow[true]/checkbox;ticksize/slider,0,100;units_pre;units_post;scale_decimals/slider,0,10,1;show_value/checkbox;value_decimals/slider,0,10,1;labels_count/slider,0,100,1;animate/checkbox">
     <%
         vis.binds.RGraph.tplRGtermometer(this.view, this.data);
     %>
 </script>
+
 <script id="tplRGgauge"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-type="gauge,value"
-        data-vis-set="RGraph" 
+        data-vis-type="gauge,number"
+        data-vis-prev='<img src="widgets/RGraph/img/Prev_gauge.png"></img>'
+        data-vis-set="RGraph"
         data-vis-name="Gauge-Basic" data-vis-attrs="oid/id;oid_2/id;oid_3/id;min_value[0];max_value[100];max_value_id/id;factor[1];value_offset[0];control/checkbox;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;back_color/color;background_gradient/checkbox;border_outline_color/color;needle_colors/color;needle_type/triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;title;title_color/color;title_font/fontname;title_size/slider,1,100;title_pos/slider,0,1;title_bottom;title_bottom_color/color;title_bottom_font/fontname;title_bottom_size/slider,1,100;title_bottom_pos/slider,0,1;labels_color[#000000]/color;labels_font/fontname;labels_size/slider,1,100;labels_centered/checkbox;labels_offset/slider,-500,500,1;green_end/slider,0,1;green_color/color;yellow_color/color;red_color/color;red_start/slider,0,1;animate/checkbox">
     <%
         vis.binds.RGraph.tplRGgauge(this.view, this.data);
     %>
 </script>
+
 <script id="tplRLiveChart" 
         type="text/ejs"
         class="vis-tpl"
-        data-vis-type="chart,value"
-        data-vis-set="RGraph" 
+        data-vis-type="chart,number"
+        data-vis-prev='<img src="widgets/RGraph/img/Prev_liveChart.png"></img>'
+        data-vis-set="RGraph"
         data-vis-name="LiveChart" data-vis-attrs="oid(1-8)/id;line_color(1-8)[black]/color;line_thick(1-8)[1]/slider,0.5,5,0.5;min_value[0];max_value[0];factor[1];value_offset[0];update_interval[5000]/slider,100,20000,100;points_count[250]/slider,10,2000,10;title;title_x;title_y;num_hlines[3]/slider,0,20,1;spline/checkbox;filled/checkbox;oid_show(1-8)/id;">
     <%
         vis.binds.RGraph.tplRLiveChart(this.view, this.data);
@@ -1211,8 +1216,9 @@
 <script id="tplRBarChart"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-type="chart,value"
-        data-vis-set="RGraph" 
+        data-vis-type="chart,number,barchart"
+        data-vis-prev='<img src="widgets/RGraph/img/Prev_barChart.png"></img>'
+        data-vis-set="RGraph"
         data-vis-name="BarChart" data-vis-attrs="oid(1-8)/id;name(1-8);filled_color[black]/color;empty_color[white]/color;label_color[black]/color;max_value(1-8);factor[1];value_offset[0];update_interval[0]/slider,0,20000,100;title;legend/checkbox;filled_text[Level];empty_text[Empty];labels_above[true]/checkbox;label_size[12]/slider,1,40,1;labels_above_angle/checkbox;decimals[2]/slider,0,10,1;shadow/checkbox;gutter_left[45]/slider,0,200,1;horz_margin[15]/slider,0,200,1;bar_labels_color[black]/color;bar_labels_bold/checkbox;bar_labels_center/checkbox;num_hlines/slider,0,20,1">
     <%
         vis.binds.RGraph.tplRBarChart(this.view, this.data);

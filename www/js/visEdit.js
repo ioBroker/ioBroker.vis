@@ -2354,8 +2354,8 @@ vis = $.extend(true, vis, {
 
                     $.fm({
                         lang:       that.language,
-                        path:       that.widgets[wdata.widgets[0]].data[wdata.attr] || '/' + that.conn.namespace + '/' + that.projectPrefix + 'img/',
-                        uploadDir:  '/' + that.conn.namespace + '/',
+                        path:       that.widgets[wdata.widgets[0]].data[wdata.attr] || ('/' + (that.conn.namespace ? that.conn.namespace + '/' : '') + that.projectPrefix + 'img/'),
+                        uploadDir:  '/' + (that.conn.namespace ? that.conn.namespace + '/' : ''),
                         fileFilter: filter || ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
                         folderFilter: false,
                         mode:       'open',
