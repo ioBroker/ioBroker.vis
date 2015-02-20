@@ -35,7 +35,7 @@
     border-radius: 100%;
     bottom: -100%;
     right: -100%;
-    box-shadow: rgb(0, 0, 0) -2px -2px 10px;
+    box-shadow: #000 -1px -1px 10px;
 }
 
 .bogen_bl {
@@ -54,7 +54,7 @@
     border-radius: 100%;
     bottom: -100%;
     left: -100%;
-    box-shadow: rgb(0, 0, 0) 2px -2px 10px;
+    box-shadow: #000 1px -1px 10px;
 }
 
 .bogen_tr {
@@ -73,7 +73,7 @@
     border-radius: 100%;
     top: -100%;
     right: -100%;
-    box-shadow: #000 -2px 2px 10px;
+    box-shadow: #000 -1px 1px 10px;
 }
 .bogen_tl {
     border-bottom-right-radius: 100%;
@@ -91,7 +91,7 @@
     border-radius: 100%;
     top: -100%;
     left: -100%;
-    box-shadow: #000 2px 2px 10px;
+    box-shadow: #000 1px 1px 10px;
 }
 
 .plumb_dock_top{
@@ -138,6 +138,13 @@
 .valve_h{
 
 }
+.valve_v{
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+
 .plumb_valve_l{
     width: 0;
     height: 0;
@@ -155,4 +162,66 @@
     right: 0;
     border-width: 10px 20px 10px 0px;
     border-color: rgba(0, 0, 0, 0) #0F0 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+}
+
+.plumb_valve_t{
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 20px 10px 0px 10px;
+    border-color: #0F0 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+
+}
+.plumb_valve_b{
+    width: 0;
+    height: 0;
+    border-style: solid;
+    position: absolute;
+    /* top: 0; */
+    /* right: 0; */
+    bottom: 0;
+    border-width: 0px 10px 19px 10px;
+    border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #0F0 rgba(0, 0, 0, 0);
+}
+.tpice_ht{
+    text-align: center;
+    height: 100%;
+}
+.tpice-hl{
+    background: #00F;
+    height: 20px;  width: 20px;
+    position: absolute;
+    top: 33%;
+    box-shadow: #000 0px 10px 10px -10px inset, #000 0px -10px 10px -10px inset;
+    height: 20px;
+    width: 20px;
+}
+.tpice-hm{
+    background: #00F;
+    position: absolute;
+    top: 33%;
+    left: 33%;
+    overflow: hidden;
+    box-shadow: #000 0px -10px 10px -10px inset;
+    height: 20px;
+    width: 20px;
+}
+.tpice-hr{
+    background: #00F;
+    position: absolute;
+    top: 33%;
+    left: 66%;
+    box-shadow: #000 0px 10px 10px -10px inset, #000 0px -10px 10px -10px inset;
+    height: 20px;
+    width: 20px;
+}
+.tpice-t{
+    background: #00F;;
+    position: absolute;
+    display: inline-block;
+    top: 0;
+    left: calc(50% - 16.5%);
+    box-shadow: #000 10px 0px 10px -10px inset, #000 -10px 0px 10px -10px inset;
+    height: 20px;
+    width: 20px;
 }
