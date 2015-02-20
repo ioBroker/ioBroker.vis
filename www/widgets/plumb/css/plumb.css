@@ -209,7 +209,7 @@
     background: #00F;
     position: absolute;
     top: 33%;
-    left: 33%;
+    left: 33.3333%;
     overflow: hidden;
     box-shadow: #000 0px -10px 10px -10px inset;
     height: 20px;
@@ -219,7 +219,7 @@
     background: #00F;
     position: absolute;
     top: 33%;
-    left: 66%;
+    left: 66.66%;
     box-shadow: #000 0px 10px 10px -10px inset, #000 0px -10px 10px -10px inset;
     height: 20px;
     width: 20px;

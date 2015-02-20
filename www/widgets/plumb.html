@@ -541,11 +541,14 @@
         },
 
         sprinkler_i: function (el, data) {
+            console.log(data)
             var $this = $(el).parent();
-            var $head = $(el)
+            var $head = $(el);
+            var $wp = $this.find(".plumb_sprinkler_i");
+            var $water = $this.find(".plumb_sprinkler_i_water");
             var id = $this.attr("id");
             var plumb = vis.binds.plumb.data;
-            var wp = $this.find(".plumb_sprinkler_i");
+
             if (!plumb[id]) {
                 vis.binds.plumb.data[id] = {
                     type: "pump",
@@ -555,7 +558,7 @@
                     conLeft: null,
                     conRight: null,
                     conTop: null,
-                    conBottom: null,
+                    conBottom: null
                 }
             }
             var self = plumb[id];
@@ -575,13 +578,12 @@
             $this.bind("plumb_change", function (event) {
                 self.status = event.status;
                 if(event.status == true ){
-                    wp.show()
+                    $wp.show();
                     $head.css({
-                        "background-color": data["head-color"]
+                        "background-color": data.head_color
                     });
                 }else{
-                    wp.hide()
-                    console.log(data)
+                    $wp.hide();
                     if(data["head-show"] == false ){
                      $head.css({
                          "background-color": "transparent"
@@ -607,41 +609,42 @@
                 <style>').appendTo("head");
 
 
-                wp.css({
+                $wp.css({
+
                     "-webkit-animation": id + "-ANIMATION " + data.time + "s infinite linear",
                     "animation": id + "-ANIMATION " + data.time + "s infinite linear",
 
                 });
-                $this.find(".plumb_splinkler_i_water").css({
+                $water.css({
                     height: data.width + "px",
                     width: data.stroke + "px",
-                    left: parseInt($(wp).width() / 2 - data.stroke / 2) + "px",
-                    top: parseInt($(wp).height() / 2 - data.width) + "px",
+                    left: parseInt($($wp).width() / 2 - data.stroke / 2) + "px",
+                    top: parseInt($($wp).height() / 2 - data.width) + "px",
                     position: "relative",
                     "background-color": data.water_color
                 });
 
-                if (data.fog == true) {
-                    $this.find(".plumb_splinkler_i_water").css({
-                        "box-shadow": '0px 0px ' + (data.stroke * 2) + 'px ' + data.stroke + 'px ' + data["water-color"],
+                if (data.fog == "true") {
+                    $water.css({
+                        "box-shadow": '0px 0px ' + (data.stroke * 2) + 'px ' + data.stroke + 'px ' + data.water_color,
                     })
                 }
 
-                if (data["head-round"]) {
+                if (data.head_round == "true" || data.head_round == true) {
                     $head.css({
                         "border-radius": "100%"
                     });
                 }
 
                 if (self.status == true || (vis.editMode == true && data.test == true)) {
-                    wp.show()
+                    $wp.show()
                 } else {
-                    wp.hide()
+                    $wp.hide()
                 }
 
-                if ((self.status == true || data["head-show"] == true ) || (vis.editMode == true && data.test == true)) {
+                if ((self.status == true || data.head_show == "true" || data.head_show == true ) || (vis.editMode == true && data.test == "true")) {
                     $head.css({
-                        "background-color": data["head-color"]
+                        "background-color": data.head_color
                     });
                 } else {
                     $head.css({
@@ -1230,16 +1233,28 @@
                 $($this).find(".tpice-hm").css({"box-shadow": 'inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
                 $($this).find(".tpice-hr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
 
-                $($this).find(".bogen_tl_shadow").css({"box-shadow": '' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 1.33) + 'px #000 '});
-                $($this).find(".bogen_tr_shadow").css({"box-shadow": '-' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 1.33) + 'px #000 '});
+                $($this).find(".bogen_tl_shadow").css({"box-shadow": '' + parseInt(shadow / 6) + 'px ' + parseInt(shadow /6) + 'px ' + parseInt(shadow / 1) + 'px #000 '});
+                $($this).find(".bogen_tr_shadow").css({"box-shadow": '-' + parseInt((shadow / 6)) + 'px ' + parseInt((shadow / 6)) + 'px ' + parseInt(shadow / 1) + 'px  #000 '});
 
                 $($this).find(".tpice-t").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'})
 
-                $($this).find(".tpice-t, .bogen_tr_shadow, .bogen_tl_shadow, .tpice-hr, .tpice-hm, .tpice-hl").css({
+                $($this).find(".tpice-t, .tpice-hr, .tpice-hm, .tpice-hl").css({
                     height: size + "px",
                     width: size + "px"
-                })
+                });
 
+                $($this).find(" .bogen_tr_shadow").css({
+                    height: shadow + "px",
+                    width: shadow + "px",
+                    right: "-"+ shadow-1 + "px",
+                    top: "-"+ shadow-1 + "px"
+                })
+                $($this).find(".bogen_tl_shadow").css({
+                    height: shadow + "px",
+                    width: shadow + "px",
+                    left: "-"+ shadow-1 + "px",
+                    top: "-"+ shadow-1 + "px"
+                })
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1286,10 +1301,10 @@
         data-vis-type="val"
         data-vis-name="Sprinker I"
         data-vis-attrs="test/checkbox;width[100];time[4];start[0];ende[90];stroke[4];opacity[0.8];fog/checkbox;water_color[blue]/color;head_color[black]/color;head_show[true]/checkbox;head_round[true]/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{"grid": [ 10, 10 ]}' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{"grid": [ 10, 10 ],"handles": "s, e"}' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="plumb_sprinkler_i_body vis-widget-body" <%= (el) -> vis.binds.plumb.sprinkler_i(el, data) %>>
 				<div class="plumb_sprinkler_i" style="display: 'none'">
-				<div class="plumb_splinkler_i_water"></div>
+				<div class="plumb_sprinkler_i_water"></div>
 				</div>
             	<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_bottom"></div>
