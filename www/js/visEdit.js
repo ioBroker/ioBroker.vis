@@ -656,7 +656,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_align_right").click(function () {
             var data = [];
             $.each(that.activeWidgets, function () {
@@ -683,7 +682,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_align_top").click(function () {
             var data = [];
             $.each(that.activeWidgets, function () {
@@ -710,7 +708,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_align_bottom").click(function () {
             var data = [];
             $.each(that.activeWidgets, function () {
@@ -737,7 +734,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_align_vc").click(function () {
             var min_top =9999;
             var max_bottom = 0;
@@ -757,7 +753,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_align_hc").click(function () {
             var min_left =9999;
             var max_right = 0;
@@ -785,8 +780,8 @@ vis = $.extend(true, vis, {
             var between;
             $.each(that.activeWidgets, function () {
                 var left = parseInt($("#" + this).css("left"));
-                var right = left + $("#" + this).width;
-                cont_size = cont_size + $("#" + this).width;
+                var right = left + $("#" + this).width();
+                cont_size = cont_size + $("#" + this).width();
                 if (min_left > left) min_left = left;
                 if (max_right < right) max_right = right;
 
@@ -808,14 +803,14 @@ vis = $.extend(true, vis, {
 
             data.sort(SortByLeft);
             var first = data.shift();
-            var left  = first.left + $("#" + first.wid).width;
+            var left  = first.left + $("#" + first.wid).width();
 
             $.each(data, function(){
                 left = left + between;
                 $("#" + this.wid).css("left", left + "px");
                 $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.left = left + "px";
-                left = left + $("#" + this.wid).width;
+                left = left + $("#" + this.wid).width();
             });
             that.save();
         });
@@ -828,8 +823,8 @@ vis = $.extend(true, vis, {
 
             $.each(that.activeWidgets, function () {
                 var top = parseInt($("#" + this).css("top"));
-                var bottom = top + $("#" + this).height;
-                cont_size = cont_size + $("#" + this).height;
+                var bottom = top + $("#" + this).height();
+                cont_size = cont_size + $("#" + this).height();
                 if (min_top > top) min_top = top;
                 if (max_bottom < bottom) max_bottom = bottom;
 
@@ -850,14 +845,14 @@ vis = $.extend(true, vis, {
 
             data.sort(SortByTop);
             var first = data.shift();
-            var top  = first.top + $("#" + first.wid).height;
+            var top  = first.top + $("#" + first.wid).height();
 
             $.each(data, function () {
                 top = top + between;
                 $("#" + this.wid).css("top", top + "px");
                 $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.top = top + "px";
-                top = top + $("#" + this.wid).height;
+                top = top + $("#" + this.wid).height();
             });
             that.save();
         });
@@ -871,7 +866,6 @@ vis = $.extend(true, vis, {
             }
             $('#wid_all_lock_f').removeClass("ui-state-focus")
         });
-
         $("#wid_all_lock_drag").button({icons: {primary: 'ui-icon-extlink', secondary: null}, text: false}).click(function () {
             $('#wid_all_lock_d').removeClass("ui-state-focus");
             that.inspectWidgets([]);
