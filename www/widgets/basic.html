@@ -297,8 +297,8 @@
                 var $this = $(this);
                 var oid = $this.attr('data-oid');
                 if (!vis.editMode) {
-                    var step = parseFloat($this.attr("data-vis-step")),
-                            tmp = parseFloat(vis.states[oid + '.val']) + step;
+                    var step = parseFloat($this.attr('data-vis-step'));
+                    var tmp  = parseFloat(vis.states[oid + '.val']) + step;
                     if (step < 0) {
                         if (tmp >= minmax) {
                             vis.setValue($this.attr('data-oid'), tmp);

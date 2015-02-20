@@ -3200,6 +3200,9 @@ vis = $.extend(true, vis, {
     inspectWidgets: function (addWidget, delWidget, onlyUpdate) {
         if (this.isStealCss) return false;
 
+        // Deselect all elements
+        $(':focus').blur();
+
         if (typeof addWidget == 'boolean') {
             onlyUpdate = addWidget;
             addWidget = undefined;
@@ -3217,7 +3220,7 @@ vis = $.extend(true, vis, {
             if (pos != -1) this.activeWidgets.splice(pos, 1);
         }
         var that = this;
-        var wid = this.activeWidgets[0] || 'none';
+        var wid  = this.activeWidgets[0] || 'none';
         // find view
         var view = this.getViewOfWidget(wid);
 
@@ -4252,6 +4255,10 @@ vis = $.extend(true, vis, {
     selectAll: function () {
         // Select all widgets on view
         var $focused = $(':focus');
+
+        // Workaround
+
+
         if (!$focused.length && this.activeView) {
             var newWidgets = [];
             // Go through all widgets
@@ -4394,7 +4401,7 @@ vis = $.extend(true, vis, {
     onButtonArrows: function (key, isSize, factor) {
         factor = factor || 1;
         var $focused = $(':focus');
-        if (!$focused.length && this.activeWidgets.lenght) {
+        if (!$focused.length && this.activeWidgets.length) {
             var what = null;
             var shift = 0;
             if (isSize) {
@@ -4459,7 +4466,7 @@ vis = $.extend(true, vis, {
             var that = this;
             this.delayedSettings = setTimeout(function () {
                 // Save new settings
-                var activeWidgets = that.activeWidgets;
+                var activeWidgets = JSON.parse(JSON.stringify(that.activeWidgets));
                 that.activeWidgets = [];
                 for (var i = 0, len = activeWidgets.length; i < len; i++) {
                     var mWidget = document.getElementById(activeWidgets[i]);
@@ -4473,6 +4480,7 @@ vis = $.extend(true, vis, {
                     if (mWidget._customHandlers && mWidget._customHandlers.isRerender) that.reRenderWidgetEdit(activeWidgets[i]);
                 }
                 that.delayedSettings = null;
+                that.activeWidgets = activeWidgets;
                 that.inspectWidgets(true);
             }, 1000);
 
@@ -4511,7 +4519,7 @@ vis = $.extend(true, vis, {
             that.instance = $(this).val();
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
-    },
+    }
 });
 
 $(document).keydown(function (e) {

@@ -1,6 +1,4 @@
 <!--
-    TODO - Warpcore Widget - Bind speed to datapoint
-    TODO - Button Widgets: adjustable width
     TODO - Button Widgets: Variants with binding (sub)title to datapoint
     TODO - Slider Widgets
     TODO - Bar Widgets
@@ -19,7 +17,37 @@
             "edge_direction": {"en": "Edge position",     "de": "Borderposition",         "ru": "Позиция"},
             "color_default":  {"en": "Dafault color",     "de": "Farbe",                  "ru": "Цвет по умолчанию"},
             "color_active":   {"en": "Active link color", "de": "Farbe von aktivem Link", "ru": "Цвет активной ссылки"},
-            "line_height":    {"en": "Line height",       "de": "Linienhöche",            "ru": "Ширина линии"}
+            "line_height":    {"en": "Line height",       "de": "Linienhöche",            "ru": "Ширина линии"},
+            "tl":             {"en": "Top left",          "de": "Oben links",             "ru": "Сверху слева"},
+            "tr":             {"en": "Top right",         "de": "Oben rechts",            "ru": "Сверху справа"},
+            "br":             {"en": "Bottom right",      "de": "Unten rechst",           "ru": "Снизу справа"},
+            "bl":             {"en": "Bottom left",       "de": "Unten links",            "ru": "Снизу слева"},
+            "frame_type":     {"en": "Type",              "de": "Typ",                    "ru": "Тип"},
+            "frame_direction": {"en": "Direction",        "de": "Richtung",               "ru": "Расположение"},
+            "speed":          {"en": "Speed",             "de": "Geschwindigkeit",        "ru": "Скорость"},
+            "rows":           {"en": "Rows",              "de": "Zeilen",                 "ru": "Строк"},
+            "cols":           {"en": "Columns",           "de": "Spalten",                "ru": "Колонок"},
+            "r":              {"en": "Right",             "de": "Rechst",                 "ru": "Справа"},
+            "l":              {"en": "Left",              "de": "Links",                  "ru": "Cлева"},
+            "rounded":        {"en": "Rounded",           "de": "Abgerundet",             "ru": "Закругления"},
+            "subtitle":       {"en": "Subtitle",          "de": "Untertitel",             "ru": "Подзаголо́вок"},
+            "subtitle_show":  {"en": "Show",              "de": "Zeige",                  "ru": "Показать"},
+            "subtitle_color": {"en": "subtitle_color",    "de": "Farbe",                  "ru": "Цвет"},
+            "minmax":         {"en": "Mininum or maximum","de": "Mininum oder Maximum",   "ru": "Минимум или максимум"},
+            "repeat_delay":   {"en": "Repeat delay",      "de": "Widerholungs- Verzögerung", "ru": "Задержка перед повтором"},
+            "repeat_interval": {"en": "Repeat interval",  "de": "Widerholungs- Interval", "ru": "Интервал повтора"},
+            "none":           {"en": "none",              "de": "keins",                  "ru": "нигде"},
+            "both":           {"en": "both",              "de": "beide",                  "ru": "оба"},
+            "step_tooltip":     {
+                "en": "Can be positive or negative",
+                "de": "Kann positiv oder negativ sein",
+                "ru": "Может быть положительным или отрицательным"
+            },
+            "minmax_tooltip":     {
+                "en": "If 'step' is positiv, the value is interpreted as maximum\x0Aif 'step' is negativ, then as minimum",
+                "de": "Falls 'Schritt' positiv ist, dann hier wird Maximum eingegeben\x0AFalls 'Schritt' negativ ist, dann Mimimum",
+                "ru": "Если 'шаг' положительный, то значение интепретируется как максимум\x0Aесли 'шаг' отрицательный, то как минимум"
+            }
         });
     }
     
@@ -61,15 +89,18 @@
 
             }
         },
-        button: function (el, options, id, val, color_active) {
+        _button: function (el, options, id, val, color_active, title) {
             var $this = $(el);
+            $this.width($this.parent().width() - 52);
             $this.lcarsButton(options);
             var newVal = (vis.states[id + '.val'] !== undefined) ? vis.states[id + '.val'] : 0;
-            if (newVal === "true" || newVal === true) { newVal = 1; }
+            if (newVal === "true" || newVal === true) newVal = 1;
+
             if (val == newVal) {
                 $this.css("background-color", vis.binds.lcars.color(color_active));
                 $this.find(".B_titleL").css("color", vis.binds.lcars.color(color_active));
             }
+
             vis.states.bind(id + '.val', function (e, newVal, oldVal) {
                 if (newVal === "true" || newVal === true) newVal = 1;
                 if (val == newVal) {
@@ -81,12 +112,30 @@
                 }
             });
 
+            if (vis.editMode) {
+                $this.parent().resize(function () {
+                    var t = $this.data('timer');
+                    if (t) clearTimeout(t);
+                    $this.data('timer', setTimeout(function () {
+                        clearTimeout($this.data('timer'));
+                        $this.data('timer', null);
+                        $this.html(title);
+                        vis.binds.lcars._button(el, options, id, val, color_active, title);
+                    }, 400));
+                });
+            }
+        },
+        button: function (el, options, id, val, color_active, title) {
+            setTimeout(function () {
+                vis.binds.lcars._button(el, options, id, val, color_active, title);
+            }, 100);
         },
         warpcoreInterval: {},
         warpcore: function (el, speed, wid) {
             var d = 114;
             var i = 0;
             var $this = $(el).prev();
+
             if (vis.binds.lcars.warpcoreInterval[wid]) {
                 clearInterval(vis.binds.lcars.warpcoreInterval[wid]);
             }
@@ -136,17 +185,34 @@
 
         },
         dnaInterval: {},
-        dna: function (el, id, speed, wid) {
+        dna: function (el, oid, speed, wid, min, max) {
             var i = 0;
             var $this = $(el).prev();
+            console.log('dna');
             if (vis.binds.lcars.dnaInterval[wid]) {
                 clearInterval(vis.binds.lcars.dnaInterval[wid]);
             }
+            var val = 1;
+            if (oid) {
+                val = vis.states.attr(oid + '.val') || 0;
+                val = parseFloat(val);
+                if (min < max) {
+                    if (val < min) val = min;
+                    if (val > max) val = max;
+                    val = (val - min) / (max - min);
+                } else {
+                    if (val > min) val = min;
+                    if (val < max) val = max;
+                    val = (val - min) / (max - min);
+                }
+                if (val < 0) val = -val;
+            }
+
             vis.binds.lcars.dnaInterval[wid] = _setInterval(function (_this) {
                 i += 1;
-                if (i > 283) { i = 0; }
+                if (i > 283) i = 0;
                 _this.css("background-position", i);
-            }, speed, $this);
+            }, val * speed, $this);
 
         },
         randomNumber: function () {
@@ -188,8 +254,15 @@
     };
 </script>
 
-<!--<script type="text/ejs" id="tplLcarsSidePanel" class="vis-tpl" data-vis-set="lcars" data-vis-name="navigation - Side-Panel" data-vis-attrs="html">
-    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 88px; height: 550px;" id="<%= this.data.attr('wid') %>">
+<!--script id="tplLcarsSidePanel"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="lcars"
+        data-vis-type="navigation"
+        data-vis-name="Side-Panel"
+        data-vis-attrs="html"
+        >
+    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 88px; height: 550px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <ul id="side-panel" class="side-panel">
                 <li style="height: 74px; background-color: rgb(153, 153, 255);"><div style="line-height: 128px;"><span style="padding-right:2px"><a href="index.html">Test1</a></span></div></li>
@@ -200,8 +273,7 @@
             </ul>
         </div>
     </div>
-</script>-->
-
+</script-->
 
 <script id="tplLcarsHtmlNav"
         type="text/ejs"
@@ -255,14 +327,15 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-prev='<div id="prev_tplLcarsLineTop" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-lcars ui-draggable-handle " style="width: 69px; height: 16px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="line-top" style="height: 3px; background-color: rgb(255, 153, 0);"></div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\lcars\img\Prev_Top.png"></img>'
         data-vis-type="static"
         data-vis-name="Line-Top"
         data-vis-attrs="lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;line_height[3]/slider,1,40,1"
         >
     <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 400px; height: 25px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
-            <div class="line-top" style="background-color:<%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>; height: <%= this.data.attr('line_height') %>px;"></div>
+            <!--div class="line-top" style="background-color:<%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>; height: <%= this.data.attr('line_height') %>px;"></div-->
+            <div class="line-top" style="background-color:<%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>;margin-bottom:-3px;"></div>
         </div>
     </div>
 </script>
@@ -272,12 +345,13 @@
         class="vis-tpl"
         data-vis-set="lcars"
         data-vis-name="Line-Bottom"
-        data-vis-prev='<div id="prev_tplLcarsLineBottom" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-lcars ui-draggable-handle " style="width: 69px; height: 16px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="line-bottom" style="position: absolute; width: 100%; bottom: 0px; left: 0px; height: 3px; background-color: rgb(255, 153, 0);"></div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\lcars\img\Prev_Bottom.png"></img>'
         data-vis-attrs="lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;line_height[3]/slider,1,40,1"
         >
     <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 400px; height: 25px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
-            <div class="line-bottom" style="position: absolute; width: 100%; bottom: 0px; left: 0px; background-color: <%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>; height: <%= this.data.attr('line_height') %>px;"></div>
+            <!--div class="line-bottom" style="position: absolute; width: 100%; bottom: 0px; left: 0px; background-color: <%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>; height: <%= this.data.attr('line_height') %>px;"></div-->
+            <div class="line-bottom" style="background-color:<%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>;margin-bottom:-3px;"></div>
         </div>
     </div>
 </script>
@@ -287,10 +361,11 @@
         class="vis-tpl"
         data-vis-set="lcars"
         data-vis-type="static"
+        data-vis-prev='<div id="prev_tplLcarsEdge" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-lcars ui-selectee ui-draggable-handle " style="width: 93px; height: 33px; padding: 0px; margin: 0px; position: absolute;" > <div class="vis-widget-prev-body" style="padding: 0px; margin: 0px; background-color: rgb(255, 153, 0);"> <img width="100%" height="100%" style="padding:0;margin:0;border:none;" src="widgets/lcars/img/edge2-tl.png"> </div> </div></div>'
         data-vis-name="Edge"
         data-vis-attrs="edge_type[1]/nselect,1,2;edge_direction[tl]/select,tl,tr,br,bl;lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
         >
-    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 195px; height: 83px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 195px; height: 83px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="padding:0;margin:0;background-color: <%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>">
             <img width="100%" height="100%" style="padding:0;margin:0;border:none;" src="widgets/lcars/img/edge<%= this.data.attr('edge_type') %>-<%= this.data.attr('edge_direction') %>.png">
         </div>
@@ -301,25 +376,28 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="static - Frame"
-        data-vis-attrs="frame_type[1]/1,2;frame_direction[r]/r,l"
+        data-vis-type="static"
+        data-vis-name="Frame"
+        data-vis-prev='<div id="prev_tplLcarsFrame" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-lcars ui-draggable-handle " style="width: 33px; height: 95px; padding: 0px; margin: 0px; position: absolute;" > <div class="vis-widget-prev-body" style="padding:0;margin:0"> <img width="100%" height="100%" style="padding:0;margin:0;border:none;" src="widgets/lcars/img/frame1-r.png"> </div> </div></div>'
+        data-vis-attrs="frame_type[1]/nselect,1,2;frame_direction[r]/select,r,l"
         >
-    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 32px; height: 215px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 32px; height: 215px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="padding:0;margin:0">
             <img width="100%" height="100%" style="padding:0;margin:0;border:none;" <%= (this.data.attr('frame_type') && this.data.attr('frame_direction') ? 'src="widgets/lcars/img/frame' + this.data.attr('frame_type') +'-' + this.data.attr('frame_direction') + '.png"' : '') %>>
         </div>
     </div>
 </script>
 
-
 <script id="tplLcarsUfpLogo"
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="static - UFP Logo"
+        data-vis-type="static"
+        data-vis-name="UFP Logo"
+        data-vis-prev='<div id="prev_tplLcarsUfpLogo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="width: 93px; height: 70px; padding: 0px; margin: 0px; position: absolute;" > <div class="vis-widget-prev-body"> <img width="100%" src="widgets/lcars/img/ufp.png"> </div> </div></div>'
         data-vis-attrs=""
         >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 531px; height: 409px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 531px; height: 409px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <img width="100%" src="widgets/lcars/img/ufp.png"/>
         </div>
@@ -330,10 +408,12 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="static - Starfleet Logo"
+        data-vis-type="static"
+        data-vis-prev='<div id="prev_tplLcarsSfLogo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="width: 73px; height: 77px; padding: 0px; margin: 0px; position: absolute;" > <div class="vis-widget-prev-body" style="background-color: rgb(255, 153, 0);"> <img width="100%" src="widgets/lcars/img/starfleet.png"> </div> </div></div>'
+        data-vis-name="Starfleet Logo"
         data-vis-attrs="lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
         >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 161px; height: 171px ;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 161px; height: 171px ;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="background-color: <%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>">
             <img width="100%" src="widgets/lcars/img/starfleet.png"/>
         </div>
@@ -344,13 +424,15 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="static - DNA"
-        data-vis-attrs="speed[50]"
+        data-vis-type="static"
+        data-vis-prev='<div id="prev_tplLcarsDna" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-lcars ui-draggable-handle " style="width: 87px; height: 43px; padding: 0px; margin: 0px; position: absolute;" > <div class="vis-widget-prev-body" style="padding:0;margin:0"> <div style="width: 100%; height: 100%; background-image: url(widgets/lcars/img/dna.png); background-position: 208px 50%;"></div>  </div> </div></div>'
+        data-vis-name="DNA"
+        data-vis-attrs="oid;speed[50];min[0];max[100]"
         >
-    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 560px; height: 48px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 560px; height: 48px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="padding:0;margin:0">
             <div style="width:100%;height:100%;background-image: url('widgets/lcars/img/dna.png')"></div>
-            <div <%= (el) -> vis.binds.lcars.dna(el, undefined, data.attr('speed'), data.attr('wid')) %>></div>
+            <div <%= (el) -> vis.binds.lcars.dna(el, data.attr('oid'), data.attr('speed'), data.attr('wid'), data.attr('min'), data.attr('max')) %>></div>
         </div>
     </div>
 </script>
@@ -359,10 +441,12 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="static - Random Numbers"
+        data-vis-type="static"
+        data-vis-name="Random Numbers"
+        data-vis-prev='<div id="prev_tplLcarsRandom" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="font-family: lcars_font; letter-spacing: 1px; font-size: 30px; width: 87px; height: 78px; padding: 0px; margin: 0px" > <div class="vis-widget-prev-body" style="padding: 0px; margin: 0px; color: rgb(255, 153, 0);"> <table style="width:100%"> <tbody><tr><td>592</td><td>248</td><td></td></tr><tr><td>653</td><td>211</td><td></td></tr></tbody></table> </div>  </div></div>'
         data-vis-attrs="rows[6];cols[4];speed[1000];lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
         >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="font-family: lcars_font; letter-spacing: 1px; font-size: 30px; top:0px; left: 0px; width: 260px; height: 32px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="font-family: lcars_font; letter-spacing: 1px; font-size: 30px; width: 260px; height: 32px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="padding:0;margin:0;color: <%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>">
             <table style="width:100%">
 
@@ -376,10 +460,12 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="static - Warpcore"
+        data-vis-type="static"
+        data-vis-name="Warpcore"
+        data-vis-prev='<img src="widgets\lcars\img\Prev_Warpcore.png"></img>'
         data-vis-attrs="speed[500]/slider,20,800,1"
         >
-    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 114px; height: 317px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 114px; height: 317px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="padding:0;margin:0">
             <div style="width:100%;height:100%;background-image: url('widgets/lcars/img/warpcore.png')"></div>
             <div <%= (el) -> vis.binds.lcars.warpcore(el, data.attr('speed'), data.attr('wid')) %>></div>
@@ -391,12 +477,14 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="val - Warpcore"
+        data-vis-type="val"
+        data-vis-name="Warpcore"
+        data-vis-prev='<img src="widgets\lcars\img\Prev_Warpcore.png"></img>'
         data-vis-attrs="oid;min[0];max[1]"
         >
-    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 114px; height: 317px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 114px; height: 317px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="padding:0;margin:0">
-            <div style="width:100%;height:100%;background-image: url('widgets/lcars/img/warpcore.png')"></div>
+            <div style="width:100%; height:100%; background-repeat: no-repeat; background-image: url('widgets/lcars/img/warpcore.png')"></div>
             <div <%= (el) -> vis.binds.lcars.warpcoreVal(el, data.attr('oid'), data.attr('min'), data.attr('max'), data.attr('wid')) %>></div>
         </div>
     </div>
@@ -406,12 +494,15 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="ctrl - Button State"
-        data-vis-attrs="oid;value;title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;color_default[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
+        data-vis-type="ctrl"
+        data-vis-name="Button State"
+        data-vis-prev='<div id="prev_tplLcarsButton" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev vis-lcars ui-draggable-handle " style="width: 132px; height: 46px; position: absolute;" data-o data-hm-val=""> <div class="vis-widget-prev-body"> <span class="button RR L" style="width: 70px; background-color: rgb(255, 153, 0);"><span style="color:#cc99cc">state</span></span> </div> </div></div>'
+        data-vis-attrs="oid;value;title;rounded[both]/select,both,left,right,none;color_default[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;"
+        data-vis-attrs0="group.title;subtitle;subtitle_show/select,none,left,right;subtitle_color[purple]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
         >
-    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 150px; height: 45px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el) %> >
+    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 150px; height: 45px" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el) %> >
         <div class="vis-widget-body">
-           <span <%= (el) -> vis.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')}, data.attr('oid'), data.attr('value'), data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+           <span <%= (el) -> vis.binds.lcars.button(el, {rounded: data.attr('rounded'), blank: data.attr('blank'), extended: true, color: data.attr('color_default'), subTitle: {direction: data.attr('subtitle_show'), text: data.attr('subtitle'), color: data.attr('subtitle_color')}, length: data.attr('width')}, data.attr('oid'), data.attr('value'), data.attr('color_active'), this.data.attr('title')) %>><%= this.data.attr('title') %></span>
         </div>
     </div>
 </script>
@@ -420,12 +511,15 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="ctrl - Button Increment"
-        data-vis-attrs="oid;step[0.01];minmax[1];repeat_delay[800];repeat_interval[800];title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;width[230];color_default[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
+        data-vis-type="ctrl"
+        data-vis-name="Button Increment"
+        data-vis-prev='<div id="prev_tplLcarsButton" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev vis-lcars ui-draggable-handle " style="width: 132px; height: 46px; position: absolute;" data-o data-hm-val=""> <div class="vis-widget-prev-body"> <span class="button RR L" style="width: 70px; background-color: rgb(255, 153, 0);"><span style="color:#cc99cc">increment</span></span> </div> </div></div>'
+        data-vis-attrs="oid;step[0.01];minmax[1];repeat_delay[800];repeat_interval[800];title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;color_default[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
+        data-vis-attrs0=""
         >
-    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 150px; height: 45px;" id="<%= this.data.attr('wid') %>" data-vis-step="<%= this.data.attr('step') %>" data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.increment(el, data.attr('minmax'), data.attr('repeat_delay'), data.attr('repeat_interval')) %>>
+    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 150px; height: 45px" id="<%= this.data.attr('wid') %>" data-vis-step="<%= this.data.attr('step') %>" data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.increment(el, data.attr('minmax'), data.attr('repeat_delay'), data.attr('repeat_interval')) %>>
         <div class="vis-widget-body">
-            <span <%= (el) -> vis.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')},data.attr('oid'), data.attr('minmax'), data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+            <span <%= (el) -> vis.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')},data.attr('oid'), data.attr('minmax'), data.attr('color_active'), this.data.attr('title')) %>><%= this.data.attr('title') %></span>
         </div>
     </div>
 </script>
@@ -434,26 +528,35 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="ctrl - Button Toggle"
-        data-vis-attrs="oid;title;subtitle;subtitle_show/none,left,right;rounded/both,left,right,none;width[230];color_default[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
+        data-vis-type="ctrl"
+        data-vis-name="Button Toggle"
+        data-vis-prev='<div id="prev_tplLcarsButton" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev vis-lcars ui-draggable-handle " style="width: 132px; height: 46px; position: absolute;" data-o data-hm-val=""> <div class="vis-widget-prev-body"> <span class="button RR L" style="width: 70px; background-color: rgb(255, 153, 0);"><span style="color:#cc99cc">toggle</span></span> </div> </div></div>'
+        data-vis-attrs="oid;title;rounded/both,left,right,none;color_default[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;"
+        data-vis-attrs0="group.title;subtitle;subtitle_show/select,none,left,right;subtitle_color[purple]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
         >
-    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 150px; height: 45px;" id="<%= this.data.attr('wid') %>" data-vis-step="<%= this.data.attr('step') %>" data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
+    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 150px; height: 45px" id="<%= this.data.attr('wid') %>" data-vis-step="<%= this.data.attr('step') %>" data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
         <div class="vis-widget-body">
-            <span <%= (el) -> vis.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')}, data.attr('oid'), 1, data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+            <span <%= (el) -> vis.binds.lcars.button(el, {rounded: data.attr('rounded'), blank: data.attr('blank'), extended: true, color: data.attr('color_default'), subTitle: {direction: data.attr('subtitle_show'), text: data.attr('subtitle'), color:data.attr('subtitle_color')},length:data.attr('width')}, data.attr('oid'), 1, data.attr('color_active'), this.data.attr('title')) %>><%= this.data.attr('title') %></span>
         </div>
     </div>
 </script>
 
-<!--script id="tplLcarsButtonVal"
+<script id="tplLcarsButtonVal"
     type="text/ejs"
     class="vis-tpl"
     data-vis-set="lcars"
-    data-vis-name="ctrl/val - Button State"
-    data-vis-attrs="oid;value;title_id;title_prepend;title_append_singular;title_append_plural;title_digits;subtitle_id;sub_title_prepend;sub_title_append_singular;subtitle_append_plural;subtitle_digits;subtitle_show/none,left,right;rounded/both,left,right,none;color_default[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
+    data-vis-type="ctrl,val"
+    data-vis-name="Button State"
+    data-vis-attrs="oid;value;"
+    data-vis-attrs0="color_default[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;"
+    data-vis-attrs1="color_active[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;"
+    data-vis-attrs2="rounded/select,both,left,right,none;"
+    data-vis-attrs3="group.title;title_oid/id;title_prepend;title_append_singular;title_append_plural;title_digits;"
+    data-vis-attrs4="group.subtitle;subtitle_oid/id;sub_title_prepend;sub_title_append_singular;subtitle_append_plural;subtitle_digits[0];subtitle_show/select,none,left,right;"
     >
     <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 150px; height: 45px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el) %> >
         <div class="vis-widget-body">
-            <span <%= (el) -> vis.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')}, data.attr('oid'), data.attr('value'), data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+            <span <%= (el) -> vis.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text: data.attr('subtitle')}}, data.attr('oid'), data.attr('value'), data.attr('color_active'), this.data.attr('title')) %>><%= this.data.attr('title') %></span>
         </div>
     </div>
 </script>
@@ -462,12 +565,18 @@
     id="tplLcarsButtonIncVal"
     class="vis-tpl"
     data-vis-set="lcars"
-    data-vis-name="ctrl/val - Button Increment"
-    data-vis-attrs="oid;step[0.01];minmax[1];repeat_delay[800];repeat_interval[800];title_id;title_prepend;title_append_singular;title_append_plural;title_digits;subtitle_id;sub_title_prepend;sub_title_append_singular;subtitle_append_plural;subtitle_digits;subtitle_show/none,left,right;rounded/both,left,right,none;width[230];color_default[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
+    data-vis-type="ctrl,val"
+    data-vis-name="Button Increment"
+    data-vis-attrs="oid;step[0.01];minmax[1];repeat_delay[800];repeat_interval[800];"
+    data-vis-attrs0="color_default[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;"
+    data-vis-attrs1="color_active[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;"
+    data-vis-attrs2="rounded/select,both,left,right,none;"
+    data-vis-attrs3="group.title;title_oid/id;title_prepend;title_append_singular;title_append_plural;title_digits;"
+    data-vis-attrs4="group.subtitle;subtitle_oid/id;sub_title_prepend;sub_title_append_singular;subtitle_append_plural;subtitle_digits[0];subtitle_show/select,none,left,right;"
     >
     <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 150px; height: 45px;" id="<%= this.data.attr('wid') %>" data-vis-step="<%= this.data.attr('step') %>" data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.increment(el, data.attr('minmax'), data.attr('repeat_delay'), data.attr('repeat_interval')) %>>
         <div class="vis-widget-body">
-            <span <%= (el) -> vis.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')},data.attr('oid'), data.attr('minmax'), data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+            <span <%= (el) -> vis.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')},data.attr('oid'), data.attr('minmax'), data.attr('color_active'), this.data.attr('title')) %>><%= this.data.attr('title') %></span>
         </div>
     </div>
 </script>
@@ -477,12 +586,18 @@
     id="tplLcarsButtonToggleVal"
     class="vis-tpl"
     data-vis-set="lcars"
-    data-vis-name="ctrl/val - Button Toggle"
-    data-vis-attrs="oid;title_id;title_prepend;title_append_singular;title_append_plural;title_digits;subtitle_id;sub_title_prepend;sub_title_append_singular;subtitle_append_plural;subtitle_digits;subtitle_show/none,left,right;rounded/both,left,right,none;width[230];color_default[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
+    data-vis-type="ctrl,val"
+    data-vis-name="Button Toggle"
+    data-vis-attrs="oid;"
+    data-vis-attrs0="color_default[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;"
+    data-vis-attrs1="color_active[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;"
+    data-vis-attrs2="rounded/select,both,left,right,none;"
+    data-vis-attrs3="group.title;title_oid/id;title_prepend;title_append_singular;title_append_plural;title_digits;"
+    data-vis-attrs4="group.subtitle;subtitle_oid/id;sub_title_prepend;sub_title_append_singular;subtitle_append_plural;subtitle_digits[0];subtitle_show/select,none,left,right;"
     >
     <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 150px; height: 45px;;" id="<%= this.data.attr('wid') %>" data-vis-step="<%= this.data.attr('step') %>" data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
         <div class="vis-widget-body">
-            <span <%= (el) -> vis.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),length:data.attr('width'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')}, data.attr('oid'), 1, data.attr('color_active')) %>><%= this.data.attr('title') %></span>
+            <span <%= (el) -> vis.binds.lcars.button(el, {rounded:data.attr('rounded'),blank:data.attr('blank'),extended:true,color:data.attr('color_default'),subTitle:{direction:data.attr('subtitle_show'),text:data.attr('subtitle')},length:data.attr('width')}, data.attr('oid'), 1, data.attr('color_active'), this.data.attr('title')) %>><%= this.data.attr('title') %></span>
         </div>
     </div>
-</script-->
+</script>

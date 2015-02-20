@@ -317,7 +317,7 @@ if (typeof jQuery != 'undefined') {  // here we check if jquery is set (aka load
 		_button_log('log','LCARS-> Button has been morphed');
 		
 		if( options.subTitle.direction != '' || options.subTitle.direction != undefined ){
-			_this.prepend('<span class="'+options.subTitle.direction+'" style="color:'+lcars_colors(options.color)+'">'+options.subTitle.text+'</span>');
+			_this.prepend('<span class="'+options.subTitle.direction+'" style="color:'+lcars_colors(options.subTitle.color)+'">'+options.subTitle.text+'</span>');
 			_button_log('log', 'LCARS-> Button Sub Title Added');
 		}
 		
