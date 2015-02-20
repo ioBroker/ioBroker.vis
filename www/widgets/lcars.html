@@ -9,6 +9,20 @@
 <link rel="stylesheet" type="text/css" href="widgets/lcars/css/lcars.css" />
 <script type="text/javascript" src="widgets/lcars/js/jquery.lcars.js"></script>
 <script type="text/javascript">
+
+    "use strict";
+    // Add words for bars
+    if (vis.editMode) {
+        $.extend(systemDictionary, {
+            "lcars_color":    {"en": "Color",             "de": "Farbe",                  "ru": "Цвет"},
+            "edge_type":      {"en": "Edge type",         "de": "Bordertyp",              "ru": "Тип кромки"},
+            "edge_direction": {"en": "Edge position",     "de": "Borderposition",         "ru": "Позиция"},
+            "color_default":  {"en": "Dafault color",     "de": "Farbe",                  "ru": "Цвет по умолчанию"},
+            "color_active":   {"en": "Active link color", "de": "Farbe von aktivem Link", "ru": "Цвет активной ссылки"},
+            "line_height":    {"en": "Line height",       "de": "Linienhöche",            "ru": "Ширина линии"}
+        });
+    }
+    
     vis.binds.lcars = {
         color: function (name) {
             switch (name) {
@@ -72,7 +86,7 @@
         warpcore: function (el, speed, wid) {
             var d = 114;
             var i = 0;
-            $this = $(el).prev();
+            var $this = $(el).prev();
             if (vis.binds.lcars.warpcoreInterval[wid]) {
                 clearInterval(vis.binds.lcars.warpcoreInterval[wid]);
             }
@@ -95,7 +109,7 @@
             if (isNaN(speed))     speed = minSpeed;
             if (speed < maxSpeed) speed = maxSpeed;
 
-            $this = $(el).prev();
+            var $this = $(el).prev();
             if (vis.binds.lcars.warpcoreInterval[wid]) {
                 clearInterval(vis.binds.lcars.warpcoreInterval[wid]);
             }
@@ -124,7 +138,7 @@
         dnaInterval: {},
         dna: function (el, id, speed, wid) {
             var i = 0;
-            $this = $(el).prev();
+            var $this = $(el).prev();
             if (vis.binds.lcars.dnaInterval[wid]) {
                 clearInterval(vis.binds.lcars.dnaInterval[wid]);
             }
@@ -193,10 +207,12 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="navigation - HTML"
+        data-vis-type="navigation"
+        data-vis-name="HTML"
+        data-vis-prev='<div id="prev_tplLcarsHtmlNav" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 116px; height: 35px; font-family: lcars_font; font-size: 30px; text-align: right; position: absolute;"><div class="vis-widget-prev-body" style="background-color: rgb(255, 153, 0);"> <span style="padding-right:4px">Link </span></div></div></div>'
         data-vis-attrs="html;nav_view;color_default[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;color_active[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
         >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 88px; height: 74px; font-family: lcars_font; font-size:30px; text-align: right; " id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 88px; height: 74px; font-family: lcars_font; font-size: 30px; text-align: right; " id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="background-color: <%= vis.binds.lcars.color(data.attr('color_default')) %>">
             <span style="padding-right:4px"><%== this.data.attr('html') %></a>
         </div>
@@ -208,10 +224,12 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="static - Text/HTML"
+        data-vis-type="static"
+        data-vis-prev='<div id="prev_tplLcarsHTML" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="font-family: lcars_font; letter-spacing: 1px; font-size: 30px; width: 93px; height: 33px; padding: 0px; margin: 0px; position: absolute;" > <div class="vis-widget-prev-body" style="padding: 0px; margin: 0px; color: rgb(255, 153, 0);"> HTML Text </div> </div></div>'
+        data-vis-name="Text/HTML"
         data-vis-attrs="html;lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
         >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="font-family: lcars_font; letter-spacing: 1px; font-size: 30px; top:0px; left: 0px; width: 260px; height: 32px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="font-family: lcars_font; letter-spacing: 1px; font-size: 30px; width: 260px; height: 32px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="padding:0;margin:0;color: <%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>">
             <%== this.data.attr('html') %>
         </div>
@@ -222,10 +240,12 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="static - Line"
-        data-vis-attrs="edge_type[1]/1,2;edge_direction[tl]/tl,tr,br,bl;lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
+        data-vis-name="Line"
+        data-vis-type="static"
+        data-vis-prev='<div id="prev_tplLcarsLine" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle" style="width: 69px; height: 13px; padding: 0px; margin: 0px; position: absolute;" > <div class="vis-widget-prev-body" style="padding: 0px; margin: 0px; background-color: rgb(255, 153, 0);"> </div> </div></div>'
+        data-vis-attrs="lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
         >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 195px; height: 25px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 195px; height: 25px; padding: 0; margin: 0" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="padding:0;margin:0;background-color: <%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>">
         </div>
     </div>
@@ -235,12 +255,14 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="static - Line-Top"
-        data-vis-attrs="lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
+        data-vis-prev='<div id="prev_tplLcarsLineTop" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-lcars ui-draggable-handle " style="width: 69px; height: 16px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="line-top" style="height: 3px; background-color: rgb(255, 153, 0);"></div> </div> </div></div>'
+        data-vis-type="static"
+        data-vis-name="Line-Top"
+        data-vis-attrs="lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;line_height[3]/slider,1,40,1"
         >
-    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 400px; height: 130px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 400px; height: 25px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
-            <div class="line-top" style="background-color:<%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>;margin-bottom:-3px;"></div>
+            <div class="line-top" style="background-color:<%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>; height: <%= this.data.attr('line_height') %>px;"></div>
         </div>
     </div>
 </script>
@@ -249,12 +271,13 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="static - Line-Bottom"
-        data-vis-attrs="lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
+        data-vis-name="Line-Bottom"
+        data-vis-prev='<div id="prev_tplLcarsLineBottom" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-lcars ui-draggable-handle " style="width: 69px; height: 16px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="line-bottom" style="position: absolute; width: 100%; bottom: 0px; left: 0px; height: 3px; background-color: rgb(255, 153, 0);"></div> </div> </div></div>'
+        data-vis-attrs="lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white;line_height[3]/slider,1,40,1"
         >
-    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="bottom:0px; left: 0px; width: 400px; height: 130px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="width: 400px; height: 25px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
-            <div class="line-bottom" style="background-color:<%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>;margin-bottom:-3px;"></div>
+            <div class="line-bottom" style="position: absolute; width: 100%; bottom: 0px; left: 0px; background-color: <%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>; height: <%= this.data.attr('line_height') %>px;"></div>
         </div>
     </div>
 </script>
@@ -263,8 +286,9 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="lcars"
-        data-vis-name="static - Edge"
-        data-vis-attrs="edge_type[1]/1,2;edge_direction[tl]/tl,tr,br,bl;lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
+        data-vis-type="static"
+        data-vis-name="Edge"
+        data-vis-attrs="edge_type[1]/nselect,1,2;edge_direction[tl]/select,tl,tr,br,bl;lcars_color[orange]/nselect,orange,purple,blue,lightBlue,red,lightRed,tan,lightTan,pink,white"
         >
     <div class="vis-widget vis-lcars <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 195px; height: 83px;padding:0;margin:0" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="padding:0;margin:0;background-color: <%= vis.binds.lcars.color(this.data.attr('lcars_color')) %>">

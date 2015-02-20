@@ -2294,7 +2294,7 @@ vis = $.extend(true, vis, {
             views.push(v);
         }
 
-        return this.editSelect(widAttr, views);
+        return this.editSelect(widAttr, views, true);
     },
     editEffect: function (widAttr) {
         var that = this;
