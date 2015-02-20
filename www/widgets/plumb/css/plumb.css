@@ -224,6 +224,34 @@
     height: 20px;
     width: 20px;
 }
+.tpice-vt{
+    background: #00F;
+    height: 20px;  width: 20px;
+    position: absolute;
+    left: 33%;
+
+    height: 20px;
+    width: 20px;
+}
+.tpice-vm{
+    background: #00F;
+    position: absolute;
+    top: 33%;
+    left: 33.33%;
+    overflow: hidden;
+
+    height: 20px;
+    width: 20px;
+}
+.tpice-vb{
+    background: #00F;
+    position: absolute;
+    top: 66.66%;
+    left: 33.33%;
+
+    height: 20px;
+    width: 20px;
+}
 .tpice-t{
     background: #00F;;
     position: absolute;
@@ -234,40 +262,25 @@
     height: 20px;
     width: 20px;
 }
+.tpice-b{
+    background: #00F;;
+    position: absolute;
+    display: inline-block;
+    bottom: 0;
+    left: calc(50% - 16.5%);
+    height: 20px;
+    width: 20px;
+    box-shadow: #000 10px 0px 10px -10px inset, #000 -10px 0px 10px
+}
 
 
 .plumb_sprinkler_i{
     height: 100%;
     width: 100%;
     position: absolute;
-    /* display: flex; */
-    /* align-content: center; */
-    /* justify-content: center; */
-    /* left: 50%; */
-    /* top: 50%; */
-    /* background-color: black; */
-    -moz-transform: rotate(30deg);
-    -ms-transform: rotate(30deg);
-    -o-transform: rotate(30deg);
-    opacity: 0.7;
-    /* border-radius: 46px; */
-    /* -webkit-transform: rotate(30deg); */
-
-
     border-radius: 100%;
-    /* text-align: center; */
 }
 
-/*@-webkit-keyframes NAME-YOUR-ANIMATION {*/
-    /*0%   { -webkit-transform: rotate(0deg); }*/
-    /*100% { -webkit-transform: rotate(360deg); }*/
-
-/*}*/
-/*@keyframes NAME-YOUR-ANIMATION {*/
-    /*0%   { transform: rotate(0deg); }*/
-    /*80%   { transform: rotate(180deg); }*/
-    /*100% { transform: rotate(0deg); }*/
-/*}*/
 
 .plumb_splinkler_i_water{
     width: 100px;
@@ -276,3 +289,16 @@
     border-radius: 20px;
 }
 
+.plumb_sprinkler_r{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    border-radius: 100%;
+
+}
+
+.plumb_sprinkler_r_water{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
