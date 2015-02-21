@@ -483,9 +483,8 @@ var vis = {
             }
         }
 
-        // Views in Container verschieben
+        // move views in container
         $("#visview_" + view).find("div[id$='container']").each(function () {
-            //console.log($(this).attr("id")+ " contains " + $(this).attr("data-vis-contains"));
             var cview = $(this).attr("data-vis-contains");
             if (!vis.views[cview]) {
                 $(this).append("error: view not found.");
@@ -497,7 +496,6 @@ var vis = {
             vis.renderView(cview, true);
             $("#visview_" + cview).appendTo(this);
             $("#visview_" + cview).show();
-
         });
 
         if (!hidden) {
@@ -738,8 +736,8 @@ var vis = {
                         }
                     }).dequeue();
                 }
-                $("#visview_" + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
 
+                $("#visview_" + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
                     // If first hide, than show
                     if (!sync) {
                         $("#visview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
@@ -790,9 +788,11 @@ var vis = {
         this.activeView = view;
 
 
-        $('#visview_' + view).find('div[id$="container"]').each(function () {
+        /*$('#visview_' + view).find('div[id$="container"]').each(function () {
             $('#visview_' + $(this).attr('data-vis-contains')).show();
-        });
+        });*/
+
+        this.updateContainers(view);
 
         if (!this.editMode && this.instance) {
             this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
@@ -930,7 +930,7 @@ var vis = {
     onWakeUp: function (callback) {
         this.wakeUpCallbacks.push(callback);
     },
-    showMessage: function (message, title, icon) {
+    showMessage: function (message, title, icon, width) {
         if (!this.$dialogMessage) {
             this.$dialogMessage = $('#dialog-message');
             this.$dialogMessage.dialog({
@@ -947,6 +947,11 @@ var vis = {
             });
         }
         this.$dialogMessage.dialog('option', 'title', title || _('Message'));
+        if (width) {
+            this.$dialogMessage.dialog('option', 'width', width);
+        } else {
+            this.$dialogMessage.dialog('option', 'width', 300);
+        }
         $('#dialog-message-text').html(message);
         if (icon) {
             $('#dialog-message-icon').show();

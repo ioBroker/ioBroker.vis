@@ -201,7 +201,7 @@
         },
         value: function (values, oid) {
             if (oid != 'nothing_selected' && vis.states.attr(oid + '.val') !== undefined) {
-                values[vis.states.attr(oid + '.val')]
+                return values[vis.states.attr(oid + '.val')];
             } else {
                 return values[0];
             }
@@ -233,27 +233,27 @@
             });
 
         },
-        state: function (el, id) {
+        state: function (el, oid) {
             var $this = $(el);
-            var oid = (id ? id : $this.attr('data-oid'));
+            var oid = (oid ? oid : $this.attr('data-oid'));
             var val = $this.attr('data-val');
+
+            if (oid) $this.attr('data-oid', oid);
 
             if (val === 'true')  val = true;
             if (val === 'false') val = false;
 
-            $this.on('click', function (e) {
-                if (!vis.editMode) {
-                    vis.setValue($this.attr('data-oid'), val);
-                }
-            });
-            // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
-            /*
-             $this.on('touchend',function (e) {
-             if (!vis.editMode) {
-             vis.setValue($this.attr('data-oid'), val);
-             }
-             });
-             */
+            if (!vis.editMode) {
+                $this.on('click', function (e) {
+                    vis.setValue($(this).attr('data-oid'), $(this).attr('data-val'));
+                });
+                // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
+                /*
+                 $this.on('touchend',function (e) {
+                    $(this).trigger('click');
+                 });
+                */
+            }
         },
         pressed: null,
         pressedNext: null,
@@ -263,19 +263,17 @@
                 vis.binds.basic.pressedNext = true;
                 var oid = $that.attr('data-oid');
                 if (!vis.editMode) {
-                    var step =  parseFloat($that.attr('data-vis-step'));
-                    var tmp =   parseFloat(vis.states[oid + '.val']) + step;
+                    var step = parseFloat($that.attr('data-vis-step'));
+                    var tmp  = parseFloat(vis.states[oid + '.val']) + step;
                     if (step < 0) {
                         if (tmp >= minmax) {
                             vis.setValue($that.attr('data-oid'), tmp);
-                            vis.binds.basic.pressed = setTimeout(fInterval, interval, $that);
+                            vis.binds.basic.pressed = _setTimeout(fInterval, interval, $that);
                         }
                     } else {
                         if (tmp <= minmax) {
                             vis.setValue($that.attr('data-oid'), tmp);
-                            vis.binds.basic.pressed = setTimeout(function ($_that) {
-                                fInterval($_that);
-                            }, interval, $that);
+                            vis.binds.basic.pressed = _setTimeout(fInterval, interval, $that);
                         }
                     }
                 }
@@ -288,15 +286,15 @@
                 vis.binds.basic.pressed = setTimeout(fInterval, delay, $this);
             }
 
-            $(el).click(function (e) {
-                clearTimeout(vis.binds.basic.pressed);
-                if (vis.binds.basic.pressedNext) {
-                    vis.binds.basic.pressedNext = false;
-                    return;
-                }
-                var $this = $(this);
-                var oid = $this.attr('data-oid');
-                if (!vis.editMode) {
+            if (!vis.editMode) {
+                $(el).click(function (e) {
+                    clearTimeout(vis.binds.basic.pressed);
+                    if (vis.binds.basic.pressedNext) {
+                        vis.binds.basic.pressedNext = false;
+                        return;
+                    }
+                    var $this = $(this);
+                    var oid = $this.attr('data-oid');
                     var step = parseFloat($this.attr('data-vis-step'));
                     var tmp  = parseFloat(vis.states[oid + '.val']) + step;
                     if (step < 0) {
@@ -308,18 +306,18 @@
                             vis.setValue($this.attr('data-oid'), tmp);
                         }
                     }
-                }
-            });
+                });
+            }
 
             if (interval) {
                 $(el).on('mousedown', intervalStart)
-                        .on('touchstart', intervalStart)
-                        .on('touchend', function () {
-                            clearTimeout(vis.binds.basic.pressed);
-                        })
-                        .on('mouseup', function () {
-                            clearTimeout(vis.binds.basic.pressed);
-                        });
+                    .on('touchstart', intervalStart)
+                    .on('touchend', function () {
+                        clearTimeout(vis.binds.basic.pressed);
+                    })
+                    .on('mouseup', function () {
+                        clearTimeout(vis.binds.basic.pressed);
+                    });
             }
         },
         navigation: function (el, options) {
@@ -512,29 +510,31 @@
                 }
             });
         },
-        toggle: function (el) {
+        toggle: function (el, oid) {
             var $this = $(el);
-            var id = $this.attr('data-oid');
-            function toggle() {
-                var val = vis.states[id + '.val'];
-                if (val === null || val === '' || val === undefined || val === false || val === 'false') {
-                    vis.setValue(id, true);
-                } else if (val === true || val === 'true') {
-                    vis.setValue(id, false);
-                } else {
-                    val = parseFloat(val);
-                    if (val >= 0.5) {
-                        val = 1;
-                    } else {
-                        val = 0;
-                    }
-                    vis.setValue( id,  1 - val);
-                }
-            }
-            if (!vis.editMode) {
+            var oid = oid || $this.attr('data-oid');
+
+            if (oid && !vis.editMode) {
                 // @geolin - musste das wieder entfernen - das führt zu doppelter Ausführung (Gerät geht kurz an und sofort wieder aus bzw umgekehrt)
-                //$this.on('touchend', toggle);
-                $this.on('click', toggle);
+                //$this.on('touchend', function () { $(this).trigger('click'); });
+
+                $this.on('click', function () {
+                    var _oid = $(this).attr('data-oid');
+                    var val = vis.states[oid + '.val'];
+                    if (val === null || val === '' || val === undefined || val === false || val === 'false') {
+                        vis.setValue(oid, true);
+                    } else if (val === true || val === 'true') {
+                        vis.setValue(oid, false);
+                    } else {
+                        val = parseFloat(val);
+                        if (val >= 0.5) {
+                            val = 1;
+                        } else {
+                            val = 0;
+                        }
+                        vis.setValue(oid, 1 - val);
+                    }
+                });
             }
         },
         iframeRefresh: function (el, src, refreshInterval) {
@@ -834,8 +834,8 @@
 		<% } %>
     </div>
 </script>
-<!-- basic Container -->
 
+<!-- basic Container -->
 <script id="tplContainerView"
         type="text/ejs"
         class="vis-tpl"
@@ -851,7 +851,6 @@
         </div>
     </div>
 </script>
-
 
 <!-- Stateful Widgets -->
 <script id="tplStatefulContainerView8"
@@ -874,8 +873,11 @@
             }
         %>
         <div class="vis-widget-body">
-            <div class="vis-view-container" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" data-oid="<%= data.attr('oid') %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
+            <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
         </div>
+        <!--div data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" class="vis-widget-body">
+            <div class="vis-view-container" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> dui.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
+        </div-->
     </div>
 </script>
 
