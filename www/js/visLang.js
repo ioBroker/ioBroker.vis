@@ -1,8 +1,8 @@
 /**
- *  DashUI
- *  https://github.com/hobbyquaker/dashui/
+ *  ioBroker.vis
+ *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
+ *  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -257,6 +257,34 @@ $.extend(systemDictionary, {
     "All widgets:": {"en": "All widgets:", "de": "Alle Widgets:", "ru": "Все элементы:"},
     "Grid": {"en": "Grid", "de": "Gitter", "ru": "Сетка"},
     "Lock all Widgets": {"en": "Lock all Widgets", "de": "Alle Widgets fixieren", "ru": "Блокировать все элементы"},
+
+    "dev1": {"en": "dev 1", "de": "dev 1", "ru": "dev 1"},
+    "dev2": {"en": "dev 2", "de": "dev 2", "ru": "dev 2"},
+    "dev3": {"en": "dev 3", "de": "dev 3", "ru": "dev 3"},
+    "dev4": {"en": "dev 4", "de": "dev 4", "ru": "dev 4"},
+    "dev5": {"en": "dev 5", "de": "dev 5", "ru": "dev 5"},
+
+    "Configuration not saved.": {
+        "en": "Project does not saved.",
+        "de": "Projekt ist noch nicht gespeichert.",
+        "ru": "Проект не сохранён."
+    },
+    "Clipboard:": {"en": "Clipboard:", "de": "Zwischenablage:", "ru": "Буфер обмена:"},
+    "Click to hide": {"en": "Click to hide", "de": "Anklicken um zu verbergen", "ru": "Нажать, что бы скрыть"},
+    "Lock Widget function": {"en": "Disable interaction with widget", "de": "Deaktiviere Widget-Interaktion", "ru": "Деактивировать взаимодействие с элементом"},
+    "Lock Widget dragging": {"en": "Lock widget dragging", "de": "Deaktiviere Widget herumschieben", "ru": "Дективировать перенос виджетов мышкой"},
+    "Show type of widgets": {"en": "Show type of widgets", "de": "Zeige Widgettyp", "ru": "Показать тип элемента"},
+    "Small widgets": {"en": "Small widgets", "de": "Kleine Widgets", "ru": "Показать маленькие элементы"},
+    "Select more than one widget and try again.": {
+        "en": "Select more than one widget and try again.",
+        "de": "Es muss mehr als ein Widget seleketiert werden.",
+        "ru": "Выберите больше одного элемента и попробуйте ещё раз."
+    },
+    "Too less widgets": {
+        "en": "Too less widgets selected",
+        "de": "Zu wenig selektierte Widgets",
+        "ru": "Слишком мало выбрано элементов"
+    },
 
     "css_left": {"en": "left", "de": "left", "ru": "left"},
     "css_top": {"en": "top", "de": "top", "ru": "top"},

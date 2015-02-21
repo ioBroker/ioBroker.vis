@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2014 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -632,14 +632,19 @@ vis = $.extend(true, vis, {
         // Widget Align ---------------------
 
         $("#wid_align_left").click(function () {
-           var data = [];
-           $.each(that.activeWidgets, function () {
-               var _data = {
-                   wid:  this,
-                   left: parseInt($("#" + this).css("left"))
-               }
-               data.push(_data);
-           });
+            var data = [];
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
+            $.each(that.activeWidgets, function () {
+                var _data = {
+                    wid:  this,
+                    left: parseInt($("#" + this).css("left"))
+                }
+                data.push(_data);
+            });
 
             function SortByLeft(a, b) {
                 var aName = a.left;
@@ -660,6 +665,10 @@ vis = $.extend(true, vis, {
 
         $("#wid_align_right").click(function () {
             var data = [];
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
             $.each(that.activeWidgets, function () {
                 var _data = {
                     wid:  this,
@@ -687,6 +696,10 @@ vis = $.extend(true, vis, {
 
         $("#wid_align_top").click(function () {
             var data = [];
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
             $.each(that.activeWidgets, function () {
                 var _data = {
                     wid: this,
@@ -714,6 +727,12 @@ vis = $.extend(true, vis, {
 
         $("#wid_align_bottom").click(function () {
             var data = [];
+
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
             $.each(that.activeWidgets, function () {
                 var _data = {
                     wid: this,
@@ -740,7 +759,12 @@ vis = $.extend(true, vis, {
         });
 
         $("#wid_align_vc").click(function () {
-            var min_top =9999;
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
+            var min_top = 9999;
             var max_bottom = 0;
             var middle;
             $.each(that.activeWidgets, function () {
@@ -760,7 +784,12 @@ vis = $.extend(true, vis, {
         });
 
         $("#wid_align_hc").click(function () {
-            var min_left =9999;
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
+            var min_left = 9999;
             var max_right = 0;
             var middle;
             $.each(that.activeWidgets, function () {
@@ -778,7 +807,13 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
+
         $("#wid_dis_h").click(function () {
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
             var data = [];
             var min_left = 9999;
             var max_right = 0;
@@ -786,8 +821,8 @@ vis = $.extend(true, vis, {
             var between;
             $.each(that.activeWidgets, function () {
                 var left = parseInt($("#" + this).css("left"));
-                var right = left + $("#" + this).width;
-                cont_size = cont_size + $("#" + this).width;
+                var right = left + $("#" + this).width();
+                cont_size = cont_size + $("#" + this).width();
                 if (min_left > left) min_left = left;
                 if (max_right < right) max_right = right;
 
@@ -809,18 +844,24 @@ vis = $.extend(true, vis, {
 
             data.sort(SortByLeft);
             var first = data.shift();
-            var left  = first.left + $("#" + first.wid).width;
+            var left  = first.left + $("#" + first.wid).width();
 
             $.each(data, function(){
                 left = left + between;
                 $("#" + this.wid).css("left", left + "px");
                 $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.left = left + "px";
-                left = left + $("#" + this.wid).width;
+                left = left + $("#" + this.wid).width();
             });
             that.save();
         });
+
         $("#wid_dis_v").click(function () {
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
             var data = [];
             var min_top = 9999;
             var max_bottom = 0;
@@ -829,8 +870,8 @@ vis = $.extend(true, vis, {
 
             $.each(that.activeWidgets, function () {
                 var top = parseInt($("#" + this).css("top"));
-                var bottom = top + $("#" + this).height;
-                cont_size = cont_size + $("#" + this).height;
+                var bottom = top + $("#" + this).height();
+                cont_size = cont_size + $("#" + this).height();
                 if (min_top > top) min_top = top;
                 if (max_bottom < bottom) max_bottom = bottom;
 
@@ -851,14 +892,14 @@ vis = $.extend(true, vis, {
 
             data.sort(SortByTop);
             var first = data.shift();
-            var top  = first.top + $("#" + first.wid).height;
+            var top  = first.top + $("#" + first.wid).height();
 
             $.each(data, function () {
                 top = top + between;
                 $("#" + this.wid).css("top", top + "px");
                 $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.top = top + "px";
-                top = top + $("#" + this.wid).height;
+                top = top + $("#" + this.wid).height();
             });
             that.save();
         });
@@ -1122,6 +1163,8 @@ vis = $.extend(true, vis, {
         });
 
         if (this.config['button/btn_prev_type']) $('#btn_prev_type').trigger('click');
+        if (this.config['button/btn_prev_type'] === undefined) $('#btn_prev_type').trigger('click');
+
         if (this.config['button/btn_prev_zoom']) $('#btn_prev_zoom').trigger('click');
     },
     editInitSelectView: function () {
@@ -2473,8 +2516,8 @@ vis = $.extend(true, vis, {
         this.groups[group]['css_font-family']    = {input: '<input type="text" id="inspect_css_font-family"/>'};
         this.groups[group]['css_font-style']     = this.editSelect('css_font-style', ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'], true);
         this.groups[group]['css_font-variant']   = this.editSelect('css_font-variant', ['', 'normal', 'small-caps', 'initial', 'inherit'], true);
-        this.groups[group]['css_font-weight']    = this.editAutoComplete('css_font-weight', ['', 'normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit'], true);
-        this.groups[group]['css_font-size']      = this.editAutoComplete('css_font-size', ['', 'medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'], true);
+        this.groups[group]['css_font-weight']    = this.editAutoComplete('css_font-weight', ['', 'normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit']);
+        this.groups[group]['css_font-size']      = this.editAutoComplete('css_font-size', ['', 'medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit']);
         this.groups[group]['css_line-height']    = {input: '<input type="text" id="inspect_css_line-height"/>'};
         this.groups[group]['css_letter-spacing'] = {input: '<input type="text" id="inspect_css_letter-spacing"/>'};
         this.groups[group]['css_word-spacing']   = {input: '<input type="text" id="inspect_css_word-spacing"/>'};
@@ -2493,7 +2536,7 @@ vis = $.extend(true, vis, {
         this.groups[group]['css_background']            = {input: '<input type="text" id="inspect_css_background"/>'};
         this.groups[group]['css_background-color']      = this.editColor('css_background-color');
         this.groups[group]['css_background-image']      = {input: '<input type="text" id="inspect_background-image"/>'};
-        this.groups[group]['css_background-repeat']     = this.editSelect('css_background-repeat', ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'], true);;
+        this.groups[group]['css_background-repeat']     = this.editSelect('css_background-repeat', ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'], true);
         this.groups[group]['css_background-attachment'] = this.editSelect('css_background-attachment', ['', 'scroll', 'fixed', 'local', 'initial', 'inherit'], true);
         this.groups[group]['css_background-position']   = {input: '<input type="text" id="inspect_background-position"/>'};
         this.groups[group]['css_background-size']       = {input: '<input type="text" id="inspect_background-size"/>'};
@@ -2512,7 +2555,7 @@ vis = $.extend(true, vis, {
         this.groups[group] = this.groups[group] || {};
 
         this.groups[group]['css_border-width']      = {input: '<input type="text" id="inspect_css_border-width"/>'};
-        this.groups[group]['css_border-style']      = this.editAutoComplete('css_border-style', ['', 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'initial', 'inherit'], true);
+        this.groups[group]['css_border-style']      = this.editAutoComplete('css_border-style', ['', 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'initial', 'inherit']);
         this.groups[group]['css_border-color']      = this.editColor('css_border-color');
         this.groups[group]['css_border-radius']     = {input: '<input type="text" id="inspect_css_border-radius"/>'};
 
@@ -2590,6 +2633,9 @@ vis = $.extend(true, vis, {
                 break;
             case 'number':
                 line = this.editNumber(widAttr.name, widAttr.options);
+                break;
+            case 'auto':
+                line = this.editAutoComplete(widAttr.name, widAttr.options);
                 break;
             case 'slider':
                 line = this.editSlider(widAttr.name, widAttr.options);
@@ -3332,7 +3378,7 @@ vis = $.extend(true, vis, {
             return false;
         }
         $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
-        $('#widget_tab').text(_("Widget") + ": " + wid);
+        $('#widget_tab').text(_("Widget") + ": " + ((this.activeWidgets.length == 1) ? wid : this.activeWidgets.length));
 
         var widget = this.views[this.activeView].widgets[wid];
 
@@ -4305,7 +4351,7 @@ vis = $.extend(true, vis, {
             var widgetNames = '';
             if (this.activeWidgets.length) {
                 for (var i = 0, len = this.activeWidgets.length; i < len; i++) {
-                    widgetNames += ', ' + this.activeWidgets[i];
+                    widgetNames += (widgetNames ? ', ' : '') + this.activeWidgets[i];
                     this.clipboard.push({
                         widget: $.extend(true, {}, this.views[this.activeView].widgets[this.activeWidgets[i]]),
                         view: (!isCut) ? this.activeView : '---copied---'
@@ -4497,7 +4543,7 @@ vis = $.extend(true, vis, {
             if (confirm(_('Changes are not saved. Are you sure?'))) {
                 return null;
             } else {
-                return "Configuration not saved.";
+                return _("Configuration not saved.");
             }
         }
         return null;

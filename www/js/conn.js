@@ -372,7 +372,43 @@ var servConn = {
                     data[res.rows[i].id] = res.rows[i].value;
                 }
 
-                if (callback) callback(err, data);
+                // Read all adapters for images
+                that._socket.emit('getObjectView', 'system', 'instance', {startkey: 'system.adapter.', endkey: 'system.adapter.\u9999'}, function (err, res) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+                    var result = {};
+                    for (var i = 0; i < res.rows.length; i++) {
+                        data[res.rows[i].id] = res.rows[i].value;
+                    }
+
+                    // Read all channels for images
+                    that._socket.emit('getObjectView', 'system', 'channel', {startkey: '', endkey: '\u9999'}, function (err, res) {
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+                        var result = {};
+                        for (var i = 0; i < res.rows.length; i++) {
+                            data[res.rows[i].id] = res.rows[i].value;
+                        }
+
+                        // Read all devices for images
+                        that._socket.emit('getObjectView', 'system', 'device', {startkey: '', endkey: '\u9999'}, function (err, res) {
+                            if (err) {
+                                callback(err);
+                                return;
+                            }
+                            var result = {};
+                            for (var i = 0; i < res.rows.length; i++) {
+                                data[res.rows[i].id] = res.rows[i].value;
+                            }
+
+                            if (callback) callback(err, data);
+                        });
+                    });
+                });
             });
         });
     },

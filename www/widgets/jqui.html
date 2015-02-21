@@ -4,6 +4,19 @@
 <script type="text/javascript">
     "use strict";
 
+    if (vis.editMode) {
+        $.extend(systemDictionary, {
+            "buttontext": {"en": "Button text", "de": "Knopftext", "ru": "Надпись на кнопке"},
+            "href": {"en": "Link", "de": "Link", "ru": "Ссылка"},
+            "href_tooltip": {"en": "Like 'http://google.com'", "de": "Wie 'http://google.com'", "ru": "Например 'http://google.com'"},
+            "target": {"en": "target", "de": "target", "ru": "target"},
+            "alt": {"en": "Tooltip (alt)", "de": "Tooltip (alt)", "ru": "Всплывающая подсказка (alt)"},
+            "text": {"en": "Text", "de": "Text", "ru": "Текст"},
+            "invert_icon": {"en": "Invert image", "de": "Invertiere das Bild", "ru": "Инвертировать картинку"}
+        });
+    }
+
+
     vis.navChangeCallbacks.push(function (view) {
         $(".jqui-nav-state").each(function () {
             var $this = $(this);
@@ -398,7 +411,7 @@
         slider: function (el, options) {
             var $this = $(el);
             var oid = $this.attr('data-oid');
-            var wid = $this.attr("data-hm-wid");
+            var wid = $this.attr("data-oid-working");
 
             var settings = $.extend({
                 min:   parseFloat(options.min)  || 0.00,
@@ -417,7 +430,8 @@
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                // console.log("slider newVal="+JSON.stringify(newVal));
-                if (vis.states.attr('_' + wid + '.val') != true) {
+                // If device not in working state
+                if (!vis.states.attr(wid + '.val')) {
                     $this.slider('value', parseFloat(newVal));
                 }
             });
@@ -487,18 +501,20 @@
                 e.preventDefault();
             });
         },
-        hueColormode: function (el, idColormode) {
-            var $hue = $(el).parent().find(".hue-mode-hue");
-            var $ct  = $(el).parent().find(".hue-mode-ct");
-            if (vis.states.attr('_' + idColormode + '.val') == "ct") {
+        hueColormode: function (el, oid) {
+            var $hue = $(el).parent().find('.hue-mode-hue');
+            var $ct  = $(el).parent().find('.hue-mode-ct');
+
+            if (vis.states.attr(oid + '.val') == 'ct') {
                 $hue.hide();
                 $ct.show();
             } else {
                 $ct.hide();
                 $hue.show();
             }
-            vis.states.bind('_' + idColormode + '.val', function (e, newVal, oldVal) {
-                if (newVal == "ct") {
+
+            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                if (newVal == 'ct') {
                     $hue.hide();
                     $ct.show();
                 } else {
@@ -566,12 +582,12 @@
 <script id="tplJquiButtonLink" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiButtonLink" style=" position: relative; text-align: initial;padding: 4px "><div style="top: 127px; left: 225px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00001_button" value=" Button " data-vis-link="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiButtonLink" style=" position: relative; text-align: initial;"><div class="vis-widget_prev ui-selectee ui-selected" style="height: 25px"> <div class="vis-widget-prev-body"> <input type="button" value=" Button " class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="static"
         data-vis-name="Button Link"
-        data-vis-attrs="html_prepend;html_append;buttontext;href">
-    <div style="top:0px; left:0px;" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
+        data-vis-attrs="buttontext[Text];href;html_prepend;html_append">
+    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
             <%== this.data.attr("html_prepend") %>
             <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-vis-link="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonLink(el, data.attr('href')); %> />
@@ -583,12 +599,12 @@
 <script id="tplJquiButtonLinkBlank" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiButtonLinkBlank" style=" position: relative; text-align: initial;padding: 4px "><div style="top: 334px; left: 223px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00003_button" value=" Link " data-vis-link="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiButtonLinkBlank" style=" position: relative; text-align: initial;padding: 4px "><div  style="height: 25px" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00003_button" value=" Link " data-vis-link="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="static"
         data-vis-name="Button Link _blank"
-        data-vis-attrs="html_prepend;html_append;buttontext;href">
-    <div style="top:50px;" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
+        data-vis-attrs="buttontext[Text];href;html_prepend;html_append">
+    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
             <%== this.data.attr("html_prepend") %>
             <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-vis-link="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonLinkBlank(el, data.attr('href')); %> />
@@ -600,18 +616,22 @@
 <script id="tplIconLink" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-set="jqui" 
-        data-vis-name="static - Icon link" 
-        data-vis-attrs="src;href;target;alt;text;invert_icon/checkbox">
+        data-vis-set="jqui"
+        data-vis-type="static"
+        data-vis-name="Icon link"
+        data-vis-attrs="src/image;href;target/auto,,_blank,_self,_parent,_top;alt;text;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
-    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 32px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div class="vis-widget-body">
-            <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+            <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration: none; text-align: left; width:100%;height:100%;">
+                <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height: 100%;" alt="<%== this.data.attr('alt') %>" />
+                <%= this.data.attr('text') %>
+            </a>
         </div>
     </div>
 </script>
@@ -619,8 +639,9 @@
 <script id="tplIconHttpGet" 
         type="text/ejs" 
         class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="static - Icon HTTP GET" 
+        data-vis-set="jqui"
+        data-vis-type="static"
+        data-vis-name="Icon HTTP GET"
         data-vis-attrs="url;src;alt;text">
     <%
     var styles = "";
@@ -639,8 +660,9 @@
 <script id="tplJquiDialog" 
         type="text/ejs" 
         class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="static - HTML - Dialog" 
+        data-vis-set="jqui"
+        data-vis-type="static"
+        data-vis-name="HTML - Dialog"
         data-vis-attrs="html;html_dialog;title;modal/checkbox;width;height;persistent/checkbox;preload/checkbox">
 
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
@@ -663,7 +685,7 @@
     <%
     var styles = "";
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
@@ -729,14 +751,14 @@
     %>
 
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
-    <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-        <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
-    </div>
-    <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
-        <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body">
+        <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
-    </div>
-    <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
+        <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
+            <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body">
+            </div>
+        </div>
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
     </div>
 </script>
 
@@ -745,11 +767,11 @@
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="container - Button - view in jqui Dialog"
-        data-vis-attrs="html_prepend;html_append;buttontext;contains_view;title;modal/checkbox;width;height">
+        data-vis-attrs="html_prepend;html_append;buttontext[Text];contains_view;title;modal/checkbox;width;height">
     <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
-            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonDialog(el); %> />
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonDialog(el); %> />
             <%== this.data.attr("html_append") %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
@@ -767,7 +789,7 @@
         data-vis-set="jqui"
         data-vis-type="navigation"
         data-vis-name="Button"
-        data-vis-attrs="html_prepend;html_append;buttontext;nav_view;hide_effect;hide_duration;show_effect;show_duration">
+        data-vis-attrs="html_prepend;html_append;buttontext[Text];nav_view;hide_effect;hide_duration;show_effect;show_duration">
     <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
@@ -809,15 +831,16 @@
 <script id="tplJquiBool"
         type="text/ejs" 
         class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="ctrl - Icon Bool" 
-        data-vis-attrs="label;oid;html_true;html_false">
+        data-vis-set="jqui"
+        data-vis-type="ctrl"
+        data-vis-name="Icon Bool"
+        data-vis-attrs="oid;html_true;html_false">
 
     <div class="ui-widget ui-corner-all ui-state-default vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %>>
     <div class="vis-widget-body">
         <div>
             <%
-            var str = vis.states.attr('_' + this.data.oid + '.val');
+            var str = vis.states.attr(this.data.oid + '.val');
             var val = parseFloat(str);
             var state;
             if (str === false || str === 'false' || val == 0) {
@@ -848,8 +871,8 @@
                 styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
             %>
-            <img class="imgToggleFalse" <%= this.data.attr('src_false') ? 'src="' +  this.data.attr('src_false') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt_false') %>" />
-            <img class="imgToggleTrue" <%= this.data.attr('src_true') ? 'src="' +  this.data.attr('src_true') + '"' : '' %> style="<%= styles %> display:none;vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt_true') %>" />
+            <img class="imgToggleFalse" <%= this.data.attr('src_false') ? 'src="' +  this.data.attr('src_false') + '"' : '' %> style="<%= styles %> vertical-align:middle; height:100%"               alt="<%== this.data.attr('alt_false') %>" />
+            <img class="imgToggleTrue"  <%= this.data.attr('src_true')  ? 'src="' +  this.data.attr('src_true')  + '"' : '' %> style="<%= styles %> vertical-align:middle; height:100%; display:none" alt="<%== this.data.attr('alt_true')  %>" />
             <div <%= (el) -> vis.binds.jqueryui.itoggle(el) %>></div>
         </div>
     </div>
@@ -891,7 +914,7 @@
         type="text/ejs" class="vis-tpl" 
         data-vis-set="jqui"
         data-vis-name="ctrl - Input + Set-Button" 
-        data-vis-attrs="title;buttontext;oid;unit;digits/slider,0,10,1;size/slider,1,50,1">
+        data-vis-attrs="title;buttontext[Text];oid;unit;digits/slider,0,10,1;size/slider,1,50,1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:300px;height:44px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('title') %></label>
@@ -905,15 +928,15 @@
 <script id="tplJquiButtonState" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiButtonState" style=" position: relative; text-align: initial;padding: 4px "><div style="left: 384px; top: 470px;" class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00001_button" value=" Button " data-o data-hm-val="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiButtonState" style=" position: relative; text-align: initial;padding: 4px "><div style="left: 384px; top: 470px;" class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00001_button" value=" Button " data-o data-val="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Button State"
-        data-vis-attrs="html_prepend;html_append;buttontext;value;oid;">
+        data-vis-attrs="oid;html_prepend;html_append;buttontext[Text];value">
     <div style="" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
             <%== this.data.attr("html_prepend") %>
-            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.button(el, data.value); vis.binds.basic.state(el); %> />
+            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.button(el, data.value); vis.binds.basic.state(el); %> />
             <%== this.data.attr("html_append") %>
         </div>
     </div>
@@ -1023,7 +1046,7 @@
         data-vis-name="Slider vertical">
     <div id="<%= this.data.attr("wid") %>" data-vis-resizable='{"minWidth":23, "maxWidth":23}' class="vis-widget" style="width:23px; height:160px; overflow:visible !important;">
         <div class="vis-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
-            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step),orientation:"vertical"}) %> /></div>
+            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid-working="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step),orientation:"vertical"}) %> /></div>
         </div>
     </div>
 </script>
@@ -1037,7 +1060,7 @@
         data-vis-name="Slider horizontal">
     <div id="<%= this.data.attr("wid") %>" data-vis-resizable='{"minHeight":23, "maxHeight":23}' class="vis-widget" style="height:23; width:160px; overflow:visible !important;">
         <div class="vis-widget-body <%== this.data.attr('class') %>" style="padding: 4px;">
-            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step)}) %> /></div>
+            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid-working="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step)}) %> /></div>
         </div>
     </div>
 </script>
@@ -1054,7 +1077,7 @@
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
-    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el); vis.binds.jqueryui.classes(el, null, data.value) %>>
+    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el); vis.binds.jqueryui.classes(el, null, data.value) %>>
         <div class="vis-widget-body">
             <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
@@ -1073,7 +1096,7 @@
     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
-    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-hm-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el); vis.binds.jqueryui.classes(el, null, data.value) %>>
+    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el); vis.binds.jqueryui.classes(el, null, data.value) %>>
         <div class="vis-widget-body">
             <img class="tplImgFalse" <%= this.data.attr('false_src') ? 'src="' +  this.data.attr('false_src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('false_alt') %>" /><%= this.data.attr('false_text') %>
             <img class="tplImgTrue" <%= this.data.attr('true_src') ? 'src="' +  this.data.attr('true_src') + '"' : '' %> style="display: hidden; <%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('true_alt') %>" /><%= this.data.attr('true_text') %>
@@ -1094,7 +1117,7 @@
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
-    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-vis-step="<%= this.data.attr('step') %>" data-hm-val="<%= this.data.attr('active_value') %>" <%= (el) -> vis.binds.basic.increment(el,data.minmax,data.repeat_delay,data.repeat_interval); vis.binds.jqueryui.classes(el, null, data.minmax) %>>
+    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-vis-step="<%= this.data.attr('step') %>" data-val="<%= this.data.attr('active_value') %>" <%= (el) -> vis.binds.basic.increment(el,data.minmax,data.repeat_delay,data.repeat_interval); vis.binds.jqueryui.classes(el, null, data.minmax) %>>
         <div class="vis-widget-body">
             <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
