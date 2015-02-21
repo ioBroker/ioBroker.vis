@@ -5,6 +5,18 @@ ioBroker.vis
 WEB visualisation for ioBroker platform.
 
 ## Changelog
+### 0.2.3 (2015-02-21)
+- (bluefox) add tooltips to buttons
+- (bluefox) fix view container widgets
+- (SmilingJack) fix error with align of widgets
+- (bluefox) lcars/metro/jqui/basic
+- (bluefox) fix move with arrows
+- (bluefox) lcars.html
+- (bluefox) update RGraph
+- (bluefox) update license text
+- (bluefox) add RGraph
+- (bluefox) show images in selectID dialog
+
 ### 0.2.2 (2015-02-17)
 - (smiling_Jack) align icons
 - (bluefox) support of sayIt and control
