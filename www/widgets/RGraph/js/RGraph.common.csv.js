@@ -1,10 +1,15 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
 
@@ -40,6 +45,83 @@
 
 
         /**
+        * A Custom split function
+        * 
+        * @param string str  The CSV string to split
+        * @param mixed  char The character to split on - or it can also be an object like this:
+        *                    {
+        *                        preserve: false, // Whether to preserve whitespace
+        *                        char: ','        // The character to split on
+        *                    }
+        */
+        this.splitCSV = function (str, split)
+        {
+            // Defaults
+            var arr            = [];
+            var field          = '';
+            var inDoubleQuotes = false;
+            var inSingleQuotes = false;
+            var preserve       = (typeof split === 'object' && split.preserve) ? true : false;
+            
+            // The character to split the CSV string on
+            if (typeof split === 'object') {
+                if (typeof split.char === 'string') {
+                    split = split.char;
+                } else {
+                    split = ',';
+                }
+            } // If not an object just leave the char as it's supplied
+
+
+
+            for (var i=0,len=str.length; i<len; i+=1) {
+                
+                char = str.charAt(i);
+                
+                if ( (char === '"') && !inDoubleQuotes) {
+                    inDoubleQuotes = true;
+                    continue;
+                
+                } else if ( (char === '"') && inDoubleQuotes) {
+                    inDoubleQuotes = false;
+                    continue;
+                }
+                if ( (char === "'") && !inSingleQuotes) {
+                    inSingleQuotes = true;
+                    continue;
+                
+                } else if ( (char === "'") && inSingleQuotes) {
+                    inSingleQuotes = false;
+                    continue;
+    
+                } else if (char === split && !inDoubleQuotes && !inSingleQuotes) {
+// TODO look ahead in order to allow for multi-character seperators
+                    arr.push(field);
+                    field = '';
+                    continue;
+    
+                } else {
+                    field = field + char;
+                }
+            }
+            
+            // Add the last field
+            arr.push(field);
+            
+            // Now trim each value if necessary
+            if (!preserve) {
+                for (i=0,len=arr.length; i<len; i+=1) {
+                    arr[i] = arr[i].trim();
+                }
+            }
+    
+            return arr;
+        };
+
+
+
+
+        /**
         * This function splits the CSV data into an array so that it can be useful.
         */
         this.fetch = function ()
@@ -50,19 +132,24 @@
 
             if (this.url.substring(0,3) == 'id:') {
 
-                // Get rid of any trailing slash
-                var data = document.getElementById(this.url.substring(3)).innerHTML.replace(/(\r?\n)+$/, '');
+                // Get rid of any surrounding whitespace
+                var data = document.getElementById(this.url.substring(3)).innerHTML.trim();
 
                 // Store the CSV data on the CSV object (ie - this object)
                 obj.data = data.split(eol);
-                
+
                 // Store the number of rows
                 obj.numrows = obj.data.length;
 
                 for (var i=0,len=obj.data.length; i<len; i+=1) {
 
 
-                    var row = obj.data[i].split(sep);
+                    /**
+                    * Split the individual line
+                    */
+                    //var row = obj.data[i].split(sep);
+                    var row = obj.splitCSV(obj.data[i], {preserve: false, char: sep});
+
 
                     if (!obj.numcols) {
                         obj.numcols = row.length;
@@ -89,16 +176,29 @@
                 RGraph.AJAX.getString(this.url, function (data)
                 {
                     data = data.replace(/(\r?\n)+$/, '');
+
+                    /**
+                    * Split the lines in the CSV
+                    */
                     obj.data = data.split(eol);
-                    
-                    // Store the number of rows
+
+                    /**
+                    * Store the number of rows
+                    */
                     obj.numrows = obj.data.length;
-    
+
+
+
+                    /**
+                    * Loop thru each lines in the CSV file
+                    */
                     for (var i=0,len=obj.data.length; i<len; i+=1) {
-    
-    
-                        var row = obj.data[i].split(sep);
-    
+                        /**
+                        * Use the new split function to split each row NOT preserving whitespace
+                        */
+                        //var row = obj.data[i].split(sep);
+                        var row = obj.splitCSV(obj.data[i], {preserve: false, char: sep});
+
                         if (!obj.numcols) {
                             obj.numcols = row.length;
                         }
@@ -121,7 +221,7 @@
                     obj.ready(obj);
                 });
             }
-        }
+        };
 
 
 
@@ -142,7 +242,7 @@
             }
             
             return row;
-        }
+        };
 
 
 
@@ -164,7 +264,7 @@
             }
             
             return col;
-        }
+        };
 
 
 
@@ -172,6 +272,4 @@
 
         // Fetch the CSV file
         this.fetch();
-    }
-// version: 2014-03-28
-
+    };

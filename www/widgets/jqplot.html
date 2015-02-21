@@ -124,9 +124,10 @@
 <script type="text/ejs"
         id="tplJqplotGauge"
         class="vis-tpl"
-        data-vis-prev='<img src="widgets\jqplot\Prev_MeterGauge.png"></img>'
+        data-vis-prev='<img src="widgets/jqplot/img/Prev_MeterGauge.png"></img>'
         data-vis-set="jqplot"
-        data-vis-name="number - MeterGauge"
+        data-vis-type="number"
+        data-vis-name="MeterGauge"
         data-vis-attrs="oid;title;min/number;max/number;label;background/color;padding/slider,0,50,1;group.ticks;ticks;showTickLabels[true]/checkbox;tickPadding/slider,0,50,1;group.intervals;intervals;intervalColors;intervalInnerRadius/slider,0,550,1;intervalOuterRadius/slider,0,550,1;group.shadow;shadowOffset/slider,0,50,1;shadowAlpha/slider,0,1,0.05;shadowDepth/slider,0,50,1;group.ring;ringColor/color;ringWidth/slider,0,150,1;group.needle;needleThickness/slider,0,50,1;needlePad/slider,0,150,1;hubRadius/slider,0,150,1"
         >
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:460px; height:280px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqplot.gauge(el, data) %>>

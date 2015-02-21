@@ -1,16 +1,19 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
+
     RGraph = window.RGraph || {isRGraph: true};
-
-
-
 
 // Module pattern
 (function (win, doc, undefined)
@@ -29,7 +32,7 @@
     */
     RG.Annotating_canvas_onmousedown = function (e)
     {
-        if (e.button == 0) {
+        if (e.button === 0) {
 
             e.target.__object__.Set('chart.mousedown', true);
 
@@ -41,9 +44,9 @@
             obj.context.beginPath();
 
                 obj.context.strokeStyle = obj.Get('chart.annotate.color');
-                obj.context.lineWidth = 1;
+                obj.context.lineWidth = obj.Get('chart.annotate.linewidth');
 
-                var mouseXY = RGraph.getMouseXY(e);
+                var mouseXY = RG.getMouseXY(e);
                 var mouseX  = mouseXY[0];
                 var mouseY  = mouseXY[1];
             
@@ -308,7 +311,7 @@
         var i, len, move, coords;
 
         context.beginPath();
-        context.lineWidth = 2;
+        context.lineWidth = obj.Get('annotate.linewidth');
 
         if (annotations && annotations.length) {
             annotations = annotations.split('|');
@@ -367,5 +370,3 @@
 
 // End module pattern
 })(window, document);
-// version: 2014-03-28
-

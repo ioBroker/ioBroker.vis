@@ -43,6 +43,7 @@ vis = $.extend(true, vis, {
     // Array with all objects (Descriptions of objects)
     objects:               {},
     config:                {},
+    objectSelector:        false, // if object select ID activated
 
     editInit: function () {
         var that = this;
@@ -1092,8 +1093,15 @@ vis = $.extend(true, vis, {
                     var $tpl = $('#' + tpl);
                     var renderVisible = $tpl.attr('data-vis-render-visible');
 
-                    // Widget attributs default values
+                    // Widget attributes default values
                     var attrs = $tpl.attr('data-vis-attrs');
+                    // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+                    var t = 0;
+                    var attr;
+                    while (attr = $tpl.attr('data-vis-attrs' + t)) {
+                        attrs += attr;
+                        t++;
+                    }
                     var data = {};
                     if (attrs) {
                         attrs = attrs.split(';');
@@ -2040,108 +2048,110 @@ vis = $.extend(true, vis, {
         // Edit for Object ID
         var line = [
             {
-                input: '<input type="text" id="inspect_' + widAttr + '">',
-                button: {
-                    icon: 'ui-icon-note',
-                    text: false,
-                    title: _('Select object ID'),
-                    click: function () {
-                        var wdata = $(this).data('data-wdata');
-
-                        $('#dialog-select-member-' + wdata.attr).selectId('show', that.views[wdata.view].widgets[wdata.widgets[0]].data[wdata.attr], function (newId, oldId) {
-                            if (oldId != newId) {
-                                $('#inspect_' + wdata.attr).val(newId);
-                                $('#inspect_' + wdata.attr).trigger('change');
-
-                                /*
-                                if (document.getElementById('inspect_hm_wid')) {
-                                    if (that.objects[newId]['Type'] !== undefined && that.objects[value]['Parent'] !== undefined &&
-                                        (that.objects[newId]['Type'] == 'STATE' ||
-                                         that.objects[newId]['Type'] == 'LEVEL')) {
-
-                                        var parent = that.objects[newId]['Parent'];
-                                        if (that.objects[parent]['DPs'] !== undefined &&
-                                            that.objects[parent]['DPs']['WORKING'] !== undefined) {
-                                            $('#inspect_hm_wid').val(that.objects[parent]['DPs']['WORKING']);
-                                            $('#inspect_hm_wid').trigger('change');
-                                        }
-                                    }
-                                }
-
-                                // Try to find Function of the device and fill the Filter field
-                                var $filterkey = $('#inspect_filterkey');
-                                if ($filterkey.length) {
-                                    if ($filterkey.val() == '') {
-                                        var oid = newId;
-                                        var func = null;
-                                        if (that.metaIndex && that.metaIndex['ENUM_FUNCTIONS']) {
-                                            while (oid && that.objects[oid]) {
-                                                for (var t = 0; t < that.metaIndex['ENUM_FUNCTIONS'].length; t++) {
-                                                    var list = that.objects[that.metaIndex['ENUM_FUNCTIONS'][t]];
-                                                    for (var z = 0; z < list['Channels'].length; z++) {
-                                                        if (list['Channels'][z] == oid) {
-                                                            func = list.Name;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (func) break;
-                                                }
-                                                if (func) break;
-
-                                                oid = that.objects[oid]['Parent'];
-                                            }
-                                        }
-                                        if (func) $filterkey.val(func).trigger('change');
-                                    }
-                                }*/
-                            }
-                        });
-                    }
-                },
-                onchange: function (val) {
-                    var wdata = $(this).data('data-wdata');
-                    $('#inspect_' + wdata.attr + '_desc').html(that.getObjDesc(val));
-                }
-            },
-            {
-                input: '<div id="inspect_' + widAttr + '_desc"></div>'
+                input: '<input type="text" id="inspect_' + widAttr + '">'
             }
         ];
 
-        // Init select dialog
-        if (!$('#dialog-select-member-' + widAttr).length) {
-            $('body').append('<div id="dialog-select-member-' + widAttr + '" style="display:none">');
-            $('#dialog-select-member-' + widAttr).selectId('init', {
-                texts: {
-                    select: _('Select'),
-                    cancel: _('Cancel'),
-                    all: _('All'),
-                    id: _('ID'),
-                    name: _('Name'),
-                    role: _('Role'),
-                    room: _('Room'),
-                    value: _('Value'),
-                    selectid: _('Select ID'),
-                    enum: _('Members'),
-                    from: _('from'),
-                    lc: _('lc'),
-                    ts: _('ts'),
-                    ack: _('ack'),
-                    expand: _('expand'),
-                    collapse: _('collapse'),
-                    refresh: _('refresh'),
-                    edit: _('edit'),
-                    ok: _('ok'),
-                    wait: _('wait'),
-                    list: _('list'),
-                    tree: _('tree')
-                },
-                columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
-                imgPath: '/lib/css/fancytree/',
-                objects: this.objects,
-                states: this.states,
-                zindex: 1001
-            });
+        if (this.objectSelector) {
+            line[0].button = {
+                icon: 'ui-icon-note',
+                    text: false,
+                    title: _('Select object ID'),
+                    click: function () {
+                    var wdata = $(this).data('data-wdata');
+
+                    $('#dialog-select-member-' + wdata.attr).selectId('show', that.views[wdata.view].widgets[wdata.widgets[0]].data[wdata.attr], function (newId, oldId) {
+                        if (oldId != newId) {
+                            $('#inspect_' + wdata.attr).val(newId);
+                            $('#inspect_' + wdata.attr).trigger('change');
+
+                            /*
+                             if (document.getElementById('inspect_hm_wid')) {
+                             if (that.objects[newId]['Type'] !== undefined && that.objects[value]['Parent'] !== undefined &&
+                             (that.objects[newId]['Type'] == 'STATE' ||
+                             that.objects[newId]['Type'] == 'LEVEL')) {
+
+                             var parent = that.objects[newId]['Parent'];
+                             if (that.objects[parent]['DPs'] !== undefined &&
+                             that.objects[parent]['DPs']['WORKING'] !== undefined) {
+                             $('#inspect_hm_wid').val(that.objects[parent]['DPs']['WORKING']);
+                             $('#inspect_hm_wid').trigger('change');
+                             }
+                             }
+                             }
+
+                             // Try to find Function of the device and fill the Filter field
+                             var $filterkey = $('#inspect_filterkey');
+                             if ($filterkey.length) {
+                             if ($filterkey.val() == '') {
+                             var oid = newId;
+                             var func = null;
+                             if (that.metaIndex && that.metaIndex['ENUM_FUNCTIONS']) {
+                             while (oid && that.objects[oid]) {
+                             for (var t = 0; t < that.metaIndex['ENUM_FUNCTIONS'].length; t++) {
+                             var list = that.objects[that.metaIndex['ENUM_FUNCTIONS'][t]];
+                             for (var z = 0; z < list['Channels'].length; z++) {
+                             if (list['Channels'][z] == oid) {
+                             func = list.Name;
+                             break;
+                             }
+                             }
+                             if (func) break;
+                             }
+                             if (func) break;
+
+                             oid = that.objects[oid]['Parent'];
+                             }
+                             }
+                             if (func) $filterkey.val(func).trigger('change');
+                             }
+                             }*/
+                        }
+                    });
+                }
+            };
+            line[0].onchange = function (val) {
+                var wdata = $(this).data('data-wdata');
+                $('#inspect_' + wdata.attr + '_desc').html(that.getObjDesc(val));
+            };
+
+            line.push({input: '<div id="inspect_' + widAttr + '_desc"></div>'});
+
+            // Init select dialog
+            if (!$('#dialog-select-member-' + widAttr).length) {
+                $('body').append('<div id="dialog-select-member-' + widAttr + '" style="display:none">');
+                $('#dialog-select-member-' + widAttr).selectId('init', {
+                    texts: {
+                        select: _('Select'),
+                        cancel: _('Cancel'),
+                        all: _('All'),
+                        id: _('ID'),
+                        name: _('Name'),
+                        role: _('Role'),
+                        room: _('Room'),
+                        value: _('Value'),
+                        selectid: _('Select ID'),
+                        enum: _('Members'),
+                        from: _('from'),
+                        lc: _('lc'),
+                        ts: _('ts'),
+                        ack: _('ack'),
+                        expand: _('expand'),
+                        collapse: _('collapse'),
+                        refresh: _('refresh'),
+                        edit: _('edit'),
+                        ok: _('ok'),
+                        wait: _('wait'),
+                        list: _('list'),
+                        tree: _('tree')
+                    },
+                    columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
+                    imgPath: '/lib/css/fancytree/',
+                    objects: this.objects,
+                    states:  this.states,
+                    zindex:  1001
+                });
+            }
         }
 
         return line;
@@ -2174,7 +2184,7 @@ vis = $.extend(true, vis, {
     editFontName: function (widAttr) {
         // Select
         var values = ['', 'Arial', 'Times', 'Andale Mono', 'Comic Sans', 'Impact'];
-        this.editSelect(widAttr, values);
+        return this.editSelect(widAttr, values);
     },
     editAutoComplete: function (widAttr, values) {
         // Effect selector
@@ -2284,7 +2294,7 @@ vis = $.extend(true, vis, {
             views.push(v);
         }
 
-        return this.editSelect(widAttr, views);
+        return this.editSelect(widAttr, views, true);
     },
     editEffect: function (widAttr) {
         var that = this;
@@ -2351,8 +2361,8 @@ vis = $.extend(true, vis, {
 
                     $.fm({
                         lang:       that.language,
-                        path:       that.widgets[wdata.widgets[0]].data[wdata.attr] || '/' + that.conn.namespace + '/' + that.projectPrefix + 'img/',
-                        uploadDir:  '/' + that.conn.namespace + '/',
+                        path:       that.widgets[wdata.widgets[0]].data[wdata.attr] || ('/' + (that.conn.namespace ? that.conn.namespace + '/' : '') + that.projectPrefix + 'img/'),
+                        uploadDir:  '/' + (that.conn.namespace ? that.conn.namespace + '/' : ''),
                         fileFilter: filter || ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
                         folderFilter: false,
                         mode:       'open',
@@ -2947,7 +2957,7 @@ vis = $.extend(true, vis, {
         var wid_default  = match[3];
         var wid_type     = match[4];
         var wid_type_opt = null;
-        var notTranslate = true;
+        var notTranslate = false;
         var index        = '';
         var attrDepends  = [];
 
@@ -3060,6 +3070,13 @@ vis = $.extend(true, vis, {
                 return [];
             }
             var widgetAttrs = $widgetTpl.attr('data-vis-attrs');
+            // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+            var t = 0;
+            var attr;
+            while (attr = $widgetTpl.attr('data-vis-attrs' + t)) {
+                widgetAttrs += attr;
+                t++;
+            }
             if (widgetAttrs) {
                 widgetAttrs = widgetAttrs.split(';');
             } else {
@@ -3183,6 +3200,9 @@ vis = $.extend(true, vis, {
     inspectWidgets: function (addWidget, delWidget, onlyUpdate) {
         if (this.isStealCss) return false;
 
+        // Deselect all elements
+        $(':focus').blur();
+
         if (typeof addWidget == 'boolean') {
             onlyUpdate = addWidget;
             addWidget = undefined;
@@ -3200,7 +3220,7 @@ vis = $.extend(true, vis, {
             if (pos != -1) this.activeWidgets.splice(pos, 1);
         }
         var that = this;
-        var wid = this.activeWidgets[0] || 'none';
+        var wid  = this.activeWidgets[0] || 'none';
         // find view
         var view = this.getViewOfWidget(wid);
 
@@ -3329,6 +3349,13 @@ vis = $.extend(true, vis, {
             return false;
         }
         var widgetAttrs = $widgetTpl.attr('data-vis-attrs');
+        // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+        var t = 0;
+        var attr;
+        while (attr = $widgetTpl.attr('data-vis-attrs' + t)) {
+            widgetAttrs += attr;
+            t++;
+        }
         if (widgetAttrs) {
             widgetAttrs = widgetAttrs.split(';');
         } else {
@@ -3807,6 +3834,13 @@ vis = $.extend(true, vis, {
 
                 // Widget attributs default values
                 var attrs = $tpl.attr('data-vis-attrs');
+                // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+                var t = 0;
+                var attr;
+                while (attr = $tpl.attr('data-vis-attrs' + t)) {
+                    attrs += attr;
+                    t++;
+                }
                 var data = {};
                 if (attrs) {
                     attrs = attrs.split(';');
@@ -4221,6 +4255,10 @@ vis = $.extend(true, vis, {
     selectAll: function () {
         // Select all widgets on view
         var $focused = $(':focus');
+
+        // Workaround
+
+
         if (!$focused.length && this.activeView) {
             var newWidgets = [];
             // Go through all widgets
@@ -4363,7 +4401,7 @@ vis = $.extend(true, vis, {
     onButtonArrows: function (key, isSize, factor) {
         factor = factor || 1;
         var $focused = $(':focus');
-        if (!$focused.length && this.activeWidgets.lenght) {
+        if (!$focused.length && this.activeWidgets.length) {
             var what = null;
             var shift = 0;
             if (isSize) {
@@ -4428,7 +4466,7 @@ vis = $.extend(true, vis, {
             var that = this;
             this.delayedSettings = setTimeout(function () {
                 // Save new settings
-                var activeWidgets = that.activeWidgets;
+                var activeWidgets = JSON.parse(JSON.stringify(that.activeWidgets));
                 that.activeWidgets = [];
                 for (var i = 0, len = activeWidgets.length; i < len; i++) {
                     var mWidget = document.getElementById(activeWidgets[i]);
@@ -4442,6 +4480,7 @@ vis = $.extend(true, vis, {
                     if (mWidget._customHandlers && mWidget._customHandlers.isRerender) that.reRenderWidgetEdit(activeWidgets[i]);
                 }
                 that.delayedSettings = null;
+                that.activeWidgets = activeWidgets;
                 that.inspectWidgets(true);
             }, 1000);
 
@@ -4480,7 +4519,7 @@ vis = $.extend(true, vis, {
             that.instance = $(this).val();
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
-    },
+    }
 });
 
 $(document).keydown(function (e) {

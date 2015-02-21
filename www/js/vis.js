@@ -132,7 +132,7 @@ var vis = {
             console.log('ID is null for val=' + val);
             return;
         }
-        // Check if this ID is a programm
+
         var d = new Date();
         var t = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) + " " + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
         var o = {};
@@ -142,8 +142,14 @@ var vis = {
             o[id + '.lc'] = this.states.attr(id + '.lc');
         }
         o[id + '.val'] = val;
-        o[id + '.ts'] = t;
+        o[id + '.ts']  = t;
         o[id + '.ack'] = false;
+
+        // Create this value
+        if (this.states.attr(id + '.val') === undefined) {
+            vis.states.attr(o);
+        }
+
         var that = this;
 
         // if no de-bounce running
@@ -380,7 +386,7 @@ var vis = {
         } else {
             if (confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
-                this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                 this.saveRemote(function () {
                     window.location.reload()
                 });
@@ -644,9 +650,9 @@ var vis = {
             if (widget.data && widget.data.oid) {
                 $('#visview_' + view).append(can.view(widget.tpl, {
                     val: this.states[widget.data.oid + '.val'],
-                    ts: this.states[widget.data.oid + '.ts'],
+                    ts:  this.states[widget.data.oid + '.ts'],
                     ack: this.states[widget.data.oid + '.ack'],
-                    lc: this.states[widget.data.oid + '.lc'],
+                    lc:  this.states[widget.data.oid + '.lc'],
                     data: widgetData,
                     view: view
                 }));
@@ -1171,6 +1177,11 @@ if ('applicationCache' in window) {
                                     // Read all data objects from server
                                     vis.conn.getObjects(function (err, data) {
                                         vis.objects = data;
+                                        // Detect if objects are loaded
+                                        for (var ob in data) {
+                                            vis.objectSelector = true;
+                                            break;
+                                        }
                                     });
                                 }
 

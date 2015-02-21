@@ -1,12 +1,18 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
+
     RGraph = window.RGraph || {isRGraph: true};
 
     /**
@@ -16,19 +22,41 @@
     * @param array  data   The chart data
     * @param array  ...    Other lines to plot
     */
-    RGraph.Gauge = function (id, min, max, value)
+    RGraph.Gauge = function (conf)
     {
-        var tmp = RGraph.getCanvasTag(id);
+        /**
+        * Allow for object config style
+        */
+        if (   typeof conf === 'object'
+            && typeof conf.min === 'number'
+            && typeof conf.max === 'number'
+            && typeof conf.id === 'string') {
 
-        // Get the canvas and context objects
-        this.id                = tmp[0];
-        this.canvas            = tmp[1];
-        this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
+            var id                        = conf.id
+            var canvas                    = document.getElementById(id);
+            var min                       = conf.min;
+            var max                       = conf.max;
+            var value                     = conf.value;
+            var parseConfObjectForOptions = true; // Set this so the config is parsed (at the end of the constructor)
+        
+        } else {
+        
+            var id     = conf;
+            var canvas = document.getElementById(id);
+            var min    = arguments[1];
+            var max    = arguments[2];
+            var value  = arguments[3];
+        }
+
+        // id, min, max, value
+        this.id                = id;
+        this.canvas            = canvas;
+        this.context           = this.canvas.getContext ? this.canvas.getContext("2d", {alpha: (typeof id === 'object' && id.alpha === false) ? false : true}) : null;
         this.canvas.__object__ = this;
         this.type              = 'gauge';
         this.min               = min;
         this.max               = max;
-        this.value             = value;
+        this.value             = RGraph.stringsToNumbers(value);
         this.isRGraph          = true;
         this.currentValue      = null;
         this.uid               = RGraph.CreateUID();
@@ -36,6 +64,7 @@
         this.colorsParsed      = false;
         this.coordsText        = [];
         this.original_colors   = [];
+        this.firstDraw         = true; // After the first draw this will be false
 
         /**
         * Range checking
@@ -179,8 +208,22 @@
         * @param mixed value The value of the property
         */
         this.set =
-        this.Set = function (name, value)
+        this.Set = function (name)
         {
+            var value = typeof arguments[1] === 'undefined' ? null : arguments[1];
+
+            /**
+            * the number of arguments is only one and it's an
+            * object - parse it for configuration data and return.
+            */
+            if (arguments.length === 1 && typeof name === 'object') {
+                RG.parseObjectStyleConfig(this, name);
+                return this;
+            }
+
+
+
+
             name = name.toLowerCase();
     
             /**
@@ -277,6 +320,12 @@
                                    );
             this.startAngle = prop['chart.angles.start'] ? prop['chart.angles.start'] : (RG.HALFPI / 3) + RG.HALFPI;
             this.endAngle   = prop['chart.angles.end'] ? prop['chart.angles.end'] : RG.TWOPI + RG.HALFPI - (RG.HALFPI / 3);
+            
+            
+            /**
+            * Reset this so it doesn't keep growing
+            */
+            this.coordsText = [];
     
     
     
@@ -350,7 +399,19 @@
             */
             RG.InstallEventListeners(this);
     
-            
+
+            /**
+            * Fire the onfirstdraw event
+            */
+            if (this.firstDraw) {
+                RG.fireCustomEvent(this, 'onfirstdraw');
+                this.firstDraw = false;
+                this.firstDrawFunc();
+            }
+
+
+
+
             /**
             * Fire the RGraph ondraw event
             */
@@ -1064,6 +1125,17 @@
 
 
         /**
+        * Use this function to reset the object to the post-constructor state. Eg reset colors if
+        * need be etc
+        */
+        this.reset = function ()
+        {
+        };
+
+
+
+
+        /**
         * This parses a single color value
         * 
         * @param string color    The color to look for a gradient in
@@ -1127,6 +1199,17 @@
 
 
         /**
+        * This function runs once only
+        * (put at the end of the file (before any effects))
+        */
+        this.firstDrawFunc = function ()
+        {
+        };
+
+
+
+
+        /**
         * Gauge Grow
         * 
         * This effect gradually increases the represented value
@@ -1154,7 +1237,6 @@
     
                 var newValue  = obj.value;
                 var diff      = newValue - origValue;
-                var step      = (diff / frames);
     
     
                 var iterator = function ()
@@ -1165,10 +1247,10 @@
                     if (obj.value < obj.min) obj.value = obj.min;
         
                     //RGraph.clear(obj.canvas);
-                    RGraph.redrawCanvas(obj.canvas);
+                    RG.redrawCanvas(obj.canvas);
         
-                    if (++frame < frames) {
-                        RGraph.Effects.updateCanvas(iterator);
+                    if (frame++ < frames) {
+                        RG.Effects.updateCanvas(iterator);
                     } else {
                         callback(obj);
                     }
@@ -1196,11 +1278,9 @@
                 var origValue = RG.array_clone(obj.currentValue);
                 var newValue  = RG.array_clone(obj.value);
                 var diff      = [];
-                var step      = [];
 
                 for (var i=0,len=newValue.length; i<len; ++i) {
                     diff[i] = newValue[i] - Number(obj.currentValue[i]);
-                    step[i] = (diff[i] / frames);
                 }
 
 
@@ -1241,6 +1321,15 @@
         * Register the object
         */
         RG.Register(this);
-    };
-// version: 2014-03-28
 
+
+
+
+        /**
+        * This is the 'end' of the constructor so if the first argument
+        * contains configuration data - handle that.
+        */
+        if (parseConfObjectForOptions) {
+            RG.parseObjectStyleConfig(this, conf.options);
+        }
+    };
