@@ -1375,6 +1375,7 @@ vis = $.extend(true, vis, {
         // Init inspect view settings buttons
         $('.view-edit-button').each(function () {
             var type = $(this).attr('data-type');
+
             if (type == 'color') {
                 if ((typeof colorSelect != 'undefined' && $().farbtastic)) {
                     $(this).button({
@@ -1388,13 +1389,14 @@ vis = $.extend(true, vis, {
                             current: $('#inspect_' + attr).val(),
                             onselectArg: attr,
                             onselect: function (img, _data) {
-                                $('#inspect_' + _data).val(colorSelect.GetColor()).trigger('change');
+                                var value = colorSelect.GetColor();
+                                $('#inspect_' + _data).css('background-color', value || '').val(value).trigger('change');
+                                that._editSetFontColor('inspect_' + _data);
                             }
                         };
                         colorSelect.show(_settings);
                     }).css({width: 22, height: 22}).attr('title', _('Select color'));
                 }
-
             }
         });
 
@@ -2255,9 +2257,44 @@ vis = $.extend(true, vis, {
         };
         return line;
     },
+    _editSetFontColor: function(element) {
+        try {
+            var r;
+            var b;
+            var g;
+            var hsp;
+            var a = $('#' + element).css('background-color');
+            if (a.match(/^rgb/)) {
+                a = a.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
+                r = a[1];
+                b = a[2];
+                g = a[3];
+            } else {
+                a = '0x' + a.slice(1).replace(a.length < 5 && /./g, '$&$&');
+                r = a >> 16;
+                b = a >> 8 & 255;
+                g = a & 255;
+            }
+            hsp = Math.sqrt(
+                0.299 * (r * r) +
+                0.587 * (g * g) +
+                0.114 * (b * b)
+            );
+            if (hsp > 127.5) {
+                $('#' + element).css("color", "#000000");
+            } else {
+                $('#' + element).css("color", "#FFFFFF");
+            }
+        }catch (err){}
+    },
     editColor: function (widAttr) {
+        var that = this;
         var line = {
-            input: '<input type="text" id="inspect_' + widAttr + '"/>'
+            input: '<input type="text" id="inspect_' + widAttr + '"/>',
+            onchange: function (value) {
+                $(this).css("background-color", value || '');
+                that._editSetFontColor('inspect_' + widAttr);
+            }
         };
         if ((typeof colorSelect != 'undefined' && $().farbtastic)) {
             line.button = {
@@ -2278,56 +2315,17 @@ vis = $.extend(true, vis, {
                 }
             };
         }
-        setTimeout(function () {
+        /*setTimeout(function () {
             $('#inspect_' + widAttr).css("background-color", $('#inspect_' + widAttr).val());
 
+
             setFontColor($('#inspect_' + widAttr));
-
-            function setFontColor(element) {
-                try {
-                    var r;
-                    var b;
-                    var g;
-                    var hsp;
-                    var a = $(element).css('background-color');
-                    if (a.match(/^rgb/)) {
-                        a = a.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
-                        r = a[1];
-                        b = a[2];
-                        g = a[3];
-                    } else {
-
-                        // @SJ: Could not understand why "+" at start?
-                        a = +("0x" + a.slice(1).replace(
-                                a.length < 5 && /./g, '$&$&'
-                            )
-                        );
-                        r = a >> 16;
-                        b = a >> 8 & 255;
-                        g = a & 255;
-                    }
-                    hsp = Math.sqrt(
-                        0.299 * (r * r) +
-                        0.587 * (g * g) +
-                        0.114 * (b * b)
-                    );
-                    if (hsp > 127.5) {
-                        $('#inspect_' + widAttr).css("color", "#000000");
-                    } else {
-                        $('#inspect_' + widAttr).css("color", "#FFFFFF");
-                    }
-                }catch (err){}
-            }
 
             $('#inspect_' + widAttr).on("change", function () {
                 $(this).css("background-color", $(this).val());
                 setFontColor($('#inspect_' + widAttr));
             });
-
-        });
-
-
-
+        }, 100);*/
 
         return line;
     },
@@ -2821,13 +2819,25 @@ vis = $.extend(true, vis, {
                 if (line[0]) line = line[0];
                 if (typeof line == 'string') line = {input: line};
                 if (typeof line.init == 'function') {
-                    if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
-                    line.init.call($input[0], widAttr, values[widAttr]);
+                    if (wdata.css) {
+                        var cwidAttr = widAttr.substring(4);
+                        if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(widgets, cwidAttr);
+                        line.init.call($input[0], cwidAttr, values[cwidAttr]);
+                    } else {
+                        if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
+                        line.init.call($input[0], widAttr, values[widAttr]);
+                    }
                 }
                 // Call on change
                 if (typeof line.onchange == 'function') {
-                    if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
-                    line.onchange.call($input[0], values[widAttr]);
+                    if (wdata.css) {
+                        var cwidAttr = widAttr.substring(4);
+                        if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(widgets, cwidAttr);
+                        line.onchange.call($input[0], values[cwidAttr]);
+                    } else {
+                        if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
+                        line.onchange.call($input[0], values[widAttr]);
+                    }
                 }
             }
         }
@@ -2893,7 +2903,14 @@ vis = $.extend(true, vis, {
                     this.$selectActiveWidgets.multiselect('refresh');
                 }
 
-                if (typeof wdata.onchange == 'function') wdata.onchange.call(this, that.widgets[wdata.widgets[i]].data[wdata.attr]);
+                if (typeof wdata.onchange == 'function'){
+                    if (wdata.css) {
+                        var css = wdata.attr.substring(4);
+                        wdata.onchange.call(this, that.views[wdata.view].widgets[wdata.widgets[i]].style[css]);
+                    } else {
+                        wdata.onchange.call(this, that.widgets[wdata.widgets[i]].data[wdata.attr]);
+                    }
+                }
 
                 that.save();
                 if (!wdata.css) that.reRenderWidgetEdit(wdata.widgets[i]);
@@ -3162,7 +3179,14 @@ vis = $.extend(true, vis, {
                         if (!allWidgetsAttr[group][name]) delete attrs[group][name];
                     }
                     for (name in allWidgetsAttr[group]) {
-                        if (JSON.stringify(allWidgetsAttr[group][name]) != JSON.stringify(attrs[group][name])) delete allWidgetsAttr[group][name];
+                        var d1 = allWidgetsAttr[group][name].default;
+                        delete allWidgetsAttr[group][name].default;
+                        delete attrs[group][name].default;
+                        if (JSON.stringify(allWidgetsAttr[group][name]) != JSON.stringify(attrs[group][name])){
+                            delete allWidgetsAttr[group][name];
+                        } else {
+                            allWidgetsAttr[group][name].default = d1;
+                        }
                     }
                 }
             }
@@ -3176,7 +3200,7 @@ vis = $.extend(true, vis, {
         for (var i = 0; i < widgets.length; i++) {
             var widget = this.views[this.activeView].widgets[widgets[i]];
             var obj = isStyle ? widget.style : widget.data;
-            var val = (isStyle && (!obj || obj[attr] === undefined)) ? '' : obj[attr];
+            var val = (isStyle && (!obj || obj[attr] === undefined)) ? '' : (obj ? obj[attr] : '');
 
             widgetValues[i] = val;
             if (values.indexOf(val) == -1) values.push(val);
@@ -3684,6 +3708,10 @@ vis = $.extend(true, vis, {
             var attr = $this.attr('id').slice(17);
             var css = $('#visview_' + view).css(attr);
             $this.val(css);
+            if (attr.match(/color$/)) {
+                $this.css("background-color", css || '');
+                that._editSetFontColor($this.attr('id'));
+            }
         });
 
         if (this.views[view] && this.views[view].settings) {

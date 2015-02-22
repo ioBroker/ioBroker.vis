@@ -37,8 +37,17 @@
             "class_true":      {"en": "Class if quality 'true'", "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
             "class_false":     {"en": "Class if quality 'false'", "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
             "test_html":       {"en": "Text for test",         "de": "Testtext",           "ru": "Тестовый текст"},
+            "test_html_tooltip": {
+                "en": "You can specify the test text if value is now empty to visualise settings.\x0AIt is valid only during edit.",
+                "de": "Man kann noch Testtext setzen um die Einstellungen visuell zu sehen.\x0ADas ist nur während Edit gültig.",
+                "ru": "Можно задать тестовый текст, что бы видеть настройки визуально.\x0AОн действителен только во время редактирования."
+            },
             "html":            {"en": "HTML",                  "de": "HTML",               "ru": "HTML"},
             "oid-quality":     {"en": "Quality ID",            "de": "Qualität ID",        "ru": "ID-Качество"},
+            "oid-quality_tooltip":     {
+                "en": "You can set additionally Quality ID to indicate if the value valid or not.",
+                "de": "Man kann noch zusätzlich Qualität ID setzetn um zu zeigen ob das Wert aktuell ist.",
+                "ru": "Можно дополнительно установить ID-Качества, что бы показать актуальное значение или нет."},
             "title":           {"en": "Title",                 "de": "Titel",              "ru": "Заголовок"},
             "title_font":      {"en": "Title font name",       "de": "Titelschriftname",   "ru": "Шрифт заголовка"},
             "title_color":     {"en": "Title color",           "de": "Titelfarbe",         "ru": "Цвет заголовка"},
@@ -709,12 +718,18 @@
             });
         },
         formatFloat: function (data) {
-            if (vis.editMode && data.attr('test_html'))
-                return data.attr('test_html');
+            var val;
+            console.log('F');
+            if (vis.editMode && data.attr('test_html') !== undefined && data.attr('test_html') !== '') {
+                val = parseFloat(data.attr('test_html'));
+            } else {
+                val = parseFloat(vis.states.attr(data.oid + '.val'));
+            }
+            if (data.factor !== undefined && data.factor != '') val = val * parseInt(data.factor, 10);
+            if (data.digits !== undefined && data.digits != '') val = val.toFixed(parseInt(data.digits, 10));
 
-            var val = (parseFloat(vis.states.attr(data.oid + ".val")) * data.factor).toFixed(data.digits);
             if (data.attr('is_comma')) {
-                val = "" + val;
+                val = '' + val;
                 val = val.replace('.', ',');
             }
 
@@ -770,6 +785,7 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="static"
+        data-vis-prev='<img src="widgets\basic\img\Prev_iFrame.png"></img>'
         data-vis-name="iFrame"
         data-vis-attrs="src;refreshInterval[0]/slider,0,180000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
@@ -788,6 +804,7 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="static"
+        data-vis-prev='<img src="widgets\basic\img\Prev_Image.png"></img>'
         data-vis-name="Image"
         data-vis-attrs="src/image;stretch/checkbox;refreshInterval[0]/slider,0,180000,100;refreshOnWakeUp[false]/checkbox;refreshOnViewChange[false]/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
@@ -804,11 +821,11 @@
 <script id="tplLink"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplLink" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee vis-widget-lock" style="height: 22px" > <div class="vis-widget-prev-body"> <a href="www.ioBroker.com" target="www.ioBroker.com" alt="" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%;text-algin:center">www.ioBroker.com</div></a> </div> </div>'
+        data-vis-prev='<div id="prev_tplLink" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee vis-widget-lock" style="height: 22px" > <div class="vis-widget-prev-body"> <a style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%;text-algin:center">www.ioBroker.com</div></a> </div> </div>'
         data-vis-set="basic"
         data-vis-type="static"
         data-vis-name="link"
-        data-vis-attrs="html;href;target;alt">
+        data-vis-attrs="html;href;target/auto,,_blank,_self,_parent,_top;alt">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr("target") %>" alt="<%== this.data.attr("alt") %>" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%"><%== this.data.attr("html") %></div></a>
@@ -980,7 +997,7 @@
 <script id="tplFilterDropdown"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplFilterDropdown" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="top: 225.9147720336914px; left: 185.09090912342072px; width: 52px; height: 23px;" > <div class="vis-widget-prev-body"> <select id="" name=""> <option value="" selected="selected">all</option> <option value="filter">filter</option></select> </div> </div>'
+        data-vis-prev='<div id="prev_tplFilterDropdown" style="text-align: initial;padding: 4px"><div class="vis-widget_prev vis-widget-lock" style="width: 60px; height: 23px;" > <div class="vis-widget-prev-body"> <select id="" name=""> <option value="" selected="selected">all</option> <option value="filter">filter</option></select> </div> </div>'
         data-vis-set="basic"
         data-vis-type="filter"
         data-vis-name="filter - dropdown"
@@ -999,12 +1016,13 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val"
+        data-vis-prev='<div id="prev_tplValueFloat" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:red; font-weight:bold" > <div class="vis-widget-prev-body"> <div>52,57 MB</div> </div> </div></div>'
         data-vis-name="Number"
         data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
     <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + ".val") == "true" ||  vis.states.attr(this.data['oid-quality'] + ".val") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(vis.states.attr(this.data.oid + ".val")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+                <%== this.data.attr("html_prepend") %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(vis.binds.basic.formatFloat(this.data)) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
             </div>
         </div>
     </div>
@@ -1016,6 +1034,7 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="String"
+        data-vis-prev='<div id="tplValueString" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:blue; font-weight:bold" > <div class="vis-widget-prev-body"> <div>Text</div> </div> </div></div>'
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
@@ -1031,6 +1050,7 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val"
+        data-vis-prev='<div id="tplValueStringRaw" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 18px; text-align: center;color:#8B008B; font-weight:bold" > <div class="vis-widget-prev-body"> <div><xmp><div>Text</div></xmp></div> </div> </div></div>'
         data-vis-name="String (unescaped)"
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
