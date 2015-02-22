@@ -154,6 +154,7 @@
                 $this.removeClass("ui-state-hover");
             });
             var oid = $this.attr('data-oid');
+            $this.css({position: 'absolute'});
             vis.binds.jqueryui.active(el, reverse, _value);
         },
         dialog: function (el, options, persistent, preload, html) {
@@ -768,7 +769,7 @@
         data-vis-set="jqui" 
         data-vis-name="container - Button - view in jqui Dialog"
         data-vis-attrs="html_prepend;html_append;buttontext[Text];contains_view;title;modal/checkbox;width;height">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
             <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonDialog(el); %> />
@@ -790,7 +791,7 @@
         data-vis-type="navigation"
         data-vis-name="Button"
         data-vis-attrs="html_prepend;html_append;buttontext[Text];nav_view;hide_effect;hide_duration;show_effect;show_duration">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
             <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" <%= (el) -> jQuery(el).button(); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %> />
@@ -805,7 +806,7 @@
         data-vis-set="jqui" 
         data-vis-name="navigation - Icon" 
         data-vis-attrs="src/image;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
-    <div data-vis-nav="<%= this.data.attr('nav_view') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %>>
+    <div data-vis-nav="<%= this.data.attr('nav_view') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: {}, duration: data.attr('hide_duration')}, showOptions: {effect: data.attr('show_effect'), options: {}, duration: data.attr('show_duration')}}) %>>
         <div class="vis-widget-body">
             <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
 
@@ -933,7 +934,7 @@
         data-vis-type="ctrl"
         data-vis-name="Button State"
         data-vis-attrs="oid;html_prepend;html_append;buttontext[Text];value">
-    <div style="" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
+    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
             <%== this.data.attr("html_prepend") %>
             <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.button(el, data.value); vis.binds.basic.state(el); %> />
@@ -950,7 +951,7 @@
         data-vis-type="ctrl"
         data-vis-name="Radiobuttons on/off"
         data-vis-attrs="off_text[OFF];on_text[ON];oid">
-    <div style="top:0px; left:0px;" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
+    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
         <div class="vis-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
 
@@ -969,7 +970,7 @@
         data-vis-type="ctrl"
         data-vis-name="Radiobuttons ValueList"
         data-vis-attrs="oid;values[0§1§2];texts[OFF§ON§AUTO]">
-    <div style="top:0px; left:0px; width:250px; height:41px;" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
+    <div style=" width:250px; height:41px;" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
         <div class="vis-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> setTimeout(function () {vis.binds.jqueryui.radio(el)},100) %> >
             <%
