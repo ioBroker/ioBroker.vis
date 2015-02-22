@@ -46,6 +46,14 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+### 0.2.4 (2015-02-22)
+- (bluefox) create some previews
+- (bluefox) fix error with color editor.css
+- (bluefox) new lcars widget - End
+- (bluefox) show images in selectID dialog
+- (bluefox) fix jqui buttons
+
+
 ### 0.2.3 (2015-02-21)
 - (bluefox) add tooltips to buttons
 - (bluefox) fix view container widgets

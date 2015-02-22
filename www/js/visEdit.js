@@ -3200,7 +3200,7 @@ vis = $.extend(true, vis, {
         for (var i = 0; i < widgets.length; i++) {
             var widget = this.views[this.activeView].widgets[widgets[i]];
             var obj = isStyle ? widget.style : widget.data;
-            var val = (isStyle && (!obj || obj[attr] === undefined)) ? '' : obj[attr];
+            var val = (isStyle && (!obj || obj[attr] === undefined)) ? '' : (obj ? obj[attr] : '');
 
             widgetValues[i] = val;
             if (values.indexOf(val) == -1) values.push(val);

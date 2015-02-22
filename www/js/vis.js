@@ -85,7 +85,7 @@ if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemL
 
 var vis = {
 
-    version:                '0.2.3',
+    version:                '0.2.4',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -684,7 +684,7 @@ var vis = {
                 }*/
             }
         } catch (e) {
-            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+           this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
         }
     },
     changeView: function (view, hideOptions, showOptions, sync) {
