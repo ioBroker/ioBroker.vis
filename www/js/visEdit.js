@@ -657,8 +657,8 @@ vis = $.extend(true, vis, {
 
             $.each(data, function () {
                 $("#" + this.wid).css('left', left  + 'px');
-                $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.left = left + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
@@ -688,8 +688,8 @@ vis = $.extend(true, vis, {
 
             $.each(data, function(){
                 $("#" + this.wid).css("left", left + "px");
-                $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.left = left + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
@@ -719,8 +719,8 @@ vis = $.extend(true, vis, {
 
             $.each(data, function () {
                 $("#" + this.wid).css("top", top  +"px");
-                $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.top = top + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
@@ -752,8 +752,8 @@ vis = $.extend(true, vis, {
 
             $.each(data, function () {
                 $("#" + this.wid).css("top", top  +"px");
-                $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.top = top + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
@@ -777,8 +777,8 @@ vis = $.extend(true, vis, {
             $.each(that.activeWidgets, function () {
                 var top = middle - ($("#" + this).height() / 2);
                 $("#" + this).css("top", top + "px");
-                $("#widget_helper_" + this).css("top", top - 2 + "px");
                 that.views[that.activeView].widgets[this].style.top = top + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
@@ -802,8 +802,8 @@ vis = $.extend(true, vis, {
             $.each(that.activeWidgets, function () {
                 var left = middle - ($("#" + this).width() / 2);
                 $("#" + this).css("left", left +"px");
-                $("#widget_helper_"+this).css("left", left - 2 + "px");
                 that.views[that.activeView].widgets[this].style.left = left + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
@@ -849,9 +849,9 @@ vis = $.extend(true, vis, {
             $.each(data, function(){
                 left = left + between;
                 $("#" + this.wid).css("left", left + "px");
-                $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.left = left + "px";
                 left = left + $("#" + this.wid).width();
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
@@ -897,9 +897,9 @@ vis = $.extend(true, vis, {
             $.each(data, function () {
                 top = top + between;
                 $("#" + this.wid).css("top", top + "px");
-                $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.top = top + "px";
                 top = top + $("#" + this.wid).height();
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
@@ -2547,15 +2547,38 @@ vis = $.extend(true, vis, {
             this.groups[group][attr].attrIndex = '';
         }
     },
+    editDimensionOnChangeHelper: function (elem, value) {
+        if (value && typeof value != 'object') {
+            var e = value.substring(value.length - 2);
+            if (e != 'px' && e != 'em') {
+                var wdata = $(elem).data('data-wdata');
+                for (var t = 0; t < wdata.widgets.length; t++) {
+                    this.views[wdata.view].widgets[wdata.widgets[t]].style[wdata.attr.substring(4)] = value + 'px';
+                    $('#' + wdata.widgets[t]).css(wdata.attr.substring(4), value + 'px');
+                }
+            }
+        }
+    },
     editCssBorder: function () {
         var group = 'css_border';
         var line;
+        var that = this;
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group]['css_border-width']      = {input: '<input type="text" id="inspect_css_border-width"/>'};
-        this.groups[group]['css_border-style']      = this.editAutoComplete('css_border-style', ['', 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'initial', 'inherit']);
-        this.groups[group]['css_border-color']      = this.editColor('css_border-color');
-        this.groups[group]['css_border-radius']     = {input: '<input type="text" id="inspect_css_border-radius"/>'};
+        this.groups[group]['css_border-width']  = {
+            input: '<input type="text" id="inspect_css_border-width"/>',
+            onchange: function (value) {
+                that.editDimensionOnChangeHelper(this, value);
+            }
+        };
+        this.groups[group]['css_border-style']  = this.editAutoComplete('css_border-style', ['', 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'initial', 'inherit']);
+        this.groups[group]['css_border-color']  = this.editColor('css_border-color');
+        this.groups[group]['css_border-radius'] = {
+            input: '<input type="text" id="inspect_css_border-radius"/>',
+            onchange: function (value) {
+                that.editDimensionOnChangeHelper(this, value);
+            }
+        };
 
         for(var attr in this.groups[group]) {
             this.groups[group][attr].css = true;
@@ -2973,8 +2996,8 @@ vis = $.extend(true, vis, {
             $('#widget_helper_' + wid).css({
                     left:   pos.left - 2,
                     top:    pos.top  - 2,
-                    height: $widget.outerHeight() + 2,
-                    width:  $widget.outerWidth()  + 2
+                    height: $widget.outerHeight() + 1,
+                    width:  $widget.outerWidth() + 1,
                 }
             ).show();
         } else {
@@ -3881,8 +3904,8 @@ vis = $.extend(true, vis, {
                 },
                 resize: function (event, ui) {
                     $('.widget-helper').css({
-                        width:  ui.element.outerWidth()  + 2,
-                        height: ui.element.outerHeight() + 2});
+                        width:  ui.element.outerWidth()  + 1,
+                        height: ui.element.outerHeight() + 1});
                 }
             }, resizableOptions));
         }
