@@ -750,7 +750,63 @@
             //<%=
             return (data.border) ? ("calc(" + (parseFloat(vis.states.attr(data.oid + '.val')) * data.factor) + "% - " + vis.binds.basic.extractWidth(data.border, 2) + ")") : ((parseFloat(vis.states.attr(data.oid + '.val')) * data.factor) + "%");
             //        %>
+        },
+        formatDate: function (dateObj, isSeconds) {
+            //return dateObj.getFullYear() + '-' +
+            //    ("0" + (dateObj.getMonth() + 1).toString(10)).slice(-2) + '-' +
+            //    ("0" + (dateObj.getDate()).toString(10)).slice(-2) + ' ' +
+            //    ("0" + (dateObj.getHours()).toString(10)).slice(-2) + ':' +
+            //    ("0" + (dateObj.getMinutes()).toString(10)).slice(-2) + ':' +
+            //    ("0" + (dateObj.getSeconds()).toString(10)).slice(-2);
+            // Following implementation is 5 times faster
+            if (isSeconds === undefined) isSeconds = true;
+            if (!dateObj) return '';
+            var text = typeof dateObj;
+            if (text == 'string') {
+                var pos = dateObj.indexOf('.');
+                if (pos != -1) dateObj = dateObj.substring(0, pos);
+                return dateObj;
+            }
+            if (text != 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
+
+            text = dateObj.getFullYear();
+            var v = dateObj.getMonth() + 1;
+            if (v < 10) {
+                text += '-0' + v;
+            } else {
+                text += '-' + v;
+            }
+
+            v = dateObj.getDate();
+            if (v < 10) {
+                text += '-0' + v;
+            } else {
+                text += '-' + v;
+            }
+
+            v = dateObj.getHours();
+            if (v < 10) {
+                text += ' 0' + v;
+            } else {
+                text += ' ' + v;
+            }
+            v = dateObj.getMinutes();
+            if (v < 10) {
+                text += ':0' + v;
+            } else {
+                text += ':' + v;
+            }
+
+            v = dateObj.getSeconds();
+            if (v < 10) {
+                text += ':0' + v;
+            } else {
+                text += ':' + v;
+            }
+
+            return text;
         }
+
     };
 
     $(document).mouseup(function () {
@@ -1066,13 +1122,14 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="val"
+        data-vis-type="val,timestamp"
         data-vis-name="Timestamp"
+        data-vis-prev='<div id="prev_tplValueTimestamp" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#00008B" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".ts") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".ts")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1082,13 +1139,14 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Lastchange Timestamp"
+        data-vis-type="val,timestamp"
+        data-vis-prev='<div id="prev_tplValueLastchange" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#006400" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
+        data-vis-name="Last change Timestamp"
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".lc") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".lc")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
