@@ -32,81 +32,77 @@
 <script type="text/javascript" src="widgets/knob/js/knobRot-0.2.2.js"></script>
 
 <script type="text/javascript">
-    //jQuery.extend(true, vis.binds, {
-        vis.binds.knob = {
-            knobrot: function (el, options, factor){
-                factor = parseInt(factor, 10);
-                if (factor == 0) { factor = 1; }
-                var $this = jQuery(el);
-                console.log(" factor="+factor);
-                var id = $this.attr("data-hm-id");
-                options = $.extend(true, {
+    vis.binds.knob = {
+        knobrot: function (el, options, factor){
+            factor = parseInt(factor, 10);
+            if (factor == 0) factor = 1;
+            var $this = $(el);
+            var oid = $this.attr("data-oid");
+            console.log('A');
+            options = $.extend(true, {
 
-                }, options);
-                $this.knobRot(options);
-                $this.bind("knobrefresh", function (a) {
-                    var val = (a.target.value / factor);
-                    localData.setValue(id, val);
-                });
-                var hm_id = "_" + id;
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                    if (isNaN(newVal)) {
-                        newVal = 0;
-                    }
-                   var val = (newVal*factor).toFixed(0);
-                    $this.val(val);
-                    $this.knobRot("set", val).trigger("knobrefresh");
+            }, options);
+            
+            $this.knobRot(options);
+            $this.bind("knobrefresh", function (a) {
+                var val = (a.target.value / factor);
+                vis.setValue(oid, val);
+            });
 
-                });
-            },
-            knob: function (el) {
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                $this.knob({
-                    change: function (val) {
-                        if (!vis.editMode) {
-                            localData.setValue(id, val / 100);
-                        }
-                    }
-                });
-                var hm_id = "_" + id;
-                localData.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                    $this.val(newVal*100).trigger("change");
-                });
-            },
-            shinyknob: function (el, type) {
-                var $this = jQuery(el);
-                var id = $this.attr("data-hm-id");
-                    $this.knobKnob({
-                        snap: 5,
-                        turn: function (val) {
-                            if (!vis.editMode) {
-                                localData.setValue(id, val.toFixed(2));
-                            }
-                        }
-                    });
+            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                if (isNaN(newVal)) {
+                    newVal = 0;
+                }
+               var val = (newVal * factor).toFixed(0);
+                $this.val(val);
+                $this.knobRot("set", val).trigger("knobrefresh");
+            });
+        },
+        knob: function (el) {
+            var $this = $(el);
+            var oid = $this.attr("data-oid");
+            $this.knob({
+                change: function (val) {
+                    if (!vis.editMode) vis.setValue(oid, val / 100);
+                }
+            });
+            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                $this.val(newVal * 100).trigger("change");
+            });
+        },
+        shinyknob: function (el, type) {
+            var $this = $(el);
+            var oid = $this.attr("data-oid");
+            $this.knobKnob({
+                snap: 5,
+                turn: function (val) {
+                    if (!vis.editMode) vis.setValue(oid, val.toFixed(2));
+                }
+            });
 
-                var hm_id = "_" + id;
-                /*homematic.uiState.bind(hm_id+".Value", function( e, newVal, oldVal ) {
-                 $this.knobKnob({
-                 snap: 5,
-                 //value: 0.5,
-                 turn: function (val) {
-                 homematic.setState( id, val.toFixed(2));
+            /*homematic.uiState.bind(oid+'.val', function( e, newVal, oldVal ) {
+             $this.knobKnob({
+             snap: 5,
+             //value: 0.5,
+             turn: function (val) {
+             homematic.setState( id, val.toFixed(2));
 
-                 }
-                 });
-                 });*/
-            }
-        };
-
-    //});
+             }
+             });
+             });*/
+        }
+    };
 </script>
 
-
-<script type="text/ejs" id="tplKnob" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - Knob" data-dashui-attrs="html;hm_id;fgColor;bgColor;width;angleOffset;angleArc;linecap;cursor;thickness;displayInput;readOnly">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
+<script id="tplKnob"
+        type="text/ejs"
+        class="vis-tpl" 
+        data-vis-set="knob" 
+        data-vis-type="ctrl"
+        data-vis-name="Knob" 
+        data-vis-attrs="html;oid;fgColor;bgColor;width;angleOffset;angleArc;linecap;cursor;thickness;displayInput;readOnly">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
             <input type="text"
                    data-width="<%= this.data.attr('width') %>"
                    data-fgColor="<%= this.data.attr('fgColor') %>"
@@ -118,113 +114,188 @@
                    data-thickness="<%= this.data.attr('thickness') %>"
                    data-displayInput="<%= this.data.attr('displayInput') %>"
                    data-readOnly="<%= this.data.attr('readOnly') %>"
-                   data-hm-id="<%= this.data.attr('hm_id') %>"
+                   data-oid="<%= this.data.attr('oid') %>"
             <%= (el) -> vis.binds.knob.knob(el) %> />
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplShinyknob" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - Shinyknob (unfertig)" data-dashui-attrs="html;hm_id">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <div data-hm-id="<%= this.data.attr('hm_id') %>" <%= (el) -> vis.binds.knob.shinyknob(el) %>></div>
+<script id="tplShinyknob"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - Shinyknob (unfertig)"
+        data-vis-attrs="html;oid">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.knob.shinyknob(el) %>></div>
         </div>
     </div>
 </script>
 
+<!--script id="tplKnobRotLumen"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - knobRot Lumen"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['lumen'],frameWidth: 90, frameHeight: 90, frameCount: 31,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+        </div>
+    </div>
+</script-->
 
-
-
-<script type="text/ejs" id="tplKnobRotLumen" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot Lumen" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['lumen'],frameWidth: 90, frameHeight: 90, frameCount: 31,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+<script id="tplKnobRotSilver"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - knobRot Silver"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el, {classes: ['silver'], frameWidth: 100, frameHeight: 100, frameCount: 31, minimumValue: data.attr('min'), maximumValue: data.attr('max')}, data.attr('factor')) %>/>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplKnobRotSilver" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot Silver" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['silver'],frameWidth: 100, frameHeight: 100, frameCount: 31,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+<script id="tplKnobRotGrey128"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - knobRot Grey 128px"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey128'],frameWidth: 128, frameHeight: 128, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplKnobRotGrey128" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot Grey 128px" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey128'],frameWidth: 128, frameHeight: 128, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+<script id="tplKnobRotGrey100"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - knobRot Grey 100px"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey100'],frameWidth: 100, frameHeight: 100, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplKnobRotGrey100" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot Grey 100px" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey100'],frameWidth: 100, frameHeight: 100, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
-        </div>
-    </div>
-</script>
-<script type="text/ejs" id="tplKnobRotGreyMM128" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot Grey MinMax 128px" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey128m'],frameWidth: 128, frameHeight: 128, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
-        </div>
-    </div>
-</script>
-
-<script type="text/ejs" id="tplKnobRotGreyMM100" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot Grey MinMax 100px" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey100m'],frameWidth: 100, frameHeight: 100, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
-        </div>
-    </div>
-</script>
-<script type="text/ejs" id="tplKnobRotGreyL128" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot Grey Line 128px" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey128l'],frameWidth: 128, frameHeight: 128, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+<script id="tplKnobRotGreyMM128"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - knobRot Grey MinMax 128px"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey128m'],frameWidth: 128, frameHeight: 128, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplKnobRotGreyL100" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot Grey Line 100px" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey100l'],frameWidth: 100, frameHeight: 100, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
-        </div>
-    </div>
-</script>
-<script type="text/ejs" id="tplKnobRotGrey64" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot Grey 64px" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey64'],frameWidth: 64, frameHeight: 64, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
-        </div>
-    </div>
-</script>
-
-
-<script type="text/ejs" id="tplKnobRotBlack80" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot Black 80px" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['black80'],frameWidth: 80, frameHeight: 80, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+<script id="tplKnobRotGreyMM100"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - knobRot Grey MinMax 100px"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey100m'],frameWidth: 100, frameHeight: 100, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplKnobRotBlack48" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot Black 48px" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['black48'],frameWidth: 48, frameHeight: 48, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+<script id="tplKnobRotGreyL128"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - knobRot Grey Line 128px"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey128l'],frameWidth: 128, frameHeight: 128, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
         </div>
     </div>
 </script>
 
-<script type="text/ejs" id="tplKnobRotWhite" class="dashui-tpl" data-dashui-set="knob" data-dashui-name="ctrl - knobRot White" data-dashui-attrs="html;hm_id;factor;min;max">
-    <div class="dashui-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
-        <div class="dashui-widget-body">
-            <input data-hm-id="<%= this.data.attr('hm_id') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['white'],frameWidth: 50, frameHeight: 50, frameCount: 41,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+<script id="tplKnobRotGreyL100"
+        type="text/ejs"
+        class="vis-tpl" data-vis-set="knob"
+        data-vis-name="ctrl - knobRot Grey Line 100px"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey100l'],frameWidth: 100, frameHeight: 100, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+        </div>
+    </div>
+</script>
+
+<script id="tplKnobRotGrey64"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - knobRot Grey 64px"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['grey64'],frameWidth: 64, frameHeight: 64, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+        </div>
+    </div>
+</script>
+
+<script id="tplKnobRotBlack80"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - knobRot Black 80px"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['black80'],frameWidth: 80, frameHeight: 80, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+        </div>
+    </div>
+</script>
+
+<script id="tplKnobRotBlack48"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - knobRot Black 48px"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['black48'],frameWidth: 48, frameHeight: 48, frameCount: 51,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
+        </div>
+    </div>
+</script>
+
+<script id="tplKnobRotWhite"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="knob"
+        data-vis-name="ctrl - knobRot White"
+        data-vis-attrs="html;oid;factor;min;max"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <input data-oid="<%= this.data.attr('oid') %>" type="text" value="0" style="" <%= (el) -> vis.binds.knob.knobrot(el,{classes:['white'],frameWidth: 50, frameHeight: 50, frameCount: 41,minimumValue:data.attr('min'),maximumValue:data.attr('max')},data.attr('factor')) %>/>
         </div>
     </div>
 </script>

@@ -1,10 +1,15 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
 
@@ -35,6 +40,7 @@
     RG.events         = [];
     RG.cursor         = [];
     RG.Effects        = RG.Effects || {};
+    RG.cache          = [];
 
     RG.ObjectRegistry                    = {};
     RG.ObjectRegistry.objects            = {};
@@ -157,7 +163,7 @@
 
 
     /**
-    * Returns an appropriate scale. The return value is actualy anm object consiosting of:
+    * Returns an appropriate scale. The return value is actualy an object consisting of:
     *  scale.max
     *  scale.min
     *  scale.scale
@@ -270,7 +276,6 @@
 
 
         } else if (!strict) {
-
 
             /**
             * Now comes the scale handling for integer values
@@ -568,7 +573,7 @@
     {
         var obj   = ca.__object__;
         var co    = ca.getContext('2d');
-        var color = arguments[1];
+        var color = arguments[1] || (obj && obj.get('clearto'));
 
         if (!ca) {
             return;
@@ -646,6 +651,8 @@
     * @param integer gutter The size of the gutter
     * @param integer        The center X point (optional - if not given it will be generated from the canvas width)
     * @param integer        Size of the text. If not given it will be 14
+    * @param object         An optional object which has canvas and context properties to use instead of those on
+    *                       the obj argument (so as to enable caching)
     */
     RG.drawTitle =
     RG.DrawTitle = function (obj, text, gutterTop)
@@ -653,6 +660,11 @@
         var ca = canvas  = obj.canvas;
         var co = context = obj.context;
         var prop         = obj.properties;
+        
+        if (arguments[5]) {
+            var ca = canvas  = arguments[5].canvas;
+            var co = context = arguments[5].context;
+        }
 
         var gutterLeft   = prop['chart.gutter.left'];
         var gutterRight  = prop['chart.gutter.right'];
@@ -781,7 +793,7 @@
         /**
         * Draw the title
         */
-        RG.Text2(obj,{'font':font,
+        RG.Text2(co, {'font':font,
                       'size':size,
                       'x':centerx,
                       'y':vpos,
@@ -1008,12 +1020,7 @@
         for (var i=0,len=objectRegistry.length; i<len; ++i) {
             if (objectRegistry[i]) {
                 var id = objectRegistry[i][0];
-                try {
-
-                    objectRegistry[i][1].Draw();
-                } catch (e) {
-                    console.log(e);
-                }
+                objectRegistry[i][1].Draw();
             }
         }
     };
@@ -1036,10 +1043,8 @@
         * First clear the canvas
         */
         if (!arguments[1] || (typeof arguments[1] === 'boolean' && !arguments[1] == false) ) {
-            
-            // TODO This function should really support passing a color as the second optional argument - which is then used in the below
-            // call
-            RG.clear(ca);
+            var color = arguments[2] || ca.__object__.get('clearto') || 'transparent';
+            RG.clear(ca, color);
         }
 
         /**
@@ -1066,270 +1071,343 @@
     RG.background.draw =
     RG.background.Draw = function (obj)
     {
-        var ca = canvas  = obj.canvas;
-        var co = context = obj.context;
-        var prop         = obj.properties;
+        var func = function (obj, canvas, context)
+        {
+            var ca   = canvas;
+            var co   = context;
+            var prop = obj.properties;
 
-        var height       = 0;
-        var gutterLeft   = obj.gutterLeft;
-        var gutterRight  = obj.gutterRight;
-        var gutterTop    = obj.gutterTop;
-        var gutterBottom = obj.gutterBottom;
-        var variant      = prop['chart.variant'];
-        
-        co.fillStyle = prop['chart.text.color'];
-        
-        // If it's a bar and 3D variant, translate
-        if (variant == '3d') {
-            co.save();
-            co.translate(10, -5);
-        }
-
-        // X axis title
-        if (typeof prop['chart.title.xaxis'] === 'string' && prop['chart.title.xaxis'].length) {
-        
-            var size = prop['chart.text.size'] + 2;
-            var font = prop['chart.text.font'];
-            var bold = prop['chart.title.xaxis.bold'];
-
-            if (typeof(prop['chart.title.xaxis.size']) == 'number') {
-                size = prop['chart.title.xaxis.size'];
-            }
-
-            if (typeof(prop['chart.title.xaxis.font']) == 'string') {
-                font = prop['chart.title.xaxis.font'];
-            }
+            var height       = 0;
+            var gutterLeft   = obj.gutterLeft;
+            var gutterRight  = obj.gutterRight;
+            var gutterTop    = obj.gutterTop;
+            var gutterBottom = obj.gutterBottom;
+            var variant      = prop['chart.variant'];
             
-            var hpos = ((ca.width - gutterLeft - gutterRight) / 2) + gutterLeft;
-            var vpos = ca.height - gutterBottom + 25;
+            co.fillStyle = prop['chart.text.color'];
             
-            if (typeof prop['chart.title.xaxis.pos'] === 'number') {
-                vpos = ca.height - (gutterBottom * prop['chart.title.xaxis.pos']);
+            // If it's a bar and 3D variant, translate
+            if (variant == '3d') {
+                co.save();
+                co.translate(10, -5);
             }
-
-
-
-
-            // Specifically specified X/Y positions
-            if (typeof prop['chart.title.xaxis.x'] === 'number') {
-                hpos = prop['chart.title.xaxis.x'];
-            }
-
-            if (typeof prop['chart.title.xaxis.y'] === 'number') {
-                vpos = prop['chart.title.xaxis.y'];
-            }
-
-
-
-
-            RG.Text2(obj, {'font':font,
-                           'size':size,
-                           'x':hpos,
-                           'y':vpos,
-                           'text':prop['chart.title.xaxis'],
-                           'halign':'center',
-                           'valign':'center',
-                           'bold':bold,
-                           'tag': 'title xaxis'
-                          });
-        }
-
-        // Y axis title
-        if (typeof(prop['chart.title.yaxis']) == 'string' && prop['chart.title.yaxis'].length) {
-
-            var size  = prop['chart.text.size'] + 2;
-            var font  = prop['chart.text.font'];
-            var angle = 270;
-            var bold  = prop['chart.title.yaxis.bold'];
-            var color = prop['chart.title.yaxis.color'];
-
-            if (typeof(prop['chart.title.yaxis.pos']) == 'number') {
-                var yaxis_title_pos = prop['chart.title.yaxis.pos'] * gutterLeft;
-            } else {
-                var yaxis_title_pos = ((gutterLeft - 25) / gutterLeft) * gutterLeft;
-            }
-
-            if (typeof prop['chart.title.yaxis.size'] === 'number') {
-                size = prop['chart.title.yaxis.size'];
-            }
-
-            if (typeof prop['chart.title.yaxis.font'] === 'string') {
-                font = prop['chart.title.yaxis.font'];
-            }
-
-            if (prop['chart.title.yaxis.align'] == 'right' || prop['chart.title.yaxis.position'] == 'right') {
-                angle = 90;
-                yaxis_title_pos = prop['chart.title.yaxis.pos'] ? (ca.width - gutterRight) + (prop['chart.title.yaxis.pos'] * gutterRight) :
-                                                                   ca.width - gutterRight + prop['chart.text.size'] + 5;
-            } else {
-                yaxis_title_pos = yaxis_title_pos;
-            }
-            
-            var y = ((ca.height - gutterTop - gutterBottom) / 2) + gutterTop;
-            
-            // Specifically specified X/Y positions
-            if (typeof prop['chart.title.yaxis.x'] === 'number') {
-                yaxis_title_pos = prop['chart.title.yaxis.x'];
-            }
-
-            if (typeof prop['chart.title.yaxis.y'] === 'number') {
-                y = prop['chart.title.yaxis.y'];
-            }
-
-            co.fillStyle = color;
-            RG.Text2(obj, {'font':font,
-                           'size':size,
-                           'x':yaxis_title_pos,
-                           'y':y,
-                           'valign':'center',
-                           'halign':'center',
-                           'angle':angle,
-                           'bold':bold,
-                           'text':prop['chart.title.yaxis'],
-                           'tag':'title yaxis'
-                          });
-        }
-
-        /**
-        * If the background color is spec ified - draw that. It's a rectangle that fills the
-        * entire are within the gutters
-        */
-        var bgcolor = prop['chart.background.color'];
-        if (bgcolor) {
-            co.fillStyle = bgcolor;
-            co.fillRect(gutterLeft, gutterTop, ca.width - gutterLeft - gutterRight, ca.height - gutterTop - gutterBottom);
-        }
-
-        /**
-        * Draw horizontal background bars
-        */
-        co.beginPath(); // Necessary?
-
-        co.fillStyle   = prop['chart.background.barcolor1'];
-        co.strokeStyle = co.fillStyle;
-        height = (ca.height - gutterBottom);
-
-        for (var i=gutterTop; i<height ; i+=80) {
-            co.fillRect(gutterLeft, i, ca.width - gutterLeft - gutterRight, ma.min(40, ca.height - gutterBottom - i) );
-        }
-
-        co.fillStyle   = prop['chart.background.barcolor2'];
-        co.strokeStyle = co.fillStyle;
-        height = (ca.height - gutterBottom);
-
-        for (var i= (40 + gutterTop); i<height; i+=80) {
-            co.fillRect(gutterLeft, i, ca.width - gutterLeft - gutterRight, i + 40 > (ca.height - gutterBottom) ? ca.height - (gutterBottom + i) : 40);
-        }
-        
-        //context.stroke();
-        co.beginPath();
     
-
-        // Draw the background grid
-        if (prop['chart.background.grid']) {
-
-            // If autofit is specified, use the .numhlines and .numvlines along with the width to work
-            // out the hsize and vsize
-            if (prop['chart.background.grid.autofit']) {
-
-                /**
-                * Align the grid to the tickmarks
-                */
-                if (prop['chart.background.grid.autofit.align']) {
-                    
-                    // Align the horizontal lines
-                    obj.Set('chart.background.grid.autofit.numhlines', prop['chart.ylabels.count']);
-
-                    // Align the vertical lines for the line
-                    if (obj.type === 'line') {
-                        if (prop['chart.labels'] && prop['chart.labels'].length) {
-                            obj.Set('chart.background.grid.autofit.numvlines', prop['chart.labels'].length - 1);
-                        } else {
-                            obj.Set('chart.background.grid.autofit.numvlines', obj.data[0].length - 1);
-                        }
-
-                    // Align the vertical lines for the bar
-                    } else if (obj.type === 'bar' && prop['chart.labels'] && prop['chart.labels'].length) {
-                        obj.Set('chart.background.grid.autofit.numvlines', prop['chart.labels'].length);
-                    }
+            // X axis title
+            if (typeof prop['chart.title.xaxis'] === 'string' && prop['chart.title.xaxis'].length) {
+            
+                var size = prop['chart.text.size'] + 2;
+                var font = prop['chart.text.font'];
+                var bold = prop['chart.title.xaxis.bold'];
+    
+                if (typeof(prop['chart.title.xaxis.size']) == 'number') {
+                    size = prop['chart.title.xaxis.size'];
                 }
-
-                var vsize = ((ca.width - gutterLeft - gutterRight)) / prop['chart.background.grid.autofit.numvlines'];
-                var hsize = (ca.height - gutterTop - gutterBottom) / prop['chart.background.grid.autofit.numhlines'];
-
-                obj.Set('chart.background.grid.vsize', vsize);
-                obj.Set('chart.background.grid.hsize', hsize);
+    
+                if (typeof(prop['chart.title.xaxis.font']) == 'string') {
+                    font = prop['chart.title.xaxis.font'];
+                }
+                
+                var hpos = ((ca.width - gutterLeft - gutterRight) / 2) + gutterLeft;
+                var vpos = ca.height - gutterBottom + 25;
+                
+                if (typeof prop['chart.title.xaxis.pos'] === 'number') {
+                    vpos = ca.height - (gutterBottom * prop['chart.title.xaxis.pos']);
+                }
+    
+    
+    
+    
+                // Specifically specified X/Y positions
+                if (typeof prop['chart.title.xaxis.x'] === 'number') {
+                    hpos = prop['chart.title.xaxis.x'];
+                }
+    
+                if (typeof prop['chart.title.xaxis.y'] === 'number') {
+                    vpos = prop['chart.title.xaxis.y'];
+                }
+    
+    
+    
+    
+                RG.Text2(co,  {'font':font,
+                               'size':size,
+                               'x':hpos,
+                               'y':vpos,
+                               'text':prop['chart.title.xaxis'],
+                               'halign':'center',
+                               'valign':'center',
+                               'bold':bold,
+                               'tag': 'title xaxis'
+                              });
             }
+    
+            // Y axis title
+            if (typeof(prop['chart.title.yaxis']) == 'string' && prop['chart.title.yaxis'].length) {
+    
+                var size  = prop['chart.text.size'] + 2;
+                var font  = prop['chart.text.font'];
+                var angle = 270;
+                var bold  = prop['chart.title.yaxis.bold'];
+                var color = prop['chart.title.yaxis.color'];
+    
+                if (typeof(prop['chart.title.yaxis.pos']) == 'number') {
+                    var yaxis_title_pos = prop['chart.title.yaxis.pos'] * gutterLeft;
+                } else {
+                    var yaxis_title_pos = ((gutterLeft - 25) / gutterLeft) * gutterLeft;
+                }
+    
+                if (typeof prop['chart.title.yaxis.size'] === 'number') {
+                    size = prop['chart.title.yaxis.size'];
+                }
+    
+                if (typeof prop['chart.title.yaxis.font'] === 'string') {
+                    font = prop['chart.title.yaxis.font'];
+                }
+    
+                if (   prop['chart.title.yaxis.align'] == 'right'
+                    || prop['chart.title.yaxis.position'] == 'right'
+                    || (obj.type === 'hbar' && prop['chart.yaxispos'] === 'right' && typeof prop['chart.title.yaxis.align'] === 'undefined' && typeof prop['chart.title.yaxis.position'] === 'undefined')
+                   ) {
+    
+                    angle = 90;
+                    yaxis_title_pos = prop['chart.title.yaxis.pos'] ? (ca.width - gutterRight) + (prop['chart.title.yaxis.pos'] * gutterRight) :
+                                                                       ca.width - gutterRight + prop['chart.text.size'] + 5;
+                } else {
+                    yaxis_title_pos = yaxis_title_pos;
+                }
+                
+                var y = ((ca.height - gutterTop - gutterBottom) / 2) + gutterTop;
+                
+                // Specifically specified X/Y positions
+                if (typeof prop['chart.title.yaxis.x'] === 'number') {
+                    yaxis_title_pos = prop['chart.title.yaxis.x'];
+                }
+    
+                if (typeof prop['chart.title.yaxis.y'] === 'number') {
+                    y = prop['chart.title.yaxis.y'];
+                }
+    
+                co.fillStyle = color;
+                RG.text2(co,  {'font':font,
+                               'size':size,
+                               'x':yaxis_title_pos,
+                               'y':y,
+                               'valign':'center',
+                               'halign':'center',
+                               'angle':angle,
+                               'bold':bold,
+                               'text':prop['chart.title.yaxis'],
+                               'tag':'title yaxis'
+                              });
+            }
+    
+            /**
+            * If the background color is spec ified - draw that. It's a rectangle that fills the
+            * entire area within the gutters
+            */
+            var bgcolor = prop['chart.background.color'];
+            if (bgcolor) {
+                co.fillStyle = bgcolor;
+                co.fillRect(gutterLeft + 0.5, gutterTop + 0.5, ca.width - gutterLeft - gutterRight, ca.height - gutterTop - gutterBottom);
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /**
+            * Draw horizontal background bars
+            */
+            var numbars   = (prop['chart.ylabels.count'] || 5);
+            var barHeight = (ca.height - gutterBottom - gutterTop) / numbars;
 
             co.beginPath();
-            co.lineWidth   = prop['chart.background.grid.width'] ? prop['chart.background.grid.width'] : 1;
-            co.strokeStyle = prop['chart.background.grid.color'];
+                co.fillStyle   = prop['chart.background.barcolor1'];
+                co.strokeStyle = co.fillStyle;
+                height = (ca.height - gutterBottom);
 
-            // Dashed background grid
-            if (prop['chart.background.grid.dashed'] && typeof co.setLineDash == 'function') {
-                co.setLineDash([3,2]);
-            }
+                for (var i=0; i<numbars; i+=2) {
+                    co.rect(gutterLeft,
+                            (i * barHeight) + gutterTop,
+                            ca.width - gutterLeft - gutterRight,
+                            barHeight
+                            );
+                }
+            co.fill();
+
+
+
+            co.beginPath();
+                co.fillStyle   = prop['chart.background.barcolor2'];
+                co.strokeStyle = co.fillStyle;
+        
+                for (var i=1; i<numbars; i+=2) {
+                    co.rect(gutterLeft,
+                            (i * barHeight) + gutterTop,
+                            ca.width - gutterLeft - gutterRight,
+                            barHeight
+                           );
+                }
             
-            // Dotted background grid
-            if (prop['chart.background.grid.dotted'] && typeof co.setLineDash == 'function') {
-                co.setLineDash([1,2]);
-            }
+            co.fill();
 
 
-            // Draw the horizontal lines
-            if (prop['chart.background.grid.hlines']) {
-                height = (ca.height - gutterBottom)
-                var hsize = prop['chart.background.grid.hsize'];
-                for (y=gutterTop; y<height; y+=hsize) {
-                    context.moveTo(gutterLeft, ma.round(y));
-                    context.lineTo(ca.width - gutterRight, ma.round(y));
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+            // Draw the background grid
+            if (prop['chart.background.grid']) {
+
+                // If autofit is specified, use the .numhlines and .numvlines along with the width to work
+                // out the hsize and vsize
+                if (prop['chart.background.grid.autofit']) {
+    
+                    /**
+                    * Align the grid to the tickmarks
+                    */
+                    if (prop['chart.background.grid.autofit.align']) {
+                        
+                        // Align the horizontal lines
+                        obj.Set('chart.background.grid.autofit.numhlines', prop['chart.ylabels.count']);
+    
+                        // Align the vertical lines for the line
+                        if (obj.type === 'line') {
+                            if (prop['chart.labels'] && prop['chart.labels'].length) {
+                                obj.Set('chart.background.grid.autofit.numvlines', prop['chart.labels'].length - 1);
+                            } else {
+                                obj.Set('chart.background.grid.autofit.numvlines', obj.data[0].length - 1);
+                            }
+    
+                        // Align the vertical lines for the bar
+                        } else if ( (obj.type === 'bar' || obj.type === 'scatter') && prop['chart.labels'] && prop['chart.labels'].length) {
+                            obj.Set('chart.background.grid.autofit.numvlines', prop['chart.labels'].length);
+                        }
+                    }
+    
+                    var vsize = ((ca.width - gutterLeft - gutterRight)) / prop['chart.background.grid.autofit.numvlines'];
+                    var hsize = (ca.height - gutterTop - gutterBottom) / prop['chart.background.grid.autofit.numhlines'];
+    
+                    obj.Set('chart.background.grid.vsize', vsize);
+                    obj.Set('chart.background.grid.hsize', hsize);
                 }
-            }
-
-            if (prop['chart.background.grid.vlines']) {
-                // Draw the vertical lines
-                var width = (ca.width - gutterRight)
-                var vsize = prop['chart.background.grid.vsize'];
-                for (x=gutterLeft; x<=width; x+=vsize) {
-                    co.moveTo(ma.round(x), gutterTop);
-                    co.lineTo(ma.round(x), ca.height - gutterBottom);
-                }
-            }
-
-            if (prop['chart.background.grid.border']) {
-                // Make sure a rectangle, the same colour as the grid goes around the graph
+    
+                co.beginPath();
+                co.lineWidth   = prop['chart.background.grid.width'] ? prop['chart.background.grid.width'] : 1;
                 co.strokeStyle = prop['chart.background.grid.color'];
-                co.strokeRect(ma.round(gutterLeft), ma.round(gutterTop), ca.width - gutterLeft - gutterRight, ca.height - gutterTop - gutterBottom);
+    
+                // Dashed background grid
+                if (prop['chart.background.grid.dashed'] && typeof co.setLineDash == 'function') {
+                    co.setLineDash([3,2]);
+                }
+                
+                // Dotted background grid
+                if (prop['chart.background.grid.dotted'] && typeof co.setLineDash == 'function') {
+                    co.setLineDash([1,2]);
+                }
+                
+                co.beginPath();
+    
+    
+                // Draw the horizontal lines
+                if (prop['chart.background.grid.hlines']) {
+                    height = (ca.height - gutterBottom)
+                    var hsize = prop['chart.background.grid.hsize'];
+                    for (y=gutterTop; y<=height; y+=hsize) {
+                        context.moveTo(gutterLeft, ma.round(y));
+                        context.lineTo(ca.width - gutterRight, ma.round(y));
+                    }
+                }
+    
+                if (prop['chart.background.grid.vlines']) {
+                    // Draw the vertical lines
+                    var width = (ca.width - gutterRight)
+                    var vsize = prop['chart.background.grid.vsize'];
+                        for (x=gutterLeft; x<=width; x+=vsize) {
+                            co.moveTo(ma.round(x), gutterTop);
+                            co.lineTo(ma.round(x), ca.height - gutterBottom);
+                        }
+                }
+    
+                if (prop['chart.background.grid.border']) {
+                    // Make sure a rectangle, the same colour as the grid goes around the graph
+                    co.strokeStyle = prop['chart.background.grid.color'];
+                    co.strokeRect(ma.round(gutterLeft), ma.round(gutterTop), ca.width - gutterLeft - gutterRight, ca.height - gutterTop - gutterBottom);
+                }
             }
-        }
 
-        context.stroke();
+            co.stroke();
 
-        // Reset the line dash
-        if (typeof co.setLineDash == 'function') {
-            co.setLineDash([1,0]);
-        }
 
-        // If it's a bar and 3D variant, translate
-        if (variant == '3d') {
-            co.restore();
-        }
 
-        // Draw the title if one is set
-        if ( typeof(prop['chart.title']) == 'string') {
+            // Necessary to ensure the gris drawn before continuing
+            co.beginPath();
+            co.closePath();
 
-            if (obj.type == 'gantt') {
-                gutterTop -= 10;
+
+
+            // If it's a bar and 3D variant, translate
+            if (variant == '3d') {
+                co.restore();
             }
 
-            RG.DrawTitle(obj,
-                         prop['chart.title'],
-                         gutterTop,
-                         null,
-                         prop['chart.title.size'] ? prop['chart.title.size'] : prop['chart.text.size'] + 2);
+            // Reset the line dash
+            if (typeof co.setLineDash == 'function') {
+                co.setLineDash([1,0]);
+            }
+    
+            // Draw the title if one is set
+            if ( typeof(prop['chart.title']) == 'string') {
+    
+                if (obj.type == 'gantt') {
+                    gutterTop -= 10;
+                }
+    
+                RG.DrawTitle(obj,
+                             prop['chart.title'],
+                             gutterTop,
+                             null,
+                             prop['chart.title.size'] ? prop['chart.title.size'] : prop['chart.text.size'] + 2,
+                             {canvas: ca, context: co});
+            }
+    
+            co.stroke();
         }
 
-        co.stroke();
+        // Now a cached draw in newer browsers
+        RG.ISOLD ? func(obj, obj.canvas, obj.context) : RG.cachedDraw(obj, obj.uid + '_background', func);
     };
 
 
@@ -2175,7 +2253,10 @@
             if (typeof prop['chart.background.image.w'] === 'number') w  = prop['chart.background.image.w'];
             if (typeof prop['chart.background.image.h'] === 'number') h = prop['chart.background.image.h'];
 
-            co.drawImage(img,x,y,w, h);
+            var oldAlpha = co.globalAlpha;
+                co.globalAlpha = prop['chart.background.image.alpha'];
+                co.drawImage(img,x,y,w, h);
+            co.globalAlpha = oldAlpha;
         }
     };
 
@@ -3047,6 +3128,7 @@
     *          text             The text to show (REQUIRED)
     *          font             The font to use
     *          size             The size of the text (in pt)
+    *          italic           Whether the text should be italic or not
     *          bold             Whether the text shouldd be bold or not
     *          marker           Whether to show a marker that indicates the X/Y coordinates
     *          valign           The vertical alignment
@@ -3072,9 +3154,14 @@
         } else if (typeof obj.getContext === 'function') {
             var ca = obj;
             var co = ca.getContext('2d');
-        } else if (obj.toString().indexOf('CanvasRenderingContext2D') != -1) {
+        } else if (obj.toString().indexOf('CanvasRenderingContext2D') != -1 || RGraph.ISIE8 && obj.moveTo) {
             var co = obj;
-            var ca = obj.context;
+            var ca = obj.canvas;
+
+        // IE7/8
+        } else if (RG.ISOLD && obj.fillText) {
+            var co = obj;
+            var ca = obj.canvas;
         }
 
         var x              = opt.x;
@@ -3088,12 +3175,13 @@
         var size           = opt.size ? opt.size : 10;
         var size_pixels    = size * 1.5;
         var bold           = opt.bold;
+        var italic         = opt.italic;
         var halign         = opt.halign ? opt.halign : 'left';
         var valign         = opt.valign ? opt.valign : 'bottom';
         var tag            = typeof opt.tag == 'string' && opt.tag.length > 0 ? opt.tag : '';
         var marker         = opt.marker;
         var angle          = opt.angle || 0;
-        
+
         /**
         * Changed the name of boundingFill/boundingStroke - this allows you to still use those names
         */
@@ -3149,7 +3237,7 @@
         /**
         * Set the font
         */
-        co.font = (opt.bold ? 'bold ' : '') + size + 'pt ' + font;
+        co.font = (opt.italic ? 'italic ' : '') + (opt.bold ? 'bold ' : '') + size + 'pt ' + font;
 
 
 
@@ -3470,7 +3558,7 @@
     
                 co.rect(shape['x'],shape['y'],shape['width'],shape['height']);
                 //co.fillRect(shape['x'],shape['y'],shape['width'],shape['height']);
-            co.stroke;
+            co.stroke();
             co.fill();
         }
     };
@@ -3531,7 +3619,7 @@
 
         // Allow for: 2013-11-22
         if (str.match(/^\d\d\d\d-\d\d-\d\d$/)) {
-            str = str.replace(/-/, '/');
+            str = str.replace(/-/g, '/');
         }
 
         // Allow for: 12:09:44 (time only using todays date)
@@ -3542,7 +3630,11 @@
             var month    = dateObj.getMonth() + 1;
             var year     = dateObj.getFullYear();
             
-            str = (year + '-' + month + '-' + date) + ' ' + str;
+            // Pad the date/month with a zero if it's not two characters
+            if (String(month).length === 1) month = '0' + month;
+            if (String(date).length === 1) date = '0' + date;
+
+            str = (year + '/' + month + '/' + date) + ' ' + str;
         }
 
         return Date.parse(str);
@@ -3562,7 +3654,7 @@
             // Reset the colors to their original values
             for (var j in obj.original_colors) {
                 if (typeof j === 'string' && j.substr(0,6) === 'chart.') {
-                    obj.properties[j] = RG.array_clone(obj.original_colors[j]);
+                    obj.properties[j] = RG.arrayClone(obj.original_colors[j]);
                 }
             }
         }
@@ -3844,6 +3936,7 @@
         co.shadowOffsetX = offsetx;
         co.shadowOffsetY = offsety;
         co.shadowBlur    = blur;
+
     };
 
 
@@ -4011,110 +4104,16 @@
 
 
     /**
-    * Fetches the canvas tag. But also handles creating the canvas tag
-    * if what you have given the constuctor is the ID of a DIV tag.
-    * This function uses jQuery to replace the tag if it's a DIV with
-    * a canvas. This needs to be a private function because it is
-    * used in the constructor - only private functions can be
-    * declared AFTER being used in the constructor.
+    * This function is due to be removed.
     * 
     * @param string id The ID of what can be either the canvas tag or a DIV tag
     */
     RG.getCanvasTag = function (id)
     {
         id = typeof id === 'object' ? id.id : id;
-        var tag = doc.getElementById(id);
+        var canvas = doc.getElementById(id);
 
-        return [id, tag];
-    };
-
-
-
-    /**
-    * Drawing the background grid and axes can be expensive. So this function can draw them
-    * on an offscreen canvas and then copy the result on to the main canvas. On subsequent
-    * calls it simply copies the off screen canvas on to the main one.
-    * 
-    * @param object obj The chart object
-    * @param identifier Used to identify the draw in the cache (so it can be retrieved by name)
-    * @param function   The function that is called initially to do the drawing
-    */
-    RG.cachedDraw = function (obj, id, func)
-    {
-        RG.cachedDraw.post_draw_strokestyle;
-        RG.cachedDraw.post_draw_fillstyle;
-        RG.cachedDraw.post_draw_linewidth;
-        RG.cachedDraw.post_draw_linejoin;
-        RG.cachedDraw.post_draw_linecap;
-
-
-
-        /**
-        * If its old IE then bypass the caching completely and just perfo4rm the draw.
-        */
-        if (RGraph.ISOLD) {
-            func(obj);
-            return;
-        }
-
-        var cacheId = obj.uid + '_' + id;
-
-        // Create the cache (first time in)
-        if (!obj.drawingCache) {
-            obj.drawingCache = [];
-        }
-
-
-        // Check the cache for the draw
-        if (!obj.drawingCache[cacheId] || (typeof obj.Get('drawingcache') === 'boolean' && obj.Get('drawingcache') === false) ) {
-
-            /**
-            * Not in the cache so make a tmp canvas, draw on it - then store it in the cache
-            */
-            
-            // Draw the background on to the main canvas
-            func(obj);
-
-            // Create the canvas
-            var cacheCanvas    = doc.createElement('canvas');
-            cacheCanvas.width  = obj.canvas.width;
-            cacheCanvas.height = obj.canvas.height;
-
-            // Copy whats just been drawn from the main canvas on to the cached canvas
-            cacheCanvas.getContext('2d').drawImage(obj.canvas,0,0);
-            
-            // And finally store the cachedCanvas
-            obj.drawingCache[cacheId] = {canvas: cacheCanvas};
-            
-            /**
-            * Save these so that they can be set again after the cache has been replayed.
-            * This puts the state of the canvas back to how it was as though the function
-            * had been run again instead of just drawing the image stored in the cache.
-            * The variables are stored on the function object (this function) instead
-            * of on The RGraph object or global (!) variables
-            */
-            RG.cachedDraw.post_draw_strokestyle = obj.context.strokeStyle;
-            RG.cachedDraw.post_draw_fillstyle   = obj.context.fillStyle;
-            RG.cachedDraw.post_draw_linewidth   = obj.context.lineWidth;
-            RG.cachedDraw.post_draw_linejoin    = obj.context.lineJoin;
-            RG.cachedDraw.post_draw_linecap     = obj.context.lineCap;
-        
-        
-        
-        } else {
-
-            obj.context.drawImage(obj.drawingCache[cacheId].canvas, -0.5, -0.5);
-
-            /**
-            * Now restore these properties so that the drawing state is as it was as
-            * if the function had just been run
-            */
-            obj.context.strokeStyle = RG.cachedDraw.post_draw_strokestyle;
-            obj.context.fillStyle   = RG.cachedDraw.post_draw_fillstyle;
-            obj.context.lineWidth   = RG.cachedDraw.post_draw_linewidth;
-            obj.context.lineJoin    = RG.cachedDraw.post_draw_linejoin;
-            obj.context.lineCap     = RG.cachedDraw.post_draw_linecap;
-        }
+        return [id, canvas];
     };
 
 
@@ -4141,13 +4140,175 @@
 
 
     /**
-    * This functions adds the generic effects to thechart object
+    * This function returns an easing multiplier for effects so they eas out towards the
+    * end of the effect.
     * 
-    * @param object obj The chart object
+    * @param number frames The total number of frames
+    * @param number frame  The frame number
     */
     RG.Effects.getEasingMultiplier = function (frames, frame)
     {
         return ma.pow(ma.sin((frame / frames) * RG.HALFPI), 3);
+    };
+
+
+
+
+    /**
+    * This function converts an array of strings to an array of numbers. Its used by the meter/gauge
+    * style charts so that if you want you can pass in a string. It supports various formats:
+    * 
+    * '45.2'
+    * '-45.2'
+    * ['45.2']
+    * ['-45.2']
+    * '45.2,45.2,45.2' // A CSV style string
+    * 
+    * @param number frames The string or array to parse
+    */
+    RG.stringsToNumbers = function (str)
+    {
+        // An optional seperator to use intead of a comma
+        var sep = arguments[1] || ',';
+        
+        
+        // If it's already a number just return it
+        if (typeof str === 'number') {
+            return str;
+        }
+
+
+
+
+
+        if (typeof str === 'string') {
+            if (str.indexOf(sep) != -1) {
+                str = str.split(sep);
+            } else {
+                str = parseFloat(str);
+            }
+        }
+
+
+
+
+
+        if (typeof str === 'object') {
+            for (var i=0,len=str.length; i<len; i+=1) {
+                str[i] = parseFloat(str[i]);
+            }
+        }
+
+        return str;
+    };
+
+
+
+
+    /**
+    * Drawing cache function. This function creates an off-screen canvas and draws [wwhatever] to it
+    * and then subsequent calls use that  instead of repeatedly drawing the same thing.
+    * 
+    * @param object   obj  The graph object
+    * @param string   id   An ID string used to identify the relevant entry in the cache
+    * @param function func The drawing function. This will be called to do the draw.
+    */
+    RG.cachedDraw = function (obj, id, func)
+    {
+        //If the cache entry xists - just copy it across to the main canvas
+        if (!RG.cache[id]) {
+
+            RG.cache[id] = {};
+            RG.cache[id].object = obj;
+            RG.cache[id].canvas = jQuery('<canvas></canvas>').attr({
+                                                               width: obj.canvas.width,
+                                                               height: obj.canvas.height,
+                                                               id: 'background_cached_canvas' + obj.canvas.id
+                                                              })
+                                                        //.appendTo($('body'))
+                                                        .get(0);
+            
+            //Add MSIE support
+            if (typeof G_vmlCanvasManager === 'object' && G_vmlCanvasManager.initElement) {
+                G_vmlCanvasManager.initElement(RG.cache[id].canvas);
+            }
+
+            RG.cache[id].context = RG.cache[id].canvas.getContext('2d');
+            
+            // Antialiasing on the cache canvas
+            RG.cache[id].context.translate(0.5,0.5);
+            
+            // Call the function
+            func(obj, RG.cache[id].canvas, RG.cache[id].context);
+        }
+        
+        // Now copy the contents of the cached canvas over to the main one.
+        // The coordinates are -0.5 because of the anti-aliasing effect in
+        // use on the main canvas
+        obj.context.drawImage(RG.cache[id].canvas,-0.5,-0.5);
+    };
+
+
+
+
+    /**
+    * The function that runs through the supplied configuration and
+    * converts it to the RGraph stylee.
+    * 
+    * @param object conf The config
+    * @param object      The settings for the object
+    */
+    RG.parseObjectStyleConfig = function (obj, config)
+    {
+        /**
+        * The recursion function
+        */
+        var recurse = function (obj, config, name, settings)
+        {
+            var i;
+    
+            for (key in config) {
+
+                var isObject = false; // Default value
+                var isArray  = false; // Default value
+                var value    = config[key]
+
+                if (!RG.isNull(value) && value.constructor) {
+                    isObject = value.constructor.toString().indexOf('Object') > 0;
+                    isArray  = value.constructor.toString().indexOf('Array') > 0;
+                }
+
+                if (isObject && !isArray) {
+                    recurse(obj, config[key], name + '.' + key, settings);
+
+                //} else if (isArray && value.length === 2 && typeof value[1] === 'object' && value[1].constructor.toString().indexOf('Array') === -1) {
+                //    settings[name + '.' + key] = value[0];
+                //    recurse(obj, value[1], name + '.' + key, settings);
+                
+                } else if (key === 'self') {
+                    settings[name] = value;
+
+                } else {
+                    settings[name + '.' + key] = value;
+                }
+            }
+
+            return settings;
+        };
+        
+        /**
+        * Go through the settings that we've been given
+        */
+        var settings = recurse(obj, config, 'chart', {});
+
+        /**
+        * Go through the settings and set them on the object
+        */
+        for (key in settings) {
+            if (typeof key === 'string') {
+                obj.set(key, settings[key]);
+            }
+        }
     };
 
 
@@ -4192,25 +4353,3 @@
     {
         return console.log(v);
     };
-
-
-
-
-    /**
-    * Checks whether strings or numbers are empty or not. It also
-    * handles null or variables set to undefined. If a variable really
-    * is undefined - ie it hasn't been declared at all - you need to use
-    * "typeof variable" and check the return value - which will be undefined.
-    * 
-    * @param mixed value The variable to check
-    */
-    window.$empty = function (value)
-    {
-        if (!value || value.length <= 0) {
-            return true;
-        }
-
-        return false;
-    };
-// version: 2014-03-28
-

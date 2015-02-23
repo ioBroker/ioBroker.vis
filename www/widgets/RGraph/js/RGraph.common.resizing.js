@@ -1,12 +1,18 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
+
     RGraph = window.RGraph || {isRGraph: true};
 
 // Module pattern
@@ -26,14 +32,6 @@
     RGraph.AllowResizing = function (obj)
     {
         if (obj.Get('chart.resizable')) {
-        
-            /**
-            * Turn off the drawing caache
-            */
-            var objects = RG.ObjectRegistry.getObjectsByCanvasID(obj.canvas.id);
-            for (var i=0,len=objects.length; i<len; ++i) {
-                objects[i].Set('drawingcache', false);
-            }
 
             var canvas  = obj.canvas;
             var context = obj.context;
@@ -240,8 +238,20 @@
                     */
                     var objects = RGraph.ObjectRegistry.getObjectsByCanvasID(canvas.id);
                     for (var i=0,len=objects.length; i<len; i+=1) {
+                        
                         RGraph.resetColorsToOriginalValues(objects[i]);
+                        if (typeof objects[i].reset === 'function') {
+                            objects[i].reset();
+                        }
                     }
+                    
+                    
+                    
+                    
+                    /**
+                    * Kill the background cache
+                    */
+                    RGraph.cache = [];
                 
 
                     /**
@@ -455,21 +465,28 @@
                     var objects = RGraph.ObjectRegistry.getObjectsByCanvasID(canvas.id);
                     for (var i=0; i<objects.length; i+=1) {
                         RGraph.resetColorsToOriginalValues(objects[i]);
+                        if (objects[i].reset) {
+                            objects[i].reset();
+                        }
+                        
+                        RGraph.redrawCanvas(objects[i].canvas);
                     }
-
-
-
+                    
+                    
                     /**
-                    * Clear the drawing cache
+                    * Clear the cache so that old things (eg backgrounds) are not reused
                     */
-                    obj.drawingCache = [];
+                    RGraph.cache = [];
+
+
+
 
 
 
                     /**
                     * Redraw the canvas
                     */
-                    RGraph.Redraw();
+                    //RGraph.RedrawCanvas(objects[i].canvas);
                     
                     /**
                     * Set the width and height on the DIV
@@ -545,5 +562,3 @@
 
 // End module pattern
 })(window, document);
-// version: 2014-03-28
-

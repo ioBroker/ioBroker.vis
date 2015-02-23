@@ -1,8 +1,8 @@
 /**
- *  vis
+ *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2014 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -85,7 +85,7 @@ if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemL
 
 var vis = {
 
-    version:                '0.2.2',
+    version:                '0.2.4',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -132,7 +132,7 @@ var vis = {
             console.log('ID is null for val=' + val);
             return;
         }
-        // Check if this ID is a programm
+
         var d = new Date();
         var t = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) + " " + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
         var o = {};
@@ -142,8 +142,14 @@ var vis = {
             o[id + '.lc'] = this.states.attr(id + '.lc');
         }
         o[id + '.val'] = val;
-        o[id + '.ts'] = t;
+        o[id + '.ts']  = t;
         o[id + '.ack'] = false;
+
+        // Create this value
+        if (this.states.attr(id + '.val') === undefined) {
+            vis.states.attr(o);
+        }
+
         var that = this;
 
         // if no de-bounce running
@@ -380,7 +386,7 @@ var vis = {
         } else {
             if (confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
-                this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                 this.saveRemote(function () {
                     window.location.reload()
                 });
@@ -477,9 +483,8 @@ var vis = {
             }
         }
 
-        // Views in Container verschieben
+        // move views in container
         $("#visview_" + view).find("div[id$='container']").each(function () {
-            //console.log($(this).attr("id")+ " contains " + $(this).attr("data-vis-contains"));
             var cview = $(this).attr("data-vis-contains");
             if (!vis.views[cview]) {
                 $(this).append("error: view not found.");
@@ -491,7 +496,6 @@ var vis = {
             vis.renderView(cview, true);
             $("#visview_" + cview).appendTo(this);
             $("#visview_" + cview).show();
-
         });
 
         if (!hidden) {
@@ -644,9 +648,9 @@ var vis = {
             if (widget.data && widget.data.oid) {
                 $('#visview_' + view).append(can.view(widget.tpl, {
                     val: this.states[widget.data.oid + '.val'],
-                    ts: this.states[widget.data.oid + '.ts'],
+                    ts:  this.states[widget.data.oid + '.ts'],
                     ack: this.states[widget.data.oid + '.ack'],
-                    lc: this.states[widget.data.oid + '.lc'],
+                    lc:  this.states[widget.data.oid + '.lc'],
                     data: widgetData,
                     view: view
                 }));
@@ -680,7 +684,7 @@ var vis = {
                 }*/
             }
         } catch (e) {
-            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+           this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
         }
     },
     changeView: function (view, hideOptions, showOptions, sync) {
@@ -732,8 +736,8 @@ var vis = {
                         }
                     }).dequeue();
                 }
-                $("#visview_" + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
 
+                $("#visview_" + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
                     // If first hide, than show
                     if (!sync) {
                         $("#visview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
@@ -784,9 +788,11 @@ var vis = {
         this.activeView = view;
 
 
-        $('#visview_' + view).find('div[id$="container"]').each(function () {
+        /*$('#visview_' + view).find('div[id$="container"]').each(function () {
             $('#visview_' + $(this).attr('data-vis-contains')).show();
-        });
+        });*/
+
+        this.updateContainers(view);
 
         if (!this.editMode && this.instance) {
             this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
@@ -924,7 +930,7 @@ var vis = {
     onWakeUp: function (callback) {
         this.wakeUpCallbacks.push(callback);
     },
-    showMessage: function (message, title, icon) {
+    showMessage: function (message, title, icon, width) {
         if (!this.$dialogMessage) {
             this.$dialogMessage = $('#dialog-message');
             this.$dialogMessage.dialog({
@@ -941,6 +947,11 @@ var vis = {
             });
         }
         this.$dialogMessage.dialog('option', 'title', title || _('Message'));
+        if (width) {
+            this.$dialogMessage.dialog('option', 'width', width);
+        } else {
+            this.$dialogMessage.dialog('option', 'width', 300);
+        }
         $('#dialog-message-text').html(message);
         if (icon) {
             $('#dialog-message-icon').show();
@@ -1171,6 +1182,11 @@ if ('applicationCache' in window) {
                                     // Read all data objects from server
                                     vis.conn.getObjects(function (err, data) {
                                         vis.objects = data;
+                                        // Detect if objects are loaded
+                                        for (var ob in data) {
+                                            vis.objectSelector = true;
+                                            break;
+                                        }
                                     });
                                 }
 

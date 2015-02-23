@@ -679,7 +679,7 @@
         data-vis-type="ctrl"
         data-vis-name="Tile State">
     <div id="<%= this.data.attr("wid") %>" class="vis-widget" style="width:136px; height:136px; padding: 3px;" >
-    <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" data-hm-val="<%= this.data.attr('value') %>" data-oid="<%= this.data.attr("state_id") %>" <%= (el) -> vis.binds.basic.state(el) %> >
+    <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" data-val="<%= this.data.attr('value') %>" data-oid="<%= this.data.attr("state_id") %>" <%= (el) -> vis.binds.basic.state(el) %> >
     <%
       if (data.value == 'true') data.value = true;
       if (data.value == "false") data.value = false;
@@ -736,7 +736,7 @@
         data-vis-type="ctrl"
         data-vis-name="Tile State / val Badge Number">
     <div id="<%= this.data.attr("wid") %>" class="vis-widget" style="width:136px; height:136px; padding: 3px;" >
-        <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" data-hm-val="<%= this.data.attr('value') %>" data-oid="<%= this.data.attr("state_id") %>" <%= (el) -> vis.binds.basic.state(el) %> >
+        <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" data-val="<%= this.data.attr('value') %>" data-oid="<%= this.data.attr("state_id") %>" <%= (el) -> vis.binds.basic.state(el) %> >
             <%
               if (data.value == 'true') data.value = true;
               if (data.value == "false") data.value = false;

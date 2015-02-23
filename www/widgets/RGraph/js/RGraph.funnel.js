@@ -1,10 +1,15 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
 
@@ -16,14 +21,31 @@
     * @param object canvas The canvas object
     * @param array  data   The chart data
     */
-    RGraph.Funnel = function (id, data)
+    RGraph.Funnel = function (conf)
     {
-        var tmp = RGraph.getCanvasTag(id);
+        /**
+        * Allow for object config style
+        */
+        if (   typeof conf === 'object'
+            && typeof conf.data === 'object'
+            && typeof conf.id === 'string') {
 
-        // Get the canvas and context objects
-        this.id                = tmp[0];
-        this.canvas            = tmp[1];
-        this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
+            var id                        = conf.id
+            var canvas                    = document.getElementById(id);
+            var data                      = conf.data;
+            var parseConfObjectForOptions = true; // Set this so the config is parsed (at the end of the constructor)
+        
+        } else {
+        
+            var id     = conf;
+            var canvas = document.getElementById(id);
+            var data   = arguments[1];
+        }
+
+
+        this.id                = id;
+        this.canvas            = canvas;
+        this.context           = this.canvas.getContext ? this.canvas.getContext("2d", {alpha: (typeof id === 'object' && id.alpha === false) ? false : true}) : null;
         this.canvas.__object__ = this;
         this.type              = 'funnel';
         this.coords            = [];
@@ -32,6 +54,7 @@
         this.canvas.uid        = this.canvas.uid ? this.canvas.uid : RGraph.CreateUID();
         this.coordsText        = [];
         this.original_colors   = [];
+        this.firstDraw         = true; // After the first draw this will be false
 
 
         /**
@@ -69,7 +92,19 @@
             'chart.title.y':                null,
             'chart.title.halign':           null,
             'chart.title.valign':           null,
-            'chart.colors':                ['Gradient(white:red)','Gradient(white:green)','Gradient(white:gray)','Gradient(white:blue)','Gradient(white:black)','Gradient(white:gray)','Gradient(white:pink)','Gradient(white:blue)','Gradient(white:yellow)','Gradient(white:green)','Gradient(white:red)'],
+            'chart.colors':                [
+                                            'Gradient(white:red)',
+                                            'Gradient(white:green)',
+                                            'Gradient(white:gray)',
+                                            'Gradient(white:blue)',
+                                            'Gradient(white:black)',
+                                            'Gradient(white:gray)',
+                                            'Gradient(white:pink)',
+                                            'Gradient(white:blue)',
+                                            'Gradient(white:yellow)',
+                                            'Gradient(white:green)',
+                                            'Gradient(white:red)'
+                                           ],
             'chart.text.size':             10,
             'chart.text.boxed':            true,
             'chart.text.halign':           'left',
@@ -184,8 +219,22 @@
         * @param value mixed  The value of the property
         */
         this.set =
-        this.Set = function (name, value)
+        this.Set = function (name)
         {
+            var value = typeof arguments[1] === 'undefined' ? null : arguments[1];
+
+            /**
+            * the number of arguments is only one and it's an
+            * object - parse it for configuration data and return.
+            */
+            if (arguments.length === 1 && typeof name === 'object') {
+                RG.parseObjectStyleConfig(this, name);
+                return this;
+            }
+
+
+
+
             name = name.toLowerCase();
     
             /**
@@ -258,6 +307,11 @@
     
             // This stops the coords array from growing
             this.coords = [];
+            
+            /**
+            * Stop this growing uncntrollably
+            */
+            this.coordsText = [];
     
             RG.DrawTitle(this, prop['chart.title'], this.gutterTop, null, prop['chart.title.size'] ? prop['chart.title.size'] : prop['chart.text.size'] + 2);
             this.DrawFunnel();
@@ -293,7 +347,19 @@
 
 
     
-            
+
+            /**
+            * Fire the onfirstdraw event
+            */
+            if (this.firstDraw) {
+                RG.fireCustomEvent(this, 'onfirstdraw');
+                this.firstDraw = false;
+                this.firstDrawFunc();
+            }
+
+
+
+
             /**
             * Fire the RGraph ondraw event
             */
@@ -454,7 +520,7 @@
                     
                     var label = labels[j];
     
-                    RG.Text2(this,{'font':font,
+                    RG.text2(this,{'font':font,
                                    'size':size,
                                    'x':x,
                                    'y':this.coords[j][1],
@@ -478,9 +544,8 @@
                         */
                         co.beginPath();
                             co.strokeStyle = 'gray';
-    
-                            co.moveTo(x + labelWidth + 10, Math.round(this.coords[j][1]));
-                            co.lineTo(this.coords[j][0] - 10, Math.round(this.coords[j][1]));
+                            co.moveTo(x + labelWidth + 10, ma.round(this.coords[j][1]));
+                            co.lineTo(this.coords[j][0] - 10, ma.round(this.coords[j][1]));
                         co.stroke();
                     }
                 }
@@ -493,8 +558,8 @@
                 var lastLabel = labels[j];
     
                 if (lastLabel) {
-    
-                    RG.Text2(this,{'font':font,
+
+                    RG.text2(this,{'font':font,
                                    'size':size,
                                    'x':x,
                                    'y':this.coords[j - 1][5],
@@ -519,8 +584,12 @@
                         */
                         co.beginPath();
                             co.strokeStyle = 'gray';
+
+                            //co.moveTo(x + labelWidth + 10, ma.round(this.coords[j][1]));
+                            //co.lineTo(this.coords[j][0] - 10, ma.round(this.coords[j][1]));
+                            
                             co.moveTo(x + labelWidth + 10, Math.round(this.coords[j - 1][7]));
-                            co.lineTo(this.coords[j - 1][0] - 10, Math.round(this.coords[j - 1][7]));
+                            co.lineTo(this.coords[j - 1][6] - 10, Math.round(this.coords[j - 1][7]));
                         co.stroke();
                     }
                 }
@@ -726,6 +795,17 @@
 
 
         /**
+        * Use this function to reset the object to the post-constructor state. Eg reset colors if
+        * need be etc
+        */
+        this.reset = function ()
+        {
+        };
+
+
+
+
+        /**
         * This parses a single color value
         */
         this.parseSingleColorForHorizontalGradient = function (color)
@@ -842,9 +922,29 @@
 
 
         /**
+        * This function runs once only
+        * (put at the end of the file (before any effects))
+        */
+        this.firstDrawFunc = function ()
+        {
+        };
+
+
+
+
+        /**
         * Always now regsiter the object
         */
         RG.Register(this);
-    };
-// version: 2014-03-28
 
+
+
+
+        /**
+        * This is the 'end' of the constructor so if the first argument
+        * contains configuration data - handle that.
+        */
+        if (parseConfObjectForOptions) {
+            RG.parseObjectStyleConfig(this, conf.options);
+        }
+    };

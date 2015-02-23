@@ -1,12 +1,18 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
+
     RGraph = window.RGraph || {isRGraph: true};
 
     /**
@@ -16,18 +22,43 @@
     * @param int value The indicated value of the meter.
     * @param int max   The end value (the upper most) of the meter
     */
-    RGraph.HProgress = function (id, value, max)
+    RGraph.HProgress = function (conf)
     {
-        var tmp = RGraph.getCanvasTag(id);
+        /**
+        * Allow for object config style
+        */
+        if (   typeof conf === 'object'
+            && typeof conf.min === 'number'
+            && typeof conf.max === 'number'
+            && typeof conf.value !== 'undefined'
+            && typeof conf.id === 'string') {
 
-        // Get the canvas and context objects
-        this.id                = tmp[0];
-        this.canvas            = tmp[1];
+            var id                        = conf.id
+            var canvas                    = document.getElementById(id);
+            var min                       = conf.min;
+            var max                       = conf.max;
+            var value                     = conf.value;
+            var parseConfObjectForOptions = true; // Set this so the config is parsed (at the end of the constructor)
+        
+        } else {
+        
+            var id     = conf;
+            var canvas = document.getElementById(id);
+            var min    = arguments[1];
+            var max    = arguments[2];
+            var value  = arguments[3];
+        }
+
+
+
+        this.id                = id;
+        this.canvas            = canvas;
         this.context           = this.canvas.getContext('2d');
         this.canvas.__object__ = this;
 
+        this.min               = min;
         this.max               = max;
-        this.value             = value;
+        this.value             = RGraph.stringsToNumbers(value);
         this.type              = 'hprogress';
         this.coords            = [];
         this.isRGraph          = true;
@@ -37,6 +68,7 @@
         this.colorsParsed      = false;
         this.coordsText        = [];
         this.original_colors   = [];
+        this.firstDraw         = true; // After the first draw this will be false
 
 
         /**
@@ -46,7 +78,6 @@
 
         this.properties =
         {
-            'chart.min':                0,
             'chart.colors':             ['Gradient(white:#0c0)','Gradient(white:red)','Gradient(white:green)','yellow','pink','cyan','black','white','gray'],
             'chart.strokestyle.inner':  '#999',
             'chart.strokestyle.outer':  '#999',
@@ -70,10 +101,10 @@
             'chart.title.background':   null,
             'chart.title.bold':         true,
             'chart.title.font':         null,
-            'chart.title.x':                null,
-            'chart.title.y':                null,
-            'chart.title.halign':           null,
-            'chart.title.valign':           null,
+            'chart.title.x':            null,
+            'chart.title.y':            null,
+            'chart.title.halign':       null,
+            'chart.title.valign':       null,
             'chart.text.size':          10,
             'chart.text.color':         'black',
             'chart.text.font':          'Arial',
@@ -84,7 +115,7 @@
             'chart.tooltips.effect':    'fade',
             'chart.tooltips.css.class': 'RGraph_tooltip',
             'chart.tooltips.highlight': true,
-            'chart.tooltips.event':         'onclick',
+            'chart.tooltips.event':     'onclick',
             'chart.highlight.stroke':   'rgba(0,0,0,0)',
             'chart.highlight.fill':     'rgba(255,255,255,0.7)',
             'chart.annotatable':        false,
@@ -94,18 +125,18 @@
             'chart.zoom.fade.out':      true,
             'chart.zoom.hdir':          'right',
             'chart.zoom.vdir':          'down',
-            'chart.zoom.frames':            25,
-            'chart.zoom.delay':             16.666,
+            'chart.zoom.frames':        25,
+            'chart.zoom.delay':         16.666,
             'chart.zoom.shadow':        true,
             'chart.zoom.background':    true,
-            'chart.arrows':                false,
-            'chart.margin':                0,
-            'chart.resizable':             false,
-            'chart.resize.handle.adjust':  [0,0],
+            'chart.arrows':             false,
+            'chart.margin':             0,
+            'chart.resizable':          false,
+            'chart.resize.handle.adjust':[0,0],
             'chart.resize.handle.background':null,
-            'chart.labels.specific':       null,
-            'chart.labels.count':          10,
-            'chart.adjustable':            false,
+            'chart.labels.specific':    null,
+            'chart.labels.count':       10,
+            'chart.adjustable':         false,
             'chart.scale.decimals':     0,
             'chart.scale.point':        '.',
             'chart.scale.thousand':     ',',
@@ -136,26 +167,7 @@
             'chart.events.click':        null,
             'chart.border.inner':        true
         }
-        
-        /**
-        * Allow for new style method of passing arguments to the constructor
-        */
-        if (arguments.length == 4) {
 
-            this.min   = arguments[1];
-            this.max   = arguments[2];
-            this.value = arguments[3];
-            
-            this.properties['chart.min'] = arguments[1];
-        
-        } else if (arguments.length == 3) {
-
-            this.min   = 0;
-            this.max   = arguments[2];
-            this.value = arguments[1];
-            
-            this.properties['chart.min'] = 0;
-        }
 
         // Check for support
         if (!this.canvas) {
@@ -216,8 +228,22 @@
         * @param string value The value of the poperty
         */
         this.set =
-        this.Set = function (name, value)
+        this.Set = function (name)
         {
+            var value = typeof arguments[1] === 'undefined' ? null : arguments[1];
+
+            /**
+            * the number of arguments is only one and it's an
+            * object - parse it for configuration data and return.
+            */
+            if (arguments.length === 1 && typeof name === 'object') {
+                RG.parseObjectStyleConfig(this, name);
+                return this;
+            }
+
+
+
+
             name = name.toLowerCase();
     
             /**
@@ -307,9 +333,10 @@
             this.gutterBottom = prop['chart.gutter.bottom'];
     
             // Figure out the width and height
-            this.width  = ca.width - this.gutterLeft - this.gutterRight;
-            this.height = ca.height - this.gutterTop - this.gutterBottom;
-            this.coords = [];
+            this.width      = ca.width - this.gutterLeft - this.gutterRight;
+            this.height     = ca.height - this.gutterTop - this.gutterBottom;
+            this.coords     = [];
+            this.coordsText = [];
     
             this.Drawbar();
             this.DrawTickMarks();
@@ -356,7 +383,16 @@
             */
             RG.InstallEventListeners(this);
     
-            
+            /**
+            * Fire the onfirstdraw event
+            */
+            if (this.firstDraw) {
+                RG.fireCustomEvent(this, 'onfirstdraw');
+                this.firstDraw = false;
+                this.firstDrawFunc();
+            }
+
+
             /**
             * Fire the RGraph ondraw event
             */
@@ -417,7 +453,7 @@
             var margin = prop['chart.margin'];
     
             // Draw the actual bar itself
-            var barWidth = Math.min(this.width, ((RG.array_sum(this.value) - prop['chart.min']) / (this.max - prop['chart.min']) ) * this.width);
+            var barWidth = Math.min(this.width, ((RG.array_sum(this.value) - this.min) / (this.max - this.min) ) * this.width);
     
             if (prop['chart.tickmarks.inner']) {
     
@@ -622,7 +658,7 @@
                                     'size':size,
                                     'x':this.gutterLeft,
                                     'y':this.gutterTop - 6,
-                                    'text': prop['chart.units.pre'] + Number(prop['chart.min']).toFixed(prop['chart.scale.decimals']) + prop['chart.units.post'],
+                                    'text': prop['chart.units.pre'] + Number(this.min).toFixed(prop['chart.scale.decimals']) + prop['chart.units.post'],
                                     'valign':'bottom',
                                     'halign':'center',
                                     'tag': 'scale'
@@ -632,7 +668,7 @@
                                     'size':size,
                                     'x':this.gutterLeft,
                                     'y':ca.height - this.gutterBottom + 5,
-                                    'text': prop['chart.units.pre'] + Number(prop['chart.min']).toFixed(prop['chart.scale.decimals']) + prop['chart.units.post'],
+                                    'text': prop['chart.units.pre'] + Number(this.min).toFixed(prop['chart.scale.decimals']) + prop['chart.units.post'],
                                     'valign':'top',
                                     'halign':'center',
                                     'tag': 'scale'
@@ -691,11 +727,11 @@
             var mouseXY = RG.getMouseXY(e);
                 
             var value = (mouseXY[0] - this.gutterLeft) / this.width;
-                value *= this.max - prop['chart.min'];
-                value += prop['chart.min'];
+                value *= this.max - this.min;
+                value += this.min;
                 
             if (mouseXY[0] < this.gutterLeft) {
-                value = prop['chart.min'];
+                value = this.min;
             }
             if (mouseXY[0] > (ca.width - this.gutterRight) ) {
                 value = this.max
@@ -877,7 +913,7 @@
         */
         this.getXCoord = function (value)
         {
-            var min = prop['chart.min'];
+            var min = this.min;
     
             if (value < min || value > this.max) {
                 return null;
@@ -950,6 +986,17 @@
             prop['chart.highlight.fill']    = this.parseSingleColorForGradient(prop['chart.highlight.fill']);
             prop['chart.highlight.stroke']  = this.parseSingleColorForGradient(prop['chart.highlight.stroke']);
             prop['chart.background.color']  = this.parseSingleColorForGradient(prop['chart.background.color']);
+        };
+
+
+
+
+        /**
+        * Use this function to reset the object to the post-constructor state. Eg reset colors if
+        * need be etc
+        */
+        this.reset = function ()
+        {
         };
 
 
@@ -1112,6 +1159,17 @@
 
 
         /**
+        * This function runs once only
+        * (put at the end of the file (before any effects))
+        */
+        this.firstDrawFunc = function ()
+        {
+        };
+
+
+
+
+        /**
         * HProgress Grow effect (which is also the VPogress Grow effect)
         * 
         * @param object obj The chart object
@@ -1198,6 +1256,15 @@
         * Register the object for redrawing
         */
         RG.Register(this);
-    };
-// version: 2014-03-28
 
+
+
+
+        /**
+        * This is the 'end' of the constructor so if the first argument
+        * contains configuration data - handle that.
+        */
+        if (parseConfObjectForOptions) {
+            RG.parseObjectStyleConfig(this, conf.options);
+        }
+    };

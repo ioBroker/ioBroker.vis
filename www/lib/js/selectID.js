@@ -149,6 +149,18 @@
         data.tree = {title: '', children: [], count: 0, root: true};
 
         for (var id in objects) {
+            if (isRoom && objects[id].type == 'enum' && data.regexEnumRooms.test(id)) data.enums.push(id);
+
+            if (isType && data.types.indexOf(objects[id].type) == -1) data.types.push(objects[id].type);
+
+            if (isRole && objects[id].common && objects[id].common.role) {
+                var parts = objects[id].common.role.split('.');
+                var role = '';
+                for (var u = 0; u < parts.length; u++) {
+                    role += (role ? '.' : '') + parts[u];
+                    if (data.roles.indexOf(role) == -1) data.roles.push(role);
+                }
+            }
 
             if (!filterId(data, id)) continue;
 
@@ -162,20 +174,6 @@
                         objects[e].common.members.indexOf(id) == -1) {
                         objects[e].common.members.push(id);
                     }
-                }
-            }
-
-            if (isRoom && objects[id].type == 'enum' && data.regexEnumRooms.test(id)) data.enums.push(id);
-
-
-            if (isType && data.types.indexOf(objects[id].type) == -1) data.types.push(objects[id].type);
-
-            if (isRole && objects[id].common && objects[id].common.role) {
-                var parts = objects[id].common.role.split('.');
-                var role = '';
-                for (var u = 0; u < parts.length; u++) {
-                    role += (role ? '.' : '') + parts[u];
-                    if (data.roles.indexOf(role) == -1) data.roles.push(role);
                 }
             }
         }
