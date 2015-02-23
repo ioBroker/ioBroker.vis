@@ -550,14 +550,7 @@ vis = $.extend(true, vis, {
             that.save();
         });
 
-        // Theme select View
-        $('#inspect_view_theme').change(function () {
-            var theme = $(this).val();
-            that.views[that.activeView].settings.theme = theme;
-            that.addViewStyle(that.activeView, theme);
-            //that.additionalThemeCss(theme);
-            that.save();
-        });
+
 
         //language
         $('[data-language=' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + ']').addClass('ui-state-active');
@@ -662,7 +655,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_align_right").click(function () {
             var data = [];
             if (that.activeWidgets.length < 2) {
@@ -693,7 +685,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_align_top").click(function () {
             var data = [];
             if (that.activeWidgets.length < 2) {
@@ -724,7 +715,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_align_bottom").click(function () {
             var data = [];
 
@@ -757,7 +747,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_align_vc").click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
@@ -782,7 +771,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_align_hc").click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
@@ -913,7 +901,6 @@ vis = $.extend(true, vis, {
             }
             $('#wid_all_lock_f').removeClass("ui-state-focus")
         });
-
         $("#wid_all_lock_drag").button({icons: {primary: 'ui-icon-extlink', secondary: null}, text: false}).click(function () {
             $('#wid_all_lock_d').removeClass("ui-state-focus");
             that.inspectWidgets([]);
@@ -1308,7 +1295,16 @@ vis = $.extend(true, vis, {
         });
         this.$copyWidgetSelectView.val(this.activeView);
         this.$copyWidgetSelectView.selectmenu();
-        $('#inspect_view_theme').selectmenu({width: '100%'});
+        $('#inspect_view_theme').selectmenu({
+            width: '100%',
+        change: function(){
+                var theme = $(this).val();
+                that.views[that.activeView].settings.theme = theme;
+                that.addViewStyle(that.activeView, theme);
+                //that.additionalThemeCss(theme);
+                that.save();
+        }
+        });
 
         // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
