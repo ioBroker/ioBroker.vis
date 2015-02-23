@@ -3,7 +3,7 @@
 <script type="text/javascript">
     "use strict";
 
-        if (vis.editMode) {
+    if (vis.editMode) {
         $.extend(true, systemDictionary, {
             "conTop": {"en": "conTop", "de": "conTop", "ru": "conTop"},
             "conBottom": {"en": "conBottom", "de": "conBottom", "ru": "conBottom"},
@@ -14,16 +14,18 @@
             "src": {"en": "src", "de": "src", "ru": "src"},
             "stretch": {"en": "stretch", "de": "stretch", "ru": "stretch"},
             "Off": {"en": "Off", "de": "Off", "ru": "Off"},
-            "ON": {"en": "ON", "de": "ON", "ru": "ON"},
+            "ON": {"en": "ON", "de": "ON", "ru": "ON"}
         });
     }
 
     vis.binds.plumb = {
+
+        data: {},
         plumb_drop: function ($this, no_pos) {
             var drag_id;
             var self_id;
 
-            if(vis.editMode) {
+            if (vis.editMode) {
                 $($this).find(".plumb_dock_top").droppable({
                     accept: ".pl_b:not(#" + $($this).attr("id") + ")",
                     hoverClass: "drop-hover",
@@ -37,18 +39,18 @@
                         vis.save();
                         if (!no_pos) {
                             $(ui.draggable).css({
-                                "left": $this.position().left - (($(ui.draggable).width() - $this.width())/2) + "px",
+                                "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
                                 "top": $this.position().top - ui.draggable.height() + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left - (($(ui.draggable).width() - $this.width())/2)-1 + "px",
-                                "top": $this.position().top - ui.draggable.height()-1 + "px"
+                                "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) - 1 + "px",
+                                "top": $this.position().top - ui.draggable.height() - 1 + "px"
                             });
                         }
-                        setTimeout(function(){
+                        setTimeout(function () {
                             vis.reRenderWidgetEdit(drag_id);
                             vis.reRenderWidgetEdit(self_id);
-                        },0)
+                        }, 0)
                     }
                 });
                 $($this).find(".plumb_dock_bottom").droppable({
@@ -64,18 +66,18 @@
                         vis.save();
                         if (!no_pos) {
                             $(ui.draggable).css({
-                                "left": $this.position().left - (($(ui.draggable).width() - $this.width())/2) + "px",
+                                "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
                                 "top": $this.position().top + $this.height() + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left - (($(ui.draggable).width() - $this.width())/2)-1 + "px",
-                                "top": $this.position().top + $this.height()-1 + "px"
+                                "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) - 1 + "px",
+                                "top": $this.position().top + $this.height() - 1 + "px"
                             });
                         }
-                        setTimeout(function(){
+                        setTimeout(function () {
                             vis.reRenderWidgetEdit(drag_id);
                             vis.reRenderWidgetEdit(self_id);
-                        },0)
+                        }, 0)
                     }
                 });
 
@@ -93,17 +95,17 @@
                         if (!no_pos) {
                             $(ui.draggable).css({
                                 "left": $this.position().left - ui.draggable.width() + "px",
-                                "top": $this.position().top-(($(ui.draggable).height() - $this.height()) /2 ) + "px"
+                                "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left - ui.draggable.width()-1 + "px",
-                                "top": $this.position().top-(($(ui.draggable).height() - $this.height()) /2 ) + "px"
+                                "left": $this.position().left - ui.draggable.width() - 1 + "px",
+                                "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
                             });
                         }
-                        setTimeout(function(){
+                        setTimeout(function () {
                             vis.reRenderWidgetEdit(drag_id);
                             vis.reRenderWidgetEdit(self_id);
-                        },0)
+                        }, 0)
                     }
                 });
                 $($this).find(".plumb_dock_right").droppable({
@@ -118,99 +120,316 @@
                         $("#inspect_conLeft").val(self_id);
                         vis.save();
                         if (!no_pos) {
-                            console.log(($(ui.draggable).height() - $this.height()) /2)
+
                             $(ui.draggable).css({
                                 "left": $this.position().left + $this.width() + "px",
-                                "top": $this.position().top-(($(ui.draggable).height() - $this.height()) /2 ) + "px"
+                                "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left + $this.width()-1 + "px",
-                                "top": $this.position().top-(($(ui.draggable).height() - $this.height()) /2 )-1 + "px"
+                                "left": $this.position().left + $this.width() - 1 + "px",
+                                "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) - 1 + "px"
                             });
                         }
-                        setTimeout(function(){
+                        setTimeout(function () {
                             vis.reRenderWidgetEdit(drag_id);
                             vis.reRenderWidgetEdit(self_id);
-                        },0)
+                        }, 0)
 
                     }
                 });
             }
         },
-        pump: function (el, oid, color_off, color_on, conTop, conBottom, conLeft, conRight) {
-            var $this = $(el).parent();
-            var id = $this.attr("id");
-            vis.binds.plumb.plumb_drop($this, true);
+        check: function (id, event) {
+            var data = {
+                type: "plumb_change",
+                from: event.from,
+                color: event.color,
+                status: event.status
+            };
 
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+            var $this = $("#" + id);
+            var plumb = vis.binds.plumb.data;
+            var self = vis.binds.plumb.data[id];
 
-                var ev ={
-                    type:"plumb_change",
-                    from: id,
-                    default: color_off
-                };
-                if (newVal >= 1) {
-                    ev.color=color_on;
-                }else{
-                    ev.color=color_off;
+            if (self.coli) {
+                if (!event.status) {
+                    vis.binds.plumb.rest_collision(id, data)
                 }
-                $("#" + conTop).trigger(ev);
-                $("#" + conBottom).trigger(ev);
-                $("#" + conLeft).trigger(ev);
-                $("#" + conRight).trigger(ev);
+            } else {
+                if (event.status) {
+                    if ((self.status == true && event.status == true && self.color.c != event.color.c && self.color.c_from != event.color.c_from)) {
+                        vis.binds.plumb.set_collision(id)
+                    } else {
+                        if (self.color.c != event.color.c || self.color.c_from != event.color.c_from) {
+                            vis.binds.plumb.set_normal(id, data)
+                        }
+                    }
+                } else {
+
+                    if (self.color.c != event.color.c || self.color.c_from != event.color.c_from) {
+                        vis.binds.plumb.set_normal(id, data)
+                    }
+
+
+                }
+            }
+
+        },
+        set_normal: function (id, event) {
+            //console.log("set_normal")
+            var $this = $("#" + id);
+            var self = vis.binds.plumb.data[id];
+
+            $($this).find(".plumb_body").css({
+                "background-image": "none",
+                "background-color": event.color.c
+            });
+            self.status = event.status;
+            self.color = event.color;
+
+
+            vis.binds.plumb.trigger(id, event)
+
+        },
+        set_collision: function (id) {
+            //console.log("set_collision")
+            var $this = $("#" + id);
+            var plumb = vis.binds.plumb.data;
+            var self = vis.binds.plumb.data[id];
+            self.status = true;
+            self.coli = true;
+
+            if (self.conLeft && self.conRight) {
+                $($this).find(".pipe_h").css("background-image", "linear-gradient(to right, " + plumb[self.conLeft].color.c + " , " + plumb[self.conRight].color.c + ")");
+            }
+        },
+        rest_collision: function (id, event) {
+            //console.log("reste_collision")
+            var $this = $("#" + id);
+            var plumb = vis.binds.plumb.data;
+            var self = vis.binds.plumb.data[id];
+            var e = JSON.parse(JSON.stringify(event));
+
+            e.status = true;
+
+            $.each(self.cons, function () {
+                if (self[this] != event.from) {
+                    e.color = plumb[self[this]].color;
+                    e.color_from = plumb[self[this]].color_from;
+                    self.color = e.color;
+                }
+            });
+
+            $($this).find(".plumb_body").css({
+                "background-image": "none",
+                "background-color": e.color.c
+            });
+
+            vis.binds.plumb.trigger_b(id, e)
+            self.coli = false;
+
+
+        },
+        trigger: function (id, event) {
+            var self = vis.binds.plumb.data[id];
+            var e = JSON.parse(JSON.stringify(event));
+
+            $.each(self.cons, function () {
+
+                if (self[this] != event.from) {
+                    e.from = id;
+                    $("#" + self[this]).trigger(e);
+                }
             });
 
 
+        },
+        trigger_b: function (id, event) {
+            var self = vis.binds.plumb.data[id];
+            var e = JSON.parse(JSON.stringify(event));
 
-            setTimeout(function(){
-                var ev ={
-                    type:"plumb_change",
-                    from: id,
-                    default: color_off
-                };
-                if(vis.states[oid + '.val'] >=1){
-                    ev.color=color_on;
-                }else{
-                    ev.color=color_off;
+            $.each(self.cons, function () {
+                if (self[this] == event.from) {
+                    e.from = id;
+                    $("#" + self[this]).trigger(e);
                 }
-                $("#" + conTop).trigger(ev);
-                $("#" + conBottom).trigger(ev);
-                $("#" + conLeft).trigger(ev);
-                $("#" + conRight).trigger(ev);
-            },2);
+            });
 
+
+        },
+
+        pump: function (el, oid, color_off, color_on, conTop, conBottom, conLeft, conRight) {
+            var $this = $(el).parent();
+            var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pump",
+                    cons: ["conTop", "conBottom", "conLeft", "conRight"],
+                    coli: false,
+                    from: id,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false
+                }
+            }
+            var self = plumb[id];
+
+            self.conLeft = conLeft || null;
+            self.conRight = conRight || null;
+            self.conTop = conTop || null;
+            self.conBottom = conBottom || null;
+
+
+            vis.binds.plumb.plumb_drop($this, true);
+
+            $this.bind("plumb_change", function (event) {
+
+                if (vis.states[oid + '.val'] >= 1) {
+                    //console.log("pump_change");
+                    //console.log(event)
+                    var ev = {
+                        type: "plumb_change",
+                        from: id,
+                        status: true,
+                        color: {
+                            c_from: id,
+                            c_default: color_off,
+                            c: color_on,
+                        }
+                    };
+                    ev.color.c = color_on;
+                    ev.status = true;
+                    self.color = ev.color,
+                            $("#" + event.from).trigger(ev);
+                }
+
+            });
+
+            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                vis.binds.plumb.stop = 0;
+                var ev = {
+                    type: "plumb_change",
+                    from: id,
+                    color: {
+                        c_from: id,
+                        c_default: color_off
+                    }
+                };
+                if (newVal >= 1) {
+                    ev.color.c = color_on;
+                    ev.status = true
+                } else {
+                    ev.color.c = color_off;
+                    ev.status = false
+                }
+                self.color = ev.color
+                $.each(self.cons, function () {
+                    if ($("#" + self[this])) {
+                        $("#" + self[this]).trigger(ev);
+                    }
+
+
+                });
+            });
+
+            setTimeout(function () {
+                //console.log("hallo")
+                var ev = {
+                    type: "plumb_change",
+                    from: id,
+                    color: {
+                        c_from: id,
+                        c_default: color_off
+                    }
+                };
+                if (vis.states[oid + '.val'] >= 1) {
+                    ev.color.c = color_on;
+                    ev.status = true
+                } else {
+                    ev.color.c = color_off;
+                    ev.status = false
+                }
+                self.color = ev.color
+                $.each(self.cons, function () {
+                    if ($("#" + self[this])) {
+                        $("#" + self[this]).trigger(ev);
+                    }
+                });
+            }, 2);
 
         },
         pipe_h: function (el, conLeft, conRight) {
             var $this = $(el).parent();
             var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conLeft", "conRight"],
+                    coli: false,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false,
+                    color: {
+                        c: null,
+                        c_from: null,
+                        c_default: null,
+                    }
+                }
+            }
+            var self = plumb[id];
+
+            self.conLeft = conLeft || null;
+            self.conRight = conRight || null;
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.height() / 2);
                 $($this).find(".pipe_h").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
             });
 
-            vis.binds.plumb.plumb_drop($this)
+            vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
+//console.log(self.color.c + " --- "+ event.color.c)
+                //console.log(self.color.c_from + " --- "+ event.color.c_from)
+                vis.binds.plumb.check(id, event)
+            });
 
-            $($this).find(".pipe_h").css("background-color", event.color);
-                var e = {
-                    type:"plumb_change",
-                    from: id,
-                    color: event.color,
-                    default: event.default
-                };
-                if(conLeft == event.from){
-                    $("#" + conRight).trigger(e);
-                }else{
-                    $("#" + conLeft).trigger(e);
-                }
-            })
         },
-        pipe_v: function (el, conTop, conBottom ) {
+        pipe_v: function (el, conTop, conBottom) {
             var $this = $(el).parent();
             var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conTop", "conBottom"],
+                    coli: false,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false,
+                    color: {
+                        c: null,
+                        c_from: null,
+                        c_default: null,
+                    }
+                }
+            }
+            var self = plumb[id];
+
+
+            self.conTop = conTop || null;
+            self.conBottom = conBottom || null;
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
@@ -220,29 +439,38 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
-                console.log("----------------------------")
-                console.log("From "+ event.from +" --> " + id);
-                console.log(conBottom)
-                console.log(conTop)
-
-                $($this).find(".pipe_v").css("background-color", event.color);
-                var e = {
-                    type:"plumb_change",
-                    from: id,
-                    color: event.color,
-                    default: event.default
-                };
-                if(conTop == event.from){
-                    $("#" + conBottom).trigger(e);
-                }else{
-                    $("#" + conTop).trigger(e);
-                }
-            })
+//                //console.log(event)
+                vis.binds.plumb.check(id, event)
+            });
 
         },
         bogen_br: function (el, conBottom, conRight) {
             var $this = $(el).parent();
             var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conRight", "conBottom"],
+                    coli: false,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false,
+                    color: {
+                        c: null,
+                        c_from: null,
+                        c_default: null,
+                    }
+                }
+            }
+            var self = plumb[id];
+
+
+            self.conRight = conRight || null;
+            self.conBottom = conBottom || null;
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
@@ -253,24 +481,48 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
+                vis.binds.plumb.check(id, event)
 
-                $($this).find(".bogen_br").css("background-color", event.color);
-                var e = {
-                    type:"plumb_change",
-                    from: id,
-                    color: event.color,
-                    default: event.default
-                };
-                if(conBottom == event.from){
-                    $("#" + conRight).trigger(e);
-                }else{
-                    $("#" + conBottom).trigger(e);
-                }
+//                $($this).find(".bogen_br").css("background-color", event.color);
+//                var e = {
+//                    type: "plumb_change",
+//                    from: id,
+//                    color: event.color,
+//                    default: event.default
+//                };
+//                if (conBottom == event.from) {
+//                    $("#" + conRight).trigger(e);
+//                } else {
+//                    $("#" + conBottom).trigger(e);
+//                }
             })
         },
         bogen_bl: function (el, conBottom, conLeft) {
             var $this = $(el).parent();
             var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conLeft", "conBottom"],
+                    coli: false,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false,
+                    color: {
+                        c: null,
+                        c_from: null,
+                        c_default: null,
+                    }
+                }
+            }
+            var self = plumb[id];
+
+            self.conLeft = conLeft || null;
+            self.conBottom = conBottom || null;
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
@@ -281,25 +533,49 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
+                vis.binds.plumb.check(id, event)
 
-                $($this).find(".bogen_bl").css("background-color", event.color);
-                var e = {
-                    type:"plumb_change",
-                    from: id,
-                    color: event.color,
-                    default: event.default
-                };
-                if(conBottom == event.from){
-                    $("#" + conLeft).trigger(e);
-                }else{
-                    $("#" + conBottom).trigger(e);
-                }
+//                $($this).find(".bogen_bl").css("background-color", event.color);
+//                var e = {
+//                    type: "plumb_change",
+//                    from: id,
+//                    color: event.color,
+//                    default: event.default
+//                };
+//                if (conBottom == event.from) {
+//                    $("#" + conLeft).trigger(e);
+//                } else {
+//                    $("#" + conBottom).trigger(e);
+//                }
             })
         },
-
         bogen_tr: function (el, conTop, conRight) {
             var $this = $(el).parent();
             var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conRight", "conTop"],
+                    coli: false,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false,
+                    color: {
+                        c: null,
+                        c_from: null,
+                        c_default: null,
+                    }
+                }
+            }
+            var self = plumb[id];
+
+
+            self.conRight = conRight || null;
+            self.conTop = conTop || null;
 
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
@@ -310,26 +586,47 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
-
-                $($this).find(".bogen_tr").css("background-color", event.color);
-                var e = {
-                    type:"plumb_change",
-                    from: id,
-                    color: event.color,
-                    default: event.default
-                };
-                if(conTop == event.from){
-                    $("#" + conRight).trigger(e);
-                }else{
-                    $("#" + conTop).trigger(e);
-                }
+                vis.binds.plumb.check(id, event);
+//                $($this).find(".bogen_tr").css("background-color", event.color);
+//                var e = {
+//                    type: "plumb_change",
+//                    from: id,
+//                    color: event.color,
+//                    default: event.default
+//                };
+//                if (conTop == event.from) {
+//                    $("#" + conRight).trigger(e);
+//                } else {
+//                    $("#" + conTop).trigger(e);
+//                }
             })
         },
         bogen_tl: function (el, conTop, conLeft) {
             var $this = $(el).parent();
             var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
 
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conLeft", "conTop"],
+                    coli: false,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false,
+                    color: {
+                        c: null,
+                        c_from: null,
+                        c_default: null,
+                    }
+                }
+            }
+            var self = plumb[id];
 
+            self.conLeft = conLeft || null;
+            self.conTop = conTop || null;
             $($this).on("resize", function () {
                 var shadow = parseInt($this.width() / 2);
                 $($this).find(".bogen_tl").css({"box-shadow": 'inset -' + shadow / 2 + 'px -' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
@@ -339,99 +636,138 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
-
-                $($this).find(".bogen_tl").css("background-color", event.color);
-                var e = {
-                    type:"plumb_change",
-                    from: id,
-                    color: event.color,
-                    default: event.default
-                };
-                if(conTop == event.from){
-                    $("#" + conLeft).trigger(e);
-                }else{
-                    $("#" + conTop).trigger(e);
-                }
+                vis.binds.plumb.check(id, event);
+//                $($this).find(".bogen_tl").css("background-color", event.color);
+//                var e = {
+//                    type: "plumb_change",
+//                    from: id,
+//                    color: event.color,
+//                    default: event.default
+//                };
+//                if (conTop == event.from) {
+//                    $("#" + conLeft).trigger(e);
+//                } else {
+//                    $("#" + conTop).trigger(e);
+//                }
             })
         },
-        valve_h: function (el,oid, conLeft, conRight, ctrl) {
+        valve_h: function (el, oid, conLeft, conRight, ctrl) {
             var $this = $(el).parent();
             var id = $this.attr("id");
-            var last_from;
-            var color_on;
-            var color_off;
-            var self_color
+            var plumb = vis.binds.plumb.data;
+            var self_color;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conLeft", "conRight"],
+                    coli: false,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false,
+                    color: {
+                        c: null,
+                        c_from: null,
+                        c_default: null,
+                    }
+                }
+            }
+            var self = plumb[id];
+
+
+            self.conLeft = conLeft || null;
+            self.conRight = conRight || null;
 
             $($this).on("resize", function () {
                 var height = $this.height();
                 $($this).find(".plumb_valve_l").css({
-                    "border-width": ''+height/2+'px 0px '+height/2+'px '+height+'px',
-                    "border-color": 'rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)' +self_color
+                    "border-width": '' + height / 2 + 'px 0px ' + height / 2 + 'px ' + height + 'px',
+                    "border-color": 'rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)' + self_color
                 });
                 $($this).find(".plumb_valve_r").css({
-                    "border-width": ''+height/2+'px '+height+'px '+height/2+'px  0px ',
-                    "border-color": 'rgba(0, 0, 0, 0) '+self_color+' rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) '
+                    "border-width": '' + height / 2 + 'px ' + height + 'px ' + height / 2 + 'px  0px ',
+                    "border-color": 'rgba(0, 0, 0, 0) ' + self_color + ' rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) '
                 })
 
             });
 
             vis.binds.plumb.plumb_drop($this);
 
-            $($this).click(function(){
-                if(ctrl){
+            $($this).click(function () {
+                if (ctrl) {
                     if (vis.states[oid + '.val'] >= 1) {
-                        vis.setValue(oid,0);
-                    }else{
-                        vis.setValue(oid,1);
+                        vis.setValue(oid, 0);
+                    } else {
+                        vis.setValue(oid, 1);
                     }
                 }
             });
 
             $this.bind("plumb_change", function (event) {
-                color_on =  event.color;
-                color_off =  event.default;
-                last_from = event.from;
-                if(vis.states[oid + '.val'] >=1){
-                    var e = {
-                        type:"plumb_change",
-                        from: id,
-                        color: event.color,
-                        default: event.default
-                    };
-                    if(conLeft == event.from){
-                        console.log("r")
-                        $("#" + conRight).trigger(e);
-                    }else{
-                        console.log("l")
-                        $("#" + conLeft).trigger(e);
-                    }
+
+                if (vis.states[oid + '.val'] >= 1) {
+                    vis.binds.plumb.check(id, event)
                 }
             });
 
-            function set(newVal){
-                var ev ={
-                    type:"plumb_change",
-                    from: id
+            function set(newVal) {
+                var ev = {
+                    type: "plumb_change",
+                    from: id,
+                    status: true
                 };
+
                 if (newVal >= 1) {
-                    ev.color=color_on;
+
                     self_color = "#0F0";
-                    $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) "+self_color });
-                    $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) "+ self_color +" rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
-                }else{
-                    ev.color=color_off;
+                    $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) " + self_color});
+                    $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) " + self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
+
+
+                    if (plumb[self.conLeft].status) {
+                        ev.color = JSON.parse(JSON.stringify(plumb[self.conLeft].color));
+                        self.color = ev.color;
+
+                        $("#" + conRight).trigger(ev);
+                    }
+
+                    if (plumb[self.conRight].status) {
+                        ev.color = JSON.parse(JSON.stringify(plumb[self.conRight].color));
+                        self.color = ev.color;
+
+                        $("#" + conLeft).trigger(ev);
+                    }
+
+
+                } else {
+
                     self_color = "#F00";
-                    $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) "+self_color });
-                    $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) "+ self_color +" rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
+                    $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) " + self_color});
+                    $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) " + self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
+
+                    if (plumb[self.conLeft].status) {
+                        ev.color = JSON.parse(JSON.stringify(plumb[self.conLeft].color));
+
+                        ev.color.c = ev.color.c_default;
+                        ev.status = false;
+                        self.color = ev.color;
+
+
+                        $("#" + conLeft).trigger(ev);
+                    }
+
+                    if (plumb[self.conRight].status) {
+                        ev.color = JSON.parse(JSON.stringify(plumb[self.conRight].color));
+                        ev.color.c = ev.color.c_default;
+                        ev.status = false;
+                        self.color = ev.color;
+                        $("#" + conRight).trigger(ev);
+                    }
                 }
 
-                if(conLeft == last_from){
-                    console.log(ev)
-                    $("#" + conRight).trigger(ev);
-                }else{
-                    console.log("2")
-                    $("#" + conLeft).trigger(ev);
-                }
+
             }
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
@@ -440,14 +776,184 @@
 
             if (vis.states[oid + '.val'] >= 1) {
                 self_color = "#0F0";
-                $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) "+self_color });
-                $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) "+ self_color +" rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
-            }else{
+                $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) " + self_color});
+                $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) " + self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
+            } else {
                 self_color = "#F00";
-                $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) "+self_color });
-                $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) "+ self_color +" rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
+                $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) " + self_color});
+                $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) " + self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
             }
-        }
+        },
+        valve_v: function (el, oid, conTop, conBottom, ctrl) {
+            var $this = $(el).parent();
+            var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+            var self_color;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conTop", "conBottom"],
+                    coli: false,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false,
+                    color: {
+                        c: null,
+                        c_from: null,
+                        c_default: null,
+                    }
+                }
+            }
+            var self = plumb[id];
+
+
+            self.conTop = conTop || null;
+            self.conBottom = conBottom || null;
+
+            $($this).on("resize", function () {
+                var width = $this.width();
+                $($this).find(".plumb_valve_t").css({
+                    "border-width": '' + width + 'px ' + width / 2 + 'px 0px  ' + width / 2 + 'px',
+                    "border-color": self_color + '  rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)'
+                });
+                $($this).find(".plumb_valve_b").css({
+                    "border-width": '0px ' + width / 2 + 'px ' + width + 'px ' + width / 2 + 'px   ',
+                    "border-color": 'rgba(0, 0, 0, 0)  rgba(0, 0, 0, 0) ' + self_color + ' rgba(0, 0, 0, 0) '
+                })
+
+            });
+
+            vis.binds.plumb.plumb_drop($this);
+
+            $($this).click(function () {
+                if (ctrl) {
+                    if (vis.states[oid + '.val'] >= 1) {
+                        vis.setValue(oid, 0);
+                    } else {
+                        vis.setValue(oid, 1);
+                    }
+                }
+            });
+
+            $this.bind("plumb_change", function (event) {
+
+                if (vis.states[oid + '.val'] >= 1) {
+                    vis.binds.plumb.check(id, event)
+                }
+            });
+
+            function set(newVal) {
+
+                if (newVal >= 1) {
+
+                    self_color = "#0F0";
+                    $this.find(".plumb_valve_t").css({"border-color": self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) "});
+                    $this.find(".plumb_valve_b").css({"border-color": 'rgba(0, 0, 0, 0)  rgba(0, 0, 0, 0) ' + self_color + ' rgba(0, 0, 0, 0) '})
+                } else {
+
+                    self_color = "#F00";
+                    $this.find(".plumb_valve_t").css({"border-color": self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) "});
+                    $this.find(".plumb_valve_b").css({"border-color": 'rgba(0, 0, 0, 0)  rgba(0, 0, 0, 0) ' + self_color + ' rgba(0, 0, 0, 0) '})
+                }
+
+
+                var ev = {
+                    type: "plumb_change",
+                    from: id,
+                    status: true
+                };
+
+                if (plumb[self.conTop].status) {
+                    ev.color = JSON.parse(JSON.stringify(plumb[self.conTop].color));
+                    self.color = ev.color;
+                    self.color_from = ev.color_from;
+
+                    //console.log(ev)
+                    $("#" + conBottom).trigger(ev);
+                }
+
+                if (plumb[self.conBottom].status) {
+                    ev.color = JSON.parse(JSON.stringify(plumb[self.conBottom].color));
+                    self.color = ev.color;
+                    //console.log(ev)
+                    $("#" + conTop).trigger(ev);
+                }
+
+            }
+
+            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                set(newVal)
+            });
+
+            if (vis.states[oid + '.val'] >= 1) {
+                self_color = "#0F0";
+                $this.find(".plumb_valve_t").css({"border-color": self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) "});
+                $this.find(".plumb_valve_b").css({"border-color": 'rgba(0, 0, 0, 0)  rgba(0, 0, 0, 0) ' + self_color + ' rgba(0, 0, 0, 0) '})
+            } else {
+                self_color = "#F00";
+                $this.find(".plumb_valve_t").css({"border-color": self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) "});
+                $this.find(".plumb_valve_b").css({"border-color": 'rgba(0, 0, 0, 0)  rgba(0, 0, 0, 0) ' + self_color + ' rgba(0, 0, 0, 0) '})
+            }
+        },
+        tpice_ht: function (el, conTop, conLeft, conRight) {
+            var $this = $(el).parent();
+            var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conLeft", "conRight", "conTop"],
+                    coli: false,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false,
+                    color: {
+                        c: null,
+                        c_from: null,
+                        c_default: null,
+                    }
+                }
+            }
+            var self = plumb[id];
+
+            self.conLeft = conLeft || null;
+            self.conRight = conRight || null;
+            self.conTop = conTop || null;
+
+            $($this).on("resize", function () {
+                var size = parseInt($this.height() / 3);
+                var shadow = parseInt($this.height() / 3 / 2);
+                $($this).find(".tpice-hl").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-hm").css({"box-shadow": 'inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-hr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+
+                $($this).find(".bogen_tl_shadow").css({"box-shadow": '' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 1.33) + 'px #000 '});
+                $($this).find(".bogen_tr_shadow").css({"box-shadow": '-' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 1.33) + 'px #000 '});
+
+                $($this).find(".tpice-t").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'})
+
+                $($this).find(".tpice-t, .bogen_tr_shadow, .bogen_tl_shadow, .tpice-hr, .tpice-hm, .tpice-hl").css({
+                    height: size + "px",
+                    width: size + "px",
+                })
+
+            });
+
+            vis.binds.plumb.plumb_drop($this);
+
+            $this.bind("plumb_change", function (event) {
+//console.log(self.color.c + " --- "+ event.color.c)
+                //console.log(self.color.c_from + " --- "+ event.color.c_from)
+                vis.binds.plumb.check(id, event)
+            });
+
+        },
     }
 </script>
 
@@ -473,6 +979,10 @@
 			</div>
         </div>
     </div>
+
+
+
+
 </script>
 
 <script id="tplPlump_pipe_V"
@@ -483,14 +993,15 @@
         data-vis-type="static"
         data-vis-name="Pipe_V"
         data-vis-attrs="conTop;conBottom">
-    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t" data-vis-resizable='{"grid": [ 10, 1 ]}' style="width: 20px; height: 100px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl_b pl_t" data-vis-resizable='{"grid": [ 10, 1 ],"handles": "all" }' style="width: 20px; height: 100px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_v(el, data.conTop, data.conBottom) %>>
-			<div class="pipe_v" style="">
+			<div class="pipe_v plumb_body" style="">
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_bottom"></div>
 			</div>
         </div>
     </div>
+
 </script>
 
 <script id="tplPlump_pipe_H"
@@ -503,12 +1014,13 @@
         data-vis-attrs="conLeft;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl_l pl_r " data-vis-resizable='{"grid": [ 1, 10 ]}' style=" width: 100px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_h(el, data.conLeft, data.conRight) %>>
-			<div class="pipe_h" style="">
+			<div class="pipe_h plumb_body" style="">
 				<div class="plumb_dock_left"></div>
 				<div class="plumb_dock_right"></div>
 			</div>
         </div>
     </div>
+
 </script>
 
 <script id="tplPlump_bogen_br"
@@ -521,13 +1033,14 @@
         data-vis-attrs="conBottom;conRight">
     <div class="vis-widget <%== this.data.attr('class')%>  pl_r pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_br(el, data.conBottom, data.conRight) %>>
-			<div class="bogen_br">
+			<div class="bogen_br plumb_body">
 				<div class="bogen_br_shadow"></div>
 				<div class="plumb_dock_right"></div>
 				<div class="plumb_dock_bottom"></div>
 			</div>
         </div>
     </div>
+
 </script>
 
 <script id="tplPlump_bogen_bl"
@@ -540,13 +1053,14 @@
         data-vis-attrs="conBottom;conLeft">
     <div class="vis-widget <%== this.data.attr('class')%>  pl_l pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_bl(el, data.conBottom, data.conLeft) %>>
-			<div class="bogen_bl">
+			<div class="bogen_bl plumb_body">
 				<div class="bogen_bl_shadow"></div>
 				<div class="plumb_dock_left"></div>
 				<div class="plumb_dock_bottom"></div>
 			</div>
         </div>
     </div>
+
 </script>
 
 <script id="tplPlump_bogen_tr"
@@ -559,13 +1073,14 @@
         data-vis-attrs="conTop;conRight">
     <div class="vis-widget <%== this.data.attr('class')%>  pl_t pl_r " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_tr(el, data.conTop, data.conRight) %>>
-			<div class="bogen_tr">
+			<div class="bogen_tr plumb_body">
 				<div class="bogen_tr_shadow"></div>
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_right"></div>
 			</div>
         </div>
     </div>
+
 </script>
 
 <script id="tplPlump_bogen_tl"
@@ -578,13 +1093,14 @@
         data-vis-attrs="conTop;conLeft">
     <div class="vis-widget <%== this.data.attr('class')%>  pl_t pl_l " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_tl(el, data.conTop, data.conLeft) %>>
-			<div class="bogen_tl">
+			<div class="bogen_tl plumb_body">
 				<div class="bogen_tl_shadow"></div>
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_left"></div>
 			</div>
         </div>
     </div>
+
 </script>
 
 <script id="tplPlump_valve_H"
@@ -597,9 +1113,61 @@
         data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %> pl_l pl_r " data-vis-resizable='{"grid": [ 20, 10 ],"aspectRatio": true}' style=" width: 40px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_h(el, data.oid, data.conLeft, data.conRight, data.ctrl) %>>
-			<div class="valve_h" style="">
+			<div class="valve_h " style="">
 			    <div class="plumb_valve_l"></div>
 			    <div class="plumb_valve_r"></div>
+				<div class="plumb_dock_left"></div>
+				<div class="plumb_dock_right"></div>
+			</div>
+        </div>
+    </div>
+
+
+
+
+
+</script>
+
+<script id="tplPlump_valve_v"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplPlump_valve_v" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 20 ],"aspectRatio": true}" style="width: 20px; height: 35px; left: 121px; top: 469px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_v " style=""> <div class="plumb_valve_t" style="border-color: rgb(255, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); border-width: 20px 10px 0px;"></div> <div class="plumb_valve_b" style="border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(255, 0, 0); border-width: 0px 10px 20px;"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-set="plumb"
+        data-vis-type="val"
+        data-vis-name="valve_V"
+        data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %> pl_t pl_b " data-vis-resizable='{"grid": [ 10, 20 ],"aspectRatio": true}' style=" width: 20px; height: 40px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_v(el, data.oid, data.conTop, data.conBottom, data.ctrl) %>>
+			<div class="valve_v " style="">
+			    <div class="plumb_valve_t"></div>
+			    <div class="plumb_valve_b"></div>
+				<div class="plumb_dock_top"></div>
+				<div class="plumb_dock_bottom"></div>
+			</div>
+        </div>
+    </div>
+
+</script>
+
+<script id="tplPlump_Tpiece_ht"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplPlump_Tpiece_ht" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_l pl_r pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 372px; top: 579px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tpice_ht " style=""> <div class="tpice-hl plumb_body"></div> <div class="tpice-hm plumb_body"> <div class="bogen_tl_shadow"></div> <div class="bogen_tr_shadow"></div> </div> <div class="tpice-hr plumb_body"></div> <div class="tpice-t plumb_body"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-set="plumb"
+        data-vis-type="static"
+        data-vis-name="Pipe_HT"
+        data-vis-attrs="conLeft;conRight;conTop">
+    <div class="vis-widget <%== this.data.attr('class') %> pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 30, 30 ],"aspectRatio": true}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_ht(el, data.conTop, data.conLeft, data.conRight) %>>
+			<div class="tpice_ht " style="">
+			    <div class="tpice-hl plumb_body"></div>
+			    <div class="tpice-hm plumb_body">
+                    <div class="bogen_tl_shadow"></div>
+                    <div class="bogen_tr_shadow"></div>
+			    </div>
+			    <div class="tpice-hr plumb_body"></div>
+			    <div class="tpice-t plumb_body"></div>
+				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_left"></div>
 				<div class="plumb_dock_right"></div>
 			</div>
