@@ -302,3 +302,77 @@
     width: 100%;
     height: 100%;
 }
+
+
+
+.ent-e_top_pipe-l{
+    background: gray;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: calc(33% - 10px);
+}
+.ent-e_top_pipe-r{
+    background: gray;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: calc(33% - 10px);
+}
+.ent-e_top{
+    /* background: -webkit-radial-gradient(   center,    ellipse closest-side,    yellow 0%,    blue 25%,    white 75%); */
+
+    /* background-position: 104% 60%; */
+    background-color: gray;
+    width: calc(100% - 20px);
+    left: 10px;
+    height: calc(20% - 10px);
+    position: absolute;
+    top: 10px;
+    border-top-left-radius: 80%;
+    border-top-right-radius: 80%;
+    box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset,rgb(0, 0, 0) 0px 103px 115px -115px inset;
+}
+.ent-e_center{    /* background: gray; */
+
+    width: calc(100% - 20px);
+    left: 10px;    height: 60%;    position: absolute;    overflow: hidden;    top: 20%;    box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset;    /* background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAOUlEQVQYV2NkQIB6ILMRiQ9nMkJZMAVYFYIUoSvAUEi0STC70U2A82EmobsXxQnYFGGYSLZJGG4EAAloEInPuQyaAAAAAElFTkSuQmCC); */    background-color: gray;    /* background-position-x: 28px; */    /* background-position-y: 77%; */}
+.ent-e_schott{    /* background: gray; */
+
+    width: 200%;
+    /* left: 10px; */
+    left: -50%;
+    height: 100%;
+    position: absolute;
+    top: 10%;
+    border-top-left-radius: 100%;
+    border-top-right-radius: 100%;
+    border: 2px solid;    border-color: black red;    background: transparent;}
+
+.ent-e_bottem{
+    background: gray;
+
+    width: calc(100% - 20px);
+    left: 10px;
+    height: calc(20% - 10px);
+    position: absolute;
+    bottom: 10px;
+    /* border-top-left-radius: 109px; */
+    /* border-top-right-radius: 100px; */
+    border-bottom-left-radius: 100%;
+    border-bottom-right-radius: 100%;
+    box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAOUlEQVQYV2NkQIB6ILMRiQ9nMkJZMAVYFYIUoSvAUEi0STC70U2A82EmobsXxQnYFGGYSLZJGG4EAAloEInPuQyaAAAAAElFTkSuQmCC) repeat;
+    background-color: gray;
+}
+.ent-e_bottem_pipe{
+
+}
+.ent-e_kies{
+    width: 100%;
+    height: 40%;
+    position: absolute;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAOUlEQVQYV2NkQIB6ILMRiQ9nMkJZMAVYFYIUoSvAUEi0STC70U2A82EmobsXxQnYFGGYSLZJGG4EAAloEInPuQyaAAAAAElFTkSuQmCC) repeat;
+
+    bottom: 0;
+}

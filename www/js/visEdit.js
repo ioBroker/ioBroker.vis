@@ -1438,6 +1438,7 @@ vis = $.extend(true, vis, {
             this.$dialogConfirm.dialog({
                 autoOpen: false,
                 modal:    true,
+                zindex: 11000,
                 buttons: [
                     {
                         text: _('Ok'),
@@ -4347,7 +4348,7 @@ vis = $.extend(true, vis, {
                     modal:    true,
                     title:    _('Confirm widget deletion'),
                     open:    function (event, ui) {
-                        $('[aria-describedby="dialog_delete"]').css('z-index', 1002);
+                        $('[aria-describedby="dialog_delete"]').css('z-index', 11002);
                         $('.ui-widget-overlay').css('z-index', 1001);
                     },
                     buttons: dialog_buttons
