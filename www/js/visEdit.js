@@ -550,14 +550,7 @@ vis = $.extend(true, vis, {
             that.save();
         });
 
-        // Theme select View
-        $('#inspect_view_theme').change(function () {
-            var theme = $(this).val();
-            that.views[that.activeView].settings.theme = theme;
-            that.addViewStyle(that.activeView, theme);
-            //that.additionalThemeCss(theme);
-            that.save();
-        });
+
 
         //language
         $('[data-language=' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + ']').addClass('ui-state-active');
@@ -1302,7 +1295,16 @@ vis = $.extend(true, vis, {
         });
         this.$copyWidgetSelectView.val(this.activeView);
         this.$copyWidgetSelectView.selectmenu();
-        $('#inspect_view_theme').selectmenu({width: '100%'});
+        $('#inspect_view_theme').selectmenu({
+            width: '100%',
+        change: function(){
+                var theme = $(this).val();
+                that.views[that.activeView].settings.theme = theme;
+                that.addViewStyle(that.activeView, theme);
+                //that.additionalThemeCss(theme);
+                that.save();
+        }
+        });
 
         // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
