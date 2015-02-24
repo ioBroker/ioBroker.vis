@@ -1,27 +1,34 @@
 .pipe_v{
-    background: #00F;
+    background: #C0C0C0;
     height: 100%;
     width: 100%;
     box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;
 }
 
 .pipe_h{
-    background: #00F;
+    background: #C0C0C0;
     height: 100%;
     width: 100%;
     box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset;
 }
 
 .pump{
-    /*background: #00F;*/
     height: 100%;
     width: 100%;
-    /*box-shadow: inset 10px 0px 11px -11px #000,inset -11px 0px 11px -11px #000;*/
 }
+.pump_img{
+    width: calc(100% - 20px);
+
+    height: calc(100% - 20px);
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
 
 .bogen_br {
     border-top-left-radius: 100%;
-    background-color: #00F;
+    background-color: #C0C0C0;
     width: 100%;
     height: 100%;
     box-shadow: rgb(0, 0, 0) 5px 5px 10px -6px inset;
@@ -40,7 +47,7 @@
 
 .bogen_bl {
     border-top-right-radius: 100%;
-    background-color: #00F;
+    background-color: #C0C0C0;
     width: 100%;
     height: 100%;
     box-shadow: rgb(0, 0, 0) -5px 5px 10px -6px inset;
@@ -59,7 +66,7 @@
 
 .bogen_tr {
     border-bottom-left-radius: 100%;
-    background-color: #00F;
+    background-color: #C0C0C0;
     width: 100%;
     height: 100%;
     box-shadow: #000 5px -5px 10px -6px inset;
@@ -77,7 +84,7 @@
 }
 .bogen_tl {
     border-bottom-right-radius: 100%;
-    background-color: #00F;
+    background-color: #C0C0C0;
     width: 100%;
     height: 100%;
     box-shadow: #000 -5px -5px 10px -6px inset;
@@ -139,9 +146,9 @@
 
 
 .drop-hover{
-    background-color: #9ACD32;
+    background-color: #9ACD32!important;;
     border-radius: 100%;
-    box-shadow: 0px 0px 3px 3px #9ACD32;
+    box-shadow: 0px 0px 3px 3px #9ACD32!important;
 }
 
 .valve_h{
@@ -197,63 +204,94 @@
     height: 100%;
 }
 .tpice-hl{
-    background: #00F;
+    background: #C0C0C0;
     height: 20px;  width: 20px;
     position: absolute;
-    top: 33%;
+    top: 33.33%;
     box-shadow: #000 0px 10px 10px -10px inset, #000 0px -10px 10px -10px inset;
     height: 20px;
     width: 20px;
 }
 .tpice-hm{
-    background: #00F;
+    background: #C0C0C0;
     position: absolute;
-    top: 33%;
-    left: 33.3333%;
+    top: 33.33%;
+    left: 33.33%;
     overflow: hidden;
     box-shadow: #000 0px -10px 10px -10px inset;
     height: 20px;
     width: 20px;
 }
 .tpice-hr{
-    background: #00F;
+    background: #C0C0C0;
     position: absolute;
-    top: 33%;
+    top: 33.33%;
     left: 66.66%;
     box-shadow: #000 0px 10px 10px -10px inset, #000 0px -10px 10px -10px inset;
     height: 20px;
     width: 20px;
 }
 .tpice-vt{
-    background: #00F;
+    background: #C0C0C0;
     height: 20px;  width: 20px;
     position: absolute;
-    left: 33%;
+    left: 33.33%;
 
-    height: 20px;
-    width: 20px;
+    height: 33.33%;
+    width: 33.33%;
+    box-shadow: #000 10px 0px 10px -10px inset, #000 -10px 0px 10px -10px inset;
 }
-.tpice-vm{
-    background: #00F;
+.tpice-vml{
+    background: #C0C0C0;
     position: absolute;
-    top: 33%;
+    top: 33.33%;
     left: 33.33%;
     overflow: hidden;
-
-    height: 20px;
-    width: 20px;
+    height: 33.33%;
+    width: 33.33%;
+    box-shadow:  #000 -10px 0px 10px -10px inset;
+}
+.tpice-vmr{
+    background: #C0C0C0;
+    position: absolute;
+    top: 33.33%;
+    left: 33.33%;
+    overflow: hidden;
+    height: 33.33%;
+    width: 33.33%;
+    box-shadow:  #000 10px 0px 10px -10px inset;
 }
 .tpice-vb{
-    background: #00F;
+    background: #C0C0C0;
     position: absolute;
     top: 66.66%;
     left: 33.33%;
 
-    height: 20px;
-    width: 20px;
+    height: 33.33%;
+    width: 33.33%;
+    box-shadow: #000 10px 0px 10px -10px inset, #000 -10px 0px 10px -10px inset;
+}
+
+.tpice-vl{
+    background: #C0C0C0;  
+    position: absolute;
+    top: 33.33%;
+    left: 0;  
+    height: 33.33%;  
+    width: 33.33%;  
+    box-shadow: #000 0px 10px 10px -10px inset, #000 0px -10px 10px -10px inset;
+}
+.tpice-vr{
+    background: #C0C0C0;
+    position: absolute;
+    top: 33.33%;
+    right: 0;
+    height: 33.33%;
+    width: 33.33%;
+    box-shadow: #000 0px 10px 10px -10px inset, #000 0px -10px 10px -10px inset;
 }
 .tpice-t{
-    background: #00F;;
+    background: #C0C0C0;;
     position: absolute;
     display: inline-block;
     top: 0;
@@ -263,7 +301,7 @@
     width: 20px;
 }
 .tpice-b{
-    background: #00F;;
+    background: #C0C0C0;;
     position: absolute;
     display: inline-block;
     bottom: 0;
@@ -323,7 +361,7 @@
     /* background: -webkit-radial-gradient(   center,    ellipse closest-side,    yellow 0%,    blue 25%,    white 75%); */
 
     /* background-position: 104% 60%; */
-    background-color: gray;
+    background-color: silver;
     width: calc(100% - 20px);
     left: 10px;
     height: calc(20% - 10px);
@@ -336,8 +374,8 @@
 .ent-e_center{    /* background: gray; */
 
     width: calc(100% - 20px);
-    left: 10px;    height: 60%;    position: absolute;    overflow: hidden;    top: 20%;    box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset;    /* background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAOUlEQVQYV2NkQIB6ILMRiQ9nMkJZMAVYFYIUoSvAUEi0STC70U2A82EmobsXxQnYFGGYSLZJGG4EAAloEInPuQyaAAAAAElFTkSuQmCC); */    background-color: gray;    /* background-position-x: 28px; */    /* background-position-y: 77%; */}
-.ent-e_schott{    /* background: gray; */
+    left: 10px;    height: 60%;    position: absolute;    overflow: hidden;    top: 20%;    box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset;    /* background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAOUlEQVQYV2NkQIB6ILMRiQ9nMkJZMAVYFYIUoSvAUEi0STC70U2A82EmobsXxQnYFGGYSLZJGG4EAAloEInPuQyaAAAAAElFTkSuQmCC); */    background-color: #C0C0C0;    /* background-position-x: 28px; */    /* background-position-y: 77%; */}
+.ent-e_schott{    /* background: gray; */;
 
     width: 200%;
     /* left: 10px; */
@@ -363,7 +401,7 @@
     border-bottom-right-radius: 100%;
     box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset;
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAOUlEQVQYV2NkQIB6ILMRiQ9nMkJZMAVYFYIUoSvAUEi0STC70U2A82EmobsXxQnYFGGYSLZJGG4EAAloEInPuQyaAAAAAElFTkSuQmCC) repeat;
-    background-color: gray;
+    background-color: #C0C0C0;
 }
 .ent-e_bottem_pipe{
 

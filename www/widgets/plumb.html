@@ -5,45 +5,50 @@
 
     if (vis.editMode) {
         $.extend(true, systemDictionary, {
-            "conTop": {"en": "conTop", "de": "conTop", "ru": "conTop"},
-            "conBottom": {"en": "conBottom", "de": "conBottom", "ru": "conBottom"},
-            "conLeft": {"en": "conLeft", "de": "conLeft", "ru": "conLeft"},
-            "conRight": {"en": "conRight", "de": "conRight", "ru": "conRight"},
-            "ctrl": {"en": "ctrl", "de": "ctrl", "ru": "ctrl"},
-            "oid": {"en": "oid", "de": "oid", "ru": "oid"},
-            "src": {"en": "src", "de": "src", "ru": "src"},
-            "stretch": {"en": "stretch", "de": "stretch", "ru": "stretch"},
-            "Off": {"en": "Off", "de": "Off", "ru": "Off"},
-            "ON": {"en": "ON", "de": "ON", "ru": "ON"}
+            "group_conTop": {"en": "Connection top", "de": "Verbindung oben", "ru": "group_conTop"},
+            "group_conBottom": {"en": "Connection bottom", "de": "Verbindung unten", "ru": "group_conBottom"},
+            "group_conLeft": {"en": "Connection left", "de": "Verbindung links", "ru": "group_conLeft"},
+            "group_conRight": {"en": "Connection right", "de": "Verbindung rechts", "ru": "group_conRight"},
+        });
+
+
+        $(document).keydown(function (e) {
+            if (vis.binds.plumb.dragging) {
+                $("#visview_" + vis.activeView).find(".plumb_dock_bottom, .plumb_dock_left, .plumb_dock_right, .plumb_dock_top").droppable("option", "disabled", true).removeClass("drop-hover");
+                e.preventDefault();
+            }
         });
     }
 
-    vis.binds.plumb = {
 
+    vis.binds.plumb = {
+        dragging: false,
         data: {},
         plumb_drop: function ($this, no_pos) {
             var drag_id;
             var self_id;
+            var drop_cancel;
+            if (vis.editMode && $("#" + drag_id).hasClass("pl_nocenter") == false) {
 
-            if (vis.editMode && $("#"+drag_id).hasClass("pl_nocenter")== false) {
                 $($this).find(".plumb_dock_top").droppable({
                     accept: ".pl_b:not(#" + $($this).attr("id") + ")",
                     hoverClass: "drop-hover",
                     tolerance: "touch",
                     drop: function (event, ui) {
+
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
                         vis.views[vis.activeView].widgets[self_id].data.conTop = drag_id;
                         vis.views[vis.activeView].widgets[drag_id].data.conBottom = self_id;
                         $("#inspect_conBottom").val(self_id);
                         vis.save();
-                        if (!no_pos && $("#"+drag_id).hasClass("pl_nocenter")== false ) {
+                        if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
                             $(ui.draggable).css({
-                                "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
+                                "left": $this.position().left + $(this).position().left - (($(ui.draggable).width() - $(this).width()) / 2) + "px",
                                 "top": $this.position().top - ui.draggable.height() + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) - 1 + "px",
+                                "left": $this.position().left + $(this).position().left - (($(ui.draggable).width() - $(this).width()) / 2) - 1 + "px",
                                 "top": $this.position().top - ui.draggable.height() - 1 + "px"
                             });
                         }
@@ -64,13 +69,13 @@
                         vis.views[vis.activeView].widgets[drag_id].data.conTop = self_id;
                         $("#inspect_conTop").val(self_id);
                         vis.save();
-                        if (!no_pos && $("#"+drag_id).hasClass("pl_nocenter")== false) {
+                        if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
                             $(ui.draggable).css({
-                                "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
+                                "left": $this.position().left + $(this).position().left - (($(ui.draggable).width() - $(this).width()) / 2) + "px",
                                 "top": $this.position().top + $this.height() + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) - 1 + "px",
+                                "left": $this.position().left + $(this).position().left - (($(ui.draggable).width() - $(this).width()) / 2) - 1 + "px",
                                 "top": $this.position().top + $this.height() - 1 + "px"
                             });
                         }
@@ -80,7 +85,6 @@
                         }, 0)
                     }
                 });
-
                 $($this).find(".plumb_dock_left").droppable({
                     accept: ".pl_r:not(#" + $($this).attr("id") + ")",
                     hoverClass: "drop-hover",
@@ -92,14 +96,14 @@
                         vis.views[vis.activeView].widgets[drag_id].data.conRight = self_id;
                         $("#inspect_conRight").val(self_id);
                         vis.save();
-                        if (!no_pos && $("#"+drag_id).hasClass("pl_nocenter")== false) {
+                        if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
                             $(ui.draggable).css({
                                 "left": $this.position().left - ui.draggable.width() + "px",
-                                "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
+                                "top": $this.position().top + $(this).position().top - (($(ui.draggable).height() - $(this).height()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
                                 "left": $this.position().left - ui.draggable.width() - 1 + "px",
-                                "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
+                                "top": $this.position().top + $(this).position().top - (($(ui.draggable).height() - $(this).height()) / 2 ) - 1 + "px"
                             });
                         }
                         setTimeout(function () {
@@ -113,8 +117,6 @@
                     hoverClass: "drop-hover",
                     tolerance: "touch",
                     drop: function (event, ui) {
-                        console.log(event)
-                        console.log(ui)
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
                         vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
@@ -122,15 +124,15 @@
 
                         $("#inspect_conLeft").val(self_id);
                         vis.save();
-                        if (!no_pos && $("#"+drag_id).hasClass("pl_nocenter")== false) {
+                        if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
 
                             $(ui.draggable).css({
                                 "left": $this.position().left + $this.width() + "px",
-                                "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
+                                "top": $this.position().top + $(this).position().top - (($(ui.draggable).height() - $(this).height()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
                                 "left": $this.position().left + $this.width() - 1 + "px",
-                                "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) - 1 + "px"
+                                "top": $this.position().top + $(this).position().top - (($(ui.draggable).height() - $(this).height()) / 2 ) - 1 + "px"
                             });
                         }
                         setTimeout(function () {
@@ -154,8 +156,8 @@
                         var dt = ui.draggable[0].offsetTop;
                         var dw = ui.draggable[0].offsetWidth;
                         var dh = ui.draggable[0].offsetHeight;
-                        var cl = $this.position().left + ($this.width() /2) -10 ;
-                        var ct = $this.position().top + ($this.height() /2) -10 ;
+                        var cl = $this.position().left + ($this.width() / 2) - 10;
+                        var ct = $this.position().top + ($this.height() / 2) - 10;
 
 
                         var data = {
@@ -176,12 +178,12 @@
 
                         });
 
-                        if (_ist = "left"){
+                        if (_ist = "left") {
                             vis.views[vis.activeView].widgets[self_id].data.conLeft = drag_id;
                             vis.views[vis.activeView].widgets[drag_id].data.conRight = self_id;
                             $("#inspect_conRight").val(self_id);
                             vis.save();
-                            if (!no_pos && $("#"+drag_id).hasClass("pl_nocenter")== false) {
+                            if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
                                 $(ui.draggable).css({
                                     "left": $this.position().left - ui.draggable.width() + "px",
                                     "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
@@ -196,13 +198,13 @@
                                 vis.reRenderWidgetEdit(self_id);
                             }, 0)
                         }
-                        if (_ist = "right"){
+                        if (_ist = "right") {
                             vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
                             vis.views[vis.activeView].widgets[drag_id].data.conLeft = self_id;
 
                             $("#inspect_conLeft").val(self_id);
                             vis.save();
-                            if (!no_pos && $("#"+drag_id).hasClass("pl_nocenter")== false) {
+                            if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
 
                                 $(ui.draggable).css({
                                     "left": $this.position().left + $this.width() + "px",
@@ -219,12 +221,12 @@
                             }, 0)
 
                         }
-                        if (_ist = "top"){
+                        if (_ist = "top") {
                             vis.views[vis.activeView].widgets[self_id].data.conTop = drag_id;
                             vis.views[vis.activeView].widgets[drag_id].data.conBottom = self_id;
                             $("#inspect_conBottom").val(self_id);
                             vis.save();
-                            if (!no_pos && $("#"+drag_id).hasClass("pl_nocenter")== false) {
+                            if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
                                 $(ui.draggable).css({
                                     "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
                                     "top": $this.position().top - ui.draggable.height() + "px"
@@ -239,12 +241,12 @@
                                 vis.reRenderWidgetEdit(self_id);
                             }, 0)
                         }
-                        if (_ist = "bottom"){
+                        if (_ist = "bottom") {
                             vis.views[vis.activeView].widgets[self_id].data.conBottom = drag_id;
                             vis.views[vis.activeView].widgets[drag_id].data.conTop = self_id;
                             $("#inspect_conTop").val(self_id);
                             vis.save();
-                            if (!no_pos && $("#"+drag_id).hasClass("pl_nocenter")== false) {
+                            if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
                                 $(ui.draggable).css({
                                     "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
                                     "top": $this.position().top + $this.height() + "px"
@@ -286,14 +288,16 @@
                 });
 
 
-                $this.on( "dragstart", function( event, ui ) {
-                    if(event.ctrlKey){
-                        $("#visview_"+ vis.activeView).find(".plumb_dock_bottom, .plumb_dock_left, .plumb_dock_right, .plumb_dock_top" ).droppable( "option", "disabled", true);
-                    }else{
-                        $("#visview_"+ vis.activeView).find( ".plumb_dock_bottom, .plumb_dock_left, .plumb_dock_right, .plumb_dock_top" ).droppable( "option", "disabled", false);
-                    }
+                $this.on("dragstart", function (event, ui) {
+                    vis.binds.plumb.dragging = true;
+                    $("#visview_" + vis.activeView).find(".plumb_dock_bottom, .plumb_dock_left, .plumb_dock_right, .plumb_dock_top").droppable("option", "disabled", false);
 
-                } );
+                });
+
+                $this.on("dragstop", function (event, ui) {
+                    vis.binds.plumb.dragging = false;
+                });
+
 
             }
         },
@@ -362,29 +366,24 @@
                 $($this).find(".plumb_body")
                         .css("background-image", "linear-gradient(to right, " + plumb[self.conLeft].color.c + " , " + plumb[self.conRight].color.c + ")")
                         .css("background-image", "-webkit-linear-gradient(to right, " + plumb[self.conLeft].color.c + " , " + plumb[self.conRight].color.c + ")");
-            }else
-            if (self.conTop && self.conBottom) {
+            } else if (self.conTop && self.conBottom) {
                 $($this).find(".plumb_body")
                         .css("background-image", "linear-gradient(" + plumb[self.conTop].color.c + " , " + plumb[self.conBottom].color.c + ")")
                         .css("background-image", "-webkit-linear-gradient(" + plumb[self.conTop].color.c + " , " + plumb[self.conBottom].color.c + ")")
-            }else
-            if (self.conTop && self.conRight) {
+            } else if (self.conTop && self.conRight) {
                 console.log("background-image", "-webkit-linear-gradient(top left , " + plumb[self.conTop].color.c + " , " + plumb[self.conRight].color.c + ")")
                 $($this).find(".plumb_body")
                         .css("background-image", "linear-gradient(top left , " + plumb[self.conTop].color.c + " , " + plumb[self.conRight].color.c + ")")
                         .css("background-image", "-webkit-linear-gradient(top left , " + plumb[self.conTop].color.c + " , " + plumb[self.conRight].color.c + ")")
-            }else
-            if (self.conTop && self.conLeft) {
+            } else if (self.conTop && self.conLeft) {
                 $($this).find(".plumb_body")
                         .css("background-image", "linear-gradient(right top, " + plumb[self.conTop].color.c + " , " + plumb[self.conLeft].color.c + ")")
                         .css("background-image", "-webkit-linear-gradient(right top, " + plumb[self.conTop].color.c + " , " + plumb[self.conLeft].color.c + ")")
-            }else
-            if (self.conBottom && self.conRight) {
+            } else if (self.conBottom && self.conRight) {
                 $($this).find(".plumb_body")
                         .css("background-image", "linear-gradient(left bottom, " + plumb[self.conBottom].color.c + " , " + plumb[self.conRight].color.c + ")")
                         .css("background-image", "-webkit-linear-gradient(left bottom, " + plumb[self.conBottom].color.c + " , " + plumb[self.conRight].color.c + ")")
-            }else
-            if (self.conBottom && self.conLeft) {
+            } else if (self.conBottom && self.conLeft) {
                 $($this).find(".plumb_body")
                         .css("background-image", "linear-gradient(right bottom, " + plumb[self.conBottom].color.c + " , " + plumb[self.conRight].color.c + ")")
                         .css("background-image", "-webkit-linear-gradient(right bottom, " + plumb[self.conBottom].color.c + " , " + plumb[self.conRight].color.c + ")")
@@ -400,9 +399,9 @@
             e.status = true;
 
             $.each(self.cons, function () {
-                if (self[this] != event.from) {
+
+                if (self[this] != event.from && self[this] != null ) {
                     e.color = plumb[self[this]].color;
-                    e.color_from = plumb[self[this]].color_from;
                     self.color = e.color;
                 }
             });
@@ -453,25 +452,105 @@
             if (!plumb[id]) {
                 vis.binds.plumb.data[id] = {
                     type: "pump",
-                    cons: ["conTop", "conBottom", "conLeft", "conRight"],
+                    cons: [],
                     coli: false,
                     from: id,
                     conLeft: null,
                     conRight: null,
                     conTop: null,
                     conBottom: null,
-                    status: false
+                    status: false,
+                    color: {
+                        c: null,
+                        c_from: null,
+                        c_default: null,
+                    }
                 }
             }
             var self = plumb[id];
-
+            self.cons = [];
             self.conLeft = data.conLeft || null;
             self.conRight = data.conRight || null;
             self.conTop = data.conTop || null;
             self.conBottom = data.conBottom || null;
 
 
-            vis.binds.plumb.plumb_drop($this, true);
+            setTimeout(function () {
+
+                $this.find(".plumb_dock_right, .plumb_dock_left, .plumb_dock_top, .plumb_dock_bottom").remove();
+                var l;
+                var t;
+                var s;
+                var shadow;
+
+                if (data.conTop_show == true) {
+                    self.cons.push("conTop");
+                    $this.find(".pump").append('<div class="plumb_dock_top"></div>');
+                    s = (data.conTop_size || 20);
+                    t = "-10";
+                    l = (($this.width() - s) / 100 * (data.conTop_pos || 50));
+                    shadow = s / 2;
+                    $this.find(".plumb_dock_top").css({
+                        top: t + "px",
+                        left: l + "px",
+                        height: "20px",
+                        width: s + "px",
+                        background: "silver",
+                        "box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'
+                    })
+                }
+                if (data.conBottom_show == true) {
+                    self.cons.push("conBottom");
+                    $this.find(".pump").append('<div class="plumb_dock_bottom"></div>');
+                    s = (data.conBottom_size || 20);
+                    t = "-10";
+                    l = (($this.width() - s) / 100 * (data.conBottom_pos || 50));
+                    shadow = s / 2;
+                    $this.find(".plumb_dock_bottom").css({
+                        bottom: t + "px",
+                        left: l + "px",
+                        height: "20px",
+                        width: s + "px",
+                        background: "silver",
+                        "box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'
+                    })
+                }
+                if (data.conLeft_show == true) {
+                    self.cons.push("conLeft")
+                    $this.find(".pump").append('<div class="plumb_dock_left"></div>');
+                    s = (data.conLeft_size || 20);
+                    l = "-10";
+                    t = (($this.height() - s) / 100 * (data.conLeft_pos || 50));
+                    shadow = s / 2;
+                    $this.find(".plumb_dock_left").css({
+                        top: t + "px",
+                        left: l + "px",
+                        height: s + "px",
+                        width: "20px",
+                        background: "silver",
+                        "box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'
+                    })
+                }
+                if (data.conRight_show == true) {
+                    self.cons.push("conRight")
+                    $this.find(".pump").append('<div class="plumb_dock_right"></div>');
+                    s = (data.conRight_size || 20);
+                    l = "-10";
+                    t = (($this.height() - s) / 100 * (data.conRight_pos || 50));
+                    shadow = s / 2;
+                    $this.find(".plumb_dock_right").css({
+                        top: t + "px",
+                        right: l + "px",
+                        height: s + "px",
+                        width: "20px",
+                        background: "silver",
+                        "box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'
+                    })
+                }
+
+                vis.binds.plumb.plumb_drop($this);
+            });
+
 
             $this.bind("plumb_change", function (event) {
 
@@ -496,7 +575,7 @@
 
             });
 
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+            vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
                 vis.binds.plumb.stop = 0;
                 var ev = {
                     type: "plumb_change",
@@ -507,14 +586,16 @@
                     }
                 };
                 if (newVal >= 1) {
-                    ev.color.c = color_on;
+                    ev.color.c = data.color_on;
                     ev.status = true
                 } else {
                     ev.color.c = data.color_off;
                     ev.status = false
                 }
                 self.color = ev.color
+                console.log(self)
                 $.each(self.cons, function () {
+              $this.find(".plumb_dock_right, .plumb_dock_left, .plumb_dock_top, .plumb_dock_bottom").css("background",ev.color.c);
                     if ($("#" + self[this])) {
                         $("#" + self[this]).trigger(ev);
                     }
@@ -542,11 +623,12 @@
                 }
                 self.color = ev.color;
                 $.each(self.cons, function () {
+                    $this.find(".plumb_dock_right, .plumb_dock_left, .plumb_dock_top, .plumb_dock_bottom").css("background",ev.color.c);
                     if ($("#" + self[this])) {
                         $("#" + self[this]).trigger(ev);
                     }
                 });
-            }, 2);
+            },2);
 
         },
         sprinkler_i: function (el, data) {
@@ -575,27 +657,27 @@
             self.conRight = data.conRight || null;
             self.conTop = data.conTop || null;
             self.conBottom = data.conBottom || null;
-            $this.css("overflow","visible");
+            $this.css("overflow", "visible");
 
             vis.binds.plumb.plumb_drop($this);
 
             $($this).on("resize", function () {
-               set()
+                set()
             });
 
             $this.bind("plumb_change", function (event) {
                 self.status = event.status;
-                if(event.status == true ){
+                if (event.status == true) {
                     $wp.show();
                     $head.css({
                         "background-color": data.head_color
                     });
-                }else{
+                } else {
                     $wp.hide();
-                    if(data["head-show"] == false ){
-                     $head.css({
-                         "background-color": "transparent"
-                     });
+                    if (data["head-show"] == false) {
+                        $head.css({
+                            "background-color": "transparent"
+                        });
                     }
                 }
             });
@@ -629,10 +711,14 @@
                     left: parseInt($($wp).width() / 2 - data.stroke / 2) + "px",
                     top: parseInt($($wp).height() / 2 - data.width) + "px",
                     position: "relative",
-                    "background-color": data.water_color
+                    "background-color": data.water_color,
+                    opacity: data.opacity,
+                    "border-radius": "100px"
                 });
 
-                if (data.fog == "true") {
+
+                if (data.fog == true) {
+                    console.log(data)
                     $water.css({
                         "box-shadow": '0px 0px ' + (data.stroke * 2) + 'px ' + data.stroke + 'px ' + data.water_color,
                     })
@@ -668,7 +754,6 @@
 
         },
         sprinkler_r: function (el, data) {
-            console.log(data)
             var $this = $(el).parent();
             var $head = $(el);
             var $wp = $this.find(".plumb_sprinkler_r");
@@ -698,27 +783,27 @@
             vis.binds.plumb.plumb_drop($this);
 
             $($this).on("resize", function () {
-               set()
+                set()
             });
 
             $this.bind("plumb_change", function (event) {
                 self.status = event.status;
-                if(event.status == true ){
+                if (event.status == true) {
                     $wp.show();
                     $head.css({
                         "background-color": data.head_color
                     });
-                }else{
+                } else {
                     $wp.hide();
-                    if(data["head-show"] == false ){
-                     $head.css({
-                         "background-color": "transparent"
-                     });
+                    if (data["head-show"] == false) {
+                        $head.css({
+                            "background-color": "transparent"
+                        });
                     }
                 }
             });
 
-            function set(){
+            function set() {
                 var time = data.time || 36;
                 var start = data.start || 0;
                 var end = data.ende || 180;
@@ -727,52 +812,52 @@
                 var left = 0;
                 var width = "200%";
 
-                if(data.position == "top-center"){
+                if (data.position == "top-center") {
                     width = "100%";
-                    top = ($this.height()/2) * -1;
+                    top = ($this.height() / 2) * -1;
                     left = 0
-                }else if(data.position == "bottom-center"){
+                } else if (data.position == "bottom-center") {
                     width = "100%";
-                    top = ($this.width()/2);
+                    top = ($this.width() / 2);
                     left = 0
-                }else if(data.position == "left-center"){
+                } else if (data.position == "left-center") {
                     width = "100%";
-                    top = ($this.height()/2) * -1;
+                    top = ($this.height() / 2) * -1;
                     left = ($this.width()) * -1
-                }else if(data.position == "right-center"){
+                } else if (data.position == "right-center") {
                     width = "100%";
-                    left = ($this.width()/2)
-                }else if(data.position == "top-left"){
-                    top = ($this.height()/2) * -1;
-                    left = ($this.width()/2) * -1
-                }else if(data.position == "top-right"){
-                    top = ($this.height()/2) * -1;
-                    left = ($this.width()/2)
-                }else if(data.position == "bottom-left"){
+                    left = ($this.width() / 2)
+                } else if (data.position == "top-left") {
+                    top = ($this.height() / 2) * -1;
+                    left = ($this.width() / 2) * -1
+                } else if (data.position == "top-right") {
+                    top = ($this.height() / 2) * -1;
+                    left = ($this.width() / 2)
+                } else if (data.position == "bottom-left") {
                     top = 0;
                     left = ($this.width()) * -1
-                }else if(data.position == "bottom-right"){
+                } else if (data.position == "bottom-right") {
                     top = 0;
                     left = 0
-                }else if(data.position == "center"){
+                } else if (data.position == "center") {
                     width = "100%"
                 }
 
 
                 $water.css({
-                    top: top +"px",
-                    left: left +"px",
+                    top: top + "px",
+                    left: left + "px",
                     height: width,
                     width: width
                 });
 
                 var _turn_winkel = start * Math.PI / 180;
                 var r = 250;
-                var x1 =250+r * Math.sin(_turn_winkel);
-                var y1 =250-r * Math.cos(_turn_winkel);
+                var x1 = 250 + r * Math.sin(_turn_winkel);
+                var y1 = 250 - r * Math.cos(_turn_winkel);
                 var winkel_max = (start - end) * -1;
-                var x2 =250+r * Math.sin(end* Math.PI / 180);
-                var y2 =250-r * Math.cos(end* Math.PI / 180);
+                var x2 = 250 + r * Math.sin(end * Math.PI / 180);
+                var y2 = 250 - r * Math.cos(end * Math.PI / 180);
 
                 if ((end - start) < 180) {
 
@@ -781,23 +866,23 @@
                     var p = "M" + x1 + "," + y1 + " A" + r + "," + r + " 0 1,1 " + x2 + "," + y2 + " L 250 250 z"
                 }
 
-                $("#"+id+"_svg").remove();
+                $("#" + id + "_svg").remove();
                 $water.append('\
                 <svg\
                 xmlns:svg="http://www.w3.org/2000/svg"\
                 xmlns="http://www.w3.org/2000/svg"\
-                id = "'+id+'_svg"\
+                id = "' + id + '_svg"\
                 width="100%"\
                 height="100%"\
                 viewBox="0 0 500 500"\
                 >\
            <clipPath id="starfoo">\
-                <path d="'+p+'"/>\
+                <path d="' + p + '"/>\
                 </clipPath>\
                     <g\
                      <g\
             transform="translate(0,0)" clip-path="url(#starfoo)">\
-                        <g style="stroke:#0000ff;stroke-width:'+stroke+';stroke-linecap:round;stroke-opacity:0.5" >\
+                        <g style="stroke:#0000ff;stroke-width:' + stroke + ';stroke-linecap:round;stroke-opacity:0.5" >\
                         <path d="M 250,500 250,0"/>\
                         <path d="M 293,496 207,3.8"/>\
                         <path d="M 335,485 165,14.7"/>\
@@ -816,7 +901,7 @@
                         <path d="M 375,33.3 125,467"/>\
                         <path d="M 335,14.9 165,485"/>\
                         <path d="M 293,3.71 207,496"/>\
-                                <animateTransform id="t_two" attributeName="transform" type="rotate" from="0 250 250" to=" 360 250 250" begin="0s" dur="'+time+'" repeatCount="indefinite"   />\
+                                <animateTransform id="t_two" attributeName="transform" type="rotate" from="0 250 250" to=" 360 250 250" begin="0s" dur="' + time + '" repeatCount="indefinite"   />\
                         </g>\
                     </g>\
                     <circle cx="250" cy="250" r="8"  fill="black"  />\
@@ -896,7 +981,6 @@
             var self = plumb[id];
 
 
-
             self.conTop = conTop || null;
             self.conBottom = conBottom || null;
 
@@ -936,8 +1020,6 @@
                 }
             }
             var self = plumb[id];
-
-
 
 
             self.conRight = conRight || null;
@@ -1417,14 +1499,14 @@
                 $($this).find(" .bogen_tr_shadow").css({
                     height: shadow + "px",
                     width: shadow + "px",
-                    right: "-"+ shadow-1 + "px",
-                    top: "-"+ shadow-1 + "px"
+                    right: "-" + shadow - 1 + "px",
+                    top: "-" + shadow - 1 + "px"
                 })
                 $($this).find(".bogen_tl_shadow").css({
                     height: shadow + "px",
                     width: shadow + "px",
-                    left: "-"+ shadow-1 + "px",
-                    top: "-"+ shadow-1 + "px"
+                    left: "-" + shadow - 1 + "px",
+                    top: "-" + shadow - 1 + "px"
                 })
             });
 
@@ -1485,13 +1567,13 @@
                 $($this).find(" .bogen_br_shadow").css({
                     height: shadow + "px",
                     width: shadow + "px",
-                    right: "-"+ shadow-1 + "px",
+                    right: "-" + shadow - 1 + "px",
                     top: size + "px"
                 });
                 $($this).find(".bogen_bl_shadow").css({
                     height: shadow + "px",
                     width: shadow + "px",
-                    left: "-"+ shadow + "px",
+                    left: "-" + shadow + "px",
                     top: size + "px"
                 })
             });
@@ -1538,7 +1620,96 @@
 
             $($this).on("resize", function () {
                 var size = Math.round($this.height() / 3);
-                var shadow = parseInt($this.width() / 2);
+                var shadow = parseInt($this.width() / 3 / 2);
+
+                $($this).find(".tpice-vt").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-vml").css({"box-shadow": 'inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'});
+                $($this).find(".tpice-vb").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'})
+
+                $($this).find(".bogen_tl_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px #000 '});
+                $($this).find(".bogen_bl_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px#000 '});
+
+                $($this).find(".tpice-vl").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px  -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+
+
+                $($this).find(" .bogen_tl_shadow").css({
+                    height: shadow + "px",
+                    width: shadow + "px",
+                    left: "-" + shadow - 1 + "px",
+                    top: size + "px"
+                });
+                $($this).find(".bogen_bl_shadow").css({
+                    height: shadow + "px",
+                    width: shadow + "px",
+                    left: "-" + shadow + "px",
+                    bottom: size + "px"
+                })
+            });
+
+            $($this).trigger("resize");
+
+            vis.binds.plumb.plumb_drop($this);
+
+            $this.bind("plumb_change", function (event) {
+                vis.binds.plumb.check(id, event)
+            });
+
+        },
+        tpice_vr: function (el, data) {
+            var $this = $(el).parent();
+            var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+            if (!plumb[id]) {
+                vis.binds.plumb.data[id] = {
+                    type: "pipe",
+                    cons: ["conLeft", "conTop", "conBottom"],
+                    coli: false,
+                    conLeft: null,
+                    conRight: null,
+                    conTop: null,
+                    conBottom: null,
+                    status: false,
+                    color: {
+                        c: null,
+                        c_from: null,
+                        c_default: null,
+                    }
+                }
+            }
+            var self = plumb[id];
+
+            self.conLeft = data.conLeft || null;
+            self.conRight = data.conRight || null;
+            self.conTop = data.conBottom || null;
+
+            $($this).on("resize", function () {
+                var size = Math.round($this.height() / 3);
+                var shadow = parseInt($this.width() / 3 / 2);
+
+                $($this).find(".tpice-vt").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-vmr").css({"box-shadow": 'inset ' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'});
+                $($this).find(".tpice-vb").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'})
+
+                $($this).find(".bogen_tr_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px #000 '});
+                $($this).find(".bogen_br_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px#000 '});
+
+                $($this).find(".tpice-vr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px  -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+
+
+                $($this).find(" .bogen_tr_shadow").css({
+                    height: shadow + "px",
+                    width: shadow + "px",
+                    right: "-" + shadow - 1 + "px",
+                    top: size + "px"
+                });
+                $($this).find(".bogen_br_shadow").css({
+                    height: shadow + "px",
+                    width: shadow + "px",
+                    right: "-" + shadow + "px",
+                    bottom: size + "px"
+                })
+
 
             });
 
@@ -1548,8 +1719,6 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
-//console.log(self.color.c + " --- "+ event.color.c)
-                //console.log(self.color.c_from + " --- "+ event.color.c_from)
                 vis.binds.plumb.check(id, event)
             });
 
@@ -1579,14 +1748,13 @@
             self.conTop = data.conTop || null;
             self.conBottom = data.conBottom || null;
 
-
             vis.binds.plumb.plumb_drop($this);
 
             $($this).on("resize", function () {
-                var shadow = parseInt($this.width() ) -20;
+                var shadow = parseInt($this.width()) - 20;
                 $($this).find(".ent-e_center").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'});
                 $($this).find(".ent-e_bottem").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".ent-e_top").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + (shadow) + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + (shadow) + 'px #000,inset  0px ' + (shadow/2) + 'px ' + (shadow/2)  + 'px -' + (shadow/2)  + 'px #000'});
+                $($this).find(".ent-e_top").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + (shadow) + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + (shadow) + 'px #000,inset  0px ' + (shadow / 2) + 'px ' + (shadow / 2) + 'px -' + (shadow / 2) + 'px #000'});
 
                 var shadow_pips_t = $($this).find(".ent-e_top_pipe-l").width() / 2;
 
@@ -1598,10 +1766,7 @@
 
 
             });
-
-
-
-        },
+        }
     }
 </script>
 
@@ -1612,14 +1777,14 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Pump"
-        data-vis-attrs="oid;src[./widgets/plumb/img/pumpe.png];stretch/checkbox;Off[#969696]/color;ON[#00ff00]/color;conTop;conBottom;conLeft;conRight">
+        data-vis-attrs="oid;src[./widgets/plumb/img/pumpe.png];color_off[#C0C0C0]/color;color_on[#00ff00]/color;group.conTop;conTop_show/checkbox;conTop_size[20]/slider,5,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_size[20]/slider,5,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_size[20]/slider,5,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_size[20]/slider,5,50,5;conRight_pos[50]/slider,0,100,1;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_nocenter pl_b pl_t pl_l pl_r" data-vis-resizable='{}' style=" width: 65px; height: 205px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pump(el, data) %>>
 			<div class="pump" style="">
 			   <% if (vis.editMode) { %>
                 <div class="editmode-helper" style="z-index:0" />
             <% } %>
-            <img style="position:absolute; width:100%;<%= this.data.attr('stretch') ? 'height:100%' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
+            <img class="pump_img" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_bottom"></div>
 				<div class="plumb_dock_left"></div>
@@ -1627,6 +1792,8 @@
 			</div>
         </div>
     </div>
+
+
 </script>
 
 <script id="tplPlump_i-strinkler"
@@ -1648,6 +1815,8 @@
 				<div class="plumb_dock_right"></div>
         </div>
     </div>
+
+
 </script>
 
 <script id="tplPlump_r-strinkler"
@@ -1669,6 +1838,8 @@
 				<div class="plumb_dock_right"></div>
         </div>
     </div>
+
+
 </script>
 
 <script id="tplPlump_pipe_V"
@@ -1688,6 +1859,8 @@
         </div>
     </div>
 
+
+
 </script>
 
 <script id="tplPlump_pipe_H"
@@ -1706,6 +1879,8 @@
 			</div>
         </div>
     </div>
+
+
 
 </script>
 
@@ -1727,6 +1902,8 @@
         </div>
     </div>
 
+
+
 </script>
 
 <script id="tplPlump_bogen_bl"
@@ -1746,6 +1923,8 @@
 			</div>
         </div>
     </div>
+
+
 
 </script>
 
@@ -1767,6 +1946,8 @@
         </div>
     </div>
 
+
+
 </script>
 
 <script id="tplPlump_bogen_tl"
@@ -1786,6 +1967,8 @@
 			</div>
         </div>
     </div>
+
+
 
 </script>
 
@@ -1812,6 +1995,8 @@
 
 
 
+
+
 </script>
 
 <script id="tplPlump_valve_v"
@@ -1833,16 +2018,18 @@
         </div>
     </div>
 
+
+
 </script>
 
 <script id="tplPlump_Tpiece_ht"
-                 type="text/ejs"
-                 class="vis-tpl"
-                 data-vis-prev='<div id="prev_tplPlump_Tpiece_ht" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_l pl_r pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 372px; top: 579px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tpice_ht " style=""> <div class="tpice-hl plumb_body"></div> <div class="tpice-hm plumb_body"> <div class="bogen_tl_shadow"></div> <div class="bogen_tr_shadow"></div> </div> <div class="tpice-hr plumb_body"></div> <div class="tpice-t plumb_body"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
-                 data-vis-set="plumb"
-                 data-vis-type="static"
-                 data-vis-name="Pipe_HT"
-                 data-vis-attrs="conLeft;conRight;conTop">
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplPlump_Tpiece_ht" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_l pl_r pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 372px; top: 579px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tpice_ht " style=""> <div class="tpice-hl plumb_body"></div> <div class="tpice-hm plumb_body"> <div class="bogen_tl_shadow"></div> <div class="bogen_tr_shadow"></div> </div> <div class="tpice-hr plumb_body"></div> <div class="tpice-t plumb_body"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-set="plumb"
+        data-vis-type="static"
+        data-vis-name="Pipe_HT"
+        data-vis-attrs="conLeft;conRight;conTop">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 30, 30 ],"aspectRatio": true}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_ht(el, data) %>>
 			<div class="tpice_ht " style="">
@@ -1859,6 +2046,8 @@
 			</div>
         </div>
     </div>
+
+
 
 </script>
 
@@ -1886,33 +2075,66 @@
 			</div>
         </div>
     </div>
-</script>
 
+
+</script>
 
 <script id="tplPlump_Tpiece_vl"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_Tpiece_ht" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_l pl_r pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 372px; top: 579px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tpice_ht " style=""> <div class="tpice-hl plumb_body"></div> <div class="tpice-hm plumb_body"> <div class="bogen_tl_shadow"></div> <div class="bogen_tr_shadow"></div> </div> <div class="tpice-hr plumb_body"></div> <div class="tpice-t plumb_body"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_Tpiece_vl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 173px; top: 431px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tpice_vl " style=""> <div class="tpice-vl plumb_body" style="box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset;"></div> <div class="tpice-vt plumb_body" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="tpice-vml plumb_body"> <div class="bogen_tl_shadow" style="box-shadow: rgb(0, 0, 0) 0px 0px 10px 2px; height: 10px; width: 10px; left: -11px; top: 20px;"></div> <div class="bogen_bl_shadow" style="box-shadow: rgb(0, 0, 0) 0px 0px 10px 2px; height: 10px; width: 10px; left: -10px; bottom: 20px;"></div> </div> <div class="tpice-vb plumb_body" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_VL"
-        data-vis-attrs="conLeft;conRight;conTop">
+        data-vis-attrs="conLeft;conBottom;conTop">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 30, 30 ],"aspectRatio": true}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_vl(el, data) %>>
 			<div class="tpice_vl " style="">
 			    <div class="tpice-vl plumb_body"></div>
-			    <div class="tpice-vm plumb_body">
+			     <div class="tpice-vt plumb_body"></div>
+			    <div class="tpice-vml plumb_body">
                     <div class="bogen_tl_shadow"></div>
-                    <div class="bogen_tr_shadow"></div>
+                    <div class="bogen_bl_shadow"></div>
 			    </div>
-			    <div class="tpice-vr plumb_body"></div>
-			    <div class="tpice-t plumb_body"></div>
+
+			    <div class="tpice-vb plumb_body"></div>
 				<div class="plumb_dock_top"></div>
+				<div class="plumb_dock_bottom"></div>
 				<div class="plumb_dock_left"></div>
+			</div>
+        </div>
+    </div>
+
+
+
+</script>
+
+<script id="tplPlump_Tpiece_vr"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplPlump_Tpiece_vl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 236px; top: 64px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tpice_vl " style=""> <div class="tpice-vl plumb_body"></div> <div class="tpice-vt plumb_body"></div> <div class="tpice-vm plumb_body"> <div class="bogen_tl_shadow"></div> <div class="bogen_bl_shadow"></div> </div> <div class="tpice-vb plumb_body"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-set="plumb"
+        data-vis-type="static"
+        data-vis-name="Pipe_VR"
+        data-vis-attrs="conBottom;conRight;conTop">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 30, 30 ],"aspectRatio": true}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_vr(el, data) %>>
+			<div class="tpice_vl " style="">
+			    <div class="tpice-vr plumb_body"></div>
+			     <div class="tpice-vt plumb_body"></div>
+			    <div class="tpice-vmr plumb_body">
+                    <div class="bogen_tr_shadow"></div>
+                    <div class="bogen_br_shadow"></div>
+			    </div>
+			    <div class="tpice-vb plumb_body"></div>
+				<div class="plumb_dock_top"></div>
+				<div class="plumb_dock_bottom"></div>
 				<div class="plumb_dock_right"></div>
 			</div>
         </div>
     </div>
+
+
 
 </script>
 
@@ -1920,7 +2142,7 @@
 <script id="tplPlump_tank_ent_e"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_Tpiece_ht" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_l pl_r pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 372px; top: 579px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tpice_ht " style=""> <div class="tpice-hl plumb_body"></div> <div class="tpice-hm plumb_body"> <div class="bogen_tl_shadow"></div> <div class="bogen_tr_shadow"></div> </div> <div class="tpice-hr plumb_body"></div> <div class="tpice-t plumb_body"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_tank_ent_e" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 110px; height: 240px; left: 330px; top: 47px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tank_ent-e " style=""> <div class="ent-e_top_pipe-l" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="ent-e_top_pipe-r" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="ent-e_top" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset, rgb(0, 0, 0) 0px 45px 45px -45px inset;"></div> <div class="ent-e_center" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset;"> <div class="ent-e_schott"></div> <div class="ent-e_kies"></div> </div> <div class="ent-e_bottem" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset;"></div> <div class="ent-e_bottem_pipe"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank Enteisung"
@@ -1943,5 +2165,7 @@
 			</div>
         </div>
     </div>
+
+
 
 </script>
