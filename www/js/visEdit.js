@@ -2263,13 +2263,13 @@ vis = $.extend(true, vis, {
             if (a.match(/^rgb/)) {
                 a = a.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
                 r = a[1];
-                b = a[2];
-                g = a[3];
+                g = a[2];
+                b = a[3];
             } else {
                 a = '0x' + a.slice(1).replace(a.length < 5 && /./g, '$&$&');
                 r = a >> 16;
-                b = a >> 8 & 255;
-                g = a & 255;
+                g = a >> 8 & 255;
+                b = a & 255;
             }
             hsp = Math.sqrt(
                 0.299 * (r * r) +
@@ -3031,10 +3031,10 @@ vis = $.extend(true, vis, {
         Result: array of oneAttr
         */
 
-        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,\.a-zA-Z0-9]+)?/;
+        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,\s:\/\.a-zA-Z0-9]+)?/;
         var match = this.regexAttr.exec(_wid_attr);
 
-        var widAttr     = match[1];
+        var widAttr      = match[1];
         var wid_repeats  = match[2];
         var wid_default  = match[3];
         var wid_type     = match[4];
@@ -3465,6 +3465,10 @@ vis = $.extend(true, vis, {
         this.addToInspect(this.activeWidgets, 'class',              group);
         this.addToInspect(this.activeWidgets, 'filterkey',          group);
         this.addToInspect(this.activeWidgets, {name: 'views', type: 'select-views'}, group);
+        group = 'visibility';
+        this.addToInspect(this.activeWidgets, {name: 'visibility-oid', type: 'id'},   group);
+        this.addToInspect(this.activeWidgets, {name: 'visibility-cond', type: 'select', options: ['==','!=','<=','>=','<','>','consist'], default: '=='},   group);
+        this.addToInspect(this.activeWidgets, {name: 'visibility-val', default: 1},     group);
 
         // Edit all attributes
         group = 'common';

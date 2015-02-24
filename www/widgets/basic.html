@@ -80,6 +80,18 @@
             "shake":           {"en": "shake", "de": "shake", "ru": "shake"},
             "size":            {"en": "size", "de": "size", "ru": "size"},
             "slide":           {"en": "slide", "de": "slide", "ru": "slide"},
+            "is_milliseconds": {"en": "Milliseconds", "de": "Millisekunden", "ru": "Миллисекунды"},
+            "is_milliseconds_tooltip": {
+                "en": "Is object is milliseconds from 1970.01.01 00:00:00. Normally no.",
+                "de": "Ob das Wert die Milleskunden seit 1970.01.01 00:00:00 ist. Normalerweise nicht.",
+                "ru": "Является ли значение объекта миллисекундами с 1970.01.01 00:00:00. Обычно нет."
+            },
+            "format_date":     {"en": "Dateformat", "de": "Datumformat", "ru": "Формат даты"},
+            "format_date_tooltip": {
+                "en": "Dateformat",
+                "de": "Datumformat",
+                "ru": "Формат даты"
+            },
 
             "hide_effect":     {"en": "Hide effect",           "de": "Verbergeneffekt",    "ru": "Эффект скрытия"},
             "hide_duration":   {"en": "Hide duration(ms)",     "de": "Verbergendauer",     "ru": "Длительность скрытия(мс)"},
@@ -751,15 +763,14 @@
             return (data.border) ? ("calc(" + (parseFloat(vis.states.attr(data.oid + '.val')) * data.factor) + "% - " + vis.binds.basic.extractWidth(data.border, 2) + ")") : ((parseFloat(vis.states.attr(data.oid + '.val')) * data.factor) + "%");
             //        %>
         },
-        formatDate: function (dateObj, isSeconds) {
-            //return dateObj.getFullYear() + '-' +
-            //    ("0" + (dateObj.getMonth() + 1).toString(10)).slice(-2) + '-' +
-            //    ("0" + (dateObj.getDate()).toString(10)).slice(-2) + ' ' +
-            //    ("0" + (dateObj.getHours()).toString(10)).slice(-2) + ':' +
-            //    ("0" + (dateObj.getMinutes()).toString(10)).slice(-2) + ':' +
-            //    ("0" + (dateObj.getSeconds()).toString(10)).slice(-2);
-            // Following implementation is 5 times faster
-            if (isSeconds === undefined) isSeconds = true;
+        formatDate: function (dateObj, isSeconds, format) {
+            if (typeof isSeconds != 'boolean') {
+                format = isSeconds;
+                isSeconds = false;
+            }
+
+            var format = format || vis.dateFormat || 'DD.MM.YYYY';
+
             if (!dateObj) return '';
             var text = typeof dateObj;
             if (text == 'string') {
@@ -769,44 +780,85 @@
             }
             if (text != 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
 
-            text = dateObj.getFullYear();
-            var v = dateObj.getMonth() + 1;
-            if (v < 10) {
-                text += '-0' + v;
-            } else {
-                text += '-' + v;
+            var v;
+
+            // Year
+            if (format.indexOf('YYYY') != -1 || format.indexOf('JJJJ') != -1 || format.indexOf('ГГГГ') != -1) {
+                v = dateObj.getFullYear();
+                format = format.replace('YYYY', v);
+                format = format.replace('JJJJ', v);
+                format = format.replace('ГГГГ', v);
+            } else if (format.indexOf('YY') != -1 || format.indexOf('JJ') != -1 || format.indexOf('ГГ') != -1) {
+                v = dateObj.getYear();
+                format = format.replace('YY', v);
+                format = format.replace('JJ', v);
+                format = format.replace('ГГ', v);
+            }
+            // Month
+            if (format.indexOf('MM') != -1 || format.indexOf('ММ') != -1) {
+                v =  dateObj.getMonth() + 1;
+                if (v < 10) v = '0' + v;
+                format = format.replace('MM', v);
+                format = format.replace('ММ', v);
+            } else if (format.indexOf('M') != -1 || format.indexOf('М') != -1) {
+                v =  dateObj.getMonth() + 1;
+                format = format.replace('M', v);
+                format = format.replace('М', v);
             }
 
-            v = dateObj.getDate();
-            if (v < 10) {
-                text += '-0' + v;
-            } else {
-                text += '-' + v;
+            // Day
+            if (format.indexOf('DD') != -1 || format.indexOf('TT') != -1 || format.indexOf('ДД') != -1) {
+                v =  dateObj.getDate();
+                if (v < 10) v = '0' + v;
+                format = format.replace('DD', v);
+                format = format.replace('TT', v);
+                format = format.replace('ДД', v);
+            } else if (format.indexOf('D') != -1 || format.indexOf('TT') != -1 || format.indexOf('Д') != -1) {
+                v =  dateObj.getDate();
+                format = format.replace('D', v);
+                format = format.replace('T', v);
+                format = format.replace('Д', v);
             }
 
-            v = dateObj.getHours();
-            if (v < 10) {
-                text += ' 0' + v;
-            } else {
-                text += ' ' + v;
-            }
-            v = dateObj.getMinutes();
-            if (v < 10) {
-                text += ':0' + v;
-            } else {
-                text += ':' + v;
-            }
-
-            v = dateObj.getSeconds();
-            if (v < 10) {
-                text += ':0' + v;
-            } else {
-                text += ':' + v;
+            // hours
+            if (format.indexOf('hh') != -1 || format.indexOf('SS') != -1 || format.indexOf('чч') != -1) {
+                v =  dateObj.getHours();
+                if (v < 10) v = '0' + v;
+                format = format.replace('hh', v);
+                format = format.replace('SS', v);
+                format = format.replace('чч', v);
+            } else if (format.indexOf('h') != -1 || format.indexOf('S') != -1 || format.indexOf('ч') != -1) {
+                v =  dateObj.getHours();
+                format = format.replace('h', v);
+                format = format.replace('S', v);
+                format = format.replace('ч', v);
             }
 
-            return text;
+            // minutes
+            if (format.indexOf('mm') != -1 || format.indexOf('мм') != -1) {
+                v =  dateObj.getMinutes();
+                if (v < 10) v = '0' + v;
+                format = format.replace('mm', v);
+                format = format.replace('мм', v);
+            } else if (format.indexOf('m') != -1 ||  format.indexOf('м') != -1) {
+                v =  dateObj.getMinutes();
+                format = format.replace('m', v);
+                format = format.replace('v', v);
+            }
+
+            // seconds
+            if (format.indexOf('ss') != -1 || format.indexOf('сс') != -1) {
+                v =  dateObj.getSeconds();
+                if (v < 10) v = '0' + v;
+                format = format.replace('ss', v);
+                format = format.replace('cc', v);
+            } else if (format.indexOf('s') != -1 || format.indexOf('с') != -1) {
+                v =  dateObj.getHours();
+                format = format.replace('s', v);
+                format = format.replace('с', v);
+            }
+            return format;
         }
-
     };
 
     $(document).mouseup(function () {
@@ -1125,11 +1177,11 @@
         data-vis-type="val,timestamp"
         data-vis-name="Timestamp"
         data-vis-prev='<div id="prev_tplValueTimestamp" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#00008B" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
-        data-vis-attrs="oid;html_prepend;html_append;test_html">
+        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".ts")) %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".ts"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1142,11 +1194,11 @@
         data-vis-type="val,timestamp"
         data-vis-prev='<div id="prev_tplValueLastchange" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#006400" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
         data-vis-name="Last change Timestamp"
-        data-vis-attrs="oid;html_prepend;html_append;test_html">
+        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".lc")) %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".lc"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1494,7 +1546,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="val"
+        data-vis-type="val,bar"
         data-vis-name="Bar Horizontal"
         data-vis-prev='<div id="prev_tplValueFloatBar" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="width: 54px; height: 17px; border: 1px solid rgb(136, 136, 136); left: 458px; top: 292px; position: absolute;" > <div data-o class="vis-widget-prev-body" style="width: 68.6%; background-color: blue;"></div> </div></div>'
         data-vis-attrs="oid;factor[1];color[blue]/color;border;shadow;reverse/checkbox">
@@ -1509,7 +1561,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="val"
+        data-vis-type="val,bar"
         data-vis-name="Bar Vertical"
         data-vis-prev='<div id="prev_tplValueFloatBarVertical" style="position: relative; text-align: initial;padding: 4px "><div data-o class="vis-widget_prev ui-draggable-handle " style="width: 17px; height: 54px; border: 1px solid rgb(136, 136, 136); left: 435px; top: 105px; position: absolute;" > <div class="vis-widget-prev-body" style="height: 68.58%; position: absolute; bottom: 0%; background-color: blue;"></div> </div></div>'
         data-vis-attrs="oid;factor[1];color[blue]/color;border;shadow;reverse/checkbox">
