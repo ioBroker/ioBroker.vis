@@ -341,21 +341,36 @@
     height: 100%;
 }
 
+.plumb_c_valve_h_img{
+    width: 100%;
+
+    height: 100%;
+    background-image: url(../img/c_valve.svg);
+    /* background-clip: inherit; */
+    position: absolute;
+    top: 0;
+    background-size: 100%;
+    left: 0;
+}
 
 
 .ent-e_top_pipe-l{
-    background: gray;
+    background: silver;
     width: 20px;
     height: 20px;
     position: absolute;
-    left: calc(33% - 10px);
+    left: calc(33% - 10px)!important;
+top:0!important;
+
 }
 .ent-e_top_pipe-r{
-    background: gray;
+    background: silver;
     width: 20px;
     height: 20px;
     position: absolute;
-    right: calc(33% - 10px);
+    right: calc(33% - 10px);!important;
+    left: auto!important;
+    top:0!important;
 }
 .ent-e_top{
     /* background: -webkit-radial-gradient(   center,    ellipse closest-side,    yellow 0%,    blue 25%,    white 75%); */
@@ -364,18 +379,25 @@
     background-color: silver;
     width: calc(100% - 20px);
     left: 10px;
-    height: calc(20% - 10px);
+    height: calc(20% - 9px);
     position: absolute;
     top: 10px;
     border-top-left-radius: 80%;
     border-top-right-radius: 80%;
-    box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset,rgb(0, 0, 0) 0px 103px 115px -115px inset;
+
 }
-.ent-e_center{    /* background: gray; */
+.ent-e_center{
 
     width: calc(100% - 20px);
-    left: 10px;    height: 60%;    position: absolute;    overflow: hidden;    top: 20%;    box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset;    /* background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAOUlEQVQYV2NkQIB6ILMRiQ9nMkJZMAVYFYIUoSvAUEi0STC70U2A82EmobsXxQnYFGGYSLZJGG4EAAloEInPuQyaAAAAAElFTkSuQmCC); */    background-color: #C0C0C0;    /* background-position-x: 28px; */    /* background-position-y: 77%; */}
-.ent-e_schott{    /* background: gray; */;
+    left: 10px;
+    height: 60%;
+    position: absolute;
+    overflow: hidden;
+    top: 20%;
+    box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset;
+    background-color: #C0C0C0;
+}
+.ent-e_schott{
 
     width: 200%;
     /* left: 10px; */
@@ -400,7 +422,7 @@
     border-bottom-left-radius: 100%;
     border-bottom-right-radius: 100%;
     box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset;
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAOUlEQVQYV2NkQIB6ILMRiQ9nMkJZMAVYFYIUoSvAUEi0STC70U2A82EmobsXxQnYFGGYSLZJGG4EAAloEInPuQyaAAAAAElFTkSuQmCC) repeat;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAGklEQVQImWNgQID/DGjgP7oEugoMCZxGMAAAluAH+UhIFMkAAAAASUVORK5CYII=) repeat;
     background-color: #C0C0C0;
 }
 .ent-e_bottem_pipe{
@@ -408,9 +430,9 @@
 }
 .ent-e_kies{
     width: 100%;
-    height: 40%;
+    height: 50%;
     position: absolute;
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAOUlEQVQYV2NkQIB6ILMRiQ9nMkJZMAVYFYIUoSvAUEi0STC70U2A82EmobsXxQnYFGGYSLZJGG4EAAloEInPuQyaAAAAAElFTkSuQmCC) repeat;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAGklEQVQImWNgQID/DGjgP7oEugoMCZxGMAAAluAH+UhIFMkAAAAASUVORK5CYII=) repeat;
 
     bottom: 0;
 }

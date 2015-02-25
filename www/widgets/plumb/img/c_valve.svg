@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="400" height="200" id="svg2" version="1.1" inkscape:version="0.48.5 r10040" sodipodi:docname="Zeichnung-1.svg">
+  <defs id="defs4" />
+  <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="1.97989898471" inkscape:cx="68.5988504895" inkscape:cy="53.4602690418" inkscape:document-units="px" inkscape:current-layer="g3800" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1018" inkscape:window-x="-8" inkscape:window-y="1016" inkscape:window-maximized="1" />
+  <metadata id="metadata7">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g id="g3800" transform="translate(60.78125,0)">
+    <g id="g3808" transform="translate(-61.25,0)">
+      <g id="g3804">
+        <path transform="matrix(13.4088391701,0,0,22.2304454068,-88.253955365,-107.415926517)" d="M 27.4635224342,9.33026409149 C 27.4635224342,11.3177537336 24.7923575736,12.9289324284 21.4973087311,12.9289324284 18.2022598886,12.9289324284 15.5310950279,11.3177537336 15.5310950279,9.33026409149 15.5310950279,7.34277444934 18.2022598886,5.73159575462 21.4973087311,5.73159575462 24.7923575736,5.73159575462 27.4635224342,7.34277444934 27.4635224342,9.33026409149 z" sodipodi:ry="3.59866833687" sodipodi:rx="5.96621370316" sodipodi:cy="9.33026409149" sodipodi:cx="21.4973087311" id="path2989" style="fill:#000000;fill-opacity:1;stroke:none" sodipodi:type="arc" />
+        <path d="M 181.75,2.5 84.7928294393,99.520305095 z M 0.9375,100 88.8066313687,100.154346397 z M 85.0747139735,100.921636645 181.96875,197.5 z" style="fill:none;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:18.3999996185;stroke-opacity:1;stroke-dasharray:none" id="path3767" inkscape:connector-curvature="0" />
+      </g>
+    </g>
+  </g>
+</svg>
