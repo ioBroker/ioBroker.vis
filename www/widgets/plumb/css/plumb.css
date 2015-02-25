@@ -188,6 +188,36 @@
     border-color: #0F0 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
 
 }
+
+.plumb_c_valve_h_back_l {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    background: silver;
+
+}
+
+.plumb_c_valve_h_back_r {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    background: silver;
+ right:0;
+}
+
+.plumb_c_valve_v_back_t{
+    height  : 50%;
+    width : 100%;
+    position: absolute;
+    background: silver;
+}
+.plumb_c_valve_v_back_b{
+    height  : 50%;
+    width: 100%;
+    position: absolute;
+    background: silver;
+    bottom:0;
+}
 .plumb_valve_b{
     width: 0;
     height: 0;
@@ -197,7 +227,6 @@
     /* right: 0; */
     bottom: 0;
     border-width: 0px 10px 19px 10px;
-    border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #0F0 rgba(0, 0, 0, 0);
 }
 .tpice_ht{
     text-align: center;
@@ -343,16 +372,28 @@
 
 .plumb_c_valve_h_img{
     width: 100%;
-
     height: 100%;
-    background-image: url(../img/c_valve.svg);
-    /* background-clip: inherit; */
     position: absolute;
     top: 0;
-    background-size: 100%;
+    background-size: 100%!important;
     left: 0;
+    z-index: 2;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
+.plumb_c_valve_v_img{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    background-size: 100%!important;
+    left: 0;
+    z-index: 2;
+    background-position: center;
+    background-repeat: no-repeat!important;
+
+}
 
 .ent-e_top_pipe-l{
     background: silver;
