@@ -85,7 +85,7 @@ if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemL
 
 var vis = {
 
-    version:                '0.2.4',
+    version:                '0.2.5',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -534,6 +534,11 @@ var vis = {
         if (isViewsConverted) {
             this.saveRemote();
         }
+        if (this.editMode) {
+            if ($('#wid_all_lock_function').prop('checked')) {
+                $(".vis-widget").addClass("vis-widget-lock");
+            }
+        }
     },
     addViewStyle: function (view,theme) {
         var _view = 'visview_' + view;
@@ -879,7 +884,6 @@ var vis = {
             setTimeout(function () {
                 that.saveRemote(callback);
             }, 1000);
-
         }else {
             if (!this.saveRemoteActive) this.saveRemoteActive = 30;
             if (this.saveRemoteActive == 10) {
@@ -888,15 +892,16 @@ var vis = {
                 return;
             }
             // Sync widget before it will be saved
-            for (var t = 0; t < this.activeWidgets.length; t++) {
-                if (this.activeWidgets[t].indexOf('_') != -1 && this.syncWidgets) {
-                    this.syncWidgets(this.activeWidgets);
-                    break;
+            if (this.activeWidgets) {
+                for (var t = 0; t < this.activeWidgets.length; t++) {
+                    if (this.activeWidgets[t].indexOf('_') != -1 && this.syncWidgets) {
+                        this.syncWidgets(this.activeWidgets);
+                        break;
+                    }
                 }
             }
 
             if (local) {
-
                 storage.set(this.storageKeyViews, JSON.stringify(this.views, null, 2));
                 that.saveRemoteActive = 0;
                 if (callback) callback();

@@ -46,6 +46,10 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+### 0.2.5 (2015-02-26)
+- (bluefox) fix lock interaction with widgets
+
+
 ### 0.2.4 (2015-02-22)
 - (bluefox) create some previews
 - (bluefox) fix error with color editor.css

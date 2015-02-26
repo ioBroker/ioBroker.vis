@@ -731,14 +731,13 @@
         },
         formatFloat: function (data) {
             var val;
-            console.log('F');
             if (vis.editMode && data.attr('test_html') !== undefined && data.attr('test_html') !== '') {
                 val = parseFloat(data.attr('test_html'));
             } else {
                 val = parseFloat(vis.states.attr(data.oid + '.val'));
             }
-            if (data.factor !== undefined && data.factor != '') val = val * parseInt(data.factor, 10);
-            if (data.digits !== undefined && data.digits != '') val = val.toFixed(parseInt(data.digits, 10));
+            if (data.factor !== undefined && data.factor != '') val = val * parseFloat(data.factor);
+            if (data.digits !== undefined && data.digits != '') val = val.toFixed(parseFloat(data.digits, 10));
 
             if (data.attr('is_comma')) {
                 val = '' + val;
