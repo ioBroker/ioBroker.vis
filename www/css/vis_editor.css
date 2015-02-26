@@ -728,3 +728,17 @@ td > .select_active_widget :nth-child(2) {
     top: 0;
     right: 0;
 }
+#css_editor_head {
+    height: 30px;
+    display: flex;
+}
+#css_editor {
+    height: calc(100% - 30px);
+    width: 100%;
+}
+#css_find{
+    margin-left: 10px;
+}
+#css_file_save{
+margin-left: 10px;
+}
