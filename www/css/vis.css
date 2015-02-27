@@ -1,29 +1,4 @@
-html{
-    -webkit-user-select: none;
-    user-select: none;
 
-    overflow: hidden!important;
-    position: absolute!important;
-    width: 100%!important;
-    height: 100%!important;
-
-}
-body{
-    min-height: 100%!important;
-    max-height: 100%!important;
-    overflow: hidden!important;
-    position: absolute!important;
-    width: 100%!important;
-    top: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-:focus {
-    outline: none;
-}
 
 div#vis_container {
     -webkit-touch-callout: none;

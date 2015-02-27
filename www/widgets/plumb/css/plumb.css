@@ -477,3 +477,23 @@ top:0!important;
 
     bottom: 0;
 }
+
+.spray{
+    position: absolute;
+    top: 12px;
+    width: 120px;
+    height: 73px;
+    z-index: 1;
+    left: -50px;
+}
+
+.teet{
+    stroke-dasharray:10,3;
+animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: 300;
+    }
+}

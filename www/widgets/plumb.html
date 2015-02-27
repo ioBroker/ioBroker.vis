@@ -2317,7 +2317,7 @@
 <script id="tplPlump_check_valve_H"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_check_valve_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r ui-selectee ui-selected ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 5 ],"aspectRatio": true}" style="width: 40px; height: 20px; left: 272px; top: 88px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_h " style=""> <div class="plumb_c_valve_h_img" style="background-image: url(http://localhost:63342/ioBroker.vis/widgets/plumb/img/c_valve_h.svg); background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_h_back_l" style="display: block; width: 50%; height: 100%; position: absolute; background-color: silver; box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_h_back_r" style="display: block; width: 50%; height: 100%; position: absolute; background-color: silver; box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; right: 0px; background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_check_valve_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r ui-selectee ui-selected ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 5 ],"aspectRatio": true}" style="width: 40px; height: 20px; left: 272px; top: 88px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_h " style=""> <div class="plumb_c_valve_h_img" style="background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_h_back_l" style="display: block; width: 50%; height: 100%; position: absolute; background-color: silver; box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_h_back_r" style="display: block; width: 50%; height: 100%; position: absolute; background-color: silver; box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; right: 0px; background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Check Valve H"
@@ -2483,8 +2483,18 @@
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 50, 50 ],"aspectRatio": true}' style="min-width: 140px; min-height: 270px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.ent_e_top(el, data) %>>
 			<div class="tank_ent-e " style="">
-                <div class="ent-e_top_pipe-l plumb_dock_top"></div>
-                <div class="ent-e_top_pipe-r plumb_dock_top"></div>
+                <div class="ent-e_top_pipe-l plumb_dock_top">
+                    <svg class="spray" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 50 50">
+                           <path class="teet" style="stroke:#0000ff;stroke-width:0.3;stroke-linecap:none;stroke-opacity:1" d="M 50,50 25,0 M 45,50 25,0 M 40,50 25,0 M 35,50 25,0 M 30,50 25,0 M 25,50 25,0 M 20,50 25,0 M 15,50 25,0 M 10,50 25,0 M 5,50 25,0 M 0,50 25,0   "></path>
+                    </svg>
+                </div>
+                <div class="ent-e_top_pipe-r plumb_dock_top">
+                  <svg class="spray" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 50 50">
+                        <svg class="spray" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 50 50">
+                           <path class="teet" style="stroke:#0000ff;stroke-width:0.3;stroke-linecap:none;stroke-opacity:1" d="M 50,50 25,0 M 45,50 25,0 M 40,50 25,0 M 35,50 25,0 M 30,50 25,0 M 25,50 25,0 M 20,50 25,0 M 15,50 25,0 M 10,50 25,0 M 5,50 25,0 M 0,50 25,0   "></path>
+                    </svg>
+                    </svg>
+                </div>
                 <div class="ent-e_top"></div>
                 <div class="ent-e_center">
                     <div class="ent-e_schott"></div>
@@ -2502,3 +2512,7 @@
 
 
 </script>
+
+
+
+
