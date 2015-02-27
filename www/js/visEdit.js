@@ -1273,6 +1273,7 @@ vis = $.extend(true, vis, {
         $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active')
     },
     editInitCSSEditor:function(){
+        var that = this
 
 
         var savetime;
@@ -1284,7 +1285,7 @@ vis = $.extend(true, vis, {
         editor.getSession().setMode("ace/mode/css");
         editor.setOptions({
             enableBasicAutocompletion: true,
-            enableLiveAutocompletion: true,
+            enableLiveAutocompletion: true
         });
         editor.$blockScrolling = Infinity;
         editor.getSession().setUseWrapMode(true);
@@ -1314,7 +1315,7 @@ vis = $.extend(true, vis, {
 
         $("#pan_attr").resize(function(){
             editor.resize()
-        })
+        });
 
 
         $("#css_find").change(function(){
@@ -1350,9 +1351,18 @@ vis = $.extend(true, vis, {
                 primary: "ui-icon-check"
             },
             text: false
-        }).click(function(){
+        }).click(function() {
 
-        });
+                if ($("#select_css_file").val() == "vis-user") {
+                    that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
+                }
+
+
+                if ($("#select_css_file").val() == "vis-common-user") {
+                    //that.conn.writeFile(that.projectPrefix + 'vis-user.css', ''); todo pfad anpassen
+                }
+
+            });
 
 
     },
