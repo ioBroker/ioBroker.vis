@@ -1304,13 +1304,13 @@ vis = $.extend(true, vis, {
         this.$copyWidgetSelectView.selectmenu();
         $('#inspect_view_theme').selectmenu({
             width: '100%',
-        change: function(){
+            change: function () {
                 var theme = $(this).val();
                 that.views[that.activeView].settings.theme = theme;
                 that.addViewStyle(that.activeView, theme);
                 //that.additionalThemeCss(theme);
                 that.save();
-        }
+            }
         });
 
         // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -1911,7 +1911,7 @@ vis = $.extend(true, vis, {
 
         if (style) $jWidget.css(style);
 
-        if (isSelectWidget && this.binds.jqueryui) this.binds.jqueryui._disable();
+        //if (isSelectWidget && this.binds.jqueryui) this.binds.jqueryui._disable();
 
         if (isSelectWidget) {
             this.activeWidgets = [widgetId];
