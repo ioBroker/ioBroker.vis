@@ -410,16 +410,13 @@
                 }
             }
         },
-        checkbox: function (el, numeric) {
+        _onChange: function (el, oid, wid) {
             var $this = $(el);
-            var oid   = $this.attr('data-oid'); // Object ID
-            var wid   = $this.attr('data-oid-working'); // Work ID
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-                // If still working
-                if (wid && (vis.states.attr(wid + '.val') === true)) return;
+            // If still working
+            //console.log(oid + ' ' + vis.states.attr(oid + '.val') + ' (' + vis.states.attr(oid + '.ack') + ') - ' + wid + ' ' + vis.states.attr(wid + '.val') + ' (' + vis.states.attr(wid + '.ack') + ')');
 
-                $this.prop('checked', !(newVal === false || parseFloat(newVal) === 0.0));
-            });
+            if (wid && (vis.states.attr(wid + '.val') === true)) return;
+
             var val = vis.states.attr(oid + '.val');
 
             if (val === 'false') {
@@ -437,14 +434,61 @@
                 }
             }
 
-            if (val > 0) $this.prop('checked', true);
+            if ($this.data('data-numeric')) {
+                $this.prop('checked', (val > (($this.data('data-max') - $this.data('data-min')) / 2)));
+            } else {
+                $this.prop('checked', val);
+            }
+
+        },
+        checkbox: function (el, numeric, min, max) {
+            var $this = $(el);
+            var oid   = $this.attr('data-oid'); // Object ID
+            var wid   = $this.attr('data-oid-working'); // Work ID
+
+            if (oid) {
+                vis.states.bind(oid + '.val', function (e, val, oldVal) {
+                    vis.binds.basic._onChange(el, oid, wid);
+                });
+                if (wid) {
+                    vis.states.bind(wid + '.val', function (e, val, oldVal) {
+                        vis.binds.basic._onChange(el, oid, wid);
+                    });
+                }
+            }
+
+            console.log('Che');
+
+            if (numeric) {
+                if (min !== undefined && min !== null && min !== '') {
+                    min = parseFloat(min);
+                } else {
+                    min = 0;
+                }
+
+                if (max !== undefined && max !== null && max !== '') {
+                    max = parseFloat(max);
+                } else {
+                    max = 1;
+                }
+            } else {
+                min = false;
+                max = true;
+            }
+
+            $this.data('data-min',     min);
+            $this.data('data-max',     max);
+            $this.data('data-numeric', numeric);
+
+            vis.binds.basic._onChange(el, oid, wid);
 
             if (!vis.editMode) {
                 $this.change(function () {
-                    if ($this.prop('checked')) {
-                        vis.setValue( $this.attr('data-oid'),  numeric ? 1 : true);
+                    var $this_ = $(this);
+                    if ($this_.prop('checked')) {
+                        vis.setValue($this_.attr('data-oid'), $this_.data('data-max'));
                     } else {
-                        vis.setValue( $this.attr('data-oid'),  numeric ? 0 : false);
+                        vis.setValue($this_.attr('data-oid'), $this_.data('data-min'));
                     }
                 });
             }

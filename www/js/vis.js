@@ -85,7 +85,7 @@ if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemL
 
 var vis = {
 
-    version:                '0.2.5',
+    version:                '0.2.6',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -160,8 +160,10 @@ var vis = {
             // Start timeout
             this.statesDebounce[id] = {
                 timeout: _setTimeout(function () {
-                        if (that.statesDebounce[id].state) that._setValue(id, that.statesDebounce[id].state);
-                        delete that.statesDebounce[id];
+                        if (that.statesDebounce[id]) {
+                            if (that.statesDebounce[id].state) that._setValue(id, that.statesDebounce[id].state);
+                            delete that.statesDebounce[id];
+                        }
                     }, 1000, id),
                 state: null
             };
@@ -1296,6 +1298,9 @@ if ('applicationCache' in window) {
                         vis.states.attr(o);
                     } catch (e) {
                         vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                    }
+                    if (id == 'hm-rpc.0.HEQ0120459.1.WORKING') {
+                        console.log(JSON.stringify(state));
                     }
 
                     if (!vis.editMode && vis.visibility[id]) {

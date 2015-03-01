@@ -299,13 +299,13 @@ $.extend(systemDictionary, {
         "de": "Abhängig von dem Zustand des Objektes mit\x0Adiesem ID kann Widget verborgen oder angezeigt sein.",
         "ru": "Элемент можно показать или скрыть\x0Aв зависимости от состояние объекта с таким ID"
     },
-    "visibility-cond": {"en": "Сondition", "de": "Bedienung", "ru": "Условие"},
+    "visibility-cond": {"en": "Сondition", "de": "Bedingung", "ru": "Условие"},
     "visibility-cond_tooltip": {
         "en": "E.g. 'Value of Object ID' >= 'Value of condition'",
         "de": "Z.B. 'Wert von dem Objekt' >= 'Wert für die Bedienung'",
         "ru": "Например 'Значение объекта' >= 'Значения для условия"
     },
-    "visibility-val": {"en": "Vavue for condition", "de": "Wert für die Bedienung", "ru": "Значение для условия"},
+    "visibility-val": {"en": "Vavue for condition", "de": "Wert für die Bedingung", "ru": "Значение для условия"},
     "css_left": {"en": "left", "de": "left", "ru": "left"},
     "css_top": {"en": "top", "de": "top", "ru": "top"},
     "css_width": {"en": "width", "de": "width", "ru": "width"},

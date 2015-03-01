@@ -182,7 +182,7 @@
             var $this = $(el).parent().find('input');
         },
         slider: function (el, options) {
-            console.log('A');
+            //console.log('A');
             var $this = $(el).parent().find('.slider');
             var oid = $this.attr('data-oid');
             var wid = $this.attr('data-oid-working');
@@ -216,23 +216,19 @@
                 }
             });
 
-            //$this.metroSlider("value", val);
-
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-               setTimeout(function (_newVal) {
-                   var val = vis.states.attr(oid + '.val');
-                   if (val === true || val === 'true') val = max;
-                   val = parseFloat(val);
-                   if (isNaN(val)) val = min;
+               var val = vis.states.attr(oid + '.val');
 
-                   val = Math.floor((val  - min) * factor);
-                   try {
-                       $this.metroSlider('value', val);
-                   } catch (e) {}
-               }, 5, newVal);
+               if (val === true || val === 'true') val = max;
+
+               val = parseFloat(val);
+               if (isNaN(val)) val = min;
+
+               val = Math.floor((val  - min) * factor);
+               try {
+                   $this.metroSlider('value', val);
+               } catch (e) {}
             });
-
-
         },
         tile: function (el, transform) {
             var $this = $(el).parent().find('.tile');
@@ -350,12 +346,12 @@
                 $.metroDialog({
                     width:     width,
                     height:    height,
-                    overlay:   options.overlay || false,
-                    shadow:    options.shadow || false,
-                    flat:      options.flat || false,
+                    overlay:   options.overlay   || false,
+                    shadow:    options.shadow    || false,
+                    flat:      options.flat      || false,
                     draggable: options.draggable || false,
                     icon:      options.icon  ? '<img src="' + options.icon + '">' : (options.icon_class ? '<span class="' + options.icon_class + '"></span>' : false),
-                    title:     options.title || '',
+                    title:     options.title     || '',
                     content:   '',
                     onShow:    function(_dialog){
                         var content = _dialog.children('.content');
@@ -373,7 +369,7 @@
                         sliderOptions.max = 1;
 
                         vis.binds.metro.slider(document.getElementById('metroSlider_' + wid), sliderOptions);
-                        vis.binds.basic.checkbox(document.getElementById(wid + '_checkbox'), true);
+                        vis.binds.basic.checkbox(document.getElementById(wid + '_checkbox'), true, sliderOptions.min, sliderOptions.max);
                     }
                 });
             });
@@ -826,7 +822,7 @@
                 <div style="margin: 30px 70px 0px 0px; float:right">
                     <div class="input-control switch">
                         <label>
-                            <input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox" id="<%= this.data.attr('wid') %>_checkbox" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.checkbox(el, true) %>/>
+                            <input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox" id="<%= this.data.attr('wid') %>_checkbox" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.checkbox(el, true, data.min, data.max) %>/>
                             <span class="check"></span>
                         </label>
                     </div>
@@ -992,7 +988,7 @@
                 <div style="margin: 30px 70px 0px 0px; float:right">
                     <div class="input-control switch">
                         <label>
-                            <input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox" id="<%= this.data.attr('wid') %>_checkbox" data-oid="<%= this.data.attr('oid') %>" data-oid-working="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.basic.checkbox(el, true) %>/>
+                            <input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox" id="<%= this.data.attr('wid') %>_checkbox" data-oid="<%= this.data.attr('oid') %>" data-oid-working="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.basic.checkbox(el, true, data.min, data.max) %>/>
                             <span class="check"></span>
                         </label>
                     </div>

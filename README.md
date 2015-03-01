@@ -46,7 +46,11 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
-### 0.2.5 (2015-02-26)
+### 0.2.5 (2015-01-03)
+- (bluefox) change shutter in metro
+- (bluefox) fix jqui- Select List
+
+### 0.2.5 (2015-01-03)
 - (bluefox) fix lock interaction with widgets
 - (bluefox) add visibility dependency for every widget
 - (bluefox) change shutter in metro
