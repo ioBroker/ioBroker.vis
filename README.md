@@ -46,6 +46,18 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+### 0.2.5 (2015-02-26)
+- (bluefox) fix lock interaction with widgets
+- (bluefox) add visibility dependency for every widget
+- (bluefox) change shutter in metro
+- (SmilingJack) Bugfix View theme select
+- (SmilingJack) Bugfix widget Align
+- (bluefox) use showWidgetHelper instead of direct editing of "widget_helper"
+- (bluefox) add px for width and radius of border
+- (bluefox) decrease size of widget_helper (selection frame)
+- (bluefox) fix "time stamp" and "last change" widgets
+
+
 ### 0.2.4 (2015-02-22)
 - (bluefox) create some previews
 - (bluefox) fix error with color editor.css

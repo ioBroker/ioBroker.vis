@@ -285,7 +285,27 @@ $.extend(systemDictionary, {
         "de": "Zu wenig selektierte Widgets",
         "ru": "Слишком мало выбрано элементов"
     },
-
+    "==": {"en": "==", "de": "==", "ru": "=="},
+    "!=": {"en": "!=", "de": "!=", "ru": "!="},
+    "<=": {"en": "<=", "de": "<=", "ru": "<="},
+    ">=": {"en": ">=", "de": ">=", "ru": ">="},
+    "<": {"en": "<", "de": "<", "ru": "<"},
+    ">": {"en": ">", "de": ">", "ru": ">"},
+    "consist": {"en": "consist", "de": "bestehend aus", "ru": "содержит"},
+    "group_visibility": {"en": "visibility", "de": "Sichtbarkeit", "ru": "Видимость"},
+    "visibility-oid": {"en": "Object ID", "de": "Object ID", "ru": "ID Объекта"},
+    "visibility-oid_tooltip": {
+        "en": "Depends on state of object with this ID,\x0Athe widget can be shown or hidden",
+        "de": "Abhängig von dem Zustand des Objektes mit\x0Adiesem ID kann Widget verborgen oder angezeigt sein.",
+        "ru": "Элемент можно показать или скрыть\x0Aв зависимости от состояние объекта с таким ID"
+    },
+    "visibility-cond": {"en": "Сondition", "de": "Bedienung", "ru": "Условие"},
+    "visibility-cond_tooltip": {
+        "en": "E.g. 'Value of Object ID' >= 'Value of condition'",
+        "de": "Z.B. 'Wert von dem Objekt' >= 'Wert für die Bedienung'",
+        "ru": "Например 'Значение объекта' >= 'Значения для условия"
+    },
+    "visibility-val": {"en": "Vavue for condition", "de": "Wert für die Bedienung", "ru": "Значение для условия"},
     "css_left": {"en": "left", "de": "left", "ru": "left"},
     "css_top": {"en": "top", "de": "top", "ru": "top"},
     "css_width": {"en": "width", "de": "width", "ru": "width"},

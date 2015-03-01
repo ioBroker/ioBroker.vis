@@ -1,1 +1,6 @@
 /.idea/
+/node_modules
+/_socket
+/.build
+/lib/js
+/lib/css
