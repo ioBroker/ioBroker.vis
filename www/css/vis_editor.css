@@ -731,6 +731,7 @@ td > .select_active_widget :nth-child(2) {
 #css_editor_head {
     height: 30px;
     display: flex;
+    padding: 2px;
 }
 #css_editor {
     height: calc(100% - 30px);

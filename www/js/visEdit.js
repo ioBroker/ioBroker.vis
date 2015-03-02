@@ -1354,12 +1354,12 @@ vis = $.extend(true, vis, {
         }).click(function() {
 
                 if ($("#select_css_file").val() == "vis-user") {
-                    that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
+                    that.conn.writeFile(vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
                 }
 
 
                 if ($("#select_css_file").val() == "vis-common-user") {
-                    //that.conn.writeFile(that.projectPrefix + 'vis-user.css', ''); todo pfad anpassen
+                    that.conn.writeFile('vis/css/vis-common-user.css', '');
                 }
 
             });
@@ -1618,7 +1618,6 @@ vis = $.extend(true, vis, {
         this.$dialogConfirm.data('callback', callback);
         this.$dialogConfirm.dialog('open');
     },
-
     addView: function (view) {
         if (this[view]) return false;
 
