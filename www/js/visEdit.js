@@ -1280,10 +1280,8 @@ vis = $.extend(true, vis, {
         $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active')
     },
     editInitCSSEditor:function(){
-        var that = this
+        var that = this;
 
-
-        var savetime;
         var file = "vis-common-user";
         var editor  = ace.edit("css_editor");
 
@@ -1297,6 +1295,10 @@ vis = $.extend(true, vis, {
         editor.$blockScrolling = Infinity;
         editor.getSession().setUseWrapMode(true);
 
+        editor.getSession().on('change', function(e) {
+            $("#"+file).text(editor.getValue())
+        });
+
 
 
         $( "#select_css_file" ).selectmenu({
@@ -1309,7 +1311,7 @@ vis = $.extend(true, vis, {
             }
         });
 
-
+        editor.setValue($("#"+ file).text());
         $(document).bind("vis-common-user", function(e){
             editor.setValue($("#"+ file).text());
             editor.navigateFileEnd()
@@ -1355,18 +1357,17 @@ vis = $.extend(true, vis, {
 
         $("#css_file_save").button({
             icons: {
-                primary: "ui-icon-check"
+                primary: " ui-icon-disk"
             },
             text: false
         }).click(function() {
-
                 if ($("#select_css_file").val() == "vis-user") {
-                    that.conn.writeFile(vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
+                    that.conn.writeFile('../' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css' , editor.getValue() );
                 }
 
 
                 if ($("#select_css_file").val() == "vis-common-user") {
-                    that.conn.writeFile('vis/css/vis-common-user.css', '');
+                    that.conn.writeFile('../vis/css/vis-common-user.css', editor.getValue());
                 }
 
             });

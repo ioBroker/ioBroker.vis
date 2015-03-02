@@ -1192,11 +1192,13 @@ if ('applicationCache' in window) {
             dataType: 'html',
             cache:    this.useCache,
             success:  function (data) {
-                    $('head').append('<style id="vis-common-user">'+data+'</style>');
+                $('head').append('<style id="vis-common-user">'+data+'</style>');
                 $(document).trigger('vis-common-user')
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 vis.conn.logError('Cannot load vis-common-user.css' + errorThrown);
+                $('head').append('<style id="vis-common-user"></style>');
+                $(document).trigger('vis-common-user')
             }
         });
 
@@ -1211,6 +1213,8 @@ if ('applicationCache' in window) {
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 vis.conn.logError('Cannot load /' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css ' + errorThrown);
+                $('head').append('<style id="vis-user"></style>');
+                $(document).trigger('vis-user')
             }
         });
 

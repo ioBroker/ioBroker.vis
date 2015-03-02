@@ -555,7 +555,9 @@ body{
 }
 
 /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
-
+#css_find_prev{
+    margin-left: 4px
+}
 .tab_attr {
     padding: 0 0 0 4px !important;
     border-width: 1px 0 0 0 !important;
@@ -732,6 +734,8 @@ td > .select_active_widget :nth-child(2) {
     height: 30px;
     display: flex;
     padding: 2px;
+    /* line-height: 25px; */
+    /* display: none; */
 }
 #css_editor {
     height: calc(100% - 30px);
@@ -739,6 +743,11 @@ td > .select_active_widget :nth-child(2) {
 }
 #css_find{
     margin-left: 10px;
+    /* display: inline-block; */
+    /* height: 22px; */
+    /* position: relative; */
+    /* top: -8px; */
+    width: calc(100% - 210px);
 }
 #css_file_save{
 margin-left: 10px;
