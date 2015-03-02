@@ -512,12 +512,12 @@ var servConn = {
             console.log("No credentials!");
         }
     },
-    getLanguage: function (callback) {
+    getConfig: function (callback) {
         if (!this._checkConnection('getLanguage', arguments)) return;
 
         this._socket.emit('getObject', 'system.config', function (err, obj) {
             if (callback && obj && obj.common) {
-                callback(null, obj.common.language);
+                callback(null, obj.common);
             } else {
                 callback('Cannot read language');
             }

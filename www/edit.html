@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<!--<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">-->
-<html xmlns="http://www.w3.org/1999/html">
+<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
 <head>
 
-    <!-- ioBroker.vis Version 0.2.4 -->
+    <!-- ioBroker.vis Version 0.2.6 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
@@ -25,7 +24,6 @@
 
     <link rel="stylesheet" type="text/css" href="lib/css/superfish/superfish.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect-1.13.css"/>
-    <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect.filter.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.jgrowl.min.css"/>
     <link rel="stylesheet" type="text/css" href="widgets/colorpicker/css/farbtastic.css"/>
 
@@ -34,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="css/vis_editor.css"/>
 
 
-    <script type="text/javascript" src="lib/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="lib/js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery-ui-1.11.3.full.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.fancytree-all.min.js"></script>
     <script type="text/javascript" src="lib/js/selectID.js"></script>
@@ -42,7 +40,6 @@
     <script type="text/javascript" src="lib/js/translate.js"></script>
 
     <script type="text/javascript" src="lib/js/jquery.multiselect-1.13.js"></script>
-    <!--script type="text/javascript" src="lib/js/jquery.multiselect.filter-1.5pre.js"></script-->
     <script type="text/javascript" src="lib/js/loStorage.js"></script>
     <script type="text/javascript" src="lib/js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="lib/js/dropzone.js"></script>
@@ -435,7 +432,7 @@
                     <tr>
                         <td class="translate" style="text-align: center; height: 22px; padding-right: 3px">All widgets:</td>
                         <td>
-                            <input id="wid_all_lock_function" type="checkbox" /><label style="width: 23px;height: 23px" id="wid_all_lock_f" for="wid_all_lock_function"  class="translateT ui-state-active" title="Lock Widget function"></label>
+                            <input id="wid_all_lock_function" type="checkbox" /><label style="width: 23px; height: 23px" id="wid_all_lock_f" for="wid_all_lock_function" class="translateT ttt" title="Lock Widget function"></label>
                         </td>
                         <td>
                             <input id="wid_all_lock_drag" type="checkbox" /><label style="width: 23px;height: 23px" id="wid_all_lock_d" for="wid_all_lock_drag"  class="translateT" title="Lock Widget dragging"></label>

@@ -379,11 +379,12 @@
         multiselect: function (el, options, isOpen) {
             var $this = $(el);
             var oid = $this.attr('data-oid');
-
+            console.log('multiselect');
             $this.find('option:selected').removeAttr('selected');
             $this.find('option[value="' + vis.states[oid + '.val'] + '"]').attr('selected', true);
 
             $this.multiselect($.extend({
+                minWidth:         $this.parent().parent().width() - 7,
                 multiple:         false,
                 header:           false,
                 noneSelectedText: false,
@@ -407,6 +408,9 @@
                 if (isOpen) $this.multiselect('open');
                 
                 vis.bindWidgetClick(el.id);
+                $this.parent().parent().resize(function () {
+                    $this.multiselect('option', 'minWidth', $(this).width() - 7);
+                });
             }
         },
         slider: function (el, options) {
@@ -996,17 +1000,16 @@
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Select ValueList"
-        data-vis-attrs="oid;values[0§1§2];texts[OFF§ON§AUTO];width[80]/slider,5,1000,1;height[100]/slider,15,500,1;open/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
-        <% if (vis.editMode) { %>
+        data-vis-attrs="oid;values[0§1§2];texts[OFF§ON§AUTO];height[100]/slider,15,500,1;open/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" >
+        <% if (false && vis.editMode) { %>
 			<div class="editmode-helper" />
 		<% } %>
         <div class="vis-widget-body" >
-            <select id="<%= this.data.attr('wid') %>_multiselect" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> setTimeout(function (el_) { vis.binds.jqueryui.multiselect(el_, {minWidth: (data.width || 300), height: (data.height || 220)}, data.open)}, 250, el); %> >
+            <select id="<%= this.data.attr('wid') %>_multiselect" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> setTimeout(function (el_) { vis.binds.jqueryui.multiselect(el_, {height: (data.height || 220)}, data.open)}, 250, el); %> >
             <%
 				var values = (data.attr('values') ? data.attr('values').split(';') : []);
 				var texts  = (data.attr('texts') ? data.attr('texts').split(';'): []);
-				var wid    = data.attr('wid');
 				for (var val in values) {
 					%>
 					<option value="<%= values[val] %>"><%= texts[val] %></option>

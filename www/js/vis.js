@@ -85,7 +85,7 @@ if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemL
 
 var vis = {
 
-    version:                '0.2.4',
+    version:                '0.2.6',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -114,6 +114,7 @@ var vis = {
     editMode:               false,
     language:               (typeof systemLang != 'undefined') ? systemLang : visConfig.language,
     statesDebounce:         {},
+    visibility:             {},
 
     _setValue: function (id, state) {
         this.conn.setState(id, state[id + '.val']);
@@ -159,8 +160,10 @@ var vis = {
             // Start timeout
             this.statesDebounce[id] = {
                 timeout: _setTimeout(function () {
-                        if (that.statesDebounce[id].state) that._setValue(id, that.statesDebounce[id].state);
-                        delete that.statesDebounce[id];
+                        if (that.statesDebounce[id]) {
+                            if (that.statesDebounce[id].state) that._setValue(id, that.statesDebounce[id].state);
+                            delete that.statesDebounce[id];
+                        }
                     }, 1000, id),
                 state: null
             };
@@ -200,7 +203,10 @@ var vis = {
     getUsedWidgetSets: function () {
         var widgetSets = [];
 
-        if (!vis.views) return null;
+        if (!this.views) {
+            console.log('Check why views are not yet loaded!');
+            return null;
+        }
 
         // Convert visConfig.widgetSets to object for easier dependency search
         var widgetSetsObj = {};
@@ -216,16 +222,16 @@ var vis = {
             }
         }
 
-        for (var view in vis.views) {
-            for (var id in vis.views[view].widgets) {
-                if (!vis.views[view].widgets[id].widgetSet) {
+        for (var view in this.views) {
+            for (var id in this.views[view].widgets) {
+                if (!this.views[view].widgets[id].widgetSet) {
 
                     // Views are not yet converted and have no widgetSet information)
                     return null;
 
-                } else if (widgetSets.indexOf(vis.views[view].widgets[id].widgetSet) == -1) {
+                } else if (widgetSets.indexOf(this.views[view].widgets[id].widgetSet) == -1) {
 
-                    var wset = vis.views[view].widgets[id].widgetSet;
+                    var wset = this.views[view].widgets[id].widgetSet;
                     widgetSets.push(wset);
 
                     // Add dependencies
@@ -311,6 +317,20 @@ var vis = {
                 return false;
             } else {
                 this.showWaitScreen(false);
+            }
+
+            this.visibility = {};
+            // Build the visibility array
+            if (!this.editMode && this.views) {
+                for (var view in this.views) {
+                    for (var id in this.views[view].widgets) {
+                        if (!this.editMode && this.views[view].widgets[id].data && this.views[view].widgets[id].data['visibility-oid']) {
+                            var oid = this.views[view].widgets[id].data['visibility-oid'];
+                            if (!this.visibility[oid]) this.visibility[oid] = [];
+                            this.visibility[oid].push({view: view, widget: id});
+                        }
+                    }
+                }
             }
 
             var hash = window.location.hash.substring(1);
@@ -516,6 +536,11 @@ var vis = {
         if (isViewsConverted) {
             this.saveRemote();
         }
+        if (this.editMode) {
+            if ($('#wid_all_lock_function').prop('checked')) {
+                $(".vis-widget").addClass("vis-widget-lock");
+            }
+        }
     },
     addViewStyle: function (view,theme) {
         var _view = 'visview_' + view;
@@ -550,10 +575,10 @@ var vis = {
     changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
         var widgets = this.views[vis.activeView].widgets;
         var that = this;
-        if (filter == "") {
+        if (!filter) {
             // show all
             for (var widget in widgets) {
-                if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
+                if (widgets[widget].data.filterkey) {
                     $("#" + widget).show(showEffect, null, parseInt(showDuration));
                 }
             }
@@ -563,7 +588,6 @@ var vis = {
                 for (var widget in widgets) {
                     mWidget = document.getElementById(widget);
                     if (widgets[widget].data.filterkey &&
-                        widgets[widget].data.filterkey != "" &&
                         mWidget &&
                         mWidget._customHandlers &&
                         mWidget._customHandlers.onShow) {
@@ -585,12 +609,13 @@ var vis = {
                 $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
             }
         } else {
-            this.viewsActiveFilter[vis.activeView] = filter.split(",");
+            this.viewsActiveFilter[vis.activeView] = filter.split(',');
             var mWidget;
             for (var widget in widgets) {
                 //console.log(widgets[widget]);
-                if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
-                    if (this.viewsActiveFilter[this.activeView].length > 0 && this.viewsActiveFilter[this.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
+                if (widgets[widget].data.filterkey) {
+                    if (this.viewsActiveFilter[this.activeView].length > 0 &&
+                        this.viewsActiveFilter[this.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
                         mWidget = document.getElementById(widget);
                         if (mWidget &&
                             mWidget._customHandlers &&
@@ -605,14 +630,16 @@ var vis = {
             }
             setTimeout(function () {
                 var mWidget;
+
                 // Show complex widgets like hqWidgets or bars
                 for (var widget in widgets) {
                     mWidget = document.getElementById(widget);
                     if (mWidget &&
                         mWidget._customHandlers &&
                         mWidget._customHandlers.onShow) {
-                        if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
-                            if (!(that.viewsActiveFilter[that.activeView].length > 0 && that.viewsActiveFilter[that.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
+                        if (widgets[widget].data.filterkey) {
+                            if (!(that.viewsActiveFilter[that.activeView].length > 0 &&
+                                that.viewsActiveFilter[that.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
                                 mWidget._customHandlers.onShow(mWidget, widget);
                             }
                         }
@@ -659,9 +686,9 @@ var vis = {
             }
 
             if (!this.editMode) {
-                if (widget.data.filterkey && widget.data.filterkey != "" && this.viewsActiveFilter[view].length > 0 && this.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
+                if (this.isWidgetFilteredOut(view, id) || this.isWidgetHidden(view, id)) {
                     var mWidget = document.getElementById(id);
-                    $('#' + id).hide();
+                    $(mWidget).hide();
                     if (mWidget &&
                         mWidget._customHandlers &&
                         mWidget._customHandlers.onHide) {
@@ -816,6 +843,7 @@ var vis = {
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
+
         if (local) {
             try {
                 this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
@@ -825,9 +853,7 @@ var vis = {
                 that.views = null
                 if (callback) callback.call(that, callbackArg);
             }
-
         } else {
-
             this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
                 if (err) alert(that.projectPrefix + 'vis-views.json ' + err);
 
@@ -860,7 +886,6 @@ var vis = {
             setTimeout(function () {
                 that.saveRemote(callback);
             }, 1000);
-
         }else {
             if (!this.saveRemoteActive) this.saveRemoteActive = 30;
             if (this.saveRemoteActive == 10) {
@@ -869,15 +894,16 @@ var vis = {
                 return;
             }
             // Sync widget before it will be saved
-            for (var t = 0; t < this.activeWidgets.length; t++) {
-                if (this.activeWidgets[t].indexOf('_') != -1 && this.syncWidgets) {
-                    this.syncWidgets(this.activeWidgets);
-                    break;
+            if (this.activeWidgets) {
+                for (var t = 0; t < this.activeWidgets.length; t++) {
+                    if (this.activeWidgets[t].indexOf('_') != -1 && this.syncWidgets) {
+                        this.syncWidgets(this.activeWidgets);
+                        break;
+                    }
                 }
             }
 
             if (local) {
-
                 storage.set(this.storageKeyViews, JSON.stringify(this.views, null, 2));
                 that.saveRemoteActive = 0;
                 if (callback) callback();
@@ -1009,6 +1035,53 @@ var vis = {
                 return;
             }
         }
+    },
+    isWidgetHidden: function (view, widget, val) {
+        var oid = this.views[view].widgets[widget].data['visibility-oid'];
+        if (oid) {
+            if (val === undefined) val = this.states[oid + '.val'];
+            if (val === undefined) return false;
+            var condition = this.views[view].widgets[widget].data['visibility-cond'];
+            var value = this.views[view].widgets[widget].data['visibility-val'];
+            if (!condition || value === undefined) return false;
+
+            var t = typeof val;
+            if (t == 'boolean') {
+                value = (value === 'true' || value === true || value === 1);
+            } else if (t == 'number') {
+                value = parseFloat(value);
+            }  else if (t == 'object') {
+                val = JSON.stringify(val)
+            }
+
+            switch (condition) {
+                case '==':
+                    return !(value == val);
+                case '!=':
+                    return !(value != val);
+                case '>=':
+                    return !(val >= value);
+                case '<=':
+                    return !(val <= value);
+                case '>':
+                    return !(val > value);
+                case '<':
+                    return !(val < value);
+                case 'consist':
+                    return (val.toString().indexOf(value) == -1);
+                default:
+                    console.log('Unknown visibility condition for ' + widget + ': ' + condition);
+                    return false;
+            }
+        } else {
+            return false;
+        }
+    },
+    isWidgetFilteredOut: function (view, widget) {
+        return (
+            this.views[view].widgets[widget].data.filterkey &&
+            this.viewsActiveFilter[view].length > 0 &&
+            this.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1);
     }
 };
 
@@ -1190,9 +1263,10 @@ if ('applicationCache' in window) {
                                 // Possibly not authenticated, wait for request from server
                             } else {
                                 // Get Server language
-                                vis.conn.getLanguage(function (err, lang) {
-                                    systemLang = lang || systemLang;
+                                vis.conn.getConfig(function (err, config) {
+                                    systemLang = config.language || systemLang;
                                     vis.language = systemLang;
+                                    vis.dateFormat = config.dateFormat;
                                     translateAll();
                                     if (vis.isFirstTime) {
                                         // Init edit dialog
@@ -1236,22 +1310,48 @@ if ('applicationCache' in window) {
                         $("#server-disconnect").dialog("open");
                     }
                 },
-                onRefresh: function () {
+                onRefresh:    function () {
                     window.location.reload();
                 },
-                onUpdate: function (id, state) {
+                onUpdate:     function (id, state) {
                     var o = {};
                     // Check new model
                     o[id + '.val'] = state.val;
-                    o[id + '.ts'] = state.ts;
+                    o[id + '.ts']  = state.ts;
                     if (vis.states[id + '.val'] !== undefined) {
                         o[id + '.ack'] = state.ack;
-                        o[id + '.lc'] = state.lc;
+                        o[id + '.lc']  = state.lc;
                     }
                     try {
                         vis.states.attr(o);
                     } catch (e) {
                         vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                    }
+                    if (id == 'hm-rpc.0.HEQ0120459.1.WORKING') {
+                        console.log(JSON.stringify(state));
+                    }
+
+                    if (!vis.editMode && vis.visibility[id]) {
+                        for (var i = 0; i < vis.visibility[id].length; i++) {
+                            var mWidget = document.getElementById(vis.visibility[id][i].widget);
+                            if (!mWidget) continue;
+                            if (vis.isWidgetHidden(vis.visibility[id][i].view, vis.visibility[id][i].widget, state.val) ||
+                                vis.isWidgetFilteredOut(vis.visibility[id][i].view, vis.visibility[id][i].widget)) {
+                                $(mWidget).hide();
+                                if (mWidget &&
+                                    mWidget._customHandlers &&
+                                    mWidget._customHandlers.onHide) {
+                                    mWidget._customHandlers.onHide(mWidget, id);
+                                }
+                            } else {
+                                $(mWidget).show();
+                                if (mWidget &&
+                                    mWidget._customHandlers &&
+                                    mWidget._customHandlers.onShow) {
+                                    mWidget._customHandlers.onShow(mWidget, id);
+                                }
+                            }
+                        }
                     }
 
                     // Inform other widgets, that do not support canJS
@@ -1259,7 +1359,7 @@ if ('applicationCache' in window) {
                         vis.onChangeCallbacks[i].callback(vis.onChangeCallbacks[i].arg, id, state.val, state.ack);
                     }
                 },
-                onAuth: function (message, salt) {
+                onAuth:       function (message, salt) {
                     if (vis.authRunning) {
                         return;
                     }
@@ -1330,7 +1430,7 @@ if ('applicationCache' in window) {
                         return true;
                     });
                 },
-                onCommand: function (instance, command, data) {
+                onCommand:    function (instance, command, data) {
                     var parts;
                     if (instance != vis.instance && instance != 'FFFFFFFF') return false;
                     if (command) {
