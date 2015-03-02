@@ -480,20 +480,17 @@ top:0!important;
 
 .spray{
     position: absolute;
-    top: 12px;
-    width: 120px;
-    height: 73px;
+    top: 3%;
+    width: 61%;
+    height: 114%;
     z-index: 1;
-    left: -50px;
+    /* left: -50px; */
+}
+.spray_l{
+
 }
 
-.teet{
-    stroke-dasharray:10,3;
-animation: dash 1s linear infinite;
-}
+.spray_r{
+    right: 0;
 
-@keyframes dash {
-    to {
-        stroke-dashoffset: 300;
-    }
 }
