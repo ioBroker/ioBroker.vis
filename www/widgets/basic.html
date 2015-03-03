@@ -832,7 +832,7 @@
                 format = format.replace('JJJJ', v);
                 format = format.replace('ГГГГ', v);
             } else if (format.indexOf('YY') != -1 || format.indexOf('JJ') != -1 || format.indexOf('ГГ') != -1) {
-                v = dateObj.getYear();
+                v = dateObj.getFullYear() % 100;
                 format = format.replace('YY', v);
                 format = format.replace('JJ', v);
                 format = format.replace('ГГ', v);
