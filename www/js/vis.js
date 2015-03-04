@@ -102,7 +102,7 @@ var vis = {
     initialized:            false,
     toLoadSetsCount:        0, // Count of widget sets that should be loaded
     isFirstTime:            true,
-    useCache:               true,
+    useCache:               false,
     authRunning:            false,
     cssChecked:             false,
 
@@ -1182,11 +1182,43 @@ if ('applicationCache' in window) {
 
         vis.conn = servConn;
 
+        // old !!!
+        // First of all load project/vis-user.css
+        //$('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
+
+        $.ajax({
+            url:      "css/vis-common-user.css",
+            type:     'GET',
+            dataType: 'html',
+            cache:    this.useCache,
+            success:  function (data) {
+                $('head').append('<style id="vis-common-user">'+data+'</style>');
+                $(document).trigger('vis-common-user')
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                vis.conn.logError('Cannot load vis-common-user.css' + errorThrown);
+                $('head').append('<style id="vis-common-user"></style>');
+                $(document).trigger('vis-common-user')
+            }
+        });
+
+        $.ajax({
+            url:      '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css',
+            type:     'GET',
+            dataType: 'html',
+            cache:    this.useCache,
+            success:  function (data) {
+                $('head').append('<style id="vis-user">'+data+'</style>');
+                $(document).trigger('vis-user')
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                vis.conn.logError('Cannot load /' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css ' + errorThrown);
+                $('head').append('<style id="vis-user"></style>');
+                $(document).trigger('vis-user')
+            }
+        });
 
         if (!local) {
-            // First of all load project/vis-user.css
-            $('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
-
             vis.conn.init(null, {
                 onConnChange: function (isConnected) {
                     //console.log("onConnChange isConnected="+isConnected);

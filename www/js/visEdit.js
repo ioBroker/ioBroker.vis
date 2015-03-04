@@ -45,6 +45,7 @@ vis = $.extend(true, vis, {
     config:                {},
     objectSelector:        false, // if object select ID activated
 
+
     editInit: function () {
         var that = this;
         vis.states["dev1.val"] = 0;
@@ -63,6 +64,7 @@ vis = $.extend(true, vis, {
 
         this.editInitDialogs();
         this.editInitMenu();
+        this.editInitCSSEditor();
         $('#pan_attr').tabs({
             //activate: function(event, ui) {
             //    // Find out index
@@ -101,12 +103,15 @@ vis = $.extend(true, vis, {
             $('#vis_wrap').width(parseInt($(window).width() - $('#pan_add_wid').width() - $('#pan_attr').width() - 1));
             that.editSaveConfig('size/pan_add_wid', $('#pan_add_wid').width());
             that.editSaveConfig('size/pan_attr',    $('#pan_attr').width());
+            if (vis.css_editor){
+                vis.css_editor.resize();
+            }
+
         }
 
         layout();
 
         $('#vis-version').html(this.version);
-
 
         $('#button_undo')
             .click(function () {
@@ -1274,6 +1279,101 @@ vis = $.extend(true, vis, {
 
         $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active')
     },
+    editInitCSSEditor:function(){
+        var that = this;
+
+        var file = "vis-common-user";
+        var editor  = ace.edit("css_editor");
+
+
+        //editor.setTheme("ace/theme/monokai");
+        editor.getSession().setMode("ace/mode/css");
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true
+        });
+        editor.$blockScrolling = Infinity;
+        editor.getSession().setUseWrapMode(true);
+
+        editor.getSession().on('change', function(e) {
+            $("#"+file).text(editor.getValue())
+        });
+
+
+
+        $( "#select_css_file" ).selectmenu({
+
+            change: function (event, ui) {
+                file = $(this).val();
+                editor.setValue($("#"+file).text());
+                editor.navigateFileEnd();
+                editor.focus()
+            }
+        });
+
+        editor.setValue($("#"+ file).text());
+        $(document).bind("vis-common-user", function(e){
+            editor.setValue($("#"+ file).text());
+            editor.navigateFileEnd()
+        });
+
+
+        $("#cssEditor_tab").click(function(){
+            editor.focus()
+        });
+
+        $("#pan_attr").resize(function(){
+            editor.resize()
+        });
+
+
+        $("#css_find").change(function(){
+            editor.find($(this).val(),{
+                backwards: false,
+                wrap: false,
+                caseSensitive: false,
+                wholeWord: false,
+                regExp: false
+            });
+        });
+
+        $("#css_find_prev").button({
+            icons: {
+                primary: " ui-icon-arrowthick-1-n"
+            },
+            text: false
+        }).click(function(){
+            editor.findPrevious();
+        });
+
+        $("#css_find_next").button({
+            icons: {
+                primary: "ui-icon-arrowthick-1-s"
+            },
+            text: false
+        }).click(function(){
+            editor.findNext();
+        });
+
+        $("#css_file_save").button({
+            icons: {
+                primary: " ui-icon-disk"
+            },
+            text: false
+        }).click(function() {
+                if ($("#select_css_file").val() == "vis-user") {
+                    that.conn.writeFile('../' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css' , editor.getValue() );
+                }
+
+
+                if ($("#select_css_file").val() == "vis-common-user") {
+                    that.conn.writeFile('../vis/css/vis-common-user.css', editor.getValue());
+                }
+
+            });
+
+
+    },
     editInitNext: function () {
         // ioBroker.vis Editor Init
         var that = this;
@@ -1299,7 +1399,7 @@ vis = $.extend(true, vis, {
             change: function (event, ui) {
                 that.changeView($(this).val());
             }
-        });
+        }).selectmenu("menuWidget").parent().addClass("view-select-menu");
         this.$copyWidgetSelectView.val(this.activeView);
         this.$copyWidgetSelectView.selectmenu();
         $('#inspect_view_theme').selectmenu({
@@ -1526,7 +1626,6 @@ vis = $.extend(true, vis, {
         this.$dialogConfirm.data('callback', callback);
         this.$dialogConfirm.dialog('open');
     },
-
     addView: function (view) {
         if (this[view]) return false;
 
