@@ -1399,7 +1399,7 @@ vis = $.extend(true, vis, {
             change: function (event, ui) {
                 that.changeView($(this).val());
             }
-        });
+        }).selectmenu("menuWidget").parent().addClass("view-select-menu");
         this.$copyWidgetSelectView.val(this.activeView);
         this.$copyWidgetSelectView.selectmenu();
         $('#inspect_view_theme').selectmenu({
