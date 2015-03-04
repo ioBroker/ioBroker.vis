@@ -755,5 +755,6 @@ margin-left: 10px;
 
 .view-select-menu {
     height: calc(100% - 100px);
-    display: flex;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
