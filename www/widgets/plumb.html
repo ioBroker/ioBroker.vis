@@ -8,7 +8,7 @@
             "group_conTop": {"en": "Connection top", "de": "Verbindung oben", "ru": "group_conTop"},
             "group_conBottom": {"en": "Connection bottom", "de": "Verbindung unten", "ru": "group_conBottom"},
             "group_conLeft": {"en": "Connection left", "de": "Verbindung links", "ru": "group_conLeft"},
-            "group_conRight": {"en": "Connection right", "de": "Verbindung rechts", "ru": "group_conRight"},
+            "group_conRight": {"en": "Connection right", "de": "Verbindung rechts", "ru": "group_conRight"}
         });
 
 
@@ -165,8 +165,7 @@
                             left: (cl - dl - dw) * -1,
                             right: (dl - cl - 20) * -1,
                             top: (ct - dt - dh) * -1,
-                            bottom: (dt - ct - 20) * -1,
-
+                            bottom: (dt - ct - 20) * -1
                         };
 
                         var ist = 9999;
@@ -176,7 +175,6 @@
                                 ist = this;
                                 _ist = key;
                             }
-
                         });
 
                         if (_ist = "left") {
@@ -464,7 +462,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -565,7 +563,7 @@
                         color: {
                             c_from: id,
                             c_default: data.color_off,
-                            c: data.color_on,
+                            c: data.color_on
                         }
                     };
                     ev.color.c = data.color_on;
@@ -593,8 +591,7 @@
                     ev.color.c = data.color_off;
                     ev.status = false
                 }
-                self.color = ev.color
-                console.log(self)
+                self.color = ev.color;
                 $.each(self.cons, function () {
               $this.find(".plumb_dock_right, .plumb_dock_left, .plumb_dock_top, .plumb_dock_bottom").css("background",ev.color.c);
                     if ($("#" + self[this])) {
@@ -701,10 +698,8 @@
 
 
                 $wp.css({
-
                     "-webkit-animation": id + "-ANIMATION " + data.time + "s infinite linear",
-                    "animation": id + "-ANIMATION " + data.time + "s infinite linear",
-
+                    "animation": id + "-ANIMATION " + data.time + "s infinite linear"
                 });
                 $water.css({
                     height: data.width + "px",
@@ -719,9 +714,8 @@
 
 
                 if (data.fog == true) {
-                    console.log(data)
                     $water.css({
-                        "box-shadow": '0px 0px ' + (data.stroke * 2) + 'px ' + data.stroke + 'px ' + data.water_color,
+                        "box-shadow": '0px 0px ' + (data.stroke * 2) + 'px ' + data.stroke + 'px ' + data.water_color
                     })
                 }
 
@@ -934,7 +928,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -975,7 +969,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1016,7 +1010,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1069,7 +1063,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1121,7 +1115,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1173,7 +1167,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1224,7 +1218,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1279,7 +1273,6 @@
                     $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) " + self_color});
                     $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) " + self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
 
-
                     if (plumb[self.conLeft].status) {
                         ev.color = JSON.parse(JSON.stringify(plumb[self.conLeft].color));
                         self.color = ev.color;
@@ -1293,7 +1286,6 @@
 
                         $("#" + conLeft).trigger(ev);
                     }
-
 
                 } else {
 
@@ -1320,8 +1312,6 @@
                         $("#" + conRight).trigger(ev);
                     }
                 }
-
-
             }
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
@@ -1357,7 +1347,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1471,7 +1461,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1498,7 +1488,7 @@
                     "-moz-transform": "scaleX(-1)",
                     "-o-transform": "scaleX(-1)",
                     "-webkit-transform": "scaleX(-1)",
-                    "transform": "scaleX(-1)",
+                    "transform": "scaleX(-1)"
                     })
                 }
 
@@ -1580,7 +1570,6 @@
                         $("#" + data.conLeft).trigger(ev);
                     }
 
-
                 } else {
 
                     self_color = "#F00";
@@ -1594,7 +1583,6 @@
                         ev.status = false;
                         self.color = ev.color;
 
-
                         $("#" + data.conLeft).trigger(ev);
                     }
 
@@ -1606,8 +1594,6 @@
                         $("#" + data.conRight).trigger(ev);
                     }
                 }
-
-
             }
         },
         c_valve_v: function (el, data) {
@@ -1629,7 +1615,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1648,7 +1634,7 @@
                     symbol =  'url('+data.symbol+')'
                 }
                 $($this).find(".plumb_c_valve_v_img").css({
-                    background: symbol,
+                    background: symbol
                 });
 
                 if(data.turn_direction == true || data.turn_direction == "true"){
@@ -1656,12 +1642,11 @@
                         "-moz-transform": "scaleY(-1)",
                         "-o-transform": "scaleY(-1)",
                         "-webkit-transform": "scaleY(-1)",
-                        "transform": "scaleY(-1)",
+                        "transform": "scaleY(-1)"
                     })
                 }
 
                 if(data.show_back == true || data.show_back == "true" ) {
-
                     $($this).find(".plumb_c_valve_v_back_t, .plumb_c_valve_v_back_b").css({
                         display: "block",
                         "box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'
@@ -1768,7 +1753,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1781,14 +1766,14 @@
             $($this).on("resize", function () {
                 var size = Math.round($this.height() / 3);
                 var shadow = parseInt($this.height() / 3 / 2);
-                $($this).find(".tpice-hl").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-hl").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
                 $($this).find(".tpice-hm").css({"box-shadow": 'inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".tpice-hr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-hr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
 
                 $($this).find(".bogen_tl_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1.33) + 'px ' + parseInt(shadow / 4) + 'px #000 '});
                 $($this).find(".bogen_tr_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1.33) + 'px ' + parseInt(shadow / 4) + 'px#000 '});
 
-                $($this).find(".tpice-t").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-t").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'});
 
                 $($this).find(".tpice-t, .tpice-hr, .tpice-hm, .tpice-hl").css({
                     height: size + "px",
@@ -1836,7 +1821,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1849,14 +1834,14 @@
             $($this).on("resize", function () {
                 var size = Math.round($this.height() / 3);
                 var shadow = parseInt($this.height() / 3 / 2);
-                $($this).find(".tpice-hl").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-hl").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
                 $($this).find(".tpice-hm").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".tpice-hr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-hr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
 
                 $($this).find(".bogen_bl_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px #000 '});
                 $($this).find(".bogen_br_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px#000 '});
 
-                $($this).find(".tpice-b").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-b").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'});
 
                 $($this).find(".tpice-b, .tpice-hr, .tpice-hm, .tpice-hl").css({
                     height: size + "px",
@@ -1907,7 +1892,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1972,7 +1957,7 @@
                     color: {
                         c: null,
                         c_from: null,
-                        c_default: null,
+                        c_default: null
                     }
                 }
             }
@@ -1986,15 +1971,14 @@
                 var size = Math.round($this.height() / 3);
                 var shadow = parseInt($this.width() / 3 / 2);
 
-                $($this).find(".tpice-vt").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-vt").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'});
                 $($this).find(".tpice-vmr").css({"box-shadow": 'inset ' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".tpice-vb").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'})
+                $($this).find(".tpice-vb").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'});
 
                 $($this).find(".bogen_tr_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px #000 '});
                 $($this).find(".bogen_br_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px#000 '});
 
-                $($this).find(".tpice-vr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px  -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
-
+                $($this).find(".tpice-vr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px  -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
 
                 $($this).find(" .bogen_tr_shadow").css({
                     height: shadow + "px",
@@ -2094,38 +2078,33 @@
             vis.binds.plumb.plumb_drop($this);
 
 
-            if(vis.editMode){
-                if(data.type == "level"){
-                    $("#inspect_fix").parent().parent().hide()
-                }
-            }
-
 
             $this.find(".tank_simple_svg").append('\
-            <svg\
+            <svg \
+            width="100%"\height="100%"\
             preserveAspectRatio="none"\
             viewBox="0 0 300 600">\
             <defs>\
             <clipPath id="f" clipPathUnits="userSpaceOnUse">\
-            <path d="m150-0.172a150 100 0 0 0 -150 100l-0.0042 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="'+ data.color +'"/>\
+            <path d="m150-0.142a150 100 0 0 0 -150 100l0.0025 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="'+ data.color +'"/>\
             </clipPath>\
             <linearGradient id="g" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
             <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
             <stop stop-color="#ffffff" stop-opacity=".302" offset=".5"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
-            <radialGradient id="i" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="400" cx="150" gradientTransform="matrix(-1 0 0 -.893 300 857)" r="150"/>\
             <linearGradient id="a">\
             <stop stop-color="#ffffff" stop-opacity=".3" offset="0"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
-            <radialGradient id="h" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="203" cx="150" gradientTransform="matrix(1 0 0 .893 .005 -87.2)" r="150"/>\
+            <radialGradient id="i" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="400" cx="150" gradientTransform="matrix(-1 0 0 -.893 300 857)" r="150"/>\
+            <radialGradient id="h" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="200" cx="150" gradientTransform="matrix(1 0 0 .893 .005 -87.2)" r="150"/>\
             </defs>\
             <path d="m150-0.142a150 100 0 0 0 -150 100l0.0025 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="'+ data.color +'"/>\
-            <rect style="color:#000000" clip-path="url(#f)" height="300" width="300" y="300" x="0" fill="'+ data.water_color +'"/>\
-            <path style="color:#000000" d="m0 100h300v400h-300z"  fill="url(#g)"/>\
-            <path style="color:#000000" d="m300 500a150 100 0 0 1 -75 86.75 150 100 0 0 1 -150 0 150 100 0 0 1 -75 -86.75h150z" stroke-width="0.1" fill="url(#i)"/>\
-            <path style="color:#000000" fill="url(#h)" d="m0 99.85a150 100.1 0 0 1 150 -100 150 100.1 0 0 1 150 100h-150z"/>\
+            <rect id="'+data.wid+'_fill" style="color:#000000" clip-path="url(#f)" height="300" width="300" y="300" x="0" fill="'+ data.water_color +'"/>\
+            <path fill="url(#g)" d="m0 100h300v400h-300z"  />\
+            <path fill="url(#i)" d="m300 500a150 100 0 0 1 -75 87 150 100 0 0 1 -150 0 150 100 0 0 1 -75 -87h150z" />\
+            <path fill="url(#h)" d="m0   100a150 100 0 0 1 150 -100 150 100 0 0 1 150 100h-150z"/>\
             </svg>\
             ');
             setTimeout(function () {
@@ -2232,19 +2211,50 @@
                 }
 
                 vis.binds.plumb.plumb_drop($this);
+
+                if (data.oid != ""){
+                    set(vis.states[data.oid + '.val'])
+                }
             });
 
-            $($this).on("resize", function () {
-                var shadow = parseInt($this.width()/2) - 20;
-                $($this).find(".tank-s_center").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".tank-s_bottom").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset  0px -' + (shadow / 2) + 'px ' + (shadow / 2) + 'px -' + (shadow / 2) + 'px #000'});
-                $($this).find(".tank-s_top").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + (shadow) + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + (shadow) + 'px #000,inset  0px ' + (shadow / 2) + 'px ' + (shadow / 2) + 'px -' + (shadow / 2) + 'px #000'});
+
+            vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
+
+                set(newVal)
 
             });
+
+            function set(newVal) {
+                var step = 600 / 100;
+                var val;
+                if(data.type == "level"){
+                  step = 600 / (data.level_max - data.level_min);
+                  val = (newVal - data.level_min) * step;
+
+                    $("#"+ data.wid +"_fill").attr("height", val).attr("y", 600 -  val);
+
+                }else
+                if(data.type == "bool"){
+                     step = 600 / 100;
+
+                    if (newVal == true){
+                        val = data.bool_on *step;
+                    }else{
+                        val = data.bool_off *step;
+                    }
+
+                    $("#"+ data.wid +"_fill").attr("height", val).attr("y", 600 - val);
+
+                }else
+                if(data.type == "fix"){
+
+                    $("#"+ data.wid +"_fill").attr("height", data.fix *step).attr("y", 600 - data.fix *step);
+                }
+            }
 
             $this.bind("plumb_change", function (event) {
             });
-        },
+        }
     }
 </script>
 
@@ -2702,12 +2712,12 @@
 <script id="tplPlump_tank_simple"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_tank_simple" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": false}" style="min-width: 70px; min-height: 135px; left: 199.984375px; top: 120px; width: 69px; height: 135px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tank_simple" style=""> </div> <svg preserveAspectRatio="none" viewBox="0 0 300 600"> <defs> <clipPath clipPathUnits="userSpaceOnUse"> <path d="m150-0.172a150 100 0 0 0 -150 100l-0.0042 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="#ff0909"></path> </clipPath> <linearGradient gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity=".302" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <radialGradient xlink:href="#a" gradientUnits="userSpaceOnUse" cy="400" cx="150" gradientTransform="matrix(-1 0 0 -.893 300 857)" r="150"></radialGradient> <linearGradient > <stop stop-color="#ffffff" stop-opacity=".3" offset="0"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <radialGradient xlink:href="#a" gradientUnits="userSpaceOnUse" cy="203" cx="150" gradientTransform="matrix(1 0 0 .927 .005 -87.2)" r="150"></radialGradient> </defs> <path d="m150-0.142a150 100 0 0 0 -150 100l0.0025 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="#c0c0c0"></path> <rect style="color:#000000" clip-path="url(#f)" height="100" width="300" y="500" x="0" fill="#49ff09"></rect> <path style="color:#000000" d="m0 100h300v400h-300z" fill="url(#g)"></path> <path style="color:#000000" d="m300 500a150 100 0 0 1 -75 86.75 150 100 0 0 1 -150 0 150 100 0 0 1 -75 -86.75h150z" stroke-width="0.1" fill="url(#i)"></path> <path style="color:#000000" fill="url(#h)" d="m0 99.85a150 100.1 0 0 1 150 -100 150 100.1 0 0 1 150 100h-150z"></path> </svg> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_tank_simple" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": false}" style="min-width: 70px; min-height: 135px; left: 354px; top: 82px; width: 100px; height: 175px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tank_simple" style=""> <div class="tank_simple_svg"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 300 600"> <defs> <clipPath clipPathUnits="userSpaceOnUse"> <path d="m150-0.172a150 100 0 0 0 -150 100l-0.0042 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="#C0C0C0"></path> </clipPath> <linearGradient gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity=".302" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <radialGradient xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="400" cx="150" gradientTransform="matrix(-1 0 0 -.893 300 857)" r="150"></radialGradient> <linearGradient > <stop stop-color="#ffffff" stop-opacity=".3" offset="0"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <radialGradient xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="203" cx="150" gradientTransform="matrix(1 0 0 .893 .005 -87.2)" r="150"></radialGradient> </defs> <path d="m150-0.142a150 100 0 0 0 -150 100l0.0025 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="#C0C0C0"></path> <rect style="color:#000000" clip-path="url(#f)" height="480" width="300" y="120" x="0" fill="#0000ff"></rect> <path style="color:#000000" d="m0 100h300v400h-300z" fill="url(#g)"></path> <path style="color:#000000" d="m300 500a150 100 0 0 1 -75 86.75 150 100 0 0 1 -150 0 150 100 0 0 1 -75 -86.75h150z" stroke-width="0.1" fill="url(#i)"></path> <path style="color:#000000" fill="url(#h)" d="m0 99.85a150 100.1 0 0 1 150 -100 150 100.1 0 0 1 150 100h-150z"></path> </svg> </div> <div class="plumb_dock_left ui-droppable" style="top: 128px; left: -10px; height: 15px; width: 80px; box-shadow: rgb(0, 0, 0) 0px 7.5px 7.5px -7.5px inset, rgb(0, 0, 0) 0px -7.5px 7.5px -7.5px inset; background: silver;"></div><div class="plumb_dock_right ui-droppable" style="top: 32px; right: -10px; height: 15px; width: 80px; box-shadow: rgb(0, 0, 0) 0px 7.5px 7.5px -7.5px inset, rgb(0, 0, 0) 0px -7.5px 7.5px -7.5px inset; background: silver;"></div></div> </div></div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank"
         data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[0];oid;color[#C0C0C0]/color;water_color[#0000ff]/color;group.conTop;conTop_show/checkbox;conTop_size[20]/slider,5,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_size[20]/slider,5,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_size[20]/slider,5,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_size[20]/slider,5,50,5;conRight_pos[50]/slider,0,100,1;conRight">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t pl_b" data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": false}' style="min-width: 70px; min-height: 135px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t pl_b" data-vis-resizable='{}' style="min-width: 70px; min-height: 135px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tank_simple(el, data) %>>
 			<div class="tank_simple" style="">
             	<div class="tank_simple_svg">
@@ -2718,9 +2728,6 @@
 			</div>
         </div>
     </div>
-
-
-
 </script>
 
 
