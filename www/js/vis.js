@@ -1217,7 +1217,8 @@ if ('applicationCache' in window) {
                                     var o = {};
                                     o[id + '.val'] = obj.val;
                                     o[id + '.ts']  = obj.ts;
-                                    if (vis.states[id + '.val'] !== undefined) {
+                                    // BF @ HQ: Why?
+                                    if (true){ //} || vis.states[id + '.val'] !== undefined) {
                                         o[id + '.ack'] = obj.ack;
                                         o[id + '.lc']  = obj.lc;
                                     }
