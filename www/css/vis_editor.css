@@ -753,6 +753,7 @@ td > .select_active_widget :nth-child(2) {
 margin-left: 10px;
 }
 
-#select_view-menu{
-    height: 400px;
+.view-select-menu {
+    height: calc(100% - 100px);
+    display: flex;
 }
