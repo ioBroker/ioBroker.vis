@@ -752,3 +752,7 @@ td > .select_active_widget :nth-child(2) {
 #css_file_save{
 margin-left: 10px;
 }
+
+#select_view-menu{
+    height: 400px;
+}
