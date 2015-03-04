@@ -443,6 +443,124 @@
 
         },
 
+        svg_tpiece: function (id){
+            $("#"+id+"_svg").append('\
+            <svg\
+            width="100%"\
+            height="100%"\
+            preserveAspectRatio="none"\
+            viewBox="0 0 600 600"\
+            >\
+            <defs>\
+            <radialGradient id="'+id+'_c" gradientUnits="userSpaceOnUse" cy="400" cx="400" gradientTransform="matrix(0 -1.393 1.4925 1.0237e-12 -197.01 957.21)" r="100.5">\
+            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+            <stop stop-color="#ffffff" stop-opacity="0" offset=".71429"/>\
+            <stop stop-color="#ffffff" stop-opacity="0" offset="1"/>\
+            </radialGradient>\
+            <radialGradient id="'+id+'_b" gradientUnits="userSpaceOnUse" cy="400" cx="600" gradientTransform="matrix(-1.4925 0 0 -1.393 1295.5 757.21)" r="100.5">\
+            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+            <stop stop-color="#fffffe" stop-opacity="0" offset=".66667"/>\
+            <stop stop-color="#ffffff" stop-opacity="0" offset="1"/>\
+            </radialGradient>\
+            <linearGradient id="'+id+'_e" y2="400" gradientUnits="userSpaceOnUse" x2="500" y1="200" x1="500">\
+            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+            <stop stop-color="#ffffff" stop-opacity="0" offset=".5"/>\
+            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
+            </linearGradient>\
+            <linearGradient id="'+id+'_d" y2="300" gradientUnits="userSpaceOnUse" x2="400" y1="300" x1="200">\
+            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+            <stop stop-color="#ffffff" stop-opacity="0" offset=".5"/>\
+            <stop stop-color="#000000" stop-opacity="0" offset="1"/>\
+            </linearGradient>\
+            <linearGradient id="'+id+'_a" y2="500" gradientUnits="userSpaceOnUse" x2="400" y1="500" x1="200">\
+            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+            <stop stop-color="#ffffff" stop-opacity="0" offset=".5"/>\
+            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
+            </linearGradient>\
+            </defs>\
+            <g>\
+            <path id="'+id+'_fill"  d="m400 200h200v200h-200zm-200-200h200v600h-200z" fill="#c0c0c0"/>\
+            <g>\
+            <rect height="200" width="200" y="200" x="200" fill="url(#'+id+'_c)"/>\
+            <rect height="200" width="200" y="200" x="200" fill="url(#'+id+'_b)"/>\
+            <rect height="200" width="200" y="200" x="200" fill="url(#'+id+'_d)"/>\
+            <rect height="200" width="200" y="200" x="400" fill="url(#'+id+'_e)"/>\
+            <rect height="200" width="200" y="400" x="200" fill="url(#'+id+'_a)"/>\
+            <rect height="200" width="200" y="0" x="200"   fill="url(#'+id+'_a)"/>\
+            </g>\
+            </g>\
+            </svg>\
+            ');
+        },
+        svg_bogen: function (id){
+
+            $("#"+id+"_svg").append('\
+            <svg\
+            width="100%"\
+            height="100%"\
+            preserveAspectRatio="none"\
+            viewBox="0 0 600 600"\
+            >\
+            <defs>\
+            <clipPath id="'+id+'_clip">\
+            <path d="m600 0a600 600 0 0 1 -600 600v-600z"/>\
+            </clipPath>\
+            <radialGradient id="'+id+'_a" gradientUnits="userSpaceOnUse" cy="0" cx="0" gradientTransform="matrix(0 2 -2 0 0 0)" r="300">\
+            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+            <stop stop-color="#ffffff" stop-opacity="0" offset=".5"/>\
+            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
+            <stop stop-color="#ffffff" stop-opacity="0" offset="1"/>\
+            </radialGradient>\
+            </defs>\
+            <g clip-path="url(#'+id+'_clip)">\
+            <path id="'+id+'_fill" fill="#c0c0c0" d="m600 0a600 600 0 0 1 -600 600v-600z"/>\
+            <rect height="600" width="600" y="0" x="0" fill="url(#'+id+'_a)"/>\
+            </g>\
+            </svg>\
+            ');
+        },
+        svg_pipe_h: function (id){
+
+            $("#"+id+"_svg").append('\
+            <svg \
+            width="100%"\
+            height="100%"\
+            preserveAspectRatio="none"\
+            viewBox="0 0 100 100" ">\
+            <defs>\
+            <linearGradient id="'+id+'_a" y2="50" gradientUnits="userSpaceOnUse" x2="100" y1="50">\
+            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+            <stop stop-color="#ffffff" stop-opacity="0" offset=".5"/>\
+            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
+            </linearGradient>\
+            </defs>\
+            <rect  id="'+id+'_fill"  height="100" width="100" y="0" x="0" fill="#c0c0c0"/>\
+            <rect height="100" width="100" y="0" x="0" fill="url(#'+id+'_a)"/>\
+            </svg>\
+            ');
+        },
+        svg_pipe_v: function (id){
+
+            $("#"+id+"_svg").append('\
+            <svg \
+            width="100%"\
+            height="100%"\
+            preserveAspectRatio="none"\
+            viewBox="0 0 100 100" ">\
+            <defs>\
+            <linearGradient id="'+id+'_a" x2="50" gradientUnits="userSpaceOnUse" y2="100" x1="50">\
+            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+            <stop stop-color="#ffffff" stop-opacity="0" offset=".5"/>\
+            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
+            </linearGradient>\
+            </defs>\
+            <rect  id="'+id+'_fill"  height="100" width="100" y="0" x="0" fill="#c0c0c0"/>\
+            <rect height="100" width="100" y="0" x="0" fill="url(#'+id+'_a)"/>\
+            </svg>\
+            ');
+        },
+
+
         pump: function (el, data) {
             var $this = $(el).parent();
             var id = $this.attr("id");
@@ -937,9 +1055,8 @@
             self.conLeft = conLeft || null;
             self.conRight = conRight || null;
 
-            $($this).on("resize", function () {
-                var shadow = parseInt($this.height() / 2);
-                $($this).find(".pipe_h").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
+            setTimeout(function () {
+                vis.binds.plumb.svg_pipe_v(id);
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -979,9 +1096,8 @@
             self.conTop = conTop || null;
             self.conBottom = conBottom || null;
 
-            $($this).on("resize", function () {
-                var shadow = parseInt($this.width() / 2);
-                $($this).find(".pipe_v").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'})
+            setTimeout(function () {
+                vis.binds.plumb.svg_pipe_h(id);
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1020,10 +1136,8 @@
             self.conRight = conRight || null;
             self.conBottom = conBottom || null;
 
-            $($this).on("resize", function () {
-                var shadow = parseInt($this.width() / 2);
-                $($this).find(".bogen_br").css({"box-shadow": 'inset ' + shadow / 2 + 'px ' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
-                $($this).find(".bogen_br_shadow").css({"box-shadow": '-' + parseInt(shadow / 2 / 2) + 'px -' + parseInt(shadow / 2 / 2) + 'px ' + shadow + 'px #000 '});
+            setTimeout(function () {
+                vis.binds.plumb.svg_bogen(id);
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1072,10 +1186,8 @@
             self.conLeft = conLeft || null;
             self.conBottom = conBottom || null;
 
-            $($this).on("resize", function () {
-                var shadow = parseInt($this.width() / 2);
-                $($this).find(".bogen_bl").css({"box-shadow": 'inset -' + shadow / 2 + 'px ' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
-                $($this).find(".bogen_bl_shadow").css({"box-shadow": '' + parseInt(shadow / 2 / 2) + 'px -' + parseInt(shadow / 2 / 2) + 'px ' + shadow + 'px #000 '});
+            setTimeout(function () {
+                vis.binds.plumb.svg_bogen(id);
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1125,10 +1237,8 @@
             self.conRight = conRight || null;
             self.conTop = conTop || null;
 
-            $($this).on("resize", function () {
-                var shadow = parseInt($this.width() / 2);
-                $($this).find(".bogen_tr").css({"box-shadow": 'inset ' + shadow / 2 + 'px -' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
-                $($this).find(".bogen_tr_shadow").css({"box-shadow": '-' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 2 / 2) + 'px ' + shadow + 'px #000 '});
+            setTimeout(function () {
+                vis.binds.plumb.svg_bogen(id);
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1175,10 +1285,9 @@
 
             self.conLeft = conLeft || null;
             self.conTop = conTop || null;
-            $($this).on("resize", function () {
-                var shadow = parseInt($this.width() / 2);
-                $($this).find(".bogen_tl").css({"box-shadow": 'inset -' + shadow / 2 + 'px -' + shadow / 2 + 'px ' + shadow + 'px -' + parseInt((shadow / 2) + 1) + 'px #000 '});
-                $($this).find(".bogen_tl_shadow").css({"box-shadow": '' + parseInt(shadow / 2 / 2) + 'px ' + parseInt(shadow / 2 / 2) + 'px ' + shadow + 'px #000 '});
+
+            setTimeout(function () {
+                vis.binds.plumb.svg_bogen(id);
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1763,36 +1872,10 @@
             self.conRight = data.conRight || null;
             self.conTop = data.conTop || null;
 
-            $($this).on("resize", function () {
-                var size = Math.round($this.height() / 3);
-                var shadow = parseInt($this.height() / 3 / 2);
-                $($this).find(".tpice-hl").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".tpice-hm").css({"box-shadow": 'inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".tpice-hr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
-
-                $($this).find(".bogen_tl_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1.33) + 'px ' + parseInt(shadow / 4) + 'px #000 '});
-                $($this).find(".bogen_tr_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1.33) + 'px ' + parseInt(shadow / 4) + 'px#000 '});
-
-                $($this).find(".tpice-t").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'});
-
-                $($this).find(".tpice-t, .tpice-hr, .tpice-hm, .tpice-hl").css({
-                    height: size + "px",
-                    width: size + "px"
-                });
-
-                $($this).find(" .bogen_tr_shadow").css({
-                    height: shadow + "px",
-                    width: shadow + "px",
-                    right: "-" + shadow - 1 + "px",
-                    top: "-" + shadow - 1 + "px"
-                })
-                $($this).find(".bogen_tl_shadow").css({
-                    height: shadow + "px",
-                    width: shadow + "px",
-                    left: "-" + shadow - 1 + "px",
-                    top: "-" + shadow - 1 + "px"
-                })
+            setTimeout(function () {
+                vis.binds.plumb.svg_tpiece(id);
             });
+
 
             vis.binds.plumb.plumb_drop($this);
 
@@ -1831,38 +1914,10 @@
             self.conRight = data.conRight || null;
             self.conBottom = data.conBottom || null;
 
-            $($this).on("resize", function () {
-                var size = Math.round($this.height() / 3);
-                var shadow = parseInt($this.height() / 3 / 2);
-                $($this).find(".tpice-hl").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".tpice-hm").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".tpice-hr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
-
-                $($this).find(".bogen_bl_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px #000 '});
-                $($this).find(".bogen_br_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px#000 '});
-
-                $($this).find(".tpice-b").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'});
-
-                $($this).find(".tpice-b, .tpice-hr, .tpice-hm, .tpice-hl").css({
-                    height: size + "px",
-                    width: size + "px"
-                });
-
-                $($this).find(" .bogen_br_shadow").css({
-                    height: shadow + "px",
-                    width: shadow + "px",
-                    right: "-" + shadow - 1 + "px",
-                    top: size + "px"
-                });
-                $($this).find(".bogen_bl_shadow").css({
-                    height: shadow + "px",
-                    width: shadow + "px",
-                    left: "-" + shadow + "px",
-                    top: size + "px"
-                })
+            setTimeout(function () {
+                vis.binds.plumb.svg_tpiece(id);
             });
 
-            $($this).trigger("resize");
 
 
             vis.binds.plumb.plumb_drop($this);
@@ -1902,35 +1957,10 @@
             self.conRight = data.conRight || null;
             self.conBottom = data.conBottom || null;
 
-            $($this).on("resize", function () {
-                var size = Math.round($this.height() / 3);
-                var shadow = parseInt($this.width() / 3 / 2);
-
-                $($this).find(".tpice-vt").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'})
-                $($this).find(".tpice-vml").css({"box-shadow": 'inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".tpice-vb").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'})
-
-                $($this).find(".bogen_tl_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px #000 '});
-                $($this).find(".bogen_bl_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px#000 '});
-
-                $($this).find(".tpice-vl").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px  -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'})
-
-
-                $($this).find(" .bogen_tl_shadow").css({
-                    height: shadow + "px",
-                    width: shadow + "px",
-                    left: "-" + shadow - 1 + "px",
-                    top: size + "px"
-                });
-                $($this).find(".bogen_bl_shadow").css({
-                    height: shadow + "px",
-                    width: shadow + "px",
-                    left: "-" + shadow + "px",
-                    bottom: size + "px"
-                })
+            setTimeout(function () {
+                vis.binds.plumb.svg_tpiece(id);
             });
 
-            $($this).trigger("resize");
 
             vis.binds.plumb.plumb_drop($this);
 
@@ -1967,36 +1997,9 @@
             self.conRight = data.conRight || null;
             self.conTop = data.conTop || null;
 
-            $($this).on("resize", function () {
-                var size = Math.round($this.height() / 3);
-                var shadow = parseInt($this.width() / 3 / 2);
-
-                $($this).find(".tpice-vt").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".tpice-vmr").css({"box-shadow": 'inset ' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".tpice-vb").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px  ' + shadow + 'px -' + shadow + 'px #000'});
-
-                $($this).find(".bogen_tr_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px #000 '});
-                $($this).find(".bogen_br_shadow").css({"box-shadow": '0px 0px ' + parseInt(shadow / 1) + 'px ' + parseInt(shadow / 5) + 'px#000 '});
-
-                $($this).find(".tpice-vr").css({"box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px  -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'});
-
-                $($this).find(" .bogen_tr_shadow").css({
-                    height: shadow + "px",
-                    width: shadow + "px",
-                    right: "-" + shadow - 1 + "px",
-                    top: size + "px"
-                });
-                $($this).find(".bogen_br_shadow").css({
-                    height: shadow + "px",
-                    width: shadow + "px",
-                    right: "-" + shadow + "px",
-                    bottom: size + "px"
-                })
-
-
+            setTimeout(function () {
+                vis.binds.plumb.svg_tpiece(id);
             });
-
-            $($this).trigger("resize")
 
 
             vis.binds.plumb.plumb_drop($this);
@@ -2081,7 +2084,8 @@
 
             $this.find(".tank_simple_svg").append('\
             <svg \
-            width="100%"\height="100%"\
+            width="100%"\
+            height="100%"\
             preserveAspectRatio="none"\
             viewBox="0 0 300 600">\
             <defs>\
@@ -2261,14 +2265,14 @@
 <script id="tplPlump_pump"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_pump" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_b pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{}" style="top: 163px; left: 449px; width: 57px; height: 183px;" > <div class="vis-widget-prev-body">			<div class="pump" style=""><img style="position: absolute; width: 100%;" src="./widgets/plumb/img/pumpe.png"><div class="plumb_dock_top ui-droppable"></div><div class="plumb_dock_bottom ui-droppable"></div>				<div class="plumb_dock_left ui-droppable"></div>				<div class="plumb_dock_right ui-droppable"></div>			</div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_pump" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_b pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{}" style="top: 163px; left: 449px; width: 57px; height: 183px;" > <div class="vis-widget-prev-body">			<div class="pump" ><img style="position: absolute; width: 100%;" src="./widgets/plumb/img/pumpe.png"><div class="plumb_dock_top ui-droppable"></div><div class="plumb_dock_bottom ui-droppable"></div>				<div class="plumb_dock_left ui-droppable"></div>				<div class="plumb_dock_right ui-droppable"></div>			</div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Pump"
         data-vis-attrs="oid;src[./widgets/plumb/img/pumpe.png];color_off[#C0C0C0]/color;color_on[#00ff00]/color;group.conTop;conTop_show/checkbox;conTop_size[20]/slider,5,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_size[20]/slider,5,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_size[20]/slider,5,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_size[20]/slider,5,50,5;conRight_pos[50]/slider,0,100,1;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{}' style=" width: 65px; height: 205px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pump(el, data) %>>
-			<div class="pump" style="">
+			<div class="pump" >
 			   <% if (vis.editMode) { %>
                 <div class="editmode-helper" style="z-index:0" />
             <% } %>
@@ -2287,7 +2291,7 @@
 <script id="tplPlump_i-strinkler"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_istrinkler" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_t pl_l pl_r ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ]}" style="width: 20px; height: 17px; overflow: visible; left: 242px; top: 228px; position: absolute;" > <div class="plumb_sprinkler_i_body vis-widget-prev-body" style="border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; background-color: rgb(0, 0, 0);"> <div class="plumb_sprinkler_i" style=""> <div class="plumb_splinkler_i_water" style="height: 60px; width: 5px; left: 7px; top: -51px; position: relative; background-color: rgb(27, 138, 222);"></div> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_istrinkler" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_t pl_l pl_r ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ]}" style="width: 20px; height: 17px; overflow: visible; left: 242px; top: 228px; position: absolute;" > <div class="plumb_sprinkler_i_body vis-widget-prev-body" style="border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; background-color: rgb(0, 0, 0);"> <div class="plumb_sprinkler_i" > <div class="plumb_splinkler_i_water" style="height: 60px; width: 5px; left: 7px; top: -51px; position: relative; background-color: rgb(27, 138, 222);"></div> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Sprinker I"
@@ -2310,7 +2314,7 @@
 <script id="tplPlump_r-strinkler"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_istrinkler" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_t pl_l pl_r ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ]}" style="width: 20px; height: 17px; overflow: visible; left: 242px; top: 228px; position: absolute;" > <div class="plumb_sprinkler_i_body vis-widget-prev-body" style="border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; background-color: rgb(0, 0, 0);"> <div class="plumb_sprinkler_i" style=""> <div class="plumb_splinkler_i_water" style="height: 60px; width: 5px; left: 7px; top: -51px; position: relative; background-color: rgb(27, 138, 222);"></div> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_istrinkler" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_t pl_l pl_r ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ]}" style="width: 20px; height: 17px; overflow: visible; left: 242px; top: 228px; position: absolute;" > <div class="plumb_sprinkler_i_body vis-widget-prev-body" style="border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; background-color: rgb(0, 0, 0);"> <div class="plumb_sprinkler_i" > <div class="plumb_splinkler_i_water" style="height: 60px; width: 5px; left: 7px; top: -51px; position: relative; background-color: rgb(27, 138, 222);"></div> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Sprinker R"
@@ -2333,14 +2337,15 @@
 <script id="tplPlump_pipe_V"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_pipe_V" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 238px; left: 82px; width: 20px; height: 100px;" > <div class="vis-widget-prev-body">			<div class="pipe_v" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;">				<div class="plumb_dock_top"></div>				<div class="plumb_dock_bottom"></div>			</div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_pipe_V" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 5, 1 ],"handles": "all" }" style="width: 20px; height: 100px; left: 279px; top: 637px; position: absolute;" id="19finltig"> <div class="vis-widget-prev-body"> <div class="pipe_v"> <div id="19finltig_svg" class="plumb-svg"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100" "=""> <defs> <linearGradient id="19finltig_a" y2="50" gradientUnits="userSpaceOnUse" x2="100" y1="50"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <rect id="19finltig_fill" height="100" width="100" y="0" x="0" fill="#c0c0c0"></rect> <rect height="100" width="100" y="0" x="0" fill="url(#19finltig_a)"></rect> </svg> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> <div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_V"
         data-vis-attrs="conTop;conBottom">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t" data-vis-resizable='{"grid": [ 5, 1 ],"handles": "all" }' style="width: 20px; height: 100px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_v(el, data.conTop, data.conBottom) %>>
-			<div class="pipe_v plumb_body" style="">
+			<div class="pipe_v" >
+			    <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_bottom"></div>
 			</div>
@@ -2354,14 +2359,15 @@
 <script id="tplPlump_pipe_H"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_pipe_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 203px; left: 181px; width: 100px; height: 20px;" > <div class="vis-widget-prev-body">			<div class="pipe_v" style="box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset;">				<div class="plumb_dock_top"></div>				<div class="plumb_dock_bottom"></div>			</div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_pipe_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r ui-draggable-handle " data-vis-resizable="{"grid": [ 1, 5 ]}" style="width: 100px; height: 20px; left: 597px; top: 638px; position: absolute;" id="19finnpkf"> <div class="vis-widget-prev-body"> <div class="pipe_h"> <div id="19finnpkf_svg" class="plumb-svg"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100" "=""> <defs> <linearGradient id="19finnpkf_a" x2="50" gradientUnits="userSpaceOnUse" y2="100" x1="50"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <rect id="19finnpkf_fill" height="100" width="100" y="0" x="0" fill="#c0c0c0"></rect> <rect height="100" width="100" y="0" x="0" fill="url(#19finnpkf_a)"></rect> </svg> </div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_H"
         data-vis-attrs="conLeft;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 1, 5 ]}' style=" width: 100px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_h(el, data.conLeft, data.conRight) %>>
-			<div class="pipe_h plumb_body" style="">
+			<div class="pipe_h" >
+			<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
 				<div class="plumb_dock_left"></div>
 				<div class="plumb_dock_right"></div>
 			</div>
@@ -2375,15 +2381,15 @@
 <script id="tplPlump_bogen_br"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_bogen_br" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 186px; left: 85px; width: 20px; height: 20px;" > <div class="vis-widget-prev-body">			<div class="bogen_br" style="box-shadow: rgb(0, 0, 0) 5px 5px 10px -6px inset;">				<div class="bogen_br_shadow" style="box-shadow: rgb(0, 0, 0) -2px -2px 10px;"></div>				<div class="plumb_dock_right"></div>				<div class="plumb_dock_bottom"></div>			</div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_bogen_br" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_r pl_b ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="width: 20px; height: 20px; left: 671px; top: 449px; position: absolute;" id="19fino9b3"> <div class="vis-widget-prev-body"> <div class="bogen_br"> <div id="19fino9b3_svg" class="plumb-svg plumb-rotate180"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <clipPath id="19fino9b3_clip"> <path d="m600 0a600 600 0 0 1 -600 600v-600z"></path> </clipPath> <radialGradient id="19fino9b3_a" gradientUnits="userSpaceOnUse" cy="0" cx="0" gradientTransform="matrix(0 2 -2 0 0 0)" r="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> </defs> <g clip-path="url(#19fino9b3_clip)"> <path id="19fino9b3_fill" fill="#c0c0c0" d="m600 0a600 600 0 0 1 -600 600v-600z"></path> <rect height="600" width="600" y="0" x="0" fill="url(#19fino9b3_a)"></rect> </g> </svg> </div> <div class="plumb_dock_right ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_br"
         data-vis-attrs="conBottom;conRight">
     <div class="vis-widget <%== this.data.attr('class')%>  pl pl_r pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_br(el, data.conBottom, data.conRight) %>>
-			<div class="bogen_br plumb_body">
-				<div class="bogen_br_shadow"></div>
+			<div class="bogen_br">
+				<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-rotate180"></div>
 				<div class="plumb_dock_right"></div>
 				<div class="plumb_dock_bottom"></div>
 			</div>
@@ -2397,7 +2403,7 @@
 <script id="tplPlump_bogen_bl"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_bogen_bl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_l pl_b ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="top: 252px; left: 147px; width: 20px; height: 20px;" > <div class="vis-widget-prev-body">			<div class="bogen_bl" style="box-shadow: rgb(0, 0, 0) -5px 5px 10px -6px inset;">				<div class="bogen_bl_shadow" style="box-shadow: rgb(0, 0, 0) 2px -2px 10px;"></div>				<div class="plumb_dock_left ui-droppable"></div>				<div class="plumb_dock_bottom ui-droppable"></div>			</div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_bogen_bl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_b ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="width: 20px; height: 20px; left: 229px; top: 482px; position: absolute;" id="prevw00002"> <div class="vis-widget-prev-body"> <div class="bogen_bl plumb_body"> <div id="prevw00002_svg" class="plumb-svg plumb-flip-y"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <clipPath id="prevw00002_clip"> <path d="m600 0a600 600 0 0 1 -600 600v-600z"></path> </clipPath> <radialGradient id="prevw00002_a" gradientUnits="userSpaceOnUse" cy="0" cx="0" gradientTransform="matrix(0 2 -2 0 0 0)" r="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> </defs> <g clip-path="url(#prevw00002_clip)"> <path id="prevw00002_fill" fill="#c0c0c0" d="m600 0a600 600 0 0 1 -600 600v-600z"></path> <rect height="600" width="600" y="0" x="0" fill="url(#prevw00002_a)"></rect> </g> </svg> </div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_bl"
@@ -2405,7 +2411,7 @@
     <div class="vis-widget <%== this.data.attr('class')%>  pl pl_l pl_b " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_bl(el, data.conBottom, data.conLeft) %>>
 			<div class="bogen_bl plumb_body">
-				<div class="bogen_bl_shadow"></div>
+				<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-flip-y"></div>
 				<div class="plumb_dock_left"></div>
 				<div class="plumb_dock_bottom"></div>
 			</div>
@@ -2419,7 +2425,7 @@
 <script id="tplPlump_bogen_tr"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_bogen_tr" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_t pl_r ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="top: 537px; left: 288px; width: 20px; height: 20px;" > <div class="vis-widget-prev-body">			<div class="bogen_tr">				<div class="bogen_tr_shadow"></div>				<div class="plumb_dock_top ui-droppable"></div>				<div class="plumb_dock_right ui-droppable"></div>			</div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_bogen_tr" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_t pl_r ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="width: 20px; height: 20px; left: 572px; top: 511px; position: absolute;" id="19finp0p2"> <div class="vis-widget-prev-body"> <div class="bogen_tr plumb_body"> <div id="19finp0p2_svg" class="plumb-svg plumb-flip-x"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <clipPath id="19finp0p2_clip"> <path d="m600 0a600 600 0 0 1 -600 600v-600z"></path> </clipPath> <radialGradient id="19finp0p2_a" gradientUnits="userSpaceOnUse" cy="0" cx="0" gradientTransform="matrix(0 2 -2 0 0 0)" r="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> </defs> <g clip-path="url(#19finp0p2_clip)"> <path id="19finp0p2_fill" fill="#c0c0c0" d="m600 0a600 600 0 0 1 -600 600v-600z"></path> <rect height="600" width="600" y="0" x="0" fill="url(#19finp0p2_a)"></rect> </g> </svg> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_tr"
@@ -2427,7 +2433,7 @@
     <div class="vis-widget <%== this.data.attr('class')%>  pl pl_t pl_r " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_tr(el, data.conTop, data.conRight) %>>
 			<div class="bogen_tr plumb_body">
-				<div class="bogen_tr_shadow"></div>
+					<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-flip-x"></div>
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_right"></div>
 			</div>
@@ -2441,7 +2447,7 @@
 <script id="tplPlump_bogen_tl"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_bogen_tl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_t pl_l ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="top: 515px; left: 147px; width: 20px; height: 20px;" > <div class="vis-widget-prev-body">			<div class="bogen_tl">				<div class="bogen_tl_shadow"></div>				<div class="plumb_dock_top ui-droppable"></div>				<div class="plumb_dock_left ui-droppable"></div>			</div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_bogen_tl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_t pl_l ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="width: 20px; height: 20px; left: 354px; top: 536px; position: absolute;" id="19finq3i4"> <div class="vis-widget-prev-body"> <div class="bogen_tl plumb_body"> <div id="19finq3i4_svg" class="plumb-svg"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <clipPath id="19finq3i4_clip"> <path d="m600 0a600 600 0 0 1 -600 600v-600z"></path> </clipPath> <radialGradient id="19finq3i4_a" gradientUnits="userSpaceOnUse" cy="0" cx="0" gradientTransform="matrix(0 2 -2 0 0 0)" r="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> </defs> <g clip-path="url(#19finq3i4_clip)"> <path id="19finq3i4_fill" fill="#c0c0c0" d="m600 0a600 600 0 0 1 -600 600v-600z"></path> <rect height="600" width="600" y="0" x="0" fill="url(#19finq3i4_a)"></rect> </g> </svg> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_tl"
@@ -2449,7 +2455,7 @@
     <div class="vis-widget <%== this.data.attr('class')%>  pl pl_t pl_l " data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_tl(el, data.conTop, data.conLeft) %>>
 			<div class="bogen_tl plumb_body">
-				<div class="bogen_tl_shadow"></div>
+				<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_left"></div>
 			</div>
@@ -2463,14 +2469,14 @@
 <script id="tplPlump_valve_H"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_valve_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_l pl_r ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 20, 10 ],"aspectRatio": true}" style="top: 245px; left: 240px; width: 40px; height: 20px;" > <div class="vis-widget-prev-body">   <div class="valve_h" style="">    <div class="plumb_valve_l" style="border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(255, 0, 0); border-width: 10px 0px 10px 20px;"></div>    <div class="plumb_valve_r" style="border-color: rgba(0, 0, 0, 0) rgb(255, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); border-width: 10px 20px 10px 0px;"></div>    <div class="plumb_dock_left ui-droppable"></div>    <div class="plumb_dock_right ui-droppable"></div>   </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_valve_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_l pl_r ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 20, 10 ],"aspectRatio": true}" style="top: 245px; left: 240px; width: 40px; height: 20px;" > <div class="vis-widget-prev-body">   <div class="valve_h" >    <div class="plumb_valve_l" style="border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(255, 0, 0); border-width: 10px 0px 10px 20px;"></div>    <div class="plumb_valve_r" style="border-color: rgba(0, 0, 0, 0) rgb(255, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); border-width: 10px 20px 10px 0px;"></div>    <div class="plumb_dock_left ui-droppable"></div>    <div class="plumb_dock_right ui-droppable"></div>   </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="valve_H"
         data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 10, 5 ],"aspectRatio": true}' style=" width: 40px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_h(el, data.oid, data.conLeft, data.conRight, data.ctrl) %>>
-			<div class="valve_h " style="">
+			<div class="valve_h " >
 			    <div class="plumb_valve_l"></div>
 			    <div class="plumb_valve_r"></div>
 				<div class="plumb_dock_left"></div>
@@ -2483,14 +2489,14 @@
 <script id="tplPlump_valve_V"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_valve_v" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 20 ],"aspectRatio": true}" style="width: 20px; height: 35px; left: 121px; top: 469px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_v " style=""> <div class="plumb_valve_t" style="border-color: rgb(255, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); border-width: 20px 10px 0px;"></div> <div class="plumb_valve_b" style="border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(255, 0, 0); border-width: 0px 10px 20px;"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_valve_v" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 20 ],"aspectRatio": true}" style="width: 20px; height: 35px; left: 121px; top: 469px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_v " > <div class="plumb_valve_t" style="border-color: rgb(255, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); border-width: 20px 10px 0px;"></div> <div class="plumb_valve_b" style="border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(255, 0, 0); border-width: 0px 10px 20px;"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="valve_V"
         data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " data-vis-resizable='{"grid": [ 5, 10 ],"aspectRatio": true}' style=" width: 20px; height: 40px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_v(el, data.oid, data.conTop, data.conBottom, data.ctrl) %>>
-			<div class="valve_v " style="">
+			<div class="valve_v " >
 			    <div class="plumb_valve_t"></div>
 			    <div class="plumb_valve_b"></div>
 				<div class="plumb_dock_top"></div>
@@ -2506,14 +2512,14 @@
 <script id="tplPlump_check_valve_H"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_check_valve_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r ui-selectee ui-selected ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 5 ],"aspectRatio": true}" style="width: 40px; height: 20px; left: 272px; top: 88px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_h " style=""> <div class="plumb_c_valve_h_img" style="background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_h_back_l" style="display: block; width: 50%; height: 100%; position: absolute; background-color: silver; box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_h_back_r" style="display: block; width: 50%; height: 100%; position: absolute; background-color: silver; box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; right: 0px; background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_check_valve_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r ui-selectee ui-selected ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 5 ],"aspectRatio": true}" style="width: 40px; height: 20px; left: 272px; top: 88px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_h " > <div class="plumb_c_valve_h_img" style="background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_h_back_l" style="display: block; width: 50%; height: 100%; position: absolute; background-color: silver; box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_h_back_r" style="display: block; width: 50%; height: 100%; position: absolute; background-color: silver; box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; right: 0px; background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Check Valve H"
         data-vis-attrs="conLeft;conRight;show_back[true]/checkbox;symbol[./widgets/plumb/img/c_valve_h.svg]/src;turn_direction/checkbox">
          <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 10, 5 ],"aspectRatio": true}' style=" width: 40px; height: 20px;" id="<%= this.data.attr('wid') %>">
              <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.c_valve_h(el, data) %>>
-    			<div class="valve_h " style="">
+    			<div class="valve_h " >
     			    <div class="plumb_c_valve_h_img"></div>
     			    <div class="plumb_c_valve_h_back_l"></div>
     			    <div class="plumb_c_valve_h_back_r"></div>
@@ -2527,14 +2533,14 @@
 <script id="tplPlump_check_valve_V"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_check_valve_V" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 5, 10 ],"aspectRatio": true}" style="width: 20px; height: 40px; left: 513px; top: 189px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_v " style=""> <div class="plumb_c_valve_v_img" style="background-image: url(http://localhost:63342/ioBroker.vis/widgets/plumb/img/c_valve_v.svg); background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_v_back_t" style="display: block; box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="plumb_c_valve_v_back_b" style="display: block; box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_check_valve_V" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 5, 10 ],"aspectRatio": true}" style="width: 20px; height: 40px; left: 513px; top: 189px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_v " > <div class="plumb_c_valve_v_img" style="background-image: url(http://localhost:63342/ioBroker.vis/widgets/plumb/img/c_valve_v.svg); background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_v_back_t" style="display: block; box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="plumb_c_valve_v_back_b" style="display: block; box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Check Valve V"
         data-vis-attrs="conTop;conBottom;show_back[true]/checkbox;symbol[./widgets/plumb/img/c_valve_v.svg]/src;turn_direction/checkbox">
          <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " data-vis-resizable='{"grid": [ 5, 10 ],"aspectRatio": true}' style=" width: 20px; height: 40px;" id="<%= this.data.attr('wid') %>">
              <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.c_valve_v(el, data) %>>
-    			<div class="valve_v " style="">
+    			<div class="valve_v " >
     			    <div class="plumb_c_valve_v_img"></div>
     			    <div class="plumb_c_valve_v_back_t"></div>
     			    <div class="plumb_c_valve_v_back_b"></div>
@@ -2548,19 +2554,15 @@
 <script id="tplPlump_Tpiece_ht"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_Tpiece_ht" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_l pl_r pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 372px; top: 579px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tpice_ht " style=""> <div class="tpice-hl plumb_body"></div> <div class="tpice-hm plumb_body"> <div class="bogen_tl_shadow"></div> <div class="bogen_tr_shadow"></div> </div> <div class="tpice-hr plumb_body"></div> <div class="tpice-t plumb_body"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_Tpiece_ht" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 215px; top: 547px; position: absolute;" id="19finqooh"> <div class="vis-widget-prev-body"> <div class="tpice_ht"> <div id="19finqooh_svg" class="plumb-svg plumb-rotate270"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <radialGradient id="19finqooh_c" gradientUnits="userSpaceOnUse" cy="400" cx="400" gradientTransform="matrix(0 -1.393 1.4925 1.0237e-12 -197.01 957.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".71429"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> <radialGradient id="19finqooh_b" gradientUnits="userSpaceOnUse" cy="400" cx="600" gradientTransform="matrix(-1.4925 0 0 -1.393 1295.5 757.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#fffffe" stop-opacity="0" offset=".66667"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> <linearGradient id="19finqooh_e" y2="400" gradientUnits="userSpaceOnUse" x2="500" y1="200" x1="500"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <linearGradient id="19finqooh_d" y2="300" gradientUnits="userSpaceOnUse" x2="400" y1="300" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </linearGradient> <linearGradient id="19finqooh_a" y2="500" gradientUnits="userSpaceOnUse" x2="400" y1="500" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <g> <path id="19finqooh_fill" d="m400 200h200v200h-200zm-200-200h200v600h-200z" fill="#c0c0c0"></path> <g> <rect height="200" width="200" y="200" x="200" fill="url(#19finqooh_c)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finqooh_b)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finqooh_d)"></rect> <rect height="200" width="200" y="200" x="400" fill="url(#19finqooh_e)"></rect> <rect height="200" width="200" y="400" x="200" fill="url(#19finqooh_a)"></rect> <rect height="200" width="200" y="0" x="200" fill="url(#19finqooh_a)"></rect> </g> </g> </svg> </div> <div class="tpice-hr plumb_body"></div> <div class="tpice-t plumb_body"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_HT"
         data-vis-attrs="conLeft;conRight;conTop">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 30, 30 ],"aspectRatio": true}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_ht(el, data) %>>
-			<div class="tpice_ht " style="">
-			    <div class="tpice-hl plumb_body"></div>
-			    <div class="tpice-hm plumb_body">
-                    <div class="bogen_tl_shadow"></div>
-                    <div class="bogen_tr_shadow"></div>
-			    </div>
+			<div class="tpice_ht" >
+			    <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-rotate270"></div>
 			    <div class="tpice-hr plumb_body"></div>
 			    <div class="tpice-t plumb_body"></div>
 				<div class="plumb_dock_top"></div>
@@ -2577,21 +2579,15 @@
 <script id="tplPlump_Tpiece_hb"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_Tpiece_hb" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 533px; top: 567px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tpice_ht " style=""> <div class="tpice-hl plumb_body" style="box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; height: 20px; width: 20px;"></div> <div class="tpice-hm plumb_body" style="box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset; height: 20px; width: 20px;"> <div class="bogen_bl_shadow" style="box-shadow: rgb(0, 0, 0) 0px 0px 10px 2px; height: 10px; width: 10px; left: -10px; top: 20px;"></div> <div class="bogen_br_shadow" style="box-shadow: rgb(0, 0, 0) 0px 0px 10px 2px; height: 10px; width: 10px; right: -11px; top: 20px;"></div> </div> <div class="tpice-hr plumb_body" style="box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; height: 20px; width: 20px;"></div> <div class="tpice-b plumb_body" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset; height: 20px; width: 20px;"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_Tpiece_hb" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 168px; top: 331px; position: absolute;" id="19finspim"> <div class="vis-widget-prev-body"> <div class="tpice_ht "> <div id="19finspim_svg" class="plumb-svg plumb-rotate90"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <radialGradient id="19finspim_c" gradientUnits="userSpaceOnUse" cy="400" cx="400" gradientTransform="matrix(0 -1.393 1.4925 1.0237e-12 -197.01 957.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".71429"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> <radialGradient id="19finspim_b" gradientUnits="userSpaceOnUse" cy="400" cx="600" gradientTransform="matrix(-1.4925 0 0 -1.393 1295.5 757.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#fffffe" stop-opacity="0" offset=".66667"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> <linearGradient id="19finspim_e" y2="400" gradientUnits="userSpaceOnUse" x2="500" y1="200" x1="500"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <linearGradient id="19finspim_d" y2="300" gradientUnits="userSpaceOnUse" x2="400" y1="300" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </linearGradient> <linearGradient id="19finspim_a" y2="500" gradientUnits="userSpaceOnUse" x2="400" y1="500" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <g> <path id="19finspim_fill" d="m400 200h200v200h-200zm-200-200h200v600h-200z" fill="#c0c0c0"></path> <g> <rect height="200" width="200" y="200" x="200" fill="url(#19finspim_c)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finspim_b)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finspim_d)"></rect> <rect height="200" width="200" y="200" x="400" fill="url(#19finspim_e)"></rect> <rect height="200" width="200" y="400" x="200" fill="url(#19finspim_a)"></rect> <rect height="200" width="200" y="0" x="200" fill="url(#19finspim_a)"></rect> </g> </g> </svg> </div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_HB"
         data-vis-attrs="conLeft;conRight;conBottom">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 30, 30 ],"aspectRatio": true}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_hb(el, data) %>>
-			<div class="tpice_ht " style="">
-			    <div class="tpice-hl plumb_body"></div>
-			    <div class="tpice-hm plumb_body">
-                    <div class="bogen_bl_shadow"></div>
-                    <div class="bogen_br_shadow"></div>
-			    </div>
-			    <div class="tpice-hr plumb_body"></div>
-			    <div class="tpice-b plumb_body"></div>
+			<div class="tpice_ht " >
+	            <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-rotate90"></div>
 				<div class="plumb_dock_bottom"></div>
 				<div class="plumb_dock_left"></div>
 				<div class="plumb_dock_right"></div>
@@ -2605,20 +2601,15 @@
 <script id="tplPlump_Tpiece_vl"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_Tpiece_vl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 173px; top: 431px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tpice_vl " style=""> <div class="tpice-vl plumb_body" style="box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset;"></div> <div class="tpice-vt plumb_body" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="tpice-vml plumb_body"> <div class="bogen_tl_shadow" style="box-shadow: rgb(0, 0, 0) 0px 0px 10px 2px; height: 10px; width: 10px; left: -11px; top: 20px;"></div> <div class="bogen_bl_shadow" style="box-shadow: rgb(0, 0, 0) 0px 0px 10px 2px; height: 10px; width: 10px; left: -10px; bottom: 20px;"></div> </div> <div class="tpice-vb plumb_body" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_Tpiece_vl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 429px; top: 637px; position: absolute;" id="19finrjcc"> <div class="vis-widget-prev-body"> <div class="tpice_vl "> <div id="19finrjcc_svg" class="plumb-svg plumb-rotate180"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <radialGradient id="19finrjcc_c" gradientUnits="userSpaceOnUse" cy="400" cx="400" gradientTransform="matrix(0 -1.393 1.4925 1.0237e-12 -197.01 957.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".71429"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> <radialGradient id="19finrjcc_b" gradientUnits="userSpaceOnUse" cy="400" cx="600" gradientTransform="matrix(-1.4925 0 0 -1.393 1295.5 757.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#fffffe" stop-opacity="0" offset=".66667"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> <linearGradient id="19finrjcc_e" y2="400" gradientUnits="userSpaceOnUse" x2="500" y1="200" x1="500"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <linearGradient id="19finrjcc_d" y2="300" gradientUnits="userSpaceOnUse" x2="400" y1="300" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </linearGradient> <linearGradient id="19finrjcc_a" y2="500" gradientUnits="userSpaceOnUse" x2="400" y1="500" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <g> <path id="19finrjcc_fill" d="m400 200h200v200h-200zm-200-200h200v600h-200z" fill="#c0c0c0"></path> <g> <rect height="200" width="200" y="200" x="200" fill="url(#19finrjcc_c)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finrjcc_b)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finrjcc_d)"></rect> <rect height="200" width="200" y="200" x="400" fill="url(#19finrjcc_e)"></rect> <rect height="200" width="200" y="400" x="200" fill="url(#19finrjcc_a)"></rect> <rect height="200" width="200" y="0" x="200" fill="url(#19finrjcc_a)"></rect> </g> </g> </svg> </div> <div class="tpice-vb plumb_body"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_VL"
         data-vis-attrs="conLeft;conBottom;conTop">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 30, 30 ],"aspectRatio": true}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_vl(el, data) %>>
-			<div class="tpice_vl " style="">
-			    <div class="tpice-vl plumb_body"></div>
-			     <div class="tpice-vt plumb_body"></div>
-			    <div class="tpice-vml plumb_body">
-                    <div class="bogen_tl_shadow"></div>
-                    <div class="bogen_bl_shadow"></div>
-			    </div>
+			<div class="tpice_vl " >
+			    <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-rotate180"></div>
 
 			    <div class="tpice-vb plumb_body"></div>
 				<div class="plumb_dock_top"></div>
@@ -2635,21 +2626,15 @@
 <script id="tplPlump_Tpiece_vr"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_Tpiece_vr" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_r pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 337.0000228881836px; top: 261.00000762939453px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tpice_vl " style=""> <div class="tpice-vr plumb_body" style="box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset;"></div> <div class="tpice-vt plumb_body" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="tpice-vmr plumb_body" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset;"> <div class="bogen_tr_shadow" style="box-shadow: rgb(0, 0, 0) 0px 0px 10px 2px; height: 10px; width: 10px; right: -11px; top: 20px;"></div> <div class="bogen_br_shadow" style="box-shadow: rgb(0, 0, 0) 0px 0px 10px 2px; height: 10px; width: 10px; right: -10px; bottom: 20px;"></div> </div> <div class="tpice-vb plumb_body" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_Tpiece_vr" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 506px; top: 329px; position: absolute;" id="19fins6o6"> <div class="vis-widget-prev-body"> <div class="tpice_vr "> <div id="19fins6o6_svg" class="plumb-svg plumb-rotate90"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <radialGradient id="19fins6o6_c" gradientUnits="userSpaceOnUse" cy="400" cx="400" gradientTransform="matrix(0 -1.393 1.4925 1.0237e-12 -197.01 957.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".71429"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> <radialGradient id="19fins6o6_b" gradientUnits="userSpaceOnUse" cy="400" cx="600" gradientTransform="matrix(-1.4925 0 0 -1.393 1295.5 757.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#fffffe" stop-opacity="0" offset=".66667"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset="1"></stop> </radialGradient> <linearGradient id="19fins6o6_e" y2="400" gradientUnits="userSpaceOnUse" x2="500" y1="200" x1="500"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <linearGradient id="19fins6o6_d" y2="300" gradientUnits="userSpaceOnUse" x2="400" y1="300" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </linearGradient> <linearGradient id="19fins6o6_a" y2="500" gradientUnits="userSpaceOnUse" x2="400" y1="500" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <g> <path id="19fins6o6_fill" d="m400 200h200v200h-200zm-200-200h200v600h-200z" fill="#c0c0c0"></path> <g> <rect height="200" width="200" y="200" x="200" fill="url(#19fins6o6_c)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19fins6o6_b)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19fins6o6_d)"></rect> <rect height="200" width="200" y="200" x="400" fill="url(#19fins6o6_e)"></rect> <rect height="200" width="200" y="400" x="200" fill="url(#19fins6o6_a)"></rect> <rect height="200" width="200" y="0" x="200" fill="url(#19fins6o6_a)"></rect> </g> </g> </svg> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_VR"
         data-vis-attrs="conBottom;conRight;conTop">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_r pl_t" data-vis-resizable='{"grid": [ 30, 30 ],"aspectRatio": true}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_vr(el, data) %>>
-			<div class="tpice_vl " style="">
-			    <div class="tpice-vr plumb_body"></div>
-			     <div class="tpice-vt plumb_body"></div>
-			    <div class="tpice-vmr plumb_body">
-                    <div class="bogen_tr_shadow"></div>
-                    <div class="bogen_br_shadow"></div>
-			    </div>
-			    <div class="tpice-vb plumb_body"></div>
+			<div  class="tpice_vr " >
+			    <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-rotate90"></div>
 				<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_bottom"></div>
 				<div class="plumb_dock_right"></div>
@@ -2664,14 +2649,14 @@
 <script id="tplPlump_tank_ent_e"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_tank_ent_e" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 110px; height: 240px; left: 330px; top: 47px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tank_ent-e " style=""> <div class="ent-e_top_pipe-l" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="ent-e_top_pipe-r" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="ent-e_top" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset, rgb(0, 0, 0) 0px 45px 45px -45px inset;"></div> <div class="ent-e_center" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset;"> <div class="ent-e_schott"></div> <div class="ent-e_kies"></div> </div> <div class="ent-e_bottom" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset;"></div> <div class="ent-e_bottom_pipe"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplPlump_tank_ent_e" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 110px; height: 240px; left: 330px; top: 47px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tank_ent-e " > <div class="ent-e_top_pipe-l" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="ent-e_top_pipe-r" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="ent-e_top" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset, rgb(0, 0, 0) 0px 45px 45px -45px inset;"></div> <div class="ent-e_center" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset;"> <div class="ent-e_schott"></div> <div class="ent-e_kies"></div> </div> <div class="ent-e_bottom" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset;"></div> <div class="ent-e_bottom_pipe"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank Enteisung"
         data-vis-attrs="conLeft;conRight;conTop;conBottom">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 50, 50 ],"aspectRatio": true}' style="min-width: 140px; min-height: 270px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.ent_e_top(el, data) %>>
-			<div class="tank_ent-e " style="">
+			<div class="tank_ent-e " >
                 <div class="ent-e_top_pipe-l plumb_dock_top"></div>
                 <div class="ent-e_top_pipe-r plumb_dock_top"></div>
                 <div class="ent-e_top">
@@ -2712,14 +2697,14 @@
 <script id="tplPlump_tank_simple"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_tank_simple" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": false}" style="min-width: 70px; min-height: 135px; left: 354px; top: 82px; width: 100px; height: 175px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tank_simple" style=""> <div class="tank_simple_svg"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 300 600"> <defs> <clipPath clipPathUnits="userSpaceOnUse"> <path d="m150-0.172a150 100 0 0 0 -150 100l-0.0042 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="#C0C0C0"></path> </clipPath> <linearGradient gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity=".302" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <radialGradient xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="400" cx="150" gradientTransform="matrix(-1 0 0 -.893 300 857)" r="150"></radialGradient> <linearGradient > <stop stop-color="#ffffff" stop-opacity=".3" offset="0"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <radialGradient xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="203" cx="150" gradientTransform="matrix(1 0 0 .893 .005 -87.2)" r="150"></radialGradient> </defs> <path d="m150-0.142a150 100 0 0 0 -150 100l0.0025 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="#C0C0C0"></path> <rect style="color:#000000" clip-path="url(#f)" height="480" width="300" y="120" x="0" fill="#0000ff"></rect> <path style="color:#000000" d="m0 100h300v400h-300z" fill="url(#g)"></path> <path style="color:#000000" d="m300 500a150 100 0 0 1 -75 86.75 150 100 0 0 1 -150 0 150 100 0 0 1 -75 -86.75h150z" stroke-width="0.1" fill="url(#i)"></path> <path style="color:#000000" fill="url(#h)" d="m0 99.85a150 100.1 0 0 1 150 -100 150 100.1 0 0 1 150 100h-150z"></path> </svg> </div> <div class="plumb_dock_left ui-droppable" style="top: 128px; left: -10px; height: 15px; width: 80px; box-shadow: rgb(0, 0, 0) 0px 7.5px 7.5px -7.5px inset, rgb(0, 0, 0) 0px -7.5px 7.5px -7.5px inset; background: silver;"></div><div class="plumb_dock_right ui-droppable" style="top: 32px; right: -10px; height: 15px; width: 80px; box-shadow: rgb(0, 0, 0) 0px 7.5px 7.5px -7.5px inset, rgb(0, 0, 0) 0px -7.5px 7.5px -7.5px inset; background: silver;"></div></div> </div></div></div>'
+        data-vis-prev='<div id="prev_tplPlump_tank_simple" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": false}" style="min-width: 70px; min-height: 135px; left: 354px; top: 82px; width: 100px; height: 175px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tank_simple" > <div class="tank_simple_svg"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 300 600"> <defs> <clipPath clipPathUnits="userSpaceOnUse"> <path d="m150-0.172a150 100 0 0 0 -150 100l-0.0042 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="#C0C0C0"></path> </clipPath> <linearGradient gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#ffffff" stop-opacity=".302" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <radialGradient xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="400" cx="150" gradientTransform="matrix(-1 0 0 -.893 300 857)" r="150"></radialGradient> <linearGradient > <stop stop-color="#ffffff" stop-opacity=".3" offset="0"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <radialGradient xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="203" cx="150" gradientTransform="matrix(1 0 0 .893 .005 -87.2)" r="150"></radialGradient> </defs> <path d="m150-0.142a150 100 0 0 0 -150 100l0.0025 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="#C0C0C0"></path> <rect style="color:#000000" clip-path="url(#f)" height="480" width="300" y="120" x="0" fill="#0000ff"></rect> <path style="color:#000000" d="m0 100h300v400h-300z" fill="url(#g)"></path> <path style="color:#000000" d="m300 500a150 100 0 0 1 -75 86.75 150 100 0 0 1 -150 0 150 100 0 0 1 -75 -86.75h150z" stroke-width="0.1" fill="url(#i)"></path> <path style="color:#000000" fill="url(#h)" d="m0 99.85a150 100.1 0 0 1 150 -100 150 100.1 0 0 1 150 100h-150z"></path> </svg> </div> <div class="plumb_dock_left ui-droppable" style="top: 128px; left: -10px; height: 15px; width: 80px; box-shadow: rgb(0, 0, 0) 0px 7.5px 7.5px -7.5px inset, rgb(0, 0, 0) 0px -7.5px 7.5px -7.5px inset; background: silver;"></div><div class="plumb_dock_right ui-droppable" style="top: 32px; right: -10px; height: 15px; width: 80px; box-shadow: rgb(0, 0, 0) 0px 7.5px 7.5px -7.5px inset, rgb(0, 0, 0) 0px -7.5px 7.5px -7.5px inset; background: silver;"></div></div> </div></div></div>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank"
         data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[0];oid;color[#C0C0C0]/color;water_color[#0000ff]/color;group.conTop;conTop_show/checkbox;conTop_size[20]/slider,5,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_size[20]/slider,5,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_size[20]/slider,5,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_size[20]/slider,5,50,5;conRight_pos[50]/slider,0,100,1;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t pl_b" data-vis-resizable='{}' style="min-width: 70px; min-height: 135px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tank_simple(el, data) %>>
-			<div class="tank_simple" style="">
+			<div class="tank_simple" >
             	<div class="tank_simple_svg">
 				<div class="plumb_dock_left"></div>
 				<div class="plumb_dock_right"></div>
@@ -2729,6 +2714,7 @@
         </div>
     </div>
 </script>
+
 
 
 

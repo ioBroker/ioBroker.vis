@@ -372,6 +372,9 @@ vis = $.extend(true, vis, {
             for (var i = 0; i < that.activeWidgets.length; i++) {
                 var widID = $('#' + that.activeWidgets[i]).attr('id');
 
+                var xid =  (new Date).valueOf().toString(32);
+
+
                 var $target = $('#' + widID);
                 var $clone = $target.clone();
                 $clone.wrap('<div>');
@@ -383,7 +386,8 @@ vis = $.extend(true, vis, {
                     .replace('ui-draggable', ' ')
                     .replace('ui-resizable', ' ')
                     .replace('<div class="editmode-helper"></div>', '')
-                    .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, '')
+                    //.replace(/(id=")[A-Za-z0-9\[\]._]+"/g, '')
+                    .replace(/w([0-9]){5}/g, xid)
                     .replace(/(?:\r\n|\r|\n)/g, '')
                     .replace(/\t/g, ' ')
                     .replace(/[ ]{2,}/g, ' ');
@@ -1255,7 +1259,9 @@ vis = $.extend(true, vis, {
             change: function (event, ui) {
                 that.changeView($(this).val());
             }
-        });
+        }).selectmenu("menuWidget").parent().addClass("view-select-menu");
+
+
         this.$copyWidgetSelectView.val(this.activeView);
         this.$copyWidgetSelectView.selectmenu();
         $('#inspect_view_theme').selectmenu({width: '100%'});
