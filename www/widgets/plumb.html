@@ -572,30 +572,23 @@
             var id = $this.attr("id");
             var plumb = vis.binds.plumb.data;
 
-
             vis.binds.plumb.data[id] = {
                 type: "pump",
                 cons: [],
                 coli: false,
-                from: id,
-                conLeft: null,
-                conRight: null,
-                conTop: null,
-                conBottom: null,
+                conLeft: data.conLeft || null,
+                conRight: data.conRight || null,
+                conTop: data.conTop || null,
+                conBottom: data.conBottom || null,
                 status: false,
                 color: {
                     c: null,
                     c_from: null,
                     c_default: null
                 }
-            }
+            };
 
             var self = plumb[id];
-            self.cons = [];
-            self.conLeft = data.conLeft || null;
-            self.conRight = data.conRight || null;
-            self.conTop = data.conTop || null;
-            self.conBottom = data.conBottom || null;
 
             setTimeout(function () {
 
@@ -607,67 +600,70 @@
 
                 if (data.conTop_show == true) {
                     self.cons.push("conTop");
-                    $this.find(".pump").append('<div class="plumb_dock_top"></div>');
+                    $this.find(".pump").append('<div id="'+id+'_dock_top_svg" class="plumb_dock_top"></div>');
+                    vis.binds.plumb.svg_pipe_v(id+"_dock_top");
+
                     s = (data.conTop_size || 20);
                     t = "-10";
                     l = (($this.width() - s) / 100 * (data.conTop_pos || 50));
-                    shadow = s / 2;
+
                     $this.find(".plumb_dock_top").css({
                         top: t + "px",
                         left: l + "px",
                         height: "20px",
-                        width: s + "px",
-                        background: "silver",
-                        "box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'
-                    })
+                        width: s + "px"
+                    });
+
+                    $("#" + id+"_dock_top_fill").attr("fill", data.color_off);
+
                 }
                 if (data.conBottom_show == true) {
                     self.cons.push("conBottom");
-                    $this.find(".pump").append('<div class="plumb_dock_bottom"></div>');
+                    $this.find(".pump").append('<div id="'+id+'_dock_bottom_svg" class="plumb_dock_bottom"></div>');
+                    vis.binds.plumb.svg_pipe_v(id+"_dock_bottom");
                     s = (data.conBottom_size || 20);
                     t = "-10";
                     l = (($this.width() - s) / 100 * (data.conBottom_pos || 50));
-                    shadow = s / 2;
+
                     $this.find(".plumb_dock_bottom").css({
                         bottom: t + "px",
                         left: l + "px",
                         height: "20px",
-                        width: s + "px",
-                        background: "silver",
-                        "box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'
-                    })
+                        width: s + "px"
+                    });
+                    $("#" + id+"_dock_bottom_fill").attr("fill", data.color_off);
                 }
                 if (data.conLeft_show == true) {
-                    self.cons.push("conLeft")
-                    $this.find(".pump").append('<div class="plumb_dock_left"></div>');
+                    self.cons.push("conLeft");
+                    $this.find(".pump").append('<div id="'+id+'_dock_left_svg" class="plumb_dock_left"></div>');
+                    vis.binds.plumb.svg_pipe_h(id+"_dock_left");
                     s = (data.conLeft_size || 20);
                     l = "-10";
                     t = (($this.height() - s) / 100 * (data.conLeft_pos || 50));
-                    shadow = s / 2;
+
                     $this.find(".plumb_dock_left").css({
                         top: t + "px",
                         left: l + "px",
                         height: s + "px",
-                        width: "20px",
-                        background: "silver",
-                        "box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'
-                    })
+                        width: "20px"
+                    });
+                    $("#" + id+"_dock_left_fill").attr("fill", data.color_off);
                 }
                 if (data.conRight_show == true) {
-                    self.cons.push("conRight")
-                    $this.find(".pump").append('<div class="plumb_dock_right"></div>');
+                    self.cons.push("conRight");
+                    $this.find(".pump").append('<div id="'+id+'_dock_right_svg" class="plumb_dock_right"></div>');
+                    vis.binds.plumb.svg_pipe_h(id+"_dock_right");
                     s = (data.conRight_size || 20);
                     l = "-10";
                     t = (($this.height() - s) / 100 * (data.conRight_pos || 50));
-                    shadow = s / 2;
+
                     $this.find(".plumb_dock_right").css({
                         top: t + "px",
                         right: l + "px",
                         height: s + "px",
-                        width: "20px",
-                        background: "silver",
-                        "box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'
-                    })
+                        width: "20px"
+                    });
+                    $("#" + id+"_dock_right_fill").attr("fill", data.color_off);
                 }
 
                 vis.binds.plumb.plumb_drop($this);
@@ -713,15 +709,17 @@
                 }
                 self.color = ev.color;
                 $.each(self.cons, function () {
-                    $this.find(".plumb_dock_right, .plumb_dock_left, .plumb_dock_top, .plumb_dock_bottom").css("background", ev.color.c);
+                    $("#" + id+"_dock_top_fill").attr("fill", ev.color.c);
+                    $("#" + id+"_dock_bottom_fill").attr("fill", ev.color.c);
+                    $("#" + id+"_dock_left_fill").attr("fill", ev.color.c);
+                    $("#" + id+"_dock_right_fill").attr("fill", ev.color.c);
                     if ($("#" + self[this])) {
                         $("#" + self[this]).trigger(ev);
                     }
                 });
             });
 
-            setTimeout(function () {
-                //console.log("hallo")
+            setTimeout(function () { //todo change to view renderd finish event
                 var ev = {
                     type: "plumb_change",
                     from: id,
@@ -739,7 +737,10 @@
                 }
                 self.color = ev.color;
                 $.each(self.cons, function () {
-                    $this.find(".plumb_dock_right, .plumb_dock_left, .plumb_dock_top, .plumb_dock_bottom").css("background", ev.color.c);
+                    $("#" + id+"_dock_top_fill").attr("fill", ev.color.c);
+                    $("#" + id+"_dock_bottom_fill").attr("fill", ev.color.c);
+                    $("#" + id+"_dock_left_fill").attr("fill", ev.color.c);
+                    $("#" + id+"_dock_right_fill").attr("fill", ev.color.c);
                     if ($("#" + self[this])) {
                         $("#" + self[this]).trigger(ev);
                     }
@@ -2038,11 +2039,11 @@
             </clipPath>\
             <linearGradient id="g" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
             <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
-            <stop stop-color="#000000" stop-opacity=".302" offset=".5"/>\
+            <stop stop-color="#000000" stop-opacity="0" offset=".5"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
             <linearGradient id="a">\
-            <stop stop-color="#000000" stop-opacity=".3" offset="0"/>\
+            <stop stop-color="#000000" stop-opacity="0" offset="0"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
             <radialGradient id="i" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="400" cx="150" gradientTransform="matrix(-1 0 0 -.893 300 857)" r="150"/>\
@@ -2219,10 +2220,10 @@
                 <div class="editmode-helper" style="z-index:0" />
             <% } %>
             <img class="pump_img" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
-				<div class="plumb_dock_top"></div>
-				<div class="plumb_dock_bottom"></div>
-				<div class="plumb_dock_left"></div>
-				<div class="plumb_dock_right"></div>
+				<div id="<%= this.data.attr('wid') %>_dock_left_svg" class="plumb-dock-svg plumb_dock_left"></div>
+				<div id="<%= this.data.attr('wid') %>_dock_left_svg" class="plumb-dock-svg plumb_dock_right"></div>
+				<div id="<%= this.data.attr('wid') %>_dock_left_svg" class="plumb-dock-svg plumb_dock_top"></div>
+				<div id="<%= this.data.attr('wid') %>_dock_left_svg" class="plumb-dock-svg plumb_dock_bottom"></div>
 			</div>
         </div>
     </div>
@@ -2666,10 +2667,10 @@
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tank_simple(el, data) %>>
 			<div class="tank_simple" >
             	<div class="tank_simple_svg">
-				<div class="plumb_dock_left"></div>
-				<div class="plumb_dock_right"></div>
-				<div class="plumb_dock_top"></div>
-				<div class="plumb_dock_bottom"></div>
+				<div id="<%= this.data.attr('wid') %>_dock_left_svg" class="plumb-dock-svg plumb_dock_left"></div>
+				<div id="<%= this.data.attr('wid') %>_dock_right_svg" class="plumb-dock-svg plumb_dock_right"></div>
+				<div id="<%= this.data.attr('wid') %>_dock_top_svg" class="plumb-dock-svg plumb_dock_top"></div>
+				<div id="<%= this.data.attr('wid') %>_dock_bottom_svg" class="plumb-dock-svg plumb_dock_bottom"></div>
 			</div>
         </div>
     </div>
