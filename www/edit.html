@@ -30,8 +30,7 @@
     <link rel="stylesheet" type="text/css" href="css/backgrounds.css"/>
     <link rel="stylesheet" type="text/css" href="css/vis.css"/>
     <link rel="stylesheet" type="text/css" href="css/vis_editor.css"/>
-    <link rel="stylesheet" type="text/css" href="css/vis-common-user.css"/>
-    <link rel="stylesheet" type="text/css" id="project_css"/>
+
 
     <script type="text/javascript" src="lib/js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery-ui-1.11.3.full.min.js"></script>
@@ -49,6 +48,8 @@
     <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script>
     <script type="text/javascript" src="lib/js/superclick.js"></script>
+    <script type="text/javascript" src="lib/ace/ace.js"></script>
+    <script type="text/javascript" src="lib/ace/ext-language_tools.js"></script>
 
     <script type="text/javascript" src="widgets/colorpicker/js/farbtastic.js"></script>
 
@@ -663,6 +664,9 @@
                 <li>
                     <a id="widget_tab" href="#tab_wid_attr" style="padding: 2px 4px 2px 4px" class="translate">Widget</a>
                 </li>
+                <li>
+                    <a id="cssEditor_tab" href="#tab_css_edit" style="padding: 2px 4px 2px 4px" class="translate">CSS</a>
+                </li>
 
             </ul>
             <div class="tab_attr ui-widget-content" id="tab_view_attr">
@@ -860,6 +864,20 @@
                         <tbody id="widget_attrs"></tbody>
                     </table>
                 </div>
+            </div>
+            <div class="tab_attr ui-widget-content" id="tab_css_edit">
+                <div id="css_editor_head">
+                    <select  id="select_css_file" style=" width: 100px;">
+                        <option value="vis-common-user">USER</option>
+                        <option value="vis-user">PROJECT</option>
+                    </select>
+                    <input id="css_find"/>
+                    <button id="css_find_prev"></button>
+                    <button id="css_find_next"></button>
+                    <button id="css_file_save"></button>
+                </div>
+                <div id="css_editor"></div>
+
             </div>
         </div>
     </div>
