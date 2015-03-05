@@ -24,6 +24,16 @@ body{
     outline: none;
 }
 
+div#vis_container {
+    width: -webkit-calc(100% - 5px);
+    width: calc(100% - 2px);
+    height: -webkit-calc(100% - 30px);
+    height: calc(100% - 30px);
+    position: relative;
+    overflow: auto;
+    border-bottom-width: 0px;
+}
+
 ::-webkit-scrollbar {
     width: 16px;
     height: 16px;
