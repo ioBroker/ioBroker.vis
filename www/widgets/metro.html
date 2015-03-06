@@ -339,8 +339,14 @@
             if (isNaN(width))  width  = undefined;
             if (isNaN(height)) height = undefined;
             
+            level_id   = level_id   || '';
             working_id = working_id || '';
-            level_id = level_id     || '';
+
+            sliderOptions.min = (sliderOptions.min === undefined || sliderOptions.min == null || sliderOptions.min == '') ? 0.00 : parseFloat(sliderOptions.min);
+            sliderOptions.max = (sliderOptions.max === undefined || sliderOptions.min == null || sliderOptions.max == '') ? 1.00 : parseFloat(sliderOptions.max);
+
+            var range =  sliderOptions.max - sliderOptions.min;
+            var factor = 100 / range;
 
             $(el).parent().click(function () {
                 $.metroDialog({
@@ -365,8 +371,13 @@
                         html += '</div>';
                         content.html(html);
 
-                        sliderOptions.min = 0;
-                        sliderOptions.max = 1;
+                        var val = vis.states.attr(level_id + '.val');
+                        if (val === true || val === 'true') val = sliderOptions.max;
+                        val = parseFloat(val);
+                        if (isNaN(val)) val = sliderOptions.min;
+
+                        val = Math.floor((val - sliderOptions.min) * factor);
+                        sliderOptions.position = val;
 
                         vis.binds.metro.slider(document.getElementById('metroSlider_' + wid), sliderOptions);
                         vis.binds.basic.checkbox(document.getElementById(wid + '_checkbox'), true, sliderOptions.min, sliderOptions.max);

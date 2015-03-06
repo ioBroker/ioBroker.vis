@@ -306,6 +306,23 @@ $.extend(systemDictionary, {
         "ru": "Например 'Значение объекта' >= 'Значения для условия"
     },
     "visibility-val": {"en": "Vavue for condition", "de": "Wert für die Bedingung", "ru": "Значение для условия"},
+
+    "Global": {"en": "Global", "de": "Global", "ru": "Общая"},
+    "Project": {"en": "Project", "de": "Projekt", "ru": "Проект"},
+    "Align width": {
+        "en": "Align width. Press more time to get the desired width.",
+        "de": "Gleiche Breite. Mehrmals druken um gewünschte Breite einzustellen.",
+        "ru": "Одинаковая ширина. Нажать несколько раз для получения желаемой ширина"
+    },
+    "Align height": {
+        "en": "Align height. Press more time to get the desired height.",
+        "de": "Gleiche Höhe. Mehrmals druken um gewünschte Höhe einzustellen.",
+        "ru": "Одинаковая высота. Нажать несколько раз для получения желаемой высоты"
+    },
+    "Find previous": {"en": "Find previous", "de": "Finde vorherige", "ru": "Искать назад"},
+    "Find next": {"en": "Find next", "de": "Finde nächste", "ru": "Искать вперёд"},
+    "Save CSS": {"en": "Save CSS", "de": "Speichern CSS", "ru": "Сохранить CSS"},
+
     "css_left": {"en": "left", "de": "left", "ru": "left"},
     "css_top": {"en": "top", "de": "top", "ru": "top"},
     "css_width": {"en": "width", "de": "width", "ru": "width"},

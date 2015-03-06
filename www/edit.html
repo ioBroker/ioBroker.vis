@@ -2,7 +2,7 @@
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
 <head>
 
-    <!-- ioBroker.vis Version 0.2.6 -->
+    <!-- ioBroker.vis Version 0.2.7 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
@@ -424,6 +424,12 @@
                         <td>
                             <div id="wid_dis_v" class="btn-iconbar ui-corner-all translateT" title="Align vertical/equal"><img class="icon-on-iconbar" src="icon/distribute-vertical-equal.png"></div>
                         </td>
+                        <td>
+                            <div id="wid_align_width" class="btn-iconbar ui-corner-all translateT" title="Align width"><img class="icon-on-iconbar" src="icon/align-width.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_align_height" class="btn-iconbar ui-corner-all translateT" title="Align height"><img class="icon-on-iconbar" src="icon/align-height.png"></div>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -643,11 +649,7 @@
             </div>
             <button id="view_select_right"></button>
         </div>
-        <div id="vis_container" class="ui-widget-content" caption="Views">
-            <!--div id="allwidgets_helper" style="display: none">
-                <div id="allwidgets_inner_helper"></div>
-            </div-->
-
+        <div id="vis_container" style="width: 100%; height: 100%; overflow: hidden" class="ui-widget-content" caption="Views">
             <div id="size_x"
                  style="display:none; z-index: 99; position: absolute; top: 0; width:0; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
             <div id="size_y"
@@ -868,13 +870,13 @@
             <div class="tab_attr ui-widget-content" id="tab_css_edit">
                 <div id="css_editor_head">
                     <select  id="select_css_file" style=" width: 100px;">
-                        <option value="vis-common-user">USER</option>
-                        <option value="vis-user">PROJECT</option>
+                        <option value="vis-common-user" class="translate">Global</option>
+                        <option value="vis-user"        class="translate">Project</option>
                     </select>
                     <input id="css_find"/>
-                    <button id="css_find_prev"></button>
-                    <button id="css_find_next"></button>
-                    <button id="css_file_save"></button>
+                    <button id="css_find_prev" class="translateT" title="Find previous"></button>
+                    <button id="css_find_next" class="translateT" title="Find next"></button>
+                    <button id="css_file_save" class="translateT" title="Save CSS"></button>
                 </div>
                 <div id="css_editor"></div>
 

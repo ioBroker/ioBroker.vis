@@ -44,7 +44,8 @@ vis = $.extend(true, vis, {
     objects:               {},
     config:                {},
     objectSelector:        false, // if object select ID activated
-
+    alignIndex:            0,
+    alignType:             '',
 
     editInit: function () {
         var that = this;
@@ -429,8 +430,8 @@ vis = $.extend(true, vis, {
 
          }, 10000);*/
 
-        // Instances
-        if (typeof storage !== 'undefined' && local == false) {
+        // Instances (Actually not used)
+        /*if (typeof storage !== 'undefined' && local == false) {
             // Show what's new
             if (storage.get('lastVersion') != this.version) {
                 // Read
@@ -465,7 +466,7 @@ vis = $.extend(true, vis, {
                     }
                 });
             }
-        }
+        }*/
         if (this.config.groupsState) this.groupsState = this.config.groupsState;
     },
     editInitDialogs: function () {
@@ -800,7 +801,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_dis_h").click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
@@ -848,7 +848,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_dis_v").click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
@@ -894,6 +893,54 @@ vis = $.extend(true, vis, {
                 top = top + $("#" + this.wid).height();
                 that.showWidgetHelper(this.wid, true);
             });
+            that.save();
+        });
+        $("#wid_align_width").click(function () {
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+            if (that.alignType != 'wid_align_width') {
+                that.alignIndex = 0;
+                that.alignValues = [];
+                for (var t = 0; t < that.activeWidgets.length; t++) {
+                    that.alignValues.push($('#' + that.activeWidgets[t]).width());
+                }
+
+                that.alignType = 'wid_align_width';
+            }
+            that.alignIndex++;
+            if (that.alignIndex >= that.activeWidgets.length) that.alignIndex = 0;
+
+            for (var t = 0; t < that.activeWidgets.length; t++) {
+                $('#' + that.activeWidgets[t]).width(that.alignValues[that.alignIndex]);
+                that.views[that.activeView].widgets[that.activeWidgets[t]].style.width = that.alignValues[that.alignIndex] + "px";
+                that.showWidgetHelper(that.activeWidgets[t], true);
+            }
+            that.save();
+        });
+        $("#wid_align_height").click(function () {
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+            if (that.alignType != 'wid_align_height') {
+                that.alignIndex = 0;
+                that.alignValues = [];
+                for (var t = 0; t < that.activeWidgets.length; t++) {
+                    that.alignValues.push($('#' + that.activeWidgets[t]).height());
+                }
+
+                that.alignType = 'wid_align_height';
+            }
+            that.alignIndex++;
+            if (that.alignIndex >= that.activeWidgets.length) that.alignIndex = 0;
+
+            for (var t = 0; t < that.activeWidgets.length; t++) {
+                $('#' + that.activeWidgets[t]).height(that.alignValues[that.alignIndex]);
+                that.views[that.activeView].widgets[that.activeWidgets[t]].style.height = that.alignValues[that.alignIndex] + "px";
+                that.showWidgetHelper(that.activeWidgets[t], true);
+            }
             that.save();
         });
 
@@ -1296,7 +1343,7 @@ vis = $.extend(true, vis, {
         editor.getSession().setUseWrapMode(true);
 
         editor.getSession().on('change', function(e) {
-            $("#"+file).text(editor.getValue())
+            $("#" + file).text(editor.getValue());
         });
 
 
@@ -1307,23 +1354,23 @@ vis = $.extend(true, vis, {
                 file = $(this).val();
                 editor.setValue($("#"+file).text());
                 editor.navigateFileEnd();
-                editor.focus()
+                editor.focus();
             }
         });
 
         editor.setValue($("#"+ file).text());
         $(document).bind("vis-common-user", function(e){
             editor.setValue($("#"+ file).text());
-            editor.navigateFileEnd()
+            editor.navigateFileEnd();
         });
 
 
         $("#cssEditor_tab").click(function(){
-            editor.focus()
+            editor.focus();
         });
 
         $("#pan_attr").resize(function(){
-            editor.resize()
+            editor.resize();
         });
 
 
@@ -1361,18 +1408,14 @@ vis = $.extend(true, vis, {
             },
             text: false
         }).click(function() {
-                if ($("#select_css_file").val() == "vis-user") {
-                    that.conn.writeFile('../' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css' , editor.getValue() );
-                }
+            if ($("#select_css_file").val() == 'vis-user') {
+                that.conn.writeFile(vis.projectPrefix + 'vis-user.css' , editor.getValue());
+            }
 
-
-                if ($("#select_css_file").val() == "vis-common-user") {
-                    that.conn.writeFile('../vis/css/vis-common-user.css', editor.getValue());
-                }
-
-            });
-
-
+            if ($("#select_css_file").val() == 'vis-common-user') {
+                that.conn.writeFile('../vis/css/vis-common-user.css', editor.getValue());
+            }
+        });
     },
     editInitNext: function () {
         // ioBroker.vis Editor Init
@@ -3453,6 +3496,8 @@ vis = $.extend(true, vis, {
         var view = this.getViewOfWidget(wid);
 
         if (!onlyUpdate) {
+            this.alignIndex = 0;
+
             var s = JSON.stringify(this.activeWidgets);
             if (JSON.stringify(this.views[this.activeView].activeWidgets) != s) {
                 this.views[this.activeView].activeWidgets = JSON.parse(s);

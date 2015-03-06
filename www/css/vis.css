@@ -14,8 +14,6 @@ div#vis_container {
     user-select: none;
 }
 
-
-
 .dashui-inspect-css {
     color: initial !important;
 
@@ -34,7 +32,6 @@ div#vis_container {
 }
 
 .vis-view {
-    position: absolute;
     top: 0;
     min-height: 100%;
     min-width: 100%;

@@ -1187,18 +1187,18 @@ if ('applicationCache' in window) {
         //$('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
 
         $.ajax({
-            url:      "css/vis-common-user.css",
+            url:      'css/vis-common-user.css',
             type:     'GET',
             dataType: 'html',
             cache:    this.useCache,
             success:  function (data) {
-                $('head').append('<style id="vis-common-user">'+data+'</style>');
-                $(document).trigger('vis-common-user')
+                $('head').append('<style id="vis-common-user">' + data + '</style>');
+                $(document).trigger('vis-common-user');
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                vis.conn.logError('Cannot load vis-common-user.css' + errorThrown);
+                vis.conn.logError('Cannot load vis-common-user.css - ' + errorThrown);
                 $('head').append('<style id="vis-common-user"></style>');
-                $(document).trigger('vis-common-user')
+                $(document).trigger('vis-common-user');
             }
         });
 
@@ -1208,13 +1208,13 @@ if ('applicationCache' in window) {
             dataType: 'html',
             cache:    this.useCache,
             success:  function (data) {
-                $('head').append('<style id="vis-user">'+data+'</style>');
-                $(document).trigger('vis-user')
+                $('head').append('<style id="vis-user">' + data + '</style>');
+                $(document).trigger('vis-user');
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                vis.conn.logError('Cannot load /' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css ' + errorThrown);
+                vis.conn.logError('Cannot load /' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css - ' + errorThrown);
                 $('head').append('<style id="vis-user"></style>');
-                $(document).trigger('vis-user')
+                $(document).trigger('vis-user');
             }
         });
 
