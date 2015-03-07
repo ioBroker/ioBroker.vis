@@ -6441,7 +6441,7 @@
   margin-top: 40px;
   width: 100%;
   height: calc(100% - 40px);
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 
   -webkit-box-sizing: content-box;

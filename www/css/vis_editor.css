@@ -1,27 +1,37 @@
+html{
+    -webkit-user-select: none;
+    user-select: none;
+    overflow: hidden!important;
+    position: absolute!important;
+    width: 100%!important;
+    height: 100%!important;
+
+}
+body{
+    min-height: 100%!important;
+    max-height: 100%!important;
+    overflow: hidden!important;
+    position: absolute!important;
+    width: 100%!important;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+:focus {
+    outline: none;
+}
 
 div#vis_container {
     width: -webkit-calc(100% - 5px);
-    width: calc(100% - 5px);
+    width: calc(100% - 2px);
     height: -webkit-calc(100% - 30px);
     height: calc(100% - 30px);
     position: relative;
     overflow: auto;
     border-bottom-width: 0px;
-    /* margin: 0; */
-    /* padding: 0; */
-}
-
-body {
-    border-width: 0px 1px 1px 1px !important;
-    width: -webkit-calc(100% - 2px) !important;
-    width: calc(100% - 2px) !important;
-    min-height: -webkit-calc(100% - 1px) !important;
-    min-height: calc(100% - 1px) !important;
-    max-height: -webkit-calc(100% - 1px) !important;
-    max-height: calc(100% - 1px) !important;
-}
-
-html {
 }
 
 ::-webkit-scrollbar {
@@ -456,11 +466,10 @@ html {
     width: 190px;
     display: inline-block;
     height: 100%;
-
-    border-right-width: 0px;
-    /* border-bottom-width: 1px; */
-    border-top-width: 0px;
-    border-left-width: 0px;
+    /* border-right-width: 0;*/
+    border-bottom-width: 0; 
+    border-top-width: 0;
+    border-left-width: 0;
     /* display: inline-block; */
     float: left;
 }
@@ -513,7 +522,7 @@ html {
 #view_select_left {
     height: 28px;
     width: 28px;
-    border-radius: 0px;
+    border-radius: 0;
     margin: 0;
 }
 
@@ -537,7 +546,7 @@ html {
     width: 28px;
     position: absolute;
     right: -2px;
-    border-radius: 0px;
+    border-radius: 0;
 }
 
 .view-select-tab {
@@ -555,9 +564,11 @@ html {
 }
 
 /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
-
+#css_find_prev{
+    margin-left: 4px
+}
 .tab_attr {
-    padding: 0px 0px 0px 4px !important;
+    padding: 0 0 0 4px !important;
     border-width: 1px 0 0 0 !important;
     font-size: 12px;
     font-weight: normal !important;
@@ -727,4 +738,32 @@ td > .select_active_widget :nth-child(2) {
     position: absolute;
     top: 0;
     right: 0;
+}
+#css_editor_head {
+    height: 30px;
+    display: flex;
+    padding: 2px;
+    /* line-height: 25px; */
+    /* display: none; */
+}
+#css_editor {
+    height: calc(100% - 30px);
+    width: 100%;
+}
+#css_find{
+    margin-left: 10px;
+    /* display: inline-block; */
+    /* height: 22px; */
+    /* position: relative; */
+    /* top: -8px; */
+    width: calc(100% - 210px);
+}
+#css_file_save{
+margin-left: 10px;
+}
+
+.view-select-menu {
+    height: calc(100% - 100px);
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
