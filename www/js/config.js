@@ -21,6 +21,11 @@ var visConfig = {
         "special",
         "swipe",
         "dev"*/
-    ],
-    language: window.navigator.userLanguage || window.navigator.language
+    ]
 };
+
+if (typeof exports != 'undefined') {
+    exports.config = visConfig;
+} else {
+	visConfig.language = window.navigator.userLanguage || window.navigator.language;
+}

@@ -9,15 +9,17 @@
  *
  */
 /* jshint browser:true */
-/* global document*/
-/* global console*/
-/* global session*/
-/* global window*/
-/* global location*/
-/* global setTimeout*/
-/* global clearTimeout*/
-/* global io*/
-/* global $*/
+/* global document */
+/* global console */
+/* global session */
+/* global window */
+/* global location */
+/* global setTimeout */
+/* global clearTimeout */
+/* global io */
+/* global $ */
+/* global visConfig */
+/* global systemLang */
 "use strict";
 
 // we should detect either local path here and not online.
@@ -147,9 +149,7 @@ var vis = {
         o[id + '.ack'] = false;
 
         // Create this value
-        if (this.states.attr(id + '.val') === undefined) {
-            vis.states.attr(o);
-        }
+        if (this.states.attr(id + '.val') === undefined) this.states.attr(o);
 
         var that = this;
 
@@ -247,30 +247,58 @@ var vis = {
         }
         return widgetSets;
     },
+    // Return as array used widgetSets or null if no information about it
+    getUsedObjectIDs: function () {
+        var widgetSets = [];
+
+        if (!this.views) {
+            console.log('Check why views are not yet loaded!');
+            return null;
+        }
+        var IDs = [];
+
+        for (var view in this.views) {
+            for (var id in this.views[view].widgets) {
+                // Check all attributes
+                var data = this.views[view].widgets[id].data;
+                for (var attr in data) {
+                    if (attr.match(/oid$/)) {
+                        if (data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    }
+                }
+            }
+        }
+        return IDs;
+    },
     loadWidgetSets: function (callback) {
         this.showWaitScreen(true, '<br>' + _('Loading Widget-Sets...') + ' <span id="widgetset_counter"></span>', null, 20);
         var arrSets = [];
 
-        // Get list of used widget sets. if Edit mode list is null.
-        var widgetSets = this.editMode ? null : this.getUsedWidgetSets();
+        // If widgets are preloaded
+        if (this.binds && this.binds.stateful !== undefined) {
+            this.toLoadSetsCount = 0;
+        } else {
+            // Get list of used widget sets. if Edit mode list is null.
+            var widgetSets = this.editMode ? null : this.getUsedWidgetSets();
 
-        // Firts calculate how many sets to load
-        for (var i = 0; i < this.widgetSets.length; i++) {
-            var name = this.widgetSets[i].name || this.widgetSets[i];
+            // Firts calculate how many sets to load
+            for (var i = 0; i < this.widgetSets.length; i++) {
+                var name = this.widgetSets[i].name || this.widgetSets[i];
 
-            // Skip unused widget sets in non-edit mode
-            if (widgetSets && widgetSets.indexOf(name) == -1) {
-                continue;
+                // Skip unused widget sets in non-edit mode
+                if (widgetSets && widgetSets.indexOf(name) == -1) {
+                    continue;
+                }
+
+                arrSets[arrSets.length] = name;
+
+                if (this.editMode && this.widgetSets[i].edit) {
+                    arrSets[arrSets.length] = this.widgetSets[i].edit;
+                }
             }
-
-            arrSets[arrSets.length] = name;
-
-            if (this.editMode && this.widgetSets[i].edit) {
-                arrSets[arrSets.length] = this.widgetSets[i].edit;
-            }
+            this.toLoadSetsCount = arrSets.length;
+            $("#widgetset_counter").html("<span style='font-size:10px'>(" + (this.toLoadSetsCount) + ")</span>");
         }
-        this.toLoadSetsCount = arrSets.length;
-        $("#widgetset_counter").html("<span style='font-size:10px'>(" + (vis.toLoadSetsCount) + ")</span>");
 
         var that = this;
         if (this.toLoadSetsCount) {
@@ -280,9 +308,7 @@ var vis = {
                 }, 100, j);
             }
         } else {
-            if (callback) {
-                callback();
-            }
+            if (callback) callback.call(this);
         }
     },
     bindInstance: function () {
@@ -308,97 +334,92 @@ var vis = {
         this.loadWidgetSets(this.initNext);
     },
     initNext: function () {
-        this.loadRemote(function () {
+        this.showWaitScreen(false);
+
+        // First start.
+        if (!this.views) {
+            this.initViewObject();
+            return false;
+        } else {
             this.showWaitScreen(false);
+        }
 
-            // First start.
-            if (!this.views) {
-                this.initViewObject();
-                return false;
-            } else {
-                this.showWaitScreen(false);
-            }
-
-            this.visibility = {};
-            // Build the visibility array
-            if (!this.editMode && this.views) {
-                for (var view in this.views) {
-                    for (var id in this.views[view].widgets) {
-                        if (!this.editMode && this.views[view].widgets[id].data && this.views[view].widgets[id].data['visibility-oid']) {
-                            var oid = this.views[view].widgets[id].data['visibility-oid'];
-                            if (!this.visibility[oid]) this.visibility[oid] = [];
-                            this.visibility[oid].push({view: view, widget: id});
-                        }
+        this.visibility = {};
+        // Build the visibility array
+        if (!this.editMode && this.views) {
+            for (var view in this.views) {
+                for (var id in this.views[view].widgets) {
+                    if (!this.editMode && this.views[view].widgets[id].data && this.views[view].widgets[id].data['visibility-oid']) {
+                        var oid = this.views[view].widgets[id].data['visibility-oid'];
+                        if (!this.visibility[oid]) this.visibility[oid] = [];
+                        this.visibility[oid].push({view: view, widget: id});
                     }
                 }
             }
+        }
 
-            var hash = window.location.hash.substring(1);
+        var hash = window.location.hash.substring(1);
 
-            // View selected?
-            if (!hash) {
-                // Take first view in the list
-                for (var view in this.views) {
-                    this.activeView = view;
-                    break;
-                }
-                // Create default view in demo mode
-                if (typeof io == 'undefined') {
-                    if (!this.activeView) {
-                        if (!this.editMode) {
-                            alert(_("error - View doesn't exist"));
-                            window.location.href = "./edit.html";
-                        } else {
-                            this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                            this.activeView = "DemoView";
-                            //vis.showWaitScreen(false);
-                        }
-                    }
-                }
-
-                if (this.activeView == '') {
+        // View selected?
+        if (!hash) {
+            // Take first view in the list
+            for (var view in this.views) {
+                this.activeView = view;
+                break;
+            }
+            // Create default view in demo mode
+            if (typeof io == 'undefined') {
+                if (!this.activeView) {
                     if (!this.editMode) {
-                        alert(_('error - View doesn\'t exist'));
-                        window.location.href = 'edit.html';
+                        alert(_("error - View doesn't exist"));
+                        window.location.href = "./edit.html";
                     } else {
-                        // All views were deleted, but file exists. Create demo View
-                        //alert("unexpected error - this should not happen :(");
-                        //$.error("this should not happen :(");
-                        // create demoView
                         this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                        this.activeView = 'DemoView';
+                        this.activeView = "DemoView";
+                        //vis.showWaitScreen(false);
                     }
-                }
-            } else {
-                if (this.views[hash]) {
-                    this.activeView = hash;
-                } else {
-                    alert(_("error - View doesn't exist"));
-                    window.location.href = "./edit.html";
-                    $.error("vis Error can't find view");
                 }
             }
 
-            $('#active_view').html(this.activeView);
-
-            // Navigation
-            $(window).bind('hashchange', function (e) {
-                this.changeView(window.location.hash.slice(1));
-            });
-
-            this.bindInstance();
-
-            // EDIT mode
-            if (this.editMode) {
-                    this.editInitNext();
+            if (this.activeView == '') {
+                if (!this.editMode) {
+                    alert(_('error - View doesn\'t exist'));
+                    window.location.href = 'edit.html';
+                } else {
+                    // All views were deleted, but file exists. Create demo View
+                    //alert("unexpected error - this should not happen :(");
+                    //$.error("this should not happen :(");
+                    // create demoView
+                    this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                    this.activeView = 'DemoView';
                 }
-            this.initialized = true;
-            // If this function called earlier, it makes problems under FireFox.
-            this.changeView(this.activeView);
+            }
+        } else {
+            if (this.views[hash]) {
+                this.activeView = hash;
+            } else {
+                alert(_("error - View doesn't exist"));
+                window.location.href = "./edit.html";
+                $.error("vis Error can't find view");
+            }
+        }
 
+        $('#active_view').html(this.activeView);
 
-
+        // Navigation
+        $(window).bind('hashchange', function (e) {
+            this.changeView(window.location.hash.slice(1));
         });
+
+        this.bindInstance();
+
+        // EDIT mode
+        if (this.editMode) {
+                this.editInitNext();
+            }
+        this.initialized = true;
+        // If this function called earlier, it makes problems under FireFox.
+        this.changeView(this.activeView);
     },
     initViewObject: function () {
         if (!this.editMode) {
@@ -418,8 +439,8 @@ var vis = {
     setViewSize: function (view) {
         var $view = $("#visview_" + view);
         // Because of background, set the width and height of the view
-        var width = parseInt(vis.views[view].settings.sizex, 10);
-        var height = parseInt(vis.views[view].settings.sizey, 10);
+        var width = parseInt(this.views[view].settings.sizex, 10);
+        var height = parseInt(this.views[view].settings.sizey, 10);
         if (!width || width < $(window).width()) {
             width = '100%';
         }
@@ -447,6 +468,8 @@ var vis = {
         });
     },
     renderView: function (view, noThemeChange, hidden) {
+        var that = this;
+
         if (!this.views[view] || !this.views[view].settings) {
             alert('Cannot render view ' + view + '. Invalid settings');
             return false;
@@ -506,14 +529,14 @@ var vis = {
         // move views in container
         $("#visview_" + view).find("div[id$='container']").each(function () {
             var cview = $(this).attr("data-vis-contains");
-            if (!vis.views[cview]) {
+            if (!that.views[cview]) {
                 $(this).append("error: view not found.");
                 return false;
             } else if (cview == view) {
                 $(this).append("error: view container recursion.");
                 return false;
             }
-            vis.renderView(cview, true);
+            that.renderView(cview, true);
             $("#visview_" + cview).appendTo(this);
             $("#visview_" + cview).show();
         });
@@ -573,7 +596,7 @@ var vis = {
         this.renderWidget(this.activeView, widget);
     },
     changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
-        var widgets = this.views[vis.activeView].widgets;
+        var widgets = this.views[this.activeView].widgets;
         var that = this;
         if (!filter) {
             // show all
@@ -609,7 +632,7 @@ var vis = {
                 $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
             }
         } else {
-            this.viewsActiveFilter[vis.activeView] = filter.split(',');
+            this.viewsActiveFilter[this.activeView] = filter.split(',');
             var mWidget;
             for (var widget in widgets) {
                 //console.log(widgets[widget]);
@@ -847,10 +870,11 @@ var vis = {
         if (local) {
             try {
                 this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
-                that.views = JSON.parse(storage.get(this.storageKeyViews));
+                this.views = JSON.parse(storage.get(this.storageKeyViews));
+                this.IDs = this.getUsedObjectIDs();
                 if (callback) callback.call(that, callbackArg);
             } catch (err) {
-                that.views = null
+                this.views = null
                 if (callback) callback.call(that, callbackArg);
             }
         } else {
@@ -869,6 +893,7 @@ var vis = {
                     } else {
                         that.views = data;
                     }
+                    that.IDs = that.getUsedObjectIDs();
                 } else {
                     that.views = null;
                 }
@@ -1091,8 +1116,8 @@ if ('applicationCache' in window) {
         window.applicationCache.addEventListener('updateready', function (e) {
             if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
                 vis.showWaitScreen(true, null, _('Update found, loading new Files...'), 100);
-                jQuery("#waitText").attr("id", "waitTextDisabled");
-                jQuery(".vis-progressbar").hide();
+                $("#waitText").attr("id", "waitTextDisabled");
+                $(".vis-progressbar").hide();
                 try {
                     window.applicationCache.swapCache();
                 } catch (_e) {
@@ -1227,13 +1252,11 @@ if ('applicationCache' in window) {
                         if (vis.isFirstTime) {
                             vis.conn.getVersion(function (version) {
                                 if (version) {
-                                    //vis.conn.readFile("www/vis/css/vis-user.css");
-
                                     if (compareVersion(version, vis.requiredServerVersion)) {
-                                        // TODO Translate
-                                        vis.showMessage('Warning: requires Server version ' + vis.requiredServerVersion + ' - found Server version ' + version + ' - please update Server.');
+                                        vis.showMessage(_('Warning: requires Server version %s - found Server version %s - please update Server.',  vis.requiredServerVersion, version));
                                     }
-                                } //else {
+                                }
+                                //else {
                                     // Possible not authenticated, wait for request from server
                                 //}
                             });
@@ -1241,74 +1264,76 @@ if ('applicationCache' in window) {
                             vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
                         }
 
-                        // Read all states from server
-                        vis.conn.getStates(function (error, data) {
-                            if (data) {
-                                for (var id in data) {
-                                    var obj = data[id];
-                                    var o = {};
-                                    o[id + '.val'] = obj.val;
-                                    o[id + '.ts']  = obj.ts;
-                                    // BF @ HQ: Why?
-                                    if (true){ //} || vis.states[id + '.val'] !== undefined) {
-                                        o[id + '.ack'] = obj.ack;
-                                        o[id + '.lc']  = obj.lc;
-                                    }
-                                    try {
-                                        vis.states.attr(o);
-                                    } catch (e) {
-                                        vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
-                                    }
-                                }
-                            }
-
-
-                            if (error) {
-                                console.log("Possibly not authenticated, wait for request from server");
-                                // Possibly not authenticated, wait for request from server
-                            } else {
-                                // Get Server language
-                                vis.conn.getConfig(function (err, config) {
-                                    systemLang = config.language || systemLang;
-                                    vis.language = systemLang;
-                                    vis.dateFormat = config.dateFormat;
-                                    translateAll();
-                                    if (vis.isFirstTime) {
-                                        // Init edit dialog
-                                        if (vis.editMode && vis.editInit) vis.editInit();
-                                        vis.isFirstTime = false;
-                                        vis.init();
-                                    }
-                                });
-
-                                // If metaIndex required, load it
-                                if (vis.editMode) {
-                                    /* socket.io */
-                                    if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
-
-                                    // Read all data objects from server
-                                    vis.conn.getObjects(function (err, data) {
-                                        vis.objects = data;
-                                        // Detect if objects are loaded
-                                        for (var ob in data) {
-                                            vis.objectSelector = true;
-                                            break;
+                        // first of all try to load views
+                        vis.loadRemote(function () {
+                            // Read all states from server
+                            vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
+                                if (data) {
+                                    for (var id in data) {
+                                        var obj = data[id];
+                                        var o = {};
+                                        o[id + '.val'] = obj.val;
+                                        o[id + '.ts']  = obj.ts;
+                                        // BF @ HQ: Why?
+                                        if (true){ //} || vis.states[id + '.val'] !== undefined) {
+                                            o[id + '.ack'] = obj.ack;
+                                            o[id + '.lc']  = obj.lc;
                                         }
-                                    });
+                                        try {
+                                            vis.states.attr(o);
+                                        } catch (e) {
+                                            vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                                        }
+                                    }
                                 }
 
-                                //console.log((new Date()) + " socket.io reconnect");
-                                if (vis.isFirstTime) {
-                                    setTimeout(function () {
+                                if (error) {
+                                    console.log("Possibly not authenticated, wait for request from server");
+                                    // Possibly not authenticated, wait for request from server
+                                } else {
+                                    // Get Server language
+                                    vis.conn.getConfig(function (err, config) {
+                                        systemLang = config.language || systemLang;
+                                        vis.language = systemLang;
+                                        vis.dateFormat = config.dateFormat;
+                                        translateAll();
                                         if (vis.isFirstTime) {
                                             // Init edit dialog
                                             if (vis.editMode && vis.editInit) vis.editInit();
                                             vis.isFirstTime = false;
                                             vis.init();
                                         }
-                                    }, 1000);
+                                    });
+
+                                    // If metaIndex required, load it
+                                    if (vis.editMode) {
+                                        /* socket.io */
+                                        if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
+
+                                        // Read all data objects from server
+                                        vis.conn.getObjects(function (err, data) {
+                                            vis.objects = data;
+                                            // Detect if objects are loaded
+                                            for (var ob in data) {
+                                                vis.objectSelector = true;
+                                                break;
+                                            }
+                                        });
+                                    }
+
+                                    //console.log((new Date()) + " socket.io reconnect");
+                                    if (vis.isFirstTime) {
+                                        setTimeout(function () {
+                                            if (vis.isFirstTime) {
+                                                // Init edit dialog
+                                                if (vis.editMode && vis.editInit) vis.editInit();
+                                                vis.isFirstTime = false;
+                                                vis.init();
+                                            }
+                                        }, 1000);
+                                    }
                                 }
-                            }
+                            });
                         });
                     } else {
                         //console.log((new Date()) + " socket.io disconnect");
