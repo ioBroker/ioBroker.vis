@@ -46,6 +46,9 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+### 0.2.8 (2015-03-08)
+- (bluefox) fix the version numbers
+
 ### 0.2.7 (2015-03-08)
 - (SmilingJack) add css editor
 - (SmilingJack) bugfix zoom
