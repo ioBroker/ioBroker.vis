@@ -322,6 +322,7 @@ $.extend(systemDictionary, {
     "Find previous": {"en": "Find previous", "de": "Finde vorherige", "ru": "Искать назад"},
     "Find next": {"en": "Find next", "de": "Finde nächste", "ru": "Искать вперёд"},
     "Save CSS": {"en": "Save CSS", "de": "Speichern CSS", "ru": "Сохранить CSS"},
+    "CSS": {"en": "CSS", "de": "CSS", "ru": "CSS"},
 
     "css_left": {"en": "left", "de": "left", "ru": "left"},
     "css_top": {"en": "top", "de": "top", "ru": "top"},

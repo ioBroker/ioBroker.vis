@@ -342,10 +342,15 @@ var servConn = {
         this._socket.emit('setState', pointId, value);
     },
     // callback (err, data)
-    getStates: function (callback) {
+    getStates: function (IDs, callback) {
+        if (typeof IDs == 'function') {
+            callback = IDs;
+            IDs = null;
+        }
+
         if (!this._checkConnection('getStates', arguments)) return;
 
-        this._socket.emit('getStates', function (err, data) {
+        this._socket.emit('getStates', IDs, function (err, data) {
             if (err || !data) {
                 if (callback) {
                     callback(err || 'Authentication required');
