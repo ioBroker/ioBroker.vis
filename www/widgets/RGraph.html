@@ -15,7 +15,7 @@
         $.extend(systemDictionary, {
             "min_value"          : {"en": "Min value",      "de": "Min Wert",             "ru": "Мин. значение"},
             "max_value"          : {"en": "Max value",      "de": "Max Wert",             "ru": "Макс. значение"},
-            "max_value_id"       : {"en": "Max value ID",   "de": "Max Wert Objekt",      "ru": "ID макс. значения"},
+            "max_value_oid"       : {"en": "Max value ID",   "de": "Max Wert Objekt",      "ru": "ID макс. значения"},
             "width"              : {"en": "Widget width",   "de": "Widgetbreite",         "ru": "Ширина элемента"},
             "control"            : {"en": "Control",        "de": "Steuerung",            "ru": "Контроль"},
             "factor"             : {"en": "Multiply factor","de": "Wert multiplizieren",  "ru": "Фактор-множитель"},
@@ -707,7 +707,7 @@
 
             values[0] = values[0] * factor + offset;
 
-            var max_value = data.attr("max_value_id") ? vis.states.attr(data.attr('max_value_id') + '.val') : data.attr('max_value');
+            var max_value = data.attr("max_value_oid") ? vis.states.attr(data.attr('max_value_oid') + '.val') : data.attr('max_value');
 
             var t = new RGraph.Gauge("c"+data.attr('wid'), parseFloat(data.attr("min_value")), parseFloat(max_value), values);
 
@@ -1243,7 +1243,7 @@
         data-vis-prev='<img src="widgets/RGraph/img/Prev_gauge.png"></img>'
         data-vis-set="RGraph"
         data-vis-name="Gauge-Basic"
-        data-vis-attrs="oid/id;oid_2/id;oid_3/id;min_value[0];max_value[100];max_value_id/id;factor[1];value_offset[0];control/checkbox;animate/checkbox;"
+        data-vis-attrs="oid/id;oid_2/id;oid_3/id;min_value[0];max_value[100];max_value_oid/id;factor[1];value_offset[0];control/checkbox;animate/checkbox;"
         data-vis-attrs0="group.scale;a_start/slider,0,360;a_end/slider,0,720;ticks_big_color/color;ticks_small_color/color;border_outer_color/color;border_inner_color/color;"
         data-vis-attrs1="group.background;back_color/color;background_gradient/checkbox;border_outline_color/color;"
         data-vis-attrs2="group.needle;needle_colors/color;needle_type/select,triangle,line;needle_tail/checkbox;needle_size/slider,5,500,1;centerpin_radius/slider,0,500,1;centerpin_color/color;"

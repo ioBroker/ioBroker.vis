@@ -87,7 +87,7 @@ if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemL
 
 var vis = {
 
-    version:                '0.2.8',
+    version:                '0.2.9',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -262,7 +262,55 @@ var vis = {
                 // Check all attributes
                 var data = this.views[view].widgets[id].data;
                 for (var attr in data) {
-                    if (attr.match(/oid$/)) {
+
+                    /* TODO DO do not forget remove it after a while */
+                    if (attr == 'state_id') {
+                        data.state_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'number_id') {
+                        data.number_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'toggle_id') {
+                        data.toggle_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'set_id') {
+                        data.set_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'temp_id') {
+                        data.temp_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'drive_id') {
+                        data.drive_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'content_id') {
+                        data.content_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'dialog_id') {
+                        data.dialog_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    }  else
+                    if (attr == 'max_value_id') {
+                        data.max_value_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    }  else
+                    if (attr == 'dialog_id') {
+                        data.dialog_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    }  else
+                    if (attr == 'dialog_id') {
+                        data.dialog_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+
+
+                    if ((attr.match(/oid$/) || attr.match(/^oid/)) && data[attr]) {
                         if (data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
                     }
                 }
