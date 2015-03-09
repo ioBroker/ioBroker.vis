@@ -184,8 +184,8 @@
 
                     if (btn && !vis.editMode) {
                         $(btn).bind('click', function () {
-                            if (that._parent._options.ack_id) {
-                                vis.setValue(that._parent._options.ack_id, that._print_id);
+                            if (that._parent._options.ack_oid) {
+                                vis.setValue(that._parent._options.ack_oid, that._print_id);
                             }
 
                             if (that._parent._options.view_for_print) {
@@ -203,8 +203,8 @@
 
         onAckButton: function () {
             //if (btn && !vis.editMode)
-            if (this._parent._options.ack_id) {
-                vis.setValue(this._parent._options.ack_id, this._ack_id);
+            if (this._parent._options.ack_oid) {
+                vis.setValue(this._parent._options.ack_oid, this._ack_id);
             }
         },
 
@@ -262,10 +262,10 @@
             vis.binds.table.initTable();
             options.tclass = options.tclass || 'tclass';
 
-            if (options.event_id) {
-                vis.binds.table.registerIds(wid, options.event_id);
+            if (options.event_oid) {
+                vis.binds.table.registerIds(wid, options.event_oid);
             } else {
-                vis.binds.table.registerIds(wid, options.table_id);
+                vis.binds.table.registerIds(wid, options.table_oid);
             }
 
             // Set default width and height
@@ -274,7 +274,7 @@
             style.height = style.height || options.defaultHeight;
 
             // read actual table as json string
-            var tableJson = options.table_id ? vis.states.attr(options.table_id + '.val') : null;
+            var tableJson = options.table_oid ? vis.states.attr(options.table_oid + '.val') : null;
             var table = [];
             if (tableJson && (typeof tableJson == "string")) {
                 try {
@@ -294,7 +294,7 @@
 
             // Create widget container
             $('#' + wid).remove();
-            $('#visview_' + view).append('<div class="vis-widget ' + (options.tclass || "") + '" id="' + wid + '" data-oid="' + options.table_id + '" ></div>');
+            $('#visview_' + view).append('<div class="vis-widget ' + (options.tclass || "") + '" id="' + wid + '" data-oid="' + options.table_oid + '" ></div>');
             var elem = document.getElementById(wid);
             if (style) $(elem).css(style);
 
@@ -409,7 +409,7 @@
                     return;
 
                 // If new event came
-                if (objId == options.event_id) {
+                if (objId == options.event_oid) {
                     // Try to find, if this event yet exists
                     var $row = (newEvent._id !== undefined) ? $('tr[data-index="'+ newEvent._id+'"]') : [];
                     //
@@ -526,22 +526,22 @@
         class="vis-tpl"
         data-vis-set="table"
         data-vis-name="Table"
-        data-vis-attrs="table_id/id;event_id/id;table_class;hide_header[true]/checkbox;show_scroll/checkbox;detailed_wid;new_on_top/checkbox;btn_print;view_for_print/views;ack_id/id"
+        data-vis-attrs="table_oid/id;event_oid/id;table_class;hide_header[true]/checkbox;show_scroll/checkbox;detailed_wid;new_on_top/checkbox;btn_print;view_for_print/views;ack_oid/id"
         >
     <%
         var options =  {
             _class:         this.data.attr('class'),
             hide_header:    this.data.attr('hide_header'),
             style:          this.data.attr('style'),
-            table_id:       this.data.attr('table_id'),
-            event_id:       this.data.attr('event_id'),
+            table_oid:      this.data.attr('table_oid'),
+            event_oid:      this.data.attr('event_oid'),
             new_on_top:     this.data.attr('new_on_top'),
             show_scroll:    this.data.attr('show_scroll'),
             tclass:         this.data.attr('table_class'),
             detailed_wid:   this.data.attr('detailed_wid'),
             btn_print:      this.data.attr('btn_print'),
             view_for_print: this.data.attr('view_for_print'),
-            ack_id:         this.data.attr('ack_id'),
+            ack_oid:         this.data.attr('ack_oid'),
             defaultWidth:   200,
             defaultHeight:  200
         };
