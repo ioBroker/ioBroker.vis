@@ -600,8 +600,8 @@
 
                 if (data.conTop_show == true) {
                     self.cons.push("conTop");
-                    $this.find(".pump").append('<div id="'+id+'_dock_top_svg" class="plumb_dock_top"></div>');
-                    vis.binds.plumb.svg_pipe_v(id+"_dock_top");
+                    $this.find(".pump").append('<div id="' + id + '_dock_top_svg" class="plumb_dock_top"></div>');
+                    vis.binds.plumb.svg_pipe_v(id + "_dock_top");
 
                     s = (data.conTop_size || 20);
                     t = "-10";
@@ -614,13 +614,13 @@
                         width: s + "px"
                     });
 
-                    $("#" + id+"_dock_top_fill").attr("fill", data.color_off);
+                    $("#" + id + "_dock_top_fill").attr("fill", data.color_off);
 
                 }
                 if (data.conBottom_show == true) {
                     self.cons.push("conBottom");
-                    $this.find(".pump").append('<div id="'+id+'_dock_bottom_svg" class="plumb_dock_bottom"></div>');
-                    vis.binds.plumb.svg_pipe_v(id+"_dock_bottom");
+                    $this.find(".pump").append('<div id="' + id + '_dock_bottom_svg" class="plumb_dock_bottom"></div>');
+                    vis.binds.plumb.svg_pipe_v(id + "_dock_bottom");
                     s = (data.conBottom_size || 20);
                     t = "-10";
                     l = (($this.width() - s) / 100 * (data.conBottom_pos || 50));
@@ -631,12 +631,12 @@
                         height: "20px",
                         width: s + "px"
                     });
-                    $("#" + id+"_dock_bottom_fill").attr("fill", data.color_off);
+                    $("#" + id + "_dock_bottom_fill").attr("fill", data.color_off);
                 }
                 if (data.conLeft_show == true) {
                     self.cons.push("conLeft");
-                    $this.find(".pump").append('<div id="'+id+'_dock_left_svg" class="plumb_dock_left"></div>');
-                    vis.binds.plumb.svg_pipe_h(id+"_dock_left");
+                    $this.find(".pump").append('<div id="' + id + '_dock_left_svg" class="plumb_dock_left"></div>');
+                    vis.binds.plumb.svg_pipe_h(id + "_dock_left");
                     s = (data.conLeft_size || 20);
                     l = "-10";
                     t = (($this.height() - s) / 100 * (data.conLeft_pos || 50));
@@ -647,12 +647,12 @@
                         height: s + "px",
                         width: "20px"
                     });
-                    $("#" + id+"_dock_left_fill").attr("fill", data.color_off);
+                    $("#" + id + "_dock_left_fill").attr("fill", data.color_off);
                 }
                 if (data.conRight_show == true) {
                     self.cons.push("conRight");
-                    $this.find(".pump").append('<div id="'+id+'_dock_right_svg" class="plumb_dock_right"></div>');
-                    vis.binds.plumb.svg_pipe_h(id+"_dock_right");
+                    $this.find(".pump").append('<div id="' + id + '_dock_right_svg" class="plumb_dock_right"></div>');
+                    vis.binds.plumb.svg_pipe_h(id + "_dock_right");
                     s = (data.conRight_size || 20);
                     l = "-10";
                     t = (($this.height() - s) / 100 * (data.conRight_pos || 50));
@@ -663,7 +663,7 @@
                         height: s + "px",
                         width: "20px"
                     });
-                    $("#" + id+"_dock_right_fill").attr("fill", data.color_off);
+                    $("#" + id + "_dock_right_fill").attr("fill", data.color_off);
                 }
 
                 vis.binds.plumb.plumb_drop($this);
@@ -709,10 +709,10 @@
                 }
                 self.color = ev.color;
                 $.each(self.cons, function () {
-                    $("#" + id+"_dock_top_fill").attr("fill", ev.color.c);
-                    $("#" + id+"_dock_bottom_fill").attr("fill", ev.color.c);
-                    $("#" + id+"_dock_left_fill").attr("fill", ev.color.c);
-                    $("#" + id+"_dock_right_fill").attr("fill", ev.color.c);
+                    $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
+                    $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
+                    $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
+                    $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
                     if ($("#" + self[this])) {
                         $("#" + self[this]).trigger(ev);
                     }
@@ -737,10 +737,10 @@
                 }
                 self.color = ev.color;
                 $.each(self.cons, function () {
-                    $("#" + id+"_dock_top_fill").attr("fill", ev.color.c);
-                    $("#" + id+"_dock_bottom_fill").attr("fill", ev.color.c);
-                    $("#" + id+"_dock_left_fill").attr("fill", ev.color.c);
-                    $("#" + id+"_dock_right_fill").attr("fill", ev.color.c);
+                    $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
+                    $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
+                    $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
+                    $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
                     if ($("#" + self[this])) {
                         $("#" + self[this]).trigger(ev);
                     }
@@ -935,17 +935,18 @@
                     left = 0
                 } else if (data.position == "left-center") {
                     width = "100%";
-                    top = ($this.height() / 2) * -1;
-                    left = ($this.width()) * -1
+                    top = 0;
+                    left = ($this.width()/2) * -1
                 } else if (data.position == "right-center") {
                     width = "100%";
+                    top= 0;
                     left = ($this.width() / 2)
                 } else if (data.position == "top-left") {
                     top = ($this.height() / 2) * -1;
                     left = ($this.width() / 2) * -1
                 } else if (data.position == "top-right") {
-                    top = ($this.height() / 2) * -1;
-                    left = ($this.width() / 2)
+                    top = ($this.height() ) * -1;
+                    left = 0
                 } else if (data.position == "bottom-left") {
                     top = 0;
                     left = ($this.width()) * -1
@@ -1020,6 +1021,22 @@
                     <circle cx="250" cy="250" r="8"  fill="black"  />\
                 </svg>\
             ')
+
+                if (self.status == true || (vis.editMode == true && data.test == true)) {
+                    $wp.show()
+                } else {
+                    $wp.hide()
+                }
+
+//                if ((self.status == true || data.head_show == "true" || data.head_show == true ) || (vis.editMode == true && data.test == "true")) {
+//                    $head.css({
+//                        "background-color": data.head_color
+//                    });
+//                } else {
+//                    $head.css({
+//                        "background-color": "pransparent"
+//                    });
+//                }
             }
 
             setTimeout(function () {
@@ -2028,16 +2045,17 @@
 
 
             $this.find(".tank_simple_svg").append('\
-            <svg \
-            width="100%"\
+            <svg\
             height="100%"\
+            viewBox="0 0 300 600"\
+            width="100%"\
             preserveAspectRatio="none"\
-            viewBox="0 0 300 600">\
+             >\
             <defs>\
-            <clipPath id="f" clipPathUnits="userSpaceOnUse">\
-            <path d="m150-0.142a150 100 0 0 0 -150 100l0.0025 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="' + data.color + '"/>\
+            <clipPath id="e" clipPathUnits="userSpaceOnUse">\
+            <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
             </clipPath>\
-            <linearGradient id="g" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
+            <linearGradient id="d" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
             <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
             <stop stop-color="#000000" stop-opacity="0" offset=".5"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
@@ -2046,14 +2064,14 @@
             <stop stop-color="#000000" stop-opacity="0" offset="0"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
-            <radialGradient id="i" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="400" cx="150" gradientTransform="matrix(-1 0 0 -.893 300 857)" r="150"/>\
-            <radialGradient id="h" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="200" cx="150" gradientTransform="matrix(1 0 0 .893 .005 -87.2)" r="150"/>\
+            <radialGradient id="c" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
+            <radialGradient id="b" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
             </defs>\
-            <path d="m150-0.142a150 100 0 0 0 -150 100l0.0025 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="' + data.color + '"/>\
-            <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#f)" height="300" width="300" y="300" x="0" fill="' + data.water_color + '"/>\
-            <path fill="url(#g)" d="m0 100h300v400h-300z"  />\
-            <path fill="url(#i)" d="m300 500a150 100 0 0 1 -75 87 150 100 0 0 1 -150 0 150 100 0 0 1 -75 -87h150z" />\
-            <path fill="url(#h)" d="m0   100a150 100 0 0 1 150 -100 150 100 0 0 1 150 100h-150z"/>\
+            <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
+            <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#e)" height="300" width="300" y="300" x="0" fill="' + data.water_color + '"/>\
+            <path d="m0 50h300v500h-300z" fill="url(#d)"/>\
+            <path style="color:#000000" fill="url(#b)" d="m300 550a150 50 0 0 1 -75 43.301 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43.3h150z"/>\
+            <path style="color:#000000" fill="url(#c)" d="m0 50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43-0z"/>\
             </svg>\
             ');
             setTimeout(function () {
@@ -2173,13 +2191,16 @@
 
             });
 
-            function set(newVal) {
+            function set(_newVal) {
+                var newVal = _newVal || 0;
                 var step = 600 / 100;
                 var val;
                 if (data.type == "level") {
-                    step = 600 / (data.level_max - data.level_min);
+                    step = 600 / (data.level_max - data.level_min );
                     val = (newVal - data.level_min) * step;
-
+                    if (val < 0){
+                        val = 0
+                    }
                     $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
 
                 } else if (data.type == "bool") {
@@ -2191,7 +2212,7 @@
                         val = data.bool_off * step;
                     }
 
-                    $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
+                    $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val );
 
                 } else if (data.type == "fix") {
 
@@ -2230,6 +2251,7 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_i-strinkler"
@@ -2254,6 +2276,7 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_r-strinkler"
@@ -2264,10 +2287,13 @@
         data-vis-type="val"
         data-vis-name="Sprinker R"
         data-vis-attrs="position[center]/nselect,center,top-center,bottom-center,left-center,right-center,top-left,top-right,bottom-left,bottom-right;test/checkbox;width[100];time[30];start[0];ende[90];stroke[4];opacity[0.8];fog/checkbox;water_color[blue]/color;head_color[black]/color;head_show[true]/checkbox;head_round[true]/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true,"handles": "s, e"}' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true,"handles": "s, e"}' style=" width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="plumb_sprinkler_r_body vis-widget-body" <%= (el) -> vis.binds.plumb.sprinkler_r(el, data) %>>
+          <% if (vis.editMode) { %>
+            <div class="editmode-helper" />
+            <% } %>
 				<div class="plumb_sprinkler_r" style="display: 'none'">
-				<div class="plumb_sprinkler_r_water"></div>
+				    <div class="plumb_sprinkler_r_water"></div>
 				</div>
             	<div class="plumb_dock_top"></div>
 				<div class="plumb_dock_bottom"></div>
@@ -2278,12 +2304,13 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_pipe_V"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_pipe_V" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 5, 1 ],"handles": "all" }" style="width: 20px; height: 100px; left: 279px; top: 637px; position: absolute;" id="19finltig"> <div class="vis-widget-prev-body"> <div class="pipe_v"> <div id="19finltig_svg" class="plumb-svg"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100" "=""> <defs> <linearGradient id="19finltig_a" y2="50" gradientUnits="userSpaceOnUse" x2="100" y1="50"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <rect id="19finltig_fill" height="100" width="100" y="0" x="0" fill="#c0c0c0"></rect> <rect height="100" width="100" y="0" x="0" fill="url(#19finltig_a)"></rect> </svg> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> <div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_pipe_v.png" ></img>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_V"
@@ -2301,12 +2328,13 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_pipe_H"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_pipe_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r ui-draggable-handle " data-vis-resizable="{"grid": [ 1, 5 ]}" style="width: 100px; height: 20px; left: 597px; top: 638px; position: absolute;" id="19finnpkf"> <div class="vis-widget-prev-body"> <div class="pipe_h"> <div id="19finnpkf_svg" class="plumb-svg"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100" "=""> <defs> <linearGradient id="19finnpkf_a" x2="50" gradientUnits="userSpaceOnUse" y2="100" x1="50"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <rect id="19finnpkf_fill" height="100" width="100" y="0" x="0" fill="#c0c0c0"></rect> <rect height="100" width="100" y="0" x="0" fill="url(#19finnpkf_a)"></rect> </svg> </div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_pipe_h.png" class=""></img>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_H"
@@ -2324,12 +2352,13 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_bogen_br"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_bogen_br" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_r pl_b ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="width: 20px; height: 20px; left: 671px; top: 449px; position: absolute;" id="19fino9b3"> <div class="vis-widget-prev-body"> <div class="bogen_br"> <div id="19fino9b3_svg" class="plumb-svg plumb-rotate180"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <clipPath id="19fino9b3_clip"> <path d="m600 0a600 600 0 0 1 -600 600v-600z"></path> </clipPath> <radialGradient id="19fino9b3_a" gradientUnits="userSpaceOnUse" cy="0" cx="0" gradientTransform="matrix(0 2 -2 0 0 0)" r="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> </defs> <g clip-path="url(#19fino9b3_clip)"> <path id="19fino9b3_fill" fill="#c0c0c0" d="m600 0a600 600 0 0 1 -600 600v-600z"></path> <rect height="600" width="600" y="0" x="0" fill="url(#19fino9b3_a)"></rect> </g> </svg> </div> <div class="plumb_dock_right ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_bogen.png" class=""></img>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_br"
@@ -2347,12 +2376,13 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_bogen_bl"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_bogen_bl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_b ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="width: 20px; height: 20px; left: 229px; top: 482px; position: absolute;" id="prevw00002"> <div class="vis-widget-prev-body"> <div class="bogen_bl plumb_body"> <div id="prevw00002_svg" class="plumb-svg plumb-flip-y"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <clipPath id="prevw00002_clip"> <path d="m600 0a600 600 0 0 1 -600 600v-600z"></path> </clipPath> <radialGradient id="prevw00002_a" gradientUnits="userSpaceOnUse" cy="0" cx="0" gradientTransform="matrix(0 2 -2 0 0 0)" r="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> </defs> <g clip-path="url(#prevw00002_clip)"> <path id="prevw00002_fill" fill="#c0c0c0" d="m600 0a600 600 0 0 1 -600 600v-600z"></path> <rect height="600" width="600" y="0" x="0" fill="url(#prevw00002_a)"></rect> </g> </svg> </div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_bogen.png" class="plumb-flip-x"></img>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_bl"
@@ -2370,12 +2400,13 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_bogen_tr"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_bogen_tr" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_t pl_r ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="width: 20px; height: 20px; left: 572px; top: 511px; position: absolute;" id="19finp0p2"> <div class="vis-widget-prev-body"> <div class="bogen_tr plumb_body"> <div id="19finp0p2_svg" class="plumb-svg plumb-flip-x"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <clipPath id="19finp0p2_clip"> <path d="m600 0a600 600 0 0 1 -600 600v-600z"></path> </clipPath> <radialGradient id="19finp0p2_a" gradientUnits="userSpaceOnUse" cy="0" cx="0" gradientTransform="matrix(0 2 -2 0 0 0)" r="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> </defs> <g clip-path="url(#19finp0p2_clip)"> <path id="19finp0p2_fill" fill="#c0c0c0" d="m600 0a600 600 0 0 1 -600 600v-600z"></path> <rect height="600" width="600" y="0" x="0" fill="url(#19finp0p2_a)"></rect> </g> </svg> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_bogen.png" class="plumb-flip-y"></img>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_tr"
@@ -2393,12 +2424,13 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_bogen_tl"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_bogen_tl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_t pl_l ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": true, "handles": "s,e" }" style="width: 20px; height: 20px; left: 354px; top: 536px; position: absolute;" id="19finq3i4"> <div class="vis-widget-prev-body"> <div class="bogen_tl plumb_body"> <div id="19finq3i4_svg" class="plumb-svg"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <clipPath id="19finq3i4_clip"> <path d="m600 0a600 600 0 0 1 -600 600v-600z"></path> </clipPath> <radialGradient id="19finq3i4_a" gradientUnits="userSpaceOnUse" cy="0" cx="0" gradientTransform="matrix(0 2 -2 0 0 0)" r="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> </defs> <g clip-path="url(#19finq3i4_clip)"> <path id="19finq3i4_fill" fill="#c0c0c0" d="m600 0a600 600 0 0 1 -600 600v-600z"></path> <rect height="600" width="600" y="0" x="0" fill="url(#19finq3i4_a)"></rect> </g> </svg> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_bogen.png" class="plumb-rotate180"></img>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_tl"
@@ -2412,6 +2444,7 @@
 			</div>
         </div>
     </div>
+
 
 
 
@@ -2437,6 +2470,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script id="tplPlump_valve_V"
@@ -2457,6 +2491,7 @@
 			</div>
         </div>
     </div>
+
 
 
 
@@ -2483,6 +2518,7 @@
              </div>
          </div>
 
+
 </script>
 
 <script id="tplPlump_check_valve_V"
@@ -2505,12 +2541,13 @@
              </div>
          </div>
 
+
 </script>
 
 <script id="tplPlump_Tpiece_ht"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_Tpiece_ht" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 215px; top: 547px; position: absolute;" id="19finqooh"> <div class="vis-widget-prev-body"> <div class="tpice_ht"> <div id="19finqooh_svg" class="plumb-svg plumb-rotate270"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <radialGradient id="19finqooh_c" gradientUnits="userSpaceOnUse" cy="400" cx="400" gradientTransform="matrix(0 -1.393 1.4925 1.0237e-12 -197.01 957.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".71429"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> <radialGradient id="19finqooh_b" gradientUnits="userSpaceOnUse" cy="400" cx="600" gradientTransform="matrix(-1.4925 0 0 -1.393 1295.5 757.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".66667"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> <linearGradient id="19finqooh_e" y2="400" gradientUnits="userSpaceOnUse" x2="500" y1="200" x1="500"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <linearGradient id="19finqooh_d" y2="300" gradientUnits="userSpaceOnUse" x2="400" y1="300" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </linearGradient> <linearGradient id="19finqooh_a" y2="500" gradientUnits="userSpaceOnUse" x2="400" y1="500" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <g> <path id="19finqooh_fill" d="m400 200h200v200h-200zm-200-200h200v600h-200z" fill="#c0c0c0"></path> <g> <rect height="200" width="200" y="200" x="200" fill="url(#19finqooh_c)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finqooh_b)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finqooh_d)"></rect> <rect height="200" width="200" y="200" x="400" fill="url(#19finqooh_e)"></rect> <rect height="200" width="200" y="400" x="200" fill="url(#19finqooh_a)"></rect> <rect height="200" width="200" y="0" x="200" fill="url(#19finqooh_a)"></rect> </g> </g> </svg> </div> <div class="tpice-hr plumb_body"></div> <div class="tpice-t plumb_body"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_tpice.png" ></img>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_HT"
@@ -2531,12 +2568,13 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_Tpiece_hb"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_Tpiece_hb" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 168px; top: 331px; position: absolute;" id="19finspim"> <div class="vis-widget-prev-body"> <div class="tpice_ht "> <div id="19finspim_svg" class="plumb-svg plumb-rotate90"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <radialGradient id="19finspim_c" gradientUnits="userSpaceOnUse" cy="400" cx="400" gradientTransform="matrix(0 -1.393 1.4925 1.0237e-12 -197.01 957.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".71429"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> <radialGradient id="19finspim_b" gradientUnits="userSpaceOnUse" cy="400" cx="600" gradientTransform="matrix(-1.4925 0 0 -1.393 1295.5 757.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".66667"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> <linearGradient id="19finspim_e" y2="400" gradientUnits="userSpaceOnUse" x2="500" y1="200" x1="500"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <linearGradient id="19finspim_d" y2="300" gradientUnits="userSpaceOnUse" x2="400" y1="300" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </linearGradient> <linearGradient id="19finspim_a" y2="500" gradientUnits="userSpaceOnUse" x2="400" y1="500" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <g> <path id="19finspim_fill" d="m400 200h200v200h-200zm-200-200h200v600h-200z" fill="#c0c0c0"></path> <g> <rect height="200" width="200" y="200" x="200" fill="url(#19finspim_c)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finspim_b)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finspim_d)"></rect> <rect height="200" width="200" y="200" x="400" fill="url(#19finspim_e)"></rect> <rect height="200" width="200" y="400" x="200" fill="url(#19finspim_a)"></rect> <rect height="200" width="200" y="0" x="200" fill="url(#19finspim_a)"></rect> </g> </g> </svg> </div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_tpice.png" class="plumb-flip-y" ></img>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_HB"
@@ -2554,12 +2592,13 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_Tpiece_vl"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_Tpiece_vl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 429px; top: 637px; position: absolute;" id="19finrjcc"> <div class="vis-widget-prev-body"> <div class="tpice_vl "> <div id="19finrjcc_svg" class="plumb-svg plumb-rotate180"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <radialGradient id="19finrjcc_c" gradientUnits="userSpaceOnUse" cy="400" cx="400" gradientTransform="matrix(0 -1.393 1.4925 1.0237e-12 -197.01 957.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".71429"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> <radialGradient id="19finrjcc_b" gradientUnits="userSpaceOnUse" cy="400" cx="600" gradientTransform="matrix(-1.4925 0 0 -1.393 1295.5 757.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".66667"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> <linearGradient id="19finrjcc_e" y2="400" gradientUnits="userSpaceOnUse" x2="500" y1="200" x1="500"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <linearGradient id="19finrjcc_d" y2="300" gradientUnits="userSpaceOnUse" x2="400" y1="300" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </linearGradient> <linearGradient id="19finrjcc_a" y2="500" gradientUnits="userSpaceOnUse" x2="400" y1="500" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <g> <path id="19finrjcc_fill" d="m400 200h200v200h-200zm-200-200h200v600h-200z" fill="#c0c0c0"></path> <g> <rect height="200" width="200" y="200" x="200" fill="url(#19finrjcc_c)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finrjcc_b)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19finrjcc_d)"></rect> <rect height="200" width="200" y="200" x="400" fill="url(#19finrjcc_e)"></rect> <rect height="200" width="200" y="400" x="200" fill="url(#19finrjcc_a)"></rect> <rect height="200" width="200" y="0" x="200" fill="url(#19finrjcc_a)"></rect> </g> </g> </svg> </div> <div class="tpice-vb plumb_body"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_tpice.png" class="plumb-rotate270" style="margin:15px"></img>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_VL"
@@ -2580,12 +2619,13 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_Tpiece_vr"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_Tpiece_vr" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 60px; height: 60px; left: 506px; top: 329px; position: absolute;" id="19fins6o6"> <div class="vis-widget-prev-body"> <div class="tpice_vr "> <div id="19fins6o6_svg" class="plumb-svg plumb-rotate90"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 600 600"> <defs> <radialGradient id="19fins6o6_c" gradientUnits="userSpaceOnUse" cy="400" cx="400" gradientTransform="matrix(0 -1.393 1.4925 1.0237e-12 -197.01 957.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".71429"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> <radialGradient id="19fins6o6_b" gradientUnits="userSpaceOnUse" cy="400" cx="600" gradientTransform="matrix(-1.4925 0 0 -1.393 1295.5 757.21)" r="100.5"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".66667"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </radialGradient> <linearGradient id="19fins6o6_e" y2="400" gradientUnits="userSpaceOnUse" x2="500" y1="200" x1="500"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <linearGradient id="19fins6o6_d" y2="300" gradientUnits="userSpaceOnUse" x2="400" y1="300" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity="0" offset="1"></stop> </linearGradient> <linearGradient id="19fins6o6_a" y2="500" gradientUnits="userSpaceOnUse" x2="400" y1="500" x1="200"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity="0" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> </defs> <g> <path id="19fins6o6_fill" d="m400 200h200v200h-200zm-200-200h200v600h-200z" fill="#c0c0c0"></path> <g> <rect height="200" width="200" y="200" x="200" fill="url(#19fins6o6_c)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19fins6o6_b)"></rect> <rect height="200" width="200" y="200" x="200" fill="url(#19fins6o6_d)"></rect> <rect height="200" width="200" y="200" x="400" fill="url(#19fins6o6_e)"></rect> <rect height="200" width="200" y="400" x="200" fill="url(#19fins6o6_a)"></rect> <rect height="200" width="200" y="0" x="200" fill="url(#19fins6o6_a)"></rect> </g> </g> </svg> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_tpice.png" class="plumb-rotate90" style="margin:15px"></img>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_VR"
@@ -2600,6 +2640,7 @@
 			</div>
         </div>
     </div>
+
 
 
 
@@ -2653,12 +2694,13 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_tank_simple"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_tank_simple" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ],"aspectRatio": false}" style="min-width: 70px; min-height: 135px; left: 354px; top: 82px; width: 100px; height: 175px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tank_simple" > <div class="tank_simple_svg"> <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 300 600"> <defs> <clipPath clipPathUnits="userSpaceOnUse"> <path d="m150-0.172a150 100 0 0 0 -150 100l-0.0042 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="#C0C0C0"></path> </clipPath> <linearGradient gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300"> <stop stop-color="#000000" stop-opacity=".5" offset="0"></stop> <stop stop-color="#000000" stop-opacity=".302" offset=".5"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <radialGradient xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="400" cx="150" gradientTransform="matrix(-1 0 0 -.893 300 857)" r="150"></radialGradient> <linearGradient > <stop stop-color="#000000" stop-opacity=".3" offset="0"></stop> <stop stop-color="#000000" stop-opacity=".5" offset="1"></stop> </linearGradient> <radialGradient xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="203" cx="150" gradientTransform="matrix(1 0 0 .893 .005 -87.2)" r="150"></radialGradient> </defs> <path d="m150-0.142a150 100 0 0 0 -150 100l0.0025 400a150 100 0 0 0 75 86 150 100 0 0 0 150 0 150 100 0 0 0 75 -86v-400a150 100 0 0 0 -150 -100z" fill="#C0C0C0"></path> <rect style="color:#000000" clip-path="url(#f)" height="480" width="300" y="120" x="0" fill="#0000ff"></rect> <path style="color:#000000" d="m0 100h300v400h-300z" fill="url(#g)"></path> <path style="color:#000000" d="m300 500a150 100 0 0 1 -75 86.75 150 100 0 0 1 -150 0 150 100 0 0 1 -75 -86.75h150z" stroke-width="0.1" fill="url(#i)"></path> <path style="color:#000000" fill="url(#h)" d="m0 99.85a150 100.1 0 0 1 150 -100 150 100.1 0 0 1 150 100h-150z"></path> </svg> </div> <div class="plumb_dock_left ui-droppable" style="top: 128px; left: -10px; height: 15px; width: 80px; box-shadow: rgb(0, 0, 0) 0px 7.5px 7.5px -7.5px inset, rgb(0, 0, 0) 0px -7.5px 7.5px -7.5px inset; background: silver;"></div><div class="plumb_dock_right ui-droppable" style="top: 32px; right: -10px; height: 15px; width: 80px; box-shadow: rgb(0, 0, 0) 0px 7.5px 7.5px -7.5px inset, rgb(0, 0, 0) 0px -7.5px 7.5px -7.5px inset; background: silver;"></div></div> </div></div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_tank_simple.png"></img>'
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank"
@@ -2674,6 +2716,7 @@
 			</div>
         </div>
     </div>
+
 
 </script>
 

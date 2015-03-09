@@ -17,7 +17,7 @@ function translateWord(text, lang, dictionary) {
             }
         }
     } else if (!text.match(/_tooltip$/)) {
-        console.log('"' + text + '": {"en": "' + text + '", "de": "' + text + '", "ru": "' + text + '"},');
+        //console.log('"' + text + '": {"en": "' + text + '", "de": "' + text + '", "ru": "' + text + '"},');
     }
     return text;
 }
