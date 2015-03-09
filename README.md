@@ -46,6 +46,9 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+### 0.2.10 (2015-03-09)
+- (bluefox) fix install for node-red-vis
+
 ### 0.2.8 (2015-03-08)
 - (bluefox) fix the version numbers
 
