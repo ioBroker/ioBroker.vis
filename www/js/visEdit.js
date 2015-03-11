@@ -44,7 +44,8 @@ vis = $.extend(true, vis, {
     objects:               {},
     config:                {},
     objectSelector:        false, // if object select ID activated
-
+    alignIndex:            0,
+    alignType:             '',
 
     editInit: function () {
         var that = this;
@@ -429,8 +430,8 @@ vis = $.extend(true, vis, {
 
          }, 10000);*/
 
-        // Instances
-        if (typeof storage !== 'undefined' && local == false) {
+        // Instances (Actually not used)
+        /*if (typeof storage !== 'undefined' && local == false) {
             // Show what's new
             if (storage.get('lastVersion') != this.version) {
                 // Read
@@ -442,7 +443,7 @@ vis = $.extend(true, vis, {
                     success: function (data) {
 
                         try {
-                            var ioaddon = data; // @bluefox: this is already parsed by jQuery.ajax! JSON.parse(data);
+                            var ioaddon = data;
                             if (ioaddon.whatsNew) {
                                 for (var i = 0; i < ioaddon.whatsNew.length; i++) {
                                     var text = ioaddon.whatsNew[i];
@@ -465,7 +466,7 @@ vis = $.extend(true, vis, {
                     }
                 });
             }
-        }
+        }*/
         if (this.config.groupsState) this.groupsState = this.config.groupsState;
     },
     editInitDialogs: function () {
@@ -800,7 +801,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_dis_h").click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
@@ -848,7 +848,6 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
-
         $("#wid_dis_v").click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
@@ -896,6 +895,58 @@ vis = $.extend(true, vis, {
             });
             that.save();
         });
+        $("#wid_align_width").click(function () {
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+            if (that.alignType != 'wid_align_width') {
+                that.alignIndex = 0;
+                that.alignValues = [];
+                for (var t = 0; t < that.activeWidgets.length; t++) {
+                    var w = $('#' + that.activeWidgets[t]).width();
+                    if (that.alignValues.indexOf(w) == -1)
+                    that.alignValues.push(w);
+                }
+
+                that.alignType = 'wid_align_width';
+            }
+            that.alignIndex++;
+            if (that.alignIndex >= that.alignValues.length) that.alignIndex = 0;
+
+            for (var t = 0; t < that.activeWidgets.length; t++) {
+                $('#' + that.activeWidgets[t]).width(that.alignValues[that.alignIndex]);
+                that.views[that.activeView].widgets[that.activeWidgets[t]].style.width = that.alignValues[that.alignIndex] + "px";
+                that.showWidgetHelper(that.activeWidgets[t], true);
+            }
+            that.save();
+        });
+        $("#wid_align_height").click(function () {
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+            if (that.alignType != 'wid_align_height') {
+                that.alignIndex = 0;
+                that.alignValues = [];
+                for (var t = 0; t < that.activeWidgets.length; t++) {
+                    var h = $('#' + that.activeWidgets[t]).height();
+                    if (that.alignValues.indexOf(h) == -1)
+                        that.alignValues.push(h);
+                }
+
+                that.alignType = 'wid_align_height';
+            }
+            that.alignIndex++;
+            if (that.alignIndex >= that.alignValues.length) that.alignIndex = 0;
+
+            for (var t = 0; t < that.activeWidgets.length; t++) {
+                $('#' + that.activeWidgets[t]).height(that.alignValues[that.alignIndex]);
+                that.views[that.activeView].widgets[that.activeWidgets[t]].style.height = that.alignValues[that.alignIndex] + "px";
+                that.showWidgetHelper(that.activeWidgets[t], true);
+            }
+            that.save();
+        });
 
         // All Widget ---------------------
         $("#wid_all_lock_function").button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
@@ -909,7 +960,11 @@ vis = $.extend(true, vis, {
             that.editSaveConfig('button/wid_all_lock_function', $('#wid_all_lock_function').prop('checked'));
         });
         if (this.config['button/wid_all_lock_function']) {
-            $('#wid_all_lock_function').trigger('click');
+            setTimeout(function () {
+                $('#wid_all_lock_function').prop('checked', true);
+                $("#vis_container").find(".vis-widget").addClass("vis-widget-lock");
+                $('#wid_all_lock_f').addClass("ui-state-focus ui-state-active");
+            }, 200);
         }
 
         $("#wid_all_lock_drag").button({icons: {primary: 'ui-icon-extlink', secondary: null}, text: false}).click(function () {
@@ -1151,7 +1206,7 @@ vis = $.extend(true, vis, {
 
                     var widgetId = that.addWidget(tpl, data);
 
-                    that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + ')</option>')
+                    that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>')
                         .multiselect('refresh');
 
                     setTimeout(function () {
@@ -1285,7 +1340,6 @@ vis = $.extend(true, vis, {
         var file = "vis-common-user";
         var editor  = ace.edit("css_editor");
 
-
         //editor.setTheme("ace/theme/monokai");
         editor.getSession().setMode("ace/mode/css");
         editor.setOptions({
@@ -1296,34 +1350,36 @@ vis = $.extend(true, vis, {
         editor.getSession().setUseWrapMode(true);
 
         editor.getSession().on('change', function(e) {
-            $("#"+file).text(editor.getValue())
+            $("#" + file).text(editor.getValue());
+            $("#css_file_save").button('enable');
         });
 
 
+        if (that.config['select/select_css_file']) $("#select_css_file").val(that.config['select/select_css_file']);
 
-        $( "#select_css_file" ).selectmenu({
-
+        $("#select_css_file").selectmenu({
             change: function (event, ui) {
                 file = $(this).val();
-                editor.setValue($("#"+file).text());
+                editor.setValue($("#" + file).text());
                 editor.navigateFileEnd();
-                editor.focus()
+                editor.focus();
+                that.editSaveConfig('select/select_css_file', file);
             }
         });
 
         editor.setValue($("#"+ file).text());
         $(document).bind("vis-common-user", function(e){
             editor.setValue($("#"+ file).text());
-            editor.navigateFileEnd()
+            editor.navigateFileEnd();
         });
 
 
         $("#cssEditor_tab").click(function(){
-            editor.focus()
+            editor.focus();
         });
 
         $("#pan_attr").resize(function(){
-            editor.resize()
+            editor.resize();
         });
 
 
@@ -1361,18 +1417,18 @@ vis = $.extend(true, vis, {
             },
             text: false
         }).click(function() {
-                if ($("#select_css_file").val() == "vis-user") {
-                    that.conn.writeFile('../' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css' , editor.getValue() );
-                }
+            if ($("#select_css_file").val() == 'vis-user') {
+                that.conn.writeFile(vis.projectPrefix + 'vis-user.css' , editor.getValue(), function () {
+                    $("#css_file_save").button('disable');
+                });
+            }
 
-
-                if ($("#select_css_file").val() == "vis-common-user") {
-                    that.conn.writeFile('../vis/css/vis-common-user.css', editor.getValue());
-                }
-
-            });
-
-
+            if ($("#select_css_file").val() == 'vis-common-user') {
+                that.conn.writeFile('/vis/css/vis-common-user.css', editor.getValue(), function () {
+                    $("#css_file_save").button('disable');
+                });
+            }
+        }).button('disable');
     },
     editInitNext: function () {
         // ioBroker.vis Editor Init
@@ -1506,10 +1562,10 @@ vis = $.extend(true, vis, {
         // Create background_class property if does not exist
         if (this.views[this.activeView] != undefined) {
             if (this.views[this.activeView].settings == undefined) {
-                this.views[vis.activeView].settings = {};
+                this.views[this.activeView].settings = {};
             }
             if (this.views[this.activeView].settings.style == undefined) {
-                this.views[vis.activeView].settings.style = {};
+                this.views[this.activeView].settings.style = {};
             }
             if (this.views[this.activeView].settings.style['background_class'] == undefined) {
                 this.views[this.activeView].settings.style['background_class'] = '';
@@ -2852,7 +2908,7 @@ vis = $.extend(true, vis, {
         var widgetData = this.views[view].widgets[widget];
         var name = (widgetData.data ? widgetData.data.name : '');
         name = name ? (name + '[' + widget + ']') : widget;
-        name += ' (' + $('#' + widgetData.tpl).attr('data-vis-name') + ')';
+        name += ' ('  + widgetData.widgetSet + ' - ' + $('#' + widgetData.tpl).attr('data-vis-name') + ')';
         return name;
     },
     showInspect: function (view, widgets) {
@@ -3453,6 +3509,8 @@ vis = $.extend(true, vis, {
         var view = this.getViewOfWidget(wid);
 
         if (!onlyUpdate) {
+            this.alignIndex = 0;
+
             var s = JSON.stringify(this.activeWidgets);
             if (JSON.stringify(this.views[this.activeView].activeWidgets) != s) {
                 this.views[this.activeView].activeWidgets = JSON.parse(s);
@@ -4086,7 +4144,7 @@ vis = $.extend(true, vis, {
 
                 var widgetId = that.addWidget(tpl, data, addPos);
 
-                that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + ')</option>')
+                that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>')
                     .multiselect('refresh');
 
                 setTimeout(function () {

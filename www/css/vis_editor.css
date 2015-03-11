@@ -466,9 +466,8 @@ div#vis_container {
     width: 190px;
     display: inline-block;
     height: 100%;
-
-    border-right-width: 0;
-    /* border-bottom-width: 1px; */
+    /* border-right-width: 0;*/
+    border-bottom-width: 0; 
     border-top-width: 0;
     border-left-width: 0;
     /* display: inline-block; */
