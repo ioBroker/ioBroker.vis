@@ -1683,48 +1683,52 @@ vis = $.extend(true, vis, {
         this.$dialogConfirm.dialog('open');
     },
     addView: function (view) {
-        if (this[view]) return false;
+        var _view = view.replace(/\s/g, '_').replace(/\./g, '_');
+        if (this[_view]) return false;
 
-        this.views[view] = {settings: {style: {}}, widgets: {}};
+        this.views[_view] = {settings: {style: {}}, widgets: {}, name: view};
         var that = this;
         this.saveRemote(function () {
             //$(window).off('hashchange');
             //window.location.hash = "#" + view;
 
             $('#view_tab_' + that.activeView).removeClass('ui-tabs-active ui-state-active');
-            that.changeView(view);
+            that.changeView(_view);
 
             $('#view_select_tabs').append('<div id="view_tab_' + view + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + view + '">' + view + '</div>');
             $('#view_tab_' + that.activeView).addClass('ui-tabs-active ui-state-active');
 
-            that.$selectView.append('<option value="' + view + '">' + view + '</option>');
-            that.$selectView.val(view);
+            that.$selectView.append('<option value="' + _view + '">' + _view + '</option>');
+            that.$selectView.val(_view);
             that.$selectView.selectmenu('refresh');
 
-            that.$copyWidgetSelectView.append('<option value="' + view + '">' + view + '</option>');
-            that.$copyWidgetSelectView.val(view);
+            that.$copyWidgetSelectView.append('<option value="' + _view + '">' + _view + '</option>');
+            that.$copyWidgetSelectView.val(_view);
             that.$copyWidgetSelectView.selectmenu('refresh');
         });
     },
     renameView: function (oldName, newName) {
-        this.views[newName] = $.extend(true, {}, this.views[oldName]);
+        var _newName = newName.replace(/\s/g, '_').replace(/\./g, '_');
+        this.views[_newName] = $.extend(true, {}, this.views[oldName]);
+        this.views[_newName].name = newName;
+
         $('#vis_container').html('');
         delete this.views[oldName];
-        this.activeView = newName;
-        this.renderView(newName);
-        this.changeView(newName);
+        this.activeView = _newName;
+        this.renderView(_newName);
+        this.changeView(_newName);
 
         // Rebuild tabs, select, selectCopyTo
-        $('#view_tab_' + oldName).attr('id', 'view_tab_' + newName);
-        $('#view_tab_' + newName).removeClass('sel_opt_' + oldName).addClass('ui-tabs-active ui-state-active sel_opt_' + newName).html(newName);
+        $('#view_tab_' + oldName).attr('id', 'view_tab_' + _newName);
+        $('#view_tab_' + _newName).removeClass('sel_opt_' + oldName).addClass('ui-tabs-active ui-state-active sel_opt_' + _newName).html(newName);
         var $opt = this.$selectView.find('option[value="' + oldName + '"]');
-        $opt.html(newName).attr('value', newName);
-        this.$selectView.val(newName);
+        $opt.html(newName).attr('value', _newName);
+        this.$selectView.val(_newName);
         this.$selectView.selectmenu('refresh');
 
         $opt = this.$copyWidgetSelectView.find('option[value="' + oldName + '"]');
-        $opt.html(newName).attr('value', newName);
-        this.$copyWidgetSelectView.val(newName);
+        $opt.html(newName).attr('value', _newName);
+        this.$copyWidgetSelectView.val(_newName);
         this.$copyWidgetSelectView.selectmenu('refresh');
         this.saveRemote(function () {
 
@@ -1757,28 +1761,30 @@ vis = $.extend(true, vis, {
         });
     },
     dupView: function (source, dest) {
-        this.views[dest] = $.extend(true, {}, this.views[source]);
+        var _dest = dest.replace(/\s/g, '_').replace(/\./g, '_');
+        this.views[_dest] = $.extend(true, {}, this.views[source]);
+        this.views[_dest].name = dest;
 
         // Give to all widgets new IDs...
-        for (var widget in this.views[dest].widgets) {
-            this.views[dest].widgets[this.nextWidget()] = this.views[dest].widgets[widget];
-            delete this.views[dest].widgets[widget];
+        for (var widget in this.views[_dest].widgets) {
+            this.views[_dest].widgets[this.nextWidget()] = this.views[_dest].widgets[widget];
+            delete this.views[_dest].widgets[widget];
         }
         var that = this;
         this.saveRemote(function () {
-            that.renderView(dest);
-            that.changeView(dest);
+            that.renderView(_dest);
+            that.changeView(_dest);
             $('.view-select-tab').removeClass('ui-tabs-active ui-state-active');
 
-            $('#view_select_tabs').append('<div id="view_tab_' + dest + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + dest + '">' + dest + '</div>');
-            $('#view_tab_' + dest).addClass('ui-tabs-active ui-state-active');
+            $('#view_select_tabs').append('<div id="view_tab_' + _dest + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + _dest + '">' + dest + '</div>');
+            $('#view_tab_' + _dest).addClass('ui-tabs-active ui-state-active');
 
-            that.$selectView.append('<option value="' + dest + '">' + dest + '</option>');
-            that.$selectView.val(dest);
+            that.$selectView.append('<option value="' + _dest + '">' + dest + '</option>');
+            that.$selectView.val(_dest);
             that.$selectView.selectmenu('refresh');
 
-            that.$copyWidgetSelectView.append('<option value="' + dest + '">'+ dest + '</option>');
-            that.$copyWidgetSelectView.val(dest);
+            that.$copyWidgetSelectView.append('<option value="' + _dest + '">'+ dest + '</option>');
+            that.$copyWidgetSelectView.val(_dest);
             that.$copyWidgetSelectView.selectmenu('refresh');
 
         });
@@ -1844,21 +1850,28 @@ vis = $.extend(true, vis, {
                 window.location.reload();
             });
         } else {
-            this.views[name] = importObject;
+            var _name = name.replace(/\s/g, '_').replace(/\./g, '_');
+            this.views[_name] = importObject;
+            this.views[_name].name = name;
 
             // Allen Widgets eine neue ID verpassen...
-            for (var widget in this.views[name].widgets) {
-                this.views[name].widgets[this.nextWidget()] = this.views[name].widgets[widget];
-                delete this.views[name].widgets[widget];
+            for (var widget in this.views[_name].widgets) {
+                this.views[_name].widgets[this.nextWidget()] = this.views[_name].widgets[widget];
+                delete this.views[_name].widgets[widget];
             }
             this.saveRemote(function () {
-                that.renderView(name);
-                that.changeView(name);
+                that.renderView(_name);
+                that.changeView(_name);
                 window.location.reload();
             });
         }
     },
     checkNewViewName: function (name) {
+        if (name === undefined || name === null) name = '';
+        if (name === 0) name = '0';
+
+        name = name.trim();
+        name = name.replace(/\s/g, '_').replace(/\./g, '_');
         if (!name && name !== 0) {
             this.showMessage(_('Please enter the name for the new view!'));
             return false;
@@ -3170,18 +3183,20 @@ vis = $.extend(true, vis, {
                 console.log('Cannot find in DOM ' + wid);
                 return;
             }
-            var pos   = $widget.position();
+            var pos = {};//$widget.position();
 
+            pos.top  = $widget[0].offsetTop;
+            pos.left = $widget[0].offsetLeft;
             // May be bug?
             if (pos.left == 0 && pos.top == 0) {
                 pos.left = $widget[0].style.left;
-                pos.top  = $widget[0].style.top;
+                pos.top  = $widget[0].style.top + $widget[0].offsetTop;
                 if (typeof pos.left == 'string') pos.left = parseInt(pos.left.replace('px', ''), 10);
                 if (typeof pos.top  == 'string') pos.top  = parseInt(pos.top.replace('px', ''), 10);
             }
 
             if (!$('#widget_helper_' + wid).length) {
-                $('#vis_container').append('<div id="widget_helper_' + wid + '" class="widget-helper"><div class="widget_inner_helper"></div></div>');
+                $('#visview_' + this.activeView).append('<div id="widget_helper_' + wid + '" class="widget-helper"><div class="widget_inner_helper"></div></div>');
             }
 
             $('#widget_helper_' + wid).css({
