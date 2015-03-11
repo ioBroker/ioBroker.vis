@@ -996,7 +996,7 @@
                     <g\
                      <g\
             transform="translate(0,0)" clip-path="url(#starfoo)">\
-                        <g style="stroke:#0000ff;stroke-width:' + stroke + ';stroke-linecap:round;stroke-opacity:0.5" >\
+                        <g style="stroke:'+data.water_color+';stroke-width:' + stroke + ';stroke-linecap:round;stroke-opacity:'+data.opacity+'" >\
                         <path d="M 250,500 250,0"/>\
                         <path d="M 293,496 207,3.8"/>\
                         <path d="M 335,485 165,14.7"/>\
@@ -1018,7 +1018,7 @@
                                 <animateTransform id="t_two" attributeName="transform" type="rotate" from="0 250 250" to=" 360 250 250" begin="0s" dur="' + time + '" repeatCount="indefinite"   />\
                         </g>\
                     </g>\
-                    <circle cx="250" cy="250" r="8"  fill="black"  />\
+                    <circle cx="250" cy="250" r="8"  fill="'+data.head_color+'"  />\
                 </svg>\
             ')
 
@@ -2070,8 +2070,8 @@
             <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
             <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#e)" height="300" width="300" y="300" x="0" fill="' + data.water_color + '"/>\
             <path d="m0 50h300v500h-300z" fill="url(#d)"/>\
-            <path style="color:#000000" fill="url(#b)" d="m300 550a150 50 0 0 1 -75 43.301 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43.3h150z"/>\
-            <path style="color:#000000" fill="url(#c)" d="m0 50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43-0z"/>\
+            <path fill="url(#b)" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
+            <path fill="url(#c)" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
             </svg>\
             ');
             setTimeout(function () {
@@ -2264,13 +2264,14 @@
         data-vis-attrs="test/checkbox;width[100];time[4];start[0];ende[90];stroke[4];opacity[0.8];fog/checkbox;water_color[blue]/color;head_color[black]/color;head_show[true]/checkbox;head_round[true]/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{"grid": [ 10, 10 ],"handles": "s, e"}' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="plumb_sprinkler_i_body vis-widget-body" <%= (el) -> vis.binds.plumb.sprinkler_i(el, data) %>>
-				<div class="plumb_sprinkler_i" style="display: 'none'">
-				<div class="plumb_sprinkler_i_water"></div>
-				</div>
-            	<div class="plumb_dock_top"></div>
-				<div class="plumb_dock_bottom"></div>
-				<div class="plumb_dock_left"></div>
-				<div class="plumb_dock_right"></div>
+            <% if (vis.editMode) { %><div class="editmode-helper" /><% } %>
+            <div class="plumb_sprinkler_i" style="display: 'none'">
+                <div class="plumb_sprinkler_i_water"></div>
+            </div>
+            <div class="plumb_dock_top"></div>
+            <div class="plumb_dock_bottom"></div>
+            <div class="plumb_dock_left"></div>
+            <div class="plumb_dock_right"></div>
         </div>
     </div>
 
@@ -2286,19 +2287,17 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Sprinker R"
-        data-vis-attrs="position[center]/nselect,center,top-center,bottom-center,left-center,right-center,top-left,top-right,bottom-left,bottom-right;test/checkbox;width[100];time[30];start[0];ende[90];stroke[4];opacity[0.8];fog/checkbox;water_color[blue]/color;head_color[black]/color;head_show[true]/checkbox;head_round[true]/checkbox">
+        data-vis-attrs="position[center]/nselect,center,top-center,bottom-center,left-center,right-center,top-left,top-right,bottom-left,bottom-right;test/checkbox;time[30];start[0];ende[90];stroke[4];opacity[0.8];water_color[blue]/color;head_color[black]/color">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{"grid": [ 10, 10 ],"aspectRatio": true,"handles": "s, e"}' style=" width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="plumb_sprinkler_r_body vis-widget-body" <%= (el) -> vis.binds.plumb.sprinkler_r(el, data) %>>
-          <% if (vis.editMode) { %>
-            <div class="editmode-helper" />
-            <% } %>
-				<div class="plumb_sprinkler_r" style="display: 'none'">
-				    <div class="plumb_sprinkler_r_water"></div>
-				</div>
-            	<div class="plumb_dock_top"></div>
-				<div class="plumb_dock_bottom"></div>
-				<div class="plumb_dock_left"></div>
-				<div class="plumb_dock_right"></div>
+            <% if (vis.editMode) { %><div class="editmode-helper" /><% } %>
+            <div class="plumb_sprinkler_r" style="display: 'none'">
+            <div class="plumb_sprinkler_r_water"></div>
+            </div>
+            <div class="plumb_dock_top"></div>
+            <div class="plumb_dock_bottom"></div>
+            <div class="plumb_dock_left"></div>
+            <div class="plumb_dock_right"></div>
         </div>
     </div>
 
