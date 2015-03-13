@@ -565,6 +565,69 @@
             </svg>\
             ');
         },
+        svg_check_valve_h: function (id) {
+
+            $("#" + id + "_svg").append('\
+             <svg\
+             width="100%"\
+            height="100%"\
+            preserveAspectRatio="none"\
+             viewBox="0 0 500 200">\
+            <defs>\
+            <radialGradient id="' + id + '_a" gradientUnits="userSpaceOnUse" cy="80" cx="260" r="75">\
+            <stop stop-color="#eeeeee" offset="0"/>\
+            <stop stop-color="#bbbbbb" offset=".25"/>\
+            <stop stop-color="#666666" offset="1"/>\
+            </radialGradient>\
+            <linearGradient id="' + id + '_b"  gradientUnits="userSpaceOnUse" x2="250" x1="250" y2="200">\
+            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+            <stop stop-color="#000000" stop-opacity="0" offset=".5"/>\
+            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
+            </linearGradient>\
+            </defs>\
+            <path d="m500 0h-250l-41 40v120l41 40h250v-200z"  fill="#c0c0c0"/>\
+            <path d="m0 0h250l-40 41v119l40 40h-249z"  fill="#c0c0c0"/>\
+            <rect height="200" width="500" y="0" x="0" fill="url(#' + id + '_b)"/>\
+            <g>\
+            <path d="m250 200-100-100m100-100-100 100" stroke-linecap="round" stroke="#000000" stroke-width="20" />\
+            <path d="m30 100 120 .26" stroke-linecap="round" stroke="#000000" stroke-width="20" />\
+            <circle cy="100" cx="270" r="75" fill="url(#' + id + '_a)"/>\
+            </g>\
+            </svg>\
+            ');
+        },
+
+        svg_check_valve_v: function (id) {
+
+            $("#" + id + "_svg").append('\
+             <svg\
+             width="100%"\
+            height="100%"\
+            preserveAspectRatio="none"\
+            viewBox="0 0 200 500">\
+            <defs>\
+            <radialGradient id="' + id + '_d" gradientUnits="userSpaceOnUse" cy="210" cx="90" r="75">\
+            <stop stop-color="#eeeeee" offset="0"/>\
+            <stop stop-color="#bbbbbb" offset=".25"/>\
+            <stop stop-color="#666666" offset="1"/>\
+            </radialGradient>\
+            <linearGradient id="' + id + '_c" y2="250" gradientUnits="userSpaceOnUse" y1="250" gradientTransform="rotate(90)" x2="200" >\
+            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+            <stop stop-color="#000000" stop-opacity="0" offset=".5"/>\
+            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
+            </linearGradient>\
+            </defs>\
+            <path d="m0 0v250l40 41h120l40-41v-250h-200z" fill="#c0c0c0"/>\
+            <path d="m0 500v-250l41 40h119l40-40v250z"  fill="#c0c0c0"/>\
+            <rect transform="rotate(-90)" height="200" width="500" y="0" x="-500" fill="url(#' + id + '_c)"/>\
+            <g>\
+            <path d="m200 252.4-100 100m-100-100 100 100" stroke="#000000" stroke-linecap="round" stroke-width="20" fill="none"/>\
+            <circle cy="235" cx="100" r="75" fill="url(#' + id + '_d)"/>\
+            <path d="m99.87 470.13.26-120" stroke="#000000" stroke-linecap="round" stroke-width="20" fill="none"/>\
+            </g>\
+            </svg>\
+            ');
+        },
 
 
         pump: function (el, data) {
@@ -1565,50 +1628,8 @@
             var self = plumb[id];
 
 
-            $($this).on("resize", function () {
-                var height = $this.height();
-                var shadow = height / 2;
-                var symbol = "none";
-
-                if (data.symbol != "" && data.symbol != undefined) {
-                    symbol = 'url(' + data.symbol + ')'
-                }
-                $($this).find(".plumb_c_valve_h_img").css({
-                    background: symbol
-                });
-
-                if (data.turn_direction == true || data.turn_direction == "true") {
-                    $($this).find(".plumb_c_valve_h_img").css({
-                        "-moz-transform": "scaleX(-1)",
-                        "-o-transform": "scaleX(-1)",
-                        "-webkit-transform": "scaleX(-1)",
-                        "transform": "scaleX(-1)"
-                    })
-                }
-
-                if (data.show_back == true || data.show_back == "true") {
-
-
-                    $($this).find(".plumb_c_valve_h_back_l, .plumb_c_valve_h_back_r").css({
-                        display: "block",
-                        width: "50%",
-                        height: "100%",
-                        position: "absolute",
-                        background: "silver",
-                        "box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'
-                    });
-                }
-                else {
-
-                    $($this).find(".plumb_c_valve_h_back_l, .plumb_c_valve_h_back_r").css({
-                        display: "none",
-                        width: "50%",
-                        height: "100%",
-                        position: "absolute",
-                        background: "silver",
-                        "box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'
-                    });
-                }
+            setTimeout(function () {
+                vis.binds.plumb.svg_check_valve_h(id);
             });
 
             $($this).trigger("resize")
@@ -1716,40 +1737,8 @@
             var self = plumb[id];
 
 
-            $($this).on("resize", function () {
-                var width = $this.width();
-                var shadow = width / 2;
-                var symbol = "none";
-
-                if (data.symbol != "" && data.symbol != undefined) {
-                    symbol = 'url(' + data.symbol + ')'
-                }
-                $($this).find(".plumb_c_valve_v_img").css({
-                    background: symbol
-                });
-
-                if (data.turn_direction == true || data.turn_direction == "true") {
-                    $($this).find(".plumb_c_valve_v_img").css({
-                        "-moz-transform": "scaleY(-1)",
-                        "-o-transform": "scaleY(-1)",
-                        "-webkit-transform": "scaleY(-1)",
-                        "transform": "scaleY(-1)"
-                    })
-                }
-
-                if (data.show_back == true || data.show_back == "true") {
-                    $($this).find(".plumb_c_valve_v_back_t, .plumb_c_valve_v_back_b").css({
-                        display: "block",
-                        "box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'
-                    });
-                }
-                else {
-
-                    $($this).find(".plumb_c_valve_v_back_t, .plumb_c_valve_v_back_b").css({
-                        display: "none",
-                        "box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'
-                    });
-                }
+            setTimeout(function () {
+                vis.binds.plumb.svg_check_valve_v(id);
             });
 
             $($this).trigger("resize");
@@ -2347,11 +2336,6 @@
 			</div>
         </div>
     </div>
-
-
-
-
-
 </script>
 
 <script id="tplPlump_bogen_br"
@@ -2458,7 +2442,7 @@
         data-vis-type="val"
         data-vis-name="valve_H"
         data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 10, 5 ],"aspectRatio": true}' style=" width: 40px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 10, 5 ],"aspectRatio": true}' style=" width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_h(el, data) %>>
 			<div class="valve_h " >
 			    <div class="plumb_valve_l"></div>
@@ -2468,8 +2452,6 @@
 			</div>
         </div>
     </div>
-
-
 </script>
 
 <script id="tplPlump_valve_V"
@@ -2505,12 +2487,10 @@
         data-vis-type="val"
         data-vis-name="Check Valve H"
         data-vis-attrs="conLeft;conRight;show_back[true]/checkbox;symbol[./widgets/plumb/img/c_valve_h.svg]/src;turn_direction/checkbox">
-         <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 10, 5 ],"aspectRatio": true}' style=" width: 40px; height: 20px;" id="<%= this.data.attr('wid') %>">
+         <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 10, 5 ],"aspectRatio": true}' style=" width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
              <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.c_valve_h(el, data) %>>
     			<div class="valve_h " >
-    			    <div class="plumb_c_valve_h_img"></div>
-    			    <div class="plumb_c_valve_h_back_l"></div>
-    			    <div class="plumb_c_valve_h_back_r"></div>
+    				<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
     				<div class="plumb_dock_left"></div>
     				<div class="plumb_dock_right"></div>
     			</div>
@@ -2531,9 +2511,7 @@
          <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " data-vis-resizable='{"grid": [ 5, 10 ],"aspectRatio": true}' style=" width: 20px; height: 40px;" id="<%= this.data.attr('wid') %>">
              <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.c_valve_v(el, data) %>>
     			<div class="valve_v " >
-    			    <div class="plumb_c_valve_v_img"></div>
-    			    <div class="plumb_c_valve_v_back_t"></div>
-    			    <div class="plumb_c_valve_v_back_b"></div>
+    		        <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
     				<div class="plumb_dock_top"></div>
     				<div class="plumb_dock_bottom"></div>
     			</div>
