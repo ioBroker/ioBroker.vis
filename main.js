@@ -1,12 +1,15 @@
 /**
  *
- *      ioBroker mqtt Adapter
+ *      ioBroker vis Adapter
  *
- *      (c) 2014 bluefox
+ *      (c) 2014-2015 bluefox
  *
  *      MIT License
  *
  */
+/* jshint -W097 */// jshint strict:false
+/*jslint node: true */
+"use strict";
 
 var utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
 var adapter = utils.adapter('vis');
@@ -40,8 +43,8 @@ function writeFile(fileName, callback) {
         var start = index.substring(0, pos + begin.length);
         pos = index.indexOf(end);
         if (pos != -1) {
-            var end = index.substring(pos);
-            index = start + '\n' + bigInsert + '\n' + end;
+            var _end = index.substring(pos);
+            index = start + '\n' + bigInsert + '\n' + _end;
             adapter.readFile('vis', fileName, function (err, data) {
                 if (data && data != index) {
                     adapter.writeFile('vis', fileName, index);

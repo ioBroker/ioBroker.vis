@@ -411,7 +411,7 @@
                     content:   '',
                     onShow:    function(_dialog){
                         var val_set_id = vis.states.attr(set_oid + '.val');
-                        if (val_set_id === undefined || val_set_id === null || val_set_id === ''){
+                        if (val_set_id === undefined || val_set_id === null || val_set_id === '') {
                             val_set_id = '';
                         } else {
                             val_set_id = val_set_id.toFixed(1);
@@ -436,7 +436,7 @@
                         html += '<div data-oid="' + set_oid + '" id="metroSlider_' + wid + '" class="slider" data-role="slider"></div>';
                         html += '</div>';
                         html += '<table style="margin-top: 12px; margin-left: 12px; font-size:14px;display:inline-block;">' +
-                                '<tr><td>' + _('Set temperature') + ':</td><td><span class="metro-dialog-string" data-oid="' + set_oid   + '">' + val_drive_id + '</span>°C</td></tr>' +
+                                '<tr><td>' + _('Set temperature') + ':</td><td><span class="metro-dialog-string" data-oid="' + set_oid   + '">' + val_set_id   + '</span>°C</td></tr>' +
                                 '<tr><td>' + _('Actual temp.')    + ':</td><td><span class="metro-dialog-string" data-oid="' + temp_oid  + '">' + val_temp_id  + '</span>°C</td></tr>' +
                                 '<tr><td>' + _('Valve position')  + ':</td><td><span class="metro-dialog-string" data-oid="' + drive_oid + '">' + val_drive_id + '</span>%</td></tr>'  +
                                 '</table>';

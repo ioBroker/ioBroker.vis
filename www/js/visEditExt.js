@@ -15,6 +15,12 @@
 
 // visEdit - the ioBroker.vis Editor extensions
 
+/* jshint browser:true */
+/* global _ */
+/* global $ */
+/* global systemDictionary */
+/* global vis:true */
+/* jshint -W097 */// jshint strict:false
 'use strict';
 
 // Add words for bars
@@ -81,7 +87,7 @@ vis.styleSelect = {
             var sSheetList = document.styleSheets;
             for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
                 var ruleList = document.styleSheets[sSheet].cssRules;
-                if (ruleList !== undefined && ruleList != null) {
+                if (ruleList) {
                     var bglen = "hq-background-".length;
                     for (var rule = 0; rule < ruleList.length; rule ++) {
                         if (ruleList[rule].selectorText === undefined || ruleList[rule].selectorText == null || ruleList[rule].selectorText == "")
@@ -110,7 +116,7 @@ vis.styleSelect = {
                             if (name.length > 0) {
                                 name = name[0].toUpperCase() + name.substring(1);
                                 var fff = document.styleSheets[sSheet].href;
-                                if (fff != null && fff != "" && fff.indexOf('/') != -1)
+                                if (fff && fff.indexOf('/') != -1)
                                     fff = fff.substring(fff.lastIndexOf('/')+1);
                                 this._internalList[name] = {style: val, file: fff, attrs: ruleList[rule].style};
                             }
@@ -172,18 +178,18 @@ vis.styleSelect = {
             htmlElem.settings.styles = $.extend(htmlElem.settings.styles, options.styles);
         } else {
             // IF filter defined
-            if (htmlElem.settings.filterFile != null || htmlElem.settings.filterName != null) {
+            if (htmlElem.settings.filterFile !== null || htmlElem.settings.filterName !== null) {
                 var filters = null;
-                if (htmlElem.settings.filterName != null && htmlElem.settings.filterName != "")
+                if (htmlElem.settings.filterName !== null && htmlElem.settings.filterName != "")
                     filters = htmlElem.settings.filterName.split(' ');
 
                 var attrs = null;
-                if (htmlElem.settings.filterAttrs != null && htmlElem.settings.filterAttrs != "")
+                if (htmlElem.settings.filterAttrs !== null && htmlElem.settings.filterAttrs != "")
                     attrs = htmlElem.settings.filterAttrs.split(' ');
 
                 for (var name in this._internalList) {
                     if (htmlElem.settings.filterFile == null ||
-                       (this._internalList[name].file != null && this._internalList[name].file.indexOf(htmlElem.settings.filterFile) != -1)) {
+                       (this._internalList[name].file !== null && this._internalList[name].file.indexOf(htmlElem.settings.filterFile) != -1)) {
                         var isFound = (filters == null);
                         if (!isFound) {
                             for (var k = 0; k < filters.length; k++) {
@@ -198,7 +204,7 @@ vis.styleSelect = {
                             if (!isFound) {
                                 for (var k = 0; k < attrs.length; k++) {
                                     var t = this._internalList[name].attrs[attrs[k]];
-                                    if (t !== undefined && t != null && t != "") {
+                                    if (t || t === 0) {
                                         isFound = true;
                                         break;
                                     }
@@ -383,7 +389,7 @@ var colorSelect = {
             modal:     true,
             buttons:   dialog_buttons
         });     
-        if (htmlElem.settings.current != null && htmlElem.settings.current != "") {
+        if (htmlElem.settings.current || htmlElem.settings.current === 0) {
             $('#colortext').val(htmlElem.settings.current);
         } else {
             $('#colortext').val('#FFFFFF');

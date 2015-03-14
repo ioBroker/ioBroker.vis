@@ -9,8 +9,12 @@
 /* global clearTimeout*/
 /* global io*/
 /* global $*/
+/* global socketNamespace */
+/* global socketUrl */
+/* global socketSession */
+/* jshint -W097 */// jshint strict:false
 
-'use strict';
+"use strict";
 
 // The idea of servConn is to use this class later in every addon.
 // The addon just must say, what must be loaded (values, objects, indexes) and
@@ -157,7 +161,7 @@ var servConn = {
             });
 
             that._socket.on('stateChange', function (id, state) {
-                if (!id || state == null || typeof state != 'object') return;
+                if (!id || state === null || typeof state != 'object') return;
 
                 if (that._connCallbacks.onCommand && id == that.namespace + '.control.command') {
                     if (state.ack) return;

@@ -17,10 +17,19 @@
 /* global setTimeout */
 /* global clearTimeout */
 /* global io */
-/* global $ */
 /* global visConfig */
-/* global systemLang */
-"use strict";
+/* global systemLang:true */
+/* global _ */
+/* global can */
+/* global storage */
+/* global servConn */
+/* global systemDictionary */
+/* global $ */
+/* global translateAll */
+/* global jQuery */
+/* global document */
+/* jshint -W097 */// jshint strict:false
+'use strict';
 
 // we should detect either local path here and not online.
 // I want to have possibility to start vis not only from broker web server, but from some others too.
@@ -83,7 +92,7 @@ if (typeof systemDictionary !== 'undefined') {
     });
 }
 
-if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemLang;
+if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
 
@@ -114,7 +123,7 @@ var vis = {
     projectPrefix:          window.location.search ? window.location.search.slice(1) + '/' : 'main/',
     navChangeCallbacks:     [],
     editMode:               false,
-    language:               (typeof systemLang != 'undefined') ? systemLang : visConfig.language,
+    language:               (typeof systemLang !== 'undefined') ? systemLang : visConfig.language,
     statesDebounce:         {},
     visibility:             {},
 
@@ -126,7 +135,7 @@ var vis = {
 
             // Inform other widgets, that does not support canJS
             for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
-                this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, val);
+                this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, state);
             }
         }
     },
@@ -411,15 +420,15 @@ var vis = {
         // View selected?
         if (!hash) {
             // Take first view in the list
-            for (var view in this.views) {
-                this.activeView = view;
+            for (var _view in this.views) {
+                this.activeView = _view;
                 break;
             }
             // Create default view in demo mode
             if (typeof io == 'undefined') {
                 if (!this.activeView) {
                     if (!this.editMode) {
-                        alert(_("error - View doesn't exist"));
+                        window.alert(_("error - View doesn't exist"));
                         window.location.href = "./edit.html";
                     } else {
                         this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
@@ -429,13 +438,13 @@ var vis = {
                 }
             }
 
-            if (this.activeView == '') {
+            if (!this.activeView) {
                 if (!this.editMode) {
-                    alert(_('error - View doesn\'t exist'));
+                    window.alert(_('error - View doesn\'t exist'));
                     window.location.href = 'edit.html';
                 } else {
                     // All views were deleted, but file exists. Create demo View
-                    //alert("unexpected error - this should not happen :(");
+                    //window.alert("unexpected error - this should not happen :(");
                     //$.error("this should not happen :(");
                     // create demoView
                     this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
@@ -446,7 +455,7 @@ var vis = {
             if (this.views[hash]) {
                 this.activeView = hash;
             } else {
-                alert(_("error - View doesn't exist"));
+                window.alert(_("error - View doesn't exist"));
                 window.location.href = "./edit.html";
                 $.error("vis Error can't find view");
             }
@@ -473,11 +482,11 @@ var vis = {
         if (!this.editMode) {
             window.location.href = './edit.html' + window.location.search;
         } else {
-            if (confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
+            if (window.confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
                 this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                 this.saveRemote(function () {
-                    window.location.reload()
+                    window.location.reload();
                 });
             } else {
                 window.location.reload();
@@ -519,7 +528,7 @@ var vis = {
         var that = this;
 
         if (!this.views[view] || !this.views[view].settings) {
-            alert('Cannot render view ' + view + '. Invalid settings');
+            window.alert('Cannot render view ' + view + '. Invalid settings');
             return false;
         }
 
@@ -595,10 +604,8 @@ var vis = {
             if (this.views[view].rerender) {
                 this.views[view].rerender = false;
                 // render all copmlex widgets, like hqWidgets or bars
-                for (var id in this.views[view].widgets) {
-                    if (this.views[view].widgets[id].renderVisible) {
-                        this.renderWidget(view, id);
-                    }
+                for (var _id in this.views[view].widgets) {
+                    if (this.views[view].widgets[_id].renderVisible) this.renderWidget(view, _id);
                 }
             }
         }
@@ -646,9 +653,11 @@ var vis = {
     changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
         var widgets = this.views[this.activeView].widgets;
         var that = this;
+        var widget;
+        var mWidget;
         if (!filter) {
             // show all
-            for (var widget in widgets) {
+            for (widget in widgets) {
                 if (widgets[widget].data.filterkey) {
                     $("#" + widget).show(showEffect, null, parseInt(showDuration));
                 }
@@ -668,9 +677,8 @@ var vis = {
             }, parseInt(showDuration) + 10);
 
         } else if (filter == "$") {
-            var mWidget;
             // hide all
-            for (var widget in widgets) {
+            for (widget in widgets) {
                 mWidget = document.getElementById(widget);
                 if (mWidget &&
                     mWidget._customHandlers &&
@@ -681,8 +689,7 @@ var vis = {
             }
         } else {
             this.viewsActiveFilter[this.activeView] = filter.split(',');
-            var mWidget;
-            for (var widget in widgets) {
+            for (widget in widgets) {
                 //console.log(widgets[widget]);
                 if (widgets[widget].data.filterkey) {
                     if (this.viewsActiveFilter[this.activeView].length > 0 &&
@@ -787,9 +794,9 @@ var vis = {
     },
     changeView: function (view, hideOptions, showOptions, sync) {
         var that = this;
-        var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
+        var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && hideOptions.effect;
         if (!effect) {
-            effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && (showOptions.effect != "")
+            effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && showOptions.effect;
         }
         if (effect && ((showOptions === undefined) || !showOptions.effect)) {
             showOptions = {effect: hideOptions.effect, options: {}, duration: hideOptions.duration};
@@ -922,12 +929,12 @@ var vis = {
                 this.IDs = this.getUsedObjectIDs();
                 if (callback) callback.call(that, callbackArg);
             } catch (err) {
-                this.views = null
+                this.views = null;
                 if (callback) callback.call(that, callbackArg);
             }
         } else {
             this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
-                if (err) alert(that.projectPrefix + 'vis-views.json ' + err);
+                if (err) window.alert(that.projectPrefix + 'vis-views.json ' + err);
 
                 if (data) {
                     if (typeof data == 'string') {
@@ -935,7 +942,7 @@ var vis = {
                             that.views = JSON.parse(data);
                         } catch (e) {
                             console.log('Cannot parse views file "' + that.projectPrefix + 'vis-views.json"');
-                            alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');
+                            window.alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');
                             that.views = null;
                         }
                     } else {
@@ -990,7 +997,7 @@ var vis = {
                         that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
                             that.cssChecked = true;
                             // Create vis-user.css file if not exist
-                            if (err || data == null || data == undefined) {
+                            if (err || data === null || data === undefined) {
                                 // Create empty css file
                                 that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
                             }
@@ -1103,7 +1110,7 @@ var vis = {
     unregisterOnChange: function (callback, arg) {
         for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
             if (this.onChangeCallbacks[i].callback == callback &&
-                (arg == undefined || this.onChangeCallbacks[i].arg == arg)) {
+                (arg === undefined || this.onChangeCallbacks[i].arg == arg)) {
                 this.onChangeCallbacks.slice(i, 1);
                 return;
             }
@@ -1114,8 +1121,10 @@ var vis = {
         if (oid) {
             if (val === undefined) val = this.states[oid + '.val'];
             if (val === undefined) return false;
+
             var condition = this.views[view].widgets[widget].data['visibility-cond'];
-            var value = this.views[view].widgets[widget].data['visibility-val'];
+            var value     = this.views[view].widgets[widget].data['visibility-val'];
+
             if (!condition || value === undefined) return false;
 
             var t = typeof val;
@@ -1124,22 +1133,23 @@ var vis = {
             } else if (t == 'number') {
                 value = parseFloat(value);
             }  else if (t == 'object') {
-                val = JSON.stringify(val)
+                val = JSON.stringify(val);
             }
 
+            // Take care: return true if widget is hidden!
             switch (condition) {
                 case '==':
-                    return !(value == val);
+                    return value != val;
                 case '!=':
-                    return !(value != val);
+                    return value == val;
                 case '>=':
-                    return !(val >= value);
+                    return val < value;
                 case '<=':
-                    return !(val <= value);
+                    return val > value;
                 case '>':
-                    return !(val > value);
+                    return val <= value;
                 case '<':
-                    return !(val < value);
+                    return val >= value;
                 case 'consist':
                     return (val.toString().indexOf(value) == -1);
                 default:
@@ -1180,7 +1190,7 @@ if ('applicationCache' in window) {
 }
 
 // Parse Querystring
-(window.onpopstate = function () {
+window.onpopstate = function () {
     var match,
         pl = /\+/g,
         search = /([^&=]+)=?([^&]*)/g,
@@ -1189,14 +1199,14 @@ if ('applicationCache' in window) {
         },
         query = window.location.search.substring(1);
     vis.urlParams = {};
-    while (match = search.exec(query)) {
+
+    while ((match = search.exec(query))) {
         vis.urlParams[decode(match[1])] = decode(match[2]);
     }
 
-    if (window.location.href.indexOf('edit.html') != -1 || vis.urlParams['edit'] === "") {
-        vis.editMode = true;
-    }
-})();
+    vis.editMode = (window.location.href.indexOf('edit.html') != -1 || vis.urlParams.edit === '');
+};
+window.onpopstate();
 
 // Start of initialisation: main ()
 (function ($) {
@@ -1206,9 +1216,7 @@ if ('applicationCache' in window) {
 
         // für iOS Safari - wirklich notwendig?
         $('body').on('touchmove', function (e) {
-            if ($(e.target).closest("body").length == 0) {
-                e.preventDefault();
-            }
+            if (!$(e.target).closest("body").length) e.preventDefault();
         });
 
         vis.preloadImages(["img/disconnect.png"]);
@@ -1433,8 +1441,8 @@ if ('applicationCache' in window) {
                     }
 
                     // Inform other widgets, that do not support canJS
-                    for (var i = 0, len = vis.onChangeCallbacks.length; i < len; i++) {
-                        vis.onChangeCallbacks[i].callback(vis.onChangeCallbacks[i].arg, id, state.val, state.ack);
+                    for (var j = 0, len = vis.onChangeCallbacks.length; j < len; j++) {
+                        vis.onChangeCallbacks[j].callback(vis.onChangeCallbacks[j].arg, id, state.val, state.ack);
                     }
                 },
                 onAuth:       function (message, salt) {
@@ -1450,7 +1458,7 @@ if ('applicationCache' in window) {
                         }
                         users += '</select>';
                     } else {
-                        users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name') + '">'
+                        users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name') + '">';
                     }
 
                 var text = '<div id="login-box" class="login-popup" style="display:none">' +
@@ -1604,6 +1612,6 @@ function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
 }
 
 if (window.location.search == "?edit") {
-    alert(_('please use /vis/edit.html instead of /vis/?edit'));
+    window.alert(_('please use /vis/edit.html instead of /vis/?edit'));
     location.href = './edit.html' + window.location.hash;
 }

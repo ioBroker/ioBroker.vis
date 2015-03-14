@@ -15,15 +15,25 @@
 
 // visEdit - the ioBroker.vis Editor
 /* jshint browser:true */
-/* global document*/
-/* global console*/
-/* global session*/
-/* global window*/
-/* global location*/
-/* global setTimeout*/
-/* global clearTimeout*/
-/* global io*/
-/* global $*/
+/* global document */
+/* global console */
+/* global session */
+/* global window */
+/* global location */
+/* global setTimeout */
+/* global clearTimeout */
+/* global io */
+/* global $ */
+/* global vis:true */
+/* global local */
+/* global can */
+/* global colorSelect */
+/* global storage */
+/* global html2canvas */
+/* global translateAll */
+/* global ace */
+/* global _ */
+/* jshint -W097 */// jshint strict:false
 
 'use strict';
 
@@ -194,10 +204,10 @@ vis = $.extend(true, vis, {
                 var pos = widgets.indexOf(that.activeWidgets[i]);
                 if (pos == -1) that.activeWidgets.splice(pos, 1);
             }
-            for (var i = 0; i < widgets.length; i++) {
-                if (that.activeWidgets.indexOf(widgets[i]) == -1) {
-                    that.activeWidgets.push(widgets[i]);
-                    that.actionHighlighWidget(widgets[i]);
+            for (var j = 0; j < widgets.length; j++) {
+                if (that.activeWidgets.indexOf(widgets[j]) == -1) {
+                    that.activeWidgets.push(widgets[j]);
+                    that.actionHighlighWidget(widgets[j]);
                 }
             }
             that.inspectWidgets();
@@ -267,7 +277,7 @@ vis = $.extend(true, vis, {
         $('#screen_size').selectmenu({
             change: function () {
                 var val = $(this).val();
-                if (val == '') {
+                if (!val) {
                     $('#screen_size_x').prop('disabled', true);
                     $('#screen_size_y').prop('disabled', true);
                     $('#screen_size_x').val('').trigger('change');
@@ -533,7 +543,7 @@ vis = $.extend(true, vis, {
         // Theme select Editor
         if (this.config.editorTheme) {
             $('#editorTheme').remove();
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + lastTheme + '/jquery-ui.min.css" id="editorTheme"/>');
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + this.config.editorTheme + '/jquery-ui.min.css" id="editorTheme"/>');
             $('[data-theme=' + this.config.editorTheme + ']').addClass('ui-state-active');
         }
 
@@ -568,19 +578,19 @@ vis = $.extend(true, vis, {
             if (typeof systemLang != 'undefined') systemLang = that.language;
             setTimeout(function () {
                 translateAll();
-            }, 0)
+            }, 0);
 
         });
 
 
         $('#m_about').click(function () {
-            $('#dialog_about').dialog('open')
+            $('#dialog_about').dialog('open');
         });
         $('#m_shortcuts').click(function () {
-            $('#dialog_shortcuts').dialog('open')
+            $('#dialog_shortcuts').dialog('open');
         });
         //$("#m_setup").click(function () {
-        //    $("#dialog_setup").dialog("open")
+        //    $("#dialog_setup").dialog("open");
         //});
 
         // Ribbon icons Golbal
@@ -641,7 +651,7 @@ vis = $.extend(true, vis, {
                 var _data = {
                     wid:  this,
                     left: parseInt($("#" + this).css("left"))
-                }
+                };
                 data.push(_data);
             });
 
@@ -671,7 +681,7 @@ vis = $.extend(true, vis, {
                 var _data = {
                     wid:  this,
                     left: parseInt($("#" + this).css("left"))
-                }
+                };
                 data.push(_data);
             });
 
@@ -914,10 +924,10 @@ vis = $.extend(true, vis, {
             that.alignIndex++;
             if (that.alignIndex >= that.alignValues.length) that.alignIndex = 0;
 
-            for (var t = 0; t < that.activeWidgets.length; t++) {
-                $('#' + that.activeWidgets[t]).width(that.alignValues[that.alignIndex]);
-                that.views[that.activeView].widgets[that.activeWidgets[t]].style.width = that.alignValues[that.alignIndex] + "px";
-                that.showWidgetHelper(that.activeWidgets[t], true);
+            for (var k = 0; k < that.activeWidgets.length; k++) {
+                $('#' + that.activeWidgets[k]).width(that.alignValues[that.alignIndex]);
+                that.views[that.activeView].widgets[that.activeWidgets[k]].style.width = that.alignValues[that.alignIndex] + "px";
+                that.showWidgetHelper(that.activeWidgets[k], true);
             }
             that.save();
         });
@@ -940,10 +950,10 @@ vis = $.extend(true, vis, {
             that.alignIndex++;
             if (that.alignIndex >= that.alignValues.length) that.alignIndex = 0;
 
-            for (var t = 0; t < that.activeWidgets.length; t++) {
-                $('#' + that.activeWidgets[t]).height(that.alignValues[that.alignIndex]);
-                that.views[that.activeView].widgets[that.activeWidgets[t]].style.height = that.alignValues[that.alignIndex] + "px";
-                that.showWidgetHelper(that.activeWidgets[t], true);
+            for (var u = 0; u < that.activeWidgets.length; u++) {
+                $('#' + that.activeWidgets[u]).height(that.alignValues[that.alignIndex]);
+                that.views[that.activeView].widgets[that.activeWidgets[u]].style.height = that.alignValues[that.alignIndex] + "px";
+                that.showWidgetHelper(that.activeWidgets[u], true);
             }
             that.save();
         });
@@ -1014,7 +1024,7 @@ vis = $.extend(true, vis, {
         $('#rib_view_rename').button({icons: {primary: 'ui-icon-pencil', secondary: null}, text: false}).click(function () {
             $('#rib_view').hide();
             $('#rib_view_rename_tr').show();
-            $('#rib_view_newname').val(that.activeView).focus()
+            $('#rib_view_newname').val(that.activeView).focus();
         });
         $("#rib_view_rename_cancel").button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
             $('#rib_view').show();
@@ -1082,7 +1092,7 @@ vis = $.extend(true, vis, {
             that.saveRemote(function () {
                 // Show hint how to get back to edit mode
                 if (!that.config['dialog/isEditHintShown']) {
-                    alert(_('To get back to edit mode just call "%s" in browser', location.href));
+                    window.alert(_('To get back to edit mode just call "%s" in browser', location.href));
                     that.editSaveConfig('dialog/isEditHintShown', true);
                 }
 
@@ -1110,13 +1120,13 @@ vis = $.extend(true, vis, {
                 if ($(this).hasClass("ui-state-active")) {
                     that.editSaveConfig('button/btn_prev_zoom', false);
                     $(this).removeClass("ui-state-active");
-                    $(".wid_prev").removeClass("wid_prev_k")
-                    $(".wid_prev_content").css("zoom", 1)
+                    $(".wid_prev").removeClass("wid_prev_k");
+                    $(".wid_prev_content").css("zoom", 1);
                 } else {
                     that.editSaveConfig('button/btn_prev_zoom', true);
                     $(this).addClass("ui-state-active");
-                    $(".wid_prev").addClass("wid_prev_k")
-                    $(".wid_prev_content").css("zoom", 0.5)
+                    $(".wid_prev").addClass("wid_prev_k");
+                    $(".wid_prev_content").css("zoom", 0.5);
                 }
             });
 
@@ -1131,34 +1141,29 @@ vis = $.extend(true, vis, {
                 if ($(this).hasClass("ui-state-active")) {
                     that.editSaveConfig('button/btn_prev_type', false);
                     $(this).removeClass("ui-state-active");
-                    $(".wid_prev_type").hide()
+                    $(".wid_prev_type").hide();
                 } else {
                     that.editSaveConfig('button/btn_prev_type', true);
                     $(this).addClass("ui-state-active");
-                    $(".wid_prev_type").show()
+                    $(".wid_prev_type").show();
                 }
             });
 
         $.each(this.widgetSets, function () {
-            var set = "";
-            if (this.name) {
-                set = this.name
-            } else {
-                set = this;
-            }
+            var set = this.name || this;
             var tpl_list = $('.vis-tpl[data-vis-set="' + set + '"]');
 
             $.each(tpl_list, function (i) {
                 var tpl = $(tpl_list[i]).attr('id');
                 var type = "";
                 if ($("#" + tpl).data('vis-type')) {
-                    type = '<div class="wid_prev_type">' + $("#" + tpl).data("vis-type") + '</div>'
+                    type = '<div class="wid_prev_type">' + $("#" + tpl).data("vis-type") + '</div>';
                 }
                 $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div></div>');
                 if ($(tpl_list[i]).data('vis-prev')) {
 
                     var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
-                    $(content).children().last().addClass("wid_prev_content")
+                    $(content).children().last().addClass("wid_prev_content");
                 }
 
 
@@ -1171,7 +1176,7 @@ vis = $.extend(true, vis, {
 
                     start: function (event, ui) {
                         if (ui.helper.children().length < 3) {
-                            $(ui.helper).addClass("ui-state-highlight ui-corner-all").css({padding: "2px", "font-size": "12px"})
+                            $(ui.helper).addClass("ui-state-highlight ui-corner-all").css({padding: "2px", "font-size": "12px"});
 
                         } else {
                             $(ui.helper).find(".wid_prev_type").remove();
@@ -1248,9 +1253,9 @@ vis = $.extend(true, vis, {
 
             if (o.self_w != o.parent_w) {
                 if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
-                    $('#view_select_tabs').css('left', o.self_l - 50 + "px")
+                    $('#view_select_tabs').css('left', o.self_l - 50 + "px");
                 } else {
-                    $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
+                    $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + 'px');
                 }
             }
         });
@@ -1269,9 +1274,9 @@ vis = $.extend(true, vis, {
 
             if (o.self_w != o.parent_w) {
                 if ((o.self_l + 50) <= 0) {
-                    $('#view_select_tabs').css('left', o.self_l + 50 + "px")
+                    $('#view_select_tabs').css('left', o.self_l + 50 + "px");
                 } else {
-                    $('#view_select_tabs').css('left', "0px")
+                    $('#view_select_tabs').css('left', "0px");
                 }
             }
         });
@@ -1281,22 +1286,22 @@ vis = $.extend(true, vis, {
                 parent_w: $('#view_select_tabs_wrap').width(),
                 self_w: $('#view_select_tabs').width(),
                 self_l: parseInt($('#view_select_tabs').css('left'))
-            }
+            };
             if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
 
                 if (o.self_w != o.parent_w) {
                     if ((o.parent_w - o.self_w) <= (o.self_l - 20)) {
-                        $('#view_select_tabs').css('left', o.self_l - 20 + "px")
+                        $('#view_select_tabs').css('left', o.self_l - 20 + "px");
                     } else {
-                        $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
+                        $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px");
                     }
                 }
             } else {
                 if (o.self_w != o.parent_w) {
                     if ((o.self_l + 20) <= 0) {
-                        $('#view_select_tabs').css('left', o.self_l + 20 + "px")
+                        $('#view_select_tabs').css('left', o.self_l + 20 + "px");
                     } else {
-                        $('#view_select_tabs').css('left', "0px")
+                        $('#view_select_tabs').css('left', "0px");
                     }
                 }
             }
@@ -1332,7 +1337,7 @@ vis = $.extend(true, vis, {
             $('#view_select_tabs').append('<div id="view_tab_' + k + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + k + '">' + k + '</div>');
         }
 
-        $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active')
+        $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active');
     },
     editInitCSSEditor:function(){
         var that = this;
@@ -1560,15 +1565,15 @@ vis = $.extend(true, vis, {
         });
 
         // Create background_class property if does not exist
-        if (this.views[this.activeView] != undefined) {
-            if (this.views[this.activeView].settings == undefined) {
+        if (this.views[this.activeView] !== undefined) {
+            if (this.views[this.activeView].settings === undefined) {
                 this.views[this.activeView].settings = {};
             }
-            if (this.views[this.activeView].settings.style == undefined) {
+            if (this.views[this.activeView].settings.style === undefined) {
                 this.views[this.activeView].settings.style = {};
             }
-            if (this.views[this.activeView].settings.style['background_class'] == undefined) {
-                this.views[this.activeView].settings.style['background_class'] = '';
+            if (this.views[this.activeView].settings.style.background_class === undefined) {
+                this.views[this.activeView].settings.style.background_class = '';
             }
         }
 
@@ -1841,7 +1846,7 @@ vis = $.extend(true, vis, {
             var text = $('#textarea_import_view').val();
             importObject = JSON.parse(text);
         } catch (e) {
-            alert(_('invalid JSON') + "\n\n" + e);
+            window.alert(_('invalid JSON') + "\n\n" + e);
             return;
         }
         if (isAll) {
@@ -1986,8 +1991,8 @@ vis = $.extend(true, vis, {
             }
         }
 
-        for (var i = 0; i < widgets.length; i++) {
-            this.delWidgetHelper(widgets[i], true);
+        for (var j = 0; j < widgets.length; j++) {
+            this.delWidgetHelper(widgets[j], true);
         }
         if (!noSave) this.save();
 
@@ -2026,7 +2031,7 @@ vis = $.extend(true, vis, {
         if (!view) view = this.activeView;
 
         var isSelectWidget = (wid === undefined);
-        var isViewExist = (document.getElementById('visview_' + view) != null);
+        var isViewExist = (document.getElementById('visview_' + view) !== null);
         var renderVisible = data.renderVisible;
 
         if (renderVisible) delete data.renderVisible;
@@ -2056,7 +2061,7 @@ vis = $.extend(true, vis, {
                 ts:   this.states[this.widgets[widgetId].data.oid + '.ts'],
                 ack:  this.states[this.widgets[widgetId].data.oid + '.ack'],
                 lc:   this.states[this.widgets[widgetId].data.oid + '.lc'],
-                data: this.widgets[widgetId]['data'],
+                data: this.widgets[widgetId].data,
                 view: view
             }));
         }
@@ -2097,20 +2102,20 @@ vis = $.extend(true, vis, {
         return widgetId;
     },
     dupWidgets: function (widgets, targetView) {
-        if (!widgets)    widgets = this.activeWidgets;
+        if (!widgets)    widgets    = this.activeWidgets;
         if (!targetView) targetView = this.activeView;
 
         var activeView;
-        var targetView;
         var tpl;
         var data;
         var style;
         var newWidgets = [];
 
         for (var i = 0; i < widgets.length; i++) {
+            var objWidget;
             // if from clipboard
             if (widgets[i].widget) {
-                var objWidget   = widgets[i].widget;
+                objWidget   = widgets[i].widget;
                 activeView      = widgets[i].view;
                 tpl             = objWidget.tpl;
                 data            = objWidget.data;
@@ -2125,7 +2130,7 @@ vis = $.extend(true, vis, {
             }
 
             if (activeView == targetView) {
-                style.top  = parseInt(style.top, 10);
+                style.top  = parseInt(style.top,  10);
                 style.left = parseInt(style.left, 10);
 
                 style.top  += 10;
@@ -2144,7 +2149,7 @@ vis = $.extend(true, vis, {
                     .append('<option value="' + newWidgets[newWidgets.length - 1] + '">' + newWidgets[newWidgets.length - 1] + ' (' + $("#" + this.views[this.activeView].widgets[newWidgets[newWidgets.length - 1]].tpl).attr("data-vis-name") + ')</option>')
                     .multiselect('refresh');
             } else {
-                if ($('#vis_container').find('#visview_' + targetView).html() == undefined) {
+                if ($('#vis_container').find('#visview_' + targetView).html() === undefined) {
                     this.renderView(targetView, true, true);
                 }
                 newWidgets.push(this.addWidget(tpl, data, style, this.nextWidget(), targetView, true));
@@ -2217,7 +2222,7 @@ vis = $.extend(true, vis, {
             }
 
             if (view) {
-                if (views == null) views = [];
+                if (views === null) views = [];
 
                 var isFound = false;
                 for (var j = 0; j < views.length; j++) {
@@ -2239,8 +2244,8 @@ vis = $.extend(true, vis, {
                         continue;
                     }
 
-                    for (var j = 0; j < views.length; j++) {
-                        if (views[j] == v_) {
+                    for (var k = 0; k < views.length; k++) {
+                        if (views[k] == v_) {
                             isFound = true;
                             break;
                         }
@@ -2259,8 +2264,8 @@ vis = $.extend(true, vis, {
 
                 if (views.length < 2 && (widgets[i].indexOf('_') != -1)) {
                     // rename this widget from "wid_view" to "wid"
-                    var wids = widgets[i].split('_', 2);
-                    this.renameWidget(widgets[i], wids[0]);
+                    var _wids = widgets[i].split('_', 2);
+                    this.renameWidget(widgets[i], _wids[0]);
                 } else if (views.length > 1 && (widgets[i].indexOf('_') == -1)) {
                     this.renameWidget(widgets[i], widgets[i] + '_' + view);
                 }
@@ -2414,7 +2419,7 @@ vis = $.extend(true, vis, {
         // Select
         var line = {
             input: '<select type="text" id="inspect_' + widAttr + '">'
-        }
+        };
         if (onchange) line.onchange = onchange;
         if (init)     line.init = init;
         if (values.length && values[0] !== undefined) {
@@ -2585,7 +2590,7 @@ vis = $.extend(true, vis, {
                 $(this).spinner(options);
                 $(this).parent().css({width: '100%'});
             }
-        }
+        };
         if (onchange) line.onchange = onchange;
         return line;
     },
@@ -2635,7 +2640,7 @@ vis = $.extend(true, vis, {
                 if (typeof this.binds[funcs[0]] == 'function') {
                     return this.binds[funcs[0]](widAttr, options);
                 } else {
-                    console.log('No function: vis.binds.' +  + funcs.join('.'));
+                    console.log('No function: vis.binds.' + funcs.join('.'));
                 }
             } else if (funcs.length == 2) {
                 if (this.binds[funcs[0]] && typeof this.binds[funcs[0]][funcs[1]] == 'function') {
@@ -2650,7 +2655,7 @@ vis = $.extend(true, vis, {
                     console.log('No function: vis.binds.' + funcs.join('.'));
                 }
             } else {
-                if (funcs.length == 0) {
+                if (!funcs.length) {
                     console.log('Function name is too short: vis.binds');
                 } else {
                     console.log('Function name is too long: vis.binds.' + funcs.join('.'));
@@ -2667,8 +2672,8 @@ vis = $.extend(true, vis, {
         }
     },
     editSlider: function (widAttr, options) {
-        options.min = (options.min === undefined || options.min === null || options.min == '') ? 0 : options.min;
-        options.max = (options.max === undefined || options.max === null || options.max == '') ? 0 : options.max;
+        options.min = (!options.min) ? 0 : options.min;
+        options.max = (!options.max) ? 0 : options.max;
         options.step = (!options.step) ? (options.max - options.min) / 100 : options.step;
         var that = this;
         var line = {
@@ -2692,10 +2697,10 @@ vis = $.extend(true, vis, {
         var line;
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group]['css_left']       = {input: '<input type="text" id="inspect_css_left"/>'};
-        this.groups[group]['css_top']        = {input: '<input type="text" id="inspect_css_top"/>'};
-        this.groups[group]['css_width']      = {input: '<input type="text" id="inspect_css_width"/>'};
-        this.groups[group]['css_height']     = {input: '<input type="text" id="inspect_css_height"/>'};
+        this.groups[group].css_left   = {input: '<input type="text" id="inspect_css_left"/>'};
+        this.groups[group].css_top    = {input: '<input type="text" id="inspect_css_top"/>'};
+        this.groups[group].css_width  = {input: '<input type="text" id="inspect_css_width"/>'};
+        this.groups[group].css_height = {input: '<input type="text" id="inspect_css_height"/>'};
         this.groups[group]['css_z-index']    = this.editNumber('css_z-index');
         this.groups[group]['css_overflow-x'] = this.editSelect('css_overflow-x', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
         this.groups[group]['css_overflow-y'] = this.editSelect('css_overflow-y', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
@@ -2711,7 +2716,7 @@ vis = $.extend(true, vis, {
         var line;
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group]['css_color']          = this.editColor('css_color');
+        this.groups[group].css_color             = this.editColor('css_color');
         this.groups[group]['css_text-align']     = this.editSelect('css_text-align', ['', 'left', 'right', 'center' ,'justify', 'initial', 'inherit'], true);
         this.groups[group]['css_text-shadow']    = {input: '<input type="text" id="inspect_css_text-shadow"/>'};
         this.groups[group]['css_font-family']    = {input: '<input type="text" id="inspect_css_font-family"/>'};
@@ -2734,7 +2739,7 @@ vis = $.extend(true, vis, {
         var line;
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group]['css_background']            = {input: '<input type="text" id="inspect_css_background"/>'};
+        this.groups[group].css_background               = {input: '<input type="text" id="inspect_css_background"/>'};
         this.groups[group]['css_background-color']      = this.editColor('css_background-color');
         this.groups[group]['css_background-image']      = {input: '<input type="text" id="inspect_background-image"/>'};
         this.groups[group]['css_background-repeat']     = this.editSelect('css_background-repeat', ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'], true);
@@ -2794,7 +2799,7 @@ vis = $.extend(true, vis, {
         var line;
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group]['css_padding']        = {input: '<input type="text" id="inspect_css_padding"/>'};
+        this.groups[group].css_padding           = {input: '<input type="text" id="inspect_css_padding"/>'};
         this.groups[group]['css_padding-left']   = {input: '<input type="text" id="inspect_css_padding-left"/>'};
         this.groups[group]['css_padding-top']    = {input: '<input type="text" id="inspect_css_padding-top"/>'};
         this.groups[group]['css_padding-right']  = {input: '<input type="text" id="inspect_css_padding-right"/>'};
@@ -2892,7 +2897,6 @@ vis = $.extend(true, vis, {
                 break;
             case 'hidden':
                 return;
-                break;
             case 'fontname':
                 line = this.editFontName(widAttr.name);
                 break;
@@ -2929,9 +2933,10 @@ vis = $.extend(true, vis, {
         var that = this;
         var depends = [];
         var values = {};
+        var widAttr;
         for (var group in this.groups) {
             if (this.groupsState[group] === undefined) this.groupsState[group] = false;
-            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="3">' + _('group_' + group) + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>')
+            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="3">' + _('group_' + group) + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>');
 
             for (var widAttr in this.groups[group]) {
                 var line = this.groups[group][widAttr];
@@ -3036,41 +3041,40 @@ vis = $.extend(true, vis, {
         }
 
         // Init all elements together
-        for (var group in this.groups) {
-            for (var widAttr in this.groups[group]) {
-                var line = this.groups[group][widAttr];
-                var $input = $('#inspect_' + widAttr);
-                wdata = $input.data('data-wdata');
-                if (depends.length) $input.data('data-depends', depends);
+        for (group in this.groups) {
+            for (widAttr in this.groups[group]) {
+                var line_ = this.groups[group][widAttr];
+                var $input_ = $('#inspect_' + widAttr);
+                var wdata_ = $input_.data('data-wdata');
+                if (depends.length) $input_.data('data-depends', depends);
 
-                if (line[0]) line = line[0];
-                if (typeof line == 'string') line = {input: line};
-                if (typeof line.init == 'function') {
-                    if (wdata.css) {
+                if (line_[0]) line_ = line_[0];
+                if (typeof line_ == 'string') line_ = {input: line_};
+                if (typeof line_.init == 'function') {
+                    if (wdata_.css) {
                         var cwidAttr = widAttr.substring(4);
                         if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(widgets, cwidAttr);
-                        line.init.call($input[0], cwidAttr, values[cwidAttr]);
+                        line_.init.call($input_[0], cwidAttr, values[cwidAttr]);
                     } else {
                         if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
-                        line.init.call($input[0], widAttr, values[widAttr]);
+                        line_.init.call($input_[0], widAttr, values[widAttr]);
                     }
                 }
                 // Call on change
-                if (typeof line.onchange == 'function') {
-                    if (wdata.css) {
+                if (typeof line_.onchange == 'function') {
+                    if (wdata_.css) {
                         var cwidAttr = widAttr.substring(4);
                         if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(widgets, cwidAttr);
-                        line.onchange.call($input[0], values[cwidAttr]);
+                        line_.onchange.call($input_[0], values[cwidAttr]);
                     } else {
                         if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
-                        line.onchange.call($input[0], values[widAttr]);
+                        line_.onchange.call($input_[0], values[widAttr]);
                     }
                 }
             }
         }
         this.initStealHandlers();
 
-        var that = this;
         $('.vis-inspect-widget').change(function (e) {
             var $this   = $(this);
             var wdata   = $this.data('data-wdata');
@@ -3091,7 +3095,7 @@ vis = $.extend(true, vis, {
                     var $widget = $('#' + wdata.widgets[i]);
                     if (val !== '' && (css == 'left' || css == 'top')) {
                         if (val.indexOf('%') == -1 && val.indexOf('px') == -1 && val.indexOf('em') == -1) {
-                            val += 'px'
+                            val += 'px';
                         }
                     }
                     $widget.css(css, val);
@@ -3188,7 +3192,7 @@ vis = $.extend(true, vis, {
             pos.top  = $widget[0].offsetTop;
             pos.left = $widget[0].offsetLeft;
             // May be bug?
-            if (pos.left == 0 && pos.top == 0) {
+            if (!pos.left && !pos.top) {
                 pos.left = $widget[0].style.left;
                 pos.top  = $widget[0].style.top + $widget[0].offsetTop;
                 if (typeof pos.left == 'string') pos.left = parseInt(pos.left.replace('px', ''), 10);
@@ -3440,7 +3444,7 @@ vis = $.extend(true, vis, {
             return {
                 values:       values,
                 widgetValues: widgetValues
-            }
+            };
         }
     },
     setAttrValue: function (widgets, attr, isStyle, values) {
@@ -3582,10 +3586,10 @@ vis = $.extend(true, vis, {
             }
 
             // Select selected widgets
-            for (var i = 0; i < select.length; i++) {
-                $widget = $('#' + select[i]);
-                this.$selectActiveWidgets.find('option[value="' + select[i] + '"]').attr('selected', 'selected');
-                this.showWidgetHelper(select[i], true);
+            for (var p = 0; p < select.length; p++) {
+                $widget = $('#' + select[p]);
+                this.$selectActiveWidgets.find('option[value="' + select[p] + '"]').attr('selected', 'selected');
+                this.showWidgetHelper(select[p], true);
 
                 if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
                     this.draggable($widget);
@@ -3974,7 +3978,6 @@ vis = $.extend(true, vis, {
                 origY = ui.position.top;
             },
             stop:   function (event, ui) {
-                //var mWidget = document.getElementById(widget);
                 //var pos = $('#' + widget).position();
 
                 /*if (!that.views[that.activeView].widgets[widget].style) {
@@ -4016,7 +4019,7 @@ vis = $.extend(true, vis, {
                     that.views[that.activeView].widgets[wid].style.top  = pos.top;
 
                     if ($wid[0]._customHandlers && $wid[0]._customHandlers.onMoveEnd) {
-                        mWidget._customHandlers.onMoveEnd($wid[0], wid);
+                        $wid[0]._customHandlers.onMoveEnd($wid[0], wid);
                     }
                 }
                 $('#inspect_css_top').val(that.findCommonValue(that.activeWidgets, 'top', true));
@@ -4195,11 +4198,11 @@ vis = $.extend(true, vis, {
                 var $jW = $('#' + w);
                 if ($jW.length) {
                     var s = $jW.position();
-                    s['width'] = $jW.width();
-                    s['height'] = $jW.height();
-                    if (s.width > 300 && s.height > 300) {
-                        continue;
-                    }
+                    s.width  = $jW.width();
+                    s.height = $jW.height();
+
+                    if (s.width > 300 && s.height > 300) continue;
+
                     positions[positions.length] = s;
                 }
             }
@@ -4248,30 +4251,29 @@ vis = $.extend(true, vis, {
         if (!$jWidget.length) return;
 
         var s = $jWidget.position();
-        s['width']  = $jWidget.width();
-        s['height'] = $jWidget.height();
-        s['radius'] = parseInt($jWidget.css('border-radius'));
+        s.width  = $jWidget.width();
+        s.height = $jWidget.height();
+        s.radius = parseInt($jWidget.css('border-radius'));
 
         var _css1 = {
-            left: s.left - 3.5,
-            top: s.top - 3.5,
-            height: s.height,
-            width: s.width,
-            opacity: 1,
+            left:         s.left - 3.5,
+            top:          s.top - 3.5,
+            height:       s.height,
+            width:        s.width,
+            opacity:      1,
             borderRadius: 15
         };
-
 
         var text = "<div id='" + id + "__action1' style='z-index:2000; top:" + (s.top - 3.5) + "px; left:" + (s.left - 3.5) + "px; width: " + s.width + "px; height: " + s.height + "px; position: absolute'></div>";
         $('#visview_' + this.activeView).append(text);
         var _css2 = {
-            left: s.left - 4 - s.width,
-            top: s.top - 4 - s.height,
-            height: s.height * 3,
-            width: s.width * 3,
-            opacity: 0,
+            left:         s.left - 4 - s.width,
+            top:          s.top - 4 - s.height,
+            height:       s.height * 3,
+            width:        s.width * 3,
+            opacity:      0,
             //borderWidth: 1,
-            borderRadius: s['radius'] + (s.height > s.width) ? s.width : s.height
+            borderRadius: s.radius + (s.height > s.width) ? s.width : s.height
         };
 
         $('#' + id + '__action1').
@@ -4350,14 +4352,14 @@ vis = $.extend(true, vis, {
                 e.preventDefault();
                 return false;
             });
-        })
+        });
     },
     stealCssModeStop: function () {
         this.isStealCss = false;
         $('#stealmode_content').remove();
-        if (this.selectable) {
-            $('#visview_' + this.activeView).selectable('enable');
-        }
+
+        if (this.selectable) $('#visview_' + this.activeView).selectable('enable');
+
         $('.vis-steal-css').removeAttr('checked').button('refresh');
         $('#vis_container').removeClass('vis-steal-cursor');
 
@@ -4369,7 +4371,7 @@ vis = $.extend(true, vis, {
         this.isStealCss = true;
 
         if (!$('#stealmode_content').length) {
-            $('body').append('<div id="stealmode_content" style="display:none" class="vis-stealmode">CSS steal mode</div>')
+            $('body').append('<div id="stealmode_content" style="display:none" class="vis-stealmode">CSS steal mode</div>');
             $('#stealmode_content').fadeIn('fast')
                 .click(function () {
                     $(this).fadeOut('slow');
@@ -4418,18 +4420,22 @@ vis = $.extend(true, vis, {
         var css;
         var parts = attr.split('-');
         var baseAttr = parts[0];
+        var cssTop;
+        var cssRight;
+        var cssBottom;
+        var cssLeft;
 
         if (attr == "border-radius") {
             // TODO second attribute
-            var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-left"));
-            var cssRight = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-right"));
-            var cssBottom = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-right"));
-            var cssLeft = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-left"));
+            cssTop    = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-top-left"));
+            cssRight  = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-top-right"));
+            cssBottom = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-bottom-right"));
+            cssLeft   = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-bottom-left"));
         } else {
-            var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top"));
-            var cssRight = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-right"));
-            var cssBottom = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom"));
-            var cssLeft = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-left"));
+            cssTop    = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-top"));
+            cssRight  = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-right"));
+            cssBottom = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-bottom"));
+            cssLeft   = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-left"));
         }
         if (cssLeft == cssRight && cssLeft == cssTop && cssLeft == cssBottom) {
             css = cssLeft;
@@ -4681,7 +4687,7 @@ vis = $.extend(true, vis, {
                     $(this).dialog('close');
                     that.delWidgets();
                     that.inspectWidgets([]);
-                }
+                };
                 dialog_buttons[_('Cancel')] = function () {
                     $(this).dialog('close');
                 };
@@ -4754,7 +4760,7 @@ vis = $.extend(true, vis, {
             shift = shift * factor;
 
             for (var i = 0, len = this.activeWidgets.length; i < len; i++) {
-                var widgetId = this.activeWidgets[i]
+                var widgetId = this.activeWidgets[i];
                 var $actualWidget = $('#' + widgetId);
                 if (this.views[this.activeView].widgets[widgetId].style[what] === undefined && $actualWidget.length) {
                     this.views[this.activeView].widgets[widgetId].style[what] = $actualWidget.css(what);
@@ -4803,7 +4809,7 @@ vis = $.extend(true, vis, {
     onPageClosing: function () {
         // If not saved
         if (this._saveTimer) {
-            if (confirm(_('Changes are not saved. Are you sure?'))) {
+            if (window.confirm(_('Changes are not saved. Are you sure?'))) {
                 return null;
             } else {
                 return _("Configuration not saved.");
