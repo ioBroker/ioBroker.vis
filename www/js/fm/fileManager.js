@@ -18,7 +18,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         var fmConn;
         if (typeof SGI != 'undefined') {
             // TO DO wraper must be created. Direct using of socket is not convenient.
-            fmConn = SGI.socket
+            fmConn = SGI.socket;
         } else if (options.conn) {
             fmConn = options.conn;
         }
@@ -158,7 +158,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 if (files.length > 0) {
                     read(o, files, uploadArray);
                 } else {
-                    $('.dialog_fm_add > *').css({cursor: "default"})
+                    $('.dialog_fm_add > *').css({cursor: "default"});
                 }
             };
             reader.readAsDataURL(files[0]);
@@ -170,7 +170,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             $("#fm_table_head").remove();
             $("#fm_bar_play, #fm_bar_stop, #fm_bar_down, #fm_bar_del").button('disable');
 
-            if (o.data != undefined && o.view == "table") {
+            if (o.data !== undefined && o.view == "table") {
 
                 $('<div id="fm_table_head">' +
                     ' <button id="fm_table_head_name" >'  + fmTranslate('Name') + '</button>' +
@@ -223,12 +223,16 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                             return(bytes / 1073741824).toFixed(0) + ' Gb';
                         }
                     }
+                    var date;
+                    var time;
+                    var type;
+                    var filter;
 
                     if (this.stats.nlink > 1 || this.isDir) {
-                        var date = this.stats.ctime.split('T')[0];
-                        var time = this.stats.ctime.split('T')[1].split(".")[0];
-                        var type = this.file.split(".")[1] || "";
-                        var filter = "fm_folderFilter";
+                        date = this.stats.ctime.split('T')[0];
+                        time = this.stats.ctime.split('T')[1].split(".")[0];
+                        type = this.file.split(".")[1] || "";
+                        filter = "fm_folderFilter";
 
                         $(".fm_file_table").append(
                             '<tr class="fm_tr_folder ' + filter + ' fm_tr ui-state-default no_background">' +
@@ -241,13 +245,12 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                             '<th class="fm_th" width="10px"></td>' +
                             '</tr>');
                     } else {
-
-                        var date = this.stats.ctime.split('T')[0];
-                        var time = this.stats.ctime.split('T')[1].split(".")[0];
-                        var type = this.file.split(".").pop() || "";
                         var icons = ['zip', 'prg', 'js', 'png', 'svg', 'jpg', 'gif', 'bmp', 'css', 'mp3', 'wav'];
                         var icon = 'undef';
-                        var filter = '';
+                        date = this.stats.ctime.split('T')[0];
+                        time = this.stats.ctime.split('T')[1].split(".")[0];
+                        type = this.file.split(".").pop() || "";
+                        filter = '';
 
                         if (icons.indexOf(type) > -1) {
                             icon = type;
@@ -330,7 +333,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     var type = $($(".fm_table_selected").children().toArray()[2]).text();
                     var name = $($(".fm_table_selected").children().toArray()[1]).text();
 
-                    if (type == "") {
+                    if (!type) {
                         selType = "folder";
                         selFile = name;
                         $("#fm_bar_down").button('disable');
@@ -375,7 +378,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 }
             }
 
-            if (o.data != undefined && o.view == 'prev') {
+            if (o.data !== undefined && o.view == 'prev') {
                 var path = o.root ? o.path.split(o.root)[1] : o.path;
 
                 if (o.uploadDir) {
@@ -399,31 +402,31 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                     } else {
                         var name = this.file.split(".")[0];
-                        var type = this.file.split(".")[1] || "";
+                        var _type = this.file.split(".")[1] || "";
                         var icon = "undef";
                         var filter = "";
-                        if (o.fileFilter.indexOf(type) == -1) {
+                        if (o.fileFilter.indexOf(_type) == -1) {
                             filter = "fm_fileFilter";
                         }
 
                         if (name.length > 0) {
                             // if image
-                            if (o.img.indexOf(type) > -1) {
+                            if (o.img.indexOf(_type) > -1) {
 
                                 $(".fm_files").append(
-                                    '<div class="fm_prev_container ' + filter + '" data-sort="' + type + '">' +
+                                    '<div class="fm_prev_container ' + filter + '" data-sort="' + _type + '">' +
                                     '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + path + this.file + '"/></div>' +
                                     '<div class="fm_prev_name">' + this.file + '</div>' +
                                     '<div class="fm_prev_overlay"></div>' +
                                     '</div>');
 
                             } else {
-                                if (o.icons.indexOf(type) > -1) {
-                                    icon = type;
+                                if (o.icons.indexOf(_type) > -1) {
+                                    icon = _type;
                                 }
 
                                 $(".fm_files").append(
-                                        '<div class="fm_prev_container ' + filter + '" data-sort="' + type + '">' +
+                                        '<div class="fm_prev_container ' + filter + '" data-sort="' + _type + '">' +
                                         '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + fmFolder + 'icon/mine/128/' + icon + '.png"/></div>' +
                                         '<div class="fm_prev_name">' + this.file + '</div>' +
                                         '<div class="fm_prev_overlay"></div>' +
@@ -511,7 +514,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 $(".fm_fileFilter").show();
             } else {
                 $(".fm_fileFilter").hide();
-                if (o.folderFilter == true) {
+                if (o.folderFilter) {
                     $(".fm_folderFilter").hide();
                 }
             }
@@ -534,7 +537,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                         $(this).parent().find('.fm_prev_overlay').trigger('click');
                         return false;
                     }
-                })
+                });
                 o.currentFile = null;
             }
         }
@@ -606,7 +609,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 var path_arry = o.path.split("/");
                 path_arry.pop();
                 path_arry.pop();
-                if (path_arry.length == 0) {
+                if (path_arry.length === 0) {
                     o.path = '';
                 } else {
                     o.path = path_arry.join('/') + '/';
@@ -614,7 +617,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                 if (o.path == o.root) {
                     $("#fm_bar_back").trigger('mouseleave');
-                    $("#fm_bar_back").button("option", "disabled", true)
+                    $("#fm_bar_back").button("option", "disabled", true);
                 }
 
                 load(o.path);
@@ -637,7 +640,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 suppressScrollX: true
             });
         }
-        if (o.folderFilter == false) {
+        if (!o.folderFilter) {
             $('#fm_bar_folder').addClass('ui-state-error');
         }
 
@@ -657,11 +660,11 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     $(".fm_fileFilter").show();
                     $(".fm_folderFilter").show();
                     if (o.view == "prev") {
-                        $(".fm_fileFilter").css({display: "inline-table"})
+                        $(".fm_fileFilter").css({display: "inline-table"});
                     }
                 } else {
                     $(".fm_fileFilter").hide();
-                    if (o.folderFilter == true) {
+                    if (o.folderFilter) {
                         $(".fm_folderFilter").hide();
                     }
                 }
@@ -758,7 +761,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                             }
 
                             $('.dialog_fm_add > *').css({cursor: "wait"});
-                            upload()
+                            upload();
                         });
 
                         $("#btn_fm_add_close").button().click(function () {
@@ -794,7 +797,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                             var new_folder = $("#fm_inp_folder").val();
                             $('#dialog_fm_folder').remove();
 
-                            if (new_folder != "" || new_folder != undefined) {
+                            if (new_folder !== '' || new_folder !== undefined) {
                                 fmConn.mkdir(o.path + new_folder, function (err) {
                                     if (err) {
                                         console.log(err);
@@ -804,7 +807,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                                     }
                                 });
                             }
-                        })
+                        });
                     } catch (err) {
                         alert(err);
                     }
@@ -847,7 +850,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                             var new_name = $("#fm_inp_rename").val();
                             $('#dialog_fm_rename').remove();
 
-                            if (new_name != "" || new_name != undefined) {
+                            if (new_name !== "" || new_name !== undefined) {
                                 fmConn.renameFile(o.path + selFile, o.path + new_name, function (err) {
                                     if (err) {
                                         console.log(err);
@@ -857,7 +860,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                                     }
                                 });
                             }
-                        })
+                        });
                     } catch (err) {
                         alert(err);
                     }
@@ -871,7 +874,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                                 alert(fmTranslate('Delete failed'));
                             }
                             load(o.path);
-                        })
+                        });
                     } catch (err) {
                         alert('ordner \n' + err);
                     }
@@ -913,7 +916,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             return callback({
                 path: o.path,
                 file: selFile
-            }, o.userArg)
+            }, o.userArg);
         });
         $("#fm_btn_save").button().click(function () {
             var file = $("#fm_inp_save").val();
@@ -923,7 +926,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 file: file
             }, o.userArg);
         });
-    }
+    };
 })
 (jQuery);
 

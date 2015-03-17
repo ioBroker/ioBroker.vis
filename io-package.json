@@ -29,6 +29,16 @@
     },
     "instanceObjects": [
         {
+            "_id":  "",
+            "type": "meta",
+            "common": {
+                "name": "user files and images for vis"
+                "type": "user"
+            },
+            "native": {
+            }
+        },
+        {
             "_id":  "control",
             "type": "channel",
             "common": {
