@@ -585,8 +585,8 @@
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
             </defs>\
-            <path d="m500 0h-250l-41 40v120l41 40h250v-200z"  fill="#c0c0c0"/>\
-            <path d="m0 0h250l-40 41v119l40 40h-249z"  fill="#c0c0c0"/>\
+            <path id="' + id + '_fill_right"  d="m500 0h-250l-41 40v120l41 40h250v-200z"  fill="#c0c0c0"/>\
+            <path id="' + id + '_fill_left" d="m0 0h250l-40 41v119l40 40h-249z"  fill="#c0c0c0"/>\
             <rect height="200" width="500" y="0" x="0" fill="url(#' + id + '_b)"/>\
             <g>\
             <path d="m250 200-100-100m100-100-100 100" stroke-linecap="round" stroke="#000000" stroke-width="20" />\
@@ -596,7 +596,6 @@
             </svg>\
             ');
         },
-
         svg_check_valve_v: function (id) {
 
             $("#" + id + "_svg").append('\
@@ -1632,7 +1631,6 @@
                 vis.binds.plumb.svg_check_valve_h(id);
             });
 
-            $($this).trigger("resize")
 
             $($this).find(".plumb_c_valve_h_back_r").css({right: "0px"});
 
@@ -1642,17 +1640,19 @@
             $this.bind("plumb_change", function (event) {
 
                 if (self.conLeft == event.from && data.turn_direction == false) {
-                    $($this).find(".plumb_c_valve_h_back_l, .plumb_c_valve_h_back_r").css("background", event.color.c)
+                    $("#" + id + "_fill_left").attr("fill", event.color.c);
+                    $("#" + id + "_fill_right").attr("fill", event.color.c);
                     vis.binds.plumb.check(id, event)
                 } else if (self.conLeft == event.from) {
-                    $($this).find(".plumb_c_valve_h_back_l").css("background", event.color.c)
+                    $("#" + id + "_fill_left").attr("fill", event.color.c);
                 }
 
                 if (self.conRight == event.from && data.turn_direction != false) {
-                    $($this).find(".plumb_c_valve_h_back_l, .plumb_c_valve_h_back_r").css("background", event.color.c)
+                    $("#" + id + "_fill_left").attr("fill", event.color.c);
+                    $("#" + id + "_fill_right").attr("fill", event.color.c);
                     vis.binds.plumb.check(id, event)
                 } else if (self.conRight == event.from) {
-                    $($this).find(".plumb_c_valve_h_back_r").css("background", event.color.c)
+                    $("#" + id + "_fill_right").attr("fill", event.color.c);
                 }
 
             });
@@ -1989,18 +1989,72 @@
 
             vis.binds.plumb.plumb_drop($this);
 
-            $($this).on("resize", function () {
-                var shadow = parseInt($this.width() / 2) - 20;
-                $($this).find(".ent-e_center").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".ent-e_bottom").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'});
-                $($this).find(".ent-e_top").css({"box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + (shadow) + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + (shadow) + 'px #000,inset  0px ' + (shadow / 2) + 'px ' + (shadow / 2) + 'px -' + (shadow / 2) + 'px #000'});
 
-                var shadow_pips_t = parseInt($($this).find(".ent-e_top_pipe-l").width() / 2);
-
-                $($this).find(".ent-e_top_pipe-l").css({"box-shadow": 'inset ' + shadow_pips_t + 'px 0px ' + shadow_pips_t + 'px -' + shadow_pips_t + 'px #000,inset -' + shadow_pips_t + 'px 0px ' + shadow_pips_t + 'px -' + shadow_pips_t + 'px #000'})
-                $($this).find(".ent-e_top_pipe-r").css({"box-shadow": 'inset ' + shadow_pips_t + 'px 0px ' + shadow_pips_t + 'px -' + shadow_pips_t + 'px #000,inset -' + shadow_pips_t + 'px 0px ' + shadow_pips_t + 'px -' + shadow_pips_t + 'px #000'})
-            });
-
+//            <div class="ent-e_top">
+//            <svg class="spray spray_l" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 50 50">
+//            <defs>
+//            <linearGradient x1="25" y1="0" x2="25" y2="50" id="linearGradient4318" xlink:href="#linearGradient3755" gradientUnits="userSpaceOnUse" />
+//            <linearGradient id="linearGradient3755">
+//            <stop offset="0" style="stop-color:#0000ff;stop-opacity:1" id="stop3757" />
+//            <stop offset="1" style="stop-color:#bb5b0d;stop-opacity:1" id="stop3759" />
+//            </linearGradient>
+//            </defs>
+//            <path style="stroke-dasharray:3,10,7; stroke:url(#linearGradient4318);stroke-width:0.5;stroke-linecap:none;stroke-opacity:1" d="M 50,50 25,0 M 45,50 25,0 M 40,50 25,0 M 35,50 25,0 M 30,50 25,0 M 25,50 25,0 M 20,50 25,0 M 15,50 25,0 M 10,50 25,0 M 5,50 25,0 M 0,50 25,0"></path>
+//            <animate attributeName="stroke-dashoffset" begin="0s"  from="0" to="40" dur="1s"  repeatCount="indefinite"></animate>
+//            </svg>
+//            <svg class="spray spray_r" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 50 50">
+//            <path style="stroke-dasharray:10,7,3; stroke:url(#linearGradient4318);stroke-width:0.5;stroke-linecap:none;stroke-opacity:1" d="M 50,50 25,0 M 45,50 25,0 M 40,50 25,0 M 35,50 25,0 M 30,50 25,0 M 25,50 25,0 M 20,50 25,0 M 15,50 25,0 M 10,50 25,0 M 5,50 25,0 M 0,50 25,0
+//            "></path>
+//            <animate attributeName="stroke-dashoffset" begin="0s"  from="0" to="40" dur="1s"  repeatCount="indefinite"></animate>
+//            </svg>
+//            </div>
+//            url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAGklEQVQImWNgQID/DGjgP7oEugoMCZxGMAAAluAH+UhIFMkAAAAASUVORK5CYII=)
+            $this.find(".tank_simple_svg").append('\
+            <svg\
+            height="100%"\
+            viewBox="0 0 300 600"\
+            width="100%"\
+            preserveAspectRatio="none"\
+             >\
+            <defs>\
+            <clipPath id="e_'+id+'" clipPathUnits="userSpaceOnUse">\
+            <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
+            </clipPath>\
+            <linearGradient id="d_'+id+'" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
+            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+            <stop stop-color="#000000" stop-opacity="0" offset=".5"/>\
+            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
+            </linearGradient>\
+            <linearGradient id="a_'+id+'">\
+            <stop stop-color="#000000" stop-opacity="0" offset="0"/>\
+            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
+            </linearGradient>\
+            <radialGradient id="c_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
+            <radialGradient id="b_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
+            \
+            \
+            \
+            <linearGradient x1="25" y1="10" x2="25" y2="90" id="linearGradient4318" xlink:href="#linearGradient3755" gradientUnits="userSpaceOnUse" />\
+            <linearGradient id="linearGradient3755">\
+            <stop offset="0" style="stop-color:#0000ff;stop-opacity:1" id="stop3757" />\
+            <stop offset="1" style="stop-color:#bb5b0d;stop-opacity:1" id="stop3759" />\
+            </linearGradient>\
+            \
+            \
+            \
+             <image id="' + id + '_kies_png" x="0" y="0" xlink:href="url.png"></image>\
+            </defs>\
+            <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
+            <rect id="' + id + '_fill" style="color:#000000" clip-path="url(#e_'+id+')" height="300" width="300" y="300" x="0" fill="' + data.water_color + '"/>\
+            <rect id="' + id + '_kies" style="color:#000000" clip-path="url(#e_'+id+')" height="200" width="300" y="400" x="0" fill="url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAGklEQVQImWNgQID/DGjgP7oEugoMCZxGMAAAluAH+UhIFMkAAAAASUVORK5CYII=)"/>\
+            <path d="m0 50h300v500h-300z" fill="url(#d_'+id+')"/>\
+            <path fill="url(#b_'+id+')" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
+            <path fill="url(#c_'+id+')" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
+            <path style="stroke-dasharray:10,7,3; stroke:url(#linearGradient4318);stroke-width:3;stroke-linecap:none;stroke-opacity:1" d="M 125,90 100,10 M 120,90 100,10 M 115,90 100,10 M 110,90 100,10 M 105,90 100,10 M 100,90 100,10 M 95,90 100,10 M 90,90 100,10 M 85,90 100,10 M 80,90 100,10 M 75,90 100,10"></path>\
+            <path style="stroke-dasharray:10,7,3; stroke:url(#linearGradient4318);stroke-width:3;stroke-linecap:none;stroke-opacity:1" d="M 225,90 200,10 M 220,90 200,10 M 215,90 200,10 M 210,90 200,10 M 205,90 200,10 M 200,90 200,10 M 195,90 200,10 M 190,90 200,10 M 185,90 200,10 M 180,90 200,10 M 175,90 200,10"></path>\
+            <animate attributeName="stroke-dashoffset" begin="0s"  from="0" to="40" dur="1s"  repeatCount="indefinite"></animate>\
+            </svg>\
+            ');
             $this.bind("plumb_change", function (event) {
 
 
@@ -2034,33 +2088,33 @@
 
 
             $this.find(".tank_simple_svg").append('\
-            <svg\
+                <svg\
             height="100%"\
             viewBox="0 0 300 600"\
             width="100%"\
             preserveAspectRatio="none"\
              >\
             <defs>\
-            <clipPath id="e" clipPathUnits="userSpaceOnUse">\
+            <clipPath id="e_'+id+'" clipPathUnits="userSpaceOnUse">\
             <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
             </clipPath>\
-            <linearGradient id="d" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
+            <linearGradient id="d_'+id+'" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
             <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
             <stop stop-color="#000000" stop-opacity="0" offset=".5"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
-            <linearGradient id="a">\
+            <linearGradient id="a_'+id+'">\
             <stop stop-color="#000000" stop-opacity="0" offset="0"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
-            <radialGradient id="c" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
-            <radialGradient id="b" xlink:href="#a" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
+            <radialGradient id="c_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
+            <radialGradient id="b_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
             </defs>\
             <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
-            <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#e)" height="300" width="300" y="300" x="0" fill="' + data.water_color + '"/>\
-            <path d="m0 50h300v500h-300z" fill="url(#d)"/>\
-            <path fill="url(#b)" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
-            <path fill="url(#c)" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
+            <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#e_'+id+')" height="300" width="300" y="300" x="0" fill="' + data.water_color + '"/>\
+            <path d="m0 50h300v500h-300z" fill="url(#d_'+id+')"/>\
+            <path fill="url(#b_'+id+')" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
+            <path fill="url(#c_'+id+')" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
             </svg>\
             ');
             setTimeout(function () {
@@ -2482,12 +2536,12 @@
 <script id="tplPlump_check_valve_H"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_check_valve_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r ui-selectee ui-selected ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 5 ],"aspectRatio": true}" style="width: 40px; height: 20px; left: 272px; top: 88px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_h " > <div class="plumb_c_valve_h_img" style="background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_h_back_l" style="display: block; width: 50%; height: 100%; position: absolute; background-color: silver; box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_h_back_r" style="display: block; width: 50%; height: 100%; position: absolute; background-color: silver; box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset; right: 0px; background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_c_valve_h.png" ></img>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Check Valve H"
-        data-vis-attrs="conLeft;conRight;show_back[true]/checkbox;symbol[./widgets/plumb/img/c_valve_h.svg]/src;turn_direction/checkbox">
-         <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 10, 5 ],"aspectRatio": true}' style=" width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="conLeft;conRight;show_pipe[true]/checkbox;show_symbol[true]/checkbox;turn_direction[false]/checkbox">
+         <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 12.5, 5 ],"aspectRatio": true}' style=" width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
              <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.c_valve_h(el, data) %>>
     			<div class="valve_h " >
     				<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
@@ -2503,12 +2557,12 @@
 <script id="tplPlump_check_valve_V"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_check_valve_V" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 5, 10 ],"aspectRatio": true}" style="width: 20px; height: 40px; left: 513px; top: 189px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_v " > <div class="plumb_c_valve_v_img" style="background-image: url(http://localhost:63342/ioBroker.vis/widgets/plumb/img/c_valve_v.svg); background-position: initial initial; background-repeat: initial initial;"></div> <div class="plumb_c_valve_v_back_t" style="display: block; box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="plumb_c_valve_v_back_b" style="display: block; box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> </div></div>'
+        data-vis-prev='<img src="widgets\plumb\img\prev_c_valve_v.png"></img>'
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Check Valve V"
-        data-vis-attrs="conTop;conBottom;show_back[true]/checkbox;symbol[./widgets/plumb/img/c_valve_v.svg]/src;turn_direction/checkbox">
-         <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " data-vis-resizable='{"grid": [ 5, 10 ],"aspectRatio": true}' style=" width: 20px; height: 40px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="conTop;conBottom;show_pipe[true]/checkbox;show_symbol[true]/checkbox;turn_direction[false]/checkbox">
+         <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " data-vis-resizable='{"grid": [ 5, 10 ],"aspectRatio": true}' style=" width: 20px; height: 50px;" id="<%= this.data.attr('wid') %>">
              <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.c_valve_v(el, data) %>>
     			<div class="valve_v " >
     		        <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
@@ -2631,39 +2685,11 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank Enteisung"
-        data-vis-attrs="conLeft;conRight;conTop;conBottom">
+        data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[0];oid;color[#C0C0C0]/color;water_color[#0000ff]/color;group.conTop;conTop_show/checkbox;conTop_size[20]/slider,5,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_size[20]/slider,5,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_size[20]/slider,5,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_size[20]/slider,5,50,5;conRight_pos[50]/slider,0,100,1;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 50, 50 ],"aspectRatio": true}' style="min-width: 140px; min-height: 270px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.ent_e_top(el, data) %>>
 			<div class="tank_ent-e " >
-                <div class="ent-e_top_pipe-l plumb_dock_top"></div>
-                <div class="ent-e_top_pipe-r plumb_dock_top"></div>
-                <div class="ent-e_top">
-                    <svg class="spray spray_l" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 50 50">
-                        <defs>
-                            <linearGradient x1="25" y1="0" x2="25" y2="50" id="linearGradient4318" xlink:href="#linearGradient3755" gradientUnits="userSpaceOnUse" />
-                            <linearGradient id="linearGradient3755">
-                                <stop offset="0" style="stop-color:#0000ff;stop-opacity:1" id="stop3757" />
-                                <stop offset="1" style="stop-color:#bb5b0d;stop-opacity:1" id="stop3759" />
-                            </linearGradient>
-                        </defs>
-                        <path style="stroke-dasharray:3,10,7; stroke:url(#linearGradient4318);stroke-width:0.5;stroke-linecap:none;stroke-opacity:1" d="M 50,50 25,0 M 45,50 25,0 M 40,50 25,0 M 35,50 25,0 M 30,50 25,0 M 25,50 25,0 M 20,50 25,0 M 15,50 25,0 M 10,50 25,0 M 5,50 25,0 M 0,50 25,0"></path>
-                        <animate attributeName="stroke-dashoffset" begin="0s"  from="0" to="40" dur="1s"  repeatCount="indefinite"></animate>
-                    </svg>
-                    <svg class="spray spray_r" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 50 50">
-                        <path style="stroke-dasharray:10,7,3; stroke:url(#linearGradient4318);stroke-width:0.5;stroke-linecap:none;stroke-opacity:1" d="M 50,50 25,0 M 45,50 25,0 M 40,50 25,0 M 35,50 25,0 M 30,50 25,0 M 25,50 25,0 M 20,50 25,0 M 15,50 25,0 M 10,50 25,0 M 5,50 25,0 M 0,50 25,0
-                        "></path>
-                        <animate attributeName="stroke-dashoffset" begin="0s"  from="0" to="40" dur="1s"  repeatCount="indefinite"></animate>
-                    </svg>
-                </div>
-                <div class="ent-e_center">
-                    <div class="ent-e_schott"></div>
-                    <div class="ent-e_kies"></div>
-                </div>
-                <div class="ent-e_bottom"></div>
-                <div class="ent-e_bottom_pipe"></div>
-
-				<div class="plumb_dock_left"></div>
-				<div class="plumb_dock_right"></div>
+                <div class="tank_simple_svg">
 			</div>
         </div>
     </div>
