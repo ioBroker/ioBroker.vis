@@ -33,7 +33,7 @@
             "type": "meta",
             "common": {
                 "name": "user files and images for vis",
-                "type": "user"
+                "type": "meta.user"
             },
             "native": {
             }
