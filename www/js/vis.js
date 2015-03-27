@@ -1556,6 +1556,8 @@ window.onpopstate();
                                     } else {
                                         href = location.protocol + '//' + location.hostname + ':' + location.port + data;
                                     }
+                                    // force read from server
+                                    href += '?' + (new Date()).getTime();
 
                                     if (typeof Audio != 'undefined') {
                                         var snd = new Audio(href); // buffers automatically when created

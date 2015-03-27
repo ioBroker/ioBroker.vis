@@ -461,16 +461,13 @@
             var settings = $.extend({}, options);
             var $this = $(el);
             var oid = $this.attr('data-oid');
-
             // Observable -> Buttonset
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 $this.find('input').removeAttr('checked');
-                if (newVal === true) {
+                if (newVal === true || newVal === 'true') {
                     newVal = 1;
-                } else if (newVal === false) {
+                } else if (newVal === false || newVal === 'false') {
                     newVal = 0;
-                } else {
-                    newVal = newVal;
                 }
 
                 $this.find('input[value="' + newVal + '"]').prop('checked', true);
@@ -481,21 +478,30 @@
 
             var val = vis.states.attr(oid + '.val');
 
-            if (val === true)  { val = 1; }
-            if (val === false) { val = 0; }
-            $this.find('input').removeAttr('checked');
-            $this.find('input[value="' + val + '"]').prop('checked', true);
-            $this.buttonset(settings);
+            if (val === true  || val === 'true')  { val = 1; }
+            if (val === false || val === 'false') { val = 0; }
+            setTimeout(function () {
+                console.log(val + ' ' + $this.find('input[value="' + val + '"]').length);
+                $this.find('input').removeAttr('checked');
+                $this.find('input[value="' + val + '"]').prop('checked', true);
+                $this.buttonset(settings);
 
-            $this.find('input').each(function () {
-                $(this).button('refresh');
-            });
-
-            // Buttonset -> Observable
-            $this.find('input').click(function () {
-                if (!vis.editMode) vis.setValue(oid,  $(this).val());
-            });
-
+                $this.find('input').each(function () {
+                    $(this).button('refresh');
+                });
+                // Buttonset -> Observable
+                $this.find('input').click(function () {
+                    if (!vis.editMode) {
+                        var val = $(this).val();
+                        var f = parseFloat(val);
+                        if (f.toString() == val.toString()) {
+                            vis.setValue(oid, f);
+                        } else {
+                            vis.setValue(oid, v);
+                        }
+                    }
+                });
+            }, 50);
         },
         iconHttpGet: function (el, url) {
             if (vis.editMode) return;
@@ -580,6 +586,14 @@
                     $this.find(".imgToggleFalse").show();
                 }
             });
+        },
+        calcValue: function (value, min, max) {
+            if (!min) min = 0;
+            if (max === null || max === undefined || max === '') max = 100;
+            min = parseFloat(min);
+            max = parseFloat(max);
+            value = parseFloat(value);
+            return min + value * (max - min);
         }
     };
 </script>
@@ -1028,15 +1042,15 @@
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Radiobuttons 25%"
-        data-vis-attrs="oid">
-    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
+        data-vis-attrs="oid;min;max">
+    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled": true, "handles": "e"}' >
         <div class="vis-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio"  data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked='checked'/><label for="<%= this.data.attr('wid') %>_radio0">aus</label>
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="0.25" checked='checked'/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="0.5" checked='checked'/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="0.75" checked='checked'/><label for="<%= this.data.attr('wid') %>_radio3">75%</label>
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio4">100%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= vis.binds.jqueryui.calcValue(0,    this.data.attr('min'), this.data.attr('max')) %>" checked='checked'/><label for="<%= this.data.attr('wid') %>_radio0">aus</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= vis.binds.jqueryui.calcValue(0.25, this.data.attr('min'), this.data.attr('max')) %>" checked='checked'/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="<%= vis.binds.jqueryui.calcValue(0.5,  this.data.attr('min'), this.data.attr('max')) %>" checked='checked'/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="<%= vis.binds.jqueryui.calcValue(0.75, this.data.attr('min'), this.data.attr('max')) %>" checked='checked'/><label for="<%= this.data.attr('wid') %>_radio3">75%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="<%= vis.binds.jqueryui.calcValue(1,    this.data.attr('min'), this.data.attr('max')) %>"/><label for="<%= this.data.attr('wid') %>_radio4">100%</label>
             </div>
         </div>
     </div>
@@ -1045,12 +1059,13 @@
 <script id="tplJquiSliderVertical" 
         type="text/ejs" 
         data-vis-attrs="oid;oid-working;min;max;step" 
-        class="vis-tpl" data-vis-set="jqui" 
+        class="vis-tpl"
+        data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Slider vertical">
     <div id="<%= this.data.attr("wid") %>" data-vis-resizable='{"minWidth":23, "maxWidth":23}' class="vis-widget" style="width:23px; height:160px; overflow:visible !important;">
         <div class="vis-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
-            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid-working="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step),orientation:"vertical"}) %> /></div>
+            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid-working="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min: parseFloat(data.min), max: parseFloat(data.max), step: parseFloat(data.step), orientation:"vertical"}) %> /></div>
         </div>
     </div>
 </script>
