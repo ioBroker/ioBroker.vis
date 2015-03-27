@@ -46,6 +46,9 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+### 0.2.12 (2015-03-27)
+- (bluefox) fix jqui radio
+
 ### 0.2.11 (2015-03-11)
 - (bluefox) fix install for ioBroker. Required newest ioBroke.js-controller
 
