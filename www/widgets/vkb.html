@@ -1,0 +1,105 @@
+<link rel="stylesheet" type="text/css" href="widgets/vkb/css/keyboard-previewkeyset.min.css"/>
+<link rel="stylesheet" type="text/css" href="widgets/vkb/css/keyboard.min.css"/>
+
+
+<script type="text/javascript" src="widgets/vkb/js/jquery.keyboard.js"></script>
+<!--<script type="text/javascript" src="widgets/vkb/js/jquery.keyboard.extention-extender.min.js"></script>-->
+<script type="text/javascript" src="widgets/vkb/js/german.min.js"></script>
+
+
+<script type="text/javascript">
+    "use strict";
+
+    if (vis.editMode) {
+        $.extend(true, systemDictionary, {});
+
+
+    }
+
+
+    vis.binds.vkb = {
+        all: function (el, data) {
+
+
+            $(document).on("wid_added", function (e, id) {
+                if ($("#" + id).hasClass("vkb_num")) {
+                    num()
+                } else if ($("#" + id).hasClass("vkb_all")) {
+                    all()
+                } else if ($("#" + id).find("input").attr("type")) {
+                    var type = $("#" + id).find("input").attr("type")
+
+                    if (type == "number") {
+                        num()
+                    } else {
+                        all()
+                    }
+
+                }
+
+                function all() {
+                    $("#" + id).find("input").keyboard({
+
+//                        layout : 'custom',
+//                        customLayout: {
+//                            'default': ['7 8 9', '4 5 6','1 2 3', '{b} 0 {a}'],
+//                        },
+                        appendTo: $("#" + id).parent(),
+                        position: {
+                            of: window, // optional - null (attach to input/textarea) or a jQuery object (attach elsewhere)
+                            my: 'center bottom',
+                            at: 'center bottom-20',
+                            at2: 'center top' // used when "usePreview" is false (centers keyboard at bottom of the input/textarea)
+                        }
+
+                    })
+                }
+
+                function num() {
+                    $("#" + id).find("input").keyboard({
+
+                        layout: 'custom',
+                        customLayout: {
+                            'default': ['7 8 9', '4 5 6', '1 2 3', '{b} 0 {a}'],
+                        },
+                        appendTo: $("#" + id).parent(),
+                        position: {
+                            of: window, // optional - null (attach to input/textarea) or a jQuery object (attach elsewhere)
+                            my: 'center bottom',
+                            at: 'center bottom-20',
+                            at2: 'center top' // used when "usePreview" is false (centers keyboard at bottom of the input/textarea)
+                        }
+
+                    })
+                }
+            })
+
+
+        }
+    }
+</script>
+
+<script id="tplvkb_all"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplPlump_pump" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_b pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{}" style="top: 163px; left: 449px; width: 57px; height: 183px;" > <div class="vis-widget-prev-body">			<div class="pump" ><img style="position: absolute; width: 100%;" src="./widgets/plumb/img/pumpe.png"><div class="plumb_dock_top ui-droppable"></div><div class="plumb_dock_bottom ui-droppable"></div>				<div class="plumb_dock_left ui-droppable"></div>				<div class="plumb_dock_right ui-droppable"></div>			</div> </div> </div></div>'
+        data-vis-set="vkb"
+        data-vis-type="project"
+        data-vis-name="All"
+        data-vis-attrs="">
+    <div class="vis-widget <%== this.data.attr('class') %>" style=" width: 190px; height: 22px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.vkb.all(el, data) %>>
+			<div style="border: 1px solid red;background: #ffffff" class="vkb">Virtual Key Bord - ALL</div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+

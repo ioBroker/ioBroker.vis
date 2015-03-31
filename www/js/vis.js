@@ -679,6 +679,8 @@ var vis = {
                     $("#" + id).addClass("vis-widget-lock")
                 }*/
             }
+
+            $(document).trigger("wid_added",id)
         } catch (e) {
             this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
         }
