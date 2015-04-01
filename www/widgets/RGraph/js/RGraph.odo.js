@@ -1,16 +1,19 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
+
     RGraph = window.RGraph || {isRGraph: true};
-
-
-
 
     /**
     * The odometer constructor. Pass it the ID of the canvas tag, the start value of the odo,
@@ -21,28 +24,52 @@
     * @param int    end   The end value of the odo
     * @param int    value The indicated value (what the needle points to)
     */
-    RGraph.Odometer = function (id, start, end, value)
+    RGraph.Odometer = function (conf)
     {
-        var tmp = RGraph.getCanvasTag(id);
+        /**
+        * Allow for object config style
+        */
+        if (   typeof conf === 'object'
+            && typeof conf.min === 'number'
+            && typeof conf.max === 'number'
+            && typeof conf.value !== 'undefined'
+            && typeof conf.id === 'string') {
 
-        // Get the canvas and context objects
-        this.id                = tmp[0];
-        this.canvas            = tmp[1];
-        this.context           = this.canvas.getContext('2d');
+            var id                        = conf.id
+            var canvas                    = document.getElementById(id);
+            var min                       = conf.min;
+            var max                       = conf.max;
+            var value                     = conf.value;
+            var parseConfObjectForOptions = true; // Set this so the config is parsed (at the end of the constructor)
+        
+        } else {
+        
+            var id     = conf;
+            var canvas = document.getElementById(id);
+            var min    = arguments[1];
+            var max    = arguments[2];
+            var value  = arguments[3];
+        }
+
+
+
+
+        this.id                = id;
+        this.canvas            = canvas;
+        this.context           = this.canvas.getContext ? this.canvas.getContext("2d", {alpha: (typeof id === 'object' && id.alpha === false) ? false : true}) : null;
         this.canvas.__object__ = this;
         this.type              = 'odo';
         this.isRGraph          = true;
-        this.start             = start;
-        this.min               = start;
-        this.end               = end;
-        this.max               = end;
-        this.value             = value;
+        this.min               = min;
+        this.max               = max;
+        this.value             = RGraph.stringsToNumbers(value);
         this.currentValue      = null;
         this.uid               = RGraph.CreateUID();
         this.canvas.uid        = this.canvas.uid ? this.canvas.uid : RGraph.CreateUID();
         this.colorsParsed      = false;
         this.coordsText        = [];
         this.original_colors   = [];
+        this.firstDraw         = true; // After the first draw this will be false
 
 
         /**
@@ -53,6 +80,9 @@
 
         this.properties =
         {
+            'chart.background.border':     'black',
+            'chart.background.color':      '#eee',
+            'chart.background.lines.color': '#ddd',
             'chart.centerx':                null,
             'chart.centery':                null,
             'chart.radius':                 null,
@@ -68,8 +98,8 @@
             'chart.text.size':              10,
             'chart.text.color':             'black',
             'chart.text.font':              'Arial',
-            'chart.green.max':              end * 0.75,
-            'chart.red.min':                end * 0.9,
+            'chart.green.max':              max * 0.75,
+            'chart.red.min':                max * 0.9,
             'chart.green.color':            'Gradient(white:#0c0)',
             'chart.yellow.color':           'Gradient(white:#ff0)',
             'chart.red.color':              'Gradient(white:#f00)',
@@ -96,10 +126,10 @@
             'chart.shadow.inner.offsety':   3,
             'chart.shadow.inner.blur':      6,
             'chart.shadow.outer':           false,
-            'chart.shadow.outer.color':     '#666',
-            'chart.shadow.outer.offsetx':   0,
-            'chart.shadow.outer.offsety':   0,
-            'chart.shadow.outer.blur':      15,
+            'chart.shadow.outer.color':     'black',
+            'chart.shadow.outer.offsetx':   3,
+            'chart.shadow.outer.offsety':   3,
+            'chart.shadow.outer.blur':      6,
             'chart.annotatable':            false,
             'chart.annotate.color':         'black',
             'chart.scale.decimals':         0,
@@ -126,6 +156,7 @@
             'chart.border.color3':          '#BEBCB0',
             'chart.tickmarks':              true,
             'chart.tickmarks.highlighted':  false,
+            'chart.tickmarks.big.color':    '#999',
             'chart.zerostart':              false,
             'chart.labels':                 null,
             'chart.units.pre':              '',
@@ -199,6 +230,20 @@
         this.set =
         this.Set = function (name, value)
         {
+            var value = arguments[1] || null;
+
+            /**
+            * the number of arguments is only one and it's an
+            * object - parse it for configuration data and return.
+            */
+            if (arguments.length === 1 && typeof name === 'object') {
+                RG.parseObjectStyleConfig(this, name);
+                return this;
+            }
+
+
+
+
             name = name.toLowerCase();
     
             /**
@@ -274,12 +319,12 @@
             /**
             * No longer allow values outside the range of the Odo
             */
-            if (this.value > this.end) {
-                this.value = this.end;
+            if (this.value > this.max) {
+                this.value = this.max;
             }
     
-            if (this.value < this.start) {
-                this.value = this.start;
+            if (this.value < this.min) {
+                this.value = this.min;
             }
     
             /**
@@ -297,10 +342,11 @@
                                      (ca.height - this.gutterTop - this.gutterBottom) / 2
                                     )
                                     - (prop['chart.border'] ? 25 : 0);
-            this.diameter = 2 * this.radius;
-            this.centerx  = ((ca.width - this.gutterLeft- this.gutterRight) / 2) + this.gutterLeft;
-            this.centery  = ((ca.height - this.gutterTop - this.gutterBottom) / 2) + this.gutterTop;
-            this.range    = this.end - this.start;
+            this.diameter   = 2 * this.radius;
+            this.centerx    = ((ca.width - this.gutterLeft- this.gutterRight) / 2) + this.gutterLeft;
+            this.centery    = ((ca.height - this.gutterTop - this.gutterBottom) / 2) + this.gutterTop;
+            this.range      = this.max - this.min;
+            this.coordsText = [];
             
             /**
             * Move the centerx if the key is defined
@@ -394,7 +440,21 @@
             * This installs the event listeners
             */
             RG.InstallEventListeners(this);
-            
+
+
+
+            /**
+            * Fire the onfirstdraw event
+            */
+            if (this.firstDraw) {
+                RG.fireCustomEvent(this, 'onfirstdraw');
+                this.firstDraw = false;
+                this.firstDrawFunc();
+            }
+
+
+
+
             /**
             * Fire the RGraph ondraw event
             */
@@ -418,10 +478,10 @@
             * Turn on the shadow if need be
             */
             if (prop['chart.shadow.outer']) {
-                RG.SetShadow(this, prop['chart.shadow.outer.color'], prop['chart.shadow.outer.offsetx'], prop['chart.shadow.outer.offsety'], prop['chart.shadow.outer.blur']);
+                RG.setShadow(this, prop['chart.shadow.outer.color'], prop['chart.shadow.outer.offsetx'], prop['chart.shadow.outer.offsety'], prop['chart.shadow.outer.blur']);
             }
     
-            var backgroundColor = '#eee';
+            var backgroundColor = prop['chart.background.color'];
     
             // Draw the grey border
             co.fillStyle = backgroundColor;
@@ -431,8 +491,8 @@
             /**
             * Turn off the shadow
             */
-            RG.NoShadow(this);
-    
+            RG.noShadow(this);
+
     
             // Draw a circle
             co.strokeStyle = '#666';
@@ -468,19 +528,19 @@
             co.arc(this.centerx, this.centery, this.radius - 5, 0, RG.TWOPI, false);
             co.fill();
             co.stroke();
-    
+
             // Gray lines at 18 degree intervals
             co.beginPath();
-            co.strokeStyle = '#ddd';
+            co.strokeStyle = prop['chart.background.lines.color'];
             for (var i=0; i<360; i+=18) {
                 co.arc(this.centerx, this.centery, this.radius, 0, RG.degrees2Radians(i), false);
                 co.lineTo(this.centerx, this.centery);
             }
             co.stroke();
-            
+
             // Redraw the outer circle
             co.beginPath();
-            co.strokeStyle = 'black';
+            co.strokeStyle = prop['chart.background.border'];
             co.arc(this.centerx, this.centery, this.radius, 0, RG.TWOPI, false);
             co.stroke();
     
@@ -513,14 +573,14 @@
                 co.arc(this.centerx, this.centery, this.radius - 2.5,
                 
                     -1 * RG.HALFPI,
-                    (((prop['chart.green.max'] - this.start)/ (this.end - this.start)) * RG.TWOPI) - RG.HALFPI,
+                    (((prop['chart.green.max'] - this.min)/ (this.max - this.min)) * RG.TWOPI) - RG.HALFPI,
                     0);
     
                 co.stroke();
                 
                 co.lineWidth = 1;
             }
-    
+
             co.beginPath();
                 co.fillStyle = greengrad;
                 co.arc(
@@ -528,7 +588,7 @@
                         this.centery,
                         this.radius - prop['chart.label.area'],
                         0 - RG.HALFPI,
-                        (((prop['chart.green.max'] - this.start)/ (this.end - this.start)) * RG.TWOPI) - RG.HALFPI,
+                        (((prop['chart.green.max'] - this.min)/ (this.max - this.min)) * RG.TWOPI) - RG.HALFPI,
                         false
                        );
                 co.lineTo(this.centerx, this.centery);
@@ -548,8 +608,8 @@
                 co.strokeStyle = yellowgrad;
                 co.arc(this.centerx, this.centery, this.radius - 2.5, (
                 
-                    ((prop['chart.green.max'] - this.start) / (this.end - this.start)) * RG.TWOPI) - RG.HALFPI,
-                    (((prop['chart.red.min'] - this.start) / (this.end - this.start)) * RG.TWOPI) - RG.HALFPI,
+                    ((prop['chart.green.max'] - this.min) / (this.max - this.min)) * RG.TWOPI) - RG.HALFPI,
+                    (((prop['chart.red.min'] - this.min) / (this.max - this.min)) * RG.TWOPI) - RG.HALFPI,
                     0);
     
                 co.stroke();
@@ -563,8 +623,8 @@
                         this.centerx,
                         this.centery,
                         this.radius - prop['chart.label.area'],
-                        ( ((prop['chart.green.max'] - this.start) / (this.end - this.start)) * RG.TWOPI) - RG.HALFPI,
-                        ( ((prop['chart.red.min'] - this.start) / (this.end - this.start)) * RG.TWOPI) - RG.HALFPI,
+                        ( ((prop['chart.green.max'] - this.min) / (this.max - this.min)) * RG.TWOPI) - RG.HALFPI,
+                        ( ((prop['chart.red.min'] - this.min) / (this.max - this.min)) * RG.TWOPI) - RG.HALFPI,
                         false
                        );
                 co.lineTo(this.centerx, this.centery);
@@ -581,12 +641,12 @@
                 co.beginPath();
                 co.lineWidth = 5;
                 co.strokeStyle = redgrad;
-                co.arc(this.centerx, this.centery, this.radius - 2.5,(((prop['chart.red.min'] - this.start) / (this.end - this.start)) * RG.TWOPI) - RG.HALFPI,RG.TWOPI - RG.HALFPI,0);
+                co.arc(this.centerx, this.centery, this.radius - 2.5,(((prop['chart.red.min'] - this.min) / (this.max - this.min)) * RG.TWOPI) - RG.HALFPI,RG.TWOPI - RG.HALFPI,0);
                 co.stroke();
                 
                 co.lineWidth = 1;
             }
-    
+
             co.beginPath();
                 co.fillStyle = redgrad;
                 co.strokeStyle = redgrad;
@@ -594,7 +654,7 @@
                         this.centerx,
                         this.centery,
                         this.radius - prop['chart.label.area'],
-                        (((prop['chart.red.min'] - this.start) / (this.end - this.start)) * RG.TWOPI) - RG.HALFPI,
+                        (((prop['chart.red.min'] - this.min) / (this.max - this.min)) * RG.TWOPI) - RG.HALFPI,
                         RG.TWOPI - RG.HALFPI,
                         false
                        );
@@ -638,12 +698,12 @@
                              prop['chart.title.size'] ? prop['chart.title.size'] : prop['chart.text.size'] + 2);
             }
     
-    
+
             // Draw the big tick marks
             if (!prop['chart.tickmarks.highlighted']) {
                 for (var i=18; i<=360; i+=36) {
                     co.beginPath();
-                        co.strokeStyle = '#999';
+                        co.strokeStyle = prop['chart.tickmarks.big.color'];
                         co.lineWidth = 2;
                         co.arc(this.centerx, this.centery, this.radius - 1, RG.degrees2Radians(i), RG.degrees2Radians(i+0.01), false);
                         co.arc(this.centerx, this.centery, this.radius - 7, RG.degrees2Radians(i), RG.degrees2Radians(i+0.01), false);
@@ -837,8 +897,8 @@
             var centerx    = this.centerx;
             var centery    = this.centery;
             var r          = this.radius - (prop['chart.label.area'] / 2);
-            var start      = this.start;
-            var end        = this.end;
+            var start      = this.min;
+            var end        = this.max;
             var decimals   = prop['chart.scale.decimals'];
             var labels     = prop['chart.labels'];
             var units_pre  = prop['chart.units.pre'];
@@ -878,7 +938,7 @@
                 RG.Text2(this, {'font':font,'size':size,'x':centerx - (0.949 * r),'y':centery + (0.300 * r),'text':RG.number_format(this, (((end - start) * (7/10)) + start).toFixed(decimals), units_pre, units_post),'halign':'center','valign':'center','angle':252,'tag': 'scale'});
                 RG.Text2(this, {'font':font,'size':size,'x':centerx - (0.951 * r),'y':centery - (0.309 * r),'text':RG.number_format(this, (((end - start) * (8/10)) + start).toFixed(decimals), units_pre, units_post),'halign':'center','valign':'center','angle':288,'tag': 'scale'});
                 RG.Text2(this, {'font':font,'size':size,'x':centerx - (0.588 * r ),'y':centery - (0.809 * r ),'text':RG.number_format(this, (((end - start) * (9/10)) + start).toFixed(decimals), units_pre, units_post),'halign':'center','valign':'center','angle':324,'tag': 'scale'});            
-                RG.Text2(this, {'font':font,'size':size,'x':centerx,'y':centery - r,'text': prop['chart.zerostart'] ? RG.number_format(this, this.start.toFixed(decimals), units_pre, units_post) : RG.number_format(this, (((end - start) * (10/10)) + start).toFixed(decimals), units_pre, units_post),'halign':'center','valign':'center','tag': 'scale'});
+                RG.Text2(this, {'font':font,'size':size,'x':centerx,'y':centery - r,'text': prop['chart.zerostart'] ? RG.number_format(this, this.min.toFixed(decimals), units_pre, units_post) : RG.number_format(this, (((end - start) * (10/10)) + start).toFixed(decimals), units_pre, units_post),'halign':'center','valign':'center','tag': 'scale'});
             }
             
             co.fill();
@@ -1030,6 +1090,17 @@
 
 
         /**
+        * Use this function to reset the object to the post-constructor state. Eg reset colors if
+        * need be etc
+        */
+        this.reset = function ()
+        {
+        };
+
+
+
+
+        /**
         * This parses a single color value
         */
         this.parseSingleColorForGradient = function (color)
@@ -1075,6 +1146,17 @@
             this[type] = func;
     
             return this;
+        };
+
+
+
+
+        /**
+        * This function runs once only
+        * (put at the end of the file (before any effects))
+        */
+        this.firstDrawFunc = function ()
+        {
         };
 
 
@@ -1128,7 +1210,16 @@
         /**
         * Register the object
         */
-        RG.Register(this);
-    };
-// version: 2014-03-28
+        RG.register(this);
 
+
+
+
+        /**
+        * This is the 'end' of the constructor so if the first argument
+        * contains configuration data - handle that.
+        */
+        if (parseConfObjectForOptions) {
+            RG.parseObjectStyleConfig(this, conf.options);
+        }
+    };

@@ -1,10 +1,15 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
 
@@ -12,9 +17,6 @@
     * Initialise the various objects
     */
     RGraph = window.RGraph || {isRGraph: true};
-
-
-
 
 // Module pattern
 (function (win, doc, undefined)
@@ -86,6 +88,14 @@
                 * End adjusting
                 */
                 if (RGraph.Registry.Get('chart.adjusting') || RGraph.Registry.Get('chart.adjusting.gantt')) {
+                
+                    var obj = RGraph.Registry.Get('chart.adjusting');
+                
+                    // If it's a line chart update the data_arr variable
+                    if (obj && obj.type === 'line') {
+                        obj.data_arr = RGraph.arrayLinearize(obj.data);
+                    }
+
                     RGraph.FireCustomEvent(RGraph.Registry.Get('chart.adjusting'), 'onadjustend');
                 }
     
@@ -238,6 +248,14 @@
         
         
                         if (RGraph.Registry.Get('chart.adjusting') || RGraph.Registry.Get('chart.adjusting.gantt')) {
+
+                        //var obj = RGraph.Registry.Get('chart.adjusting');
+                    
+                        // If it's a line chart update the data_arr variable
+                        if (obj && obj.type === 'line') {
+                            obj.data_arr = RGraph.arrayLinearize(obj.data);
+                        }
+
                             RGraph.FireCustomEvent(RGraph.Registry.Get('chart.adjusting'), 'onadjustend');
                         }
         
@@ -560,8 +578,9 @@
                     if (!func && typeof(obj.onclick) == 'function') {
                         func = obj.onclick;
                     }
-    
+
                     if (shape && typeof func == 'function') {
+
                         func(e, shape);
                         
                         /**
@@ -733,6 +752,9 @@
 
         if (resizable && mouseX >= (e.target.width - 15) && mouseY >= (e.target.height - 15)) {
             e.target.style.cursor = 'move';
+        
+        } else if (e.target.style.cursor === 'move') {
+            e.target.style.cursor = 'default';
         }
 
 
@@ -751,14 +773,15 @@
         // Gantt chart adjusting
         // =========================================================================
 
-
-        if (obj && obj.type == 'gantt' && obj.Get('chart.adjustable')) {
-            if (obj.getShape && obj.getShape(e)) {
-                e.target.style.cursor = 'ew-resize';
-            } else {
-                e.target.style.cursor = 'default';
-            }
-        }
+        //if (obj && obj.type == 'gantt' && obj.Get('chart.adjustable')) {
+        //    if (obj.getShape && obj.getShape(e)) {
+        //        e.target.style.cursor = 'ew-resize';
+        //    } else {
+        //        e.target.style.cursor = 'default';
+        //    }
+        //} else if (!obj || !obj.type) {
+        //    e.target.style.cursor = cursor;
+        //}
 
         
         // =========================================================================
@@ -1039,5 +1062,3 @@
 
 // End module pattern
 })(window, document);
-// version: 2014-03-28
-

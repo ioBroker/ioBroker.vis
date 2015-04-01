@@ -1,5 +1,4 @@
 
-
 div#vis_container {
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color:rgba(0,0,0,0);
@@ -14,8 +13,6 @@ div#vis_container {
     -ms-user-select: none;
     user-select: none;
 }
-
-
 
 .dashui-inspect-css {
     color: initial !important;
@@ -35,8 +32,7 @@ div#vis_container {
 }
 
 .vis-view {
-    position: absolute;
-    top: 0px;
+    top: 0;
     min-height: 100%;
     min-width: 100%;
 }
@@ -63,7 +59,7 @@ div#vis_container {
 }
 
 .ui-dialog .ui-dialog-content {
-    padding: .5em 0em;
+    padding: .5em 0;
 }
 
 .vis-widget-button {
@@ -157,16 +153,16 @@ a.ui-dialog-titlebar-restore {
     font-size: 12pt;
     font-weight: bold;
     padding-top: 0;
-    padding-bottom: 0px;
+    padding-bottom: 0;
     padding-left: 6px;
     width: calc(100% - 7px);
 }
 
 .vis-no-spaces {
-    padding: 0px;
-    margin: 0px;
-    border: 0px;
-    border-spacing: 0px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-spacing: 0;
 }
 
 .vis-wait-screen {
@@ -286,7 +282,7 @@ div#vis_editor {
 
 .vis-clipboard {
     position: absolute;
-    top: 0px;
+    top: 0;
     padding-top: 4px;
     padding-bottom: 4px;
     padding-left: 14px;
@@ -329,7 +325,6 @@ div#vis_editor {
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 10;
     width: 100%;
     height: 100%;
     opacity: 0.8;
@@ -348,11 +343,11 @@ div#vis_editor {
     top: 50%;
     left: 50%;
     z-index: 99999;
-    box-shadow: 0px 0px 20px #999;
+    box-shadow: 0 0 20px #999;
     /* CSS3 */
-    -moz-box-shadow: 0px 0px 20px #999;
+    -moz-box-shadow: 0 0 20px #999;
     /* Firefox */
-    -webkit-box-shadow: 0px 0px 20px #999;
+    -webkit-box-shadow: 0 0 20px #999;
     /* Safari, Chrome */
     border-radius: 3px 3px 3px 3px;
     -moz-border-radius: 3px;

@@ -1,43 +1,83 @@
 /**
  *
- *      ioBroker mqtt Adapter
+ *      ioBroker vis Adapter
  *
- *      (c) 2014 bluefox
+ *      (c) 2014-2015 bluefox
  *
  *      MIT License
  *
  */
+/* jshint -W097 */// jshint strict:false
+/*jslint node: true */
+"use strict";
 
 var utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
 var adapter = utils.adapter('vis');
+var fs =      require('fs');
 
 adapter.on('ready', function () {
     main();
 });
 
+function writeFile(fileName, callback) {
+    var config = require(__dirname + '/www/js/config.js').config;
+
+    var index = fs.readFileSync(__dirname + '/www/' + fileName).toString();
+    var begin = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->';
+    var end   = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->';
+    var bigInsert = '';
+    for (var w in config.widgetSets) {
+        var file;
+        var name;
+
+        if (typeof config.widgetSets[w] == 'object') {
+            name = config.widgetSets[w].name + '.html';
+        } else {
+            name = config.widgetSets[w] + '.html';
+        }
+        file = fs.readFileSync(__dirname + '/www/widgets/' + name);
+        bigInsert += '<!-- --------------' + name + '--- START -->\n' + file.toString() + '\n<!-- --------------' + name + '--- END -->\n';
+    }
+    var pos = index.indexOf(begin);
+    if (pos != -1) {
+        var start = index.substring(0, pos + begin.length);
+        pos = index.indexOf(end);
+        if (pos != -1) {
+            var _end = index.substring(pos);
+            index = start + '\n' + bigInsert + '\n' + _end;
+            adapter.readFile('vis', fileName, function (err, data) {
+                if (data && data != index) {
+                    adapter.writeFile('vis', fileName, index);
+                    if (callback) callback(true);
+                } else {
+                    if (callback) callback(false);
+                }
+            });
+        } else if (callback) {
+            callback(false);
+        }
+    } else if (callback) {
+        callback(false);
+    }
+}
+
 function main() {
-    var widgetSets = [
-        "basic",
-        "bars",
-        "bko",
-        "colorpicker",
-        "fancyswitch",
-        {name: "homematic", depends: ["basic", "jqui"]},
-        "knob",
-//        {name: "hqWidgets", edit: "hqWidgetsEdit"},
-        "jqplot",
-        {name: "jqui",     depends: ["basic"]},
-        {name: "jqui-mfd", depends: ["basic", "jqui"]},
-        {name: "lcars",    depends: ["basic"]},
-        {name: "metro",    depends: ["basic"]},
-        "RGraph",
-        "special",
-        "swipe",
-        "timeAndWeather",
-        "weather-adapter",
-        "table",
-        "dev"
-    ];
+    // Update index.html
+    writeFile('index.html', function (isChanged1) {
+        // Update edit.html
+        writeFile('edit.html', function (isChanged2) {
+            if (isChanged1 || isChanged2) {
+                adapter.log.info('Changes in index.html detected => update cache.manifest');
+                // update cache.manifest if changes detected
+                adapter.readFile('vis', 'cache.manifest', function (err, data) {
+                    data = data.toString();
+                    var build = data.match(/# dev build ([0-9]+)/);
+                    data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
+                    adapter.writeFile('vis', 'cache.manifest', data);
+                });
+            }
+        });
+    });
 
     // create command variable
     adapter.getObject('command', function (err, obj) {
@@ -48,14 +88,15 @@ function main() {
                     type: 'object',
                     desc: 'Write object: {instance: "FFFFFFFFF", command: "changeView", data: "ViewName"} to change the view'
                 },
-                type: 'state'
+                type: 'state',
+                native: {}
             }) ;
         }
     });
 
     // Create common user CSS file
     adapter.readFile('vis', 'css/vis-common-user.css', function (err, data) {
-        if (err || !data) {
+        if (err || data === null || data === undefined) {
             adapter.writeFile('vis', 'css/vis-common-user.css', '');
         }
     });

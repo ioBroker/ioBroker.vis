@@ -1,24 +1,35 @@
 /**
- *  vis
+ *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2014 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
  *
  */
 /* jshint browser:true */
-/* global document*/
-/* global console*/
-/* global session*/
-/* global window*/
-/* global location*/
-/* global setTimeout*/
-/* global clearTimeout*/
-/* global io*/
-/* global $*/
-"use strict";
+/* global document */
+/* global console */
+/* global session */
+/* global window */
+/* global location */
+/* global setTimeout */
+/* global clearTimeout */
+/* global io */
+/* global visConfig */
+/* global systemLang:true */
+/* global _ */
+/* global can */
+/* global storage */
+/* global servConn */
+/* global systemDictionary */
+/* global $ */
+/* global translateAll */
+/* global jQuery */
+/* global document */
+/* jshint -W097 */// jshint strict:false
+'use strict';
 
 // we should detect either local path here and not online.
 // I want to have possibility to start vis not only from broker web server, but from some others too.
@@ -81,11 +92,11 @@ if (typeof systemDictionary !== 'undefined') {
     });
 }
 
-if (typeof systemLang != 'undefined') systemLang = visConfig.language || systemLang;
+if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
 
-    version:                '0.2.2',
+    version:                '0.2.11',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -102,7 +113,7 @@ var vis = {
     initialized:            false,
     toLoadSetsCount:        0, // Count of widget sets that should be loaded
     isFirstTime:            true,
-    useCache:               true,
+    useCache:               false,
     authRunning:            false,
     cssChecked:             false,
 
@@ -112,8 +123,9 @@ var vis = {
     projectPrefix:          window.location.search ? window.location.search.slice(1) + '/' : 'main/',
     navChangeCallbacks:     [],
     editMode:               false,
-    language:               (typeof systemLang != 'undefined') ? systemLang : visConfig.language,
+    language:               (typeof systemLang !== 'undefined') ? systemLang : visConfig.language,
     statesDebounce:         {},
+    visibility:             {},
 
     _setValue: function (id, state) {
         this.conn.setState(id, state[id + '.val']);
@@ -123,7 +135,7 @@ var vis = {
 
             // Inform other widgets, that does not support canJS
             for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
-                this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, val);
+                this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, state);
             }
         }
     },
@@ -132,7 +144,7 @@ var vis = {
             console.log('ID is null for val=' + val);
             return;
         }
-        // Check if this ID is a programm
+
         var d = new Date();
         var t = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) + " " + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
         var o = {};
@@ -142,8 +154,12 @@ var vis = {
             o[id + '.lc'] = this.states.attr(id + '.lc');
         }
         o[id + '.val'] = val;
-        o[id + '.ts'] = t;
+        o[id + '.ts']  = t;
         o[id + '.ack'] = false;
+
+        // Create this value
+        if (this.states.attr(id + '.val') === undefined) this.states.attr(o);
+
         var that = this;
 
         // if no de-bounce running
@@ -153,8 +169,10 @@ var vis = {
             // Start timeout
             this.statesDebounce[id] = {
                 timeout: _setTimeout(function () {
-                        if (that.statesDebounce[id].state) that._setValue(id, that.statesDebounce[id].state);
-                        delete that.statesDebounce[id];
+                        if (that.statesDebounce[id]) {
+                            if (that.statesDebounce[id].state) that._setValue(id, that.statesDebounce[id].state);
+                            delete that.statesDebounce[id];
+                        }
                     }, 1000, id),
                 state: null
             };
@@ -194,7 +212,10 @@ var vis = {
     getUsedWidgetSets: function () {
         var widgetSets = [];
 
-        if (!vis.views) return null;
+        if (!this.views) {
+            console.log('Check why views are not yet loaded!');
+            return null;
+        }
 
         // Convert visConfig.widgetSets to object for easier dependency search
         var widgetSetsObj = {};
@@ -210,16 +231,16 @@ var vis = {
             }
         }
 
-        for (var view in vis.views) {
-            for (var id in vis.views[view].widgets) {
-                if (!vis.views[view].widgets[id].widgetSet) {
+        for (var view in this.views) {
+            for (var id in this.views[view].widgets) {
+                if (!this.views[view].widgets[id].widgetSet) {
 
                     // Views are not yet converted and have no widgetSet information)
                     return null;
 
-                } else if (widgetSets.indexOf(vis.views[view].widgets[id].widgetSet) == -1) {
+                } else if (widgetSets.indexOf(this.views[view].widgets[id].widgetSet) == -1) {
 
-                    var wset = vis.views[view].widgets[id].widgetSet;
+                    var wset = this.views[view].widgets[id].widgetSet;
                     widgetSets.push(wset);
 
                     // Add dependencies
@@ -235,30 +256,106 @@ var vis = {
         }
         return widgetSets;
     },
+    // Return as array used widgetSets or null if no information about it
+    getUsedObjectIDs: function () {
+        var widgetSets = [];
+
+        if (!this.views) {
+            console.log('Check why views are not yet loaded!');
+            return null;
+        }
+        var IDs = [];
+
+        for (var view in this.views) {
+            for (var id in this.views[view].widgets) {
+                // Check all attributes
+                var data = this.views[view].widgets[id].data;
+                for (var attr in data) {
+
+                    /* TODO DO do not forget remove it after a while */
+                    if (attr == 'state_id') {
+                        data.state_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'number_id') {
+                        data.number_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'toggle_id') {
+                        data.toggle_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'set_id') {
+                        data.set_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'temp_id') {
+                        data.temp_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'drive_id') {
+                        data.drive_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'content_id') {
+                        data.content_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+                    if (attr == 'dialog_id') {
+                        data.dialog_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    }  else
+                    if (attr == 'max_value_id') {
+                        data.max_value_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    }  else
+                    if (attr == 'dialog_id') {
+                        data.dialog_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    }  else
+                    if (attr == 'dialog_id') {
+                        data.dialog_oid = data[attr];
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    } else
+
+
+                    if ((attr.match(/oid$/) || attr.match(/^oid/)) && data[attr]) {
+                        if (data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                    }
+                }
+            }
+        }
+        return IDs;
+    },
     loadWidgetSets: function (callback) {
         this.showWaitScreen(true, '<br>' + _('Loading Widget-Sets...') + ' <span id="widgetset_counter"></span>', null, 20);
         var arrSets = [];
 
-        // Get list of used widget sets. if Edit mode list is null.
-        var widgetSets = this.editMode ? null : this.getUsedWidgetSets();
+        // If widgets are preloaded
+        if (this.binds && this.binds.stateful !== undefined) {
+            this.toLoadSetsCount = 0;
+        } else {
+            // Get list of used widget sets. if Edit mode list is null.
+            var widgetSets = this.editMode ? null : this.getUsedWidgetSets();
 
-        // Firts calculate how many sets to load
-        for (var i = 0; i < this.widgetSets.length; i++) {
-            var name = this.widgetSets[i].name || this.widgetSets[i];
+            // Firts calculate how many sets to load
+            for (var i = 0; i < this.widgetSets.length; i++) {
+                var name = this.widgetSets[i].name || this.widgetSets[i];
 
-            // Skip unused widget sets in non-edit mode
-            if (widgetSets && widgetSets.indexOf(name) == -1) {
-                continue;
+                // Skip unused widget sets in non-edit mode
+                if (widgetSets && widgetSets.indexOf(name) == -1) {
+                    continue;
+                }
+
+                arrSets[arrSets.length] = name;
+
+                if (this.editMode && this.widgetSets[i].edit) {
+                    arrSets[arrSets.length] = this.widgetSets[i].edit;
+                }
             }
-
-            arrSets[arrSets.length] = name;
-
-            if (this.editMode && this.widgetSets[i].edit) {
-                arrSets[arrSets.length] = this.widgetSets[i].edit;
-            }
+            this.toLoadSetsCount = arrSets.length;
+            $("#widgetset_counter").html("<span style='font-size:10px'>(" + (this.toLoadSetsCount) + ")</span>");
         }
-        this.toLoadSetsCount = arrSets.length;
-        $("#widgetset_counter").html("<span style='font-size:10px'>(" + (vis.toLoadSetsCount) + ")</span>");
 
         var that = this;
         if (this.toLoadSetsCount) {
@@ -268,9 +365,7 @@ var vis = {
                 }, 100, j);
             }
         } else {
-            if (callback) {
-                callback();
-            }
+            if (callback) callback.call(this);
         }
     },
     bindInstance: function () {
@@ -296,93 +391,102 @@ var vis = {
         this.loadWidgetSets(this.initNext);
     },
     initNext: function () {
-        this.loadRemote(function () {
+        this.showWaitScreen(false);
+
+        // First start.
+        if (!this.views) {
+            this.initViewObject();
+            return false;
+        } else {
             this.showWaitScreen(false);
+        }
 
-            // First start.
-            if (!this.views) {
-                this.initViewObject();
-                return false;
-            } else {
-                this.showWaitScreen(false);
-            }
-
-            var hash = window.location.hash.substring(1);
-
-            // View selected?
-            if (!hash) {
-                // Take first view in the list
-                for (var view in this.views) {
-                    this.activeView = view;
-                    break;
-                }
-                // Create default view in demo mode
-                if (typeof io == 'undefined') {
-                    if (!this.activeView) {
-                        if (!this.editMode) {
-                            alert(_("error - View doesn't exist"));
-                            window.location.href = "./edit.html";
-                        } else {
-                            this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                            this.activeView = "DemoView";
-                            //vis.showWaitScreen(false);
-                        }
+        this.visibility = {};
+        // Build the visibility array
+        if (!this.editMode && this.views) {
+            for (var view in this.views) {
+                for (var id in this.views[view].widgets) {
+                    if (!this.editMode && this.views[view].widgets[id].data && this.views[view].widgets[id].data['visibility-oid']) {
+                        var oid = this.views[view].widgets[id].data['visibility-oid'];
+                        if (!this.visibility[oid]) this.visibility[oid] = [];
+                        this.visibility[oid].push({view: view, widget: id});
                     }
                 }
+            }
+        }
 
-                if (this.activeView == '') {
+        var hash = window.location.hash.substring(1);
+
+        // View selected?
+        if (!hash) {
+            // Take first view in the list
+            for (var _view in this.views) {
+                this.activeView = _view;
+                break;
+            }
+            // Create default view in demo mode
+            if (typeof io == 'undefined') {
+                if (!this.activeView) {
                     if (!this.editMode) {
-                        alert(_('error - View doesn\'t exist'));
-                        window.location.href = 'edit.html';
+                        window.alert(_("error - View doesn't exist"));
+                        window.location.href = "./edit.html";
                     } else {
-                        // All views were deleted, but file exists. Create demo View
-                        //alert("unexpected error - this should not happen :(");
-                        //$.error("this should not happen :(");
-                        // create demoView
                         this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                        this.activeView = 'DemoView';
+                        this.activeView = "DemoView";
+                        //vis.showWaitScreen(false);
                     }
-                }
-            } else {
-                if (this.views[hash]) {
-                    this.activeView = hash;
-                } else {
-                    alert(_("error - View doesn't exist"));
-                    window.location.href = "./edit.html";
-                    $.error("vis Error can't find view");
                 }
             }
 
-            $('#active_view').html(this.activeView);
-
-            // Navigation
-            $(window).bind('hashchange', function (e) {
-                this.changeView(window.location.hash.slice(1));
-            });
-
-            this.bindInstance();
-
-            // EDIT mode
-            if (this.editMode) {
-                    this.editInitNext();
+            if (!this.activeView) {
+                if (!this.editMode) {
+                    window.alert(_('error - View doesn\'t exist'));
+                    window.location.href = 'edit.html';
+                } else {
+                    // All views were deleted, but file exists. Create demo View
+                    //window.alert("unexpected error - this should not happen :(");
+                    //$.error("this should not happen :(");
+                    // create demoView
+                    this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                    this.activeView = 'DemoView';
                 }
-            this.initialized = true;
-            // If this function called earlier, it makes problems under FireFox.
-            this.changeView(this.activeView);
+            }
+        } else {
+            if (this.views[hash]) {
+                this.activeView = hash;
+            } else {
+                window.alert(_("error - View doesn't exist"));
+                window.location.href = "./edit.html";
+                $.error("vis Error can't find view");
+            }
+        }
 
+        $('#active_view').html(this.activeView);
 
-
+        // Navigation
+        $(window).bind('hashchange', function (e) {
+            this.changeView(window.location.hash.slice(1));
         });
+
+        this.bindInstance();
+
+        // EDIT mode
+        if (this.editMode) {
+                this.editInitNext();
+            }
+        this.initialized = true;
+        // If this function called earlier, it makes problems under FireFox.
+        this.changeView(this.activeView);
     },
     initViewObject: function () {
         if (!this.editMode) {
             window.location.href = './edit.html' + window.location.search;
         } else {
-            if (confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
+            if (window.confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
-                this.views['DemoView'] = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                 this.saveRemote(function () {
-                    window.location.reload()
+                    window.location.reload();
                 });
             } else {
                 window.location.reload();
@@ -392,8 +496,8 @@ var vis = {
     setViewSize: function (view) {
         var $view = $("#visview_" + view);
         // Because of background, set the width and height of the view
-        var width = parseInt(vis.views[view].settings.sizex, 10);
-        var height = parseInt(vis.views[view].settings.sizey, 10);
+        var width = parseInt(this.views[view].settings.sizex, 10);
+        var height = parseInt(this.views[view].settings.sizey, 10);
         if (!width || width < $(window).width()) {
             width = '100%';
         }
@@ -421,8 +525,10 @@ var vis = {
         });
     },
     renderView: function (view, noThemeChange, hidden) {
+        var that = this;
+
         if (!this.views[view] || !this.views[view].settings) {
-            alert('Cannot render view ' + view + '. Invalid settings');
+            window.alert('Cannot render view ' + view + '. Invalid settings');
             return false;
         }
 
@@ -477,21 +583,19 @@ var vis = {
             }
         }
 
-        // Views in Container verschieben
+        // move views in container
         $("#visview_" + view).find("div[id$='container']").each(function () {
-            //console.log($(this).attr("id")+ " contains " + $(this).attr("data-vis-contains"));
             var cview = $(this).attr("data-vis-contains");
-            if (!vis.views[cview]) {
+            if (!that.views[cview]) {
                 $(this).append("error: view not found.");
                 return false;
             } else if (cview == view) {
                 $(this).append("error: view container recursion.");
                 return false;
             }
-            vis.renderView(cview, true);
+            that.renderView(cview, true);
             $("#visview_" + cview).appendTo(this);
             $("#visview_" + cview).show();
-
         });
 
         if (!hidden) {
@@ -500,10 +604,8 @@ var vis = {
             if (this.views[view].rerender) {
                 this.views[view].rerender = false;
                 // render all copmlex widgets, like hqWidgets or bars
-                for (var id in this.views[view].widgets) {
-                    if (this.views[view].widgets[id].renderVisible) {
-                        this.renderWidget(view, id);
-                    }
+                for (var _id in this.views[view].widgets) {
+                    if (this.views[view].widgets[_id].renderVisible) this.renderWidget(view, _id);
                 }
             }
         }
@@ -511,6 +613,11 @@ var vis = {
         // Store modified view
         if (isViewsConverted) {
             this.saveRemote();
+        }
+        if (this.editMode) {
+            if ($('#wid_all_lock_function').prop('checked')) {
+                $(".vis-widget").addClass("vis-widget-lock");
+            }
         }
     },
     addViewStyle: function (view,theme) {
@@ -544,12 +651,14 @@ var vis = {
         this.renderWidget(this.activeView, widget);
     },
     changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
-        var widgets = this.views[vis.activeView].widgets;
+        var widgets = this.views[this.activeView].widgets;
         var that = this;
-        if (filter == "") {
+        var widget;
+        var mWidget;
+        if (!filter) {
             // show all
-            for (var widget in widgets) {
-                if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
+            for (widget in widgets) {
+                if (widgets[widget].data.filterkey) {
                     $("#" + widget).show(showEffect, null, parseInt(showDuration));
                 }
             }
@@ -559,7 +668,6 @@ var vis = {
                 for (var widget in widgets) {
                     mWidget = document.getElementById(widget);
                     if (widgets[widget].data.filterkey &&
-                        widgets[widget].data.filterkey != "" &&
                         mWidget &&
                         mWidget._customHandlers &&
                         mWidget._customHandlers.onShow) {
@@ -569,9 +677,8 @@ var vis = {
             }, parseInt(showDuration) + 10);
 
         } else if (filter == "$") {
-            var mWidget;
             // hide all
-            for (var widget in widgets) {
+            for (widget in widgets) {
                 mWidget = document.getElementById(widget);
                 if (mWidget &&
                     mWidget._customHandlers &&
@@ -581,12 +688,12 @@ var vis = {
                 $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
             }
         } else {
-            this.viewsActiveFilter[vis.activeView] = filter.split(",");
-            var mWidget;
-            for (var widget in widgets) {
+            this.viewsActiveFilter[this.activeView] = filter.split(',');
+            for (widget in widgets) {
                 //console.log(widgets[widget]);
-                if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
-                    if (this.viewsActiveFilter[this.activeView].length > 0 && this.viewsActiveFilter[this.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
+                if (widgets[widget].data.filterkey) {
+                    if (this.viewsActiveFilter[this.activeView].length > 0 &&
+                        this.viewsActiveFilter[this.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
                         mWidget = document.getElementById(widget);
                         if (mWidget &&
                             mWidget._customHandlers &&
@@ -601,14 +708,16 @@ var vis = {
             }
             setTimeout(function () {
                 var mWidget;
+
                 // Show complex widgets like hqWidgets or bars
                 for (var widget in widgets) {
                     mWidget = document.getElementById(widget);
                     if (mWidget &&
                         mWidget._customHandlers &&
                         mWidget._customHandlers.onShow) {
-                        if (widgets[widget].data.filterkey && widgets[widget].data.filterkey != "") {
-                            if (!(that.viewsActiveFilter[that.activeView].length > 0 && that.viewsActiveFilter[that.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
+                        if (widgets[widget].data.filterkey) {
+                            if (!(that.viewsActiveFilter[that.activeView].length > 0 &&
+                                that.viewsActiveFilter[that.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
                                 mWidget._customHandlers.onShow(mWidget, widget);
                             }
                         }
@@ -644,9 +753,9 @@ var vis = {
             if (widget.data && widget.data.oid) {
                 $('#visview_' + view).append(can.view(widget.tpl, {
                     val: this.states[widget.data.oid + '.val'],
-                    ts: this.states[widget.data.oid + '.ts'],
+                    ts:  this.states[widget.data.oid + '.ts'],
                     ack: this.states[widget.data.oid + '.ack'],
-                    lc: this.states[widget.data.oid + '.lc'],
+                    lc:  this.states[widget.data.oid + '.lc'],
                     data: widgetData,
                     view: view
                 }));
@@ -655,9 +764,9 @@ var vis = {
             }
 
             if (!this.editMode) {
-                if (widget.data.filterkey && widget.data.filterkey != "" && this.viewsActiveFilter[view].length > 0 && this.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1) {
+                if (this.isWidgetFilteredOut(view, id) || this.isWidgetHidden(view, id)) {
                     var mWidget = document.getElementById(id);
-                    $('#' + id).hide();
+                    $(mWidget).hide();
                     if (mWidget &&
                         mWidget._customHandlers &&
                         mWidget._customHandlers.onHide) {
@@ -682,14 +791,14 @@ var vis = {
 
             $(document).trigger("wid_added",id)
         } catch (e) {
-            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+           this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
         }
     },
     changeView: function (view, hideOptions, showOptions, sync) {
         var that = this;
-        var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && (hideOptions.effect != "");
+        var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && hideOptions.effect;
         if (!effect) {
-            effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && (showOptions.effect != "")
+            effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && showOptions.effect;
         }
         if (effect && ((showOptions === undefined) || !showOptions.effect)) {
             showOptions = {effect: hideOptions.effect, options: {}, duration: hideOptions.duration};
@@ -734,8 +843,8 @@ var vis = {
                         }
                     }).dequeue();
                 }
-                $("#visview_" + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
 
+                $("#visview_" + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
                     // If first hide, than show
                     if (!sync) {
                         $("#visview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
@@ -786,9 +895,11 @@ var vis = {
         this.activeView = view;
 
 
-        $('#visview_' + view).find('div[id$="container"]').each(function () {
+        /*$('#visview_' + view).find('div[id$="container"]').each(function () {
             $('#visview_' + $(this).attr('data-vis-contains')).show();
-        });
+        });*/
+
+        this.updateContainers(view);
 
         if (!this.editMode && this.instance) {
             this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
@@ -812,20 +923,20 @@ var vis = {
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
+
         if (local) {
             try {
                 this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
-                that.views = JSON.parse(storage.get(this.storageKeyViews));
+                this.views = JSON.parse(storage.get(this.storageKeyViews));
+                this.IDs = this.getUsedObjectIDs();
                 if (callback) callback.call(that, callbackArg);
             } catch (err) {
-                that.views = null
+                this.views = null;
                 if (callback) callback.call(that, callbackArg);
             }
-
         } else {
-
             this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
-                if (err) alert(that.projectPrefix + 'vis-views.json ' + err);
+                if (err) window.alert(that.projectPrefix + 'vis-views.json ' + err);
 
                 if (data) {
                     if (typeof data == 'string') {
@@ -833,12 +944,13 @@ var vis = {
                             that.views = JSON.parse(data);
                         } catch (e) {
                             console.log('Cannot parse views file "' + that.projectPrefix + 'vis-views.json"');
-                            alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');
+                            window.alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');
                             that.views = null;
                         }
                     } else {
                         that.views = data;
                     }
+                    that.IDs = that.getUsedObjectIDs();
                 } else {
                     that.views = null;
                 }
@@ -856,7 +968,6 @@ var vis = {
             setTimeout(function () {
                 that.saveRemote(callback);
             }, 1000);
-
         }else {
             if (!this.saveRemoteActive) this.saveRemoteActive = 30;
             if (this.saveRemoteActive == 10) {
@@ -865,15 +976,16 @@ var vis = {
                 return;
             }
             // Sync widget before it will be saved
-            for (var t = 0; t < this.activeWidgets.length; t++) {
-                if (this.activeWidgets[t].indexOf('_') != -1 && this.syncWidgets) {
-                    this.syncWidgets(this.activeWidgets);
-                    break;
+            if (this.activeWidgets) {
+                for (var t = 0; t < this.activeWidgets.length; t++) {
+                    if (this.activeWidgets[t].indexOf('_') != -1 && this.syncWidgets) {
+                        this.syncWidgets(this.activeWidgets);
+                        break;
+                    }
                 }
             }
 
             if (local) {
-
                 storage.set(this.storageKeyViews, JSON.stringify(this.views, null, 2));
                 that.saveRemoteActive = 0;
                 if (callback) callback();
@@ -887,7 +999,7 @@ var vis = {
                         that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
                             that.cssChecked = true;
                             // Create vis-user.css file if not exist
-                            if (err || data == null || data == undefined) {
+                            if (err || data === null || data === undefined) {
                                 // Create empty css file
                                 that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
                             }
@@ -926,7 +1038,7 @@ var vis = {
     onWakeUp: function (callback) {
         this.wakeUpCallbacks.push(callback);
     },
-    showMessage: function (message, title, icon) {
+    showMessage: function (message, title, icon, width) {
         if (!this.$dialogMessage) {
             this.$dialogMessage = $('#dialog-message');
             this.$dialogMessage.dialog({
@@ -943,6 +1055,11 @@ var vis = {
             });
         }
         this.$dialogMessage.dialog('option', 'title', title || _('Message'));
+        if (width) {
+            this.$dialogMessage.dialog('option', 'width', width);
+        } else {
+            this.$dialogMessage.dialog('option', 'width', 300);
+        }
         $('#dialog-message-text').html(message);
         if (icon) {
             $('#dialog-message-icon').show();
@@ -995,11 +1112,61 @@ var vis = {
     unregisterOnChange: function (callback, arg) {
         for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
             if (this.onChangeCallbacks[i].callback == callback &&
-                (arg == undefined || this.onChangeCallbacks[i].arg == arg)) {
+                (arg === undefined || this.onChangeCallbacks[i].arg == arg)) {
                 this.onChangeCallbacks.slice(i, 1);
                 return;
             }
         }
+    },
+    isWidgetHidden: function (view, widget, val) {
+        var oid = this.views[view].widgets[widget].data['visibility-oid'];
+        if (oid) {
+            if (val === undefined) val = this.states[oid + '.val'];
+            if (val === undefined) return false;
+
+            var condition = this.views[view].widgets[widget].data['visibility-cond'];
+            var value     = this.views[view].widgets[widget].data['visibility-val'];
+
+            if (!condition || value === undefined) return false;
+
+            var t = typeof val;
+            if (t == 'boolean') {
+                value = (value === 'true' || value === true || value === 1);
+            } else if (t == 'number') {
+                value = parseFloat(value);
+            }  else if (t == 'object') {
+                val = JSON.stringify(val);
+            }
+
+            // Take care: return true if widget is hidden!
+            switch (condition) {
+                case '==':
+                    return value != val;
+                case '!=':
+                    return value == val;
+                case '>=':
+                    return val < value;
+                case '<=':
+                    return val > value;
+                case '>':
+                    return val <= value;
+                case '<':
+                    return val >= value;
+                case 'consist':
+                    return (val.toString().indexOf(value) == -1);
+                default:
+                    console.log('Unknown visibility condition for ' + widget + ': ' + condition);
+                    return false;
+            }
+        } else {
+            return false;
+        }
+    },
+    isWidgetFilteredOut: function (view, widget) {
+        return (
+            this.views[view].widgets[widget].data.filterkey &&
+            this.viewsActiveFilter[view].length > 0 &&
+            this.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1);
     }
 };
 
@@ -1009,8 +1176,8 @@ if ('applicationCache' in window) {
         window.applicationCache.addEventListener('updateready', function (e) {
             if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
                 vis.showWaitScreen(true, null, _('Update found, loading new Files...'), 100);
-                jQuery("#waitText").attr("id", "waitTextDisabled");
-                jQuery(".vis-progressbar").hide();
+                $("#waitText").attr("id", "waitTextDisabled");
+                $(".vis-progressbar").hide();
                 try {
                     window.applicationCache.swapCache();
                 } catch (_e) {
@@ -1025,7 +1192,7 @@ if ('applicationCache' in window) {
 }
 
 // Parse Querystring
-(window.onpopstate = function () {
+window.onpopstate = function () {
     var match,
         pl = /\+/g,
         search = /([^&=]+)=?([^&]*)/g,
@@ -1034,14 +1201,14 @@ if ('applicationCache' in window) {
         },
         query = window.location.search.substring(1);
     vis.urlParams = {};
-    while (match = search.exec(query)) {
+
+    while ((match = search.exec(query))) {
         vis.urlParams[decode(match[1])] = decode(match[2]);
     }
 
-    if (window.location.href.indexOf('edit.html') != -1 || vis.urlParams['edit'] === "") {
-        vis.editMode = true;
-    }
-})();
+    vis.editMode = (window.location.href.indexOf('edit.html') != -1 || vis.urlParams.edit === '');
+};
+window.onpopstate();
 
 // Start of initialisation: main ()
 (function ($) {
@@ -1051,9 +1218,7 @@ if ('applicationCache' in window) {
 
         // für iOS Safari - wirklich notwendig?
         $('body').on('touchmove', function (e) {
-            if ($(e.target).closest("body").length == 0) {
-                e.preventDefault();
-            }
+            if (!$(e.target).closest("body").length) e.preventDefault();
         });
 
         vis.preloadImages(["img/disconnect.png"]);
@@ -1100,11 +1265,43 @@ if ('applicationCache' in window) {
 
         vis.conn = servConn;
 
+        // old !!!
+        // First of all load project/vis-user.css
+        //$('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
+
+        $.ajax({
+            url:      'css/vis-common-user.css',
+            type:     'GET',
+            dataType: 'html',
+            cache:    this.useCache,
+            success:  function (data) {
+                $('head').append('<style id="vis-common-user">' + data + '</style>');
+                $(document).trigger('vis-common-user');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                vis.conn.logError('Cannot load vis-common-user.css - ' + errorThrown);
+                $('head').append('<style id="vis-common-user"></style>');
+                $(document).trigger('vis-common-user');
+            }
+        });
+
+        $.ajax({
+            url:      '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css',
+            type:     'GET',
+            dataType: 'html',
+            cache:    this.useCache,
+            success:  function (data) {
+                $('head').append('<style id="vis-user">' + data + '</style>');
+                $(document).trigger('vis-user');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                vis.conn.logError('Cannot load /' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css - ' + errorThrown);
+                $('head').append('<style id="vis-user"></style>');
+                $(document).trigger('vis-user');
+            }
+        });
 
         if (!local) {
-            // First of all load project/vis-user.css
-            $('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
-
             vis.conn.init(null, {
                 onConnChange: function (isConnected) {
                     //console.log("onConnChange isConnected="+isConnected);
@@ -1113,13 +1310,11 @@ if ('applicationCache' in window) {
                         if (vis.isFirstTime) {
                             vis.conn.getVersion(function (version) {
                                 if (version) {
-                                    //vis.conn.readFile("www/vis/css/vis-user.css");
-
                                     if (compareVersion(version, vis.requiredServerVersion)) {
-                                        // TODO Translate
-                                        vis.showMessage('Warning: requires Server version ' + vis.requiredServerVersion + ' - found Server version ' + version + ' - please update Server.');
+                                        vis.showMessage(_('Warning: requires Server version %s - found Server version %s - please update Server.',  vis.requiredServerVersion, version));
                                     }
-                                } //else {
+                                }
+                                //else {
                                     // Possible not authenticated, wait for request from server
                                 //}
                             });
@@ -1127,97 +1322,132 @@ if ('applicationCache' in window) {
                             vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
                         }
 
-                        // Read all states from server
-                        vis.conn.getStates(function (error, data) {
-                            if (data) {
-                                for (var id in data) {
-                                    var obj = data[id];
-                                    var o = {};
-                                    o[id + '.val'] = obj.val;
-                                    o[id + '.ts']  = obj.ts;
-                                    if (vis.states[id + '.val'] !== undefined) {
-                                        o[id + '.ack'] = obj.ack;
-                                        o[id + '.lc']  = obj.lc;
-                                    }
-                                    try {
-                                        vis.states.attr(o);
-                                    } catch (e) {
-                                        vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                        // first of all try to load views
+                        vis.loadRemote(function () {
+                            // Read all states from server
+                            vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
+                                if (data) {
+                                    for (var id in data) {
+                                        var obj = data[id];
+                                        var o = {};
+                                        o[id + '.val'] = obj.val;
+                                        o[id + '.ts']  = obj.ts;
+                                        // BF @ HQ: Why?
+                                        if (true){ //} || vis.states[id + '.val'] !== undefined) {
+                                            o[id + '.ack'] = obj.ack;
+                                            o[id + '.lc']  = obj.lc;
+                                        }
+                                        try {
+                                            vis.states.attr(o);
+                                        } catch (e) {
+                                            vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                                        }
                                     }
                                 }
-                            }
 
-
-                            if (error) {
-                                console.log("Possibly not authenticated, wait for request from server");
-                                // Possibly not authenticated, wait for request from server
-                            } else {
-                                // Get Server language
-                                vis.conn.getLanguage(function (err, lang) {
-                                    systemLang = lang || systemLang;
-                                    vis.language = systemLang;
-                                    translateAll();
-                                    if (vis.isFirstTime) {
-                                        // Init edit dialog
-                                        if (vis.editMode && vis.editInit) vis.editInit();
-                                        vis.isFirstTime = false;
-                                        vis.init();
-                                    }
-                                });
-
-                                // If metaIndex required, load it
-                                if (vis.editMode) {
-                                    /* socket.io */
-                                    if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
-
-                                    // Read all data objects from server
-                                    vis.conn.getObjects(function (err, data) {
-                                        vis.objects = data;
-                                    });
-                                }
-
-                                //console.log((new Date()) + " socket.io reconnect");
-                                if (vis.isFirstTime) {
-                                    setTimeout(function () {
+                                if (error) {
+                                    console.log("Possibly not authenticated, wait for request from server");
+                                    // Possibly not authenticated, wait for request from server
+                                } else {
+                                    // Get Server language
+                                    vis.conn.getConfig(function (err, config) {
+                                        systemLang = config.language || systemLang;
+                                        vis.language = systemLang;
+                                        vis.dateFormat = config.dateFormat;
+                                        translateAll();
                                         if (vis.isFirstTime) {
                                             // Init edit dialog
                                             if (vis.editMode && vis.editInit) vis.editInit();
                                             vis.isFirstTime = false;
                                             vis.init();
                                         }
-                                    }, 1000);
+                                    });
+
+                                    // If metaIndex required, load it
+                                    if (vis.editMode) {
+                                        /* socket.io */
+                                        if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
+
+                                        // Read all data objects from server
+                                        vis.conn.getObjects(function (err, data) {
+                                            vis.objects = data;
+                                            // Detect if objects are loaded
+                                            for (var ob in data) {
+                                                vis.objectSelector = true;
+                                                break;
+                                            }
+                                        });
+                                    }
+
+                                    //console.log((new Date()) + " socket.io reconnect");
+                                    if (vis.isFirstTime) {
+                                        setTimeout(function () {
+                                            if (vis.isFirstTime) {
+                                                // Init edit dialog
+                                                if (vis.editMode && vis.editInit) vis.editInit();
+                                                vis.isFirstTime = false;
+                                                vis.init();
+                                            }
+                                        }, 1000);
+                                    }
                                 }
-                            }
+                            });
                         });
                     } else {
                         //console.log((new Date()) + " socket.io disconnect");
                         $("#server-disconnect").dialog("open");
                     }
                 },
-                onRefresh: function () {
+                onRefresh:    function () {
                     window.location.reload();
                 },
-                onUpdate: function (id, state) {
+                onUpdate:     function (id, state) {
                     var o = {};
                     // Check new model
                     o[id + '.val'] = state.val;
-                    o[id + '.ts'] = state.ts;
+                    o[id + '.ts']  = state.ts;
                     if (vis.states[id + '.val'] !== undefined) {
                         o[id + '.ack'] = state.ack;
-                        o[id + '.lc'] = state.lc;
+                        o[id + '.lc']  = state.lc;
                     }
                     try {
                         vis.states.attr(o);
                     } catch (e) {
                         vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
                     }
+                    if (id == 'hm-rpc.0.HEQ0120459.1.WORKING') {
+                        console.log(JSON.stringify(state));
+                    }
+
+                    if (!vis.editMode && vis.visibility[id]) {
+                        for (var i = 0; i < vis.visibility[id].length; i++) {
+                            var mWidget = document.getElementById(vis.visibility[id][i].widget);
+                            if (!mWidget) continue;
+                            if (vis.isWidgetHidden(vis.visibility[id][i].view, vis.visibility[id][i].widget, state.val) ||
+                                vis.isWidgetFilteredOut(vis.visibility[id][i].view, vis.visibility[id][i].widget)) {
+                                $(mWidget).hide();
+                                if (mWidget &&
+                                    mWidget._customHandlers &&
+                                    mWidget._customHandlers.onHide) {
+                                    mWidget._customHandlers.onHide(mWidget, id);
+                                }
+                            } else {
+                                $(mWidget).show();
+                                if (mWidget &&
+                                    mWidget._customHandlers &&
+                                    mWidget._customHandlers.onShow) {
+                                    mWidget._customHandlers.onShow(mWidget, id);
+                                }
+                            }
+                        }
+                    }
 
                     // Inform other widgets, that do not support canJS
-                    for (var i = 0, len = vis.onChangeCallbacks.length; i < len; i++) {
-                        vis.onChangeCallbacks[i].callback(vis.onChangeCallbacks[i].arg, id, state.val, state.ack);
+                    for (var j = 0, len = vis.onChangeCallbacks.length; j < len; j++) {
+                        vis.onChangeCallbacks[j].callback(vis.onChangeCallbacks[j].arg, id, state.val, state.ack);
                     }
                 },
-                onAuth: function (message, salt) {
+                onAuth:       function (message, salt) {
                     if (vis.authRunning) {
                         return;
                     }
@@ -1230,7 +1460,7 @@ if ('applicationCache' in window) {
                         }
                         users += '</select>';
                     } else {
-                        users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name') + '">'
+                        users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name') + '">';
                     }
 
                 var text = '<div id="login-box" class="login-popup" style="display:none">' +
@@ -1288,7 +1518,7 @@ if ('applicationCache' in window) {
                         return true;
                     });
                 },
-                onCommand: function (instance, command, data) {
+                onCommand:    function (instance, command, data) {
                     var parts;
                     if (instance != vis.instance && instance != 'FFFFFFFF') return false;
                     if (command) {
@@ -1328,6 +1558,8 @@ if ('applicationCache' in window) {
                                     } else {
                                         href = location.protocol + '//' + location.hostname + ':' + location.port + data;
                                     }
+                                    // force read from server
+                                    href += '?' + (new Date()).getTime();
 
                                     if (typeof Audio != 'undefined') {
                                         var snd = new Audio(href); // buffers automatically when created
@@ -1384,6 +1616,6 @@ function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
 }
 
 if (window.location.search == "?edit") {
-    alert(_('please use /vis/edit.html instead of /vis/?edit'));
+    window.alert(_('please use /vis/edit.html instead of /vis/?edit'));
     location.href = './edit.html' + window.location.hash;
 }

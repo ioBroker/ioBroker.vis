@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for ioBroker.",
-  "version": "0.2.2",
+  "version": "0.2.12",
   "author": {
     "name": "bluefox",
     "email": "bluefox@ccu.io"
@@ -46,13 +46,8 @@
   },
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "node main.js --install"
   },
-  "license": "CC BY-NC",
-  "readme": "![Logo](admin/vis.png)\nioBroker.vis\n============\n\nWEB visualisation for ioBroker platform.\n\n## Changelog\n### 0.0.3 (2015-01-03)\n- (bluefox) npm install\n\n### 0.0.1 (2014-12-28)\n- (bluefox) initial checkin\n\n",
-  "readmeFilename": "README.md",
-  "gitHead": "440e9e801d683f799f307074c780d4a5b1b43ecb",
-  "_id": "iobroker.vis@0.0.3",
-  "_shasum": "192cbf807447a1bc51f2894e9f0782f27913d464",
-  "_from": "iobroker.vis@"
+  "license": "CC BY-NC"
 }

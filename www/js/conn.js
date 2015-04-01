@@ -9,8 +9,12 @@
 /* global clearTimeout*/
 /* global io*/
 /* global $*/
+/* global socketNamespace */
+/* global socketUrl */
+/* global socketSession */
+/* jshint -W097 */// jshint strict:false
 
-'use strict';
+"use strict";
 
 // The idea of servConn is to use this class later in every addon.
 // The addon just must say, what must be loaded (values, objects, indexes) and
@@ -65,6 +69,9 @@ var servConn = {
         return true;
     },
     init: function (connOptions, connCallbacks) {
+        // init namespace
+        if (typeof socketNamespace != 'undefined') this.namespace = socketNamespace;
+
         connOptions = connOptions || {};
         var that = this;
         if (!connOptions.name) connOptions.name = this.namespace;
@@ -154,7 +161,7 @@ var servConn = {
             });
 
             that._socket.on('stateChange', function (id, state) {
-                if (!id || state == null || typeof state != 'object') return;
+                if (!id || state === null || typeof state != 'object') return;
 
                 if (that._connCallbacks.onCommand && id == that.namespace + '.control.command') {
                     if (state.ack) return;
@@ -293,6 +300,7 @@ var servConn = {
             console.log('socket.io not initialized');
             return;
         }
+        if (!dirname) dirname = '/';
         var parts = dirname.split('/');
         var adapter = parts[1];
         parts.splice(0, 2);
@@ -338,10 +346,15 @@ var servConn = {
         this._socket.emit('setState', pointId, value);
     },
     // callback (err, data)
-    getStates: function (callback) {
+    getStates: function (IDs, callback) {
+        if (typeof IDs == 'function') {
+            callback = IDs;
+            IDs = null;
+        }
+
         if (!this._checkConnection('getStates', arguments)) return;
 
-        this._socket.emit('getStates', function (err, data) {
+        this._socket.emit('getStates', IDs, function (err, data) {
             if (err || !data) {
                 if (callback) {
                     callback(err || 'Authentication required');
@@ -368,7 +381,43 @@ var servConn = {
                     data[res.rows[i].id] = res.rows[i].value;
                 }
 
-                if (callback) callback(err, data);
+                // Read all adapters for images
+                that._socket.emit('getObjectView', 'system', 'instance', {startkey: 'system.adapter.', endkey: 'system.adapter.\u9999'}, function (err, res) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+                    var result = {};
+                    for (var i = 0; i < res.rows.length; i++) {
+                        data[res.rows[i].id] = res.rows[i].value;
+                    }
+
+                    // Read all channels for images
+                    that._socket.emit('getObjectView', 'system', 'channel', {startkey: '', endkey: '\u9999'}, function (err, res) {
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+                        var result = {};
+                        for (var i = 0; i < res.rows.length; i++) {
+                            data[res.rows[i].id] = res.rows[i].value;
+                        }
+
+                        // Read all devices for images
+                        that._socket.emit('getObjectView', 'system', 'device', {startkey: '', endkey: '\u9999'}, function (err, res) {
+                            if (err) {
+                                callback(err);
+                                return;
+                            }
+                            var result = {};
+                            for (var i = 0; i < res.rows.length; i++) {
+                                data[res.rows[i].id] = res.rows[i].value;
+                            }
+
+                            if (callback) callback(err, data);
+                        });
+                    });
+                });
             });
         });
     },
@@ -472,12 +521,12 @@ var servConn = {
             console.log("No credentials!");
         }
     },
-    getLanguage: function (callback) {
+    getConfig: function (callback) {
         if (!this._checkConnection('getLanguage', arguments)) return;
 
         this._socket.emit('getObject', 'system.config', function (err, obj) {
             if (callback && obj && obj.common) {
-                callback(null, obj.common.language);
+                callback(null, obj.common);
             } else {
                 callback('Cannot read language');
             }

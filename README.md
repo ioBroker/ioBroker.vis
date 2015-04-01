@@ -4,7 +4,103 @@ ioBroker.vis
 
 WEB visualisation for ioBroker platform.
 
+## Installation & Dokumentation
+
+![Demo interface](https://github.com/GermanBluefox/DashUI/raw/master/images/user0.png)
+![Demo interface](https://github.com/GermanBluefox/DashUI/raw/master/images/user7.png)
+
+[Online Demos](http://dashui.ccu.io)
+
+## Control interface
+Vis creates 3 variables:
+
+- control.instance - Here the browser instance should be written or FFFFFFFF if every browser must be controlled.
+- control.data     - Parameter for command. See specific command description.
+- control.command  - Command name. Write this variable triggers the command. That means before command will be written the "instance" and "data" must be prepared with data.
+
+Commands:
+
+* alert - show alert window in vis. "control.data" has following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write ```Message;;info```.
+* changeView - switch to desired view. "control.data" must have name of view. You can specify project name too as "project/view". Default project is "main".
+* refresh - reload vis, for instance after project is changed to reload on all browsers.
+* reload - same as refresh.
+* dialog - Show dialog window. Dialog must exist on view. One of:
+
+    - "static - HTML - Dialog",
+    - "static - Icon - Dialog",
+    - "container - HTML - view in jqui Dialog",
+    - "container - ext cmd - view in jqui Dialog",
+    - "container - Icon - view in jqui Dialog",
+    - "container - Button - view in jqui Dialog".
+
+    "control.data" must have id of dialog widget, e.g. "w00056".
+* popup - opens a new browser window. Link must be specified in "control.data", e.g. http://google.com
+* playSound - play sound file. The link to file is specified in "control.data", e.g. http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
+  You can upload your own file in vis and let it play as for instance "/vis.0/main/img/myFile.mp3".
+
+If user changes the view or at start the variables will be filled by vis with
+
+- "control.instance": browser instance and ack=true
+- "control.data": project and view name in form "project/view", e.g. "main/view" (and ack=true)
+- "control.command": "changedView" and ack=true
+
+
 ## Changelog
+### 0.2.12 (2015-03-27)
+- (bluefox) fix jqui radio
+
+### 0.2.11 (2015-03-11)
+- (bluefox) fix install for ioBroker. Required newest ioBroke.js-controller
+
+### 0.2.10 (2015-03-09)
+- (bluefox) fix install for node-red-vis
+
+### 0.2.8 (2015-03-08)
+- (bluefox) fix the version numbers
+
+### 0.2.7 (2015-03-08)
+- (SmilingJack) add css editor
+- (SmilingJack) bugfix zoom
+- (SmilingJack) Bugfix select view menu
+- (bluefox) read last change of the state by start
+- (bluefox) fix formatDate and short year
+
+### 0.2.6 (2015-03-03)
+- (bluefox) change shutter in metro
+- (bluefox) fix jqui- Select List
+
+### 0.2.5 (2015-03-03)
+- (bluefox) fix lock interaction with widgets
+- (bluefox) add visibility dependency for every widget
+- (bluefox) change shutter in metro
+- (SmilingJack) Bugfix View theme select
+- (SmilingJack) Bugfix widget Align
+- (bluefox) use showWidgetHelper instead of direct editing of "widget_helper"
+- (bluefox) add px for width and radius of border
+- (bluefox) decrease size of widget_helper (selection frame)
+- (bluefox) fix "time stamp" and "last change" widgets
+
+
+### 0.2.4 (2015-02-22)
+- (bluefox) create some previews
+- (bluefox) fix error with color editor.css
+- (bluefox) new lcars widget - End
+- (bluefox) show images in selectID dialog
+- (bluefox) fix jqui buttons
+
+
+### 0.2.3 (2015-02-21)
+- (bluefox) add tooltips to buttons
+- (bluefox) fix view container widgets
+- (SmilingJack) fix error with align of widgets
+- (bluefox) lcars/metro/jqui/basic
+- (bluefox) fix move with arrows
+- (bluefox) lcars.html
+- (bluefox) update RGraph
+- (bluefox) update license text
+- (bluefox) add RGraph
+- (bluefox) show images in selectID dialog
+
 ### 0.2.2 (2015-02-17)
 - (smiling_Jack) align icons
 - (bluefox) support of sayIt and control
@@ -51,49 +147,7 @@ WEB visualisation for ioBroker platform.
 ### 0.0.1 (2014-12-28)
 - (bluefox) initial checkin
 
-## Installation & Dokumentation
-
-![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/user0.png)
-![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/user7.png)
-
-[Online Demos](http://dashui.ccu.io)
-
-## Control interface
-Vis creates 3 variables:
-
-- control.instance - Here the browser instance should be written or FFFFFFFF if every browser must be controlled.
-- control.data     - Parameter for command. See specific command description.
-- control.command  - Command name. Write this variable triggers the command. That means before command will be written the "instance" and "data" must be prepared with data.
-
-Commands:
-
-* alert - show alert window in vis. "control.data" has following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write ```Message;;info```.
-* changeView - switch to desired view. "control.data" must have name of view. You can specify project name too as "project/view". Default project is "main".
-* refresh - reload vis, for instance after project is changed to reload on all browsers.
-* reload - same as refresh.
-* dialog - Show dialog window. Dialog must exist on view. One of:
-
-    - "static - HTML - Dialog",
-    - "static - Icon - Dialog",
-    - "container - HTML - view in jqui Dialog",
-    - "container - ext cmd - view in jqui Dialog",
-    - "container - Icon - view in jqui Dialog",
-    - "container - Button - view in jqui Dialog".
-
-    "control.data" must have id of dialog widget, e.g. "w00056".
-* popup - opens a new browser window. Link must be specified in "control.data", e.g. http://google.com
-* playSound - play sound file. The link to file is specified in "control.data", e.g. http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
-  You can upload your own file in vis and let it play as for instance "/vis.0/main/img/myFile.mp3".
-
-If user changes the view or at start the variables will be filled by vis with
-
-- "control.instance": browser instance and ack=true
-- "control.data": project and view name in form "project/view", e.g. "main/view" (and ack=true)
-- "control.command": "changedView" and ack=true
-
-
-
-## Licence
+## License
  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  Creative Common Attribution-NonCommercial (CC BY-NC)
 

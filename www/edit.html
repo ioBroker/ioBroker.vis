@@ -2,7 +2,7 @@
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
 <head>
 
-    <!-- ioBroker.vis Version 0.0.1 -->
+    <!-- ioBroker.vis Version 0.2.11 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
@@ -24,17 +24,15 @@
 
     <link rel="stylesheet" type="text/css" href="lib/css/superfish/superfish.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect-1.13.css"/>
-    <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect.filter.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.jgrowl.min.css"/>
     <link rel="stylesheet" type="text/css" href="widgets/colorpicker/css/farbtastic.css"/>
 
     <link rel="stylesheet" type="text/css" href="css/backgrounds.css"/>
     <link rel="stylesheet" type="text/css" href="css/vis.css"/>
     <link rel="stylesheet" type="text/css" href="css/vis_editor.css"/>
-    <!--<link rel="stylesheet" type="text/css" href="css/vis-common-user.css"/>-->
-    <link rel="stylesheet" type="text/css" id="project_css"/>
 
-    <script type="text/javascript" src="lib/js/jquery-1.11.1.min.js"></script>
+
+    <script type="text/javascript" src="lib/js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery-ui-1.11.3.full.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.fancytree-all.min.js"></script>
     <script type="text/javascript" src="lib/js/selectID.js"></script>
@@ -42,7 +40,6 @@
     <script type="text/javascript" src="lib/js/translate.js"></script>
 
     <script type="text/javascript" src="lib/js/jquery.multiselect-1.13.js"></script>
-    <!--script type="text/javascript" src="lib/js/jquery.multiselect.filter-1.5pre.js"></script-->
     <script type="text/javascript" src="lib/js/loStorage.js"></script>
     <script type="text/javascript" src="lib/js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="lib/js/dropzone.js"></script>
@@ -51,6 +48,8 @@
     <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script>
     <script type="text/javascript" src="lib/js/superclick.js"></script>
+    <script type="text/javascript" src="lib/ace/ace.js"></script>
+    <script type="text/javascript" src="lib/ace/ext-language_tools.js"></script>
 
     <script type="text/javascript" src="widgets/colorpicker/js/farbtastic.js"></script>
 
@@ -70,6 +69,10 @@
     <!--- widgetsStop -->
 </head>
 <body class="ui-widget-content">
+
+<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->
+<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->
+
 <div id='waitScreen' class='vis-wait-screen'>
     <div id='waitDialog' class='waitDialog'>
         <div class='vis-progressbar '></div>
@@ -425,6 +428,12 @@
                         <td>
                             <div id="wid_dis_v" class="btn-iconbar ui-corner-all translateT" title="Align vertical/equal"><img class="icon-on-iconbar" src="icon/distribute-vertical-equal.png"></div>
                         </td>
+                        <td>
+                            <div id="wid_align_width" class="btn-iconbar ui-corner-all translateT" title="Align width"><img class="icon-on-iconbar" src="icon/align-width.png"></div>
+                        </td>
+                        <td>
+                            <div id="wid_align_height" class="btn-iconbar ui-corner-all translateT" title="Align height"><img class="icon-on-iconbar" src="icon/align-height.png"></div>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -433,7 +442,7 @@
                     <tr>
                         <td class="translate" style="text-align: center; height: 22px; padding-right: 3px">All widgets:</td>
                         <td>
-                            <input id="wid_all_lock_function" type="checkbox" /><label style="width: 23px;height: 23px" id="wid_all_lock_f" for="wid_all_lock_function"  class="translateT ui-state-active" title="Lock Widget function"></label>
+                            <input id="wid_all_lock_function" type="checkbox" /><label style="width: 23px; height: 23px" id="wid_all_lock_f" for="wid_all_lock_function" class="translateT ttt" title="Lock Widget function"></label>
                         </td>
                         <td>
                             <input id="wid_all_lock_drag" type="checkbox" /><label style="width: 23px;height: 23px" id="wid_all_lock_d" for="wid_all_lock_drag"  class="translateT" title="Lock Widget dragging"></label>
@@ -485,8 +494,8 @@
                                 <option value="1920x1080">Samsung S4, S5, Note 3 - Landscape</option>
                                 <option value="768x1280">Nexus 4 - Portrait</option>
                                 <option value="1280x768">Nexus 4 - Landscape</option>
-                                <option value="1080x1920">Nexus 5 - Portrait</option>
-                                <option value="1920x1080">Nexus 5 - Landscape</option>
+                                <option value="328x581">Nexus 5 - Portrait</option>
+                                <option value="581x328">Nexus 5 - Landscape</option>
                                 <option value="800x1280">Nexus 7 (2012) - Portrait</option>
                                 <option value="1280x800">Nexus 7 (2012) - Landscape</option>
                                 <option value="1200x1920">Nexus 7 (2013) - Portrait</option>
@@ -629,8 +638,8 @@
     <div class="ui-widget-content" id="pan_add_wid">
         <div class="ui-state-default" style="height:16px;font-size:16px;padding: 5px;font-weight: bolder;">
             <span class="translate">Add Widget</span>
-            <div id="btn_prev_type" class="ui-"><span class="ui-icon  ui-icon-tag"></span></div>
-            <div id="btn_prev_zoom" class="ui-"><span class="ui-icon  ui-icon-zoomout"></span></div>
+            <div id="btn_prev_type" title="Show type of widgets" class="translateT"><span class="ui-icon ui-icon-tag"></span></div>
+            <div id="btn_prev_zoom" title="Small widgets" class="translateT"><span class="ui-icon ui-icon-zoomout"></span></div>
         </div>
         <select id="select_set" style="width: 100%" class="select-set"></select>
 
@@ -644,11 +653,7 @@
             </div>
             <button id="view_select_right"></button>
         </div>
-        <div id="vis_container" class="ui-widget-content" caption="Views">
-            <!--div id="allwidgets_helper" style="display: none">
-                <div id="allwidgets_inner_helper"></div>
-            </div-->
-
+        <div id="vis_container" style="width: 100%; height: 100%; overflow: auto" class="ui-widget-content" caption="Views">
             <div id="size_x"
                  style="display:none; z-index: 99; position: absolute; top: 0; width:0; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
             <div id="size_y"
@@ -664,6 +669,9 @@
                 </li>
                 <li>
                     <a id="widget_tab" href="#tab_wid_attr" style="padding: 2px 4px 2px 4px" class="translate">Widget</a>
+                </li>
+                <li>
+                    <a id="cssEditor_tab" href="#tab_css_edit" style="padding: 2px 4px 2px 4px" class="translate">CSS</a>
                 </li>
 
             </ul>
@@ -697,7 +705,7 @@
                                         <option value="black-tie">black-tie</option>
                                         <option value="blitzer">blitzer</option>
                                         <option value="cupertino">cupertino</option>
-                                        <option value="dhive">dark-hive</option>
+                                        <option value="dark-hive">dark-hive</option>
                                         <option value="dot-luv">dot-luv</option>
                                         <option value="eggplant">eggplant</option>
                                         <option value="excite-bike">excite-bike</option>
@@ -862,6 +870,20 @@
                         <tbody id="widget_attrs"></tbody>
                     </table>
                 </div>
+            </div>
+            <div class="tab_attr ui-widget-content" id="tab_css_edit">
+                <div id="css_editor_head">
+                    <select  id="select_css_file" style=" width: 100px;">
+                        <option value="vis-common-user" class="translate">Global</option>
+                        <option value="vis-user"        class="translate">Project</option>
+                    </select>
+                    <input id="css_find"/>
+                    <button id="css_find_prev" class="translateT" title="Find previous"></button>
+                    <button id="css_find_next" class="translateT" title="Find next"></button>
+                    <button id="css_file_save" class="translateT" title="Save CSS"></button>
+                </div>
+                <div id="css_editor"></div>
+
             </div>
         </div>
     </div>

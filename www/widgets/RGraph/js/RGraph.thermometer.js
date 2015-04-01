@@ -1,12 +1,18 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
+
     RGraph = window.RGraph || {isRGraph: true};
 
 
@@ -23,23 +29,43 @@
     * @param number max   The maximum value
     * @param number value The value reported by the thermometer
     */
-    RGraph.Thermometer = function (id, min, max, value)
+    RGraph.Thermometer = function (conf)
     {
-        var tmp = RGraph.getCanvasTag(id);
+        /**
+        * Allow for object config style
+        */
+        if (   typeof conf === 'object'
+            && typeof conf.min === 'number'
+            && typeof conf.max === 'number'
+            && typeof conf.id === 'string') {
 
-        // Get the canvas and context objects
-        this.id                = tmp[0];
-        this.canvas            = tmp[1];
-        this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
+            var parseConfObjectForOptions = true; // Set this so the config is parsed (at the end of the constructor)
+        
+        } else {
+
+            var conf = {
+                           id: arguments[0],
+                          min: arguments[1],
+                          max: arguments[2],
+                        value: arguments[3]
+                       }
+        }
+
+
+
+
+        this.id                = conf.id;
+        this.canvas            = document.getElementById(this.id);
+        this.context           = this.canvas.getContext ? this.canvas.getContext('2d') : null;
         this.canvas.__object__ = this;
         this.uid               = RGraph.CreateUID();
         this.canvas.uid        = this.canvas.uid ? this.canvas.uid : RGraph.CreateUID();
         this.colorsParsed      = false;
         this.type              = 'thermometer';
         this.isRGraph          = true;
-        this.min               = min;
-        this.max               = max;
-        this.value             = value;
+        this.min               = conf.min;
+        this.max               = conf.max;
+        this.value             = RGraph.stringsToNumbers(conf.value);
         this.coords            = [];
         this.graphArea         = [];
         this.currentValue      = null;
@@ -49,8 +75,9 @@
         this.bulbTopCenterY    = 0;
         this.coordsText        = [];
         this.original_colors   = [];
+        this.firstDraw         = true; // After the first draw this will be false
 
-        //RGraph.OldBrowserCompat(this.context);
+
 
 
         this.properties =
@@ -166,8 +193,22 @@
         * @param value mixed  The value of the property
         */
         this.set =
-        this.Set = function (name, value)
+        this.Set = function (name)
         {
+            var value = typeof arguments[1] === 'undefined' ? null : arguments[1];
+
+            /**
+            * the number of arguments is only one and it's an
+            * object - parse it for configuration data and return.
+            */
+            if (arguments.length === 1 && typeof name === 'object') {
+                RG.parseObjectStyleConfig(this, name);
+                return this;
+            }
+
+
+
+
             /**
             * This should be done first - prepend the property name with "chart." if necessary
             */
@@ -236,6 +277,17 @@
             * Set the current value
             */
             this.currentValue = this.value;
+
+
+
+            /**
+            * Stop this growing uncontrollably
+            */
+            this.coordsText = [];
+
+
+
+
             
             /**
             * This is new in May 2011 and facilitates indiviual gutter settings,
@@ -329,7 +381,18 @@
             */
             RG.InstallEventListeners(this);
     
-            
+
+            /**
+            * Fire the onfirstdraw event
+            */
+            if (this.firstDraw) {
+                RG.fireCustomEvent(this, 'onfirstdraw');
+                this.firstDraw = false;
+                this.firstDrawFunc();
+            }
+
+
+
             /**
             * Fire the custom RGraph ondraw event (which should be fired when you have drawn the chart)
             */
@@ -909,6 +972,17 @@
 
 
         /**
+        * Use this function to reset the object to the post-constructor state. Eg reset colors if
+        * need be etc
+        */
+        this.reset = function ()
+        {
+        };
+
+
+
+
+        /**
         * This parses a single color value
         */
         this.parseSingleColorForGradient = function (color)
@@ -954,6 +1028,17 @@
             this[type] = func;
     
             return this;
+        };
+
+
+
+
+        /**
+        * This function runs once only
+        * (put at the end of the file (before any effects))
+        */
+        this.firstDrawFunc = function ()
+        {
         };
 
 
@@ -1011,6 +1096,15 @@
         * Now, because canvases can support multiple charts, canvases must always be registered
         */
         RG.Register(this);
-    };
-// version: 2014-03-28
 
+
+
+
+        /**
+        * This is the 'end' of the constructor so if the first argument
+        * contains configuration data - handle that.
+        */
+        if (parseConfObjectForOptions) {
+            RG.parseObjectStyleConfig(this, conf.options);
+        }
+    };

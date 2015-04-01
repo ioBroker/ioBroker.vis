@@ -292,17 +292,17 @@ if (typeof jQuery != 'undefined') {  // here we check if jquery is set (aka load
 		var subtitle_dir = [];
 		subtitle_dir['left'] = 'B_titleL';
 		subtitle_dir['right'] = 'B_titleR';
-		subtitle_dir['none'] = undefined;
-		options.subTitle.direction = subtitle_dir[options.subTitle.direction];
+		subtitle_dir['none'] = '';
+		options.subTitle.direction = (subtitle_dir[options.subTitle.direction] || '') + ' _subtitle';
 		if( options.subTitle.text == undefined ){
 			options.subTitle.text = '';
 		}
 		
 		var blank_dir = [];
-		blank_dir['none'] = undefined;
+		blank_dir['none'] = '';
 		blank_dir['left'] = 'B_blankL';
 		blank_dir['right'] = 'B_blankR';
-		options.blank = blank_dir[options.blank];
+		options.blank = (blank_dir[options.blank] || '');
 		
 		
 		this.each(function(){
@@ -317,7 +317,7 @@ if (typeof jQuery != 'undefined') {  // here we check if jquery is set (aka load
 		_button_log('log','LCARS-> Button has been morphed');
 		
 		if( options.subTitle.direction != '' || options.subTitle.direction != undefined ){
-			_this.prepend('<span class="'+options.subTitle.direction+'" style="color:'+lcars_colors(options.color)+'">'+options.subTitle.text+'</span>');
+			_this.prepend('<span class="'+options.subTitle.direction+'" style="color:'+lcars_colors(options.subTitle.color)+'">'+options.subTitle.text+'</span>');
 			_button_log('log', 'LCARS-> Button Sub Title Added');
 		}
 		

@@ -7,24 +7,26 @@ var visConfig = {
         //"jqplot",
         //"timeAndWeather",
         {name: "jqui",        depends: ["basic"]},
-        //{name: "jqui-mfd",    depends: ["basic", "jqui"]},
-        //"weather-adapter",
-"vkb",
-        "plumb",
-        /*,
+        {name: "jqui-mfd",    depends: ["basic", "jqui"]},
+        "weather-adapter",
+        "RGraph",
+        {name: "lcars",       depends: ["basic"]}
+        /*"plumb",
+        vbs,
+        "table"
         "bars",
         "colorpicker",
-
         {name: "homematic", depends: ["basic", "jqui"]},
-        "knob",
 //        {name: "hqWidgets", edit: "hqWidgetsEdit"},
-        "jqplot",
-        {name: "lcars",    depends: ["basic"]},
-        "RGraph",
+         "knob"
         "special",
         "swipe",
-        "table",
         "dev"*/
-    ],
-    language: window.navigator.userLanguage || window.navigator.language
+    ]
 };
+
+if (typeof exports != 'undefined') {
+    exports.config = visConfig;
+} else {
+	visConfig.language = window.navigator.userLanguage || window.navigator.language;
+}

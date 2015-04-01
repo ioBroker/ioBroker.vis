@@ -28,20 +28,20 @@ white = #ccccff
     font-style: normal;
 }
 
-div.dashui-lcars h1{font-size: 40px;font-weight:normal;margin:0;padding:0;}
-div.dashui-lcars h2{font-size: 35px;font-weight:normal;margin:0;padding:0;}
-div.dashui-lcars h3{font-size: 30px;font-weight:normal;margin:0;padding:0;}
+div.vis-lcars h1{font-size: 40px;font-weight:normal;margin:0;padding:0;}
+div.vis-lcars h2{font-size: 35px;font-weight:normal;margin:0;padding:0;}
+div.vis-lcars h3{font-size: 30px;font-weight:normal;margin:0;padding:0;}
 
-div.dashui-lcars a:link, div.dashui-lcars a:visited{
+div.vis-lcars a:link, div.vis-lcars a:visited{
     color:#aaF;
     text-decoration:none;
 }
-div.dashui-lcars a:hover{
+div.vis-lcars a:hover{
     color:#66F;
     text-decoration:none;
 }
 
-div.dashui-lcars{
+div.vis-lcars{
     background-color:#000;
     color:#fff;
     margin:0;
@@ -57,7 +57,7 @@ div.dashui-lcars{
 
 
 /* LINE STYLEING */
-div.dashui-lcars .line-top{
+div.vis-lcars .line-top{
     width:100%;
     height:25px;
     margin:0;
@@ -65,7 +65,7 @@ div.dashui-lcars .line-top{
     background-repeat: no-repeat;
     background-position:0 -31px;
 }
-div.dashui-lcars .line-bottom{
+div.vis-lcars .line-bottom{
     width:100%;
     height:25px;
     margin:0;
@@ -73,7 +73,7 @@ div.dashui-lcars .line-bottom{
     background-repeat: no-repeat;
     background-position:0 0;
 }
-div.dashui-lcars .line-middle{
+div.vis-lcars .line-middle{
     width:100%;
     height:50px;
     position:absolute;
@@ -83,7 +83,7 @@ div.dashui-lcars .line-middle{
     background-color:transparent;
     float:left;
 }
-div.dashui-lcars .line-middle .top{
+div.vis-lcars .line-middle .top{
     height:25px;
     width:100%;
     margin:0;
@@ -91,7 +91,7 @@ div.dashui-lcars .line-middle .top{
     background-repeat: no-repeat;
     background-position:0 0;
 }
-div.dashui-lcars .line-middle .bottom{
+div.vis-lcars .line-middle .bottom{
     height:25px;
     width:100%;
     margin:0;
@@ -102,7 +102,7 @@ div.dashui-lcars .line-middle .bottom{
 /* // LINE STYLEING */
 
 /* CONTENT AND SIDE PANEL */
-div.dashui-lcars .content{
+div.vis-lcars .content{
     width:auto;
     height:auto;
     overflow:auto;
@@ -113,7 +113,7 @@ div.dashui-lcars .content{
     padding:0;
 }
 
-div.dashui-lcars .side-panel{
+div.vis-lcars .side-panel{
     color:black;
     width:87px;
     background:transparent;
@@ -123,7 +123,7 @@ div.dashui-lcars .side-panel{
     float:left;
 }
 
-div.dashui-lcars .side-panel li{
+div.vis-lcars .side-panel li{
     height:auto;
     width:100%;
     text-align:right;
@@ -132,7 +132,7 @@ div.dashui-lcars .side-panel li{
     padding:0;
 }
 
-div.dashui-lcars .side-panel a{
+div.vis-lcars .side-panel a{
     color:black;
     text-decoration:none;
     font-family:lcars_font;
@@ -140,7 +140,7 @@ div.dashui-lcars .side-panel a{
     font-size:20px;
 }
 
-div.dashui-lcars .upper-content{
+div.vis-lcars .upper-content{
     width:auto;
     height:auto;
     overflow:auto;
@@ -151,7 +151,7 @@ div.dashui-lcars .upper-content{
 /* // CONTENT AND SIDE PANEL */
 
 /* TITLE BBAR FOR PANEL SCREEN */
-div.dashui-lcars .lcars-title{
+div.vis-lcars .lcars-title{
     background-color:transparent;
     height: 50px;
     line-height:50px; /* Centers text */
@@ -166,7 +166,7 @@ div.dashui-lcars .lcars-title{
     -moz-border-radius:50px;
     -o-border-radius:50px;
 }
-div.dashui-lcars .lcars-title h1{
+div.vis-lcars .lcars-title h1{
     margin:0;
     padding:0;
     font-size:30px;
@@ -174,7 +174,7 @@ div.dashui-lcars .lcars-title h1{
     color:black;
     font-weight:normal;
 }
-div.dashui-lcars .lcars-subTitle{
+div.vis-lcars .lcars-subTitle{
     background-color:transparent;
     height: 50px;
     line-height: 50px; /* Centers text */
@@ -188,7 +188,7 @@ div.dashui-lcars .lcars-subTitle{
     -moz-border-radius:50px;
     -o-border-radius:50px;
 }
-div.dashui-lcars .lcars-subTitle h2{
+div.vis-lcars .lcars-subTitle h2{
     margin:0;
     padding:0;
     font-size: 20px;
@@ -199,7 +199,7 @@ div.dashui-lcars .lcars-subTitle h2{
 /* // TITLE BBAR FOR PANEL SCREEN */
 
 /* DEBUG BOX STYLING */
-div.dashui-lcars div.lcars-debug{
+div.vis-lcars div.lcars-debug{
     display:none;
     height:auto;
     width:600px;
@@ -217,7 +217,7 @@ div.dashui-lcars div.lcars-debug{
     -moz-border-radius: 10px 10px 0 10px;
     -o-border-radius: 10px 10px 0 10px;
 }
-div.dashui-lcars a.lcars-debug{
+div.vis-lcars a.lcars-debug{
     color:black;
     text-decoration:none;
     background:white;
@@ -251,7 +251,7 @@ div.lcars-debug{position:relative:}
 /* // MEDIA STYLING FOR SMALL SCREENS */
 
 /* BUTTON STYLING */
-div.dashui-lcars .button{
+div.vis-lcars .button{
     display:block;
     height: 30px;
     width:100%;
@@ -266,30 +266,32 @@ div.dashui-lcars .button{
     cursor:pointer;
     border:none;
 }
-div.dashui-lcars .B_titleR{
+div.vis-lcars .B_titleR{
     display:block;
     float:right;
-    height:40px;
+    height:41px;
     line-height:40px;
     color:#FFCC00;
     font-size:32px;
     background:#000;
     padding:2px;
-    margin-top:-0.2em;
+    padding-top: 3px;
+    margin-top:-0.22em;
 }
-div.dashui-lcars .B_titleL{
+div.vis-lcars .B_titleL{
     display:block;
     float:left;
-    height:40px;
+    height:41px;
     line-height:40px;
     color:#FFCC00;
     font-size:32px;
     background:#000;
     padding:2px;
-    margin-top:-0.2em;
+    padding-top: 3px;
+    margin-top:-0.22em;
 }
 
-div.dashui-lcars .B_blankL{
+div.vis-lcars .B_blankL{
     color:#000;
     background:#000;
     display:block;
@@ -299,7 +301,7 @@ div.dashui-lcars .B_blankL{
     margin-left:0em;
     width:100%;
 }
-div.dashui-lcars .B_blankR{
+div.vis-lcars .B_blankR{
     color:#000;
     background:#000;
     display:block;
@@ -309,17 +311,17 @@ div.dashui-lcars .B_blankR{
     margin-left:-1em;
     width:100%;
 }
-div.dashui-lcars .RR{border-radius:20px;-moz-border-radius:20px;-webkit-border-radius:20px;}
-div.dashui-lcars .SR{-moz-border-radius-topright:20px;-moz-border-radius-bottomright:20px;-webkit-border-top-right-radius:20px;-webkit-border-bottom-right-radius:20px;}
-div.dashui-lcars .RS{-moz-border-radius-topleft:20px;-moz-border-radius-bottomleft:20px;-webkit-border-top-left-radius:20px;-webkit-border-bottom-left-radius:20px;}
-div.dashui-lcars .L{width:100px;}
-div.dashui-lcars .B_title a:link, div.dashui-lcars .B_title a:visited, div.dashui-lcars .B_title a:hover{color:#fc0;text-decoration:none;}
-div.dashui-lcars .button a:link, div.dashui-lcars .button a:visited, div.dashui-lcars .button a:hover{color:black;text-decoration:none!important;}
-div.dashui-lcars a.button:link, div.dashui-lcars a.button:visited, div.dashui-lcars a.button:hover{color:black;text-decoration:none!important;}
+div.vis-lcars .RR{border-radius:20px;-moz-border-radius:20px;-webkit-border-radius:20px;}
+div.vis-lcars .SR{-moz-border-radius-topright:20px;-moz-border-radius-bottomright:20px;-webkit-border-top-right-radius:20px;-webkit-border-bottom-right-radius:20px;}
+div.vis-lcars .RS{-moz-border-radius-topleft:20px;-moz-border-radius-bottomleft:20px;-webkit-border-top-left-radius:20px;-webkit-border-bottom-left-radius:20px;}
+div.vis-lcars .L{width:100px;}
+div.vis-lcars .B_title a:link, div.vis-lcars .B_title a:visited, div.vis-lcars .B_title a:hover{color:#fc0;text-decoration:none;}
+div.vis-lcars .button a:link, div.vis-lcars .button a:visited, div.vis-lcars .button a:hover{color:black;text-decoration:none!important;}
+div.vis-lcars a.button:link, div.vis-lcars a.button:visited, div.vis-lcars a.button:hover{color:black;text-decoration:none!important;}
 /* // BUTTON STYLING */
 
 /* INPUT STYLING */
-div.dashui-lcars input{
+div.vis-lcars input{
     background:transparent;
     color: white;
     padding:0;
@@ -334,11 +336,11 @@ div.dashui-lcars input{
     -o-border-radius: 5px;
     border-radius: 5px;
 }
-div.dashui-lcars input:focus{
+div.vis-lcars input:focus{
     background:#ff9900;
     color:black;
 }
-div.dashui-lcars input[type=button], div.dashui-lcars input[type=submit], div.dashui-lcars button{
+div.vis-lcars input[type=button], div.vis-lcars input[type=submit], div.vis-lcars button{
     background:#ff9900;
     font-family:lcars_font;
     font-size:25px;
@@ -354,7 +356,7 @@ div.dashui-lcars input[type=button], div.dashui-lcars input[type=submit], div.da
     -o-border-radius: 15px;
     border-radius: 15px;
 }
-div.dashui-lcars input[type=button]:hover, div.dashui-lcars input[type=submit]:hover, div.dashui-lcars button:hover{
+div.vis-lcars input[type=button]:hover, div.vis-lcars input[type=submit]:hover, div.vis-lcars button:hover{
     -webkit-border-radius: 30px;
     -moz-border-radius: 30px;
     -o-border-radius: 30px;

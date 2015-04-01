@@ -37,8 +37,17 @@
             "class_true":      {"en": "Class if quality 'true'", "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
             "class_false":     {"en": "Class if quality 'false'", "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
             "test_html":       {"en": "Text for test",         "de": "Testtext",           "ru": "Тестовый текст"},
+            "test_html_tooltip": {
+                "en": "You can specify the test text if value is now empty to visualise settings.\x0AIt is valid only during edit.",
+                "de": "Man kann noch Testtext setzen um die Einstellungen visuell zu sehen.\x0ADas ist nur während Edit gültig.",
+                "ru": "Можно задать тестовый текст, что бы видеть настройки визуально.\x0AОн действителен только во время редактирования."
+            },
             "html":            {"en": "HTML",                  "de": "HTML",               "ru": "HTML"},
             "oid-quality":     {"en": "Quality ID",            "de": "Qualität ID",        "ru": "ID-Качество"},
+            "oid-quality_tooltip":     {
+                "en": "You can set additionally Quality ID to indicate if the value valid or not.",
+                "de": "Man kann noch zusätzlich Qualität ID setzetn um zu zeigen ob das Wert aktuell ist.",
+                "ru": "Можно дополнительно установить ID-Качества, что бы показать актуальное значение или нет."},
             "title":           {"en": "Title",                 "de": "Titel",              "ru": "Заголовок"},
             "title_font":      {"en": "Title font name",       "de": "Titelschriftname",   "ru": "Шрифт заголовка"},
             "title_color":     {"en": "Title color",           "de": "Titelfarbe",         "ru": "Цвет заголовка"},
@@ -71,6 +80,18 @@
             "shake":           {"en": "shake", "de": "shake", "ru": "shake"},
             "size":            {"en": "size", "de": "size", "ru": "size"},
             "slide":           {"en": "slide", "de": "slide", "ru": "slide"},
+            "is_milliseconds": {"en": "Milliseconds", "de": "Millisekunden", "ru": "Миллисекунды"},
+            "is_milliseconds_tooltip": {
+                "en": "Is object is milliseconds from 1970.01.01 00:00:00. Normally no.",
+                "de": "Ob das Wert die Milleskunden seit 1970.01.01 00:00:00 ist. Normalerweise nicht.",
+                "ru": "Является ли значение объекта миллисекундами с 1970.01.01 00:00:00. Обычно нет."
+            },
+            "format_date":     {"en": "Dateformat", "de": "Datumformat", "ru": "Формат даты"},
+            "format_date_tooltip": {
+                "en": "Dateformat",
+                "de": "Datumformat",
+                "ru": "Формат даты"
+            },
 
             "hide_effect":     {"en": "Hide effect",           "de": "Verbergeneffekt",    "ru": "Эффект скрытия"},
             "hide_duration":   {"en": "Hide duration(ms)",     "de": "Verbergendauer",     "ru": "Длительность скрытия(мс)"},
@@ -201,7 +222,7 @@
         },
         value: function (values, oid) {
             if (oid != 'nothing_selected' && vis.states.attr(oid + '.val') !== undefined) {
-                values[vis.states.attr(oid + '.val')]
+                return values[vis.states.attr(oid + '.val')];
             } else {
                 return values[0];
             }
@@ -233,27 +254,27 @@
             });
 
         },
-        state: function (el, id) {
+        state: function (el, oid) {
             var $this = $(el);
-            var oid = (id ? id : $this.attr('data-oid'));
+            var oid = (oid ? oid : $this.attr('data-oid'));
             var val = $this.attr('data-val');
+
+            if (oid) $this.attr('data-oid', oid);
 
             if (val === 'true')  val = true;
             if (val === 'false') val = false;
 
-            $this.on('click', function (e) {
-                if (!vis.editMode) {
-                    vis.setValue($this.attr('data-oid'), val);
-                }
-            });
-            // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
-            /*
-             $this.on('touchend',function (e) {
-             if (!vis.editMode) {
-             vis.setValue($this.attr('data-oid'), val);
-             }
-             });
-             */
+            if (!vis.editMode) {
+                $this.on('click', function (e) {
+                    vis.setValue($(this).attr('data-oid'), $(this).attr('data-val'));
+                });
+                // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
+                /*
+                 $this.on('touchend',function (e) {
+                    $(this).trigger('click');
+                 });
+                */
+            }
         },
         pressed: null,
         pressedNext: null,
@@ -263,19 +284,17 @@
                 vis.binds.basic.pressedNext = true;
                 var oid = $that.attr('data-oid');
                 if (!vis.editMode) {
-                    var step =  parseFloat($that.attr('data-vis-step'));
-                    var tmp =   parseFloat(vis.states[oid + '.val']) + step;
+                    var step = parseFloat($that.attr('data-vis-step'));
+                    var tmp  = parseFloat(vis.states[oid + '.val']) + step;
                     if (step < 0) {
                         if (tmp >= minmax) {
                             vis.setValue($that.attr('data-oid'), tmp);
-                            vis.binds.basic.pressed = setTimeout(fInterval, interval, $that);
+                            vis.binds.basic.pressed = _setTimeout(fInterval, interval, $that);
                         }
                     } else {
                         if (tmp <= minmax) {
                             vis.setValue($that.attr('data-oid'), tmp);
-                            vis.binds.basic.pressed = setTimeout(function ($_that) {
-                                fInterval($_that);
-                            }, interval, $that);
+                            vis.binds.basic.pressed = _setTimeout(fInterval, interval, $that);
                         }
                     }
                 }
@@ -288,17 +307,17 @@
                 vis.binds.basic.pressed = setTimeout(fInterval, delay, $this);
             }
 
-            $(el).click(function (e) {
-                clearTimeout(vis.binds.basic.pressed);
-                if (vis.binds.basic.pressedNext) {
-                    vis.binds.basic.pressedNext = false;
-                    return;
-                }
-                var $this = $(this);
-                var oid = $this.attr('data-oid');
-                if (!vis.editMode) {
-                    var step = parseFloat($this.attr("data-vis-step")),
-                            tmp = parseFloat(vis.states[oid + '.val']) + step;
+            if (!vis.editMode) {
+                $(el).click(function (e) {
+                    clearTimeout(vis.binds.basic.pressed);
+                    if (vis.binds.basic.pressedNext) {
+                        vis.binds.basic.pressedNext = false;
+                        return;
+                    }
+                    var $this = $(this);
+                    var oid = $this.attr('data-oid');
+                    var step = parseFloat($this.attr('data-vis-step'));
+                    var tmp  = parseFloat(vis.states[oid + '.val']) + step;
                     if (step < 0) {
                         if (tmp >= minmax) {
                             vis.setValue($this.attr('data-oid'), tmp);
@@ -308,18 +327,18 @@
                             vis.setValue($this.attr('data-oid'), tmp);
                         }
                     }
-                }
-            });
+                });
+            }
 
             if (interval) {
                 $(el).on('mousedown', intervalStart)
-                        .on('touchstart', intervalStart)
-                        .on('touchend', function () {
-                            clearTimeout(vis.binds.basic.pressed);
-                        })
-                        .on('mouseup', function () {
-                            clearTimeout(vis.binds.basic.pressed);
-                        });
+                    .on('touchstart', intervalStart)
+                    .on('touchend', function () {
+                        clearTimeout(vis.binds.basic.pressed);
+                    })
+                    .on('mouseup', function () {
+                        clearTimeout(vis.binds.basic.pressed);
+                    });
             }
         },
         navigation: function (el, options) {
@@ -391,16 +410,13 @@
                 }
             }
         },
-        checkbox: function (el, numeric) {
+        _onChange: function (el, oid, wid) {
             var $this = $(el);
-            var oid   = $this.attr('data-oid'); // Object ID
-            var wid   = $this.attr('data-oid-working'); // Work ID
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-                // If still working
-                if (wid && (vis.states.attr(wid + '.val') === true)) return;
+            // If still working
+            //console.log(oid + ' ' + vis.states.attr(oid + '.val') + ' (' + vis.states.attr(oid + '.ack') + ') - ' + wid + ' ' + vis.states.attr(wid + '.val') + ' (' + vis.states.attr(wid + '.ack') + ')');
 
-                $this.prop('checked', !(newVal === false || parseFloat(newVal) === 0.0));
-            });
+            if (wid && (vis.states.attr(wid + '.val') === true)) return;
+
             var val = vis.states.attr(oid + '.val');
 
             if (val === 'false') {
@@ -418,14 +434,59 @@
                 }
             }
 
-            if (val > 0) $this.prop('checked', true);
+            if ($this.data('data-numeric')) {
+                $this.prop('checked', (val > (($this.data('data-max') - $this.data('data-min')) / 2)));
+            } else {
+                $this.prop('checked', val);
+            }
+
+        },
+        checkbox: function (el, numeric, min, max) {
+            var $this = $(el);
+            var oid   = $this.attr('data-oid'); // Object ID
+            var wid   = $this.attr('data-oid-working'); // Work ID
+
+            if (oid) {
+                vis.states.bind(oid + '.val', function (e, val, oldVal) {
+                    vis.binds.basic._onChange(el, oid, wid);
+                });
+                if (wid) {
+                    vis.states.bind(wid + '.val', function (e, val, oldVal) {
+                        vis.binds.basic._onChange(el, oid, wid);
+                    });
+                }
+            }
+
+            if (numeric) {
+                if (min !== undefined && min !== null && min !== '') {
+                    min = parseFloat(min);
+                } else {
+                    min = 0;
+                }
+
+                if (max !== undefined && max !== null && max !== '') {
+                    max = parseFloat(max);
+                } else {
+                    max = 1;
+                }
+            } else {
+                min = false;
+                max = true;
+            }
+
+            $this.data('data-min',     min);
+            $this.data('data-max',     max);
+            $this.data('data-numeric', numeric);
+
+            vis.binds.basic._onChange(el, oid, wid);
 
             if (!vis.editMode) {
                 $this.change(function () {
-                    if ($this.prop('checked')) {
-                        vis.setValue( $this.attr('data-oid'),  numeric ? 1 : true);
+                    var $this_ = $(this);
+                    if ($this_.prop('checked')) {
+                        vis.setValue($this_.attr('data-oid'), $this_.data('data-max'));
                     } else {
-                        vis.setValue( $this.attr('data-oid'),  numeric ? 0 : false);
+                        vis.setValue($this_.attr('data-oid'), $this_.data('data-min'));
                     }
                 });
             }
@@ -512,30 +573,31 @@
                 }
             });
         },
-        toggle: function (el) {
+        toggle: function (el, oid) {
             var $this = $(el);
-            var id = $this.attr('data-oid');
-            function toggle() {
-                var val = vis.states[id + '.val'];
+            var oid = oid || $this.attr('data-oid');
 
-                if (val === false || val === 'false') {
-                    vis.setValue(id, true);
-                } else if (val === true || val === 'true') {
-                    vis.setValue(id, false);
-                } else {
-                    val = parseFloat(val);
-                    if (val >= 0.5) {
-                        val = 1;
-                    } else {
-                        val = 0;
-                    }
-                    vis.setValue( id,  1 - val);
-                }
-            }
-            if (!vis.editMode) {
+            if (oid && !vis.editMode) {
                 // @geolin - musste das wieder entfernen - das führt zu doppelter Ausführung (Gerät geht kurz an und sofort wieder aus bzw umgekehrt)
-                //$this.on('touchend', toggle);
-                $this.on('click', toggle);
+                //$this.on('touchend', function () { $(this).trigger('click'); });
+
+                $this.on('click', function () {
+                    var _oid = $(this).attr('data-oid');
+                    var val = vis.states[oid + '.val'];
+                    if (val === null || val === '' || val === undefined || val === false || val === 'false') {
+                        vis.setValue(oid, true);
+                    } else if (val === true || val === 'true') {
+                        vis.setValue(oid, false);
+                    } else {
+                        val = parseFloat(val);
+                        if (val >= 0.5) {
+                            val = 1;
+                        } else {
+                            val = 0;
+                        }
+                        vis.setValue(oid, 1 - val);
+                    }
+                });
             }
         },
         iframeRefresh: function (el, src, refreshInterval) {
@@ -633,7 +695,7 @@
                     var $this = $(this);
                     var id = $this.attr('data-oid');
                     var val = vis.states[id + '.val'];
-                    if (val === false || val === "false") {
+                    if (val === null || val === '' || val === undefined || val === false || val === "false") {
                         vis.setValue(id, true);
                     } else if (val === true || val === "true") {
                         vis.setValue(id, false);
@@ -710,12 +772,17 @@
             });
         },
         formatFloat: function (data) {
-            if (vis.editMode && data.attr('test_html'))
-                return data.attr('test_html');
+            var val;
+            if (vis.editMode && data.attr('test_html') !== undefined && data.attr('test_html') !== '') {
+                val = parseFloat(data.attr('test_html'));
+            } else {
+                val = parseFloat(vis.states.attr(data.oid + '.val'));
+            }
+            if (data.factor !== undefined && data.factor != '') val = val * parseFloat(data.factor);
+            if (data.digits !== undefined && data.digits != '') val = val.toFixed(parseFloat(data.digits, 10));
 
-            var val = (parseFloat(vis.states.attr(data.oid + ".val")) * data.factor).toFixed(data.digits);
             if (data.attr('is_comma')) {
-                val = "" + val;
+                val = '' + val;
                 val = val.replace('.', ',');
             }
 
@@ -736,6 +803,102 @@
             //<%=
             return (data.border) ? ("calc(" + (parseFloat(vis.states.attr(data.oid + '.val')) * data.factor) + "% - " + vis.binds.basic.extractWidth(data.border, 2) + ")") : ((parseFloat(vis.states.attr(data.oid + '.val')) * data.factor) + "%");
             //        %>
+        },
+        formatDate: function (dateObj, isSeconds, format) {
+            if (typeof isSeconds != 'boolean') {
+                format = isSeconds;
+                isSeconds = false;
+            }
+
+            var format = format || vis.dateFormat || 'DD.MM.YYYY';
+
+            if (!dateObj) return '';
+            var text = typeof dateObj;
+            if (text == 'string') {
+                var pos = dateObj.indexOf('.');
+                if (pos != -1) dateObj = dateObj.substring(0, pos);
+                return dateObj;
+            }
+            if (text != 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
+
+            var v;
+
+            // Year
+            if (format.indexOf('YYYY') != -1 || format.indexOf('JJJJ') != -1 || format.indexOf('ГГГГ') != -1) {
+                v = dateObj.getFullYear();
+                format = format.replace('YYYY', v);
+                format = format.replace('JJJJ', v);
+                format = format.replace('ГГГГ', v);
+            } else if (format.indexOf('YY') != -1 || format.indexOf('JJ') != -1 || format.indexOf('ГГ') != -1) {
+                v = dateObj.getFullYear() % 100;
+                format = format.replace('YY', v);
+                format = format.replace('JJ', v);
+                format = format.replace('ГГ', v);
+            }
+            // Month
+            if (format.indexOf('MM') != -1 || format.indexOf('ММ') != -1) {
+                v =  dateObj.getMonth() + 1;
+                if (v < 10) v = '0' + v;
+                format = format.replace('MM', v);
+                format = format.replace('ММ', v);
+            } else if (format.indexOf('M') != -1 || format.indexOf('М') != -1) {
+                v =  dateObj.getMonth() + 1;
+                format = format.replace('M', v);
+                format = format.replace('М', v);
+            }
+
+            // Day
+            if (format.indexOf('DD') != -1 || format.indexOf('TT') != -1 || format.indexOf('ДД') != -1) {
+                v =  dateObj.getDate();
+                if (v < 10) v = '0' + v;
+                format = format.replace('DD', v);
+                format = format.replace('TT', v);
+                format = format.replace('ДД', v);
+            } else if (format.indexOf('D') != -1 || format.indexOf('TT') != -1 || format.indexOf('Д') != -1) {
+                v =  dateObj.getDate();
+                format = format.replace('D', v);
+                format = format.replace('T', v);
+                format = format.replace('Д', v);
+            }
+
+            // hours
+            if (format.indexOf('hh') != -1 || format.indexOf('SS') != -1 || format.indexOf('чч') != -1) {
+                v =  dateObj.getHours();
+                if (v < 10) v = '0' + v;
+                format = format.replace('hh', v);
+                format = format.replace('SS', v);
+                format = format.replace('чч', v);
+            } else if (format.indexOf('h') != -1 || format.indexOf('S') != -1 || format.indexOf('ч') != -1) {
+                v =  dateObj.getHours();
+                format = format.replace('h', v);
+                format = format.replace('S', v);
+                format = format.replace('ч', v);
+            }
+
+            // minutes
+            if (format.indexOf('mm') != -1 || format.indexOf('мм') != -1) {
+                v =  dateObj.getMinutes();
+                if (v < 10) v = '0' + v;
+                format = format.replace('mm', v);
+                format = format.replace('мм', v);
+            } else if (format.indexOf('m') != -1 ||  format.indexOf('м') != -1) {
+                v =  dateObj.getMinutes();
+                format = format.replace('m', v);
+                format = format.replace('v', v);
+            }
+
+            // seconds
+            if (format.indexOf('ss') != -1 || format.indexOf('сс') != -1) {
+                v =  dateObj.getSeconds();
+                if (v < 10) v = '0' + v;
+                format = format.replace('ss', v);
+                format = format.replace('cc', v);
+            } else if (format.indexOf('s') != -1 || format.indexOf('с') != -1) {
+                v =  dateObj.getHours();
+                format = format.replace('s', v);
+                format = format.replace('с', v);
+            }
+            return format;
         }
     };
 
@@ -757,7 +920,7 @@
         data-vis-set="basic"
         data-vis-type="static"
         data-vis-name="HTML"
-        data-vis-prev='<img src="widgets\basic\img\Prev_HTML.png"></img>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_HTML.png"></img>'
         data-vis-attrs="html;refreshInterval[0]/slider,0,180000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.basic.htmlRefresh(el, this.data.attr('html'), data.attr("refreshInterval")) %>>
@@ -771,6 +934,7 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="static"
+        data-vis-prev='<img src="widgets/basic/img/Prev_iFrame.png"></img>'
         data-vis-name="iFrame"
         data-vis-attrs="src;refreshInterval[0]/slider,0,180000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
@@ -789,6 +953,7 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="static"
+        data-vis-prev='<img src="widgets/basic/img/Prev_Image.png"></img>'
         data-vis-name="Image"
         data-vis-attrs="src/image;stretch/checkbox;refreshInterval[0]/slider,0,180000,100;refreshOnWakeUp[false]/checkbox;refreshOnViewChange[false]/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
@@ -805,11 +970,11 @@
 <script id="tplLink"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplLink" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee vis-widget-lock" style="height: 22px" > <div class="vis-widget-prev-body"> <a href="www.ioBroker.com" target="www.ioBroker.com" alt="" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%;text-algin:center">www.ioBroker.com</div></a> </div> </div>'
+        data-vis-prev='<div id="prev_tplLink" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee vis-widget-lock" style="height: 22px" > <div class="vis-widget-prev-body"> <a style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%;text-algin:center">www.ioBroker.com</div></a> </div> </div>'
         data-vis-set="basic"
         data-vis-type="static"
         data-vis-name="link"
-        data-vis-attrs="html;href;target;alt">
+        data-vis-attrs="html;href;target/auto,,_blank,_self,_parent,_top;alt">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <a href="<%== this.data.attr('href') %>" target="<%== this.data.attr("target") %>" alt="<%== this.data.attr("alt") %>" style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%"><%== this.data.attr("html") %></div></a>
@@ -835,8 +1000,8 @@
 		<% } %>
     </div>
 </script>
-<!-- basic Container -->
 
+<!-- basic Container -->
 <script id="tplContainerView"
         type="text/ejs"
         class="vis-tpl"
@@ -852,7 +1017,6 @@
         </div>
     </div>
 </script>
-
 
 <!-- Stateful Widgets -->
 <script id="tplStatefulContainerView8"
@@ -875,8 +1039,11 @@
             }
         %>
         <div class="vis-widget-body">
-            <div class="vis-view-container" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" data-oid="<%= data.attr('oid') %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
+            <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
         </div>
+        <!--div data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" class="vis-widget-body">
+            <div class="vis-view-container" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> dui.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
+        </div-->
     </div>
 </script>
 
@@ -979,7 +1146,7 @@
 <script id="tplFilterDropdown"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplFilterDropdown" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="top: 225.9147720336914px; left: 185.09090912342072px; width: 52px; height: 23px;" > <div class="vis-widget-prev-body"> <select id="" name=""> <option value="" selected="selected">all</option> <option value="filter">filter</option></select> </div> </div>'
+        data-vis-prev='<div id="prev_tplFilterDropdown" style="text-align: initial;padding: 4px"><div class="vis-widget_prev vis-widget-lock" style="width: 60px; height: 23px;" > <div class="vis-widget-prev-body"> <select id="" name=""> <option value="" selected="selected">all</option> <option value="filter">filter</option></select> </div> </div>'
         data-vis-set="basic"
         data-vis-type="filter"
         data-vis-name="filter - dropdown"
@@ -998,12 +1165,13 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val"
+        data-vis-prev='<div id="prev_tplValueFloat" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:red; font-weight:bold" > <div class="vis-widget-prev-body"> <div>52,57 MB</div> </div> </div></div>'
         data-vis-name="Number"
         data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
     <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + ".val") == "true" ||  vis.states.attr(this.data['oid-quality'] + ".val") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(vis.states.attr(this.data.oid + ".val")) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+                <%== this.data.attr("html_prepend") %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(vis.binds.basic.formatFloat(this.data)) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
             </div>
         </div>
     </div>
@@ -1015,6 +1183,7 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="String"
+        data-vis-prev='<div id="tplValueString" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:blue; font-weight:bold" > <div class="vis-widget-prev-body"> <div>Text</div> </div> </div></div>'
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
@@ -1030,6 +1199,7 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val"
+        data-vis-prev='<div id="tplValueStringRaw" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 18px; text-align: center;color:#8B008B; font-weight:bold" > <div class="vis-widget-prev-body"> <div><xmp><div>Text</div></xmp></div> </div> </div></div>'
         data-vis-name="String (unescaped)"
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
@@ -1045,13 +1215,14 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="val"
+        data-vis-type="val,timestamp"
         data-vis-name="Timestamp"
-        data-vis-attrs="oid;html_prepend;html_append;test_html">
+        data-vis-prev='<div id="prev_tplValueTimestamp" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#00008B" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
+        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".ts") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".ts"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1061,13 +1232,14 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Lastchange Timestamp"
-        data-vis-attrs="oid;html_prepend;html_append;test_html">
+        data-vis-type="val,timestamp"
+        data-vis-prev='<div id="prev_tplValueLastchange" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#006400" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
+        data-vis-name="Last change Timestamp"
+        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".lc") %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".lc"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1343,7 +1515,7 @@
         data-vis-attrs="oid">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 44px; height: 59px">
         <div class="vis-widget-body">
-            <% switch (vis.states.attr(this.data.oid + '.val')) { case 0: case "0": case "0.000000": case false: case "false": %>
+            <% switch (vis.states.attr(this.data.oid + '.val')) { case null: case '': case undefined: case 0: case "0": case "0.000000": case false: case "false": %>
             <img src="img/bulb_off.png" width="100%"/>
             <% break; default: %>
             <img src="img/bulb_on.png" width="100%"/>
@@ -1362,7 +1534,7 @@
         data-vis-attrs="oid">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>  style="width: 44px; height: 59px">
     <div class="vis-widget-body">
-        <% switch (vis.states.attr(this.data.oid + ".val")) { case 0: case "0": case "0.000000": case "false": case false: %>
+        <% switch (vis.states.attr(this.data.oid + ".val")) { case null: case '': case undefined: case 0: case "0": case "0.000000": case "false": case false: %>
         <img src="img/bulb_off.png" width="100%"/>
         <% break; default: %>
         <img src="img/bulb_on.png" width="100%"/>
@@ -1415,7 +1587,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="val"
+        data-vis-type="val,bar"
         data-vis-name="Bar Horizontal"
         data-vis-prev='<div id="prev_tplValueFloatBar" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="width: 54px; height: 17px; border: 1px solid rgb(136, 136, 136); left: 458px; top: 292px; position: absolute;" > <div data-o class="vis-widget-prev-body" style="width: 68.6%; background-color: blue;"></div> </div></div>'
         data-vis-attrs="oid;factor[1];color[blue]/color;border;shadow;reverse/checkbox">
@@ -1430,7 +1602,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="val"
+        data-vis-type="val,bar"
         data-vis-name="Bar Vertical"
         data-vis-prev='<div id="prev_tplValueFloatBarVertical" style="position: relative; text-align: initial;padding: 4px "><div data-o class="vis-widget_prev ui-draggable-handle " style="width: 17px; height: 54px; border: 1px solid rgb(136, 136, 136); left: 435px; top: 105px; position: absolute;" > <div class="vis-widget-prev-body" style="height: 68.58%; position: absolute; bottom: 0%; background-color: blue;"></div> </div></div>'
         data-vis-attrs="oid;factor[1];color[blue]/color;border;shadow;reverse/checkbox">

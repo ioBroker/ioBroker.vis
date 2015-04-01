@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2014 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -15,15 +15,25 @@
 
 // visEdit - the ioBroker.vis Editor
 /* jshint browser:true */
-/* global document*/
-/* global console*/
-/* global session*/
-/* global window*/
-/* global location*/
-/* global setTimeout*/
-/* global clearTimeout*/
-/* global io*/
-/* global $*/
+/* global document */
+/* global console */
+/* global session */
+/* global window */
+/* global location */
+/* global setTimeout */
+/* global clearTimeout */
+/* global io */
+/* global $ */
+/* global vis:true */
+/* global local */
+/* global can */
+/* global colorSelect */
+/* global storage */
+/* global html2canvas */
+/* global translateAll */
+/* global ace */
+/* global _ */
+/* jshint -W097 */// jshint strict:false
 
 'use strict';
 
@@ -43,6 +53,9 @@ vis = $.extend(true, vis, {
     // Array with all objects (Descriptions of objects)
     objects:               {},
     config:                {},
+    objectSelector:        false, // if object select ID activated
+    alignIndex:            0,
+    alignType:             '',
 
     editInit: function () {
         var that = this;
@@ -62,6 +75,7 @@ vis = $.extend(true, vis, {
 
         this.editInitDialogs();
         this.editInitMenu();
+        this.editInitCSSEditor();
         $('#pan_attr').tabs({
             //activate: function(event, ui) {
             //    // Find out index
@@ -100,12 +114,15 @@ vis = $.extend(true, vis, {
             $('#vis_wrap').width(parseInt($(window).width() - $('#pan_add_wid').width() - $('#pan_attr').width() - 1));
             that.editSaveConfig('size/pan_add_wid', $('#pan_add_wid').width());
             that.editSaveConfig('size/pan_attr',    $('#pan_attr').width());
+            if (vis.css_editor){
+                vis.css_editor.resize();
+            }
+
         }
 
         layout();
 
         $('#vis-version').html(this.version);
-
 
         $('#button_undo')
             .click(function () {
@@ -187,10 +204,10 @@ vis = $.extend(true, vis, {
                 var pos = widgets.indexOf(that.activeWidgets[i]);
                 if (pos == -1) that.activeWidgets.splice(pos, 1);
             }
-            for (var i = 0; i < widgets.length; i++) {
-                if (that.activeWidgets.indexOf(widgets[i]) == -1) {
-                    that.activeWidgets.push(widgets[i]);
-                    that.actionHighlighWidget(widgets[i]);
+            for (var j = 0; j < widgets.length; j++) {
+                if (that.activeWidgets.indexOf(widgets[j]) == -1) {
+                    that.activeWidgets.push(widgets[j]);
+                    that.actionHighlighWidget(widgets[j]);
                 }
             }
             that.inspectWidgets();
@@ -260,7 +277,7 @@ vis = $.extend(true, vis, {
         $('#screen_size').selectmenu({
             change: function () {
                 var val = $(this).val();
-                if (val == '') {
+                if (!val) {
                     $('#screen_size_x').prop('disabled', true);
                     $('#screen_size_y').prop('disabled', true);
                     $('#screen_size_x').val('').trigger('change');
@@ -427,8 +444,8 @@ vis = $.extend(true, vis, {
 
          }, 10000);*/
 
-        // Instances
-        if (typeof storage !== 'undefined' && local == false) {
+        // Instances (Actually not used)
+        /*if (typeof storage !== 'undefined' && local == false) {
             // Show what's new
             if (storage.get('lastVersion') != this.version) {
                 // Read
@@ -440,7 +457,7 @@ vis = $.extend(true, vis, {
                     success: function (data) {
 
                         try {
-                            var ioaddon = data; // @bluefox: this is already parsed by jQuery.ajax! JSON.parse(data);
+                            var ioaddon = data;
                             if (ioaddon.whatsNew) {
                                 for (var i = 0; i < ioaddon.whatsNew.length; i++) {
                                     var text = ioaddon.whatsNew[i];
@@ -463,7 +480,7 @@ vis = $.extend(true, vis, {
                     }
                 });
             }
-        }
+        }*/
         if (this.config.groupsState) this.groupsState = this.config.groupsState;
     },
     editInitDialogs: function () {
@@ -530,7 +547,7 @@ vis = $.extend(true, vis, {
         // Theme select Editor
         if (this.config.editorTheme) {
             $('#editorTheme').remove();
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + lastTheme + '/jquery-ui.min.css" id="editorTheme"/>');
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + this.config.editorTheme + '/jquery-ui.min.css" id="editorTheme"/>');
             $('[data-theme=' + this.config.editorTheme + ']').addClass('ui-state-active');
         }
 
@@ -553,14 +570,7 @@ vis = $.extend(true, vis, {
             that.save();
         });
 
-        // Theme select View
-        $('#inspect_view_theme').change(function () {
-            var theme = $(this).val();
-            that.views[that.activeView].settings.theme = theme;
-            that.addViewStyle(that.activeView, theme);
-            //that.additionalThemeCss(theme);
-            that.save();
-        });
+
 
         //language
         $('[data-language=' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + ']').addClass('ui-state-active');
@@ -572,19 +582,19 @@ vis = $.extend(true, vis, {
             if (typeof systemLang != 'undefined') systemLang = that.language;
             setTimeout(function () {
                 translateAll();
-            }, 0)
+            }, 0);
 
         });
 
 
         $('#m_about').click(function () {
-            $('#dialog_about').dialog('open')
+            $('#dialog_about').dialog('open');
         });
         $('#m_shortcuts').click(function () {
-            $('#dialog_shortcuts').dialog('open')
+            $('#dialog_shortcuts').dialog('open');
         });
         //$("#m_setup").click(function () {
-        //    $("#dialog_setup").dialog("open")
+        //    $("#dialog_setup").dialog("open");
         //});
 
         // Ribbon icons Golbal
@@ -635,14 +645,19 @@ vis = $.extend(true, vis, {
         // Widget Align ---------------------
 
         $("#wid_align_left").click(function () {
-           var data = [];
-           $.each(that.activeWidgets, function () {
-               var _data = {
-                   wid:  this,
-                   left: parseInt($("#" + this).css("left"))
-               }
-               data.push(_data);
-           });
+            var data = [];
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
+            $.each(that.activeWidgets, function () {
+                var _data = {
+                    wid:  this,
+                    left: parseInt($("#" + this).css("left"))
+                };
+                data.push(_data);
+            });
 
             function SortByLeft(a, b) {
                 var aName = a.left;
@@ -655,19 +670,22 @@ vis = $.extend(true, vis, {
 
             $.each(data, function () {
                 $("#" + this.wid).css('left', left  + 'px');
-                $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.left = left + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-
         $("#wid_align_right").click(function () {
             var data = [];
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
             $.each(that.activeWidgets, function () {
                 var _data = {
                     wid:  this,
                     left: parseInt($("#" + this).css("left"))
-                }
+                };
                 data.push(_data);
             });
 
@@ -682,14 +700,17 @@ vis = $.extend(true, vis, {
 
             $.each(data, function(){
                 $("#" + this.wid).css("left", left + "px");
-                $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.left = left + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-
         $("#wid_align_top").click(function () {
             var data = [];
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
             $.each(that.activeWidgets, function () {
                 var _data = {
                     wid: this,
@@ -709,14 +730,19 @@ vis = $.extend(true, vis, {
 
             $.each(data, function () {
                 $("#" + this.wid).css("top", top  +"px");
-                $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.top = top + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-
         $("#wid_align_bottom").click(function () {
             var data = [];
+
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
             $.each(that.activeWidgets, function () {
                 var _data = {
                     wid: this,
@@ -736,14 +762,18 @@ vis = $.extend(true, vis, {
 
             $.each(data, function () {
                 $("#" + this.wid).css("top", top  +"px");
-                $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.top = top + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-
         $("#wid_align_vc").click(function () {
-            var min_top =9999;
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
+            var min_top = 9999;
             var max_bottom = 0;
             var middle;
             $.each(that.activeWidgets, function () {
@@ -756,14 +786,18 @@ vis = $.extend(true, vis, {
             $.each(that.activeWidgets, function () {
                 var top = middle - ($("#" + this).height() / 2);
                 $("#" + this).css("top", top + "px");
-                $("#widget_helper_" + this).css("top", top - 2 + "px");
                 that.views[that.activeView].widgets[this].style.top = top + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-
         $("#wid_align_hc").click(function () {
-            var min_left =9999;
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
+            var min_left = 9999;
             var max_right = 0;
             var middle;
             $.each(that.activeWidgets, function () {
@@ -776,19 +810,24 @@ vis = $.extend(true, vis, {
             $.each(that.activeWidgets, function () {
                 var left = middle - ($("#" + this).width() / 2);
                 $("#" + this).css("left", left +"px");
-                $("#widget_helper_"+this).css("left", left - 2 + "px");
                 that.views[that.activeView].widgets[this].style.left = left + "px";
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
         $("#wid_dis_h").click(function () {
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
             var data = [];
             var min_left = 9999;
             var max_right = 0;
             var cont_size = 0;
             var between;
             $.each(that.activeWidgets, function () {
-                var left = $("#" + this).position().left;
+                var left = parseInt($("#" + this).css("left"));
                 var right = left + $("#" + this).width();
                 cont_size = cont_size + $("#" + this).width();
                 if (min_left > left) min_left = left;
@@ -818,13 +857,18 @@ vis = $.extend(true, vis, {
                 left = left + between;
                 console.log(left)
                 $("#" + this.wid).css("left", left + "px");
-                $("#widget_helper_" + this.wid).css("left", left - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.left = left + "px";
                 left = left + $("#" + this.wid).width();
+                that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
         $("#wid_dis_v").click(function () {
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+
             var data = [];
             var min_top = 9999;
             var max_bottom = 0;
@@ -860,26 +904,88 @@ vis = $.extend(true, vis, {
             $.each(data, function () {
                 top = top + between;
                 $("#" + this.wid).css("top", top + "px");
-                $("#widget_helper_" + this.wid).css("top", top - 2 + "px");
                 that.views[that.activeView].widgets[this.wid].style.top = top + "px";
                 top = top + $("#" + this.wid).height();
+                that.showWidgetHelper(this.wid, true);
             });
+            that.save();
+        });
+        $("#wid_align_width").click(function () {
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+            if (that.alignType != 'wid_align_width') {
+                that.alignIndex = 0;
+                that.alignValues = [];
+                for (var t = 0; t < that.activeWidgets.length; t++) {
+                    var w = $('#' + that.activeWidgets[t]).width();
+                    if (that.alignValues.indexOf(w) == -1)
+                    that.alignValues.push(w);
+                }
+
+                that.alignType = 'wid_align_width';
+            }
+            that.alignIndex++;
+            if (that.alignIndex >= that.alignValues.length) that.alignIndex = 0;
+
+            for (var k = 0; k < that.activeWidgets.length; k++) {
+                $('#' + that.activeWidgets[k]).width(that.alignValues[that.alignIndex]);
+                that.views[that.activeView].widgets[that.activeWidgets[k]].style.width = that.alignValues[that.alignIndex] + "px";
+                that.showWidgetHelper(that.activeWidgets[k], true);
+            }
+            that.save();
+        });
+        $("#wid_align_height").click(function () {
+            if (that.activeWidgets.length < 2) {
+                that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
+                return;
+            }
+            if (that.alignType != 'wid_align_height') {
+                that.alignIndex = 0;
+                that.alignValues = [];
+                for (var t = 0; t < that.activeWidgets.length; t++) {
+                    var h = $('#' + that.activeWidgets[t]).height();
+                    if (that.alignValues.indexOf(h) == -1)
+                        that.alignValues.push(h);
+                }
+
+                that.alignType = 'wid_align_height';
+            }
+            that.alignIndex++;
+            if (that.alignIndex >= that.alignValues.length) that.alignIndex = 0;
+
+            for (var u = 0; u < that.activeWidgets.length; u++) {
+                $('#' + that.activeWidgets[u]).height(that.alignValues[that.alignIndex]);
+                that.views[that.activeView].widgets[that.activeWidgets[u]].style.height = that.alignValues[that.alignIndex] + "px";
+                that.showWidgetHelper(that.activeWidgets[u], true);
+            }
             that.save();
         });
 
         // All Widget ---------------------
         $("#wid_all_lock_function").button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
-            if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
-                $("#vis_container").find(".vis-widget").addClass("vis-widget-lock")
+            if ($('#wid_all_lock_function').prop('checked')) {
+                $("#vis_container").find(".vis-widget").addClass("vis-widget-lock");
+                $('#wid_all_lock_f').addClass("ui-state-focus");
             } else {
-                $("#vis_container").find(".vis-widget").removeClass("vis-widget-lock")
+                $("#vis_container").find(".vis-widget").removeClass("vis-widget-lock");
+                $('#wid_all_lock_f').removeClass("ui-state-focus");
             }
-            $('#wid_all_lock_f').removeClass("ui-state-focus")
+            that.editSaveConfig('button/wid_all_lock_function', $('#wid_all_lock_function').prop('checked'));
         });
+        if (this.config['button/wid_all_lock_function']) {
+            setTimeout(function () {
+                $('#wid_all_lock_function').prop('checked', true);
+                $("#vis_container").find(".vis-widget").addClass("vis-widget-lock");
+                $('#wid_all_lock_f').addClass("ui-state-focus ui-state-active");
+            }, 200);
+        }
 
         $("#wid_all_lock_drag").button({icons: {primary: 'ui-icon-extlink', secondary: null}, text: false}).click(function () {
             $('#wid_all_lock_d').removeClass("ui-state-focus");
             that.inspectWidgets([]);
+            //that.editSaveConfig('checkbox/wid_all_lock_function', $('#wid_all_lock_function').prop('checked'));
         });
 
         // View ----------------------------------------------------------------
@@ -923,7 +1029,7 @@ vis = $.extend(true, vis, {
         $('#rib_view_rename').button({icons: {primary: 'ui-icon-pencil', secondary: null}, text: false}).click(function () {
             $('#rib_view').hide();
             $('#rib_view_rename_tr').show();
-            $('#rib_view_newname').val(that.activeView).focus()
+            $('#rib_view_newname').val(that.activeView).focus();
         });
         $("#rib_view_rename_cancel").button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
             $('#rib_view').show();
@@ -991,7 +1097,7 @@ vis = $.extend(true, vis, {
             that.saveRemote(function () {
                 // Show hint how to get back to edit mode
                 if (!that.config['dialog/isEditHintShown']) {
-                    alert(_('To get back to edit mode just call "%s" in browser', location.href));
+                    window.alert(_('To get back to edit mode just call "%s" in browser', location.href));
                     that.editSaveConfig('dialog/isEditHintShown', true);
                 }
 
@@ -1019,13 +1125,13 @@ vis = $.extend(true, vis, {
                 if ($(this).hasClass("ui-state-active")) {
                     that.editSaveConfig('button/btn_prev_zoom', false);
                     $(this).removeClass("ui-state-active");
-                    $(".wid_prev").removeClass("wid_prev_k")
-                    $(".wid_prev_content").css("zoom", 1)
+                    $(".wid_prev").removeClass("wid_prev_k");
+                    $(".wid_prev_content").css("zoom", 1);
                 } else {
                     that.editSaveConfig('button/btn_prev_zoom', true);
                     $(this).addClass("ui-state-active");
-                    $(".wid_prev").addClass("wid_prev_k")
-                    $(".wid_prev_content").css("zoom", 0.5)
+                    $(".wid_prev").addClass("wid_prev_k");
+                    $(".wid_prev_content").css("zoom", 0.5);
                 }
             });
 
@@ -1040,34 +1146,29 @@ vis = $.extend(true, vis, {
                 if ($(this).hasClass("ui-state-active")) {
                     that.editSaveConfig('button/btn_prev_type', false);
                     $(this).removeClass("ui-state-active");
-                    $(".wid_prev_type").hide()
+                    $(".wid_prev_type").hide();
                 } else {
                     that.editSaveConfig('button/btn_prev_type', true);
                     $(this).addClass("ui-state-active");
-                    $(".wid_prev_type").show()
+                    $(".wid_prev_type").show();
                 }
             });
 
         $.each(this.widgetSets, function () {
-            var set = "";
-            if (this.name) {
-                set = this.name
-            } else {
-                set = this;
-            }
+            var set = this.name || this;
             var tpl_list = $('.vis-tpl[data-vis-set="' + set + '"]');
 
             $.each(tpl_list, function (i) {
                 var tpl = $(tpl_list[i]).attr('id');
                 var type = "";
                 if ($("#" + tpl).data('vis-type')) {
-                    type = '<div class="wid_prev_type">' + $("#" + tpl).data("vis-type") + '</div>'
+                    type = '<div class="wid_prev_type">' + $("#" + tpl).data("vis-type") + '</div>';
                 }
                 $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div></div>');
                 if ($(tpl_list[i]).data('vis-prev')) {
 
                     var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
-                    $(content).children().last().addClass("wid_prev_content")
+                    $(content).children().last().addClass("wid_prev_content");
                 }
 
 
@@ -1080,7 +1181,7 @@ vis = $.extend(true, vis, {
 
                     start: function (event, ui) {
                         if (ui.helper.children().length < 3) {
-                            $(ui.helper).addClass("ui-state-highlight ui-corner-all").css({padding: "2px", "font-size": "12px"})
+                            $(ui.helper).addClass("ui-state-highlight ui-corner-all").css({padding: "2px", "font-size": "12px"});
 
                         } else {
                             $(ui.helper).find(".wid_prev_type").remove();
@@ -1097,8 +1198,15 @@ vis = $.extend(true, vis, {
                     var $tpl = $('#' + tpl);
                     var renderVisible = $tpl.attr('data-vis-render-visible');
 
-                    // Widget attributs default values
+                    // Widget attributes default values
                     var attrs = $tpl.attr('data-vis-attrs');
+                    // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+                    var t = 0;
+                    var attr;
+                    while (attr = $tpl.attr('data-vis-attrs' + t)) {
+                        attrs += attr;
+                        t++;
+                    }
                     var data = {};
                     if (attrs) {
                         attrs = attrs.split(';');
@@ -1108,7 +1216,7 @@ vis = $.extend(true, vis, {
 
                     var widgetId = that.addWidget(tpl, data);
 
-                    that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + ')</option>')
+                    that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>')
                         .multiselect('refresh');
 
                     setTimeout(function () {
@@ -1119,6 +1227,8 @@ vis = $.extend(true, vis, {
         });
 
         if (this.config['button/btn_prev_type']) $('#btn_prev_type').trigger('click');
+        if (this.config['button/btn_prev_type'] === undefined) $('#btn_prev_type').trigger('click');
+
         if (this.config['button/btn_prev_zoom']) $('#btn_prev_zoom').trigger('click');
     },
     editInitSelectView: function () {
@@ -1148,9 +1258,9 @@ vis = $.extend(true, vis, {
 
             if (o.self_w != o.parent_w) {
                 if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
-                    $('#view_select_tabs').css('left', o.self_l - 50 + "px")
+                    $('#view_select_tabs').css('left', o.self_l - 50 + "px");
                 } else {
-                    $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
+                    $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + 'px');
                 }
             }
         });
@@ -1169,9 +1279,9 @@ vis = $.extend(true, vis, {
 
             if (o.self_w != o.parent_w) {
                 if ((o.self_l + 50) <= 0) {
-                    $('#view_select_tabs').css('left', o.self_l + 50 + "px")
+                    $('#view_select_tabs').css('left', o.self_l + 50 + "px");
                 } else {
-                    $('#view_select_tabs').css('left', "0px")
+                    $('#view_select_tabs').css('left', "0px");
                 }
             }
         });
@@ -1181,22 +1291,22 @@ vis = $.extend(true, vis, {
                 parent_w: $('#view_select_tabs_wrap').width(),
                 self_w: $('#view_select_tabs').width(),
                 self_l: parseInt($('#view_select_tabs').css('left'))
-            }
+            };
             if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
 
                 if (o.self_w != o.parent_w) {
                     if ((o.parent_w - o.self_w) <= (o.self_l - 20)) {
-                        $('#view_select_tabs').css('left', o.self_l - 20 + "px")
+                        $('#view_select_tabs').css('left', o.self_l - 20 + "px");
                     } else {
-                        $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px")
+                        $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px");
                     }
                 }
             } else {
                 if (o.self_w != o.parent_w) {
                     if ((o.self_l + 20) <= 0) {
-                        $('#view_select_tabs').css('left', o.self_l + 20 + "px")
+                        $('#view_select_tabs').css('left', o.self_l + 20 + "px");
                     } else {
-                        $('#view_select_tabs').css('left', "0px")
+                        $('#view_select_tabs').css('left', "0px");
                     }
                 }
             }
@@ -1232,7 +1342,103 @@ vis = $.extend(true, vis, {
             $('#view_select_tabs').append('<div id="view_tab_' + k + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + k + '">' + k + '</div>');
         }
 
-        $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active')
+        $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active');
+    },
+    editInitCSSEditor:function(){
+        var that = this;
+
+        var file = "vis-common-user";
+        var editor  = ace.edit("css_editor");
+
+        //editor.setTheme("ace/theme/monokai");
+        editor.getSession().setMode("ace/mode/css");
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true
+        });
+        editor.$blockScrolling = Infinity;
+        editor.getSession().setUseWrapMode(true);
+
+        editor.getSession().on('change', function(e) {
+            $("#" + file).text(editor.getValue());
+            $("#css_file_save").button('enable');
+        });
+
+
+        if (that.config['select/select_css_file']) $("#select_css_file").val(that.config['select/select_css_file']);
+
+        $("#select_css_file").selectmenu({
+            change: function (event, ui) {
+                file = $(this).val();
+                editor.setValue($("#" + file).text());
+                editor.navigateFileEnd();
+                editor.focus();
+                that.editSaveConfig('select/select_css_file', file);
+            }
+        });
+
+        editor.setValue($("#"+ file).text());
+        $(document).bind("vis-common-user", function(e){
+            editor.setValue($("#"+ file).text());
+            editor.navigateFileEnd();
+        });
+
+
+        $("#cssEditor_tab").click(function(){
+            editor.focus();
+        });
+
+        $("#pan_attr").resize(function(){
+            editor.resize();
+        });
+
+
+        $("#css_find").change(function(){
+            editor.find($(this).val(),{
+                backwards: false,
+                wrap: false,
+                caseSensitive: false,
+                wholeWord: false,
+                regExp: false
+            });
+        });
+
+        $("#css_find_prev").button({
+            icons: {
+                primary: " ui-icon-arrowthick-1-n"
+            },
+            text: false
+        }).click(function(){
+            editor.findPrevious();
+        });
+
+        $("#css_find_next").button({
+            icons: {
+                primary: "ui-icon-arrowthick-1-s"
+            },
+            text: false
+        }).click(function(){
+            editor.findNext();
+        });
+
+        $("#css_file_save").button({
+            icons: {
+                primary: " ui-icon-disk"
+            },
+            text: false
+        }).click(function() {
+            if ($("#select_css_file").val() == 'vis-user') {
+                that.conn.writeFile(vis.projectPrefix + 'vis-user.css' , editor.getValue(), function () {
+                    $("#css_file_save").button('disable');
+                });
+            }
+
+            if ($("#select_css_file").val() == 'vis-common-user') {
+                that.conn.writeFile('/vis/css/vis-common-user.css', editor.getValue(), function () {
+                    $("#css_file_save").button('disable');
+                });
+            }
+        }).button('disable');
     },
     editInitNext: function () {
         // ioBroker.vis Editor Init
@@ -1260,11 +1466,18 @@ vis = $.extend(true, vis, {
                 that.changeView($(this).val());
             }
         }).selectmenu("menuWidget").parent().addClass("view-select-menu");
-
-
         this.$copyWidgetSelectView.val(this.activeView);
         this.$copyWidgetSelectView.selectmenu();
-        $('#inspect_view_theme').selectmenu({width: '100%'});
+        $('#inspect_view_theme').selectmenu({
+            width: '100%',
+            change: function () {
+                var theme = $(this).val();
+                that.views[that.activeView].settings.theme = theme;
+                that.addViewStyle(that.activeView, theme);
+                //that.additionalThemeCss(theme);
+                that.save();
+            }
+        });
 
         // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
@@ -1331,6 +1544,7 @@ vis = $.extend(true, vis, {
         // Init inspect view settings buttons
         $('.view-edit-button').each(function () {
             var type = $(this).attr('data-type');
+
             if (type == 'color') {
                 if ((typeof colorSelect != 'undefined' && $().farbtastic)) {
                     $(this).button({
@@ -1344,26 +1558,27 @@ vis = $.extend(true, vis, {
                             current: $('#inspect_' + attr).val(),
                             onselectArg: attr,
                             onselect: function (img, _data) {
-                                $('#inspect_' + _data).val(colorSelect.GetColor()).trigger('change');
+                                var value = colorSelect.GetColor();
+                                $('#inspect_' + _data).css('background-color', value || '').val(value).trigger('change');
+                                that._editSetFontColor('inspect_' + _data);
                             }
                         };
                         colorSelect.show(_settings);
                     }).css({width: 22, height: 22}).attr('title', _('Select color'));
                 }
-
             }
         });
 
         // Create background_class property if does not exist
-        if (this.views[this.activeView] != undefined) {
-            if (this.views[this.activeView].settings == undefined) {
-                this.views[vis.activeView].settings = {};
+        if (this.views[this.activeView] !== undefined) {
+            if (this.views[this.activeView].settings === undefined) {
+                this.views[this.activeView].settings = {};
             }
-            if (this.views[this.activeView].settings.style == undefined) {
-                this.views[vis.activeView].settings.style = {};
+            if (this.views[this.activeView].settings.style === undefined) {
+                this.views[this.activeView].settings.style = {};
             }
-            if (this.views[this.activeView].settings.style['background_class'] == undefined) {
-                this.views[this.activeView].settings.style['background_class'] = '';
+            if (this.views[this.activeView].settings.style.background_class === undefined) {
+                this.views[this.activeView].settings.style.background_class = '';
             }
         }
 
@@ -1478,50 +1693,53 @@ vis = $.extend(true, vis, {
         this.$dialogConfirm.data('callback', callback);
         this.$dialogConfirm.dialog('open');
     },
-
     addView: function (view) {
-        if (this[view]) return false;
+        var _view = view.replace(/\s/g, '_').replace(/\./g, '_');
+        if (this[_view]) return false;
 
-        this.views[view] = {settings: {style: {}}, widgets: {}};
+        this.views[_view] = {settings: {style: {}}, widgets: {}, name: view};
         var that = this;
         this.saveRemote(function () {
             //$(window).off('hashchange');
             //window.location.hash = "#" + view;
 
             $('#view_tab_' + that.activeView).removeClass('ui-tabs-active ui-state-active');
-            that.changeView(view);
+            that.changeView(_view);
 
             $('#view_select_tabs').append('<div id="view_tab_' + view + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + view + '">' + view + '</div>');
             $('#view_tab_' + that.activeView).addClass('ui-tabs-active ui-state-active');
 
-            that.$selectView.append('<option value="' + view + '">' + view + '</option>');
-            that.$selectView.val(view);
+            that.$selectView.append('<option value="' + _view + '">' + _view + '</option>');
+            that.$selectView.val(_view);
             that.$selectView.selectmenu('refresh');
 
-            that.$copyWidgetSelectView.append('<option value="' + view + '">' + view + '</option>');
-            that.$copyWidgetSelectView.val(view);
+            that.$copyWidgetSelectView.append('<option value="' + _view + '">' + _view + '</option>');
+            that.$copyWidgetSelectView.val(_view);
             that.$copyWidgetSelectView.selectmenu('refresh');
         });
     },
     renameView: function (oldName, newName) {
-        this.views[newName] = $.extend(true, {}, this.views[oldName]);
+        var _newName = newName.replace(/\s/g, '_').replace(/\./g, '_');
+        this.views[_newName] = $.extend(true, {}, this.views[oldName]);
+        this.views[_newName].name = newName;
+
         $('#vis_container').html('');
         delete this.views[oldName];
-        this.activeView = newName;
-        this.renderView(newName);
-        this.changeView(newName);
+        this.activeView = _newName;
+        this.renderView(_newName);
+        this.changeView(_newName);
 
         // Rebuild tabs, select, selectCopyTo
-        $('#view_tab_' + oldName).attr('id', 'view_tab_' + newName);
-        $('#view_tab_' + newName).removeClass('sel_opt_' + oldName).addClass('ui-tabs-active ui-state-active sel_opt_' + newName).html(newName);
+        $('#view_tab_' + oldName).attr('id', 'view_tab_' + _newName);
+        $('#view_tab_' + _newName).removeClass('sel_opt_' + oldName).addClass('ui-tabs-active ui-state-active sel_opt_' + _newName).html(newName);
         var $opt = this.$selectView.find('option[value="' + oldName + '"]');
-        $opt.html(newName).attr('value', newName);
-        this.$selectView.val(newName);
+        $opt.html(newName).attr('value', _newName);
+        this.$selectView.val(_newName);
         this.$selectView.selectmenu('refresh');
 
         $opt = this.$copyWidgetSelectView.find('option[value="' + oldName + '"]');
-        $opt.html(newName).attr('value', newName);
-        this.$copyWidgetSelectView.val(newName);
+        $opt.html(newName).attr('value', _newName);
+        this.$copyWidgetSelectView.val(_newName);
         this.$copyWidgetSelectView.selectmenu('refresh');
         this.saveRemote(function () {
 
@@ -1554,28 +1772,30 @@ vis = $.extend(true, vis, {
         });
     },
     dupView: function (source, dest) {
-        this.views[dest] = $.extend(true, {}, this.views[source]);
+        var _dest = dest.replace(/\s/g, '_').replace(/\./g, '_');
+        this.views[_dest] = $.extend(true, {}, this.views[source]);
+        this.views[_dest].name = dest;
 
         // Give to all widgets new IDs...
-        for (var widget in this.views[dest].widgets) {
-            this.views[dest].widgets[this.nextWidget()] = this.views[dest].widgets[widget];
-            delete this.views[dest].widgets[widget];
+        for (var widget in this.views[_dest].widgets) {
+            this.views[_dest].widgets[this.nextWidget()] = this.views[_dest].widgets[widget];
+            delete this.views[_dest].widgets[widget];
         }
         var that = this;
         this.saveRemote(function () {
-            that.renderView(dest);
-            that.changeView(dest);
+            that.renderView(_dest);
+            that.changeView(_dest);
             $('.view-select-tab').removeClass('ui-tabs-active ui-state-active');
 
-            $('#view_select_tabs').append('<div id="view_tab_' + dest + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + dest + '">' + dest + '</div>');
-            $('#view_tab_' + dest).addClass('ui-tabs-active ui-state-active');
+            $('#view_select_tabs').append('<div id="view_tab_' + _dest + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + _dest + '">' + dest + '</div>');
+            $('#view_tab_' + _dest).addClass('ui-tabs-active ui-state-active');
 
-            that.$selectView.append('<option value="' + dest + '">' + dest + '</option>');
-            that.$selectView.val(dest);
+            that.$selectView.append('<option value="' + _dest + '">' + dest + '</option>');
+            that.$selectView.val(_dest);
             that.$selectView.selectmenu('refresh');
 
-            that.$copyWidgetSelectView.append('<option value="' + dest + '">'+ dest + '</option>');
-            that.$copyWidgetSelectView.val(dest);
+            that.$copyWidgetSelectView.append('<option value="' + _dest + '">'+ dest + '</option>');
+            that.$copyWidgetSelectView.val(_dest);
             that.$copyWidgetSelectView.selectmenu('refresh');
 
         });
@@ -1632,7 +1852,7 @@ vis = $.extend(true, vis, {
             var text = $('#textarea_import_view').val();
             importObject = JSON.parse(text);
         } catch (e) {
-            alert(_('invalid JSON') + "\n\n" + e);
+            window.alert(_('invalid JSON') + "\n\n" + e);
             return;
         }
         if (isAll) {
@@ -1641,21 +1861,28 @@ vis = $.extend(true, vis, {
                 window.location.reload();
             });
         } else {
-            this.views[name] = importObject;
+            var _name = name.replace(/\s/g, '_').replace(/\./g, '_');
+            this.views[_name] = importObject;
+            this.views[_name].name = name;
 
             // Allen Widgets eine neue ID verpassen...
-            for (var widget in this.views[name].widgets) {
-                this.views[name].widgets[this.nextWidget()] = this.views[name].widgets[widget];
-                delete this.views[name].widgets[widget];
+            for (var widget in this.views[_name].widgets) {
+                this.views[_name].widgets[this.nextWidget()] = this.views[_name].widgets[widget];
+                delete this.views[_name].widgets[widget];
             }
             this.saveRemote(function () {
-                that.renderView(name);
-                that.changeView(name);
+                that.renderView(_name);
+                that.changeView(_name);
                 window.location.reload();
             });
         }
     },
     checkNewViewName: function (name) {
+        if (name === undefined || name === null) name = '';
+        if (name === 0) name = '0';
+
+        name = name.trim();
+        name = name.replace(/\s/g, '_').replace(/\./g, '_');
         if (!name && name !== 0) {
             this.showMessage(_('Please enter the name for the new view!'));
             return false;
@@ -1770,8 +1997,8 @@ vis = $.extend(true, vis, {
             }
         }
 
-        for (var i = 0; i < widgets.length; i++) {
-            this.delWidgetHelper(widgets[i], true);
+        for (var j = 0; j < widgets.length; j++) {
+            this.delWidgetHelper(widgets[j], true);
         }
         if (!noSave) this.save();
 
@@ -1810,7 +2037,7 @@ vis = $.extend(true, vis, {
         if (!view) view = this.activeView;
 
         var isSelectWidget = (wid === undefined);
-        var isViewExist = (document.getElementById('visview_' + view) != null);
+        var isViewExist = (document.getElementById('visview_' + view) !== null);
         var renderVisible = data.renderVisible;
 
         if (renderVisible) delete data.renderVisible;
@@ -1840,7 +2067,7 @@ vis = $.extend(true, vis, {
                 ts:   this.states[this.widgets[widgetId].data.oid + '.ts'],
                 ack:  this.states[this.widgets[widgetId].data.oid + '.ack'],
                 lc:   this.states[this.widgets[widgetId].data.oid + '.lc'],
-                data: this.widgets[widgetId]['data'],
+                data: this.widgets[widgetId].data,
                 view: view
             }));
         }
@@ -1863,7 +2090,7 @@ vis = $.extend(true, vis, {
 
         if (style) $jWidget.css(style);
 
-        if (isSelectWidget && this.binds.jqueryui) this.binds.jqueryui._disable();
+        //if (isSelectWidget && this.binds.jqueryui) this.binds.jqueryui._disable();
 
         if (isSelectWidget) {
             this.activeWidgets = [widgetId];
@@ -1874,23 +2101,27 @@ vis = $.extend(true, vis, {
 
         this.bindWidgetClick(widgetId);
 
+        if ($('#wid_all_lock_function').prop('checked')) {
+            $jWidget.addClass('vis-widget-lock');
+        }
+
         return widgetId;
     },
     dupWidgets: function (widgets, targetView) {
-        if (!widgets)    widgets = this.activeWidgets;
+        if (!widgets)    widgets    = this.activeWidgets;
         if (!targetView) targetView = this.activeView;
 
         var activeView;
-        var targetView;
         var tpl;
         var data;
         var style;
         var newWidgets = [];
 
         for (var i = 0; i < widgets.length; i++) {
+            var objWidget;
             // if from clipboard
             if (widgets[i].widget) {
-                var objWidget   = widgets[i].widget;
+                objWidget   = widgets[i].widget;
                 activeView      = widgets[i].view;
                 tpl             = objWidget.tpl;
                 data            = objWidget.data;
@@ -1905,7 +2136,7 @@ vis = $.extend(true, vis, {
             }
 
             if (activeView == targetView) {
-                style.top  = parseInt(style.top, 10);
+                style.top  = parseInt(style.top,  10);
                 style.left = parseInt(style.left, 10);
 
                 style.top  += 10;
@@ -1924,7 +2155,7 @@ vis = $.extend(true, vis, {
                     .append('<option value="' + newWidgets[newWidgets.length - 1] + '">' + newWidgets[newWidgets.length - 1] + ' (' + $("#" + this.views[this.activeView].widgets[newWidgets[newWidgets.length - 1]].tpl).attr("data-vis-name") + ')</option>')
                     .multiselect('refresh');
             } else {
-                if ($('#vis_container').find('#visview_' + targetView).html() == undefined) {
+                if ($('#vis_container').find('#visview_' + targetView).html() === undefined) {
                     this.renderView(targetView, true, true);
                 }
                 newWidgets.push(this.addWidget(tpl, data, style, this.nextWidget(), targetView, true));
@@ -1964,9 +2195,13 @@ vis = $.extend(true, vis, {
         if (this.activeWidgets.indexOf(wid) != -1) {
             var $wid = $('#' + wid);
             // User interaction
-            if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
-                if (!this.widgets[wid].data._no_move) this.draggable($wid);
+            if (!$("#wid_all_lock_d").hasClass("ui-state-active") && !this.widgets[wid].data._no_move) {
+                this.draggable($wid);
             }
+            if ($('#wid_all_lock_function').prop('checked')) {
+                $wid.addClass("vis-widget-lock");
+            }
+
             // If only one selected
             if (this.activeWidgets.length == 1) if (!this.widgets[wid].data._no_resize) this.resizable($wid);
 
@@ -1993,7 +2228,7 @@ vis = $.extend(true, vis, {
             }
 
             if (view) {
-                if (views == null) views = [];
+                if (views === null) views = [];
 
                 var isFound = false;
                 for (var j = 0; j < views.length; j++) {
@@ -2015,8 +2250,8 @@ vis = $.extend(true, vis, {
                         continue;
                     }
 
-                    for (var j = 0; j < views.length; j++) {
-                        if (views[j] == v_) {
+                    for (var k = 0; k < views.length; k++) {
+                        if (views[k] == v_) {
                             isFound = true;
                             break;
                         }
@@ -2035,8 +2270,8 @@ vis = $.extend(true, vis, {
 
                 if (views.length < 2 && (widgets[i].indexOf('_') != -1)) {
                     // rename this widget from "wid_view" to "wid"
-                    var wids = widgets[i].split('_', 2);
-                    this.renameWidget(widgets[i], wids[0]);
+                    var _wids = widgets[i].split('_', 2);
+                    this.renameWidget(widgets[i], _wids[0]);
                 } else if (views.length > 1 && (widgets[i].indexOf('_') == -1)) {
                     this.renameWidget(widgets[i], widgets[i] + '_' + view);
                 }
@@ -2048,108 +2283,134 @@ vis = $.extend(true, vis, {
         // Edit for Object ID
         var line = [
             {
-                input: '<input type="text" id="inspect_' + widAttr + '">',
-                button: {
-                    icon: 'ui-icon-note',
-                    text: false,
-                    title: _('Select object ID'),
-                    click: function () {
-                        var wdata = $(this).data('data-wdata');
-
-                        $('#dialog-select-member-' + wdata.attr).selectId('show', that.views[wdata.view].widgets[wdata.widgets[0]].data[wdata.attr], function (newId, oldId) {
-                            if (oldId != newId) {
-                                $('#inspect_' + wdata.attr).val(newId);
-                                $('#inspect_' + wdata.attr).trigger('change');
-
-                                /*
-                                if (document.getElementById('inspect_hm_wid')) {
-                                    if (that.objects[newId]['Type'] !== undefined && that.objects[value]['Parent'] !== undefined &&
-                                        (that.objects[newId]['Type'] == 'STATE' ||
-                                         that.objects[newId]['Type'] == 'LEVEL')) {
-
-                                        var parent = that.objects[newId]['Parent'];
-                                        if (that.objects[parent]['DPs'] !== undefined &&
-                                            that.objects[parent]['DPs']['WORKING'] !== undefined) {
-                                            $('#inspect_hm_wid').val(that.objects[parent]['DPs']['WORKING']);
-                                            $('#inspect_hm_wid').trigger('change');
-                                        }
-                                    }
-                                }
-
-                                // Try to find Function of the device and fill the Filter field
-                                var $filterkey = $('#inspect_filterkey');
-                                if ($filterkey.length) {
-                                    if ($filterkey.val() == '') {
-                                        var oid = newId;
-                                        var func = null;
-                                        if (that.metaIndex && that.metaIndex['ENUM_FUNCTIONS']) {
-                                            while (oid && that.objects[oid]) {
-                                                for (var t = 0; t < that.metaIndex['ENUM_FUNCTIONS'].length; t++) {
-                                                    var list = that.objects[that.metaIndex['ENUM_FUNCTIONS'][t]];
-                                                    for (var z = 0; z < list['Channels'].length; z++) {
-                                                        if (list['Channels'][z] == oid) {
-                                                            func = list.Name;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (func) break;
-                                                }
-                                                if (func) break;
-
-                                                oid = that.objects[oid]['Parent'];
-                                            }
-                                        }
-                                        if (func) $filterkey.val(func).trigger('change');
-                                    }
-                                }*/
-                            }
-                        });
-                    }
-                },
-                onchange: function (val) {
-                    var wdata = $(this).data('data-wdata');
-                    $('#inspect_' + wdata.attr + '_desc').html(that.getObjDesc(val));
-                }
-            },
-            {
-                input: '<div id="inspect_' + widAttr + '_desc"></div>'
+                input: '<input type="text" id="inspect_' + widAttr + '">'
             }
         ];
 
-        // Init select dialog
-        if (!$('#dialog-select-member-' + widAttr).length) {
-            $('body').append('<div id="dialog-select-member-' + widAttr + '" style="display:none">');
-            $('#dialog-select-member-' + widAttr).selectId('init', {
-                texts: {
-                    select: _('Select'),
-                    cancel: _('Cancel'),
-                    all: _('All'),
-                    id: _('ID'),
-                    name: _('Name'),
-                    role: _('Role'),
-                    room: _('Room'),
-                    value: _('Value'),
-                    selectid: _('Select ID'),
-                    enum: _('Members'),
-                    from: _('from'),
-                    lc: _('lc'),
-                    ts: _('ts'),
-                    ack: _('ack'),
-                    expand: _('expand'),
-                    collapse: _('collapse'),
-                    refresh: _('refresh'),
-                    edit: _('edit'),
-                    ok: _('ok'),
-                    wait: _('wait'),
-                    list: _('list'),
-                    tree: _('tree')
-                },
-                columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
-                imgPath: '/lib/css/fancytree/',
-                objects: this.objects,
-                states: this.states,
-                zindex: 1001
-            });
+        if (this.objectSelector) {
+            line[0].button = {
+                icon: 'ui-icon-note',
+                    text: false,
+                    title: _('Select object ID'),
+                    click: function () {
+                    var wdata = $(this).data('data-wdata');
+
+                    $('#dialog-select-member-' + wdata.attr).selectId('show', that.views[wdata.view].widgets[wdata.widgets[0]].data[wdata.attr], function (newId, oldId) {
+                        if (oldId != newId) {
+                            $('#inspect_' + wdata.attr).val(newId).trigger('change');
+
+                            if ($('#inspect_min').length) {
+                                if (that.objects[newId] && that.objects[newId].common && that.objects[newId].common.min !== undefined) {
+                                    $('#inspect_min').val(that.objects[newId].common.min).trigger('change');
+                                }
+                            }
+
+                            if ($('#inspect_max').length) {
+                                if (that.objects[newId] && that.objects[newId].common && that.objects[newId].common.max !== undefined) {
+                                    $('#inspect_max').val(that.objects[newId].common.max).trigger('change');
+                                }
+                            }
+
+                            if ($('#inspect_oid-working').length) {
+                                if (that.objects[newId] && that.objects[newId].common && that.objects[newId].common.workingID) {
+                                    if (that.objects[newId].common.workingID.indexOf('.') != -1) {
+                                        $('#inspect_oid-working').val(that.objects[newId].common.workingID).trigger('change');
+                                    } else {
+                                        var parts = newId.split('.');
+                                        parts.pop();
+                                        parts.push(that.objects[newId].common.workingID);
+                                        $('#inspect_oid-working').val(parts.join('.')).trigger('change');
+                                    }
+                                }
+                            }
+
+                            /*
+                             if (document.getElementById('inspect_hm_wid')) {
+                             if (that.objects[newId]['Type'] !== undefined && that.objects[value]['Parent'] !== undefined &&
+                             (that.objects[newId]['Type'] == 'STATE' ||
+                             that.objects[newId]['Type'] == 'LEVEL')) {
+
+                             var parent = that.objects[newId]['Parent'];
+                             if (that.objects[parent]['DPs'] !== undefined &&
+                             that.objects[parent]['DPs']['WORKING'] !== undefined) {
+                             $('#inspect_hm_wid').val(that.objects[parent]['DPs']['WORKING']);
+                             $('#inspect_hm_wid').trigger('change');
+                             }
+                             }
+                             }
+
+                             // Try to find Function of the device and fill the Filter field
+                             var $filterkey = $('#inspect_filterkey');
+                             if ($filterkey.length) {
+                             if ($filterkey.val() == '') {
+                             var oid = newId;
+                             var func = null;
+                             if (that.metaIndex && that.metaIndex['ENUM_FUNCTIONS']) {
+                             while (oid && that.objects[oid]) {
+                             for (var t = 0; t < that.metaIndex['ENUM_FUNCTIONS'].length; t++) {
+                             var list = that.objects[that.metaIndex['ENUM_FUNCTIONS'][t]];
+                             for (var z = 0; z < list['Channels'].length; z++) {
+                             if (list['Channels'][z] == oid) {
+                             func = list.Name;
+                             break;
+                             }
+                             }
+                             if (func) break;
+                             }
+                             if (func) break;
+
+                             oid = that.objects[oid]['Parent'];
+                             }
+                             }
+                             if (func) $filterkey.val(func).trigger('change');
+                             }
+                             }*/
+                        }
+                    });
+                }
+            };
+            line[0].onchange = function (val) {
+                var wdata = $(this).data('data-wdata');
+                $('#inspect_' + wdata.attr + '_desc').html(that.getObjDesc(val));
+            };
+
+            line.push({input: '<div id="inspect_' + widAttr + '_desc"></div>'});
+
+            // Init select dialog
+            if (!$('#dialog-select-member-' + widAttr).length) {
+                $('body').append('<div id="dialog-select-member-' + widAttr + '" style="display:none">');
+                $('#dialog-select-member-' + widAttr).selectId('init', {
+                    texts: {
+                        select: _('Select'),
+                        cancel: _('Cancel'),
+                        all: _('All'),
+                        id: _('ID'),
+                        name: _('Name'),
+                        role: _('Role'),
+                        room: _('Room'),
+                        value: _('Value'),
+                        selectid: _('Select ID'),
+                        enum: _('Members'),
+                        from: _('from'),
+                        lc: _('lc'),
+                        ts: _('ts'),
+                        ack: _('ack'),
+                        expand: _('expand'),
+                        collapse: _('collapse'),
+                        refresh: _('refresh'),
+                        edit: _('edit'),
+                        ok: _('ok'),
+                        wait: _('wait'),
+                        list: _('list'),
+                        tree: _('tree')
+                    },
+                    columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
+                    imgPath: '/lib/css/fancytree/',
+                    objects: this.objects,
+                    states:  this.states,
+                    zindex:  1001
+                });
+            }
         }
 
         return line;
@@ -2164,7 +2425,7 @@ vis = $.extend(true, vis, {
         // Select
         var line = {
             input: '<select type="text" id="inspect_' + widAttr + '">'
-        }
+        };
         if (onchange) line.onchange = onchange;
         if (init)     line.init = init;
         if (values.length && values[0] !== undefined) {
@@ -2182,7 +2443,7 @@ vis = $.extend(true, vis, {
     editFontName: function (widAttr) {
         // Select
         var values = ['', 'Arial', 'Times', 'Andale Mono', 'Comic Sans', 'Impact'];
-        this.editSelect(widAttr, values);
+        return this.editSelect(widAttr, values);
     },
     editAutoComplete: function (widAttr, values) {
         // Effect selector
@@ -2210,9 +2471,44 @@ vis = $.extend(true, vis, {
         };
         return line;
     },
+    _editSetFontColor: function(element) {
+        try {
+            var r;
+            var b;
+            var g;
+            var hsp;
+            var a = $('#' + element).css('background-color');
+            if (a.match(/^rgb/)) {
+                a = a.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
+                r = a[1];
+                g = a[2];
+                b = a[3];
+            } else {
+                a = '0x' + a.slice(1).replace(a.length < 5 && /./g, '$&$&');
+                r = a >> 16;
+                g = a >> 8 & 255;
+                b = a & 255;
+            }
+            hsp = Math.sqrt(
+                0.299 * (r * r) +
+                0.587 * (g * g) +
+                0.114 * (b * b)
+            );
+            if (hsp > 127.5) {
+                $('#' + element).css("color", "#000000");
+            } else {
+                $('#' + element).css("color", "#FFFFFF");
+            }
+        }catch (err){}
+    },
     editColor: function (widAttr) {
+        var that = this;
         var line = {
-            input: '<input type="text" id="inspect_' + widAttr + '"/>'
+            input: '<input type="text" id="inspect_' + widAttr + '"/>',
+            onchange: function (value) {
+                $(this).css("background-color", value || '');
+                that._editSetFontColor('inspect_' + widAttr);
+            }
         };
         if ((typeof colorSelect != 'undefined' && $().farbtastic)) {
             line.button = {
@@ -2233,56 +2529,17 @@ vis = $.extend(true, vis, {
                 }
             };
         }
-        setTimeout(function () {
+        /*setTimeout(function () {
             $('#inspect_' + widAttr).css("background-color", $('#inspect_' + widAttr).val());
 
+
             setFontColor($('#inspect_' + widAttr));
-
-            function setFontColor(element) {
-                try {
-                    var r;
-                    var b;
-                    var g;
-                    var hsp;
-                    var a = $(element).css('background-color');
-                    if (a.match(/^rgb/)) {
-                        a = a.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
-                        r = a[1];
-                        b = a[2];
-                        g = a[3];
-                    } else {
-
-                        // @SJ: Could not understand why "+" at start?
-                        a = +("0x" + a.slice(1).replace(
-                                a.length < 5 && /./g, '$&$&'
-                            )
-                        );
-                        r = a >> 16;
-                        b = a >> 8 & 255;
-                        g = a & 255;
-                    }
-                    hsp = Math.sqrt(
-                        0.299 * (r * r) +
-                        0.587 * (g * g) +
-                        0.114 * (b * b)
-                    );
-                    if (hsp > 127.5) {
-                        $('#inspect_' + widAttr).css("color", "#000000");
-                    } else {
-                        $('#inspect_' + widAttr).css("color", "#FFFFFF");
-                    }
-                }catch (err){}
-            }
 
             $('#inspect_' + widAttr).on("change", function () {
                 $(this).css("background-color", $(this).val());
                 setFontColor($('#inspect_' + widAttr));
             });
-
-        });
-
-
-
+        }, 100);*/
 
         return line;
     },
@@ -2292,7 +2549,7 @@ vis = $.extend(true, vis, {
             views.push(v);
         }
 
-        return this.editSelect(widAttr, views);
+        return this.editSelect(widAttr, views, true);
     },
     editEffect: function (widAttr) {
         var that = this;
@@ -2339,7 +2596,7 @@ vis = $.extend(true, vis, {
                 $(this).spinner(options);
                 $(this).parent().css({width: '100%'});
             }
-        }
+        };
         if (onchange) line.onchange = onchange;
         return line;
     },
@@ -2359,8 +2616,8 @@ vis = $.extend(true, vis, {
 
                     $.fm({
                         lang:       that.language,
-                        path:       that.widgets[wdata.widgets[0]].data[wdata.attr] || '/' + that.conn.namespace + '/' + that.projectPrefix + 'img/',
-                        uploadDir:  '/' + that.conn.namespace + '/',
+                        path:       that.widgets[wdata.widgets[0]].data[wdata.attr] || ('/' + (that.conn.namespace ? that.conn.namespace + '/' : '') + that.projectPrefix + 'img/'),
+                        uploadDir:  '/' + (that.conn.namespace ? that.conn.namespace + '/' : ''),
                         fileFilter: filter || ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
                         folderFilter: false,
                         mode:       'open',
@@ -2389,7 +2646,7 @@ vis = $.extend(true, vis, {
                 if (typeof this.binds[funcs[0]] == 'function') {
                     return this.binds[funcs[0]](widAttr, options);
                 } else {
-                    console.log('No function: vis.binds.' +  + funcs.join('.'));
+                    console.log('No function: vis.binds.' + funcs.join('.'));
                 }
             } else if (funcs.length == 2) {
                 if (this.binds[funcs[0]] && typeof this.binds[funcs[0]][funcs[1]] == 'function') {
@@ -2404,7 +2661,7 @@ vis = $.extend(true, vis, {
                     console.log('No function: vis.binds.' + funcs.join('.'));
                 }
             } else {
-                if (funcs.length == 0) {
+                if (!funcs.length) {
                     console.log('Function name is too short: vis.binds');
                 } else {
                     console.log('Function name is too long: vis.binds.' + funcs.join('.'));
@@ -2421,8 +2678,8 @@ vis = $.extend(true, vis, {
         }
     },
     editSlider: function (widAttr, options) {
-        options.min = (options.min === undefined || options.min === null || options.min == '') ? 0 : options.min;
-        options.max = (options.max === undefined || options.max === null || options.max == '') ? 0 : options.max;
+        options.min = (!options.min) ? 0 : options.min;
+        options.max = (!options.max) ? 0 : options.max;
         options.step = (!options.step) ? (options.max - options.min) / 100 : options.step;
         var that = this;
         var line = {
@@ -2446,10 +2703,10 @@ vis = $.extend(true, vis, {
         var line;
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group]['css_left']       = {input: '<input type="text" id="inspect_css_left"/>'};
-        this.groups[group]['css_top']        = {input: '<input type="text" id="inspect_css_top"/>'};
-        this.groups[group]['css_width']      = {input: '<input type="text" id="inspect_css_width"/>'};
-        this.groups[group]['css_height']     = {input: '<input type="text" id="inspect_css_height"/>'};
+        this.groups[group].css_left   = {input: '<input type="text" id="inspect_css_left"/>'};
+        this.groups[group].css_top    = {input: '<input type="text" id="inspect_css_top"/>'};
+        this.groups[group].css_width  = {input: '<input type="text" id="inspect_css_width"/>'};
+        this.groups[group].css_height = {input: '<input type="text" id="inspect_css_height"/>'};
         this.groups[group]['css_z-index']    = this.editNumber('css_z-index');
         this.groups[group]['css_overflow-x'] = this.editSelect('css_overflow-x', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
         this.groups[group]['css_overflow-y'] = this.editSelect('css_overflow-y', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
@@ -2465,14 +2722,14 @@ vis = $.extend(true, vis, {
         var line;
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group]['css_color']          = this.editColor('css_color');
+        this.groups[group].css_color             = this.editColor('css_color');
         this.groups[group]['css_text-align']     = this.editSelect('css_text-align', ['', 'left', 'right', 'center' ,'justify', 'initial', 'inherit'], true);
         this.groups[group]['css_text-shadow']    = {input: '<input type="text" id="inspect_css_text-shadow"/>'};
         this.groups[group]['css_font-family']    = {input: '<input type="text" id="inspect_css_font-family"/>'};
         this.groups[group]['css_font-style']     = this.editSelect('css_font-style', ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'], true);
         this.groups[group]['css_font-variant']   = this.editSelect('css_font-variant', ['', 'normal', 'small-caps', 'initial', 'inherit'], true);
-        this.groups[group]['css_font-weight']    = this.editAutoComplete('css_font-weight', ['', 'normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit'], true);
-        this.groups[group]['css_font-size']      = this.editAutoComplete('css_font-size', ['', 'medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'], true);
+        this.groups[group]['css_font-weight']    = this.editAutoComplete('css_font-weight', ['', 'normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit']);
+        this.groups[group]['css_font-size']      = this.editAutoComplete('css_font-size', ['', 'medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit']);
         this.groups[group]['css_line-height']    = {input: '<input type="text" id="inspect_css_line-height"/>'};
         this.groups[group]['css_letter-spacing'] = {input: '<input type="text" id="inspect_css_letter-spacing"/>'};
         this.groups[group]['css_word-spacing']   = {input: '<input type="text" id="inspect_css_word-spacing"/>'};
@@ -2488,10 +2745,10 @@ vis = $.extend(true, vis, {
         var line;
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group]['css_background']            = {input: '<input type="text" id="inspect_css_background"/>'};
+        this.groups[group].css_background               = {input: '<input type="text" id="inspect_css_background"/>'};
         this.groups[group]['css_background-color']      = this.editColor('css_background-color');
         this.groups[group]['css_background-image']      = {input: '<input type="text" id="inspect_background-image"/>'};
-        this.groups[group]['css_background-repeat']     = this.editSelect('css_background-repeat', ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'], true);;
+        this.groups[group]['css_background-repeat']     = this.editSelect('css_background-repeat', ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'], true);
         this.groups[group]['css_background-attachment'] = this.editSelect('css_background-attachment', ['', 'scroll', 'fixed', 'local', 'initial', 'inherit'], true);
         this.groups[group]['css_background-position']   = {input: '<input type="text" id="inspect_background-position"/>'};
         this.groups[group]['css_background-size']       = {input: '<input type="text" id="inspect_background-size"/>'};
@@ -2504,15 +2761,38 @@ vis = $.extend(true, vis, {
             this.groups[group][attr].attrIndex = '';
         }
     },
+    editDimensionOnChangeHelper: function (elem, value) {
+        if (value && typeof value != 'object') {
+            var e = value.substring(value.length - 2);
+            if (e != 'px' && e != 'em') {
+                var wdata = $(elem).data('data-wdata');
+                for (var t = 0; t < wdata.widgets.length; t++) {
+                    this.views[wdata.view].widgets[wdata.widgets[t]].style[wdata.attr.substring(4)] = value + 'px';
+                    $('#' + wdata.widgets[t]).css(wdata.attr.substring(4), value + 'px');
+                }
+            }
+        }
+    },
     editCssBorder: function () {
         var group = 'css_border';
         var line;
+        var that = this;
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group]['css_border-width']      = {input: '<input type="text" id="inspect_css_border-width"/>'};
-        this.groups[group]['css_border-style']      = this.editAutoComplete('css_border-style', ['', 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'initial', 'inherit'], true);
-        this.groups[group]['css_border-color']      = this.editColor('css_border-color');
-        this.groups[group]['css_border-radius']     = {input: '<input type="text" id="inspect_css_border-radius"/>'};
+        this.groups[group]['css_border-width']  = {
+            input: '<input type="text" id="inspect_css_border-width"/>',
+            onchange: function (value) {
+                that.editDimensionOnChangeHelper(this, value);
+            }
+        };
+        this.groups[group]['css_border-style']  = this.editAutoComplete('css_border-style', ['', 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'initial', 'inherit']);
+        this.groups[group]['css_border-color']  = this.editColor('css_border-color');
+        this.groups[group]['css_border-radius'] = {
+            input: '<input type="text" id="inspect_css_border-radius"/>',
+            onchange: function (value) {
+                that.editDimensionOnChangeHelper(this, value);
+            }
+        };
 
         for(var attr in this.groups[group]) {
             this.groups[group][attr].css = true;
@@ -2525,7 +2805,7 @@ vis = $.extend(true, vis, {
         var line;
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group]['css_padding']        = {input: '<input type="text" id="inspect_css_padding"/>'};
+        this.groups[group].css_padding           = {input: '<input type="text" id="inspect_css_padding"/>'};
         this.groups[group]['css_padding-left']   = {input: '<input type="text" id="inspect_css_padding-left"/>'};
         this.groups[group]['css_padding-top']    = {input: '<input type="text" id="inspect_css_padding-top"/>'};
         this.groups[group]['css_padding-right']  = {input: '<input type="text" id="inspect_css_padding-right"/>'};
@@ -2589,6 +2869,9 @@ vis = $.extend(true, vis, {
             case 'number':
                 line = this.editNumber(widAttr.name, widAttr.options);
                 break;
+            case 'auto':
+                line = this.editAutoComplete(widAttr.name, widAttr.options);
+                break;
             case 'slider':
                 line = this.editSlider(widAttr.name, widAttr.options);
                 break;
@@ -2620,7 +2903,6 @@ vis = $.extend(true, vis, {
                 break;
             case 'hidden':
                 return;
-                break;
             case 'fontname':
                 line = this.editFontName(widAttr.name);
                 break;
@@ -2649,7 +2931,7 @@ vis = $.extend(true, vis, {
         var widgetData = this.views[view].widgets[widget];
         var name = (widgetData.data ? widgetData.data.name : '');
         name = name ? (name + '[' + widget + ']') : widget;
-        name += ' (' + $('#' + widgetData.tpl).attr('data-vis-name') + ')';
+        name += ' ('  + widgetData.widgetSet + ' - ' + $('#' + widgetData.tpl).attr('data-vis-name') + ')';
         return name;
     },
     showInspect: function (view, widgets) {
@@ -2657,9 +2939,10 @@ vis = $.extend(true, vis, {
         var that = this;
         var depends = [];
         var values = {};
+        var widAttr;
         for (var group in this.groups) {
             if (this.groupsState[group] === undefined) this.groupsState[group] = false;
-            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="3">' + _('group_' + group) + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>')
+            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="3">' + _('group_' + group) + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>');
 
             for (var widAttr in this.groups[group]) {
                 var line = this.groups[group][widAttr];
@@ -2764,28 +3047,40 @@ vis = $.extend(true, vis, {
         }
 
         // Init all elements together
-        for (var group in this.groups) {
-            for (var widAttr in this.groups[group]) {
-                var line = this.groups[group][widAttr];
-                var $input = $('#inspect_' + widAttr);
-                if (depends.length) $input.data('data-depends', depends);
+        for (group in this.groups) {
+            for (widAttr in this.groups[group]) {
+                var line_ = this.groups[group][widAttr];
+                var $input_ = $('#inspect_' + widAttr);
+                var wdata_ = $input_.data('data-wdata');
+                if (depends.length) $input_.data('data-depends', depends);
 
-                if (line[0]) line = line[0];
-                if (typeof line == 'string') line = {input: line};
-                if (typeof line.init == 'function') {
-                    if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
-                    line.init.call($input[0], widAttr, values[widAttr]);
+                if (line_[0]) line_ = line_[0];
+                if (typeof line_ == 'string') line_ = {input: line_};
+                if (typeof line_.init == 'function') {
+                    if (wdata_.css) {
+                        var cwidAttr = widAttr.substring(4);
+                        if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(widgets, cwidAttr);
+                        line_.init.call($input_[0], cwidAttr, values[cwidAttr]);
+                    } else {
+                        if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
+                        line_.init.call($input_[0], widAttr, values[widAttr]);
+                    }
                 }
                 // Call on change
-                if (typeof line.onchange == 'function') {
-                    if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
-                    line.onchange.call($input[0], values[widAttr]);
+                if (typeof line_.onchange == 'function') {
+                    if (wdata_.css) {
+                        var cwidAttr = widAttr.substring(4);
+                        if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(widgets, cwidAttr);
+                        line_.onchange.call($input_[0], values[cwidAttr]);
+                    } else {
+                        if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
+                        line_.onchange.call($input_[0], values[widAttr]);
+                    }
                 }
             }
         }
         this.initStealHandlers();
 
-        var that = this;
         $('.vis-inspect-widget').change(function (e) {
             var $this   = $(this);
             var wdata   = $this.data('data-wdata');
@@ -2806,7 +3101,7 @@ vis = $.extend(true, vis, {
                     var $widget = $('#' + wdata.widgets[i]);
                     if (val !== '' && (css == 'left' || css == 'top')) {
                         if (val.indexOf('%') == -1 && val.indexOf('px') == -1 && val.indexOf('em') == -1) {
-                            val += 'px'
+                            val += 'px';
                         }
                     }
                     $widget.css(css, val);
@@ -2841,11 +3136,18 @@ vis = $.extend(true, vis, {
 
                 // Update select widget dropdown
                 if (wdata.attr == 'name') {
-                    this.$selectActiveWidgets.find('option[value="' + wdata.widgets[i] + '"]').text(that.getWidgetName(wdata.view, wdata.widgets[i]));
-                    this.$selectActiveWidgets.multiselect('refresh');
+                    that.$selectActiveWidgets.find('option[value="' + wdata.widgets[i] + '"]').text(that.getWidgetName(wdata.view, wdata.widgets[i]));
+                    that.$selectActiveWidgets.multiselect('refresh');
                 }
 
-                if (typeof wdata.onchange == 'function') wdata.onchange.call(this, that.widgets[wdata.widgets[i]].data[wdata.attr]);
+                if (typeof wdata.onchange == 'function'){
+                    if (wdata.css) {
+                        var css = wdata.attr.substring(4);
+                        wdata.onchange.call(this, that.views[wdata.view].widgets[wdata.widgets[i]].style[css]);
+                    } else {
+                        wdata.onchange.call(this, that.widgets[wdata.widgets[i]].data[wdata.attr]);
+                    }
+                }
 
                 that.save();
                 if (!wdata.css) that.reRenderWidgetEdit(wdata.widgets[i]);
@@ -2891,25 +3193,27 @@ vis = $.extend(true, vis, {
                 console.log('Cannot find in DOM ' + wid);
                 return;
             }
-            var pos   = $widget.position();
+            var pos = {};//$widget.position();
 
+            pos.top  = $widget[0].offsetTop;
+            pos.left = $widget[0].offsetLeft;
             // May be bug?
-            if (pos.left == 0 && pos.top == 0) {
+            if (!pos.left && !pos.top) {
                 pos.left = $widget[0].style.left;
-                pos.top  = $widget[0].style.top;
+                pos.top  = $widget[0].style.top + $widget[0].offsetTop;
                 if (typeof pos.left == 'string') pos.left = parseInt(pos.left.replace('px', ''), 10);
                 if (typeof pos.top  == 'string') pos.top  = parseInt(pos.top.replace('px', ''), 10);
             }
 
             if (!$('#widget_helper_' + wid).length) {
-                $('#vis_container').append('<div id="widget_helper_' + wid + '" class="widget-helper"><div class="widget_inner_helper"></div></div>');
+                $('#visview_' + this.activeView).append('<div id="widget_helper_' + wid + '" class="widget-helper"><div class="widget_inner_helper"></div></div>');
             }
 
             $('#widget_helper_' + wid).css({
                     left:   pos.left - 2,
                     top:    pos.top  - 2,
-                    height: $widget.outerHeight() + 2,
-                    width:  $widget.outerWidth()  + 2
+                    height: $widget.outerHeight() + 1,
+                    width:  $widget.outerWidth()  + 1
                 }
             ).show();
         } else {
@@ -2947,15 +3251,15 @@ vis = $.extend(true, vis, {
         Result: array of oneAttr
         */
 
-        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,\.a-zA-Z0-9]+)?/;
+        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,\s:\/\.a-zA-Z0-9]+)?/;
         var match = this.regexAttr.exec(_wid_attr);
 
-        var widAttr     = match[1];
+        var widAttr      = match[1];
         var wid_repeats  = match[2];
         var wid_default  = match[3];
         var wid_type     = match[4];
         var wid_type_opt = null;
-        var notTranslate = true;
+        var notTranslate = false;
         var index        = '';
         var attrDepends  = [];
 
@@ -3068,6 +3372,13 @@ vis = $.extend(true, vis, {
                 return [];
             }
             var widgetAttrs = $widgetTpl.attr('data-vis-attrs');
+            // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+            var t = 0;
+            var attr;
+            while (attr = $widgetTpl.attr('data-vis-attrs' + t)) {
+                widgetAttrs += attr;
+                t++;
+            }
             if (widgetAttrs) {
                 widgetAttrs = widgetAttrs.split(';');
             } else {
@@ -3107,7 +3418,14 @@ vis = $.extend(true, vis, {
                         if (!allWidgetsAttr[group][name]) delete attrs[group][name];
                     }
                     for (name in allWidgetsAttr[group]) {
-                        if (JSON.stringify(allWidgetsAttr[group][name]) != JSON.stringify(attrs[group][name])) delete allWidgetsAttr[group][name];
+                        var d1 = allWidgetsAttr[group][name].default;
+                        delete allWidgetsAttr[group][name].default;
+                        delete attrs[group][name].default;
+                        if (JSON.stringify(allWidgetsAttr[group][name]) != JSON.stringify(attrs[group][name])){
+                            delete allWidgetsAttr[group][name];
+                        } else {
+                            allWidgetsAttr[group][name].default = d1;
+                        }
                     }
                 }
             }
@@ -3121,7 +3439,7 @@ vis = $.extend(true, vis, {
         for (var i = 0; i < widgets.length; i++) {
             var widget = this.views[this.activeView].widgets[widgets[i]];
             var obj = isStyle ? widget.style : widget.data;
-            var val = (isStyle && (!obj || obj[attr] === undefined)) ? '' : obj[attr];
+            var val = (isStyle && (!obj || obj[attr] === undefined)) ? '' : (obj ? obj[attr] : '');
 
             widgetValues[i] = val;
             if (values.indexOf(val) == -1) values.push(val);
@@ -3132,7 +3450,7 @@ vis = $.extend(true, vis, {
             return {
                 values:       values,
                 widgetValues: widgetValues
-            }
+            };
         }
     },
     setAttrValue: function (widgets, attr, isStyle, values) {
@@ -3191,6 +3509,9 @@ vis = $.extend(true, vis, {
     inspectWidgets: function (addWidget, delWidget, onlyUpdate) {
         if (this.isStealCss) return false;
 
+        // Deselect all elements
+        $(':focus').blur();
+
         if (typeof addWidget == 'boolean') {
             onlyUpdate = addWidget;
             addWidget = undefined;
@@ -3208,11 +3529,13 @@ vis = $.extend(true, vis, {
             if (pos != -1) this.activeWidgets.splice(pos, 1);
         }
         var that = this;
-        var wid = this.activeWidgets[0] || 'none';
+        var wid  = this.activeWidgets[0] || 'none';
         // find view
         var view = this.getViewOfWidget(wid);
 
         if (!onlyUpdate) {
+            this.alignIndex = 0;
+
             var s = JSON.stringify(this.activeWidgets);
             if (JSON.stringify(this.views[this.activeView].activeWidgets) != s) {
                 this.views[this.activeView].activeWidgets = JSON.parse(s);
@@ -3269,10 +3592,10 @@ vis = $.extend(true, vis, {
             }
 
             // Select selected widgets
-            for (var i = 0; i < select.length; i++) {
-                $widget = $('#' + select[i]);
-                this.$selectActiveWidgets.find('option[value="' + select[i] + '"]').attr('selected', 'selected');
-                this.showWidgetHelper(select[i], true);
+            for (var p = 0; p < select.length; p++) {
+                $widget = $('#' + select[p]);
+                this.$selectActiveWidgets.find('option[value="' + select[p] + '"]').attr('selected', 'selected');
+                this.showWidgetHelper(select[p], true);
 
                 if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
                     this.draggable($widget);
@@ -3320,7 +3643,7 @@ vis = $.extend(true, vis, {
             return false;
         }
         $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
-        $('#widget_tab').text(_("Widget") + ": " + wid);
+        $('#widget_tab').text(_("Widget") + ": " + ((this.activeWidgets.length == 1) ? wid : this.activeWidgets.length));
 
         var widget = this.views[this.activeView].widgets[wid];
 
@@ -3337,6 +3660,13 @@ vis = $.extend(true, vis, {
             return false;
         }
         var widgetAttrs = $widgetTpl.attr('data-vis-attrs');
+        // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+        var t = 0;
+        var attr;
+        while (attr = $widgetTpl.attr('data-vis-attrs' + t)) {
+            widgetAttrs += attr;
+            t++;
+        }
         if (widgetAttrs) {
             widgetAttrs = widgetAttrs.split(';');
         } else {
@@ -3357,6 +3687,10 @@ vis = $.extend(true, vis, {
         this.addToInspect(this.activeWidgets, 'class',              group);
         this.addToInspect(this.activeWidgets, 'filterkey',          group);
         this.addToInspect(this.activeWidgets, {name: 'views', type: 'select-views'}, group);
+        group = 'visibility';
+        this.addToInspect(this.activeWidgets, {name: 'visibility-oid', type: 'id'},   group);
+        this.addToInspect(this.activeWidgets, {name: 'visibility-cond', type: 'select', options: ['==','!=','<=','>=','<','>','consist'], default: '=='},   group);
+        this.addToInspect(this.activeWidgets, {name: 'visibility-val', default: 1},     group);
 
         // Edit all attributes
         group = 'common';
@@ -3619,6 +3953,10 @@ vis = $.extend(true, vis, {
             var attr = $this.attr('id').slice(17);
             var css = $('#visview_' + view).css(attr);
             $this.val(css);
+            if (attr.match(/color$/)) {
+                $this.css("background-color", css || '');
+                that._editSetFontColor($this.attr('id'));
+            }
         });
 
         if (this.views[view] && this.views[view].settings) {
@@ -3646,7 +3984,6 @@ vis = $.extend(true, vis, {
                 origY = ui.position.top;
             },
             stop:   function (event, ui) {
-                //var mWidget = document.getElementById(widget);
                 //var pos = $('#' + widget).position();
 
                 /*if (!that.views[that.activeView].widgets[widget].style) {
@@ -3688,7 +4025,7 @@ vis = $.extend(true, vis, {
                     that.views[that.activeView].widgets[wid].style.top  = pos.top;
 
                     if ($wid[0]._customHandlers && $wid[0]._customHandlers.onMoveEnd) {
-                        mWidget._customHandlers.onMoveEnd($wid[0], wid);
+                        $wid[0]._customHandlers.onMoveEnd($wid[0], wid);
                     }
                 }
                 $('#inspect_css_top').val(that.findCommonValue(that.activeWidgets, 'top', true));
@@ -3788,8 +4125,8 @@ vis = $.extend(true, vis, {
                 },
                 resize: function (event, ui) {
                     $('.widget-helper').css({
-                        width:  ui.element.outerWidth()  + 2,
-                        height: ui.element.outerHeight() + 2});
+                        width:  ui.element.outerWidth()  + 1,
+                        height: ui.element.outerHeight() + 1});
                 }
             }, resizableOptions));
         }
@@ -3815,6 +4152,13 @@ vis = $.extend(true, vis, {
 
                 // Widget attributs default values
                 var attrs = $tpl.attr('data-vis-attrs');
+                // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+                var t = 0;
+                var attr;
+                while (attr = $tpl.attr('data-vis-attrs' + t)) {
+                    attrs += attr;
+                    t++;
+                }
                 var data = {};
                 if (attrs) {
                     attrs = attrs.split(';');
@@ -3824,7 +4168,7 @@ vis = $.extend(true, vis, {
 
                 var widgetId = that.addWidget(tpl, data, addPos);
 
-                that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + ')</option>')
+                that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>')
                     .multiselect('refresh');
 
                 setTimeout(function () {
@@ -3860,11 +4204,11 @@ vis = $.extend(true, vis, {
                 var $jW = $('#' + w);
                 if ($jW.length) {
                     var s = $jW.position();
-                    s['width'] = $jW.width();
-                    s['height'] = $jW.height();
-                    if (s.width > 300 && s.height > 300) {
-                        continue;
-                    }
+                    s.width  = $jW.width();
+                    s.height = $jW.height();
+
+                    if (s.width > 300 && s.height > 300) continue;
+
                     positions[positions.length] = s;
                 }
             }
@@ -3913,30 +4257,29 @@ vis = $.extend(true, vis, {
         if (!$jWidget.length) return;
 
         var s = $jWidget.position();
-        s['width']  = $jWidget.width();
-        s['height'] = $jWidget.height();
-        s['radius'] = parseInt($jWidget.css('border-radius'));
+        s.width  = $jWidget.width();
+        s.height = $jWidget.height();
+        s.radius = parseInt($jWidget.css('border-radius'));
 
         var _css1 = {
-            left: s.left - 3.5,
-            top: s.top - 3.5,
-            height: s.height,
-            width: s.width,
-            opacity: 1,
+            left:         s.left - 3.5,
+            top:          s.top - 3.5,
+            height:       s.height,
+            width:        s.width,
+            opacity:      1,
             borderRadius: 15
         };
-
 
         var text = "<div id='" + id + "__action1' style='z-index:2000; top:" + (s.top - 3.5) + "px; left:" + (s.left - 3.5) + "px; width: " + s.width + "px; height: " + s.height + "px; position: absolute'></div>";
         $('#visview_' + this.activeView).append(text);
         var _css2 = {
-            left: s.left - 4 - s.width,
-            top: s.top - 4 - s.height,
-            height: s.height * 3,
-            width: s.width * 3,
-            opacity: 0,
+            left:         s.left - 4 - s.width,
+            top:          s.top - 4 - s.height,
+            height:       s.height * 3,
+            width:        s.width * 3,
+            opacity:      0,
             //borderWidth: 1,
-            borderRadius: s['radius'] + (s.height > s.width) ? s.width : s.height
+            borderRadius: s.radius + (s.height > s.width) ? s.width : s.height
         };
 
         $('#' + id + '__action1').
@@ -4015,14 +4358,14 @@ vis = $.extend(true, vis, {
                 e.preventDefault();
                 return false;
             });
-        })
+        });
     },
     stealCssModeStop: function () {
         this.isStealCss = false;
         $('#stealmode_content').remove();
-        if (this.selectable) {
-            $('#visview_' + this.activeView).selectable('enable');
-        }
+
+        if (this.selectable) $('#visview_' + this.activeView).selectable('enable');
+
         $('.vis-steal-css').removeAttr('checked').button('refresh');
         $('#vis_container').removeClass('vis-steal-cursor');
 
@@ -4034,7 +4377,7 @@ vis = $.extend(true, vis, {
         this.isStealCss = true;
 
         if (!$('#stealmode_content').length) {
-            $('body').append('<div id="stealmode_content" style="display:none" class="vis-stealmode">CSS steal mode</div>')
+            $('body').append('<div id="stealmode_content" style="display:none" class="vis-stealmode">CSS steal mode</div>');
             $('#stealmode_content').fadeIn('fast')
                 .click(function () {
                     $(this).fadeOut('slow');
@@ -4083,18 +4426,22 @@ vis = $.extend(true, vis, {
         var css;
         var parts = attr.split('-');
         var baseAttr = parts[0];
+        var cssTop;
+        var cssRight;
+        var cssBottom;
+        var cssLeft;
 
         if (attr == "border-radius") {
             // TODO second attribute
-            var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-left"));
-            var cssRight = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top-right"));
-            var cssBottom = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-right"));
-            var cssLeft = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom-left"));
+            cssTop    = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-top-left"));
+            cssRight  = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-top-right"));
+            cssBottom = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-bottom-right"));
+            cssLeft   = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-bottom-left"));
         } else {
-            var cssTop = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-top"));
-            var cssRight = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-right"));
-            var cssBottom = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-bottom"));
-            var cssLeft = that.css(attr.replace(RegExp(baseAttr), baseAttr + "-left"));
+            cssTop    = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-top"));
+            cssRight  = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-right"));
+            cssBottom = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-bottom"));
+            cssLeft   = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-left"));
         }
         if (cssLeft == cssRight && cssLeft == cssTop && cssLeft == cssBottom) {
             css = cssLeft;
@@ -4229,6 +4576,10 @@ vis = $.extend(true, vis, {
     selectAll: function () {
         // Select all widgets on view
         var $focused = $(':focus');
+
+        // Workaround
+
+
         if (!$focused.length && this.activeView) {
             var newWidgets = [];
             // Go through all widgets
@@ -4275,7 +4626,7 @@ vis = $.extend(true, vis, {
             var widgetNames = '';
             if (this.activeWidgets.length) {
                 for (var i = 0, len = this.activeWidgets.length; i < len; i++) {
-                    widgetNames += ', ' + this.activeWidgets[i];
+                    widgetNames += (widgetNames ? ', ' : '') + this.activeWidgets[i];
                     this.clipboard.push({
                         widget: $.extend(true, {}, this.views[this.activeView].widgets[this.activeWidgets[i]]),
                         view: (!isCut) ? this.activeView : '---copied---'
@@ -4342,7 +4693,7 @@ vis = $.extend(true, vis, {
                     $(this).dialog('close');
                     that.delWidgets();
                     that.inspectWidgets([]);
-                }
+                };
                 dialog_buttons[_('Cancel')] = function () {
                     $(this).dialog('close');
                 };
@@ -4371,7 +4722,7 @@ vis = $.extend(true, vis, {
     onButtonArrows: function (key, isSize, factor) {
         factor = factor || 1;
         var $focused = $(':focus');
-        if (!$focused.length && this.activeWidgets.lenght) {
+        if (!$focused.length && this.activeWidgets.length) {
             var what = null;
             var shift = 0;
             if (isSize) {
@@ -4415,7 +4766,7 @@ vis = $.extend(true, vis, {
             shift = shift * factor;
 
             for (var i = 0, len = this.activeWidgets.length; i < len; i++) {
-                var widgetId = this.activeWidgets[i]
+                var widgetId = this.activeWidgets[i];
                 var $actualWidget = $('#' + widgetId);
                 if (this.views[this.activeView].widgets[widgetId].style[what] === undefined && $actualWidget.length) {
                     this.views[this.activeView].widgets[widgetId].style[what] = $actualWidget.css(what);
@@ -4436,7 +4787,7 @@ vis = $.extend(true, vis, {
             var that = this;
             this.delayedSettings = setTimeout(function () {
                 // Save new settings
-                var activeWidgets = that.activeWidgets;
+                var activeWidgets = JSON.parse(JSON.stringify(that.activeWidgets));
                 that.activeWidgets = [];
                 for (var i = 0, len = activeWidgets.length; i < len; i++) {
                     var mWidget = document.getElementById(activeWidgets[i]);
@@ -4450,6 +4801,7 @@ vis = $.extend(true, vis, {
                     if (mWidget._customHandlers && mWidget._customHandlers.isRerender) that.reRenderWidgetEdit(activeWidgets[i]);
                 }
                 that.delayedSettings = null;
+                that.activeWidgets = activeWidgets;
                 that.inspectWidgets(true);
             }, 1000);
 
@@ -4463,10 +4815,10 @@ vis = $.extend(true, vis, {
     onPageClosing: function () {
         // If not saved
         if (this._saveTimer) {
-            if (confirm(_('Changes are not saved. Are you sure?'))) {
+            if (window.confirm(_('Changes are not saved. Are you sure?'))) {
                 return null;
             } else {
-                return "Configuration not saved.";
+                return _("Configuration not saved.");
             }
         }
         return null;
@@ -4488,7 +4840,7 @@ vis = $.extend(true, vis, {
             that.instance = $(this).val();
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
-    },
+    }
 });
 
 $(document).keydown(function (e) {

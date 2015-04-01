@@ -1,8 +1,8 @@
 /**
- *  DashUI
- *  https://github.com/hobbyquaker/dashui/
+ *  ioBroker.vis
+ *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker, bluefox https://github.com/GermanBluefox
+ *  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -12,7 +12,14 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
+/* jshint browser:true */
+/* jshint -W097 */// jshint strict:false
+/* global $ */
+/* global systemDictionary */
+
+
 'use strict';
+
 
 // Languages
 $.extend(systemDictionary, {
@@ -184,12 +191,13 @@ $.extend(systemDictionary, {
      'en': '(Free for non-commercial use)',
      'de': 'DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIESSLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.',
      'ru': 'ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ ГАРАНТИЯМИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И ОТСУТСТВИЯ НАРУШЕНИЙ ПРАВ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО ИСКАМ О ВОЗМЕЩЕНИИ УЩЕРБА, УБЫТКОВ ИЛИ ДРУГИХ ТРЕБОВАНИЙ ПО ДЕЙСТВУЮЩИМ КОНТРАКТАМ, ДЕЛИКТАМ ИЛИ ИНОМУ, ВОЗНИКШИМ ИЗ, ИМЕЮЩИМ ПРИЧИНОЙ ИЛИ СВЯЗАННЫМ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ ИСПОЛЬЗОВАНИЕМ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫМИ ДЕЙСТВИЯМИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.'},
-     */'license5': {
+     */
+    'license5': {
         'en': 'HomeMatic and the HomeMatic Logo are the registered trademarks of eQ-3 AG',
         'de': 'HomeMatic und das HomeMatic Logo sind eingetragene Warenzeichen der eQ-3 AG',
         'ru': 'HomeMatic и HomeMatic логотип являются зарегистрированными тоговыми марками фирмы eQ-3 Inc.'
     },
-    'group_fixed':  {'en': 'Fixed',  'de': 'Fixt',      'ru': 'Фиксированные'},
+    'group_fixed':  {'en': 'General',  'de': 'Generell',      'ru': 'Фиксированные'},
     'group_common': {'en': 'Common', 'de': 'Allgemein', 'ru': 'Общие'},
     'group_css_common': {'en': 'CSS Common', 'de': 'CSS Allgemein', 'ru': 'CSS Основные'},
     'group_css_font_text': {'en': 'CSS Font & Text', 'de': 'CSS Font & Text', 'ru': 'CSS шрифт и текст'},
@@ -256,6 +264,72 @@ $.extend(systemDictionary, {
     "All widgets:": {"en": "All widgets:", "de": "Alle Widgets:", "ru": "Все элементы:"},
     "Grid": {"en": "Grid", "de": "Gitter", "ru": "Сетка"},
     "Lock all Widgets": {"en": "Lock all Widgets", "de": "Alle Widgets fixieren", "ru": "Блокировать все элементы"},
+
+    "dev1": {"en": "dev 1", "de": "dev 1", "ru": "dev 1"},
+    "dev2": {"en": "dev 2", "de": "dev 2", "ru": "dev 2"},
+    "dev3": {"en": "dev 3", "de": "dev 3", "ru": "dev 3"},
+    "dev4": {"en": "dev 4", "de": "dev 4", "ru": "dev 4"},
+    "dev5": {"en": "dev 5", "de": "dev 5", "ru": "dev 5"},
+
+    "Configuration not saved.": {
+        "en": "Project does not saved.",
+        "de": "Projekt ist noch nicht gespeichert.",
+        "ru": "Проект не сохранён."
+    },
+    "Clipboard:": {"en": "Clipboard:", "de": "Zwischenablage:", "ru": "Буфер обмена:"},
+    "Click to hide": {"en": "Click to hide", "de": "Anklicken um zu verbergen", "ru": "Нажать, что бы скрыть"},
+    "Lock Widget function": {"en": "Disable interaction with widget", "de": "Deaktiviere Widget-Interaktion", "ru": "Деактивировать взаимодействие с элементом"},
+    "Lock Widget dragging": {"en": "Lock widget dragging", "de": "Deaktiviere Widget herumschieben", "ru": "Дективировать перенос виджетов мышкой"},
+    "Show type of widgets": {"en": "Show type of widgets", "de": "Zeige Widgettyp", "ru": "Показать тип элемента"},
+    "Small widgets": {"en": "Small widgets", "de": "Kleine Widgets", "ru": "Показать маленькие элементы"},
+    "Select more than one widget and try again.": {
+        "en": "Select more than one widget and try again.",
+        "de": "Es muss mehr als ein Widget seleketiert werden.",
+        "ru": "Выберите больше одного элемента и попробуйте ещё раз."
+    },
+    "Too less widgets": {
+        "en": "Too less widgets selected",
+        "de": "Zu wenig selektierte Widgets",
+        "ru": "Слишком мало выбрано элементов"
+    },
+    "==": {"en": "==", "de": "==", "ru": "=="},
+    "!=": {"en": "!=", "de": "!=", "ru": "!="},
+    "<=": {"en": "<=", "de": "<=", "ru": "<="},
+    ">=": {"en": ">=", "de": ">=", "ru": ">="},
+    "<": {"en": "<", "de": "<", "ru": "<"},
+    ">": {"en": ">", "de": ">", "ru": ">"},
+    "consist": {"en": "consist", "de": "bestehend aus", "ru": "содержит"},
+    "group_visibility": {"en": "visibility", "de": "Sichtbarkeit", "ru": "Видимость"},
+    "visibility-oid": {"en": "Object ID", "de": "Object ID", "ru": "ID Объекта"},
+    "visibility-oid_tooltip": {
+        "en": "Depends on state of object with this ID,\x0Athe widget can be shown or hidden",
+        "de": "Abhängig von dem Zustand des Objektes mit\x0Adiesem ID kann Widget verborgen oder angezeigt sein.",
+        "ru": "Элемент можно показать или скрыть\x0Aв зависимости от состояние объекта с таким ID"
+    },
+    "visibility-cond": {"en": "Сondition", "de": "Bedingung", "ru": "Условие"},
+    "visibility-cond_tooltip": {
+        "en": "E.g. 'Value of Object ID' >= 'Value of condition'",
+        "de": "Z.B. 'Wert von dem Objekt' >= 'Wert für die Bedienung'",
+        "ru": "Например 'Значение объекта' >= 'Значения для условия"
+    },
+    "visibility-val": {"en": "Vavue for condition", "de": "Wert für die Bedingung", "ru": "Значение для условия"},
+
+    "Global": {"en": "Global", "de": "Global", "ru": "Общая"},
+    "Project": {"en": "Project", "de": "Projekt", "ru": "Проект"},
+    "Align width": {
+        "en": "Align width. Press more time to get the desired width.",
+        "de": "Gleiche Breite. Mehrmals druken um gewünschte Breite einzustellen.",
+        "ru": "Одинаковая ширина. Нажать несколько раз для получения желаемой ширина"
+    },
+    "Align height": {
+        "en": "Align height. Press more time to get the desired height.",
+        "de": "Gleiche Höhe. Mehrmals druken um gewünschte Höhe einzustellen.",
+        "ru": "Одинаковая высота. Нажать несколько раз для получения желаемой высоты"
+    },
+    "Find previous": {"en": "Find previous", "de": "Finde vorherige", "ru": "Искать назад"},
+    "Find next": {"en": "Find next", "de": "Finde nächste", "ru": "Искать вперёд"},
+    "Save CSS": {"en": "Save CSS", "de": "Speichern CSS", "ru": "Сохранить CSS"},
+    "CSS": {"en": "CSS", "de": "CSS", "ru": "CSS"},
 
     "css_left": {"en": "left", "de": "left", "ru": "left"},
     "css_top": {"en": "top", "de": "top", "ru": "top"},

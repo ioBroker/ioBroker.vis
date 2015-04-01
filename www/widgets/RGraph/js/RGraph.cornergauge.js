@@ -1,17 +1,19 @@
+// version: 2014-11-15
     /**
     * o--------------------------------------------------------------------------------o
-    * | This file is part of the RGraph package. RGraph is Free Software, licensed     |
-    * | under the MIT license - so it's free to use for all purposes. If you want to   |
-    * | donate to help keep the project going then you can do so here:                 |
+    * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
-    * |                             http://www.rgraph.net/donate                       |
+    * |                          http://www.rgraph.net                                 |
+    * |                                                                                |
+    * | This package is licensed under the Creative Commons BY-NC license. That means  |
+    * | that for non-commercial purposes it's free to use and for business use there's |
+    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
+    * |                                                                                |
+    * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
 
     RGraph = window.RGraph || {isRGraph: true};
-
-
-
 
     /**
     * The constructor
@@ -21,19 +23,42 @@
     * @param array  max   The maximum value
     * @param array  value The indicated value
     */
-    RGraph.CornerGauge = function (id, min, max, value)
+    RGraph.CornerGauge = function (conf)
     {
-        var tmp = RGraph.getCanvasTag(id);
+        /**
+        * Allow for object config style
+        */
+        if (   typeof conf === 'object'
+            && typeof conf.min === 'number'
+            && typeof conf.max === 'number'
+            && typeof conf.value !== 'undefined'
+            && typeof conf.id === 'string') {
+
+            var id                        = conf.id
+            var canvas                    = document.getElementById(id);
+            var min                       = conf.min;
+            var max                       = conf.max;
+            var value                     = conf.value;
+            var parseConfObjectForOptions = true; // Set this so the config is parsed (at the end of the constructor)
+        
+        } else {
+        
+            var id     = conf;
+            var canvas = document.getElementById(id);
+            var min    = arguments[1];
+            var max    = arguments[2];
+            var value  = arguments[3];
+        }
 
         // Get the canvas and context objects
-        this.id                = tmp[0];
-        this.canvas            = tmp[1];
-        this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
+        this.id                = id;
+        this.canvas            = canvas;
+        this.context           = this.canvas.getContext ? this.canvas.getContext("2d", {alpha: (typeof id === 'object' && id.alpha === false) ? false : true}) : null;
         this.canvas.__object__ = this;
         this.type              = 'cornergauge';
         this.min               = min;
         this.max               = max;
-        this.value             = value;
+        this.value             = RGraph.stringsToNumbers(value);
         this.angles            = {};
         this.angles.needle     = [];
         this.centerpin         = {};
@@ -43,6 +68,7 @@
         this.canvas.uid        = this.canvas.uid ? this.canvas.uid : RGraph.CreateUID();
         this.coordsText        = [];
         this.original_colors   = [];
+        this.firstDraw         = true; // After the first draw this will be false
 
         /**
         * Range checking
@@ -173,6 +199,18 @@
         this.set =
         this.Set = function (name, value)
         {
+            /**
+            * the number of arguments is only one and it's an
+            * object - parse it for configuration data and return.
+            */
+            if (arguments.length === 1 && typeof arguments[0] === 'object') {
+                RG.parseObjectStyleConfig(this, arguments[0]);
+                return this;
+            }
+
+
+
+
             name = name.toLowerCase();
     
             /**
@@ -254,6 +292,17 @@
             */
             this.centerx = (ca.width / 2) - (this.radius / 2) + Math.max(30, this.radius * 0.1);
             this.centery = (ca.height / 2) + (this.radius / 2) - (this.radius * 0.1);
+
+
+
+            /**
+            * Stop this growing uncontrollably
+            */
+            this.coordsText = [];
+
+
+
+
     
             if (typeof prop['chart.centerx'] === 'number') this.centerx = prop['chart.centerx'];
             if (typeof prop['chart.centery'] === 'number') this.centery = prop['chart.centery'];
@@ -310,6 +359,7 @@
             if (typeof this.value === 'object') {
     
                 for (var i=0,len=this.value.length; i<len; ++i) {
+
                     this.DrawNeedle(
                                     i,
                                     this.value[i],
@@ -362,7 +412,19 @@
             */
             RGraph.InstallEventListeners(this);
     
-            
+
+            /**
+            * Fire the onfirstdraw event
+            */
+            if (this.firstDraw) {
+                RG.fireCustomEvent(this, 'onfirstdraw');
+                this.firstDraw = false;
+                this.firstDrawFunc();
+            }
+
+
+
+
             /**
             * Fire the RGraph ondraw event
             */
@@ -485,7 +547,7 @@
             co.strokeStyle  = 'rgba(0,0,0,0)';
             co.fillStyle    = grad;
     
-    
+
             co.beginPath();
     
                 co.moveTo(this.centerx, this.centery);
@@ -738,10 +800,10 @@
                 co.fillStyle   = prop['chart.text.color'];
                 
                 var value = typeof(this.value) == 'number' ? this.value.toFixed(prop['chart.value.text.decimals']) : this.value;
-    
+
                 if (typeof(value) == 'object') {
                     for (var i=0; i<value.length; ++i) {
-                        value[i] = Number(value[i]).toFixed(prop['chart.value.text.decimals']);
+                        value[i] = parseFloat(value[i]).toFixed(prop['chart.value.text.decimals']);
                     }
                     
                     value = value.toString();
@@ -751,7 +813,7 @@
                                'size':prop['chart.value.text.size'],
                                'x':this.centerx + (ma.cos((RG.PI / 180) * 45) * (this.radius / 3)),
                                'y':this.centery - (ma.sin((RG.PI / 180) * 45) * (this.radius / 3)),
-                               'text':RG.number_format(this, String(value), prop['chart.value.text.units.pre'], prop['chart.value.text.units.post']),
+                               'text': prop['chart.value.text.units.pre'] + value + prop['chart.value.text.units.post'],
                                'valign':'center',
                                'halign':'center',
                                'bounding':prop['chart.value.text.boxed'],
@@ -908,6 +970,17 @@
 
 
         /**
+        * Use this function to reset the object to the post-constructor state. Eg reset colors if
+        * need be etc
+        */
+        this.reset = function ()
+        {
+        };
+
+
+
+
+        /**
         * This parses a single color value
         */
         this.parseSingleColorForGradient = function (color)
@@ -957,6 +1030,17 @@
             this[type] = func;
     
             return this;
+        };
+
+
+
+
+        /**
+        * This function runs once only
+        * (put at the end of the file (before any effects))
+        */
+        this.firstDrawFunc = function ()
+        {
         };
 
 
@@ -1084,6 +1168,15 @@
         * Register the object
         */
         RG.Register(this);
-    };
-// version: 2014-03-28
 
+
+
+
+        /**
+        * This is the 'end' of the constructor so if the first argument
+        * contains configuration dsta - handle that.
+        */
+        if (parseConfObjectForOptions) {
+            RG.parseObjectStyleConfig(this, conf.options);
+        }
+    };
