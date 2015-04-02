@@ -6,14 +6,15 @@ var visConfig = {
         //"tabs",
         //"jqplot",
         //"timeAndWeather",
-        {name: "jqui",        depends: ["basic"]},
-        {name: "jqui-mfd",    depends: ["basic", "jqui"]},
-        "weather-adapter",
-        "RGraph",
-        {name: "lcars",       depends: ["basic"]}
-        /*"plumb",
-        vbs,
-        "table"
+        //{name: "jqui",        depends: ["basic"]},
+        //{name: "jqui-mfd",    depends: ["basic", "jqui"]},
+        //"weather-adapter",
+        //"RGraph",
+        //{name: "lcars",       depends: ["basic"]},
+        //"vkb",
+        "plumb",
+        //"table"
+        /*
         "bars",
         "colorpicker",
         {name: "homematic", depends: ["basic", "jqui"]},

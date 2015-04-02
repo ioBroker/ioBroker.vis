@@ -486,7 +486,7 @@ var vis = {
                 this.views = {};
                 this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                 this.saveRemote(function () {
-                    window.location.reload();
+                    //window.location.reload();
                 });
             } else {
                 window.location.reload();
@@ -923,12 +923,12 @@ var vis = {
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
-
+        console.log(local)
         if (local) {
             try {
                 this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
-                this.views = JSON.parse(storage.get(this.storageKeyViews));
-                this.IDs = this.getUsedObjectIDs();
+                that.views = JSON.parse(storage.get(this.storageKeyViews));
+                console.log(that)
                 if (callback) callback.call(that, callbackArg);
             } catch (err) {
                 this.views = null;
@@ -1583,6 +1583,76 @@ window.onpopstate();
             });
         } else {
             // Init edit dialog
+            vis.loadRemote(function () {
+                // Read all states from server
+                vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
+                    if (data) {
+                        for (var id in data) {
+                            var obj = data[id];
+                            var o = {};
+                            o[id + '.val'] = obj.val;
+                            o[id + '.ts']  = obj.ts;
+                            // BF @ HQ: Why?
+                            if (true){ //} || vis.states[id + '.val'] !== undefined) {
+                                o[id + '.ack'] = obj.ack;
+                                o[id + '.lc']  = obj.lc;
+                            }
+                            try {
+                                vis.states.attr(o);
+                            } catch (e) {
+                                vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                            }
+                        }
+                    }
+
+                    if (error) {
+                        console.log("Possibly not authenticated, wait for request from server");
+                        // Possibly not authenticated, wait for request from server
+                    } else {
+                        // Get Server language
+                        vis.conn.getConfig(function (err, config) {
+                            systemLang = config.language || systemLang;
+                            vis.language = systemLang;
+                            vis.dateFormat = config.dateFormat;
+                            translateAll();
+                            if (vis.isFirstTime) {
+                                // Init edit dialog
+                                if (vis.editMode && vis.editInit) vis.editInit();
+                                vis.isFirstTime = false;
+                                vis.init();
+                            }
+                        });
+
+                        // If metaIndex required, load it
+                        if (vis.editMode) {
+                            /* socket.io */
+                            if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
+
+                            // Read all data objects from server
+                            vis.conn.getObjects(function (err, data) {
+                                vis.objects = data;
+                                // Detect if objects are loaded
+                                for (var ob in data) {
+                                    vis.objectSelector = true;
+                                    break;
+                                }
+                            });
+                        }
+
+                        //console.log((new Date()) + " socket.io reconnect");
+                        if (vis.isFirstTime) {
+                            setTimeout(function () {
+                                if (vis.isFirstTime) {
+                                    // Init edit dialog
+                                    if (vis.editMode && vis.editInit) vis.editInit();
+                                    vis.isFirstTime = false;
+                                    vis.init();
+                                }
+                            }, 1000);
+                        }
+                    }
+                });
+            });
             if (vis.editMode && vis.editInit) vis.editInit();
             vis.init();
         }
