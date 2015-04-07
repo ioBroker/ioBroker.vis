@@ -1440,14 +1440,14 @@
                         ev.color = JSON.parse(JSON.stringify(plumb[self.conLeft].color));
                         self.color = ev.color;
 
-                        $("#" + conRight).trigger(ev);
+                        $("#" + self.conRight).trigger(ev);
                     }
 
                     if (plumb[self.conRight].status) {
                         ev.color = JSON.parse(JSON.stringify(plumb[self.conRight].color));
                         self.color = ev.color;
 
-                        $("#" + conLeft).trigger(ev);
+                        $("#" + self.conLeft).trigger(ev);
                     }
 
                 } else {
@@ -1464,7 +1464,7 @@
                         self.color = ev.color;
 
 
-                        $("#" + conLeft).trigger(ev);
+                        $("#" + self.conLeft).trigger(ev);
                     }
 
                     if (plumb[self.conRight].status) {
@@ -1472,7 +1472,7 @@
                         ev.color.c = ev.color.c_default;
                         ev.status = false;
                         self.color = ev.color;
-                        $("#" + conRight).trigger(ev);
+                        $("#" + self.conRight).trigger(ev);
                     }
                 }
             }
@@ -1575,14 +1575,14 @@
                     self.color_from = ev.color_from;
 
                     //console.log(ev)
-                    $("#" + conBottom).trigger(ev);
+                    $("#" + self.conBottom).trigger(ev);
                 }
 
                 if (plumb[self.conBottom].status) {
                     ev.color = JSON.parse(JSON.stringify(plumb[self.conBottom].color));
                     self.color = ev.color;
                     //console.log(ev)
-                    $("#" + conTop).trigger(ev);
+                    $("#" + self.conTop).trigger(ev);
                 }
 
             }
@@ -2011,25 +2011,28 @@
             </linearGradient>\
             <radialGradient id="c_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
             <radialGradient id="b_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
-            <linearGradient x1="25" y1="10" x2="25" y2="90" id="linearGradient4318" xlink:href="#linearGradient3755" gradientUnits="userSpaceOnUse" />\
-            <linearGradient id="linearGradient3755">\
+            <linearGradient x1="25" y1="10" x2="25" y2="90" id="spray_grad_'+id+'" gradientUnits="userSpaceOnUse">\
             <stop offset="0" style="stop-color:#0000ff;stop-opacity:1" />\
             <stop offset="1" style="stop-color:#bb5500;stop-opacity:1"  />\
             </linearGradient>\
-            <pattern id="kies_png" x="0" y="0" height="15" width="15" patternUnits="userSpaceOnUse">\
+            <linearGradient x1="150" y1="300" x2="150" y2="550" id="fill_grad_'+id+'" gradientUnits="userSpaceOnUse">\
+            <stop id="fill_grad_top'+id+'"    offset="0" style="stop-color:#bb5500;stop-opacity:0" />\
+            <stop id="fill_grad_bottom'+id+'" offset="1" style="stop-color:'+data.water_color+';stop-opacity:1"  />\
+            </linearGradient>\
+            <pattern id="kies_'+id+'" x="0" y="0" height="15" width="15" patternUnits="userSpaceOnUse">\
                     <image height="15" width="15"  xlink:href="widgets/plumb/img/pattern.png"></image>\
             </pattern>\
             </defs>\
             <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
-            <rect id="' + id + '_fill" style="color:#000000" clip-path="url(#e_'+id+')" height="300" width="300" y="300" x="0" fill="' + data.water_color + '"/>\
-            <rect id="' + id + '_kies" style="color:#000000" clip-path="url(#e_'+id+')" height="450" width="300" y="250" x="0" fill="url(#kies_png)"/>\
+            <rect id="' + id + '_fill" clip-path="url(#e_'+id+')" height="400" width="300" y="200" x="0" fill="url(#fill_grad_'+id+')"/>\
+            <rect id="' + id + '_kies" clip-path="url(#e_'+id+')" height="450" width="300" y="250" x="0" fill="url(#kies_'+id+')"/>\
             <rect class="' + id + '_spray" style="color:#000000" fill="#bb5500" stroke="#000000" stroke-linecap="round" stroke-width="0" height="60" width="300" y="120" x="0"></rect>\
             <polyline points="0,180 300,180" stroke="black" stroke-width="5"></polyline>\
-            <path d="m0 50h300v500h-300z" fill="url(#d_'+id+')"/>\
+            <path d="m0 50h300v500h-300z" fill="url(#d_'+id+')" />\
             <path fill="url(#b_'+id+')" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
             <path fill="url(#c_'+id+')" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
-            <path class="' + id + '_spray" style="stroke-dasharray:10,7,3; stroke:url(#linearGradient4318);stroke-width:3;stroke-linecap:none;stroke-opacity:1" d="M 125,90 100,10 M 120,90 100,10 M 115,90 100,10 M 110,90 100,10 M 105,90 100,10 M 100,90 100,10 M 95,90 100,10 M 90,90 100,10 M 85,90 100,10 M 80,90 100,10 M 75,90 100,10"></path>\
-            <path class="' + id + '_spray" style="stroke-dasharray:10,7,3; stroke:url(#linearGradient4318);stroke-width:3;stroke-linecap:none;stroke-opacity:1" d="M 225,90 200,10 M 220,90 200,10 M 215,90 200,10 M 210,90 200,10 M 205,90 200,10 M 200,90 200,10 M 195,90 200,10 M 190,90 200,10 M 185,90 200,10 M 180,90 200,10 M 175,90 200,10"></path>\
+            <path class="' + id + '_spray" style="stroke-dasharray:10,7,3; stroke:url(#spray_grad_'+id+');stroke-width:3;stroke-linecap:none;stroke-opacity:1" d="M 150,120 100,5 M 140,120 100,5 M 130,120 100,5 M 120,120 100,5 M 110,120 100,5 M 100,120 100,5 M  90,120 100,5 M  80,120 100,5 M  70,120 100,5 M  60,120 100,5 M  50,120 100,10"></path>\
+            <path class="' + id + '_spray" style="stroke-dasharray:10,7,3; stroke:url(#spray_grad_'+id+');stroke-width:3;stroke-linecap:none;stroke-opacity:1" d="M 250,120 200,5 M 240,120 200,5 M 230,120 200,5 M 220,120 200,5 M 210,120 200,5 M 200,120 200,5 M 190,120 200,5 M 180,120 200,5 M 170,120 200,5 M 160,120 200,5 M 150,120 200,10"></path>\
             <animate attributeName="stroke-dashoffset" begin="0s"  from="0" to="40" dur="1s"  repeatCount="indefinite"></animate>\
             </svg>\
             ');
@@ -2041,11 +2044,26 @@
                         $("." + id + "_spray").hide()
                     }
                 }
-                if (self.conTop == event.from) {
+               if (self.conRight == event.from) {
+                    console.log("event von rechts")
                     if (event.status == true) {
-                        $("." + id + "_spray").show()
+                        $('#fill_grad_top'+id).css("stop-opacity","1");
+
+
+                        var ev = {
+                            type: "plumb_change",
+                            from: id,
+                            status: true,
+                            color: {
+                                c_from: id,
+                                c_default: event.color.c_default,
+                                c: data.water_color
+                            }
+
+                        };
+                        $("#" + self.conBottom).trigger(ev);
                     } else {
-                        $("." + id + "_spray").hide()
+                        $('#fill_grad_top'+id).css("stop-opacity","0")
                     }
                 }
 
@@ -2487,7 +2505,7 @@
         data-vis-type="val"
         data-vis-name="valve_H"
         data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 10, 5 ],"aspectRatio": true}' style=" width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 10, 5 ],"aspectRatio": true}' style=" width: 40px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_h(el, data) %>>
 			<div class="valve_h " >
 			    <div class="plumb_valve_l"></div>

@@ -25,10 +25,10 @@ body{
 }
 
 div#vis_container {
-    width: -webkit-calc(100% - 5px);
-    width: calc(100% - 2px);
-    height: -webkit-calc(100% - 30px);
-    height: calc(100% - 30px);
+    width: -webkit-calc(100% - 5px)!important;
+    width: calc(100% - 2px)!important;
+    height: -webkit-calc(100% - 30px)!important;
+    height: calc(100% - 30px)!important;
     position: relative;
     overflow: auto;
     border-bottom-width: 0px;
