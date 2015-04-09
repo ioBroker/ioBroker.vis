@@ -498,10 +498,10 @@ var vis = {
         // Because of background, set the width and height of the view
         var width = parseInt(this.views[view].settings.sizex, 10);
         var height = parseInt(this.views[view].settings.sizey, 10);
-        if (!width || width < $(window).width()) {
+        if (!width || width < $("#vis_container").width()) {
             width = '100%';
         }
-        if (!height || height < $(window).height()) {
+        if (!height || height < $("#vis_container").height()) {
             height = '100%';
         }
         $view.css({width: width});

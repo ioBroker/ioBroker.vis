@@ -12,6 +12,8 @@ div#vis_container {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    width: 100%;
+     height: 100%;
 }
 
 .dashui-inspect-css {

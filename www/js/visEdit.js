@@ -3210,10 +3210,10 @@ vis = $.extend(true, vis, {
             }
 
             $('#widget_helper_' + wid).css({
-                    left:   pos.left - 2,
-                    top:    pos.top  - 2,
-                    height: $widget.outerHeight() + 1,
-                    width:  $widget.outerWidth()  + 1
+                    left:   pos.left - 3,
+                    top:    pos.top  - 3,
+                    height: $widget.outerHeight() + 2,
+                    width:  $widget.outerWidth()  + 2
                 }
             ).show();
         } else {
@@ -4037,21 +4037,25 @@ vis = $.extend(true, vis, {
 
             },
             drag:   function (event, ui) {
-
                 var moveX = ui.position.left - origX;
                 var moveY = ui.position.top  - origY;
 
                 origX = ui.position.left;
                 origY = ui.position.top;
-
+                console.log(moveX + " " +moveY)
                 for (var i = 0; i < that.activeWidgets.length; i++) {
                     var mWidget = document.getElementById(that.activeWidgets[i]);
                     var $mWidget = $(mWidget);
-                    var pos = $mWidget.position();
+                    var pos = {
+                        left : parseInt($mWidget.css("left")),
+                        top : parseInt($mWidget.css("top"))
+                    }
+                    console.log(pos)
                     var x = pos.left + moveX;
                     var y = pos.top  + moveY;
 
-                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 2, top: y - 2});
+
+                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 3, top: y - 3});
 
                     if (ui.helper.attr('id') != that.activeWidgets[i]) $mWidget.css({left: x, top: y});
 
@@ -4125,8 +4129,8 @@ vis = $.extend(true, vis, {
                 },
                 resize: function (event, ui) {
                     $('.widget-helper').css({
-                        width:  ui.element.outerWidth()  + 1,
-                        height: ui.element.outerHeight() + 1});
+                        width:  ui.element.outerWidth()  + 2,
+                        height: ui.element.outerHeight() + 2});
                 }
             }, resizableOptions));
         }

@@ -8,8 +8,33 @@
             "group_conTop": {"en": "Connection top", "de": "Verbindung oben", "ru": "group_conTop"},
             "group_conBottom": {"en": "Connection bottom", "de": "Verbindung unten", "ru": "group_conBottom"},
             "group_conLeft": {"en": "Connection left", "de": "Verbindung links", "ru": "group_conLeft"},
-            "group_conRight": {"en": "Connection right", "de": "Verbindung rechts", "ru": "group_conRight"}
-        });
+            "group_conRight": {"en": "Connection right", "de": "Verbindung rechts", "ru": "group_conRight"},
+            "type": {"en": "type", "de": "type", "ru": "type"},
+        "fix": {"en": "fix", "de": "fix", "ru": "fix"},
+        "bool_on": {"en": "bool_on", "de": "bool_on", "ru": "bool_on"},
+        "bool_off": {"en": "bool_off", "de": "bool_off", "ru": "bool_off"},
+        "level_min": {"en": "level_min", "de": "level_min", "ru": "level_min"},
+        "level_max": {"en": "level_max", "de": "level_max", "ru": "level_max"},
+        "oid": {"en": "oid", "de": "oid", "ru": "oid"},
+        "color": {"en": "color", "de": "color", "ru": "color"},
+        "water_color": {"en": "water_color", "de": "water_color", "ru": "water_color"},
+        "conTop_show": {"en": "conTop_show", "de": "conTop_show", "ru": "conTop_show"},
+        "conTop_size": {"en": "conTop_size", "de": "conTop_size", "ru": "conTop_size"},
+        "conTop_pos": {"en": "conTop_pos", "de": "conTop_pos", "ru": "conTop_pos"},
+        "conTop": {"en": "conTop", "de": "conTop", "ru": "conTop"},
+        "conBottom_show": {"en": "conBottom_show", "de": "conBottom_show", "ru": "conBottom_show"},
+        "conBottom_size": {"en": "conBottom_size", "de": "conBottom_size", "ru": "conBottom_size"},
+        "conBottom_pos": {"en": "conBottom_pos", "de": "conBottom_pos", "ru": "conBottom_pos"},
+        "conBottom": {"en": "conBottom", "de": "conBottom", "ru": "conBottom"},
+        "conLeft_show": {"en": "conLeft_show", "de": "conLeft_show", "ru": "conLeft_show"},
+        "conLeft_size": {"en": "conLeft_size", "de": "conLeft_size", "ru": "conLeft_size"},
+        "conLeft_pos": {"en": "conLeft_pos", "de": "conLeft_pos", "ru": "conLeft_pos"},
+        "conLeft": {"en": "conLeft", "de": "conLeft", "ru": "conLeft"},
+        "conRight_show": {"en": "conRight_show", "de": "conRight_show", "ru": "conRight_show"},
+        "conRight_size": {"en": "conRight_size", "de": "conRight_size", "ru": "conRight_size"},
+        "conRight_pos": {"en": "conRight_pos", "de": "conRight_pos", "ru": "conRight_pos"},
+        "conRight": {"en": "conRight", "de": "conRight", "ru": "conRight"},
+    });
 
 
         $(document).keydown(function (e) {
@@ -48,8 +73,8 @@
                                 "left": $this.position().left + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) - 1 + "px",
-                                "top": $this.position().top - ui.draggable.height() - 1 + "px"
+                                "left": $this.position().left + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) - 3 + "px",
+                                "top": $this.position().top - ui.draggable.height() - 3 + "px"
                             });
                         }
                         setTimeout(function () {
@@ -75,8 +100,8 @@
                                 "top": $this.position().top + $this.height() + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) - 1 + "px",
-                                "top": $this.position().top + $this.height() - 1 + "px"
+                                "left": $this.position().left + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) - 3 + "px",
+                                "top": $this.position().top + $this.height() - 3 + "px"
                             });
                         }
                         setTimeout(function () {
@@ -103,8 +128,8 @@
                                 "top": $this.position().top + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left - ui.draggable.width() - 1 + "px",
-                                "top": $this.position().top + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) - 1 + "px"
+                                "left": $this.position().left - ui.draggable.width() - 3 + "px",
+                                "top": $this.position().top + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) - 3 + "px"
                             });
                         }
                         setTimeout(function () {
@@ -132,8 +157,8 @@
                                 "top": $this.position().top + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left + $this.width() - 1 + "px",
-                                "top": $this.position().top + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 ) - 1 + "px"
+                                "left": $this.position().left + $this.width() - 3 + "px",
+                                "top": $this.position().top + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 ) - 3 + "px"
                             });
                         }
                         setTimeout(function () {
@@ -2012,7 +2037,7 @@
             <radialGradient id="c_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
             <radialGradient id="b_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
             <linearGradient x1="25" y1="10" x2="25" y2="90" id="spray_grad_'+id+'" gradientUnits="userSpaceOnUse">\
-            <stop offset="0" style="stop-color:#0000ff;stop-opacity:1" />\
+            <stop offset="0.3" style="stop-color:#353575;stop-opacity:1" />\
             <stop offset="1" style="stop-color:#bb5500;stop-opacity:1"  />\
             </linearGradient>\
             <linearGradient x1="150" y1="300" x2="150" y2="550" id="fill_grad_'+id+'" gradientUnits="userSpaceOnUse">\
@@ -2505,7 +2530,7 @@
         data-vis-type="val"
         data-vis-name="valve_H"
         data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 10, 5 ],"aspectRatio": true}' style=" width: 40px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 8.75, 5 ],"aspectRatio": true}' style=" width: 35px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_h(el, data) %>>
 			<div class="valve_h " >
 			    <div class="plumb_valve_l"></div>
@@ -2693,7 +2718,7 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank Enteisung"
-        data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[0];oid;color[#C0C0C0]/color;water_color[#0000ff]/color;group.conTop;conTop_show/checkbox;conTop_size[20]/slider,5,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_size[20]/slider,5,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_size[20]/slider,5,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_size[20]/slider,5,50,5;conRight_pos[50]/slider,0,100,1;conRight">
+        data-vis-attrs="color[#C0C0C0]/color;water_color[#0000ff]/color;conTop,cnBottom;conLeft;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": false}' style="min-width: 140px; min-height: 270px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.ent_e_top(el, data) %>>
 			<div class="tank_ent-e " >
