@@ -69,12 +69,12 @@
                         vis.save();
                         if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
                             $(ui.draggable).css({
-                                "top": $this.position().top - ui.draggable.height() + "px",
-                                "left": $this.position().left + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px"
+                                "top":  parseInt($this.css("top")) - ui.draggable.height() + "px",
+                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) - 3 + "px",
-                                "top": $this.position().top - ui.draggable.height() - 3 + "px"
+                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) - 3 + "px",
+                                "top":  parseInt($this.css("top")) - ui.draggable.height() - 3 + "px"
                             });
                         }
                         setTimeout(function () {
@@ -96,12 +96,12 @@
                         vis.save();
                         if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
                             $(ui.draggable).css({
-                                "left": $this.position().left + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) + "px",
-                                "top": $this.position().top + $this.height() + "px"
+                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) + "px",
+                                "top": parseInt($this.css("top"))+ $this.height() + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) - 3 + "px",
-                                "top": $this.position().top + $this.height() - 3 + "px"
+                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) - 3 + "px",
+                                "top": parseInt($this.css("top")) + $this.height() - 3 + "px"
                             });
                         }
                         setTimeout(function () {
@@ -124,12 +124,12 @@
                         if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
 
                             $(ui.draggable).css({
-                                "left": $this.position().left - ui.draggable.width() + "px",
-                                "top": $this.position().top + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px"
+                                "left": parseInt($this.css("left")) - ui.draggable.width() + "px",
+                                "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left - ui.draggable.width() - 3 + "px",
-                                "top": $this.position().top + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) - 3 + "px"
+                                "left": parseInt($this.css("left")) - ui.draggable.width() - 3 + "px",
+                                "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) - 3 + "px"
                             });
                         }
                         setTimeout(function () {
@@ -153,12 +153,12 @@
                         if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
 
                             $(ui.draggable).css({
-                                "left": $this.position().left + $this.width() + "px",
-                                "top": $this.position().top + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 ) + "px"
+                                "left": parseInt($this.css("left")) + $this.width() + "px",
+                                "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": $this.position().left + $this.width() - 3 + "px",
-                                "top": $this.position().top + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 ) - 3 + "px"
+                                "left": parseInt($this.css("left")) + $this.width() - 3 + "px",
+                                "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 ) - 3 + "px"
                             });
                         }
                         setTimeout(function () {
@@ -182,8 +182,8 @@
                         var dt = ui.draggable[0].offsetTop;
                         var dw = ui.draggable[0].offsetWidth;
                         var dh = ui.draggable[0].offsetHeight;
-                        var cl = $this.position().left + ($this.width() / 2) - 10;
-                        var ct = $this.position().top + ($this.height() / 2) - 10;
+                        var cl = parseInt($this.css("left")) + ($this.width() / 2) - 10;
+                        var ct = parseInt($this.css("top")) + ($this.height() / 2) - 10;
 
 
                         var data = {
@@ -2087,6 +2087,28 @@
 
                         };
                         $("#" + self.conBottom).trigger(ev);
+                    } else {
+                        $('#fill_grad_top'+id).css("stop-opacity","0")
+                    }
+                }
+                if (self.conBottom == event.from) {
+                    console.log("event von unten")
+                    if (event.status == true) {
+                        $('#fill_grad_top'+id).css("stop-opacity","1");
+
+
+                        var ev = {
+                            type: "plumb_change",
+                            from: id,
+                            status: true,
+                            color: {
+                                c_from: id,
+                                c_default: event.color.c_default,
+                                c: "#bb5500"
+                            }
+
+                        };
+                        $("#" + self.conRight).trigger(ev);
                     } else {
                         $('#fill_grad_top'+id).css("stop-opacity","0")
                     }
