@@ -24,7 +24,7 @@ body{
     outline: none;
 }
 
-div#vis_container {
+.vis_container {
     width: -webkit-calc(100% - 5px)!important;
     width: calc(100% - 2px)!important;
     height: -webkit-calc(100% - 30px)!important;

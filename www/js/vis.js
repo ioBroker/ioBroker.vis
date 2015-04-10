@@ -461,6 +461,7 @@ var vis = {
             }
         }
 
+
         $('#active_view').html(this.activeView);
 
         // Navigation
@@ -476,6 +477,10 @@ var vis = {
             }
         this.initialized = true;
         // If this function called earlier, it makes problems under FireFox.
+        if(this.views["_project"]){
+            this.renderView("_project",false,true);
+        }
+
         this.changeView(this.activeView);
     },
     initViewObject: function () {

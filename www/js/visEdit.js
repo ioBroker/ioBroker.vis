@@ -1486,7 +1486,7 @@ vis = $.extend(true, vis, {
         //$select_set.html('');
         $select_set.append('<option value="all">*</option>');
         for (i = 0; i < this.widgetSets.length; i++) {
-            if (this.widgetSets[i].name !== undefined) {
+            if (this.widgetSets[i].name !== undefined ) {
                 $select_set.append('<option value="' + this.widgetSets[i].name + '">' + this.widgetSets[i].name + '</option>');
             } else {
                 $select_set.append('<option value="' + this.widgetSets[i] + '">' + this.widgetSets[i] + '</option>');
@@ -3971,6 +3971,12 @@ vis = $.extend(true, vis, {
             $('#inspect_view_theme').val(this.views[view].settings.theme);
         }
         $('#inspect_view_theme').selectmenu('refresh');
+
+
+
+        if(view == "_project"){
+            wid_prev
+        }
     },
     dragging: false,
     draggable: function (obj) {
@@ -4005,7 +4011,10 @@ vis = $.extend(true, vis, {
                 for (var i = 0; i < that.activeWidgets.length; i++) {
                     var wid = that.activeWidgets[i];
                     var $wid = $('#' + that.activeWidgets[i]);
-                    var pos = $wid.position();
+                    var pos = {
+                        left : parseInt($wid.css("left")),
+                        top : parseInt($wid.css("top"))
+                    };
                     if (!that.views[that.activeView].widgets[wid].style) that.views[that.activeView].widgets[wid].style = {};
 
                     if (typeof pos.left == 'string' && pos.left.indexOf('px') == -1) {
@@ -4039,21 +4048,17 @@ vis = $.extend(true, vis, {
             drag:   function (event, ui) {
                 var moveX = ui.position.left - origX;
                 var moveY = ui.position.top  - origY;
-
                 origX = ui.position.left;
                 origY = ui.position.top;
-                console.log(moveX + " " +moveY)
                 for (var i = 0; i < that.activeWidgets.length; i++) {
                     var mWidget = document.getElementById(that.activeWidgets[i]);
                     var $mWidget = $(mWidget);
                     var pos = {
                         left : parseInt($mWidget.css("left")),
                         top : parseInt($mWidget.css("top"))
-                    }
-                    console.log(pos)
+                    };
                     var x = pos.left + moveX;
                     var y = pos.top  + moveY;
-
 
                     $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 3, top: y - 3});
 
@@ -4921,10 +4926,13 @@ $(document).keydown(function (e) {
         if ($container.hasClass('fullscreen')) {
             $("#attr_wrap").unbind("mouseenter").unbind("mouseleave");
             $("#pan_attr").show();
+            $container.addClass('vis_container')
             $container.removeClass('fullscreen').appendTo('#vis_wrap');
             $pan_attr.removeClass('fullscreen-pan-attr').appendTo('#panel_body');
 
+
         } else {
+            $container.removeClass('vis_container');
             $container.prependTo('body').addClass('fullscreen');
             $pan_attr.prependTo('body').addClass('fullscreen-pan-attr');
 
