@@ -1,11 +1,12 @@
 {
   "settings": {
     "style": {
-      "background_class": "hq-background-blue-marine-lines"
+      "background_class": "hq-background-h-gradient-blue-4",
+      "background": ""
     },
     "theme": "redmond",
-    "sizex": "1024",
-    "sizey": "748",
+    "sizex": "1280",
+    "sizey": "1024",
     "hideDescription": false,
     "gridSize": ""
   },
@@ -16,71 +17,77 @@
         "oid": "dev1",
         "visibility-cond": "==",
         "visibility-val": 1,
-        "src": "./widgets/plumb/img/pumpe.png",
+        "src": "./widgets/plumb/img/pump_brunnen.png",
         "color_off": "#C0C0C0",
-        "color_on": "#353973",
-        "conTop_size": "20",
-        "conTop_pos": "50",
+        "color_on": "#292791",
+        "conTop_size": "10",
+        "conTop_pos": "49",
         "conBottom_size": "20",
         "conBottom_pos": "50",
         "conLeft_size": "20",
         "conLeft_pos": "50",
-        "conRight_size": "15",
+        "conRight_size": "20",
         "conRight_pos": "50",
-        "conRight_show": true,
-        "conRight": "w00002"
+        "conTop_show": true,
+        "conTop": "w00003"
       },
       "style": {
-        "left": "98px",
-        "top": "193px"
+        "left": "36px",
+        "top": "794px",
+        "width": "39px",
+        "height": "162px"
       },
       "widgetSet": "plumb"
     },
     "e00002": {
-      "tpl": "tplPlump_pipe_H",
+      "tpl": "tplPlump_tank_ent_e",
       "data": {
         "visibility-cond": "==",
         "visibility-val": 1,
-        "conLeft": "w00001",
-        "conRight": "w00003"
+        "color": "#C0C0C0",
+        "water_color": "#00fffd",
+        "conTop": "w00010",
+        "conRight": "w00011",
+        "conBottom": "w00017"
       },
       "style": {
-        "left": "163px",
-        "top": "288px",
-        "width": "108px",
-        "height": "15px"
+        "left": "167px",
+        "top": "89px",
+        "width": "130px",
+        "height": "325px"
       },
       "widgetSet": "plumb"
     },
     "e00003": {
-      "tpl": "tplPlump_bogen_tl",
-      "data": {
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conLeft": "w00002",
-        "conTop": "w00004"
-      },
-      "style": {
-        "left": "271px",
-        "top": "288px",
-        "width": "15px",
-        "height": "15px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00004": {
       "tpl": "tplPlump_pipe_V",
       "data": {
         "visibility-cond": "==",
         "visibility-val": 1,
-        "conBottom": "w00003",
+        "conBottom": "w00001",
         "conTop": "w00005"
       },
       "style": {
-        "left": "271px",
-        "top": "132px",
-        "width": "15px",
-        "height": "156px"
+        "left": "50px",
+        "top": "88px",
+        "width": "10px",
+        "height": "706px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00004": {
+      "tpl": "tplPlump_Tpiece_hb",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conBottom": "w00010",
+        "conLeft": "w00006",
+        "conRight": "w00008"
+      },
+      "style": {
+        "left": "202px",
+        "top": "68px",
+        "width": "30px",
+        "height": "30px"
       },
       "widgetSet": "plumb"
     },
@@ -89,68 +96,511 @@
       "data": {
         "visibility-cond": "==",
         "visibility-val": 1,
-        "conBottom": "w00004",
-        "conRight": "w00008"
+        "conBottom": "w00003",
+        "conRight": "w00006"
       },
       "style": {
-        "left": "271px",
-        "top": "117px",
-        "width": "15px",
-        "height": "15px"
+        "left": "50px",
+        "top": "78px",
+        "width": "10px",
+        "height": "10px"
       },
       "widgetSet": "plumb"
     },
     "e00006": {
-      "tpl": "tplPlump_Tpiece_hb",
-      "data": {
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conLeft": "w00008",
-        "conRight": "w00011",
-        "conBottom": "w00006"
-      },
-      "style": {
-        "left": "386px",
-        "top": "102px",
-        "width": "45px",
-        "height": "45px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00007": {
       "tpl": "tplPlump_pipe_H",
       "data": {
         "visibility-cond": "==",
         "visibility-val": 1,
-        "conRight": "w00007",
+        "conRight": "w00004",
         "conLeft": "w00005"
       },
       "style": {
-        "left": "286px",
-        "top": "117px",
+        "left": "60px",
+        "top": "78px",
+        "width": "142px",
+        "height": "10px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00007": {
+      "tpl": "tplPlump_bogen_bl",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conLeft": "w00008",
+        "conBottom": "w00009"
+      },
+      "style": {
+        "left": "252px",
+        "top": "78px",
+        "width": "10px",
+        "height": "10px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00008": {
+      "tpl": "tplPlump_pipe_H",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conLeft": "w00004",
+        "conRight": "w00007"
+      },
+      "style": {
+        "left": "232px",
+        "top": "78px",
+        "width": "20px",
+        "height": "10px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00009": {
+      "tpl": "tplPlump_pipe_V",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conTop": "w00007"
+      },
+      "style": {
+        "left": "252px",
+        "top": "88px",
+        "width": "10px",
+        "height": "45px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00010": {
+      "tpl": "tplPlump_pipe_V",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conTop": "w00004",
+        "conBottom": "w00002"
+      },
+      "style": {
+        "left": "212px",
+        "top": "98px",
+        "width": "10px",
+        "height": "37px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00011": {
+      "tpl": "tplPlump_pipe_H",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conLeft": "w00002",
+        "conRight": "w00016"
+      },
+      "style": {
+        "left": 196,
+        "top": "207px",
+        "width": "187px",
+        "height": "15px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00012": {
+      "tpl": "tplPlump_pipe_H",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conRight": "w00013"
+      },
+      "style": {
+        "left": 220,
+        "top": "170px",
         "width": "100px",
         "height": "15px"
       },
       "widgetSet": "plumb"
     },
-    "e00008": {
+    "e00013": {
+      "tpl": "tplPlump_pump",
+      "data": {
+        "oid": "dev2",
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "src": "./widgets/plumb/img/pump_etaline.png",
+        "color_off": "#C0C0C0",
+        "color_on": "#bb5500",
+        "conTop_size": "20",
+        "conTop_pos": "86",
+        "conBottom_size": "20",
+        "conBottom_pos": "50",
+        "conLeft_size": "15",
+        "conLeft_pos": "70",
+        "conRight_size": "15",
+        "conRight_pos": "71",
+        "conLeft": "w00012",
+        "conLeft_show": true,
+        "conRight_show": true,
+        "conRight": "w00014"
+      },
+      "style": {
+        "left": 320,
+        "top": "136px",
+        "width": "63px",
+        "height": "63px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00014": {
       "tpl": "tplPlump_bogen_bl",
       "data": {
         "visibility-cond": "==",
         "visibility-val": 1,
-        "conLeft": "w00011",
-        "conBottom": "w00010"
+        "conLeft": "w00013",
+        "conBottom": "w00015"
       },
       "style": {
-        "left": "455px",
-        "top": "117px",
+        "left": 383,
+        "top": "170px",
         "width": "15px",
         "height": "15px"
       },
       "widgetSet": "plumb"
     },
-    "e00009": {
-      "tpl": "tplPlump_tank_ent_e",
+    "e00015": {
+      "tpl": "tplPlump_pipe_V",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conTop": "w00014",
+        "conBottom": "w00016"
+      },
+      "style": {
+        "left": 383,
+        "top": "185px",
+        "width": "15px",
+        "height": "22px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00016": {
+      "tpl": "tplPlump_bogen_tl",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conTop": "w00015",
+        "conLeft": "w00011"
+      },
+      "style": {
+        "left": 383,
+        "top": "207px",
+        "width": "15px",
+        "height": "15px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00017": {
+      "tpl": "tplPlump_pipe_V",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conTop": "w00002",
+        "conBottom": "w00018"
+      },
+      "style": {
+        "left": 231,
+        "top": "354px",
+        "width": "15px",
+        "height": "100px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00018": {
+      "tpl": "tplPlump_Tpiece_ht",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conTop": "w00017",
+        "conRight": "w00019",
+        "conLeft": "w00020"
+      },
+      "style": {
+        "left": 216,
+        "top": "454px",
+        "width": "45px",
+        "height": "45px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00019": {
+      "tpl": "tplPlump_valve_H",
+      "data": {
+        "oid": "dev3",
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conLeft": "w00018",
+        "conRight": "w00021",
+        "ctrl": true
+      },
+      "style": {
+        "left": 261,
+        "top": "469px",
+        "width": "26px",
+        "height": "15px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00020": {
+      "tpl": "tplPlump_pipe_H",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conLeft": "w00019",
+        "conRight": "w00023"
+      },
+      "style": {
+        "left": 287,
+        "top": "469px",
+        "width": "147px",
+        "height": "15px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00021": {
+      "tpl": "tplPlump_tank_simple",
+      "data": {
+        "oid": "dev4",
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "type": "level",
+        "fix": "50",
+        "bool_on": "90",
+        "bool_off": "20",
+        "level_min": "0",
+        "level_max": "100",
+        "color": "#C0C0C0",
+        "water_color": "#0000ff",
+        "conTop_size": "15",
+        "conTop_pos": "50",
+        "conBottom_size": "15",
+        "conBottom_pos": "50",
+        "conLeft_size": "20",
+        "conLeft_pos": "50",
+        "conRight_size": "20",
+        "conRight_pos": "50",
+        "conTop_show": true,
+        "conTop": "w00025",
+        "conBottom_show": true,
+        "conBottom": "w00030",
+        "is_filter": true
+      },
+      "style": {
+        "left": 502,
+        "top": "149px",
+        "width": "141px",
+        "height": "256px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00022": {
+      "tpl": "tplPlump_pipe_V",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conBottom": "w00023",
+        "conTop": "w00029"
+      },
+      "style": {
+        "left": 448,
+        "top": "134px",
+        "width": "15px",
+        "height": "320px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00023": {
+      "tpl": "tplPlump_Tpiece_hb",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conBottom": "w00022",
+        "conLeft": "w00026",
+        "conRight": "w00027"
+      },
+      "style": {
+        "left": 550,
+        "top": "104px",
+        "width": "45px",
+        "height": "45px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00024": {
+      "tpl": "tplPlump_valve_H",
+      "data": {
+        "oid": "a",
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conRight": "w00025",
+        "conLeft": "w00028",
+        "ctrl": true
+      },
+      "style": {
+        "left": 524,
+        "top": "119px",
+        "width": "26px",
+        "height": "15px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00025": {
+      "tpl": "tplPlump_valve_H",
+      "data": {
+        "oid": "b",
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conLeft": "w00025",
+        "ctrl": true
+      },
+      "style": {
+        "left": 595,
+        "top": "119px",
+        "width": "26px",
+        "height": "15px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00026": {
+      "tpl": "tplPlump_pipe_H",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conRight": "w00026",
+        "conLeft": "w00029"
+      },
+      "style": {
+        "left": 463,
+        "top": "119px",
+        "width": "61px",
+        "height": "15px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00027": {
+      "tpl": "tplPlump_bogen_br",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conRight": "w00028",
+        "conBottom": "w00024"
+      },
+      "style": {
+        "left": 448,
+        "top": "119px",
+        "width": "15px",
+        "height": "15px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00028": {
+      "tpl": "tplPlump_Tpiece_ht",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conLeft": "w00021",
+        "conTop": "w00024",
+        "conRight": "w00035"
+      },
+      "style": {
+        "left": 433,
+        "top": "454px",
+        "width": "45px",
+        "height": "45px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00029": {
+      "tpl": "tplPlump_pipe_V",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conTop": "w00022",
+        "conBottom": "w00032"
+      },
+      "style": {
+        "left": 565,
+        "top": "405px",
+        "width": "15px",
+        "height": "49px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00030": {
+      "tpl": "tplPlump_Tpiece_ht",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conLeft": "w00033",
+        "conRight": "w00034",
+        "conTop": "w00030"
+      },
+      "style": {
+        "left": 550,
+        "top": "454px",
+        "width": "45px",
+        "height": "45px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00031": {
+      "tpl": "tplPlump_valve_H",
+      "data": {
+        "oid": "c",
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conRight": "w00032",
+        "conLeft": "w00035",
+        "ctrl": true
+      },
+      "style": {
+        "left": 524,
+        "top": "469px",
+        "width": "26px",
+        "height": "15px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00032": {
+      "tpl": "tplPlump_valve_H",
+      "data": {
+        "oid": "d",
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conLeft": "w00032",
+        "ctrl": true
+      },
+      "style": {
+        "left": 595,
+        "top": "469px",
+        "width": "26px",
+        "height": "15px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00033": {
+      "tpl": "tplPlump_pipe_H",
+      "data": {
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conLeft": "w00023",
+        "conRight": "w00033"
+      },
+      "style": {
+        "left": 476,
+        "top": "469px",
+        "width": "48px",
+        "height": "15px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00034": {
+      "tpl": "tplPlump_tank_simple",
       "data": {
         "oid": "nothing_selected",
         "visibility-cond": "==",
@@ -171,171 +621,20 @@
         "conLeft_pos": "50",
         "conRight_size": "20",
         "conRight_pos": "50",
-        "conTop": "w00007",
-        "conRight": "w00018"
+        "conBottom_show": false,
+        "is_filter": false
       },
       "style": {
-        "left": "341px",
-        "top": "132px",
-        "width": "190px",
-        "height": "490px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00010": {
-      "tpl": "tplPlump_pipe_V",
-      "data": {
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conTop": "w00009"
-      },
-      "style": {
-        "left": "455px",
-        "top": "132px",
-        "width": "15px",
-        "height": "73px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00011": {
-      "tpl": "tplPlump_pipe_H",
-      "data": {
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conLeft": "w00007",
-        "conRight": "w00009"
-      },
-      "style": {
-        "left": "431px",
-        "top": "117px",
-        "width": "24px",
-        "height": "15px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00012": {
-      "tpl": "tplPlump_pipe_H",
-      "data": {
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conRight": "w00013"
-      },
-      "style": {
-        "left": "481px",
-        "top": "251px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00013": {
-      "tpl": "tplPlump_pump",
-      "data": {
-        "oid": "dev2",
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "src": "./widgets/plumb/img/pumpe.png",
-        "color_off": "#C0C0C0",
-        "color_on": "#bb5500",
-        "conTop_size": "20",
-        "conTop_pos": "50",
-        "conBottom_size": "20",
-        "conBottom_pos": "50",
-        "conLeft_size": "20",
-        "conLeft_pos": "83",
-        "conRight_size": "20",
-        "conRight_pos": "83",
-        "conLeft": "w00012",
-        "conRight_show": true,
-        "conLeft_show": true,
-        "conRight": "w00015"
-      },
-      "style": {
-        "left": "581px",
-        "top": "205px",
-        "width": "46px",
-        "height": "76px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00014": {
-      "tpl": "tplPlump_bogen_bl",
-      "data": {
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conLeft": "w00015",
-        "conBottom": "w00017"
-      },
-      "style": {
-        "left": "663px",
-        "top": "251px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00015": {
-      "tpl": "tplPlump_pipe_H",
-      "data": {
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conLeft": "w00013",
-        "conRight": "w00014"
-      },
-      "style": {
-        "left": "627px",
-        "top": "251px",
-        "width": "36px",
-        "height": "20px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00016": {
-      "tpl": "tplPlump_bogen_tl",
-      "data": {
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conTop": "w00017",
-        "conLeft": "w00018"
-      },
-      "style": {
-        "left": "663px",
-        "top": "311px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00017": {
-      "tpl": "tplPlump_pipe_V",
-      "data": {
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conTop": "w00014",
-        "conBottom": "w00016"
-      },
-      "style": {
-        "left": "663px",
-        "top": "271px",
-        "width": "20px",
-        "height": "40px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00018": {
-      "tpl": "tplPlump_pipe_H",
-      "data": {
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conRight": "w00016",
-        "conLeft": "w00006"
-      },
-      "style": {
-        "left": "474px",
-        "top": "311px",
-        "width": "189px",
-        "height": "20px"
+        "left": "915px",
+        "top": "155px",
+        "width": "137px",
+        "height": "256px"
       },
       "widgetSet": "plumb"
     }
   },
+  "name": "Übersicht",
   "rerender": false,
-  "filterList": [],
-  "activeWidgets": [
-    "w00006"
-  ]
+  "activeWidgets": [],
+  "filterList": []
 }

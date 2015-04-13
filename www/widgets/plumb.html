@@ -10,31 +10,31 @@
             "group_conLeft": {"en": "Connection left", "de": "Verbindung links", "ru": "group_conLeft"},
             "group_conRight": {"en": "Connection right", "de": "Verbindung rechts", "ru": "group_conRight"},
             "type": {"en": "type", "de": "type", "ru": "type"},
-        "fix": {"en": "fix", "de": "fix", "ru": "fix"},
-        "bool_on": {"en": "bool_on", "de": "bool_on", "ru": "bool_on"},
-        "bool_off": {"en": "bool_off", "de": "bool_off", "ru": "bool_off"},
-        "level_min": {"en": "level_min", "de": "level_min", "ru": "level_min"},
-        "level_max": {"en": "level_max", "de": "level_max", "ru": "level_max"},
-        "oid": {"en": "oid", "de": "oid", "ru": "oid"},
-        "color": {"en": "color", "de": "color", "ru": "color"},
-        "water_color": {"en": "water_color", "de": "water_color", "ru": "water_color"},
-        "conTop_show": {"en": "conTop_show", "de": "conTop_show", "ru": "conTop_show"},
-        "conTop_size": {"en": "conTop_size", "de": "conTop_size", "ru": "conTop_size"},
-        "conTop_pos": {"en": "conTop_pos", "de": "conTop_pos", "ru": "conTop_pos"},
-        "conTop": {"en": "conTop", "de": "conTop", "ru": "conTop"},
-        "conBottom_show": {"en": "conBottom_show", "de": "conBottom_show", "ru": "conBottom_show"},
-        "conBottom_size": {"en": "conBottom_size", "de": "conBottom_size", "ru": "conBottom_size"},
-        "conBottom_pos": {"en": "conBottom_pos", "de": "conBottom_pos", "ru": "conBottom_pos"},
-        "conBottom": {"en": "conBottom", "de": "conBottom", "ru": "conBottom"},
-        "conLeft_show": {"en": "conLeft_show", "de": "conLeft_show", "ru": "conLeft_show"},
-        "conLeft_size": {"en": "conLeft_size", "de": "conLeft_size", "ru": "conLeft_size"},
-        "conLeft_pos": {"en": "conLeft_pos", "de": "conLeft_pos", "ru": "conLeft_pos"},
-        "conLeft": {"en": "conLeft", "de": "conLeft", "ru": "conLeft"},
-        "conRight_show": {"en": "conRight_show", "de": "conRight_show", "ru": "conRight_show"},
-        "conRight_size": {"en": "conRight_size", "de": "conRight_size", "ru": "conRight_size"},
-        "conRight_pos": {"en": "conRight_pos", "de": "conRight_pos", "ru": "conRight_pos"},
-        "conRight": {"en": "conRight", "de": "conRight", "ru": "conRight"},
-    });
+            "fix": {"en": "fix", "de": "fix", "ru": "fix"},
+            "bool_on": {"en": "bool_on", "de": "bool_on", "ru": "bool_on"},
+            "bool_off": {"en": "bool_off", "de": "bool_off", "ru": "bool_off"},
+            "level_min": {"en": "level_min", "de": "level_min", "ru": "level_min"},
+            "level_max": {"en": "level_max", "de": "level_max", "ru": "level_max"},
+            "oid": {"en": "oid", "de": "oid", "ru": "oid"},
+            "color": {"en": "color", "de": "color", "ru": "color"},
+            "water_color": {"en": "water_color", "de": "water_color", "ru": "water_color"},
+            "conTop_show": {"en": "conTop_show", "de": "conTop_show", "ru": "conTop_show"},
+            "conTop_size": {"en": "conTop_size", "de": "conTop_size", "ru": "conTop_size"},
+            "conTop_pos": {"en": "conTop_pos", "de": "conTop_pos", "ru": "conTop_pos"},
+            "conTop": {"en": "conTop", "de": "conTop", "ru": "conTop"},
+            "conBottom_show": {"en": "conBottom_show", "de": "conBottom_show", "ru": "conBottom_show"},
+            "conBottom_size": {"en": "conBottom_size", "de": "conBottom_size", "ru": "conBottom_size"},
+            "conBottom_pos": {"en": "conBottom_pos", "de": "conBottom_pos", "ru": "conBottom_pos"},
+            "conBottom": {"en": "conBottom", "de": "conBottom", "ru": "conBottom"},
+            "conLeft_show": {"en": "conLeft_show", "de": "conLeft_show", "ru": "conLeft_show"},
+            "conLeft_size": {"en": "conLeft_size", "de": "conLeft_size", "ru": "conLeft_size"},
+            "conLeft_pos": {"en": "conLeft_pos", "de": "conLeft_pos", "ru": "conLeft_pos"},
+            "conLeft": {"en": "conLeft", "de": "conLeft", "ru": "conLeft"},
+            "conRight_show": {"en": "conRight_show", "de": "conRight_show", "ru": "conRight_show"},
+            "conRight_size": {"en": "conRight_size", "de": "conRight_size", "ru": "conRight_size"},
+            "conRight_pos": {"en": "conRight_pos", "de": "conRight_pos", "ru": "conRight_pos"},
+            "conRight": {"en": "conRight", "de": "conRight", "ru": "conRight"},
+        });
 
 
         $(document).keydown(function (e) {
@@ -69,12 +69,12 @@
                         vis.save();
                         if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
                             $(ui.draggable).css({
-                                "top":  parseInt($this.css("top")) - ui.draggable.height() + "px",
+                                "top": parseInt($this.css("top")) - ui.draggable.height() + "px",
                                 "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
                                 "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) - 3 + "px",
-                                "top":  parseInt($this.css("top")) - ui.draggable.height() - 3 + "px"
+                                "top": parseInt($this.css("top")) - ui.draggable.height() - 3 + "px"
                             });
                         }
                         setTimeout(function () {
@@ -97,7 +97,7 @@
                         if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
                             $(ui.draggable).css({
                                 "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) + "px",
-                                "top": parseInt($this.css("top"))+ $this.height() + "px"
+                                "top": parseInt($this.css("top")) + $this.height() + "px"
                             });
                             $(".widget-helper").css({
                                 "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) - 3 + "px",
@@ -173,8 +173,6 @@
                     hoverClass: "drop-hover",
                     tolerance: "touch",
                     drop: function (event, ui) {
-                        console.log(event)
-                        console.log(ui)
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
 
@@ -363,7 +361,6 @@
 
         },
         set_normal: function (id, event) {
-            //console.log("set_normal")
             var $this = $("#" + id);
             var self = vis.binds.plumb.data[id];
 
@@ -378,7 +375,6 @@
 
         },
         set_collision: function (id) {
-            console.log("set_collision")
 
             var $this = $("#" + id);
             var plumb = vis.binds.plumb.data;
@@ -414,7 +410,6 @@
 //            }
         },
         rest_collision: function (id, event) {
-            //console.log("reste_collision")
             var $this = $("#" + id);
             var plumb = vis.binds.plumb.data;
             var self = vis.binds.plumb.data[id];
@@ -759,8 +754,6 @@
             $this.bind("plumb_change", function (event) {
 
                 if (vis.states[data.oid + '.val'] >= 1) {
-                    console.log("pump_change");
-                    console.log(event)
                     var ev = {
                         type: "plumb_change",
                         from: id,
@@ -1023,10 +1016,10 @@
                 } else if (data.position == "left-center") {
                     width = "100%";
                     top = 0;
-                    left = ($this.width()/2) * -1
+                    left = ($this.width() / 2) * -1
                 } else if (data.position == "right-center") {
                     width = "100%";
-                    top= 0;
+                    top = 0;
                     left = ($this.width() / 2)
                 } else if (data.position == "top-left") {
                     top = ($this.height() / 2) * -1;
@@ -1083,7 +1076,7 @@
                     <g\
                      <g\
             transform="translate(0,0)" clip-path="url(#starfoo)">\
-                        <g style="stroke:'+data.water_color+';stroke-width:' + stroke + ';stroke-linecap:round;stroke-opacity:'+data.opacity+'" >\
+                        <g style="stroke:' + data.water_color + ';stroke-width:' + stroke + ';stroke-linecap:round;stroke-opacity:' + data.opacity + '" >\
                         <path d="M 250,500 250,0"/>\
                         <path d="M 293,496 207,3.8"/>\
                         <path d="M 335,485 165,14.7"/>\
@@ -1105,7 +1098,7 @@
                                 <animateTransform id="t_two" attributeName="transform" type="rotate" from="0 250 250" to=" 360 250 250" begin="0s" dur="' + time + '" repeatCount="indefinite"   />\
                         </g>\
                     </g>\
-                    <circle cx="250" cy="250" r="8"  fill="'+data.head_color+'"  />\
+                    <circle cx="250" cy="250" r="8"  fill="' + data.head_color + '"  />\
                 </svg>\
             ')
 
@@ -1163,8 +1156,6 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
-//console.log(self.color.c + " --- "+ event.color.c)
-                //console.log(self.color.c_from + " --- "+ event.color.c_from)
                 vis.binds.plumb.check(id, event)
             });
 
@@ -1200,7 +1191,6 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
-//                //console.log(event)
                 vis.binds.plumb.check(id, event)
             });
 
@@ -1441,9 +1431,13 @@
                 }
             });
 
+            var last_from;
             $this.bind("plumb_change", function (event) {
 
+                last_from = event.from;
+
                 if (vis.states[data.oid + '.val'] >= 1) {
+
                     vis.binds.plumb.check(id, event)
                 }
             });
@@ -1461,14 +1455,14 @@
                     $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) " + self_color});
                     $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) " + self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
 
-                    if (plumb[self.conLeft].status) {
+                    if (self.conLeft == last_from) {
                         ev.color = JSON.parse(JSON.stringify(plumb[self.conLeft].color));
                         self.color = ev.color;
 
                         $("#" + self.conRight).trigger(ev);
                     }
 
-                    if (plumb[self.conRight].status) {
+                    if (self.conRight == last_from) {
                         ev.color = JSON.parse(JSON.stringify(plumb[self.conRight].color));
                         self.color = ev.color;
 
@@ -1481,7 +1475,7 @@
                     $this.find(".plumb_valve_l").css({"border-color": "rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) " + self_color});
                     $this.find(".plumb_valve_r").css({"border-color": "rgba(0, 0, 0, 0) " + self_color + " rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)"})
 
-                    if (plumb[self.conLeft].status) {
+                    if (self.conLeft == last_from) {
                         ev.color = JSON.parse(JSON.stringify(plumb[self.conLeft].color));
 
                         ev.color.c = ev.color.c_default;
@@ -1489,15 +1483,15 @@
                         self.color = ev.color;
 
 
-                        $("#" + self.conLeft).trigger(ev);
+                        $("#" + self.conRight).trigger(ev);
                     }
 
-                    if (plumb[self.conRight].status) {
+                    if (self.conRight == last_from) {
                         ev.color = JSON.parse(JSON.stringify(plumb[self.conRight].color));
                         ev.color.c = ev.color.c_default;
                         ev.status = false;
                         self.color = ev.color;
-                        $("#" + self.conRight).trigger(ev);
+                        $("#" + self.conLeft).trigger(ev);
                     }
                 }
             }
@@ -1599,14 +1593,14 @@
                     self.color = ev.color;
                     self.color_from = ev.color_from;
 
-                    //console.log(ev)
+
                     $("#" + self.conBottom).trigger(ev);
                 }
 
                 if (plumb[self.conBottom].status) {
                     ev.color = JSON.parse(JSON.stringify(plumb[self.conBottom].color));
                     self.color = ev.color;
-                    //console.log(ev)
+
                     $("#" + self.conTop).trigger(ev);
                 }
 
@@ -1873,8 +1867,6 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
-//console.log(self.color.c + " --- "+ event.color.c)
-                //console.log(self.color.c_from + " --- "+ event.color.c_from)
                 vis.binds.plumb.check(id, event)
             });
 
@@ -1911,8 +1903,6 @@
             vis.binds.plumb.plumb_drop($this);
 
             $this.bind("plumb_change", function (event) {
-//console.log(self.color.c + " --- "+ event.color.c)
-                //console.log(self.color.c_from + " --- "+ event.color.c_from)
                 vis.binds.plumb.check(id, event)
             });
 
@@ -2022,42 +2012,42 @@
             preserveAspectRatio="none"\
              >\
             <defs>\
-            <clipPath id="e_'+id+'" clipPathUnits="userSpaceOnUse">\
+            <clipPath id="e_' + id + '" clipPathUnits="userSpaceOnUse">\
             <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
             </clipPath>\
-            <linearGradient id="d_'+id+'" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
+            <linearGradient id="d_' + id + '" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
             <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
             <stop stop-color="#000000" stop-opacity="0" offset=".5"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
-            <linearGradient id="a_'+id+'">\
+            <linearGradient id="a_' + id + '">\
             <stop stop-color="#000000" stop-opacity="0" offset="0"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
-            <radialGradient id="c_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
-            <radialGradient id="b_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
-            <linearGradient x1="25" y1="10" x2="25" y2="90" id="spray_grad_'+id+'" gradientUnits="userSpaceOnUse">\
+            <radialGradient id="c_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
+            <radialGradient id="b_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
+            <linearGradient x1="25" y1="10" x2="25" y2="90" id="spray_grad_' + id + '" gradientUnits="userSpaceOnUse">\
             <stop offset="0.3" style="stop-color:#353575;stop-opacity:1" />\
             <stop offset="1" style="stop-color:#bb5500;stop-opacity:1"  />\
             </linearGradient>\
-            <linearGradient x1="150" y1="300" x2="150" y2="550" id="fill_grad_'+id+'" gradientUnits="userSpaceOnUse">\
-            <stop id="fill_grad_top'+id+'"    offset="0" style="stop-color:#bb5500;stop-opacity:0" />\
-            <stop id="fill_grad_bottom'+id+'" offset="1" style="stop-color:'+data.water_color+';stop-opacity:1"  />\
+            <linearGradient x1="150" y1="300" x2="150" y2="550" id="fill_grad_' + id + '" gradientUnits="userSpaceOnUse">\
+            <stop id="fill_grad_top' + id + '"    offset="0" style="stop-color:#bb5500;stop-opacity:0" />\
+            <stop id="fill_grad_bottom' + id + '" offset="1" style="stop-color:' + data.water_color + ';stop-opacity:1"  />\
             </linearGradient>\
-            <pattern id="kies_'+id+'" x="0" y="0" height="15" width="15" patternUnits="userSpaceOnUse">\
+            <pattern id="kies_' + id + '" x="0" y="0" height="15" width="15" patternUnits="userSpaceOnUse">\
                     <image height="15" width="15"  xlink:href="widgets/plumb/img/pattern.png"></image>\
             </pattern>\
             </defs>\
             <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
-            <rect id="' + id + '_fill" clip-path="url(#e_'+id+')" height="400" width="300" y="200" x="0" fill="url(#fill_grad_'+id+')"/>\
-            <rect id="' + id + '_kies" clip-path="url(#e_'+id+')" height="450" width="300" y="250" x="0" fill="url(#kies_'+id+')"/>\
+            <rect id="' + id + '_fill" clip-path="url(#e_' + id + ')" height="400" width="300" y="200" x="0" fill="url(#fill_grad_' + id + ')"/>\
+            <rect id="' + id + '_kies" clip-path="url(#e_' + id + ')" height="450" width="300" y="250" x="0" fill="url(#kies_' + id + ')"/>\
             <rect class="' + id + '_spray" style="color:#000000" fill="#bb5500" stroke="#000000" stroke-linecap="round" stroke-width="0" height="60" width="300" y="120" x="0"></rect>\
             <polyline points="0,180 300,180" stroke="black" stroke-width="5"></polyline>\
-            <path d="m0 50h300v500h-300z" fill="url(#d_'+id+')" />\
-            <path fill="url(#b_'+id+')" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
-            <path fill="url(#c_'+id+')" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
-            <path class="' + id + '_spray" style="stroke-dasharray:10,7,3; stroke:url(#spray_grad_'+id+');stroke-width:3;stroke-linecap:none;stroke-opacity:1" d="M 150,120 100,5 M 140,120 100,5 M 130,120 100,5 M 120,120 100,5 M 110,120 100,5 M 100,120 100,5 M  90,120 100,5 M  80,120 100,5 M  70,120 100,5 M  60,120 100,5 M  50,120 100,10"></path>\
-            <path class="' + id + '_spray" style="stroke-dasharray:10,7,3; stroke:url(#spray_grad_'+id+');stroke-width:3;stroke-linecap:none;stroke-opacity:1" d="M 250,120 200,5 M 240,120 200,5 M 230,120 200,5 M 220,120 200,5 M 210,120 200,5 M 200,120 200,5 M 190,120 200,5 M 180,120 200,5 M 170,120 200,5 M 160,120 200,5 M 150,120 200,10"></path>\
+            <path d="m0 50h300v500h-300z" fill="url(#d_' + id + ')" />\
+            <path fill="url(#b_' + id + ')" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
+            <path fill="url(#c_' + id + ')" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
+            <path class="' + id + '_spray" style="stroke-dasharray:10,7,3; stroke:url(#spray_grad_' + id + ');stroke-width:3;stroke-linecap:none;stroke-opacity:1" d="M 150,120 100,5 M 140,120 100,5 M 130,120 100,5 M 120,120 100,5 M 110,120 100,5 M 100,120 100,5 M  90,120 100,5 M  80,120 100,5 M  70,120 100,5 M  60,120 100,5 M  50,120 100,10"></path>\
+            <path class="' + id + '_spray" style="stroke-dasharray:10,7,3; stroke:url(#spray_grad_' + id + ');stroke-width:3;stroke-linecap:none;stroke-opacity:1" d="M 250,120 200,5 M 240,120 200,5 M 230,120 200,5 M 220,120 200,5 M 210,120 200,5 M 200,120 200,5 M 190,120 200,5 M 180,120 200,5 M 170,120 200,5 M 160,120 200,5 M 150,120 200,10"></path>\
             <animate attributeName="stroke-dashoffset" begin="0s"  from="0" to="40" dur="1s"  repeatCount="indefinite"></animate>\
             </svg>\
             ');
@@ -2069,11 +2059,9 @@
                         $("." + id + "_spray").hide()
                     }
                 }
-               if (self.conRight == event.from) {
-                    console.log("event von rechts")
+                if (self.conRight == event.from) {
                     if (event.status == true) {
-                        $('#fill_grad_top'+id).css("stop-opacity","1");
-
+                        $('#fill_grad_top' + id).css("stop-opacity", "1");
 
                         var ev = {
                             type: "plumb_change",
@@ -2088,13 +2076,12 @@
                         };
                         $("#" + self.conBottom).trigger(ev);
                     } else {
-                        $('#fill_grad_top'+id).css("stop-opacity","0")
+                        $('#fill_grad_top' + id).css("stop-opacity", "0")
                     }
                 }
                 if (self.conBottom == event.from) {
-                    console.log("event von unten")
                     if (event.status == true) {
-                        $('#fill_grad_top'+id).css("stop-opacity","1");
+                        $('#fill_grad_top' + id).css("stop-opacity", "1");
 
 
                         var ev = {
@@ -2110,12 +2097,13 @@
                         };
                         $("#" + self.conRight).trigger(ev);
                     } else {
-                        $('#fill_grad_top'+id).css("stop-opacity","0")
+                        $('#fill_grad_top' + id).css("stop-opacity", "0")
                     }
                 }
 
             });
         },
+
         tank_simple: function (el, data) {
             var $this = $(el).parent();
             var id = $this.attr("id");
@@ -2142,6 +2130,11 @@
 
             vis.binds.plumb.plumb_drop($this);
 
+            var kies = "";
+
+            if (data.is_filter == true) {
+                kies = '<rect id="' + id + '_kies" clip-path="url(#e_' + id + ')" height="550" width="300" y="150" x="0" fill="url(#kies_' + id + ')"/>';
+            }
 
             $this.find(".tank_simple_svg").append('\
                 <svg\
@@ -2151,26 +2144,30 @@
             preserveAspectRatio="none"\
              >\
             <defs>\
-            <clipPath id="e_'+id+'" clipPathUnits="userSpaceOnUse">\
+            <clipPath id="e_' + id + '" clipPathUnits="userSpaceOnUse">\
             <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
             </clipPath>\
-            <linearGradient id="d_'+id+'" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
+            <linearGradient id="d_' + id + '" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
             <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
             <stop stop-color="#000000" stop-opacity="0" offset=".5"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
-            <linearGradient id="a_'+id+'">\
+            <linearGradient id="a_' + id + '">\
             <stop stop-color="#000000" stop-opacity="0" offset="0"/>\
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
-            <radialGradient id="c_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
-            <radialGradient id="b_'+id+'" xlink:href="#a_'+id+'" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
+            <radialGradient id="c_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
+            <radialGradient id="b_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\<pattern id="kies_' + id + '" x="0" y="0" height="15" width="15" patternUnits="userSpaceOnUse">\
+            <pattern id="kies_' + id + '" x="0" y="0" height="15" width="15" patternUnits="userSpaceOnUse">\
+                    <image height="15" width="15"  xlink:href="widgets/plumb/img/pattern.png"></image>\
+            </pattern>\
             </defs>\
             <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
-            <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#e_'+id+')" height="300" width="300" y="300" x="0" fill="' + data.water_color + '"/>\
-            <path d="m0 50h300v500h-300z" fill="url(#d_'+id+')"/>\
-            <path fill="url(#b_'+id+')" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
-            <path fill="url(#c_'+id+')" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
+            <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#e_' + id + ')" height="300" width="300" y="300" x="0" fill="' + data.water_color + '"/>\
+            <path d="m0 50h300v500h-300z" fill="url(#d_' + id + ')"/>\
+                                    ' + kies + '\
+            <path fill="url(#b_' + id + ')" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
+            <path fill="url(#c_' + id + ')" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
             </svg>\
             ');
             setTimeout(function () {
@@ -2213,67 +2210,71 @@
 
                 if (data.conTop_show == true) {
                     self.cons.push("conTop");
-                    $this.find(".tank_simple").append('<div class="plumb_dock_top"></div>');
+
+                    $this.find(".tank_simple").append('<div id="' + id + '_dock_top_svg" class="plumb_dock_top"></div>');
+                    vis.binds.plumb.svg_pipe_v(id + "_dock_top");
+
                     s = (data.conTop_size || 20);
                     t = "-10";
                     l = (($this.width() - s) / 100 * (data.conTop_pos || 50));
-                    shadow = s / 2;
+
                     $this.find(".plumb_dock_top").css({
                         top: t + "px",
                         left: l + "px",
-                        height: "80px",
-                        width: s + "px",
-                        background: "silver",
-                        "box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'
-                    })
+                        height: "20px",
+                        width: s + "px"
+                    });
+
+                    $("#" + id + "_dock_top_fill").attr("fill", data.color_off);
                 }
+
                 if (data.conBottom_show == true) {
                     self.cons.push("conBottom");
-                    $this.find(".tank_simple").append('<div class="plumb_dock_bottom"></div>');
+                    $this.find(".tank_simple").append('<div id="' + id + '_dock_bottom_svg" class="plumb_dock_bottom"></div>');
+                    vis.binds.plumb.svg_pipe_v(id + "_dock_bottom");
                     s = (data.conBottom_size || 20);
                     t = "-10";
                     l = (($this.width() - s) / 100 * (data.conBottom_pos || 50));
-                    shadow = s / 2;
+
                     $this.find(".plumb_dock_bottom").css({
                         bottom: t + "px",
                         left: l + "px",
-                        height: "80px",
-                        width: s + "px",
-                        background: "silver",
-                        "box-shadow": 'inset ' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000,inset -' + shadow + 'px 0px ' + shadow + 'px -' + shadow + 'px #000'
-                    })
+                        height: "20px",
+                        width: s + "px"
+                    });
+                    $("#" + id + "_dock_bottom_fill").attr("fill", data.color_off);
                 }
                 if (data.conLeft_show == true) {
                     self.cons.push("conLeft");
-                    $this.find(".tank_simple").append('<div class="plumb_dock_left"></div>');
+                    $this.find(".tank_simple").append('<div id="' + id + '_dock_left_svg" class="plumb_dock_left"></div>');
+                    vis.binds.plumb.svg_pipe_h(id + "_dock_left");
                     s = (data.conLeft_size || 20);
                     l = "-10";
                     t = (($this.height() - s) / 100 * (data.conLeft_pos || 50));
-                    shadow = s / 2;
+
                     $this.find(".plumb_dock_left").css({
                         top: t + "px",
                         left: l + "px",
                         height: s + "px",
-                        width: "80px",
-                        background: "silver",
-                        "box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'
-                    })
+                        width: "20px"
+                    });
+                    $("#" + id + "_dock_left_fill").attr("fill", data.color_off);
                 }
                 if (data.conRight_show == true) {
-                    self.cons.push("conRight")
-                    $this.find(".tank_simple").append('<div class="plumb_dock_right"></div>');
+                    self.cons.push("conRight");
+                    $this.find(".tank_simple").append('<div id="' + id + '_dock_right_svg" class="plumb_dock_right"></div>');
+                    vis.binds.plumb.svg_pipe_h(id + "_dock_right");
                     s = (data.conRight_size || 20);
                     l = "-10";
                     t = (($this.height() - s) / 100 * (data.conRight_pos || 50));
-                    shadow = s / 2;
+
                     $this.find(".plumb_dock_right").css({
                         top: t + "px",
                         right: l + "px",
                         height: s + "px",
-                        width: "80px",
-                        background: "silver",
-                        "box-shadow": 'inset 0px ' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000,inset 0px -' + shadow + 'px ' + shadow + 'px -' + shadow + 'px #000'
-                    })
+                        width: "20px"
+                    });
+                    $("#" + id + "_dock_right_fill").attr("fill", data.color_off);
                 }
 
                 vis.binds.plumb.plumb_drop($this);
@@ -2297,7 +2298,7 @@
                 if (data.type == "level") {
                     step = 600 / (data.level_max - data.level_min );
                     val = (newVal - data.level_min) * step;
-                    if (val < 0){
+                    if (val < 0) {
                         val = 0
                     }
                     $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
@@ -2311,7 +2312,7 @@
                         val = data.bool_off * step;
                     }
 
-                    $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val );
+                    $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
 
                 } else if (data.type == "fix") {
 
@@ -2351,6 +2352,7 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_i-strinkler"
@@ -2373,6 +2375,7 @@
             <div class="plumb_dock_right"></div>
         </div>
     </div>
+
 
 
 
@@ -2403,6 +2406,7 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_pipe_V"
@@ -2427,6 +2431,7 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_pipe_H"
@@ -2446,6 +2451,7 @@
 			</div>
         </div>
     </div>
+
 </script>
 
 <script id="tplPlump_bogen_br"
@@ -2465,6 +2471,7 @@
 			</div>
         </div>
     </div>
+
 
 
 
@@ -2494,6 +2501,7 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_bogen_tr"
@@ -2513,6 +2521,7 @@
 			</div>
         </div>
     </div>
+
 
 
 
@@ -2542,6 +2551,7 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_valve_H"
@@ -2562,6 +2572,7 @@
 			</div>
         </div>
     </div>
+
 </script>
 
 <script id="tplPlump_valve_V"
@@ -2582,6 +2593,7 @@
 			</div>
         </div>
     </div>
+
 
 
 
@@ -2608,6 +2620,7 @@
          </div>
 
 
+
 </script>
 
 <script id="tplPlump_check_valve_V"
@@ -2627,6 +2640,7 @@
     			</div>
              </div>
          </div>
+
 
 
 </script>
@@ -2656,6 +2670,7 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_Tpiece_hb"
@@ -2676,6 +2691,7 @@
 			</div>
         </div>
     </div>
+
 
 
 
@@ -2707,6 +2723,7 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_Tpiece_vr"
@@ -2726,6 +2743,7 @@
 			</div>
         </div>
     </div>
+
 
 
 
@@ -2757,6 +2775,7 @@
 
 
 
+
 </script>
 
 <script id="tplPlump_tank_simple"
@@ -2766,7 +2785,7 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank"
-        data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[0];oid;color[#C0C0C0]/color;water_color[#0000ff]/color;group.conTop;conTop_show/checkbox;conTop_size[20]/slider,5,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_size[20]/slider,5,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_size[20]/slider,5,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_size[20]/slider,5,50,5;conRight_pos[50]/slider,0,100,1;conRight">
+        data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[0];oid;color[#C0C0C0]/color;water_color[#0000ff]/color;is_filter/checkbox;group.conTop;conTop_show/checkbox;conTop_size[20]/slider,5,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_size[20]/slider,5,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_size[20]/slider,5,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_size[20]/slider,5,50,5;conRight_pos[50]/slider,0,100,1;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t pl_b" data-vis-resizable='{}' style="min-width: 70px; min-height: 135px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tank_simple(el, data) %>>
 			<div class="tank_simple" >
@@ -2778,6 +2797,7 @@
 			</div>
         </div>
     </div>
+
 
 
 </script>
