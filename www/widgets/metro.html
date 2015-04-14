@@ -61,7 +61,7 @@
             "group_bg-and-text": {"en": "Background and label", "de": "Hintergrund und Titel", "ru": "Фон и надпись"},
             "group_dialog": {"en": "Dialog", "de": "Dialog", "ru": "Диалог"},
             "transform": {"en": "Transform", "de": "Druckeffekt", "ru": "Эффект нажатия"},
-            "hover": {"en": "Effect by hover", "de": "Effekt beim Scheben", "ru": "Реакция на курсор"},
+            "hover": {"en": "Hover effect", "de": "Hover-Effekt", "ru": "Реакция на курсор"},
             "oid-working": {"en": "Working state ID", "de": "In Arbeit Zustand ID", "ru": "'В работе' ID"},
             "min": {"en": "Min", "de": "Min", "ru": "Минимум"},
             "max": {"en": "Max", "de": "Max", "ru": "Максимум"},
@@ -157,7 +157,7 @@
         "Actual temp.": {"en": "Actual temp.", "de": "Ist-Temperatur", "ru": "Актуальная темп."},
         "Valve position": {"en": "Valve position", "de": "Ventilstellung", "ru": "Позиция вентиля"},
         "Target": {"en": "Target", "de": "Soll", "ru": "Должно"},
-        "Actual": {"en": "Target", "de": "Ist", "ru": "Сейчас"}
+        "Actual": {"en": "Now",    "de": "Ist",  "ru": "Сейчас"}
     });
 
     vis.navChangeCallbacks.push(function (view) {
@@ -1100,7 +1100,10 @@
 <script id="tplMetroTileHeating"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-attrs="set_oid/id;temp_oid/id;drive_oid/id;hover/checkbox;transform/checkbox;label;bg_class[bg-indigo]/nselect,,bg-black,bg-white,bg-lime,bg-green,bg-emerald,bg-teal,bg-cyan,bg-cobalt,bg-indigo,bg-violet,bg-pink,bg-magenta,bg-crimson,bg-red,bg-orange,bg-amber,bg-yellow,bg-brown,bg-olive,bg-steel,bg-mauve,bg-taupe,bg-gray,bg-dark,bg-darker,bg-transparent,bg-darkBrown,bg-darkCrimson,bg-darkMagenta,bg-darkIndigo,bg-darkCyan,bg-darkCobalt,bg-darkTeal,bg-darkEmerald,bg-darkGreen,bg-darkOrange,bg-darkRed,bg-darkPink,bg-darkViolet,bg-darkBlue,bg-lightBlue,bg-lightTeal,bg-lightOlive,bg-lightOrange,bg-lightPink,bg-lightRed,bg-lightGreen,ribbed-black,ribbed-white,ribbed-lime,ribbed-green,ribbed-emerald,ribbed-teal,ribbed-cyan,ribbed-cobalt,ribbed-indigo,ribbed-violet,ribbed-pink,ribbed-magenta,ribbed-crimson,ribbed-red,ribbed-orange,ribbed-amber,ribbed-yellow,ribbed-brown,ribbed-olive,ribbed-steel,ribbed-mauve,ribbed-taupe,ribbed-gray,ribbed-dark,ribbed-darker,ribbed-transparent,ribbed-darkBrown,ribbed-darkCrimson,ribbed-darkMagenta,ribbed-darkIndigo,ribbed-darkCyan,ribbed-darkCobalt,ribbed-darkTeal,ribbed-darkEmerald,ribbed-darkGreen,ribbed-darkOrange,ribbed-darkRed,ribbed-darkPink,ribbed-darkViolet,ribbed-darkBlue,ribbed-lightBlue,ribbed-lightTeal,ribbed-lightOlive,ribbed-lightOrange,ribbed-lightPink,ribbed-lightRed,ribbed-lightGreen;brand_bg_class[]/nselect,,bg-black,bg-white,bg-lime,bg-green,bg-emerald,bg-teal,bg-cyan,bg-cobalt,bg-indigo,bg-violet,bg-pink,bg-magenta,bg-crimson,bg-red,bg-orange,bg-amber,bg-yellow,bg-brown,bg-olive,bg-steel,bg-mauve,bg-taupe,bg-gray,bg-dark,bg-darker,bg-transparent,bg-darkBrown,bg-darkCrimson,bg-darkMagenta,bg-darkIndigo,bg-darkCyan,bg-darkCobalt,bg-darkTeal,bg-darkEmerald,bg-darkGreen,bg-darkOrange,bg-darkRed,bg-darkPink,bg-darkViolet,bg-darkBlue,bg-lightBlue,bg-lightTeal,bg-lightOlive,bg-lightOrange,bg-lightPink,bg-lightRed,bg-lightGreen,ribbed-black,ribbed-white,ribbed-lime,ribbed-green,ribbed-emerald,ribbed-teal,ribbed-cyan,ribbed-cobalt,ribbed-indigo,ribbed-violet,ribbed-pink,ribbed-magenta,ribbed-crimson,ribbed-red,ribbed-orange,ribbed-amber,ribbed-yellow,ribbed-brown,ribbed-olive,ribbed-steel,ribbed-mauve,ribbed-taupe,ribbed-gray,ribbed-dark,ribbed-darker,ribbed-transparent,ribbed-darkBrown,ribbed-darkCrimson,ribbed-darkMagenta,ribbed-darkIndigo,ribbed-darkCyan,ribbed-darkCobalt,ribbed-darkTeal,ribbed-darkEmerald,ribbed-darkGreen,ribbed-darkOrange,ribbed-darkRed,ribbed-darkPink,ribbed-darkViolet,ribbed-darkBlue,ribbed-lightBlue,ribbed-lightTeal,ribbed-lightOlive,ribbed-lightOrange,ribbed-lightPink,ribbed-lightRed,ribbed-lightGreen;group.slider;sliderColor/color;sliderCompleteColor/color;sliderMarkerColor/color"
+        data-vis-attrs="set_oid/id;temp_oid/id;drive_oid/id;hover/checkbox;transform/checkbox;label;"
+        data-vis-attrs0="bg_class[bg-indigo]/nselect,,bg-black,bg-white,bg-lime,bg-green,bg-emerald,bg-teal,bg-cyan,bg-cobalt,bg-indigo,bg-violet,bg-pink,bg-magenta,bg-crimson,bg-red,bg-orange,bg-amber,bg-yellow,bg-brown,bg-olive,bg-steel,bg-mauve,bg-taupe,bg-gray,bg-dark,bg-darker,bg-transparent,bg-darkBrown,bg-darkCrimson,bg-darkMagenta,bg-darkIndigo,bg-darkCyan,bg-darkCobalt,bg-darkTeal,bg-darkEmerald,bg-darkGreen,bg-darkOrange,bg-darkRed,bg-darkPink,bg-darkViolet,bg-darkBlue,bg-lightBlue,bg-lightTeal,bg-lightOlive,bg-lightOrange,bg-lightPink,bg-lightRed,bg-lightGreen,ribbed-black,ribbed-white,ribbed-lime,ribbed-green,ribbed-emerald,ribbed-teal,ribbed-cyan,ribbed-cobalt,ribbed-indigo,ribbed-violet,ribbed-pink,ribbed-magenta,ribbed-crimson,ribbed-red,ribbed-orange,ribbed-amber,ribbed-yellow,ribbed-brown,ribbed-olive,ribbed-steel,ribbed-mauve,ribbed-taupe,ribbed-gray,ribbed-dark,ribbed-darker,ribbed-transparent,ribbed-darkBrown,ribbed-darkCrimson,ribbed-darkMagenta,ribbed-darkIndigo,ribbed-darkCyan,ribbed-darkCobalt,ribbed-darkTeal,ribbed-darkEmerald,ribbed-darkGreen,ribbed-darkOrange,ribbed-darkRed,ribbed-darkPink,ribbed-darkViolet,ribbed-darkBlue,ribbed-lightBlue,ribbed-lightTeal,ribbed-lightOlive,ribbed-lightOrange,ribbed-lightPink,ribbed-lightRed,ribbed-lightGreen;"
+        data-vis-attrs1="brand_bg_class[]/nselect,,bg-black,bg-white,bg-lime,bg-green,bg-emerald,bg-teal,bg-cyan,bg-cobalt,bg-indigo,bg-violet,bg-pink,bg-magenta,bg-crimson,bg-red,bg-orange,bg-amber,bg-yellow,bg-brown,bg-olive,bg-steel,bg-mauve,bg-taupe,bg-gray,bg-dark,bg-darker,bg-transparent,bg-darkBrown,bg-darkCrimson,bg-darkMagenta,bg-darkIndigo,bg-darkCyan,bg-darkCobalt,bg-darkTeal,bg-darkEmerald,bg-darkGreen,bg-darkOrange,bg-darkRed,bg-darkPink,bg-darkViolet,bg-darkBlue,bg-lightBlue,bg-lightTeal,bg-lightOlive,bg-lightOrange,bg-lightPink,bg-lightRed,bg-lightGreen,ribbed-black,ribbed-white,ribbed-lime,ribbed-green,ribbed-emerald,ribbed-teal,ribbed-cyan,ribbed-cobalt,ribbed-indigo,ribbed-violet,ribbed-pink,ribbed-magenta,ribbed-crimson,ribbed-red,ribbed-orange,ribbed-amber,ribbed-yellow,ribbed-brown,ribbed-olive,ribbed-steel,ribbed-mauve,ribbed-taupe,ribbed-gray,ribbed-dark,ribbed-darker,ribbed-transparent,ribbed-darkBrown,ribbed-darkCrimson,ribbed-darkMagenta,ribbed-darkIndigo,ribbed-darkCyan,ribbed-darkCobalt,ribbed-darkTeal,ribbed-darkEmerald,ribbed-darkGreen,ribbed-darkOrange,ribbed-darkRed,ribbed-darkPink,ribbed-darkViolet,ribbed-darkBlue,ribbed-lightBlue,ribbed-lightTeal,ribbed-lightOlive,ribbed-lightOrange,ribbed-lightPink,ribbed-lightRed,ribbed-lightGreen;"
+        data-vis-attrs2="group.slider;sliderColor/color;sliderCompleteColor/color;sliderMarkerColor/color"
         data-vis-set="metro"
         data-vis-type="ctrl"
         data-vis-name="Tile Heating">
@@ -1114,9 +1117,9 @@
                 </div>
                 <div style="float: right; padding-top: 16px; padding-right: 12px;">
                     <table style="color:white;font-size:11px;display:inline-block;">
-                        <tr><td>Soll-Temperatur:</td><td><%= vis.states.attr(this.data.attr('set_oid') + '.val') ? vis.states.attr(this.data.attr('set_oid') + '.val').toFixed(1) : '' %>°C</td></tr>
-                        <tr><td>Ist-Temperatur:</td><td><%= vis.states.attr(this.data.attr('temp_oid') + '.val') ? vis.states.attr(this.data.attr('temp_oid') + '.val').toFixed(1) : '' %>°C</td></tr>
-                        <tr><td>Ventilstellung:</td><td><%= vis.states.attr(this.data.attr('drive_oid') + '.val') %>%</td></tr>
+                        <tr><td><%= _('Set temperature') %>:</td><td><%= vis.states.attr(this.data.attr('set_oid') + '.val')  ? vis.states.attr(this.data.attr('set_oid')  + '.val').toFixed(1) : '' %>°C</td></tr>
+                        <tr><td><%= _('Actual temp.') %>:</td><td><%=    vis.states.attr(this.data.attr('temp_oid') + '.val') ? vis.states.attr(this.data.attr('temp_oid') + '.val').toFixed(1) : '' %>°C</td></tr>
+                        <tr><td><%= _('Valve position') %>:</td><td><%=  vis.states.attr(this.data.attr('drive_oid') + '.val') %>%</td></tr>
                     </table>
                 </div>
                 <div style="clear: both; margin: 0px 12px;" data-oid="<%= this.data.attr('set_oid') %>" id="metroSlider_<%= this.data.attr("wid") %>" class="slider" data-role="slider"></div>
