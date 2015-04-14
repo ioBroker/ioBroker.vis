@@ -95,7 +95,8 @@ function main() {
                     type: 'object',
                     desc: 'Write object: {instance: "FFFFFFFFF", command: "changeView", data: "ViewName"} to change the view'
                 },
-                type: 'state'
+                type: 'state',
+                native: {}
             }, function () {
                 if (!(--count)) adapter.stop();
             }) ;
@@ -107,7 +108,7 @@ function main() {
     // Create common user CSS file
     count++;
     adapter.readFile('vis', 'css/vis-common-user.css', function (err, data) {
-        if (err || !data) {
+        if (err || data === null || data === undefined) {
             adapter.writeFile('vis', 'css/vis-common-user.css', '', function () {
                 if (!(--count)) adapter.stop();
             });
