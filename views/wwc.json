@@ -1,12 +1,12 @@
 {
   "settings": {
     "style": {
-      "background_class": "hq-background-h-gradient-blue-4",
+      "background_class": "hq-background-h-gradient-blue-1",
       "background": ""
     },
     "theme": "redmond",
-    "sizex": "1280",
-    "sizey": "1024",
+    "sizex": "1277",
+    "sizey": "1021",
     "hideDescription": false,
     "gridSize": ""
   },
@@ -21,7 +21,7 @@
         "color_off": "#C0C0C0",
         "color_on": "#292791",
         "conTop_size": "10",
-        "conTop_pos": "49",
+        "conTop_pos": "47",
         "conBottom_size": "20",
         "conBottom_pos": "50",
         "conLeft_size": "20",
@@ -329,24 +329,6 @@
       "widgetSet": "plumb"
     },
     "e00019": {
-      "tpl": "tplPlump_valve_H",
-      "data": {
-        "oid": "dev3",
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conLeft": "w00018",
-        "conRight": "w00021",
-        "ctrl": true
-      },
-      "style": {
-        "left": 261,
-        "top": "469px",
-        "width": "26px",
-        "height": "15px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00020": {
       "tpl": "tplPlump_pipe_H",
       "data": {
         "visibility-cond": "==",
@@ -355,50 +337,14 @@
         "conRight": "w00023"
       },
       "style": {
-        "left": 287,
-        "top": "469px",
-        "width": "147px",
+        "left": "293px",
+        "top": "468px",
+        "width": "140px",
         "height": "15px"
       },
       "widgetSet": "plumb"
     },
-    "e00021": {
-      "tpl": "tplPlump_tank_simple",
-      "data": {
-        "oid": "dev4",
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "type": "level",
-        "fix": "50",
-        "bool_on": "90",
-        "bool_off": "20",
-        "level_min": "0",
-        "level_max": "100",
-        "color": "#C0C0C0",
-        "water_color": "#0000ff",
-        "conTop_size": "15",
-        "conTop_pos": "50",
-        "conBottom_size": "15",
-        "conBottom_pos": "50",
-        "conLeft_size": "20",
-        "conLeft_pos": "50",
-        "conRight_size": "20",
-        "conRight_pos": "50",
-        "conTop_show": true,
-        "conTop": "w00025",
-        "conBottom_show": true,
-        "conBottom": "w00030",
-        "is_filter": true
-      },
-      "style": {
-        "left": 502,
-        "top": "149px",
-        "width": "141px",
-        "height": "256px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00022": {
+    "e00020": {
       "tpl": "tplPlump_pipe_V",
       "data": {
         "visibility-cond": "==",
@@ -414,13 +360,13 @@
       },
       "widgetSet": "plumb"
     },
-    "e00023": {
+    "e00021": {
       "tpl": "tplPlump_Tpiece_hb",
       "data": {
         "visibility-cond": "==",
         "visibility-val": 1,
         "conBottom": "w00022",
-        "conLeft": "w00026",
+        "conLeft": "w00022",
         "conRight": "w00027"
       },
       "style": {
@@ -431,58 +377,23 @@
       },
       "widgetSet": "plumb"
     },
-    "e00024": {
-      "tpl": "tplPlump_valve_H",
-      "data": {
-        "oid": "a",
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conRight": "w00025",
-        "conLeft": "w00028",
-        "ctrl": true
-      },
-      "style": {
-        "left": 524,
-        "top": "119px",
-        "width": "26px",
-        "height": "15px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00025": {
-      "tpl": "tplPlump_valve_H",
-      "data": {
-        "oid": "b",
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "conLeft": "w00025",
-        "ctrl": true
-      },
-      "style": {
-        "left": 595,
-        "top": "119px",
-        "width": "26px",
-        "height": "15px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00026": {
+    "e00022": {
       "tpl": "tplPlump_pipe_H",
       "data": {
         "visibility-cond": "==",
         "visibility-val": 1,
-        "conRight": "w00026",
+        "conRight": "w00027",
         "conLeft": "w00029"
       },
       "style": {
         "left": 463,
         "top": "119px",
-        "width": "61px",
+        "width": "56px",
         "height": "15px"
       },
       "widgetSet": "plumb"
     },
-    "e00027": {
+    "e00023": {
       "tpl": "tplPlump_bogen_br",
       "data": {
         "visibility-cond": "==",
@@ -498,7 +409,7 @@
       },
       "widgetSet": "plumb"
     },
-    "e00028": {
+    "e00024": {
       "tpl": "tplPlump_Tpiece_ht",
       "data": {
         "visibility-cond": "==",
@@ -509,13 +420,13 @@
       },
       "style": {
         "left": 433,
-        "top": "454px",
+        "top": "453px",
         "width": "45px",
         "height": "45px"
       },
       "widgetSet": "plumb"
     },
-    "e00029": {
+    "e00025": {
       "tpl": "tplPlump_pipe_V",
       "data": {
         "visibility-cond": "==",
@@ -524,19 +435,19 @@
         "conBottom": "w00032"
       },
       "style": {
-        "left": 565,
+        "left": "565px",
         "top": "405px",
         "width": "15px",
         "height": "49px"
       },
       "widgetSet": "plumb"
     },
-    "e00030": {
+    "e00026": {
       "tpl": "tplPlump_Tpiece_ht",
       "data": {
         "visibility-cond": "==",
         "visibility-val": 1,
-        "conLeft": "w00033",
+        "conLeft": "w00026",
         "conRight": "w00034",
         "conTop": "w00030"
       },
@@ -548,38 +459,111 @@
       },
       "widgetSet": "plumb"
     },
-    "e00031": {
-      "tpl": "tplPlump_valve_H",
+    "e00027": {
+      "tpl": "tplPlump_pipe_H",
       "data": {
-        "oid": "c",
         "visibility-cond": "==",
         "visibility-val": 1,
-        "conRight": "w00032",
-        "conLeft": "w00035",
-        "ctrl": true
+        "conLeft": "w00023",
+        "conRight": "w00026"
       },
       "style": {
-        "left": 524,
-        "top": "469px",
-        "width": "26px",
+        "left": "478px",
+        "top": "468px",
+        "width": "40px",
         "height": "15px"
       },
       "widgetSet": "plumb"
     },
-    "e00032": {
-      "tpl": "tplPlump_valve_H",
+    "e00028": {},
+    "e00029": {
+      "tpl": "tplFancyDarkAnAusWippe",
       "data": {
-        "oid": "d",
+        "oid": "dev1",
         "visibility-cond": "==",
         "visibility-val": 1,
-        "conLeft": "w00032",
+        "invert": false
+      },
+      "style": {
+        "left": "138px",
+        "top": "878px"
+      },
+      "widgetSet": "fancyswitch"
+    },
+    "e00030": {
+      "tpl": "tplPlump_valve_H",
+      "data": {
+        "oid": "dev3",
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conLeft": "w00018",
+        "conRight": "w00021",
         "ctrl": true
       },
       "style": {
-        "left": 595,
-        "top": "469px",
-        "width": "26px",
-        "height": "15px"
+        "left": "261px",
+        "top": "465px",
+        "width": "32px",
+        "height": "20px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00031": {
+      "tpl": "tplPlump_valve_H",
+      "data": {
+        "oid": "nothing_selected",
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "conRight": "w00025",
+        "conLeft": "w00028",
+        "ctrl": true
+      },
+      "style": {
+        "left": "518px",
+        "top": "116px"
+      },
+      "widgetSet": "plumb"
+    },
+    "e00032": {
+      "tpl": "tplPlump_tank_filter",
+      "data": {
+        "oid": "nothing_selected",
+        "visibility-cond": "==",
+        "visibility-val": 1,
+        "type": "fix",
+        "fix": "80",
+        "bool_on": "90",
+        "bool_off": "20",
+        "level_min": "0",
+        "level_max": "0",
+        "color": "#C0C0C0",
+        "water_color": "#0000ff",
+        "conTop_size": "15",
+        "conTop_pos": "50",
+        "conBottom_size": "15",
+        "conBottom_pos": "50",
+        "conLeft_size": "20",
+        "conLeft_pos": "50",
+        "conRight_size": "20",
+        "conRight_pos": "50",
+        "conTop": "w00025",
+        "conTop_show": true,
+        "conBottom_show": true,
+        "conBottom": "w00030",
+        "conRight": "w00026",
+        "top_water": "#0000ff",
+        "bottom_water": "#ff0003",
+        "conTop_water": "#0000ff",
+        "conBottom_water": "#0000ff",
+        "conLeft_water": "#0000ff",
+        "conRight_water": "#fffd00",
+        "conRight_show": true
+      },
+      "style": {
+        "left": "510px",
+        "top": "149px",
+        "width": "125px",
+        "height": "256px"
       },
       "widgetSet": "plumb"
     },
@@ -588,47 +572,11 @@
       "data": {
         "visibility-cond": "==",
         "visibility-val": 1,
-        "conLeft": "w00023",
-        "conRight": "w00033"
+        "conLeft": "w00022"
       },
       "style": {
-        "left": 476,
-        "top": "469px",
-        "width": "48px",
-        "height": "15px"
-      },
-      "widgetSet": "plumb"
-    },
-    "e00034": {
-      "tpl": "tplPlump_tank_simple",
-      "data": {
-        "oid": "nothing_selected",
-        "visibility-cond": "==",
-        "visibility-val": 1,
-        "type": "level",
-        "fix": "50",
-        "bool_on": "90",
-        "bool_off": "20",
-        "level_min": "0",
-        "level_max": "0",
-        "color": "#C0C0C0",
-        "water_color": "#0000ff",
-        "conTop_size": "20",
-        "conTop_pos": "50",
-        "conBottom_size": "20",
-        "conBottom_pos": "50",
-        "conLeft_size": "20",
-        "conLeft_pos": "50",
-        "conRight_size": "20",
-        "conRight_pos": "50",
-        "conBottom_show": false,
-        "is_filter": false
-      },
-      "style": {
-        "left": "915px",
-        "top": "155px",
-        "width": "137px",
-        "height": "256px"
+        "left": "635px",
+        "top": "267px"
       },
       "widgetSet": "plumb"
     }
