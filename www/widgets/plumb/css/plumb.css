@@ -63,11 +63,11 @@
 }
 
 .valve_h{
-
+    height: 100%;
+    width: 100%;
 }
 .valve_v{
     height: 100%;
-    position: absolute;
     width: 100%;
 }
 

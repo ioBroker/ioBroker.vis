@@ -3210,8 +3210,8 @@ vis = $.extend(true, vis, {
             }
 
             $('#widget_helper_' + wid).css({
-                    left:   pos.left - 3,
-                    top:    pos.top  - 3,
+                    left:   pos.left - 2,
+                    top:    pos.top  - 2,
                     height: $widget.outerHeight() + 2,
                     width:  $widget.outerWidth()  + 2
                 }
@@ -4060,7 +4060,7 @@ vis = $.extend(true, vis, {
                     var x = pos.left + moveX;
                     var y = pos.top  + moveY;
 
-                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 3, top: y - 3});
+                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 2, top: y - 2});
 
                     if (ui.helper.attr('id') != that.activeWidgets[i]) $mWidget.css({left: x, top: y});
 
