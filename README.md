@@ -46,6 +46,17 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+
+###
+- (smiling_Jack) Bugfix View Size
+- (smiling_Jack) Add "_project" view
+- (smiling_Jack) Add VBK Widget Set
+- (smiling_Jack) Working on Plumb Widget Set
+- (smiling_Jack) Working on Plumb Widget Set
+- (smiling_Jack) some small Bugfix
+- (smiling_Jack) remove animation on add Widget by Drag&Drop
+
+
 ### 0.2.12 (2015-03-27)
 - (bluefox) fix jqui radio
 

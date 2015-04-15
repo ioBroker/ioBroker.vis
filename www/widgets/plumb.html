@@ -1130,7 +1130,18 @@
             var id = $this.attr("id");
             var plumb = vis.binds.plumb.data;
 
+            $($this).on("resize", function () {
+                $("#widget_helper_" + id).css({
+                    top: parseInt($this.css("top")) - 2 + "px",
+                    left: parseInt($this.css("left")) - 2 + "px"
+                })
+            });
 
+            $( $this ).on( "resizestop", function( event, ui ) {
+                vis.views[vis.activeView].widgets[id].style.left = ui.position.left;
+                vis.views[vis.activeView].widgets[id].style.top  = ui.position.top;
+                vis.save();
+            } );
             vis.binds.plumb.data[id] = {
                 type: "pipe",
                 cons: ["conLeft", "conRight"],
@@ -1147,14 +1158,11 @@
                 }
             }
 
-            var self = plumb[id];
-
             setTimeout(function () {
                 vis.binds.plumb.svg_pipe_h(id);
             });
 
             vis.binds.plumb.plumb_drop($this);
-
             $this.bind("plumb_change", function (event) {
                 vis.binds.plumb.check(id, event)
             });
@@ -1181,8 +1189,18 @@
                     c_default: null
                 }
             }
+            $($this).on("resize", function () {
+                $("#widget_helper_" + id).css({
+                    top: parseInt($this.css("top")) - 2 + "px",
+                    left: parseInt($this.css("left")) - 2 + "px"
+                })
+            });
 
-            var self = plumb[id];
+            $( $this ).on( "resizestop", function( event, ui ) {
+                vis.views[vis.activeView].widgets[id].style.left = ui.position.left;
+                vis.views[vis.activeView].widgets[id].style.top  = ui.position.top;
+                vis.save();
+            } );
 
             setTimeout(function () {
                 vis.binds.plumb.svg_pipe_v(id);
@@ -1441,24 +1459,46 @@
 
                 console.log(last_from)
                 console.log(self)
+
+                function check_ev(ev) {
+                    var x = ev;
+                    if (x.color.c == null) x.color.c = "#c0c0c0";
+                    if (x.color.c_default == null) x.color.c_default = "#c0c0c0";
+                    return x
+                }
                 if (newVal >= 1) {
 //
                     self_color = "#0F0";
                     $this.find("path").attr("fill", self_color);
 
+
+
                     if (self.conLeft == last_from && last_from != undefined && plumb[self.conLeft].status) {
                         ev.color = JSON.parse(JSON.stringify(plumb[self.conLeft].color));
+                        ev.status = JSON.parse(JSON.stringify(plumb[self.conLeft].status));
+                        ev = check_ev(ev);
+                        self.color = ev.color;
+                        self.status = ev.status;
 console.log(1)
                         $("#" + self.conRight).trigger(ev);
                     }else if (plumb[self.conRight].status) {
                         last_from = self.conRight;
-                        ev.color = JSON.parse(JSON.stringify(plumb[self.conRight].color))
-console.log(2)
+                        ev.color = JSON.parse(JSON.stringify(plumb[self.conRight].color));
+                        ev.status = JSON.parse(JSON.stringify(plumb[self.conLeft].status));
+                        ev = check_ev(ev);
+                        self.color = ev.color;
+                        self.status = ev.status;
+                        console.log(ev)
+                        console.log(2)
                         $("#" + self.conLeft).trigger(ev);
                     }else{
                         last_from = self.conLeft;
                         ev.color = JSON.parse(JSON.stringify(plumb[self.conLeft].color));
-console.log(5)
+                        ev.status = JSON.parse(JSON.stringify(plumb[self.conLeft].status));
+                        ev = check_ev(ev);
+                        self.color = ev.color;
+                        self.status = ev.status;
+                        console.log(3)
                         $("#" + self.conRight).trigger(ev);
                     }
 
@@ -1468,22 +1508,25 @@ console.log(5)
                     $this.find("path").attr("fill", self_color);
 
 
-                    if (self.conLeft == last_from) {
+                    if (self.conLeft == last_from ) {
                         ev.color = JSON.parse(JSON.stringify(plumb[self.conLeft].color));
-
-                        ev.color.c = ev.color.c_default;
                         ev.status = false;
-
+                        ev.color.c = ev.color.c_default;
+                        ev = check_ev(ev);
+                        self.color = ev.color;
+                        self.status = false;
+                        console.log(4)
                         $("#" + self.conRight).trigger(ev);
                     }
 
-                    if (self.conRight == last_from) {
+                    if (self.conRight == last_from ) {
                         ev.color = JSON.parse(JSON.stringify(plumb[self.conRight].color));
-                        ev.color.c = ev.color.c_default;
                         ev.status = false;
-
-
-
+                        ev.color.c = ev.color.c_default;
+                        ev = check_ev(ev);
+                        self.color = ev.color;
+                        self.status = false;
+                        console.log(5)
                         $("#" + self.conLeft).trigger(ev);
                     }
                 }
@@ -1562,8 +1605,16 @@ console.log(5)
                     status: true
                 };
 
+                function check_ev(ev) {
+                    var x = ev
+                    if (!x.color.c) x.color.c = "#c0c0c0";
+                    if (!x.color.c_default) x.color.c_default = "#c0c0c0";
+                    return x
+                }
+
                 if (self.conTop == last_from && last_from != undefined) {
                     ev.color = JSON.parse(JSON.stringify(plumb[self.conTop].color));
+                    ev = check_ev(ev);
                     self.color = ev.color;
                     self.color_from = ev.color_from;
 
@@ -1572,7 +1623,9 @@ console.log(5)
 
                 if (self.conBottom == last_from && last_from != undefined) {
                     ev.color = JSON.parse(JSON.stringify(plumb[self.conBottom].color));
+                    ev = check_ev(ev);
                     self.color = ev.color;
+                    self.color_from = ev.color_from;
 
                     $("#" + self.conTop).trigger(ev);
                 }
@@ -2005,13 +2058,13 @@ console.log(5)
             <stop id="fill_grad_top' + id + '"    offset="0" style="stop-color:#bb5500;stop-opacity:0" />\
             <stop id="fill_grad_bottom' + id + '" offset="1" style="stop-color:' + data.water_color + ';stop-opacity:1"  />\
             </linearGradient>\
-            <pattern id="kies_' + id + '" x="0" y="0" height="15" width="15" patternUnits="userSpaceOnUse">\
-                    <image height="15" width="15"  xlink:href="widgets/plumb/img/pattern.png"></image>\
+            <pattern id="kies_' + id + '" x="0" y="0" height="'+data.filter_size+'" width="'+data.filter_size+'" patternUnits="userSpaceOnUse">\
+                    <image height="'+data.filter_size+'" width="'+data.filter_size+'"  xlink:href="'+data.filter_pattern+'"></image>\
             </pattern>\
             </defs>\
             <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
             <rect id="' + id + '_fill" clip-path="url(#e_' + id + ')" height="400" width="300" y="200" x="0" fill="url(#fill_grad_' + id + ')"/>\
-            <rect id="' + id + '_kies" clip-path="url(#e_' + id + ')" height="450" width="300" y="250" x="0" fill="url(#kies_' + id + ')"/>\
+            <rect id="' + id + '_kies" clip-path="url(#e_' + id + ')" height="450" width="300" y="250" x="0" style="opacity:'+data.filter_opa / 100+'" fill="url(#kies_' + id + ')"/>\
             <rect class="' + id + '_spray" style="color:#000000" fill="#bb5500" stroke="#000000" stroke-linecap="round" stroke-width="0" height="60" width="300" y="120" x="0"></rect>\
             <polyline points="0,180 300,180" stroke="black" stroke-width="5"></polyline>\
             <path d="m0 50h300v500h-300z" fill="url(#d_' + id + ')" />\
@@ -2093,18 +2146,11 @@ console.log(5)
                     c_from: null,
                     c_default: null
                 }
-            }
+            };
 
             var self = plumb[id];
 
             vis.binds.plumb.plumb_drop($this);
-
-            var kies = "";
-
-            if (data.is_filter == true) {
-                kies = '<rect id="' + id + '_kies" clip-path="url(#e_' + id + ')" height="550" width="300" y="150" x="0" fill="url(#kies_' + id + ')"/>';
-//                kies = '<rect id="' + id + '_kies" clip-path="url(#e_' + id + ')" height="550" width="300" y="150" x="0" style="background-image:url(widgets/plumb/img/pattern.png)"/>';
-            }
 
             $this.find(".tank_simple_svg").append('\
                 <svg\
@@ -2128,14 +2174,10 @@ console.log(5)
             </linearGradient>\
             <radialGradient id="c_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
             <radialGradient id="b_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
-            <pattern id="kies_' + id + '" x="0" y="0" height="15" width="15" patternUnits="userSpaceOnUse">\
-                    <image style="height: 15px;width: 15px;"  xlink:href="widgets/plumb/img/pattern.png"></image>\
-            </pattern>\
             </defs>\
             <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
             <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#e_' + id + ')" height="300" width="300" y="300" x="0" fill="' + data.water_color + '"/>\
             <path d="m0 50h300v500h-300z" fill="url(#d_' + id + ')"/>\
-                                    ' + kies + '\
             <path fill="url(#b_' + id + ')" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
             <path fill="url(#c_' + id + ')" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
             </svg>\
@@ -2291,6 +2333,67 @@ console.log(5)
             }
 
             $this.bind("plumb_change", function (event) {
+                var ev = {
+                    type: "plumb_change",
+                    from: id,
+                    status: true,
+                    color: {
+                        c_from: id,
+                        c_default: event.color.c_default,
+                        c: ""
+                    }
+                };
+
+                if (self.conRight != event.from) {
+                    if (event.status == true) {
+                        ev.color.c = data.conRight_water;
+                    } else {
+                        ev.color.c = event.color.c_default
+                    }
+                    $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
+                    $("#" + self.conRight).trigger(ev);
+
+                }
+                if (self.conLeft != event.from) {
+                    if (event.status == true) {
+                        ev.color.c = data.conRight_Left;
+                    } else {
+                        ev.color.c = event.color.c_default
+                    }
+                    $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
+                    $("#" + self.conleft).trigger(ev);
+                }
+                if (self.conTop != event.from) {
+                    if (event.status == true) {
+                        ev.color.c = data.conTop_water;
+                    } else {
+                        ev.color.c = event.color.c_default
+                    }
+                    $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
+                    $("#" + self.conTop).trigger(ev);
+                }
+                if (self.conBottom != event.from) {
+                    if (event.status == true) {
+                        ev.color.c = data.conBottom_water;
+                    } else {
+                        ev.color.c = event.color.c_default;
+                    }
+                    $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
+                    $("#" + self.conBottom).trigger(ev);
+                }
+
+                if (self.conRight == event.from) {
+                    $("#" + id + "_dock_right_fill").attr("fill", event.color.c);
+                }else
+                if (self.conLeft == event.from) {
+                    $("#" + id + "_dock_left_fill").attr("fill", event.color.c);
+                }else
+                if (self.conTop == event.from) {
+                    $("#" + id + "_dock_top_fill").attr("fill", event.color.c);
+                }else
+                if (self.conBottom == event.from) {
+                    $("#" + id + "_dock_bottom_fill").attr("fill", event.color.c);
+                }
             });
         },
         tank_filter: function (el, data) {
@@ -2313,7 +2416,7 @@ console.log(5)
                     c_from: null,
                     c_default: null
                 }
-            }
+            };
 
             var self = plumb[id];
 
@@ -2516,18 +2619,22 @@ console.log(5)
                     status: true,
                     color: {
                         c_from: id,
-                        c_default: event.color.c_default,
-                        c: ""
+                        c_default: event.color.c_default || "#C0C0C0",
+                        c: event.color.c || "#C0C0C0"
                     }
                 };
+
 
                 if (self.conRight != event.from) {
                     if (event.status == true) {
                         ev.color.c = data.conRight_water;
                     } else {
-                        ev.color.c = event.color.c_default
+                        ev.status = false;
+                        ev.color.c = event.color.c_default || "#C0C0C0";
                     }
                     $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
+                    console.log("trigger_r")
+                    console.log(ev)
                     $("#" + self.conRight).trigger(ev);
 
                 }
@@ -2535,29 +2642,40 @@ console.log(5)
                     if (event.status == true) {
                         ev.color.c = data.conRight_Left;
                     } else {
-                        ev.color.c = event.color.c_default
+                        ev.status = false;
+                        ev.color.c = event.color.c_default || "#C0C0C0";
                     }
                     $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
+                    console.log("trigger_l")
+                    console.log(ev)
                     $("#" + self.conleft).trigger(ev);
                 }
                 if (self.conTop != event.from) {
                     if (event.status == true) {
                         ev.color.c = data.conTop_water;
                     } else {
-                        ev.color.c = event.color.c_default
+                        ev.status = false;
+                        ev.color.c = event.color.c_default || "#C0C0C0";
                     }
                     $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
+                    console.log("trigger_t")
+                    console.log(ev)
                     $("#" + self.conTop).trigger(ev);
                 }
                 if (self.conBottom != event.from) {
                     if (event.status == true) {
                         ev.color.c = data.conBottom_water;
                     } else {
-                        ev.color.c = event.color.c_default;
+                        ev.status = false;
+                        ev.color.c = event.color.c_default || "#C0C0C0";
                     }
                     $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
+                    console.log("trigger_b")
+                    console.log(ev)
                     $("#" + self.conBottom).trigger(ev);
                 }
+
+
 
                 if (self.conRight == event.from) {
                     $("#" + id + "_dock_right_fill").attr("fill", event.color.c);
@@ -2571,9 +2689,6 @@ console.log(5)
                 if (self.conBottom == event.from) {
                     $("#" + id + "_dock_bottom_fill").attr("fill", event.color.c);
                 }
-
-
-
             });
         }
     }
@@ -2939,7 +3054,7 @@ console.log(5)
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank Enteisung"
-        data-vis-attrs="color[#C0C0C0]/color;water_color[#0000ff]/color;conTop,cnBottom;conLeft;conRight">
+        data-vis-attrs="color[#C0C0C0]/color;water_color[#0000ff]/color;conTop,cnBottom;conLeft;conRight;filter_pattern[widgets/plumb/img/kies.png]/image;filter_size[15];filter_opa[50]/slider,0,100,1">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": false,"handles": "n, e, s, w"}' style="min-width: 140px; min-height: 270px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.ent_e_top(el, data) %>>
 			<div class="tank_ent-e " >

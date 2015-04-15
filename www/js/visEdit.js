@@ -2033,7 +2033,7 @@ vis = $.extend(true, vis, {
             return false;
         });
     },
-    addWidget: function (tpl, data, style, wid, view, hidden, noSave) {
+    addWidget: function (tpl, data, style, wid, view, hidden, noSave,no_animate) {
         if (!view) view = this.activeView;
 
         var isSelectWidget = (wid === undefined);
@@ -2094,7 +2094,9 @@ vis = $.extend(true, vis, {
 
         if (isSelectWidget) {
             this.activeWidgets = [widgetId];
-            this.actionHighlighWidget(widgetId);
+            if (!no_animate) {
+                this.actionHighlighWidget(widgetId);
+            }
         }
 
         if (!noSave) this.save();
@@ -4174,8 +4176,8 @@ vis = $.extend(true, vis, {
                     if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
                 }
                 if (renderVisible) data.renderVisible = true;
-
-                var widgetId = that.addWidget(tpl, data, addPos);
+                //tpl, data, style, wid, view, hidden, noSave,no_animate
+                var widgetId = that.addWidget(tpl, data, addPos,undefined,undefined,undefined,undefined,true);
 
                 that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>')
                     .multiselect('refresh');
