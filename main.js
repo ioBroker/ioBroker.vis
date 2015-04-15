@@ -93,7 +93,8 @@ function main() {
                 common: {
                     name: 'Command interface for vis',
                     type: 'object',
-                    desc: 'Write object: {instance: "FFFFFFFFF", command: "changeView", data: "ViewName"} to change the view'
+                    desc: 'Write object: {instance: "FFFFFFFFF", command: "changeView", data: "ViewName"} to change the view',
+                    role: 'command'
                 },
                 type: 'state',
                 native: {}
