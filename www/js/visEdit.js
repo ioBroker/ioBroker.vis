@@ -2595,6 +2595,14 @@ vis = $.extend(true, vis, {
                 } else {
                     $(this).parent().css({width: '98%'});
                 }
+                // Allow only numbers
+                $(this).on('keypress', function(e) {
+                    if (e.keyCode < 48 || e.keyCode > 57) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
             }
         };
         if (onchange) line.onchange = onchange;
