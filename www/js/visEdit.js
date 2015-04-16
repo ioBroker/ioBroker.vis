@@ -2583,12 +2583,18 @@ vis = $.extend(true, vis, {
         var line = {
             input: '<input id="inspect_' + widAttr + '" style="width: 100%"/>',
             init: function (w, data) {
-                options = options || {};
-                options.spin = function () {
-                    $(this).trigger('change');
-                };
-                $(this).spinner(options);
-                $(this).parent().css({width: '100%'});
+                var platform = window.navigator.oscpu || window.navigator.platform;
+                // Do not show spin on MAc OS
+                if (platform.indexOf('Mac') == -1) {
+                    options = options || {};
+                    options.spin = function () {
+                        $(this).trigger('change');
+                    };
+                    $(this).spinner(options);
+                    $(this).parent().css({width: '100%'});
+                } else {
+                    $(this).parent().css({width: '98%'});
+                }
             }
         };
         if (onchange) line.onchange = onchange;
