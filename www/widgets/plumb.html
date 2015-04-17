@@ -1480,9 +1480,6 @@
                     status: true
                 };
 
-                console.log(last_from)
-                console.log(self)
-
                 function check_ev(ev) {
                     var x = ev;
                     if (x.color.c == null) x.color.c = "#c0c0c0";
@@ -1502,7 +1499,6 @@
                         ev = check_ev(ev);
                         self.color = ev.color;
                         self.status = ev.status;
-                        console.log(1)
                         $("#" + self.conRight).trigger(ev);
                     } else if (plumb[self.conRight].status) {
                         last_from = self.conRight;
@@ -1511,8 +1507,6 @@
                         ev = check_ev(ev);
                         self.color = ev.color;
                         self.status = ev.status;
-                        console.log(ev)
-                        console.log(2)
                         $("#" + self.conLeft).trigger(ev);
                     } else {
                         last_from = self.conLeft;
@@ -1521,7 +1515,6 @@
                         ev = check_ev(ev);
                         self.color = ev.color;
                         self.status = ev.status;
-                        console.log(3)
                         $("#" + self.conRight).trigger(ev);
                     }
 
@@ -1538,7 +1531,6 @@
                         ev = check_ev(ev);
                         self.color = ev.color;
                         self.status = false;
-                        console.log(4)
                         $("#" + self.conRight).trigger(ev);
                     }
 
@@ -1549,7 +1541,6 @@
                         ev = check_ev(ev);
                         self.color = ev.color;
                         self.status = false;
-                        console.log(5)
                         $("#" + self.conLeft).trigger(ev);
                     }
                 }
@@ -1612,16 +1603,6 @@
             });
 
             function set(newVal) {
-
-                if (newVal >= 1) {
-                    self_color = "#0F0";
-                    $this.find("path").attr("fill", self_color);
-                } else {
-                    self_color = "#F00";
-                    $this.find("path").attr("fill", self_color);
-                }
-
-
                 var ev = {
                     type: "plumb_change",
                     from: id,
@@ -1629,29 +1610,72 @@
                 };
 
                 function check_ev(ev) {
-                    var x = ev
-                    if (!x.color.c) x.color.c = "#c0c0c0";
-                    if (!x.color.c_default) x.color.c_default = "#c0c0c0";
+                    var x = ev;
+                    if (x.color.c == null) x.color.c = "#c0c0c0";
+                    if (x.color.c_default == null) x.color.c_default = "#c0c0c0";
                     return x
                 }
 
-                if (self.conTop == last_from && last_from != undefined) {
-                    ev.color = JSON.parse(JSON.stringify(plumb[self.conTop].color));
-                    ev = check_ev(ev);
-                    self.color = ev.color;
-                    self.color_from = ev.color_from;
+                if (newVal >= 1) {
+//
+                    self_color = "#0F0";
+                    $this.find("path").attr("fill", self_color);
 
-                    $("#" + self.conBottom).trigger(ev);
+
+                    if (self.conTop == last_from && last_from != undefined && plumb[self.conTop].status) {
+                        ev.color = JSON.parse(JSON.stringify(plumb[self.conTop].color));
+                        ev.status = JSON.parse(JSON.stringify(plumb[self.conTop].status));
+                        ev = check_ev(ev);
+                        self.color = ev.color;
+                        self.status = ev.status;
+                        $("#" + self.conBottom).trigger(ev);
+                    } else if (plumb[self.conBottom].status) {
+                        last_from = self.conBottom;
+                        ev.color = JSON.parse(JSON.stringify(plumb[self.conBottom].color));
+                        ev.status = JSON.parse(JSON.stringify(plumb[self.conTop].status));
+                        ev = check_ev(ev);
+                        self.color = ev.color;
+                        self.status = ev.status;
+                        $("#" + self.conTop).trigger(ev);
+                    } else {
+                        last_from = self.conTop;
+                        ev.color = JSON.parse(JSON.stringify(plumb[self.conTop].color));
+                        ev.status = JSON.parse(JSON.stringify(plumb[self.conTop].status));
+                        ev = check_ev(ev);
+                        self.color = ev.color;
+                        self.status = ev.status;
+                        $("#" + self.conBottom).trigger(ev);
+                    }
+
+                } else {
+
+                    self_color = "#F00";
+                    $this.find("path").attr("fill", self_color);
+
+
+                    if (self.conTop == last_from) {
+                        ev.color = JSON.parse(JSON.stringify(plumb[self.conTop].color));
+                        ev.status = false;
+                        ev.color.c = ev.color.c_default;
+                        ev = check_ev(ev);
+                        self.color = ev.color;
+                        self.status = false;
+                        console.log(4)
+                        $("#" + self.conBottom).trigger(ev);
+                    }
+
+                    if (self.conBottom == last_from) {
+                        ev.color = JSON.parse(JSON.stringify(plumb[self.conBottom].color));
+                        ev.status = false;
+                        ev.color.c = ev.color.c_default;
+                        ev = check_ev(ev);
+                        self.color = ev.color;
+                        self.status = false;
+                        console.log(5)
+                        $("#" + self.conTop).trigger(ev);
+                    }
                 }
 
-                if (self.conBottom == last_from && last_from != undefined) {
-                    ev.color = JSON.parse(JSON.stringify(plumb[self.conBottom].color));
-                    ev = check_ev(ev);
-                    self.color = ev.color;
-                    self.color_from = ev.color_from;
-
-                    $("#" + self.conTop).trigger(ev);
-                }
             }
 
             vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
@@ -2677,8 +2701,6 @@
                         ev.color.c = event.color.c_default || "#C0C0C0";
                     }
                     $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
-                    console.log("trigger_t")
-                    console.log(ev)
                     $("#" + self.conTop).trigger(ev);
                 }
                 if (self.conBottom != event.from) {
@@ -2689,8 +2711,6 @@
                         ev.color.c = event.color.c_default || "#C0C0C0";
                     }
                     $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
-                    console.log("trigger_b")
-                    console.log(ev)
                     $("#" + self.conBottom).trigger(ev);
                 }
 
@@ -2932,7 +2952,7 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="valve_V"
-        data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
+        data-vis-attrs="oid;conTop;conBottom;ctrl/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " data-vis-resizable='{"grid": [ 5, 8 ],"aspectRatio": true,"handles": "n, e, s, w"}' style=" width: 20px; height: 32px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_v(el, data) %>>
 			<div class="valve_v " >
