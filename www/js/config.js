@@ -11,8 +11,8 @@ var visConfig = {
         "weather-adapter",
         "RGraph",
         {name: "lcars",       depends: ["basic"]},
-        "vkb",
-        "plumb",
+        //"vkb",
+        //"plumb",
         //"table"
         /*
         "bars",
