@@ -926,6 +926,11 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 file: file
             }, o.userArg);
         });
+
+        if (window.location.href.indexOf("37.120.169.17") >= 0){
+            $("#fm_bar_rename").remove();
+            $("#fm_bar_del").remove();
+        }
     };
 })
 (jQuery);
