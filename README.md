@@ -55,6 +55,8 @@ If user changes the view or at start the variables will be filled by vis with
 - (smiling_Jack) Working on Plumb Widget Set
 - (smiling_Jack) some small Bugfix
 - (smiling_Jack) remove animation on add Widget by Drag&Drop
+- (smiling_Jack) fm_manager safety function vor sandbox
+
 
 
 ### 0.2.12 (2015-03-27)
