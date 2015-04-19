@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg id="svg3019" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="100%" width="100%" version="1.1" preserveAspectRatio="none" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 3000 6000">
+ <metadata id="metadata3051">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs id="defs3021">
+  <clipPath id="e_" clipPathUnits="userSpaceOnUse">
+   <path id="path3024" fill="#0F0" d="M146,0.014a150,50,0,0,0,-71,6.686,150,50,0,0,0,-75,43.3v500h0.014a150,50.2,0,0,0,74.986,43,150,50.2,0,0,0,150,0,150,50.2,0,0,0,75,-43v-500a150,50,0,0,0,-75,-43.3,150,50,0,0,0,-79,-6.686z"/>
+  </clipPath>
+  <linearGradient id="d_" gradientUnits="userSpaceOnUse" x2="300" gradientTransform="scale(10,10)" y1="300" y2="300">
+   <stop id="stop3027" stop-color="#000" stop-opacity=".5" offset="0"/>
+   <stop id="stop3029" stop-color="#000" stop-opacity="0" offset="0.5"/>
+   <stop id="stop3031" stop-color="#000" stop-opacity=".5" offset="1"/>
+  </linearGradient>
+  <radialGradient id="c_" href="#a_" gradientUnits="userSpaceOnUse" cy="173" cx="153" gradientTransform="matrix(9.8,0,0,3.83654,30.8,-142.322)" r="150"/>
+  <radialGradient id="b_" href="#a_" gradientUnits="userSpaceOnUse" cy="427" cx="150" gradientTransform="matrix(-10,0,0,-3.98298,3000,7213.11)" r="150"/>
+ </defs>
+ <path id="path3047" fill="url(#c_)" d="M0,500a1500,535.81,0,0,1,750,-428.22,1500,535.81,0,0,1,1500,0,1500,535.81,0,0,1,750,428.22z"/>
+ <path id="path3040" fill="#0FF" d="M1460-4.9993a1500,503.08,0,0,0,-710,100.56,1500,503.08,0,0,0,-750,401.86v5029.8h0.14a1500,505.08,0,0,0,749.86,400.04,1500,505.08,0,0,0,1500,0,1500,505.08,0,0,0,750,-400v-5029.8a1500,503.08,0,0,0,-750,-401.87,1500,503.08,0,0,0,-790,-100.56z"/>
+ <rect id="_fill" style="color:#000000;" clip-path="url(#e_)" transform="matrix(10,0,0,10.0092,0,-2.75174)" height="300" width="300" y="300" x="0" fill="#FF0"/>
+ <path id="path3043" fill="url(#d_)" d="M0,500h3000v5000h-3000z"/>
+ <path id="path3045" fill="url(#b_)" d="M3000,5500a1500,535.35,0,0,1,-750,428.3,1500,535.35,0,0,1,-1500,0,1500,535.35,0,0,1,-750,-428.3h1500z"/>
+</svg>
