@@ -47,7 +47,7 @@ If user changes the view or at start the variables will be filled by vis with
 
 ## Changelog
 
-###
+### 0.2.13 (2015-04-20)
 - (smiling_Jack) Bugfix View Size
 - (smiling_Jack) Add "_project" view
 - (smiling_Jack) Add VBK Widget Set
