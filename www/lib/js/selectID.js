@@ -571,7 +571,7 @@
                 var $tdList = $(node.tr).find(">td");
 
                 var isCommon = data.objects[node.key] && data.objects[node.key].common;
-
+                $tdList.eq(1).css({'overflow': 'hidden'});
                 var base = 2;
 
                 for (var c = 0; c < data.columns.length; c++) {
@@ -1418,7 +1418,7 @@
         // update states
         "state": function (id, state) {
             for (var i = 0; i < this.length; i++) {
-                var dlg = this[i];
+                var dlg  = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
                 if (!data || !data.states || !data.$tree) continue;
