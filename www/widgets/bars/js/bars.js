@@ -547,6 +547,39 @@ vis.binds.bars = {
             });
             if (barsOptions.bOpen && vis.editMode) $div.sidebar('open');
             $('#jquerySideBar_' + barsIntern.wid).addClass(barsOptions.bTheme);
+
+            if (vis.editMode) {
+                var pos = {left: $('#jquerySideBar_' + barsIntern.wid).css('left'), top: $('#jquerySideBar_' + barsIntern.wid).css('top')};
+
+                pos.left = parseInt(pos.left, 10);
+                pos.top  = parseInt(pos.top, 10);
+                if (pos.top  < 0) {
+                    pos.top  = 0;
+                    pos.left += 10;
+                }
+                if (pos.left < 0) {
+                    pos.left = 0;
+                    pos.top += 10;
+                }
+
+                $('#inspect_css_top').val(pos.top + 'px');
+                $('#inspect_css_left').val(pos.left + 'px');
+                vis.views[vis.activeView].widgets[barsIntern.wid].style.left = pos.left + 'px';
+                vis.views[vis.activeView].widgets[barsIntern.wid].style.top  = pos.top  + 'px';
+                $('#' + barsIntern.wid).attr('data-vis-resizable', '{"disabled":true}').attr('data-vis-draggable', '{"disabled":true}');
+                if (vis.activeWidgets.indexOf(barsIntern.wid) != -1) {
+                    vis.showWidgetHelper(barsIntern.wid, true);
+                    $('#' + barsIntern.wid).draggable('destroy').resizable('destroy');
+                }
+                $('#jquerySideBar_' + barsIntern.wid + ' .sidebar-inject').click(function () {
+                    vis.inspectWidgets(barsIntern.wid);
+                });
+            }
+
+            for (var u = 1; u <= barsOptions.bCount; u++) {
+                var $htmlBtn = $('#' + barsIntern.wid + '_btn' + u);
+                $htmlBtn.css({borderRadius: barsOptions.bRadius + 'px'});
+            }
         }
     },
     /*editButton: function (div, i, isInit) {

@@ -2214,9 +2214,7 @@ vis = $.extend(true, vis, {
             }
 
             // If only one selected
-            if (this.activeWidgets.length == 1) if (!this.widgets[wid].data._no_resize) this.resizable($wid);
-
-
+            if (this.activeWidgets.length == 1 && !this.widgets[wid].data._no_resize) this.resizable($wid);
         }
     },
     getObjDesc: function (id) {
@@ -3647,6 +3645,7 @@ vis = $.extend(true, vis, {
                 $('#rib_wid_copy').button('disable');
                 $('#rib_wid_doc').button('disable');
             }
+
             if (this.activeWidgets.length == 1) {
                 $widget = $('#' + this.activeWidgets[0]);
                 if (!$widget.hasClass('ui-resizable')) {
@@ -4017,6 +4016,13 @@ vis = $.extend(true, vis, {
     draggable: function (obj) {
         var origX, origY;
         var that = this;
+        var draggableOptions;
+        if (obj.attr('data-vis-draggable')) draggableOptions = JSON.parse(obj.attr('data-vis-draggable'));
+
+        if (!draggableOptions) draggableOptions = {};
+
+        if (draggableOptions.disabled) return;
+
         var draggableOptions = {
             cancel: false,
             start:  function (event, ui) {
@@ -4047,21 +4053,19 @@ vis = $.extend(true, vis, {
                     var wid = that.activeWidgets[i];
                     var $wid = $('#' + that.activeWidgets[i]);
                     var pos = {
-                        left : parseInt($wid.css("left")),
-                        top : parseInt($wid.css("top"))
+                        left: parseInt($wid.css("left")),
+                        top:  parseInt($wid.css("top"))
                     };
                     if (!that.views[that.activeView].widgets[wid].style) that.views[that.activeView].widgets[wid].style = {};
 
                     if (typeof pos.left == 'string' && pos.left.indexOf('px') == -1) {
                         pos.left += 'px';
-                    }
-                    else {
+                    } else {
                         pos.left = pos.left.toFixed(0) + 'px';
                     }
                     if (typeof pos.top == 'string' && pos.top.indexOf('px') == -1) {
                         pos.top += 'px';
-                    }
-                    else {
+                    } else {
                         pos.top = pos.top.toFixed(0) + 'px';
                     }
 
@@ -4178,6 +4182,7 @@ vis = $.extend(true, vis, {
     droppable: function (view) {
         var $view = $("#visview_" + view);
         var that = this;
+
         $view.droppable({
             accept: ".wid_prev",
             drop: function (event, ui) {
