@@ -2033,12 +2033,12 @@ vis = $.extend(true, vis, {
             return false;
         });
     },
-    addWidget: function (tpl, data, style, wid, view, hidden, noSave,no_animate) {
+    addWidget: function (tpl, data, style, wid, view, hidden, noSave, no_animate) {
         if (!view) view = this.activeView;
 
         var isSelectWidget = (wid === undefined);
-        var isViewExist = (document.getElementById('visview_' + view) !== null);
-        var renderVisible = data.renderVisible;
+        var isViewExist    = (document.getElementById('visview_' + view) !== null);
+        var renderVisible  = data.renderVisible;
 
         if (renderVisible) delete data.renderVisible;
 
@@ -2048,6 +2048,15 @@ vis = $.extend(true, vis, {
         }
 
         var widgetId = wid || this.nextWidget();
+        var $tpl = $('#' + tpl);
+
+        // call custom init function
+        if ($tpl.attr('data-vis-init')) {
+            var init = $tpl.attr('data-vis-init');
+            if (this.binds[$tpl.attr('data-vis-set')][init]) {
+                this.binds[$tpl.attr('data-vis-set')][init](tpl, data);
+            }
+        }
 
         this.widgets[widgetId] = {
             wid: widgetId,
@@ -2063,7 +2072,7 @@ vis = $.extend(true, vis, {
 
         if (isViewExist) {
             $('#visview_' + view).append(can.view(tpl, {
-                hm:   this.states[this.widgets[widgetId].data.oid + '.val'],
+                val:  this.states[this.widgets[widgetId].data.oid + '.val'],
                 ts:   this.states[this.widgets[widgetId].data.oid + '.ts'],
                 ack:  this.states[this.widgets[widgetId].data.oid + '.ack'],
                 lc:   this.states[this.widgets[widgetId].data.oid + '.lc'],
@@ -2553,6 +2562,12 @@ vis = $.extend(true, vis, {
 
         return this.editSelect(widAttr, views, true);
     },
+    editFilterName: function (widAttr) {
+        var filters = vis.updateFilter();
+        filters.unshift('');
+
+        return this.editSelect(widAttr, filters, true);
+    },
     editEffect: function (widAttr) {
         var that = this;
         return this.editSelect(widAttr, [
@@ -2893,6 +2908,9 @@ vis = $.extend(true, vis, {
                 break;
             case 'views':
                 line = this.editViewName(widAttr.name);
+                break;
+            case 'filters':
+                line = this.editFilterName(widAttr.name);
                 break;
             case 'custom':
                 line = this.editCustom(widAttr.name, widAttr.options);
@@ -3239,6 +3257,7 @@ vis = $.extend(true, vis, {
     extractAttributes: function (_wid_attr, widget) {
         // Format: attr_name(start-end)[default_value]/type
         // attr_name can be extended with numbers (1-2) means it will be attr_name1 and attr_name2 created
+        //     end number can be other attribute, e.g (1-count)
         // defaultValue: If defaultValue has ';' it must be replaced by §
         // Type format: id - Object ID Dialog
         //              checkbox
@@ -3698,10 +3717,10 @@ vis = $.extend(true, vis, {
 
         // Add fixed attributes
         var group = 'fixed';
-        this.addToInspect(this.activeWidgets, 'name',               group);
-        this.addToInspect(this.activeWidgets, 'comment',            group);
-        this.addToInspect(this.activeWidgets, 'class',              group);
-        this.addToInspect(this.activeWidgets, 'filterkey',          group);
+        this.addToInspect(this.activeWidgets, 'name',      group);
+        this.addToInspect(this.activeWidgets, 'comment',   group);
+        this.addToInspect(this.activeWidgets, 'class',     group);
+        this.addToInspect(this.activeWidgets, 'filterkey', group);
         this.addToInspect(this.activeWidgets, {name: 'views', type: 'select-views'}, group);
         group = 'visibility';
         this.addToInspect(this.activeWidgets, {name: 'visibility-oid', type: 'id'},   group);
