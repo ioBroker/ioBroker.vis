@@ -46,6 +46,19 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+
+### 0.2.13 (2015-04-20)
+- (smiling_Jack) Bugfix View Size
+- (smiling_Jack) Add "_project" view
+- (smiling_Jack) Add VBK Widget Set
+- (smiling_Jack) Working on Plumb Widget Set
+- (smiling_Jack) Working on Plumb Widget Set
+- (smiling_Jack) some small Bugfix
+- (smiling_Jack) remove animation on add Widget by Drag&Drop
+- (smiling_Jack) fm_manager safety function vor sandbox
+
+
+
 ### 0.2.12 (2015-04-14)
 - (bluefox) fix jqui radio
 - (bluefox) add to created objects "native"

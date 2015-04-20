@@ -35,6 +35,7 @@ $.extend(systemDictionary, {
     }
 });
 vis.createDemoView = function () {
+
     var obj =
     {
         "settings" : {

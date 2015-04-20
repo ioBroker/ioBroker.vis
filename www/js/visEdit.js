@@ -389,6 +389,9 @@ vis = $.extend(true, vis, {
             for (var i = 0; i < that.activeWidgets.length; i++) {
                 var widID = $('#' + that.activeWidgets[i]).attr('id');
 
+                var xid =  (new Date).valueOf().toString(32);
+
+
                 var $target = $('#' + widID);
                 var $clone = $target.clone();
                 $clone.wrap('<div>');
@@ -400,7 +403,8 @@ vis = $.extend(true, vis, {
                     .replace('ui-draggable', ' ')
                     .replace('ui-resizable', ' ')
                     .replace('<div class="editmode-helper"></div>', '')
-                    .replace(/(id=")[A-Za-z0-9\[\]._]+"/g, '')
+                    //.replace(/(id=")[A-Za-z0-9\[\]._]+"/g, '')
+                    .replace(/w([0-9]){5}/g, xid)
                     .replace(/(?:\r\n|\r|\n)/g, '')
                     .replace(/\t/g, ' ')
                     .replace(/[ ]{2,}/g, ' ');
@@ -828,7 +832,6 @@ vis = $.extend(true, vis, {
                 cont_size = cont_size + $("#" + this).width();
                 if (min_left > left) min_left = left;
                 if (max_right < right) max_right = right;
-
                 var _data = {
                     wid:  this,
                     left: left
@@ -837,6 +840,7 @@ vis = $.extend(true, vis, {
             });
 
             between = (max_right - min_left - cont_size) / (that.activeWidgets.length - 1);
+
             if (between < 0 ) between = 0;
 
             function SortByLeft(a, b) {
@@ -851,6 +855,7 @@ vis = $.extend(true, vis, {
 
             $.each(data, function(){
                 left = left + between;
+                console.log(left)
                 $("#" + this.wid).css("left", left + "px");
                 that.views[that.activeView].widgets[this.wid].style.left = left + "px";
                 left = left + $("#" + this.wid).width();
@@ -1481,7 +1486,7 @@ vis = $.extend(true, vis, {
         //$select_set.html('');
         $select_set.append('<option value="all">*</option>');
         for (i = 0; i < this.widgetSets.length; i++) {
-            if (this.widgetSets[i].name !== undefined) {
+            if (this.widgetSets[i].name !== undefined ) {
                 $select_set.append('<option value="' + this.widgetSets[i].name + '">' + this.widgetSets[i].name + '</option>');
             } else {
                 $select_set.append('<option value="' + this.widgetSets[i] + '">' + this.widgetSets[i] + '</option>');
@@ -1654,6 +1659,7 @@ vis = $.extend(true, vis, {
             this.$dialogConfirm.dialog({
                 autoOpen: false,
                 modal:    true,
+                zindex: 11000,
                 buttons: [
                     {
                         text: _('Ok'),
@@ -2027,7 +2033,7 @@ vis = $.extend(true, vis, {
             return false;
         });
     },
-    addWidget: function (tpl, data, style, wid, view, hidden, noSave) {
+    addWidget: function (tpl, data, style, wid, view, hidden, noSave,no_animate) {
         if (!view) view = this.activeView;
 
         var isSelectWidget = (wid === undefined);
@@ -2088,7 +2094,9 @@ vis = $.extend(true, vis, {
 
         if (isSelectWidget) {
             this.activeWidgets = [widgetId];
-            this.actionHighlighWidget(widgetId);
+            if (!no_animate) {
+                this.actionHighlighWidget(widgetId);
+            }
         }
 
         if (!noSave) this.save();
@@ -3220,8 +3228,8 @@ vis = $.extend(true, vis, {
             $('#widget_helper_' + wid).css({
                     left:   pos.left - 2,
                     top:    pos.top  - 2,
-                    height: $widget.outerHeight() + 1,
-                    width:  $widget.outerWidth()  + 1
+                    height: $widget.outerHeight() + 2,
+                    width:  $widget.outerWidth()  + 2
                 }
             ).show();
         } else {
@@ -3979,6 +3987,12 @@ vis = $.extend(true, vis, {
             $('#inspect_view_theme').val(this.views[view].settings.theme);
         }
         $('#inspect_view_theme').selectmenu('refresh');
+
+
+
+        if(view == "_project"){
+            wid_prev
+        }
     },
     dragging: false,
     draggable: function (obj) {
@@ -4013,7 +4027,10 @@ vis = $.extend(true, vis, {
                 for (var i = 0; i < that.activeWidgets.length; i++) {
                     var wid = that.activeWidgets[i];
                     var $wid = $('#' + that.activeWidgets[i]);
-                    var pos = $wid.position();
+                    var pos = {
+                        left : parseInt($wid.css("left")),
+                        top : parseInt($wid.css("top"))
+                    };
                     if (!that.views[that.activeView].widgets[wid].style) that.views[that.activeView].widgets[wid].style = {};
 
                     if (typeof pos.left == 'string' && pos.left.indexOf('px') == -1) {
@@ -4045,17 +4062,17 @@ vis = $.extend(true, vis, {
 
             },
             drag:   function (event, ui) {
-
                 var moveX = ui.position.left - origX;
                 var moveY = ui.position.top  - origY;
-
                 origX = ui.position.left;
                 origY = ui.position.top;
-
                 for (var i = 0; i < that.activeWidgets.length; i++) {
                     var mWidget = document.getElementById(that.activeWidgets[i]);
                     var $mWidget = $(mWidget);
-                    var pos = $mWidget.position();
+                    var pos = {
+                        left : parseInt($mWidget.css("left")),
+                        top : parseInt($mWidget.css("top"))
+                    };
                     var x = pos.left + moveX;
                     var y = pos.top  + moveY;
 
@@ -4133,8 +4150,8 @@ vis = $.extend(true, vis, {
                 },
                 resize: function (event, ui) {
                     $('.widget-helper').css({
-                        width:  ui.element.outerWidth()  + 1,
-                        height: ui.element.outerHeight() + 1});
+                        width:  ui.element.outerWidth()  + 2,
+                        height: ui.element.outerHeight() + 2});
                 }
             }, resizableOptions));
         }
@@ -4173,8 +4190,8 @@ vis = $.extend(true, vis, {
                     if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
                 }
                 if (renderVisible) data.renderVisible = true;
-
-                var widgetId = that.addWidget(tpl, data, addPos);
+                //tpl, data, style, wid, view, hidden, noSave,no_animate
+                var widgetId = that.addWidget(tpl, data, addPos,undefined,undefined,undefined,undefined,true);
 
                 that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>')
                     .multiselect('refresh');
@@ -4713,7 +4730,7 @@ vis = $.extend(true, vis, {
                     modal:    true,
                     title:    _('Confirm widget deletion'),
                     open:    function (event, ui) {
-                        $('[aria-describedby="dialog_delete"]').css('z-index', 1002);
+                        $('[aria-describedby="dialog_delete"]').css('z-index', 11002);
                         $('.ui-widget-overlay').css('z-index', 1001);
                     },
                     buttons: dialog_buttons
@@ -4925,10 +4942,13 @@ $(document).keydown(function (e) {
         if ($container.hasClass('fullscreen')) {
             $("#attr_wrap").unbind("mouseenter").unbind("mouseleave");
             $("#pan_attr").show();
+            $container.addClass('vis_container')
             $container.removeClass('fullscreen').appendTo('#vis_wrap');
             $pan_attr.removeClass('fullscreen-pan-attr').appendTo('#panel_body');
 
+
         } else {
+            $container.removeClass('vis_container');
             $container.prependTo('body').addClass('fullscreen');
             $pan_attr.prependTo('body').addClass('fullscreen-pan-attr');
 

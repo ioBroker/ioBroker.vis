@@ -24,11 +24,11 @@ body{
     outline: none;
 }
 
-div#vis_container {
-    width: -webkit-calc(100% - 5px);
-    width: calc(100% - 2px);
-    height: -webkit-calc(100% - 30px);
-    height: calc(100% - 30px);
+.vis_container_edit {
+    width: -webkit-calc(100% - 5px)!important;
+    width: calc(100% - 2px)!important;
+    height: -webkit-calc(100% - 30px)!important;
+    height: calc(100% - 30px)!important;
     position: relative;
     overflow: auto;
     border-bottom-width: 0px;
@@ -438,10 +438,10 @@ div#vis_container {
     position: absolute;
     top: 0;
     left: 0;
-    width: -webkit-calc(100% - 4px);
-    width: calc(100% - 4px);
-    height: -webkit-calc(100% - 4px);
-    height: calc(100% - 4px);
+    width: -webkit-calc(100% - 3px);
+    width: calc(100% - 3px);
+    height: -webkit-calc(100% - 3px);
+    height: calc(100% - 3px);
     z-index: 1000;
 }
 
@@ -467,7 +467,7 @@ div#vis_container {
     display: inline-block;
     height: 100%;
     /* border-right-width: 0;*/
-    border-bottom-width: 0; 
+    border-bottom-width: 0;
     border-top-width: 0;
     border-left-width: 0;
     /* display: inline-block; */
@@ -759,7 +759,7 @@ td > .select_active_widget :nth-child(2) {
     width: calc(100% - 210px);
 }
 #css_file_save{
-margin-left: 10px;
+    margin-left: 10px;
 }
 
 .view-select-menu {

@@ -35,7 +35,7 @@
 // I want to have possibility to start vis not only from broker web server, but from some others too.
 
 // ok But I need the local flag in Webstorm too (faster Page reload) 
-var local = false;
+var local = true;
 if (document.URL.split('/local/')[1] || document.URL.split('/localhost:63343/')[1] || document.URL.split('/localhost:63342/')[1]) {
     local = true;
 }
@@ -461,6 +461,7 @@ var vis = {
             }
         }
 
+
         $('#active_view').html(this.activeView);
 
         // Navigation
@@ -476,6 +477,10 @@ var vis = {
             }
         this.initialized = true;
         // If this function called earlier, it makes problems under FireFox.
+        if(this.views["_project"]){
+            this.renderView("_project",false,true);
+        }
+
         this.changeView(this.activeView);
     },
     initViewObject: function () {
@@ -486,7 +491,7 @@ var vis = {
                 this.views = {};
                 this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                 this.saveRemote(function () {
-                    window.location.reload();
+                    //window.location.reload();
                 });
             } else {
                 window.location.reload();
@@ -498,10 +503,10 @@ var vis = {
         // Because of background, set the width and height of the view
         var width = parseInt(this.views[view].settings.sizex, 10);
         var height = parseInt(this.views[view].settings.sizey, 10);
-        if (!width || width < $(window).width()) {
+        if (!width || width < $("#vis_container").width()) {
             width = '100%';
         }
-        if (!height || height < $(window).height()) {
+        if (!height || height < $("#vis_container").height()) {
             height = '100%';
         }
         $view.css({width: width});
@@ -788,6 +793,8 @@ var vis = {
                     $("#" + id).addClass("vis-widget-lock")
                 }*/
             }
+
+            $(document).trigger("wid_added",id)
         } catch (e) {
            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
         }
@@ -921,12 +928,12 @@ var vis = {
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
-
+        console.log(local)
         if (local) {
             try {
                 this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
-                this.views = JSON.parse(storage.get(this.storageKeyViews));
-                this.IDs = this.getUsedObjectIDs();
+                that.views = JSON.parse(storage.get(this.storageKeyViews));
+                console.log(that)
                 if (callback) callback.call(that, callbackArg);
             } catch (err) {
                 this.views = null;
@@ -1581,6 +1588,76 @@ window.onpopstate();
             });
         } else {
             // Init edit dialog
+            vis.loadRemote(function () {
+                // Read all states from server
+                vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
+                    if (data) {
+                        for (var id in data) {
+                            var obj = data[id];
+                            var o = {};
+                            o[id + '.val'] = obj.val;
+                            o[id + '.ts']  = obj.ts;
+                            // BF @ HQ: Why?
+                            if (true){ //} || vis.states[id + '.val'] !== undefined) {
+                                o[id + '.ack'] = obj.ack;
+                                o[id + '.lc']  = obj.lc;
+                            }
+                            try {
+                                vis.states.attr(o);
+                            } catch (e) {
+                                vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                            }
+                        }
+                    }
+
+                    if (error) {
+                        console.log("Possibly not authenticated, wait for request from server");
+                        // Possibly not authenticated, wait for request from server
+                    } else {
+                        // Get Server language
+                        vis.conn.getConfig(function (err, config) {
+                            systemLang = config.language || systemLang;
+                            vis.language = systemLang;
+                            vis.dateFormat = config.dateFormat;
+                            translateAll();
+                            if (vis.isFirstTime) {
+                                // Init edit dialog
+                                if (vis.editMode && vis.editInit) vis.editInit();
+                                vis.isFirstTime = false;
+                                vis.init();
+                            }
+                        });
+
+                        // If metaIndex required, load it
+                        if (vis.editMode) {
+                            /* socket.io */
+                            if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
+
+                            // Read all data objects from server
+                            vis.conn.getObjects(function (err, data) {
+                                vis.objects = data;
+                                // Detect if objects are loaded
+                                for (var ob in data) {
+                                    vis.objectSelector = true;
+                                    break;
+                                }
+                            });
+                        }
+
+                        //console.log((new Date()) + " socket.io reconnect");
+                        if (vis.isFirstTime) {
+                            setTimeout(function () {
+                                if (vis.isFirstTime) {
+                                    // Init edit dialog
+                                    if (vis.editMode && vis.editInit) vis.editInit();
+                                    vis.isFirstTime = false;
+                                    vis.init();
+                                }
+                            }, 1000);
+                        }
+                    }
+                });
+            });
             if (vis.editMode && vis.editInit) vis.editInit();
             vis.init();
         }

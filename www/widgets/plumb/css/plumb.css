@@ -1,97 +1,15 @@
-.pipe_v{
-    background: #00F;
-    height: 100%;
-    width: 100%;
-    box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;
-}
-
-.pipe_h{
-    background: #00F;
-    height: 100%;
-    width: 100%;
-    box-shadow: rgb(0, 0, 0) 0px 10px 10px -10px inset, rgb(0, 0, 0) 0px -10px 10px -10px inset;
-}
 
 .pump{
-    /*background: #00F;*/
     height: 100%;
     width: 100%;
-    /*box-shadow: inset 10px 0px 11px -11px #000,inset -11px 0px 11px -11px #000;*/
 }
+.pump_img{
+    width: calc(100% - 20px);
 
-.bogen_br {
-    border-top-left-radius: 100%;
-    background-color: #00F;
-    width: 100%;
-    height: 100%;
-    box-shadow: rgb(0, 0, 0) 5px 5px 10px -6px inset;
-}
-
-.bogen_br_shadow{
-    border: 1px solid #F00;
+    height: calc(100% - 20px);
     position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 100%;
-    bottom: -100%;
-    right: -100%;
-    box-shadow: #000 -1px -1px 10px;
-}
-
-.bogen_bl {
-    border-top-right-radius: 100%;
-    background-color: #00F;
-    width: 100%;
-    height: 100%;
-    box-shadow: rgb(0, 0, 0) -5px 5px 10px -6px inset;
-}
-
-.bogen_bl_shadow{
-    border: 1px solid #F00;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 100%;
-    bottom: -100%;
-    left: -100%;
-    box-shadow: #000 1px -1px 10px;
-}
-
-.bogen_tr {
-    border-bottom-left-radius: 100%;
-    background-color: #00F;
-    width: 100%;
-    height: 100%;
-    box-shadow: #000 5px -5px 10px -6px inset;
-}
-
-.bogen_tr_shadow{
-    border: 1px solid #F00;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 100%;
-    top: -100%;
-    right: -100%;
-    box-shadow: #000 -1px 1px 10px;
-}
-.bogen_tl {
-    border-bottom-right-radius: 100%;
-    background-color: #00F;
-    width: 100%;
-    height: 100%;
-    box-shadow: #000 -5px -5px 10px -6px inset;
-}
-
-.bogen_tl_shadow{
-    border: 1px solid #F00;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 100%;
-    top: -100%;
-    left: -100%;
-    box-shadow: #000 1px 1px 10px;
+    left: 10px;
+    top: 10px;
 }
 
 .plumb_dock_top{
@@ -128,19 +46,28 @@
     right: -10px;
     top:0;
 }
+.plumb_dock_center{
+    width: 20px!important;
+    height: 20px!important;
+    left: calc(50% - 10px)!important;
+    top: calc(50% - 10px)!important;
+    position: absolute;
+    background: red;
+}
+
 
 .drop-hover{
-    background-color: #9ACD32;
+    background-color: #9ACD32!important;;
     border-radius: 100%;
-    box-shadow: 0px 0px 3px 3px #9ACD32;
+    box-shadow: 0px 0px 3px 3px #9ACD32!important;
 }
 
 .valve_h{
-
+    height: 100%;
+    width: 100%;
 }
 .valve_v{
     height: 100%;
-    position: absolute;
     width: 100%;
 }
 
@@ -172,6 +99,37 @@
     border-color: #0F0 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
 
 }
+
+.plumb_c_valve_h_back_l {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    background: silver;
+
+}
+
+.plumb_c_valve_h_back_r {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    background: silver;
+ right:0;
+}
+
+.plumb_c_valve_v_back_t{
+    height  : 50%;
+    width : 100%;
+    position: absolute;
+    background: silver;
+}
+
+.plumb_c_valve_v_back_b{
+    height  : 50%;
+    width: 100%;
+    position: absolute;
+    background: silver;
+    bottom:0;
+}
 .plumb_valve_b{
     width: 0;
     height: 0;
@@ -181,47 +139,212 @@
     /* right: 0; */
     bottom: 0;
     border-width: 0px 10px 19px 10px;
-    border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #0F0 rgba(0, 0, 0, 0);
 }
-.tpice_ht{
-    text-align: center;
+
+.plumb_sprinkler_i{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    border-radius: 100%;
+}
+
+
+.plumb_splinkler_i_water{
+    width: 100px;
+    height: 10px;
+    background-color: #000066;
+    border-radius: 20px;
+}
+
+.plumb_sprinkler_r{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    border-radius: 100%;
+
+}
+
+.plumb_sprinkler_r_water{
+    position: absolute;
+    width: 100%;
     height: 100%;
 }
-.tpice-hl{
-    background: #00F;
-    height: 20px;  width: 20px;
+
+.plumb_c_valve_h_img{
+    width: 100%;
+    height: 100%;
     position: absolute;
-    top: 33%;
-    box-shadow: #000 0px 10px 10px -10px inset, #000 0px -10px 10px -10px inset;
-    height: 20px;
-    width: 20px;
-}
-.tpice-hm{
-    background: #00F;
-    position: absolute;
-    top: 33%;
-    left: 33%;
-    overflow: hidden;
-    box-shadow: #000 0px -10px 10px -10px inset;
-    height: 20px;
-    width: 20px;
-}
-.tpice-hr{
-    background: #00F;
-    position: absolute;
-    top: 33%;
-    left: 66%;
-    box-shadow: #000 0px 10px 10px -10px inset, #000 0px -10px 10px -10px inset;
-    height: 20px;
-    width: 20px;
-}
-.tpice-t{
-    background: #00F;;
-    position: absolute;
-    display: inline-block;
     top: 0;
-    left: calc(50% - 16.5%);
-    box-shadow: #000 10px 0px 10px -10px inset, #000 -10px 0px 10px -10px inset;
-    height: 20px;
+    background-size: 100%!important;
+    left: 0;
+    z-index: 2;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.plumb_c_valve_v_img{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    background-size: 100%!important;
+    left: 0;
+    z-index: 2;
+    background-position: center;
+    background-repeat: no-repeat!important;
+
+}
+
+.ent-e_top_pipe-l{
+    background: silver;
     width: 20px;
+    height: 20px;
+    position: absolute;
+    left: calc(33% - 10px)!important;
+top:0!important;
+
+}
+.ent-e_top_pipe-r{
+    background: silver;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: calc(33% - 10px);!important;
+    left: auto!important;
+    top:0!important;
+}
+.ent-e_top{
+    /* background: -webkit-radial-gradient(   center,    ellipse closest-side,    yellow 0%,    blue 25%,    white 75%); */
+
+    /* background-position: 104% 60%; */
+    background-color: silver;
+    width: calc(100% - 20px);
+    left: 10px;
+    height: calc(20% - 9px);
+    position: absolute;
+    top: 10px;
+    border-top-left-radius: 80%;
+    border-top-right-radius: 80%;
+
+}
+.ent-e_center{
+
+    width: calc(100% - 20px);
+    left: 10px;
+    height: 60%;
+    position: absolute;
+    overflow: hidden;
+    top: 20%;
+    box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset;
+    background-color: #C0C0C0;
+}
+
+.ent-e_schott{
+
+    width: 200%;
+    /* left: 10px; */
+    left: -50%;
+    height: 100%;
+    position: absolute;
+    top: 10%;
+    border-top-left-radius: 100%;
+    border-top-right-radius: 100%;
+    border: 2px solid;    border-color: black red;    background: transparent;}
+
+.ent-e_bottom{
+    width: calc(100% - 20px);
+    left: 10px;
+    height: calc(20% - 10px);
+    position: absolute;
+    bottom: 10px;
+    /* border-top-left-radius: 109px; */
+    /* border-top-right-radius: 100px; */
+    border-bottom-left-radius: 100%;
+    border-bottom-right-radius: 100%;
+    box-shadow: rgb(0, 0, 0) 115px 0px 115px -115px inset, rgb(0, 0, 0) -115px 0px 115px -115px inset;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAGklEQVQImWNgQID/DGjgP7oEugoMCZxGMAAAluAH+UhIFMkAAAAASUVORK5CYII=) repeat;
+    background-color: #C0C0C0;
+}
+
+.ent-e_bottom_pipe{
+
+}
+.ent-e_kies{
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAGklEQVQImWNgQID/DGjgP7oEugoMCZxGMAAAluAH+UhIFMkAAAAASUVORK5CYII=) repeat;
+
+    bottom: 0;
+}
+
+.spray{
+    position: absolute;
+    top: 3%;
+    width: 61%;
+    height: 114%;
+    z-index: 1;
+    /* left: -50px; */
+}
+.spray_l{
+
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: 300;
+    }
+}
+
+.tank_simple_svg {
+    padding: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    position: absolute;
+    z-index: 2;
+}
+
+.plumb-rotate90{
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+
+    transform: rotate(90deg);
+}
+.plumb-rotate180{
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+
+    transform: rotate(180deg);
+}
+.plumb-rotate270{
+    -moz-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    -webkit-transform: rotate(270deg);
+
+    transform: rotate(270deg);
+}
+.plumb-flip-x{
+-moz-transform: scaleX(-1);
+-o-transform: scaleX(-1);
+-webkit-transform: scaleX(-1);
+transform: scaleX(-1);
+}
+.plumb-flip-y{
+-moz-transform: scaleY(-1);
+-o-transform: scaleY(-1);
+-webkit-transform: scaleY(-1);
+transform: scaleY(-1);
+}
+
+
+.plumb-svg{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    line-height: 0;
 }
