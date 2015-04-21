@@ -57,6 +57,7 @@
             "fog":              {"en": "fog",               "de": "fog",                "ru": "fog"},
             "head_show":        {"en": "head_show",         "de": "head_show",          "ru": "head_show"},
             "head_round":       {"en": "head_round",        "de": "head_round",         "ru": "head_round"},
+            "pipe_size":        {"en": "Pipe size",         "de": "Rohr größe",          "ru": "pipe_size"},
         });
 
 
@@ -1183,6 +1184,11 @@
 
             setTimeout(function () {
                 vis.binds.plumb.svg_pipe_h(id);
+
+                $($this).css("height",data.pipe_size +"px");
+                $("#widget_helper_" + id).css({
+                    height: parseInt(data.pipe_size) + 2 + "px"
+                })
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1227,6 +1233,11 @@
 
             setTimeout(function () {
                 vis.binds.plumb.svg_pipe_v(id);
+
+                $($this).css("width",data.pipe_size +"px");
+                $("#widget_helper_" + id).css({
+                    width: parseInt(data.pipe_size) + 2 + "px"
+                })
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1262,6 +1273,14 @@
 
             setTimeout(function () {
                 vis.binds.plumb.svg_bogen(id);
+                $($this).css({
+                    height: data.pipe_size +"px",
+                    width: data.pipe_size +"px"
+                });
+                $("#widget_helper_" + id).css({
+                    height: parseInt(data.pipe_size) + 2 + "px",
+                    width: parseInt(data.pipe_size) + 2 + "px"
+                })
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1309,6 +1328,14 @@
 
             setTimeout(function () {
                 vis.binds.plumb.svg_bogen(id);
+                $($this).css({
+                    height: data.pipe_size +"px",
+                    width: data.pipe_size +"px"
+                });
+                $("#widget_helper_" + id).css({
+                    height: parseInt(data.pipe_size) + 2 + "px",
+                    width: parseInt(data.pipe_size) + 2 + "px"
+                })
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1356,6 +1383,14 @@
 
             setTimeout(function () {
                 vis.binds.plumb.svg_bogen(id);
+                $($this).css({
+                    height: data.pipe_size +"px",
+                    width: data.pipe_size +"px"
+                });
+                $("#widget_helper_" + id).css({
+                    height: parseInt(data.pipe_size) + 2 + "px",
+                    width: parseInt(data.pipe_size) + 2 + "px"
+                })
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1402,6 +1437,14 @@
 
             setTimeout(function () {
                 vis.binds.plumb.svg_bogen(id);
+                $($this).css({
+                    height: data.pipe_size +"px",
+                    width: data.pipe_size +"px"
+                });
+                $("#widget_helper_" + id).css({
+                    height: parseInt(data.pipe_size) + 2 + "px",
+                    width: parseInt(data.pipe_size) + 2 + "px"
+                })
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -1447,6 +1490,14 @@
 
             var self = plumb[id];
 
+            $($this).css({
+                height:  parseInt(data.pipe_size) +"px",
+                width:  parseInt( parseInt(data.pipe_size) *1.5) +"px"
+            });
+            $("#widget_helper_" + id).css({
+                height: parseInt(data.pipe_size) + 2 + "px",
+                width:  parseInt(parseInt(data.pipe_size) *1.5) + 2 + "px"
+            });
 
             vis.binds.plumb.plumb_drop($this);
 
@@ -1582,6 +1633,15 @@
             }
 
             var self = plumb[id];
+
+            $($this).css({
+                height:  parseInt(parseInt(data.pipe_size) *1.5) +"px",
+                width:   parseInt(data.pipe_size) +"px"
+            });
+            $("#widget_helper_" + id).css({
+                height: parseInt(parseInt(data.pipe_size) *1.5) + 2 + "px",
+                width:  parseInt(data.pipe_size) + 2 + "px"
+            });
 
             vis.binds.plumb.plumb_drop($this);
 
@@ -1719,6 +1779,14 @@
 
             setTimeout(function () {
                 vis.binds.plumb.svg_check_valve_h(id);
+                $($this).css({
+                    height:  parseInt(data.pipe_size) +"px",
+                    width:  parseInt( parseInt(data.pipe_size) *2.5) +"px"
+                });
+                $("#widget_helper_" + id).css({
+                    height: parseInt(data.pipe_size) + 2 + "px",
+                    width:  parseInt(parseInt(data.pipe_size) *2.5) + 2 + "px"
+                });
             });
 
 
@@ -1822,13 +1890,21 @@
                     c_from: null,
                     c_default: null
                 }
-            }
+            };
 
             var self = plumb[id];
 
 
             setTimeout(function () {
                 vis.binds.plumb.svg_check_valve_v(id);
+                $($this).css({
+                    height:  parseInt(parseInt(data.pipe_size) *2.5) +"px",
+                    width:   parseInt(data.pipe_size) +"px"
+                });
+                $("#widget_helper_" + id).css({
+                    height: parseInt(parseInt(data.pipe_size) *2.5) + 2 + "px",
+                    width:  parseInt(data.pipe_size) + 2 + "px"
+                });
             });
 
             $($this).trigger("resize");
@@ -1932,6 +2008,14 @@
 
             setTimeout(function () {
                 vis.binds.plumb.svg_tpiece(id);
+                $($this).css({
+                    height:  parseInt(data.pipe_size) * 3 +"px",
+                    width:   parseInt(data.pipe_size) * 3 +"px"
+                });
+                $("#widget_helper_" + id).css({
+                    height: parseInt(data.pipe_size) * 3  + 2 + "px",
+                    width:  parseInt(data.pipe_size) * 3 + 2 + "px"
+                });
             });
 
 
@@ -1969,6 +2053,14 @@
 
             setTimeout(function () {
                 vis.binds.plumb.svg_tpiece(id);
+                $($this).css({
+                    height:  parseInt(data.pipe_size) * 3 +"px",
+                    width:   parseInt(data.pipe_size) * 3 +"px"
+                });
+                $("#widget_helper_" + id).css({
+                    height: parseInt(data.pipe_size) * 3  + 2 + "px",
+                    width:  parseInt(data.pipe_size) * 3 + 2 + "px"
+                });
             });
 
             vis.binds.plumb.plumb_drop($this);
@@ -2005,6 +2097,14 @@
 
             setTimeout(function () {
                 vis.binds.plumb.svg_tpiece(id);
+                $($this).css({
+                    height:  parseInt(data.pipe_size) * 3 +"px",
+                    width:   parseInt(data.pipe_size) * 3 +"px"
+                });
+                $("#widget_helper_" + id).css({
+                    height: parseInt(data.pipe_size) * 3  + 2 + "px",
+                    width:  parseInt(data.pipe_size) * 3 + 2 + "px"
+                });
             });
 
 
@@ -2040,6 +2140,14 @@
 
             setTimeout(function () {
                 vis.binds.plumb.svg_tpiece(id);
+                $($this).css({
+                    height:  parseInt(data.pipe_size) * 3 +"px",
+                    width:   parseInt(data.pipe_size) * 3 +"px"
+                });
+                $("#widget_helper_" + id).css({
+                    height: parseInt(data.pipe_size) * 3  + 2 + "px",
+                    width:  parseInt(data.pipe_size) * 3 + 2 + "px"
+                });
             });
 
 
@@ -2731,7 +2839,7 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Pump"
-        data-vis-attrs="oid;src[./widgets/plumb/img/pumpe.png];color_off[#C0C0C0]/color;color_on[#00ff00]/color;group.conTop;conTop_show/checkbox;conTop_size[20]/slider,5,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_size[20]/slider,5,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_size[20]/slider,5,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_size[20]/slider,5,50,5;conRight_pos[50]/slider,0,100,1;conRight">
+        data-vis-attrs="oid;src[./widgets/plumb/img/pumpe.png];color_off[#C0C0C0]/color;color_on[#00ff00]/color;group.conTop;conTop_show/checkbox;conTop_size[20]/slider,10,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_size[20]/slider,10,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_size[20]/slider,10,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_size[20]/slider,10,50,5;conRight_pos[50]/slider,0,100,1;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{}' style=" width: 65px; height: 205px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pump(el, data) %>>
 			<div class="pump" >
@@ -2802,8 +2910,8 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_V"
-        data-vis-attrs="conTop;conBottom">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t" data-vis-resizable='{"grid": [ 5, 1 ],"handles": "n, e, s, w" }' style="width: 20px; height: 100px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="pipe_size[20]/slider,10,50,5;conTop;conBottom">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t" data-vis-resizable='{"handles": "n,s" }' style="width: 20px; height: 100px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_v(el, data) %>>
 			<div class="pipe_v" >
 			    <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
@@ -2822,8 +2930,8 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_H"
-        data-vis-attrs="conLeft;conRight">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 1, 5 ],"handles": "n, e, s, w"}' style=" width: 100px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="pipe_size[20]/slider,10,50,5;conLeft;conRight">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"handles": "e, w"}' style=" width: 100px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.pipe_h(el, data) %>>
 			<div class="pipe_h" >
 			<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
@@ -2842,8 +2950,8 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_br"
-        data-vis-attrs="conBottom;conRight">
-    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_r pl_b " data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conBottom;conRight">
+    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_r pl_b "  style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_br(el, data) %>>
 			<div class="bogen_br">
 				<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-rotate180"></div>
@@ -2862,8 +2970,8 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_bl"
-        data-vis-attrs="conBottom;conLeft">
-    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_l pl_b " data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conBottom;conLeft">
+    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_l pl_b " style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_bl(el, data) %>>
 			<div class="bogen_bl plumb_body">
 				<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-flip-y"></div>
@@ -2882,8 +2990,8 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_tr"
-        data-vis-attrs="conTop;conRight">
-    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_t pl_r " data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conTop;conRight">
+    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_t pl_r " style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_tr(el, data) %>>
 			<div class="bogen_tr plumb_body">
 					<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-flip-x"></div>
@@ -2902,8 +3010,8 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Bogen_tl"
-        data-vis-attrs="conTop;conLeft">
-    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_t pl_l " data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": true, "handles": "s,e" }' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conTop;conLeft">
+    <div class="vis-widget <%== this.data.attr('class')%>  pl pl_t pl_l " style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.bogen_tl(el, data) %>>
 			<div class="bogen_tl plumb_body">
 				<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
@@ -2922,12 +3030,12 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="valve_H"
-        data-vis-attrs="oid;conLeft;conRight;ctrl/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [8 , 5 ],"aspectRatio": true,"handles": "n, e, s, w"}' style=" width: 32px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;oid;pipe_size[20]/slider,10,50,5;conLeft;conRight;ctrl/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " style=" width: 30px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_h(el, data) %>>
 			<div class="valve_h " >
-			<svg
-			    preserveAspectRatio="none"\
+			<svg style="display: block"
+			    preserveAspectRatio="none"
             	height="100%"
             	width="100%"
             	viewBox="0 0 350 200">
@@ -2948,11 +3056,11 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="valve_V"
-        data-vis-attrs="oid;conTop;conBottom;ctrl/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " data-vis-resizable='{"grid": [ 5, 8 ],"aspectRatio": true,"handles": "n, e, s, w"}' style=" width: 20px; height: 32px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;oid;pipe_size[20]/slider,10,50,5;conTop;conBottom;ctrl/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " style=" width: 20px; height: 32px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.valve_v(el, data) %>>
 			<div class="valve_v " >
-				<svg
+				<svg style="display: block"
 				    preserveAspectRatio="none"\
                 	height="100%"
                 	width="100%"
@@ -2974,8 +3082,8 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Check Valve H"
-        data-vis-attrs="conLeft;conRight;show_pipe[true]/checkbox;show_symbol[true]/checkbox;turn_direction[false]/checkbox">
-         <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " data-vis-resizable='{"grid": [ 12.5, 5 ],"aspectRatio": true,"handles": "n, e, s, w"}' style=" width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;conLeft;conRight;pipe_size[20]/slider,10,50,5;show_pipe[true]/checkbox;show_symbol[true]/checkbox;turn_direction[false]/checkbox">
+         <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " style=" width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
              <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.c_valve_h(el, data) %>>
     			<div class="valve_h " >
     				<div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
@@ -2994,8 +3102,8 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Check Valve V"
-        data-vis-attrs="conTop;conBottom;show_pipe[true]/checkbox;show_symbol[true]/checkbox;turn_direction[false]/checkbox">
-         <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " data-vis-resizable='{"grid": [ 5, 10 ],"aspectRatio": true,"handles": "n, e, s, w"}' style=" width: 20px; height: 50px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;conTop;conBottom;pipe_size[20]/slider,10,50,5;show_pipe[true]/checkbox;show_symbol[true]/checkbox;turn_direction[false]/checkbox">
+         <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " style=" width: 20px; height: 50px;" id="<%= this.data.attr('wid') %>">
              <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.c_valve_v(el, data) %>>
     			<div class="valve_v " >
     		        <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg"></div>
@@ -3014,8 +3122,8 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_HT"
-        data-vis-attrs="conLeft;conRight;conTop">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": true,"handles": "n, e, s, w"}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conLeft;conRight;conTop">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_ht(el, data) %>>
 			<div class="tpice_ht" >
 			    <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-rotate270"></div>
@@ -3037,8 +3145,8 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_HB"
-        data-vis-attrs="conLeft;conRight;conBottom">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_b" data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": true,"handles": "n, e, s, w"}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conLeft;conRight;conBottom">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_b" style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_hb(el, data) %>>
 			<div class="tpice_ht " >
 	            <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-rotate90"></div>
@@ -3058,8 +3166,8 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_VL"
-        data-vis-attrs="conLeft;conBottom;conTop">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_b pl_t" data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": true,"handles": "n, e, s, w"}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conLeft;conBottom;conTop">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_b pl_t" style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_vl(el, data) %>>
 			<div class="tpice_vl " >
 			    <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg plumb-rotate180"></div>
@@ -3081,8 +3189,8 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Pipe_VR"
-        data-vis-attrs="conBottom;conRight;conTop">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_r pl_t" data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": true,"handles": "n, e, s, w"}' style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs=_no_resize[true]/hidden;"pipe_size[20]/slider,10,50,5;conBottom;conRight;conTop">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_r pl_t" style="width: 60px; height: 60px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tpice_vr(el, data) %>>
 			<div  class="tpice_vr " >
 			    <div id="<%= this.data.attr('wid') %>_svg" class="plumb-svg "></div>				<div class="plumb_dock_top"></div>
@@ -3123,7 +3231,7 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank"
-        data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[0];oid;color[#C0C0C0]/color;water_color[#0000ff]/color;is_filter/checkbox;group.conTop;conTop_show/checkbox;conTop_water[#0000ff]/color;conTop_size[20]/slider,5,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_water[#0000ff]/color;conBottom_size[20]/slider,5,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_water[#0000ff]/color;conLeft_size[20]/slider,5,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_water[#0000ff]/color;conRight_size[20]/slider,5,50,5;conRight_pos[50]/slider,0,100,1;conRight">
+        data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[0];oid;color[#C0C0C0]/color;water_color[#0000ff]/color;is_filter/checkbox;group.conTop;conTop_show/checkbox;conTop_water[#0000ff]/color;conTop_size[20]/slider,10,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_water[#0000ff]/color;conBottom_size[20]/slider,10,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_water[#0000ff]/color;conLeft_size[20]/slider,10,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_water[#0000ff]/color;conRight_size[20]/slider,10,50,5;conRight_pos[50]/slider,0,100,1;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t pl_b" data-vis-resizable='{}' style="min-width: 70px; min-height: 135px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tank_simple(el, data) %>>
 			<div class="tank_simple" >
@@ -3145,7 +3253,7 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank Filter"
-        data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[0];oid;color[#C0C0C0]/color;top_water[#0000ff]/color;bottom_water[#00ffff]/color;filter_pattern[widgets/plumb/img/kies.png]/image;filter_size[15];filter_opa[50]/slider,0,100,1;group.conTop;conTop_show/checkbox;conTop_water[#0000ff]/color;conTop_size[20]/slider,5,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_water[#0000ff]/color;conBottom_size[20]/slider,5,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_water[#0000ff]/color;conLeft_size[20]/slider,5,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_water[#0000ff]/color;conRight_size[20]/slider,5,50,5;conRight_pos[50]/slider,0,100,1;conRight">
+        data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[0];oid;color[#C0C0C0]/color;top_water[#0000ff]/color;bottom_water[#00ffff]/color;filter_pattern[widgets/plumb/img/kies.png]/image;filter_size[15];filter_opa[50]/slider,0,100,1;group.conTop;conTop_show/checkbox;conTop_water[#0000ff]/color;conTop_size[20]/slider,10,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_water[#0000ff]/color;conBottom_size[20]/slider,10,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_water[#0000ff]/color;conLeft_size[20]/slider,10,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_water[#0000ff]/color;conRight_size[20]/slider,10,50,5;conRight_pos[50]/slider,0,100,1;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t pl_b" data-vis-resizable='{}' style="min-width: 70px; min-height: 135px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tank_filter(el, data) %>>
 			<div class="tank_simple" >

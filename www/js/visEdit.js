@@ -3630,7 +3630,7 @@ vis = $.extend(true, vis, {
             }
             if (this.activeWidgets.length == 1) {
                 $widget = $('#' + this.activeWidgets[0]);
-                if (!$widget.hasClass('ui-resizable')) {
+                if (!$widget.hasClass('ui-resizable') && (!this.widgets[wid].data._no_resize)) {
                     this.resizable($widget);
                 }
             }
