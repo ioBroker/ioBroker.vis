@@ -147,12 +147,13 @@
                         vis.save();
                         if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
 
+                            console.log(ui.draggable.width())
                             $(ui.draggable).css({
                                 "left": parseInt($this.css("left")) - ui.draggable.width() + "px",
                                 "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": parseInt($this.css("left")) - ui.draggable.width() - 2 + "px",
+                                "left": parseInt($this.css("left")) - ui.draggable.width() - 1 + "px",
                                 "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) - 2 + "px"
                             });
                         }
@@ -566,7 +567,7 @@
             $("#" + id + "_svg").append('\
             <svg \
             width="100%"\
-            height="100%"\
+            height="105%"\
             preserveAspectRatio="none"\
             viewBox="0 0 100 100" ">\
             <defs>\
@@ -589,7 +590,7 @@
 
             $("#" + id + "_svg").append('\
             <svg \
-            width="100%"\
+            width="105%"\
             height="100%"\
             preserveAspectRatio="none"\
             viewBox="0 0 100 100" ">\
