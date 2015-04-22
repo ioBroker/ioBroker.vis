@@ -92,6 +92,9 @@
                         $("#inspect_conBottom").val(self_id);
                         vis.save();
                         if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
+                            console.log(ui.draggable.height())
+                            console.log(parseInt($this.css("top")))
+                            console.log(parseInt($this.css("top")) - ui.draggable.height() )
                             $(ui.draggable).css({
                                 "top": parseInt($this.css("top")) - ui.draggable.height() + "px",
                                 "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px"
@@ -567,7 +570,7 @@
             $("#" + id + "_svg").append('\
             <svg \
             width="100%"\
-            height="105%"\
+            height="100%"\
             preserveAspectRatio="none"\
             viewBox="0 0 100 100" ">\
             <defs>\
@@ -590,7 +593,7 @@
 
             $("#" + id + "_svg").append('\
             <svg \
-            width="105%"\
+            width="100%"\
             height="100%"\
             preserveAspectRatio="none"\
             viewBox="0 0 100 100" ">\
@@ -661,8 +664,8 @@
             <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
             </linearGradient>\
             </defs>\
-            <path d="m0 0v250l40 41h120l40-41v-250h-200z" fill="#c0c0c0"/>\
-            <path d="m0 500v-250l41 40h119l40-40v250z"  fill="#c0c0c0"/>\
+            <path id="' + id + '_fill_top" d="m0 0v250l40 41h120l40-41v-250h-200z" fill="#c0c0c0"/>\
+            <path id="' + id + '_fill_bottom"  d="m0 500v-250l41 40h119l40-40v250z"  fill="#c0c0c0"/>\
             <rect transform="rotate(-90)" height="200" width="500" y="0" x="-500" fill="url(#' + id + '_c)"/>\
             <g>\
             <path d="m200 252.4-100 100m-100-100 100 100" stroke="#000000" stroke-linecap="round" stroke-width="20" fill="none"/>\
@@ -1788,6 +1791,13 @@
                     height: parseInt(data.pipe_size) + 2 + "px",
                     width:  parseInt(parseInt(data.pipe_size) *2.5) + 2 + "px"
                 });
+
+                if(data.turn_direction){
+                    $this.find('svg').css({
+                    "-webkit-transform": "rotate(180deg)",
+                    "transform": "rotate(180deg)"
+                    })
+                }
             });
 
 
@@ -1803,7 +1813,7 @@
                     $("#" + id + "_fill_right").attr("fill", event.color.c);
                     vis.binds.plumb.check(id, event)
                 } else if (self.conLeft == event.from) {
-                    $("#" + id + "_fill_left").attr("fill", event.color.c);
+                    $("#" + id + "_fill_right").attr("fill", event.color.c);
                 }
 
                 if (self.conRight == event.from && data.turn_direction != false) {
@@ -1917,17 +1927,19 @@
             $this.bind("plumb_change", function (event) {
 
                 if (self.conTop == event.from && data.turn_direction == false) {
-                    $($this).find(".plumb_c_valve_v_back_t, .plumb_c_valve_v_back_b").css("background", event.color.c)
+                    $("#" + id + "_fill_top").attr("fill", event.color.c);
+                    $("#" + id + "_fill_bottom").attr("fill", event.color.c);
                     vis.binds.plumb.check(id, event)
                 } else if (self.conTop == event.from) {
-                    $($this).find(".plumb_c_valve_v_back_t").css("background", event.color.c)
+                    $("#" + id + "_fill_bottom").attr("fill", event.color.c);
                 }
 
                 if (self.conBottom == event.from && data.turn_direction != false) {
-                    $($this).find(".plumb_c_valve_v_back_t, .plumb_c_valve_v_back_b").css("background", event.color.c)
+                    $("#" + id + "_fill_top").attr("fill", event.color.c);
+                    $("#" + id + "_fill_bottom").attr("fill", event.color.c);
                     vis.binds.plumb.check(id, event)
                 } else if (self.conBottom == event.from) {
-                    $($this).find(".plumb_c_valve_v_back_b").css("background", event.color.c)
+                    $("#" + id + "_fill_bottom").attr("fill", event.color.c);
                 }
             });
 
@@ -1982,6 +1994,50 @@
                 }
             }
         },
+        tpice_hb: function (el, data) {
+            var $this = $(el).parent();
+            var id = $this.attr("id");
+            var plumb = vis.binds.plumb.data;
+
+
+            vis.binds.plumb.data[id] = {
+                type: "tpice",
+                cons: ["conLeft", "conRight", "conBottom"],
+                coli: false,
+                conLeft: data.conLeft || null,
+                conRight: data.conRight || null,
+                conTop: data.conTop || null,
+                conBottom: data.conBottom || null,
+                status: false,
+                color: {
+                    c: null,
+                    c_from: null,
+                    c_default: null
+                }
+            }
+
+            var self = plumb[id];
+
+
+            setTimeout(function () {
+                vis.binds.plumb.svg_tpiece(id);
+                $($this).css({
+                    height:  parseInt(data.pipe_size) * 3 +"px",
+                    width:   parseInt(data.pipe_size) * 3 +"px"
+                });
+                $("#widget_helper_" + id).css({
+                    height: parseInt(data.pipe_size) * 3  + 2 + "px",
+                    width:  parseInt(data.pipe_size) * 3 + 2 + "px"
+                });
+            });
+
+            vis.binds.plumb.plumb_drop($this);
+
+            $this.bind("plumb_change", function (event) {
+                vis.binds.plumb.check(id, event)
+            });
+
+        },
         tpice_ht: function (el, data) {
             var $this = $(el).parent();
             var id = $this.attr("id");
@@ -2019,50 +2075,6 @@
                 });
             });
 
-
-            vis.binds.plumb.plumb_drop($this);
-
-            $this.bind("plumb_change", function (event) {
-                vis.binds.plumb.check(id, event)
-            });
-
-        },
-        tpice_hb: function (el, data) {
-            var $this = $(el).parent();
-            var id = $this.attr("id");
-            var plumb = vis.binds.plumb.data;
-
-
-            vis.binds.plumb.data[id] = {
-                type: "tpice",
-                cons: ["conLeft", "conRight", "conBottom"],
-                coli: false,
-                conLeft: data.conLeft || null,
-                conRight: data.conRight || null,
-                conTop: data.conTop || null,
-                conBottom: data.conBottom || null,
-                status: false,
-                color: {
-                    c: null,
-                    c_from: null,
-                    c_default: null
-                }
-            }
-
-            var self = plumb[id];
-
-
-            setTimeout(function () {
-                vis.binds.plumb.svg_tpiece(id);
-                $($this).css({
-                    height:  parseInt(data.pipe_size) * 3 +"px",
-                    width:   parseInt(data.pipe_size) * 3 +"px"
-                });
-                $("#widget_helper_" + id).css({
-                    height: parseInt(data.pipe_size) * 3  + 2 + "px",
-                    width:  parseInt(data.pipe_size) * 3 + 2 + "px"
-                });
-            });
 
             vis.binds.plumb.plumb_drop($this);
 
@@ -3083,7 +3095,7 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Check Valve H"
-        data-vis-attrs="_no_resize[true]/hidden;conLeft;conRight;pipe_size[20]/slider,10,50,5;show_pipe[true]/checkbox;show_symbol[true]/checkbox;turn_direction[false]/checkbox">
+        data-vis-attrs="_no_resize[true]/hidden;conLeft;conRight;pipe_size[20]/slider,10,50,5;turn_direction[false]/checkbox">
          <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r " style=" width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
              <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.c_valve_h(el, data) %>>
     			<div class="valve_h " >
@@ -3103,7 +3115,7 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Check Valve V"
-        data-vis-attrs="_no_resize[true]/hidden;conTop;conBottom;pipe_size[20]/slider,10,50,5;show_pipe[true]/checkbox;show_symbol[true]/checkbox;turn_direction[false]/checkbox">
+        data-vis-attrs="_no_resize[true]/hidden;conTop;conBottom;pipe_size[20]/slider,10,50,5;turn_direction[false]/checkbox">
          <div class="vis-widget <%== this.data.attr('class') %> pl pl_t pl_b " style=" width: 20px; height: 50px;" id="<%= this.data.attr('wid') %>">
              <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.c_valve_v(el, data) %>>
     			<div class="valve_v " >

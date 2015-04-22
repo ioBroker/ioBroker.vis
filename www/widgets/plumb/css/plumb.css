@@ -344,7 +344,9 @@ transform: scaleY(-1);
 
 .plumb-svg{
     position: absolute;
-    width: 100%;
-    height: 100%;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    margin-left: -1px;
+    margin-top: -1px;
     line-height: 0;
 }
