@@ -2611,7 +2611,12 @@ vis = $.extend(true, vis, {
                 if (platform.indexOf('Mac') == -1) {
                     options = options || {};
                     options.spin = function () {
-                        $(this).trigger('change');
+                        var $this = $(this);
+                        var timer = $this.data('timer');
+                        if (timer) clearTimeout(timer);
+                        $this.data('timer', setTimeout(function () {
+                            $this.trigger('change');
+                        },200));
                     };
                     $(this).spinner(options);
                     $(this).parent().css({width: '100%'});
