@@ -220,9 +220,9 @@
             
             $(window).resize(function(){
                 if(position === "left" || position === "right") {
-                    container.css({top:($(this).height()/2) - (height/2) + "px"});
+                    container.css({top:(container.parent().height()/2) - (height/2) + "px"});
                 } else {
-                    container.css({left:($(this).width()/2) - (width/2) + "px"});
+                    container.css({left:(container.parent().width()/2) - (width/2) + "px"});
                 }
             });
             

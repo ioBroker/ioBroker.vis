@@ -34,9 +34,8 @@
 // we should detect either local path here and not online.
 // I want to have possibility to start vis not only from broker web server, but from some others too.
 
-// ok But I need the local flag in Webstorm too (faster Page reload) 
-var local = true;
-if (document.URL.split('/local/')[1] || document.URL.split('/localhost:63343/')[1] || document.URL.split('/localhost:63342/')[1]) {
+var local = false;
+if (document.URL.split('/local/')[1]) {
     local = true;
 }
 
