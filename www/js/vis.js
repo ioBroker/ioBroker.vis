@@ -31,16 +31,6 @@
 /* jshint -W097 */// jshint strict:false
 'use strict';
 
-// we should detect either local path here and not online.
-// I want to have possibility to start vis not only from broker web server, but from some others too.
-
-// ok But I need the local flag in Webstorm too (faster Page reload) 
-var local = true;
-if (document.URL.split('/local/')[1] || document.URL.split('/localhost:63343/')[1] || document.URL.split('/localhost:63342/')[1]) {
-    local = true;
-}
-
-
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
         'No connection to Server': {'en': 'No connection to Server', 'de': 'Keine Verbindung zu Server', 'ru': 'Нет соединения с сервером'},
@@ -928,41 +918,28 @@ var vis = {
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
-        console.log(local)
-        if (local) {
-            try {
-                this.showWaitScreen(true, '<br/>' + _('Loading Views...') + '<br/>', null, 12.5);
-                that.views = JSON.parse(storage.get(this.storageKeyViews));
-                console.log(that)
-                if (callback) callback.call(that, callbackArg);
-            } catch (err) {
-                this.views = null;
-                if (callback) callback.call(that, callbackArg);
-            }
-        } else {
-            this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
-                if (err) window.alert(that.projectPrefix + 'vis-views.json ' + err);
+        this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
+            if (err) window.alert(that.projectPrefix + 'vis-views.json ' + err);
 
-                if (data) {
-                    if (typeof data == 'string') {
-                        try {
-                            that.views = JSON.parse(data);
-                        } catch (e) {
-                            console.log('Cannot parse views file "' + that.projectPrefix + 'vis-views.json"');
-                            window.alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');
-                            that.views = null;
-                        }
-                    } else {
-                        that.views = data;
+            if (data) {
+                if (typeof data == 'string') {
+                    try {
+                        that.views = JSON.parse(data);
+                    } catch (e) {
+                        console.log('Cannot parse views file "' + that.projectPrefix + 'vis-views.json"');
+                        window.alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');
+                        that.views = null;
                     }
-                    that.IDs = that.getUsedObjectIDs();
                 } else {
-                    that.views = null;
+                    that.views = data;
                 }
+                that.IDs = that.getUsedObjectIDs();
+            } else {
+                that.views = null;
+            }
 
-                if (callback) callback.call(that, callbackArg);
-            });
-        }
+            if (callback) callback.call(that, callbackArg);
+        });
     },
     saveRemoteActive: 0,
     saveRemote: function (callback) {
@@ -990,28 +967,22 @@ var vis = {
                 }
             }
 
-            if (local) {
-                storage.set(this.storageKeyViews, JSON.stringify(this.views, null, 2));
+            this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
                 that.saveRemoteActive = 0;
                 if (callback) callback();
-            } else {
-                this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
-                    that.saveRemoteActive = 0;
-                    if (callback) callback();
 
-                    // If not yet checked => check if project css file exists
-                    if (!that.cssChecked) {
-                        that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
-                            that.cssChecked = true;
-                            // Create vis-user.css file if not exist
-                            if (err || data === null || data === undefined) {
-                                // Create empty css file
-                                that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
-                            }
-                        });
-                    }
-                });
-            }
+                // If not yet checked => check if project css file exists
+                if (!that.cssChecked) {
+                    that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
+                        that.cssChecked = true;
+                        // Create vis-user.css file if not exist
+                        if (err || data === null || data === undefined) {
+                            // Create empty css file
+                            that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
+                        }
+                    });
+                }
+            });
         }
     },
     //additionalThemeCss: function (theme) {
@@ -1306,361 +1277,285 @@ window.onpopstate();
             }
         });
 
-        if (!local) {
-            vis.conn.init(null, {
-                onConnChange: function (isConnected) {
-                    //console.log("onConnChange isConnected="+isConnected);
-                    if (isConnected) {
-                        $("#server-disconnect").dialog("close");
-                        if (vis.isFirstTime) {
-                            vis.conn.getVersion(function (version) {
-                                if (version) {
-                                    if (compareVersion(version, vis.requiredServerVersion)) {
-                                        vis.showMessage(_('Warning: requires Server version %s - found Server version %s - please update Server.',  vis.requiredServerVersion, version));
+        vis.conn.init(null, {
+            onConnChange: function (isConnected) {
+                //console.log("onConnChange isConnected="+isConnected);
+                if (isConnected) {
+                    $("#server-disconnect").dialog("close");
+                    if (vis.isFirstTime) {
+                        vis.conn.getVersion(function (version) {
+                            if (version) {
+                                if (compareVersion(version, vis.requiredServerVersion)) {
+                                    vis.showMessage(_('Warning: requires Server version %s - found Server version %s - please update Server.',  vis.requiredServerVersion, version));
+                                }
+                            }
+                            //else {
+                                // Possible not authenticated, wait for request from server
+                            //}
+                        });
+
+                        vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
+                    }
+
+                    // first of all try to load views
+                    vis.loadRemote(function () {
+                        // Read all states from server
+                        vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
+                            if (data) {
+                                for (var id in data) {
+                                    var obj = data[id];
+                                    var o = {};
+                                    o[id + '.val'] = obj.val;
+                                    o[id + '.ts']  = obj.ts;
+                                    // BF @ HQ: Why?
+                                    if (true){ //} || vis.states[id + '.val'] !== undefined) {
+                                        o[id + '.ack'] = obj.ack;
+                                        o[id + '.lc']  = obj.lc;
+                                    }
+                                    try {
+                                        vis.states.attr(o);
+                                    } catch (e) {
+                                        vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
                                     }
                                 }
-                                //else {
-                                    // Possible not authenticated, wait for request from server
-                                //}
-                            });
+                            }
 
-                            vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
-                        }
-
-                        // first of all try to load views
-                        vis.loadRemote(function () {
-                            // Read all states from server
-                            vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
-                                if (data) {
-                                    for (var id in data) {
-                                        var obj = data[id];
-                                        var o = {};
-                                        o[id + '.val'] = obj.val;
-                                        o[id + '.ts']  = obj.ts;
-                                        // BF @ HQ: Why?
-                                        if (true){ //} || vis.states[id + '.val'] !== undefined) {
-                                            o[id + '.ack'] = obj.ack;
-                                            o[id + '.lc']  = obj.lc;
-                                        }
-                                        try {
-                                            vis.states.attr(o);
-                                        } catch (e) {
-                                            vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
-                                        }
+                            if (error) {
+                                console.log("Possibly not authenticated, wait for request from server");
+                                // Possibly not authenticated, wait for request from server
+                            } else {
+                                // Get Server language
+                                vis.conn.getConfig(function (err, config) {
+                                    systemLang = config.language || systemLang;
+                                    vis.language = systemLang;
+                                    vis.dateFormat = config.dateFormat;
+                                    translateAll();
+                                    if (vis.isFirstTime) {
+                                        // Init edit dialog
+                                        if (vis.editMode && vis.editInit) vis.editInit();
+                                        vis.isFirstTime = false;
+                                        vis.init();
                                     }
+                                });
+
+                                // If metaIndex required, load it
+                                if (vis.editMode) {
+                                    /* socket.io */
+                                    if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
+
+                                    // Read all data objects from server
+                                    vis.conn.getObjects(function (err, data) {
+                                        vis.objects = data;
+                                        // Detect if objects are loaded
+                                        for (var ob in data) {
+                                            vis.objectSelector = true;
+                                            break;
+                                        }
+                                    });
                                 }
 
-                                if (error) {
-                                    console.log("Possibly not authenticated, wait for request from server");
-                                    // Possibly not authenticated, wait for request from server
-                                } else {
-                                    // Get Server language
-                                    vis.conn.getConfig(function (err, config) {
-                                        systemLang = config.language || systemLang;
-                                        vis.language = systemLang;
-                                        vis.dateFormat = config.dateFormat;
-                                        translateAll();
+                                //console.log((new Date()) + " socket.io reconnect");
+                                if (vis.isFirstTime) {
+                                    setTimeout(function () {
                                         if (vis.isFirstTime) {
                                             // Init edit dialog
                                             if (vis.editMode && vis.editInit) vis.editInit();
                                             vis.isFirstTime = false;
                                             vis.init();
                                         }
-                                    });
-
-                                    // If metaIndex required, load it
-                                    if (vis.editMode) {
-                                        /* socket.io */
-                                        if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
-
-                                        // Read all data objects from server
-                                        vis.conn.getObjects(function (err, data) {
-                                            vis.objects = data;
-                                            // Detect if objects are loaded
-                                            for (var ob in data) {
-                                                vis.objectSelector = true;
-                                                break;
-                                            }
-                                        });
-                                    }
-
-                                    //console.log((new Date()) + " socket.io reconnect");
-                                    if (vis.isFirstTime) {
-                                        setTimeout(function () {
-                                            if (vis.isFirstTime) {
-                                                // Init edit dialog
-                                                if (vis.editMode && vis.editInit) vis.editInit();
-                                                vis.isFirstTime = false;
-                                                vis.init();
-                                            }
-                                        }, 1000);
-                                    }
-                                }
-                            });
-                        });
-                    } else {
-                        //console.log((new Date()) + " socket.io disconnect");
-                        $("#server-disconnect").dialog("open");
-                    }
-                },
-                onRefresh:    function () {
-                    window.location.reload();
-                },
-                onUpdate:     function (id, state) {
-                    var o = {};
-                    // Check new model
-                    o[id + '.val'] = state.val;
-                    o[id + '.ts']  = state.ts;
-                    if (vis.states[id + '.val'] !== undefined) {
-                        o[id + '.ack'] = state.ack;
-                        o[id + '.lc']  = state.lc;
-                    }
-                    try {
-                        vis.states.attr(o);
-                    } catch (e) {
-                        vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
-                    }
-                    if (id == 'hm-rpc.0.HEQ0120459.1.WORKING') {
-                        console.log(JSON.stringify(state));
-                    }
-
-                    if (!vis.editMode && vis.visibility[id]) {
-                        for (var i = 0; i < vis.visibility[id].length; i++) {
-                            var mWidget = document.getElementById(vis.visibility[id][i].widget);
-                            if (!mWidget) continue;
-                            if (vis.isWidgetHidden(vis.visibility[id][i].view, vis.visibility[id][i].widget, state.val) ||
-                                vis.isWidgetFilteredOut(vis.visibility[id][i].view, vis.visibility[id][i].widget)) {
-                                $(mWidget).hide();
-                                if (mWidget &&
-                                    mWidget._customHandlers &&
-                                    mWidget._customHandlers.onHide) {
-                                    mWidget._customHandlers.onHide(mWidget, id);
-                                }
-                            } else {
-                                $(mWidget).show();
-                                if (mWidget &&
-                                    mWidget._customHandlers &&
-                                    mWidget._customHandlers.onShow) {
-                                    mWidget._customHandlers.onShow(mWidget, id);
+                                    }, 1000);
                                 }
                             }
-                        }
-                    }
-
-                    // Inform other widgets, that do not support canJS
-                    for (var j = 0, len = vis.onChangeCallbacks.length; j < len; j++) {
-                        vis.onChangeCallbacks[j].callback(vis.onChangeCallbacks[j].arg, id, state.val, state.ack);
-                    }
-                },
-                onAuth:       function (message, salt) {
-                    if (vis.authRunning) {
-                        return;
-                    }
-                    vis.authRunning = true;
-                    var users;
-                    if (visConfig.auth.users && visConfig.auth.users.length) {
-                        users = '<select id="login-username" value="' + visConfig.auth.users[0] + '" class="login-input-field">';
-                        for (var z = 0; z < visConfig.auth.users.length; z++) {
-                            users += '<option value="' + visConfig.auth.users[z] + '">' + visConfig.auth.users[z] + '</option>';
-                        }
-                        users += '</select>';
-                    } else {
-                        users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name') + '">';
-                    }
-
-                var text = '<div id="login-box" class="login-popup" style="display:none">' +
-                            '<div class="login-message">' + message + '</div>' +
-                            '<div class="login-input-field">' +
-                                '<label class="username">' +
-                                    '<span class="_">' + _('User name') + '</span>' +
-                                    users +
-                                '</label>' +
-                                '<label class="password">' +
-                                    '<span class="_">' + _('Password') + '</span>' +
-                                    '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password') + '">' +
-                                '</label>' +
-                                '<button class="login-button" type="button"  class="_">' + _('Sign in') + '</button>' +
-                            '</div>' +
-                        '</div>';
-
-                    $('body').append(text);
-
-                    var loginBox = $('#login-box');
-
-                    //Fade in the Popup
-                    $(loginBox).fadeIn(300);
-
-                    //Set the center alignment padding + border see css style
-                    var popMargTop = ($(loginBox).height() + 24) / 2;
-                    var popMargLeft = ($(loginBox).width() + 24) / 2;
-
-                    $(loginBox).css({
-                        'margin-top': -popMargTop,
-                        'margin-left': -popMargLeft
-                    });
-
-                    // Add the mask to body
-                    $('body').append('<div id="login-mask"></div>');
-                    $('#login-mask').fadeIn(300);
-                    // When clicking on the button close or the mask layer the popup closed
-                    $('#login-password').keypress(function (e) {
-                        if (e.which == 13) {
-                            $('.login-button').trigger('click');
-                        }
-                    });
-                    $('.login-button').bind('click', function () {
-                        var user = $('#login-username').val();
-                        var pass = $('#login-password').val();
-                        $('#login_mask , .login-popup').fadeOut(300, function () {
-                            $('#login-mask').remove();
-                            $('#login-box').remove();
                         });
-                        setTimeout(function () {
-                            vis.authRunning = false;
-                            console.log("user " + user + ", " + pass + " " + salt);
-                            vis.conn.authenticate(user, pass, salt);
-                        }, 500);
-                        return true;
                     });
-                },
-                onCommand:    function (instance, command, data) {
-                    var parts;
-                    if (instance != vis.instance && instance != 'FFFFFFFF') return false;
-                    if (command) {
-                        // external Commands
-                        switch (command) {
-                            case 'alert':
-                                parts = data.split(';');
-                                vis.showMessage(parts[0], parts[1], parts[2]);
-                                break;
-                            case 'changedView':
-                                // Do nothing
-                                return false;
-                            case 'changeView':
-                                parts = data.split('/');
-                                //if (parts[1]) {
-                                    // Todo switch to desired project
-                                //}
-                                vis.changeView(parts[1] || parts[0]);
-                                break;
-                            case 'refresh':
-                            case 'reload':
-                                setTimeout(function () {
-                                    window.location.reload();
-                                }, 1);
-                                break;
-                            case 'dialog':
-                                $('#' + data + '_dialog').dialog('open');
-                                break;
-                            case 'popup':
-                                window.open(data);
-                                break;
-                            case 'playSound':
-                                setTimeout(function () {
-                                    var href;
-                                    if (data.match(/^http(s)?:\/\//)) {
-                                        href = data;
-                                    } else {
-                                        href = location.protocol + '//' + location.hostname + ':' + location.port + data;
-                                    }
-                                    // force read from server
-                                    href += '?' + (new Date()).getTime();
-
-                                    if (typeof Audio != 'undefined') {
-                                        var snd = new Audio(href); // buffers automatically when created
-                                        snd.play();
-                                    } else {
-                                        if (!$('#external_sound').length) {
-                                            $('body').append('<audio id="external_sound"></audio>');
-                                        }
-                                        $('#external_sound').attr('src', href);
-                                        document.getElementById('external_sound').play();
-                                    }
-                                }, 1);
-                                break;
-                            default:
-                                vis.conn.logError('unknown external command ' + command);
-                        }
-                    }
-
-                    return true;
+                } else {
+                    //console.log((new Date()) + " socket.io disconnect");
+                    $("#server-disconnect").dialog("open");
                 }
-            });
-        } else {
-            // Init edit dialog
-            vis.loadRemote(function () {
-                // Read all states from server
-                vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
-                    if (data) {
-                        for (var id in data) {
-                            var obj = data[id];
-                            var o = {};
-                            o[id + '.val'] = obj.val;
-                            o[id + '.ts']  = obj.ts;
-                            // BF @ HQ: Why?
-                            if (true){ //} || vis.states[id + '.val'] !== undefined) {
-                                o[id + '.ack'] = obj.ack;
-                                o[id + '.lc']  = obj.lc;
+            },
+            onRefresh:    function () {
+                window.location.reload();
+            },
+            onUpdate:     function (id, state) {
+                var o = {};
+                // Check new model
+                o[id + '.val'] = state.val;
+                o[id + '.ts']  = state.ts;
+                if (vis.states[id + '.val'] !== undefined) {
+                    o[id + '.ack'] = state.ack;
+                    o[id + '.lc']  = state.lc;
+                }
+                try {
+                    vis.states.attr(o);
+                } catch (e) {
+                    vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                }
+                if (id == 'hm-rpc.0.HEQ0120459.1.WORKING') {
+                    console.log(JSON.stringify(state));
+                }
+
+                if (!vis.editMode && vis.visibility[id]) {
+                    for (var i = 0; i < vis.visibility[id].length; i++) {
+                        var mWidget = document.getElementById(vis.visibility[id][i].widget);
+                        if (!mWidget) continue;
+                        if (vis.isWidgetHidden(vis.visibility[id][i].view, vis.visibility[id][i].widget, state.val) ||
+                            vis.isWidgetFilteredOut(vis.visibility[id][i].view, vis.visibility[id][i].widget)) {
+                            $(mWidget).hide();
+                            if (mWidget &&
+                                mWidget._customHandlers &&
+                                mWidget._customHandlers.onHide) {
+                                mWidget._customHandlers.onHide(mWidget, id);
                             }
-                            try {
-                                vis.states.attr(o);
-                            } catch (e) {
-                                vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                        } else {
+                            $(mWidget).show();
+                            if (mWidget &&
+                                mWidget._customHandlers &&
+                                mWidget._customHandlers.onShow) {
+                                mWidget._customHandlers.onShow(mWidget, id);
                             }
                         }
                     }
+                }
 
-                    if (error) {
-                        console.log("Possibly not authenticated, wait for request from server");
-                        // Possibly not authenticated, wait for request from server
-                    } else {
-                        // Get Server language
-                        vis.conn.getConfig(function (err, config) {
-                            systemLang = config.language || systemLang;
-                            vis.language = systemLang;
-                            vis.dateFormat = config.dateFormat;
-                            translateAll();
-                            if (vis.isFirstTime) {
-                                // Init edit dialog
-                                if (vis.editMode && vis.editInit) vis.editInit();
-                                vis.isFirstTime = false;
-                                vis.init();
-                            }
-                        });
+                // Inform other widgets, that do not support canJS
+                for (var j = 0, len = vis.onChangeCallbacks.length; j < len; j++) {
+                    vis.onChangeCallbacks[j].callback(vis.onChangeCallbacks[j].arg, id, state.val, state.ack);
+                }
+            },
+            onAuth:       function (message, salt) {
+                if (vis.authRunning) {
+                    return;
+                }
+                vis.authRunning = true;
+                var users;
+                if (visConfig.auth.users && visConfig.auth.users.length) {
+                    users = '<select id="login-username" value="' + visConfig.auth.users[0] + '" class="login-input-field">';
+                    for (var z = 0; z < visConfig.auth.users.length; z++) {
+                        users += '<option value="' + visConfig.auth.users[z] + '">' + visConfig.auth.users[z] + '</option>';
+                    }
+                    users += '</select>';
+                } else {
+                    users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name') + '">';
+                }
 
-                        // If metaIndex required, load it
-                        if (vis.editMode) {
-                            /* socket.io */
-                            if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
+            var text = '<div id="login-box" class="login-popup" style="display:none">' +
+                        '<div class="login-message">' + message + '</div>' +
+                        '<div class="login-input-field">' +
+                            '<label class="username">' +
+                                '<span class="_">' + _('User name') + '</span>' +
+                                users +
+                            '</label>' +
+                            '<label class="password">' +
+                                '<span class="_">' + _('Password') + '</span>' +
+                                '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password') + '">' +
+                            '</label>' +
+                            '<button class="login-button" type="button"  class="_">' + _('Sign in') + '</button>' +
+                        '</div>' +
+                    '</div>';
 
-                            // Read all data objects from server
-                            vis.conn.getObjects(function (err, data) {
-                                vis.objects = data;
-                                // Detect if objects are loaded
-                                for (var ob in data) {
-                                    vis.objectSelector = true;
-                                    break;
-                                }
-                            });
-                        }
+                $('body').append(text);
 
-                        //console.log((new Date()) + " socket.io reconnect");
-                        if (vis.isFirstTime) {
-                            setTimeout(function () {
-                                if (vis.isFirstTime) {
-                                    // Init edit dialog
-                                    if (vis.editMode && vis.editInit) vis.editInit();
-                                    vis.isFirstTime = false;
-                                    vis.init();
-                                }
-                            }, 1000);
-                        }
+                var loginBox = $('#login-box');
+
+                //Fade in the Popup
+                $(loginBox).fadeIn(300);
+
+                //Set the center alignment padding + border see css style
+                var popMargTop = ($(loginBox).height() + 24) / 2;
+                var popMargLeft = ($(loginBox).width() + 24) / 2;
+
+                $(loginBox).css({
+                    'margin-top': -popMargTop,
+                    'margin-left': -popMargLeft
+                });
+
+                // Add the mask to body
+                $('body').append('<div id="login-mask"></div>');
+                $('#login-mask').fadeIn(300);
+                // When clicking on the button close or the mask layer the popup closed
+                $('#login-password').keypress(function (e) {
+                    if (e.which == 13) {
+                        $('.login-button').trigger('click');
                     }
                 });
-            });
-            if (vis.editMode && vis.editInit) vis.editInit();
-            vis.init();
-        }
+                $('.login-button').bind('click', function () {
+                    var user = $('#login-username').val();
+                    var pass = $('#login-password').val();
+                    $('#login_mask , .login-popup').fadeOut(300, function () {
+                        $('#login-mask').remove();
+                        $('#login-box').remove();
+                    });
+                    setTimeout(function () {
+                        vis.authRunning = false;
+                        console.log("user " + user + ", " + pass + " " + salt);
+                        vis.conn.authenticate(user, pass, salt);
+                    }, 500);
+                    return true;
+                });
+            },
+            onCommand:    function (instance, command, data) {
+                var parts;
+                if (instance != vis.instance && instance != 'FFFFFFFF') return false;
+                if (command) {
+                    // external Commands
+                    switch (command) {
+                        case 'alert':
+                            parts = data.split(';');
+                            vis.showMessage(parts[0], parts[1], parts[2]);
+                            break;
+                        case 'changedView':
+                            // Do nothing
+                            return false;
+                        case 'changeView':
+                            parts = data.split('/');
+                            //if (parts[1]) {
+                                // Todo switch to desired project
+                            //}
+                            vis.changeView(parts[1] || parts[0]);
+                            break;
+                        case 'refresh':
+                        case 'reload':
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 1);
+                            break;
+                        case 'dialog':
+                            $('#' + data + '_dialog').dialog('open');
+                            break;
+                        case 'popup':
+                            window.open(data);
+                            break;
+                        case 'playSound':
+                            setTimeout(function () {
+                                var href;
+                                if (data.match(/^http(s)?:\/\//)) {
+                                    href = data;
+                                } else {
+                                    href = location.protocol + '//' + location.hostname + ':' + location.port + data;
+                                }
+                                // force read from server
+                                href += '?' + (new Date()).getTime();
+
+                                if (typeof Audio != 'undefined') {
+                                    var snd = new Audio(href); // buffers automatically when created
+                                    snd.play();
+                                } else {
+                                    if (!$('#external_sound').length) {
+                                        $('body').append('<audio id="external_sound"></audio>');
+                                    }
+                                    $('#external_sound').attr('src', href);
+                                    document.getElementById('external_sound').play();
+                                }
+                            }, 1);
+                            break;
+                        default:
+                            vis.conn.logError('unknown external command ' + command);
+                    }
+                }
+
+                return true;
+            }
+        });
     });
 
     //vis.preloadImages(["../lib/css/themes/jquery-ui/redmond/images/modalClose.png"]);

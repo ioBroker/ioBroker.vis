@@ -40,7 +40,7 @@ var servConn = {
     _authRunning:       false,
     _cmdQueue:          [],
     _connTimer:         null,
-    _type:              1, // 0 - SignalR, 1 - socket.io, 2 - local demo
+    _type:              'socket.io', // [SignalR | socket.io | local]
     _timeout:           0, // 0 - use transport default timeout to detect disconnect
     _reconnectInterval: 10000, // reconnect interval
     _subscribes:        [],
@@ -48,7 +48,7 @@ var servConn = {
     _cmdInstance:       null,
     namespace:          'vis.0',
     getType: function () {
-        return 'socket.io';
+        return this._type;
     },
     getIsConnected: function () {
         return this._isConnected;
@@ -69,6 +69,16 @@ var servConn = {
         return true;
     },
     init: function (connOptions, connCallbacks) {
+        // To start vis as local use one of:
+        // - start vis from directory with name local, e.g. c:/blbla/local/ioBroker.vis/www/index.html
+        // - do not create "_socket/info.js" file in "www" directory
+        // - create "_socket/info.js" file with
+        //   var socketUrl = "local"; var socketSession = ""; sysLang="en";
+        //   in this case you can overwrite browser language settings
+        if ((document.URL.split('/local/')[1] || (typeof socketUrl === 'undefined' || socketUrl === 'local'))) {
+            this._type =  'local';
+        }
+
         // init namespace
         if (typeof socketNamespace != 'undefined') this.namespace = socketNamespace;
 
@@ -95,6 +105,12 @@ var servConn = {
         if (!connLink && typeof socketUrl != 'undefined') connLink = socketUrl;
         if (!connOptions.socketSession && typeof socketSession != 'undefined') connOptions.socketSession = socketSession;
 
+        // if no remote data
+        if (this._type === 'local') {
+            // report connected state
+            that._isConnected = true;
+            if (that._connCallbacks.onConnChange) that._connCallbacks.onConnChange(that._isConnected);
+        } else
         if (typeof io != "undefined") {
             connOptions.socketSession = connOptions.socketSession || 'nokey';
 
@@ -212,14 +228,22 @@ var servConn = {
         });
     },
     readFile: function (filename, callback) {
-        if (!callback) {
-            throw 'No callback set';
-        }
-        if (!this._checkConnection('readFile', arguments)) return;
+        if (!callback) throw 'No callback set';
 
-        this._socket.emit('readFile', this.namespace, filename, function (err, data) {
-            callback(err, data);
-        });
+        if (this._type === 'local') {
+            try {
+                var data = storage.get(filename);
+                callback(null, data ? JSON.parse(storage.get(data)) : null);
+            } catch (err) {
+                callback(err, null);
+            }
+        } else {
+            if (!this._checkConnection('readFile', arguments)) return;
+
+            this._socket.emit('readFile', this.namespace, filename, function (err, data) {
+                callback(err, data);
+            });
+        }
     },
     readFile64: function (filename, callback) {
         if (!callback) {
@@ -277,11 +301,16 @@ var servConn = {
     },
     writeFile: function (filename, data, callback) {
         var that = this;
-        if (!this._checkConnection('writeFile', arguments)) return;
+        if (this._type === 'local') {
+            storage.set(filename, JSON.stringify(data));
+            if (callback) callback();
+        } else {
+            if (!this._checkConnection('writeFile', arguments)) return;
 
-        if (typeof data == 'object') data = JSON.stringify(data, null, 2);
+            if (typeof data == 'object') data = JSON.stringify(data, null, 2);
 
-        this._socket.emit('writeFile', this.namespace, filename, data, callback);
+            this._socket.emit('writeFile', this.namespace, filename, data, callback);
+        }
     },
     // Write file base 64
     writeFile64: function (filename, data, callback) {

@@ -56,6 +56,7 @@ vis = $.extend(true, vis, {
     objectSelector:        false, // if object select ID activated
     alignIndex:            0,
     alignType:             '',
+    widgetAccordeon:       false,
 
     editInit: function () {
         var that = this;
@@ -69,9 +70,6 @@ vis = $.extend(true, vis, {
         this.$selectView           = $('#select_view');
         this.$copyWidgetSelectView = $('#rib_wid_copy_view');
         this.$selectActiveWidgets  = $('#select_active_widget');
-        // @SJ cannot select menu and dialogs if it is enabled
-        //$("#wid_all_lock_function").trigger("click");
-        if (local) $("#ribbon_tab_datei").show();
 
         this.editInitDialogs();
         this.editInitMenu();
@@ -217,6 +215,11 @@ vis = $.extend(true, vis, {
         $('#export_view').click(function () {
             that.exportView(false);
         });
+        if (this.conn.getType() == 'local') {
+            // @SJ cannot select menu and dialogs if it is enabled
+            //$("#wid_all_lock_function").trigger("click");
+            $("#ribbon_tab_datei").show();
+        }
 
         $('#import_view').click(function () {
             $('#textarea_import_view').html('');
@@ -428,6 +431,19 @@ vis = $.extend(true, vis, {
             });
         });
 
+        $('#btn_accordeon').
+            button({icons: {primary: 'ui-icon-grip-dotted-horizontal', secondary: null}, text: false}).
+            css({width: 18, height: 18}).
+            click(function () {
+                that.widgetAccordeon = !that.widgetAccordeon;
+                that.editUpdateAccordeon();
+            });
+
+        if (this.config.widgetAccordeon) {
+            this.widgetAccordeon = true;
+            this.editUpdateAccordeon();
+        }
+
         // Bug in firefox or firefox is too slow or too fast
         /*setTimeout(function() {
 
@@ -482,6 +498,37 @@ vis = $.extend(true, vis, {
             }
         }*/
         if (this.config.groupsState) this.groupsState = this.config.groupsState;
+    },
+    editUpdateAccordeon: function () {
+        var that = this;
+
+        if (that.widgetAccordeon) {
+            $('#btn_accordeon').addClass('ui-state-error');
+            var opened = '';
+            $('.group-control').each(function () {
+                var group = $(this).attr('data-group');
+                if (that.groupsState[group]) {
+                    if (!opened) {
+                        opened = group;
+                    } else {
+                        that.groupsState[group] = false;
+                        $(this).button('option', {
+                            icons: {primary: that.groupsState[group] ? "ui-icon-triangle-1-n" : "ui-icon-triangle-1-s"}
+                        });
+                        if (that.groupsState[group]) {
+                            $('.group-' + group).show();
+                        } else {
+                            $('.group-' + group).hide();
+                        }
+                    }
+                }
+
+                that.editSaveConfig('groupsState', that.groupsState);
+            });
+        } else {
+            $('#btn_accordeon').removeClass('ui-state-error');
+        }
+        that.editSaveConfig('widgetAccordeon', that.widgetAccordeon);
     },
     editInitDialogs: function () {
 
@@ -2609,7 +2656,12 @@ vis = $.extend(true, vis, {
                 if (platform.indexOf('Mac') == -1) {
                     options = options || {};
                     options.spin = function () {
-                        $(this).trigger('change');
+                        var $this = $(this);
+                        var timer = $this.data('timer');
+                        if (timer) clearTimeout(timer);
+                        $this.data('timer', setTimeout(function () {
+                            $this.trigger('change');
+                        },200));
                     };
                     $(this).spinner(options);
                     $(this).parent().css({width: '100%'});
@@ -3210,11 +3262,23 @@ vis = $.extend(true, vis, {
                 });
                 if (that.groupsState[group]) {
                     $('.group-' + group).show();
+
+                    if (that.widgetAccordeon) {
+                        //close others
+                        $('.group-control').each(function () {
+                            var _group = $(this).attr('data-group');
+                            if (_group != group && that.groupsState[_group]) {
+                                that.groupsState[_group] = false;
+                                $('.group-control[data-group="' + _group + '"]').button('option', {icons: {primary: "ui-icon-triangle-1-s"}});
+                                $('.group-' + _group).hide();
+                            }
+                        });
+                    }
+
                 } else {
                     $('.group-' + group).hide();
                 }
                 that.editSaveConfig('groupsState', that.groupsState);
-
             });
         });
     },
@@ -3840,7 +3904,10 @@ vis = $.extend(true, vis, {
         });
         $("#inspect_views").next().css('width', '100%');
 
-
+        // If tab Widget is not selected => select it
+        if ($('#menu_body').tabs('option', 'active') == 1) {
+            $('#menu_body').tabs({'active': 2});
+        }
     },
     // Init all edit fields for one view
     changeViewEdit: function (view, noChange) {
