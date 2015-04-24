@@ -70,9 +70,6 @@ vis = $.extend(true, vis, {
         this.$selectView           = $('#select_view');
         this.$copyWidgetSelectView = $('#rib_wid_copy_view');
         this.$selectActiveWidgets  = $('#select_active_widget');
-        // @SJ cannot select menu and dialogs if it is enabled
-        //$("#wid_all_lock_function").trigger("click");
-        if (local) $("#ribbon_tab_datei").show();
 
         this.editInitDialogs();
         this.editInitMenu();
@@ -218,6 +215,11 @@ vis = $.extend(true, vis, {
         $('#export_view').click(function () {
             that.exportView(false);
         });
+        if (this.conn.getType() == 'local') {
+            // @SJ cannot select menu and dialogs if it is enabled
+            //$("#wid_all_lock_function").trigger("click");
+            $("#ribbon_tab_datei").show();
+        }
 
         $('#import_view').click(function () {
             $('#textarea_import_view').html('');
