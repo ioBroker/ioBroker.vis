@@ -1,5 +1,6 @@
 html{
-    -webkit-user-select: none;
+    /* use this tag locally, where it is really required */
+    /*-webkit-user-select: none;*/
     user-select: none;
     overflow: hidden!important;
     position: absolute!important;

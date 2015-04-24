@@ -385,7 +385,7 @@ vis.binds.bars = {
                     opt['buttonsImage' + i] : "img/" + opt['buttonsImage' + i]) +"' style='" + (opt.bWidth ? ("max-width:" + (opt.bWidth - 5) + "px;") : "") + (opt.bHeight ? ("max-height:"+(opt.bHeight - 5)+"px;") : "") + "' />\n";
         }
         if (isTable) {
-            text += "</td><td class='vis-no-spaces' style='width:" + (100 - opt.bOffset)+"%; text-align: " + opt.bTextAlign+"'>\n";
+            text += "</td><td class='vis-no-spaces' style='width:" + (100 - opt.bOffset) + "%; text-align: " + opt.bTextAlign+"'>\n";
         }
         if (opt['buttonsText' + i]) {
             text += "<span style='text-align: " + opt.bTextAlign + "'>" + opt['buttonsText' + i] + "</span>\n";
@@ -399,14 +399,14 @@ vis.binds.bars = {
     draw: function($div) {
         var barsOptions = $div.data('barsOptions');
         var barsIntern  = $div.data('barsIntern');
-        
-        var isHorizontal = (barsOptions.position == 'floatHorizontal' ||
-                            barsOptions.position == 'dockTop' ||
-                            barsOptions.position == 'dockBottom');
 
-        var text = "";
+        var isHorizontal = (barsOptions.position === 'floatHorizontal' ||
+                            barsOptions.position === 'dockTop' ||
+                            barsOptions.position === 'dockBottom');
 
-        text += '<table style="width:100%; height:100%; ' + (barsOptions.bLayout == 'fixed' ? 'table-layout: fixed' : '') + '" class="vis-no-spaces">';
+        var text = '';
+        var calc = (barsOptions.bTheme && barsOptions.bSpace) ? 'calc(100% - ' + (barsOptions.bSpace * 2) + 'px)' : '100%';
+        text += '<table style="width:' + calc + '; height: ' + calc + '; ' + (barsOptions.bLayout === 'fixed' ? 'table-layout: fixed' : '') + '" class="vis-no-spaces">';
         if (isHorizontal) {
             text += '<tr class="vis-no-spaces">';
             for (var d = 1; d <= barsOptions.bCount; d++) {
@@ -497,17 +497,22 @@ vis.binds.bars = {
         // Remove previous class
         //if (div._oldAttr) $div.removeClass(div._oldAttr);
 
-        if (barsOptions.position == 'floatHorizontal' ||
-            barsOptions.position == 'floatVertical') {
+        if (barsOptions.position === 'floatHorizontal' ||
+            barsOptions.position === 'floatVertical') {
             $div.css({'position': 'absolute'});
 
             for (var q = 0; q < vis.binds.bars.themes.length; q++) {
                 $div.removeClass(vis.binds.bars.themes[q].cssClass);
             }
-            if (!barsOptions.bTheme) {
+            if (barsOptions.bTheme) {
                 $div.addClass(barsOptions.bTheme);
-                $div.css({'border-radius': 10, padding: 15});
+                $div.css({'border-radius': 10, padding: barsOptions.bSpace});
+                $div.parent().css({'border-radius': 10});
             }
+            if (vis.editMode && vis.activeWidgets.indexOf(barsIntern.wid) !== -1) {
+                vis.showWidgetHelper(barsIntern.wid, true);
+            }
+
             $('#jquerySideBar_' + barsIntern.wid).remove();
         }
         else {
@@ -521,16 +526,16 @@ vis.binds.bars = {
 
             switch(barsOptions.position) {
                 case 'dockTop':
-                    position = "top"
+                    position = "top";
                     break;
                 case 'dockLeft':
-                    position = "left"
+                    position = "left";
                     break;
                 case 'dockRight':
-                    position = "right"
+                    position = "right";
                     break;
                 default:
-                    position = "bottom"
+                    position = "bottom";
                     break;
             }
             var w = $div.width();
@@ -545,40 +550,50 @@ vis.binds.bars = {
                 id:       barsIntern.wid,
                 root:     $('#visview_' + barsIntern.view)
             });
+
             if (barsOptions.bOpen && vis.editMode) $div.sidebar('open');
+
+            if (0 && barsOptions.bTest && vis.editMode) {
+                if (barsIntern.wType === 'tplBarFilter') {
+                    // Hide all
+                    vis.changeFilter("$", barsOptions.bShowEffect, barsOptions.bShowEffectMs, barsOptions.bHideEffect, barsOptions.bHideEffectMs);
+
+                    // Show all
+                    setTimeout (function () {
+                        vis.changeFilter ("", barsOptions.bShowEffect, barsOptions.bShowEffectMs, barsOptions.bHideEffect, barsOptions.bHideEffectMs);
+                    }, 500 + parseInt(barsOptions.bShowEffectMs, 10));
+                }
+                else
+                if (barsIntern.wType === 'tplBarNavigator'){
+                    var v = vis.activeView;
+                    // find other view
+                    for (var t in vis.views) {
+                        if (t != v) break;
+                    }
+
+                    vis.changeView (t,
+                        {effect: barsOptions.bHideEffect, duration: barsOptions.bHideEffectMs},
+                        {effect: barsOptions.bShowEffect, duration: barsOptions.bShowEffectMs});
+
+                    // Show all
+                    setTimeout (function () {
+                        vis.changeView (v,
+                            {effect: barsOptions.bHideEffect, duration: barsOptions.bHideEffectMs},
+                            {effect: barsOptions.bShowEffect, duration: barsOptions.bShowEffectMs});
+                        vis.inspectWidgets(barsIntern.wid);
+                    }, 500 + parseInt (barsOptions.bShowEffectMs, 10));
+                }
+            }
             $('#jquerySideBar_' + barsIntern.wid).addClass(barsOptions.bTheme);
 
             if (vis.editMode) {
-                var pos = {left: $('#jquerySideBar_' + barsIntern.wid).css('left'), top: $('#jquerySideBar_' + barsIntern.wid).css('top')};
-
-                pos.left = parseInt(pos.left, 10);
-                pos.top  = parseInt(pos.top, 10);
-                if (pos.top  < 0) {
-                    pos.top  = 0;
-                    pos.left += 10;
-                }
-                if (pos.left < 0) {
-                    pos.left = 0;
-                    pos.top += 10;
-                }
-
-                $('#inspect_css_top').val(pos.top + 'px');
-                $('#inspect_css_left').val(pos.left + 'px');
-                vis.views[vis.activeView].widgets[barsIntern.wid].style.left = pos.left + 'px';
-                vis.views[vis.activeView].widgets[barsIntern.wid].style.top  = pos.top  + 'px';
-                $('#' + barsIntern.wid).attr('data-vis-resizable', '{"disabled":true}').attr('data-vis-draggable', '{"disabled":true}');
                 if (vis.activeWidgets.indexOf(barsIntern.wid) != -1) {
                     vis.showWidgetHelper(barsIntern.wid, true);
-                    $('#' + barsIntern.wid).draggable('destroy').resizable('destroy');
                 }
-                $('#jquerySideBar_' + barsIntern.wid + ' .sidebar-inject').click(function () {
-                    vis.inspectWidgets(barsIntern.wid);
-                });
             }
 
-            for (var u = 1; u <= barsOptions.bCount; u++) {
-                var $htmlBtn = $('#' + barsIntern.wid + '_btn' + u);
-                $htmlBtn.css({borderRadius: barsOptions.bRadius + 'px'});
+            for (var k = 1; k <= barsOptions.bCount; k++) {
+                $('#' + barsIntern.wid + '_btn' + k).css({borderRadius: barsOptions.bRadius + 'px'});
             }
         }
     },
@@ -1129,7 +1144,7 @@ vis.binds.bars = {
     initOptions: function (tpl, barsOptions) {
         var $tpl = $('#' + tpl);
 
-        if ($tpl.attr('id') == 'tplBarFilter') {
+        if ($tpl.attr('id') === 'tplBarFilter') {
             var filter = vis.updateFilter();
             if (filter.length > 0) {
                 barsOptions.buttonsImage1  = '';
@@ -1150,7 +1165,7 @@ vis.binds.bars = {
             }
         }
         else
-        if ($tpl.attr('id') == 'tplBarNavigator') {
+        if ($tpl.attr('id') === 'tplBarNavigator') {
             var cnt = 0;
             for (var s in vis.views) {
                 cnt++;
@@ -1166,7 +1181,7 @@ vis.binds.bars = {
         if (!$div.length) return;
 
         if (!$div.find('.vis-widget-body').length) {
-            $div.append('<div class="vis-widget-body"></div>');
+            $div.append('<div class="vis-widget-body" style="overflow: hidden"></div>');
         }
         $div = $('#' + wid + ' .vis-widget-body');
 
@@ -1196,7 +1211,7 @@ vis.binds.bars = {
         // non edit mode
         if (!vis.editMode) {
             // Select by default buttons
-            if (barsIntern.wType == 'tplBarFilter') {
+            if (barsIntern.wType === 'tplBarFilter') {
                 if (barsOptions.bValue) {
                     var values = barsOptions.bValue.split(",");
                     for (var p = 1; p <= barsOptions.bCount; p++) {
@@ -1225,18 +1240,13 @@ vis.binds.bars = {
                 }
             }
             else
-            if (barsIntern.wType == 'tplBarNavigator') {
-                var v = barsIntern.view;
+            if (barsIntern.wType === 'tplBarNavigator') {
                 for (var u = 1; u <= barsOptions.bCount; u++) {
-                    if(v === barsOptions.buttons[u].option) {
+                    if (barsIntern.view === barsOptions['buttonsOption' + u]) {
                         var $htmlBtn = $('#' + barsIntern.wid + '_btn' + u);
                         if ($htmlBtn.length) {
-                            $htmlBtn.data('_state', true);
-                            if (barsOptions.bStyleActive) {
-                                $htmlBtn.addClass(barsOptions.bStyleActive);
-                            } else {
-                                $htmlBtn.addClass('ui-state-active');
-                            }
+                            $htmlBtn.data('state', true);
+                            $htmlBtn.addClass(barsOptions.bStyleActive || 'ui-state-active');
                         }
                         break;
                     }
@@ -1251,8 +1261,8 @@ vis.binds.bars = {
 
                     $htmlBtn = $('#' + barsIntern.wid + '_btn' + r);
 
-                    if (barsIntern.wType == 'tplBarNavigator') {
-                        vis.changeView (barsOptions.buttons[r].option,
+                    if (barsIntern.wType === 'tplBarNavigator') {
+                        vis.changeView(barsOptions['buttonsOption' + r],
                             {effect: barsOptions.bHideEffect, duration: barsOptions.bHideEffectMs},
                             {effect: barsOptions.bShowEffect, duration: barsOptions.bShowEffectMs});
                     }

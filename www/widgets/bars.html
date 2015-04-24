@@ -8,13 +8,17 @@
 		class="vis-tpl" 
 		data-vis-set="bars" 
 		data-vis-name="Filter bar" 
-		data-vis-attrs="bOpen[true]/checkbox;bTheme[sidebar-dark]/nselect,sidebar-dark,sidebar-blue,sidebar-red;position[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/number;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bValue/filters;bOnlyOneSelected/checkbox;"
+		data-vis-attrs="bTest/button;bOpen[true]/checkbox;bTheme[sidebar-dark]/nselect,sidebar-dark,sidebar-blue,sidebar-red;position[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/number;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bValue/filters;bOnlyOneSelected/checkbox;"
 		data-vis-attrs0="bStyleNormal;bStyleNormalHover;bStyleActive;bStyleActiveHover"
 		data-vis-attrs1="bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;bLayout[fixed]/select,auto,fixed;"
-		data-vis-attrs2="bCount[1]/number;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/filters"
+		data-vis-attrs2="bCount[1]/number,1,100,1;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/filters"
 		data-vis-init="initOptions">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body"></div>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>"
+	    data-vis-hide-helper=<%== (this.data.attr('position')=='floatHorizontal' || this.data.attr('position')=='floatVertical') ? 'false' : 'true' %>
+	    data-vis-resizable='<%== (this.data.position=='floatHorizontal' || this.data.position=='floatVertical') ? "" : '{"disabled":true}' %>'
+	    data-vis-draggable='<%== (this.data.position=='floatHorizontal' || this.data.position=='floatVertical') ? "" : '{"disabled":true}' %>'
+	    >
+        <div class="vis-widget-body" style="overflow:hidden"></div>
         <% var that = this; setTimeout(function() {vis.binds.bars.init(that.data.wid, that.data, that.view, "tplBarFilter");}, 100); %>
     </div>
 </script>
@@ -22,15 +26,18 @@
 		type="text/ejs"
 		class="vis-tpl" 
 		data-vis-set="bars" 
-		data-vis-name="Views bar" 
-		data-vis-attrs="baroptions">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body">
-           <% var that = this;
-              setTimeout(function () {
-           		vis.binds.bars.init(that.data.wid, that.data, that.view, "tplBarNavigator");
-           	  }, 0);
-           %>
-        </div>
+		data-vis-name="Views bar"
+		data-vis-attrs="bTest/button;bOpen[true]/checkbox;bTheme[sidebar-dark]/nselect,,sidebar-dark,sidebar-blue,sidebar-red;position[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/number;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bValue/filters;bOnlyOneSelected/checkbox;"
+		data-vis-attrs0="bStyleNormal;bStyleNormalHover;bStyleActive;bStyleActiveHover"
+		data-vis-attrs1="bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;bLayout[fixed]/select,auto,fixed;"
+		data-vis-attrs2="bCount[1]/number,1,100,1;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/views"
+		data-vis-init="initOptions">
+    <div class="vis-widget <%== this.data.attr('class') %> <%== this.data.attr('bTheme') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>"
+	    data-vis-hide-helper=<%== (this.data.attr('position')=='floatHorizontal' || this.data.attr('position')=='floatVertical') ? 'false' : 'true' %>
+	    data-vis-resizable='<%== (this.data.position=='floatHorizontal' || this.data.position=='floatVertical') ? "" : '{"disabled":true}' %>'
+	    data-vis-draggable='<%== (this.data.position=='floatHorizontal' || this.data.position=='floatVertical') ? "" : '{"disabled":true}' %>'
+	    >
+        <div class="vis-widget-body" style="overflow:hidden"></div>
+        <% var that = this; setTimeout(function() {vis.binds.bars.init(that.data.wid, that.data, that.view, "tplBarNavigator");}, 100); %>
     </div>
 </script>

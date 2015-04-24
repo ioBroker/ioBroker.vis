@@ -1135,7 +1135,9 @@ vis = $.extend(true, vis, {
         $('#saving_progress').button({
             text:  false,
             icons: {primary: 'ui-icon-disk'}
-        }).click(that._saveToServer).hide().addClass('ui-state-active');
+        }).click(function () {
+            that._saveToServer();
+        }).hide().addClass('ui-state-active');
 
         $('#exit_button').button({
             text:  false,
@@ -2681,6 +2683,25 @@ vis = $.extend(true, vis, {
         if (onchange) line.onchange = onchange;
         return line;
     },
+    editButton: function (widAttr, options, onchange) {
+        // options = {min: ?,max: ?,step: ?}
+        // Select
+        var line = {
+            input: '<button id="inspect_' + widAttr + '">' + widAttr + '</button>',
+            init: function (w, data) {
+                $(this).button().click(function () {
+                    $(this).trigger('change');
+                    $(this).button('disable');
+                    setTimeout(function () {
+                        $(this).trigger('change');
+                        $(this).button('enable');
+                    }, 2000);
+                });
+            }
+        };
+        if (onchange) line.onchange = onchange;
+        return line;
+    },
     editUrl: function (widAttr, filter) {
         var line = {
             input: '<input type="text" id="inspect_' + widAttr + '"/>'
@@ -2949,6 +2970,9 @@ vis = $.extend(true, vis, {
                 break;
             case 'number':
                 line = this.editNumber(widAttr.name, widAttr.options);
+                break;
+            case 'button':
+                line = this.editButton(widAttr.name, widAttr.options);
                 break;
             case 'auto':
                 line = this.editAutoComplete(widAttr.name, widAttr.options);
@@ -3283,14 +3307,17 @@ vis = $.extend(true, vis, {
         });
     },
     showWidgetHelper: function (wid, isShow) {
+        var $widget = $('#' + wid);
+
+        if ($widget.attr('data-vis-hide-helper') === 'true') isShow = false;
+
         if (isShow) {
-            var $widget = $('#' + wid);
             if (!$widget.length) {
                 console.log('Cannot find in DOM ' + wid);
                 return;
             }
-            var pos = {};//$widget.position();
 
+            var pos = {};//$widget.position();
             pos.top  = $widget[0].offsetTop;
             pos.left = $widget[0].offsetLeft;
             // May be bug?
@@ -4371,7 +4398,7 @@ vis = $.extend(true, vis, {
 
         var $jWidget = $('#' + id);
         if (!$jWidget.length) return;
-
+        if ($jWidget.attr('data-vis-hide-helper') === 'false') return;
         var s = $jWidget.position();
         s.width  = $jWidget.width();
         s.height = $jWidget.height();
