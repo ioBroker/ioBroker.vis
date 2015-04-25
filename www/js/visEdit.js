@@ -2498,13 +2498,41 @@ vis = $.extend(true, vis, {
         line.input += '</select>';
         return line;
     },
+    editStyle: function (widAttr, options) {
+        var that = this;
+        // options[0] fileFilter
+        // options[1] nameFilter
+        // options[2] attrFilter
+        // Effect selector
+        var line = {
+            input: '<input type="text" id="inspect_' + widAttr + '" class="vis-edit-textbox"/>',
+            init: function (_wid_attr, data) {
+                if (that.styleSelect) {
+                    that.styleSelect.Show({
+                        width:      '100%',
+                        name:       'inspect_' + _wid_attr,
+                        filterFile:  options[0],
+                        filterName:  options[1],
+                        filterAttrs: options[2],
+                        style:      data,
+                        parent:     $(this).parent(),
+                        onchange: function (newStyle, obj) {
+                            $('#inspect_' + widAttr).val(newStyle).trigger('change');
+                        }
+                    });
+                    $('#inspect_' + widAttr).hide();
+                }
+            }
+        };
+        return line;
+    },
     editFontName: function (widAttr) {
         // Select
         var values = ['', 'Arial', 'Times', 'Andale Mono', 'Comic Sans', 'Impact'];
         return this.editSelect(widAttr, values);
     },
     editAutoComplete: function (widAttr, values) {
-        // Effect selector
+        // Autocomplete
         var line = {
             input: '<input type="text" id="inspect_' + widAttr + '" class="vis-edit-textbox"/>',
             init: function (_wid_attr, data) {
@@ -2634,15 +2662,17 @@ vis = $.extend(true, vis, {
             'shake',
             'size',
             'slide'
-        ], null, function (data) {
-            var eff = widAttr.replace('_effect', '_options');
-            var $elem = $('#inspect_' + eff);
-            if ($elem.length) {
-                if (data == 'slide') {
-                    that.hideShowAttr(eff, true);
-                } else {
-                    that.hideShowAttr(eff, false);
-                    $('#inspect_' + eff).val('').trigger('change');
+        ], null, function (_widAttr, data) {
+            if (_widAttr.indexOf('_effect') != -1) {
+                var eff = _widAttr.replace('_effect', '_options');
+                var $elem = $('#inspect_' + eff);
+                if ($elem.length) {
+                    if (data == 'slide') {
+                        that.hideShowAttr(eff, true);
+                    } else {
+                        that.hideShowAttr(eff, false);
+                        $('#inspect_' + eff).val('').trigger('change');
+                    }
                 }
             }
         });
@@ -2690,12 +2720,8 @@ vis = $.extend(true, vis, {
             input: '<button id="inspect_' + widAttr + '">' + widAttr + '</button>',
             init: function (w, data) {
                 $(this).button().click(function () {
-                    $(this).trigger('change');
-                    $(this).button('disable');
-                    setTimeout(function () {
-                        $(this).trigger('change');
-                        $(this).button('enable');
-                    }, 2000);
+                    var that = this;
+                    $(this).val(true).trigger('change');
                 });
             }
         };
@@ -2920,6 +2946,7 @@ vis = $.extend(true, vis, {
             this.groups[group][attr].attrIndex = '';
         }
     },
+    // adds extracted attributes to array
     addToInspect: function (widgets, widAttr, group, options, onchange) {
         if (typeof widAttr != 'object') {
             widAttr = {name: widAttr};
@@ -2998,6 +3025,9 @@ vis = $.extend(true, vis, {
             case 'select':
                 line = this.editSelect(widAttr.name, widAttr.options, widAttr.notTranslate);
                 break;
+            case 'style':
+                line = this.editStyle(widAttr.name, widAttr.options);
+                break;
             case 'effect':
                 line = this.editEffect(widAttr.name);
                 break;
@@ -3042,6 +3072,7 @@ vis = $.extend(true, vis, {
         name += ' ('  + widgetData.widgetSet + ' - ' + $('#' + widgetData.tpl).attr('data-vis-name') + ')';
         return name;
     },
+    // Render edit panel
     showInspect: function (view, widgets) {
         var $widgetAttrs = $('#widget_attrs');
         var that = this;
@@ -3050,7 +3081,14 @@ vis = $.extend(true, vis, {
         var widAttr;
         for (var group in this.groups) {
             if (this.groupsState[group] === undefined) this.groupsState[group] = false;
-            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="3">' + _('group_' + group) + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>');
+            var groupName = group;
+            if (groupName.indexOf('_§') != -1) {
+                var m = groupName.match(/^([\w_]+)_§([0-9]+)/);
+                groupName = _('group_' + m[1]) + '[' + m[2] + ']';
+            } else {
+                groupName = _('group_' + group)
+            }
+            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="3">' + groupName + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>');
 
             for (var widAttr in this.groups[group]) {
                 var line = this.groups[group][widAttr];
@@ -3359,6 +3397,7 @@ vis = $.extend(true, vis, {
         //              fontName - Font name
         //              slider,min,max,step - Default step is ((max - min) / 100)
         //              select,value1,value2,... - dropdown select
+        //              style,fileFilter,nameFilter,attrFilter
         //              custom,functionName,options,... - functionName is starting from vis.binds.[widgetset.funct]. E.g. custom/timeAndWeather.editWeather,short
         //              group.name - define new or old group. All following attributes belongs to new group till new group.xyz
 
@@ -3509,18 +3548,34 @@ vis = $.extend(true, vis, {
                 widgetAttrs = [];
             }
             var group = 'common';
+            var groupMode = 'normal';
             var attrs = {};
             for (var j = 0; j < widgetAttrs.length; j++) {
                 if (widgetAttrs[j].match(/^group\./)) {
                     group = widgetAttrs[j].substring('group.'.length);
+                    // extract group mode
+                    if (group.indexOf('/') != -1) {
+                        var parts = group.split('/');
+                        group  = parts[0];
+                        groupMode = parts[1]
+                    } else {
+                        groupMode = 'normal';
+                    }
                     continue;
                 }
                 if (!widgetAttrs[j]) continue;
 
-                attrs[group] = attrs[group] || {};
                 var a = this.extractAttributes(widgetAttrs[j], widgets[i]);
-                for (var k = 0; k < a.length; k++) {
-                    attrs[group][a[k].name] = a[k];
+                if (groupMode == 'byindex') {
+                    for (var k = 0; k < a.length; k++) {
+                        attrs[group + '_§' + k] = attrs[group + '_§' + k] || {};
+                        attrs[group + '_§' + k][a[k].name] = a[k];
+                    }
+                } else {
+                    attrs[group] = attrs[group] || {};
+                    for (var k = 0; k < a.length; k++) {
+                        attrs[group][a[k].name] = a[k];
+                    }
                 }
             }
 

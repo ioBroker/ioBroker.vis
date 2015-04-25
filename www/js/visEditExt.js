@@ -388,7 +388,8 @@ var colorSelect = {
             width:     320,
             modal:     true,
             buttons:   dialog_buttons
-        });     
+        });
+        $('div[aria-describedby="colorSelect"]').css({'z-index': htmlElem.settings.zindex});
         if (htmlElem.settings.current || htmlElem.settings.current === 0) {
             $('#colortext').val(htmlElem.settings.current);
         } else {

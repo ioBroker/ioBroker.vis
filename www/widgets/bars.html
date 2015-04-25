@@ -1,43 +1,52 @@
 <link rel="stylesheet" type="text/css" href="widgets/bars/css/bars.css" />
 <link rel="stylesheet" type="text/css" href="widgets/bars/css/sidebar.css" />
+<link rel="stylesheet" type="text/css" href="widgets/bars/css/hqButtons.css" />
 <!--script type="text/javascript" src="widgets/bars/js/bars.js"></script>
 <script type="text/javascript" src="widgets/bars/js/jquery.sidebar.js"></script-->
 
 <script id="tplBarFilter" 
 		type="text/ejs"
-		class="vis-tpl" 
-		data-vis-set="bars" 
+		class="vis-tpl"
+		data-vis-type="filter"
+		data-vis-set="bars"
 		data-vis-name="Filter bar" 
-		data-vis-attrs="bTest/button;bOpen[true]/checkbox;bTheme[sidebar-dark]/nselect,sidebar-dark,sidebar-blue,sidebar-red;position[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/number;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bValue/filters;bOnlyOneSelected/checkbox;"
-		data-vis-attrs0="bStyleNormal;bStyleNormalHover;bStyleActive;bStyleActiveHover"
-		data-vis-attrs1="bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;bLayout[fixed]/select,auto,fixed;"
-		data-vis-attrs2="bCount[1]/number,1,100,1;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/filters"
+		data-vis-attrs="bCount[1]/number,1,100,1;bTheme[sidebar-red]/style,,sidebar-,background-color;bPosition[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;bOnlyOneSelected/checkbox;bValue/filters;alwaysOpened/checkbox;"
+		data-vis-attrs0="group.button_options;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/slider,0,100,1;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bLayout[fixed]/select,auto,fixed;"
+		data-vis-attrs1="group.style;bStyleNormal/style,hqButtons,-button,background;bStyleNormalHover/style,hqButtons,-button,background;bStyleActive/style,hqButtons,-button,background;bStyleActiveHover/style,hqButtons,-button,background;"
+		data-vis-attrs2="group.effects;bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;"
+		data-vis-attrs3="group.buttons/byindex;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/filters;"
 		data-vis-init="initOptions">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>"
-	    data-vis-hide-helper=<%== (this.data.attr('position')=='floatHorizontal' || this.data.attr('position')=='floatVertical') ? 'false' : 'true' %>
-	    data-vis-resizable='<%== (this.data.position=='floatHorizontal' || this.data.position=='floatVertical') ? "" : '{"disabled":true}' %>'
-	    data-vis-draggable='<%== (this.data.position=='floatHorizontal' || this.data.position=='floatVertical') ? "" : '{"disabled":true}' %>'
+	    data-vis-hide-helper=<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? 'true' : 'false' %>
+	    data-vis-resizable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    data-vis-draggable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
 	    >
         <div class="vis-widget-body" style="overflow:hidden"></div>
-        <% var that = this; setTimeout(function() {vis.binds.bars.init(that.data.wid, that.data, that.view, "tplBarFilter");}, 100); %>
+        <%
+        	vis.binds.bars.init(this.data.wid, this.data, this.view, "tplBarFilter");
+        %>
     </div>
 </script>
 <script id="tplBarNavigator" 
 		type="text/ejs"
-		class="vis-tpl" 
-		data-vis-set="bars" 
+		class="vis-tpl"
+		data-vis-type="navigation"
+		data-vis-set="bars"
 		data-vis-name="Views bar"
-		data-vis-attrs="bTest/button;bOpen[true]/checkbox;bTheme[sidebar-dark]/nselect,,sidebar-dark,sidebar-blue,sidebar-red;position[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/number;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bValue/filters;bOnlyOneSelected/checkbox;"
-		data-vis-attrs0="bStyleNormal;bStyleNormalHover;bStyleActive;bStyleActiveHover"
-		data-vis-attrs1="bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;bLayout[fixed]/select,auto,fixed;"
-		data-vis-attrs2="bCount[1]/number,1,100,1;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/views"
+		data-vis-attrs="bCount[1]/number,1,100,1;bTheme[sidebar-blue]/style,,sidebar-,background-color;bPosition[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;alwaysOpened/checkbox;"
+		data-vis-attrs0="group.button_options;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/slider,0,100,1;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bLayout[fixed]/select,auto,fixed;"
+		data-vis-attrs1="group.style;bStyleNormal/style,hqButtons,-button,background;bStyleNormalHover/style,hqButtons,-button,background;bStyleActive/style,hqButtons,-button,background;bStyleActiveHover/style,hqButtons,-button,background;"
+		data-vis-attrs2="group.effects;bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;"
+		data-vis-attrs3="group.buttons/byindex;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/views;"
 		data-vis-init="initOptions">
-    <div class="vis-widget <%== this.data.attr('class') %> <%== this.data.attr('bTheme') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>"
-	    data-vis-hide-helper=<%== (this.data.attr('position')=='floatHorizontal' || this.data.attr('position')=='floatVertical') ? 'false' : 'true' %>
-	    data-vis-resizable='<%== (this.data.position=='floatHorizontal' || this.data.position=='floatVertical') ? "" : '{"disabled":true}' %>'
-	    data-vis-draggable='<%== (this.data.position=='floatHorizontal' || this.data.position=='floatVertical') ? "" : '{"disabled":true}' %>'
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>"
+	    data-vis-hide-helper=<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? 'true' : 'false' %>
+	    data-vis-resizable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    data-vis-draggable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
 	    >
         <div class="vis-widget-body" style="overflow:hidden"></div>
-        <% var that = this; setTimeout(function() {vis.binds.bars.init(that.data.wid, that.data, that.view, "tplBarNavigator");}, 100); %>
+        <%
+        	vis.binds.bars.init(this.data.wid, this.data, this.view, "tplBarNavigator");
+        %>
     </div>
 </script>

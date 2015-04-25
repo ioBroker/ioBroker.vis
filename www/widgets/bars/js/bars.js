@@ -4,62 +4,47 @@
 
 "use strict";
 
-_("");
 // Add words for bars
 if (vis.editMode) {
     $.extend(true, systemDictionary, {
         // Bars
-        "One at time:"     : {"en" : "One at time:",  "de": "Nur eine auswahlbar:","ru": "Только один фильтр:"},
-        "Geometry..."      : {"en" : "Geometry...",   "de": "Geometrie...",        "ru": "Позиция и размер..."},
-        "Show"             : {"en" : "Show",          "de": "Zeigen",              "ru": "Показать"},
-        "Bar type:"        : {"en" : "Bar type:",     "de": "Bartyp:",             "ru": "Тип:"},
-        "Button width:"    : {"en" : "Button width:", "de": "Knopfbreite:",        "ru": "Ширина кнопок:"},
-        "Button height:"   : {"en" : "Button height:","de": "Knopfh&ouml;he:",     "ru": "Высота кнопок:"},
-        "bSpace"           : {"en" : "Button space:", "de": "Zwischenplatz:",      "ru": "Промежуток:"},
-        "bRadius"          : {"en" : "Border radius:","de": "Randradius:",         "ru": "Радиус закруглений:"},
-        "Text offset %:"   : {"en" : "Text offset %:","de": "Textoffset in %:",    "ru": "Смещение текста в %:"},
-        "bTextAlign"       : {"en" : "Text align:",   "de": "Textausrichtung:",    "ru": "Позиция текста:"},
-        "Image align:"     : {"en" : "Image align:",  "de": "Bildausrichtung:",    "ru": "Позиция миниатюры:"},
-        "Effects..."       : {"en" : "Effects...",    "de": "Effekte...",          "ru": "Эффекты..."},
-        "Hide effect:"     : {"en" : "Hide effect:",  "de": "Verbergeneffekt:",    "ru": "Исчезновение:"},
-        "Show effect:"     : {"en" : "Show effect:",  "de": "Anzeigeeffekt:",      "ru": "Появление:"},
-        "Test"             : {"en" : "Test",          "de": "Test",                "ru": "Тест"},
-        "Buttons..."       : {"en" : "Buttons...",    "de": "Kn&ouml;pfe",         "ru": "Кнопки..."},
-        "Icon:"            : {"en" : "Icon:",         "de": "Bildchen:",           "ru": "Миниатюра:"},
-        "Caption:"         : {"en" : "Caption:",      "de": "Beschriftung:",       "ru": "Подпись:"},
-        "Filter key:"      : {"en" : "Filter key:",   "de": "Filterwort:",         "ru": "Значение фильтра:"},
-        "Add"              : {"en" : "Add",           "de": "Neu",                 "ru": "Добавить"},
-        "Up"               : {"en" : "Up",            "de": "Nach oben",           "ru": "На верх"},
-        "Down"             : {"en" : "Down",          "de": "Nach unten",          "ru": "Вниз"},
-        "Delete"           : {"en" : "Delete",        "de": "L&ouml;schen",        "ru": "Удалить"},
-        "Horizontal"       : {"en" : "Horizontal",    "de": "Horizontal",          "ru": "Горизонтально"},
-        "Vertical"         : {"en" : "Vertical",      "de": "Senkrecht",           "ru": "Вертикально"},
-        "Docked at top"    : {"en" : "Docked at top", "de": "Angedockt oben",      "ru": "Панель сверху"},
-        "Docked at bottom" : {"en" : "Docked at bottom", "de": "Angedockt unten",  "ru": "Панель снизу"},
-        "Docked at left"   : {"en" : "Docked at left","de": "Angedockt links",     "ru": "Панель слева"},
-        "Docked at right"  : {"en" : "Docked at right","de": "Angedockt rechts",   "ru": "Панель справа"},
-        "Center"           : {"en" : "Center",        "de": "In der MItte",        "ru": "В середине"},
-        "Left"             : {"en" : "Left",          "de": "Links",               "ru": "Слева"},
-        "Right"            : {"en" : "Right",         "de": "Rechts",              "ru": "Справа"},
-        "floatHorizontal": {"en": "floatHorizontal", "de": "floatHorizontal", "ru": "floatHorizontal"},
-        "floatVertical": {"en": "floatVertical", "de": "floatVertical", "ru": "floatVertical"},
-        "dockTop": {"en": "dockTop", "de": "dockTop", "ru": "dockTop"},
-        "dockBottom": {"en": "dockBottom", "de": "dockBottom", "ru": "dockBottom"},
-        "dockLeft": {"en": "dockLeft", "de": "dockLeft", "ru": "dockLeft"},
-        "dockRight": {"en": "dockRight", "de": "dockRight", "ru": "dockRight"},
-        "center": {"en": "center", "de": "center", "ru": "center"},
-        "bTheme": {"en": "bTheme", "de": "bTheme", "ru": "bTheme"},
-        "bWidth": {"en": "bWidth", "de": "bWidth", "ru": "bWidth"},
-        "bHeight": {"en": "bHeight", "de": "bHeight", "ru": "bHeight"},
-        "bImageAlign": {"en": "bImageAlign", "de": "bImageAlign", "ru": "bImageAlign"},
-        "bOnlyOneSelected": {"en": "bOnlyOneSelected", "de": "bOnlyOneSelected", "ru": "bOnlyOneSelected"},
-        "bStyleNormal": {"en": "bStyleNormal", "de": "bStyleNormal", "ru": "bStyleNormal"},
-        "bStyleNormalHover": {"en": "bStyleNormalHover", "de": "bStyleNormalHover", "ru": "bStyleNormalHover"},
-        "bStyleActive": {"en": "bStyleActive", "de": "bStyleActive", "ru": "bStyleActive"},
-        "bStyleActiveHoverbShowEffect": {"en": "bStyleActiveHoverbShowEffect", "de": "bStyleActiveHoverbShowEffect", "ru": "bStyleActiveHoverbShowEffect"},
-        "bShowEffectMs": {"en": "bShowEffectMs", "de": "bShowEffectMs", "ru": "bShowEffectMs"},
-        "bHideEffect": {"en": "bHideEffect", "de": "bHideEffect", "ru": "bHideEffect"},
-        "bHideEffectMs": {"en": "bHideEffectMs", "de": "bHideEffectMs", "ru": "bHideEffectMs"}
+        "bSpace":           {"en": "Button space",      "de": "Zwischenplatz",      "ru": "Промежуток"},
+        "bPosition":        {"en": "Position",          "de": "Position",           "ru": "Расположeние"},
+        "floatHorizontal":  {"en": "Horizontal",        "de": "Horizontal",         "ru": "горизонтально"},
+        "floatVertical":    {"en": "Vertical",          "de": "Senkrecht",          "ru": "вертикально"},
+        "dockTop":          {"en": "Dock at top",       "de": "Angedockt oben",     "ru": "панель сверху"},
+        "dockBottom":       {"en": "Dock at bottom",    "de": "Angedockt unten",    "ru": "панель снизу"},
+        "dockLeft":         {"en": "Dock at left",      "de": "Angedockt links",    "ru": "панель слева"},
+        "dockRight":        {"en": "Dock at right",     "de": "Angedockt rechts",   "ru": "панель справа"},
+        "center":           {"en": "Center",            "de": "In der Mitte",       "ru": "по центру"},
+        "bTheme":           {"en": "Theme",             "de": "Thema",              "ru": "Тема"},
+        "bImageAlign":      {"en": "Image align",       "de": "Bildposition",       "ru": "Позиция картинки"},
+        "bOnlyOneSelected": {"en": "Selected only one", "de": "Nur eine auswahlbar", "ru": "Только один фильтр"},
+        "bStyleNormal":     {"en": "Normal",            "de": "Normal",             "ru": "Нормальное"},
+        "bStyleNormalHover": {"en": "Normal hover",     "de": "Normal(hover)",      "ru": "Нормальное(hover)"},
+        "bStyleActive":     {"en": "Active",            "de": "Aktiv",              "ru": "Активное"},
+        "bStyleActiveHover": {"en": "Active hover",     "de": "Aktiv(hover)",       "ru": "Активное(hover)"},
+        "bShowEffect":      {"en": "Show",              "de": "Anzeigen",           "ru": "Показать"},
+        "bShowEffectMs":    {"en": "Show in ms",        "de": "Anzeigen in ms",     "ru": "Показ в мс"},
+        "bHideEffect":      {"en": "Hide",              "de": "Verbergen",          "ru": "Скрыть"},
+        "bHideEffectMs":    {"en": "Hide in ms",        "de": "Verbergen in ms",    "ru": "Скрытие в мс"},
+        "fixed":            {"en": "fixed",             "de": "fest",               "ru": "фиксировано"},
+        "bTest":            {"en": "Test",              "de": "Test",               "ru": "Тест"},
+        "bOpen":            {"en": "Open",              "de": "Open",               "ru": "Открыть"},
+        "bOffset":          {"en": "Text offset %",     "de": "Textabsetzung %",    "ru": "Отступ текста в %"},
+        "bValue":           {"en": "Default value",     "de": "Startwert",          "ru": "Начальное значение"},
+        "bLayout":          {"en": "Layout",            "de": "Layout",             "ru": "Размещение"},
+        "bCount":           {"en": "Buttons count",     "de": "Knopfanzahl",        "ru": "Количество кнопок"},
+        "group_buttons":    {"en": "Button",            "de": "Knopf",              "ru": "Кнопка"},
+        "buttonsImage":     {"en": "Image",             "de": "Bild",               "ru": "Картинка"},
+        "buttonsText":      {"en": "Text",              "de": "Text",               "ru": "Текст"},
+        "buttonsOption":    {"en": "Value",             "de": "Wert",               "ru": "Значение"},
+        "bRadius":          {"en": "Button radius",     "de": "Knopfradius",        "ru": "Радиус закругления"},
+        "bTextAlign":       {"en": "Text align",        "de": "Textposition",       "ru": "Позиция текста"},
+        "group_button_options": {"en": "Button options", "de": "Knopfeinstellungen", "ru": "Опции кнопки"},
+        "group_style":      {"en": "Style",             "de": "Stil",               "ru": "Стиль"},
+        "group_test":       {"en": "Test",              "de": "Test",               "ru": "Тест"},
+        "alwaysOpened":     {"en": "Always opened",     "de": "Immer auf",          "ru": "Всегда открыта"}
     });
 }
 
@@ -377,11 +362,11 @@ vis.binds.bars = {
         var text = "<div id='" + wid + "_btn" + i + "' " + style + " class='" + cssClass + "'>\n";
         var isTable = true || (opt['buttonsImage' + i] && opt['buttonsText' + i]);
         if (isTable) {
-            text += '<table ' + style + ' class="vis-no-spaces"><tr style="width:100%;height:100%" class="vis-no-spaces">\n';
-            text += "<td class='vis-no-spaces' style='width:" + opt.bOffset + "%; vertical-align: bottom; text-align: " + opt.bImageAlign + "'>\n";
+            text += '<table style="height:100%;width:100%" class="vis-no-spaces"><tr style="width:100%;height:100%" class="vis-no-spaces">\n';
+            text += "<td class='vis-no-spaces' style='width:" + opt.bOffset + "%; vertical-align: middle; text-align: " + opt.bImageAlign + "'>\n";
         }
         if (opt['buttonsImage' + i]) {
-            text += "<img class='vis-no-spaces' src='" + ((opt['buttonsImage' + i].indexOf("/") != -1) ?
+            text += "<img class='vis-no-spaces' src='" + ((opt['buttonsImage' + i].indexOf("/") !== -1) ?
                     opt['buttonsImage' + i] : "img/" + opt['buttonsImage' + i]) +"' style='" + (opt.bWidth ? ("max-width:" + (opt.bWidth - 5) + "px;") : "") + (opt.bHeight ? ("max-height:"+(opt.bHeight - 5)+"px;") : "") + "' />\n";
         }
         if (isTable) {
@@ -400,9 +385,11 @@ vis.binds.bars = {
         var barsOptions = $div.data('barsOptions');
         var barsIntern  = $div.data('barsIntern');
 
-        var isHorizontal = (barsOptions.position === 'floatHorizontal' ||
-                            barsOptions.position === 'dockTop' ||
-                            barsOptions.position === 'dockBottom');
+        var isHorizontal = (barsOptions.bPosition === 'floatHorizontal' ||
+                            barsOptions.bPosition === 'dockTop' ||
+                            barsOptions.bPosition === 'dockBottom');
+
+        $('#jquerySideBar_' + barsIntern.wid).remove();
 
         var text = '';
         var calc = (barsOptions.bTheme && barsOptions.bSpace) ? 'calc(100% - ' + (barsOptions.bSpace * 2) + 'px)' : '100%';
@@ -487,7 +474,7 @@ vis.binds.bars = {
                 }
             });
 
-            $htmlBtn.click (function () {
+            $htmlBtn.click(function () {
                 var div__ = $(this).data('ctrl').div;
                 var onClick = $(div__).data('onClick');
                 if (onClick) onClick(this, div__, $(this).data('ctrl').id);
@@ -497,8 +484,9 @@ vis.binds.bars = {
         // Remove previous class
         //if (div._oldAttr) $div.removeClass(div._oldAttr);
 
-        if (barsOptions.position === 'floatHorizontal' ||
-            barsOptions.position === 'floatVertical') {
+        if (barsOptions.bPosition === 'floatHorizontal' ||
+            barsOptions.bPosition === 'floatVertical') {
+            $('#' + barsIntern.wid).show();
             $div.css({'position': 'absolute'});
 
             for (var q = 0; q < vis.binds.bars.themes.length; q++) {
@@ -512,8 +500,6 @@ vis.binds.bars = {
             if (vis.editMode && vis.activeWidgets.indexOf(barsIntern.wid) !== -1) {
                 vis.showWidgetHelper(barsIntern.wid, true);
             }
-
-            $('#jquerySideBar_' + barsIntern.wid).remove();
         }
         else {
             if (!$().sidebar) {
@@ -524,7 +510,7 @@ vis.binds.bars = {
             $div.css({left: 'auto', top: 'auto'});
             var position;
 
-            switch(barsOptions.position) {
+            switch(barsOptions.bPosition) {
                 case 'dockTop':
                     position = "top";
                     break;
@@ -544,16 +530,22 @@ vis.binds.bars = {
 
             $div.sidebar({
                 position: position,
-                width:    $div.width()  + 20,
-                height:   $div.height() + 20,
+                width:    $div.width()  + ((position == 'top' || position == 'bottom') ? 20 : 10),
+                height:   $div.height() + ((position == 'top' || position == 'bottom') ? 10 : 20),
                 open:     'click',
+                close:    (barsOptions.alwaysOpened) ? 'none': undefined,
                 id:       barsIntern.wid,
                 root:     $('#visview_' + barsIntern.view)
             });
 
-            if (barsOptions.bOpen && vis.editMode) $div.sidebar('open');
+            if (barsOptions.alwaysOpened) $div.sidebar('open');
 
             if (0 && barsOptions.bTest && vis.editMode) {
+
+                // Remove test flag
+                vis.widgets[barsIntern.wid].data['bTest'] = false;
+                vis.view[barsIntern.view].widgets[barsIntern.wid].data['bTest'] = false;
+
                 if (barsIntern.wType === 'tplBarFilter') {
                     // Hide all
                     vis.changeFilter("$", barsOptions.bShowEffect, barsOptions.bShowEffectMs, barsOptions.bHideEffect, barsOptions.bHideEffectMs);
@@ -584,8 +576,9 @@ vis.binds.bars = {
                     }, 500 + parseInt (barsOptions.bShowEffectMs, 10));
                 }
             }
-            $('#jquerySideBar_' + barsIntern.wid).addClass(barsOptions.bTheme);
+            $('#jquerySideBar_' + barsIntern.wid).addClass(barsOptions.bTheme + ' vis-widget');
 
+            $('#' + barsIntern.wid).hide();
             if (vis.editMode) {
                 if (vis.activeWidgets.indexOf(barsIntern.wid) != -1) {
                     vis.showWidgetHelper(barsIntern.wid, true);
@@ -1178,7 +1171,36 @@ vis.binds.bars = {
     },
     init: function(wid, options, view, wType) {
         var $div = $('#' + wid);
-        if (!$div.length) return;
+        if (!$div.length) {
+            setTimeout(function () {
+                vis.binds.bars.init(wid, options, view, wType);
+            }, 100);
+            return;
+        } else {
+            var timer = $('#' + wid).data('timer');
+            if (timer) clearTimeout(timer);
+            $('#' + wid).data('timer', setTimeout(function () {
+                vis.binds.bars._init(wid, options, view, wType);
+            }, 300));
+        }
+    },
+    _init: function(wid, options, view, wType) {
+        var $div = $('#' + wid);
+        if (!$div.length) {
+            setTimeout(function () {
+                vis.binds.bars.init(wid, options, view, wType);
+            }, 100);
+            return;
+        } else {
+            var timer = $('#' + wid).data('timer');
+            if (!timer) {
+                $('#' + wid).data('timer', function () {
+                    vis.binds.bars.init(wid, options, view, wType);
+                });
+            } else {
+                $('#' + wid).data('timer', null);
+            }
+        }
 
         if (!$div.find('.vis-widget-body').length) {
             $div.append('<div class="vis-widget-body" style="overflow: hidden"></div>');
@@ -1335,11 +1357,14 @@ vis.binds.bars = {
             //$div.attr('data-vis-resizable', '{"disabled":true}');
             //div.visCustomEdit = {'baroptions': vis.binds.bars.edit, 'delete': vis.binds.bars.editDelete};
             // Install on click function
-            /*if (div._onClick === undefined) {
-                div._onClick = function (htmlBtn, div, r) {
-                    vis.inspectWidget(barsIntern.wid);
-                };
-            }*/
+            if (!$div.data('onClick')) {
+                $div.data('onClick', function (htmlBtn, div, r) {
+                    var barsIntern = $(div).data('barsIntern');
+                    var barsOptions = $(div).data('barsOptions');
+                    vis.inspectWidgets(barsIntern.wid);
+                    //$htmlBtn = $('#' + barsIntern.wid + '_btn' + r);
+                });
+            }
         }
     }
 };

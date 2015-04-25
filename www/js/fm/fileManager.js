@@ -40,11 +40,10 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             img:          ['gif','png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
             icons:        ['zip', 'prg', 'js', 'css', 'mp3', 'wav'],
             userArg:      options.userArg,
-            zindex:       null
+            zindex:       options.zindex
 //            save_data : options.save_data,
 //            save_mime : options.save_mime
         };
-
         var uploadArray = [];
         var selFile = '';
         var selType = '';
@@ -589,7 +588,9 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             }
         });
         // Set z-index of dialog
-        if (o.zindex !== null) $('div[aria-describedby="dialog_fm"]').css({'z-index': o.zindex});
+        if (o.zindex !== null) {
+            $('div[aria-describedby="dialog_fm"]').css({'z-index': o.zindex});
+        }
 
         if (o.mode == "show") {
             $(".fm_buttonbar").hide();
