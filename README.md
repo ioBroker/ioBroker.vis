@@ -46,6 +46,9 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+### 0.2.15 (2015-04-26)
+- (bluefox) fix error with bars
+
 ### 0.2.14 (2015-04-26)
 - (bluefox) Add BARS
 - (bluefox) Add "accordion" to properties of widget
