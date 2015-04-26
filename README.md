@@ -46,6 +46,12 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+### 0.2.14 (2015-04-26)
+- (bluefox) Add BARS
+- (bluefox) Add "accordion" to properties of widget
+- (bluefox) Better import 
+- (bluefox) Fix error with lock-widget zindex and the Color Select Dialog and the Image Select Dialog
+- (bluefox) Switch Tab to widget, when widget is selected
 
 ### 0.2.13 (2015-04-20)
 - (smiling_Jack) Bugfix View Size
@@ -56,8 +62,6 @@ If user changes the view or at start the variables will be filled by vis with
 - (smiling_Jack) some small Bugfix
 - (smiling_Jack) remove animation on add Widget by Drag&Drop
 - (smiling_Jack) fm_manager safety function vor sandbox
-
-
 
 ### 0.2.12 (2015-04-14)
 - (bluefox) fix jqui radio
