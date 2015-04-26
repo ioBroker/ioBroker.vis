@@ -47,6 +47,26 @@ div.sidebar-container {
     box-shadow:0px 0px 20px #000000;
 }
 
+.sidebar-green {
+    background-color:#94C894;
+    filter: alpha(opacity=87);
+    -moz-opacity:0.87;
+    opacity:0.87;
+    -moz-box-shadow:0px 0px 20px #000000;
+    -webkit-box-shadow:0px 0px 20px #000000;
+    box-shadow:0px 0px 20px #000000;
+}
+
+.sidebar-yellow {
+    background-color:#FCFF89;
+    filter: alpha(opacity=87);
+    -moz-opacity:0.87;
+    opacity:0.87;
+    -moz-box-shadow:0px 0px 20px #000000;
+    -webkit-box-shadow:0px 0px 20px #000000;
+    box-shadow:0px 0px 20px #000000;
+}
+
 div.sidebar-container.left {
     top:50%;
     left:0px;
