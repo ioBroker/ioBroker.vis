@@ -221,8 +221,15 @@ vis = $.extend(true, vis, {
             $("#ribbon_tab_datei").show();
         }
 
+        $('#name_import_view').keydown(function (e) {
+            if (e.which === 13 && $(this).val()) {
+                $('#start_import_view').trigger('click');
+            }
+            $('#start_import_view').prop('disabled', !$(this).val());
+        })
         $('#import_view').click(function () {
             $('#textarea_import_view').html('');
+            $('#start_import_view').prop('disabled', !$('#name_import_view').val());
             $('#dialog_import_view').dialog({
                 autoOpen: true,
                 width: 800,
@@ -233,6 +240,7 @@ vis = $.extend(true, vis, {
                     $('.ui-widget-overlay').css('z-index', 1001);
                     $('#start_import_view').click(function () {
                         that.importView();
+                        $('#dialog_import_view').dialog('close');
                     });
                     $('#name_import_view').show();
                 }
@@ -1869,7 +1877,7 @@ vis = $.extend(true, vis, {
     },
     exportView: function (isAll) {
         var exportView = $.extend(true, {}, isAll ? this.views : this.views[this.activeView]);
-        // Allen Widgets eine neue ID verpassen...
+        // Set to all widgets the new ID...
         var num = 1;
         var wid;
         if (!isAll) {
@@ -1880,13 +1888,13 @@ vis = $.extend(true, vis, {
                 delete exportView.widgets[widget];
             }
         }
-        $('#textarea_export_view').html(JSON.stringify(exportView, null, "  "));
+        $('#textarea_export_view').html(JSON.stringify(exportView, null, '  '));
         $('#dialog_export_view').dialog({
             autoOpen: true,
-            width: 800,
-            height: 600,
-            modal: true,
-            open: function (/*event, ui*/) {
+            width:    800,
+            height:   600,
+            modal:    true,
+            open:     function (/*event, ui*/) {
                 $('[aria-describedby="dialog_export_view"]').css('z-index', 1002);
                 $('.ui-widget-overlay').css('z-index', 1001);
             }
@@ -1905,24 +1913,36 @@ vis = $.extend(true, vis, {
             return;
         }
         if (isAll) {
+            for (var v in importObject) {
+                for (var w in importObject[v]) {
+                    if (vis.binds.bars && vis.binds.bars.convertOldBars && importObject[v][w].data.baroptions) {
+                        importObject[v][w] = vis.binds.bars.convertOldBars(importObject[v][w]);
+                    }
+                }
+            }
+
             this.views = importObject;
             this.saveRemote(function () {
                 window.location.reload();
             });
         } else {
             var _name = name.replace(/\s/g, '_').replace(/\./g, '_');
+            this.addView(_name);
             this.views[_name] = importObject;
             this.views[_name].name = name;
 
-            // Allen Widgets eine neue ID verpassen...
+            // Set for all widgets the new ID...
             for (var widget in this.views[_name].widgets) {
+                if (vis.binds.bars && vis.binds.bars.convertOldBars && this.views[_name].widgets[widget].data.baroptions) {
+                    this.views[_name].widgets[widget] = vis.binds.bars.convertOldBars(this.views[_name].widgets[widget]);
+                }
+
                 this.views[_name].widgets[this.nextWidget()] = this.views[_name].widgets[widget];
                 delete this.views[_name].widgets[widget];
             }
             this.saveRemote(function () {
                 that.renderView(_name);
                 that.changeView(_name);
-                window.location.reload();
             });
         }
     },
@@ -3568,8 +3588,8 @@ vis = $.extend(true, vis, {
                 var a = this.extractAttributes(widgetAttrs[j], widgets[i]);
                 if (groupMode == 'byindex') {
                     for (var k = 0; k < a.length; k++) {
-                        attrs[group + '_§' + k] = attrs[group + '_§' + k] || {};
-                        attrs[group + '_§' + k][a[k].name] = a[k];
+                        attrs[group + '_§' + (k + 1)] = attrs[group + '_§' + k] || {};
+                        attrs[group + '_§' + (k + 1)][a[k].name] = a[k];
                     }
                 } else {
                     attrs[group] = attrs[group] || {};
