@@ -160,8 +160,7 @@
     height: 100%;
     width: 100%;
     position: absolute;
-    border-radius: 100%;
-
+    border-radius: 0;
 }
 .plumb_sprinkler_r_head{
     height: 100%;
@@ -173,7 +172,8 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    top: 0;
+    left: 0;
 }
 .plumb_sprinkler_r_body{
     overflow: visible;
