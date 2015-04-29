@@ -3588,8 +3588,8 @@ vis = $.extend(true, vis, {
                 var a = this.extractAttributes(widgetAttrs[j], widgets[i]);
                 if (groupMode == 'byindex') {
                     for (var k = 0; k < a.length; k++) {
-                        attrs[group + '_§' + (k + 1)] = attrs[group + '_§' + k] || {};
-                        attrs[group + '_§' + (k + 1)][a[k].name] = a[k];
+                        attrs[group + '_§' + k] = attrs[group + '_§' + k] || {};
+                        attrs[group + '_§' + k][a[k].name] = a[k];
                     }
                 } else {
                     attrs[group] = attrs[group] || {};
