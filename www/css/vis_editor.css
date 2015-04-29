@@ -526,19 +526,18 @@ body{
     margin: 0;
 }
 
-#view-select-tabs_wrap {
+#view_select_tabs_wrap {
     height: 27px;
     max-width: -webkit-calc(100% - 54px);
     max-width: calc(100% - 54px);
     overflow: hidden;
 }
 
-#view-select-tabs {
-    width: auto;
-    display: -webkit-inline-box;
-    display: inline-flex;
-    left: 0;
+#view_select_tabs {
+    display: inline-block;
     position: relative;
+    height: 25px;
+    padding-top: 3px;
 }
 
 #view_select_right {
@@ -550,7 +549,7 @@ body{
 }
 
 .view-select-tab {
-    display: inline-block;
+    display: inline;
     margin-left: 1px;
     margin-right: 1px;
     padding: 2px 6px 3px 6px;

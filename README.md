@@ -46,6 +46,8 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+### ???
+- (smiling_Jack) Bugfix View select tabs
 
 ### 0.2.13 (2015-04-20)
 - (smiling_Jack) Bugfix View Size

@@ -997,15 +997,11 @@
                     c_from: null,
                     c_default: null
                 }
-            }
+            };
 
             var self = plumb[id];
 
             vis.binds.plumb.plumb_drop($this);
-
-            $($this).on("resize", function () {
-                set()
-            });
 
             $this.bind("plumb_change", function (event) {
                 self.status = event.status;
@@ -1039,7 +1035,7 @@
                 var spray_l ;
                 var radius;
 
-                if (data.position == "270-90") {
+                if (data.spray_range == "270-90") {
                     svg_t = 0;
                     svg_l = 0;
                     spray_w = set_w;
@@ -1049,7 +1045,7 @@
 
                     start = parseInt(180/100*start)+270;
                     end = parseInt(180/100*end)+270;
-                } else if (data.position == "90-270") {
+                } else if (data.spray_range == "90-270") {
                     svg_t = -set_w/2;
                     svg_l = 0;
                     spray_w = set_w;
@@ -1059,7 +1055,7 @@
 
                     start = parseInt(180/100*start)+90;
                     end = parseInt(180/100*end)+90;
-                } else if (data.position == "180-360") {
+                } else if (data.spray_range == "180-360") {
                     svg_t = 0;
                     svg_l = 0;
                     spray_w = set_w/2;
@@ -1069,7 +1065,7 @@
 
                     start = parseInt(180/100*start)+180;
                     end = parseInt(180/100*end)+180;
-                } else if (data.position == "0-180") {
+                } else if (data.spray_range == "0-180") {
                     svg_t = 0;
                     svg_l = -set_w/2;
                     spray_w = set_w/2;
@@ -1079,7 +1075,7 @@
 
                     start = parseInt(180/100*start);
                     end = parseInt(180/100*end);
-                } else if (data.position == "270-360") {
+                } else if (data.spray_range == "270-360") {
                     svg_t = 0;
                     svg_l = 0;
                     spray_w = set_w/2;
@@ -1089,7 +1085,7 @@
 
                     start = parseInt(90/100*start)+270;
                     end = parseInt(90/100*end)+270;
-                } else if (data.position == "0-90") {
+                } else if (data.spray_range == "0-90") {
                     svg_t = 0;
                     svg_l = -set_w/2;
                     spray_w = set_w/2;
@@ -1099,7 +1095,7 @@
 
                     start = parseInt(90/100*start);
                     end = parseInt(90/100*end);
-                } else if (data.position == "180-270") {
+                } else if (data.spray_range == "180-270") {
                     svg_t = -set_w/2;
                     svg_l = 0;
                     spray_w = set_w/2;
@@ -1109,7 +1105,7 @@
 
                     start = parseInt(90/100*start)+180;
                     end = parseInt(90/100*end)+180;
-                } else if (data.position == "90-180") {
+                } else if (data.spray_range == "90-180") {
                     svg_t = -set_w/2;
                     svg_l = -set_w/2;
                     spray_w = set_w/2;
@@ -1119,7 +1115,7 @@
 
                     start = parseInt(90/100*start)+90;
                     end = parseInt(90/100*end)+90;
-                } else if (data.position == "360") {
+                } else if (data.spray_range == "360") {
                     svg_t = 0;
                     svg_l = 0;
                     spray_w = set_w;
@@ -1164,8 +1160,15 @@
 
                 $this.css({
                     "border-radius": radius,
-
+                    "width": data.head_size + "px",
+                    "height": data.head_size + "px"
                 });
+
+                    $("#widget_helper_" + id).css({
+                        "width": parseInt(data.head_size) + 2 + "px",
+                        "height": parseInt(data.head_size) + 2+ "px"
+                    });
+
 
                 var _turn_winkel = start * Math.PI / 180;
                 var r = 250;
@@ -2981,8 +2984,8 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Sprinker I"
-        data-vis-attrs="test/checkbox;spray_width[100]/slider,10,500,1;time[4];start[0];ende[90];stroke[4];opacity[0.8];fog/checkbox;water_color[blue]/color;head_color[black]/color;head_show[true]/checkbox;head_round[true]/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{"grid": [ 10, 10 ],"handles": "s, e"}' style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;test/checkbox;spray_width[100]/slider,10,500,1;head_size[20]/slider,10,50,5;time[4];start[0];ende[90];stroke[4];opacity[0.8];fog/checkbox;water_color[blue]/color;head_color[black]/color;head_show[true]/checkbox;head_round[true]/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" style=" width: 20px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="plumb_sprinkler_i_body vis-widget-body" <%= (el) -> vis.binds.plumb.sprinkler_i(el, data) %>>
             <% if (vis.editMode) { %><div class="editmode-helper" /><% } %>
             <div class="plumb_sprinkler_i" style="display: 'none'">
@@ -3005,9 +3008,9 @@
         data-vis-set="plumb"
         data-vis-type="val"
         data-vis-name="Sprinker R"
-        data-vis-attrs="spray_width[100]/slider,10,500,1;"
-        data-vis-attrs0="position[360]/nselect,360,0-180,90-270,270-90,0-90,90-180,180-270,270-360;test/checkbox;time[30];head_size[5]/slider,5,50,1;start[0]/slider,0,100,1;ende[100]/slider,0,100,1;stroke[4];opacity[0.8]/slider,0,1,0.01;water_color[blue]/color;head_color[black]/color">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" data-vis-resizable='{"grid": [ 10, 10 ],"handles": "s, e"}' style=" width: 60px; height: 60px;overflow: visible" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="_no_resize[true]/hidden;spray_width[100]/slider,10,500,1;"
+        data-vis-attrs0="spray_range[360]/nselect,360,0-180,90-270,270-90,0-90,90-180,180-270,270-360;test/checkbox;time[30];head_size[20]/slider,10,50,5;start[0]/slider,0,100,1;ende[100]/slider,0,100,1;stroke[4];opacity[0.8]/slider,0,1,0.01;water_color[blue]/color;head_color[black]/color">
+    <div class="vis-widget <%== this.data.attr('class') %> pl pl_b pl_t pl_l pl_r" style=" width: 20px; height: 20px;overflow: visible" id="<%= this.data.attr('wid') %>">
         <div style="overflow: visible" class="plumb_sprinkler_r_body vis-widget-body" <%= (el) -> vis.binds.plumb.sprinkler_r(el, data) %>>
             <div class="plumb_sprinkler_r_head"></div>
             <div class="plumb_dock_top"></div>

@@ -1252,15 +1252,15 @@ vis = $.extend(true, vis, {
         }).click(function () {
             var o = {
                 parent_w: $('#view_select_tabs_wrap').width(),
-                self_w:   $('#view_select_tabs').width(),
-                self_l:   parseInt($('#view_select_tabs').css('left'))
+                self_w: $('#view_select_tabs').width(),
+                self_l: parseInt($('#view_select_tabs').css('left'))
             };
 
             if (o.self_w != o.parent_w) {
-                if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
-                    $('#view_select_tabs').css('left', o.self_l - 50 + "px");
+                if ((o.self_l + 50) <= 0) {
+                    $('#view_select_tabs').css('left', o.self_l + 50 + "px");
                 } else {
-                    $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + 'px');
+                    $('#view_select_tabs').css('left', "0px");
                 }
             }
         });
@@ -1273,15 +1273,15 @@ vis = $.extend(true, vis, {
         }).click(function () {
             var o = {
                 parent_w: $('#view_select_tabs_wrap').width(),
-                self_w: $('#view_select_tabs').width(),
-                self_l: parseInt($('#view_select_tabs').css('left'))
+                self_w:   $('#view_select_tabs').width(),
+                self_l:   parseInt($('#view_select_tabs').css('left'))
             };
 
             if (o.self_w != o.parent_w) {
-                if ((o.self_l + 50) <= 0) {
-                    $('#view_select_tabs').css('left', o.self_l + 50 + "px");
+                if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
+                    $('#view_select_tabs').css('left', o.self_l - 50 + "px");
                 } else {
-                    $('#view_select_tabs').css('left', "0px");
+                    $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + 'px');
                 }
             }
         });
