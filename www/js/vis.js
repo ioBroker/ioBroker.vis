@@ -116,7 +116,7 @@ var vis = {
     language:               (typeof systemLang !== 'undefined') ? systemLang : visConfig.language,
     statesDebounce:         {},
     visibility:             {},
-
+    commonStyle:            null,
     _setValue: function (id, state) {
         this.conn.setState(id, state[id + '.val']);
 
@@ -522,6 +522,11 @@ var vis = {
     renderView: function (view, noThemeChange, hidden) {
         var that = this;
 
+        if (!this.editMode && !$('#commonTheme').length) {
+            console.log('Set common theme ' + this.calcCommonStyle());
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + this.calcCommonStyle() + '/jquery-ui.min.css" id="commonTheme"/>');
+        }
+
         if (!this.views[view] || !this.views[view].settings) {
             window.alert('Cannot render view ' + view + '. Invalid settings');
             return false;
@@ -548,7 +553,6 @@ var vis = {
 
             $('#vis_container').append('<div style="display:none;" id="visview_' + view + '" class="vis-view"></div>');
             this.addViewStyle(view, this.views[view].settings.theme);
-
 
             var $view = $("#visview_" + view);
             $view.css(this.views[view].settings.style);
@@ -615,12 +619,14 @@ var vis = {
             }
         }
     },
-    addViewStyle: function (view,theme) {
+    addViewStyle: function (view, theme) {
         var _view = 'visview_' + view;
+        if (this.calcCommonStyle() == theme) return;
         $.ajax({
             url: 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
             cache: false,
             success: function (data) {
+                console.log('Add theme ' + theme + ' for ' + view);
                 $('#' + view + '_style').remove();
                 data = data.replace('.ui-helper-hidden', '#' + _view + ' .ui-helper-hidden');
                 data = data.replace(/(}.)/g, '}#' + _view + ' .');
@@ -1143,6 +1149,31 @@ var vis = {
             this.views[view].widgets[widget].data.filterkey &&
             this.viewsActiveFilter[view].length > 0 &&
             this.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1);
+    },
+    calcCommonStyle: function (recalc) {
+        if (!this.commonStyle || recalc) {
+            if (this.editMode) {
+                this.commonStyle = this.config.editorTheme || 'redmond';
+                return this.commonStyle;
+            }
+            var styles = {};
+            for (var view in this.views) {
+                if (this.views[view].settings.theme && styles[this.views[view].settings.theme]) {
+                    styles[this.views[view].settings.theme]++;
+                } else {
+                    styles[this.views[view].settings.theme] = 1;
+                }
+            }
+            var max = 0;
+            this.commonStyle = '';
+            for (var s in styles) {
+                if (styles[s] > max) {
+                    max = styles[s];
+                    this.commonStyle = s;
+                }
+            }
+        }
+        return this.commonStyle;
     }
 };
 

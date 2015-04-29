@@ -601,8 +601,8 @@ vis = $.extend(true, vis, {
 
         // Theme select Editor
         if (this.config.editorTheme) {
-            $('#editorTheme').remove();
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + this.config.editorTheme + '/jquery-ui.min.css" id="editorTheme"/>');
+            $('#commonTheme').remove();
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + this.config.editorTheme + '/jquery-ui.min.css" id="commonTheme"/>');
             $('[data-theme=' + this.config.editorTheme + ']').addClass('ui-state-active');
         }
 
@@ -610,8 +610,8 @@ vis = $.extend(true, vis, {
             var theme = $(this).data('info');
             // deselect all
             $('#ul_theme li').removeClass('ui-state-active');
-            $('#editorTheme').remove();
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="editorTheme"/>');
+            $('#commonTheme').remove();
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="commonTheme"/>');
             //that.additionalThemeCss(theme);
             setTimeout(function () {
                 $('#scrollbar_style').remove();
@@ -4225,6 +4225,7 @@ vis = $.extend(true, vis, {
                         left: parseInt($wid.css("left")),
                         top:  parseInt($wid.css("top"))
                     };
+                    if (!that.views[that.activeView].widgets[wid]) continue;
                     if (!that.views[that.activeView].widgets[wid].style) that.views[that.activeView].widgets[wid].style = {};
 
                     if (typeof pos.left == 'string' && pos.left.indexOf('px') == -1) {
