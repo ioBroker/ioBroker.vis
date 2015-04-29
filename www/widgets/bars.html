@@ -1,15 +1,36 @@
 <link rel="stylesheet" type="text/css" href="widgets/bars/css/bars.css" />
 <link rel="stylesheet" type="text/css" href="widgets/bars/css/sidebar.css" />
-<script type="text/javascript" src="widgets/bars/js/bars.js"></script>
-<script type="text/javascript" src="widgets/bars/js/jquery.sidebar.js"></script>
+<!--script type="text/javascript" src="widgets/bars/js/bars.js"></script>
+<script type="text/javascript" src="widgets/bars/js/jquery.sidebar.js"></script-->
 
-<script type="text/ejs" id="tplBarFilter" class="dashui-tpl" data-dashui-set="bars" data-dashui-name="Filter bar" data-dashui-attrs="baroptions">
-	<%
-		vis.binds.bars.init (this.data.wid, this.data.attr('baroptions'), this.view, "tplBarFilter", this.data.attr('style'));
-	%>
+<script id="tplBarFilter" 
+		type="text/ejs"
+		class="vis-tpl" 
+		data-vis-set="bars" 
+		data-vis-name="Filter bar" 
+		data-vis-attrs="bOpen[true]/checkbox;bTheme[sidebar-dark]/nselect,sidebar-dark,sidebar-blue,sidebar-red;position[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/number;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bValue/filters;bOnlyOneSelected/checkbox;"
+		data-vis-attrs0="bStyleNormal;bStyleNormalHover;bStyleActive;bStyleActiveHover"
+		data-vis-attrs1="bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;bLayout[fixed]/select,auto,fixed;"
+		data-vis-attrs2="bCount[1]/number;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/filters"
+		data-vis-init="initOptions">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body"></div>
+        <% var that = this; setTimeout(function() {vis.binds.bars.init(that.data.wid, that.data, that.view, "tplBarFilter");}, 100); %>
+    </div>
 </script>
-<script type="text/ejs" id="tplBarNavigator" class="dashui-tpl" data-dashui-set="bars" data-dashui-name="Views bar" data-dashui-attrs="baroptions">
-	<%
-		vis.binds.bars.init (this.data.wid, this.data.attr('baroptions'), this.view, "tplBarNavigator", this.data.attr('style'));
-	%>
+<script id="tplBarNavigator" 
+		type="text/ejs"
+		class="vis-tpl" 
+		data-vis-set="bars" 
+		data-vis-name="Views bar" 
+		data-vis-attrs="baroptions">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+           <% var that = this;
+              setTimeout(function () {
+           		vis.binds.bars.init(that.data.wid, that.data, that.view, "tplBarNavigator");
+           	  }, 0);
+           %>
+        </div>
+    </div>
 </script>
