@@ -613,6 +613,18 @@ vis = $.extend(true, vis, {
             $('#commonTheme').remove();
             $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="commonTheme"/>');
             //that.additionalThemeCss(theme);
+
+            var oldValue = that.config.editorTheme;
+            that.editSaveConfig('editorTheme', theme);
+            that.calcCommonStyle(true);
+            // We must re-render all opened views
+            for (var view in that.views) {
+                if ($('.vis-view #visview' + view).length &&
+                    (that.views[view].settings.theme == theme || that.views[view].settings.theme == oldValue)) {
+                    that.renderView(view, false);
+                }
+            }
+
             setTimeout(function () {
                 $('#scrollbar_style').remove();
                 $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: ' + $(".ui-widget-header ").first().css("background-color") + '}</style>');
@@ -621,7 +633,6 @@ vis = $.extend(true, vis, {
             // Select active theme in menu
             $('[data-theme=' + theme + ']').addClass('ui-state-active');
 
-            this.editSaveConfig('editorTheme', theme);
             that.save();
         });
 
