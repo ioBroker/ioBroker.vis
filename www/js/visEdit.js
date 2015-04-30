@@ -215,11 +215,22 @@ vis = $.extend(true, vis, {
         $('#export_view').click(function () {
             that.exportView(false);
         });
+
+        $('#export_widgets').click(function () {
+            that.exportWidgets();
+        });
+
+        $('#import_widgets').click(function () {
+            that.importWidgets();
+        });
+
         if (this.conn.getType() == 'local') {
             // @SJ cannot select menu and dialogs if it is enabled
             //$("#wid_all_lock_function").trigger("click");
             $("#ribbon_tab_datei").show();
         }
+
+        $('#start_import_view').button();
 
         $('#name_import_view').keydown(function (e) {
             if (e.which === 13 && $(this).val()) {
@@ -228,7 +239,8 @@ vis = $.extend(true, vis, {
             $('#start_import_view').prop('disabled', !$(this).val());
         })
         $('#import_view').click(function () {
-            $('#textarea_import_view').html('');
+            $('#textarea_import_view').val('');
+            $('#name_import_view').show();
             $('#start_import_view').prop('disabled', !$('#name_import_view').val());
             $('#dialog_import_view').dialog({
                 autoOpen: true,
@@ -238,7 +250,7 @@ vis = $.extend(true, vis, {
                 open: function (event, ui) {
                     $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
                     $('.ui-widget-overlay').css('z-index', 1001);
-                    $('#start_import_view').click(function () {
+                    $('#start_import_view').unbind('click').click(function () {
                         that.importView();
                         $('#dialog_import_view').dialog('close');
                     });
@@ -1664,7 +1676,8 @@ vis = $.extend(true, vis, {
                 that.exportView(true);
             }).show();
             $('#import_local_view').click(function () {
-                $('#textarea_import_view').html('');
+                $('#textarea_import_view').val('');
+                $('#name_import_view').show();
                 $('#dialog_import_view').dialog({
                     autoOpen: true,
                     width: 800,
@@ -1673,7 +1686,7 @@ vis = $.extend(true, vis, {
                     open: function (event, ui) {
                         $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
                         $('.ui-widget-overlay').css('z-index', 1001);
-                        $('#start_import_view').click(function () {
+                        $('#start_import_view').unbind('click').click(function () {
                             that.importView(true);
                         });
                         $('#name_import_view').hide();
@@ -1886,6 +1899,70 @@ vis = $.extend(true, vis, {
             $('.view-select-tab.ui-state-active').parent().children().last().trigger('click');
         }
     },
+    exportWidgets: function () {
+        var exportW = [];
+
+        for (var i = 0; i < this.activeWidgets.length; i++) {
+            exportW.push(this.views[this.activeView].widgets[this.activeWidgets[i]]);
+        }
+
+        $('#textarea_export_view').html(JSON.stringify(exportW, null, '  '));
+        document.getElementById("textarea_export_view").select();
+        $('#dialog_export_view').dialog({
+            autoOpen: true,
+            width:    800,
+            height:   600,
+            modal:    true,
+            open:     function (/*event, ui*/) {
+                $('[aria-describedby="dialog_export_view"]').css('z-index', 1002);
+                $('.ui-widget-overlay').css('z-index', 1001);
+            }
+        });
+    },
+    importWidgets: function () {
+        $('#textarea_import_view').val('');
+        $('#start_import_view').prop('disabled', false);
+        $('#name_import_view').hide();
+        var that = this;
+
+        $('#dialog_import_view').dialog({
+            autoOpen: true,
+            width:    800,
+            height:   600,
+            modal:    true,
+            open:     function (event, ui) {
+                $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
+                $('.ui-widget-overlay').css('z-index', 1001);
+                $('#start_import_view').unbind('click').click(function () {
+                    $('#dialog_import_view').dialog('close');
+                    var importObject;
+                    try {
+                        var text = $('#textarea_import_view').val();
+                        importObject = JSON.parse(text);
+                    } catch (e) {
+                        that.showMessage(_('invalid JSON') + "\n\n" + e, _('Error'));
+                        return;
+                    }
+                    var activeWidgets = [];
+                    for (var widget = 0;widget < importObject.length; widget++) {
+                        if (vis.binds.bars && vis.binds.bars.convertOldBars && importObject[widget].data.baroptions) {
+                            importObject[widget] = that.binds.bars.convertOldBars(importObject[widget]);
+                        }
+                        //(tpl, data, style, wid, view, hidden, noSave, no_animate)
+                        activeWidgets.push(that.addWidget(importObject[widget].tpl, importObject[widget].data, importObject[widget].style, null, that.activeView, false, true, true));
+                    }
+
+                    that.saveRemote(function () {
+                        //that.renderView(that.activeView);
+                        setTimeout(function () {
+                            that.inspectWidgets(activeWidgets);
+                        }, 1000);
+                    });
+
+                });
+            }
+        });
+    },
     exportView: function (isAll) {
         var exportView = $.extend(true, {}, isAll ? this.views : this.views[this.activeView]);
         // Set to all widgets the new ID...
@@ -1900,6 +1977,7 @@ vis = $.extend(true, vis, {
             }
         }
         $('#textarea_export_view').html(JSON.stringify(exportView, null, '  '));
+        document.getElementById("textarea_export_view").select();
         $('#dialog_export_view').dialog({
             autoOpen: true,
             width:    800,
@@ -2131,7 +2209,7 @@ vis = $.extend(true, vis, {
         var $tpl = $('#' + tpl);
 
         // call custom init function
-        if ($tpl.attr('data-vis-init')) {
+        if (!noSave && $tpl.attr('data-vis-init')) {
             var init = $tpl.attr('data-vis-init');
             if (this.binds[$tpl.attr('data-vis-set')][init]) {
                 this.binds[$tpl.attr('data-vis-set')][init](tpl, data);
@@ -3817,10 +3895,12 @@ vis = $.extend(true, vis, {
                 $('#rib_wid_del').button('enable');
                 $('#rib_wid_copy').button('enable');
                 $('#rib_wid_doc').button('enable');
+                $('#export_widgets').button('enable');
             } else {
                 $('#rib_wid_del').button('disable');
                 $('#rib_wid_copy').button('disable');
                 $('#rib_wid_doc').button('disable');
+                $('#export_widgets').button('disable');
             }
 
             if (this.activeWidgets.length == 1) {

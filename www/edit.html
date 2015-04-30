@@ -114,14 +114,13 @@
     <p class="translate">license4</p-->
     <p class="translate">license5</p>
 </div>
-<div style="display: none;" id="dialog_export_view" title="export view" class="translateT">
+<div style="display: none;" id="dialog_export_view" title="export" class="translateT">
     <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
               id="textarea_export_view"></textarea>
 </div>
 <div style="display: none;" id="dialog_import_view" title="import view" class="translateT">
     <textarea rows="50" cols="160" style="width: 99%; height: calc(98% - 40px); font-size: 11px;"
               id="textarea_import_view"></textarea>
-    <br/>
     <input type="text" id="name_import_view">
     <button id="start_import_view" class="translateB">import</button>
 </div>
@@ -450,6 +449,19 @@
                     </tr>
                 </table>
             </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
+                            <button class="vis-editor translateB" id="export_widgets">export widgets</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="import_widgets">import widgets</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
         </div>
     </div>
     <div class="ribbon_tab" id="ribbon_tools" >
