@@ -1954,9 +1954,7 @@ vis = $.extend(true, vis, {
 
                     that.saveRemote(function () {
                         //that.renderView(that.activeView);
-                        setTimeout(function () {
-                            that.inspectWidgets(activeWidgets);
-                        }, 1000);
+                        that.inspectWidgets(activeWidgets);
                     });
 
                 });

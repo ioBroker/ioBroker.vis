@@ -617,7 +617,7 @@
         data-vis-set="jqui"
         data-vis-type="static"
         data-vis-name="Button Link"
-        data-vis-attrs="buttontext[Text];href;html_prepend;html_append;padding[0]/slider,0,100,1">
+        data-vis-attrs="buttontext[Text];href;html_prepend;html_append;padding[5]/slider,0,100,1">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
             <%== this.data.attr("html_prepend") %>
@@ -634,7 +634,7 @@
         data-vis-set="jqui"
         data-vis-type="static"
         data-vis-name="Button Link _blank"
-        data-vis-attrs="buttontext[Text];href;html_prepend;html_append;padding[0]/slider,0,100,1">
+        data-vis-attrs="buttontext[Text];href;html_prepend;html_append;padding[5]/slider,0,100,1">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
             <%== this.data.attr("html_prepend") %>
@@ -798,7 +798,7 @@
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="container - Button - view in jqui Dialog"
-        data-vis-attrs="html_prepend;html_append;buttontext[Text];contains_view;title;modal/checkbox;width;height;padding[0]/slider,0,100,1">
+        data-vis-attrs="html_prepend;html_append;buttontext[Text];contains_view;title;modal/checkbox;width;height;padding[5]/slider,0,100,1">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
@@ -963,7 +963,7 @@
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Button State"
-        data-vis-attrs="oid;html_prepend;html_append;buttontext[Text];value;padding[0]/slider,0,100,1">
+        data-vis-attrs="oid;html_prepend;html_append;buttontext[Text];value;padding[5]/slider,0,100,1">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
             <%== this.data.attr("html_prepend") %>
@@ -980,7 +980,7 @@
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Radiobuttons on/off"
-        data-vis-attrs="off_text[OFF];on_text[ON];oid;padding[0]/slider,0,100,1">
+        data-vis-attrs="off_text[OFF];on_text[ON];oid;padding[5]/slider,0,100,1">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
         <div class="vis-widget-body" >
             <div id="<%= this.data.attr('wid') %>_radio" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
