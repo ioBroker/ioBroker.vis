@@ -46,7 +46,8 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
-### 0.2.16 (2015-04-30)
+### 0.3.0 (2015-05-01)
+- (bluefox) enable binding of any attribute of widget to object
 - (bluefox) implement export/import of array of widgets (and not only whole views)
 - (bluefox) update jquery-ui
 - (bluefox) optimize styles of views

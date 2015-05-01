@@ -86,7 +86,7 @@ if (typeof systemLang !== 'undefined') systemLang = visConfig.language || system
 
 var vis = {
 
-    version:                '0.2.15',
+    version:                '0.3.0',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -116,6 +116,7 @@ var vis = {
     language:               (typeof systemLang !== 'undefined') ? systemLang : visConfig.language,
     statesDebounce:         {},
     visibility:             {},
+    bindings:               {},
     commonStyle:            null,
     _setValue: function (id, state) {
         this.conn.setState(id, state[id + '.val']);
@@ -254,63 +255,97 @@ var vis = {
             console.log('Check why views are not yet loaded!');
             return null;
         }
-        var IDs = [];
+
+        var IDs         = [];
+        this.visibility = {};
+        this.bindings   = {};
 
         for (var view in this.views) {
             for (var id in this.views[view].widgets) {
                 // Check all attributes
-                var data = this.views[view].widgets[id].data;
+                var data  = this.views[view].widgets[id].data;
+                var style = this.views[view].widgets[id].style;
                 for (var attr in data) {
 
                     /* TODO DO do not forget remove it after a while */
-                    if (attr == 'state_id') {
+                    if (attr === 'state_id') {
                         data.state_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                     } else
-                    if (attr == 'number_id') {
+                    if (attr === 'number_id') {
                         data.number_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] && data[attr] !== 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                     } else
-                    if (attr == 'toggle_id') {
+                    if (attr === 'toggle_id') {
                         data.toggle_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                     } else
-                    if (attr == 'set_id') {
+                    if (attr === 'set_id') {
                         data.set_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                     } else
-                    if (attr == 'temp_id') {
+                    if (attr === 'temp_id') {
                         data.temp_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                     } else
-                    if (attr == 'drive_id') {
+                    if (attr === 'drive_id') {
                         data.drive_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                     } else
-                    if (attr == 'content_id') {
+                    if (attr === 'content_id') {
                         data.content_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                     } else
-                    if (attr == 'dialog_id') {
+                    if (attr === 'dialog_id') {
                         data.dialog_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                     }  else
-                    if (attr == 'max_value_id') {
+                    if (attr === 'max_value_id') {
                         data.max_value_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                     }  else
-                    if (attr == 'dialog_id') {
+                    if (attr === 'dialog_id') {
                         data.dialog_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                     }  else
-                    if (attr == 'dialog_id') {
+                    if (attr === 'dialog_id') {
                         data.dialog_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                     } else
 
 
                     if ((attr.match(/oid$/) || attr.match(/^oid/)) && data[attr]) {
-                        if (data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) == -1) IDs.push(data[attr]);
+                        if (data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+
+                        // Visibility binding
+                        if (attr == 'visibility-oid' && data['visibility-oid']) {
+                            var oid = data['visibility-oid'];
+                            if (!this.visibility[oid]) this.visibility[oid] = [];
+                            this.visibility[oid].push({view: view, widget: id});
+                        }
+                    } else
+                    if (typeof data[attr] === 'string') {
+                        var oid = data[attr].match(/^{(.+)}$/);
+                        if (oid) {
+                            IDs.push(oid[1]);
+
+                            // any field binding
+                            if (!this.bindings[oid[1]]) this.bindings[oid[1]] = [];
+                            this.bindings[oid[1]].push({view: view, widget: id, type: 'data', attr: attr});
+                        }
+                    }
+                }
+
+                // build bindings for styles
+                if (style) {
+                    for (var css in style) {
+                        if (typeof style[css] == 'string') {
+                            var oid = style[css].match(/^{(.+)}$/);
+                            if (oid) {
+                                if (!this.bindings[oid[1]]) this.bindings[oid[1]] = [];
+                                this.bindings[oid[1]].push({view: view, widget: id, type: 'style', attr: css});
+                            }
+                        }
                     }
                 }
             }
@@ -333,7 +368,7 @@ var vis = {
                 var name = this.widgetSets[i].name || this.widgetSets[i];
 
                 // Skip unused widget sets in non-edit mode
-                if (widgetSets && widgetSets.indexOf(name) == -1) {
+                if (widgetSets && widgetSets.indexOf(name) === -1) {
                     continue;
                 }
 
@@ -389,20 +424,6 @@ var vis = {
             return false;
         } else {
             this.showWaitScreen(false);
-        }
-
-        this.visibility = {};
-        // Build the visibility array
-        if (!this.editMode && this.views) {
-            for (var view in this.views) {
-                for (var id in this.views[view].widgets) {
-                    if (!this.editMode && this.views[view].widgets[id].data && this.views[view].widgets[id].data['visibility-oid']) {
-                        var oid = this.views[view].widgets[id].data['visibility-oid'];
-                        if (!this.visibility[oid]) this.visibility[oid] = [];
-                        this.visibility[oid].push({view: view, widget: id});
-                    }
-                }
-            }
         }
 
         var hash = window.location.hash.substring(1);
@@ -647,9 +668,9 @@ var vis = {
             this.preloadImages.cache.push(img);
         }
     },
-    reRenderWidget: function (widget) {
+    reRenderWidget: function (view, widget) {
         $("#" + widget).remove();
-        this.renderWidget(this.activeView, widget);
+        this.renderWidget(view || this.activeView, widget);
     },
     changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
         var widgets = this.views[this.activeView].widgets;
@@ -694,7 +715,7 @@ var vis = {
                 //console.log(widgets[widget]);
                 if (widgets[widget].data.filterkey) {
                     if (this.viewsActiveFilter[this.activeView].length > 0 &&
-                        this.viewsActiveFilter[this.activeView].indexOf(widgets[widget].data.filterkey) == -1) {
+                        this.viewsActiveFilter[this.activeView].indexOf(widgets[widget].data.filterkey) === -1) {
                         mWidget = document.getElementById(widget);
                         if (mWidget &&
                             mWidget._customHandlers &&
@@ -718,7 +739,7 @@ var vis = {
                         mWidget._customHandlers.onShow) {
                         if (widgets[widget].data.filterkey) {
                             if (!(that.viewsActiveFilter[that.activeView].length > 0 &&
-                                that.viewsActiveFilter[that.activeView].indexOf(widgets[widget].data.filterkey) == -1)) {
+                                that.viewsActiveFilter[that.activeView].indexOf(widgets[widget].data.filterkey) === -1)) {
                                 mWidget._customHandlers.onShow(mWidget, widget);
                             }
                         }
@@ -732,6 +753,9 @@ var vis = {
         }
     },
     renderWidget: function (view, id) {
+        var $view = $('#visview_' + view);
+        if (!$view.length) return;
+
         var widget = this.views[view].widgets[id];
 
         //console.log("renderWidget("+view+","+id+")");
@@ -752,7 +776,7 @@ var vis = {
         try {
             // Append html element to view
             if (widget.data && widget.data.oid) {
-                $('#visview_' + view).append(can.view(widget.tpl, {
+                $view.append(can.view(widget.tpl, {
                     val: this.states[widget.data.oid + '.val'],
                     ts:  this.states[widget.data.oid + '.ts'],
                     ack: this.states[widget.data.oid + '.ack'],
@@ -761,7 +785,7 @@ var vis = {
                     view: view
                 }));
             } else {
-                $('#visview_' + view).append(can.view(widget.tpl, {data: widgetData, view: view}));
+                $view.append(can.view(widget.tpl, {data: widgetData, view: view}));
             }
 
             if (!this.editMode) {
@@ -1135,7 +1159,7 @@ var vis = {
                 case '<':
                     return val >= value;
                 case 'consist':
-                    return (val.toString().indexOf(value) == -1);
+                    return (val.toString().indexOf(value) === -1);
                 default:
                     console.log('Unknown visibility condition for ' + widget + ': ' + condition);
                     return false;
@@ -1148,7 +1172,7 @@ var vis = {
         return (
             this.views[view].widgets[widget].data.filterkey &&
             this.viewsActiveFilter[view].length > 0 &&
-            this.viewsActiveFilter[view].indexOf(widget.data.filterkey) == -1);
+            this.viewsActiveFilter[view].indexOf(widget.data.filterkey) === -1);
     },
     calcCommonStyle: function (recalc) {
         if (!this.commonStyle || recalc) {
@@ -1343,6 +1367,13 @@ window.onpopstate();
                                         o[id + '.ack'] = obj.ack;
                                         o[id + '.lc']  = obj.lc;
                                     }
+
+                                    if (!vis.editMode && vis.bindings[id]) {
+                                        for (var i = 0; i < vis.bindings[id].length; i++) {
+                                            vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = obj.val;
+                                        }
+                                    }
+
                                     try {
                                         vis.states.attr(o);
                                     } catch (e) {
@@ -1421,9 +1452,6 @@ window.onpopstate();
                 } catch (e) {
                     vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
                 }
-                if (id == 'hm-rpc.0.HEQ0120459.1.WORKING') {
-                    console.log(JSON.stringify(state));
-                }
 
                 if (!vis.editMode && vis.visibility[id]) {
                     for (var i = 0; i < vis.visibility[id].length; i++) {
@@ -1445,6 +1473,17 @@ window.onpopstate();
                                 mWidget._customHandlers.onShow(mWidget, id);
                             }
                         }
+                    }
+                }
+
+                // Bindings on every element
+                if (!vis.editMode && vis.bindings[id]) {
+                    for (var i = 0; i < vis.bindings[id].length; i++) {
+                        vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = state.val;
+                        if (vis.widgets[vis.bindings[id][i].widget] && vis.bindings[id][i].type == 'data') {
+                            vis.widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type + '.' + vis.bindings[id][i].attr] = state.val;
+                        }
+                        vis.reRenderWidget(vis.bindings[id][i].view, vis.bindings[id][i].widget);
                     }
                 }
 

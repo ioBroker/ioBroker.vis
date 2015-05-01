@@ -200,10 +200,10 @@ vis = $.extend(true, vis, {
             });
             for (var i = that.activeWidgets.length - 1; i >= 0; i--) {
                 var pos = widgets.indexOf(that.activeWidgets[i]);
-                if (pos == -1) that.activeWidgets.splice(pos, 1);
+                if (pos === -1) that.activeWidgets.splice(pos, 1);
             }
             for (var j = 0; j < widgets.length; j++) {
-                if (that.activeWidgets.indexOf(widgets[j]) == -1) {
+                if (that.activeWidgets.indexOf(widgets[j]) === -1) {
                     that.activeWidgets.push(widgets[j]);
                     that.actionHighlighWidget(widgets[j]);
                 }
@@ -998,7 +998,7 @@ vis = $.extend(true, vis, {
                 that.alignValues = [];
                 for (var t = 0; t < that.activeWidgets.length; t++) {
                     var w = $('#' + that.activeWidgets[t]).width();
-                    if (that.alignValues.indexOf(w) == -1)
+                    if (that.alignValues.indexOf(w) === -1)
                     that.alignValues.push(w);
                 }
 
@@ -1024,7 +1024,7 @@ vis = $.extend(true, vis, {
                 that.alignValues = [];
                 for (var t = 0; t < that.activeWidgets.length; t++) {
                     var h = $('#' + that.activeWidgets[t]).height();
-                    if (that.alignValues.indexOf(h) == -1)
+                    if (that.alignValues.indexOf(h) === -1)
                         that.alignValues.push(h);
                 }
 
@@ -2020,8 +2020,8 @@ vis = $.extend(true, vis, {
 
             // Set for all widgets the new ID...
             for (var widget in this.views[_name].widgets) {
-                if (vis.binds.bars && vis.binds.bars.convertOldBars && this.views[_name].widgets[widget].data.baroptions) {
-                    this.views[_name].widgets[widget] = vis.binds.bars.convertOldBars(this.views[_name].widgets[widget]);
+                if (this.binds.bars && this.binds.bars.convertOldBars && this.views[_name].widgets[widget].data.baroptions) {
+                    this.views[_name].widgets[widget] = thisbinds.bars.convertOldBars(this.views[_name].widgets[widget]);
                 }
 
                 this.views[_name].widgets[this.nextWidget()] = this.views[_name].widgets[widget];
@@ -2079,7 +2079,7 @@ vis = $.extend(true, vis, {
         return view;
     },
     getViewsOfWidget: function (id) {
-        if (id.indexOf('_') == -1) {
+        if (id.indexOf('_') === -1) {
             var view = this.getViewOfWidget(id);
             if (view) {
                 return [view];
@@ -2171,7 +2171,7 @@ vis = $.extend(true, vis, {
                 var pos = that.activeWidgets.indexOf(widgetId);
 
                 // Add to list
-                if (pos == -1) {
+                if (pos === -1) {
                     that.inspectWidgets(widgetId);
                 } else {
                     // Remove from list
@@ -2358,7 +2358,7 @@ vis = $.extend(true, vis, {
         this.save();
     },
     reRenderWidgetEdit: function (wid) {
-        this.reRenderWidget(wid);
+        this.reRenderWidget(null, wid);
         if (this.activeWidgets.indexOf(wid) != -1) {
             var $wid = $('#' + wid);
             // User interaction
@@ -2437,7 +2437,7 @@ vis = $.extend(true, vis, {
                     // rename this widget from "wid_view" to "wid"
                     var _wids = widgets[i].split('_', 2);
                     this.renameWidget(widgets[i], _wids[0]);
-                } else if (views.length > 1 && (widgets[i].indexOf('_') == -1)) {
+                } else if (views.length > 1 && (widgets[i].indexOf('_') === -1)) {
                     this.renameWidget(widgets[i], widgets[i] + '_' + view);
                 }
             }
@@ -2792,7 +2792,7 @@ vis = $.extend(true, vis, {
             init: function (w, data) {
                 var platform = window.navigator.oscpu || window.navigator.platform;
                 // Do not show spin on MAc OS
-                if (platform.indexOf('Mac') == -1) {
+                if (platform.indexOf('Mac') === -1) {
                     options = options || {};
                     options.spin = function () {
                         var $this = $(this);
@@ -3290,7 +3290,7 @@ vis = $.extend(true, vis, {
                 // Collect list of attribute names on which depends other attributes
                 if (line.depends) {
                     for (var u = 0; u < line.depends.length; u++) {
-                        if (depends.indexOf(line.depends[u]) == -1) depends.push(line.depends[u]);
+                        if (depends.indexOf(line.depends[u]) === -1) depends.push(line.depends[u]);
                     }
                 }
             }
@@ -3353,7 +3353,7 @@ vis = $.extend(true, vis, {
                     that.views[wdata.view].widgets[wdata.widgets[i]].style[css] = val;
                     var $widget = $('#' + wdata.widgets[i]);
                     if (val !== '' && (css == 'left' || css == 'top')) {
-                        if (val.indexOf('%') == -1 && val.indexOf('px') == -1 && val.indexOf('em') == -1) {
+                        if (val.indexOf('%') === -1 && val.indexOf('px') === -1 && val.indexOf('em') === -1) {
                             val += 'px';
                         }
                     }
@@ -3728,7 +3728,7 @@ vis = $.extend(true, vis, {
             var val = (isStyle && (!obj || obj[attr] === undefined)) ? '' : (obj ? obj[attr] : '');
 
             widgetValues[i] = val;
-            if (values.indexOf(val) == -1) values.push(val);
+            if (values.indexOf(val) === -1) values.push(val);
         }
         if (values.length == 1) {
             return values[0];
@@ -3807,7 +3807,7 @@ vis = $.extend(true, vis, {
             if (typeof addWidget == 'object') {
                 this.activeWidgets = addWidget;
             } else {
-                if (this.activeWidgets.indexOf(addWidget) == -1) this.activeWidgets.push(addWidget);
+                if (this.activeWidgets.indexOf(addWidget) === -1) this.activeWidgets.push(addWidget);
             }
         }
         if (typeof delWidget == 'string') {
@@ -3836,10 +3836,10 @@ vis = $.extend(true, vis, {
             var deselect = [];
 
             for (var i = 0; i < this.activeWidgets.length; i++) {
-                if (this.oldActiveWidgets.indexOf(this.activeWidgets[i]) == -1) select.push(this.activeWidgets[i]);
+                if (this.oldActiveWidgets.indexOf(this.activeWidgets[i]) === -1) select.push(this.activeWidgets[i]);
             }
             for (i = 0; i < this.oldActiveWidgets.length; i++) {
-                if (this.activeWidgets.indexOf(this.oldActiveWidgets[i]) == -1) deselect.push(this.oldActiveWidgets[i]);
+                if (this.activeWidgets.indexOf(this.oldActiveWidgets[i]) === -1) deselect.push(this.oldActiveWidgets[i]);
             }
 
             // Deselect unselected widgets
@@ -4123,7 +4123,7 @@ vis = $.extend(true, vis, {
                     //$('#allwidgets_helper').hide();
                 },
                 selecting: function (e, ui) {
-                    if (ui.selecting.id && that.activeWidgets.indexOf(ui.selecting.id) == -1) {
+                    if (ui.selecting.id && that.activeWidgets.indexOf(ui.selecting.id) === -1) {
                         that.activeWidgets.push(ui.selecting.id);
                         that.showWidgetHelper(ui.selecting.id, true);
                     }
@@ -4317,12 +4317,12 @@ vis = $.extend(true, vis, {
                     if (!that.views[that.activeView].widgets[wid]) continue;
                     if (!that.views[that.activeView].widgets[wid].style) that.views[that.activeView].widgets[wid].style = {};
 
-                    if (typeof pos.left == 'string' && pos.left.indexOf('px') == -1) {
+                    if (typeof pos.left == 'string' && pos.left.indexOf('px') === -1) {
                         pos.left += 'px';
                     } else {
                         pos.left = pos.left.toFixed(0) + 'px';
                     }
-                    if (typeof pos.top == 'string' && pos.top.indexOf('px') == -1) {
+                    if (typeof pos.top == 'string' && pos.top.indexOf('px') === -1) {
                         pos.top += 'px';
                     } else {
                         pos.top = pos.top.toFixed(0) + 'px';
@@ -4410,12 +4410,12 @@ vis = $.extend(true, vis, {
                     var widget = ui.helper.attr('id');
                     var w = ui.size.width;
                     var h = ui.size.height;
-                    if (typeof w == 'string' && w.indexOf('px') == -1) {
+                    if (typeof w == 'string' && w.indexOf('px') === -1) {
                         w += 'px';
                     } else {
                         w = w.toFixed(0) + 'px';
                     }
-                    if (typeof h == 'string' && h.indexOf('px') == -1) {
+                    if (typeof h == 'string' && h.indexOf('px') === -1) {
                         h += 'px';
                     } else {
                         h = h.toFixed(0) + 'px';
@@ -4507,8 +4507,8 @@ vis = $.extend(true, vis, {
                 continue;
             }
 
-            if (this.views[view].widgets[w].tpl.indexOf('Image') == -1 &&
-                this.views[view].widgets[w].tpl.indexOf('image') == -1) {
+            if (this.views[view].widgets[w].tpl.indexOf('Image') === -1 &&
+                this.views[view].widgets[w].tpl.indexOf('image') === -1) {
                 var $jW = $('#' + w);
                 if ($jW.length) {
                     var s = $jW.position();
