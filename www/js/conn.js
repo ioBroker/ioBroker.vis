@@ -111,7 +111,7 @@ var servConn = {
             that._isConnected = true;
             if (that._connCallbacks.onConnChange) that._connCallbacks.onConnChange(that._isConnected);
         } else
-        if (typeof io != "undefined") {
+        if (typeof io != 'undefined') {
             connOptions.socketSession = connOptions.socketSession || 'nokey';
 
             var url;
