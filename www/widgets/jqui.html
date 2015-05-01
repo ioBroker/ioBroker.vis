@@ -436,8 +436,8 @@
 
             if (isNaN(settings.value)) settings.value = 0;
             if (isNaN(settings.min))   settings.min   = 0;
-            if (isNaN(settings.step))  settings.step  = 1;
             if (isNaN(settings.max))   settings.max   = 100;
+            if (isNaN(settings.step))  settings.step  = (settings.max - settings.min) / 100;
 
             if (settings.inverted) settings.value = (settings.max - settings.value) + settings.min;
 

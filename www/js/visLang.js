@@ -342,6 +342,7 @@ $.extend(systemDictionary, {
     "css_overflow-x": {"en": "overflow-x", "de": "overflow-x", "ru": "overflow-x"},
     "css_overflow-y": {"en": "overflow-y", "de": "overflow-y", "ru": "overflow-y"},
     "css_color": {"en": "color", "de": "color", "ru": "color"},
+    "css_opacity": {"en": "opacity", "de": "opacity", "ru": "opacity"},
     "css_text-align": {"en": "text-align", "de": "text-align", "ru": "text-align"},
     "css_text-shadow": {"en": "text-shadow", "de": "text-shadow", "ru": "text-shadow"},
     "css_font-family": {"en": "font-family", "de": "font-family", "ru": "font-family"},
