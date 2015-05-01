@@ -86,7 +86,7 @@ if (typeof systemLang !== 'undefined') systemLang = visConfig.language || system
 
 var vis = {
 
-    version:                '0.3.0',
+    version:                '0.3.1',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -117,6 +117,7 @@ var vis = {
     statesDebounce:         {},
     visibility:             {},
     bindings:               {},
+    bindingsCache:          {},
     commonStyle:            null,
     _setValue: function (id, state) {
         this.conn.setState(id, state[id + '.val']);
@@ -325,13 +326,19 @@ var vis = {
                         }
                     } else
                     if (typeof data[attr] === 'string') {
-                        var oid = data[attr].match(/^{(.+)}$/);
-                        if (oid) {
-                            IDs.push(oid[1]);
+                        var oids = this.extractBinding(data[attr]);
+                        if (oids) {
+                            for (var t = 0; t < oids.length; t++) {
+                                if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
+                                if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
 
-                            // any field binding
-                            if (!this.bindings[oid[1]]) this.bindings[oid[1]] = [];
-                            this.bindings[oid[1]].push({view: view, widget: id, type: 'data', attr: attr});
+                                oids[t].type   = 'data';
+                                oids[t].attr   = attr;
+                                oids[t].view   = view;
+                                oids[t].widget = id;
+
+                                this.bindings[oids[t].systemOid].push(oids[t]);
+                            }
                         }
                     }
                 }
@@ -340,10 +347,19 @@ var vis = {
                 if (style) {
                     for (var css in style) {
                         if (typeof style[css] == 'string') {
-                            var oid = style[css].match(/^{(.+)}$/);
-                            if (oid) {
-                                if (!this.bindings[oid[1]]) this.bindings[oid[1]] = [];
-                                this.bindings[oid[1]].push({view: view, widget: id, type: 'style', attr: css});
+                            var oids = this.extractBinding(style[css]);
+                            if (oids) {
+                                for (var t = 0; t < oids.length; t++) {
+                                    if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
+                                    if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
+
+                                    oids[t].type   = 'style';
+                                    oids[t].attr   = css;
+                                    oids[t].view   = view;
+                                    oids[t].widget = id;
+
+                                    this.bindings[oids[t].systemOid].push(oids[t]);
+                                }
                             }
                         }
                     }
@@ -1198,6 +1214,233 @@ var vis = {
             }
         }
         return this.commonStyle;
+    },
+    formatDate: function formatDate(dateObj, isSeconds, _format) {
+        if (typeof isSeconds != 'boolean') {
+            _format = isSeconds;
+            isSeconds = false;
+        }
+
+        var format = _format || 'DD.MM.YYYY';
+
+        if (!dateObj) return '';
+        if (typeof dateObj != 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
+
+        var v;
+        // Year
+        if (format.indexOf('YYYY') != -1 || format.indexOf('JJJJ') != -1 || format.indexOf('ГГГГ') != -1) {
+            v = dateObj.getFullYear();
+            format = format.replace('YYYY', v);
+            format = format.replace('JJJJ', v);
+            format = format.replace('ГГГГ', v);
+        } else if (format.indexOf('YY') != -1 || format.indexOf('JJ') != -1 || format.indexOf('ГГ') != -1) {
+            v = dateObj.getFullYear() % 100;
+            format = format.replace('YY', v);
+            format = format.replace('JJ', v);
+            format = format.replace('ГГ', v);
+        }
+        // Month
+        if (format.indexOf('MM') != -1 || format.indexOf('ММ') != -1) {
+            v =  dateObj.getMonth() + 1;
+            if (v < 10) v = '0' + v;
+            format = format.replace('MM', v);
+            format = format.replace('ММ', v);
+        } else if (format.indexOf('M') != -1 || format.indexOf('М') != -1) {
+            v =  dateObj.getMonth() + 1;
+            format = format.replace('M', v);
+            format = format.replace('М', v);
+        }
+
+        // Day
+        if (format.indexOf('DD') != -1 || format.indexOf('TT') != -1 || format.indexOf('ДД') != -1) {
+            v =  dateObj.getDate();
+            if (v < 10) v = '0' + v;
+            format = format.replace('DD', v);
+            format = format.replace('TT', v);
+            format = format.replace('ДД', v);
+        } else if (format.indexOf('D') != -1 || format.indexOf('TT') != -1 || format.indexOf('Д') != -1) {
+            v =  dateObj.getDate();
+            format = format.replace('D', v);
+            format = format.replace('T', v);
+            format = format.replace('Д', v);
+        }
+
+        // hours
+        if (format.indexOf('hh') != -1 || format.indexOf('SS') != -1 || format.indexOf('чч') != -1) {
+            v =  dateObj.getHours();
+            if (v < 10) v = '0' + v;
+            format = format.replace('hh', v);
+            format = format.replace('SS', v);
+            format = format.replace('чч', v);
+        } else if (format.indexOf('h') != -1 || format.indexOf('S') != -1 || format.indexOf('ч') != -1) {
+            v =  dateObj.getHours();
+            format = format.replace('h', v);
+            format = format.replace('S', v);
+            format = format.replace('ч', v);
+        }
+
+        // minutes
+        if (format.indexOf('mm') != -1 || format.indexOf('мм') != -1) {
+            v =  dateObj.getMinutes();
+            if (v < 10) v = '0' + v;
+            format = format.replace('mm', v);
+            format = format.replace('мм', v);
+        } else if (format.indexOf('m') != -1 ||  format.indexOf('м') != -1) {
+            v =  dateObj.getMinutes();
+            format = format.replace('m', v);
+            format = format.replace('v', v);
+        }
+
+        // seconds
+        if (format.indexOf('ss') != -1 || format.indexOf('сс') != -1) {
+            v =  dateObj.getSeconds();
+            if (v < 10) v = '0' + v;
+            format = format.replace('ss', v);
+            format = format.replace('cc', v);
+        } else if (format.indexOf('s') != -1 || format.indexOf('с') != -1) {
+            v =  dateObj.getHours();
+            format = format.replace('s', v);
+            format = format.replace('с', v);
+        }
+        return format;
+    },
+    extractBinding: function (format) {
+        if (this.editMode) return null;
+        if (this.bindingsCache[format]) return JSON.parse(JSON.stringify(this.bindingsCache[format]));
+
+        var oid = format.match(/{(.+?)}/g);
+        var result = null;
+        if (oid) {
+            for (var p = 0; p < oid.length; p++) {
+                var _oid = oid[p].substring(1, oid[p].length - 1);
+                var parts = _oid.split(';');
+                result = result || [];
+                var systemOid = parts[0].trim();
+                var visOid    = systemOid;
+
+                var test1 = visOid.substring(visOid.length - 4);
+                var test2 = visOid.substring(visOid.length - 3);
+                if (test1 !== '.val' && test2 != '.ts' && test2 != '.lc' && test1 != '.ack') {
+                    visOid = visOid + '.val';
+                }
+
+                var isSeconds = (test2 == '.ts' || test2 == '.lc');
+
+                var test1 = systemOid.substring(systemOid.length - 4);
+                var test2 = systemOid.substring(systemOid.length - 3);
+                if (test1 === '.val' || test1 === '.ack') {
+                    systemOid = systemOid.substring(0, systemOid.length - 4);
+                } else if (test2 === '.lc' || test2 === '.ts') {
+                    systemOid = systemOid.substring(0, systemOid.length - 3);
+                }
+                var operations = null;
+                for (var u = 1; u < parts.length; u++) {
+                    var parse = parts[u].match(/([\w\s\+\-\*\/]+)(\(.+\))?/);
+                    if (parse && parse[1]) {
+                        parse[1] = parse[1].trim();
+                        if (parse[1] === '*' || parse[1] === '+' || parse[1] === '-' || parse[1] === '/') {
+                            if (parse[2] === undefined) {
+                                console.log('Invalid format of format string: ' + format);
+                                parse[2] = null;
+                            } else {
+                                parse[2] = parse[2].trim().replace(',', '.');
+                                parse[2] = parse[2].substring(1, parse[2].length - 1);
+                                parse[2] = parseFloat(parse[2].trim());
+
+                                if (parse[2].toString() === 'NaN') {
+                                    console.log('Invalid format of format string: ' + format);
+                                    parse[2] = null;
+                                } else {
+                                    operations = operations || [];
+                                    operations.push({op: parse[1], arg: parse[2]});
+                                }
+                            }
+                        } else if (parse[1] == 'date') {
+                            operations = operations || [];
+                            parse[2] = parse[2].trim();
+                            parse[2] = parse[2].substring(1, parse[2].length - 1);
+                            operations.push({op: parse[1], arg: parse[2]});
+                        } else {
+                            operations = operations || [];
+                            operations.push({op: parse[1]});
+                        }
+                    } else {
+                        console.log('Invalid format ' + format);
+                    }
+                }
+
+                result.push({
+                    visOid:     visOid,
+                    systemOid:  systemOid,
+                    token:      oid[p],
+                    operations: operations ? operations : undefined,
+                    format:     format,
+                    isSeconds:  isSeconds
+                });
+            }
+        }
+        // cache bindings
+        if (result) {
+            this.bindingsCache = this.bindingsCache || {};
+            this.bindingsCache[format] = JSON.parse(JSON.stringify(result));
+        }
+
+        return result;
+    },
+    formatBinding: function (format) {
+        var oids = this.extractBinding(format);
+        for (var t = 0; t < oids.length; t++) {
+            var value = this.states[oids[t].visOid];
+            if (oids[t].operations) {
+                for (var k = 0; k < oids[t].operations.length; k++) {
+                    if (oids[t].operations[k].op === '*' && oids[t].operations[k].arg !== undefined) {
+                        value = parseFloat(value) * oids[t].operations[k].arg;
+                    } else
+                    if (oids[t].operations[k].op === '/' && oids[t].operations[k].arg !== undefined) {
+                        value = parseFloat(value) / oids[t].operations[k].arg;
+                    } else
+                    if (oids[t].operations[k].op === '+' && oids[t].operations[k].arg !== undefined) {
+                        value = parseFloat(value) + oids[t].operations[k].arg;
+                    } else
+                    if (oids[t].operations[k].op === '-' && oids[t].operations[k].arg !== undefined) {
+                        value = parseFloat(value) - oids[t].operations[k].arg;
+                    } else
+                    if (oids[t].operations[k].op === 'round') {
+                        if (oids[t].operations[k].arg === undefined) {
+                            value = Math.round(parseFloat(value));
+                        } else {
+                            value = parseFloat(value).toFixed(oids[t].operations[k].arg);
+                        }
+                    } else
+                    if (oids[t].operations[k].op === 'hex') {
+                        value = Math.round(parseFloat(value)).toString(16);
+                    } else
+                    if (oids[t].operations[k].op === 'hex2') {
+                        value = Math.round(parseFloat(value)).toString(16);
+                        if (value.length < 2) value = '0' + value;
+                    } else
+                    if (oids[t].operations[k].op === 'HEX') {
+                        value = Math.round(parseFloat(value)).toString(16).toUpperCase();
+                    } else
+                    if (oids[t].operations[k].op === 'HEX2') {
+                        value = Math.round(parseFloat(value)).toString(16).toUpperCase();
+                        if (value.length < 2) value = '0' + value;
+                    } else
+                    if (oids[t].operations[k].op === 'date') {
+                        var number = parseInt(value);
+
+                        // This seconds or milliseconds
+                        if (number.toString() == value) {
+                            value = this.formatDate(value, oids[t].isSeconds, oids[t].operations[k].arg);
+                        } else {
+                            value = this.formatDate(value, false, oids[t].operations[k].arg);
+                        }
+                    }
+                }
+            }
+            format = format.replace(oids[t].token, value);
+        }
+        return format;
     }
 };
 
@@ -1368,16 +1611,42 @@ window.onpopstate();
                                         o[id + '.lc']  = obj.lc;
                                     }
 
-                                    if (!vis.editMode && vis.bindings[id]) {
-                                        for (var i = 0; i < vis.bindings[id].length; i++) {
-                                            vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = obj.val;
-                                        }
-                                    }
-
                                     try {
                                         vis.states.attr(o);
                                     } catch (e) {
                                         vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                                    }
+
+                                    if (!vis.editMode && vis.bindings[id]) {
+                                        for (var i = 0; i < vis.bindings[id].length; i++) {
+                                            vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format);
+                                        }
+                                    }
+                                }
+                            }
+                            // Create non-existing IDs
+                            if (vis.IDs) {
+                                var now = new Date().getTime() / 1000;
+                                for (var id in vis.IDs) {
+                                    if (vis.states[vis.IDs[id] + '.val'] === undefined) {
+                                        console.log('Create inner vis object ' + id);
+                                        var o = {};
+                                        o[id + '.val'] = 0;
+                                        o[id + '.ts']  = now;
+                                        o[id + '.ack'] = false;
+                                        o[id + '.lc']  = now;
+
+                                        try {
+                                            vis.states.attr(o);
+                                        } catch (e) {
+                                            vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                                        }
+
+                                        if (!vis.editMode && vis.bindings[id]) {
+                                            for (var i = 0; i < vis.bindings[id].length; i++) {
+                                                vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -1479,9 +1748,11 @@ window.onpopstate();
                 // Bindings on every element
                 if (!vis.editMode && vis.bindings[id]) {
                     for (var i = 0; i < vis.bindings[id].length; i++) {
-                        vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = state.val;
+                        var value = vis.formatBinding(vis.bindings[id][i].format);
+
+                        vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = value;
                         if (vis.widgets[vis.bindings[id][i].widget] && vis.bindings[id][i].type == 'data') {
-                            vis.widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type + '.' + vis.bindings[id][i].attr] = state.val;
+                            vis.widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type + '.' + vis.bindings[id][i].attr] = value;
                         }
                         vis.reRenderWidget(vis.bindings[id][i].view, vis.bindings[id][i].widget);
                     }

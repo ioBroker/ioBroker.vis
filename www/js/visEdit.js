@@ -1175,6 +1175,11 @@ vis = $.extend(true, vis, {
             icons: {primary: 'ui-icon-close'}
         }).click(function () {
             that.saveRemote(function () {
+                if (that._saveTimer) {
+                    $('#saving_progress').hide();
+                    clearTimeout(that._saveTimer);
+                    that._saveTimer = null;
+                }
                 // Show hint how to get back to edit mode
                 if (!that.config['dialog/isEditHintShown']) {
                     window.alert(_('To get back to edit mode just call "%s" in browser', location.href));
@@ -2809,11 +2814,7 @@ vis = $.extend(true, vis, {
                 }
                 // Allow only numbers
                 $(this).on('keypress', function(e) {
-                    if (e.keyCode < 48 || e.keyCode > 57) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode == 45);
                 });
             }
         };
@@ -2945,6 +2946,7 @@ vis = $.extend(true, vis, {
         this.groups[group]['css_z-index']    = this.editNumber('css_z-index');
         this.groups[group]['css_overflow-x'] = this.editSelect('css_overflow-x', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
         this.groups[group]['css_overflow-y'] = this.editSelect('css_overflow-y', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
+        this.groups[group].css_opacity       = {input: '<input type="text" id="inspect_css_opacity"/>'};
 
         for(var attr in this.groups[group]) {
             this.groups[group][attr].css = true;
@@ -4263,8 +4265,6 @@ vis = $.extend(true, vis, {
             $('#inspect_view_theme').val(this.views[view].settings.theme);
         }
         $('#inspect_view_theme').selectmenu('refresh');
-
-
 
         if(view == "_project"){
             wid_prev
