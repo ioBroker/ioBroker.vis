@@ -35,6 +35,8 @@ Following operations are supported:
 - HEX - same as hex, but upper cased.
 - HEX2 - same as hex2, but upper cased.
 - date - format date according to given format. Format is the same as in [ioBroker.javascript](https://github.com/ioBroker/ioBroker.javascript/blob/master/README.md#formatdate)
+- min(N) - if value is less than N, take the N, elsewise value
+- max(M) - if value is greater than M, take the M, elsewise value 
 
 You can use this pattern in any text, like
 

@@ -1338,7 +1338,12 @@ var vis = {
                     var parse = parts[u].match(/([\w\s\+\-\*\/]+)(\(.+\))?/);
                     if (parse && parse[1]) {
                         parse[1] = parse[1].trim();
-                        if (parse[1] === '*' || parse[1] === '+' || parse[1] === '-' || parse[1] === '/') {
+                        if (parse[1] === '*' ||
+                            parse[1] === '+' ||
+                            parse[1] === '-' ||
+                            parse[1] === '/' ||
+                            parse[1] === 'min' ||
+                            parse[1] === 'max') {
                             if (parse[2] === undefined) {
                                 console.log('Invalid format of format string: ' + format);
                                 parse[2] = null;
@@ -1435,6 +1440,14 @@ var vis = {
                         } else {
                             value = this.formatDate(value, false, oids[t].operations[k].arg);
                         }
+                    } else
+                    if (oids[t].operations[k].op === 'min') {
+                        value = parseFloat(value);
+                        value = (value < oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
+                    } else
+                    if (oids[t].operations[k].op === 'max') {
+                        value = parseFloat(value);
+                        value = (value > oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
                     }
                 }
             }
