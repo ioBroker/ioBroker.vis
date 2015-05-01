@@ -11,6 +11,12 @@ WEB visualisation for ioBroker platform.
 
 [Online Demos](http://dashui.ccu.io)
 
+## Bindings of objects
+Normally most of widgets have ObjectID attribute. And this attribute can be bound with some value of object ID.
+But there is another option how to bind *any* attribute of widget to some ObjectID. 
+
+Just write into attribute ```{object.id}``` and it will be bound (not in edit mode) to this object's value. 
+
 ## Control interface
 Vis creates 3 variables:
 
