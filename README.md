@@ -19,7 +19,9 @@ Just write into attribute ```{object.id}``` and it will be bound (not in edit mo
 If you will use special format, you can even make some simple operations with it, e.g. multiplying or formatting.
 Patten has following format:
 
-```{objectID;operation1;operation2;...}```
+```
+{objectID;operation1;operation2;...}
+```
 
 Following operations are supported:
 - * - multiplying. Argument must be in brackets, like "*(4)". In this sample we multiplying value with 4.
@@ -36,14 +38,21 @@ Following operations are supported:
 
 You can use this pattern in any text, like
 
-```My calculations with {objectID1;operation1;operation2;...} are {objectID2;operation3;operation4;...}```
+```
+My calculations with {objectID1;operation1;operation2;...} are {objectID2;operation3;operation4;...}
+```
 
 or color calculations:
-```#{objectRed;/(100);*(255);HEX2}{objectGreen;HEX2}{objectBlue;HEX2}```
+
+```
+#{objectRed;/(100);*(255);HEX2}{objectGreen;HEX2}{objectBlue;HEX2}
+```
 
 To show timestamp of object write ".ts" or ".lc" (for last change) at the end of object id, e.g.:
 
-```# Last change: {objectRed.lc;date(hh:mm)}```
+```
+Last change: {objectRed.lc;date(hh:mm)}
+```
 
 ## Control interface
 Vis creates 3 variables:
