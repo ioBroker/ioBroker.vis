@@ -39,11 +39,12 @@ You can use this pattern in any text, like
 ```My calculations with {objectID1;operation1;operation2;...} are {objectID2;operation3;operation4;...}```
 
 or color calculations:
+
 ```#{objectRed;/(100);*(255);HEX2}{objectGreen;HEX2}{objectBlue;HEX2}```
 
 To show timestamp of object write ".ts" or ".lc" (for last change) at the end of object id, e.g.:
 
-```# Last change: {objectRed.lc;date(hh:mm)}```
+``` Last change: {objectRed.lc;date(hh:mm)}```
 
 ## Control interface
 Vis creates 3 variables:
