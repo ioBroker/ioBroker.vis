@@ -338,6 +338,14 @@ var vis = {
                                 oids[t].widget = id;
 
                                 this.bindings[oids[t].systemOid].push(oids[t]);
+
+                                if (oids[t].operations[0].arg instanceof Array) {
+                                    for (var w = 0; w < oids[t].operations[0].arg.length; w++) {
+                                        if (IDs.indexOf(oids[t].operations[0].arg[w].systemOid) === -1) IDs.push(oids[t].operations[0].arg[w].systemOid);
+                                        if (!this.bindings[oids[t].operations[0].arg[w].systemOid]) this.bindings[oids[t].operations[0].arg[w].systemOid] = [];
+                                        this.bindings[oids[t].operations[0].arg[w].systemOid].push(oids[t]);
+                                    }
+                                }
                             }
                         }
                     }
@@ -359,6 +367,13 @@ var vis = {
                                     oids[t].widget = id;
 
                                     this.bindings[oids[t].systemOid].push(oids[t]);
+                                    if (oids[t].operations[0].arg instanceof Array) {
+                                        for (var w = 0; w < oids[t].operations[0].arg.length; w++) {
+                                            if (IDs.indexOf(oids[t].operations[0].arg[w].systemOid) === -1) IDs.push(oids[t].operations[0].arg[w].systemOid);
+                                            if (!this.bindings[oids[t].operations[0].arg[w].systemOid]) this.bindings[oids[t].operations[0].arg[w].systemOid] = [];
+                                            this.bindings[oids[t].operations[0].arg[w].systemOid].push(oids[t]);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1013,7 +1028,15 @@ var vis = {
                 }
             }
 
-            this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(this.views, null, 2), function () {
+            // replace all bounded variables with initial values
+            var viewsToSave = JSON.parse(JSON.stringify(this.views));
+            for (var b in this.bindings) {
+                for (var h = 0; h < this.bindings[b].length; h++) {
+                    viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget][this.bindings[b][h].type][this.bindings[b][h].attr] = this.bindings[b][h].format;
+                }
+            }
+
+            this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(viewsToSave, null, 2), function () {
                 that.saveRemoteActive = 0;
                 if (callback) callback();
 
@@ -1066,6 +1089,9 @@ var vis = {
             this.$dialogMessage.dialog({
                 autoOpen: false,
                 modal:    true,
+                open: function () {
+                    $(this).parent().css({'z-index': 1001});
+                },
                 buttons: [
                     {
                         text: _('Ok'),
@@ -1334,43 +1360,124 @@ var vis = {
                     systemOid = systemOid.substring(0, systemOid.length - 3);
                 }
                 var operations = null;
-                for (var u = 1; u < parts.length; u++) {
-                    var parse = parts[u].match(/([\w\s\+\-\*\/]+)(\(.+\))?/);
-                    if (parse && parse[1]) {
-                        parse[1] = parse[1].trim();
-                        if (parse[1] === '*' ||
-                            parse[1] === '+' ||
-                            parse[1] === '-' ||
-                            parse[1] === '/' ||
-                            parse[1] === 'min' ||
-                            parse[1] === 'max') {
-                            if (parse[2] === undefined) {
-                                console.log('Invalid format of format string: ' + format);
-                                parse[2] = null;
-                            } else {
-                                parse[2] = parse[2].trim().replace(',', '.');
-                                parse[2] = parse[2].substring(1, parse[2].length - 1);
-                                parse[2] = parseFloat(parse[2].trim());
+                var isEval = visOid.indexOf(':') != -1;
 
-                                if (parse[2].toString() === 'NaN') {
+                if (isEval) {
+                    var xx = visOid.split(':', 2);
+                    var yy = systemOid.split(':', 2);
+                    visOid = xx[1];
+                    systemOid = yy[1];
+                    operations = operations || [];
+                    operations.push({
+                        op: 'eval',
+                        arg: [{
+                            name:      xx[0],
+                            visOid:    xx[1],
+                            systemOid: yy[1]
+                        }]
+                    });
+                }
+
+
+                for (var u = 1; u < parts.length; u++) {
+                    // eval construction
+                    if (isEval) {
+                        if (parts[u].indexOf(':') != -1) {
+                            var _systemOid = parts[u].trim();
+                            var _visOid    = _systemOid;
+
+                            var test1 = _visOid.substring(_visOid.length - 4);
+                            var test2 = _visOid.substring(_visOid.length - 3);
+                            if (test1 !== '.val' && test2 != '.ts' && test2 != '.lc' && test1 != '.ack') {
+                                _visOid = _visOid + '.val';
+                            }
+
+                            test1 = systemOid.substring(_systemOid.length - 4);
+                            test2 = systemOid.substring(_systemOid.length - 3);
+                            if (test1 === '.val' || test1 === '.ack') {
+                                _systemOid = _systemOid.substring(0, _systemOid.length - 4);
+                            } else if (test2 === '.lc' || test2 === '.ts') {
+                                _systemOid = _systemOid.substring(0, _systemOid.length - 3);
+                            }
+                            var xx = _visOid.split(':', 2);
+                            var yy = _systemOid.split(':', 2);
+                            operations[0].arg.push({
+                                    name:      xx[0],
+                                    visOid:    xx[1],
+                                    systemOid: yy[1]
+                                });
+                        } else {
+                            if (operations[0].formula) {
+                                var n = JSON.parse(JSON.stringify(operations[0]));
+                                n.formula = parts[u];
+                                operations.push(n);
+                            } else {
+                                operations[0].formula = parts[u];
+                            }
+                        }
+                    } else {
+                        var parse = parts[u].match(/([\w\s\+\-\*\/]+)(\(.+\))?/);
+                        if (parse && parse[1]) {
+                            parse[1] = parse[1].trim();
+                            // operators requires paremeter
+                            if (parse[1] === '*' ||
+                                parse[1] === '+' ||
+                                parse[1] === '-' ||
+                                parse[1] === '/' ||
+                                parse[1] === '%' ||
+                                parse[1] === 'min' ||
+                                parse[1] === 'max') {
+                                if (parse[2] === undefined) {
                                     console.log('Invalid format of format string: ' + format);
                                     parse[2] = null;
                                 } else {
-                                    operations = operations || [];
-                                    operations.push({op: parse[1], arg: parse[2]});
+                                    parse[2] = parse[2].trim().replace(',', '.');
+                                    parse[2] = parse[2].substring(1, parse[2].length - 1);
+                                    parse[2] = parseFloat(parse[2].trim());
+
+                                    if (parse[2].toString() === 'NaN') {
+                                        console.log('Invalid format of format string: ' + format);
+                                        parse[2] = null;
+                                    } else {
+                                        operations = operations || [];
+                                        operations.push({op: parse[1], arg: parse[2]});
+                                    }
                                 }
+                            } else
+                            // date formatting
+                            if (parse[1] == 'date') {
+                                operations = operations || [];
+                                parse[2] = parse[2].trim();
+                                parse[2] = parse[2].substring(1, parse[2].length - 1);
+                                operations.push({op: parse[1], arg: parse[2]});
+                            } else
+                            // operators have optional parameter
+                            if (parse[1] === 'pow' || parse[1] === 'round' || parse[1] === 'random') {
+                                if (parse[2] === undefined) {
+                                    operations = operations || [];
+                                    operations.push({op: parse[1]});
+                                } else {
+                                    parse[2] = parse[2].trim().replace(',', '.');
+                                    parse[2] = parse[2].substring(1, parse[2].length - 1);
+                                    parse[2] = parseFloat(parse[2].trim());
+
+                                    if (parse[2].toString() === 'NaN') {
+                                        console.log('Invalid format of format string: ' + format);
+                                        parse[2] = null;
+                                    } else {
+                                        operations = operations || [];
+                                        operations.push({op: parse[1], arg: parse[2]});
+                                    }
+                                }
+                            } else
+                            // operators without parameter
+                            {
+                                operations = operations || [];
+                                operations.push({op: parse[1]});
                             }
-                        } else if (parse[1] == 'date') {
-                            operations = operations || [];
-                            parse[2] = parse[2].trim();
-                            parse[2] = parse[2].substring(1, parse[2].length - 1);
-                            operations.push({op: parse[1], arg: parse[2]});
                         } else {
-                            operations = operations || [];
-                            operations.push({op: parse[1]});
+                            console.log('Invalid format ' + format);
                         }
-                    } else {
-                        console.log('Invalid format ' + format);
                     }
                 }
 
@@ -1398,6 +1505,21 @@ var vis = {
             var value = this.states[oids[t].visOid];
             if (oids[t].operations) {
                 for (var k = 0; k < oids[t].operations.length; k++) {
+                    if (oids[t].operations[k].op === 'eval') {
+                        var string = '';//'(function() {';
+                        for (var a = 0; a < oids[t].operations[k].arg.length; a++) {
+                            string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + this.states[oids[t].operations[k].arg[a].visOid] + '";';
+                        }
+                        string += 'return ' + oids[t].operations[k].formula + ';';
+                        //string += '}())';
+                        try{
+                            value = new Function(string)();
+                        } catch(e)
+                        {
+                            console.log('Error in eval: ' + string);
+                            value = 0;
+                        }
+                    } else
                     if (oids[t].operations[k].op === '*' && oids[t].operations[k].arg !== undefined) {
                         value = parseFloat(value) * oids[t].operations[k].arg;
                     } else
@@ -1410,12 +1532,25 @@ var vis = {
                     if (oids[t].operations[k].op === '-' && oids[t].operations[k].arg !== undefined) {
                         value = parseFloat(value) - oids[t].operations[k].arg;
                     } else
+                    if (oids[t].operations[k].op === '%' && oids[t].operations[k].arg !== undefined) {
+                        value = parseFloat(value) % oids[t].operations[k].arg;
+                    } else
                     if (oids[t].operations[k].op === 'round') {
                         if (oids[t].operations[k].arg === undefined) {
                             value = Math.round(parseFloat(value));
                         } else {
                             value = parseFloat(value).toFixed(oids[t].operations[k].arg);
                         }
+                    } else
+                    if (oids[t].operations[k].op === 'pow') {
+                        if (oids[t].operations[k].arg === undefined) {
+                            value = Math.pow(parseFloat(value), 2);
+                        } else {
+                            value = Math.pow(parseFloat(value), oids[t].operations[k].arg);
+                        }
+                    } else
+                    if (oids[t].operations[k].op === 'sqrt') {
+                        value = Math.sqrt(parseFloat(value));
                     } else
                     if (oids[t].operations[k].op === 'hex') {
                         value = Math.round(parseFloat(value)).toString(16);
@@ -1448,6 +1583,19 @@ var vis = {
                     if (oids[t].operations[k].op === 'max') {
                         value = parseFloat(value);
                         value = (value > oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
+                    } else
+                    if (oids[t].operations[k].op === 'random') {
+                        if (oids[t].operations[k].arg === undefined) {
+                            value = Math.random();
+                        } else {
+                            value = Math.random() * oids[t].operations[k].arg;
+                        }
+                    } else
+                    if (oids[t].operations[k].op === 'floor') {
+                        value = Math.floor(parseFloat(value));
+                    } else
+                    if (oids[t].operations[k].op === 'ceil') {
+                        value = Math.ceil(parseFloat(value));
                     }
                 }
             }

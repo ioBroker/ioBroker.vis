@@ -1745,7 +1745,9 @@ vis = $.extend(true, vis, {
             this.$dialogConfirm.dialog({
                 autoOpen: false,
                 modal:    true,
-                zindex: 11000,
+                open: function () {
+                    $(this).parent().css({'z-index': 1001});
+                },
                 buttons: [
                     {
                         text: _('Ok'),

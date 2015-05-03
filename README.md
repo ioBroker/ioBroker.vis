@@ -24,10 +24,12 @@ Patten has following format:
 ```
 
 Following operations are supported:
+
 - * - multiplying. Argument must be in brackets, like "*(4)". In this sample we multiplying value with 4.
 - + - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
 - - - subtract. Argument must be in brackets, like "-(-674.5)". In this sample we subtract from value -674.5.
 - / - dividing. Argument must be in brackets, like "/(0.5)". In this sample we dividing value by 0.5.
+- % - modulo. Argument must be in brackets, like "%(5)". In this sample we take modulo of 5.
 - round - round the value.
 - round(N) - round the value with N places after point, e.g. 34.678;round(1) => 34.7
 - hex - convert value to hexadecimal value. All letters are lower cased. 
@@ -36,7 +38,13 @@ Following operations are supported:
 - HEX2 - same as hex2, but upper cased.
 - date - format date according to given format. Format is the same as in [ioBroker.javascript](https://github.com/ioBroker/ioBroker.javascript/blob/master/README.md#formatdate)
 - min(N) - if value is less than N, take the N, elsewise value
-- max(M) - if value is greater than M, take the M, elsewise value 
+- max(M) - if value is greater than M, take the M, elsewise value
+- sqrt - square root
+- pow(n) - power of N.
+- pow - power of 2.
+- floor - Math.floor
+- ceil - Math.ceil
+- random(R) - Math.random() * R, or just Math.random() if no argument
 
 You can use this pattern in any text, like
 
@@ -55,6 +63,31 @@ To show timestamp of object write ".ts" or ".lc" (for last change) at the end of
 ```
 Last change: {objectRed.lc;date(hh:mm)}
 ```
+
+There is another possibility to write pattern:
+
+```
+Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(h*h + w*w))}
+```
+
+```{h:height;w:width;h*w}``` will be interpreted as function:
+
+```
+value = (function () {
+    var h = "10";
+    var w = "20";
+    return Math.max(20, Math.sqrt(h*h + w*w));
+})();
+```
+
+You can use *any* javascript functions. Arguments must be defined with ':', if not, it will be interpreted as formula.
+
+Take care about types. All of them defined as strings. To be sure, that value will be treated as number use parseFloat function.
+
+```
+Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
+```
+
 
 ## Control interface
 Vis creates 3 variables:
