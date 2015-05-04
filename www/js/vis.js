@@ -268,63 +268,58 @@ var vis = {
                 var style = this.views[view].widgets[id].style;
                 for (var attr in data) {
 
-                    /* TODO DO do not forget remove it after a while */
+                    /* TODO DO do not forget remove it after a while. Required for import from DashUI */
                     if (attr === 'state_id') {
                         data.state_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                        delete data[attr];
+                        attr = 'state_oid';
                     } else
                     if (attr === 'number_id') {
                         data.number_oid = data[attr];
-                        if (data[attr] && data[attr] !== 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                        delete data[attr];
+                        attr = 'number_oid';
                     } else
                     if (attr === 'toggle_id') {
                         data.toggle_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                        delete data[attr];
+                        attr = 'toggle_oid';
                     } else
                     if (attr === 'set_id') {
                         data.set_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                        delete data[attr];
+                        attr = 'set_oid';
                     } else
                     if (attr === 'temp_id') {
                         data.temp_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                        delete data[attr];
+                        attr = 'temp_oid';
                     } else
                     if (attr === 'drive_id') {
                         data.drive_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                        delete data[attr];
+                        attr = 'drive_oid';
                     } else
                     if (attr === 'content_id') {
                         data.content_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                        delete data[attr];
+                        attr = 'content_oid';
                     } else
                     if (attr === 'dialog_id') {
                         data.dialog_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                        delete data[attr];
+                        attr = 'dialog_oid';
                     }  else
                     if (attr === 'max_value_id') {
                         data.max_value_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                        delete data[attr];
+                        attr = 'max_value_oid';
                     }  else
                     if (attr === 'dialog_id') {
                         data.dialog_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
-                    }  else
-                    if (attr === 'dialog_id') {
-                        data.dialog_oid = data[attr];
-                        if (data[attr] && data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
-                    } else
+                        delete data[attr];
+                        attr = 'dialog_oid';
+                    }
 
-
-                    if ((attr.match(/oid$/) || attr.match(/^oid/)) && data[attr]) {
-                        if (data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
-
-                        // Visibility binding
-                        if (attr == 'visibility-oid' && data['visibility-oid']) {
-                            var oid = data['visibility-oid'];
-                            if (!this.visibility[oid]) this.visibility[oid] = [];
-                            this.visibility[oid].push({view: view, widget: id});
-                        }
-                    } else
                     if (typeof data[attr] === 'string') {
                         var oids = this.extractBinding(data[attr]);
                         if (oids) {
@@ -332,20 +327,29 @@ var vis = {
                                 if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
                                 if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
 
-                                oids[t].type   = 'data';
-                                oids[t].attr   = attr;
-                                oids[t].view   = view;
+                                oids[t].type = 'data';
+                                oids[t].attr = attr;
+                                oids[t].view = view;
                                 oids[t].widget = id;
 
                                 this.bindings[oids[t].systemOid].push(oids[t]);
 
-                                if (oids[t].operations[0].arg instanceof Array) {
+                                if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
                                     for (var w = 0; w < oids[t].operations[0].arg.length; w++) {
                                         if (IDs.indexOf(oids[t].operations[0].arg[w].systemOid) === -1) IDs.push(oids[t].operations[0].arg[w].systemOid);
                                         if (!this.bindings[oids[t].operations[0].arg[w].systemOid]) this.bindings[oids[t].operations[0].arg[w].systemOid] = [];
                                         this.bindings[oids[t].operations[0].arg[w].systemOid].push(oids[t]);
                                     }
                                 }
+                            }
+                        } else if ((attr.match(/oid$/) || attr.match(/^oid/)) && data[attr]) {
+                            if (data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+
+                            // Visibility binding
+                            if (attr == 'visibility-oid' && data['visibility-oid']) {
+                                var oid = data['visibility-oid'];
+                                if (!this.visibility[oid]) this.visibility[oid] = [];
+                                this.visibility[oid].push({view: view, widget: id});
                             }
                         }
                     }
@@ -367,7 +371,7 @@ var vis = {
                                     oids[t].widget = id;
 
                                     this.bindings[oids[t].systemOid].push(oids[t]);
-                                    if (oids[t].operations[0].arg instanceof Array) {
+                                    if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
                                         for (var w = 0; w < oids[t].operations[0].arg.length; w++) {
                                             if (IDs.indexOf(oids[t].operations[0].arg[w].systemOid) === -1) IDs.push(oids[t].operations[0].arg[w].systemOid);
                                             if (!this.bindings[oids[t].operations[0].arg[w].systemOid]) this.bindings[oids[t].operations[0].arg[w].systemOid] = [];

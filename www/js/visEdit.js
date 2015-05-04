@@ -3365,6 +3365,10 @@ vis = $.extend(true, vis, {
                     if (that.activeWidgets.indexOf(wdata.widgets[i]) != -1) {
                         that.showWidgetHelper(wdata.widgets[i], true);
                     }
+
+                    if ($('#' + that.views[wdata.view].widgets[wdata.widgets[i]].tpl).attr('data-vis-update-style')) {
+                        that.reRenderWidgetEdit(wdata.widgets[i]);
+                    }
                 } else {
                     if ($this.attr('type') == 'checkbox') {
                         that.widgets[wdata.widgets[i]].data[wdata.attr] = $this.prop('checked');
@@ -4430,6 +4434,11 @@ vis = $.extend(true, vis, {
 
                     that.views[that.activeView].widgets[widget].style.width  = w;
                     that.views[that.activeView].widgets[widget].style.height = h;
+
+                    if ($('#' + that.views[that.activeView].widgets[widget].tpl).attr('data-vis-update-style')) {
+                        that.reRenderWidgetEdit(widget);
+                    }
+
                     that.save();
                 },
                 resize: function (event, ui) {

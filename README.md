@@ -88,6 +88,10 @@ Take care about types. All of them defined as strings. To be sure, that value wi
 Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
 ```
 
+## Filters
+To visualise on the one view thw whole number of widgets you can use filters to reduce the amount of widgets simultaneously shown on the view.
+ 
+Every widget has a field "filter". If you set it to some value, e.g. "light", so you can use other widget (bars - filters) to control which filter is actually active. 
 
 ## Control interface
 Vis creates 3 variables:
