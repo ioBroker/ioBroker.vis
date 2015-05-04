@@ -359,3 +359,10 @@ transform: scaleY(-1);
     margin-top: -1px;
     line-height: 0;
 }
+
+.plumb-dock-svg{
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    margin-left: -1px;
+    margin-top: -1px;
+}
