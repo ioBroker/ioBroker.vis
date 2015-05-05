@@ -3162,15 +3162,19 @@ vis = $.extend(true, vis, {
         if (typeof line == 'string') line = {input: line};
 
         if (line[0]) {
-            line[0].attrName  = widAttr.clearName;
-            line[0].attrIndex = widAttr.index;
+            line[0].attrName       = widAttr.clearName;
+            line[0].attrIndex      = widAttr.index;
+            line[0].type           = widAttr.type;
+            line[0].onChangeWidget = widAttr.onChangeWidget;
+            if (widAttr.depends && widAttr.depends.length) line[0].depends = widAttr.depends;
         } else {
-            line.attrName  = widAttr.clearName;
-            line.attrIndex = widAttr.index;
+            line.attrName       = widAttr.clearName;
+            line.attrIndex      = widAttr.index;
+            line.type           = widAttr.type;
+            line.onChangeWidget = widAttr.onChangeWidget;
+            if (widAttr.depends && widAttr.depends.length) line.depends = widAttr.depends;
         }
 
-        if (widAttr.depends && widAttr.depends.length) line.depends = widAttr.depends;
-        line.type = widAttr.type;
 
         // <tr><td>title:</td><td><input /></td><td>button</td></tr>
         this.groups[group] = this.groups[group] || {};
@@ -3274,11 +3278,12 @@ vis = $.extend(true, vis, {
                 this.setAttrValue(this.activeWidgets, widAttr, line.css, values);
 
                 var wdata = {
-                    attr:    widAttr,
-                    widgets: widgets,
-                    view:    view,
-                    type:    line.type,
-                    css:     line.css
+                    attr:           widAttr,
+                    widgets:        widgets,
+                    view:           view,
+                    type:           line.type,
+                    css:            line.css,
+                    onChangeWidget: line.onChangeWidget
                 };
                 if (line.onchange) wdata.onchange = line.onchange;
 
@@ -3409,6 +3414,17 @@ vis = $.extend(true, vis, {
                         wdata.onchange.call(this, that.widgets[wdata.widgets[i]].data[wdata.attr]);
                     }
                 }
+                if (wdata.onChangeWidget) {
+                    var widgetSet = $('#' + that.views[wdata.view].widgets[wdata.widgets[i]].tpl).attr('data-vis-set');
+                    if (that.binds[widgetSet] && that.binds[widgetSet][wdata.onChangeWidget]) {
+                        if (wdata.css) {
+                            var css = wdata.attr.substring(4);
+                            that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.views[wdata.view].widgets[wdata.widgets[i]].style[css], css, true);
+                        } else {
+                            that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.widgets[wdata.widgets[i]].data[wdata.attr], wdata.attr, false);
+                        }
+                    }
+                }
 
                 that.save();
                 if (!wdata.css) that.reRenderWidgetEdit(wdata.widgets[i]);
@@ -3497,7 +3513,7 @@ vis = $.extend(true, vis, {
         }
     },
     extractAttributes: function (_wid_attr, widget) {
-        // Format: attr_name(start-end)[default_value]/type
+        // Format: attr_name(start-end)[default_value]/type/onChangeFunc
         // attr_name can be extended with numbers (1-2) means it will be attr_name1 and attr_name2 created
         //     end number can be other attribute, e.g (1-count)
         // defaultValue: If defaultValue has ';' it must be replaced by §
@@ -3532,19 +3548,26 @@ vis = $.extend(true, vis, {
         if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,\s:\/\.a-zA-Z0-9]+)?/;
         var match = this.regexAttr.exec(_wid_attr);
 
-        var widAttr      = match[1];
-        var wid_repeats  = match[2];
-        var wid_default  = match[3];
-        var wid_type     = match[4];
-        var wid_type_opt = null;
-        var notTranslate = false;
-        var index        = '';
-        var attrDepends  = [];
+        var widAttr       = match[1];
+        var wid_repeats   = match[2];
+        var wid_default   = match[3];
+        var wid_type      = match[4];
+        var wid_on_change = null;
+        var wid_type_opt  = null;
+        var notTranslate  = false;
+        var index         = '';
+        var attrDepends   = [];
+
 
         // remove /
         if (wid_type) {
             wid_type = wid_type.substring(1);
-            var parts = wid_type.split(',');
+            // extract on change function
+            var _parts = wid_type.split('/');
+            wid_type = _parts[0];
+            wid_on_change =  _parts[1];
+
+            parts = wid_type.split(',');
             // extract min,max,step or select values
             if (parts.length > 1) {
                 wid_type = parts.shift();
@@ -3620,14 +3643,15 @@ vis = $.extend(true, vis, {
         var result = [];
         do {
             result.push({
-                name:         (widAttr + index),
-                type:         wid_type,
-                default:      wid_default,
-                options:      wid_type_opt,
-                notTranslate: notTranslate,
-                depends:      attrDepends,
-                clearName:    widAttr,
-                index:        index
+                name:           (widAttr + index),
+                type:           wid_type,
+                default:        wid_default,
+                options:        wid_type_opt,
+                onChangeWidget: wid_on_change,
+                notTranslate:   notTranslate,
+                depends:        attrDepends,
+                clearName:      widAttr,
+                index:          index
             });
         } while (wid_repeats && ((++index) <= wid_repeats.end));
         return result;
