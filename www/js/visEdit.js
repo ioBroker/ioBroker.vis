@@ -3244,10 +3244,10 @@ vis = $.extend(true, vis, {
             }
 
             $('#widget_helper_' + wid).css({
-                    left:   pos.left - 2,
-                    top:    pos.top  - 2,
-                    height: $widget.outerHeight() + 2,
-                    width:  $widget.outerWidth()  + 2
+                    left:   pos.left -2 ,
+                    top:    pos.top -2 ,
+                    height: $widget.outerHeight(),
+                    width:  $widget.outerWidth()
                 }
             ).show();
         } else {
@@ -4169,8 +4169,8 @@ vis = $.extend(true, vis, {
                 },
                 resize: function (event, ui) {
                     $('.widget-helper').css({
-                        width:  ui.element.outerWidth()  + 2,
-                        height: ui.element.outerHeight() + 2});
+                        width:  ui.element.outerWidth()  ,
+                        height: ui.element.outerHeight()});
                 }
             }, resizableOptions));
         }

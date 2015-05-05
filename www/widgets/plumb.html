@@ -107,8 +107,8 @@
                                 "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) - 2 + "px",
-                                "top": parseInt($this.css("top")) - ui.draggable.height() - 2 + "px"
+                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 )  + "px",
+                                "top": parseInt($this.css("top")) - ui.draggable.height()  + "px"
                             });
                         }
                         ;
@@ -136,8 +136,8 @@
                                 "top": parseInt($this.css("top")) + $this.height() + "px"
                             });
                             $(".widget-helper").css({
-                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) - 2 + "px",
-                                "top": parseInt($this.css("top")) + $this.height() - 2 + "px"
+                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 )  + "px",
+                                "top": parseInt($this.css("top")) + $this.height()  + "px"
                             });
                         }
 
@@ -166,8 +166,8 @@
                                 "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": parseInt($this.css("left")) - ui.draggable.width() - 1 + "px",
-                                "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) - 2 + "px"
+                                "left": parseInt($this.css("left")) - ui.draggable.width()  + "px",
+                                "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px"
                             });
                         }
 
@@ -251,8 +251,8 @@
                                     "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
                                 });
                                 $(".widget-helper").css({
-                                    "left": $this.position().left - ui.draggable.width() - 1 + "px",
-                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
+                                    "left": $this.position().left - ui.draggable.width()  + "px",
+                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 )  + "px"
                                 });
                             }
                             setTimeout(function () {
@@ -273,8 +273,8 @@
                                     "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
                                 });
                                 $(".widget-helper").css({
-                                    "left": $this.position().left + $this.width() - 1 + "px",
-                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) - 1 + "px"
+                                    "left": $this.position().left + $this.width()  + "px",
+                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 )+ "px"
                                 });
                             }
                             setTimeout(function () {
@@ -294,8 +294,8 @@
                                     "top": $this.position().top - ui.draggable.height() + "px"
                                 });
                                 $(".widget-helper").css({
-                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) - 1 + "px",
-                                    "top": $this.position().top - ui.draggable.height() - 1 + "px"
+                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
+                                    "top": $this.position().top - ui.draggable.height() - 2 + "px"
                                 });
                             }
                             setTimeout(function () {
@@ -314,8 +314,8 @@
                                     "top": $this.position().top + $this.height() + "px"
                                 });
                                 $(".widget-helper").css({
-                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) - 1 + "px",
-                                    "top": $this.position().top + $this.height() - 1 + "px"
+                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2)  + "px",
+                                    "top": $this.position().top + $this.height() - 2 + "px"
                                 });
                             }
                             setTimeout(function () {
@@ -349,37 +349,38 @@
 
                     length = parseInt($right.css("left")) - (parseInt($left.css("left")) + parseInt($left.css("width")));
 
-                    vis.views[vis.activeView].widgets[id].style.width = length + "px";
-                    vis.views[vis.activeView].widgets[id].style.left = parseInt($left.css("left")) + parseInt($left.css("width")) + "px";
-                    vis.save();
-                    $("#" + id).css({
-                        "width": length + "px",
-                        "left": parseInt($left.css("left")) + parseInt($left.css("width")) + "px"
-                    });
-                    $(".widget-helper").css({
-                        "width": length + 2 + "px",
-                        "left": parseInt($left.css("left")) + parseInt($left.css("width")) - 2 + "px"
-                    });
+                    if(length >0){
+                        vis.views[vis.activeView].widgets[id].style.width = length + "px";
+                        vis.views[vis.activeView].widgets[id].style.left = parseInt($left.css("left")) + parseInt($left.css("width")) + "px";
+                        vis.save();
+                        $("#" + id).css({
+                            "width": length + "px",
+                            "left": parseInt($left.css("left")) + parseInt($left.css("width")) + "px"
+                        });
+                        $(".widget-helper").css({
+                            "width": length + "px",
+                            "left": parseInt($left.css("left")) + parseInt($left.css("width"))  + "px"
+                        });
+                    }
 
                 } else if (data.conTop != "" && data.conBottom != "" && data.conTop != undefined && data.conBottom != undefined) {
                     var $top = $("#" + data.conTop);
                     var $bottom = $("#" + data.conBottom);
 
-
                     length = parseInt($bottom.css("top")) - (parseInt($top.css("top")) + parseInt($top.css("height")));
-
-                    vis.views[vis.activeView].widgets[id].style.height = length + "px";
-                    vis.views[vis.activeView].widgets[id].style.top = parseInt($top.css("top")) + parseInt($top.css("height")) + "px";
-                    vis.save();
-                    $("#" + id).css({
-                        "height": length + "px",
-                        "top": parseInt($top.css("top")) + parseInt($top.css("height")) + "px"
-                    });
-                    $(".widget-helper").css({
-                        "height": length + 2 + "px",
-                        "top": parseInt($top.css("top")) + parseInt($top.css("height")) - 2 + "px"
-                    });
-
+                    if(length >0){
+                        vis.views[vis.activeView].widgets[id].style.height = length + "px";
+                        vis.views[vis.activeView].widgets[id].style.top = parseInt($top.css("top")) + parseInt($top.css("height")) + "px";
+                        vis.save();
+                        $("#" + id).css({
+                            "height": length + "px",
+                            "top": parseInt($top.css("top")) + parseInt($top.css("height")) + "px"
+                        });
+                        $(".widget-helper").css({
+                            "height": length  + "px",
+                            "top": parseInt($top.css("top")) + parseInt($top.css("height")) + "px"
+                        });
+                    }
                 }
             }
 
