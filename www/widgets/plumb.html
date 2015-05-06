@@ -107,8 +107,8 @@
                                 "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 )  + "px",
-                                "top": parseInt($this.css("top")) - ui.draggable.height()  + "px"
+                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px",
+                                "top": parseInt($this.css("top")) - ui.draggable.height() + "px"
                             });
                         }
                         ;
@@ -136,8 +136,8 @@
                                 "top": parseInt($this.css("top")) + $this.height() + "px"
                             });
                             $(".widget-helper").css({
-                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 )  + "px",
-                                "top": parseInt($this.css("top")) + $this.height()  + "px"
+                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) + "px",
+                                "top": parseInt($this.css("top")) + $this.height() + "px"
                             });
                         }
 
@@ -166,7 +166,7 @@
                                 "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px"
                             });
                             $(".widget-helper").css({
-                                "left": parseInt($this.css("left")) - ui.draggable.width()  + "px",
+                                "left": parseInt($this.css("left")) - ui.draggable.width() + "px",
                                 "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px"
                             });
                         }
@@ -251,8 +251,8 @@
                                     "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
                                 });
                                 $(".widget-helper").css({
-                                    "left": $this.position().left - ui.draggable.width()  + "px",
-                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 )  + "px"
+                                    "left": $this.position().left - ui.draggable.width() + "px",
+                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
                                 });
                             }
                             setTimeout(function () {
@@ -273,8 +273,8 @@
                                     "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
                                 });
                                 $(".widget-helper").css({
-                                    "left": $this.position().left + $this.width()  + "px",
-                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 )+ "px"
+                                    "left": $this.position().left + $this.width() + "px",
+                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
                                 });
                             }
                             setTimeout(function () {
@@ -314,7 +314,7 @@
                                     "top": $this.position().top + $this.height() + "px"
                                 });
                                 $(".widget-helper").css({
-                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2)  + "px",
+                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
                                     "top": $this.position().top + $this.height() - 2 + "px"
                                 });
                             }
@@ -349,7 +349,7 @@
 
                     length = parseInt($right.css("left")) - (parseInt($left.css("left")) + parseInt($left.css("width")));
 
-                    if(length >0){
+                    if (length > 0) {
                         vis.views[vis.activeView].widgets[id].style.width = length + "px";
                         vis.views[vis.activeView].widgets[id].style.left = parseInt($left.css("left")) + parseInt($left.css("width")) + "px";
                         vis.save();
@@ -359,7 +359,7 @@
                         });
                         $(".widget-helper").css({
                             "width": length + "px",
-                            "left": parseInt($left.css("left")) + parseInt($left.css("width"))  + "px"
+                            "left": parseInt($left.css("left")) + parseInt($left.css("width")) + "px"
                         });
                     }
 
@@ -368,7 +368,7 @@
                     var $bottom = $("#" + data.conBottom);
 
                     length = parseInt($bottom.css("top")) - (parseInt($top.css("top")) + parseInt($top.css("height")));
-                    if(length >0){
+                    if (length > 0) {
                         vis.views[vis.activeView].widgets[id].style.height = length + "px";
                         vis.views[vis.activeView].widgets[id].style.top = parseInt($top.css("top")) + parseInt($top.css("height")) + "px";
                         vis.save();
@@ -377,7 +377,7 @@
                             "top": parseInt($top.css("top")) + parseInt($top.css("height")) + "px"
                         });
                         $(".widget-helper").css({
-                            "height": length  + "px",
+                            "height": length + "px",
                             "top": parseInt($top.css("top")) + parseInt($top.css("height")) + "px"
                         });
                     }
@@ -2296,7 +2296,7 @@
                 var $this = $(el).parent();
                 var id = $this.attr("id");
                 var plumb = vis.binds.plumb.data;
-
+var last_event;
                 vis.binds.plumb.data[id] = {
                     type: "pump",
                     cons: [],
@@ -2318,302 +2318,7 @@
                 vis.binds.plumb.plumb_drop($this);
 
                 $this.find(".tank_simple_svg").append('\
-                <svg\
-            height="100%"\
-            viewBox="0 0 3000 6000"\
-            width="100%"\
-            preserveAspectRatio="none"\
-             >\
-            <defs>\
-            <clipPath id="e_' + id + '" clipPathUnits="userSpaceOnUse">\
-            <path d="M146,0.014a150,50,0,0,0,-71,6.686,150,50,0,0,0,-75,43.3v500h0.014a150,50.2,0,0,0,74.986,43,150,50.2,0,0,0,150,0,150,50.2,0,0,0,75,-43v-500a150,50,0,0,0,-75,-43.3,150,50,0,0,0,-79,-6.686z" fill="' + data.color + '"/>\
-            </clipPath>\
-            <linearGradient id="d_' + id + '" gradientUnits="userSpaceOnUse" y1="3000" x2="3000" y2="3000">\
-            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
-            <stop stop-color="#000000" stop-opacity="0" offset=".5"/>\
-            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
-            </linearGradient>\
-            <linearGradient id="a_' + id + '">\
-            <stop stop-color="#000000" stop-opacity="0" offset="0"/>\
-            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
-            </linearGradient>\
-            <radialGradient id="c_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(9.8,0,0,3.83654,30.8,-142.322)" r="150"/>\
-            <radialGradient id="b_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-10,0,0,-3.98298,3000,7213.11)" r="150"/>\
-            </defs>\
-            <path d="M1460-4.9993a1500,503.08,0,0,0,-710,100.56,1500,503.08,0,0,0,-750,401.86v5029.8h0.14a1500,505.08,0,0,0,749.86,400.04,1500,505.08,0,0,0,1500,0,1500,505.08,0,0,0,750,-400v-5029.8a1500,503.08,0,0,0,-750,-401.87,1500,503.08,0,0,0,-790,-100.56z" fill="' + data.color + '"/>\
-            <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#e_' + id + ')" transform="matrix(10,0,0,10.0092,0,-2.75174)" height="300" width="300" y="300" x="0" fill="' + data.water_color + '"/>\
-            <path d="M0,500h3000v5000h-3000z" fill="url(#d_' + id + ')"/>\
-            <path fill="url(#b_' + id + ')" d="M3000,5500a1500,535.35,0,0,1,-750,428.3,1500,535.35,0,0,1,-1500,0,1500,535.35,0,0,1,-750,-428.3h1500z"/>\
-            <path fill="url(#c_' + id + ')" d="M0,500a1500,535.81,0,0,1,750,-428.22,1500,535.81,0,0,1,1500,0,1500,535.81,0,0,1,750,428.22z"/>\
-            </svg>\
-            ');
-                setTimeout(function () {
-
-                    if (vis.editMode) {
-                        if (data.type == "level") {
-                            $("#inspect_fix").parent().parent().hide();
-                            $("#inspect_level_min").parent().parent().show();
-                            $("#inspect_level_max").parent().parent().show();
-                            $("#inspect_bool_on").parent().parent().hide();
-                            $("#inspect_bool_off").parent().parent().hide();
-                            $("#inspect_oid").parent().parent().show();
-                            $("#inspect_oid_desc").parent().parent().show();
-                        }
-                        if (data.type == "fix") {
-                            $("#inspect_fix").parent().parent().show();
-                            $("#inspect_level_min").parent().parent().hide();
-                            $("#inspect_level_max").parent().parent().hide();
-                            $("#inspect_bool_on").parent().parent().hide();
-                            $("#inspect_bool_off").parent().parent().hide();
-                            $("#inspect_oid").parent().parent().hide();
-                            $("#inspect_oid_desc").parent().parent().hide();
-                        }
-                        if (data.type == "bool") {
-                            $("#inspect_fix").parent().parent().hide();
-                            $("#inspect_level_min").parent().parent().hide();
-                            $("#inspect_level_max").parent().parent().hide();
-                            $("#inspect_bool_on").parent().parent().show();
-                            $("#inspect_bool_off").parent().parent().show();
-                            $("#inspect_oid").parent().parent().show();
-                            $("#inspect_oid_desc").parent().parent().show();
-                        }
-                    }
-
-                    $this.find(".plumb_dock_right, .plumb_dock_left, .plumb_dock_top, .plumb_dock_bottom").remove();
-                    var l;
-                    var t;
-                    var s;
-                    var shadow;
-
-                    if (data.conTop_show == true) {
-                        self.cons.push("conTop");
-
-                        $this.find(".tank_simple").append('<div id="' + id + '_dock_top_svg" class="plumb-dock-svg plumb_dock_top"></div>');
-                        vis.binds.plumb.svg_pipe_v(id + "_dock_top");
-
-                        s = (parseInt(data.conTop_size) || 20);
-                        t = "-9";
-                        l = (($this.width() - s) / 100 * (data.conTop_pos || 50));
-
-                        $this.find(".plumb_dock_top").css({
-                            top: t + "px",
-                            left: l + "px",
-                            height: "50px",
-                            width: s + "px",
-                            overflow: "hidden"
-                        }).find("svg").css({
-                            position: 'absolute',
-                            width: 'calc(100% + 2px)',
-                            height: 'calc(100% + 2px)',
-                            'margin-left': '-1px',
-                            'margin-top': '-1px',
-                        });
-
-                        $("#" + id + "_dock_top_fill").attr("fill", data.color_off);
-                    }
-
-                    if (data.conBottom_show == true) {
-                        self.cons.push("conBottom");
-                        $this.find(".tank_simple").append('<div id="' + id + '_dock_bottom_svg" class="plumb-dock-svg plumb_dock_bottom"></div>');
-                        vis.binds.plumb.svg_pipe_v(id + "_dock_bottom");
-                        s = (parseInt(data.conBottom_size) || 20);
-                        t = "-9";
-                        l = (($this.width() - s) / 100 * (data.conBottom_pos || 50));
-
-                        $this.find(".plumb_dock_bottom").css({
-                            bottom: t + "px",
-                            left: l + "px",
-                            height: "50px",
-                            width: s + "px",
-                            overflow: "hidden"
-                        }).find("svg").css({
-                            position: 'absolute',
-                            width: 'calc(100% + 2px)',
-                            height: 'calc(100% + 2px)',
-                            'margin-left': '-1px',
-                            'margin-top': '-1px',
-                        });
-                        $("#" + id + "_dock_bottom_fill").attr("fill", data.color_off);
-                    }
-                    if (data.conLeft_show == true) {
-                        self.cons.push("conLeft");
-                        $this.find(".tank_simple").append('<div id="' + id + '_dock_left_svg" class="plumb-dock-svg plumb_dock_left"></div>');
-                        vis.binds.plumb.svg_pipe_h(id + "_dock_left");
-                        s = (parseInt(data.conLeft_size) || 20);
-                        l = "-9";
-                        t = (($this.height() - s) / 100 * (data.conLeft_pos || 50));
-
-                        $this.find(".plumb_dock_left").css({
-                            top: t + "px",
-                            left: l + "px",
-                            height: s + "px",
-                            width: "20px",
-                            overflow: "hidden"
-                        }).find("svg").css({
-                            position: 'absolute',
-                            width: 'calc(100% + 2px)',
-                            height: 'calc(100% + 2px)',
-                            'margin-left': '-1px',
-                            'margin-top': '-1px',
-                        });
-                        $("#" + id + "_dock_left_fill").attr("fill", data.color_off);
-                    }
-                    if (data.conRight_show == true) {
-                        self.cons.push("conRight");
-                        $this.find(".tank_simple").append('<div id="' + id + '_dock_right_svg" class="plumb-dock-svg plumb_dock_right"></div>');
-                        vis.binds.plumb.svg_pipe_h(id + "_dock_right");
-                        s = (parseInt(data.conRight_size) || 20);
-                        l = "-9";
-                        t = (($this.height() - s) / 100 * (data.conRight_pos || 50));
-
-                        $this.find(".plumb_dock_right").css({
-                            top: t + "px",
-                            right: l + "px",
-                            height: s + "px",
-                            width: "20px",
-                            overflow: "hidden"
-                        }).find("svg").css({
-                            position: 'absolute',
-                            width: 'calc(100% + 2px)',
-                            height: 'calc(100% + 2px)',
-                            'margin-left': '-1px',
-                            'margin-top': '-1px',
-                        });
-                        $("#" + id + "_dock_right_fill").attr("fill", data.color_off);
-                    }
-
-                    vis.binds.plumb.plumb_drop($this);
-
-                    if (data.oid != "") {
-                        set(vis.states[data.oid + '.val'])
-                    }
-
-
-                    vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
-
-                        set(newVal)
-
-                    });
-                });
-                $this.bind("plumb_change", function (event) {
-                    var ev = {
-                        type: "plumb_change",
-                        from: id,
-                        status: true,
-                        color: {
-                            c_from: id,
-                            c_default: event.color.c_default,
-                            c: ""
-                        }
-                    };
-
-                    if (self.conRight != event.from) {
-                        if (event.status == true) {
-                            ev.color.c = data.conRight_water;
-                        } else {
-                            ev.color.c = event.color.c_default
-                        }
-                        $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
-                        $("#" + self.conRight).trigger(ev);
-
-                    }
-                    if (self.conLeft != event.from) {
-                        if (event.status == true) {
-                            ev.color.c = data.conRight_Left;
-                        } else {
-                            ev.color.c = event.color.c_default
-                        }
-                        $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
-                        $("#" + self.conLeft).trigger(ev);
-                    }
-                    if (self.conTop != event.from) {
-                        if (event.status == true) {
-                            ev.color.c = data.conTop_water;
-                        } else {
-                            ev.color.c = event.color.c_default
-                        }
-                        $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
-                        $("#" + self.conTop).trigger(ev);
-                    }
-                    if (self.conBottom != event.from) {
-                        if (event.status == true) {
-                            ev.color.c = data.conBottom_water;
-                        } else {
-                            ev.color.c = event.color.c_default;
-                        }
-                        $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
-                        $("#" + self.conBottom).trigger(ev);
-                    }
-
-                    if (self.conRight == event.from) {
-                        $("#" + id + "_dock_right_fill").attr("fill", event.color.c);
-                    } else if (self.conLeft == event.from) {
-                        $("#" + id + "_dock_left_fill").attr("fill", event.color.c);
-                    } else if (self.conTop == event.from) {
-                        $("#" + id + "_dock_top_fill").attr("fill", event.color.c);
-                    } else if (self.conBottom == event.from) {
-                        $("#" + id + "_dock_bottom_fill").attr("fill", event.color.c);
-                    }
-                });
-            }
-            function set(_newVal) {
-                var newVal = _newVal || 0;
-                var step = 600 / 100;
-                var val;
-                if (data.type == "level") {
-                    step = 600 / (data.level_max - data.level_min );
-                    val = (newVal - data.level_min) * step;
-                    if (val < 0) {
-                        val = 0
-                    }
-                    $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
-
-                } else if (data.type == "bool") {
-                    step = 600 / 100;
-
-                    if (newVal == true) {
-                        val = data.bool_on * step;
-                    } else {
-                        val = data.bool_off * step;
-                    }
-
-                    $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
-
-                } else if (data.type == "fix") {
-
-                    $("#" + data.wid + "_fill").attr("height", data.fix * step).attr("y", 600 - data.fix * step);
-                }
-            }
-        },
-        tank_filter: function (el, data) {
-
-            if (data.conRight_pos != undefined) {
-                var $this = $(el).parent();
-                var id = $this.attr("id");
-                var plumb = vis.binds.plumb.data;
-
-                vis.binds.plumb.data[id] = {
-                    type: "pump",
-                    cons: [],
-                    coli: false,
-                    conLeft: data.conLeft || null,
-                    conRight: data.conRight || null,
-                    conTop: data.conTop || null,
-                    conBottom: data.conBottom || null,
-                    status: false,
-                    color: {
-                        c: null,
-                        c_from: null,
-                        c_default: null
-                    }
-                };
-
-                var self = plumb[id];
-                vis.binds.plumb.plumb_drop($this);
-
-                console.log(data)
-                $this.find(".tank_simple_svg").append('\
-                <svg\
+ <svg\
             height="100%"\
             viewBox="0 0 300 600"\
             width="100%"\
@@ -2644,43 +2349,18 @@
             </defs>\
             <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
             <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#e_' + id + ')" height="300" width="300" y="300" x="0" fill="url(#fill_grad_' + id + ')"/>\
-            <rect id="' + id + '_kies" clip-path="url(#e_' + id + ')" height="450" width="300" y="150" x="0" style="opacity:' + data.filter_opa / 100 + '" fill="url(#kies_' + id + ')"/>\
+            <rect id="' + id + '_kies" clip-path="url(#e_' + id + ')" height="450" width="300" y="150" x="0" style="display: none; opacity:' + data.filter_opa / 100 + '" fill="url(#kies_' + id + ')"/>\
             <path d="m0 50h300v500h-300z" fill="url(#d_' + id + ')"/>\
             <path fill="url(#b_' + id + ')" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
             <path fill="url(#c_' + id + ')" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
             </svg>\
             ');
 
-                setTimeout(function () {
 
-                    if (vis.editMode) {
-                        if (data.type == "level") {
-                            $("#inspect_fix").parent().parent().hide();
-                            $("#inspect_level_min").parent().parent().show();
-                            $("#inspect_level_max").parent().parent().show();
-                            $("#inspect_bool_on").parent().parent().hide();
-                            $("#inspect_bool_off").parent().parent().hide();
-                            $("#inspect_oid").parent().parent().show();
-                            $("#inspect_oid_desc").parent().parent().show();
-                        }
-                        if (data.type == "fix") {
-                            $("#inspect_fix").parent().parent().show();
-                            $("#inspect_level_min").parent().parent().hide();
-                            $("#inspect_level_max").parent().parent().hide();
-                            $("#inspect_bool_on").parent().parent().hide();
-                            $("#inspect_bool_off").parent().parent().hide();
-                            $("#inspect_oid").parent().parent().hide();
-                            $("#inspect_oid_desc").parent().parent().hide();
-                        }
-                        if (data.type == "bool") {
-                            $("#inspect_fix").parent().parent().hide();
-                            $("#inspect_level_min").parent().parent().hide();
-                            $("#inspect_level_max").parent().parent().hide();
-                            $("#inspect_bool_on").parent().parent().show();
-                            $("#inspect_bool_off").parent().parent().show();
-                            $("#inspect_oid").parent().parent().show();
-                            $("#inspect_oid_desc").parent().parent().show();
-                        }
+
+                setTimeout(function () {
+                    if(data.is_filter == true){
+                        $("#"+id + "_kies").show()
                     }
 
                     $this.find(".plumb_dock_right, .plumb_dock_left, .plumb_dock_top, .plumb_dock_bottom").remove();
@@ -2785,14 +2465,11 @@
                         });
                         $("#" + id + "_dock_right_fill").attr("fill", data.color_off);
                     }
-
                     vis.binds.plumb.plumb_drop($this);
 
                     if (data.oid != "") {
                         set(vis.states[data.oid + '.val'])
                     }
-
-
                     vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
 
                         set(newVal)
@@ -2801,103 +2478,391 @@
                 });
 
 
-
                 $this.bind("plumb_change", function (event) {
 
-                    var ev = {
-                        type: "plumb_change",
-                        from: id,
-                        status: true,
-                        color: {
-                            c_from: id,
-                            c_default: event.color.c_default || "#C0C0C0",
-                            c: event.color.c || "#C0C0C0"
-                        }
-                    };
-                    if (self.conRight != event.from) {
-                        if (event.status == true) {
-                            ev.color.c = data.conRight_water;
-                        } else {
-                            ev.status = false;
-                            ev.color.c = event.color.c_default || "#C0C0C0";
-                        }
-                        $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
-                        $("#" + self.conRight).trigger(ev);
-
+                    if (event.status == true) {
+                        last_event == event.from; 
                     }
-                    if (self.conLeft != event.from) {
-                        if (event.status == true) {
-                            ev.color.c = data.conRight_Left;
-                        } else {
-                            ev.status = false;
-                            ev.color.c = event.color.c_default || "#C0C0C0";
-                        }
-                        $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
-                        $("#" + self.conLeft).trigger(ev);
-                    }
-                    if (self.conTop != event.from) {
-                        if (event.status == true) {
-                            ev.color.c = data.conTop_water;
-                        } else {
-                            ev.status = false;
-                            ev.color.c = event.color.c_default || "#C0C0C0";
-                        }
-                        $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
-                        $("#" + self.conTop).trigger(ev);
-                    }
-                    if (self.conBottom != event.from) {
-                        if (event.status == true) {
-                            ev.color.c = data.conBottom_water;
-                        } else {
-                            ev.status = false;
-                            ev.color.c = event.color.c_default || "#C0C0C0";
-                        }
-                        $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
-                        $("#" + self.conBottom).trigger(ev);
-                    }
-
-                    if (self.conRight == event.from) {
-                        $("#" + id + "_dock_right_fill").attr("fill", event.color.c);
-                    } else if (self.conLeft == event.from) {
-                        $("#" + id + "_dock_left_fill").attr("fill", event.color.c);
-                    } else if (self.conTop == event.from) {
-                        $("#" + id + "_dock_top_fill").attr("fill", event.color.c);
-                    } else if (self.conBottom == event.from) {
-                        $("#" + id + "_dock_bottom_fill").attr("fill", event.color.c);
-                    }
+                    
                 });
             }
             function set(_newVal) {
                 var newVal = _newVal || 0;
                 var step = 600 / 100;
                 var val;
+                var level;
                 if (data.type == "level") {
                     step = 600 / (data.level_max - data.level_min );
                     val = (newVal - data.level_min) * step;
                     if (val < 0) {
                         val = 0
                     }
+                    level = parseInt(100/600*val);
                     $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
                     $('#fill_grad_' + id).attr("y1", 600 - val);
                 } else if (data.type == "bool") {
                     step = 600 / 100;
 
                     if (newVal == true) {
-                        val = data.bool_on * step;
+                        val = data.level_max * step;
                     } else {
-                        val = data.bool_off * step;
+                        val = data.level_min * step;
                     }
-
+                    level = parseInt(100/600*val);
                     $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
                     $('#fill_grad_' + id).attr("y1", 600 - val);
                 } else if (data.type == "fix") {
+                    level = parseInt(100/600*(data.level_min * step));
+                    $("#" + data.wid + "_fill").attr("height", data.level_min * step).attr("y", 600 - data.level_min * step);
+                    $('#fill_grad_' + id).attr("y1", 600 - data.level_min * step);
+                }
+                
+                
+//                --------------------------------------------------------------------------------------------------------------------
+                console.log(level)
+                var ev = {
+                    type: "plumb_change",
+                    from: id,
+                    status: true,
+                    color: {
+                        c_from: id,
+                        c_default: event.color.c_default || "#C0C0C0",
+                        c: event.color.c || "#C0C0C0"
+                    }
+                };
+                
+                
+                if (self.conRight != last_event) {
+                    if (event.status == true) {
+                        ev.color.c = data.conRight_water;
+                    } else {
+                        ev.status = false;
+                        ev.color.c = event.color.c_default || "#C0C0C0";
+                    }
+                    $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
+                    $("#" + self.conRight).trigger(ev);
 
-                    $("#" + data.wid + "_fill").attr("height", data.fix * step).attr("y", 600 - data.fix * step);
-                    $('#fill_grad_' + id).attr("y1", 600 - data.fix * step);
+                }
+                if (self.conLeft != last_event) {
+                    if (event.status == true) {
+                        ev.color.c = data.conRight_Left;
+                    } else {
+                        ev.status = false;
+                        ev.color.c = event.color.c_default || "#C0C0C0";
+                    }
+                    $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
+                    $("#" + self.conLeft).trigger(ev);
+                }
+                if (self.conTop != last_event) {
+                    if (event.status == true) {
+                        ev.color.c = data.conTop_water;
+                    } else {
+                        ev.status = false;
+                        ev.color.c = event.color.c_default || "#C0C0C0";
+                    }
+                    $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
+                    $("#" + self.conTop).trigger(ev);
+                }
+                if (self.conBottom != last_event) {
+                    if (event.status == true) {
+                        ev.color.c = data.conBottom_water;
+                    } else {
+                        ev.status = false;
+                        ev.color.c = event.color.c_default || "#C0C0C0";
+                    }
+                    $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
+                    $("#" + self.conBottom).trigger(ev);
+                }
+
+                if (self.conRight == last_event) {
+                    $("#" + id + "_dock_right_fill").attr("fill", event.color.c);
+                } else if (self.conLeft == last_event) {
+                    $("#" + id + "_dock_left_fill").attr("fill", event.color.c);
+                } else if (self.conTop == last_event) {
+                    $("#" + id + "_dock_top_fill").attr("fill", event.color.c);
+                } else if (self.conBottom == last_event) {
+                    $("#" + id + "_dock_bottom_fill").attr("fill", event.color.c);
                 }
             }
 
-        }
+        },
+//        tank_filter: function (el, data) {
+//
+//            if (data.conRight_pos != undefined) {
+//                var $this = $(el).parent();
+//                var id = $this.attr("id");
+//                var plumb = vis.binds.plumb.data;
+//
+//                vis.binds.plumb.data[id] = {
+//                    type: "pump",
+//                    cons: [],
+//                    coli: false,
+//                    conLeft: data.conLeft || null,
+//                    conRight: data.conRight || null,
+//                    conTop: data.conTop || null,
+//                    conBottom: data.conBottom || null,
+//                    status: false,
+//                    color: {
+//                        c: null,
+//                        c_from: null,
+//                        c_default: null
+//                    }
+//                };
+//
+//                var self = plumb[id];
+//                vis.binds.plumb.plumb_drop($this);
+//
+//                console.log(data)
+//                $this.find(".tank_simple_svg").append('\
+//                <svg\
+//            height="100%"\
+//            viewBox="0 0 300 600"\
+//            width="100%"\
+//            preserveAspectRatio="none"\
+//             >\
+//            <defs>\
+//            <clipPath id="e_' + id + '" clipPathUnits="userSpaceOnUse">\
+//            <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
+//            </clipPath>\
+//            <linearGradient id="d_' + id + '" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
+//            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
+//            <stop stop-color="#000000" stop-opacity="0" offset=".5"/>\
+//            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
+//            </linearGradient>\
+//            <linearGradient id="a_' + id + '">\
+//            <stop stop-color="#000000" stop-opacity="0" offset="0"/>\
+//            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
+//            </linearGradient>\
+//            <radialGradient id="c_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
+//            <radialGradient id="b_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
+//            <linearGradient x1="150" y1="300" x2="150" y2="600" id="fill_grad_' + id + '" gradientUnits="userSpaceOnUse">\
+//            <stop id="fill_grad_top' + id + '"    offset="0" style="stop-color:' + data.top_water + ';stop-opacity:1" />\
+//            <stop id="fill_grad_bottom' + id + '" offset="1" style="stop-color:' + data.bottom_water + ';stop-opacity:1"  />\
+//            </linearGradient>\
+//            <pattern id="kies_' + id + '" x="0" y="0" height="' + data.filter_size + '" width="' + data.filter_size + '" patternUnits="userSpaceOnUse">\
+//                    <image height="' + data.filter_size + '" width="' + data.filter_size + '"  xlink:href="' + data.filter_pattern + '"></image>\
+//            </pattern>\
+//            </defs>\
+//            <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
+//            <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#e_' + id + ')" height="300" width="300" y="300" x="0" fill="url(#fill_grad_' + id + ')"/>\
+//            <rect id="' + id + '_kies" clip-path="url(#e_' + id + ')" height="450" width="300" y="150" x="0" style="opacity:' + data.filter_opa / 100 + '" fill="url(#kies_' + id + ')"/>\
+//            <path d="m0 50h300v500h-300z" fill="url(#d_' + id + ')"/>\
+//            <path fill="url(#b_' + id + ')" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
+//            <path fill="url(#c_' + id + ')" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
+//            </svg>\
+//            ');
+//
+//                setTimeout(function () {
+//
+//                    $this.find(".plumb_dock_right, .plumb_dock_left, .plumb_dock_top, .plumb_dock_bottom").remove();
+//                    var l;
+//                    var t;
+//                    var s;
+//                    var shadow;
+//
+//                    if (data.conTop_show == true) {
+//                        self.cons.push("conTop");
+//
+//                        $this.find(".tank_simple").append('<div id="' + id + '_dock_top_svg" class="plumb-dock-svg plumb_dock_top"></div>');
+//                        vis.binds.plumb.svg_pipe_v(id + "_dock_top");
+//
+//                        s = (parseInt(data.conTop_size) || 20);
+//                        t = "-9";
+//                        l = (($this.width() - s) / 100 * (data.conTop_pos || 50));
+//
+//                        $this.find(".plumb_dock_top").css({
+//                            top: t + "px",
+//                            left: l + "px",
+//                            height: "50px",
+//                            width: s + "px",
+//                            overflow: "hidden"
+//                        }).find("svg").css({
+//                            position: 'absolute',
+//                            width: 'calc(100% + 2px)',
+//                            height: 'calc(100% + 2px)',
+//                            'margin-left': '-1px',
+//                            'margin-top': '-1px',
+//                        });
+//
+//                        $("#" + id + "_dock_top_fill").attr("fill", data.color_off);
+//                    }
+//
+//                    if (data.conBottom_show == true) {
+//                        self.cons.push("conBottom");
+//                        $this.find(".tank_simple").append('<div id="' + id + '_dock_bottom_svg" class="plumb-dock-svg plumb_dock_bottom"></div>');
+//                        vis.binds.plumb.svg_pipe_v(id + "_dock_bottom");
+//                        s = (parseInt(data.conBottom_size) || 20);
+//                        t = "-9";
+//                        l = (($this.width() - s) / 100 * (data.conBottom_pos || 50));
+//
+//                        $this.find(".plumb_dock_bottom").css({
+//                            bottom: t + "px",
+//                            left: l + "px",
+//                            height: "50px",
+//                            width: s + "px",
+//                            overflow: "hidden"
+//                        }).find("svg").css({
+//                            position: 'absolute',
+//                            width: 'calc(100% + 2px)',
+//                            height: 'calc(100% + 2px)',
+//                            'margin-left': '-1px',
+//                            'margin-top': '-1px',
+//                        });
+//                        $("#" + id + "_dock_bottom_fill").attr("fill", data.color_off);
+//                    }
+//                    if (data.conLeft_show == true) {
+//                        self.cons.push("conLeft");
+//                        $this.find(".tank_simple").append('<div id="' + id + '_dock_left_svg" class="plumb-dock-svg plumb_dock_left"></div>');
+//                        vis.binds.plumb.svg_pipe_h(id + "_dock_left");
+//                        s = (parseInt(data.conLeft_size) || 20);
+//                        l = "-9";
+//                        t = (($this.height() - s) / 100 * (data.conLeft_pos || 50));
+//
+//                        $this.find(".plumb_dock_left").css({
+//                            top: t + "px",
+//                            left: l + "px",
+//                            height: s + "px",
+//                            width: "20px",
+//                            overflow: "hidden"
+//                        }).find("svg").css({
+//                            position: 'absolute',
+//                            width: 'calc(100% + 2px)',
+//                            height: 'calc(100% + 2px)',
+//                            'margin-left': '-1px',
+//                            'margin-top': '-1px',
+//                        });
+//                        $("#" + id + "_dock_left_fill").attr("fill", data.color_off);
+//                    }
+//                    if (data.conRight_show == true) {
+//                        self.cons.push("conRight");
+//                        $this.find(".tank_simple").append('<div id="' + id + '_dock_right_svg" class="plumb-dock-svg plumb_dock_right"></div>');
+//                        vis.binds.plumb.svg_pipe_h(id + "_dock_right");
+//                        s = (parseInt(data.conRight_size) || 20);
+//                        l = "-9";
+//                        t = (($this.height() - s) / 100 * (data.conRight_pos || 50));
+//
+//                        $this.find(".plumb_dock_right").css({
+//                            top: t + "px",
+//                            right: l + "px",
+//                            height: s + "px",
+//                            width: "20px",
+//                            overflow: "hidden"
+//                        }).find("svg").css({
+//                            position: 'absolute',
+//                            width: 'calc(100% + 2px)',
+//                            height: 'calc(100% + 2px)',
+//                            'margin-left': '-1px',
+//                            'margin-top': '-1px',
+//                        });
+//                        $("#" + id + "_dock_right_fill").attr("fill", data.color_off);
+//                    }
+//                    vis.binds.plumb.plumb_drop($this);
+//
+//                    if (data.oid != "") {
+//                        set(vis.states[data.oid + '.val'])
+//                    }
+//                    vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
+//
+//                        set(newVal)
+//
+//                    });
+//                });
+//                $this.bind("plumb_change", function (event) {
+//
+//                    var ev = {
+//                        type: "plumb_change",
+//                        from: id,
+//                        status: true,
+//                        color: {
+//                            c_from: id,
+//                            c_default: event.color.c_default || "#C0C0C0",
+//                            c: event.color.c || "#C0C0C0"
+//                        }
+//                    };
+//                    if (self.conRight != event.from) {
+//                        if (event.status == true) {
+//                            ev.color.c = data.conRight_water;
+//                        } else {
+//                            ev.status = false;
+//                            ev.color.c = event.color.c_default || "#C0C0C0";
+//                        }
+//                        $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
+//                        $("#" + self.conRight).trigger(ev);
+//
+//                    }
+//                    if (self.conLeft != event.from) {
+//                        if (event.status == true) {
+//                            ev.color.c = data.conRight_Left;
+//                        } else {
+//                            ev.status = false;
+//                            ev.color.c = event.color.c_default || "#C0C0C0";
+//                        }
+//                        $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
+//                        $("#" + self.conLeft).trigger(ev);
+//                    }
+//                    if (self.conTop != event.from) {
+//                        if (event.status == true) {
+//                            ev.color.c = data.conTop_water;
+//                        } else {
+//                            ev.status = false;
+//                            ev.color.c = event.color.c_default || "#C0C0C0";
+//                        }
+//                        $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
+//                        $("#" + self.conTop).trigger(ev);
+//                    }
+//                    if (self.conBottom != event.from) {
+//                        if (event.status == true) {
+//                            ev.color.c = data.conBottom_water;
+//                        } else {
+//                            ev.status = false;
+//                            ev.color.c = event.color.c_default || "#C0C0C0";
+//                        }
+//                        $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
+//                        $("#" + self.conBottom).trigger(ev);
+//                    }
+//
+//                    if (self.conRight == event.from) {
+//                        $("#" + id + "_dock_right_fill").attr("fill", event.color.c);
+//                    } else if (self.conLeft == event.from) {
+//                        $("#" + id + "_dock_left_fill").attr("fill", event.color.c);
+//                    } else if (self.conTop == event.from) {
+//                        $("#" + id + "_dock_top_fill").attr("fill", event.color.c);
+//                    } else if (self.conBottom == event.from) {
+//                        $("#" + id + "_dock_bottom_fill").attr("fill", event.color.c);
+//                    }
+//                });
+//            }
+//            function set(_newVal) {
+//                var newVal = _newVal || 0;
+//                var step = 600 / 100;
+//                var val;
+//                if (data.type == "level") {
+//                    step = 600 / (data.level_max - data.level_min );
+//                    val = (newVal - data.level_min) * step;
+//                    if (val < 0) {
+//                        val = 0
+//                    }
+//                    $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
+//                    $('#fill_grad_' + id).attr("y1", 600 - val);
+//                } else if (data.type == "bool") {
+//                    step = 600 / 100;
+//
+//                    if (newVal == true) {
+//                        val = data.bool_on * step;
+//                    } else {
+//                        val = data.bool_off * step;
+//                    }
+//
+//                    $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
+//                    $('#fill_grad_' + id).attr("y1", 600 - val);
+//                } else if (data.type == "fix") {
+//
+//                    $("#" + data.wid + "_fill").attr("height", data.fix * step).attr("y", 600 - data.fix * step);
+//                    $('#fill_grad_' + id).attr("y1", 600 - data.fix * step);
+//                }
+//            }
+//
+//        }
     }
 </script>
 
@@ -2924,6 +2889,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script id="tplPlump_i-strinkler"
@@ -2946,6 +2912,7 @@
             <div class="plumb_dock_right"></div>
         </div>
     </div>
+
 
 </script>
 
@@ -2970,6 +2937,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script id="tplPlump_pipe_V"
@@ -2989,6 +2957,7 @@
 			</div>
         </div>
     </div>
+
 
 </script>
 
@@ -3010,6 +2979,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script id="tplPlump_bogen_br"
@@ -3029,6 +2999,7 @@
 			</div>
         </div>
     </div>
+
 
 </script>
 
@@ -3050,6 +3021,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script id="tplPlump_bogen_tr"
@@ -3070,6 +3042,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script id="tplPlump_bogen_tl"
@@ -3089,6 +3062,7 @@
 			</div>
         </div>
     </div>
+
 
 </script>
 
@@ -3116,6 +3090,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script id="tplPlump_valve_V"
@@ -3142,6 +3117,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script id="tplPlump_check_valve_H"
@@ -3162,6 +3138,7 @@
              </div>
          </div>
 
+
 </script>
 
 <script id="tplPlump_check_valve_V"
@@ -3181,6 +3158,7 @@
     			</div>
              </div>
          </div>
+
 
 </script>
 
@@ -3205,6 +3183,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script id="tplPlump_Tpiece_hb"
@@ -3225,6 +3204,7 @@
 			</div>
         </div>
     </div>
+
 
 </script>
 
@@ -3248,6 +3228,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script id="tplPlump_Tpiece_vr"
@@ -3268,6 +3249,7 @@
 			</div>
         </div>
     </div>
+
 
 </script>
 
@@ -3291,6 +3273,7 @@
         </div>
     </div>
 
+
 </script>
 
 <script id="tplPlump_tank_simple"
@@ -3300,7 +3283,12 @@
         data-vis-set="plumb"
         data-vis-type="static"
         data-vis-name="Tank"
-        data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[100];oid;color[#C0C0C0]/color;water_color[#0000ff]/color;group.conTop;conTop_show/checkbox;conTop_water[#0000ff]/color;conTop_size[20]/slider,10,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_water[#0000ff]/color;conBottom_size[20]/slider,10,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_water[#0000ff]/color;conLeft_size[20]/slider,10,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_water[#0000ff]/color;conRight_size[20]/slider,10,50,5;conRight_pos[50]/slider,0,100,1;conRight">
+        data-vis-attrs="type[level]/nselect,fix,bool,level;level_min[0];level_max[100];oid;color[#C0C0C0]/color;top_water[#0000ff]/color;bottom_water[#00ffff]/color;"
+        data-vis-attrs0="group.filter;is_filter/checkbox;filter_pattern[widgets/plumb/img/kies.png]/image;filter_size[100];filter_opa[50]/slider,0,100,1;"
+        data-vis-attrs1="group.conTop;conTop_show/checkbox;conTop_level[100]/slider,0,100,1;conTop_color_off[#C0C0C0]/color;conTop_color_on[#00ff00]/color;conTop_size[20]/slider,10,50,5;conTop_pos[50]/slider,0,100,1;conTop;"
+        data-vis-attrs2="group.conBottom;conBottom_show/checkbox;conBottom_level[1]/slider,0,100,1;conBottom_color_off[#C0C0C0]/color;conBottom_color_on[#00ff00]/color;conBottom_size[20]/slider,10,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;"
+        data-vis-attrs3="group.conLeft;conLeft_show/checkbox;conLeft_level[50]/slider,0,100,1;conLeft_color_off[#C0C0C0]/color;conLeft_color_on[#00ff00]/color;conLeft_size[20]/slider,10,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;"
+        data-vis-attrs4="group.conRight;conRight_show/checkbox;conRight_level[50]/slider,0,100,1;conRight_color_off[#C0C0C0]/color;conRight_color_on[#00ff00]/color;conRight_size[20]/slider,10,50,5;conRight_pos[50]/slider,0,100,1;conRight">"
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t pl_b" data-vis-resizable='{}' style="min-width: 70px; min-height: 135px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tank_simple(el, data) %>>
 			<div class="tank_simple" >
@@ -3313,29 +3301,29 @@
         </div>
     </div>
 
-</script>
-
-<script id="tplPlump_tank_filter"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-prev='<img src="widgets\plumb\img\prev_tank_simple.png"></img>'
-        data-vis-set="plumb"
-        data-vis-type="static"
-        data-vis-name="Tank Filter"
-        data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[100];oid;color[#C0C0C0]/color;top_water[#0000ff]/color;bottom_water[#00ffff]/color;filter_pattern[widgets/plumb/img/kies.png]/image;filter_size[15];filter_opa[50]/slider,0,100,1;group.conTop;conTop_show/checkbox;conTop_water[#0000ff]/color;conTop_size[20]/slider,10,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_water[#0000ff]/color;conBottom_size[20]/slider,10,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_water[#0000ff]/color;conLeft_size[20]/slider,10,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_water[#0000ff]/color;conRight_size[20]/slider,10,50,5;conRight_pos[50]/slider,0,100,1;conRight">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t pl_b" data-vis-resizable='{}' style="min-width: 70px; min-height: 135px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tank_filter(el, data) %>>
-			<div class="tank_simple" >
-            	<div class="tank_simple_svg">
-				<div id="<%= this.data.attr('wid') %>_dock_left_svg" class="plumb-dock-svg plumb_dock_left"></div>
-				<div id="<%= this.data.attr('wid') %>_dock_right_svg" class="plumb-dock-svg plumb_dock_right"></div>
-				<div id="<%= this.data.attr('wid') %>_dock_top_svg" class="plumb-dock-svg plumb_dock_top"></div>
-				<div id="<%= this.data.attr('wid') %>_dock_bottom_svg" class="plumb-dock-svg plumb_dock_bottom"></div>
-			</div>
-        </div>
-    </div>
 
 </script>
+
+<!--<script id="tplPlump_tank_filter"-->
+        <!--type="text/ejs"-->
+        <!--class="vis-tpl"-->
+        <!--data-vis-prev='<img src="widgets\plumb\img\prev_tank_simple.png"></img>'-->
+        <!--data-vis-set="plumb"-->
+        <!--data-vis-type="static"-->
+        <!--data-vis-name="Tank Filter"-->
+        <!--data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[100];oid;color[#C0C0C0]/color;top_water[#0000ff]/color;bottom_water[#00ffff]/color;filter_pattern[widgets/plumb/img/kies.png]/image;filter_size[15];filter_opa[50]/slider,0,100,1;group.conTop;conTop_show/checkbox;conTop_water[#0000ff]/color;conTop_size[20]/slider,10,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_water[#0000ff]/color;conBottom_size[20]/slider,10,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_water[#0000ff]/color;conLeft_size[20]/slider,10,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_water[#0000ff]/color;conRight_size[20]/slider,10,50,5;conRight_pos[50]/slider,0,100,1;conRight">-->
+    <!--<div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t pl_b" data-vis-resizable='{}' style="min-width: 70px; min-height: 135px;" id="<%= this.data.attr('wid') %>">-->
+        <!--<div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tank_filter(el, data) %>>-->
+			<!--<div class="tank_simple" >-->
+            	<!--<div class="tank_simple_svg">-->
+				<!--<div id="<%= this.data.attr('wid') %>_dock_left_svg" class="plumb-dock-svg plumb_dock_left"></div>-->
+				<!--<div id="<%= this.data.attr('wid') %>_dock_right_svg" class="plumb-dock-svg plumb_dock_right"></div>-->
+				<!--<div id="<%= this.data.attr('wid') %>_dock_top_svg" class="plumb-dock-svg plumb_dock_top"></div>-->
+				<!--<div id="<%= this.data.attr('wid') %>_dock_bottom_svg" class="plumb-dock-svg plumb_dock_bottom"></div>-->
+			<!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</script>-->
 
 
 
