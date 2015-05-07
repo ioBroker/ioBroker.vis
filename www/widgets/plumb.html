@@ -2387,10 +2387,8 @@ var last_event;
                             overflow: "hidden"
                         }).find("svg").css({
                             position: 'absolute',
-                            width: 'calc(100% + 2px)',
-                            height: 'calc(100% + 2px)',
-                            'margin-left': '-1px',
-                            'margin-top': '-1px',
+                            width: '100%',
+                            height: '100%',
                         });
 
                         $("#" + id + "_dock_top_fill").attr("fill", data.color_off);
@@ -2412,10 +2410,8 @@ var last_event;
                             overflow: "hidden"
                         }).find("svg").css({
                             position: 'absolute',
-                            width: 'calc(100% + 2px)',
-                            height: 'calc(100% + 2px)',
-                            'margin-left': '-1px',
-                            'margin-top': '-1px',
+                            width: '100%',
+                            height: '100%',
                         });
                         $("#" + id + "_dock_bottom_fill").attr("fill", data.color_off);
                     }
@@ -2435,10 +2431,8 @@ var last_event;
                             overflow: "hidden"
                         }).find("svg").css({
                             position: 'absolute',
-                            width: 'calc(100% + 2px)',
-                            height: 'calc(100% + 2px)',
-                            'margin-left': '-1px',
-                            'margin-top': '-1px',
+                            width: '100%',
+                            height: '100%',
                         });
                         $("#" + id + "_dock_left_fill").attr("fill", data.color_off);
                     }
@@ -2458,10 +2452,8 @@ var last_event;
                             overflow: "hidden"
                         }).find("svg").css({
                             position: 'absolute',
-                            width: 'calc(100% + 2px)',
-                            height: 'calc(100% + 2px)',
-                            'margin-left': '-1px',
-                            'margin-top': '-1px',
+                            width: '100%',
+                            height: '100%',
                         });
                         $("#" + id + "_dock_right_fill").attr("fill", data.color_off);
                     }
@@ -2526,63 +2518,71 @@ var last_event;
                     status: true,
                     color: {
                         c_from: id,
-                        c_default: event.color.c_default || "#C0C0C0",
-                        c: event.color.c || "#C0C0C0"
+//                        c_default: event.color.c_default || "#C0C0C0",
+//                        c: event.color.c || "#C0C0C0"
                     }
                 };
-                
-                
+//
+//
                 if (self.conRight != last_event) {
-                    if (event.status == true) {
-                        ev.color.c = data.conRight_water;
+                    if (level >= data.conRight_level) {
+                        ev.color.c = data.conRight_color_on;
+                        ev.color.c_default = data.conRight_color_off;
                     } else {
                         ev.status = false;
-                        ev.color.c = event.color.c_default || "#C0C0C0";
+                        ev.color.c = data.conRight_color_off;
+                        ev.color.c_default = data.conRight_color_off;
                     }
                     $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
                     $("#" + self.conRight).trigger(ev);
 
                 }
                 if (self.conLeft != last_event) {
-                    if (event.status == true) {
-                        ev.color.c = data.conRight_Left;
+                    if (level >= data.conLeft_level) {
+                        ev.color.c = data.conLeft_color_on;
+                        ev.color.c_default = data.conLeft_color_off;
                     } else {
                         ev.status = false;
-                        ev.color.c = event.color.c_default || "#C0C0C0";
+                        ev.color.c = data.conLeft_color_off;
+                        ev.color.c_default = data.conLeft_color_off;
                     }
                     $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
                     $("#" + self.conLeft).trigger(ev);
                 }
                 if (self.conTop != last_event) {
-                    if (event.status == true) {
-                        ev.color.c = data.conTop_water;
+                    if (level >= data.conTop_level) {
+                        ev.color.c = data.conTop_color_on;
+                        ev.color.c_default = data.conTop_color_off;
                     } else {
                         ev.status = false;
-                        ev.color.c = event.color.c_default || "#C0C0C0";
+                        ev.color.c = data.conTop_color_off;
+                        ev.color.c_default = data.conTop_color_off;
                     }
                     $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
                     $("#" + self.conTop).trigger(ev);
                 }
                 if (self.conBottom != last_event) {
-                    if (event.status == true) {
-                        ev.color.c = data.conBottom_water;
+                    if (level >= data.conBottom_level) {
+                        ev.color.c = data.conBottom_color_on;
+                        ev.color.c_default = data.conBottom_color_off;
                     } else {
                         ev.status = false;
-                        ev.color.c = event.color.c_default || "#C0C0C0";
+                        ev.color.c = data.conBottom_color_off;
+                        ev.color.c_default = data.conBottom_color_off;
                     }
                     $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
                     $("#" + self.conBottom).trigger(ev);
                 }
-
-                if (self.conRight == last_event) {
-                    $("#" + id + "_dock_right_fill").attr("fill", event.color.c);
-                } else if (self.conLeft == last_event) {
-                    $("#" + id + "_dock_left_fill").attr("fill", event.color.c);
-                } else if (self.conTop == last_event) {
-                    $("#" + id + "_dock_top_fill").attr("fill", event.color.c);
-                } else if (self.conBottom == last_event) {
-                    $("#" + id + "_dock_bottom_fill").attr("fill", event.color.c);
-                }
+//
+//                if (self.conRight == last_event) {
+//                    $("#" + id + "_dock_right_fill").attr("fill", event.color.c);
+//                } else if (self.conLeft == last_event) {
+//                    $("#" + id + "_dock_left_fill").attr("fill", event.color.c);
+//                } else if (self.conTop == last_event) {
+//                    $("#" + id + "_dock_top_fill").attr("fill", event.color.c);
+//                } else if (self.conBottom == last_event) {
+//                    $("#" + id + "_dock_bottom_fill").attr("fill", event.color.c);
+//                }
             }
 
         },
@@ -2678,8 +2678,8 @@ var last_event;
 //                            overflow: "hidden"
 //                        }).find("svg").css({
 //                            position: 'absolute',
-//                            width: 'calc(100% + 2px)',
-//                            height: 'calc(100% + 2px)',
+//                            width: '100%',
+//                            height: '100%',
 //                            'margin-left': '-1px',
 //                            'margin-top': '-1px',
 //                        });
@@ -2703,8 +2703,8 @@ var last_event;
 //                            overflow: "hidden"
 //                        }).find("svg").css({
 //                            position: 'absolute',
-//                            width: 'calc(100% + 2px)',
-//                            height: 'calc(100% + 2px)',
+//                            width: '100%',
+//                            height: '100%',
 //                            'margin-left': '-1px',
 //                            'margin-top': '-1px',
 //                        });
@@ -2726,8 +2726,8 @@ var last_event;
 //                            overflow: "hidden"
 //                        }).find("svg").css({
 //                            position: 'absolute',
-//                            width: 'calc(100% + 2px)',
-//                            height: 'calc(100% + 2px)',
+//                            width: '100%',
+//                            height: '100%',
 //                            'margin-left': '-1px',
 //                            'margin-top': '-1px',
 //                        });
@@ -2749,8 +2749,8 @@ var last_event;
 //                            overflow: "hidden"
 //                        }).find("svg").css({
 //                            position: 'absolute',
-//                            width: 'calc(100% + 2px)',
-//                            height: 'calc(100% + 2px)',
+//                            width: '100%',
+//                            height: '100%',
 //                            'margin-left': '-1px',
 //                            'margin-top': '-1px',
 //                        });
