@@ -7,12 +7,22 @@
             if (options == 'value') {
                 return this.each(function () {
                     var $this = $(this);
-                    $this.find('.scalaInput').val(arg);
+                    $this.find('.scalaInput').val(arg).trigger('change');
                 });
             }
             return;
         }
+        function h2rgba (h, a) {
+            var rgb;
+            h = h.substring(1,7)
+            rgb = [
+                parseInt(h.substring(0,2), 16),
+                parseInt(h.substring(2,4), 16),
+                parseInt(h.substring(4,6), 16)
+            ];
 
+            return "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + a + ")";
+        };
         var settings = $.extend({
             bgColor:   "#EEEEEE",
             value:     0,
@@ -21,12 +31,22 @@
             unit:      null,
             fontSize:  24,
             readOnly:  false,
-            color:     '#FFCE00',
+            color:     '#FFCC00',
 
-            change:    function (value) {},
+            change:    function (value) {
+                console.log('change ' + value);
+            },
             changing:  function (value) {},
             onshow:    function (isShow) {},
-            onhide:    function (isShow) {}
+            onhide:    function (isShow) {},
+            click:     function () {
+                console.log('click');
+            },
+            colorize: function (color, value) {
+                return h2rgba(color, (value - settings.min) / (settings.max - settings.min) + 0.5)
+            },
+            min: 0,
+            max: 100
         }, options);
 
         return this.each(function () {
@@ -36,10 +56,12 @@
             $this.data('scaled', true);
             $this.wrapInner('<div class="scalaWrapped"></div>');
             var divW = $this.width();
+            var divH = $this.height();
+            var divMax = ((divW > divH) ? divW : divH);
 
             // calculate thickness
-            if (!settings.width) settings.width = divW + 30;
-            if (!settings.thickness) settings.thickness = 1 - (divW / settings.width);
+            if (!settings.width)     settings.width = Math.round(divMax + 30) + '';
+            if (!settings.thickness) settings.thickness = 1 - (divMax / settings.width);
 
             $this.prepend('<input type="text" value="' + settings.value + '" class="scalaInput" data-width="' + settings.width + '" data-thickness="' + settings.thickness + '"/>');
 
@@ -50,20 +72,32 @@
                 release: function () {
                     $knobDiv._mouseDown = false;
 
-                    if (!$knobDiv._mouseEnter && !$knobDiv._mouseDown) {
-                        $knobDiv.hide();
-                        $scalaWrapped.show();
+                    hide('release');
 
-                        if (settings.change) settings.change($scalaInput.val());
+                    if ($knobDiv._pressTimer) {
+                        $knobDiv._pressTimer = null;
+                        setValue($knobDiv._oldValue);
+                        if (settings.click) {
+                            var newVal = settings.click($knobDiv._oldValue);
+                            if (newVal !== undefined) {
+                                setValue(newVal);
+                            }
+                        }
+                    } else {
+                        // remove unit
+                        var val = $scalaInput.val();
+                        if (settings.unit !== null && val.substring(val.length - settings.unit.length, val.length) == settings.unit) {
+                            val = val.substring(0, val.length - settings.unit.length);
+                        }
+                        if (settings.change && $knobDiv._oldValue != val) settings.change(val);
                     }
                 },
                 cancel: function () {
                     $knobDiv._mouseDown = false;
+                    hide('cancel');
+                    // set old value
+                    setValue($knobDiv._oldValue);
 
-                    if (!$knobDiv._mouseEnter && !$knobDiv._mouseDown) {
-                        $knobDiv.hide();
-                        $scalaWrapped.show();
-                    }
                 },
                 change: function (value) {
                     if (settings.changing) settings.changing(value);
@@ -73,115 +107,130 @@
                     return v;
                 },
                 displayPrevious : true,
-                displayInput: true,
-                bgColor:      settings.bgColor,
-                readOnly:     settings.readOnly,
-                fgcolor:      settings.color,
-                inputColor:   settings.color
+                displayInput:     true,
+                bgColor:          settings.bgColor,
+                readOnly:         settings.readOnly,
+                fgColor:          settings.color,
+                inputColor:       settings.color,
+                colorize:         settings.colorize ? settings.colorize : undefined,
+                min:              settings.min,
+                max:              settings.max
             });
 
             var w = $knobDiv.width();
             $this.data('$knobDiv', $knobDiv);
 
+            function setValue(value) {
+                console.log('Restore value ' + value);
+                setTimeout(function () {
+                    $scalaInput.val(value).trigger('change');
+                }, 200);
+            }
+
+            function hide(event){
+                if (!$knobDiv._mouseEnter && !$knobDiv._mouseDown) {
+                    $knobDiv.hide();
+                    $scalaWrapped.show();
+                }
+                //console.log((event || '') +  ' (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown + ')');
+            }
+
+            function show(event){
+                $knobDiv.show();
+                //console.log((event || '') +  ' (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown + ')');
+            }
+
+            function press(event) {
+                if (!$knobDiv._mouseDown) {
+                    var val = $scalaInput.val();
+                    if (settings.unit !== null) {
+                        val = val.substring(0, val.length - settings.unit.length);
+                    }
+
+                    $knobDiv._oldValue = val;
+                    $knobDiv._mouseDown = true;
+                    $knobDiv._pressTimer = setTimeout(function () {
+                        $knobDiv._pressTimer = null;
+                    }, 300);
+                    console.log((new Date().getSeconds() + '.' + new Date().getMilliseconds())+ ' ' + (event || '') +  ' (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown + ')');
+                    show(event);
+                }
+            }
+            function unpress(event) {
+                $knobDiv._mouseDown = false;
+                console.log((new Date().getSeconds() + '.' + new Date().getMilliseconds()) + ' ' + (event || '') +  ' (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown + ')');
+                hide(event);
+
+                if ($knobDiv._pressTimer) {
+                    console.log('click detected');
+                    clearTimeout($knobDiv._pressTimer);
+                }
+            }
+
             $knobDiv.css({
                 position: 'absolute',
-                left: '-' + ((w - divW)  / 2) + 'px',
-                top:  '-' + ((w - $this.height()) / 2) + 'px',
+                left:      '-' + ((w - divW)  / 2) + 'px',
+                top:       '-' + ((w - divH) / 2) + 'px',
                 'z-index': 2,
-                cursor: 'hand'
-            })
-                .hide()
-                .bind('mouseleave',function () {
-                    $knobDiv._mouseEnter = false;
-                    if (!$knobDiv._mouseEnter && !$knobDiv._mouseDown) {
-                        $knobDiv.hide();
-                        $scalaWrapped.show();
-                    }
-                    //console.log('mouseleave (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown);
-                })
-                .bind('mousedown', function () {
-                    $knobDiv._mouseDown = true;
-                    //console.log('mousedown (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown);
-                }).bind('mouseup', function () {
-                    $knobDiv._mouseDown = false;
-                    //console.log('mousedown (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown);
-                })
-                .bind('mouseenter', function () {
-                    $knobDiv._mouseEnter = true;
-                    $knobDiv.show();
-                    //console.log('mouseenter (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown);
-                }).bind('touchend', function (e) {
-                    $knobDiv._mouseEnter = false;
-
-                    if (!$knobDiv._mouseEnter && !$knobDiv._mouseDown) {
-                        $knobDiv.hide();
-                        $scalaWrapped.show();
-                    }
-                    //console.log('touchend (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown);
-                });
-
-            $this.bind('mouseenter', function () {
+                cursor:    'pointer',
+                'opacity': 0.7
+            }).hide().bind('mouseleave',function (e) {
+                $knobDiv._mouseEnter = false;
+                hide(e.type);
+            }).bind('mousedown', function (e) {
+                press(e.type);
+            }).bind('mouseup', function (e) {
+                unpress(e.type);
+            }).bind('mouseenter', function (e) {
                 $knobDiv._mouseEnter = true;
-                $knobDiv.show();
-                //console.log('mouseenter (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown);
+                show(e.type);
+            }).bind('touchend', function (e) {
+                $knobDiv._mouseEnter = false;
+                unpress(e.type);
+            });
+
+            $this.bind('mouseenter', function (e) {
+                $knobDiv._mouseEnter = true;
+                show(e.type);
             }).bind('touchstart', function (e) {
                 if (e.simulated) {
                     e.preventDefault();
                     return;
                 }
-                $knobDiv.show();
-                //$scalaWrapped.hide();
+                press(e.type);
                 var event = $.Event(e.type, {simulated: true, originalEvent: {touches: [{pageX: e.originalEvent.touches[e.originalEvent.touches.length - 1].pageX, pageY: e.originalEvent.touches[e.originalEvent.touches.length - 1].pageY}]}} );
                 $knobDiv.find('canvas').trigger(event);
                 e.preventDefault();
-                //console.log('touchstart (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown);
             }).bind('mousedown', function (e) {
                 if (e.simulated) {
                     e.preventDefault();
                     return;
                 }
-                $knobDiv.show();
-                //$scalaWrapped.hide();
+                press(e.type);
                 var event = $.Event(e.type, {simulated: true, pageX: e.pageX, pageY: e.pageY});
                 $knobDiv.find('canvas').trigger(event);
                 e.preventDefault();
-                //console.log('touchstart (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown);
             });
 
-
-            $scalaInput.prop('disabled', true)
-                .bind('focusout', function () {
-                    $knobDiv._mouseEnter = false;
-
-                    if (!$knobDiv._mouseEnter && !$knobDiv._mouseDown) {
-                        $knobDiv.hide();
-                        $scalaWrapped.show();
-                    }
-                    console.log('focusout (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown);
-                })
-                .bind('focusin', function () {
-                    $knobDiv._mouseDown = false;
-
-                    if (!$knobDiv._mouseEnter && !$knobDiv._mouseDown) {
-                        $knobDiv.hide();
-                        $scalaWrapped.show();
-                    }
-                    console.log('focusin (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown);
-                })
-                .css({
-                    'font-size': settings.fontSize,
-                    cursor: 'hand',
-                    '-webkit-touch-callout': 'none',
-                    '-webkit-user-select': 'none',
-                    '-khtml-user-select': 'none',
-                    '-moz-user-select': 'none',
-                    '-ms-user-select': 'none',
-                    'user-select': 'none'
-                });
+            $scalaInput.bind('focusout', function (e) {
+                $knobDiv._mouseEnter = false;
+                hide(e.type)
+            }).bind('focusin', function (e) {
+                unpress(e.type);
+            }).css({
+                'font-size': settings.fontSize,
+                cursor: 'pointer',
+                '-webkit-touch-callout': 'none',
+                '-webkit-user-select': 'none',
+                '-khtml-user-select': 'none',
+                '-moz-user-select': 'none',
+                '-ms-user-select': 'none',
+                'user-select': 'none'
+            }).prop('readonly', true);
         });
     };
 
-}( jQuery ));
+}(jQuery));
 
 // Add words for bars
 if (vis.editMode) {
@@ -211,12 +260,14 @@ vis.binds.hqWidgets = {
         changeState: function ($div) {
             var data = $div.data('data');
 
-            console.log(data.value);
+            if (data.oldValue == data.value) return;
+
+            console.log('New state ' + data.value);
 
             if (vis.editMode && data.testActive) {
                 data.state = 'active';
             } else
-            if (data.value === data.min ||
+            if (data.value == data.min ||
                 data.value === null ||
                 data.value === '' ||
                 data.value === undefined ||
@@ -248,6 +299,10 @@ vis.binds.hqWidgets = {
 
                     break;
             }
+            if (data.wType == 'number') {
+                $div.find('.vis-hq-rightinfo').html(((data.value === undefined || data.value === null) ? data.min : data.value) + ((data.unit === undefined) ? '' : data.unit));
+            }
+
         },
         changedId: function (wid, view, newId, attr, isCss) {
             // Try to extract whole information
@@ -264,16 +319,16 @@ vis.binds.hqWidgets = {
                     text += '<div class="vis-hq-leftinfo" style="padding-left: 15px; padding-right:50px">' +
                         (data.descriptionLeft || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</div>\n';
                 }
-                if (data.infoRight) {
+                if (data.infoRight || data.wType == 'number') {
                     text += '<div class="vis-hq-rightinfo" style="padding-right: 15px;">' +
                         (data.infoRight || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</div>\n';
                 }
                 text += '<div class="vis-hq-main" style="z-index: 1">\n';
                 if ($div.height() > $div.width()) {
-                    text += '    <div class="vis-hq-middle"><table class="hq-no-space vis-hq-middle-vertical" style="margin-top:-' + (100 - data.topOffset) + '%"><tr><td><div class="vis-hq-icon" style="text-align: center;"></div></td></tr>\n';
+                    text += '    <div class="vis-hq-middle"><table class="hq-no-space vis-hq-middle-vertical" style="margin-top:' + (-1 * (100 - data.topOffset)) + '%"><tr><td><div class="vis-hq-icon" style="text-align: center;"></div></td></tr>\n';
                     text += '    <tr><td><div class="vis-hq-text-caption" style="text-align: center;"></div></td></tr></table></div>\n';
                 } else {
-                    text += '    <div class="vis-hq-middle"><table class="hq-no-space vis-hq-middle-vertical" style="margin-top:-' + data.topOffset + '%"><tr><td><div class="vis-hq-icon" style="text-align: center;"></div></td>\n';
+                    text += '    <div class="vis-hq-middle"><table class="hq-no-space vis-hq-middle-vertical" style="margin-top:' + (-1 * data.topOffset) + '%"><tr><td><div class="vis-hq-icon" style="text-align: center;"></div></td>\n';
                     text += '    <td><div class="vis-hq-text-caption" style="text-align: center;"></div></td></tr></table></div>\n';
                 }
                 text += '</div>';
@@ -303,7 +358,7 @@ vis.binds.hqWidgets = {
                     data.value = newVal;
                     if (data.wType == 'number') {
                         if (newVal === false || newVal === 'false') data.value = data.min;
-                        if (newVal === true || newVal === 'true')   data.value = data.max;
+                        if (newVal === true  || newVal === 'true')  data.value = data.max;
                     }
 
                     vis.binds.hqWidgets.button.changeState($div);
@@ -316,30 +371,45 @@ vis.binds.hqWidgets = {
                 if (data.wType == 'number') {
                     $main.scala({
                         change: function (value) {
-                            data.value = value;
+                            data.value = parseFloat(value);
+                            if (data.digits !== null) data.value = data.value.toFixed(data.digits);
+                            if (data.is_comma) data.value = data.value.toString().replace('.', ',');
+                            data.value = parseFloat(data.value);
                             vis.binds.hqWidgets.button.changeState($div);
-                            vis.setValue(data.oid, value);
+                            vis.setValue(data.oid, data.value);
                         },
                         changing: function (value) {
                             data.value = value;
+                            if (data.digits !== null) data.value = data.value.toFixed(data.digits);
+                            if (data.is_comma) data.value = data.value.toString().replace('.', ',');
+                            data.value = parseFloat(data.value);
                             vis.binds.hqWidgets.button.changeState($div);
+                        },
+                        click: function (val) {
+                            if (val - data.min > ((data.max - data.min) / 2)) {
+                                val = data.min;
+                            } else {
+                                val = data.max;
+                            }
+                            return val;
                         }
                     });
+
                     $main.click(function () {
-                        if (data.value - data.min > ((data.max - data.min) / 2)) {
+                        /*if (data.value - data.min > ((data.max - data.min) / 2)) {
                             data.value = data.min;
                         } else {
                             data.value = data.max;
                         }
                         $main.scala('value', data.value);
                         vis.binds.hqWidgets.button.changeState($div);
-                        vis.setValue(data.oid, data.value);
+                        vis.setValue(data.oid, data.value);*/
                     });
                 } else {
                     $main.click(function () {
                         data.value = (data.state == 'normal') ? data.max : data.min
                         vis.binds.hqWidgets.button.changeState($div);
-                        vis.setValue(data.oid, (data.state == 'normal'));
+                        vis.setValue(data.oid, data.value);
                     });
                 }
             }
@@ -373,8 +443,8 @@ vis.binds.hqWidgets = {
             data.styleActive = data.usejQueryStyle ? 'ui-state-active'  : (data.styleActive || 'hq-button-base-on');
             data.min = (data.min !== undefined) ? parseFloat(data.min) : 0;
             data.max = (data.max !== undefined) ? parseFloat(data.max) : 100;
+            data.digits = (!data.digits && data.digits !== 0) ? parseInt(data.digits, 10) : null;
 
-            var options = JSON.parse(JSON.stringify(data));
             $div.data('data',  data);
             $div.data('style', style);
 

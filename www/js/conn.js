@@ -181,6 +181,18 @@ var servConn = {
 
                 if (that._connCallbacks.onCommand && id == that.namespace + '.control.command') {
                     if (state.ack) return;
+
+                    if (state.val &&
+                        typeof state.val == 'string' &&
+                        state.val[0] == '{' &&
+                        state.val[state.val.length - 1] == '}') {
+                        try {
+                            state.val = JSON.parse(state.val);
+                        } catch (e) {
+                            console.log('Command seems to be an object, but cannot parse it: ' + state.val);
+                        }
+                    }
+
                     // if command is an object {instance: 'iii', command: 'cmd', data: 'ddd'}
                     if (state.val && state.val.instance) {
                         if (that._connCallbacks.onCommand(state.val.instance, state.val.command, state.val.data)) {
