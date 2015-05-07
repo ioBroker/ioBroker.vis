@@ -1,6 +1,6 @@
 <link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/hqWidgets.css" />
 <link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/hqWidgetsButtons.css" />
-
+<script type="text/javascript" src="widgets/hqWidgets/js/jquery.knob.js"></script>
 <!--script type="text/javascript" src="widgets/hqWidgets/js/hqWidgets.js"></script>
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgetsDashUI.js"></script>
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgetsLang.js"></script-->
@@ -12,13 +12,30 @@
         data-vis-set="hqWidgets"
         data-vis-name="On/Off"
         data-vis-update-style="true"
-        data-vis-attrs="oid/id/changedId;iconName/image;iconOn/image;"
-        data-vis-attrs0="caption;description;topOffset[30]/slider,0,100,1;btIconWidth/slider,0,400,1;"
-        data-vis-attrs1="group.styles;styleNormal;styleActive;usejQueryStyle/checkbox;"
+        data-vis-type="ctrl,bool"
+        data-vis-attrs="oid/id/changedId;oid-working;oid-battery;oid-signal;min[0];max[1];"
+        data-vis-attrs0="group.visual;iconName[~vis~img~bulb_off.png]/image;iconOn/image;caption;descriptionLeft;infoRight;topOffset[55]/slider,0,100,1;btIconWidth[56]/slider,0,400,1;"
+        data-vis-attrs1="group.styles;styleNormal/style,hqButtons,-button,background;styleActive/style,hqButtons,-button,background;usejQueryStyle/checkbox;"
         data-vis-attrs2="group.test;testActive/checkbox"
         data-hqwidgets-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-PCB,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM,HMW-IO-12-Sw14-DR,HMW-IO-12-Sw7-DR,HM-ES-PMSw1-Pl">
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px; border-radius: 64px" id="<%= this.data.attr('wid') %>"><%
-            vis.binds.hqWidgets.init(this.data.wid, this.view, 'button', this.data, this.style);
+            vis.binds.hqWidgets.button.init(this.data.wid, this.view, this.data, this.style);
+    %></div>
+</script>
+<script type="text/ejs"
+        id="tplHqDimmer"
+        class="vis-tpl"
+        data-vis-set="hqWidgets"
+        data-vis-name="Dimmer"
+        data-vis-type="ctrl,dimmer"
+        data-vis-update-style="true"
+        data-vis-attrs="oid/id/changedId;oid-working;oid-battery;oid-signal;min[0];max[100];"
+        data-vis-attrs0="group.visual;iconName[~vis~img~bulb_off.png]/image;iconOn/image;caption;descriptionLeft;infoRight;topOffset[55]/slider,0,100,1;btIconWidth[56]/slider,0,400,1;"
+        data-vis-attrs1="group.styles;styleNormal/style,hqButtons,-button,background;styleActive/style,hqButtons,-button,background;usejQueryStyle/checkbox;"
+        data-vis-attrs2="group.test;testActive/checkbox"
+        data-hqwidgets-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-PCB,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM,HMW-IO-12-Sw14-DR,HMW-IO-12-Sw7-DR,HM-ES-PMSw1-Pl">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px; border-radius: 64px" id="<%= this.data.attr('wid') %>"><%
+            vis.binds.hqWidgets.button.init(this.data.wid, this.view, this.data, this.style, 'number');
     %></div>
 </script>
 <!--script type="text/ejs" id="tplHqDimmer" class="vis-tpl" data-vis-set="hqWidgets" data-vis-name="Dimmer" data-vis-attrs="hqoptions" data-vis-render-visible="true" data-hqwidgets-filter="HM-LC-Dim1TPBU-FM,HM-LC-Dim1PWM-CV,HM-LC-Dim1T-FM,HM-LC-Dim1T-CV,HM-LC-Dim1T-PI,HM-LC-Dim1L-CV,HM-LC-Dim1L-Pl,HM-LC-Dim2L-SM,HMW-LC-Dim1L-DR">

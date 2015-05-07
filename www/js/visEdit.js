@@ -3517,6 +3517,7 @@ vis = $.extend(true, vis, {
         // attr_name can be extended with numbers (1-2) means it will be attr_name1 and attr_name2 created
         //     end number can be other attribute, e.g (1-count)
         // defaultValue: If defaultValue has ';' it must be replaced by §
+        // defaultValue: If defaultValue has '/' it must be replaced by ~
         // Type format: id - Object ID Dialog
         //              checkbox
         //              image - image
@@ -3600,6 +3601,7 @@ vis = $.extend(true, vis, {
         if (wid_default) {
             wid_default = wid_default.substring(1, wid_default.length - 1);
             wid_default = wid_default.replace(/§/g, ';');
+            wid_default = wid_default.replace(/~/g, '/');
         } else {
             wid_default = undefined;
         }
