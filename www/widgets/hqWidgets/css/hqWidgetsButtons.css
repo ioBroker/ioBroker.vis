@@ -1,4 +1,4 @@
-.hq-button-red-normal,.hq-button-red-normal-hover,.hq-button-red-normal-active,.hq-button-red-normal-active-hover  {   
+.hq-button-red-normal,.hq-button-red-normal-active  {
     -moz-box-shadow:inset 0px 1px 0px 0px #333333;
     -webkit-box-shadow:inset 0px 1px 0px 0px #333333;
     box-shadow:inset 0px 1px 0px 0px #333333;
@@ -25,7 +25,7 @@
     
     background-color:#ededed;
 }
-.hq-button-red-normal-hover  {        
+.hq-button-red-normal:hover  {
     background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed));
     background:-moz-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
     background:-webkit-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
@@ -47,7 +47,7 @@
 	
 	background-color:#fe1a00;
 }
-.hq-button-red-active-hover   {
+.hq-button-red-active:hover   {
 	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ce0100), color-stop(1, #fe1a00));
 	background:-moz-linear-gradient(top, #ce0100 5%, #fe1a00 100%);
 	background:-webkit-linear-gradient(top, #ce0100 5%, #fe1a00 100%);
@@ -62,7 +62,7 @@
 	background:none;
 }
 
-.hq-button-green-normal,.hq-button-green-normal-hover,.hq-button-green-normal-active,.hq-button-green-normal-active-hover{
+.hq-button-green-normal, .hq-button-green-normal-active {
 	-moz-box-shadow:inset 3px 2px 7px 0px #d9fbbe;
 	-webkit-box-shadow:inset 3px 2px 7px 0px #d9fbbe;
 	box-shadow:inset 3px 2px 7px 0px #d9fbbe;
@@ -73,17 +73,16 @@
 	border:1px solid #83c41a;
 	display:inline-block;
 	color:#ffffff;
-	height:65px;
-	line-height:65px;
-	width:70px;
 }
-.hq-button-green-normal-hover,.hq-button-green-normal-active-hover{
+
+.hq-button-green-normal-active {
+	 position:relative;
+	 top:1px;
+}
+
+.hq-button-green-normal:hover,.hq-button-green-normal-active:hover{
 	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #a5cc52), color-stop(1, #b8e356) );
 	background:-moz-linear-gradient( center top, #a5cc52 5%, #b8e356 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#a5cc52', endColorstr='#b8e356');
 	background-color:#a5cc52;
-}
-.hq-button-green-normal-active {
-	position:relative;
-	top:1px;
 }

@@ -12,9 +12,10 @@
             }
             return;
         }
+
         function h2rgba (h, a) {
             var rgb;
-            h = h.substring(1,7)
+            h = h.substring(1,7);
             rgb = [
                 parseInt(h.substring(0,2), 16),
                 parseInt(h.substring(2,4), 16),
@@ -22,24 +23,26 @@
             ];
 
             return "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + a + ")";
-        };
-        var settings = $.extend({
-            bgColor:   "#EEEEEE",
-            value:     0,
-            width:     0,
-            thickness: null,
-            unit:      null,
-            fontSize:  24,
-            readOnly:  false,
-            color:     '#FFCC00',
+        }
 
-            change:    function (value) {
+        var settings = $.extend({
+            bgColor:    "#EEEEEE",
+            value:      0,
+            width:      0,
+            thickness:  null,
+            unit:       null,
+            fontSize:   24,
+            readOnly:   false,
+            color:      '#FFCC00',
+            alwaysShow: false,
+            hideNumber: false,
+            change:      function (value) {
                 console.log('change ' + value);
             },
-            changing:  function (value) {},
-            onshow:    function (isShow) {},
-            onhide:    function (isShow) {},
-            click:     function () {
+            changing:   function (value) {},
+            onshow:     function (isShow) {},
+            onhide:     function (isShow) {},
+            click:      function () {
                 console.log('click');
             },
             colorize: function (color, value) {
@@ -107,7 +110,7 @@
                     return v;
                 },
                 displayPrevious : true,
-                displayInput:     true,
+                displayInput:     !settings.hideNumber,
                 bgColor:          settings.bgColor,
                 readOnly:         settings.readOnly,
                 fgColor:          settings.color,
@@ -128,13 +131,12 @@
             }
 
             function hide(event){
-                if (!$knobDiv._mouseEnter && !$knobDiv._mouseDown) {
+                if (!settings.alwaysShow && !$knobDiv._mouseEnter && !$knobDiv._mouseDown) {
                     $knobDiv.hide();
                     $scalaWrapped.show();
                 }
                 //console.log((event || '') +  ' (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown + ')');
             }
-
             function show(event){
                 $knobDiv.show();
                 //console.log((event || '') +  ' (enter: ' + $knobDiv._mouseEnter + ', down: ' + $knobDiv._mouseDown + ')');
@@ -169,12 +171,12 @@
 
             $knobDiv.css({
                 position: 'absolute',
-                left:      '-' + ((w - divW)  / 2) + 'px',
+                left:      '-' + ((w - divW) / 2) + 'px',
                 top:       '-' + ((w - divH) / 2) + 'px',
                 'z-index': 2,
                 cursor:    'pointer',
                 'opacity': 0.7
-            }).hide().bind('mouseleave',function (e) {
+            }).bind('mouseleave',function (e) {
                 $knobDiv._mouseEnter = false;
                 hide(e.type);
             }).bind('mousedown', function (e) {
@@ -188,6 +190,9 @@
                 $knobDiv._mouseEnter = false;
                 unpress(e.type);
             });
+            if (!settings.alwaysShow) {
+                $knobDiv.hide();
+            }
 
             $this.bind('mouseenter', function (e) {
                 $knobDiv._mouseEnter = true;
@@ -230,6 +235,183 @@
         });
     };
 
+    // possible options: waves wobble tada swing shake rubberBand pulse flash bounce
+    $.fn.animateDiv = function (effect, options) {
+        return this.each(function () {
+            // Do something to each element here.
+            var $this = $(this);
+            options = options || {};
+            effect = effect || 'waves';
+
+            if (options.speed != 1 && options.speed != 2 && options.speed != 2) options.speed = 1;
+
+            if (effect == 'waves') {
+                var borderThickness = (options.tickness || 3) - 1;
+                var border = ';border: ' + borderThickness + 'px ' + (options.style || 'solid') +' ' + (options.color || 'grey');
+
+                var text = '<div class="wave wave1" style="top:-' + borderThickness + 'px; left: -' + borderThickness + 'px;width: ' + Math.round($this.width()) +
+                    'px;height: ' + Math.round($this.height()) + 'px;border-radius: ' + (options.radius || $this.css('border-radius')) +
+                    border +
+                    '; position: absolute"></div>';
+                $this.append(text);
+                $this.append(text.replace('wave1', 'wave2'));
+
+                $this.find('.wave1').show().addClass('animated' + options.speed + 's zoomIn1');
+                $this.find('.wave2').show().addClass('animated' + options.speed + 's zoomIn2');
+
+                setTimeout(function () {
+                    $this.find('.wave1').remove();
+                    $this.find('.wave2').remove();
+                }, 2050);
+            } else {
+                $this.addClass('animated' + options.speed + 's ' + effect);
+                setTimeout(function () {
+                    $this.removeClass('animated' + options.speed + 's ' + effect);
+                }, 2100);
+            }
+        });
+    };
+
+    $.fn.popupShow = function ($div, options, callback) {
+
+        if (typeof options == 'function') {
+            callback = options;
+            options = null;
+        }
+        options = options || {};
+        options.effect = options.effect || 'zoomIn';
+        options.speed  = options.speed  || '05';
+        return this.each(function () {
+            // Do something to each element here.
+            var $this = $(this);
+            if (!$div) {
+                console.log('no div');
+                return;
+            }
+            var offset = $this.position();
+            var eTop  = offset.top; //get the offset top of the element
+            var eLeft = offset.left; //get the offset top of the element
+
+            var dh = $div.show().height();
+            var dw = $div.width();
+            // calculate center
+            var x = $this.width();
+            var y = $this.height();
+            var zindex = $div.css('z-index');
+            zindex = options.zindex || ((zindex == 'auto') ? 1 : (zindex || 0) + 1);
+            $div.css({position: 'absolute', left: eLeft + ($this.width() - dw) / 2, top: eTop + ($this.height() - dh) / 2, 'z-index': zindex});
+            setTimeout(function () {
+                $div.addClass('animated' + options.speed + 's ' + options.effect);
+            }, 0);
+            setTimeout(function () {
+                $div.removeClass('animated' + options.speed + 's ' + options.effect);
+                if (callback) callback();
+            }, (options.speed == '05') ? 550 : parseInt(options.speed, 10) * 1000 + 50);
+        });
+    };
+    $.fn.popupHide = function ($div, options, callback) {
+        if (typeof $div == 'function') {
+            callback = $div;
+            $div = null;
+        }
+        if (typeof options == 'function') {
+            callback = options;
+            options = null;
+        }
+        options = options || {};
+        options.effect = options.effect || 'zoomOut';
+        options.speed  = options.speed  || '05';
+
+        return this.each(function () {
+            // Do something to each element here.
+            if (!$div) {
+                $div = $(this);
+            }
+            setTimeout(function () {
+                $div.addClass('animated' + options.speed + 's ' + options.effect);
+            }, 0);
+            setTimeout(function () {
+                $div.removeClass('animated' + options.speed + 's ' + options.effect);
+                $div.hide();
+                if (callback) callback();
+            }, (options.speed == '05') ? 550 : parseInt(options.speed, 10) * 1000 + 50);
+        });
+    };
+
+    $.fn.makeSlider = function (options, onChange, onIdle) {
+
+        if (typeof options == 'string') {
+            if (options == 'restart') {
+                return this.each(function () {
+                    var $this = $(this);
+                    var options = $this.data('options');
+                    if (options.timeout) {
+                        $this.data('hideTimer', setTimeout(function () {
+                            if (options.onIdle) options.onIdle();
+                        }, options.timeout));
+                    }
+                });
+            }
+            return;
+        }
+
+
+        if (typeof options == 'function') {
+            onIdle   = onChange;
+            onChange = options;
+            options  = null;
+        }
+
+
+        options = options || {};
+        options.timeout  = (options.timeout === undefined) ? 2000 : options.timeout;
+        options.min      = (options.min === undefined) ? 0: options.min;
+        options.max      = (options.max === undefined) ? 100: options.max;
+        options.value    = (options.value === undefined) ? options.max : options.value;
+        options.show     = (options.show === undefined)  ? true : options.show;
+        options.onIdle   = onIdle;
+        options.onChange = onChange;
+
+        return this.each(function () {
+            var $this = $(this);
+
+            if (options.timeout && options.show) {
+                $this.data('hideTimer', setTimeout(function () {
+                    if (onIdle) onIdle();
+                }, options.timeout));
+            }
+
+            $this.data('options', options);
+
+            $this.slider({
+                orientation: "vertical",
+                range:       "max",
+                min:         options.min,
+                max:         options.max,
+                value:       options.value,
+                slide: function( event, ui ) {
+                    var timer     = $this.data('timer');
+                    var hideTimer = $this.data('hideTimer');
+
+                    if (timer)     clearTimeout(timer);
+                    if (hideTimer) clearTimeout(hideTimer);
+
+                    $this.data('timer', setTimeout(function () {
+                        $this.data('timer', null);
+                        if (options.onChange) options.onChange(ui.value);
+                    }, 500));
+
+                    if (options.timeout) {
+                        $this.data('hideTimer', setTimeout(function () {
+                            $this.data('hideTimer', null);
+                            if (options.onIdle) options.onIdle();
+                        }, options.timeout));
+                    }
+                }
+            });
+            //$this.find('.ui-slider-range').removeClass("ui-widget-header").css({background: 'blue'});
+        });
+    };
 }(jQuery));
 
 // Add words for bars
@@ -257,17 +439,17 @@ if (vis.editMode) {
 
 vis.binds.hqWidgets = {
     button: {
-        changeState: function ($div) {
+        // Calculate state of button
+        changeState: function ($div, isInit) {
             var data = $div.data('data');
 
             if (data.oldValue !== undefined && data.oldValue == data.value) return;
 
-            console.log('New state ' + data.value);
-
             if (vis.editMode && data.testActive) {
                 data.state = 'active';
             } else
-            if (data.value == data.min ||
+            if (data.temperature ||
+                data.value == data.min ||
                 data.value === null ||
                 data.value === '' ||
                 data.value === undefined ||
@@ -276,6 +458,10 @@ vis.binds.hqWidgets = {
                 data.state = 'normal';
             } else {
                 data.state = 'active';
+            }
+
+            if (data.value !== null && data.value !== undefined) {
+                $div.find('.vis-hq-nodata').remove();
             }
 
             switch (data.state) {
@@ -303,6 +489,40 @@ vis.binds.hqWidgets = {
                 $div.find('.vis-hq-rightinfo').html(((data.value === undefined || data.value === null) ? data.min : data.value) + ((data.unit === undefined) ? '' : data.unit));
             }
 
+            if (!data.ack || (data['oid-working'] && data.working)) {
+                $div.find('.vis-hq-working').show();
+            } else {
+                $div.find('.vis-hq-working').hide();
+            }
+
+            if (data['oid-battery']) {
+                if (data.battery) {
+                    $div.find('.vis-hq-battery').show();
+                } else {
+                    $div.find('.vis-hq-battery').hide();
+                }
+            }
+
+            if (data['oid-signal']) {
+                data.signal;
+            }
+
+            if (data['oid-humidity']) {
+                $div.find('.vis-hq-humidity').html(data.humidity);
+            }
+
+            if (data['set-oid']) {
+                $div.find('.vis-hq-set-temperature').html(data.set);
+            }
+
+            if (data['drive-oid']) {
+                $div.find('.vis-hq-drive').html(data.drive);
+            }
+
+            if (data.changeEffect && (!isInit || (vis.editMode && data.testActive))) {
+                var $main = $div.find('.vis-hq-main');
+                $main.animateDiv(data.changeEffect, {color: data.waveColor});
+            }
         },
         changedId: function (wid, view, newId, attr, isCss) {
             // Try to extract whole information
@@ -313,25 +533,31 @@ vis.binds.hqWidgets = {
             data.state = data.state || 'normal';
             var radius = $div.css('borderRadius');
 
+            // place left-info, right-info, caption and image
             if (!$div.find('.vis-hq-main').length) {
                 var text = '';
                 if (data.descriptionLeft) {
-                    text += '<div class="vis-hq-leftinfo" style="padding-left: 15px; padding-right:50px; font-size: ' + data.infoFontSize + 'px">' +
+                    text += '<div class="vis-hq-leftinfo" style="padding-left: 15px; padding-right:50px; font-size: ' + (data.infoLeftFontSize || 12) + 'px">' +
                         (data.descriptionLeft || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</div>\n';
                 }
                 if (data.infoRight || data.wType == 'number') {
-                    text += '<div class="vis-hq-rightinfo" style="padding-right: 15px; font-size: ' + data.infoFontSize + 'px">' +
+                    text += '<div class="vis-hq-rightinfo" style="padding-right: 15px; font-size: ' + (data.infoFontRightSize || 12) + 'px">' +
                         (data.infoRight || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</div>\n';
                 }
-                text += '<div class="vis-hq-main" style="z-index: 1">\n';
-                if ($div.height() > $div.width()) {
-                    text += '    <div class="vis-hq-middle"><table class="hq-no-space vis-hq-middle-vertical" style="margin-top:' + (-1 * (100 - data.topOffset)) + '%"><tr><td><div class="vis-hq-icon" style="text-align: center;"></div></td></tr>\n';
-                    text += '    <tr><td><div class="vis-hq-text-caption" style="text-align: center;"></div></td></tr></table></div>\n';
+                text += '<div class="vis-hq-main" style="z-index: 1"><div class="vis-hq-middle">\n';
+
+                if (data.offsetAuto) {
+                    text += '<table class="vis-hq-table hq-no-space" style="position: absolute"><tr class="hq-no-space"><td class="hq-no-space"><div class="vis-hq-icon" style="text-align: center;"></div></td>\n';
                 } else {
-                    text += '    <div class="vis-hq-middle"><table class="hq-no-space vis-hq-middle-vertical" style="margin-top:' + (-1 * data.topOffset) + '%"><tr><td><div class="vis-hq-icon" style="text-align: center;"></div></td>\n';
-                    text += '    <td><div class="vis-hq-text-caption" style="text-align: center;"></div></td></tr></table></div>\n';
+                    text += '<table class="vis-hq-table hq-no-space" style="position: absolute;top:' + data.topOffset + '%;left:' + data.leftOffset + '%"><tr class="hq-no-space"><td class="hq-no-space"><div class="vis-hq-icon" style="text-align: center;"></div></td>\n';
                 }
-                text += '</div>';
+
+                if (data.caption) {
+                    if ($div.height() > $div.width()) text += '</tr><tr class="hq-no-space">';
+                    text += '<td class="hq-no-space"><div class="vis-hq-text-caption" style="text-align: center;"></div></td>';
+                }
+
+                text += '</tr></table></div></div></div>';
                 $div.append(text);
             }
             // Get the border radius from parent
@@ -345,69 +571,155 @@ vis.binds.hqWidgets = {
             $div.find('.vis-hq-leftinfo').css({right: offset + 'px'});
             $div.find('.vis-hq-rightinfo').css({'padding-left': 5 + (width / 2) + 'px'});
 
+            // Place icon
+            var img = null;
             if (data.iconName || data.iconOn) {
-                var img = (data.state == 'normal') ? (data.iconName || ''): (data.iconOn || '');
+                img = (data.state == 'normal') ? (data.iconName || ''): (data.iconOn || '');
                 $div.find('.vis-hq-icon').html('<img class="vis-hq-icon-img" style="height: ' + data.btIconWidth + 'px; width: auto;" src="' + img + '"/>')
             } else {
                 $div.find('.vis-hq-icon').html('');
             }
-            vis.binds.hqWidgets.button.changeState($div);
 
-            if (!vis.editMode && data.oid) {
-                vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
-                    data.value = newVal;
-                    if (data.wType == 'number') {
-                        if (newVal === false || newVal === 'false') data.value = data.min;
-                        if (newVal === true  || newVal === 'true')  data.value = data.max;
-                    }
+            if (data['oid-battery']) {
+                $div.append('<div class="vis-hq-battery"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 48 48"><path d="M0 0h48v48h-48z" fill="none"/><path fill="#ff5555" transform="rotate(-90, 24, 24)" d="M31.33 8h-3.33v-4h-8v4h-3.33c-1.48 0-2.67 1.19-2.67 2.67v30.67c0 1.47 1.19 2.67 2.67 2.67h14.67c1.47 0 2.67-1.19 2.67-2.67v-30.67c-.01-1.48-1.2-2.67-2.68-2.67zm-5.33 28h-4v-4h4v4zm0-8h-4v-10h4v10z"/></svg></div>');
+            }
 
-                    vis.binds.hqWidgets.button.changeState($div);
-                    if (data.wType == 'number') {
-                        $main.scala('value', data.value);
-                    }
+            if (data['oid-working']) {
+                $div.append('<div class="vis-hq-working"><span class="ui-icon ui-icon-gear"></span></div>');
+            }
 
+            // find the right position for image and caption in the middle
+            if (data.offsetAuto) {
+                var $middle = $div.find('.vis-hq-table');
+                $middle.css({
+                    left: ($main.width()  - $middle.width()) / 2,
+                    top:  ($main.height() - $middle.height()) / 2
                 });
-
-                if (data.wType == 'number') {
-                    $main.scala({
-                        change: function (value) {
-                            data.value = parseFloat(value);
-                            if (data.digits !== null) data.value = data.value.toFixed(data.digits);
-                            if (data.is_comma) data.value = data.value.toString().replace('.', ',');
-                            data.value = parseFloat(data.value);
-                            vis.binds.hqWidgets.button.changeState($div);
-                            vis.setValue(data.oid, data.value);
-                        },
-                        changing: function (value) {
-                            data.value = value;
-                            if (data.digits !== null) data.value = data.value.toFixed(data.digits);
-                            if (data.is_comma) data.value = data.value.toString().replace('.', ',');
-                            data.value = parseFloat(data.value);
-                            vis.binds.hqWidgets.button.changeState($div);
-                        },
-                        click: function (val) {
-                            if (val - data.min > ((data.max - data.min) / 2)) {
-                                val = data.min;
-                            } else {
-                                val = data.max;
-                            }
-                            return val;
-                        }
+                if (img) {
+                    $div.find('.vis-hq-icon-img').load(function () {
+                        var $middle = $div.find('.vis-hq-table');
+                        $middle.css({
+                            left: ($main.width()  - $middle.width()) / 2,
+                            top:  ($main.height() - $middle.height()) / 2
+                        });
                     });
+                }
+            }
 
-                    $main.click(function () {
-                        /*if (data.value - data.min > ((data.max - data.min) / 2)) {
-                            data.value = data.min;
-                        } else {
-                            data.value = data.max;
+            // action
+            if (!vis.editMode) {
+                if (data.oid) {
+
+                    $div.append('<div class="vis-hq-nodata"><span class="ui-icon ui-icon-cancel"></span></div>');
+
+                    vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
+                        data.value = newVal;
+                        data.ack   = vis.states[data.oid + '.ack'];
+
+                        if (data.wType == 'number') {
+                            if (newVal === false || newVal === 'false') data.value = data.min;
+                            if (newVal === true  || newVal === 'true')  data.value = data.max;
                         }
-                        $main.scala('value', data.value);
+
                         vis.binds.hqWidgets.button.changeState($div);
-                        vis.setValue(data.oid, data.value);*/
+
+                        if (data.wType == 'number') {
+                            $main.scala('value', data.value);
+                        }
                     });
-                } else {
+                }
+
+                if (data['oid-working']) {
+                    vis.states.bind(data['oid-working'] + '.val', function (e, newVal, oldVal) {
+                        data.working = newVal;
+                        vis.binds.hqWidgets.button.changeState($div);
+                    });
+                }
+
+                if (data['oid-battery']) {
+                    vis.states.bind(data['oid-battery'] + '.val', function (e, newVal, oldVal) {
+                        data.battery = newVal;
+                        vis.binds.hqWidgets.button.changeState($div);
+                    });
+                }
+
+                if (data['oid-signal']) {
+                    vis.states.bind(data['oid-signal'] + '.val', function (e, newVal, oldVal) {
+                        data.signal = newVal;
+                        vis.binds.hqWidgets.button.changeState($div);
+                    });
+                }
+
+                if (data['oid-humidity']) {
+                    vis.states.bind(data['oid-humidity'] + '.val', function (e, newVal, oldVal) {
+                        data.humidity = newVal;
+                        vis.binds.hqWidgets.button.changeState($div);
+                    });
+                }
+
+                if (data['set-oid']) {
+                    vis.states.bind(data['set-oid'] + '.val', function (e, newVal, oldVal) {
+                        data.set = newVal;
+                        vis.binds.hqWidgets.button.changeState($div);
+                    });
+                }
+
+                if (data['drive-oid']) {
+                    vis.states.bind(data['drive-oid'] + '.val', function (e, newVal, oldVal) {
+                        data.drive = newVal;
+                        vis.binds.hqWidgets.button.changeState($div);
+                    });
+                }
+            }
+            // initiate state
+            vis.binds.hqWidgets.button.changeState($div, true);
+
+            // If dimmer or number
+            if (data.wType == 'number') {
+                var scalaOptions = {
+                    change: function (value) {
+                        data.value = parseFloat(value);
+                        if (data.digits !== null) data.value = data.value.toFixed(data.digits);
+                        if (data.is_comma) data.value = data.value.toString().replace('.', ',');
+                        data.value = parseFloat(data.value);
+                        data.ack   = false;
+                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.setValue(data.oid, data.value);
+                    },
+                    changing: function (value) {
+                        data.value = value;
+                        if (data.digits !== null) data.value = data.value.toFixed(data.digits);
+                        if (data.is_comma) data.value = data.value.toString().replace('.', ',');
+                        data.value = parseFloat(data.value);
+                        vis.binds.hqWidgets.button.changeState($div);
+                    },
+                    click: function (val) {
+                        if (val - data.min > ((data.max - data.min) / 2)) {
+                            val = data.min;
+                        } else {
+                            val = data.max;
+                        }
+                        return val;
+                    },
+                    alwaysShow: data.alwaysShow,
+                    hideNumber: !data.showValue,
+                    readOnly: vis.editMode,
+                    width: ((100 + parseInt(data.circleWidth, 10)) * width / 100).toFixed(0)
+                };
+
+                // show for temperature color depends on value
+                if (data.temperature) {
+                    scalaOptions.colorize = function (color, value, isPrevious) {
+                        var ratio = (value - data.min) / (data.max - data.min);
+                        return 'hsla(' + (180 + Math.round(180 * ratio)) + ', 70%, 50%, ' + ((isPrevious) ? 0.7 : 0.9) + ')';
+                    }
+                }
+                $main.scala(scalaOptions);
+            } else {
+                if (!vis.editMode && data.oid) {
                     $main.click(function () {
-                        data.value = (data.state == 'normal') ? data.max : data.min
+                        data.value = (data.state == 'normal') ? data.max : data.min;
+                        data.ack   = false;
                         vis.binds.hqWidgets.button.changeState($div);
                         vis.setValue(data.oid, data.value);
                     });
@@ -448,7 +760,16 @@ vis.binds.hqWidgets = {
             $div.data('data',  data);
             $div.data('style', style);
 
-            data.value = vis.states.attr(data.oid + '.val');
+            if (data.oid) {
+                data.value = vis.states.attr(data.oid + '.val');
+                data.ack   = vis.states.attr(data.oid + '.ack');
+            }
+            if (data['oid-working'])  data.working  = vis.states.attr(data['oid-working']  + '.val');
+            if (data['oid-battery'])  data.battery  = vis.states.attr(data['oid-battery']  + '.val');
+            if (data['oid-signal'])   data.signal   = vis.states.attr(data['oid-signal']   + '.val');
+            if (data['oid-humidity']) data.humidity = vis.states.attr(data['oid-humidity'] + '.val');
+            if (data['set-oid'])      data.set      = vis.states.attr(data['set-oid']      + '.val');
+            if (data['drive-oid'])    data.drive    = vis.states.attr(data['drive-oid']    + '.val');
 
             vis.binds.hqWidgets.button.draw($div);
         }
