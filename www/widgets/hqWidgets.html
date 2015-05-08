@@ -15,7 +15,7 @@
         data-vis-type="ctrl,bool"
         data-vis-attrs="oid[nothing_selected]/id/changedId;oid-working;oid-battery;oid-signal;"
         data-vis-attrs0="group.value;min[0];max[1];"
-        data-vis-attrs1="group.visual;iconName[~vis~img~bulb_off.png]/image;iconOn/image;caption;descriptionLeft;infoRight;topOffset[55]/slider,0,100,1;btIconWidth[56]/slider,0,400,1;"
+        data-vis-attrs1="group.visual;iconName[~vis~img~bulb_off.png]/image;iconOn/image;caption;descriptionLeft;infoRight;topOffset[55]/slider,0,100,1;btIconWidth[56]/slider,0,400,1;infoFontSize[12]/slider,6,50,1;"
         data-vis-attrs2="group.styles;styleNormal/style,hqButtons,-button,background;styleActive/style,hqButtons,-button,background;usejQueryStyle/checkbox;"
         data-vis-attrs3="group.test;testActive/checkbox"
         data-vis-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-PCB,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM,HMW-IO-12-Sw14-DR,HMW-IO-12-Sw7-DR,HM-ES-PMSw1-Pl">
@@ -30,11 +30,11 @@
         data-vis-name="Dimmer"
         data-vis-type="ctrl,dimmer"
         data-vis-update-style="true"
-        data-vis-attrs="oid[nothing_selected]/id/changedId;oid-working;oid-battery;oid-signal;min[0];max[100];unit[%];"
-        data-vis-attrs0="group.value;min[0];max[100];digits[0];is_comma[true]/checkbox;"
-        data-vis-attrs0="group.visual;iconName[~vis~img~bulb_off.png]/image;iconOn/image;caption;descriptionLeft;topOffset[55]/slider,0,100,1;btIconWidth[56]/slider,0,400,1;"
-        data-vis-attrs1="group.styles;styleNormal/style,hqButtons,-button,background;styleActive/style,hqButtons,-button,background;usejQueryStyle/checkbox;"
-        data-vis-attrs2="group.test;testActive/checkbox"
+        data-vis-attrs="oid[nothing_selected]/id/changedId;oid-working;oid-battery;oid-signal;"
+        data-vis-attrs0="group.value;unit[%];min[0];max[100];digits[0];is_comma[true]/checkbox;"
+        data-vis-attrs1="group.visual;iconName[~vis~img~bulb_off.png]/image;iconOn/image;caption;descriptionLeft;topOffset[55]/slider,0,100,1;btIconWidth[56]/slider,0,400,1;infoFontSize[12]/slider,6,50,1;"
+        data-vis-attrs2="group.styles;styleNormal/style,hqButtons,-button,background;styleActive/style,hqButtons,-button,background;usejQueryStyle/checkbox;"
+        data-vis-attrs3="group.test;testActive/checkbox"
         data-vis-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-PCB,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM,HMW-IO-12-Sw14-DR,HMW-IO-12-Sw7-DR,HM-ES-PMSw1-Pl">
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px; border-radius: 64px" id="<%= this.data.attr('wid') %>"><%
             vis.binds.hqWidgets.button.init(this.data.wid, this.view, this.data, this.style, 'number');
@@ -48,11 +48,11 @@
         data-vis-name="Inner temperature"
         data-vis-type="ctrl,temperature"
         data-vis-update-style="true"
-        data-vis-attrs="oid[nothing_selected]/id/changedId;oid-working;oid-battery;oid-signal;min[0];max[100];unit[%];"
-        data-vis-attrs0="group.value;min[0];max[100];digits[0];is_comma[true]/checkbox;"
-        data-vis-attrs0="group.visual;iconName[~vis~img~bulb_off.png]/image;iconOn/image;caption;descriptionLeft;topOffset[55]/slider,0,100,1;btIconWidth[56]/slider,0,400,1;"
-        data-vis-attrs1="group.styles;styleNormal/style,hqButtons,-button,background;styleActive/style,hqButtons,-button,background;usejQueryStyle/checkbox;"
-        data-vis-attrs2="group.test;testActive/checkbox"
+        data-vis-attrs="oid[nothing_selected]/id/changedId;oid-working;oid-battery;oid-signal;"
+        data-vis-attrs0="group.value;unit[%];min[0];max[100];digits[0];is_comma[true]/checkbox;"
+        data-vis-attrs1="group.visual;iconName[~vis~img~bulb_off.png]/image;iconOn/image;caption;descriptionLeft;topOffset[55]/slider,0,100,1;btIconWidth[56]/slider,0,400,1;infoFontSize[12]/slider,6,50,1;"
+        data-vis-attrs2="group.styles;styleNormal/style,hqButtons,-button,background;styleActive/style,hqButtons,-button,background;usejQueryStyle/checkbox;"
+        data-vis-attrs3="group.test;testActive/checkbox"
         data-vis-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-PCB,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM,HMW-IO-12-Sw14-DR,HMW-IO-12-Sw7-DR,HM-ES-PMSw1-Pl">
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px; border-radius: 64px" id="<%= this.data.attr('wid') %>"><%
             this.data.temperature = true;

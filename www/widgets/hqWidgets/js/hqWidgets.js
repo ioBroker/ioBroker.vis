@@ -260,7 +260,7 @@ vis.binds.hqWidgets = {
         changeState: function ($div) {
             var data = $div.data('data');
 
-            if (data.oldValue == data.value) return;
+            if (data.oldValue !== undefined && data.oldValue == data.value) return;
 
             console.log('New state ' + data.value);
 
@@ -316,11 +316,11 @@ vis.binds.hqWidgets = {
             if (!$div.find('.vis-hq-main').length) {
                 var text = '';
                 if (data.descriptionLeft) {
-                    text += '<div class="vis-hq-leftinfo" style="padding-left: 15px; padding-right:50px">' +
+                    text += '<div class="vis-hq-leftinfo" style="padding-left: 15px; padding-right:50px; font-size: ' + data.infoFontSize + 'px">' +
                         (data.descriptionLeft || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</div>\n';
                 }
                 if (data.infoRight || data.wType == 'number') {
-                    text += '<div class="vis-hq-rightinfo" style="padding-right: 15px;">' +
+                    text += '<div class="vis-hq-rightinfo" style="padding-right: 15px; font-size: ' + data.infoFontSize + 'px">' +
                         (data.infoRight || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</div>\n';
                 }
                 text += '<div class="vis-hq-main" style="z-index: 1">\n';
