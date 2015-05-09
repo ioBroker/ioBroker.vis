@@ -128,6 +128,10 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+### 0.3.2 (2015-05-09)
+- (bluefox) fix errors in binding
+- (bluefox) start implement hqWidgets
+
 ### 0.3.1 (2015-05-01)
 - (bluefox) support of binding with formula "{object;*(2);/(3)}"
 

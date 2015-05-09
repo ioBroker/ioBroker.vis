@@ -82,9 +82,8 @@
                         setValue($knobDiv._oldValue);
                         if (settings.click) {
                             var newVal = settings.click($knobDiv._oldValue);
-                            if (newVal !== undefined) {
-                                setValue(newVal);
-                            }
+
+                            if (newVal !== undefined) setValue(newVal);
                         }
                     } else {
                         // remove unit
@@ -164,7 +163,6 @@
                 hide(event);
 
                 if ($knobDiv._pressTimer) {
-                    console.log('click detected');
                     clearTimeout($knobDiv._pressTimer);
                 }
             }
@@ -420,7 +418,16 @@ if (vis.editMode) {
 
     });
 }
-
+$.extend(true, systemDictionary, {
+    "for&nbsp;%s&nbsp;min.":  {"en": "for&nbsp;%s&nbsp;min.", "de": "vor&nbsp;%s&nbsp;Min.", "ru": "%s&nbsp;мин. назад"},
+    "for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.": {
+        "en": "for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.",
+        "de": "vor&nbsp;%s&nbsp;St.&nbsp;und&nbsp;%s&nbsp;Min.",
+        "ru": "%s&nbsp;часов&nbsp;и&nbsp;%s&nbsp;мин. назад"
+    },
+    "yesterday":              {"en": "yesterday", "de": "gestern", "ru": "вчера"},
+    "for&nbsp;%s&nbsp;hours": {"en": "for&nbsp;%s&nbsp;hours", "de": "vor&nbsp;%s&nbsp;Stunden", "ru": "%s&nbsp;часов назад"}
+});
 // widget can has following parts:
 // left info (descriptionLeft)
 // right info (additional info)
@@ -438,29 +445,119 @@ if (vis.editMode) {
 // </div>
 
 vis.binds.hqWidgets = {
+    getTimeInterval: function (oldTime, hoursToShow) {
+        var result = '';
+
+        var newTime = new Date ();
+
+        if (!oldTime) return '';
+        if (typeof oldTime == 'string') {
+            oldTime = new Date(oldTime);
+        } else {
+            if (typeof oldTime == 'number') oldTime = new Date(oldTime * 1000);
+        }
+
+        var seconds = (newTime.getTime() - oldTime.getTime ()) / 1000;
+
+        if (hoursToShow && (seconds / 3600) > hoursToShow) return '';
+
+        if (seconds <= 3600)
+            result = _('for&nbsp;%s&nbsp;min.', Math.floor (seconds / 60));
+        else
+        if (seconds <= 3600 * 24)
+            result = _('for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.', Math.floor (seconds / 3600), (Math.floor (seconds / 60) % 60));
+        else
+        if (seconds > 3600 * 24 && seconds <= 3600 * 48)
+            result = _('yesterday');
+        else
+        if (seconds > 3600*48) {
+            result = _('for&nbsp;%s&nbsp;hours', Math.floor (seconds / 3600));
+        }
+
+        return result;
+    },
     button: {
-        // Calculate state of button
-        changeState: function ($div, isInit) {
+        showRightInfo: function ($div, value) {
             var data = $div.data('data');
 
-            if (data.oldValue !== undefined && data.oldValue == data.value) return;
+            var time  = null;
+            var timer = null;
+            if (data.hoursLastAction) {
+                // show time interval. It must be updated every minute
+                if (data.timeAsInterval) {
+                    time = vis.binds.hqWidgets.getTimeInterval(data.lc, data.hoursLastAction);
+                    $div.find('.vis-hq-time').html(time);
+                    if (!vis.editMode) {
+                        timer = $div.data('lastTimer');
+                        if (!timer) {
+                            timer = setInterval(function () {
+                                var time = vis.binds.hqWidgets.getTimeInterval(data.lc, data.hoursLastAction);
+                                $div.find('.vis-hq-time').html(time);
+
+                                if (time && $div.find('.vis-hq-time').text()){
+                                    $div.find('.vis-hq-rightinfo').show();
+                                } else {
+                                    $div.find('.vis-hq-rightinfo').hide();
+                                }
+                            }, 60000);
+
+                            $div.data('lastTimer', timer);
+                        }
+                    }
+
+                } else {
+                    // Show static date
+                    time = vis.binds.basic.formatDate(data.lc, true, data.format_date);
+                    $div.find('.vis-hq-time').html(time);
+                }
+            }
+
+            // Kill timer if not required
+            if (!timer) {
+                var t = $div.data('lastTimer');
+                if (t) clearTimeout(t);
+            }
+
+            // Set number value
+            var text = null;
+            if (data.wType == 'number') {
+                text = $div.find('.vis-hq-rightinfo-text').html(((value === undefined || value === null) ? data.min : value) + ((data.unit === undefined) ? '' : data.unit));
+            }
+
+            // Hide right info if empty
+            if (time || (text && text.text())) {
+                $div.find('.vis-hq-rightinfo').show();
+            } else {
+                $div.find('.vis-hq-rightinfo').hide();
+            }
+
+        },
+        // Calculate state of button
+        changeState: function ($div, isInit, isForce) {
+            var data = $div.data('data');
+
+            var value = (data.tempValue !== undefined) ? data.tempValue : data.value;
+
+            if (!isForce && data.oldValue !== undefined && data.oldValue == value) return;
+
+            data.oldValue = value;
 
             if (vis.editMode && data.testActive) {
                 data.state = 'active';
             } else
-            if (data.temperature ||
-                data.value == data.min ||
-                data.value === null ||
-                data.value === '' ||
-                data.value === undefined ||
-                data.value === 'false'||
-                data.value === false) {
+            if (data.temperature  ||
+                value == data.min ||
+                value === null    ||
+                value === ''      ||
+                value === undefined ||
+                value === 'false' ||
+                value === false) {
                 data.state = 'normal';
             } else {
                 data.state = 'active';
             }
 
-            if (data.value !== null && data.value !== undefined) {
+            if (value !== null && value !== undefined) {
                 $div.find('.vis-hq-nodata').remove();
             }
 
@@ -485,9 +582,8 @@ vis.binds.hqWidgets = {
 
                     break;
             }
-            if (data.wType == 'number') {
-                $div.find('.vis-hq-rightinfo').html(((data.value === undefined || data.value === null) ? data.min : data.value) + ((data.unit === undefined) ? '' : data.unit));
-            }
+
+            vis.binds.hqWidgets.button.showRightInfo($div, value);
 
             if (!data.ack || (data['oid-working'] && data.working)) {
                 $div.find('.vis-hq-working').show();
@@ -519,6 +615,7 @@ vis.binds.hqWidgets = {
                 $div.find('.vis-hq-drive').html(data.drive);
             }
 
+            // Show change effect
             if (data.changeEffect && (!isInit || (vis.editMode && data.testActive))) {
                 var $main = $div.find('.vis-hq-main');
                 $main.animateDiv(data.changeEffect, {color: data.waveColor});
@@ -537,12 +634,18 @@ vis.binds.hqWidgets = {
             if (!$div.find('.vis-hq-main').length) {
                 var text = '';
                 if (data.descriptionLeft) {
-                    text += '<div class="vis-hq-leftinfo" style="padding-left: 15px; padding-right:50px; font-size: ' + (data.infoLeftFontSize || 12) + 'px">' +
-                        (data.descriptionLeft || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</div>\n';
+                    text += '<div class="vis-hq-leftinfo" style="padding-left: 15px; padding-right:50px; font-size: ' + (data.infoLeftFontSize || 12) + 'px"><span class="vis-hq-leftinfo-text">' +
+                        (data.descriptionLeft || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</span></div>\n';
                 }
-                if (data.infoRight || data.wType == 'number') {
-                    text += '<div class="vis-hq-rightinfo" style="padding-right: 15px; font-size: ' + (data.infoFontRightSize || 12) + 'px">' +
-                        (data.infoRight || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</div>\n';
+                if (data.infoRight || data.wType == 'number' || data.hoursLastAction) {
+                    text += '<div class="vis-hq-rightinfo" style="padding-right: 15px; font-size: ' + (data.infoFontRightSize || 12) + 'px"><span class="vis-hq-rightinfo-text">' +
+                        (data.infoRight || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</span>';
+
+                    if (data.hoursLastAction) {
+                        text += '<span class="vis-hq-time"></span>';
+                    }
+
+                    text += '</div>\n';
                 }
                 text += '<div class="vis-hq-main" style="z-index: 1"><div class="vis-hq-middle">\n';
 
@@ -615,6 +718,7 @@ vis.binds.hqWidgets = {
                     vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
                         data.value = newVal;
                         data.ack   = vis.states[data.oid + '.ack'];
+                        data.lc    = vis.states[data.oid + '.lc'];
 
                         if (data.wType == 'number') {
                             if (newVal === false || newVal === 'false') data.value = data.min;
@@ -632,45 +736,46 @@ vis.binds.hqWidgets = {
                 if (data['oid-working']) {
                     vis.states.bind(data['oid-working'] + '.val', function (e, newVal, oldVal) {
                         data.working = newVal;
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, true);
                     });
                 }
 
                 if (data['oid-battery']) {
                     vis.states.bind(data['oid-battery'] + '.val', function (e, newVal, oldVal) {
                         data.battery = newVal;
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, true);
                     });
                 }
 
                 if (data['oid-signal']) {
                     vis.states.bind(data['oid-signal'] + '.val', function (e, newVal, oldVal) {
                         data.signal = newVal;
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, true);
                     });
                 }
 
                 if (data['oid-humidity']) {
                     vis.states.bind(data['oid-humidity'] + '.val', function (e, newVal, oldVal) {
                         data.humidity = newVal;
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, true);
                     });
                 }
 
                 if (data['set-oid']) {
                     vis.states.bind(data['set-oid'] + '.val', function (e, newVal, oldVal) {
                         data.set = newVal;
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, true);
                     });
                 }
 
                 if (data['drive-oid']) {
                     vis.states.bind(data['drive-oid'] + '.val', function (e, newVal, oldVal) {
                         data.drive = newVal;
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, true);
                     });
                 }
             }
+
             // initiate state
             vis.binds.hqWidgets.button.changeState($div, true);
 
@@ -683,22 +788,26 @@ vis.binds.hqWidgets = {
                         if (data.is_comma) data.value = data.value.toString().replace('.', ',');
                         data.value = parseFloat(data.value);
                         data.ack   = false;
+                        console.log('Set value: ' + data.value);
+                        data.tempValue = undefined;
                         vis.binds.hqWidgets.button.changeState($div);
                         vis.setValue(data.oid, data.value);
                     },
                     changing: function (value) {
-                        data.value = value;
-                        if (data.digits !== null) data.value = data.value.toFixed(data.digits);
-                        if (data.is_comma) data.value = data.value.toString().replace('.', ',');
-                        data.value = parseFloat(data.value);
+                        data.tempValue = value;
+                        if (data.digits !== null) data.tempValue = data.tempValue.toFixed(data.digits);
+                        if (data.is_comma) data.tempValue = data.tempValue.toString().replace('.', ',');
+                        data.tempValue = parseFloat(data.tempValue);
                         vis.binds.hqWidgets.button.changeState($div);
                     },
                     click: function (val) {
+                        val = data.value;
                         if (val - data.min > ((data.max - data.min) / 2)) {
                             val = data.min;
                         } else {
                             val = data.max;
                         }
+                        console.log('Click. Set value ' + val);
                         return val;
                     },
                     alwaysShow: data.alwaysShow,
@@ -753,8 +862,8 @@ vis.binds.hqWidgets = {
 
             data.styleNormal = data.usejQueryStyle ? 'ui-state-default' : (data.styleNormal || 'hq-button-base-normal');
             data.styleActive = data.usejQueryStyle ? 'ui-state-active'  : (data.styleActive || 'hq-button-base-on');
-            data.min = (data.min !== undefined) ? parseFloat(data.min) : 0;
-            data.max = (data.max !== undefined) ? parseFloat(data.max) : 100;
+            data.min = (data.min === 'true' || data.min === true) ? true : ((data.min === 'false' || data.min === false) ? false : ((data.min !== undefined) ? parseFloat(data.min) : 0));
+            data.max = (data.max === 'true' || data.max === true) ? true : ((data.max === 'false' || data.max === false) ? false : ((data.max !== undefined) ? parseFloat(data.max) : 100));
             data.digits = (!data.digits && data.digits !== 0) ? parseInt(data.digits, 10) : null;
 
             $div.data('data',  data);
@@ -763,6 +872,7 @@ vis.binds.hqWidgets = {
             if (data.oid) {
                 data.value = vis.states.attr(data.oid + '.val');
                 data.ack   = vis.states.attr(data.oid + '.ack');
+                data.lc    = vis.states.attr(data.oid + '.lc');
             }
             if (data['oid-working'])  data.working  = vis.states.attr(data['oid-working']  + '.val');
             if (data['oid-battery'])  data.battery  = vis.states.attr(data['oid-battery']  + '.val');

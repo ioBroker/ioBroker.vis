@@ -810,6 +810,8 @@
                 isSeconds = false;
             }
 
+            if (format == 'auto') format = (vis.dateFormat || 'DD.MM.YYYY') + ' hh:mm:ss';
+
             var format = format || vis.dateFormat || 'DD.MM.YYYY';
 
             if (!dateObj) return '';
