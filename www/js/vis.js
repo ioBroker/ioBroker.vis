@@ -810,7 +810,7 @@ var vis = {
 
         try {
             // Append html element to view
-            if (widget.data && widget.data.oid) {
+            /*if (widget.data && widget.data.oid) {
                 $view.append(can.view(widget.tpl, {
                     val: this.states[widget.data.oid + '.val'],
                     ts:  this.states[widget.data.oid + '.ts'],
@@ -819,7 +819,7 @@ var vis = {
                     data: widgetData,
                     view: view
                 }));
-            } else {
+            } else */{
                 $view.append(can.view(widget.tpl, {data: widgetData, view: view}));
             }
 
@@ -1653,7 +1653,20 @@ window.onpopstate();
 (function ($) {
     $(document).ready(function () {
         // On some platfors, the can.js is not immediately ready
-        vis.states = new can.Map({'nothing_selected.val': null});
+        if (vis.editMode) {
+            vis.states = {
+                'nothing_selected.val': null,
+                attr: function (id) {
+                    return vis.states[id];
+                },
+                bind: function (id, callback) {
+                    console.log('ERROR: binding in edit mode is not allowed on ' + id);
+                }
+            }
+
+        } else {
+            vis.states = new can.Map({'nothing_selected.val': null});
+        }
 
         // für iOS Safari - wirklich notwendig?
         $('body').on('touchmove', function (e) {
@@ -1767,17 +1780,21 @@ window.onpopstate();
                             if (data) {
                                 for (var id in data) {
                                     var obj = data[id];
-                                    var o = {};
-                                    o[id + '.val'] = obj.val;
-                                    o[id + '.ts']  = obj.ts;
-                                    // BF @ HQ: Why?
-                                    if (true){ //} || vis.states[id + '.val'] !== undefined) {
-                                        o[id + '.ack'] = obj.ack;
-                                        o[id + '.lc']  = obj.lc;
-                                    }
 
                                     try {
-                                        vis.states.attr(o);
+                                        if (vis.editMode) {
+                                            vis.states[id + '.val'] = obj.val;
+                                            vis.states[id + '.ts']  = obj.ts;
+                                            vis.states[id + '.ack'] = obj.ack;
+                                            vis.states[id + '.lc']  = obj.lc;
+                                        } else {
+                                            var o = {};
+                                            o[id + '.val'] = obj.val;
+                                            o[id + '.ts']  = obj.ts;
+                                            o[id + '.ack'] = obj.ack;
+                                            o[id + '.lc']  = obj.lc;
+                                            vis.states.attr(o);
+                                        }
                                     } catch (e) {
                                         vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
                                     }
@@ -1789,22 +1806,30 @@ window.onpopstate();
                                     }
                                 }
                             }
+
                             // Create non-existing IDs
                             if (vis.IDs) {
                                 var now = new Date().getTime() / 1000;
                                 for (var id in vis.IDs) {
                                     if (vis.states[vis.IDs[id] + '.val'] === undefined) {
-                                        console.log('Create inner vis object ' + id);
-                                        var o = {};
-                                        o[id + '.val'] = 0;
-                                        o[id + '.ts']  = now;
-                                        o[id + '.ack'] = false;
-                                        o[id + '.lc']  = now;
+                                        console.log('Create inner vis object ' + vis.IDs[id]);
+                                        if (vis.editMode) {
+                                            vis.states[id + '.val'] = 0;
+                                            vis.states[id + '.ts']  = now;
+                                            vis.states[id + '.ack'] = false;
+                                            vis.states[id + '.lc']  = now;
+                                        } else {
+                                            var o = {};
+                                            o[id + '.val'] = 0;
+                                            o[id + '.ts']  = now;
+                                            o[id + '.ack'] = false;
+                                            o[id + '.lc']  = now;
 
-                                        try {
-                                            vis.states.attr(o);
-                                        } catch (e) {
-                                            vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                                            try {
+                                                vis.states.attr(o);
+                                            } catch (e) {
+                                                vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                                            }
                                         }
 
                                         if (!vis.editMode && vis.bindings[id]) {
@@ -1873,60 +1898,62 @@ window.onpopstate();
                 window.location.reload();
             },
             onUpdate:     function (id, state) {
-                var o = {};
-                // Check new model
-                o[id + '.val'] = state.val;
-                o[id + '.ts']  = state.ts;
-                if (vis.states[id + '.val'] !== undefined) {
-                    o[id + '.ack'] = state.ack;
-                    o[id + '.lc']  = state.lc;
-                }
-                try {
-                    vis.states.attr(o);
-                } catch (e) {
-                    vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
-                }
+                _setTimeout(function (id, state) {
+                    var o = {};
+                    // Check new model
+                    o[id + '.val'] = state.val;
+                    o[id + '.ts']  = state.ts;
+                    if (vis.states[id + '.val'] !== undefined) {
+                        o[id + '.ack'] = state.ack;
+                        o[id + '.lc']  = state.lc;
+                    }
+                    try {
+                        vis.states.attr(o);
+                    } catch (e) {
+                        vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                    }
 
-                if (!vis.editMode && vis.visibility[id]) {
-                    for (var i = 0; i < vis.visibility[id].length; i++) {
-                        var mWidget = document.getElementById(vis.visibility[id][i].widget);
-                        if (!mWidget) continue;
-                        if (vis.isWidgetHidden(vis.visibility[id][i].view, vis.visibility[id][i].widget, state.val) ||
-                            vis.isWidgetFilteredOut(vis.visibility[id][i].view, vis.visibility[id][i].widget)) {
-                            $(mWidget).hide();
-                            if (mWidget &&
-                                mWidget._customHandlers &&
-                                mWidget._customHandlers.onHide) {
-                                mWidget._customHandlers.onHide(mWidget, id);
-                            }
-                        } else {
-                            $(mWidget).show();
-                            if (mWidget &&
-                                mWidget._customHandlers &&
-                                mWidget._customHandlers.onShow) {
-                                mWidget._customHandlers.onShow(mWidget, id);
+                    if (!vis.editMode && vis.visibility[id]) {
+                        for (var i = 0; i < vis.visibility[id].length; i++) {
+                            var mWidget = document.getElementById(vis.visibility[id][i].widget);
+                            if (!mWidget) continue;
+                            if (vis.isWidgetHidden(vis.visibility[id][i].view, vis.visibility[id][i].widget, state.val) ||
+                                vis.isWidgetFilteredOut(vis.visibility[id][i].view, vis.visibility[id][i].widget)) {
+                                $(mWidget).hide();
+                                if (mWidget &&
+                                    mWidget._customHandlers &&
+                                    mWidget._customHandlers.onHide) {
+                                    mWidget._customHandlers.onHide(mWidget, id);
+                                }
+                            } else {
+                                $(mWidget).show();
+                                if (mWidget &&
+                                    mWidget._customHandlers &&
+                                    mWidget._customHandlers.onShow) {
+                                    mWidget._customHandlers.onShow(mWidget, id);
+                                }
                             }
                         }
                     }
-                }
 
-                // Bindings on every element
-                if (!vis.editMode && vis.bindings[id]) {
-                    for (var i = 0; i < vis.bindings[id].length; i++) {
-                        var value = vis.formatBinding(vis.bindings[id][i].format);
+                    // Bindings on every element
+                    if (!vis.editMode && vis.bindings[id]) {
+                        for (var i = 0; i < vis.bindings[id].length; i++) {
+                            var value = vis.formatBinding(vis.bindings[id][i].format);
 
-                        vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = value;
-                        if (vis.widgets[vis.bindings[id][i].widget] && vis.bindings[id][i].type == 'data') {
-                            vis.widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type + '.' + vis.bindings[id][i].attr] = value;
+                            vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = value;
+                            if (vis.widgets[vis.bindings[id][i].widget] && vis.bindings[id][i].type == 'data') {
+                                vis.widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type + '.' + vis.bindings[id][i].attr] = value;
+                            }
+                            vis.reRenderWidget(vis.bindings[id][i].view, vis.bindings[id][i].widget);
                         }
-                        vis.reRenderWidget(vis.bindings[id][i].view, vis.bindings[id][i].widget);
                     }
-                }
 
-                // Inform other widgets, that do not support canJS
-                for (var j = 0, len = vis.onChangeCallbacks.length; j < len; j++) {
-                    vis.onChangeCallbacks[j].callback(vis.onChangeCallbacks[j].arg, id, state.val, state.ack);
-                }
+                    // Inform other widgets, that do not support canJS
+                    for (var j = 0, len = vis.onChangeCallbacks.length; j < len; j++) {
+                        vis.onChangeCallbacks[j].callback(vis.onChangeCallbacks[j].arg, id, state.val, state.ack);
+                    }
+                }, 0, id, state);
             },
             onAuth:       function (message, salt) {
                 if (vis.authRunning) {

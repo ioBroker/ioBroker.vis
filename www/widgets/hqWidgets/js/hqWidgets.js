@@ -508,6 +508,7 @@ if (vis.editMode) {
 }
 
 $.extend(true, systemDictionary, {
+    "just&nbsp;now":  {"en": "just&nbsp;now", "de": "gerade&nbsp;jetzt", "ru": "только&nbsp;что"},
     "for&nbsp;%s&nbsp;min.":  {"en": "for&nbsp;%s&nbsp;min.", "de": "vor&nbsp;%s&nbsp;Min.", "ru": "%s&nbsp;мин. назад"},
     "for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.": {
         "en": "for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.",
@@ -550,6 +551,9 @@ vis.binds.hqWidgets = {
 
         if (hoursToShow && (seconds / 3600) > hoursToShow) return '';
 
+        if (seconds < 60) {
+            result = _('just&nbsp;now');
+        } else
         if (seconds <= 3600)
             result = _('for&nbsp;%s&nbsp;min.', Math.floor (seconds / 60));
         else
@@ -622,7 +626,7 @@ vis.binds.hqWidgets = {
 
         },
         // Calculate state of button
-        changeState: function ($div, isInit, isForce) {
+        changeState: function ($div, isInit, isForce, isOwn) {
             var data = $div.data('data');
 
             var value = (data.tempValue !== undefined) ? data.tempValue : data.value;
@@ -700,7 +704,7 @@ vis.binds.hqWidgets = {
             }
 
             // Show change effect
-            if (data.changeEffect && (!isInit || (vis.editMode && data.testActive))) {
+            if (data.changeEffect && ((!isInit && !isOwn) || (vis.editMode && data.testActive))) {
                 var $main = $div.find('.vis-hq-main');
                 $main.animateDiv(data.changeEffect, {color: data.waveColor});
             }
@@ -726,6 +730,7 @@ vis.binds.hqWidgets = {
                         (data.infoRight || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</span>';
 
                     if (data.hoursLastAction) {
+                        if (data.infoRight || data.wType == 'number') text += '<br>';
                         text += '<span class="vis-hq-time"></span>';
                     }
 
@@ -872,7 +877,7 @@ vis.binds.hqWidgets = {
                         data.ack   = false;
                         console.log('Set value: ' + data.value);
                         data.tempValue = undefined;
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, false, true);
                         vis.setValue(data.oid, data.value);
                     },
                     changing: function (value) {
@@ -880,7 +885,7 @@ vis.binds.hqWidgets = {
                         if (data.digits !== null) data.tempValue = data.tempValue.toFixed(data.digits);
                         if (data.is_comma) data.tempValue = data.tempValue.toString().replace('.', ',');
                         data.tempValue = parseFloat(data.tempValue);
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, false, true);
                     },
                     click: function (val) {
                         val = data.value;
@@ -911,7 +916,7 @@ vis.binds.hqWidgets = {
                     $main.click(function () {
                         data.value = (data.state == 'normal') ? data.max : data.min;
                         data.ack   = false;
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, false, true);
                         vis.setValue(data.oid, data.value);
                     });
                 }
@@ -989,10 +994,12 @@ vis.binds.hqWidgets = {
 
             if (settings.oid) {
                 $scalaInput.val(vis.states[settings.oid + '.val']);
-                vis.states.bind(settings.oid + '.val', function (e, newVal, oldVal) {
-                    data.value = newVal;
-                    $scalaInput.val(data.value).trigger('change');
-                });
+                if (!vis.editMode) {
+                    vis.states.bind(settings.oid + '.val', function (e, newVal, oldVal) {
+                        data.value = newVal;
+                        $scalaInput.val(data.value).trigger('change');
+                    });
+                }
             } else {
                 $scalaInput.val(settings.min);
             }
@@ -1006,7 +1013,7 @@ vis.binds.hqWidgets = {
             $scalaInput.attr('data-angleArc',    data.angleArc);
             $scalaInput.attr('data-thickness',   data.thickness);
             $scalaInput.attr('data-linecap',     (settings.linecap === 'true' || settings.linecap === true) ? 'round' : 'butt');
-
+            $scalaInput.show();
             var $knobDiv = $scalaInput.knob({
                 width:   $div.width(),
                 release: function () {

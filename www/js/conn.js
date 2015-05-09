@@ -145,7 +145,11 @@ var servConn = {
                     return;
                 }
                 that._isConnected = true;
-                if (that._connCallbacks.onConnChange) that._connCallbacks.onConnChange(that._isConnected);
+                if (that._connCallbacks.onConnChange) {
+                    setTimeout(function () {
+                        that._connCallbacks.onConnChange(that._isConnected);
+                    }, 0);
+                }
                 //this._myParent._autoReconnect();
             });
 
@@ -251,7 +255,9 @@ var servConn = {
             if (!this._checkConnection('readFile', arguments)) return;
 
             this._socket.emit('readFile', this.namespace, filename, function (err, data) {
-                callback(err, data);
+                setTimeout(function () {
+                    callback(err, data);
+                }, 0);
             });
         }
     },
