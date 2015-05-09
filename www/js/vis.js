@@ -1929,10 +1929,10 @@ window.onpopstate();
             onUpdate:     function (id, state) {
                 _setTimeout(function (id, state) {
                     if (vis.editMode) {
-                        vis.statesEdit[id + '.val'] = state.val;
-                        vis.statesEdit[id + '.ts']  = state.ts;
-                        vis.statesEdit[id + '.ack'] = state.ack;
-                        vis.statesEdit[id + '.lc']  = state.lc;
+                        vis.states[id + '.val'] = state.val;
+                        vis.states[id + '.ts']  = state.ts;
+                        vis.states[id + '.ack'] = state.ack;
+                        vis.states[id + '.lc']  = state.lc;
                     } else {
                         var o = {};
                         // Check new model
