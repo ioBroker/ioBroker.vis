@@ -810,17 +810,20 @@ var vis = {
 
         try {
             // Append html element to view
-            /*if (widget.data && widget.data.oid) {
+            if (widget.data && widget.data.oid) {
                 $view.append(can.view(widget.tpl, {
                     val: this.states[widget.data.oid + '.val'],
-                    ts:  this.states[widget.data.oid + '.ts'],
-                    ack: this.states[widget.data.oid + '.ack'],
-                    lc:  this.states[widget.data.oid + '.lc'],
+                    //ts:  this.states[widget.data.oid + '.ts'],
+                    //ack: this.states[widget.data.oid + '.ack'],
+                    //lc:  this.states[widget.data.oid + '.lc'],
                     data: widgetData,
                     view: view
                 }));
-            } else */{
-                $view.append(can.view(widget.tpl, {data: widgetData, view: view}));
+            } else {
+                $view.append(can.view(widget.tpl, {
+                    data: widgetData,
+                    view: view
+                }));
             }
 
             if (!this.editMode) {
@@ -1900,10 +1903,10 @@ window.onpopstate();
             onUpdate:     function (id, state) {
                 _setTimeout(function (id, state) {
                     if (vis.editMode) {
-                        vis.states[id + '.val'] = obj.val;
-                        vis.states[id + '.ts']  = obj.ts;
-                        vis.states[id + '.ack'] = obj.ack;
-                        vis.states[id + '.lc']  = obj.lc;
+                        vis.states[id + '.val'] = state.val;
+                        vis.states[id + '.ts']  = state.ts;
+                        vis.states[id + '.ack'] = state.ack;
+                        vis.states[id + '.lc']  = state.lc;
                     } else {
                         var o = {};
                         // Check new model
