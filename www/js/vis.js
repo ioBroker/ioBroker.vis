@@ -1899,18 +1899,23 @@ window.onpopstate();
             },
             onUpdate:     function (id, state) {
                 _setTimeout(function (id, state) {
-                    var o = {};
-                    // Check new model
-                    o[id + '.val'] = state.val;
-                    o[id + '.ts']  = state.ts;
-                    if (vis.states[id + '.val'] !== undefined) {
+                    if (vis.editMode) {
+                        vis.states[id + '.val'] = obj.val;
+                        vis.states[id + '.ts']  = obj.ts;
+                        vis.states[id + '.ack'] = obj.ack;
+                        vis.states[id + '.lc']  = obj.lc;
+                    } else {
+                        var o = {};
+                        // Check new model
+                        o[id + '.val'] = state.val;
+                        o[id + '.ts']  = state.ts;
                         o[id + '.ack'] = state.ack;
                         o[id + '.lc']  = state.lc;
-                    }
-                    try {
-                        vis.states.attr(o);
-                    } catch (e) {
-                        vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                        try {
+                            vis.states.attr(o);
+                        } catch (e) {
+                            vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                        }
                     }
 
                     if (!vis.editMode && vis.visibility[id]) {
