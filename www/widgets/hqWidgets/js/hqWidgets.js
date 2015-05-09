@@ -410,14 +410,103 @@
             //$this.find('.ui-slider-range').removeClass("ui-widget-header").css({background: 'blue'});
         });
     };
+
+    $.fn.batteryIndicator = function (options, args) {
+        if (typeof options == 'string') {
+            if (options == 'show') {
+                return this.each(function () {
+                    var $this = $(this);
+                    if (args === undefined) args = true;
+
+                    if (args) {
+                        $this.find('.vis-hq-battery').show();
+                    } else {
+                        $this.find('.vis-hq-battery').hide();
+                    }
+                });
+            } else
+            if (options == 'show') {
+                return this.each(function () {
+                    $(this).find('.vis-hq-battery').show();
+                });
+            } else
+            if (options == 'hide') {
+                return this.each(function () {
+                    $(this).find('.vis-hq-battery').hide();
+                });
+            }
+            return;
+        }
+
+        options = options || {};
+        options.color = options.color || '#FF5555';
+        options.angle = (options.angle !== undefined) ? options.angle : -90;
+        options.size  = options.size || 32;
+
+        return this.each(function () {
+            var $this = $(this);
+
+            $this.data('options', options);
+            if ($this.find('.vis-hq-battery').length) return;
+
+            $this.append('<div class="vis-hq-battery">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" width="' + options.size + '" height="' + options.size + '" viewBox="0 0 48 48">' +
+                '<path d="M0 0h48v48h-48z" fill="none"/>' +
+                '<path fill="' + options.color + '" transform="rotate(' + options.angle + ', 24, 24)" d="M31.33 8h-3.33v-4h-8v4h-3.33c-1.48 0-2.67 1.19-2.67 2.67v30.67c0 1.47 1.19 2.67 2.67 2.67h14.67c1.47 0 2.67-1.19 2.67-2.67v-30.67c-.01-1.48-1.2-2.67-2.68-2.67zm-5.33 28h-4v-4h4v4zm0-8h-4v-10h4v10z"/></svg>' +
+                '</div>');
+            if (!options.show) {
+                $this.find('.vis-hq-battery').hide();
+            }
+        });
+    }
 }(jQuery));
 
 // Add words for bars
 if (vis.editMode) {
     $.extend(true, systemDictionary, {
-
+        "circleWidth":      {"en": "Сircle width",      "de": "Kreisbreite",            "ru": "Ширина дуги"},
+        "showValue":        {"en": "Show value",        "de": "Wert anzeigen",          "ru": "Показать значение"},
+        "alwaysShow":       {"en": "Always show circle", "de": "Kreis immer zeigen",    "ru": "Показывать круг всегда"},
+        "iconName":         {"en": "Icon",              "de": "Kleinbild",              "ru": "Миниатюра"},
+        "iconOn":           {"en": "Active icon",       "de": "Aktivbild",              "ru": "Активная миниатюра"},
+        "btIconWidth":      {"en": "Icon width",        "de": "Bildbreite",             "ru": "Ширина миниатюры"},
+        "offsetAuto":       {"en": "Auto positioning",  "de": "Positionieren(Auto)",    "ru": "Автоматическое позиционирование"},
+        "leftOffset":       {"en": "Left offset",       "de": "Offset links",           "ru": "Сдвиг слева"},
+        "topOffset":        {"en": "Top offset",        "de": "Offset von Oben",        "ru": "Сдвиг сверху"},
+        "group_leftRight":  {"en": "Descriptions",      "de": "Beschreibungen",         "ru": "Подписи"},
+        "hoursLastAction":  {"en": "Hide last action after(hrs)", "de": "Ausblenden letze Anderungszeit nach(Std)", "ru": "Скрыть последнее изменение(часов)"},
+        "timeAsInterval":   {"en": "Time as interval",  "de": "Zeit als Intervall",     "ru": "Время, как интервал"},
+        "descriptionLeft":  {"en": "Description (left)", "de": "Beschreibung (links)",  "ru": "Подпись (слева)"},
+        "infoLeftFontSize": {"en": "Left font size",    "de": "Schriftgrosse links",    "ru": "Размер шрифта слева"},
+        "infoRight":        {"en": "Description (right)", "de": "Beschreibung (rechts)", "ru": "Подпись (справа)"},
+        "infoFontRightSize": {"en": "Right font size",  "de": "Schriftgrosse rechts",   "ru": "Размер шрифта справа"},
+        "group_styles":     {"en": "Styles",            "de": "Stil",                   "ru": "Стили"},
+        "styleNormal":      {"en": "Normal",            "de": "Normal",                 "ru": "Нормальный"},
+        "styleActive":      {"en": "Active",            "de": "Aktiv",                 "ru": "Активный"},
+        "usejQueryStyle":   {"en": "Use jQuery Styles", "de": "jQuery Stil anwenden",   "ru": "Применить jQuery стили"},
+        "changeEffect":     {"en": "Change effect",     "de": "Anderungseffekt",        "ru": "Эффект при изменении"},
+        "waveColor":        {"en": "Wave color",        "de": "Wellenfarbe",            "ru": "Цвет волн"},
+        "testActive":       {"en": "Test",              "de": "Test",                   "ru": "Тест"},
+        "oid-battery":      {"en": "Battery object ID", "de": "Battery ObjektID",       "ru": "ID батарейного индикатора"},
+        "oid-signal":       {"en": "Signal object ID",  "de": "Signal ObjektID",        "ru": "ID качества сигнала"},
+        "group_value":      {"en": "Value",             "de": "Wert",                   "ru": "Значение"},
+        "unit":             {"en": "Unit",              "de": "Einheit",                "ru": "Единицы"},
+        "readOnly":         {"en": "Read only",         "de": "Nur lesend",             "ru": "Не изменять"},
+        "group_center":     {"en": "Center",            "de": "Zentrum",                "ru": "Центр"},
+        "caption":          {"en": "Caption",           "de": "Beschriftung",           "ru": "Подпись"},
+        "hideNumber":       {"en": "Hide number",       "de": "Nummer ausblenden",      "ru": "Скрыть число"},
+        "group_arc":        {"en": "Arc",               "de": "Bogen",                  "ru": "Дуга"},
+        "angleOffset":      {"en": "Angle offset",      "de": "Winkeloffset",           "ru": "Сдвиг дуги"},
+        "angleArc":         {"en": "Angle arc",         "de": "Bogenwinkel",            "ru": "Угол дуги"},
+        "displayPrevious":  {"en": "Display previous",  "de": "Letztes Wert zeigen",    "ru": "Показывать предыдущее значение"},
+        "cursor":           {"en": "Cursor",            "de": "Griff",                  "ru": "Ручка"},
+        "thickness":        {"en": "Thickness",         "de": "Dicke",                  "ru": "Толщина"},
+        "bgcolor":          {"en": "Background color",  "de": "Hintergrundfarbe",       "ru": "Цвет фона"},
+        "linecap":          {"en": "Line cap",          "de": "Linienende",             "ru": "Округлое окончание"},
+        "anticlockwise":    {"en": "Anticlockwise",     "de": "Gegenuhrzeigersinn",     "ru": "Против часовой стрелки"}
     });
 }
+
 $.extend(true, systemDictionary, {
     "for&nbsp;%s&nbsp;min.":  {"en": "for&nbsp;%s&nbsp;min.", "de": "vor&nbsp;%s&nbsp;Min.", "ru": "%s&nbsp;мин. назад"},
     "for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.": {
@@ -542,9 +631,6 @@ vis.binds.hqWidgets = {
 
             data.oldValue = value;
 
-            if (vis.editMode && data.testActive) {
-                data.state = 'active';
-            } else
             if (data.temperature  ||
                 value == data.min ||
                 value === null    ||
@@ -555,6 +641,10 @@ vis.binds.hqWidgets = {
                 data.state = 'normal';
             } else {
                 data.state = 'active';
+            }
+
+            if (vis.editMode && data.testActive) {
+                data.state = (data.state == 'normal') ? 'active' : 'normal';
             }
 
             if (value !== null && value !== undefined) {
@@ -591,13 +681,7 @@ vis.binds.hqWidgets = {
                 $div.find('.vis-hq-working').hide();
             }
 
-            if (data['oid-battery']) {
-                if (data.battery) {
-                    $div.find('.vis-hq-battery').show();
-                } else {
-                    $div.find('.vis-hq-battery').hide();
-                }
-            }
+            if (data['oid-battery']) $div.batteryIndicator('show', data.battery || false);
 
             if (data['oid-signal']) {
                 data.signal;
@@ -683,9 +767,7 @@ vis.binds.hqWidgets = {
                 $div.find('.vis-hq-icon').html('');
             }
 
-            if (data['oid-battery']) {
-                $div.append('<div class="vis-hq-battery"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 48 48"><path d="M0 0h48v48h-48z" fill="none"/><path fill="#ff5555" transform="rotate(-90, 24, 24)" d="M31.33 8h-3.33v-4h-8v4h-3.33c-1.48 0-2.67 1.19-2.67 2.67v30.67c0 1.47 1.19 2.67 2.67 2.67h14.67c1.47 0 2.67-1.19 2.67-2.67v-30.67c-.01-1.48-1.2-2.67-2.68-2.67zm-5.33 28h-4v-4h4v4zm0-8h-4v-10h4v10z"/></svg></div>');
-            }
+            if (data['oid-battery']) $div.batteryIndicator();
 
             if (data['oid-working']) {
                 $div.append('<div class="vis-hq-working"><span class="ui-icon ui-icon-gear"></span></div>');
@@ -882,6 +964,106 @@ vis.binds.hqWidgets = {
             if (data['drive-oid'])    data.drive    = vis.states.attr(data['drive-oid']    + '.val');
 
             vis.binds.hqWidgets.button.draw($div);
+        }
+    },
+    circle: {
+        init: function (wid, view, data) {
+            var $div = $('#' + wid).addClass('hq-button-base');
+            if (!$div.length) {
+                setTimeout(function () {
+                    vis.binds.hqWidgets.circle.init(wid, view, data);
+                }, 100);
+                return;
+            } else {
+                var timer = $('#' + wid).data('timer');
+                if (!timer) {
+                    $('#' + wid).data('timer', function () {
+                        vis.binds.hqWidgets.circle.init(wid, view, data);
+                    });
+                } else {
+                    $('#' + wid).data('timer', null);
+                }
+            }
+            var settings = data;
+            var $scalaInput = $div.find('input');
+
+            if (settings.oid) {
+                $scalaInput.val(vis.states[settings.oid + '.val']);
+                vis.states.bind(settings.oid + '.val', function (e, newVal, oldVal) {
+                    data.value = newVal;
+                    $scalaInput.val(data.value).trigger('change');
+                });
+            } else {
+                $scalaInput.val(settings.min);
+            }
+
+            var offset = data.angleOffset;
+            if (data.angleArc !== undefined && !offset && offset !== 0 && offset !== '0') {
+                offset = 180 + (360 - parseInt(data.angleArc, 10)) / 2;
+            }
+
+            $scalaInput.attr('data-angleOffset', offset);
+            $scalaInput.attr('data-angleArc',    data.angleArc);
+            $scalaInput.attr('data-thickness',   data.thickness);
+            $scalaInput.attr('data-linecap',     (settings.linecap === 'true' || settings.linecap === true) ? 'round' : 'butt');
+
+            var $knobDiv = $scalaInput.knob({
+                width:   $div.width(),
+                release: function () {
+                    // remove unit
+                    var oldValue = $scalaInput.data('oldValue');
+                    var val = $scalaInput.val();
+
+                    if ((settings.unit || settings.unit === 0) && val.substring(val.length - settings.unit.length, val.length) == settings.unit) {
+                        val = val.substring(0, val.length - settings.unit.length);
+                    }
+                    if (oldValue != val && !vis.editMode && settings.oid) {
+                        $scalaInput.data('oldValue', val);
+                        vis.setValue(settings.oid, val);
+                    }
+                },
+                cancel:  function () {
+                },
+                change:  function (value) {
+                },
+                format:  function (v) {
+                    if (settings.unit) v = v + settings.unit;
+                    return v;
+                },
+                displayPrevious : settings.displayPrevious,
+                displayInput:     !settings.hideNumber,
+                bgColor:          settings.bgcolor || undefined,
+                readOnly:         settings.readOnly,
+                fgColor:          settings.color,
+                inputColor:       settings.color,
+                colorize:         settings.colorize ? settings.colorize : undefined,
+                min:              settings.min,
+                max:              settings.max,
+                step:             settings.step,
+                cursor:           settings.cursor,
+                rotation:         settings.anticlockwise ? 'anticlockwise' : 'clockwise'
+
+            });
+            if (settings.caption) {
+                $scalaInput.after('<div style="position: absolute; left: 50%; top: 60%"><span style="position:relative; left: -50%" >' + settings.caption + '</span></div>');
+            }
+
+            $scalaInput.prop('readonly', true);
+            var parentFont = $div.parent().css('font-size');
+            var font       = $div.css('font-size');
+            if (font != parentFont) $scalaInput.css('font-size', font);
+
+            parentFont = $div.parent().css('font-weight');
+            font       = $div.css('font-weight');
+            if (font != parentFont) $scalaInput.css('font-weight', font);
+
+            parentFont = $div.parent().css('font-style');
+            font       = $div.css('font-style');
+            if (font != parentFont) $scalaInput.css('font-style', font);
+
+            parentFont = $div.parent().css('font-variant');
+            font       = $div.css('font-variant');
+            if (font != parentFont) $scalaInput.css('font-variant', font);
         }
     }
 };

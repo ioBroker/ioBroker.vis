@@ -2964,7 +2964,19 @@ vis = $.extend(true, vis, {
         this.groups[group].css_color             = this.editColor('css_color');
         this.groups[group]['css_text-align']     = this.editSelect('css_text-align', ['', 'left', 'right', 'center' ,'justify', 'initial', 'inherit'], true);
         this.groups[group]['css_text-shadow']    = {input: '<input type="text" id="inspect_css_text-shadow"/>'};
-        this.groups[group]['css_font-family']    = {input: '<input type="text" id="inspect_css_font-family"/>'};
+        this.groups[group]['css_font-family']    = this.editAutoComplete('css_font-family', ['',
+            'Verdana, Geneva, sans-serif',
+            'Georgia, "Times New Roman", Times, serif',
+            '"Courier New", Courier, monospace',
+            'Arial, Helvetica, sans-serif',
+            'Tahoma, Geneva, sans-serif',
+            '"Trebuchet MS", Arial, Helvetica, sans-serif',
+            '"Arial Black", Gadget, sans-serif',
+            '"Times New Roman", Times, serif',
+            '"Palatino Linotype", "Book Antiqua", Palatino, serif',
+            '"Lucida Sans Unicode", "Lucida Grande", sans-serif',
+            '"MS Serif", "New York", serif',
+            '"Comic Sans MS", cursive']);//{input: '<input type="text" id="inspect_css_font-family"/>'};
         this.groups[group]['css_font-style']     = this.editSelect('css_font-style', ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'], true);
         this.groups[group]['css_font-variant']   = this.editSelect('css_font-variant', ['', 'normal', 'small-caps', 'initial', 'inherit'], true);
         this.groups[group]['css_font-weight']    = this.editAutoComplete('css_font-weight', ['', 'normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit']);
