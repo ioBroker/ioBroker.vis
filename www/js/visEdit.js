@@ -1745,7 +1745,9 @@ vis = $.extend(true, vis, {
             this.$dialogConfirm.dialog({
                 autoOpen: false,
                 modal:    true,
-                zindex: 11000,
+                open: function () {
+                    $(this).parent().css({'z-index': 1001});
+                },
                 buttons: [
                     {
                         text: _('Ok'),
@@ -2962,7 +2964,19 @@ vis = $.extend(true, vis, {
         this.groups[group].css_color             = this.editColor('css_color');
         this.groups[group]['css_text-align']     = this.editSelect('css_text-align', ['', 'left', 'right', 'center' ,'justify', 'initial', 'inherit'], true);
         this.groups[group]['css_text-shadow']    = {input: '<input type="text" id="inspect_css_text-shadow"/>'};
-        this.groups[group]['css_font-family']    = {input: '<input type="text" id="inspect_css_font-family"/>'};
+        this.groups[group]['css_font-family']    = this.editAutoComplete('css_font-family', ['',
+            'Verdana, Geneva, sans-serif',
+            'Georgia, "Times New Roman", Times, serif',
+            '"Courier New", Courier, monospace',
+            'Arial, Helvetica, sans-serif',
+            'Tahoma, Geneva, sans-serif',
+            '"Trebuchet MS", Arial, Helvetica, sans-serif',
+            '"Arial Black", Gadget, sans-serif',
+            '"Times New Roman", Times, serif',
+            '"Palatino Linotype", "Book Antiqua", Palatino, serif',
+            '"Lucida Sans Unicode", "Lucida Grande", sans-serif',
+            '"MS Serif", "New York", serif',
+            '"Comic Sans MS", cursive']);//{input: '<input type="text" id="inspect_css_font-family"/>'};
         this.groups[group]['css_font-style']     = this.editSelect('css_font-style', ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'], true);
         this.groups[group]['css_font-variant']   = this.editSelect('css_font-variant', ['', 'normal', 'small-caps', 'initial', 'inherit'], true);
         this.groups[group]['css_font-weight']    = this.editAutoComplete('css_font-weight', ['', 'normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit']);
@@ -3160,15 +3174,19 @@ vis = $.extend(true, vis, {
         if (typeof line == 'string') line = {input: line};
 
         if (line[0]) {
-            line[0].attrName  = widAttr.clearName;
-            line[0].attrIndex = widAttr.index;
+            line[0].attrName       = widAttr.clearName;
+            line[0].attrIndex      = widAttr.index;
+            line[0].type           = widAttr.type;
+            line[0].onChangeWidget = widAttr.onChangeWidget;
+            if (widAttr.depends && widAttr.depends.length) line[0].depends = widAttr.depends;
         } else {
-            line.attrName  = widAttr.clearName;
-            line.attrIndex = widAttr.index;
+            line.attrName       = widAttr.clearName;
+            line.attrIndex      = widAttr.index;
+            line.type           = widAttr.type;
+            line.onChangeWidget = widAttr.onChangeWidget;
+            if (widAttr.depends && widAttr.depends.length) line.depends = widAttr.depends;
         }
 
-        if (widAttr.depends && widAttr.depends.length) line.depends = widAttr.depends;
-        line.type = widAttr.type;
 
         // <tr><td>title:</td><td><input /></td><td>button</td></tr>
         this.groups[group] = this.groups[group] || {};
@@ -3272,11 +3290,12 @@ vis = $.extend(true, vis, {
                 this.setAttrValue(this.activeWidgets, widAttr, line.css, values);
 
                 var wdata = {
-                    attr:    widAttr,
-                    widgets: widgets,
-                    view:    view,
-                    type:    line.type,
-                    css:     line.css
+                    attr:           widAttr,
+                    widgets:        widgets,
+                    view:           view,
+                    type:           line.type,
+                    css:            line.css,
+                    onChangeWidget: line.onChangeWidget
                 };
                 if (line.onchange) wdata.onchange = line.onchange;
 
@@ -3363,6 +3382,10 @@ vis = $.extend(true, vis, {
                     if (that.activeWidgets.indexOf(wdata.widgets[i]) != -1) {
                         that.showWidgetHelper(wdata.widgets[i], true);
                     }
+
+                    if ($('#' + that.views[wdata.view].widgets[wdata.widgets[i]].tpl).attr('data-vis-update-style')) {
+                        that.reRenderWidgetEdit(wdata.widgets[i]);
+                    }
                 } else {
                     if ($this.attr('type') == 'checkbox') {
                         that.widgets[wdata.widgets[i]].data[wdata.attr] = $this.prop('checked');
@@ -3401,6 +3424,17 @@ vis = $.extend(true, vis, {
                         wdata.onchange.call(this, that.views[wdata.view].widgets[wdata.widgets[i]].style[css]);
                     } else {
                         wdata.onchange.call(this, that.widgets[wdata.widgets[i]].data[wdata.attr]);
+                    }
+                }
+                if (wdata.onChangeWidget) {
+                    var widgetSet = $('#' + that.views[wdata.view].widgets[wdata.widgets[i]].tpl).attr('data-vis-set');
+                    if (that.binds[widgetSet] && that.binds[widgetSet][wdata.onChangeWidget]) {
+                        if (wdata.css) {
+                            var css = wdata.attr.substring(4);
+                            that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.views[wdata.view].widgets[wdata.widgets[i]].style[css], css, true);
+                        } else {
+                            that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.widgets[wdata.widgets[i]].data[wdata.attr], wdata.attr, false);
+                        }
                     }
                 }
 
@@ -3491,10 +3525,11 @@ vis = $.extend(true, vis, {
         }
     },
     extractAttributes: function (_wid_attr, widget) {
-        // Format: attr_name(start-end)[default_value]/type
+        // Format: attr_name(start-end)[default_value]/type/onChangeFunc
         // attr_name can be extended with numbers (1-2) means it will be attr_name1 and attr_name2 created
         //     end number can be other attribute, e.g (1-count)
         // defaultValue: If defaultValue has ';' it must be replaced by §
+        // defaultValue: If defaultValue has '/' it must be replaced by ~
         // Type format: id - Object ID Dialog
         //              checkbox
         //              image - image
@@ -3526,19 +3561,26 @@ vis = $.extend(true, vis, {
         if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,\s:\/\.a-zA-Z0-9]+)?/;
         var match = this.regexAttr.exec(_wid_attr);
 
-        var widAttr      = match[1];
-        var wid_repeats  = match[2];
-        var wid_default  = match[3];
-        var wid_type     = match[4];
-        var wid_type_opt = null;
-        var notTranslate = false;
-        var index        = '';
-        var attrDepends  = [];
+        var widAttr       = match[1];
+        var wid_repeats   = match[2];
+        var wid_default   = match[3];
+        var wid_type      = match[4];
+        var wid_on_change = null;
+        var wid_type_opt  = null;
+        var notTranslate  = false;
+        var index         = '';
+        var attrDepends   = [];
+
 
         // remove /
         if (wid_type) {
             wid_type = wid_type.substring(1);
-            var parts = wid_type.split(',');
+            // extract on change function
+            var _parts = wid_type.split('/');
+            wid_type = _parts[0];
+            wid_on_change =  _parts[1];
+
+            parts = wid_type.split(',');
             // extract min,max,step or select values
             if (parts.length > 1) {
                 wid_type = parts.shift();
@@ -3571,6 +3613,7 @@ vis = $.extend(true, vis, {
         if (wid_default) {
             wid_default = wid_default.substring(1, wid_default.length - 1);
             wid_default = wid_default.replace(/§/g, ';');
+            wid_default = wid_default.replace(/~/g, '/');
         } else {
             wid_default = undefined;
         }
@@ -3614,14 +3657,15 @@ vis = $.extend(true, vis, {
         var result = [];
         do {
             result.push({
-                name:         (widAttr + index),
-                type:         wid_type,
-                default:      wid_default,
-                options:      wid_type_opt,
-                notTranslate: notTranslate,
-                depends:      attrDepends,
-                clearName:    widAttr,
-                index:        index
+                name:           (widAttr + index),
+                type:           wid_type,
+                default:        wid_default,
+                options:        wid_type_opt,
+                onChangeWidget: wid_on_change,
+                notTranslate:   notTranslate,
+                depends:        attrDepends,
+                clearName:      widAttr,
+                index:          index
             });
         } while (wid_repeats && ((++index) <= wid_repeats.end));
         return result;
@@ -4428,6 +4472,11 @@ vis = $.extend(true, vis, {
 
                     that.views[that.activeView].widgets[widget].style.width  = w;
                     that.views[that.activeView].widgets[widget].style.height = h;
+
+                    if ($('#' + that.views[that.activeView].widgets[widget].tpl).attr('data-vis-update-style')) {
+                        that.reRenderWidgetEdit(widget);
+                    }
+
                     that.save();
                 },
                 resize: function (event, ui) {

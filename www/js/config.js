@@ -10,6 +10,7 @@ var visConfig = {
         {name: "jqui-mfd",    depends: ["basic", "jqui"]},
         "weather-adapter",
         "RGraph",
+        "hqWidgets",
         //"plumb",
         "bars",
         {name: "lcars",       depends: ["basic"]}

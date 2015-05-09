@@ -7,7 +7,7 @@
             // Bars
             "src":             {"en": "Source",               "de": "Quelle",              "ru": "Адрес"},
             "refreshInterval": {"en": "Refresh interval(ms)", "de": "Updatezeit(ms)",      "ru": "Интервал обновления(ms)"},
-            "is_comma":        {"en": "Divider comma",        "de": "Kamme als Trennung",  "ru": "Запятая-разделитель"},
+            "is_comma":        {"en": "Divider comma",        "de": "Komme als Trennung",  "ru": "Запятая-разделитель"},
             "digits":          {"en": "Digits after comma",   "de": "Zeichen nach Komma",  "ru": "Знаков после запятой"},
             "oid":             {"en": "Object ID",            "de": "Object ID",           "ru": "ID Объекта"},
             "html_prepend":    {"en": "Prepend value",        "de": "Voranstellen HTML",   "ru": "Префикс значения"},
@@ -810,6 +810,8 @@
                 isSeconds = false;
             }
 
+            if (format == 'auto') format = (vis.dateFormat || 'DD.MM.YYYY') + ' hh:mm:ss';
+
             var format = format || vis.dateFormat || 'DD.MM.YYYY';
 
             if (!dateObj) return '';
@@ -1023,7 +1025,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="stateful/container"
+        data-vis-type="stateful,container"
         data-vis-name="view in widget 8"
         data-vis-attrs="oid;persistent/checkbox;contains_view_(0-7)/views">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
@@ -1133,7 +1135,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="navigation"
+        data-vis-type="static,navigation"
         data-vis-name="HTML"
         data-vis-attrs="html;nav_view;sync/checkbox;body-background/color;group.effects;hide_effect/effect;hide_duration/slider,0,10000,100;hide_options/effect-options;show_effect/effect;show_duration/slider,0,10000,100;show_options/effect-options">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: (data.attr('hide_options') ? data.attr('hide_options') : {}),duration:data.attr('hide_duration')}, showOptions: {effect:data.attr('show_effect'), options: (data.attr('show_options') ? data.attr('show_options') : {}), duration: data.attr('show_duration')}, sync: data.attr('sync'), background: data.attr('body-background')}) %>>
@@ -1270,11 +1272,11 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="ValueList Text"
-        data-vis-attrs="oid;html_prepend;html_append;valuelist;test_list/-,0,1,2,3,4,5,6,7,8,9,10,11,12">
+        data-vis-attrs="oid;html_prepend;html_append;valuelist;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.vallist ? data.vallist.split(';') : []); %><%= list[(vis.editMode && this.data.attr('test_html')) ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"))] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%= list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1286,11 +1288,11 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="ValueList HTML"
-        data-vis-attrs="oid;html_prepend;html_append;valuelist">
+        data-vis-attrs="oid;html_prepend;html_append;valuelist;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.vallist ? data.vallist.split(';') : []); %><%== list[parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%== list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1302,13 +1304,27 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="ValueList HTML Style"
-        data-vis-attrs="oid;html_prepend;html_append;count[2];value(0-count);style(0-count)">
+        data-vis-attrs="oid;html_prepend;html_append;count[2]/number,0,10,1;value(0-count);style(0-count);test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" style="<% var slist = []; var i = 0; while (data['style' + i] !== undefined) {slist[i] = data['style' + i]; i++;} %><%== slist[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10)] %>">
-        <div data-oid="<%= this.data.attr('oid') %>">
-           <%== this.data.attr("html_prepend") %><% var list = []; var j = 0; while (data['value' + j] !== undefined) {list[j] = data['value' + j]; j++;}; %><%== list[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))),10)] %><%== this.data.attr("html_append") %>
+        <%
+            var slist = [];
+            var i = 0;
+            while (data['style' + i] !== undefined) {
+                slist[i] = data['style' + i]; i++;
+            }
+            console.log(slist[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))]);
+        %>
+        <div class="vis-widget-body" style="<%== slist[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %>">
+            <div data-oid="<%= this.data.attr('oid') %>">
+               <%== this.data.attr("html_prepend") %><%
+                   var list = [];
+                   var j = 0;
+                   while (data['value' + j] !== undefined) {
+                        list[j] = data['value' + j]; j++;
+                   }
+                   %><%== list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %><%== this.data.attr("html_append") %>
+            </div>
         </div>
-    </div>
     </div>
 </script>
 
@@ -1428,7 +1444,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="ctrl"
+        data-vis-type="ctrl,bool"
         data-vis-name="Bool SVG"
         data-vis-attrs="oid;svg_false;svg_true;opacity/slider,0,1,0.05">
     <% vis.binds.basic.showSvg(this.data.attr('class'), this.view, this.data.attr('wid'), this.data.attr('oid'),this.data.attr("opacity"),this.data.attr("svg_false"),this.data.attr("svg_true")) %>
@@ -1516,9 +1532,9 @@
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 44px; height: 59px">
         <div class="vis-widget-body">
             <% switch (vis.states.attr(this.data.oid + '.val')) { case null: case '': case undefined: case 0: case "0": case "0.000000": case false: case "false": %>
-            <img src="img/bulb_off.png" width="100%"/>
+                <img src="img/bulb_off.png" width="100%"/>
             <% break; default: %>
-            <img src="img/bulb_on.png" width="100%"/>
+                <img src="img/bulb_on.png" width="100%"/>
             <% } %>
         </div>
     </div>

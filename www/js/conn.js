@@ -27,7 +27,7 @@ var servConn = {
     _onUpdate:          null,
     _isConnected:       false,
     _disconnectedSince: null,
-    _connCallbacks: {
+    _connCallbacks:     {
         onConnChange: null,
         onUpdate:     null,
         onRefresh:    null,
@@ -41,16 +41,16 @@ var servConn = {
     _cmdQueue:          [],
     _connTimer:         null,
     _type:              'socket.io', // [SignalR | socket.io | local]
-    _timeout:           0, // 0 - use transport default timeout to detect disconnect
-    _reconnectInterval: 10000, // reconnect interval
+    _timeout:           0,           // 0 - use transport default timeout to detect disconnect
+    _reconnectInterval: 10000,       // reconnect interval
     _subscribes:        [],
     _cmdData:           null,
     _cmdInstance:       null,
     namespace:          'vis.0',
-    getType: function () {
+    getType:          function () {
         return this._type;
     },
-    getIsConnected: function () {
+    getIsConnected:   function () {
         return this._isConnected;
     },
     _checkConnection: function (func, _arguments) {
@@ -68,7 +68,7 @@ var servConn = {
         }
         return true;
     },
-    init: function (connOptions, connCallbacks) {
+    init:             function (connOptions, connCallbacks) {
         // To start vis as local use one of:
         // - start vis from directory with name local, e.g. c:/blbla/local/ioBroker.vis/www/index.html
         // - do not create "_socket/info.js" file in "www" directory
@@ -181,6 +181,18 @@ var servConn = {
 
                 if (that._connCallbacks.onCommand && id == that.namespace + '.control.command') {
                     if (state.ack) return;
+
+                    if (state.val &&
+                        typeof state.val == 'string' &&
+                        state.val[0] == '{' &&
+                        state.val[state.val.length - 1] == '}') {
+                        try {
+                            state.val = JSON.parse(state.val);
+                        } catch (e) {
+                            console.log('Command seems to be an object, but cannot parse it: ' + state.val);
+                        }
+                    }
+
                     // if command is an object {instance: 'iii', command: 'cmd', data: 'ddd'}
                     if (state.val && state.val.instance) {
                         if (that._connCallbacks.onCommand(state.val.instance, state.val.command, state.val.data)) {
@@ -203,16 +215,14 @@ var servConn = {
             });
         }
     },
-    getVersion: function (callback) {
+    getVersion:       function (callback) {
         if (!this._checkConnection('getVersion', arguments)) return;
 
         this._socket.emit('getVersion', function (version) {
-            if (callback) {
-                callback(version);
-            }
+            if (callback) callback(version);
         });
     },
-    _checkAuth: function (callback) {
+    _checkAuth:       function (callback) {
         if (!this._isConnected) {
             console.log("No connection!");
             return;
@@ -227,7 +237,7 @@ var servConn = {
                 callback(version);
         });
     },
-    readFile: function (filename, callback) {
+    readFile:         function (filename, callback) {
         if (!callback) throw 'No callback set';
 
         if (this._type === 'local') {
@@ -245,7 +255,7 @@ var servConn = {
             });
         }
     },
-    readFile64: function (filename, callback) {
+    readFile64:       function (filename, callback) {
         if (!callback) {
             throw 'No callback set';
         }
@@ -299,7 +309,7 @@ var servConn = {
             }
         });
     },
-    writeFile: function (filename, data, callback) {
+    writeFile:        function (filename, data, callback) {
         var that = this;
         if (this._type === 'local') {
             storage.set(filename, JSON.stringify(data));
@@ -313,7 +323,7 @@ var servConn = {
         }
     },
     // Write file base 64
-    writeFile64: function (filename, data, callback) {
+    writeFile64:      function (filename, data, callback) {
         var that = this;
         if (!this._checkConnection('writeFile', arguments)) return;
 
@@ -323,7 +333,7 @@ var servConn = {
 
         this._socket.emit('writeFile', adapter, parts.join('/'), atob(data), callback);
     },
-    readDir: function (dirname, callback) {
+    readDir:          function (dirname, callback) {
         //socket.io
         if (this._socket === null) {
             console.log('socket.io not initialized');
@@ -338,7 +348,7 @@ var servConn = {
             if (callback) callback(err, data);
         });
     },
-    mkdir: function (dirname, callback) {
+    mkdir:            function (dirname, callback) {
         var parts = dirname.split('/');
         var adapter = parts[1];
         parts.splice(0, 2);
@@ -347,7 +357,7 @@ var servConn = {
             if (callback) callback(err);
         });
     },
-    unlink: function (name, callback) {
+    unlink:           function (name, callback) {
         var parts = name.split('/');
         var adapter = parts[1];
         parts.splice(0, 2);
@@ -356,7 +366,7 @@ var servConn = {
             if (callback) callback(err);
         });
     },
-    renameFile: function (oldname, newname, callback) {
+    renameFile:       function (oldname, newname, callback) {
         var parts1 = oldname.split('/');
         var adapter = parts1[1];
         parts1.splice(0, 2);
@@ -366,7 +376,7 @@ var servConn = {
             if (callback) callback(err);
         });
     },
-    setState: function (pointId, value) {
+    setState:         function (pointId, value) {
         //socket.io
         if (this._socket === null) {
             //console.log('socket.io not initialized');
@@ -374,8 +384,8 @@ var servConn = {
         }
         this._socket.emit('setState', pointId, value);
     },
-    // callback (err, data)
-    getStates: function (IDs, callback) {
+    // callback(err, data)
+    getStates:        function (IDs, callback) {
         if (typeof IDs == 'function') {
             callback = IDs;
             IDs = null;
@@ -393,8 +403,8 @@ var servConn = {
             }
         });
     },
-    // callback (err, data)
-    getObjects: function (callback) {
+    // callback(err, data)
+    getObjects:       function (callback) {
         if (!this._checkConnection('getObjects', arguments)) return;
         var that = this;
         this._socket.emit('getObjects', function (err, data) {
@@ -450,7 +460,7 @@ var servConn = {
             });
         });
     },
-    addObject: function (objId, obj, callback) {
+    addObject:        function (objId, obj, callback) {
         if (!this._isConnected) {
             console.log("No connection!");
             return;
@@ -461,12 +471,12 @@ var servConn = {
             return;
         }
     },
-    delObject: function (objId) {
+    delObject:        function (objId) {
         if (!this._checkConnection('delObject', arguments)) return;
 
         this._socket.emit('delObject', objId);
     },
-    getUrl: function (url, callback) {
+    getUrl:           function (url, callback) {
         if (!this._isConnected) {
             console.log("No connection!");
             return;
@@ -482,7 +492,7 @@ var servConn = {
             }
         });
     },
-    logError: function (errorText) {
+    logError:         function (errorText) {
         console.log("Error: " + errorText);
         if (!this._isConnected) {
             //console.log("No connection!");
@@ -530,7 +540,7 @@ var servConn = {
             return false;
         }
     },
-    authenticate: function (user, password, salt) {
+    authenticate:     function (user, password, salt) {
         this._authRunning = true;
 
         if (user !== undefined) {
@@ -550,7 +560,7 @@ var servConn = {
             console.log("No credentials!");
         }
     },
-    getConfig: function (callback) {
+    getConfig:        function (callback) {
         if (!this._checkConnection('getLanguage', arguments)) return;
 
         this._socket.emit('getObject', 'system.config', function (err, obj) {
@@ -561,7 +571,7 @@ var servConn = {
             }
         });
     },
-    sendCommand: function (instance, command, data) {
+    sendCommand:      function (instance, command, data) {
         this.setState(this.namespace + '.control.instance', {val: instance, ack: true});
         this.setState(this.namespace + '.control.data',     {val: data, ack: true});
         this.setState(this.namespace + '.control.command',  {val: command, ack: true});
