@@ -797,7 +797,7 @@ vis.binds.hqWidgets = {
             }
 
             // action
-            if (!vis.editMode) {
+            if (1 || !vis.editMode) {
                 if (data.oid) {
 
                     $div.append('<div class="vis-hq-nodata"><span class="ui-icon ui-icon-cancel"></span></div>');
@@ -993,8 +993,8 @@ vis.binds.hqWidgets = {
             var $scalaInput = $div.find('input');
 
             if (settings.oid) {
-                $scalaInput.val(vis.states[settings.oid + '.val']);
-                if (!vis.editMode) {
+                $scalaInput.val(vis.states.attr(settings.oid + '.val'));
+                if (1 || !vis.editMode) {
                     vis.states.bind(settings.oid + '.val', function (e, newVal, oldVal) {
                         data.value = newVal;
                         $scalaInput.val(data.value).trigger('change');

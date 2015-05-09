@@ -60,11 +60,11 @@ vis = $.extend(true, vis, {
 
     editInit: function () {
         var that = this;
-        vis.states["dev1.val"] = 0;
-        vis.states["dev2.val"] = 0;
-        vis.states["dev3.val"] = 0;
-        vis.states["dev4.val"] = 0;
-        vis.states["dev5.val"] = 1;
+        vis.states.attr({'dev1.val': 0});
+        vis.states.attr({'dev2.val': 0});
+        vis.states.attr({'dev3.val': 0});
+        vis.states.attr({'dev4.val': 0});
+        vis.states.attr({'dev5.val': 1});
         this.editLoadConfig();
 
         this.$selectView           = $('#select_view');
@@ -1194,7 +1194,9 @@ vis = $.extend(true, vis, {
         // Dev ----------------------------------------------------------------
         $(".oid-dev").change(function () {
             that.setValue($(this).attr("id").split("_")[1], parseInt($(this).val()));
-        });
+        }).keyup(function () {
+            $(this).trigger('change');
+        })
 
     },
     editInitWidgetPreview: function () {
@@ -2235,10 +2237,10 @@ vis = $.extend(true, vis, {
 
         if (isViewExist) {
             $('#visview_' + view).append(can.view(tpl, {
-                val:  this.states[this.widgets[widgetId].data.oid + '.val'],
-                ts:   this.states[this.widgets[widgetId].data.oid + '.ts'],
-                ack:  this.states[this.widgets[widgetId].data.oid + '.ack'],
-                lc:   this.states[this.widgets[widgetId].data.oid + '.lc'],
+                val:  this.states.attr(this.widgets[widgetId].data.oid + '.val'),
+                ts:   this.states.attr(this.widgets[widgetId].data.oid + '.ts'),
+                ack:  this.states.attr(this.widgets[widgetId].data.oid + '.ack'),
+                lc:   this.states.attr(this.widgets[widgetId].data.oid + '.lc'),
                 data: this.widgets[widgetId].data,
                 view: view
             }));

@@ -122,7 +122,7 @@ var vis = {
     _setValue: function (id, state) {
         this.conn.setState(id, state[id + '.val']);
 
-        if (this.states[id] || this.states[id + '.val'] !== undefined) {
+        if (this.states.attr(id) || this.states.attr(id + '.val') !== undefined) {
             this.states.attr(state);
 
             // Inform other widgets, that does not support canJS
@@ -812,10 +812,10 @@ var vis = {
             // Append html element to view
             if (widget.data && widget.data.oid) {
                 $view.append(can.view(widget.tpl, {
-                    val: this.states[widget.data.oid + '.val'],
-                    //ts:  this.states[widget.data.oid + '.ts'],
-                    //ack: this.states[widget.data.oid + '.ack'],
-                    //lc:  this.states[widget.data.oid + '.lc'],
+                    val: this.states.attr(widget.data.oid + '.val'),
+                    //ts:  this.states.attr(widget.data.oid + '.ts'),
+                    //ack: this.states.attr(widget.data.oid + '.ack'),
+                    //lc:  this.states.attr(widget.data.oid + '.lc'),
                     data: widgetData,
                     view: view
                 }));
@@ -1176,7 +1176,7 @@ var vis = {
     isWidgetHidden: function (view, widget, val) {
         var oid = this.views[view].widgets[widget].data['visibility-oid'];
         if (oid) {
-            if (val === undefined) val = this.states[oid + '.val'];
+            if (val === undefined) val = this.states.attr(oid + '.val');
             if (val === undefined) return false;
 
             var condition = this.views[view].widgets[widget].data['visibility-cond'];
@@ -1509,13 +1509,13 @@ var vis = {
     formatBinding: function (format) {
         var oids = this.extractBinding(format);
         for (var t = 0; t < oids.length; t++) {
-            var value = this.states[oids[t].visOid];
+            var value = this.states.attr(oids[t].visOid);
             if (oids[t].operations) {
                 for (var k = 0; k < oids[t].operations.length; k++) {
                     if (oids[t].operations[k].op === 'eval') {
                         var string = '';//'(function() {';
                         for (var a = 0; a < oids[t].operations[k].arg.length; a++) {
-                            string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + this.states[oids[t].operations[k].arg[a].visOid] + '";';
+                            string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + this.states.attr(oids[t].operations[k].arg[a].visOid) + '";';
                         }
                         string += 'return ' + oids[t].operations[k].formula + ';';
                         //string += '}())';
@@ -1655,20 +1655,45 @@ window.onpopstate();
 // Start of initialisation: main ()
 (function ($) {
     $(document).ready(function () {
-        // On some platfors, the can.js is not immediately ready
-        if (vis.editMode) {
-            vis.states = {
-                'nothing_selected.val': null,
-                attr: function (id) {
-                    return vis.states[id];
-                },
-                bind: function (id, callback) {
-                    console.log('ERROR: binding in edit mode is not allowed on ' + id);
-                }
-            }
+        // On some platforms, the can.js is not immediately ready
+        vis.states = new can.Map({
+            'nothing_selected.val': null
+        });
 
-        } else {
-            vis.states = new can.Map({'nothing_selected.val': null});
+        if (vis.editMode) {
+            vis.statesEdit = {};
+            vis.states.attr = function (attr, val) {
+                var type = typeof attr;
+                if (type !== 'string' && type !== 'number') {
+                    for (var o in attr) {
+                        // allow only dev1, dev2, ... to be bound
+                        if (o.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
+                            return this._attrs(attr, val);
+                        }
+                    }
+                } else if (arguments.length === 1) {
+                    if (attr.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
+                        can.__reading(this, attr);
+                        return this._get(attr);
+                    } else {
+                        return vis.statesEdit[attr];
+                    }
+                } else {
+                    console.log('This is ERROR!');
+                    this._set(attr, val);
+                    return this;
+                }
+            };
+
+            // binding
+            vis.states.___bind = vis.states.bind;
+            vis.states.bind = function (id, callback) {
+                // allow only dev1, dev2, ... to be bound
+                if (id.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
+                    return vis.states.___bind(id, callback);
+                }
+                //console.log('ERROR: binding in edit mode is not allowed on ' + id);
+            };
         }
 
         // für iOS Safari - wirklich notwendig?
@@ -1786,10 +1811,10 @@ window.onpopstate();
 
                                     try {
                                         if (vis.editMode) {
-                                            vis.states[id + '.val'] = obj.val;
-                                            vis.states[id + '.ts']  = obj.ts;
-                                            vis.states[id + '.ack'] = obj.ack;
-                                            vis.states[id + '.lc']  = obj.lc;
+                                            vis.statesEdit[id + '.val'] = obj.val;
+                                            vis.statesEdit[id + '.ts']  = obj.ts;
+                                            vis.statesEdit[id + '.ack'] = obj.ack;
+                                            vis.statesEdit[id + '.lc']  = obj.lc;
                                         } else {
                                             var o = {};
                                             o[id + '.val'] = obj.val;
@@ -1814,13 +1839,15 @@ window.onpopstate();
                             if (vis.IDs) {
                                 var now = new Date().getTime() / 1000;
                                 for (var id in vis.IDs) {
-                                    if (vis.states[vis.IDs[id] + '.val'] === undefined) {
-                                        console.log('Create inner vis object ' + vis.IDs[id]);
+                                    if (vis.states.attr(vis.IDs[id] + '.val') === undefined) {
+                                        if (!vis.IDs[id].match(/^dev\d+$/)) {
+                                            console.log('Create inner vis object ' + vis.IDs[id]);
+                                        }
                                         if (vis.editMode) {
-                                            vis.states[id + '.val'] = 0;
-                                            vis.states[id + '.ts']  = now;
-                                            vis.states[id + '.ack'] = false;
-                                            vis.states[id + '.lc']  = now;
+                                            vis.statesEdit[id + '.val'] = 0;
+                                            vis.statesEdit[id + '.ts']  = now;
+                                            vis.statesEdit[id + '.ack'] = false;
+                                            vis.statesEdit[id + '.lc']  = now;
                                         } else {
                                             var o = {};
                                             o[id + '.val'] = 0;
@@ -1903,10 +1930,10 @@ window.onpopstate();
             onUpdate:     function (id, state) {
                 _setTimeout(function (id, state) {
                     if (vis.editMode) {
-                        vis.states[id + '.val'] = state.val;
-                        vis.states[id + '.ts']  = state.ts;
-                        vis.states[id + '.ack'] = state.ack;
-                        vis.states[id + '.lc']  = state.lc;
+                        vis.statesEdit[id + '.val'] = state.val;
+                        vis.statesEdit[id + '.ts']  = state.ts;
+                        vis.statesEdit[id + '.ack'] = state.ack;
+                        vis.statesEdit[id + '.lc']  = state.lc;
                     } else {
                         var o = {};
                         // Check new model
