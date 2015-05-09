@@ -2238,9 +2238,9 @@ vis = $.extend(true, vis, {
         if (isViewExist) {
             $('#visview_' + view).append(can.view(tpl, {
                 val:  this.states.attr(this.widgets[widgetId].data.oid + '.val'),
-                ts:   this.states.attr(this.widgets[widgetId].data.oid + '.ts'),
+                /*ts:   this.states.attr(this.widgets[widgetId].data.oid + '.ts'),
                 ack:  this.states.attr(this.widgets[widgetId].data.oid + '.ack'),
-                lc:   this.states.attr(this.widgets[widgetId].data.oid + '.lc'),
+                lc:   this.states.attr(this.widgets[widgetId].data.oid + '.lc'),*/
                 data: this.widgets[widgetId].data,
                 view: view
             }));

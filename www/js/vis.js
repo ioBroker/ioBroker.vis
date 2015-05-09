@@ -1661,7 +1661,6 @@ window.onpopstate();
         });
 
         if (vis.editMode) {
-            vis.statesEdit = {};
             vis.states.attr = function (attr, val) {
                 var type = typeof attr;
                 if (type !== 'string' && type !== 'number') {
@@ -1676,7 +1675,7 @@ window.onpopstate();
                         can.__reading(this, attr);
                         return this._get(attr);
                     } else {
-                        return vis.statesEdit[attr];
+                        return vis.states[attr];
                     }
                 } else {
                     console.log('This is ERROR!');
@@ -1811,10 +1810,10 @@ window.onpopstate();
 
                                     try {
                                         if (vis.editMode) {
-                                            vis.statesEdit[id + '.val'] = obj.val;
-                                            vis.statesEdit[id + '.ts']  = obj.ts;
-                                            vis.statesEdit[id + '.ack'] = obj.ack;
-                                            vis.statesEdit[id + '.lc']  = obj.lc;
+                                            vis.states[id + '.val'] = obj.val;
+                                            vis.states[id + '.ts']  = obj.ts;
+                                            vis.states[id + '.ack'] = obj.ack;
+                                            vis.states[id + '.lc']  = obj.lc;
                                         } else {
                                             var o = {};
                                             o[id + '.val'] = obj.val;
@@ -1839,15 +1838,15 @@ window.onpopstate();
                             if (vis.IDs) {
                                 var now = new Date().getTime() / 1000;
                                 for (var id in vis.IDs) {
-                                    if (vis.states.attr(vis.IDs[id] + '.val') === undefined) {
+                                    if (vis.states[vis.IDs[id] + '.val'] === undefined) {
                                         if (!vis.IDs[id].match(/^dev\d+$/)) {
                                             console.log('Create inner vis object ' + vis.IDs[id]);
                                         }
                                         if (vis.editMode) {
-                                            vis.statesEdit[id + '.val'] = 0;
-                                            vis.statesEdit[id + '.ts']  = now;
-                                            vis.statesEdit[id + '.ack'] = false;
-                                            vis.statesEdit[id + '.lc']  = now;
+                                            vis.states[id + '.val'] = 0;
+                                            vis.states[id + '.ts']  = now;
+                                            vis.states[id + '.ack'] = false;
+                                            vis.states[id + '.lc']  = now;
                                         } else {
                                             var o = {};
                                             o[id + '.val'] = 0;
