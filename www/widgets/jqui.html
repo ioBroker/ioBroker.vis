@@ -238,7 +238,7 @@
                         'text-align': 'left',
                         'outline':    'none',
                         'cursor':     'text',
-                        height:       '95%'
+                        height:       '50%'
                     }).change(function () {
                         vis.setValue(oid, $(this).val());
                     });
@@ -854,7 +854,8 @@
         data-vis-attrs="label[Input];oid;digits[0]/slider,0,10,1;size[10]/slider,10,100,1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:275px;height:44px;" id="<%= this.data.attr("wid") %>">
         <div class="vis-widget-body">
-            <label for="<%= this.data.attr('wid') %>_input"><%= ((this.data.attr('label') === undefined || this.data.attr('label') === null) ? '' : this.data.attr('label')) %></label><input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.input(el, data.digits); %> />
+            <label for="<%= this.data.attr('wid') %>_input"><%= ((this.data.attr('label') === undefined || this.data.attr('label') === null) ? '' : this.data.attr('label')) %></label>
+            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.input(el, data.digits); %> />
         </div>
     </div>
 </script>
