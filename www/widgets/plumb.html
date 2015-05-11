@@ -1,6 +1,6 @@
 <link rel="stylesheet" type="text/css" href="widgets/plumb/css/plumb.css"/>
 
-<script type="text/javascript">
+<script type="text/javascript" >
     "use strict";
 
     if (vis.editMode) {
@@ -1928,6 +1928,13 @@
                     height: parseInt(parseInt(data.pipe_size) * 2.5) + 2 + "px",
                     width: parseInt(data.pipe_size) + 2 + "px"
                 });
+
+                if (data.turn_direction) {
+                    $this.find('svg').css({
+                        "-webkit-transform": "rotate(180deg)",
+                        "transform": "rotate(180deg)"
+                    })
+                }
             });
 
             $($this).trigger("resize");
@@ -1938,20 +1945,20 @@
 
             $this.bind("plumb_change", function (event) {
 
-                if (self.conTop == event.from && data.turn_direction == false) {
+                if (self.conTop == event.from && data.turn_direction != false) {
                     $("#" + id + "_fill_top").attr("fill", event.color.c);
                     $("#" + id + "_fill_bottom").attr("fill", event.color.c);
                     vis.binds.plumb.check(id, event)
                 } else if (self.conTop == event.from) {
-                    $("#" + id + "_fill_bottom").attr("fill", event.color.c);
+                    $("#" + id + "_fill_top").attr("fill", event.color.c);
                 }
 
-                if (self.conBottom == event.from && data.turn_direction != false) {
+                if (self.conBottom == event.from && data.turn_direction == false) {
                     $("#" + id + "_fill_top").attr("fill", event.color.c);
                     $("#" + id + "_fill_bottom").attr("fill", event.color.c);
                     vis.binds.plumb.check(id, event)
                 } else if (self.conBottom == event.from) {
-                    $("#" + id + "_fill_bottom").attr("fill", event.color.c);
+                    $("#" + id + "_fill_top").attr("fill", event.color.c);
                 }
             });
 
@@ -2292,6 +2299,9 @@
             });
         },
         tank_simple: function (el, data) {
+
+            console.log("tank")
+
             if (data.conRight_pos != undefined) {
                 var $this = $(el).parent();
                 var id = $this.attr("id");
@@ -2318,7 +2328,7 @@ var last_event;
                 vis.binds.plumb.plumb_drop($this);
 
                 $this.find(".tank_simple_svg").append('\
- <svg\
+<svg\
             height="100%"\
             viewBox="0 0 300 600"\
             width="100%"\
@@ -3288,7 +3298,7 @@ var last_event;
         data-vis-attrs1="group.conTop;conTop_show/checkbox;conTop_level[100]/slider,0,100,1;conTop_color_off[#C0C0C0]/color;conTop_color_on[#00ff00]/color;conTop_size[20]/slider,10,50,5;conTop_pos[50]/slider,0,100,1;conTop;"
         data-vis-attrs2="group.conBottom;conBottom_show/checkbox;conBottom_level[1]/slider,0,100,1;conBottom_color_off[#C0C0C0]/color;conBottom_color_on[#00ff00]/color;conBottom_size[20]/slider,10,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;"
         data-vis-attrs3="group.conLeft;conLeft_show/checkbox;conLeft_level[50]/slider,0,100,1;conLeft_color_off[#C0C0C0]/color;conLeft_color_on[#00ff00]/color;conLeft_size[20]/slider,10,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;"
-        data-vis-attrs4="group.conRight;conRight_show/checkbox;conRight_level[50]/slider,0,100,1;conRight_color_off[#C0C0C0]/color;conRight_color_on[#00ff00]/color;conRight_size[20]/slider,10,50,5;conRight_pos[50]/slider,0,100,1;conRight">"
+        data-vis-attrs4="group.conRight;conRight_show/checkbox;conRight_level[50]/slider,0,100,1;conRight_color_off[#C0C0C0]/color;conRight_color_on[#00ff00]/color;conRight_size[20]/slider,10,50,5;conRight_pos[50]/slider,0,100,1;conRight">
     <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t pl_b" data-vis-resizable='{}' style="min-width: 70px; min-height: 135px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tank_simple(el, data) %>>
 			<div class="tank_simple" >
