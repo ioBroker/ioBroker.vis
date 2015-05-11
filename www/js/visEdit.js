@@ -60,11 +60,13 @@ vis = $.extend(true, vis, {
 
     editInit: function () {
         var that = this;
+        // Create debug variables
         vis.states.attr({'dev1.val': 0});
         vis.states.attr({'dev2.val': 0});
         vis.states.attr({'dev3.val': 0});
         vis.states.attr({'dev4.val': 0});
         vis.states.attr({'dev5.val': 1});
+        vis.states.attr({'dev6.val': 'string'});
         this.editLoadConfig();
 
         this.$selectView           = $('#select_view');
@@ -103,7 +105,6 @@ vis = $.extend(true, vis, {
         });
         if (this.config['size/pan_add_wid']) $('#pan_add_wid').width(this.config['size/pan_add_wid']);
         if (this.config['size/pan_attr'])    $('#pan_attr').width(this.config['size/pan_attr']);
-
 
         $(window).resize(layout);
 
@@ -1193,7 +1194,17 @@ vis = $.extend(true, vis, {
 
         // Dev ----------------------------------------------------------------
         $(".oid-dev").change(function () {
-            that.setValue($(this).attr("id").split("_")[1], parseInt($(this).val()));
+            var val = $(this).val();
+            if ($(this).attr('type') == 'number') {
+                if ($(this).attr('step') == '0.1') {
+                    val = val.replace(',', '.');
+                    that.setValue($(this).attr("id").split("_")[1], parseFloat(val, 10));
+                } else {
+                    that.setValue($(this).attr("id").split("_")[1], parseInt(val, 10));
+                }
+            } else {
+                that.setValue($(this).attr("id").split("_")[1], $(this).val());
+            }
         }).keyup(function () {
             $(this).trigger('change');
         })
@@ -1247,17 +1258,26 @@ vis = $.extend(true, vis, {
 
             $.each(tpl_list, function (i) {
                 var tpl = $(tpl_list[i]).attr('id');
-                var type = "";
-                if ($("#" + tpl).data('vis-type')) {
-                    type = '<div class="wid_prev_type">' + $("#" + tpl).data("vis-type") + '</div>';
-                }
-                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div></div>');
-                if ($(tpl_list[i]).data('vis-prev')) {
+                var type = $('#' + tpl).data('vis-type') || '';
+                var classtypes = '';
 
+                if (type) {
+                    var types = type.split(',');
+                    type = '<div class="wid_prev_type">' + type + '</div>';
+
+                    for (var z = 0; z < types.length; z++) {
+                        classtypes += types[z].trim() + ' ';
+                    }
+                }
+                classtypes += set + ' ' + $("#" + tpl).data('vis-name');
+                classtypes = classtypes.toLowerCase().replace('ctrl', 'control').replace('val', 'value');
+
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev widget-filters" data-keywords="' + classtypes + '" data-tpl="' + tpl + '">' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div></div>');
+
+                if ($(tpl_list[i]).data('vis-prev')) {
                     var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
                     $(content).children().last().addClass("wid_prev_content");
                 }
-
 
                 $('#prev_container_' + tpl).draggable({
                     helper:      'clone',
@@ -1599,9 +1619,72 @@ vis = $.extend(true, vis, {
             }
         });
 
+        // Create list of filters
+        this.filterList = [];
+        $('.widget-filters').each(function () {
+            var keywords = $(this).data('keywords').split(' ');
+            for (var k = 0; k < keywords.length; k++) {
+                if (that.filterList.indexOf(keywords[k]) == -1) that.filterList.push(keywords[k]);
+            }
+        });
+
+        var $filter_set = $('#filter_set');
+
+        function filterWidgets () {
+            if ($filter_set.data('timeout')) return;
+            $filter_set.data('timeout', setTimeout(function () {
+                $filter_set.data('timeout', null);
+                var value = $filter_set.val().toLowerCase();
+                that.editSaveConfig('select/filter_set', value);
+                $('.widget-filters').each(function () {
+                    if (value !== '' && value !== '*' && $select_set.val() != 'all') {
+                        $select_set.val('all');
+                        $select_set.selectmenu('refresh');
+                    }
+                    var keywords = $(this).data('keywords');
+                    if (value === '' || value === '*' || keywords.indexOf(value) != -1) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }, 400));
+        }
+        $filter_set.autocomplete({
+            minLength: 0,
+            source: function (request, response) {
+                var data = $.grep(that.filterList, function (value) {
+                    return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                });
+                data = data.slice(0, 50);
+                response(data);
+            },
+            select: filterWidgets,
+            change: filterWidgets
+        }).focus(function () {
+            $(this).autocomplete('search', '');
+        }).keyup(function (e) {
+            if (e.keyCode == 13) {
+                $filter_set.autocomplete('close');
+            }
+            filterWidgets();
+        }).bind('dblclick', function () {
+            $filter_set.val('*');
+            var textToShow = $filter_set.find(":selected").text();
+            $filter_set.parent().find("span").find("input").val(textToShow);
+            filterWidgets();
+        });
+
         if (this.config['select/select_set'] != "all" && this.config['select/select_set']) {
             $('.wid_prev').hide();
             $('.' + this.config['select/select_set'] + '_prev').show();
+        }
+
+        if (this.config['select/filter_set'] && this.config['select/filter_set'] != '*') {
+            $filter_set.val(this.config['select/filter_set']);
+            var textToShow = $filter_set.find(":selected").text();
+            $filter_set.parent().find("span").find("input").val(textToShow);
+            setTimeout(filterWidgets, 500);
         }
 
         // Expand/Collapse view settings
